@@ -64,7 +64,6 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
-  shared_ptr<DOMParser> MainWindow::parser=DOMParser::create(true);
   OctEval *MainWindow::octEval=NULL;
   vector<boost::filesystem::path> dependencies;
   NewParamLevel *MainWindow::octEvalParamLevel=NULL;
@@ -84,6 +83,7 @@ namespace MBSimGUI {
     mbsim = new Process(this);
 
     mbsimThread = new MBSimThread(this);
+    parser=DOMParser::create(true);
     mbsimThread->setParser(parser);
     connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(preprocessFinished(int)));
 

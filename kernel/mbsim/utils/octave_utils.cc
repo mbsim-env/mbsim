@@ -28,7 +28,7 @@ namespace MBSim {
   void OctaveElement::toStream(ostream &os) const {
     os << "# name: " << name << endl;
     os << "# type: " << type << endl;
-  };
+  }
 
   void OctaveStruct::toStream(ostream &os) const {
     OctaveElement::toStream(os);

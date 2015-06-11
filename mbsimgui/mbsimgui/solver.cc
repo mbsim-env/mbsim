@@ -98,7 +98,7 @@ namespace MBSimGUI {
 
   Solver* Solver::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     Solver *solver=ObjectFactory::getInstance()->createSolver(e);
     if(solver)
@@ -107,7 +107,7 @@ namespace MBSimGUI {
   }
 
   void Solver::writeXMLFile(const string &name) {
-    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
+    shared_ptr<DOMDocument> doc=mw->parser->createDocument();
     writeXMLFile(doc.get());
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }

@@ -36,5 +36,5 @@ endif
 noinst_PROGRAMS = $(MAYBE_CPPCASADITOXML)
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc
 cppCasADiToXML_LDADD = libutils.la 
-cppCasADiToXML_LDFLAGS = -Wl,--no-as-needed
-cppCasADiToXML_CPPFLAGS = $(libutils_la_CPPFLAGS)
+cppCasADiToXML_LDFLAGS = -Wl,--no-as-needed $(CASADI_LIBS)
+cppCasADiToXML_CPPFLAGS = $(libutils_la_CPPFLAGS) $(CASADI_CFLAGS)

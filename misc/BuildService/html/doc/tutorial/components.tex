@@ -5,7 +5,7 @@ Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \emph{MBSim} i
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-    \includegraphics[width=0.9\hsize]{Figures/mbsim_embedding_grey.eps}
+    %\includegraphics[width=0.9\hsize]{Figures/mbsim_embedding_grey.eps}
     \label{fig:departure:mbsim:embedding}
 \end{figure}                                                                                                                                                                                                                                                                                                                                      
 \MBSim{} can handle a set of dynamical systems from various domains not only separated but also exchanging data of the examplary smooth form
@@ -15,19 +15,13 @@ Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \emph{MBSim} i
 \dot{\vx}&=\vf\left(\vx\right)\,,\\
 &\left(\vq,\vu,\vlambda,t\right)\in\mathcal{N}\,.
 \end{align*}
-Though, the simulation of hydraulics, electronics, control and power train systems is included within several modules. \MBSim{} is based on the interface \FMatVec{} using either LaPack\footnote{cf.~\url{http://www.netlib.org/lapack/}} or ATLAS\footnote{cf.~\url{http://www.netlib.org/atlas/}} for fast evaluation of linear algebra routines. Further, with \emph{HDF5Serie} it writes simulation result files in the hierarchical HDF5 file format\footnote{cf.~\url{http://www.hdfgroup.org/HDF5/}} even for large dynamical systems. These files can be read by \emph{H5PlotSerie} for plotting or by \OpenMBV{} for visualisation. Thereby, \OpenMBV{} is based on the Coin implementation\footnote{cf.~\url{http://www.coin3d.org/}} of the Open Inventor Library\footnote{\url{http://oss.sgi.com/projects/inventor/}}. Also a co-simulation with Matlab/Simulink\footnote{cf.~\url{http://www.mathworks.de/}}, \emph{HySim} \cite{Bor03} for hydraulic components and \emph{KetSim} \cite{Fri98} for camshaft timing chains is possible \cite{Fri09}. \MBSim{} is divided in a modelling part using C++ or XML and a simulation part. The simulation part is implemented quite modular distinguishing between the update of bodies and interactions concerning kinematics, kinetics as well as force laws and integration / nonlinear solution schemes. Also here external libraries are used where it is possible for having always a state-of-the-art numerical basis.
+Though, the simulation of hydraulics, electronics, control and power train systems is included within several modules. \MBSim{} is based on the interface \FMatVec{} using either LaPack\footnote{cf.~\url{http://www.netlib.org/lapack/}} or ATLAS\footnote{cf.~\url{http://www.netlib.org/atlas/}} for fast evaluation of linear algebra routines. Further, with \emph{HDF5Serie} it writes simulation result files in the hierarchical HDF5 file format\footnote{cf.~\url{http://www.hdfgroup.org/HDF5/}} even for large dynamical systems. These files can be read by \emph{H5PlotSerie} for plotting or by \OpenMBV{} for visualisation. Thereby, \OpenMBV{} is based on the Coin implementation\footnote{cf.~\url{http://www.coin3d.org/}} of the Open Inventor Library\footnote{\url{http://oss.sgi.com/projects/inventor/}}. Also a co-simulation with Matlab/Simulink\footnote{cf.~\url{http://www.mathworks.de/}}, \emph{HySim} \cite{Bor03} for hydraulic components and \emph{KetSim} \cite{Fri98} for camshaft timing chains is possible \cite{Fri11}. \MBSim{} is divided in a modelling part using C++ or XML and a simulation part. The simulation part is implemented quite modular distinguishing between the update of bodies and interactions concerning kinematics, kinetics as well as force laws and integration / nonlinear solution schemes. Also here external libraries are used where it is possible for having always a state-of-the-art numerical basis.
 A typical example of a dynamical system only from mechanics is given by Figure~\ref{fig:objects}.
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-    \psfrag{Body}{\put(+2.0,+0.0){\texttt{Body}}}
-    \psfrag{Frame}{\put(+4.0,+0.0){\texttt{Frame}}}
-    \psfrag{Contour}{\put(+2.0,+2.0){\texttt{Contour}}}
-    \psfrag{Joint}{\put(+4.0,+0.0){\texttt{Joint}}}
-    \psfrag{Contact}{\put(+1.0,+1.0){\texttt{Contact}}}
-    \psfrag{Load}{\put(-50.0,+5.0){\texttt{KineticExcitation}}}
   	
-    \includegraphics[width=0.9\hsize]{Figures/mbsim_objectorientation.eps} 
+    \includegraphics[width=0.9\hsize]{Figures/mbsim_objectorientation.pdf} 
   	\caption{Mechanical object structure in \emph{MBSim}.}
   	\label{fig:objects}
 \end{figure}
@@ -41,16 +35,8 @@ Hierarchically \texttt{Object}s and \texttt{Link}s belong to \texttt{DynamicSyst
 \begin{figure}[hbt]%
 	\centering
     \scriptsize
-    \psfrag{Element}{\put(+0.0,+0.0){\textbf{Element}}}
-    \psfrag{ExtraDynamicInterface}{\put(+0.0,+0.0){\textbf{ExtraDynamicInterface}}}
-    \psfrag{LinkInterface}{\put(+0.0,+0.0){\textbf{LinkInterface}}}
-    \psfrag{ObjectInterface}{\put(+0.0,+0.0){\textbf{ObjectInterface}}}
-    \psfrag{DynamicSystemSolver}{\put(+1.0,+0.0){\textbf{DynamicSystemSolver}}}
-    \psfrag{DynamicSystem}{\put(+0.0,+0.0){\textbf{DynamicSystem}}}
-    \psfrag{Group}{\put(+0.0,+0.0){\textbf{Group}}}
-    \psfrag{Graph}{\put(+0.0,+0.0){\textbf{Graph}}}
 
-  	\includegraphics[width=0.7\hsize]{Figures/mbsim_dynamicsystem.eps} 
+  	\includegraphics[width=0.7\hsize]{Figures/mbsim_dynamicsystem.pdf} 
   	\caption{Dynamic system type classes in \MBSim{} (UML).}
   	\label{fig:departure:mbsim:dynamicsystem}
 \end{figure}
@@ -153,15 +139,8 @@ Mechanical \texttt{Body}s provide their portion of a positive definite mass matr
 \begin{figure}[hbt]%
 	\centering
     \scriptsize
-    \psfrag{ObjectInterface}{\put(+5.0,+0.0){\textbf{ObjectInterface}}}
-    \psfrag{Element}{\put(+2.0,+0.0){\textbf{Element}}}
-    \psfrag{HydraulicObject}{\put(+4.0,+0.0){\textbf{HydraulicObject}}}
-    \psfrag{Object}{\put(+2.0,+0.0){\textbf{Object}}}
-    \psfrag{FlexibleBody}{\put(+4.0,+0.0){\textbf{FlexibleBody}}}
-    \psfrag{RigidBody}{\put(+2.0,+0.0){\textbf{RigidBody}}}
-    \psfrag{Body}{\put(+1.0,+0.0){\textbf{Body}}}
 
-  	\includegraphics[width=0.45\hsize]{Figures/mbsim_object.eps} 
+  	\includegraphics[width=0.45\hsize]{Figures/mbsim_object.pdf} 
   	\caption{Object type classes in \MBSim{} (UML).}
   	\label{fig:departure:mbsim:object}
 \end{figure}
@@ -188,15 +167,8 @@ In the referencing coordinate frame, Eq.~\eqref{eq:translation} describes the tr
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-    \psfrag{DS}{\texttt{DynamicSystem}}
-    \psfrag{RB}{\texttt{RigidBody}}
-    \psfrag{link}{\texttt{Link}}
-    \psfrag{C}{\put(+0.0,+0.0){$C$}}
-    \psfrag{Itilde}{\put(+0.0,+0.0){$\tilde{I}$}}
-    \psfrag{I}{\put(+0.0,+0.0){$I$}}
-    \psfrag{B}{\put(+0.0,+0.0){$B$}}
-    \psfrag{q}{\put(+0.0,+0.0){$q_{\text{rel}}$}}
-  	\includegraphics[width=0.6\hsize]{Figures/mbsim_rigid_kinematics.eps} 
+    \def\svgwidth{0.6\columnwidth}
+    \import{Figures/}{mbsim_rigid_kinematics.pdf_tex}
   	\caption{Rigid kinematics in \MBSim{}.}
   	\label{fig:departure:mbsim:rigid_kinematics}
 \end{figure}
@@ -246,19 +218,8 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment only availab
 \begin{figure}[hbt]%
 	\centering
     \scriptsize
-    \psfrag{Element}{\put(+2.0,+0.0){\textbf{Element}}}
-    \psfrag{ExtraDynamicInterface}{\put(+3.0,+0.0){\textbf{ExtraDynamicInterface}}}
-    \psfrag{LinkInterface}{\put(+3.0,+0.0){\textbf{LinkInterface}}}
-    \psfrag{LinkMechanicsHydraulics}{\put(+4.0,+0.0){\textbf{LinkMechanicsHydraulics}}}
-    \psfrag{LinkMechanics}{\put(+2.0,+0.0){\textbf{LinkMechanics}}}
-    \psfrag{LinkHydraulics}{\put(+2.0,+0.0){\textbf{LinkHydraulics}}}
-    \psfrag{Link}{\put(+0.0,+0.0){\textbf{Link}}}
-    \psfrag{Contact}{\put(+1.0,+0.0){\textbf{Contact}}}
-    \psfrag{SpringDamper}{\put(+3.0,+0.0){\textbf{SpringDamper}}}
-    \psfrag{Joint}{\put(+0.0,+0.0){\textbf{Joint}}}
-    \psfrag{KineticExcitation}{\put(+2.0,+0.0){\textbf{KineticExcitation}}}
     
-  	\includegraphics[width=0.85\hsize]{Figures/mbsim_link.eps} 
+  	\includegraphics[width=0.85\hsize]{Figures/mbsim_link.pdf} 
   	\caption{Link type classes in \MBSim{} (UML).}
   	\label{fig:departure:mbsim:link}
 \end{figure}

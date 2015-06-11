@@ -42,7 +42,8 @@ namespace {
   string SHEXT_(".so");
 #endif
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src);
+  void copyShLibToFMU(const boost::shared_ptr<DOMParser> &parser,
+                      CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src);
 }
 
 int main(int argc, char *argv[]) {
@@ -95,6 +96,8 @@ int main(int argc, char *argv[]) {
 
     // create parser (a validating parser for XML input and a none validating parser for shared library input)
     boost::shared_ptr<DOMParser> parser=DOMParser::create(xmlFile);
+    // create parser (none validating parser for use in copyShLibToFMU)
+    boost::shared_ptr<DOMParser> parserNoneVali=DOMParser::create(false);
 
     // note: the order of these variable definitions is importend for proper deallocation
     // (dss and integrator must be deallocated before the shLib is unlaoded)
@@ -198,7 +201,7 @@ int main(int argc, char *argv[]) {
     else {
       // save binary model to FMU
       cout<<"Copy the shared library model file and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, path("resources")/"model"/("libmbsimfmi_model"+SHEXT), path("resources")/"model",
+      copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"model"/("libmbsimfmi_model"+SHEXT), path("resources")/"model",
                      inputFilename);
       cout<<endl;
 
@@ -344,14 +347,14 @@ int main(int argc, char *argv[]) {
       if(xmlParam.empty()) {
         // xml with no parameters -> save libmbsimxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for preprocessed XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
+        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
                        getInstallPath()/LIBDIR/("libmbsimxml_fmi"+SHEXT));
         cout<<endl;
       }
       else {
         // xml with parameters -> save libmbsimppxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for (normal) XML models and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
+        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
                        getInstallPath()/LIBDIR/("libmbsimppxml_fmi"+SHEXT));
         cout<<endl;
 
@@ -373,12 +376,11 @@ int main(int argc, char *argv[]) {
         cout<<endl;
 
         cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
-        // note: casadi_interface.oct is copied automatically with all other octave oct files later
-        fmuFile.add(path("resources")/"local"/"bin"/"casadi.m", getInstallPath()/"bin"/"casadi.m");
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"bin"/"@swig_ref");
+        // note: casadi.oct is copied automatically with all other octave oct files later
+        for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR/"@swig_ref");
           srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"bin"/"@swig_ref"/srcIt->path().filename(), srcIt->path());
+          fmuFile.add(path("resources")/"local"/LIBDIR/"@swig_ref"/srcIt->path().filename(), srcIt->path());
         }
         cout<<endl;
 
@@ -428,7 +430,7 @@ int main(int argc, char *argv[]) {
         for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR); srcIt!=directory_iterator(); ++srcIt) {
           cout<<"."<<flush;
           if(srcIt->path().extension()==".oct")
-            copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/srcIt->path().filename(),
+            copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/srcIt->path().filename(),
                            path("resources")/"local"/LIBDIR, srcIt->path());
           if(srcIt->path().filename()=="PKG_ADD")
             fmuFile.add(path("resources")/"local"/LIBDIR/srcIt->path().filename(),
@@ -446,7 +448,7 @@ int main(int argc, char *argv[]) {
       cout<<endl;
       for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
         cout<<"Copy MBSim plugin module "<<it->filename()<<" and dependencies to FMU."<<endl;
-        copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/it->filename(), path("resources")/"local"/LIBDIR,
+        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/it->filename(), path("resources")/"local"/LIBDIR,
                        *it);
         cout<<endl;
       }
@@ -454,13 +456,13 @@ int main(int argc, char *argv[]) {
     else {
       // source model (always without parameters) -> save libmbsimppxml_fmi.so to FMU
       cout<<"Copy MBSim FMI library for source code models and dependencies to FMU."<<endl;
-      copyShLibToFMU(fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
+      copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
                      getInstallPath()/LIBDIR/("libmbsimsrc_fmi"+SHEXT));
       cout<<endl;
     }
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
-    copyShLibToFMU(fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_), path("binaries")/FMIOS,
+    copyShLibToFMU(parserNoneVali, fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_), path("binaries")/FMIOS,
                    getInstallPath()/"lib"/("mbsim"+SHEXT_));
     cout<<endl;
 
@@ -480,7 +482,8 @@ int main(int argc, char *argv[]) {
 
 namespace {
 
-  void copyShLibToFMU(CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src) {
+  void copyShLibToFMU(const boost::shared_ptr<DOMParser> &parser,
+                      CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src) {
     // copy src to FMU
     cout<<"."<<flush;
     fmuFile.add(dst, src);
@@ -493,7 +496,6 @@ namespace {
     }
 
     // read *.deplibs file
-    static boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
     boost::shared_ptr<xercesc::DOMDocument> depDoc=parser->parse(depFile);
     for(DOMElement *e=depDoc->getDocumentElement()->getFirstElementChild(); e!=NULL; e=e->getNextElementSibling()) {
       string file=X()%E(e)->getFirstTextChild()->getData();

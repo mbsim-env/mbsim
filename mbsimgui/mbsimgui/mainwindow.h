@@ -91,7 +91,7 @@ namespace MBSimGUI {
     public:
       MainWindow(QStringList &arg);
       ~MainWindow();
-      static boost::shared_ptr<MBXMLUtils::DOMParser> parser;
+      boost::shared_ptr<MBXMLUtils::DOMParser> parser;
       static MBXMLUtils::OctEval *octEval;
       static MBXMLUtils::NewParamLevel *octEvalParamLevel;
       void mbsimxml(int task);

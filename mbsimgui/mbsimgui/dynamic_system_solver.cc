@@ -32,6 +32,8 @@ using namespace boost;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   void Environment::initializeUsingXML(DOMElement *element) {
     E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
     //setAccelerationOfGravity(Element::getVec3(e));
@@ -110,7 +112,7 @@ namespace MBSimGUI {
 
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename, Element *parent) {
     MBSimObjectFactory::initialize();
-    shared_ptr<DOMDocument> doc=MainWindow::parser->parse(filename);
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     DynamicSystemSolver *solver=static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e, parent));
     solver->initializeUsingXML(e);

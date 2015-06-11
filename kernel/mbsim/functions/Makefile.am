@@ -12,8 +12,8 @@ libfunction_la_SOURCES = basic_functions.cc \
 
 functionincludedir = $(includedir)/mbsim/functions
 
-libfunction_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
-libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libfunction_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
+libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(CASADI_CFLAGS)
 
 functioninclude_HEADERS = function.h \
 			  basic_functions.h \
