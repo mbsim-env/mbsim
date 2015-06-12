@@ -3,6 +3,7 @@ SUBDIRS = neutral_contour_components .
 noinst_LTLIBRARIES = libneutralcontour.la
 libneutralcontour_la_SOURCES = contour_1s_neutral_cosserat.cc\
 							   contour_1s_neutral_linear_external_FFR.cc\
+							   contour_1s_neutral_reference_curve.cc\
 							   contour_2s_neutral_linear_external_FFR.cc	
 
 libneutralcontour_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
@@ -13,6 +14,7 @@ libneutralcontour_la_LIBADD += neutral_contour_components/libneutralcontourcompo
 neutralcontourincludedir = $(includedir)/mbsimFlexibleBody/contours/neutral_contour/
 neutralcontourinclude_HEADERS = contour_1s_neutral_cosserat.h\
 								contour_1s_neutral_linear_external_FFR.h\
+								contour_1s_neutral_reference_curve.h\
                                 contour_2s_neutral_linear_external_FFR.h
 								
 									 
