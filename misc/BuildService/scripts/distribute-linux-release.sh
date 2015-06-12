@@ -28,7 +28,7 @@ $PREFIX/bin/mbsimxml
 $PREFIX/bin/mbsimgui
 $PREFIX/bin/mbxmlutilspp
 $PREFIX/bin/openmbv
-$PREFIX/bin/casadi_interface.oct
+$PREFIX/lib/casadi.oct
 $PREFIX/bin/mbsimCreateFMU
 $PREFIX/bin/fmuCheck.*
 $PREFIX/lib/mbsimsrc_fmi.so
@@ -127,7 +127,7 @@ export LD_LIBRARY_PATH=\$DIRNAME/../lib:\$LD_LIBRARY_PATH
 EOF
 chmod +x $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 for F in $DISTDIR/bin/*; do
-  test "$(basename $F)" == "casadi_interface.oct" && continue
+  test "$(basename $F)" == "casadi.oct" && continue
   ldd $F &> /dev/null || continue
   if ! readelf -d $F | grep "Library rpath: \[.*\$ORIGIN/../lib.*" &> /dev/null; then
     echo "$F"
@@ -230,7 +230,6 @@ cp -uL $PREFIX/bin/libopenmbvjavaloadJNI.jni $DISTDIR/bin
 mkdir -p $DISTDIR/examples/openmbvcppinterface_swig
 cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openmbvcppinterface_swig
 # copy casadi SWIG files for octave
-cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
 # modifie all ELF rpath in lib/*.so*
 
