@@ -48,7 +48,7 @@
 #include <mbsim/contact_kinematics/sphere_plane.h>
 //#include <mbsim/contact_kinematics/sphere_rectangle.h>
 //#include <mbsim/contact_kinematics/sphere_polynomialfrustum.h>
-//#include <mbsim/contact_kinematics/sphere_sphere.h>
+#include <mbsim/contact_kinematics/sphere_sphere.h>
 //#include <mbsim/contact_kinematics/rectangle_polynomialfrustum.h>
 //#include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 // --- List of contact kinematic implementations - END ---
@@ -163,8 +163,8 @@ namespace MBSim {
 //    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
 //      return new ContactKinematicsSpherePolynomialFrustum;
 //
-//    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Sphere")==0 )
-//      return new ContactKinematicsSphereSphere;
+    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Sphere")==0 )
+      return new ContactKinematicsSphereSphere;
 //
 //    else if ( strcmp(contour0, "Rectangle")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
 //      return new ContactKinematicsRectanglePolynomialFrustum;

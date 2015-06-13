@@ -34,31 +34,31 @@ namespace MBSim {
     sphere1 = static_cast<Sphere*>(contour[1]);
   }
 
-  void ContactKinematicsSphereSphere::updateg(double &g, ContourPointData *cpData, int index) {
-    Vec3 Wd = sphere1->getFrame()->getPosition() - sphere0->getFrame()->getPosition();
+  void ContactKinematicsSphereSphere::updateg(double t, double &g, ContourPointData *cpData, int index) {
+    Vec3 Wd = sphere1->getFrame()->getPosition(t) - sphere0->getFrame()->getPosition(t);
     double l = nrm2(Wd);
     Wd = Wd/l;
     g = l-sphere0->getRadius()-sphere1->getRadius();
-    Vec3 t;
+    Vec3 t_;
     if(fabs(Wd(0))<epsroot() && fabs(Wd(1))<epsroot()) {
-      t(0) = 1.;
-      t(1) = 0.;
-      t(2) = 0.;
+      t_(0) = 1.;
+      t_(1) = 0.;
+      t_(2) = 0.;
     }
     else {
-      t(0) = -Wd(1);
-      t(1) = Wd(0);
-      t(2) = 0.0;
+      t_(0) = -Wd(1);
+      t_(1) = Wd(0);
+      t_(2) = 0.0;
     }
-    t = t/nrm2(t);
+    t_ = t_/nrm2(t_);
     cpData[isphere0].getFrameOfReference().getOrientation().set(0, Wd);
     cpData[isphere1].getFrameOfReference().getOrientation().set(0, -cpData[isphere0].getFrameOfReference().getOrientation().col(0));
-    cpData[isphere0].getFrameOfReference().getOrientation().set(1, t);
+    cpData[isphere0].getFrameOfReference().getOrientation().set(1, t_);
     cpData[isphere1].getFrameOfReference().getOrientation().set(1, -cpData[isphere0].getFrameOfReference().getOrientation().col(1));
-    cpData[isphere0].getFrameOfReference().getOrientation().set(2, crossProduct(Wd,t));
+    cpData[isphere0].getFrameOfReference().getOrientation().set(2, crossProduct(Wd,t_));
     cpData[isphere1].getFrameOfReference().getOrientation().set(2, cpData[isphere0].getFrameOfReference().getOrientation().col(2));
-    cpData[isphere0].getFrameOfReference().getPosition() = sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd;
-    cpData[isphere1].getFrameOfReference().getPosition() = sphere1->getFrame()->getPosition() - sphere1->getRadius() * Wd;
+    cpData[isphere0].getFrameOfReference().setPosition(sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd);
+    cpData[isphere1].getFrameOfReference().setPosition(sphere1->getFrame()->getPosition() - sphere1->getRadius() * Wd);
   }
 
 }
