@@ -28,7 +28,7 @@ $PREFIX/bin/mbsimxml.exe
 $PREFIX/bin/mbsimgui.exe
 $PREFIX/bin/mbxmlutilspp.exe
 $PREFIX/bin/openmbv.exe
-$PREFIX/lib/casadi.oct
+$PREFIX/lib/casadi_oct.oct
 $PREFIX/bin/mbsimCreateFMU.exe
 $PREFIX/bin/fmuCheck.*
 $PREFIX/lib/mbsimsrc_fmi.dll
