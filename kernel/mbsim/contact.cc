@@ -973,10 +973,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkRoot() {
+  void Contact::checkRoot(double t) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkRoot();
+        jter->checkRoot(t);
     }
   }
 

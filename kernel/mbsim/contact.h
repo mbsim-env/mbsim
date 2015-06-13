@@ -145,7 +145,7 @@ namespace MBSim {
       virtual void updatecorr(int j);
       virtual void calccorrSize(int j);
       virtual void setcorrInd(int corrInd_);
-      virtual void checkRoot();
+      virtual void checkRoot(double t);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Frame>& getOpenMBVFrame() {return openMBVFrame;}

@@ -220,7 +220,7 @@ namespace MBSim {
       void calccorrSize(int j);
       void updatecorr(int j);
 
-      void checkRoot();
+      void checkRoot(double t);
 
       void resetUpToDate();
 

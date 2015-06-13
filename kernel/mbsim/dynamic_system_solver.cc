@@ -1650,13 +1650,14 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
+    resetUpToDate();
     useOldla = false;
     if (q() != zParent()) {
       updatezRef(zParent);
     }
     jsv = jsv_;
 
-    checkRoot();
+    checkRoot(t);
     int maxj = getRootID();
     if (maxj == 3) { // impact (velocity jump)
       checkActive(t,6); // decide which contacts have closed
@@ -1672,7 +1673,6 @@ namespace MBSim {
       updateLaRef(LaParent(0, laSize - 1));
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-      resetUpToDate();
       V[0] = getW(t); //updateV(t) not allowed here
       updV[0] = false;
 
@@ -1720,7 +1720,6 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
       if (laSize) {
-        resetUpToDate();
         b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
         solveConstraints(t);
 
@@ -1734,7 +1733,6 @@ namespace MBSim {
     else if (maxj == 1) { // contact opens or transition from stick to slip
       checkActive(t,8);
 
-        resetUpToDate();
       projectGeneralizedPositions(t, 1);
       projectGeneralizedVelocities(t, 1);
     }

@@ -1280,9 +1280,8 @@ namespace MBSim {
               if (gdActive[1]) {
                 if (nrm2(gddT) <= gddTol)
                   gddActive[1] = true;
-                else {
+                else
                   gddActive[1] = false;
-                }
               }
             }
           }
@@ -1531,7 +1530,7 @@ namespace MBSim {
       THROW_MBSIMERROR("Internal error");
   }
 
-  void SingleContact::checkRoot() {
+  void SingleContact::checkRoot(double t) {
     rootID = 0;
     if (jsv(0)) {
       if (gActive)
@@ -1546,7 +1545,7 @@ namespace MBSim {
         else {
           if (getFrictionDirections() == 1)
             rootID = 2; // contact was sliding -> sticking
-          else if (nrm2(gdT) <= gdTol)
+          else if (nrm2(getGeneralizedRelativeVelocity(t)((Index(1,getFrictionDirections())))) <= gdTol)
             rootID = 2; // contact was sliding -> sticking
         }
       }

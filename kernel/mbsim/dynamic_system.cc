@@ -1529,10 +1529,10 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::checkRoot() {
+  void DynamicSystem::checkRoot(double t) {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkRoot();
+      (*i)->checkRoot(t);
   }
 
   void DynamicSystem::resetUpToDate() {

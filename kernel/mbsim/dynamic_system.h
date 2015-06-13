@@ -769,7 +769,7 @@ namespace MBSim {
       void updatecorrRef(const fmatvec::Vec &ref);
       void calccorrSize(int j);
 
-      void checkRoot();
+      void checkRoot(double t);
 
       void resetUpToDate();
 

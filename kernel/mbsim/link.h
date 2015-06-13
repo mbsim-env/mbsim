@@ -361,7 +361,7 @@ namespace MBSim {
       virtual void updatecorrRef(const fmatvec::Vec &ref);
       virtual void calccorrSize(int j) { corrSize = 0; }
       virtual void setcorrInd(int corrInd_) { corrInd = corrInd_; }
-      virtual void checkRoot() {};
+      virtual void checkRoot(double t) {}
       /***************************************************/
 
       /* GETTER / SETTER */
