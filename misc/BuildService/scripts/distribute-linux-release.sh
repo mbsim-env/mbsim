@@ -83,7 +83,8 @@ done
 DISTDIR=$DISTBASEDIR/mbsim
 
 # PKG config
-export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig
+export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig:/home/user/3rdparty/casadi-local-linux32/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/3rdparty/casadi-local-linux32/lib
 # get includes and libs of all packages required for compiling mbsim source examples
 SRCINC=$(pkg-config --cflags mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
 SRCLIB=$(pkg-config --libs   mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)

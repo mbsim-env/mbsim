@@ -12,6 +12,8 @@ env=os.environ.copy()
 env['CXXFLAGS']='-O0 -g'
 env['CFLAGS']='-O0 -g'
 env['INSTALL']='/usr/bin/install -c -p'
+env['PKG_CONFIG_PATH']='/home/user/3rdparty/casadi-local-linux32/lib/pkgconfig'
+env['LD_LIBRARY_PATH']=env.get('LD_LIBRARY_PATH', '')+':/home/user/3rdparty/casadi-local-linux32/lib'
 
 # config files
 scriptdir=os.path.dirname(__file__)

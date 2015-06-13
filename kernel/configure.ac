@@ -40,6 +40,7 @@ else
   FFLAGS="$FFLAGS -g -O2"
 fi
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
+CPPFLAGS="$CPPFLAGS -Wno-error=sign-compare" # casadi headers use some wrong sign-compare
 
 dnl Check for casadi 
 PKG_CHECK_MODULES(CASADI, casadi, [casadi=yes; requires="$requires casadi"; CPPFLAGS="$CPPFLAGS -DHAVE_CASADI"; DEFINES="$DEFINES -DHAVE_CASADI"], [casadi=no])
