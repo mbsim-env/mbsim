@@ -170,10 +170,10 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
         vector<double> data;
         data.push_back(t);
-        data.push_back(R->getPosition()(0));
+        data.push_back(R->getPosition(t)(0));
         data.push_back(R->getPosition()(1));
         data.push_back(R->getPosition()(2));
-        Vec3 cardan=AIK2Cardan(R->getOrientation());
+        Vec3 cardan=AIK2Cardan(R->getOrientation(t));
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));
