@@ -85,6 +85,7 @@ done
 # dist dir
 DISTDIR=$DISTBASEDIR/mbsim
 
+export LD_LIBRARY_PATH=/home/user/3rdparty/casadi-local-win32/lib
 # PKG config
 export PKG_CONFIG_PATH=/home/user/MBSimWindows/local/lib/pkgconfig:/home/user/3rdparty/casadi-local-win32/lib/pkgconfig
 # get includes and libs of all packages required for compiling mbsim source examples
@@ -135,6 +136,9 @@ getdlls() {
   for F in $(cat $TMPDLLFILESOUT); do
     locate $F | grep "/$(basename $F)$" | grep "^/usr/i686-w64-mingw32/sys-root/mingw" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
     find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
+    for D in $(echo $LD_LIBRARY_PATH | tr : ' '); do
+      test -e $D/$(basename $F) && echo $D/$(basename $F) >> $TMPDLLFILESOUT.abs
+    done
   done
   sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
   rm -f $TMPDLLFILESOUT
@@ -202,6 +206,7 @@ cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libboost_filesystem-gcc47-1_48.d
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libxerces-c.dll.a $DISTDIR/lib
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/lib/libz.dll.a $DISTDIR/lib
+cp -uL /home/user/3rdparty/casadi-local-win32/lib/libcasadi.dll.a $DISTDIR/lib
 # copy openmbvcppinterface SWIG files
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
@@ -439,9 +444,22 @@ echo ALL TESTS DONE
 cd "%PWD%"
 EOF
 
+# strip dist dir
+for f in $(find $DISTDIR -type f); do
+  if file $f | grep -w PE32 > /dev/null; then
+    objcopy --only-keep-debug $f $f.debug
+    objcopy --strip-all $f
+    objcopy --add-gnu-debuglink $f.debug $f &> /dev/null || DUMMYVAR=0 # may fail for system dll files
+  fi
+done
+     
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
+  rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip
+  (cd $DISTBASEDIR; zip $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip $(find -name "*.debug"))
+  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip"
+
   rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip
-  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip mbsim)
-  echo "Create MBSim archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip"
+  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip mbsim --exclude \*.debug)
+  echo "Created MBSim archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip"
 fi

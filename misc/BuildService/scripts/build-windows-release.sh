@@ -59,6 +59,7 @@ $SRCDIR/mbsim/misc/BuildService/scripts/distribute-windows-release.sh &> $OUTDIR
 test $? -ne 0 && RET=1
 
 cp $SRCDIR/dist_mbsim/mbsim-windows-shared-build-xxx.zip $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
+cp $SRCDIR/dist_mbsim/mbsim-windows-shared-build-xxx-debug.zip $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
 test $? -ne 0 && RET=1
 
 if [ $RET -ne 0 ]; then
