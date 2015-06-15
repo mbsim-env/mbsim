@@ -28,7 +28,7 @@ $PREFIX/bin/mbsimxml.exe
 $PREFIX/bin/mbsimgui.exe
 $PREFIX/bin/mbxmlutilspp.exe
 $PREFIX/bin/openmbv.exe
-$PREFIX/bin/casadi_interface.oct
+$PREFIX/lib/casadi_oct.oct
 $PREFIX/bin/mbsimCreateFMU.exe
 $PREFIX/bin/fmuCheck.*
 $PREFIX/lib/mbsimsrc_fmi.dll
@@ -213,7 +213,6 @@ cp -uL $PREFIX/bin/libopenmbvjavaloadJNI.jni $DISTDIR/bin
 mkdir -p $DISTDIR/examples/openmbvcppinterface_swig
 cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openmbvcppinterface_swig
 # copy casadi SWIG files for octave
-cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
 
 # create mbsim-config.bat
