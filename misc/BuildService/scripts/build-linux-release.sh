@@ -57,6 +57,7 @@ $SRCDIR/mbsim/misc/BuildService/scripts/distribute-linux-release.sh &> $OUTDIR/r
 test $? -ne 0 && RET=1
 
 cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
+cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx-debug.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
 test $? -ne 0 && RET=1
 
 if [ $RET -ne 0 ]; then

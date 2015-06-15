@@ -420,10 +420,23 @@ echo "DONE"
 echo "ALL TESTS DONE"
 EOF
 chmod +x $DISTDIR/bin/mbsim-test
+
+# strip dist dir
+for f in $(find $DISTDIR -type f); do
+  if file $f | grep -w ELF | grep -w "not stripped" > /dev/null; then
+    objcopy --only-keep-debug $f $f.debug
+    objcopy --strip-all $f
+    objcopy --add-gnu-debuglink $f.debug $f
+  fi
+done
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
+  rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2 $(find -name "*.debug"))
+  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2"
+
   rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2
-  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 mbsim)
-  echo "Create MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 --exclude=\*.debug mbsim)
+  echo "Created MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
 fi
