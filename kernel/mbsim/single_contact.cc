@@ -112,8 +112,6 @@ namespace MBSim {
   }
 
   void SingleContact::updateForceDirections(double t) {
-    iF = Index(0,1+getFrictionDirections()-1);
-    DF.resize(1+getFrictionDirections(),NONINIT);
     DF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
     if (getFrictionDirections()) {
       DF.set(1, cpData[0].getFrameOfReference().getOrientation().col(1));
@@ -158,7 +156,7 @@ namespace MBSim {
       vrel(0) = Wn.T() * WvD;
 
       if (getFrictionDirections()) {
-        Mat3xV Wt(gdT.size());
+        Mat3xV Wt(getFrictionDirections());
         Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
         if (getFrictionDirections() > 1)
           Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));
@@ -480,6 +478,10 @@ namespace MBSim {
     }
     else if (stage == resize) {
       MechanicalLink::init(stage);
+
+      iF = Index(0,1+getFrictionDirections()-1);
+      iM = Index(0,-1);
+      DF.resize(1+getFrictionDirections(),NONINIT);
 
       //TODO: Change this if la should be the vector of nonsmooth forces
       la.resize(1 + getFrictionDirections());
@@ -1296,9 +1298,8 @@ namespace MBSim {
       if (gActive) {
         if (gdActive[0]) {
           if (gdActive[1]) {
-            if (!gddActive[1]) {
+            if (!gddActive[1])
               gdActive[1] = false;
-            }
           }
           if (!gddActive[0]) {
             gActive = false;

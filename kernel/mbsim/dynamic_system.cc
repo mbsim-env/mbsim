@@ -1565,6 +1565,11 @@ namespace MBSim {
     return r[i];
   }
 
+  const Vec& DynamicSystem::getrdt(double t, int i) {
+    if(ds->updaterdt(i)) ds->updaterdt(t,i);
+    return rdt[i];
+  }
+
   const SymMat& DynamicSystem::getM(double t, int i) {
     if(ds->updateM(i)) ds->updateM(t,i);
     return M[i];
