@@ -1,5 +1,5 @@
 #include "woodpecker.h"
-
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contour.h"
