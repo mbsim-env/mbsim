@@ -19,7 +19,6 @@
  */
 
 #include<config.h>
-#include<unistd.h>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/frame.h"
@@ -30,14 +29,12 @@
 #include "mbsim/observer.h"
 #include "mbsim/constraint.h"
 #include "mbsim/utils/eps.h"
-#include "dirent.h"
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>
 
 #include <hdf5serie/file.h>
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
-#include <unistd.h>
 #include <limits>
 #include <boost/lexical_cast.hpp>
 
@@ -1187,10 +1184,12 @@ namespace MBSim {
     calccorrSize(corrID);
     updatecorrRef(corrParent(0, corrSize - 1));
     updategRef(gParent(0, gSize - 1));
+    updateg(t);
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+    updateW(t);
     SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
     Mat T = getT(t);
     int iter = 0;
@@ -1208,8 +1207,10 @@ namespace MBSim {
    }
     calclaSize(3);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+    updateW(t);
     calcgSize(0);
     updategRef(gParent(0, gSize - 1));
+    updateg(t);
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(double t, int mode) {
@@ -1234,21 +1235,30 @@ namespace MBSim {
       calcgdSize(gdID); // IH
       updatecorrRef(corrParent(0, corrSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
+      updategd(t);
       updatecorr(corrID);
 
       calclaSize(gdID);
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateW(t);
 
       if (laSize) {
         SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
         Vec mu = slvLS(Gv, -getgd(t) + corr);
+        // TODO Remove after debug
+        cout << "projectGeneralizedVelocities at t = " << t << endl;
+        cout << mu << endl;
+        cout << getW(t) << endl;
+        cout << getW(t) * mu << endl;
         u += slvLLFac(getLLM(t), getW(t) * mu);
         resetUpToDate();
       }
       calclaSize(3);
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateW(t);
       calcgdSize(1);
       updategdRef(gdParent(0, gdSize - 1));
+      updategd(t);
     }
   }
 
@@ -1727,7 +1737,6 @@ namespace MBSim {
 
         projectGeneralizedPositions(t, 2);
         projectGeneralizedVelocities(t, 2);
-
       }
     }
     else if (maxj == 1) { // contact opens or transition from stick to slip
@@ -1781,7 +1790,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
-    //cout << "plot, t = " << t << endl;
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);
