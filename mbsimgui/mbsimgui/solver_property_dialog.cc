@@ -24,7 +24,6 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#include "integrator_widgets.h"
 
 using namespace std;
 
@@ -338,8 +337,12 @@ namespace MBSimGUI {
     addTab("Tolerances");
     addTab("Step size");
 
-    type = new ExtWidget("Type",new RKSuiteTypeWidget);
-    addToTab("General", type);
+    vector<QString> list;
+    list.push_back("RK23");
+    list.push_back("RK45");
+    list.push_back("RK67");
+    method = new ExtWidget("Method",new TextChoiceWidget(list,1),true);
+    addToTab("General", method);
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
@@ -359,7 +362,7 @@ namespace MBSimGUI {
 
   void RKSuiteIntegratorPropertyDialog::toWidget(Solver *solver) {
     IntegratorPropertyDialog::toWidget(solver);
-    static_cast<RKSuiteIntegrator*>(solver)->type.toWidget(type);
+    static_cast<RKSuiteIntegrator*>(solver)->method.toWidget(method);
     static_cast<RKSuiteIntegrator*>(solver)->relTol.toWidget(relTol);
     static_cast<RKSuiteIntegrator*>(solver)->threshold.toWidget(threshold);
     static_cast<RKSuiteIntegrator*>(solver)->initialStepSize.toWidget(initialStepSize);
@@ -367,7 +370,7 @@ namespace MBSimGUI {
 
   void RKSuiteIntegratorPropertyDialog::fromWidget(Solver *solver) {
     IntegratorPropertyDialog::fromWidget(solver);
-    static_cast<RKSuiteIntegrator*>(solver)->type.fromWidget(type);
+    static_cast<RKSuiteIntegrator*>(solver)->method.fromWidget(method);
     static_cast<RKSuiteIntegrator*>(solver)->relTol.fromWidget(relTol);
     static_cast<RKSuiteIntegrator*>(solver)->threshold.fromWidget(threshold);
     static_cast<RKSuiteIntegrator*>(solver)->initialStepSize.fromWidget(initialStepSize);
