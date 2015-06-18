@@ -42,8 +42,9 @@ namespace MBSimControl {
     s=(*function)(0); 
   }
 
-  void FunctionSensor::updateh(double t, int j) {
+  void FunctionSensor::updateSignal(double t) {
     s=(*function)(t); 
+    upds = false;
   }
 
   void FunctionSensor::initializeUsingXML(DOMElement *element) {

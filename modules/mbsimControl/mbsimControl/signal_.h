@@ -42,8 +42,9 @@ namespace MBSimControl {
       void init(InitStage stage);
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateg(double t) {getSignal(); }; // at least one signal-update
-      virtual void updategd(double t) {};
+      virtual void updateg(double t) {}
+      virtual void updategd(double t) {}
+      virtual void updateSignal(double t) {}
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -64,11 +65,15 @@ namespace MBSimControl {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
       
-      virtual const fmatvec::VecV& getSignal() { return s; }
+      const fmatvec::VecV& getSignal() { return s; }
+      const fmatvec::VecV& getSignal(double t) { if(upds) updateSignal(t); return s; }
       virtual int getSignalSize() const { return s.size(); }
+
+      void resetUpToDate() { upds = true; }
 
     protected:
       fmatvec::VecV s;
+      bool upds;
   };
 
 }

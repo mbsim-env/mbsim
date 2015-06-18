@@ -32,36 +32,36 @@ namespace MBSimControl {
    * \brief Massless Spring Damper (PT1)
    * \author Markus Schneider
    */
-  class MasslessSpringDamper : public SignalProcessingSystem {
-
-    public:   
-      MasslessSpringDamper(const std::string& name="");
-      virtual std::string getType() const {return "MasslessSpringDamper"; }
-      void initializeUsingXML(xercesc::DOMElement * element);
-      
-      void calcxSize() {xSize=1; }
-      fmatvec::VecV calculateOutput() {return x.copy(); }
-      
-      void init(InitStage stage);
-
-      void updatedx(double t, double dt);
-      void updatexd(double t);
-      
-      void plot(double t,double dt);
-      
-      void setSpringStiffness(double c_) {c=c_; }
-      void setBasicSpringForce(double F0_) {F0=F0_; }
-      void setDampingCoefficient(double d_) {dPos=d_; }
-      void setNegativeDampingCoefficient(double d_) {dNeg=d_; }
-      void setFrictionForce(double FFric_) {FFricPos=FFric_; }
-      void setNegativeFrictionForce(double FFric_) {FFricNeg=FFric_; }
-      void setMinimumPositionValue(double xMin_) {xMin=xMin_; }
-      void setMaximumPositionValue(double xMax_) {xMax=xMax_; }
-
-    private:
-      double c, F0, dPos, dNeg, FFricPos, FFricNeg, xMin, xMax;
-      double xdLocal;
-  };
+//  class MasslessSpringDamper : public SignalProcessingSystem {
+//
+//    public:   
+//      MasslessSpringDamper(const std::string& name="");
+//      virtual std::string getType() const {return "MasslessSpringDamper"; }
+//      void initializeUsingXML(xercesc::DOMElement * element);
+//      
+//      void calcxSize() {xSize=1; }
+//      fmatvec::VecV calculateOutput() {return x.copy(); }
+//      
+//      void init(InitStage stage);
+//
+//      void updatedx(double t, double dt);
+//      void updatexd(double t);
+//      
+//      void plot(double t,double dt);
+//      
+//      void setSpringStiffness(double c_) {c=c_; }
+//      void setBasicSpringForce(double F0_) {F0=F0_; }
+//      void setDampingCoefficient(double d_) {dPos=d_; }
+//      void setNegativeDampingCoefficient(double d_) {dNeg=d_; }
+//      void setFrictionForce(double FFric_) {FFricPos=FFric_; }
+//      void setNegativeFrictionForce(double FFric_) {FFricNeg=FFric_; }
+//      void setMinimumPositionValue(double xMin_) {xMin=xMin_; }
+//      void setMaximumPositionValue(double xMax_) {xMax=xMax_; }
+//
+//    private:
+//      double c, F0, dPos, dNeg, FFricPos, FFricNeg, xMin, xMax;
+//      double xdLocal;
+//  };
 }
 
 #endif

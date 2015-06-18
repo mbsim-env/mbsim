@@ -39,8 +39,9 @@ namespace MBSimControl {
 
       void setReturnSignal(Signal *ret_);
 
-      virtual Ret operator()(const Arg& a) {
-        return MBSim::FromVecV<Ret>::cast(ret->getSignal());
+      //virtual Ret operator()(const Arg& a) {
+      virtual Ret operator()(const double& t) {
+        return MBSim::FromVecV<Ret>::cast(ret->getSignal(t));
       }
 
       void init(MBSim::Element::InitStage stage);
@@ -78,52 +79,52 @@ namespace MBSimControl {
       MBSim::Function<Ret(Arg)>::init(stage);
   }
 
-  //! A function with two arguments which get its return value from a signal
-  template<typename Ret, typename Arg1, typename Arg2>
-  class SignalFunction<Ret(Arg1,Arg2)> : public MBSim::Function<Ret(Arg1,Arg2)> {
-    public:
-      SignalFunction(Signal *ret_=NULL) : ret(ret_) {}
-
-      void setReturnSignal(Signal *ret_);
-
-      virtual Ret operator()(const Arg1& a1, const Arg2& a2) {
-        return MBSim::FromVecV<Ret>::cast(ret->getSignal());
-      }
-
-      void init(MBSim::Element::InitStage stage);
-
-      void initializeUsingXML(xercesc::DOMElement *element);
-
-      MBSim::Element* getDependency() const { return ret; }
-
-    protected:
-      std::string retString;
-      Signal *ret;
-  };
-
-  template<typename Ret, typename Arg1, typename Arg2>
-  void SignalFunction<Ret(Arg1, Arg2)>::setReturnSignal(Signal *ret_) {
-    ret=ret_;
-  }
-
-  template<typename Ret, typename Arg1, typename Arg2>
-  void SignalFunction<Ret(Arg1, Arg2)>::initializeUsingXML(xercesc::DOMElement *element) {
-    MBSim::Function<Ret(Arg1,Arg2)>::initializeUsingXML(element);
-    xercesc::DOMElement *e;
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"returnSignal");
-    retString=MBXMLUtils::E(e)->getAttribute("ref");
-  }
-
-  template<typename Ret, typename Arg1, typename Arg2>
-  void SignalFunction<Ret(Arg1, Arg2)>::init(MBSim::Element::InitStage stage) {
-    if(stage==MBSim::Element::resolveXMLPath) {
-      if(retString!="")
-        setReturnSignal(this->template getByPath<Signal>(retString));
-      MBSim::Function<Ret(Arg1,Arg2)>::init(stage);
-    }
-    else
-      MBSim::Function<Ret(Arg1,Arg2)>::init(stage);
-  }
+//  //! A function with two arguments which get its return value from a signal
+//  template<typename Ret, typename Arg1, typename Arg2>
+//  class SignalFunction<Ret(Arg1,Arg2)> : public MBSim::Function<Ret(Arg1,Arg2)> {
+//    public:
+//      SignalFunction(Signal *ret_=NULL) : ret(ret_) {}
+//
+//      void setReturnSignal(Signal *ret_);
+//
+//      virtual Ret operator()(const Arg1& a1, const Arg2& a2) {
+//        return MBSim::FromVecV<Ret>::cast(ret->getSignal(t));
+//      }
+//
+//      void init(MBSim::Element::InitStage stage);
+//
+//      void initializeUsingXML(xercesc::DOMElement *element);
+//
+//      MBSim::Element* getDependency() const { return ret; }
+//
+//    protected:
+//      std::string retString;
+//      Signal *ret;
+//  };
+//
+//  template<typename Ret, typename Arg1, typename Arg2>
+//  void SignalFunction<Ret(Arg1, Arg2)>::setReturnSignal(Signal *ret_) {
+//    ret=ret_;
+//  }
+//
+//  template<typename Ret, typename Arg1, typename Arg2>
+//  void SignalFunction<Ret(Arg1, Arg2)>::initializeUsingXML(xercesc::DOMElement *element) {
+//    MBSim::Function<Ret(Arg1,Arg2)>::initializeUsingXML(element);
+//    xercesc::DOMElement *e;
+//    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"returnSignal");
+//    retString=MBXMLUtils::E(e)->getAttribute("ref");
+//  }
+//
+//  template<typename Ret, typename Arg1, typename Arg2>
+//  void SignalFunction<Ret(Arg1, Arg2)>::init(MBSim::Element::InitStage stage) {
+//    if(stage==MBSim::Element::resolveXMLPath) {
+//      if(retString!="")
+//        setReturnSignal(this->template getByPath<Signal>(retString));
+//      MBSim::Function<Ret(Arg1,Arg2)>::init(stage);
+//    }
+//    else
+//      MBSim::Function<Ret(Arg1,Arg2)>::init(stage);
+//  }
 
 }
 

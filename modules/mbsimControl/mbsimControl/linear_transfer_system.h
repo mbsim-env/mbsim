@@ -24,7 +24,7 @@
 #ifndef _LINEAR_TRANSFER_SYSTEM_
 #define _LINEAR_TRANSFER_SYSTEM_
 
-#include "mbsimControl/signal_processing_system.h"
+#include "mbsimControl/signal_.h"
 
 namespace MBSimControl {
 
@@ -32,7 +32,7 @@ namespace MBSimControl {
    * \brief LinearTransferSystem
    * \author Markus Schneider
    */
-  class LinearTransferSystem : public SignalProcessingSystem {
+  class LinearTransferSystem : public Signal {
 
     public:   
       LinearTransferSystem(const std::string& name="");
@@ -43,7 +43,7 @@ namespace MBSimControl {
       
       void init(InitStage stage);
 
-      void updateh(double t, int j=0);
+      void updateSignal(double t);
       void updatedx(double t, double dt);
       void updatexd(double t);
       
@@ -58,13 +58,18 @@ namespace MBSimControl {
       void setGain(double P);
       void showABCD();
 
+      void setInputSignal(Signal * inputSignal_) {inputSignal=inputSignal_; }
+      int getSignalSize() const { return inputSignal->getSignalSize(); }
+
     protected:
+      Signal * inputSignal;
+      std::string inputSignalString;
       fmatvec::Mat A,B,C,D;
       double R1,R2,c;
-      fmatvec::VecV (LinearTransferSystem::*calculateOutputMethod)();
-      fmatvec::VecV outputMethodC();
-      fmatvec::VecV outputMethodD();
-      fmatvec::VecV outputMethodCD();
+      fmatvec::VecV (LinearTransferSystem::*calculateOutputMethod)(double t);
+      fmatvec::VecV outputMethodC(double t);
+      fmatvec::VecV outputMethodD(double t);
+      fmatvec::VecV outputMethodCD(double t);
   };
 }
 

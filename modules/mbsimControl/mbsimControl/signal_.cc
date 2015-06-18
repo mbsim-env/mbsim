@@ -50,9 +50,8 @@ namespace MBSimControl {
   void Signal::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled) {
-        VecV y=getSignal();
-        for (int i=0; i<y.size(); i++)
-          plotVector.push_back(y(i));
+        for (int i=0; i<getSignal(t).size(); i++)
+          plotVector.push_back(getSignal()(i));
       }
     }
     Link::plot(t, dt);

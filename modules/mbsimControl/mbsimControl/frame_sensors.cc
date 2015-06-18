@@ -53,32 +53,39 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsolutePositionSensor, MBSIMCONTROL%"AbsolutePositionSensor")
 
-  void AbsolutePositionSensor::updateh(double t, int j) {
-    s = direction.T()*frame->getPosition();
+  void AbsolutePositionSensor::updateSignal(double t) {
+    s = direction.T()*frame->getPosition(t);
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteVelocitySensor, MBSIMCONTROL%"AbsoluteVelocitySensor")
 
-  void AbsoluteVelocitySensor::updateh(double t, int j) {
-    s = direction.T()*frame->getVelocity();
+  void AbsoluteVelocitySensor::updateSignal(double t) {
+    s = direction.T()*frame->getVelocity(t);
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteAngularPositionSensor, MBSIMCONTROL%"AbsoluteAngularPositionSensor")
 
-  void AbsoluteAngularPositionSensor::updategd(double t) {
-    gd=direction.T()*frame->getAngularVelocity();
+  void AbsoluteAngularPositionSensor::updatexd(double t) {
+    xd=direction.T()*frame->getAngularVelocity(t);
   }
 
-  void AbsoluteAngularPositionSensor::updateh(double t, int j) {
-    s = g;
+  void AbsoluteAngularPositionSensor::updatedx(double t, double dt) {
+    xd=direction.T()*frame->getAngularVelocity(t)*dt;
+  }
+
+  void AbsoluteAngularPositionSensor::updateSignal(double t) {
+    s = x;
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteAngularVelocitySensor, MBSIMCONTROL%"AbsoluteAngularVelocitySensor")
 
-  void AbsoluteAngularVelocitySensor::updateh(double t, int j) {
-    s = direction.T()*frame->getAngularVelocity();
+  void AbsoluteAngularVelocitySensor::updateSignal(double t) {
+    s = direction.T()*frame->getAngularVelocity(t);
+    upds = false;
   }
-  
 
   void RelativeCoordinateSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);
@@ -106,34 +113,43 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativePositionSensor, MBSIMCONTROL%"RelativePositionSensor")
 
-  void RelativePositionSensor::updateh(double t, int j) {
-    VecV WrRefRel=relFrame->getPosition()-refFrame->getPosition();
-    s = (refFrame->getOrientation()*direction).T()*WrRefRel;
+  void RelativePositionSensor::updateSignal(double t) {
+    VecV WrRefRel=relFrame->getPosition(t)-refFrame->getPosition(t);
+    s = (refFrame->getOrientation(t)*direction).T()*WrRefRel;
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeVelocitySensor, MBSIMCONTROL%"RelativeVelocitySensor")
 
-  void RelativeVelocitySensor::updateh(double t, int j) {
-    VecV WvRefRel=relFrame->getVelocity()-refFrame->getVelocity();
-    s = (refFrame->getOrientation()*direction).T()*WvRefRel;
+  void RelativeVelocitySensor::updateSignal(double t) {
+    VecV WvRefRel=relFrame->getVelocity(t)-refFrame->getVelocity(t);
+    s = (refFrame->getOrientation(t)*direction).T()*WvRefRel;
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeAngularPositionSensor, MBSIMCONTROL%"RelativeAngularPositionSensor")
 
-  void RelativeAngularPositionSensor::updategd(double t) {
-    VecV WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
-    gd=(refFrame->getOrientation()*direction).T()*WomegaRefRel;
+  void RelativeAngularPositionSensor::updatexd(double t) {
+    VecV WomegaRefRel=relFrame->getAngularVelocity(t)-refFrame->getAngularVelocity(t);
+    xd=(refFrame->getOrientation(t)*direction).T()*WomegaRefRel;
   }
 
-  void RelativeAngularPositionSensor::updateh(double t, int j) {
-    s = g;
+  void RelativeAngularPositionSensor::updatedx(double t, double dt) {
+    VecV WomegaRefRel=relFrame->getAngularVelocity(t)-refFrame->getAngularVelocity(t);
+    xd=(refFrame->getOrientation(t)*direction).T()*WomegaRefRel*dt;
+  }
+
+  void RelativeAngularPositionSensor::updateSignal(double t) {
+    s = x;
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeAngularVelocitySensor, MBSIMCONTROL%"RelativeAngularVelocitySensor")
 
-  void RelativeAngularVelocitySensor::updateh(double t, int j) {
-    VecV WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
-    s = (refFrame->getOrientation()*direction).T()*WomegaRefRel;
+  void RelativeAngularVelocitySensor::updateSignal(double t) {
+    VecV WomegaRefRel=relFrame->getAngularVelocity(t)-refFrame->getAngularVelocity(t);
+    s = (refFrame->getOrientation(t)*direction).T()*WomegaRefRel;
+    upds = false;
   }
 
 }

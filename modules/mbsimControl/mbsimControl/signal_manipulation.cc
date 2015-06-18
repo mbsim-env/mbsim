@@ -57,16 +57,17 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalMux::updateh(double t, int j) {
-    VecV y=signals[0]->getSignal();
+  void SignalMux::updateSignal(double t) {
+    VecV y=signals[0]->getSignal(t);
     for (unsigned int i=1; i<signals.size(); i++) {
       VecV s1=y;
-      VecV s2=signals[i]->getSignal();
+      VecV s2=signals[i]->getSignal(t);
       y.resize(s1.size()+s2.size());
       y.set(Index(0, s1.size()-1),s1);
       y.set(Index(s1.size(), y.size()-1),s2);
     }
     s = y;
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalDemux, MBSIMCONTROL%"SignalDemux")
@@ -94,12 +95,13 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalDemux::updateh(double t, int j) {
+  void SignalDemux::updateSignal(double t) {
     VecV y(indices.size(), INIT, 0);
     for (int k=0; k<indices.size(); k++) {
-      y(k)=signal->getSignal()(indices(k));
+      y(k)=signal->getSignal(t)(indices(k));
     }
     s = y;
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalTimeDiscretization, MBSIMCONTROL%"SignalTimeDiscretization")
@@ -128,14 +130,12 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalTimeDiscretization::updateg(double t) { 
-  }
-
-  void SignalTimeDiscretization::updateh(double t, int j) {
+  void SignalTimeDiscretization::updateSignal(double t) {
     if (fabs(tOld-t)>epsroot()) {
-      Signal::s=s->getSignal(); 
+      Signal::s=s->getSignal(t); 
       tOld=t; 
     } 
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PIDController, MBSIMCONTROL%"PIDController")
@@ -157,11 +157,11 @@ namespace MBSimControl {
   }
 
   void PIDController::updatedx(double t, double dt) {
-    if(xSize) xd=s->getSignal()*dt;
+    if(xSize) xd=s->getSignal(t)*dt;
   }
 
   void PIDController::updatexd(double t) {
-    if(xSize) xd=s->getSignal();
+    if(xSize) xd=s->getSignal(t);
   }
 
   void PIDController::init(InitStage stage) {
@@ -191,16 +191,17 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void PIDController::updateh(double t, int j) {
-    (this->*updateSignalMethod)();
+  void PIDController::updateSignal(double t) {
+    (this->*updateSignalMethod)(t);
+    upds = false;
   }
 
-  void PIDController::updateSignalPID() {
-    Signal::s = P*s->getSignal() + D*sd->getSignal() + I*x;
+  void PIDController::updateSignalPID(double t) {
+    Signal::s = P*s->getSignal(t) + D*sd->getSignal(t) + I*x;
   }
 
-  void PIDController::updateSignalPD() {
-    Signal::s = P*s->getSignal() + D*sd->getSignal();
+  void PIDController::updateSignalPD(double t) {
+    Signal::s = P*s->getSignal(t) + D*sd->getSignal(t);
   }
 
   void PIDController::setPID(double PP, double II, double DD) {
@@ -209,10 +210,6 @@ namespace MBSimControl {
     else
       updateSignalMethod=&PIDController::updateSignalPID;
     P = PP; I = II; D = DD;
-  }
-
-  void PIDController::plot(double t, double dt) {
-    Signal::plot(t,dt);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnarySignalOperation, MBSIMCONTROL%"UnarySignalOperation")
@@ -244,8 +241,9 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  void UnarySignalOperation::updateh(double t, int j) {
-    Signal::s = (*f)(s->getSignal()); 
+  void UnarySignalOperation::updateSignal(double t) {
+    Signal::s = (*f)(s->getSignal(t)); 
+    upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BinarySignalOperation, MBSIMCONTROL%"BinarySignalOperation")
@@ -282,8 +280,9 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  void BinarySignalOperation::updateh(double t, int j) {
-    s = (*f)(s1->getSignal(),s2->getSignal()); 
+  void BinarySignalOperation::updateSignal(double t) {
+    s = (*f)(s1->getSignal(t),s2->getSignal(t)); 
+    upds = false;
   }
 
 }

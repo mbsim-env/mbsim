@@ -38,13 +38,15 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearTransferSystem, MBSIMCONTROL%"LinearTransferSystem")
 
-  LinearTransferSystem::LinearTransferSystem(const string& name) : SignalProcessingSystem(name), R1(.002), R2(1.), c(1.) {
+  LinearTransferSystem::LinearTransferSystem(const string& name) : Signal(name), inputSignal(NULL), R1(.002), R2(1.), c(1.) {
   }
 
   void LinearTransferSystem::initializeUsingXML(DOMElement * element) {
-    SignalProcessingSystem::initializeUsingXML(element);
+    Signal::initializeUsingXML(element);
     DOMElement * e;
     DOMElement * ee;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    inputSignalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"pidType");
     if (e) {
       ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"P");
@@ -86,49 +88,52 @@ namespace MBSimControl {
       showABCD();
   }
 
-  void LinearTransferSystem::updateh(double t, int j) {
-    output=(this->*calculateOutputMethod)();
+  void LinearTransferSystem::updateSignal(double t) {
+    s=(this->*calculateOutputMethod)(t);
+    upds = false;
   }
 
   void LinearTransferSystem::updatedx(double t, double dt) {
-    xd=(A*x+B*inputSignal->getSignal())*dt;
+    xd=(A*x+B*inputSignal->getSignal(t))*dt;
   }
 
   void LinearTransferSystem::updatexd(double t) {
-    xd=A*x+B*inputSignal->getSignal();
+    xd=A*x+B*inputSignal->getSignal(t);
   }
 
   void LinearTransferSystem::init(InitStage stage) {
-    if (stage==resize) {
-      SignalProcessingSystem::init(stage);
+    if (stage==resolveXMLPath) {
+      if (inputSignalString!="")
+        setInputSignal(getByPath<Signal>(inputSignalString));
+      Signal::init(stage);
+    }
+    else if (stage==resize) {
+      Signal::init(stage);
       x.resize(xSize, INIT, 0);
     }
     else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
-        if (getPlotFeature(globalPosition)==enabled)
-          for (int i=0; i<C.rows(); i++)
-            plotColumns.push_back("Output Sigout (" + numtostr(i) + ")");
         if (getPlotFeature(rightHandSide)==enabled)
           for (int i=0; i<B.cols(); i++)
             plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
-        SignalProcessingSystem::init(stage);
       }
+      Signal::init(stage);
     }
     else
-      SignalProcessingSystem::init(stage);
+      Signal::init(stage);
   }
 
-  VecV LinearTransferSystem::outputMethodC() {
+  VecV LinearTransferSystem::outputMethodC(double t) {
     return C*x;
   }
 
-  VecV LinearTransferSystem::outputMethodD() {
-    return D*inputSignal->getSignal();
+  VecV LinearTransferSystem::outputMethodD(double t) {
+    return D*inputSignal->getSignal(t);
   }
 
-  VecV LinearTransferSystem::outputMethodCD() {
-    return outputMethodC()+outputMethodD();
+  VecV LinearTransferSystem::outputMethodCD(double t) {
+    return outputMethodC(t)+outputMethodD(t);
   }
 
   void LinearTransferSystem::showABCD() {
@@ -213,14 +218,11 @@ namespace MBSimControl {
 
   void LinearTransferSystem::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if (getPlotFeature(globalPosition)==enabled)
-        for (int i=0; i<output.size(); i++)
-          plotVector.push_back(output(i));
       if (getPlotFeature(rightHandSide)==enabled)
         for (int i=0; i<B.cols(); i++)
-          plotVector.push_back(inputSignal->getSignal()(i));
+          plotVector.push_back(inputSignal->getSignal(t)(i));
     }
-    SignalProcessingSystem::plot(t,dt);
+    Signal::plot(t,dt);
   }
 
 }
