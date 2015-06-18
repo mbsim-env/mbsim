@@ -741,7 +741,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateh(double t, int j) {
-//    cout << t << " " << j << endl;
     h[j].init(0);
     Group::updateh(t, j);
     updh[j] = false;
@@ -1184,12 +1183,10 @@ namespace MBSim {
     calccorrSize(corrID);
     updatecorrRef(corrParent(0, corrSize - 1));
     updategRef(gParent(0, gSize - 1));
-    updateg(t);
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-    updateW(t);
     SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
     Mat T = getT(t);
     int iter = 0;
@@ -1207,10 +1204,8 @@ namespace MBSim {
    }
     calclaSize(3);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-    updateW(t);
     calcgSize(0);
     updategRef(gParent(0, gSize - 1));
-    updateg(t);
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(double t, int mode) {
@@ -1235,30 +1230,21 @@ namespace MBSim {
       calcgdSize(gdID); // IH
       updatecorrRef(corrParent(0, corrSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
-      updategd(t);
       updatecorr(corrID);
 
       calclaSize(gdID);
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateW(t);
 
       if (laSize) {
         SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
         Vec mu = slvLS(Gv, -getgd(t) + corr);
-        // TODO Remove after debug
-        cout << "projectGeneralizedVelocities at t = " << t << endl;
-        cout << mu << endl;
-        cout << getW(t) << endl;
-        cout << getW(t) * mu << endl;
-        u += slvLLFac(getLLM(t), getW(t) * mu);
+        u += slvLLFac(getLLM(), getW() * mu);
         resetUpToDate();
       }
       calclaSize(3);
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateW(t);
       calcgdSize(1);
       updategdRef(gdParent(0, gdSize - 1));
-      updategd(t);
     }
   }
 
