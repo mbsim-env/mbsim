@@ -30,14 +30,14 @@
 #include <mbsim/contact_kinematics/circlesolid_line.h>
 //#include <mbsim/contact_kinematics/circlesolid_linesegment.h>
 //#include <mbsim/contact_kinematics/circlesolid_plane.h>
-//#include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
+#include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
-//#include <mbsim/contact_kinematics/edge_edge.h>
+#include <mbsim/contact_kinematics/edge_edge.h>
 //#include <mbsim/contact_kinematics/line_contour1s.h>
-//#include <mbsim/contact_kinematics/point_rectangle.h>
+#include <mbsim/contact_kinematics/point_rectangle.h>
 //#include <mbsim/contact_kinematics/point_contour1s.h>
 //#include <mbsim/contact_kinematics/point_contourinterpolation.h>
-//#include <mbsim/contact_kinematics/point_frustum.h>
+#include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
 //#include <mbsim/contact_kinematics/point_circlesolid.h>
 #include <mbsim/contact_kinematics/point_plane.h>
@@ -101,11 +101,11 @@ namespace MBSim {
     else if (( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Plane")==0 ) or
         ( strcmp(contour0, "Room")==0 && strcmp(contour1, "Point")==0 ) or
         ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Frustum")==0 ))
-        return new ContactKinematicsCompoundContourContour;  
+      return new ContactKinematicsCompoundContourContour;
 
-//    else if (( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Room")==0 ) or
-//        ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Cuboid")==0 ))
-//        return new ContactKinematicsCompoundContourCompoundContour;
+    else if (( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Room")==0 ) or
+        ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Cuboid")==0 ))
+      return new ContactKinematicsCompoundContourCompoundContour;
 //
 //    /*
 //     *else if ( strcmp(contour0, "CompoundContour")==0 )
@@ -115,11 +115,11 @@ namespace MBSim {
 //     *    return new ContactKinematicsCompoundContourContour;  
 //     */
 //
-//    else if ( strcmp(contour0, "Edge")==0 && strcmp(contour1, "Edge")==0 )
-//      return new ContactKinematicsEdgeEdge;
-//
-//    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Rectangle")==0 )
-//      return new ContactKinematicsPointRectangle;
+    else if ( strcmp(contour0, "Edge")==0 && strcmp(contour1, "Edge")==0 )
+      return new ContactKinematicsEdgeEdge;
+
+    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Rectangle")==0 )
+      return new ContactKinematicsPointRectangle;
 //
 //    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1s")==0 )
 //      return new ContactKinematicsPointContour1s;
@@ -127,8 +127,8 @@ namespace MBSim {
 //    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "ContourInterpolation")==0 )
 //      return new ContactKinematicsPointContourInterpolation;
 //
-//    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Frustum")==0 )
-//      return new ContactKinematicsPointFrustum;  
+    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Frustum")==0 )
+      return new ContactKinematicsPointFrustum;
 //
 //    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
 //      return new ContactKinematicsPointPolynomialFrustum;

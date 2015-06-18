@@ -10,6 +10,7 @@ libcontour_la_SOURCES = circle.cc\
 			edge.cc\
 			plane.cc\
 			sphere.cc\
+			frustum.cc\
 			contour1s.cc
 
 libcontour_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
@@ -25,4 +26,5 @@ contourinclude_HEADERS = circle.h\
 			 edge.h\
 			 plane.h\
 			 sphere.h\
+			 frustum.h\
 			 contour1s.h

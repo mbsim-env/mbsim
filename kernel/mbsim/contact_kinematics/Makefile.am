@@ -1,11 +1,15 @@
 noinst_LTLIBRARIES = libcontactkinematics.la
 libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 				  point_line.cc\
-				  circlesolid_line.cc\
 				  point_plane.cc\
+				  point_rectangle.cc\
+				  point_frustum.cc\
+				  circlesolid_line.cc\
 				  sphere_plane.cc\
 				  sphere_sphere.cc\
-				  compoundcontour_contour.cc
+				  edge_edge.cc\
+				  compoundcontour_contour.cc\
+				  compoundcontour_compoundcontour.cc
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
@@ -14,8 +18,12 @@ libcontactkinematics_la_LIBADD =  $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   point_line.h\
-				   circlesolid_line.h\
 				   point_plane.h\
+				   point_rectangle.h\
+				   point_frustum.h\
+				   circlesolid_line.h\
 				   sphere_plane.h\
 				   sphere_sphere.h\
-				   compoundcontour_contour.h
+				   edge_edge.h\
+				   compoundcontour_contour.h\
+				   compoundcontour_compoundcontour.h

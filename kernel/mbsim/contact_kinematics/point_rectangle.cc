@@ -43,8 +43,8 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointRectangle::updateg(double &g, ContourPointData *cpData, int index) {
-    Vec3 Ar = rectangle->getFrame()->getOrientation().T() * (point->getFrame()->getPosition() - rectangle->getFrame()->getPosition());
+  void ContactKinematicsPointRectangle::updateg(double t, double &g, ContourPointData *cpData, int index) {
+    Vec3 Ar = rectangle->getFrame()->getOrientation(t).T() * (point->getFrame()->getPosition(t) - rectangle->getFrame()->getPosition(t));
     if(fabs(Ar(1)) <= rectangle->getYLength()/2 and fabs(Ar(2)) <= rectangle->getZLength()/2){
       g = Ar(0);
       if(g < -rectangle->getThickness())
