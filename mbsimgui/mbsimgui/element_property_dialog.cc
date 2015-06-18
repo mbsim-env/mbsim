@@ -26,7 +26,6 @@
 #include "function_widgets.h"
 #include "kinematic_functions_widgets.h"
 #include "ombv_widgets.h"
-#include "integrator_widgets.h"
 #include "extended_widgets.h"
 #include "dynamic_system_solver.h"
 #include "frame.h"

@@ -51,7 +51,6 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   function_property_factory.cc \
 		   ombv_properties.cc \
 		   extended_properties.cc \
-		   integrator_properties.cc \
 		   basic_widgets.cc \
 		   variable_widgets.cc \
 		   function_widgets.cc \
@@ -60,7 +59,6 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   kinetics_widgets.cc \
 		   ombv_widgets.cc \
 		   extended_widgets.cc \
-		   integrator_widgets.cc \
 		   property_dialog.cc \
 		   element_property_dialog.cc \
 		   solver_property_dialog.cc \

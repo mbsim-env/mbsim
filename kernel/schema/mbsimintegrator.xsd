@@ -548,11 +548,7 @@
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="method23"/>
-            <xs:element name="method45"/>
-            <xs:element name="method67"/>
-          </xs:choice>
+          <xs:element name="method" type="pv:stringFullOctEval" minOccurs="0"/>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.

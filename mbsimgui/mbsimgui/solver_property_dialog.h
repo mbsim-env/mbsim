@@ -144,7 +144,7 @@ namespace MBSimGUI {
       virtual void toWidget(Solver *solver);
       virtual void fromWidget(Solver *solver);
     protected:
-      ExtWidget *type, *relTol, *threshold, *initialStepSize;
+      ExtWidget *method, *relTol, *threshold, *initialStepSize;
   };
 
   class EigenanalyserPropertyDialog : public SolverPropertyDialog {
