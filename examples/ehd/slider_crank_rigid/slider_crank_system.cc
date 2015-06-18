@@ -108,10 +108,10 @@ SliderCrankSystem::SliderCrankSystem(const string &projectName) :
 
   Vec3 kinematicsFrameCrankPos;
   kinematicsFrameCrankPos(0) = -length_crank / 2.;
-  FixedRelativeFrame * kinematicsFrameCrank = new FixedRelativeFrame("LoadFrame", kinematicsFrameCrankPos);
-  crank->addFrame(kinematicsFrameCrank);
-  crank->setFrameForKinematics(kinematicsFrameCrank);
-  kinematicsFrameCrank->enableOpenMBV(0.5e-1);
+  FixedRelativeFrame * fkinematicsCrank = new FixedRelativeFrame("LoadFrame", kinematicsFrameCrankPos);
+  crank->addFrame(fkinematicsCrank);
+  crank->setFrameForKinematics(fkinematicsCrank);
+  fkinematicsCrank->enableOpenMBV(0.5e-1);
   crank->getFrameC()->enableOpenMBV(0.7e-1);
 
 
@@ -130,13 +130,13 @@ SliderCrankSystem::SliderCrankSystem(const string &projectName) :
   //Add contour to crank
   Vec3 cylinderCenterPos;
   cylinderCenterPos(0) = length_crank / 2;
-  FixedRelativeFrame * circleCrankRef = new FixedRelativeFrame("CylinderRef", cylinderCenterPos);
-  circleCrankRef->enableOpenMBV(0.3e-1);
-  crank->addFrame(circleCrankRef);
+  FixedRelativeFrame * fcircleCrank = new FixedRelativeFrame("CylinderRef", cylinderCenterPos);
+  fcircleCrank->enableOpenMBV(0.3e-1);
+  crank->addFrame(fcircleCrank);
 
   MBSim::CircleHollow * circleCrankContour = new MBSim::CircleHollow("CircleCrank");
   crank->addContour(circleCrankContour);
-  circleCrankContour->setFrameOfReference(circleCrankRef);
+  circleCrankContour->setFrameOfReference(fcircleCrank);
   circleCrankContour->setRadius(innerRadius);
   circleCrankContour->enableOpenMBV(_diffuseColor = "[0.6;0.3;0.6]", _transparency = 0.3);
 
@@ -144,9 +144,9 @@ SliderCrankSystem::SliderCrankSystem(const string &projectName) :
 
   Vec3 rodInitPos;
   rodInitPos(0) = length_crank + length_rod / 2.;
-  FixedRelativeFrame * rodRefEnd = new FixedRelativeFrame("RodRefEnd", rodInitPos);
-  rodRefEnd->enableOpenMBV(1e-1);
-  addFrame(rodRefEnd);
+  FixedRelativeFrame * frodRef = new FixedRelativeFrame("RodRefEnd", rodInitPos);
+  frodRef->enableOpenMBV(1e-1);
+  addFrame(frodRef);
 
   RigidBody *rod = new RigidBody("rod");
   this->addObject(rod);
@@ -154,26 +154,26 @@ SliderCrankSystem::SliderCrankSystem(const string &projectName) :
   rod->setInertiaTensor(inertia_rod);
   rod->setTranslation(new TranslationAlongAxesXY<VecV>());
   rod->setRotation(new RotationAboutZAxis<VecV>());
-  rod->setFrameOfReference(rodRefEnd);
+  rod->setFrameOfReference(frodRef);
 
   Vec3 rodCircleCenterDistance;
   rodCircleCenterDistance(0) = -length_rod / 2;
-  FixedRelativeFrame * rodRefCrankEnd = new FixedRelativeFrame("RodRefCrankEnd", rodCircleCenterDistance);
-  rodRefCrankEnd->setFrameOfReference(rod->getFrameC());
-  rod->addFrame(rodRefCrankEnd);
-  rodRefCrankEnd->enableOpenMBV(1e-2);
+  FixedRelativeFrame * frodRefCrank = new FixedRelativeFrame("RodRefCrankEnd", rodCircleCenterDistance);
+  frodRefCrank->setFrameOfReference(rod->getFrameC());
+  rod->addFrame(frodRefCrank);
+  frodRefCrank->enableOpenMBV(1e-2);
 
-  FixedRelativeFrame * rodRefPistonEnd = new FixedRelativeFrame("RodRefPistonEnd", -rodCircleCenterDistance);
-  rodRefPistonEnd->setFrameOfReference(rod->getFrameC());
-  rod->addFrame(rodRefPistonEnd);
-  rodRefPistonEnd->enableOpenMBV(1e-2);
+  FixedRelativeFrame * frodRefPiston = new FixedRelativeFrame("RodRefPistonEnd", -rodCircleCenterDistance);
+  frodRefPiston->setFrameOfReference(rod->getFrameC());
+  rod->addFrame(frodRefPiston);
+  frodRefPiston->enableOpenMBV(1e-2);
 
   // set a initial angle for the body reference
 
   // add neutral contour to the rod
-  CircleSolid* circleRodContour = new CircleSolid("Buchse");
+  CircleHollow* circleRodContour = new CircleHollow("Buchse");
   rod->addContour(circleRodContour);
-  circleRodContour->setFrameOfReference(rodRefCrankEnd);
+  circleRodContour->setFrameOfReference(frodRefCrank);
   circleRodContour->setRadius(rodBigRadius);
   circleRodContour->enableOpenMBV(_diffuseColor = "[0.2;0.3;0.6]", _transparency = 0.8);
 
@@ -240,7 +240,7 @@ SliderCrankSystem::SliderCrankSystem(const string &projectName) :
     addLink(load);
     load->setMomentFunction(new Moment);
     load->setMomentDirection(Mat("[0;0;1]"));
-    load->connect(kinematicsFrameCrank);
+    load->connect(fkinematicsCrank);
   }
 
   // ---------- LINK-DEFINTIION
@@ -261,7 +261,7 @@ SliderCrankSystem::SliderCrankSystem(const string &projectName) :
   joint_rod_piston->setForceLaw(new BilateralConstraint());
 //  joint_rod_piston->setMomentDirection("[1,0;0,1;0,0]");
 //  joint_rod_piston->setMomentLaw(new BilateralConstraint());
-  joint_rod_piston->connect(pistonFixRef, rodRefPistonEnd);
+  joint_rod_piston->connect(pistonFixRef, frodRefPiston);
 
 }
 
