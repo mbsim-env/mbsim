@@ -272,22 +272,22 @@ namespace MBSim {
     const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     for (int i = 0; i < forceDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
-      la(i) = fifl->project(la(i), gdn(i), gd(i), rFactor(i));
+      La(i) = fifl->project(La(i), gdn(i), gd(i), rFactor(i));
     }
     for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
-      la(i) = fiml->project(la(i), gdn(i), gd(i), rFactor(i));
+      La(i) = fiml->project(La(i), gdn(i), gd(i), rFactor(i));
     }
   }
 
@@ -320,22 +320,22 @@ namespace MBSim {
     const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     for (int i = 0; i < forceDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i] + 1; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
-      la(i) = fifl->solve(a[ia[laInd + i]], gdn(i), gd(i));
+      La(i) = fifl->solve(a[ia[laInd + i]], gdn(i), gd(i));
     }
     for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i] + 1; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
-      la(i) = fiml->solve(a[ia[laInd + i]], gdn(i), gd(i));
+      La(i) = fiml->solve(a[ia[laInd + i]], gdn(i), gd(i));
     }
   }
 
@@ -368,22 +368,22 @@ namespace MBSim {
     const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     for (int i = 0; i < forceDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
-      res(i) = la(i) - fifl->project(la(i), gdn(i), gd(i), rFactor(i));
+      res(i) = La(i) - fifl->project(La(i), gdn(i), gd(i), rFactor(i));
     }
     for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
-      res(i) = la(i) - fiml->project(la(i), gdn(i), gd(i), rFactor(i));
+      res(i) = La(i) - fiml->project(La(i), gdn(i), gd(i), rFactor(i));
     }
   }
 
@@ -414,7 +414,7 @@ namespace MBSim {
   void Joint::jacobianConstraints(double t) {
 
     const SqrMat Jprox = ds->getJprox();
-    const SqrMat G = ds->getG();
+    const SqrMat G = ds->getG(t);
 
     for (int i = 0; i < forceDir.cols(); i++) {
       RowVec jp1 = Jprox.row(laInd + i);
@@ -443,7 +443,7 @@ namespace MBSim {
   void Joint::jacobianImpacts(double t) {
 
     const SqrMat Jprox = ds->getJprox();
-    const SqrMat G = ds->getG();
+    const SqrMat G = ds->getG(t);
 
     for (int i = 0; i < forceDir.cols(); i++) {
       RowVec jp1 = Jprox.row(laInd + i);
@@ -496,13 +496,13 @@ namespace MBSim {
     const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     for (int i = 0; i < forceDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
       if (!fifl->isFulfilled(la(i), gdn(i), gd(i), LaTol, gdTol)) {
         ds->setTermination(false);
@@ -512,9 +512,9 @@ namespace MBSim {
     for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(laInd + i);
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
-        gdn(i) += a[j] * laMBS(ja[j]);
+        gdn(i) += a[j] * LaMBS(ja[j]);
 
-      if (!fiml->isFulfilled(la(i), gdn(i), gd(i), LaTol, gdTol)) {
+      if (!fiml->isFulfilled(La(i), gdn(i), gd(i), LaTol, gdTol)) {
         ds->setTermination(false);
         return;
       }
