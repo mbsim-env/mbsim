@@ -13,6 +13,7 @@ libfe_la_SOURCES = 	finite_element_1s_21_ancf.cc\
 			finite_element_2s_13_disk.cc\
 			finite_element_2s_13_mfr_mindlin.cc\
 			finite_element_linear_external_lumped_node.cc\
+			finite_element_1S_reference_curve.cc\
             superelement_linear_external.cc
 
 libfe_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
@@ -34,5 +35,7 @@ feinclude_HEADERS = finite_element_1s_21_ancf.h\
 			finite_element_2s_13_disk.h\
 			finite_element_2s_13_mfr_mindlin.h\
 			finite_element_linear_external_lumped_node.h\
+			finite_element_1S_reference_curve.h\
+			finite_element_1S_reference_curve_functions.h\
             superelement_linear_external.h
 

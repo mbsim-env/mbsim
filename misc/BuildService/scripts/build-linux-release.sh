@@ -46,6 +46,9 @@ rss 0
 
 rm -rf $SRCDIR/local/share/mbxmlutils
 
+export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig:/home/user/3rdparty/casadi-local-linux32/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/3rdparty/casadi-local-linux32/lib
+
 $SRCDIR/mbsim/misc/BuildService/scripts/build.py --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --with-swigpath=/home/user/Updates/local/bin --passToRunexamples --disableCompare --disableValidate
 
 RET=0
@@ -54,6 +57,7 @@ $SRCDIR/mbsim/misc/BuildService/scripts/distribute-linux-release.sh &> $OUTDIR/r
 test $? -ne 0 && RET=1
 
 cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
+cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx-debug.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
 test $? -ne 0 && RET=1
 
 if [ $RET -ne 0 ]; then

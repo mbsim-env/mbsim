@@ -28,7 +28,7 @@ $PREFIX/bin/mbsimxml
 $PREFIX/bin/mbsimgui
 $PREFIX/bin/mbxmlutilspp
 $PREFIX/bin/openmbv
-$PREFIX/bin/casadi_interface.oct
+$PREFIX/lib/casadi_oct.oct
 $PREFIX/bin/mbsimCreateFMU
 $PREFIX/bin/fmuCheck.*
 $PREFIX/lib/mbsimsrc_fmi.so
@@ -83,7 +83,8 @@ done
 DISTDIR=$DISTBASEDIR/mbsim
 
 # PKG config
-export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig
+export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig:/home/user/3rdparty/casadi-local-linux32/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/3rdparty/casadi-local-linux32/lib
 # get includes and libs of all packages required for compiling mbsim source examples
 SRCINC=$(pkg-config --cflags mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
 SRCLIB=$(pkg-config --libs   mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
@@ -126,7 +127,7 @@ export LD_LIBRARY_PATH=\$DIRNAME/../lib:\$LD_LIBRARY_PATH
 EOF
 chmod +x $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 for F in $DISTDIR/bin/*; do
-  test "$(basename $F)" == "casadi_interface.oct" && continue
+  test "$(basename $F)" == "casadi_oct.oct" && continue
   ldd $F &> /dev/null || continue
   if ! readelf -d $F | grep "Library rpath: \[.*\$ORIGIN/../lib.*" &> /dev/null; then
     echo "$F"
@@ -229,8 +230,7 @@ cp -uL $PREFIX/bin/libopenmbvjavaloadJNI.jni $DISTDIR/bin
 mkdir -p $DISTDIR/examples/openmbvcppinterface_swig
 cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openmbvcppinterface_swig
 # copy casadi SWIG files for octave
-cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
-cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
+cp -ruL $PREFIX/lib/@swig_ref $DISTDIR/lib
 # modifie all ELF rpath in lib/*.so*
 
 # create mbsim-config
@@ -420,10 +420,23 @@ echo "DONE"
 echo "ALL TESTS DONE"
 EOF
 chmod +x $DISTDIR/bin/mbsim-test
+
+# strip dist dir
+for f in $(find $DISTDIR -type f); do
+  if file $f | grep -w ELF | grep -w "not stripped" > /dev/null; then
+    objcopy --only-keep-debug $f $f.debug
+    objcopy --strip-all $f
+    objcopy --add-gnu-debuglink $f.debug $f
+  fi
+done
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
+  rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2 $(find -name "*.debug"))
+  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2"
+
   rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2
-  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 mbsim)
-  echo "Create MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 --exclude=\*.debug mbsim)
+  echo "Created MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
 fi
