@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libcontour.la
 libcontour_la_SOURCES = circle.cc\
 			rectangle.cc\
 			line.cc\
+			line_segment.cc\
 			point.cc\
 			compound_contour.cc\
 			cuboid.cc\
@@ -20,6 +21,7 @@ contourincludedir = $(includedir)/mbsim/contours
 contourinclude_HEADERS = circle.h\
 			 rectangle.h\
 			 line.h\
+			 line_segment.h\
 			 point.h\
 			 compound_contour.h\
 			 cuboid.h\

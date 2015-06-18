@@ -1375,6 +1375,7 @@ namespace MBSim {
     contactDrop << "constraint velocities gp" << endl << gd << endl << endl;
     contactDrop << "non-holonomic part in gp; b" << endl << b << endl << endl;
     contactDrop << "Lagrange multipliers la" << endl << la << endl << endl;
+    contactDrop << "Lagrange multipliers La" << endl << La << endl << endl;
     contactDrop.close();
   }
 

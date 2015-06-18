@@ -76,27 +76,5 @@ namespace MBSim {
     return ele0;
   }
 
-  void LineSegment::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
-    if (ff == Frame::velocity || ff == Frame::velocities) {
-      Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
-      cp.getFrameOfReference().setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrPC));
-    }
-    if (ff == Frame::angularVelocity || ff == Frame::velocities)
-      cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
-
-    if (ff == Frame::position) {
-      double s = cp.getLagrangeParameterPosition()(0);
-      cp.getFrameOfReference().getPosition() = R->getPosition() + R->getOrientation().col(1) * s;
-    }
-
-    if (ff == Frame::firstTangent) {
-      cp.getFrameOfReference().getOrientation().set(1, R->getOrientation().col(1));
-    }
-
-    if (ff!= Frame::position and ff != Frame::firstTangent and ff != Frame::velocity && ff != Frame::angularVelocity && ff != Frame::velocities)
-      THROW_MBSIMERROR("(LineSegment::updateKinematicsForFrame): Frame::Feature not implemented!");
-
-  }
-
 }
 

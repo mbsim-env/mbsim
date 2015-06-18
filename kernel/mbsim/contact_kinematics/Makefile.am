@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libcontactkinematics.la
 libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 				  point_line.cc\
+				  point_line_segment.cc\
 				  point_plane.cc\
 				  point_rectangle.cc\
 				  point_frustum.cc\
@@ -18,6 +19,7 @@ libcontactkinematics_la_LIBADD =  $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   point_line.h\
+				   point_line_segment.h\
 				   point_plane.h\
 				   point_rectangle.h\
 				   point_frustum.h\
