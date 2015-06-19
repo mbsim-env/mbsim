@@ -1,5 +1,5 @@
+#include "config.h"
 #include <mbxmlutils/preprocess.h>
-#include "../config.h" // preprocess.h/octeval.h will undefine macro, hence include config.h after this file
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <mbsimxml/mbsimflatxml.h>
@@ -14,6 +14,7 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/scope_exit.hpp>
+#include <mbxmlutils/octeval.h>
 #include <octave/version.h>
 #include <octave/defaults.h>
 
@@ -117,7 +118,8 @@ int main(int argc, char *argv[]) {
     // Create dss from XML file
     if(xmlFile) {
       // create octave
-      OctEval octEval(&dependencies);
+      OctEval dummy(&dependencies);
+      Eval &eval=dummy;
 
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all plugins."<<endl;
@@ -132,10 +134,10 @@ int main(int argc, char *argv[]) {
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
       boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-      Preprocess::preprocess(parser, octEval, dependencies, modelEle, param);
+      Preprocess::preprocess(parser, eval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
-      convertXPathParamSetToVariable(param, xmlParam);
+      convertXPathParamSetToVariable(param, xmlParam, eval);
       // remove all variables which are not in useParam
       vector<boost::shared_ptr<Variable> > xmlParam2;
       for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
