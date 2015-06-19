@@ -481,8 +481,8 @@ namespace MBSim {
     Z.getJacobianOfTranslation().init(0);
     Z.getJacobianOfRotation().init(0);
 
-    Z.getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
-    Z.getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation(t));
+    Z.getJacobianOfTranslation().set(i02,Index(0,R->gethSize()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
+    Z.getJacobianOfRotation().set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
 
     Z.getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
     Z.getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
@@ -812,8 +812,8 @@ namespace MBSim {
   }
   void RigidBody::setuRel(const fmatvec::Vec &u) { 
     uRel = u; 
-    uTRel = uRel(iqT); 
-    uRRel = uRel(iqR); 
+    uTRel = uRel(iuT);
+    uRRel = uRel(iuR);
     updGC = false; 
   }
   void RigidBody::setJRel(const fmatvec::Mat &J) { 
