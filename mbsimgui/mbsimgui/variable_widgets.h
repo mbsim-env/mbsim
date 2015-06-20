@@ -68,9 +68,9 @@ namespace MBSimGUI {
       QCheckBox *value;
   };
 
-  class OctaveExpressionWidget : public VariableWidget {
+  class ExpressionWidget : public VariableWidget {
     public:
-      OctaveExpressionWidget(const QString &str="");
+      ExpressionWidget(const QString &str="");
       QString getValue() const { return value->toPlainText(); }
       void setValue(const QString &str) { value->setPlainText(str); }
       virtual QString getType() const {return "Editor";}

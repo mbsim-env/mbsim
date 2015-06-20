@@ -687,7 +687,7 @@ namespace MBSimGUI {
   }
 
   // update model parameters including additional paramters from paramList
-  void MainWindow::updateOctaveParameters(Element *element) {
+  void MainWindow::updateParameters(Element *element) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     vector<Element*> parents = element->getParents();
     Parameters param;
@@ -714,7 +714,7 @@ namespace MBSimGUI {
     try {
       D(doc)->validate();
 
-      // remove all parameters from octave using delete and new NewParamLevel
+      // remove all parameters from evaluator using delete and new NewParamLevel
       // (this will not work for nested parameters in embed!???)
       delete evalParamLevel;
       evalParamLevel=new NewParamLevel(*eval);
@@ -722,10 +722,10 @@ namespace MBSimGUI {
       eval->addParamSet(doc->getDocumentElement());
     }
     catch(runtime_error error) {
-      message = string("An exception occurred in updateOctaveParameters: ") + error.what();
+      message = string("An exception occurred in updateParameters: ") + error.what();
     }
     catch(...) {
-      message = "An unknown exception occurred in updateOctaveParameters.";
+      message = "An unknown exception occurred in updateParameters.";
     }
     cout << message << endl;
   }

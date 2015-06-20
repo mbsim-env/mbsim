@@ -149,14 +149,14 @@ namespace MBSimGUI {
     return new BoolWidget(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString()))));
   }
 
-  OctaveExpressionWidget::OctaveExpressionWidget(const QString &str) {
+  ExpressionWidget::ExpressionWidget(const QString &str) {
     QVBoxLayout *layout=new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     value=new QPlainTextEdit;
     value->setMinimumHeight(value->sizeHint().height()/2);
     value->setMaximumHeight(value->sizeHint().height()/2);
-    new OctaveHighlighter(value->document());
+    new OctaveHighlighter(value->document());// MFMF use the highlighter of the current MainWindow::eval
     QFont font;
     font.setFamily("Monospace");
     value->setFont(font);
@@ -165,8 +165,8 @@ namespace MBSimGUI {
     setValue(str);
   }
 
-  QWidget* OctaveExpressionWidget::getValidatedWidget() const {
-    //  return new OctaveExpressionWidget(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString()))));
+  QWidget* ExpressionWidget::getValidatedWidget() const {
+    //  return new ExpressionWidget(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString()))));
     QString str = QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
     vector<vector<QString> > A = strToMat(str);
@@ -752,7 +752,7 @@ namespace MBSimGUI {
       w = widget->getValidatedWidget();
     }
     catch(MBXMLUtils::DOMEvalException e) {
-      QMessageBox::warning(0, "Octave evaluation", QString::fromStdString(e.getMessage()));
+      QMessageBox::warning(0, "Expression evaluation", QString::fromStdString(e.getMessage()));
       return;
     }
     EvalDialog evalDialog(w); 
@@ -800,7 +800,7 @@ namespace MBSimGUI {
     if(i==0)
       return new PhysicalVariableWidget(new BoolWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
     return NULL;
   }
 
@@ -821,7 +821,7 @@ namespace MBSimGUI {
     if(i==0)
       return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
     return NULL;
   }
 
@@ -853,7 +853,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 
@@ -878,7 +878,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 
@@ -911,7 +911,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 
@@ -936,7 +936,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 
@@ -952,7 +952,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 
@@ -978,7 +978,7 @@ namespace MBSimGUI {
     if(i==2)
       return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
     if(i==3)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget,unit[2],defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget,unit[2],defaultUnit[2]);
     return NULL;
   }
 
@@ -1003,7 +1003,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new OctaveExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 

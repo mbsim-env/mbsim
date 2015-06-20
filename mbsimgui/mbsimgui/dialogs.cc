@@ -52,7 +52,7 @@ namespace MBSimGUI {
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     layout->addWidget(buttonBox);
-    setWindowTitle("Octave expression evaluation");
+    setWindowTitle("Expression evaluation");
   }
 
   RigidBodyBrowser::RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(0), element(element_) {

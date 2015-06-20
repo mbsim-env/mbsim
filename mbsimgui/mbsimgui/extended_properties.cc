@@ -33,7 +33,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   ExtPhysicalVarProperty::ExtPhysicalVarProperty(const std::vector<PhysicalVariableProperty> &inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
-    inputProperty.push_back(PhysicalVariableProperty(new OctaveExpressionProperty, inputProperty[0].getUnit(), inputProperty[0].getXmlName()));
+    inputProperty.push_back(PhysicalVariableProperty(new ExpressionProperty, inputProperty[0].getUnit(), inputProperty[0].getXmlName()));
   }
 
   DOMElement* ExtPhysicalVarProperty::initializeUsingXML(DOMElement *element) {

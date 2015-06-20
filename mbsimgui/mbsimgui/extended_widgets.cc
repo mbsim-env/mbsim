@@ -34,7 +34,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    inputWidget.push_back(new PhysicalVariableWidget(new OctaveExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
+    inputWidget.push_back(new PhysicalVariableWidget(new ExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
 
     QPushButton *evalButton = new QPushButton("Eval");
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));

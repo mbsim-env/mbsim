@@ -79,7 +79,7 @@ namespace MBSimGUI {
     static_cast<VariableWidget*>(widget)->setValue(QString::fromStdString(getValue()));
   }
 
-  DOMElement* OctaveExpressionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* ExpressionProperty::initializeUsingXML(DOMElement *element) {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
       return 0;
@@ -87,7 +87,7 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* OctaveExpressionProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* ExpressionProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text = doc->createTextNode(X()%getValue());
     parent->insertBefore(text, NULL);
@@ -382,7 +382,7 @@ namespace MBSimGUI {
     if(i==0)
       return new PhysicalVariableProperty(new ScalarProperty(value), unit[0], xmlName);
     if(i==1)
-      return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[1], xmlName);
+      return new PhysicalVariableProperty(new ExpressionProperty, unit[1], xmlName);
     return NULL;
   }
 
@@ -401,7 +401,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
     if(i==2)
-      return new PhysicalVariableProperty(new OctaveExpressionProperty, unit[2], xmlName);
+      return new PhysicalVariableProperty(new ExpressionProperty, unit[2], xmlName);
     return NULL;
   }
 
@@ -419,7 +419,7 @@ namespace MBSimGUI {
     if(i==2)
       return new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),unit[0],xmlName);
     if(i==3)
-      return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+      return new PhysicalVariableProperty(new ExpressionProperty,unit[2],xmlName);
     return NULL;
   }
 
@@ -435,7 +435,7 @@ namespace MBSimGUI {
     if(i==1)
       return new PhysicalVariableProperty(new FromFileProperty,unit[1],xmlName);
     if(i==2)
-      return new PhysicalVariableProperty(new OctaveExpressionProperty,unit[2],xmlName);
+      return new PhysicalVariableProperty(new ExpressionProperty,unit[2],xmlName);
     return NULL;
   }
 

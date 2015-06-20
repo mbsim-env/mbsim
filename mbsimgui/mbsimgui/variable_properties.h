@@ -42,10 +42,10 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
   };
 
-  class OctaveExpressionProperty : public VariableProperty {
+  class ExpressionProperty : public VariableProperty {
     public:
-      OctaveExpressionProperty() {}
-      virtual PropertyInterface* clone() const {return new OctaveExpressionProperty(*this);}
+      ExpressionProperty() {}
+      virtual PropertyInterface* clone() const {return new ExpressionProperty(*this);}
       std::string getValue() const { return value; }
       void setValue(const std::string &str) { value = str; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

@@ -141,7 +141,7 @@ namespace MBSimGUI {
       void h5plotserie();
       void help();
       void about();
-      void updateOctaveParameters(Element *element);
+      void updateParameters(Element *element);
       void removeElement();
       void saveElementAs();
     protected slots:
