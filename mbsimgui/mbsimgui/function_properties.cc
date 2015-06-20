@@ -27,7 +27,7 @@
 #include "utils.h"
 #include "function_property_factory.h"
 #include "mainwindow.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <boost/lexical_cast.hpp>
 
 using namespace std;

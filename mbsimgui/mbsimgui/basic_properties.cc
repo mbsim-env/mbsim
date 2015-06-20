@@ -29,7 +29,7 @@
 #include "extended_widgets.h"
 #include "mainwindow.h"
 #include <xercesc/dom/DOMText.hpp>
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <boost/lexical_cast.hpp>
 #include <QDir>
 #include <QTreeWidget>
@@ -372,7 +372,7 @@ namespace MBSimGUI {
     DOMElement *ele0 = xmlName.second.empty()?static_cast<DOMElement*>(parent):D(doc)->createElement(xmlName);
     string fileName = file;
     if(absolutePath) {
-      // fileName = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(fileName));
+      // fileName = MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(fileName));
       QFileInfo fileInfo = QString::fromStdString(fileName.substr(1,fileName.length()-2));
       fileName = string("\"")+fileInfo.absoluteFilePath().toStdString()+"\"";
     }

@@ -171,11 +171,12 @@ namespace MBSimGUI {
       D(doc)->validate();
 
       vector<boost::filesystem::path> dependencies;
-      OctEval octEval(&dependencies);
+      OctEval dummy(&dependencies);
+      Eval &eval=dummy;
 
       // Praeprozessor starten
       DOMElement *mainxmlele=doc->getDocumentElement();
-      Preprocess::preprocess(parser, octEval, dependencies, mainxmlele);
+      Preprocess::preprocess(parser, eval, dependencies, mainxmlele);
     }
     catch(exception &ex) {
       errText = ex.what();

@@ -26,7 +26,7 @@
 #include "extended_widgets.h"
 #include <QDir>
 #include "mainwindow.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 
 using namespace std;
 using namespace MBXMLUtils;

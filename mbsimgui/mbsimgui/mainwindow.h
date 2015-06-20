@@ -33,7 +33,7 @@ namespace OpenMBVGUI {
 }
 
 namespace MBXMLUtils {
-  class OctEval;
+  class Eval;
   class NewParamLevel;
   class DOMParser;
 }
@@ -92,8 +92,8 @@ namespace MBSimGUI {
       MainWindow(QStringList &arg);
       ~MainWindow();
       boost::shared_ptr<MBXMLUtils::DOMParser> parser;
-      static MBXMLUtils::OctEval *octEval;
-      static MBXMLUtils::NewParamLevel *octEvalParamLevel;
+      static MBXMLUtils::Eval *eval;
+      static MBXMLUtils::NewParamLevel *evalParamLevel;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter);

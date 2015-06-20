@@ -21,7 +21,7 @@
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "dialogs.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <vector>
 #include <QtGui>
 
@@ -146,7 +146,7 @@ namespace MBSimGUI {
   }
 
   QWidget* BoolWidget::getValidatedWidget() const {
-    return new BoolWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
+    return new BoolWidget(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString()))));
   }
 
   OctaveExpressionWidget::OctaveExpressionWidget(const QString &str) {
@@ -166,8 +166,8 @@ namespace MBSimGUI {
   }
 
   QWidget* OctaveExpressionWidget::getValidatedWidget() const {
-    //  return new OctaveExpressionWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
-    QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
+    //  return new OctaveExpressionWidget(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString()))));
+    QString str = QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
     vector<vector<QString> > A = strToMat(str);
     return new MatWidget(A);
@@ -193,7 +193,7 @@ namespace MBSimGUI {
   }
 
   QWidget* ScalarWidget::getValidatedWidget() const {
-    return new ScalarWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
+    return new ScalarWidget(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString()))));
   }
 
   VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
@@ -698,7 +698,7 @@ namespace MBSimGUI {
   QWidget* CardanWidget::getValidatedWidget() const {
     vector<QString> x = getAngles();
     for(size_t i=0; i<x.size(); i++)
-      x[i] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(x[i].toStdString())));
+      x[i] = QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(x[i].toStdString())));
     return new VecWidget(x);
   }
 
@@ -727,7 +727,7 @@ namespace MBSimGUI {
   }
 
   QWidget* AboutZWidget::getValidatedWidget() const {
-    return new ScalarWidget(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString()))));
+    return new ScalarWidget(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString()))));
   }
 
   PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
@@ -783,12 +783,12 @@ namespace MBSimGUI {
   }
 
   QString FromFileWidget::getValue() const {
-    string file = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getFile().toStdString(),0,false));
-    return QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue("ret=load(" + file + ")")));
+    string file = MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getFile().toStdString(),0,false));
+    return QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue("ret=load(" + file + ")")));
   }
 
   QWidget* FromFileWidget::getValidatedWidget() const {
-    return new MatWidget(strToMat(QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())))));
+    return new MatWidget(strToMat(QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString())))));
   }
 
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,4) {
@@ -828,7 +828,7 @@ namespace MBSimGUI {
   QWidget* BasicVecWidget::getValidatedWidget() const {
     vector<QString> x = getVec();
     for(size_t i=0; i<x.size(); i++)
-      x[i] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(x[i].toStdString())));
+      x[i] = QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(x[i].toStdString())));
     return new VecWidget(x);
   }
 
@@ -886,7 +886,7 @@ namespace MBSimGUI {
     vector<vector<QString> > A = getMat();
     for(size_t i=0; i<A.size(); i++)
       for(size_t j=0; j<A[i].size(); j++)
-        A[i][j] = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(A[i][j].toStdString())));
+        A[i][j] = QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(A[i][j].toStdString())));
     return new MatWidget(A);
   }
 

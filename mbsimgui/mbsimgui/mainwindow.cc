@@ -64,9 +64,9 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
-  OctEval *MainWindow::octEval=NULL;
+  Eval *MainWindow::eval=NULL;
   vector<boost::filesystem::path> dependencies;
-  NewParamLevel *MainWindow::octEvalParamLevel=NULL;
+  NewParamLevel *MainWindow::evalParamLevel=NULL;
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
     // use html output of MBXMLUtils
@@ -98,8 +98,8 @@ namespace MBSimGUI {
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
-    octEval=new MBXMLUtils::OctEval(&dependencies);
-    octEvalParamLevel=new NewParamLevel(*octEval);
+    eval=new MBXMLUtils::OctEval(&dependencies);
+    evalParamLevel=new NewParamLevel(*eval);
 
     QMenu *GUIMenu=new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
@@ -330,7 +330,7 @@ namespace MBSimGUI {
     delete mbsimThread;
     bfs::remove_all(uniqueTempDir);
     bfs::remove("./.MBS.mbsimprj.xml");
-    delete octEval;
+    delete eval;
   }
 
   void MainWindow::setProjectChanged(bool changed) { 
@@ -716,10 +716,10 @@ namespace MBSimGUI {
 
       // remove all parameters from octave using delete and new NewParamLevel
       // (this will not work for nested parameters in embed!???)
-      delete octEvalParamLevel;
-      octEvalParamLevel=new NewParamLevel(*octEval);
+      delete evalParamLevel;
+      evalParamLevel=new NewParamLevel(*eval);
       // add parameter
-      octEval->addParamSet(doc->getDocumentElement());
+      eval->addParamSet(doc->getDocumentElement());
     }
     catch(runtime_error error) {
       message = string("An exception occurred in updateOctaveParameters: ") + error.what();

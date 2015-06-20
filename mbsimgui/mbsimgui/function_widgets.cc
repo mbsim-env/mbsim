@@ -27,7 +27,7 @@
 #include "function_property.h"
 #include <QtGui>
 #include "mainwindow.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 
 using namespace std;
 
