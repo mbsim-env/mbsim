@@ -42,12 +42,12 @@ namespace MBSim {
 
   void ContactKinematicsPointLineSegment::updateg(double t, double &g, ContourPointData *cpData, int index) {
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation(t));
-    cpData[ipoint].getFrameOfReference().getOrientation().set(0, -line->getFrame()->getOrientation().col(0));
-    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -line->getFrame()->getOrientation().col(1));
-    cpData[ipoint].getFrameOfReference().getOrientation().set(2, line->getFrame()->getOrientation().col(2));
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[iline].getFrameOfReference().getOrientation().col(0);
-    Vec3 Wt = cpData[iline].getFrameOfReference().getOrientation().col(1);
+    Vec3 Wn = cpData[iline].getFrameOfReference().getOrientation(false).col(0);
+    Vec3 Wt = cpData[iline].getFrameOfReference().getOrientation(false).col(1);
 
     Vec3 Wd =  point->getFrame()->getPosition(t) - line->getFrame()->getPosition(t);
 
@@ -58,7 +58,7 @@ namespace MBSim {
         g = 1;
       else {
         cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
-        cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g);
+        cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition(false) - Wn*g);
       }
     }
     else 
