@@ -381,6 +381,7 @@ int main(int argc, char *argv[]) {
             copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/it->second.first/it->first.filename(),
                            path("resources")/"local"/LIBDIR, it->first);
         }
+        cout<<endl;
       }
 
       cout<<"Copy MBSim plugin files to FMU."<<endl;
@@ -435,7 +436,7 @@ namespace {
     // check if *.deplibs file exits
     path depFile=src.parent_path()/(src.filename().string()+".deplibs");
     if(!exists(depFile)) {
-      cerr<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
+      cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
       return;
     }
 
@@ -461,7 +462,7 @@ namespace {
       }
 
       // not found
-      cerr<<"Warning: Dependent library "<<file<<" not found.\nThis dependent libraries will be missing in the FMU."<<endl;
+      cerr<<endl<<"Warning: Dependent library "<<file<<" not found.\nThis dependent libraries will be missing in the FMU."<<endl;
     }
   }
 
