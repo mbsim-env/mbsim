@@ -141,9 +141,9 @@ namespace MBSim {
 
       virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
 
-      fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
-      fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
-      int getuRelSize(int i=0) const {return nu[i];}
+      fmatvec::Mat3xV& getPJT(int i=0, bool check=true) { assert((not check) or (not updPJ)); return PJT[i]; }
+      fmatvec::Mat3xV& getPJR(int i=0, bool check=true) { assert((not check) or (not updPJ)); return PJR[i]; }
+      int getuRelSize(int i=0) const { return nu[i]; }
 
       const fmatvec::Mat3xV& getPJT(double t);
       const fmatvec::Mat3xV& getPJR(double t);

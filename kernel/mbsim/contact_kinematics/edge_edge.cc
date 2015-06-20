@@ -56,12 +56,12 @@ namespace MBSim {
         if(fabs(t1) <= edge1->getLength()/2 and fabs(t0) <= edge0->getLength()/2) {
           cpData[iedge0].getFrameOfReference().setPosition(edge0->getFrame()->getPosition() + t0*Wd0);
           cpData[iedge1].getFrameOfReference().setPosition(edge1->getFrame()->getPosition() + t1*Wd1);
-          cpData[iedge0].getFrameOfReference().getOrientation().set(0, -Wn);
-          cpData[iedge1].getFrameOfReference().getOrientation().set(0, -cpData[iedge0].getFrameOfReference().getOrientation().col(0));
-          cpData[iedge0].getFrameOfReference().getOrientation().set(1, Wd0);
-          cpData[iedge1].getFrameOfReference().getOrientation().set(1, -cpData[iedge0].getFrameOfReference().getOrientation().col(1));
-          cpData[iedge0].getFrameOfReference().getOrientation().set(2, crossProduct(Wn,Wd0));
-          cpData[iedge1].getFrameOfReference().getOrientation().set(2, cpData[iedge0].getFrameOfReference().getOrientation().col(2));
+          cpData[iedge0].getFrameOfReference().getOrientation(false).set(0, -Wn);
+          cpData[iedge1].getFrameOfReference().getOrientation(false).set(0, -cpData[iedge0].getFrameOfReference().getOrientation(false).col(0));
+          cpData[iedge0].getFrameOfReference().getOrientation(false).set(1, Wd0);
+          cpData[iedge1].getFrameOfReference().getOrientation(false).set(1, -cpData[iedge0].getFrameOfReference().getOrientation(false).col(1));
+          cpData[iedge0].getFrameOfReference().getOrientation(false).set(2, crossProduct(Wn,Wd0));
+          cpData[iedge1].getFrameOfReference().getOrientation(false).set(2, cpData[iedge0].getFrameOfReference().getOrientation(false).col(2));
 
           g = -d;
         }

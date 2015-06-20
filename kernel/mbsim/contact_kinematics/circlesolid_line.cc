@@ -45,18 +45,18 @@ namespace MBSim {
   void ContactKinematicsCircleSolidLine::updateg(double t, double &g, ContourPointData *cpData, int index) {
 
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation(t));
-    cpData[icircle].getFrameOfReference().getOrientation().set(0, -line->getFrame()->getOrientation().col(0));
-    cpData[icircle].getFrameOfReference().getOrientation().set(1, -line->getFrame()->getOrientation().col(1));
-    cpData[icircle].getFrameOfReference().getOrientation().set(2, line->getFrame()->getOrientation().col(2));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[iline].getFrameOfReference().getOrientation().col(0);
+    Vec3 Wn = cpData[iline].getFrameOfReference().getOrientation(false).col(0);
 
     Vec3 Wd = circlesolid->getFrame()->getPosition(t) - line->getFrame()->getPosition(t);
 
     g = Wn.T()*Wd - circlesolid->getRadius();
 
     cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - Wn*circlesolid->getRadius());
-    cpData[iline].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g);
+    cpData[iline].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition(false) - Wn*g);
   }
 
   void ContactKinematicsCircleSolidLine::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {

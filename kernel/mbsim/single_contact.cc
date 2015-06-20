@@ -804,7 +804,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       int addIndexNormal = 0;
       double scaleFactorN = dt;
@@ -838,7 +838,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
@@ -870,7 +870,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       //TODO: check indices (in other solution algorithms too!)
       const double om = 1.0;
@@ -905,7 +905,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       const double om = 1.0; // relaxation parameter omega (cf. Foerg, dissertation, p. 102)
 
@@ -938,7 +938,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       //compute residuum for normal direction
       int addIndexnormal = 0;
@@ -971,7 +971,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       //compute residuum for normal direction
       int addIndexnormal = 0;
@@ -1168,7 +1168,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
@@ -1207,7 +1207,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb();
+      const Vec &b = ds->getb(false);
 
       int addIndexnormal = 0;
       double scaleFactorN = dt;

@@ -103,7 +103,7 @@ namespace MBSimIntegrator {
       system.resize_(t);
 //      system.update(z,t); 
 
-      system.getb() << system.getgd(t) + system.getW(t).T()*slvLLFac(system.getLLM(t),system.geth(t))*dt;
+      system.getb(false) << system.getgd(t) + system.getW(t).T()*slvLLFac(system.getLLM(t),system.geth(t))*dt;
       iter = system.solveImpacts(t,dt);
 
       if(iter>maxIter) maxIter = iter;

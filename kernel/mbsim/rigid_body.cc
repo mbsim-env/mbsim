@@ -478,23 +478,23 @@ namespace MBSim {
 
   void RigidBody::updateJacobians0(double t) {
 
-    Z.getJacobianOfTranslation().init(0);
-    Z.getJacobianOfRotation().init(0);
+    Z.getJacobianOfTranslation(0,false).init(0);
+    Z.getJacobianOfRotation(0,false).init(0);
 
-    Z.getJacobianOfTranslation().set(i02,Index(0,R->gethSize()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
-    Z.getJacobianOfRotation().set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
+    Z.getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
+    Z.getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
 
-    Z.getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
-    Z.getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
+    Z.getJacobianOfTranslation(0,false).add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
+    Z.getJacobianOfRotation(0,false).add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
   }
 
   void RigidBody::updateJacobians2(double t) {
     if(updateByReference) {
-      Z.getJacobianOfTranslation(2).set(i02,Index(0,R->getJacobianOfTranslation(2).cols()-1), R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2));
-      Z.getJacobianOfRotation(2).set(i02,Index(0,R->getJacobianOfRotation(2).cols()-1), R->getJacobianOfRotation(t,2));
+      Z.getJacobianOfTranslation(2,false).set(i02,Index(0,R->getJacobianOfTranslation(2,false).cols()-1), R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2));
+      Z.getJacobianOfRotation(2,false).set(i02,Index(0,R->getJacobianOfRotation(2,false).cols()-1), R->getJacobianOfRotation(t,2));
     } else {
-      Z.getJacobianOfTranslation(2).set(i02,Index(0,K->getJacobianOfTranslation(2).cols()-1), R->getOrientation(t)*getPJT(t));
-      Z.getJacobianOfRotation(2).set(i02,Index(0,K->getJacobianOfRotation(2).cols()-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);  
+      Z.getJacobianOfTranslation(2,false).set(i02,Index(0,K->getJacobianOfTranslation(2,false).cols()-1), R->getOrientation(t)*getPJT(t));
+      Z.getJacobianOfRotation(2,false).set(i02,Index(0,K->getJacobianOfRotation(2,false).cols()-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);
     }
   }
 
@@ -810,16 +810,19 @@ namespace MBSim {
     qRRel = qRel(iqR); 
     updGC = false; 
   }
+
   void RigidBody::setuRel(const fmatvec::Vec &u) { 
     uRel = u; 
     uTRel = uRel(iuT);
     uRRel = uRel(iuR);
     updGC = false; 
   }
+
   void RigidBody::setJRel(const fmatvec::Mat &J) { 
     JRel[0] = J; 
     updGJ = false; 
   }
+
   void RigidBody::setjRel(const fmatvec::Vec &j) { 
     jRel = j; 
     updGJ = false; 

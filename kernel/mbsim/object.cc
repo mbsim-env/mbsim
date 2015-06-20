@@ -335,5 +335,16 @@ namespace MBSim {
   void Object::updateqd(double t) {
     qd = getT(t) * u;
   }
+
+  const fmatvec::Vec& Object::geth(int i, bool check) const {
+    assert((not check) or (not ds->updateh(i)));
+    return h[i];
+  }
+
+  fmatvec::Vec& Object::geth(int i, bool check) {
+    assert((not check) or (not ds->updateh(i)));
+    return h[i];
+  }
+
 }
 

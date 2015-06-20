@@ -50,12 +50,12 @@ namespace MBSim {
       if(g < -rectangle->getThickness())
         g = 1;
       else {
-        cpData[ipoint].getFrameOfReference().getPosition() = point->getFrame()->getPosition();
-        cpData[irectangle].getFrameOfReference().getPosition() = point->getFrame()->getPosition() - g * rectangle->getFrame()->getOrientation().col(0);
-        cpData[irectangle].getFrameOfReference().getOrientation() = rectangle->getFrame()->getOrientation();
-        cpData[ipoint].getFrameOfReference().getOrientation().set(0,-rectangle->getFrame()->getOrientation().col(0));
-        cpData[ipoint].getFrameOfReference().getOrientation().set(1,-rectangle->getFrame()->getOrientation().col(1));
-        cpData[ipoint].getFrameOfReference().getOrientation().set(2,rectangle->getFrame()->getOrientation().col(2));
+        cpData[ipoint].getFrameOfReference().getPosition(false) = point->getFrame()->getPosition();
+        cpData[irectangle].getFrameOfReference().getPosition(false) = point->getFrame()->getPosition() - g * rectangle->getFrame()->getOrientation().col(0);
+        cpData[irectangle].getFrameOfReference().getOrientation(false) = rectangle->getFrame()->getOrientation();
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(0,-rectangle->getFrame()->getOrientation().col(0));
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(1,-rectangle->getFrame()->getOrientation().col(1));
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(2,rectangle->getFrame()->getOrientation().col(2));
       }
     }
     else

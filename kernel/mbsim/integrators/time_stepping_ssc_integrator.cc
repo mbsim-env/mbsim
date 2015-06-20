@@ -1348,9 +1348,9 @@ namespace MBSimIntegrator {
       if (! SetValuedLinkList[i]->isActive())
         SetValuedLinkList[i]->deletelaRef();
       if(sizeLink >= la_Sizes(i)) 
-        SetValuedLinkList[i]->getla()(0,la_Sizes(i)-1) =  la_(j,j+la_Sizes(i)-1); 
+        SetValuedLinkList[i]->getla()(0,la_Sizes(i)-1) = la_(j,j+la_Sizes(i)-1);
       else
-        SetValuedLinkList[i]->getla()(0,sizeLink-1) =  la_(j,j+sizeLink-1); 
+        SetValuedLinkList[i]->getla()(0,sizeLink-1) = la_(j,j+sizeLink-1);
       j+=la_Sizes(i);  
     }     
   }

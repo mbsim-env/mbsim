@@ -43,11 +43,11 @@ namespace MBSim {
 
   void ContactKinematicsSpherePlane::updateg(double t, double &g, ContourPointData *cpData, int index) {
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation(t));
-    cpData[isphere].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
-    cpData[isphere].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
-    cpData[isphere].getFrameOfReference().getOrientation().set(2, plane->getFrame()->getOrientation().col(2));
+    cpData[isphere].getFrameOfReference().getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    cpData[isphere].getFrameOfReference().getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    cpData[isphere].getFrameOfReference().getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
+    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation(false).col(0);
 
     Vec3 Wd = sphere->getFrame()->getPosition(t) - plane->getFrame()->getPosition(t);
 
@@ -55,7 +55,7 @@ namespace MBSim {
 
 
     cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
-    cpData[iplane].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition() - Wn*g);
+    cpData[iplane].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition(false) - Wn*g);
   }
 
   void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {

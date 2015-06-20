@@ -38,13 +38,13 @@ namespace MBSim {
     if(type==constant) {
       connectedObject->geth(j)(uInd)+=la(0);
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
-        applyForceAlsoTo[i].ref->geth(j)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
+        applyForceAlsoTo[i].ref->geth(j,false)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
     else if(type==linear) {
       la(0)=m*(t-t0)+a;
       connectedObject->geth(j)(uInd)+=la(0);
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
-        applyForceAlsoTo[i].ref->geth(j)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
+        applyForceAlsoTo[i].ref->geth(j,false)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
   }
 

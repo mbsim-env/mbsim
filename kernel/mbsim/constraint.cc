@@ -605,13 +605,13 @@ namespace MBSim {
       Mat B(nu,nh);
       Mat JT0(3,nh);
       Mat JR0(3,nh);
-      if(frame1->getJacobianOfTranslation().cols()) {
-        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation().cols()-1))+=frame1->getJacobianOfTranslation(t);
-        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation().cols()-1))+=frame1->getJacobianOfRotation(t);
+      if(frame1->getJacobianOfTranslation(0,false).cols()) {
+        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=frame1->getJacobianOfTranslation(t);
+        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=frame1->getJacobianOfRotation(t);
       }
-      if(frame2->getJacobianOfTranslation().cols()) {
-        JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation().cols()-1))-=frame2->getJacobianOfTranslation(t);
-        JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation().cols()-1))-=frame2->getJacobianOfRotation(t);
+      if(frame2->getJacobianOfTranslation(0,false).cols()) {
+        JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->getJacobianOfTranslation(t);
+        JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->getJacobianOfRotation(t);
       }
       B(Index(0,dT.cols()-1),Index(0,nh-1)) = -(dT.T()*JT0);
       B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -(dR.T()*JR0);

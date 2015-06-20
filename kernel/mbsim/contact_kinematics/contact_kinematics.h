@@ -79,15 +79,15 @@ namespace MBSim {
        */
       virtual void updatewb(double t, fmatvec::Vec &wb, double g, ContourPointData* cpData) = 0;
       
-      /*!
-       * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
-       * \param vector of single contacts used in the contact kinematics
-       *
-       * REMARK: The given vector of Contacts is ordered by the possible contact points (cp. multi-contact preINIT-stage)
-       */
-      virtual void updateg(double t, std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(t, contact[0].getg()(0), contact[0].getcpData());}
-
-      virtual void updatewb(double t, std::vector<SingleContact> & contact) {if(contact[0].getwb().size()) updatewb(t, contact[0].getwb(), contact[0].getg()(0), contact[0].getcpData());}
+//      /*!
+//       * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
+//       * \param vector of single contacts used in the contact kinematics
+//       *
+//       * REMARK: The given vector of Contacts is ordered by the possible contact points (cp. multi-contact preINIT-stage)
+//       */
+//      virtual void updateg(double t, std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(t, contact[0].getg()(0), contact[0].getcpData());}
+//
+//      virtual void updatewb(double t, std::vector<SingleContact> & contact) {if(contact[0].getwb().size()) updatewb(t, contact[0].getwb(), contact[0].getg()(0), contact[0].getcpData());}
 
       /** 
        * \brief treats ordering of contours

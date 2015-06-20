@@ -1550,6 +1550,71 @@ namespace MBSim {
       inverseKineticsLink[i]->resetUpToDate();
   }
 
+  const fmatvec::Mat& DynamicSystem::getT(bool check) const {
+    assert((not check) or (not ds->updateT()));
+    return T;
+  }
+
+  const fmatvec::Vec& DynamicSystem::geth(int i, bool check) const {
+    assert((not check) or (not ds->updateh(i)));
+    return h[i];
+  }
+
+  const fmatvec::SymMat& DynamicSystem::getM(int i, bool check) const {
+    assert((not check) or (not ds->updateM(i)));
+    return M[i];
+  }
+
+  const fmatvec::SymMat& DynamicSystem::getLLM(int i, bool check) const {
+    assert((not check) or (not ds->updateLLM(i)));
+    return LLM[i];
+  }
+
+  const fmatvec::Mat& DynamicSystem::getW(int i, bool check) const {
+    assert((not check) or (not ds->updateW(i)));
+    return W[i];
+  }
+
+  const fmatvec::Mat& DynamicSystem::getV(int i, bool check) const {
+    assert((not check) or (not ds->updateV(i)));
+    return V[i];
+  }
+
+  const fmatvec::Vec& DynamicSystem::getg(bool check) const {
+    assert((not check) or (not ds->updateg()));
+    return g;
+  }
+
+  const fmatvec::Vec& DynamicSystem::getgd(bool check) const {
+    assert((not check) or (not ds->updategd()));
+    return gd;
+  }
+
+//  fmatvec::Vec& DynamicSystem::geth(int i, bool check) {
+//    assert((not check) or (not ds->updh(i)));
+//    return h[i];
+//  }
+//
+//  fmatvec::Vec& DynamicSystem::getM(int i, bool check) {
+//    assert((not check) or (not ds->updM(i)));
+//    return M[i];
+//  }
+
+  fmatvec::SymMat& DynamicSystem::getLLM(int i, bool check) {
+    assert((not check) or (not ds->updateLLM(i)));
+    return LLM[i];
+  }
+
+  fmatvec::Mat& DynamicSystem::getW(int i, bool check) {
+    assert((not check) or (not ds->updateW(i)));
+    return W[i];
+  }
+//
+//  fmatvec::Vec& DynamicSystem::getV(int i, bool check) {
+//    assert((not check) or (not ds->updV(i)));
+//    return V[i];
+//  }
+
   const Mat& DynamicSystem::getT(double t) {
     if(ds->updateT()) ds->updateT(t);
     return T;
@@ -1614,6 +1679,11 @@ namespace MBSim {
     ds->updatebInverseKinetics(t);
     return bInverseKinetics;
   }
+
+//  const Mat& DynamicSystem::getsv(double t) {
+//    ds->updateStopVector(t);
+//    return sv;
+//  }
 
 }
 

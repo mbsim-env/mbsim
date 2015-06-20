@@ -122,7 +122,7 @@ namespace MBSim {
        *
        * \param contacts vector of contacts that are part of the contact law
        */
-      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contact) {};
+//      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contact) {};
 
       /** \brief Set the force function for use in regularisized constitutive laws
        * The first input parameter to the force function is g.
@@ -738,7 +738,7 @@ namespace MBSim {
       virtual bool isActive(double g, double gTol) { return g<=gTol; }
       virtual bool remainsActive(double s, double sTol) { return s<=sTol; }
       virtual bool isSetValued() const { return false; }
-      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
+//      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
       /***************************************************/
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
@@ -933,7 +933,7 @@ namespace MBSim {
       virtual bool isActive(double g, double gTol) { return true; }
       virtual bool remainsActive(double s, double sTol) { return true; }
       virtual bool isSetValued() const { return false; }
-      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contact);
+//      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contact);
       /***************************************************/
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);

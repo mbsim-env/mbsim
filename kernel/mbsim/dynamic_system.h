@@ -239,42 +239,32 @@ namespace MBSim {
       const fmatvec::Vec& getx0() const { return x0; };
       fmatvec::Vec& getx0() { return x0; };
 
-      const fmatvec::Mat& getT() const { return T; };
-      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
-      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
-      fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
-      const fmatvec::Vec& geth(int j=0) const { return h[j]; };
-      fmatvec::Vec& geth(int j=0) { return h[j]; };
-      const fmatvec::Vec& getf() const { return f; };
-      fmatvec::Vec& getf() { return f; };
-
-      const fmatvec::Mat& getW(int i=0) const { return W[i]; }
-      fmatvec::Mat& getW(int i=0) { return W[i]; }
-      const fmatvec::Mat& getV(int i=0) const { return V[i]; }
-      fmatvec::Mat& getV(int i=0) { return V[i]; }
-
+      const fmatvec::Mat& getT(bool check=true) const;
+      const fmatvec::Vec& geth(int j=0, bool check=true) const;
+      const fmatvec::SymMat& getM(int i=0, bool check=true) const;
+      const fmatvec::SymMat& getLLM(int i=0, bool check=true) const;
+      const fmatvec::Mat& getW(int i=0, bool check=true) const;
+      const fmatvec::Mat& getV(int i=0, bool check=true) const;
       const fmatvec::Vec& getla() const { return la; }
-      fmatvec::Vec& getla() { return la; }
       const fmatvec::Vec& getLa() const { return La; }
+      const fmatvec::Vec& getg(bool check=true) const;
+      const fmatvec::Vec& getgd(bool check=true) const;
+      fmatvec::Vec& getla() { return la; }
       fmatvec::Vec& getLa() { return La; }
-      const fmatvec::Vec& getg() const { return g; }
-      fmatvec::Vec& getg() { return g; }
-      const fmatvec::Vec& getgd() const { return gd; }
-      fmatvec::Vec& getgd() { return gd; }
-      const fmatvec::Vec& getrFactor() const { return rFactor; }
-      fmatvec::Vec& getrFactor() { return rFactor; }
-      fmatvec::Vec& getsv() { return sv; }
-      const fmatvec::Vec& getsv() const { return sv; }
-      fmatvec::VecInt& getjsv() { return jsv; }
-      const fmatvec::VecInt& getjsv() const { return jsv; }
+//      const fmatvec::Vec& getsv(bool check=true) const { return sv; }
+//      const fmatvec::VecInt& getjsv() const { return jsv; }
+//      const fmatvec::Vec& getres() const { return res; }
+//      const fmatvec::Vec& getcorr(bool check=true) const { return corr; };
+      fmatvec::Mat& getW(int i=0, bool check=true);
+//      fmatvec::Mat& getV(int i=0, bool check=true);
+      fmatvec::SymMat& getLLM(int i=0, bool check=true);
+//      fmatvec::SymMat& getM(int i=0, bool check=true);
+//      fmatvec::Vec& geth(int j=0, bool check=true);
+
       fmatvec::VecInt& getLinkStatus() { return LinkStatus; }
       fmatvec::VecInt& getLinkStatusReg() { return LinkStatusReg; }
       const fmatvec::VecInt& getLinkStatus() const { return LinkStatus; }
       const fmatvec::VecInt& getLinkStatusReg() const { return LinkStatusReg; }
-      const fmatvec::Vec& getres() const { return res; }
-      fmatvec::Vec& getres() { return res; }
-      const fmatvec::Vec& getcorr() const { return corr; };
-      fmatvec::Vec& getcorr() { return corr; };
 
       const fmatvec::Mat& getT(double t);
       const fmatvec::Vec& geth(double t, int i=0);
@@ -289,6 +279,7 @@ namespace MBSim {
       const fmatvec::Vec& getgd(double t);
       const fmatvec::Mat& getWInverseKinetics(double t, int i=0);
       const fmatvec::Mat& getbInverseKinetics(double t);
+//      const fmatvec::Vec& getsv(double t);
 
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
@@ -837,9 +828,9 @@ namespace MBSim {
       fmatvec::Vec x, xd, x0;
 
       /**
-       * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
+       * \brief smooth, smooth with respect to objects, smooth with respect to links and nonsmooth
        */
-      fmatvec::Vec h[2], r[2], rdt[2], f;
+      fmatvec::Vec h[2], r[2], rdt[2];
 
       /**
        * \brief 

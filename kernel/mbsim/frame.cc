@@ -181,94 +181,23 @@ namespace MBSim {
     updateVel = true;
     updateAcc = true;
   }
+
   void Frame::resetPositionsUpToDate() {
     updatePos = true;
   }
+
   void Frame::resetVelocitiesUpToDate() {
     updateVel = true;
   }
+
   void Frame::resetJacobiansUpToDate() {
     updateJac[0] = true; 
     updateJac[1] = true; 
     updateJac[2] = true; 
   }
+
   void Frame::resetGyroscopicAccelerationsUpToDate() {
     updateGA = true; 
-  }
-
-  const Vec3& Frame::getPosition(double t) {
-    if(updatePos) updatePositions(t);
-    return getPosition(); 
-  }
-
-  const SqrMat3& Frame::getOrientation(double t) {
-    if(updatePos) updatePositions(t); 
-    return getOrientation(); 
-  }
-
-  const Vec3& Frame::getVelocity(double t) {
-    if(updateVel) updateVelocities(t); 
-    return getVelocity(); 
-  }
-
-  const Vec3& Frame::getAngularVelocity(double t) {
-    if(updateVel) updateVelocities(t); 
-    return getAngularVelocity(); 
-  }
-
-  const Vec3& Frame::getAcceleration(double t) {
-    if(updateAcc) updateAccelerations(t); 
-    return getAcceleration(); 
-  }
-
-  const Vec3& Frame::getAngularAcceleration(double t) {
-    if(updateAcc) updateAccelerations(t); 
-    return getAngularAcceleration(); 
-  }
-
-  const Mat3xV& Frame::getJacobianOfTranslation(double t, int j) {
-    if(updateJac[j]) updateJacobians(t,j); 
-    return getJacobianOfTranslation(j); 
-  }
-
-  const Mat3xV& Frame::getJacobianOfRotation(double t, int j) {
-    if(updateJac[j]) updateJacobians(t,j); 
-    return getJacobianOfRotation(j); 
-  }
-
-  const Vec3& Frame::getGyroscopicAccelerationOfTranslation(double t) {
-    if(updateGA) updateGyroscopicAccelerations(t); 
-    return getGyroscopicAccelerationOfTranslation(); 
-  }
-
-  const Vec3& Frame::getGyroscopicAccelerationOfRotation(double t) {
-    if(updateGA) updateGyroscopicAccelerations(t); 
-    return getGyroscopicAccelerationOfRotation(); 
-  }
-
-  void Frame::updatePositions(double t) { 
-    parent->updatePositions(t);
-    updatePos = false;
-  }
-
-  void Frame::updateVelocities(double t) { 
-    parent->updateVelocities(t);
-    updateVel = false;
-  }
-
-  void Frame::updateAccelerations(double t) { 
-    parent->updateAccelerations(t);
-    updateAcc = false;
-  }
-
-  void Frame::updateJacobians(double t, int j) {
-    parent->updateJacobians(t,j);
-    updateJac[j] = false;
-  }
-
-  void Frame::updateGyroscopicAccelerations(double t) {
-    parent->updateGyroscopicAccelerations(t);
-    updateGA = false;
   }
 
 }

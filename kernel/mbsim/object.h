@@ -232,16 +232,16 @@ namespace MBSim {
       virtual void sethInd(int hInd_, int i=0); 
       int gethInd(int i=0) { return hInd[i]; }
 
-      const fmatvec::Vec& geth(int i=0) const { return h[i]; };
-      fmatvec::Vec& geth(int i=0) { return h[i]; };
-      const fmatvec::Vec& getr(int i=0) const { return r[i]; };
-      fmatvec::Vec& getr(int i=0) { return r[i]; };
-      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
-      fmatvec::SymMat& getM(int i=0) { return M[i]; };
-      const fmatvec::Mat& getT() const { return T; };
-      fmatvec::Mat& getT() { return T; };
-      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
-      fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
+      const fmatvec::Vec& geth(int i=0, bool check=true) const;
+      fmatvec::Vec& geth(int i=0, bool check=true);
+//      const fmatvec::Vec& getr(int i=0) const { return r[i]; };
+//      fmatvec::Vec& getr(int i=0) { return r[i]; };
+//      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
+//      fmatvec::SymMat& getM(int i=0) { return M[i]; };
+//      const fmatvec::Mat& getT() const { return T; };
+//      fmatvec::Mat& getT() { return T; };
+//      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
+//      fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
 
       fmatvec::Vec& getq() { return q; };
       fmatvec::Vec& getu() { return u; };

@@ -214,13 +214,13 @@ namespace MBSim {
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
-      const fmatvec::SparseMat& getGs() const { return Gs; }
-      fmatvec::SparseMat& getGs() { return Gs; }
-      const fmatvec::SqrMat& getG() const { return G; }
-      fmatvec::SqrMat& getG() { return G; }
-      const fmatvec::Vec& getb() const { return b; }
-      fmatvec::Vec& getb() { return b; }
+      const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
+      const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
+      const fmatvec::Vec& getb(bool check=true) const { assert((not check) or (not updb)); return b; }
       const fmatvec::SqrMat& getJprox() const { return Jprox; }
+      fmatvec::SqrMat& getG(bool check=true) { assert((not check) or (not updG)); return G; }
+      fmatvec::SparseMat& getGs(bool check=true) { assert((not check) or (not updG)); return Gs; }
+      fmatvec::Vec& getb(bool check=true) { assert((not check) or (not updb)); return b; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
       const fmatvec::SqrMat& getG(double t);

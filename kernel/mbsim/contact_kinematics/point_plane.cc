@@ -45,18 +45,18 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::updateg(double t, double &g, ContourPointData* cpData, int index) {
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation(t)); // data of possible contact point
-    cpData[ipoint].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
-    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
-    cpData[ipoint].getFrameOfReference().getOrientation().set(2, plane->getFrame()->getOrientation().col(2));
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0); // normal is first vector of coordinate orientation
+    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation(false).col(0); // normal is first vector of coordinate orientation
 
     Vec3 Wd =  point->getFrame()->getPosition(t) - plane->getFrame()->getPosition(t);
 
     g = Wn.T()*Wd; // distance
 
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // possible contact locations
-    cpData[iplane].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g);
+    cpData[iplane].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition(false) - Wn*g);
   }
 
   void ContactKinematicsPointPlane::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {

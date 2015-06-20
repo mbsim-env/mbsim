@@ -380,24 +380,30 @@ namespace MBSim {
       int getLinkStatusRegSize() const { return LinkStatusRegSize; }
 
       const fmatvec::Vec& getla() const { return la; }
-      fmatvec::Vec& getla() { return la; }
       const fmatvec::Vec& getLa() const { return La; }
+      fmatvec::Vec& getla() { return la; }
       fmatvec::Vec& getLa() { return La; }
+
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
       int getbSize() const { return bSize; }
-      const fmatvec::Index& getlaIndex() const { return Ila; }
 
-      const fmatvec::Vec& getg() const { return g; }
-      fmatvec::Vec& getg() { return g; }
-      const fmatvec::Vec& getgd() const { return gd; }
-      fmatvec::Vec& getgd() { return gd; }
-      const fmatvec::Vec& getwb() const { return wb; }
-      fmatvec::Vec& getwb() { return wb; }
+//      const fmatvec::Vec& getg() const { return g; }
+//      const fmatvec::Vec& getgd() const { return gd; }
+//      const fmatvec::Vec& getwb() const { return wb; }
+//      fmatvec::Vec& getg() { return g; }
+//      fmatvec::Vec& getgd() { return gd; }
+//      fmatvec::Vec& getwb() { return wb; }
+      const fmatvec::Vec& getg(double t);
+      const fmatvec::Vec& getgd(double t);
+      const fmatvec::Vec& getwb(double t);
+
       int getgdInd() const { return gdInd; } 
       int getgSize() const { return gSize; } 
       int getgdSize() const { return gdSize; } 
-      const fmatvec::Index& getgIndex() const { return Ig; }
+
+//      const fmatvec::Index& getgIndex() const { return Ig; }
+//      const fmatvec::Index& getlaIndex() const { return Ila; }
       
       int getrFactorSize() const { return rFactorSize; } 
       

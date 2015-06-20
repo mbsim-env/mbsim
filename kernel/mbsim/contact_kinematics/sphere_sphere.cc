@@ -51,12 +51,12 @@ namespace MBSim {
       t_(2) = 0.0;
     }
     t_ = t_/nrm2(t_);
-    cpData[isphere0].getFrameOfReference().getOrientation().set(0, Wd);
-    cpData[isphere1].getFrameOfReference().getOrientation().set(0, -cpData[isphere0].getFrameOfReference().getOrientation().col(0));
-    cpData[isphere0].getFrameOfReference().getOrientation().set(1, t_);
-    cpData[isphere1].getFrameOfReference().getOrientation().set(1, -cpData[isphere0].getFrameOfReference().getOrientation().col(1));
-    cpData[isphere0].getFrameOfReference().getOrientation().set(2, crossProduct(Wd,t_));
-    cpData[isphere1].getFrameOfReference().getOrientation().set(2, cpData[isphere0].getFrameOfReference().getOrientation().col(2));
+    cpData[isphere0].getFrameOfReference().getOrientation(false).set(0, Wd);
+    cpData[isphere1].getFrameOfReference().getOrientation(false).set(0, -cpData[isphere0].getFrameOfReference().getOrientation(false).col(0));
+    cpData[isphere0].getFrameOfReference().getOrientation(false).set(1, t_);
+    cpData[isphere1].getFrameOfReference().getOrientation(false).set(1, -cpData[isphere0].getFrameOfReference().getOrientation(false).col(1));
+    cpData[isphere0].getFrameOfReference().getOrientation(false).set(2, crossProduct(Wd,t_));
+    cpData[isphere1].getFrameOfReference().getOrientation(false).set(2, cpData[isphere0].getFrameOfReference().getOrientation(false).col(2));
     cpData[isphere0].getFrameOfReference().setPosition(sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd);
     cpData[isphere1].getFrameOfReference().setPosition(sphere1->getFrame()->getPosition() - sphere1->getRadius() * Wd);
   }

@@ -1195,8 +1195,8 @@ namespace MBSim {
         msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed!" << endl;
         break;
       }
-      Vec mu = slvLS(Gv, -getg(t) + getW().T() * nu + corr);
-      Vec dnu = slvLLFac(getLLM(), getW() * mu) - nu;
+      Vec mu = slvLS(Gv, -getg(t) + getW(0,false).T() * nu + corr);
+      Vec dnu = slvLLFac(getLLM(0,false), getW(0,false) * mu) - nu;
       nu += dnu;
       q += T * dnu;
       resetUpToDate();
