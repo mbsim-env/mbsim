@@ -59,7 +59,7 @@
         </xs:element>
       </xs:choice>
     </xs:sequence>
-    <xs:attribute name="name" type="pv:stringPartialOctEval" use="required"/>
+    <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
   </xs:complexType>
 
 </xs:schema>

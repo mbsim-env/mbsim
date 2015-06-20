@@ -90,7 +90,7 @@
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="maximalNumberOfSteps" type="pv:integerFullOctEval" minOccurs="0"> 
+          <xs:element name="maximalNumberOfSteps" type="pv:integerFullEval" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
@@ -144,7 +144,7 @@
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="maximalNumberOfSteps" type="pv:integerFullOctEval" minOccurs="0"> 
+          <xs:element name="maximalNumberOfSteps" type="pv:integerFullEval" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
@@ -195,7 +195,7 @@
                 Minimal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="numberOfMaximalSteps" type="pv:integerFullOctEval">
+          <xs:element name="numberOfMaximalSteps" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
@@ -251,7 +251,7 @@
                 Maximal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="plotOnRoot" type="pv:booleanFullOctEval">
+          <xs:element name="plotOnRoot" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
             </xs:documentation></xs:annotation>
@@ -304,7 +304,7 @@
                 minimale Zeitschrittweite (default: sqrt(eps))
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="outputInterpolation" type="pv:booleanFullOctEval" minOccurs="0"> 
+          <xs:element name="outputInterpolation" type="pv:booleanFullEval" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 flag zur Steuerung, ob für die Plotausgabe die vom Integrator angefahrenen Zeitpunkte verwendet werden oder ob auf die vorgegebenen Plotzeitpunkte interpoliert werden soll (default: false)
             </xs:documentation></xs:annotation>
@@ -359,7 +359,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="order" type="pv:integerFullOctEval">
+                <xs:element name="order" type="pv:integerFullEval">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
                       maximale Integrationsordnung: default: 1; 1,2,3 bei Fehlerschätzung mittels Extrapolation; 1 ..4 bei embedded Verfahren 
@@ -463,7 +463,7 @@
           <xs:element name="advancedOptions" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
-                  <xs:element name="deactivateSSC" type="pv:booleanFullOctEval" minOccurs="0"> 
+                  <xs:element name="deactivateSSC" type="pv:booleanFullEval" minOccurs="0"> 
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                       Deaktivieren der Schrittweitenkontrolle und Umschalten auf konstante Zeitschrittweite
                   </xs:documentation></xs:annotation>
@@ -510,7 +510,7 @@
                 Gewichtungsfaktor des implizit ermittelten Systemzustandes. Wert zwischen 0 (voll explizit) und 1 (voll implizit).
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="driftCompensation" type="pv:booleanFullOctEval"> 
+          <xs:element name="driftCompensation" type="pv:booleanFullEval"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Driftkompensation
             </xs:documentation></xs:annotation>

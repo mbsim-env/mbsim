@@ -41,7 +41,7 @@
                 Anfangszustand der Differentialinklusion.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="task" type="pv:stringFullOctEval" minOccurs="0">
+          <xs:element name="task" type="pv:stringFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
@@ -51,17 +51,17 @@
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="mode" type="pv:integerFullOctEval" minOccurs="0">  
+          <xs:element name="mode" type="pv:integerFullEval" minOccurs="0">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="determineEquilibriumState" type="pv:booleanFullOctEval" minOccurs="0">  
+          <xs:element name="determineEquilibriumState" type="pv:booleanFullEval" minOccurs="0">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="autoUpdate" type="pv:booleanFullOctEval" minOccurs="0">  
+          <xs:element name="autoUpdate" type="pv:booleanFullEval" minOccurs="0">  
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>

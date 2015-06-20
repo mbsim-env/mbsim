@@ -22,7 +22,7 @@
     schemaLocation="../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>
 
   <xs:simpleType name="HLineReferenceType">
-    <xs:restriction base="pv:stringPartialOctEval">
+    <xs:restriction base="pv:stringPartialEval">
       <!-- pattern value="/?((\.\.|Group\[X\])/)*(Object\[X\]|Object\[X\])" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
@@ -313,7 +313,7 @@
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
-          <xs:element name="number" type="pv:integerFullOctEval">
+          <xs:element name="number" type="pv:integerFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Anzahl der parallel geschalteten hydraulischen Widerstände.
@@ -1506,7 +1506,7 @@
                   <xs:element name="Polynom"/>
                   <xs:element name="Harmonic"/>
                 </xs:choice>
-                <xs:element name="number" type="pv:integerFullOctEval"/>
+                <xs:element name="number" type="pv:integerFullEval"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1535,7 +1535,7 @@
           <xs:element name="diameter" type="pv:lengthScalar"/>
           <xs:element name="length" type="pv:lengthScalar"/>
           <xs:element name="relativePlotPoints" type="pv:nounitVector" minOccurs="0"/>
-          <xs:element name="numberOfAnsatzFunctions" type="pv:integerFullOctEval"/>
+          <xs:element name="numberOfAnsatzFunctions" type="pv:integerFullEval"/>
           <xs:choice>
             <xs:element name="windowNone"/>
             <xs:element name="windowHann"/>

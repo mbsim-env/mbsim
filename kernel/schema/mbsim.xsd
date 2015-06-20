@@ -63,7 +63,7 @@
     <xs:sequence>
       <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
-      <xs:element name="referencePoint" minOccurs="0" type="pv:stringFullOctEval"/>
+      <xs:element name="referencePoint" minOccurs="0" type="pv:stringFullEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
       <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
     </xs:sequence>
@@ -75,7 +75,7 @@
       <xs:element name="springRadius" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="crossSectionRadius" type="pv:lengthScalar" minOccurs="0"/>
       <xs:element name="nominalLength" type="pv:lengthScalar" minOccurs="0"/>
-      <xs:element name="type" minOccurs="0" type="pv:stringFullOctEval"/>
+      <xs:element name="type" minOccurs="0" type="pv:stringFullEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
       <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
     </xs:sequence>
@@ -104,17 +104,17 @@
           <dt>debug</dt>               <dd>interne Größen ausgeben [-]</dd>
         </dl>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <!-- A reference to a Frame at the same hierarchy -->
   <xs:simpleType name="CurrentFrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><span class="_element">&lt;Frame&gt;</span></a> im aktuellen Kontext.
-        Gültige Werte sind <code>Frame[X]</code>, wobei <code>X</code> den <a class="link" href="pv:partialOctaveType">Element-Namen</a> des
+        Gültige Werte sind <code>Frame[X]</code>, wobei <code>X</code> den <a class="link" href="pv:stringPartialEval">Element-Namen</a> des
         zu referenzierenden Frames darstellt.
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <!-- A reference to a Frame at the parent -->
@@ -122,11 +122,11 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><span class="_element">&lt;Frame&gt;</span></a> des Vorgängers
         des aktuellen Kontext (Vorgänger in der Hierarchieebene). Gültige Werte sind <code>../Frame[X]</code>, wobei <code>X</code> den
-        <a class="link" href="pv:partialOctaveType">Element-Namen</a> des Frames des Vorgangers darstellt.
+        <a class="link" href="pv:stringPartialEval">Element-Namen</a> des Frames des Vorgangers darstellt.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <!-- A reference from a Link|Object to a Frame somewhere in the hierarchy -->
@@ -134,7 +134,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><span class="_element">&lt;Frame&gt;</span></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <code>../../Group[X]/Group[X]/Object[Y]/Frame[Z]</code>, wobei <code>X</code>,
-        <code>Y</code> und <code>Z</code> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil
+        <code>Y</code> und <code>Z</code> geweils einen <a class="link" href="pv:stringPartialEval">Element-Namen</a> darstellt. Der Pfadteil
         <code>..</code> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
         <code>Group</code> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
         <code>Group</code> mit dem Element-Namen <code>X</code>. Als letzter Pfadteil kann der <code>Frame Z</code> des
@@ -145,7 +145,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link|Object to a Contour somewhere in the hierarchy -->
@@ -153,7 +153,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einer <a class="link" href="mbsim:Contour"><span class="_element">&lt;Contour&gt;</span></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <code>../../Group[X]/Group[X]/Object[Y]/Contour[Z]</code>, wobei <code>X</code>,
-        <code>Y</code> und <code>Z</code> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil
+        <code>Y</code> und <code>Z</code> geweils einen <a class="link" href="pv:stringPartialEval">Element-Namen</a> darstellt. Der Pfadteil
         <code>..</code> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
         <code>Group</code> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
         <code>Group</code> mit dem Element-Namen <code>X</code>. Als letzter Pfadteil kann die <code>Contour Z</code> des
@@ -164,7 +164,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Object somewhere in the hierarchy -->
@@ -172,7 +172,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Object"><span class="_element">&lt;Object&gt;</span></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <code>../../Group[X]/Group[X]/Object[Y]</code>, wobei <code>X</code> und
-        <code>Y</code> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil <code>..</code>
+        <code>Y</code> geweils einen <a class="link" href="pv:stringPartialEval">Element-Namen</a> darstellt. Der Pfadteil <code>..</code>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <code>Group</code>
         kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <code>Group</code> mit dem
         Element-Namen <code>X</code>. Als letzter Pfadteil wird das <code>Object Y</code> ausgewählt. Alternativ kann die
@@ -181,7 +181,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Link somewhere in the hierarchy -->
@@ -189,7 +189,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Link"><span class="_element">&lt;Link&gt;</span></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <code>../../Group[X]/Group[X]/Link[Y]</code>, wobei <code>X</code> und
-        <code>Y</code> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil <code>..</code>
+        <code>Y</code> geweils einen <a class="link" href="pv:stringPartialEval">Element-Namen</a> darstellt. Der Pfadteil <code>..</code>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <code>Group</code>
         kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <code>Group</code> mit dem
         Element-Namen <code>X</code>. Als letzter Pfadteil wird das <code>Link Y</code> ausgewählt. Alternativ kann die
@@ -198,7 +198,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
@@ -206,7 +206,7 @@
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Contact"><span class="_element">&lt;Contact&gt;</span></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <code>../../Group[X]/Group[X]/Contact[Y]</code>, wobei <code>X</code> und
-        <code>Y</code> geweils einen <a class="link" href="pv:partialOctaveType">Element-Namen</a> darstellt. Der Pfadteil <code>..</code>
+        <code>Y</code> geweils einen <a class="link" href="pv:stringPartialEval">Element-Namen</a> darstellt. Der Pfadteil <code>..</code>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <code>Group</code> kann
         beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <code>Group</code> mit dem
         Element-Namen <code>X</code>. Als letzter Pfadteil wird der <code>Contact Y</code> ausgewählt. Alternativ kann die
@@ -215,7 +215,7 @@
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:stringPartialOctEval"/>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <xs:element name="Element" abstract="true" type="ElementType">
@@ -252,7 +252,7 @@
         </xs:complexType> 
       </xs:element>  
     </xs:choice> 
-    <xs:attribute name="name" type="pv:stringPartialOctEval"/> <!-- is not required here since Function has not name attribute -->
+    <xs:attribute name="name" type="pv:stringPartialEval"/> <!-- is not required here since Function has not name attribute -->
   </xs:complexType> 
 
   <xs:element name="EmptyGroup" abstract="true" substitutionGroup="Element" type="EmptyGroupType"/>
@@ -595,7 +595,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="constraintSolver" minOccurs="0" type="pv:stringFullOctEval">
+                <xs:element name="constraintSolver" minOccurs="0" type="pv:stringFullEval">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
                       <p>Nebenbedingungsgleichungen auf Beschleunigungsebene.</p>
@@ -608,7 +608,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="impactSolver" minOccurs="0" type="pv:stringFullOctEval">
+                <xs:element name="impactSolver" minOccurs="0" type="pv:stringFullEval">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
                       <p>Nebenbedingungsgleichungen auf Geschwindigkeitssebene.</p>
@@ -621,7 +621,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="numberOfMaximalIterations" type="pv:integerFullOctEval" minOccurs="0">
+                <xs:element name="numberOfMaximalIterations" type="pv:integerFullEval" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
                       Maximale Iterationszahl der Löser bis zum Abruch.
@@ -654,12 +654,12 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="inverseKinetics" minOccurs="0" type="pv:booleanFullOctEval">
+          <xs:element name="inverseKinetics" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob Gelenkreaktionen berechnet werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="initialProjection" minOccurs="0" type="pv:booleanFullOctEval">
+          <xs:element name="initialProjection" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob vor Beginn der Simulation eine Projektion der generalisierten Lagen und Geschwindigkeiten erfolgen soll.
             </xs:documentation></xs:annotation>
@@ -908,12 +908,12 @@
               </xs:complexType>
             </xs:element>
           </xs:choice>
-          <xs:element name="translationDependentRotation" minOccurs="0" type="pv:booleanFullOctEval">
+          <xs:element name="translationDependentRotation" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullOctEval">
+          <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               tbd
             </xs:documentation></xs:annotation>
@@ -1373,7 +1373,7 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                tbd
             </xs:documentation></xs:annotation>
@@ -1455,7 +1455,7 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                tbd
             </xs:documentation></xs:annotation>
@@ -1860,7 +1860,7 @@
     <xs:complexContent>
       <xs:extension base="LinkType">
         <xs:sequence>
-          <xs:element name="type" minOccurs="0" type="pv:stringFullOctEval">
+          <xs:element name="type" minOccurs="0" type="pv:stringFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               <p>Definiert, wie die aufzuprägende Kraft während der Simulation in abhängigkeit der
               dynamischen Parameter berechnet wird.</p>
@@ -1907,7 +1907,7 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullOctEval">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                tbd
             </xs:documentation></xs:annotation>
@@ -2139,7 +2139,7 @@
              <xs:complexType>  
                <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
                <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
-               <xs:attribute name="name" type="pv:stringPartialOctEval" use="optional"/>
+               <xs:attribute name="name" type="pv:stringPartialEval" use="optional"/>
              </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
@@ -3888,7 +3888,7 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullOctEval">
+          <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
                   <dl>
@@ -3954,7 +3954,7 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="amplitudePhaseAngleForm" minOccurs="0" type="pv:booleanFullOctEval">
+          <xs:element name="amplitudePhaseAngleForm" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob die Koeffizienten <object class="inlineeqn">a_i</object> und <object class="inlineeqn">b_i</object> als Amplitude <object class="inlineeqn">A_i</object> und Phasenwinkel <object class="inlineeqn">\varphi_i</object> interpretiert werden sollen.
             </xs:documentation></xs:annotation>
