@@ -1,25 +1,14 @@
 #include "config.h"
-#include <mbxmlutils/preprocess.h>
-#include <iostream>
-#include <boost/filesystem.hpp>
+#include <mbxmlutils/octeval.h>
 #include <mbsimxml/mbsimflatxml.h>
-#include <mbxmlutilshelper/dom.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/shared_library.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
 #include <mbsimxml/mbsimxml.h>
-#include <boost/lexical_cast.hpp>
-#include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/algorithm/string.hpp>
-#include <boost/scope_exit.hpp>
-#include <mbxmlutils/octeval.h>
-#include <octave/version.h>
-#include <octave/defaults.h>
-
 #include "zip.h"
-
 #include <../general/fmi_variables.h>
 #include <../general/xmlpp_utils.h>
 #include <../general/mbsimsrc_fmi.h>
@@ -115,11 +104,12 @@ int main(int argc, char *argv[]) {
 
     vector<boost::shared_ptr<Variable> > xmlParam;
 
+    boost::shared_ptr<Eval> eval;
+
     // Create dss from XML file
     if(xmlFile) {
       // create octave
-      OctEval dummy(&dependencies);
-      Eval &eval=dummy;
+      eval.reset(new OctEval(&dependencies));
 
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all plugins."<<endl;
@@ -134,10 +124,10 @@ int main(int argc, char *argv[]) {
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
       boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-      Preprocess::preprocess(parser, eval, dependencies, modelEle, param);
+      Preprocess::preprocess(parser, *eval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
-      convertXPathParamSetToVariable(param, xmlParam, eval);
+      convertXPathParamSetToVariable(param, xmlParam, *eval);
       // remove all variables which are not in useParam
       vector<boost::shared_ptr<Variable> > xmlParam2;
       for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
@@ -377,68 +367,20 @@ int main(int argc, char *argv[]) {
         }
         cout<<endl;
 
-        cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
-        // note: casadi.oct is copied automatically with all other octave oct files later
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR/"@swig_ref");
-          srcIt!=directory_iterator(); ++srcIt) {
-          cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/LIBDIR/"@swig_ref"/srcIt->path().filename(), srcIt->path());
-        }
-        cout<<endl;
-
-        cout<<"Copy MBXMLUtils m-files to FMU."<<endl;
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbxmlutils"/"octave");
-          srcIt!=directory_iterator(); ++srcIt) {
-          cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"octave"/srcIt->path().filename(), srcIt->path());
-        }
-        cout<<endl;
-
         cout<<"Copy MBXMLUtils measurement.xml file to FMU."<<endl;
         fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"xml"/"measurement.xml",
           getInstallPath()/"share"/"mbxmlutils"/"xml"/"measurement.xml");
 
-        // get octave prefix
-        path octave_prefix(getInstallPath()); // use octave in install path
-        if(!exists(octave_prefix/"share"/"octave")) // if not found use octave in system path
-          octave_prefix=OCTAVE_PREFIX;
-        // get octave libdir without octave_prefix
-        path octave_libdir(string(OCTAVE_LIBDIR).substr(string(OCTAVE_PREFIX).length()+1));
-        // get octave octfiledir without octave_prefix
-        path octave_octfiledir(string(OCTAVE_OCTFILEDIR).substr(string(OCTAVE_PREFIX).length()+1));
-        // get octave fcnfiledir without octave_prefix
-        path octave_fcnfiledir(string(OCTAVE_FCNFILEDIR).substr(string(OCTAVE_PREFIX).length()+1));
-
-        cout<<"Copy octave m-files to FMU."<<endl;
-        path dir=octave_prefix/octave_fcnfiledir;
-        depth=distance(dir.begin(), dir.end());
-        for(recursive_directory_iterator srcIt=recursive_directory_iterator(octave_prefix/octave_fcnfiledir);
-            srcIt!=recursive_directory_iterator(); ++srcIt) {
-          if(is_directory(*srcIt)) // skip directories
-            continue;
-          path::iterator dstIt=srcIt->path().begin();
-          for(int i=0; i<depth; ++i) ++dstIt;
-          path dst;
-          for(; dstIt!=srcIt->path().end(); ++dstIt)
-            dst/=*dstIt;
+        map<path, pair<path, bool> > &files=eval->requiredFiles();
+        cout<<"Copy files required by the evaluator and dependencies to FMU."<<endl;
+        for(map<path, pair<path, bool> >::iterator it=files.begin(); it!=files.end(); ++it) {
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/octave_fcnfiledir/dst, srcIt->path());
+          if(!it->second.second)
+            fmuFile.add(path("resources")/"local"/it->second.first/it->first.filename(), it->first);
+          else
+            copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/it->second.first/it->first.filename(),
+                           path("resources")/"local"/LIBDIR, it->first);
         }
-        cout<<endl;
-
-        cout<<"Copy octave oct-files to FMU."<<endl;
-        // octave oct-files are copied to $FMU/resources/local/$LIBDIR since their are also all dependent libraries
-        // installed (and are found their due to Linux rpath or Windows alternate search order flag).
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR); srcIt!=directory_iterator(); ++srcIt) {
-          cout<<"."<<flush;
-          if(srcIt->path().extension()==".oct")
-            copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/srcIt->path().filename(),
-                           path("resources")/"local"/LIBDIR, srcIt->path());
-          if(srcIt->path().filename()=="PKG_ADD")
-            fmuFile.add(path("resources")/"local"/LIBDIR/srcIt->path().filename(),
-                        srcIt->path());
-        }
-        cout<<endl;
       }
 
       cout<<"Copy MBSim plugin files to FMU."<<endl;

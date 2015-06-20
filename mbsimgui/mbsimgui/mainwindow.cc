@@ -45,6 +45,7 @@
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <xercesc/dom/DOMException.hpp>
 #ifdef WIN32
 # define putenv _putenv
 #endif
