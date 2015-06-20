@@ -1,5 +1,5 @@
 #include "config.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/shared_library.h>
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
     // Create dss from XML file
     if(xmlFile) {
       // create octave
-      eval.reset(new OctEval(&dependencies));
+      eval=Eval::createEvaluator("octave", &dependencies);
 
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all plugins."<<endl;

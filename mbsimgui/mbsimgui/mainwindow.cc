@@ -40,7 +40,7 @@
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/dom.h>
@@ -65,7 +65,7 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
-  Eval *MainWindow::eval=NULL;
+  shared_ptr<Eval> MainWindow::eval;
   vector<boost::filesystem::path> dependencies;
   NewParamLevel *MainWindow::evalParamLevel=NULL;
 
@@ -99,7 +99,7 @@ namespace MBSimGUI {
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
-    eval=new MBXMLUtils::OctEval(&dependencies);
+    eval=Eval::createEvaluator("octave", &dependencies);
     evalParamLevel=new NewParamLevel(*eval);
 
     QMenu *GUIMenu=new QMenu("GUI", menuBar());
@@ -331,7 +331,6 @@ namespace MBSimGUI {
     delete mbsimThread;
     bfs::remove_all(uniqueTempDir);
     bfs::remove("./.MBS.mbsimprj.xml");
-    delete eval;
   }
 
   void MainWindow::setProjectChanged(bool changed) { 

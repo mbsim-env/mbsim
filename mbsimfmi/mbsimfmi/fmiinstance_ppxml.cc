@@ -5,7 +5,7 @@
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbsimxml/mbsimxml.h>
 #include <mbsim/objectfactory.h>
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include "../general/xmlpp_utils.h"
 #include "boost/filesystem/fstream.hpp"
@@ -47,21 +47,20 @@ namespace MBSimFMI {
     boost::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile);
 
     // set param according data in var
-    OctEval dummy;
-    Eval &eval=dummy;
+    shared_ptr<Eval> eval=Eval::createEvaluator("octave");
     boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-    convertVariableToXPathParamSet(varSim.size(), var, param, eval);
+    convertVariableToXPathParamSet(varSim.size(), var, param, *eval);
 
     // preprocess XML file
     vector<path> dependencies;
     xercesc::DOMElement *ele=doc->getDocumentElement();
     msg(Debug)<<"Preprocess MBSim XML model."<<endl;
-    Preprocess::preprocess(validatingParser, eval, dependencies, ele, param);
+    Preprocess::preprocess(validatingParser, *eval, dependencies, ele, param);
 
     // convert the parameter set from the mbxmlutils preprocessor to a "Variable" vector
     msg(Debug)<<"Convert XML parameters to FMI parameters."<<endl;
     vector<boost::shared_ptr<Variable> > xmlParam;
-    convertXPathParamSetToVariable(param, xmlParam, eval);
+    convertXPathParamSetToVariable(param, xmlParam, *eval);
     // build a set of all Parameter's in var
     set<string> useParam;
     for(vector<boost::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it)
