@@ -37,7 +37,7 @@ namespace MBSimControl {
   class Signal : public MBSim::Link {
 
     public:
-      Signal(const std::string &name) : Link(name) {}
+      Signal(const std::string &name) : Link(name), upds(true) {}
 
       void init(InitStage stage);
 
@@ -65,7 +65,7 @@ namespace MBSimControl {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
       
-      const fmatvec::VecV& getSignal() { return s; }
+      const fmatvec::VecV& getSignal(bool check=true) { assert((not check) or (not upds)); return s; }
       const fmatvec::VecV& getSignal(double t) { if(upds) updateSignal(t); return s; }
       virtual int getSignalSize() const { return s.size(); }
 
