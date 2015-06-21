@@ -156,10 +156,10 @@ namespace MBSimGUI {
     value=new QPlainTextEdit;
     value->setMinimumHeight(value->sizeHint().height()/2);
     value->setMaximumHeight(value->sizeHint().height()/2);
-    if(MainWindow::eval->getEvaluatorName()=="octave")
+    if(MainWindow::eval->getName()=="octave")
       new OctaveHighlighter(value->document());
     else
-      cout<<"No syntax hightlighter for current evaluator "+MainWindow::eval->getEvaluatorName()+" available."<<endl;
+      cout<<"No syntax hightlighter for current evaluator "+MainWindow::eval->getName()+" available."<<endl;
     QFont font;
     font.setFamily("Monospace");
     value->setFont(font);
