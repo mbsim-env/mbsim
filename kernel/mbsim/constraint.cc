@@ -273,7 +273,7 @@ namespace MBSim {
   }
 
   void GeneralizedPositionConstraint::updateGeneralizedJacobians(double t, int jj) {
-    bd->getjRel() = f->parDerParDer(t);
+    bd->getjRel(false) = f->parDerParDer(t);
     updGJ = false;
   }
 
@@ -321,9 +321,9 @@ namespace MBSim {
   void GeneralizedVelocityConstraint::updateGeneralizedJacobians(double t, int jj) {
     MatV J = f->parDer1(x,t);
     if(J.cols())
-      bd->getjRel() = J*xd + f->parDer2(x,t);
+      bd->getjRel(false) = J*xd + f->parDer2(x,t);
     else
-      bd->getjRel() = f->parDer2(x,t);
+      bd->getjRel(false) = f->parDer2(x,t);
     updGJ = false;
   }
 
@@ -383,7 +383,7 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(double t, int jj) {
-    bd->getjRel() = (*f)(x,t);
+    bd->getjRel(false) = (*f)(x,t);
     updGJ = false;
   }
 
