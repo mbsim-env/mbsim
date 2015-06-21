@@ -48,7 +48,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updateByReference(true), Z("Z") {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updT(true), updateByReference(true), Z("Z") {
     
     Z.setParent(this);
 
@@ -412,7 +412,7 @@ namespace MBSim {
     if(!constraint) {
       qd(iqT) = getuTRel(t);
       if(fTR)
-        qd(iqR) = (*fTR)(qRRel)*uRRel; // TODO: Prüfen ob schon in updateT berechnet
+        qd(iqR) = (*fTR)(qRRel)*uRRel;
       else
         qd(iqR) = uRRel;
     }
@@ -422,7 +422,7 @@ namespace MBSim {
     if(!constraint) {
       qd(iqT) = getuTRel(t)*dt;
       if(fTR)
-        qd(iqR) = (*fTR)(qRRel)*uRRel*dt; // TODO: Prüfen ob schon in updateT berechnet
+        qd(iqR) = (*fTR)(qRRel)*uRRel*dt;
       else
         qd(iqR) = uRRel*dt;
     }
@@ -430,6 +430,7 @@ namespace MBSim {
 
   void RigidBody::updateT(double t) {
     if(fTR) TRel(iqR,iuR) = (*fTR)(getqRRel(t));
+    updT = false;
   }
 
   void RigidBody::updatePositions(double t) {
@@ -589,6 +590,7 @@ namespace MBSim {
     updGC = true;
     updGJ = true;
     updWTS = true;
+    updT = true;
   }
 
   void RigidBody::updateqRef(const Vec& ref) {

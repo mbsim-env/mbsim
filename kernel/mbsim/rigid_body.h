@@ -229,15 +229,11 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      const fmatvec::Mat3xV& getWJTrel() const {return WJTrel;}
-      const fmatvec::Mat3xV& getWJRrel() const {return WJRrel;}
-      fmatvec::Mat3xV& getWJTrel() {return WJTrel;}
-      fmatvec::Mat3xV& getWJRrel() {return WJRrel;}
-      fmatvec::Mat& getJRel(int i=0) {return JRel[i];}
-      fmatvec::Vec& getjRel() {return jRel;}
-      fmatvec::Vec& getqRel() {return qRel;}
-      fmatvec::Vec& getuRel() {return uRel;}
-      fmatvec::Mat& getTRel() {return TRel;}
+      fmatvec::Mat& getJRel(int i=0, bool check=true) { assert((not check) or (not updGJ)); return JRel[i]; }
+      fmatvec::Vec& getjRel(bool check=true) { assert((not check) or (not updGJ)); return jRel; }
+      fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
+      fmatvec::Vec& getuRel(bool check=true) { assert((not check) or (not updGC)); return uRel; }
+      fmatvec::Mat& getTRel(bool check=true) { assert((not check) or (not updT)); return TRel; }
       void setqRel(const fmatvec::Vec &q);
       void setuRel(const fmatvec::Vec &u);
       void setJRel(const fmatvec::Mat &J);
@@ -260,7 +256,8 @@ namespace MBSim {
       const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel; }
       const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel; }
       const fmatvec::Mat& getJRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return JRel[j]; }
-      const fmatvec::Vec& getjRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return jRel; }
+      const fmatvec::Vec& getjRel(double t) { if(updGJ) updateGeneralizedJacobians(t); return jRel; }
+      const fmatvec::Mat& getTRel(double t) { if(updT) updateT(t); return TRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 
@@ -371,7 +368,7 @@ namespace MBSim {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updGC, updGJ, updWTS, updateByReference;
+      bool updGC, updGJ, updWTS, updT, updateByReference;
 
       Frame Z;
 

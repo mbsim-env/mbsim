@@ -110,13 +110,13 @@ namespace MBSim {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
     for(unsigned int i=0; i<body1.size(); i++) {
-      int dq = body1[i]->getqRel().size();
+      int dq = body1[i]->getqRelSize();
       body1[i]->resetPositionsUpToDate();
       body1[i]->setqRel(x(nq,nq+dq-1));
       nq += dq;
     }
     for(unsigned int i=0; i<body2.size(); i++) {
-      int dq = body2[i]->getqRel().size();
+      int dq = body2[i]->getqRelSize();
       body2[i]->resetPositionsUpToDate();
       body2[i]->setqRel(x(nq,nq+dq-1));
       nq += dq;
@@ -165,19 +165,19 @@ namespace MBSim {
   }
 
   void GearConstraint::updateGeneralizedCoordinates(double t) {
-    bd->getqRel().init(0);
-    bd->getuRel().init(0);
+    bd->getqRel(false).init(0);
+    bd->getuRel(false).init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getqRel() += bi[i]->getqRel(t)*ratio[i];
-      bd->getuRel() += bi[i]->getuRel(t)*ratio[i];
+      bd->getqRel(false) += bi[i]->getqRel(t)*ratio[i];
+      bd->getuRel(false) += bi[i]->getuRel(t)*ratio[i];
     }
     updGC = false;
   }
 
   void GearConstraint::updateGeneralizedJacobians(double t, int j) {
-    bd->getJRel().init(0); 
+    bd->getJRel(0,false).init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel(t)*ratio[i];
+      bd->getJRel(0,false)(Range<Var,Var>(0,bi[i]->getuRelSize()-1),Range<Var,Var>(0,bi[i]->gethSize()-1)) += bi[i]->getJRel(t)*ratio[i];
     }
     updGJ = false;
   }
@@ -267,8 +267,8 @@ namespace MBSim {
   }
 
   void GeneralizedPositionConstraint::updateGeneralizedCoordinates(double t) {
-    bd->getqRel() = (*f)(t);
-    bd->getuRel() = f->parDer(t);
+    bd->getqRel(false) = (*f)(t);
+    bd->getuRel(false) = f->parDer(t);
     updGC = false;
   }
 
@@ -309,12 +309,12 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityConstraint::updatexd(double t) {
-    xd = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
+    xd = bd->transformCoordinates()?bd->getTRel(t)*bd->getuRel(t):bd->getuRel(t);
   }
 
   void GeneralizedVelocityConstraint::updateGeneralizedCoordinates(double t) {
-    bd->getqRel() = x;
-    bd->getuRel() = (*f)(x,t);
+    bd->getqRel(false) = x;
+    bd->getuRel(false) = (*f)(x,t);
     updGC = false;
   }
 
@@ -372,8 +372,8 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updatexd(double t) {
-    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel()*bd->getuRel():bd->getuRel();
-    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel();
+    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel(t)*bd->getuRel(t):bd->getuRel(t);
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel(t);
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates(double t) {
@@ -501,8 +501,8 @@ namespace MBSim {
     nu = 0;
     nh = 0;
     for(unsigned int i=0; i<bd1.size(); i++) {
-      int dq = bd1[i]->getqRel().size();
-      int du = bd1[i]->getuRel().size();
+      int dq = bd1[i]->getqRelSize();
+      int du = bd1[i]->getuRelSize();
       int dh = bd1[i]->gethSize(0);
       Iq1.push_back(Index(nq,nq+dq-1));
       Iu1.push_back(Index(nu,nu+du-1));
@@ -512,8 +512,8 @@ namespace MBSim {
       nh = max(nh,dh);
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
-      int dq = bd2[i]->getqRel().size();
-      int du = bd2[i]->getuRel().size();
+      int dq = bd2[i]->getqRelSize();
+      int du = bd2[i]->getuRelSize();
       int dh = bd2[i]->gethSize(0);
       Iq2.push_back(Index(nq,nq+dq-1));
       Iu2.push_back(Index(nu,nu+du-1));
@@ -591,12 +591,12 @@ namespace MBSim {
     if(jj == 0) {
 
       for(unsigned int i=0; i<bd1.size(); i++) {
-        bd1[i]->setJRel(Mat(bd1[i]->getJRel().rows(),bd1[i]->getJRel().cols()));
-        bd1[i]->setjRel(Vec(bd1[i]->getjRel().size()));
+        bd1[i]->setJRel(Mat(bd1[i]->getuRelSize(),bd1[i]->gethSize()));
+        bd1[i]->setjRel(Vec(bd1[i]->getuRelSize()));
       }
       for(unsigned int i=0; i<bd2.size(); i++) {
-        bd2[i]->setJRel(Mat(bd2[i]->getJRel().rows(),bd2[i]->getJRel().cols()));
-        bd2[i]->setjRel(Vec(bd2[i]->getjRel().size()));
+        bd2[i]->setJRel(Mat(bd2[i]->getuRelSize(),bd2[i]->gethSize()));
+        bd2[i]->setjRel(Vec(bd2[i]->getuRelSize()));
       }
 
       SqrMat A(nu);
