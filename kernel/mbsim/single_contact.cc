@@ -142,6 +142,16 @@ namespace MBSim {
     h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
   }
 
+  void SingleContact::updateGeneralizedPositions(double t) {
+    updatePositions(t);
+    updrrel = false;
+  }
+
+  void SingleContact::updateGeneralizedVelocities(double t) {
+    updateVelocities(t);
+    updvrel = false;
+  }
+
   void SingleContact::updatePositions(double t) {
     contactKinematics->updateg(t, rrel(0), cpData);
     updPos = false;

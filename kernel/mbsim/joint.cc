@@ -86,16 +86,12 @@ namespace MBSim {
     WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
     C.setPosition(frame[1]->getPosition());
     C.setOrientation(frame[0]->getOrientation());
-    rrel.set(iF, getGlobalForceDirection(t).T() * WrP0P1);
-    rrel.set(iM, x);
     updPos = false;
   }
 
   void Joint::updateVelocities(double t) {
     WvP0P1 = frame[1]->getVelocity(t) - C.getVelocity(t);
     WomP0P1 = frame[1]->getAngularVelocity(t) - C.getAngularVelocity(t);
-    vrel.set(iF, getGlobalForceDirection(t).T() * WvP0P1);
-    vrel.set(iM, getGlobalMomentDirection(t).T() * WomP0P1);
     updVel = false;
   }
 
@@ -103,6 +99,18 @@ namespace MBSim {
     DF = refFrame->getOrientation(t) * forceDir;
     DM = refFrame->getOrientation(t) * momentDir;
     updFD = false;
+  }
+
+  void Joint::updateGeneralizedPositions(double t) {
+    rrel.set(iF, getGlobalForceDirection(t).T() * getGlobalRelativePosition(t));
+    rrel.set(iM, x);
+    updrrel = false;
+  }
+
+  void Joint::updateGeneralizedVelocities(double t) {
+    vrel.set(iF, getGlobalForceDirection(t).T() * getGlobalRelativeVelocity(t));
+    vrel.set(iM, getGlobalMomentDirection(t).T() * getGlobalRelativeAngularVelocity(t));
+    updvrel = false;
   }
 
   void Joint::updateGeneralizedSetValuedForces(double t) {

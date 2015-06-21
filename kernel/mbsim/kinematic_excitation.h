@@ -99,8 +99,8 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
-      void updatePositions(double t);
-      void updateVelocities(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updatexd(double t) { }
       void updatewb(double t);
 
@@ -122,8 +122,8 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
-      void updatePositions(double t);
-      void updateVelocities(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updatexd(double t);
       void updatewb(double t);
 
@@ -151,8 +151,8 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
-      void updatePositions(double t);
-      void updateVelocities(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updatexd(double t);
       void updatewb(double t);
 

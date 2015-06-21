@@ -358,6 +358,7 @@ namespace MBSim {
       ke->setOpenMBVForce(FArrow);
     if(MArrow)
       ke->setOpenMBVMoment(MArrow);
+    ke->setPlotFeature(linkKinematics,disabled);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedAccelerationConstraint, MBSIM%"GeneralizedAccelerationConstraint")

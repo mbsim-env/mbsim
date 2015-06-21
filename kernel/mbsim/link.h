@@ -409,13 +409,15 @@ namespace MBSim {
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
 
-      void resetUpToDate() { updPos = true; updVel = true; updlaSV = true; updlaMV = true; }
+      void resetUpToDate() { updrrel = true; updvrel = true; updlaSV = true; updlaMV = true; }
 
+      virtual void updateGeneralizedPositions(double t) { }
+      virtual void updateGeneralizedVelocities(double t) { }
       virtual void updateGeneralizedSingleValuedForces(double t) { }
       virtual void updateGeneralizedSetValuedForces(double t) { }
 
-      const fmatvec::VecV& getGeneralizedRelativePosition(double t) { if(updPos) updatePositions(t); return rrel; }
-      const fmatvec::VecV& getGeneralizedRelativeVelocity(double t) { if(updVel) updateVelocities(t); return vrel; }
+      const fmatvec::VecV& getGeneralizedRelativePosition(double t) { if(updrrel) updateGeneralizedPositions(t); return rrel; }
+      const fmatvec::VecV& getGeneralizedRelativeVelocity(double t) { if(updvrel) updateGeneralizedVelocities(t); return vrel; }
       const fmatvec::VecV& getGeneralizedSingleValuedForce(double t) { if(updlaSV) updateGeneralizedSingleValuedForces(t); return laSV; }
       const fmatvec::VecV& getGeneralizedSetValuedForce(double t) { if(updlaMV) updateGeneralizedSetValuedForces(t); return laMV; }
       const fmatvec::VecV& getGeneralizedForce(double t) { return isSetValued()?getGeneralizedSetValuedForce(t):getGeneralizedSingleValuedForce(t); }
@@ -618,7 +620,7 @@ namespace MBSim {
 
       fmatvec::VecV rrel, vrel, laSV, laMV;
 
-      bool updPos, updVel, updlaSV, updlaMV;
+      bool updrrel, updvrel, updlaSV, updlaMV;
   };
 }
 

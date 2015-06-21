@@ -62,6 +62,8 @@ namespace MBSim {
       void updatePositions(double t);
       void updateVelocities(double t);
       void updateForceDirections(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updateGeneralizedSingleValuedForces(double t);
       void updateGeneralizedSetValuedForces(double t);
       void updatewb(double t);

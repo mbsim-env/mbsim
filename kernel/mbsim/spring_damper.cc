@@ -61,15 +61,24 @@ namespace MBSim {
   
   void SpringDamper::updatePositions(double t) {
     WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    rrel(0)=nrm2(WrP0P1);
     updPos = false;
   }
 
   void SpringDamper::updateVelocities(double t) {
     WvP0P1=frame[1]->getVelocity(t) - frame[0]->getVelocity(t);
-    vrel=getGlobalForceDirection(t).T()*WvP0P1;
     updVel = false;
   }
+
+  void SpringDamper::updateGeneralizedPositions(double t) {
+    rrel(0)=nrm2(getGlobalRelativePosition(t));
+    updrrel = false;
+  }
+
+  void SpringDamper::updateGeneralizedVelocities(double t) {
+    vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
+    updvrel = false;
+  }
+
 
   void SpringDamper::updateGeneralizedSingleValuedForces(double t) {
     laSV(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
@@ -193,14 +202,22 @@ namespace MBSim {
     WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
     C.setPosition(frame[1]->getPosition());
     C.setOrientation(frame[0]->getOrientation());
-    rrel=getGlobalForceDirection(t).T()*WrP0P1;
     updPos = false;
   }
 
   void DirectionalSpringDamper::updateVelocities(double t) {
     WvP0P1=frame[1]->getVelocity(t) - C.getVelocity(t);
-    vrel=getGlobalForceDirection(t).T()*WvP0P1;
     updVel = false;
+  }
+
+  void DirectionalSpringDamper::updateGeneralizedPositions(double t) {
+    rrel=getGlobalForceDirection(t).T()*getGlobalRelativePosition(t);
+    updrrel = false;
+  }
+
+  void DirectionalSpringDamper::updateGeneralizedVelocities(double t) {
+    vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
+    updvrel = false;
   }
 
   void DirectionalSpringDamper::updateh(double t, int j) {
@@ -351,8 +368,8 @@ namespace MBSim {
   }
 
   void GeneralizedSpringDamper::updateForceDirections(double t) {
-    DF = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT(t);
-    DM = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR(t);
+    DF = body[1]->getFrameOfReference()->getOrientation(t)*body[1]->getPJT(t);
+    DM = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR();
     updFD = false;
   }
 
@@ -371,14 +388,14 @@ namespace MBSim {
     }
   }
 
-  void GeneralizedSpringDamper::updatePositions(double t) {
+  void GeneralizedSpringDamper::updateGeneralizedPositions(double t) {
     rrel=body[0]?(body[1]->getqRel(t)-body[0]->getqRel(t)):body[1]->getqRel(t);
-    updPos = false;
+    updrrel = false;
   }
 
-  void GeneralizedSpringDamper::updateVelocities(double t) {
+  void GeneralizedSpringDamper::updateGeneralizedVelocities(double t) {
     vrel=body[0]?(body[1]->getuRel(t)-body[0]->getuRel(t)):body[1]->getuRel(t);
-    updVel = false;
+    updvrel = false;
   }
 
   void GeneralizedSpringDamper::init(InitStage stage) {

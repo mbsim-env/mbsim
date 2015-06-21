@@ -101,7 +101,7 @@ namespace MBSim {
         return frame;
       }
 
-      void resetUpToDate() { Link::resetUpToDate(); updFD = true; updFSV = true; updFMV = true; updRMV = true; }
+      void resetUpToDate() { Link::resetUpToDate(); updPos = true; updVel = true; updFD = true; updFSV = true; updFMV = true; updRMV = true; }
       virtual void updateForceDirections(double t) { }
       void updateSingleValuedForces(double t);
       void updateSetValuedForces(double t);
@@ -158,7 +158,7 @@ namespace MBSim {
       boost::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
 #endif
 
-      bool updFD, updFSV, updFMV, updRMV;
+      bool updPos, updVel, updFD, updFSV, updFMV, updRMV;
   };
 }
 

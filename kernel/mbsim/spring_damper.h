@@ -49,6 +49,8 @@ namespace MBSim {
       void updatePositions(double t);
       void updateVelocities(double t);
       void updateForceDirections(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updateGeneralizedSingleValuedForces(double t);
       void updateh(double t, int i=0);
 
@@ -118,6 +120,8 @@ namespace MBSim {
       void updatePositions(double t);
       void updateVelocities(double t);
       void updateForceDirections(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updateGeneralizedSingleValuedForces(double t);
       void updateh(double t, int i=0);
 
@@ -185,10 +189,10 @@ namespace MBSim {
       GeneralizedSpringDamper(const std::string &name="");
       ~GeneralizedSpringDamper();
 
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateGeneralizedSingleValuedForces(double t);
       void updateForceDirections(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
+      void updateGeneralizedSingleValuedForces(double t);
       void updateh(double, int i=0);
 
       bool isActive() const { return true; }

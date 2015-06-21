@@ -44,8 +44,9 @@ namespace MBSim {
 
   void KinematicExcitation::updatePositions(double t) {
     WrP0P1 = body->getFrameForKinematics()->getPosition(t)-body->getFrameOfReference()->getPosition(t);
-    C.setPosition(body->getFrameForKinematics()->getPosition(t));
+    C.setPosition(body->getFrameForKinematics()->getPosition());
     C.setOrientation(body->getFrameOfReference()->getOrientation());
+    updPos = false;
   }
 
   void KinematicExcitation::updateg(double) {
@@ -118,7 +119,8 @@ namespace MBSim {
       h[1].push_back(Vec(6));
       W[0].push_back(Mat(body->getFrameOfReference()->getJacobianOfTranslation(0).cols(),laSize));
       W[1].push_back(Mat(6,laSize));
-      C.setParent(this);
+
+      C.setFrameOfReference(body->getFrameOfReference());
     }
     else if(stage==resize) {
       MechanicalLink::init(stage);
@@ -211,15 +213,14 @@ namespace MBSim {
     f->init(stage);
   }
 
-  void GeneralizedPositionExcitation::updatePositions(double t) {
-    KinematicExcitation::updatePositions(t);
+  void GeneralizedPositionExcitation::updateGeneralizedPositions(double t) {
     rrel=body->getqRel(t)-(*f)(t);
-    updPos = false;
+    updrrel = false;
   } 
 
-  void GeneralizedPositionExcitation::updateVelocities(double t) {
+  void GeneralizedPositionExcitation::updateGeneralizedVelocities(double t) {
     vrel=body->getuRel(t)-f->parDer(t);
-    updVel = false;
+    updvrel = false;
   }
 
   void GeneralizedPositionExcitation::updatewb(double t) {
@@ -228,6 +229,8 @@ namespace MBSim {
 
   void GeneralizedVelocityExcitation::calcxSize() {
     xSize = body->getqRelSize();
+    cout << "--------------------------------------------------" << endl;
+    cout << xSize << endl;
   }
 
   void GeneralizedVelocityExcitation::init(InitStage stage) {
@@ -244,15 +247,14 @@ namespace MBSim {
     if(f) xd = (*f)(x,t);
   }
 
-  void GeneralizedVelocityExcitation::updatePositions(double t) {
-    KinematicExcitation::updatePositions(t);
+  void GeneralizedVelocityExcitation::updateGeneralizedPositions(double t) {
     rrel=body->getqRel(t)-x;
-    updPos = false;
+    updrrel = false;
   } 
 
-  void GeneralizedVelocityExcitation::updateVelocities(double t) {
+  void GeneralizedVelocityExcitation::updateGeneralizedVelocities(double t) {
     vrel=body->getuRel(t)-(*f)(x,t);
-    updVel = false;
+    updvrel = false;
   }
 
   void GeneralizedVelocityExcitation::updatewb(double t) {
@@ -278,15 +280,14 @@ namespace MBSim {
     xd(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1) = (*f)(x,t);
   }
 
-  void GeneralizedAccelerationExcitation::updatePositions(double t) {
-    KinematicExcitation::updatePositions(t);
+  void GeneralizedAccelerationExcitation::updateGeneralizedPositions(double t) {
     rrel=body->getqRel(t)-x(0,body->getqRelSize()-1);
-    updPos = false;
+    updrrel = false;
   }
 
-  void GeneralizedAccelerationExcitation::updateVelocities(double t) {
+  void GeneralizedAccelerationExcitation::updateGeneralizedVelocities(double t) {
     vrel=body->getuRel(t)-x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
-    updVel = false;
+    updvrel = false;
   }
 
   void GeneralizedAccelerationExcitation::updatewb(double t) {
