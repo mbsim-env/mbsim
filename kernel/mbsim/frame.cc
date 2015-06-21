@@ -75,6 +75,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
+          if(updatePos) updatePositions(t);
           vector<double> data;
           data.push_back(t);
           data.push_back(WrOP(0));
