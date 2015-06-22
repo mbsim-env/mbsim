@@ -150,7 +150,7 @@ namespace MBSim {
           data.push_back(WrOToPoint(0));
           data.push_back(WrOToPoint(1));
           data.push_back(WrOToPoint(2));
-          data.push_back(laSV(0));
+          data.push_back(getGeneralizedSingleValuedForce(t)(0));
           coilspringOpenMBV->append(data);
         }
       }
@@ -291,8 +291,8 @@ namespace MBSim {
           Vec3 WrOToPoint;
           Vec3 WrOFromPoint;
 
-          WrOFromPoint = C.getPosition();
-          WrOToPoint   = frame[1]->getPosition();
+          WrOFromPoint = C.getPosition(t);
+          WrOToPoint   = frame[1]->getPosition(t);
           vector<double> data;
           data.push_back(t); 
           data.push_back(WrOFromPoint(0));
@@ -301,7 +301,7 @@ namespace MBSim {
           data.push_back(WrOToPoint(0));
           data.push_back(WrOToPoint(1));
           data.push_back(WrOToPoint(2));
-          data.push_back(la(0));
+          data.push_back(getGeneralizedSingleValuedForce(t)(0));
           coilspringOpenMBV->append(data);
         }
       }
@@ -357,7 +357,7 @@ namespace MBSim {
       h[j][0]>>hParent(I);
     }
     else {
-      Index I = Index(body[1]->getFrameOfReference()->gethInd(j),body[1]->getFrameOfReference()->gethInd(j)+body[1]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+      Index I = Index(body[1]->getFrameOfReference()->gethInd(j),body[1]->getFrameOfReference()->gethInd(j)+body[1]->getFrameOfReference()->gethSize(j)-1);
       h[j][0]>>hParent(I);
     }
   }
@@ -381,7 +381,7 @@ namespace MBSim {
     else {
       h[j][1] += body[1]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[1]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
       if(body[0]) {
-        h[j][0] -= body[0]->getFrameOfReference()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[0]->getFrameOfReference()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+        h[j][0] -= body[0]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[0]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
       } else {
         h[j][0] -= body[1]->getFrameOfReference()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[1]->getFrameOfReference()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
       }
@@ -456,8 +456,8 @@ namespace MBSim {
         Vec WrOToPoint;
         Vec WrOFromPoint;
 
-        WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->getPosition():body[1]->getFrameOfReference()->getPosition();
-        WrOToPoint   = body[1]->getFrameForKinematics()->getPosition();
+        WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->getPosition(t):body[1]->getFrameOfReference()->getPosition(t);
+        WrOToPoint   = body[1]->getFrameForKinematics()->getPosition(t);
         vector<double> data;
         data.push_back(t);
         data.push_back(WrOFromPoint(0));
@@ -466,7 +466,7 @@ namespace MBSim {
         data.push_back(WrOToPoint(0));
         data.push_back(WrOToPoint(1));
         data.push_back(WrOToPoint(2));
-        data.push_back(la(0));
+        data.push_back(getGeneralizedSingleValuedForce(t)(0));
         coilspringOpenMBV->append(data);
       }
 #endif

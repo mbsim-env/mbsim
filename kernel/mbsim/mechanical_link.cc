@@ -159,6 +159,7 @@ namespace MBSim {
     M = getGlobalMomentDirection(t)*getGeneralizedSingleValuedForce(t)(iM);
     updFSV = false;
   }
+
   void MechanicalLink::updateSetValuedForces(double t) { 
     F = getGlobalForceDirection(t)*getGeneralizedSetValuedForce(t)(iF);
     M = getGlobalMomentDirection(t)*getGeneralizedSetValuedForce(t)(iM);
@@ -166,8 +167,8 @@ namespace MBSim {
   }
 
   void MechanicalLink::updateSetValuedForceDirections(double t) { 
-    RF.set(Index(0, 2), Index(iF), getGlobalForceDirection(t));
-    RM.set(Index(0, 2), Index(iM), getGlobalMomentDirection(t));
+    RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
+    RM.set(Index(0,2), Index(iM), getGlobalMomentDirection(t));
     updRMV = false;
   }
 

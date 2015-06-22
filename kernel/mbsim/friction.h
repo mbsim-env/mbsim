@@ -42,9 +42,12 @@ namespace MBSim {
     public:
       GeneralizedFriction(const std::string &name="");
       ~GeneralizedFriction();
+      void updateForceDirections(double t);
+      void updateGeneralizedVelocities(double t);
+      void updateg(double t) { }
+      void updategd(double t) { gd = getGeneralizedRelativeVelocity(t); }
+      void updateGeneralizedSingleValuedForces(double t);
       void updateh(double t, int i=0);
-      void updateg(double) { }
-      void updategd(double);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
@@ -63,7 +66,6 @@ namespace MBSim {
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
 
-      void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
@@ -72,15 +74,13 @@ namespace MBSim {
       /** \brief Visualize a force arrow acting on each of both connected frames */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        std::vector<bool> which; which.resize(2, true);
-        MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVForce(ombv.createOpenMBV());
       }
 
       /** \brief Visualize a torque arrow acting on each of both connected frames */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-        std::vector<bool> which; which.resize(2, true);
-        MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(), which);
+        MechanicalLink::setOpenMBVMoment(ombv.createOpenMBV());
       }
 #endif
     private:

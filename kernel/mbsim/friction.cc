@@ -40,10 +40,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedFriction, MBSIM%"GeneralizedFriction")
 
-  GeneralizedFriction::GeneralizedFriction(const string &name) : MechanicalLink(name), func(NULL), laN(0), body(2)
-  {
-    WF.resize(2);
-    WM.resize(2);
+  GeneralizedFriction::GeneralizedFriction(const string &name) : MechanicalLink(name), func(NULL), laN(0), body(2) {
     h[0].resize(2);
     h[1].resize(2);
     body[0] = 0;
@@ -63,35 +60,40 @@ namespace MBSim {
       h[j][0]>>hParent(I);
     }
     else {
-      Index I = Index(body[1]->getFrameOfReference()->gethInd(j),body[1]->getFrameOfReference()->gethInd(j)+body[1]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+      Index I = Index(body[1]->getFrameOfReference()->gethInd(j),body[1]->getFrameOfReference()->gethInd(j)+body[1]->getFrameOfReference()->gethSize(j)-1);
       h[j][0]>>hParent(I);
     }
   } 
 
-  void GeneralizedFriction::updateh(double t, int j) {
-    la = -(*func)(gd, (*laN)(t));
-    if(j==0) {
-      if(body[0]) h[j][0]+=body[0]->getJRel(j).T()*la;
-      h[j][1]-=body[1]->getJRel(j).T()*la;
-    }
-    else {
-      WF[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJT()*la;
-      WM[1] = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR()*la;
-      h[j][1]-=body[1]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[1] + body[1]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[1];
-      if(body[0]) {
-        WF[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJT()*la;
-        WM[0] = -body[0]->getFrameOfReference()->getOrientation()*body[0]->getPJR()*la;
-        h[j][0]-=body[0]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*WF[0] + body[0]->getFrameForKinematics()->getJacobianOfRotation(j).T()*WM[0];
-      } else {
-        WF[0] = -WF[1];
-        WM[0] = -WM[1];
-        h[j][0]-=body[1]->getFrameOfReference()->getJacobianOfTranslation(j).T()*WF[0]+body[1]->getFrameOfReference()->getJacobianOfRotation(j).T()*WM[0];
-      }
-    }
+  void GeneralizedFriction::updateGeneralizedVelocities(double t) {
+    vrel=body[0]?(body[1]->getuRel(t)-body[0]->getuRel(t)):body[1]->getuRel(t);
+    updvrel = false;
   }
 
-  void GeneralizedFriction::updategd(double) {
-    gd=body[0]?(body[1]->getuRel()-body[0]->getuRel()):body[1]->getuRel();
+  void GeneralizedFriction::updateGeneralizedSingleValuedForces(double t) {
+    laSV = (*func)(getGeneralizedRelativeVelocity(t),(*laN)(t));
+    updlaSV = false;
+  }
+
+  void GeneralizedFriction::updateForceDirections(double t) {
+    DF = body[1]->getFrameOfReference()->getOrientation(t)*body[1]->getPJT(t);
+    DM = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR();
+    updFD = false;
+  }
+
+  void GeneralizedFriction::updateh(double t, int j) {
+    if(j==0) {
+      if(body[0]) h[j][0]-=body[0]->getJRel(t,j).T()*getGeneralizedSingleValuedForce(t);
+      h[j][1]+=body[1]->getJRel(t,j).T()*getGeneralizedSingleValuedForce(t);
+    }
+    else {
+      h[j][1]+=body[1]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[1]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+      if(body[0]) {
+        h[j][0]-=body[0]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[0]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+      } else {
+        h[j][0]-=body[1]->getFrameOfReference()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body[1]->getFrameOfReference()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+      }
+    }
   }
 
   void GeneralizedFriction::init(InitStage stage) {
@@ -115,13 +117,11 @@ namespace MBSim {
       g.resize(1);
       gd.resize(1);
       la.resize(1);
-    }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-      plotColumns.push_back("la(0)");
-      if(getPlotFeature(plotRecursive)==enabled) {
-        MechanicalLink::init(stage);
-      }
+      iF = Index(0, 0);
+      iM = Index(0, 0);
+      rrel.resize(1);
+      vrel.resize(1);
+      laSV.resize(1);
     }
     else if(stage==unknownStage) {
       if(body[0] and body[0]->getuRelSize()!=1)
@@ -140,13 +140,6 @@ namespace MBSim {
     func->setParent(this);
   }
 
-  void GeneralizedFriction::plot(double t,double dt) {
-    plotVector.push_back(la(0));
-    if(getPlotFeature(plotRecursive)==enabled) {
-      MechanicalLink::plot(t,dt);
-    }
-  }
-
   void GeneralizedFriction::initializeUsingXML(DOMElement *element) {
     MechanicalLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionForceLaw");
@@ -162,14 +155,12 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      std::vector<bool> which; which.resize(2, true);
-      MechanicalLink::setOpenMBVForceArrow(ombv.createOpenMBV(e), which);
+      MechanicalLink::setOpenMBVForce(ombv.createOpenMBV(e));
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      std::vector<bool> which; which.resize(2, true);
-      MechanicalLink::setOpenMBVMomentArrow(ombv.createOpenMBV(e), which);
+      MechanicalLink::setOpenMBVMoment(ombv.createOpenMBV(e));
     }
 #endif
   }

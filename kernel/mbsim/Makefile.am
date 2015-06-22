@@ -20,6 +20,7 @@ dynamic_system_solver.cc\
 joint.cc\
 gear.cc\
 spring_damper.cc\
+friction.cc\
 extern_generalized_io.cc\
 link.cc\
 mechanical_link.cc\
@@ -68,6 +69,7 @@ group.h\
 joint.h\
 gear.h\
 spring_damper.h\
+friction.h\
 extern_generalized_io.h\
 link.h\
 mechanical_link.h\

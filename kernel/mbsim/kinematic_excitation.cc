@@ -89,17 +89,17 @@ namespace MBSim {
 
   void KinematicExcitation::updateWRef(const Mat &WParent, int j) {
     Index J = Index(laInd,laInd+laSize-1);
-    Index I = Index(body->getFrameForKinematics()->gethInd(j),body->getFrameForKinematics()->gethInd(j)+body->getFrameForKinematics()->getJacobianOfTranslation(j).cols()-1);
+    Index I = Index(body->getFrameForKinematics()->gethInd(j),body->getFrameForKinematics()->gethInd(j)+body->getFrameForKinematics()->gethSize(j)-1);
 
     W[j][0]>>WParent(I,J);
-    I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+    I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->gethSize(j)-1);
     W[j][1]>>WParent(I,J);
   } 
 
   void KinematicExcitation::updatehRef(const Vec &hParent, int j) {
     Index I = Index(body->gethInd(j),body->gethInd(j)+body->gethSize(j)-1);
     h[j][0]>>hParent(I);
-    I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+    I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->gethSize(j)-1);
     h[j][1]>>hParent(I);
   } 
 
@@ -111,13 +111,13 @@ namespace MBSim {
     if(stage==unknownStage) {
       //MechanicalLink::init(stage);
 
-      h[0].push_back(Vec(body->getFrameForKinematics()->getJacobianOfTranslation(0).cols()));
+      h[0].push_back(Vec(body->getFrameForKinematics()->gethSize()));
       h[1].push_back(Vec(6));
-      W[0].push_back(Mat(body->getFrameForKinematics()->getJacobianOfTranslation(0).cols(),laSize));
+      W[0].push_back(Mat(body->getFrameForKinematics()->gethSize(),laSize));
       W[1].push_back(Mat(6,laSize));
-      h[0].push_back(Vec(body->getFrameOfReference()->getJacobianOfTranslation(0).cols()));
+      h[0].push_back(Vec(body->getFrameOfReference()->gethSize()));
       h[1].push_back(Vec(6));
-      W[0].push_back(Mat(body->getFrameOfReference()->getJacobianOfTranslation(0).cols(),laSize));
+      W[0].push_back(Mat(body->getFrameOfReference()->gethSize(),laSize));
       W[1].push_back(Mat(6,laSize));
 
       C.setFrameOfReference(body->getFrameOfReference());
