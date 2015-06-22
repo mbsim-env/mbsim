@@ -48,7 +48,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updT(true), updateByReference(true), Z("Z") {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z") {
     
     Z.setParent(this);
 
@@ -184,11 +184,11 @@ namespace MBSim {
       PJR[0].resize(nu[0]);
       if(constraint) {
         for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
-          (*i)->getJacobianOfTranslation(2).resize(nu[0]);
-          (*i)->getJacobianOfRotation(2).resize(nu[0]);
+          (*i)->getJacobianOfTranslation(2,false).resize(nu[0]);
+          (*i)->getJacobianOfRotation(2,false).resize(nu[0]);
         }
-        Z.getJacobianOfTranslation(2).resize(nu[0]);
-        Z.getJacobianOfRotation(2).resize(nu[0]);
+        Z.getJacobianOfTranslation(2,false).resize(nu[0]);
+        Z.getJacobianOfRotation(2,false).resize(nu[0]);
       }
 
       PJT[1].resize(nu[1]);
@@ -221,8 +221,8 @@ namespace MBSim {
     else if(stage==unknownStage) {
       Body::init(stage);
 
-      Z.getJacobianOfTranslation(1) = PJT[1];
-      Z.getJacobianOfRotation(1) = PJR[1];
+      Z.getJacobianOfTranslation(1,false) = PJT[1];
+      Z.getJacobianOfRotation(1,false) = PJR[1];
 
       bool cb = false;
       StateDependentFunction<RotMat3> *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);

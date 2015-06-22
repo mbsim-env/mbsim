@@ -53,7 +53,6 @@ namespace MBSim {
       void updateAccelerations(double t); 
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
-      void setUpdatePositions(bool updatePos_) { updatePos = updatePos_; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

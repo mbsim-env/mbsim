@@ -59,7 +59,7 @@ namespace MBSim {
     hInd[0] = 0;
     hInd[1] = 0;
 
-    I = new FixedRelativeFrame("I");
+    I = new Frame("I");
     addFrame(I);
   }
 
@@ -423,28 +423,26 @@ namespace MBSim {
         if (!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
           ((FixedRelativeFrame*) frame[k])->setFrameOfReference(I);
       }
+      for (unsigned int k = 0; k < contour.size(); k++) {
+        if (!(contour[k]->getFrameOfReference()))
+          contour[k]->setFrameOfReference(I);
+      }
     }
     else if (stage == worldFrameContourLocation) {
       if (R) {
-        I->setPosition(R->getPosition() + R->getOrientation() * PrPF);
-        I->setOrientation(R->getOrientation() * APF);
+        I->setPosition(R->getPosition(0.) + R->getOrientation(0.) * PrPF);
+        I->setOrientation(R->getOrientation(0.) * APF);
       }
       else {
         DynamicSystem* sys = dynamic_cast<DynamicSystem*>(parent);
         if (sys) {
-          I->setPosition(sys->getFrameI()->getPosition() + sys->getFrameI()->getOrientation() * PrPF);
-          I->setOrientation(sys->getFrameI()->getOrientation() * APF);
+          I->setPosition(sys->getFrameI()->getPosition(0.) + sys->getFrameI()->getOrientation(0.) * PrPF);
+          I->setOrientation(sys->getFrameI()->getOrientation(0.) * APF);
         }
         else {
-          I->setPosition(getFrameI()->getPosition() + getFrameI()->getOrientation() * PrPF);
-          I->setOrientation(getFrameI()->getOrientation() * APF);
+          I->setPosition(getFrameI()->getPosition(0.) + getFrameI()->getOrientation(0.) * PrPF);
+          I->setOrientation(getFrameI()->getOrientation(0.) * APF);
         }
-      }
-      for (unsigned int i = 1; i < frame.size(); i++) // kinematics of other frames can be updates from frame I
-        frame[i]->updatePositions(0);
-      for (unsigned int k = 0; k < contour.size(); k++) {
-        if (!(contour[k]->getFrameOfReference()))
-          contour[k]->setFrameOfReference(I);
       }
     }
     else if (stage == plotting) {
@@ -1314,7 +1312,7 @@ namespace MBSim {
       (**i).setrMax(rMax);
   }
 
-  void DynamicSystem::addFrame(FixedRelativeFrame *frame_) {
+  void DynamicSystem::addFrame(Frame *frame_) {
     if (getFrame(frame_->getName(), false)) {
       THROW_MBSIMERROR("DynamicSystem can only comprises one Frame by the name \"" + name + "\"!");
       assert(getFrame(frame_->getName(),false)==NULL);

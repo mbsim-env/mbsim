@@ -36,9 +36,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  Body::Body(const string &name) : Object(name), R(0),
-                                   saved_frameOfReference("") {
-                                   } 
+  Body::Body(const string &name) : Object(name), R(0), updPos(true), updVel(true), updPJ(true), saved_frameOfReference("") { }
 
   Body::~Body() {
     for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 

@@ -37,15 +37,15 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Frame::Frame(const string &name) : Element(name), AWP(EYE), updateGA(false), updatePos(false), updateVel(false) {
+  Frame::Frame(const string &name) : Element(name), AWP(EYE), updateGA(true), updatePos(true), updateVel(true), updateAcc(true) {
 
     hSize[0] = 0;
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-    updateJac[0] = false;
-    updateJac[1] = false;
-    updateJac[2] = false;
+    updateJac[0] = true;
+    updateJac[1] = true;
+    updateJac[2] = true;
   }
 
   void Frame::plot(double t, double dt) {

@@ -675,7 +675,7 @@ namespace MBSim {
        */
       void setrMax(double rMax);
 
-      void addFrame(FixedRelativeFrame *frame);
+      void addFrame(Frame *frame);
 
       /**
        * \param frame
@@ -752,7 +752,7 @@ namespace MBSim {
       ModellingInterface* getModel(const std::string &name, bool check=true) const;
 
       /** Return frame "I" */
-      FixedRelativeFrame *getFrameI() { return I; }
+      Frame *getFrameI() { return I; }
 
       virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
 
@@ -954,7 +954,7 @@ namespace MBSim {
       void addContour(Contour* contour);
 
       /** A pointer to frame "I" */
-      FixedRelativeFrame *I;
+      Frame *I;
 
       /** 
        * \brief size of contact force parameters of special links relative to parent

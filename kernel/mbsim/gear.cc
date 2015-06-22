@@ -63,7 +63,7 @@ namespace MBSim {
     for(unsigned i=0; i<body.size(); i++) {
       Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
       h[j][i]>>hParent(I);
-      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->gethSize(j)-1);
       h[j][body.size()+i]>>hParent(I);
     }
   } 
@@ -71,32 +71,37 @@ namespace MBSim {
   void Gear::updateWRef(const Mat &WParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(body[i]->getFrameForKinematics()->gethInd(j),body[i]->getFrameForKinematics()->gethInd(j)+body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).cols()-1);
+      Index I = Index(body[i]->getFrameForKinematics()->gethInd(j),body[i]->getFrameForKinematics()->gethInd(j)+body[i]->getFrameForKinematics()->gethSize(j)-1);
 
       W[j][i]>>WParent(I,J);
-      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
+      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->gethSize(j)-1);
       W[j][body.size()+i]>>WParent(I,J);
     }
   } 
 
   void Gear::updatePositions(double t) {
-    rrel.init(0);
     for(unsigned i=0; i<body.size(); i++) {
       WrP0P1 = body[i]->getFrameForKinematics()->getPosition(t)-body[i]->getFrameOfReference()->getPosition(t);
       C[i].setPosition(body[i]->getFrameForKinematics()->getPosition(t));
       C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());
-      C[i].setUpdatePositions(false);
-      rrel+=body[i]->getqRel(t)*ratio[i];
     }
     updPos = false;
   }
 
-  void Gear::updateVelocities(double t) {
+  void Gear::updateGeneralizedPositions(double t) {
+    rrel.init(0);
+    for(unsigned i=0; i<body.size(); i++) {
+      rrel+=body[i]->getqRel(t)*ratio[i];
+    }
+    updrrel = false;
+  }
+
+  void Gear::updateGeneralizedVelocities(double t) {
     vrel.init(0);
     for(unsigned i=0; i<body.size(); i++) {
       vrel+=body[i]->getuRel(t)*ratio[i];
     }
-    updVel = false;
+    updvrel = false;
   }
 
   void Gear::updateGeneralizedSetValuedForces(double t) {
@@ -169,24 +174,24 @@ namespace MBSim {
     else if(stage==unknownStage) {
 
       for(unsigned int i=0; i<body.size(); i++) {
-        h[0].push_back(Vec(body[i]->getFrameForKinematics()->getJacobianOfTranslation(0).cols()));
+        h[0].push_back(Vec(body[i]->getFrameForKinematics()->gethSize()));
         h[1].push_back(Vec(6));
-        W[0].push_back(Mat(body[i]->getFrameForKinematics()->getJacobianOfTranslation(0).cols(),laSize));
+        W[0].push_back(Mat(body[i]->getFrameForKinematics()->gethSize(),laSize));
         W[1].push_back(Mat(6,laSize));
         stringstream s;
         s << "F" << i;
         C.push_back(FloatingRelativeFrame(s.str()));
-        C[i].getJacobianOfTranslation(0).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols());
-        C[i].getJacobianOfRotation(0).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(0).cols());
-        C[i].getJacobianOfTranslation(1).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(1).cols());
-        C[i].getJacobianOfRotation(1).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(1).cols());
+        C[i].getJacobianOfTranslation(0,false).resize(body[i]->getFrameOfReference()->gethSize());
+        C[i].getJacobianOfRotation(0,false).resize(body[i]->getFrameOfReference()->gethSize());
+        C[i].getJacobianOfTranslation(1,false).resize(body[i]->getFrameOfReference()->gethSize(1));
+        C[i].getJacobianOfRotation(1,false).resize(body[i]->getFrameOfReference()->gethSize(1));
         C[i].setParent(this);
         C[i].setFrameOfReference(body[i]->getFrameOfReference());
       }
       for(unsigned int i=0; i<body.size(); i++) {
-        h[0].push_back(Vec(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols()));
+        h[0].push_back(Vec(body[i]->getFrameOfReference()->gethSize()));
         h[1].push_back(Vec(6));
-        W[0].push_back(Mat(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols(),laSize));
+        W[0].push_back(Mat(body[i]->getFrameOfReference()->gethSize(),laSize));
         W[1].push_back(Mat(6,laSize));
       }
     }

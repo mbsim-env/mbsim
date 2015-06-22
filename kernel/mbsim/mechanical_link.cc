@@ -34,7 +34,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  MechanicalLink::MechanicalLink(const std::string &name) : Link(name) {
+  MechanicalLink::MechanicalLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
   }
 
   MechanicalLink::~MechanicalLink() {}
