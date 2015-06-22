@@ -89,7 +89,7 @@ namespace MBSimGUI {
 
   void ExtPhysicalVarWidget::openEvalDialog() {
     evalInput = inputCombo->currentIndex();
-    QString str = QString::fromStdString(MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(getValue().toStdString())));
+    QString str = QString::fromStdString(MainWindow::eval->cast<MBXMLUtils::CodeString>(MainWindow::eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
     vector<vector<QString> > A = strToMat(str);
     if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {

@@ -38,7 +38,7 @@ void convertXPathParamSetToVariable(const boost::shared_ptr<Preprocess::XPathPar
       }
       // add a string variable as it
       else if(type==Eval::StringType) {
-        string value=eval.cast<string>(pIt->second);
+        string value=eval.cast<CodeString>(pIt->second);
         value=value.substr(1, value.length()-2); // remove the leading and trailing '
         fmiParam.push_back(boost::make_shared<VariableStore<string> >(pIt->first, Parameter, value));
       }

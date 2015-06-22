@@ -66,7 +66,7 @@ namespace MBSimGUI {
   }
 
   int LinearTranslation::getArg1Size() const {
-    string str = MainWindow::eval->cast<string>(MainWindow::eval->stringToValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
+    string str = MainWindow::eval->cast<CodeString>(MainWindow::eval->stringToValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
     vector<vector<string> > A = strToMat(str);
     return A.size()?A[0].size():0;
   }
