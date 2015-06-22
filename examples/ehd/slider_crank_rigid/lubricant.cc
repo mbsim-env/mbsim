@@ -19,103 +19,120 @@
 
 #include "lubricant.h"
 
-namespace MBsimEHD {
-  methods
-  function lub = Lubricant(eta0, rho0, alpha, Z, viscModel, densModel, pr)
-  // Constructur for lubricant
-  //
-  // Input:
-  //   Fluid properties (for description see above)
-  //
-  // Output:
-  //   lub:    Object of properties
+#include <math.h>
+#include <algorithm>
+#include <mbsim/dynamic_system_solver.h>
 
-  lub.eta0 = eta0;lub.rho0 = rho0;
+using namespace MBSim;
+using namespace std;
 
-  // Check if both parameters alpha and Z were defined
-  if ~isempty(alpha) && ~isempty(Z)
-  error(['Both parameters alpha and Z were defined. ', ...
-      'Define only one of them.']);end
+namespace MBSimEHD {
+  Lubricant::Lubricant(const double & eta0, const double & rho0, const double & alphaOrZ, const bool & isAlpha, const ViscosityPressureModel & viscModel, const DensityPressureModel & densModel, const double & pr) :
+      eta0(eta0), rho0(rho0), pr(pr) {
 
-  // Compute alpha out of Z or vice versa
-  if isempty(alpha)
-  lub.Z = Z;lub.alpha = lub.Z / lub.cp * log(lub.eta0 / lub.etaInf);
-  elseif isempty(Z) lub.alpha = alpha;lub.Z = lub.alpha * lub.cp / log(lub.eta0 / lub.etaInf);end
+    if (not isAlpha) {
+      Z = alphaOrZ;
+      alpha = Z / cp * log(eta0 / etaInf);
+    }
+    else {
+      alpha = alphaOrZ;
+      Z = alpha * cp / log(eta0 / etaInf);
+    }
 
-  // Save used models for pressure dependence
-  lub.viscModel = viscModel;lub.densModel = densModel;
+    // Save used models for pressure dependence
+    this->viscModel = viscModel;
+    this->densModel = densModel;
 
-  // Save reference pressure if a dimensionless description is
-  // used
-  if nargin == 7
-  lub.pr = pr;elseif ~isempty(strfind(viscModel, 'DimLess')) || ...
-      ~isempty(strfind(densModel, 'DimLess'))
-          error(['No reference pressure for dimensionless ', ...
-              'description defined.']);
-          end end
+    // Save reference pressure if a dimensionless description is
+    // used
+    if (viscModel == constVisc or viscModel == Roelands or viscModel == Barus or densModel == constDen or densModel == DowsonHigginson)
+      throw MBSimError("No reference pressure for dimensionless description defined.");
 
-          function [eta, etadp, etadpdp] = DynViscosity(lub, p)
+  }
 
-          p = max(p, 0);
+  void Lubricant::DynViscosity(const double & p_, double & eta, double & etadp, double & etadpdp) {
 
-          switch lub.viscModel
-          case 'Barus'
+    double p = std::max(p_, 0.);
+
+    if (viscModel == constVisc) {
+      // Constant viscosity
+      eta = eta0;
+      etadp = 0;
+      etadpdp = 0;
+    }
+    else if (viscModel == constViscDimLess) {
+      // Constant viscosity
+      eta = 1;
+      etadp = 0;
+      etadpdp = 0;
+    }
+    else if (viscModel == Roelands) {
+      // Roelands formula, see Hamrock eq. (4.10)
+      // Note: log = loge = ln (natural logarithm)
+      eta = eta0 * pow(etaInf / eta0, 1 - pow(1 + p / cp, Z));
+      etadp = -eta * Z / cp * log(etaInf / eta0) * pow(1 + p / cp, Z - 1);
+      etadpdp = -etadp / cp / (1 + p / cp) * (Z * log(etaInf / eta0) * pow(1 + p / cp, Z) - (Z - 1));
+    }
+    else if (viscModel == RoelandsDimLess) {
+      // Dimensionless Roelands formula
+      double cpdl = cp / pr;
+      eta = pow(etaInf / eta0, 1 - pow(1 + p / cpdl, Z));
+      etadp = -eta * Z / cpdl * log(etaInf / eta0) * pow(1 + p / cpdl, Z - 1);
+      etadpdp = -etadp / cpdl / (1 + p / cpdl) * (Z * log(etaInf / eta0) * pow(1 + p / cpdl, Z) - (Z - 1));
+
+    }
+    else if (viscModel == Barus) {
       // Barus formula, see Hamrock eq. (4.7)
-          eta = lub.eta0 * exp(lub.alpha * p);etadp = lub.eta0 * lub.alpha * exp(lub.alpha * p);etadpdp = lub.eta0 * lub.alpha^2 * exp(lub.alpha * p);
+      eta = eta0 * exp(alpha * p);
+      etadp = eta0 * alpha * exp(alpha * p);
+      etadpdp = eta0 * pow(alpha, 2) * exp(alpha * p);
+    }
+    else if (viscModel == BarusDimLess) {
+      // Dimensionless Barus formula
+      double alphadl = alpha * pr;
+      eta = exp(alphadl * p);
+      etadp = alphadl * exp(alphadl * p);
+      etadpdp = pow(alphadl, 2) * exp(alphadl * p);
+    }
+    else {
+      throw MBSimError("No valid ViscModel chosen!");
+    }
 
-          case 'Roelands'
-   // Roelands formula, see Hamrock eq. (4.10)
-                             // Note: log = loge = ln (natural logarithm)
-          eta = lub.eta0 * (lub.etaInf / lub.eta0) ...
-          ^ (1 - (1 + p / lub.cp)^lub.Z);etadp = -eta * lub.Z / lub.cp ...
-          * log(lub.etaInf / lub.eta0) ...
-          * (1 + p / lub.cp)^(lub.Z - 1);etadpdp = -etadp / lub.cp / (1 + p / lub.cp) ...
-          * (lub.Z * log(lub.etaInf / lub.eta0) ...
-              * (1 + p / lub.cp)^lub.Z - (lub.Z - 1));
+  }
 
-          case 'constant'
-// Constant viscosity
-          eta = lub.eta0;etadp = 0;etadpdp = 0;
+  void Lubricant::Density(const double & p_, double & rho, double & rhodp, double & rhodpdp) {
 
-          case 'BarusDimLess'
-// Dimensionless Barus formula
-          alphadl = lub.alpha * lub.pr;eta = exp(alphadl * p);etadp = alphadl * exp(alphadl * p);etadpdp = alphadl^2 * exp(alphadl * p);
+    double p = std::max(p_, 0.);
 
-          case 'RoelandsDimLess'
-// Dimensionless Roelands formula
-          cpdl = lub.cp / lub.pr;eta = (lub.etaInf / lub.eta0) ...
-          ^ (1 - (1 + p / cpdl)^lub.Z);etadp = -eta * lub.Z / cpdl ...
-          * log(lub.etaInf / lub.eta0) ...
-          * (1 + p / cpdl)^(lub.Z - 1);etadpdp = -etadp / cpdl / (1 + p / cpdl) ...
-          * (lub.Z * log(lub.etaInf / lub.eta0) ...
-              * (1 + p / cpdl)^lub.Z - (lub.Z - 1));
+    if (densModel == constDen) {
+      // Constant density
+      rho = rho0;
+      rhodp = 0;
+      rhodpdp = 0;
+    }
+    else if (densModel == constDenDimLess) {
+      // Constant density
+      rho = 1;
+      rhodp = 0;
+      rhodpdp = 0;
+    }
+    else if (densModel == DowsonHigginson) {
+      // Dowson and Higginson formula, see Hamrock eq. (4.19)
+      rho = rho0 * (1 + a * p / (1 + b * p));
+      rhodp = rho0 * a / pow(1 + b * p, 2);
+      rhodpdp = -2 * rho0 * a * b / pow(1 + b * p, 3);
+    }
+    else if (densModel == DowsonHigginsonDimLess) {
+      // Dimensionless Dowson and Higginson formula
+      double adl = a * pr;
+      double bdl = b * pr;
+      rho = 1 + adl * p / (1 + bdl * p);
+      rhodp = adl / pow(1 + bdl * p, 2);
+      rhodpdp = -2 * adl * bdl / pow(1 + bdl * p, 3);
+    }
+    else {
+      throw MBSimError("No valid densModel chosen!");
+    }
 
-          case 'constantDimLess'
-// Constant viscosity
-          eta = 1;etadp = 0;etadpdp = 0;
-          end end
-
-          function [rho, rhodp, rhodpdp] = Density(lub, p)
-
-          p = max(p, 0);
-
-          switch lub.densModel
-          case 'DowsonHigginson'
-        // Dowson and Higginson formula, see Hamrock eq. (4.19)
-          rho = lub.rho0 * (1 + lub.a * p / (1 + lub.b * p));rhodp = lub.rho0 * lub.a / (1 + lub.b * p)^2;rhodpdp = -2 * lub.rho0 * lub.a * lub.b ...
-          / (1 + lub.b * p)^3;
-
-          case 'constant'
-               // Constant density
-          rho = lub.rho0;rhodp = 0;rhodpdp = 0;
-
-          case 'DowsonHigginsonDimLess'
- // Dimensionless Dowson and Higginson formula
-          adl = lub.a * lub.pr;bdl = lub.b * lub.pr;rho = 1 + adl * p / (1 + bdl * p);rhodp = adl / (1 + bdl * p)^2;rhodpdp = -2 * adl * bdl / (1 + bdl * p)^3;
-
-          case 'constantDimLess'
-        // Constant density
-          rho = 1;rhodp = 0;rhodpdp = 0;
-          end endend
-        }
-      }
+  }
+}

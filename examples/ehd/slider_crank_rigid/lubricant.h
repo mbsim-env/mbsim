@@ -28,10 +28,10 @@ namespace MBSimEHD {
   class Lubricant {
     public:
       enum ViscosityPressureModel {
-        constant, constantDimLess, Roelands, RoelandsDimLess, Barus, BarusDimLess
+        constVisc, constViscDimLess, Roelands, RoelandsDimLess, Barus, BarusDimLess
       };
       enum DensityPressureModel {
-        constant, constantDimLess, DowsonHigginson, DowsonHigginsonDimLess
+        constDen, constDenDimLess, DowsonHigginson, DowsonHigginsonDimLess
       };
       /*!
        * \brief standard constructor
@@ -41,7 +41,7 @@ namespace MBSimEHD {
       /*!
        * \brief constructor to initialize all values
        */
-      Lubricant(const double & eta0, const double & rho0, const double & alpha, const double & Z, const ViscosityPressureModel & viscModel, const DensityPressureModel & densModel, const double & pr);
+      Lubricant(const double & eta0, const double & rho0, const double & alphaOrZ, const bool & isAlpha, const ViscosityPressureModel & viscModel, const DensityPressureModel & densModel, const double & pr = 0);
 
       /* Isothermal viscosity-pressure dependence
        *
@@ -102,7 +102,7 @@ namespace MBSimEHD {
 
       // Constants for Dowson Higginson formula, in m^2/N
       const double a = 0.6e-9;
-      const double b = 1.7e-9;end
+      const double b = 1.7e-9;
 
   };
 }

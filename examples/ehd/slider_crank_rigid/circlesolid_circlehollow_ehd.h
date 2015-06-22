@@ -15,7 +15,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: martin.o.foerg@googlemail.com
- *          rzander@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_CIRCLESOLID_CIRCLEHOLLOW_EHD_H_
@@ -26,17 +25,21 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief interface class for all contact kinematics for EHD computation
+   */
+  class ContactKinematicsEHDInterface : public ContactKinematics {
+
+  };
+
   class CircleSolid;
   class CircleHollow;
 
   /**
-   * \brief pairing circle outer side to circle inner side
-   * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \date 2009-05-13 updateg implemented (Bastian Esefeld)
-   * \todo updatewb TODO
+   * \brief pairing circle outer side to circle inner side for EHD contacts
+   * \author Kilian Grundl
    */
-  class ContactKinematicsCircleSolidCircleHollowEHD : public ContactKinematics {
+  class ContactKinematicsCircleSolidCircleHollowEHD : public ContactKinematicsEHDInterface {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
