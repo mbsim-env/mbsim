@@ -33,8 +33,8 @@ if test "_$debug" = "_yes" ; then
   FCFLAGS="$FCFLAGS -ggdb"
   FFLAGS="$FFLAGS -ggdb"
 else
-  CFLAGS="$CFLAGS -g -O3"
-  CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
+  CFLAGS="$CFLAGS -g -O2"
+  CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
   FCFLAGS="$FCFLAGS -g -O2"
   FFLAGS="$FFLAGS -g -O2"
 fi
