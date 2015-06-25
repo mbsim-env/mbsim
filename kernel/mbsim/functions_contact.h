@@ -71,13 +71,13 @@ namespace MBSim {
        * \param contour parameter
        * \return possible contact-distance at contour parameter
        */
-      virtual double operator[](const Arg& x) { return nrm2(computeWrD(t,x)); }
+      virtual double operator[](const Arg& x) { return nrm2(getWrD(t,x)); }
 
       /*!
        * \param contour parameter
        * \return helping distance vector at contour parameter
        */
-      virtual fmatvec::Vec3 computeWrD(double t, const Arg& x) = 0;
+      virtual fmatvec::Vec3 getWrD(double t, const Arg& x) = 0;
       /*************************************************/
   };
 
@@ -99,12 +99,12 @@ namespace MBSim {
 //
 //      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
 //      double operator()(const double &alpha) {
-//        fmatvec::Vec3 Wd = computeWrD(alpha);
+//        fmatvec::Vec3 Wd = getWrD(alpha);
 //        fmatvec::Vec3 Wt = cp.getFrameOfReference().getOrientation().col(1);
 //        return Wt.T() * Wd;
 //      }
 //
-//      fmatvec::Vec3 computeWrD(const double &alpha) {
+//      fmatvec::Vec3 getWrD(const double &alpha) {
 //        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
 //        cp.getLagrangeParameterPosition()(0) = alpha;
 //        contour->computeRootFunctionPosition(cp);
@@ -145,7 +145,7 @@ namespace MBSim {
 //
 //      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
 //      fmatvec::Vec operator()(const fmatvec::Vec &alpha) {  // Vec2: U and V direction
-//        fmatvec::Vec3 Wd = computeWrD(alpha);
+//        fmatvec::Vec3 Wd = getWrD(alpha);
 //        fmatvec::Vec3 Wt1 = cp.getFrameOfReference().getOrientation().col(1);
 //        fmatvec::Vec3 Wt2 = cp.getFrameOfReference().getOrientation().col(2);
 //        fmatvec::Vec Wt(2, fmatvec::NONINIT);  // TODO:: check this?
@@ -154,7 +154,7 @@ namespace MBSim {
 //        return Wt;
 //      }
 //
-//      fmatvec::Vec3 computeWrD(const fmatvec::Vec &alpha) {
+//      fmatvec::Vec3 getWrD(const fmatvec::Vec &alpha) {
 //        cp.getLagrangeParameterPosition()(0) = alpha(0);
 //        cp.getLagrangeParameterPosition()(1) = alpha(1);
 //        contour->computeRootFunctionPosition(cp);
@@ -194,11 +194,11 @@ namespace MBSim {
 //
 //      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
 //      double operator()(const double &alpha) {
-//        fmatvec::Vec3 Wd = computeWrD(alpha);
+//        fmatvec::Vec3 Wd = getWrD(alpha);
 //        return circle->getFrame()->getOrientation().col(2).T() * Wd;
 //      }
 //
-//      fmatvec::Vec3 computeWrD(const double &alpha) {
+//      fmatvec::Vec3 getWrD(const double &alpha) {
 //        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
 //        cp.getLagrangeParameterPosition()(0) = alpha;
 //        contour->computeRootFunctionPosition(cp);
@@ -239,12 +239,12 @@ namespace MBSim {
 //        fmatvec::Mat3xV Wt = contour->computeWt(alpha);
 //        fmatvec::Vec3 WrOC[2];
 //        WrOC[0] = point->getFrame()->getPosition();
-//        WrOC[1] = contour->computeWrOC(alpha);
+//        WrOC[1] = contour->getWrOC(alpha);
 //        return Wt.T() * (WrOC[1] - WrOC[0]);
 //      }
 //
-//      fmatvec::Vec3 computeWrD(const fmatvec::VecV &alpha) {
-//        return contour->computeWrOC(alpha) - point->getFrame()->getPosition();
+//      fmatvec::Vec3 getWrD(const fmatvec::VecV &alpha) {
+//        return contour->getWrOC(alpha) - point->getFrame()->getPosition();
 //      }
 //      /*************************************************/
 //
@@ -286,7 +286,7 @@ namespace MBSim {
 //      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
 //      virtual double operator()(const double &phi) = 0;
 //      double operator[](const double &phi);
-//      virtual fmatvec::Vec3 computeWrD(const double &phi) = 0;
+//      virtual fmatvec::Vec3 getWrD(const double &phi) = 0;
 //      /*************************************************/
 //
 //      /* GETTER / SETTER */
@@ -326,9 +326,9 @@ namespace MBSim {
 //  }
 //  inline double FuncPairConeSectionCircle::operator[](const double &phi) {
 //    if (sec_IN_ci)
-//      return R - nrm2(computeWrD(phi));
+//      return R - nrm2(getWrD(phi));
 //    else
-//      return nrm2(computeWrD(phi)) - R;
+//      return nrm2(getWrD(phi)) - R;
 //  }
 //
 //  /*!
@@ -363,7 +363,7 @@ namespace MBSim {
 //
 //      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
 //      double operator()(const double &phi);
-//      fmatvec::Vec3 computeWrD(const double &phi);
+//      fmatvec::Vec3 getWrD(const double &phi);
 //      /*************************************************/
 //
 //      /* GETTER / SETTER */
@@ -377,7 +377,7 @@ namespace MBSim {
 //  inline double FuncPairEllipseCircle::operator()(const double &phi) {
 //    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cos(phi) + 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sin(phi) + ((a * a) - (b * b)) * sin(2 * phi);
 //  }
-//  inline fmatvec::Vec3 FuncPairEllipseCircle::computeWrD(const double &phi) {
+//  inline fmatvec::Vec3 FuncPairEllipseCircle::getWrD(const double &phi) {
 //    return d + b1 * a * cos(phi) + b2 * b * sin(phi);
 //  }
 //
@@ -412,14 +412,14 @@ namespace MBSim {
 //
 //      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
 //      double operator()(const double &phi);
-//      fmatvec::Vec3 computeWrD(const double &phi);
+//      fmatvec::Vec3 getWrD(const double &phi);
 //      /*************************************************/
 //  };
 //
 //  inline double FuncPairHyperbolaCircle::operator()(const double &phi) {
 //    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cosh(phi) - 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sinh(phi) - ((a * a) + (b * b)) * sinh(2 * phi);
 //  }
-//  inline fmatvec::Vec3 FuncPairHyperbolaCircle::computeWrD(const double &phi) {
+//  inline fmatvec::Vec3 FuncPairHyperbolaCircle::getWrD(const double &phi) {
 //    return d + b1 * a * cosh(phi) + b2 * b * sinh(phi);
 //  }
 //
@@ -544,16 +544,16 @@ namespace MBSim {
 //        //return trans(WtC)*WnL;
 //      }
 //
-//      virtual fmatvec::Vec3 computeWrD(const double &s) {
-//        THROW_MBSIMERROR("(FuncPairContour1sLine::computeWrD): Not implemented!");
-//        //fmatvec::Vec WrOCContour =  contour->computeWrOC(s);
+//      virtual fmatvec::Vec3 getWrD(const double &s) {
+//        THROW_MBSIMERROR("(FuncPairContour1sLine::getWrD): Not implemented!");
+//        //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
 //        //fmatvec::Vec Wn = contour->computeWn(s);
 //        //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());
 //        //return Wn*g;
 //      }
 //
 //      virtual double operator[](const double &s) {
-//        return nrm2(computeWrD(s));
+//        return nrm2(getWrD(s));
 //      }
 //      /*************************************************/
 //
@@ -581,15 +581,15 @@ namespace MBSim {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
-        fmatvec::Vec3 Wd = computeWrD(t,alpha);
-        fmatvec::Vec3 Wt = contour->computeTangent(t,cp);
+        fmatvec::Vec3 Wd = getWrD(t,alpha);
+        fmatvec::Vec3 Wt = contour->getTangent(t,cp);
         return Wt.T() * Wd;
       }
 
-      fmatvec::Vec3 computeWrD(double t, const double &alpha) {
+      fmatvec::Vec3 getWrD(double t, const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
-        WrOC[0] = circle->getFrame()->getPosition(t) - circle->getRadius() * contour->computeNormal(t,cp);
-        WrOC[1] = contour->computePosition(t,cp);
+        WrOC[0] = circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getNormal(t,cp);
+        WrOC[1] = contour->getPosition(t,cp);
         return WrOC[1] - WrOC[0];
       }
       /***************************************************/

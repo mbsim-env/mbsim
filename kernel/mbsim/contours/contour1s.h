@@ -50,55 +50,53 @@ namespace MBSim {
       void plot(double t, double dt);
       /***************************************************/
 
-      virtual fmatvec::Vec3 computes(double t, ContourPointData &cp) {
-        return cp.getFrameOfReference().getOrientation(t).col(1);
-      }
-      virtual fmatvec::Vec3 computesd(double t, ContourPointData &cp) {
-        return cp.getFrameOfReference().getOrientation(t).col(1);
+      virtual fmatvec::Vec3 getRelativePosition(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getRelativePosition): Not implemented.");
+        return 0;
       }
 
-//      /* INTERFACE FOR DERIVED CLASSES */
-//      /**
-//       * \return tangent in world frame
-//       * \param contour position
-//       */
-      virtual fmatvec::Vec3 computeTangent(double t, ContourPointData &cp) {
-        return cp.getFrameOfReference().getOrientation(t).col(1);
+      virtual fmatvec::Vec3 getDerivativeOfRelativePosition(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getDerivativeOfRelativePosition): Not implemented.");
+        return 0;
       }
-//
-//      /**
-//       * \return binormal in world frame
-//       * \param Lagrangian position
-//       */
-      virtual fmatvec::Vec3 computeBinormal(double t, ContourPointData &cp) {
-        return cp.getFrameOfReference().getOrientation(t).col(2);
+
+      virtual fmatvec::Vec3 getSecondDerivativeOfRelativePosition(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getSecondDerivativeOfRelativePosition): Not implemented.");
+        return 0;
       }
+
+      /**
+       * \return position in world frame
+       * \param contour position
+       */
+     virtual fmatvec::Vec3 getPosition(double t, ContourPointData &cp);
+
+      /**
+       * \return tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getTangent(double t, ContourPointData &cp);
+
+      /**
+       * \return normal in world frame
+       * \param contour position
+       */
+      virtual fmatvec::Vec3 getNormal(double t, ContourPointData &cp);
+
+      /**
+       * \return binormal in world frame
+       * \param Lagrangian position
+       */
+      virtual fmatvec::Vec3 getBinormal(double t, ContourPointData &cp);
       /***************************************************/
 
       /**
        * \return radius of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) {
-        THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented.");
-        return 0;
-      }
-
-      /**
-       * \return distance between frameOfReference and possible contour point
-       * \param Lagrangian position
-       * \param orderOfDerivative
-       */
-      virtual double computeR(double alpha) {
-        THROW_MBSIMERROR("(Contour::computeR): Not implemented.");
-        return 0;
-      }
-      virtual double computedRdAlpha(double alpha) {
-        THROW_MBSIMERROR("(Contour::computedRdAlpha): Not implemented.");
-        return 0;
-      }
-      virtual double computed2RdAlpha2(double alpha) {
-        THROW_MBSIMERROR("(Contour::computed2RdAlpha2): Not implemented.");
+      virtual double getCurvature(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getCurvature): Not implemented.");
         return 0;
       }
 

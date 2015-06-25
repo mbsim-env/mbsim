@@ -1388,8 +1388,8 @@ namespace MBSim {
   void SingleContact::applyh(double t, int j) {
   }
 
-  void SingleContact::computeCurvatures(Vec & r) const {
-    contactKinematics->computeCurvatures(r, cpData);
+  void SingleContact::getCurvatures(Vec & r) const {
+    contactKinematics->getCurvatures(r, cpData);
   }
 
 //  void SingleContact::LinearImpactEstimation(Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {

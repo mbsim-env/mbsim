@@ -245,7 +245,7 @@ namespace MBSim {
        */
       void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0, const std::string & name = "");
 
-      void computeCurvatures(fmatvec::Vec & r, int contactKinematicsIndex) const;
+      void getCurvatures(fmatvec::Vec & r, int contactKinematicsIndex) const;
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

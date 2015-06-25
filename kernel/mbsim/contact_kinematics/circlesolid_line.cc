@@ -82,9 +82,9 @@ namespace MBSim {
       wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
   }
       
-  void ContactKinematicsCircleSolidLine::computeCurvatures(Vec &r, ContourPointData* cpData) {
-    r(icircle)=circlesolid->computeCurvature(cpData[icircle]);
-    r(iline)=line->computeCurvature(cpData[iline]);
+  void ContactKinematicsCircleSolidLine::getCurvatures(Vec &r, ContourPointData* cpData) {
+    r(icircle)=circlesolid->getCurvature(cpData[icircle]);
+    r(iline)=line->getCurvature(cpData[iline]);
   }
 
 }

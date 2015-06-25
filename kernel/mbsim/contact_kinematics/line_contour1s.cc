@@ -66,7 +66,7 @@ namespace MBSim {
   //    cpData[iline].Wn    = line->computeWn();
   //    cpData[icontour].Wn = -cpData[iline].Wn;
   //
-  //    cpData[icontour].WrOC = contour1s->computeWrOC(cpData[icontour]);
+  //    cpData[icontour].WrOC = contour1s->getWrOC(cpData[icontour]);
   //
   //    g=trans(cpData[icontour].Wn)*(cpData[icontour].WrOC-line->getWrOP());
   //
@@ -76,7 +76,7 @@ namespace MBSim {
 
   //  void ContactKinematicsLineContour1s::stage2(double g, Vec &gd, vector<ContourPointData> &cpData) {
 
-  //    cpData[icontour].WrOC =  contour1s->computeWrOC(cpData[icontour]);
+  //    cpData[icontour].WrOC =  contour1s->getWrOC(cpData[icontour]);
   //    cpData[iline].WrOC = cpData[icontour].WrOC - g*cpData[icontour].Wn;
   //
   //    Vec WrPCLine;

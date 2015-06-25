@@ -216,7 +216,7 @@ namespace MBSim {
           if ((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec3 dTilde_tmp = funcRho->getWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde);
             Vec3 Wd_PF = cpData[icircle].getFrameOfReference().getPosition() - frustum->getFrame()->getPosition();
@@ -348,7 +348,7 @@ namespace MBSim {
           if ((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec3 dTilde_tmp = funcRho->getWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde);
             Vec3 Wd_PF = cpData[icircle].getFrameOfReference().getPosition() - frustum->getFrame()->getPosition();

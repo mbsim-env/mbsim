@@ -56,7 +56,7 @@ namespace MBSim {
       double minRadius=1./epsroot();
       for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
         ContourPointData cp(alpha);
-        double radius=1./static_cast<Contour1sAnalytical*>(contour1s)->computeCurvature(cp);
+        double radius=1./contour1s->getCurvature(cp);
         minRadius=(radius<minRadius)?radius:minRadius;
       }
       if (circle->getRadius()>minRadius)
@@ -79,17 +79,17 @@ namespace MBSim {
 
     cpData[icontour1s].getLagrangeParameterPosition()(0) = search.slv();
 
-    cpData[icontour1s].getFrameOfReference().getPosition(false) = contour1s->computePosition(t,cpData[icontour1s]);
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->computeNormal(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->computeTangent(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->computeBinormal(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getPosition(false) = contour1s->getPosition(t,cpData[icontour1s]);
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->getNormal(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->getTangent(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->getBinormal(t,cpData[icontour1s]));
 
     cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition(t)-circle->getRadius()*cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
     cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
     cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(1));
     cpData[icircle].getFrameOfReference().getOrientation(false).set(2, cpData[icontour1s].getFrameOfReference().getOrientation(false).col(2));
 
-    Vec3 WrD = func->computeWrD(t,cpData[icontour1s].getLagrangeParameterPosition()(0));
+    Vec3 WrD = func->getWrD(t,cpData[icontour1s].getLagrangeParameterPosition()(0));
     g = -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0).T()*WrD;
   }
 
@@ -100,8 +100,8 @@ namespace MBSim {
     const Vec3 R1=circle->getRadius()*u1;
     const Vec3 N1=u1;
 
-    Vec3 Ks2 = contour1s->computes(t,cpData[icontour1s]);
-    Vec3 Ks2d = contour1s->computesd(t,cpData[icontour1s]);
+    Vec3 Ks2 = contour1s->getDerivativeOfRelativePosition(cpData[icontour1s]);
+    Vec3 Ks2d = contour1s->getSecondDerivativeOfRelativePosition(cpData[icontour1s]);
     const Vec3 s2=contour1s->getFrame()->getOrientation(t)*Ks2;
     const Vec3 u2=cpData[icontour1s].getFrameOfReference().getOrientation(t).col(1);
     const Vec3 v2=cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
@@ -134,9 +134,9 @@ namespace MBSim {
     }
   }
       
-  void ContactKinematicsCircleSolidContour1s::computeCurvatures(fmatvec::Vec &r, ContourPointData* cpData) {
-    r(icircle)=circle->computeCurvature(cpData[icircle]);
-    r(icontour1s)=contour1s->computeCurvature(cpData[icontour1s]);
+  void ContactKinematicsCircleSolidContour1s::getCurvatures(fmatvec::Vec &r, ContourPointData* cpData) {
+    r(icircle)=circle->getCurvature(cpData[icircle]);
+    r(icontour1s)=contour1s->getCurvature(cpData[icontour1s]);
   }
 
 }

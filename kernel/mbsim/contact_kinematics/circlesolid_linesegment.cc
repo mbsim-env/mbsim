@@ -77,9 +77,9 @@ namespace MBSim {
     throw MBSimError("Not implemented!");
   }
       
-  void ContactKinematicsCircleSolidLineSegment::computeCurvatures(Vec &r, ContourPointData* cpData) {
-    r(icircle)=circlesolid->computeCurvature(cpData[icircle]);
-    r(iline)=linesegment->computeCurvature(cpData[iline]);
+  void ContactKinematicsCircleSolidLineSegment::getCurvatures(Vec &r, ContourPointData* cpData) {
+    r(icircle)=circlesolid->getCurvature(cpData[icircle]);
+    r(iline)=linesegment->getCurvature(cpData[iline]);
   }
 
 }

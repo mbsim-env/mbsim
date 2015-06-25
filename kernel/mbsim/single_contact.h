@@ -215,7 +215,7 @@ namespace MBSim {
        */
       void applyh(double t, int j);
 
-      void computeCurvatures(fmatvec::Vec & r) const;
+      void getCurvatures(fmatvec::Vec & r) const;
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 

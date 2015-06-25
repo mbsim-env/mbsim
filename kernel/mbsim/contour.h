@@ -66,46 +66,6 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
 
-//      /**
-//       * \return normal in world frame
-//       * \param contour position
-//       */
-      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp) { return cp.getFrameOfReference().getOrientation(t).col(0); }
-//
-      /**
-       * \return position in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp) { return cp.getFrameOfReference().getPosition(t); }
-//
-//      /**
-//       * \return velocity in world frame
-//       * \param contour position
-//       */
-//      virtual fmatvec::Vec3 computeVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getVelocity(t); }
-//
-//      /**
-//       * \return angular in world frame
-//       * \param contour position
-//       */
-//      virtual fmatvec::Vec3 computeAngularVelocity(double t, ContourPointData &cp) { return cp.getFrameOfReference().getAngularVelocity(t); }
-//
-//      /**
-//       * \return curvature of contour in contour point
-//       * \param contour position
-//       */
-//      virtual double computeCurvature(double t, ContourPointData &cp) { THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented."); return 0; }
-//
-//      /**
-//       * \brief projects the point on the contour to compute the Lagrange parameter
-//       * \param WrPoint point in world coordinates
-//       * \return Vec of lagrange parameters
-//       *
-//       * \remark: a vector length of 2 is necessary (Vec(2,INIT,0.))
-//       */
-//      virtual fmatvec::Vec2 computeLagrangeParameter(double t, const fmatvec::Vec3 &WrPoint) {THROW_MBSIMERROR("computeLagrangeParameter(const fmatvec::Vec3 &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
-//
-
       /**
        * \brief TODO
        */

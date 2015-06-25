@@ -758,7 +758,7 @@ namespace MBSim {
 
   }
 
-  void Contact::computeCurvatures(Vec & r, int contactKinematicsIndex) const {
+  void Contact::getCurvatures(Vec & r, int contactKinematicsIndex) const {
     THROW_MBSIMERROR("Not implemented");
     //TODO
   }

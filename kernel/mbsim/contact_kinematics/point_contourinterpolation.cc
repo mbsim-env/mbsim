@@ -69,7 +69,7 @@ namespace MBSim {
   //      cpData[ipoint].WrOC = point->getWrOP();
   //
   //      cpData[idinterpol].type     = EXTINTERPOL;
-  //      cpData[idinterpol].WrOC     = cinterpol->computeWrOC(cpData[idinterpol]);
+  //      cpData[idinterpol].WrOC     = cinterpol->getWrOC(cpData[idinterpol]);
   //      //    cpData[idinterpol].iWeights = cinterpol->computePointWeights(cpData[idinterpol].alpha); ist eh in stage2
   //
   //      Vec Wd = cpData[idinterpol].WrOC - cpData[ipoint].WrOC;
@@ -86,7 +86,7 @@ namespace MBSim {
 
   //    if(g>0.0) return;
   //    // Contour-Interpolation
-  //    cpData[idinterpol].WrOC = cinterpol->computeWrOC(cpData[idinterpol].alpha);
+  //    cpData[idinterpol].WrOC = cinterpol->getWrOC(cpData[idinterpol].alpha);
   //
   //    // Interpolation
   //    cpData[idinterpol].iPoints = cinterpol->getPoints();

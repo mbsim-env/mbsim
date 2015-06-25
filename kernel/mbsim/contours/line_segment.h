@@ -54,7 +54,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual double computeCurvature(ContourPointData &cp) { return 0; }
+      virtual double getCurvature(ContourPointData &cp) { return 0; }
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

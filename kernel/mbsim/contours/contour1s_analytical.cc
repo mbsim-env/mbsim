@@ -49,31 +49,16 @@ namespace MBSim {
      funcCrPC=NULL;
   }
 
-  Vec3 Contour1sAnalytical::computePosition(double t, ContourPointData &cp) {
-    return R->getPosition(t) + R->getOrientation(t)*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
+  Vec3 Contour1sAnalytical::getRelativePosition(ContourPointData &cp) {
+    return (*funcCrPC)(cp.getLagrangeParameterPosition()(0));
   }
 
-  Vec3 Contour1sAnalytical::computes(double t, ContourPointData &cp) {
+  Vec3 Contour1sAnalytical::getDerivativeOfRelativePosition(ContourPointData &cp) {
     return funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
   }
 
-  Vec3 Contour1sAnalytical::computesd(double t, ContourPointData &cp) {
+  Vec3 Contour1sAnalytical::getSecondDerivativeOfRelativePosition(ContourPointData &cp) {
     return funcCrPC->parDerParDer(cp.getLagrangeParameterPosition()(0));
-  }
-
-  Vec3 Contour1sAnalytical::computeTangent(double t, ContourPointData &cp) {
-    Vec3 T=funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
-    return R->getOrientation(t)*T/nrm2(T);
-  }
-
-  Vec3 Contour1sAnalytical::computeNormal(double t, ContourPointData &cp) {
-    static Vec3 B("[0;0;1]");
-    Vec3 N=crossProduct(funcCrPC->parDer(cp.getLagrangeParameterPosition()(0)),B);
-    return R->getOrientation(t)*N/nrm2(N);
-  }
-
-  Vec3 Contour1sAnalytical::computeBinormal(double t, ContourPointData &cp) {
-    return R->getOrientation(t).col(2);
   }
 
   void Contour1sAnalytical::init(InitStage stage) {
@@ -162,7 +147,7 @@ namespace MBSim {
     }
   }
       
-  double Contour1sAnalytical::computeCurvature(ContourPointData &cp) {
+  double Contour1sAnalytical::getCurvature(ContourPointData &cp) {
     const fmatvec::Vec3 rs = funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
     return nrm2(crossProduct(rs,funcCrPC->parDerParDer(cp.getLagrangeParameterPosition()(0))))/pow(nrm2(rs),3);
   }

@@ -43,8 +43,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sAnalytical(const std::string &name="") : Contour1s(name)
-                                                     {}
+      Contour1sAnalytical(const std::string &name="") : Contour1s(name) { }
 
       /**
        * \brief destructor
@@ -53,30 +52,15 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Contour1sAnalytical"; }
-      virtual void plot(double t, double dt = 1);
+      void plot(double t, double dt = 1);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-//      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
-//      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
-      virtual void init(InitStage stage);
-      virtual double computeCurvature(ContourPointData &cp);
-//      double computeR(double alpha) { return funcCrPC->computeR(alpha); }
-//      double computedRdAlpha(double alpha) { return funcCrPC->computedRdAlpha(alpha); }
-//      double computed2RdAlpha2(double alpha) { return funcCrPC->computed2RdAlpha2(alpha); }
-      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp);
-      virtual fmatvec::Vec3 computes(double t, ContourPointData &cp);
-      virtual fmatvec::Vec3 computesd(double t, ContourPointData &cp);
-      virtual fmatvec::Vec3 computeTangent(double t, ContourPointData &cp);
-      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp);
-      virtual fmatvec::Vec3 computeBinormal(double t, ContourPointData &cp);
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-//      virtual void computeRootFunctionPosition(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::position); }
-//      virtual void computeRootFunctionFirstTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::firstTangent); }
-//      virtual void computeRootFunctionNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::normal); }
-//      virtual void computeRootFunctionSecondTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::secondTangent); }
+      void init(InitStage stage);
+      double getCurvature(ContourPointData &cp);
+      fmatvec::Vec3 getRelativePosition(ContourPointData &cp);
+      fmatvec::Vec3 getDerivativeOfRelativePosition(ContourPointData &cp);
+      fmatvec::Vec3 getSecondDerivativeOfRelativePosition(ContourPointData &cp);
       /***************************************************/
 
       /* GETTER / SETTER */

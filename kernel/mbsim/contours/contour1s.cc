@@ -32,10 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Contour1s::Contour1s(const std::string &name) :
-      ContourContinuum<double>(name), diameter(0.)
-
-  {
+  Contour1s::Contour1s(const std::string &name) : ContourContinuum<double>(name), diameter(0.) {
   }
 
   void Contour1s::init(InitStage stage) {
@@ -66,6 +63,25 @@ namespace MBSim {
       }
     }
     ContourContinuum<double>::init(stage);
+  }
+
+  Vec3 Contour1s::getPosition(double t, ContourPointData &cp) {
+    return R->getPosition(t) + R->getOrientation(t)*getRelativePosition(cp);
+  }
+
+  Vec3 Contour1s::getTangent(double t, ContourPointData &cp) {
+    Vec3 T=getDerivativeOfRelativePosition(cp);
+    return R->getOrientation(t)*T/nrm2(T);
+  }
+
+  Vec3 Contour1s::getNormal(double t, ContourPointData &cp) {
+    static Vec3 B("[0;0;1]");
+    Vec3 N=crossProduct(getDerivativeOfRelativePosition(cp),B);
+    return R->getOrientation(t)*N/nrm2(N);
+  }
+
+  Vec3 Contour1s::getBinormal(double t, ContourPointData &cp) {
+    return R->getOrientation(t).col(2);
   }
 
   void Contour1s::plot(double t, double dt) {
