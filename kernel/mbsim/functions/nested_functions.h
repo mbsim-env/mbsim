@@ -143,10 +143,10 @@ namespace MBSim {
   template<typename Sig> class BinaryNestedFunction; 
 
   // BinaryNestedFunction with a double as inner argument (2nd derivative defined)
-  template<typename Ret, typename Argo> 
-    class BinaryNestedFunction<Ret(Argo(double))> : public Function<Ret(double)> {
+  template<typename Ret, typename Argo1, typename Argo2>
+    class BinaryNestedFunction<Ret(Argo1(double),Argo2(double))> : public Function<Ret(double)> {
       public:
-        BinaryNestedFunction(Function<Ret(Argo,Argo)> *fo_=0, Function<Argo(double)> *fi1_=0, Function<Argo(double)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
+        BinaryNestedFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(double)> *fi1_=0, Function<Argo2(double)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
           if(fo)
             fo->setParent(this);
           if(fi1)
@@ -179,28 +179,28 @@ namespace MBSim {
             + fo->parDer1((*fi1)(arg),(*fi2)(arg))*fi1->parDerParDer(arg) \
             + fo->parDer2((*fi1)(arg),(*fi2)(arg))*fi2->parDerParDer(arg);
         }
-        void setOuterFunction(Function<Ret(Argo,Argo)> *fo_) {
+        void setOuterFunction(Function<Ret(Argo1,Argo2)> *fo_) {
           fo = fo_;
           fo->setParent(this);
           fo->setName("Outer");
         }
-        void setFirstInnerFunction(Function<Argo(double)> *fi_) {
+        void setFirstInnerFunction(Function<Argo1(double)> *fi_) {
           fi1 = fi_;
           fi1->setParent(this);
           fi1->setName("FirstInner");
         }
-        void setSecondInnerFunction(Function<Argo(double)> *fi_) {
+        void setSecondInnerFunction(Function<Argo2(double)> *fi_) {
           fi2 = fi_;
           fi2->setParent(this);
           fi2->setName("SecondInner");
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo,Argo)> >(e->getFirstElementChild()));
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo1,Argo2)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstInnerFunction");
-          setFirstInnerFunction(ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild()));
+          setFirstInnerFunction(ObjectFactory::createAndInit<Function<Argo1(double)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondInnerFunction");
-          setSecondInnerFunction(ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild()));
+          setSecondInnerFunction(ObjectFactory::createAndInit<Function<Argo2(double)> >(e->getFirstElementChild()));
         }
         void init(Element::InitStage stage) {
           Function<Ret(double)>::init(stage);
@@ -212,15 +212,16 @@ namespace MBSim {
           return 0;
         } 
       private:
-        Function<Ret(Argo,Argo)> *fo;
-        Function<Argo(double)> *fi1, *fi2;
+        Function<Ret(Argo1,Argo2)> *fo;
+        Function<Argo1(double)> *fi1;
+        Function<Argo2(double)> *fi2;
     };
 
   // BinaryNestedFunction with a vector as inner argument (no 2nd derivative defined)
-  template<typename Ret, typename Argo, typename Argi> 
-    class BinaryNestedFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
+  template<typename Ret, typename Argo1, typename Argo2, typename Argi>
+    class BinaryNestedFunction<Ret(Argo1(Argi),Argo2(Argi))> : public Function<Ret(Argi)> {
       public:
-        BinaryNestedFunction(Function<Ret(Argo,Argo)> *fo_=0, Function<Argo(Argi)> *fi1_=0, Function<Argo(Argi)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
+        BinaryNestedFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(Argi)> *fi1_=0, Function<Argo2(Argi)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
           if(fo)
             fo->setParent(this);
           if(fi1)
@@ -245,28 +246,28 @@ namespace MBSim {
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) {
           return fo->parDer1((*fi1)(arg),(*fi2)(arg))*fi1->parDer(arg) + fo->parDer2((*fi1)(arg),(*fi2)(arg))*fi2->parDer(arg);
         }
-        void setOuterFunction(Function<Ret(Argo,Argo)> *fo_) {
+        void setOuterFunction(Function<Ret(Argo1,Argo2)> *fo_) {
           fo = fo_;
           fo->setParent(this);
           fo->setName("Outer");
         }
-        void setFirstInnerFunction(Function<Argo(Argi)> *fi_) {
+        void setFirstInnerFunction(Function<Argo1(Argi)> *fi_) {
           fi1 = fi_;
           fi1->setParent(this);
           fi1->setName("FirstInner");
         }
-        void setSecondInnerFunction(Function<Argo(Argi)> *fi_) {
+        void setSecondInnerFunction(Function<Argo2(Argi)> *fi_) {
           fi2 = fi_;
           fi2->setParent(this);
           fi2->setName("SecondInner");
         }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo,Argo)> >(e->getFirstElementChild()));
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo1,Argo2)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"firstInnerFunction");
-          setFirstInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
+          setFirstInnerFunction(ObjectFactory::createAndInit<Function<Argo1(Argi)> >(e->getFirstElementChild()));
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"secondInnerFunction");
-          setSecondInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
+          setSecondInnerFunction(ObjectFactory::createAndInit<Function<Argo2(Argi)> >(e->getFirstElementChild()));
         }
         void init(Element::InitStage stage) {
           Function<Ret(Argi)>::init(stage);
@@ -278,8 +279,9 @@ namespace MBSim {
           return 0;
         } 
       private:
-        Function<Ret(Argo,Argo)> *fo;
-        Function<Argo(Argi)> *fi1, *fi2;
+        Function<Ret(Argo1,Argo2)> *fo;
+        Function<Argo1(Argi)> *fi1;
+        Function<Argo2(Argi)> *fi2;
     };
 
 }
