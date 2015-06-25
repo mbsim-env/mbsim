@@ -26,7 +26,6 @@
 #include "mbsim/functions_contact.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
-#include "mbsim/utils/contour_functions.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -56,7 +55,8 @@ namespace MBSim {
     if (dynamic_cast<Contour1sAnalytical*>(contour1s)) {
       double minRadius=1./epsroot();
       for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
-        double radius=1./static_cast<Contour1sAnalytical*>(contour1s)->getContourFunction1s()->computeCurvature(alpha);
+        ContourPointData cp(alpha);
+        double radius=1./static_cast<Contour1sAnalytical*>(contour1s)->computeCurvature(cp);
         minRadius=(radius<minRadius)?radius:minRadius;
       }
       if (circle->getRadius()>minRadius)
@@ -79,64 +79,40 @@ namespace MBSim {
 
     cpData[icontour1s].getLagrangeParameterPosition()(0) = search.slv();
 
-    cpData[icontour1s].getFrameOfReference().getPosition() = 
-      contour1s->computePosition(cpData[icontour1s]);
-    cpData[icontour1s].getFrameOfReference().getOrientation().set(0, 
-      contour1s->computeNormal(cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation().set(1, 
-      contour1s->computeTangent(cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation().set(2, 
-      -contour1s->computeBinormal(cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getPosition(false) = contour1s->computePosition(t,cpData[icontour1s]);
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->computeNormal(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->computeTangent(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->computeBinormal(t,cpData[icontour1s]));
 
-    cpData[icircle].getFrameOfReference().getPosition() =
-      circle->getFrame()->getPosition()-
-      circle->getRadius()*cpData[icontour1s].getFrameOfReference().getOrientation().col(0);
-    cpData[icircle].getFrameOfReference().getOrientation().set(0,
-      -cpData[icontour1s].getFrameOfReference().getOrientation().col(0));
-    cpData[icircle].getFrameOfReference().getOrientation().set(1,
-      -cpData[icontour1s].getFrameOfReference().getOrientation().col(1));
-    cpData[icircle].getFrameOfReference().getOrientation().set(2,
-      cpData[icontour1s].getFrameOfReference().getOrientation().col(2));
+    cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition(t)-circle->getRadius()*cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(1));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(2, cpData[icontour1s].getFrameOfReference().getOrientation(false).col(2));
 
-    Vec3 WrD = func->computeWrD(cpData[icontour1s].getLagrangeParameterPosition()(0));
-    g = -cpData[icontour1s].getFrameOfReference().getOrientation().col(0).T()*WrD;
+    Vec3 WrD = func->computeWrD(t,cpData[icontour1s].getLagrangeParameterPosition()(0));
+    g = -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0).T()*WrD;
   }
 
   void ContactKinematicsCircleSolidContour1s::updatewb(double t, Vec &wb, double g, ContourPointData* cpData) {
     
-    const Vec3 n1=cpData[icircle].getFrameOfReference().getOrientation().col(0);
-    const Vec3 u1=-cpData[icircle].getFrameOfReference().getOrientation().col(1);
+    const Vec3 n1=cpData[icircle].getFrameOfReference().getOrientation(t).col(0);
+    const Vec3 u1=cpData[icircle].getFrameOfReference().getOrientation().col(1);
     const Vec3 R1=circle->getRadius()*u1;
     const Vec3 N1=u1;
 
-    const double zeta2=cpData[icontour1s].getLagrangeParameterPosition()(0);
-    const double sa2=sin(zeta2);
-    const double ca2=cos(zeta2);
-    const double r2=contour1s->computeDistance(zeta2, 0);
-    const double r2s=contour1s->computeDistance(zeta2, 1);
-    const double r2ss=contour1s->computeDistance(zeta2, 2);
-    Vec3 Ks2(NONINIT);
-    Ks2(0)=0;
-    Ks2(1)=-r2*sa2+r2s*ca2;
-    Ks2(2)=r2*ca2+r2s*sa2;
-    const Vec3 s2=contour1s->getFrame()->getOrientation()*Ks2;
-    const Vec3 u2=-cpData[icontour1s].getFrameOfReference().getOrientation().col(1);
-    const Vec3 v2=-cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
+    Vec3 Ks2 = contour1s->computes(t,cpData[icontour1s]);
+    Vec3 Ks2d = contour1s->computesd(t,cpData[icontour1s]);
+    const Vec3 s2=contour1s->getFrame()->getOrientation(t)*Ks2;
+    const Vec3 u2=cpData[icontour1s].getFrameOfReference().getOrientation(t).col(1);
+    const Vec3 v2=cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
     const Vec3 &R2 = s2;
-    Vec3 KU2(NONINIT);
-    KU2(0)=0;
-    KU2(1)=-r2*ca2-r2s*sa2;
-    KU2(2)=-r2*sa2+r2s*ca2;
-    const double r2q=r2*r2;
-    const double r2sq=r2s*r2s;
-    const double r2qpr2sq=r2q+r2sq;
-    KU2*=(r2q+2*r2sq-r2*r2ss)/sqrt(r2qpr2sq*r2qpr2sq*r2qpr2sq);
+    Vec3 KU2 = Ks2d/nrm2(Ks2) - Ks2*((Ks2.T()*Ks2d)/pow(nrm2(Ks2),3));
     const Vec3 U2=contour1s->getFrame()->getOrientation()*KU2;
 
-    const Vec3 vC1 = cpData[icircle].getFrameOfReference().getVelocity();
-    const Vec3 vC2 = cpData[icontour1s].getFrameOfReference().getVelocity();
-    const Vec3 Om1 = cpData[icircle].getFrameOfReference().getAngularVelocity();
-    const Vec3 Om2 = cpData[icontour1s].getFrameOfReference().getAngularVelocity();
+    const Vec3 vC1 = cpData[icircle].getFrameOfReference().getVelocity(t);
+    const Vec3 vC2 = cpData[icontour1s].getFrameOfReference().getVelocity(t);
+    const Vec3 Om1 = cpData[icircle].getFrameOfReference().getAngularVelocity(t);
+    const Vec3 Om2 = cpData[icontour1s].getFrameOfReference().getAngularVelocity(t);
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;

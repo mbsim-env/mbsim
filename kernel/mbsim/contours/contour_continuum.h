@@ -49,10 +49,10 @@ namespace MBSim {
          * \brief compute necessary parameters for contact kinematics root function
          * \param contour point data
          */
-        virtual void computeRootFunctionPosition(ContourPointData &cp) = 0;
-        virtual void computeRootFunctionFirstTangent(ContourPointData &cp) = 0;
-        virtual void computeRootFunctionNormal(ContourPointData &cp) = 0;
-        virtual void computeRootFunctionSecondTangent(ContourPointData &cp) = 0;
+//        virtual void computeRootFunctionPosition(ContourPointData &cp) = 0;
+//        virtual void computeRootFunctionFirstTangent(ContourPointData &cp) = 0;
+//        virtual void computeRootFunctionNormal(ContourPointData &cp) = 0;
+//        virtual void computeRootFunctionSecondTangent(ContourPointData &cp) = 0;
 
       /**
        * \return radius of contour in contour point

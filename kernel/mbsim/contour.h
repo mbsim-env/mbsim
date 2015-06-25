@@ -70,13 +70,13 @@ namespace MBSim {
 //       * \return normal in world frame
 //       * \param contour position
 //       */
-//      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp) { return cp.getFrameOfReference().getOrientation(t).col(0); }
+      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp) { return cp.getFrameOfReference().getOrientation(t).col(0); }
 //
-//      /**
-//       * \return position in world frame
-//       * \param contour position
-//       */
-//      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp) { return cp.getFrameOfReference().getPosition(t); }
+      /**
+       * \return position in world frame
+       * \param contour position
+       */
+      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp) { return cp.getFrameOfReference().getPosition(t); }
 //
 //      /**
 //       * \return velocity in world frame

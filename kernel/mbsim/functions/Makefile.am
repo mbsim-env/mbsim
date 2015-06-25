@@ -8,7 +8,8 @@ libfunction_la_SOURCES = basic_functions.cc \
 			 kinematic_functions.cc \
 			 kinetic_functions.cc \
 			 piecewise_polynom_function.cc \
-			 fourier_function.cc
+			 fourier_function.cc\
+			 contour_functions.cc
 
 functionincludedir = $(includedir)/mbsim/functions
 
@@ -26,4 +27,5 @@ functioninclude_HEADERS = function.h \
 			  kinetic_functions.h \
 			  auxiliary_functions.h \
 			  piecewise_polynom_function.h \
-			  fourier_function.h
+			  fourier_function.h\
+			  contour_functions.h

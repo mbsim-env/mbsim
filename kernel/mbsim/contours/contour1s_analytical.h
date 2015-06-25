@@ -21,6 +21,7 @@
 #define _CONTOUR1S_ANALYTICAL_H_
 
 #include "mbsim/contours/contour1s.h"
+#include <mbsim/functions/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/openmbv_utils.h>
@@ -28,7 +29,6 @@
 
 namespace MBSim {
 
-  class ContourFunction1s;
   class ContactKinematics;
 
   /** 
@@ -57,23 +57,31 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
-      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
+//      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
+//      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
       virtual void init(InitStage stage);
       virtual double computeCurvature(ContourPointData &cp);
-      virtual double computeDistance(const double s, const int order=0);
+//      double computeR(double alpha) { return funcCrPC->computeR(alpha); }
+//      double computedRdAlpha(double alpha) { return funcCrPC->computedRdAlpha(alpha); }
+//      double computed2RdAlpha2(double alpha) { return funcCrPC->computed2RdAlpha2(alpha); }
+      virtual fmatvec::Vec3 computePosition(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 computes(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 computesd(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 computeTangent(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 computeNormal(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 computeBinormal(double t, ContourPointData &cp);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::position); }
-      virtual void computeRootFunctionFirstTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::firstTangent); }
-      virtual void computeRootFunctionNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::normal); }
-      virtual void computeRootFunctionSecondTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::secondTangent); }
+//      virtual void computeRootFunctionPosition(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::position); }
+//      virtual void computeRootFunctionFirstTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::firstTangent); }
+//      virtual void computeRootFunctionNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::normal); }
+//      virtual void computeRootFunctionSecondTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,Frame::secondTangent); }
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setContourFunction1s(ContourFunction1s* f) { funcCrPC = f; }
-      ContourFunction1s* getContourFunction1s() { return funcCrPC; }
+      void setContourFunction1s(Function<fmatvec::Vec3(double)> *f) { funcCrPC = f; }
+      Function<fmatvec::Vec3(double)>* getContourFunction1s() { return funcCrPC; }
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -94,7 +102,7 @@ namespace MBSim {
       ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
     protected:
-      ContourFunction1s * funcCrPC;
+      Function<fmatvec::Vec3(double)> * funcCrPC;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
 #endif

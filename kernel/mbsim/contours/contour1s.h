@@ -50,19 +50,26 @@ namespace MBSim {
       void plot(double t, double dt);
       /***************************************************/
 
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \return tangent in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec3 computeTangent(double t, ContourPointData &cp) {
+      virtual fmatvec::Vec3 computes(double t, ContourPointData &cp) {
+        return cp.getFrameOfReference().getOrientation(t).col(1);
+      }
+      virtual fmatvec::Vec3 computesd(double t, ContourPointData &cp) {
         return cp.getFrameOfReference().getOrientation(t).col(1);
       }
 
-      /**
-       * \return binormal in world frame
-       * \param Lagrangian position
-       */
+//      /* INTERFACE FOR DERIVED CLASSES */
+//      /**
+//       * \return tangent in world frame
+//       * \param contour position
+//       */
+      virtual fmatvec::Vec3 computeTangent(double t, ContourPointData &cp) {
+        return cp.getFrameOfReference().getOrientation(t).col(1);
+      }
+//
+//      /**
+//       * \return binormal in world frame
+//       * \param Lagrangian position
+//       */
       virtual fmatvec::Vec3 computeBinormal(double t, ContourPointData &cp) {
         return cp.getFrameOfReference().getOrientation(t).col(2);
       }
@@ -72,7 +79,7 @@ namespace MBSim {
        * \return radius of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(double t, ContourPointData &cp) {
+      virtual double computeCurvature(ContourPointData &cp) {
         THROW_MBSIMERROR("(Contour::computeCurvature): Not implemented.");
         return 0;
       }
@@ -82,8 +89,16 @@ namespace MBSim {
        * \param Lagrangian position
        * \param orderOfDerivative
        */
-      virtual double computeDistance(const double s, const int order = 0) {
-        THROW_MBSIMERROR("(Contour::computeDistance): Not implemented.");
+      virtual double computeR(double alpha) {
+        THROW_MBSIMERROR("(Contour::computeR): Not implemented.");
+        return 0;
+      }
+      virtual double computedRdAlpha(double alpha) {
+        THROW_MBSIMERROR("(Contour::computedRdAlpha): Not implemented.");
+        return 0;
+      }
+      virtual double computed2RdAlpha2(double alpha) {
+        THROW_MBSIMERROR("(Contour::computed2RdAlpha2): Not implemented.");
         return 0;
       }
 

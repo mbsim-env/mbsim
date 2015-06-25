@@ -25,7 +25,6 @@ utilsinclude_HEADERS = colors.h\
                        utils.h\
                        stopwatch.h\
                        ansatz_functions.h\
-                       contour_functions.h\
 		       boost_parameters.h\
 		       openmbv_utils.h\
 		       octave_utils.h

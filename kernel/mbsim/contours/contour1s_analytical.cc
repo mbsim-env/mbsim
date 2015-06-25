@@ -22,7 +22,6 @@
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/utils/contour_functions.h"
 #include "mbsim/utils/contact_utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/object.h"
@@ -50,40 +49,31 @@ namespace MBSim {
      funcCrPC=NULL;
   }
 
-  void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
-    if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-      cp.getFrameOfReference().getOrientation().set(0, funcCrPC->computeN(cp.getLagrangeParameterPosition()(0)));
-      cp.getFrameOfReference().getOrientation().set(1, funcCrPC->computeT(cp.getLagrangeParameterPosition()(0)));
-      cp.getFrameOfReference().getOrientation().set(2, funcCrPC->computeB(cp.getLagrangeParameterPosition()(0)));
-      cp.getFrameOfReference().getOrientation() = R->getOrientation() * cp.getFrameOfReference().getOrientation();
-    }
-    if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) 
-      cp.getFrameOfReference().getPosition() = R->getPosition() + R->getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
-    if(ff==Frame::velocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) 
-      cp.getFrameOfReference().getVelocity() = R->getVelocity() + crossProduct(R->getAngularVelocity(),R->getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0)));
-    if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) 
-      cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
+  Vec3 Contour1sAnalytical::computePosition(double t, ContourPointData &cp) {
+    return R->getPosition(t) + R->getOrientation(t)*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
   }
 
-  void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
-    Mat3x3 tWrPC = tilde(WrPC);
+  Vec3 Contour1sAnalytical::computes(double t, ContourPointData &cp) {
+    return funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
+  }
 
-    cp.getFrameOfReference().setJacobianOfTranslation(
-        R->getJacobianOfTranslation(j) - tWrPC*R->getJacobianOfRotation(j),j);
-    cp.getFrameOfReference().setJacobianOfRotation(
-        R->getJacobianOfRotation(j),j);
-    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(
-        R->getGyroscopicAccelerationOfTranslation() - tWrPC*R->getGyroscopicAccelerationOfRotation() + 
-        crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrPC)));
-    cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(
-        R->getGyroscopicAccelerationOfRotation());
+  Vec3 Contour1sAnalytical::computesd(double t, ContourPointData &cp) {
+    return funcCrPC->parDerParDer(cp.getLagrangeParameterPosition()(0));
+  }
 
-    // adapt dimensions if necessary
-    if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0)
-      cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R->getJacobianOfTranslation(j).cols());
-    if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0)
-      cp.getFrameOfReference().getJacobianOfRotation(j).resize(R->getJacobianOfRotation(j).cols());
+  Vec3 Contour1sAnalytical::computeTangent(double t, ContourPointData &cp) {
+    Vec3 T=funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
+    return R->getOrientation(t)*T/nrm2(T);
+  }
+
+  Vec3 Contour1sAnalytical::computeNormal(double t, ContourPointData &cp) {
+    static Vec3 B("[0;0;1]");
+    Vec3 N=crossProduct(funcCrPC->parDer(cp.getLagrangeParameterPosition()(0)),B);
+    return R->getOrientation(t)*N/nrm2(N);
+  }
+
+  Vec3 Contour1sAnalytical::computeBinormal(double t, ContourPointData &cp) {
+    return R->getOrientation(t).col(2);
   }
 
   void Contour1sAnalytical::init(InitStage stage) {
@@ -105,13 +95,13 @@ namespace MBSim {
           while(alpha.back()<ae) {
             class PointDistance : public Function<double(double)> {
               public:
-                PointDistance(Vec3 p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
+                PointDistance(Vec3 p1_, Function<Vec3(double)> * f_, double d_) : p1(p1_), f(f_), d(d_) {}
                 double operator()(const double &alpha) {
                   return nrm2((*f)(alpha)-p1)-d;
                 }
               private:
                 Vec3 p1;
-                ContourFunction1s * f;
+                Function<Vec3(double)> * f;
                 double d;
             };
             PointDistance g((*funcCrPC)(alpha.back()), funcCrPC, .1*rMax);
@@ -136,11 +126,11 @@ namespace MBSim {
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
           for (unsigned int i=0; i<alpha.size(); i++) {
             const Vec3 CrPC=(*funcCrPC)(alpha[i]);
-            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(1), CrPC(2), 0));
+            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
           }
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
-          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
+//          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
           parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
   #endif
@@ -157,7 +147,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
         vector<double> data;
         data.push_back(t);
-        data.push_back(R->getPosition()(0));
+        data.push_back(R->getPosition(t)(0));
         data.push_back(R->getPosition()(1));
         data.push_back(R->getPosition()(2));
         Vec3 cardan=AIK2Cardan(R->getOrientation());
@@ -173,20 +163,8 @@ namespace MBSim {
   }
       
   double Contour1sAnalytical::computeCurvature(ContourPointData &cp) {
-    return funcCrPC->computeCurvature(cp);
-  }
-
-  double Contour1sAnalytical::computeDistance(const double s, const int order) {
-    if (order==0)
-      return funcCrPC->computeR(s);
-    else if (order==1)
-      return funcCrPC->computedRdAlpha(s);
-    else if (order==2)
-      return funcCrPC->computed2RdAlpha2(s);
-    else {
-      THROW_MBSIMERROR("(Contour1sAnalytical::computeDistance): Not implemented.");
-      return 0.;
-    }
+    const fmatvec::Vec3 rs = funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
+    return nrm2(crossProduct(rs,funcCrPC->parDerParDer(cp.getLagrangeParameterPosition()(0))))/pow(nrm2(rs),3);
   }
 
   void Contour1sAnalytical::initializeUsingXML(DOMElement * element) {
@@ -204,7 +182,8 @@ namespace MBSim {
     diameter=getDouble(e);
     //Contour1sAnalytical
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
-    funcCrPC=ObjectFactory::createAndInit<ContourFunction1s>(e->getFirstElementChild());
+    throw;
+//    funcCrPC=ObjectFactory::createAndInit<ContourFunction1s> >(e->getFirstElementChild());
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
