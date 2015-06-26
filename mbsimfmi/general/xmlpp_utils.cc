@@ -1,6 +1,6 @@
 #include "config.h"
 #include "xmlpp_utils.h"
-#include <mbsimxml/mbsimxml.h>
+#include <mbsimxml/mbsimflatxml.h>
 
 using namespace std;
 using namespace MBXMLUtils;

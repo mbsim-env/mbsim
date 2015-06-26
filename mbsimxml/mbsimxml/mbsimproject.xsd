@@ -26,6 +26,7 @@
   </xs:element>
   <xs:complexType name="MBSimProjectType">
     <xs:sequence>
+      <xs:element ref="pv:evaluator" minOccurs="0"/>
       <xs:choice>
         <xs:element ref="mbsim:DynamicSystemSolver">
           <xs:annotation>
