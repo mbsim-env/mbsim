@@ -23,9 +23,15 @@
  * \author Kilian Grundl (copied to c++ 19.06.2015)
  */
 
+#ifndef _LUBRICANT_H_
+#define _LUBRICANT_H_
+
 namespace MBSimEHD {
 
   class Lubricant {
+
+      friend class PressureElement;
+
     public:
       enum ViscosityPressureModel {
         constVisc, constViscDimLess, Roelands, RoelandsDimLess, Barus, BarusDimLess
@@ -58,7 +64,7 @@ namespace MBSimEHD {
        *   For dimensionless models the values for p, eta, etadp and
        *   etadpdp are dimensionless numbers
        */
-      void DynViscosity(const double & p, double & eta, double & etadp, double & etadpdp);
+      void DynViscosity(const double & p, double & eta, double & etadp, double & etadpdp) const;
 
       /*!
        * Isothermal density-pressure dependence
@@ -76,7 +82,7 @@ namespace MBSimEHD {
        *   For dimensionless models the values for p, eta, etadp and
        *   etadpdp are dimensionless numbers
        */
-      void Density(const double & p, double & rho, double & rhodp, double & rhodpdp);
+      void Density(const double & p, double & rho, double & rhodp, double & rhodpdp) const;
 
     private:
       double eta0;           // Dynamic viscosity at p = 0 and at a constant
@@ -106,3 +112,5 @@ namespace MBSimEHD {
 
   };
 }
+
+#endif

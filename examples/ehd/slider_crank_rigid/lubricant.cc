@@ -50,7 +50,7 @@ namespace MBSimEHD {
 
   }
 
-  void Lubricant::DynViscosity(const double & p_, double & eta, double & etadp, double & etadpdp) {
+  void Lubricant::DynViscosity(const double & p_, double & eta, double & etadp, double & etadpdp) const {
 
     double p = std::max(p_, 0.);
 
@@ -100,7 +100,7 @@ namespace MBSimEHD {
 
   }
 
-  void Lubricant::Density(const double & p_, double & rho, double & rhodp, double & rhodpdp) {
+  void Lubricant::Density(const double & p_, double & rho, double & rhodp, double & rhodpdp) const {
 
     double p = std::max(p_, 0.);
 

@@ -22,6 +22,9 @@
 
 #include <mbsim/mbsim_event.h>
 
+using namespace fmatvec;
+using namespace MBSim;
+
 namespace MBSimEHD {
 
   JournalBearing::JournalBearing(bool dimLess) :
@@ -47,7 +50,7 @@ namespace MBSimEHD {
 
   }
 
-  void JournalBearing::Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy) {
+  void JournalBearing::Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy) const {
 
     double y = x(1);
     if (dimLess) {
@@ -79,25 +82,27 @@ namespace MBSimEHD {
     }
   }
 
-  void JournalBearing::Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) {
+  void JournalBearing::Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) const {
 
-    double y = x(1);
+    VecV y(1);
+    y(0) = x(1);
     if (dimLess) {
       y = y * xrF;
     }
 
     double phi;
     SqrMat2 AFK;
-    AngleCoordSys(y, phi, AFK);
+    AngleCoordSys(y(0), phi, AFK);
 
     double er, et, r1;
-    Eccentricity(y, er, et, r1);
+    Eccentricity(y(0), er, et, r1);
 
-    double void1, h2, void3, void4;
-    Thickness(y, void1, h2, void3, void4);
+    double h2;
+    double void1;
+    Thickness(y, void1, void1, void1, h2, void1, void1);
 
     // Compute derivative of second line from rotation matrix AFK
-    Vec2 AFKdphi2;
+    RowVec2 AFKdphi2;
     AFKdphi2(0) = -cos(phi);
     AFKdphi2(1) = -sin(phi);
 
@@ -120,7 +125,7 @@ namespace MBSimEHD {
     }
   }
 
-  void JournalBearing::Eccentricity(const double & y, double & er, double & et, double & r1) {
+  void JournalBearing::Eccentricity(const double & y, double & er, double & et, double & r1) const {
 // Get rotation matrix
     double phi;
     SqrMat2 AFK;
@@ -138,7 +143,7 @@ namespace MBSimEHD {
     r1 = sqrt(pow(R1, 2) - pow(et, 2));
   }
 
-  void JournalBearing::AngleCoordSys(y, double & phi, fmatvec::SqrMat2 & AFK) {
+  void JournalBearing::AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat2 & AFK) const {
 
 // Define mapping
     phi = y / R2;
