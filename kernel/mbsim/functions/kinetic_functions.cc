@@ -144,8 +144,8 @@ namespace MBSim {
 //    Function<double(std::pair<Contour*, ContourPointData>,std::pair<Contour*, ContourPointData>)>::initializeUsingXML(element);
 //  }
 //
-//  fmatvec::Vec2 InfluenceFunction::computeLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo) {
-//    return contourInfo.first->computeLagrangeParameter(contourInfo.second.getFrameOfReference().getPosition());
+//  fmatvec::Vec2 InfluenceFunction::getLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo) {
+//    return contourInfo.first->getLagrangeParameter(contourInfo.second.getFrameOfReference().getPosition());
 //  }
 //
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibilityInfluenceFunction, MBSIM%"FlexibilityInfluenceFunction")

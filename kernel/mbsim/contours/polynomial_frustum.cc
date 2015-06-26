@@ -71,7 +71,7 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec2 PolynomialFrustum::computeLagrangeParameter(const Vec3 & WrPoint) {
+  Vec2 PolynomialFrustum::getLagrangeParameter(const Vec3 & WrPoint) {
     Vec2 returnVal(NONINIT);
     Vec3 inFramePoint = -R->getPosition() + R->getOrientation().T() * WrPoint;
 

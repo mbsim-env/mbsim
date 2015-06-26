@@ -81,8 +81,8 @@ namespace MBSim {
 
     cpData[icontour1s].getFrameOfReference().getPosition(false) = contour1s->getPosition(t,cpData[icontour1s]);
     cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->getNormal(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->getTangent(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->getBinormal(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->getFirstTangent(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->getSecondTangent(t,cpData[icontour1s]));
 
     cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition(t)-circle->getRadius()*cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
     cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
@@ -95,19 +95,15 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidContour1s::updatewb(double t, Vec &wb, double g, ContourPointData* cpData) {
     
-    const Vec3 n1=cpData[icircle].getFrameOfReference().getOrientation(t).col(0);
-    const Vec3 u1=cpData[icircle].getFrameOfReference().getOrientation().col(1);
-    const Vec3 R1=circle->getRadius()*u1;
-    const Vec3 N1=u1;
+    const Vec3 n1 = cpData[icircle].getFrameOfReference().getOrientation(t).col(0);
+    const Vec3 u1 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
+    const Vec3 R1 = circle->getRadius()*u1;
+    const Vec3 N1 = u1;
 
-    Vec3 Ks2 = contour1s->getDerivativeOfRelativePosition(cpData[icontour1s]);
-    Vec3 Ks2d = contour1s->getSecondDerivativeOfRelativePosition(cpData[icontour1s]);
-    const Vec3 s2=contour1s->getFrame()->getOrientation(t)*Ks2;
-    const Vec3 u2=cpData[icontour1s].getFrameOfReference().getOrientation(t).col(1);
-    const Vec3 v2=cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
-    const Vec3 &R2 = s2;
-    Vec3 KU2 = Ks2d/nrm2(Ks2) - Ks2*((Ks2.T()*Ks2d)/pow(nrm2(Ks2),3));
-    const Vec3 U2=contour1s->getFrame()->getOrientation()*KU2;
+    const Vec3 u2 = cpData[icontour1s].getFrameOfReference().getOrientation(t).col(1);
+    const Vec3 v2 = cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
+    const Vec3 R2 = contour1s->getGlobalDerivativeOfRelativePosition(t,cpData[icontour1s]);
+    const Vec3 U2 = contour1s->getDerivativeOfFirstTangent(t,cpData[icontour1s]);
 
     const Vec3 vC1 = cpData[icircle].getFrameOfReference().getVelocity(t);
     const Vec3 vC2 = cpData[icontour1s].getFrameOfReference().getVelocity(t);

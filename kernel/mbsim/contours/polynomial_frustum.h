@@ -64,7 +64,7 @@ namespace MBSim {
        *    index 0: x,   height coordinate of frustum
        *    index 1: phi, angle of point
        */
-      virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
+      virtual fmatvec::Vec2 getLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /*********************************/
 
       /*!

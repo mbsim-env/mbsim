@@ -61,7 +61,7 @@ namespace MBSim {
   }
 
   //TODO: Same function as in flexible_body_2s_13_mfr_mindlin (transformCW) --> this is just the transformation into cylindrical coordinates --> get it into utils?
-  Vec2 Frustum::computeLagrangeParameter(const Vec3 &WrPoint) {
+  Vec2 Frustum::getLagrangeParameter(const Vec3 &WrPoint) {
     Vec3 CrPoint = WrPoint;
 
     CrPoint -= R->getPosition();

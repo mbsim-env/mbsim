@@ -46,7 +46,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
+      fmatvec::Vec2 getLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /**********************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -60,7 +60,7 @@ namespace MBSim {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
   };
 
-  inline fmatvec::Vec2 Point::computeLagrangeParameter(const fmatvec::Vec3 & WrPoint) {
+  inline fmatvec::Vec2 Point::getLagrangeParameter(const fmatvec::Vec3 & WrPoint) {
     return fmatvec::Vec2(fmatvec::INIT,0.);
   }
 }

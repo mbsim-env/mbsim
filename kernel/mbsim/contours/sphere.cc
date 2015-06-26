@@ -52,7 +52,7 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec2 Sphere::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
+  Vec2 Sphere::getLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
     Vec3 SrPoint = R->getOrientation().T() * (WrPoint - R->getPosition());
     Vec2 alpha;
     double r = nrm2(SrPoint);

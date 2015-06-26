@@ -69,9 +69,13 @@ namespace MBSim {
     return R->getPosition(t) + R->getOrientation(t)*getRelativePosition(cp);
   }
 
-  Vec3 Contour1s::getTangent(double t, ContourPointData &cp) {
+  Vec3 Contour1s::getFirstTangent(double t, ContourPointData &cp) {
     Vec3 T=getDerivativeOfRelativePosition(cp);
     return R->getOrientation(t)*T/nrm2(T);
+  }
+
+  Vec3 Contour1s::getSecondTangent(double t, ContourPointData &cp) {
+    return R->getOrientation(t).col(2);
   }
 
   Vec3 Contour1s::getNormal(double t, ContourPointData &cp) {
@@ -80,8 +84,15 @@ namespace MBSim {
     return R->getOrientation(t)*N/nrm2(N);
   }
 
-  Vec3 Contour1s::getBinormal(double t, ContourPointData &cp) {
-    return R->getOrientation(t).col(2);
+  Vec3 Contour1s::getDerivativeOfFirstTangent(double t, ContourPointData &cp) {
+    Vec3 s = getDerivativeOfRelativePosition(cp);
+    Vec3 sd = getSecondDerivativeOfRelativePosition(cp);
+    Vec3 U = sd/nrm2(s) - s*((s.T()*sd)/pow(nrm2(s),3));
+    return R->getOrientation(t)*U;
+  }
+
+  Vec3 Contour1s::getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getDerivativeOfRelativePosition(cp);
   }
 
   void Contour1s::plot(double t, double dt) {

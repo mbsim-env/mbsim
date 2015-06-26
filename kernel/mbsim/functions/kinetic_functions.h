@@ -326,7 +326,7 @@ namespace MBSim {
 //      virtual void initializeUsingXML(xercesc::DOMElement *element);
 //      /***************************************************/
 //    protected:
-//      fmatvec::Vec2 computeLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo);
+//      fmatvec::Vec2 getLagrangeParameter(const std::pair<Contour*, ContourPointData>& contourInfo);
 //  };
 //
 //  /*
@@ -342,7 +342,7 @@ namespace MBSim {
 //      virtual ~FlexibilityInfluenceFunction() {}
 //      /* INHERITED INTERFACE OF FUNCTION2 */
 //      virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
-//        if(nrm2(computeLagrangeParameter(firstContourInfo)- computeLagrangeParameter(secondContourInfo)) < macheps())
+//        if(nrm2(getLagrangeParameter(firstContourInfo)- getLagrangeParameter(secondContourInfo)) < macheps())
 //          return flexibility;
 //        else
 //          return 0;
