@@ -72,13 +72,38 @@ namespace MBSim {
     return Kt;
   }
 
-  Vec3 Sphere::getParDer1Ks(ContourPointData &cp) {
-    Vec3 parDer1Ks(NONINIT);
+  Vec3 Sphere::getParDer1Ku(ContourPointData &cp) {
+    Vec3 parDer1Ku(NONINIT);
     double a = cp.getLagrangeParameterPosition()(0);
-    parDer1Ks(0) = -cos(a);
-    parDer1Ks(1) = -sin(a);
-    parDer1Ks(2) = 0;
-    return parDer1Ks;
+    parDer1Ku(0) = -cos(a);
+    parDer1Ku(1) = -sin(a);
+    parDer1Ku(2) = 0;
+    return parDer1Ku;
+  }
+
+  Vec3 Sphere::getParDer2Ku(ContourPointData &cp) {
+    static Vec3 parDer2Ku;
+    return parDer2Ku;
+  }
+
+  Vec3 Sphere::getParDer1Kv(ContourPointData &cp) {
+    Vec3 parDer1Kv(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    double b = cp.getLagrangeParameterPosition()(1);
+    parDer1Kv(0) = sin(a)*sin(b);
+    parDer1Kv(1) = -cos(a)*sin(b);
+    parDer1Kv(2) = 0;
+    return parDer1Kv;
+  }
+
+  Vec3 Sphere::getParDer2Kv(ContourPointData &cp) {
+    Vec3 parDer2Kv(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    double b = cp.getLagrangeParameterPosition()(1);
+    parDer2Kv(0) = -cos(a)*cos(b);
+    parDer2Kv(1) = -sin(a)*cos(b);
+    parDer2Kv(2) = -sin(b);
+    return parDer2Kv;
   }
 
   Vec2 Sphere::getLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
