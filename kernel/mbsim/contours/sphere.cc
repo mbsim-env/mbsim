@@ -52,6 +52,35 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
+  Vec3 Sphere::getKs(ContourPointData &cp) {
+    Vec3 Ks(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    double b = cp.getLagrangeParameterPosition()(1);
+    Ks(0) = -r*sin(a)*cos(b);
+    Ks(1) = r*cos(a)*cos(b);
+    Ks(2) = 0;
+    return Ks;
+  }
+
+  Vec3 Sphere::getKt(ContourPointData &cp) {
+    Vec3 Kt(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    double b = cp.getLagrangeParameterPosition()(1);
+    Kt(0) = -r*cos(a)*sin(b);
+    Kt(1) = -r*sin(a)*sin(b);
+    Kt(2) = r*cos(b);
+    return Kt;
+  }
+
+  Vec3 Sphere::getParDer1Ks(ContourPointData &cp) {
+    Vec3 parDer1Ks(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    parDer1Ks(0) = -cos(a);
+    parDer1Ks(1) = -sin(a);
+    parDer1Ks(2) = 0;
+    return parDer1Ks;
+  }
+
   Vec2 Sphere::getLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
     Vec3 SrPoint = R->getOrientation().T() * (WrPoint - R->getPosition());
     Vec2 alpha;

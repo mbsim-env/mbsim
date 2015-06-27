@@ -582,13 +582,13 @@ namespace MBSim {
       double operator()(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
         fmatvec::Vec3 Wd = getWrD(t,alpha);
-        fmatvec::Vec3 Wt = contour->getFirstTangent(t,cp);
+        fmatvec::Vec3 Wt = contour->getWu(t,cp);
         return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 getWrD(double t, const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
-        WrOC[0] = circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getNormal(t,cp);
+        WrOC[0] = circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getWn(t,cp);
         WrOC[1] = contour->getPosition(t,cp);
         return WrOC[1] - WrOC[0];
       }

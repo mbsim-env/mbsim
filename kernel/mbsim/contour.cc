@@ -123,6 +123,95 @@ namespace MBSim {
     }
   }
 
+  Vec3 Contour::getPosition(double t, ContourPointData &cp) {
+    return R->getPosition(t) + getWrPS(t,cp);
+  }
+
+  Vec3 Contour::getWu(double t, ContourPointData &cp) {
+    Vec3 Ws=getWs(t,cp);
+    return Ws/nrm2(Ws);
+  }
+
+  Vec3 Contour::getWv(double t, ContourPointData &cp) {
+    Vec3 Wt=getWt(t,cp);
+    return Wt/nrm2(Wt);
+  }
+
+  Vec3 Contour::getWn(double t, ContourPointData &cp) {
+    Vec3 N=crossProduct(getWs(t,cp),getWt(t,cp));
+    return N/nrm2(N);
+  }
+
+  Vec3 Contour::getParDer1Ku(ContourPointData &cp) {
+    Vec3 Ks = getKs(cp);
+    Vec3 parDer1Ks = getParDer1Ks(cp);
+    return parDer1Ks/nrm2(Ks) - Ks*((Ks.T()*parDer1Ks)/pow(nrm2(Ks),3));
+  }
+
+  Vec3 Contour::getParDer2Ku(ContourPointData &cp) {
+    THROW_MBSIMERROR("(Contour::getParDer2Ku): Not implemented.");
+    return 0;
+  }
+
+  Vec3 Contour::getParDer1Kv(ContourPointData &cp) {
+    THROW_MBSIMERROR("(Contour::getParDer1Kv): Not implemented.");
+    return 0;
+  }
+
+  Vec3 Contour::getParDer2Kv(ContourPointData &cp) {
+    THROW_MBSIMERROR("(Contour::getParDer2Kv): Not implemented.");
+    return 0;
+  }
+
+  Vec3 Contour::getParDer1Wu(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getParDer1Ku(cp);
+  }
+
+  Vec3 Contour::getParDer2Wu(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getParDer2Ku(cp);
+  }
+
+  Vec3 Contour::getParDer1Wv(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getParDer1Kv(cp);
+  }
+
+  Vec3 Contour::getParDer2Wv(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getParDer2Kv(cp);
+  }
+
+  Vec3 Contour::getWrPS(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getKrPS(cp);
+  }
+
+  Vec3 Contour::getWs(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getKs(cp);
+  }
+
+  Vec3 Contour::getWt(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getKt(cp);
+  }
+
+  Mat3x2 Contour::getWR(double t, ContourPointData &cp) {
+    Mat3x2 WR(NONINIT);
+    WR.set(0,getWs(t,cp));
+    WR.set(1,getWt(t,cp));
+    return WR;
+  }
+
+  Mat3x2 Contour::getWU(double t, ContourPointData &cp) {
+    Mat3x2 WU(NONINIT);
+    WU.set(0,getParDer1Wu(t,cp));
+    WU.set(1,getParDer2Wu(t,cp));
+    return WU;
+  }
+
+  Mat3x2 Contour::getWV(double t, ContourPointData &cp) {
+    Mat3x2 WV(NONINIT);
+    WV.set(0,getParDer1Wv(t,cp));
+    WV.set(1,getParDer2Wv(t,cp));
+    return WV;
+  }
+
   void Contour::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
     DOMElement *ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");

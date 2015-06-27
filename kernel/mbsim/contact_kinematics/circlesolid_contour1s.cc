@@ -80,9 +80,9 @@ namespace MBSim {
     cpData[icontour1s].getLagrangeParameterPosition()(0) = search.slv();
 
     cpData[icontour1s].getFrameOfReference().getPosition(false) = contour1s->getPosition(t,cpData[icontour1s]);
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->getNormal(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->getFirstTangent(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->getSecondTangent(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->getWn(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->getWu(t,cpData[icontour1s]));
+    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->getWv(t,cpData[icontour1s]));
 
     cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition(t)-circle->getRadius()*cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
     cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
@@ -102,8 +102,8 @@ namespace MBSim {
 
     const Vec3 u2 = cpData[icontour1s].getFrameOfReference().getOrientation(t).col(1);
     const Vec3 v2 = cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
-    const Vec3 R2 = contour1s->getGlobalDerivativeOfRelativePosition(t,cpData[icontour1s]);
-    const Vec3 U2 = contour1s->getDerivativeOfFirstTangent(t,cpData[icontour1s]);
+    const Vec3 R2 = contour1s->getWs(t,cpData[icontour1s]);
+    const Vec3 U2 = contour1s->getParDer1Wu(t,cpData[icontour1s]);
 
     const Vec3 vC1 = cpData[icircle].getFrameOfReference().getVelocity(t);
     const Vec3 vC2 = cpData[icontour1s].getFrameOfReference().getVelocity(t);

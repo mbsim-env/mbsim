@@ -58,9 +58,9 @@ namespace MBSim {
       /* INHERITED INTERFACE OF CONTOUR */
       void init(InitStage stage);
       double getCurvature(ContourPointData &cp);
-      fmatvec::Vec3 getRelativePosition(ContourPointData &cp);
-      fmatvec::Vec3 getDerivativeOfRelativePosition(ContourPointData &cp);
-      fmatvec::Vec3 getSecondDerivativeOfRelativePosition(ContourPointData &cp);
+      fmatvec::Vec3 getKrPS(ContourPointData &cp);
+      fmatvec::Vec3 getKs(ContourPointData &cp);
+      fmatvec::Vec3 getParDer1Ks(ContourPointData &cp);
       /***************************************************/
 
       /* GETTER / SETTER */

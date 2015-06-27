@@ -70,26 +70,15 @@ namespace MBSim {
 
     Vec3 KrPC2 = sphere->getFrame()->getOrientation(t).T()*(cpData[isphere].getFrameOfReference().getPosition(t) - sphere->getFrame()->getPosition(t));
     Vec2 zeta2 = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
+    ContourPointData cp2(zeta2);
     double a2 = zeta2(0);
     double b2 = zeta2(1);
     Vec3 &s1 = u1;
     Vec3 &t1 = v1;
 
-    double r = sphere->getRadius();
-    Mat3x2 KR2(NONINIT);
-    Vec3 Ks2(NONINIT);
-    Ks2(0) = -r*sin(a2)*cos(b2);
-    Ks2(1) = r*cos(a2)*cos(b2);
-    Ks2(2) = 0;
-
-    Vec3 Kt2(NONINIT);
-    Kt2(0) = -r*cos(a2)*sin(b2);
-    Kt2(1) = -r*sin(a2)*sin(b2);
-    Kt2(2) = r*cos(b2);
-
-    Vec3 s2 = sphere->getFrame()->getOrientation()*Ks2;
-    Vec3 t2 = sphere->getFrame()->getOrientation()*Kt2;
-    Vec3 u2 = s2/nrm2(s2);
+    Vec3 s2 = sphere->getWs(t,cp2);
+    Vec3 t2 = sphere->getWt(t,cp2);
+    Vec3 u2 = sphere->getWu(t,cp2);;
     Vec3 v2 = crossProduct(n2,u2);
 
     Mat3x2 R1;

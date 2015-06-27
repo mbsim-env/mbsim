@@ -65,35 +65,44 @@ namespace MBSim {
     ContourContinuum<double>::init(stage);
   }
 
-  Vec3 Contour1s::getPosition(double t, ContourPointData &cp) {
-    return R->getPosition(t) + R->getOrientation(t)*getRelativePosition(cp);
+  Vec3 Contour1s::getKt(ContourPointData &cp) {
+    static Vec3 Kt("[0;0;1]");
+    return Kt;
   }
 
-  Vec3 Contour1s::getFirstTangent(double t, ContourPointData &cp) {
-    Vec3 T=getDerivativeOfRelativePosition(cp);
-    return R->getOrientation(t)*T/nrm2(T);
-  }
-
-  Vec3 Contour1s::getSecondTangent(double t, ContourPointData &cp) {
-    return R->getOrientation(t).col(2);
-  }
-
-  Vec3 Contour1s::getNormal(double t, ContourPointData &cp) {
-    static Vec3 B("[0;0;1]");
-    Vec3 N=crossProduct(getDerivativeOfRelativePosition(cp),B);
-    return R->getOrientation(t)*N/nrm2(N);
-  }
-
-  Vec3 Contour1s::getDerivativeOfFirstTangent(double t, ContourPointData &cp) {
-    Vec3 s = getDerivativeOfRelativePosition(cp);
-    Vec3 sd = getSecondDerivativeOfRelativePosition(cp);
-    Vec3 U = sd/nrm2(s) - s*((s.T()*sd)/pow(nrm2(s),3));
-    return R->getOrientation(t)*U;
-  }
-
-  Vec3 Contour1s::getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getDerivativeOfRelativePosition(cp);
-  }
+//  Vec3 Contour1s::getPosition(double t, ContourPointData &cp) {
+//    return R->getPosition(t) + getGlobalRelativePosition(t,cp);
+//  }
+//
+//  Vec3 Contour1s::getFirstTangent(double t, ContourPointData &cp) {
+//    Vec3 T=getDerivativeOfRelativePosition(cp);
+//    return R->getOrientation(t)*T/nrm2(T);
+//  }
+//
+//  Vec3 Contour1s::getSecondTangent(double t, ContourPointData &cp) {
+//    return R->getOrientation(t).col(2);
+//  }
+//
+//  Vec3 Contour1s::getNormal(double t, ContourPointData &cp) {
+//    static Vec3 B("[0;0;1]");
+//    Vec3 N=crossProduct(getDerivativeOfRelativePosition(cp),B);
+//    return R->getOrientation(t)*N/nrm2(N);
+//  }
+//
+//  Vec3 Contour1s::getDerivativeOfFirstTangent(double t, ContourPointData &cp) {
+//    Vec3 s = getDerivativeOfRelativePosition(cp);
+//    Vec3 sd = getSecondDerivativeOfRelativePosition(cp);
+//    Vec3 U = sd/nrm2(s) - s*((s.T()*sd)/pow(nrm2(s),3));
+//    return R->getOrientation(t)*U;
+//  }
+//
+//  Vec3 Contour1s::getGlobalRelativePosition(double t, ContourPointData &cp) {
+//    return R->getOrientation(t)*getRelativePosition(cp);
+//  }
+//
+//  Vec3 Contour1s::getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp) {
+//    return R->getOrientation(t)*getDerivativeOfRelativePosition(cp);
+//  }
 
   void Contour1s::plot(double t, double dt) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

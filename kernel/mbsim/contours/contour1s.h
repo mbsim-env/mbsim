@@ -65,44 +65,53 @@ namespace MBSim {
         return 0;
       }
 
-      /**
-       * \return position in world frame
-       * \param contour position
-       */
-     virtual fmatvec::Vec3 getPosition(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getKt(ContourPointData &cp);
 
-      /**
-       * \return first tangent in world frame
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 getFirstTangent(double t, ContourPointData &cp);
-
-      /**
-       * \return second tangent in world frame
-       * \param Lagrangian position
-       */
-      virtual fmatvec::Vec3 getSecondTangent(double t, ContourPointData &cp);
-
-      /**
-       * \return normal in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec3 getNormal(double t, ContourPointData &cp);
-
-      /**
-       * \return derivative of first tangent in world frame
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 getDerivativeOfFirstTangent(double t, ContourPointData &cp);
-
-      /**
-       * \return derivative of first tangent in world frame
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp);
+//      /**
+//       * \return position in world frame
+//       * \param contour position
+//       */
+//     virtual fmatvec::Vec3 getPosition(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getFirstTangent(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return second tangent in world frame
+//       * \param Lagrangian position
+//       */
+//      virtual fmatvec::Vec3 getSecondTangent(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return normal in world frame
+//       * \param contour position
+//       */
+//      virtual fmatvec::Vec3 getNormal(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return derivative of first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getDerivativeOfFirstTangent(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return derivative of first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getGlobalRelativePosition(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return derivative of first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp);
 
       /**
        * \return radius of contour in contour point

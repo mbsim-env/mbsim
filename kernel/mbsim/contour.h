@@ -91,6 +91,149 @@ namespace MBSim {
       void setFrameOfReference(Frame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
+      virtual fmatvec::Vec3 getKrPS(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getKrPS): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getKs(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getKs): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getKt(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getKt): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getParDer1Ks(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getParDer1Ks): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getParDer2Ks(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getParDer2Ks): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getParDer1Kt(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getParDer1Kt): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getParDer2Kt(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getParDer2Kt): Not implemented.");
+        return 0;
+      }
+
+       /**
+       * \return position in world frame
+       * \param contour position
+       */
+     virtual fmatvec::Vec3 getPosition(double t, ContourPointData &cp);
+
+      /**
+       * \return first tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWu(double t, ContourPointData &cp);
+
+      /**
+       * \return second tangent in world frame
+       * \param Lagrangian position
+       */
+      virtual fmatvec::Vec3 getWv(double t, ContourPointData &cp);
+
+      /**
+       * \return normal in world frame
+       * \param contour position
+       */
+      virtual fmatvec::Vec3 getWn(double t, ContourPointData &cp);
+
+      /**
+       * \return derivative of first tangent
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer1Ku(ContourPointData &cp);
+
+      /**
+       * \return derivative of first tangent
+       * \param t time
+       * \param cp contour position
+       */
+
+      virtual fmatvec::Vec3 getParDer2Ku(ContourPointData &cp);
+      /**
+       * \return derivative of second tangent
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer1Kv(ContourPointData &cp);
+
+      /**
+       * \return derivative second first tangent
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer2Kv(ContourPointData &cp);
+
+      /**
+       * \return derivative of first tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer1Wu(double t, ContourPointData &cp);
+
+      /**
+       * \return derivative of first tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer2Wu(double t, ContourPointData &cp);
+
+      /**
+       * \return derivative of second tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer1Wv(double t, ContourPointData &cp);
+
+      /**
+       * \return derivative of second tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer2Wv(double t, ContourPointData &cp);
+
+      /**
+       * \return derivative of first tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWrPS(double t, ContourPointData &cp);
+
+      /**
+       * \return first tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWs(double t, ContourPointData &cp);
+
+      /**
+       * \return second tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWt(double t, ContourPointData &cp);
+
+      virtual fmatvec::Mat3x2 getWR(double t, ContourPointData &cp);
+
+      virtual fmatvec::Mat3x2 getWU(double t, ContourPointData &cp);
+
+      virtual fmatvec::Mat3x2 getWV(double t, ContourPointData &cp);
+
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 

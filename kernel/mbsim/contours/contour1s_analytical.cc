@@ -49,15 +49,15 @@ namespace MBSim {
      funcCrPC=NULL;
   }
 
-  Vec3 Contour1sAnalytical::getRelativePosition(ContourPointData &cp) {
+  Vec3 Contour1sAnalytical::getKrPS(ContourPointData &cp) {
     return (*funcCrPC)(cp.getLagrangeParameterPosition()(0));
   }
 
-  Vec3 Contour1sAnalytical::getDerivativeOfRelativePosition(ContourPointData &cp) {
+  Vec3 Contour1sAnalytical::getKs(ContourPointData &cp) {
     return funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
   }
 
-  Vec3 Contour1sAnalytical::getSecondDerivativeOfRelativePosition(ContourPointData &cp) {
+  Vec3 Contour1sAnalytical::getParDer1Ks(ContourPointData &cp) {
     return funcCrPC->parDerParDer(cp.getLagrangeParameterPosition()(0));
   }
 

@@ -55,6 +55,18 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
+      virtual fmatvec::Vec3 getKs(ContourPointData &cp);
+
+      virtual fmatvec::Vec3 getKt(ContourPointData &cp);
+
+      virtual fmatvec::Vec3 getParDer1Ks(ContourPointData &cp);
+
+//      virtual fmatvec::Vec3 getParDer2Ks(ContourPointData &cp);
+//
+//      virtual fmatvec::Vec3 getParDer1Kt(ContourPointData &cp);
+//
+//      virtual fmatvec::Vec3 getParDer2Kt(ContourPointData &cp);
+
       /* INHERITED INTERFACE OF CONTOUR */
       fmatvec::Vec2 getLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /**********************************/
@@ -63,6 +75,52 @@ namespace MBSim {
       void setRadius(double r_) { r = r_; }
       double getRadius() const { return r; }
       /***************************************************/
+
+//      /**
+//       * \return position in world frame
+//       * \param contour position
+//       */
+//     virtual fmatvec::Vec3 getPosition(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getFirstTangent(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return second tangent in world frame
+//       * \param Lagrangian position
+//       */
+//      virtual fmatvec::Vec3 getSecondTangent(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return normal in world frame
+//       * \param contour position
+//       */
+//      virtual fmatvec::Vec3 getNormal(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return derivative of first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getDerivativeOfFirstTangent(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return derivative of first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getGlobalRelativePosition(double t, ContourPointData &cp);
+//
+//      /**
+//       * \return derivative of first tangent in world frame
+//       * \param t time
+//       * \param cp contour position
+//       */
+//      virtual fmatvec::Vec3 getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
