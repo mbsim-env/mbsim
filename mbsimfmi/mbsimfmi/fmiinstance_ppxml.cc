@@ -45,15 +45,21 @@ namespace MBSimFMI {
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim XML model file."<<endl;
     boost::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile);
+    xercesc::DOMElement *ele=doc->getDocumentElement();
+
+    // create a clean evaluator (get the evaluator name first form the dom)
+    string evalName="octave"; // default evaluator
+    xercesc::DOMElement *evaluator=E(ele)->getFirstElementChildNamed(PV%"evaluator");
+    if(evaluator)
+      evalName=X()%E(evaluator)->getFirstTextChild()->getData();
+    shared_ptr<Eval> eval=Eval::createEvaluator(evalName);
 
     // set param according data in var
-    shared_ptr<Eval> eval=Eval::createEvaluator("octave");
     boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
     convertVariableToXPathParamSet(varSim.size(), var, param, *eval);
 
     // preprocess XML file
     vector<path> dependencies;
-    xercesc::DOMElement *ele=doc->getDocumentElement();
     msg(Debug)<<"Preprocess MBSim XML model."<<endl;
     Preprocess::preprocess(validatingParser, *eval, dependencies, ele, param);
 
@@ -80,7 +86,7 @@ namespace MBSimFMI {
     // create object for DynamicSystemSolver
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
     doc->normalizeDocument();
-    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
+    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver")));
   }
 
 }

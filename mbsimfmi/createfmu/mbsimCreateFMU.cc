@@ -108,9 +108,6 @@ int main(int argc, char *argv[]) {
 
     // Create dss from XML file
     if(xmlFile) {
-      // create octave
-      eval=Eval::createEvaluator("octave", &dependencies);
-
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all plugins."<<endl;
       generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
@@ -120,6 +117,13 @@ int main(int argc, char *argv[]) {
       cout<<"Load MBSim model from XML project file."<<endl;
       boost::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies);
       DOMElement *modelEle=modelDoc->getDocumentElement();
+
+      // create a clean evaluator (get the evaluator name first form the dom)
+      string evalName="octave"; // default evaluator
+      DOMElement *evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
+      if(evaluator)
+        evalName=X()%E(evaluator)->getFirstTextChild()->getData();
+      eval=Eval::createEvaluator(evalName, &dependencies);
 
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
@@ -145,6 +149,15 @@ int main(int argc, char *argv[]) {
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
 
       if(xmlParam.empty()) {
+        // adapt the evaluator in the dom
+        if(evaluator)
+          E(evaluator)->getFirstTextChild()->setData(X()%"xmlflat");
+        else {
+          evaluator=D(modelDoc)->createElement(PV%"evaluator");
+          evaluator->appendChild(modelDoc->createTextNode(X()%"xmlflat"));
+          modelEle->insertBefore(evaluator, modelEle->getFirstChild());
+        }
+
         cout<<"Copy preprocessed XML model file to FMU."<<endl;
         // no parameters -> save preprocessed model to FMU
         string ppModelStr;
@@ -183,11 +196,11 @@ int main(int argc, char *argv[]) {
       // create object for DynamicSystemSolver
       // Note: The document modelEle must be normalized (done above, see above)
       cout<<"Build up the model."<<endl;
-      dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(modelEle->getFirstElementChild()));
+      DOMElement *dssEle=E(modelEle)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+      dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(dssEle));
 
       // create object for Integrator (just to get the start/end time for DefaultExperiment)
-      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(
-        modelEle->getFirstElementChild()->getNextElementSibling()));
+      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(dssEle->getNextElementSibling()));
     }
     // Create dss from shared library
     else {
