@@ -25,7 +25,8 @@ namespace MBSimFMI {
   
     // create object for DynamicSystemSolver
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
-    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
+    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(
+      MBXMLUtils::E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver")));
   }
 
 }
