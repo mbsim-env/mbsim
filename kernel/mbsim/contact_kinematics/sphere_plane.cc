@@ -53,38 +53,30 @@ namespace MBSim {
 
     g = Wn.T()*Wd - sphere->getRadius();
 
-
     cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
     cpData[iplane].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition(false) - Wn*g);
   }
 
   void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
-    Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation(t).col(2);
     Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0);
     Vec3 n2 = cpData[isphere].getFrameOfReference().getOrientation(t).col(0);
-    Vec3 u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1);
     Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity(t);
     Vec3 vC2 = cpData[isphere].getFrameOfReference().getVelocity(t);
     Vec3 Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity(t);
     Vec3 Om2 = cpData[isphere].getFrameOfReference().getAngularVelocity(t);
 
     Vec3 KrPC2 = sphere->getFrame()->getOrientation(t).T()*(cpData[isphere].getFrameOfReference().getPosition(t) - sphere->getFrame()->getPosition(t));
-    Vec2 zeta2 = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
-    ContourPointData cp2(zeta2);
-    Vec3 &s1 = u1;
-    Vec3 &t1 = v1;
+    cpData[isphere].setLagrangeParameterPosition(computeAnglesOnUnitSphere(KrPC2/sphere->getRadius()));
 
-    Vec3 u2 = sphere->getWu(t,cp2);;
+    Vec3 u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1);
+    Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2);
+    Vec3 u2 = sphere->getWu(t,cpData[isphere]);
     Vec3 v2 = crossProduct(n2,u2);
 
-    Mat3x2 R1;
-    R1.set(0, s1);
-    R1.set(1, t1);
-
-    Mat3x2 R2 = sphere->getWR(t,cp2);
-
-    Mat3x2 U2 = sphere->getWU(t,cp2);
-    Mat3x2 V2 = sphere->getWV(t,cp2);
+    Mat3x2 R1 = plane->getWR(t,cpData[iplane]);
+    Mat3x2 R2 = sphere->getWR(t,cpData[isphere]);
+    Mat3x2 U2 = sphere->getWU(t,cpData[isphere]);
+    Mat3x2 V2 = sphere->getWV(t,cpData[isphere]);
 
     SqrMat A(4,NONINIT);
     A(Index(0,0),Index(0,1)) = -u1.T()*R1;

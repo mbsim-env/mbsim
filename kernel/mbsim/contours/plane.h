@@ -51,6 +51,41 @@ namespace MBSim {
       /***************************************************/
 
       /* INTERFACE OF CONTOUR */
+     /**
+       * \return first tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWu(double t, ContourPointData &cp) { return getWs(t,cp); }
+
+      /**
+       * \return second tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWv(double t, ContourPointData &cp) { return getWt(t,cp); }
+
+      /**
+       * \return second tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWn(double t, ContourPointData &cp) { return R->getOrientation(t).col(0); }
+
+     /**
+       * \return first tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWs(double t, ContourPointData &cp) { return R->getOrientation(t).col(1); }
+
+      /**
+       * \return second tangent in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getWt(double t, ContourPointData &cp) { return R->getOrientation(t).col(2); }
+
       virtual fmatvec::Vec2 getLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /***************************************************/
 

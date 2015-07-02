@@ -76,6 +76,9 @@ namespace MBSim {
       const int& getNodeNumber() const {
         return ID;
       }
+      void setLagrangeParameterPosition(const fmatvec::Vec2 &alpha_) {
+        alpha = alpha_;
+      }
       fmatvec::Vec2& getLagrangeParameterPosition() {
         return alpha;
       }
