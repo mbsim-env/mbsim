@@ -48,56 +48,9 @@ namespace MBSim {
     func= new FuncPairContour1sLine(line,contour1s);
   }
 
-  void ContactKinematicsLineContour1s::updateg(double &g, ContourPointData *cpData, int index) {}
-
-  //  void ContactKinematicsLineContour1s::stage1(double &g, vector<ContourPointData> &cpData) {
-  //
-  //    Contact1sSearch search(func);
-  //    search.setNodes(contour1s->getNodes());     
-  //    if(cpData[icontour].alpha.size()==1) {
-  //      search.setInitialValue(cpData[icontour].alpha(0));
-  //    } else { 
-  //      search.setSearchAll   (true);
-  //      cpData[icontour].alpha = Vec(1);
-  //    }
-  //
-  //    cpData[icontour].alpha(0) = search.slv();
-  //
-  //    cpData[iline].Wn    = line->computeWn();
-  //    cpData[icontour].Wn = -cpData[iline].Wn;
-  //
-  //    cpData[icontour].WrOC = contour1s->getWrOC(cpData[icontour]);
-  //
-  //    g=trans(cpData[icontour].Wn)*(cpData[icontour].WrOC-line->getWrOP());
-  //
-  //    cpData[iline].WrOC = cpData[icontour].WrOC - g*cpData[icontour].Wn;
-
-  //  }
-
-  //  void ContactKinematicsLineContour1s::stage2(double g, Vec &gd, vector<ContourPointData> &cpData) {
-
-  //    cpData[icontour].WrOC =  contour1s->getWrOC(cpData[icontour]);
-  //    cpData[iline].WrOC = cpData[icontour].WrOC - g*cpData[icontour].Wn;
-  //
-  //    Vec WrPCLine;
-  //    WrPCLine = cpData[iline].WrOC - line->getWrOP();
-  //
-  //    Vec WvC[2];
-  //    WvC[iline] = line->getWvP()+crossProduct(line->getWomegaC(),WrPCLine);
-  //    WvC[icontour] = contour1s->computeWvC(cpData[icontour]);
-  //
-  //    Vec WvD = WvC[icontour] - WvC[iline];
-  //    gd(0) = trans(cpData[icontour].Wn)*WvD;
-  //
-  //
-  //    if(cpData[0].Wt.cols()) {
-  //      //    cpData[icontour].Wt = contour1s->computeWt(cpData[icontour].alpha(0))(0,0,2,iT.end()-1);
-  //      static Index iT(1,cpData[0].Wt.cols());
-  //      cpData[iline].Wt    = line->computeWt()(0,0,2,iT.end()-1);
-  //      cpData[icontour].Wt = -cpData[iline].Wt; 
-  //      gd(iT) = trans(cpData[icontour].Wt)*WvD;
-  //    }
-  //  }
+  void ContactKinematicsLineContour1s::updateg(double t, double &g, ContourPointData *cpData, int index) {
+    throw MBSimError("(ContactKinematicsLineContour1s::updateg): Not implemented!");
+  }
 
 }
 

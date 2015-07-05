@@ -105,7 +105,6 @@ namespace MBSim {
         THROW_MBSIMERROR("(Contour::getKt): Not implemented.");
         return 0;
       }
-
       virtual fmatvec::Vec3 getParDer1Ks(ContourPointData &cp) {
         THROW_MBSIMERROR("(Contour::getParDer1Ks): Not implemented.");
         return 0;
@@ -151,6 +150,17 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 getWn(double t, ContourPointData &cp);
 
+
+      virtual fmatvec::Vec3 getParDer1Kn(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getParDer1Kn): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getParDer2Kn(ContourPointData &cp) {
+        THROW_MBSIMERROR("(Contour::getParDer2Kn): Not implemented.");
+        return 0;
+      }
+
       /**
        * \return derivative of first tangent
        * \param t time
@@ -178,6 +188,20 @@ namespace MBSim {
        * \param cp contour position
        */
       virtual fmatvec::Vec3 getParDer2Kv(ContourPointData &cp);
+
+      /**
+       * \return derivative of normal in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer1Wn(double t, ContourPointData &cp);
+
+      /**
+       * \return derivative of normal in world frame
+       * \param t time
+       * \param cp contour position
+       */
+      virtual fmatvec::Vec3 getParDer2Wn(double t, ContourPointData &cp);
 
       /**
        * \return derivative of first tangent in world frame
@@ -227,6 +251,8 @@ namespace MBSim {
        * \param cp contour position
        */
       virtual fmatvec::Vec3 getWt(double t, ContourPointData &cp);
+
+      virtual fmatvec::Mat3x2 getWN(double t, ContourPointData &cp);
 
       virtual fmatvec::Mat3x2 getWR(double t, ContourPointData &cp);
 

@@ -147,7 +147,7 @@ namespace MBSim {
       /*!
        * \brief return the center of the enclosing sphere
        */
-      fmatvec::Vec3 getEnclosingSphereCenter();
+      fmatvec::Vec3 getEnclosingSphereCenter(double t);
 
       /*!
        * \brief get coefficient vector of the polynomial
@@ -157,22 +157,22 @@ namespace MBSim {
       /*!
        * \brief returns the point in local coordinates of the frustum at the position (x, phi)
        */
-      fmatvec::Vec3 computePoint(const double & x, const double & phi);
+      fmatvec::Vec3 getKrPS(ContourPointData &cp);
 
       /*!
        * \brief returns the normal in local coordinates of the frustum at the position (x, phi)
        */
-      fmatvec::Vec3 computeNormal(const double & x, const double & phi);
+      fmatvec::Vec3 getKn(ContourPointData &cp);
 
       /*!
        * \brief returns the tangent in radial direction in local coordinates of the frustum at the position (x, phi)
        */
-      fmatvec::Vec3 computeTangentRadial(const double & x, const double & phi);
+      fmatvec::Vec3 getKu(ContourPointData &cp);
 
       /*!
        * \brief returns the tangent in azimuthal direction in local coordinates of the frustum at the point x, phi
        */
-      fmatvec::Vec3 computeTangentAzimuthal(const double & x, const double & phi);
+      fmatvec::Vec3 getKv(ContourPointData &cp);
 
       /*!
        * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
@@ -182,6 +182,10 @@ namespace MBSim {
        * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
        */
       fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
+
+      fmatvec::Vec3 getWn(double t, ContourPointData &cp);
+      fmatvec::Vec3 getWu(double t, ContourPointData &cp);
+      fmatvec::Vec3 getWv(double t, ContourPointData &cp);
 
     protected:
       /*!

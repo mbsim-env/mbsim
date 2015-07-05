@@ -130,8 +130,8 @@ namespace MBSim {
     if (getFrictionDirections()) {
       if (fdf->isSetValued()) {
         if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
-          V[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),iT) * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), laN(0));
-          V[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),iT) * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), laN(0));
+          V[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(1, getFrictionDirections())) * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), laN(0));
+          V[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(1, getFrictionDirections())) * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), laN(0));
         }
       }
     }
@@ -726,7 +726,7 @@ namespace MBSim {
           data.push_back(cpData[1].getFrameOfReference().getPosition()(0));
           data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
           data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
-          Vec3 F = getGlobalForceDirection(t)(Index(0,2),iT)*getGeneralizedForce(t)(iT);
+          Vec3 F = getGlobalForceDirection(t)(Index(0,2),Index(1, getFrictionDirections()))*getGeneralizedForce(t)(Index(1, getFrictionDirections()));
           data.push_back(F(0));
           data.push_back(F(1));
           data.push_back(F(2));

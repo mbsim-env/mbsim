@@ -12,6 +12,10 @@ libcontour_la_SOURCES = circle.cc\
 			plane.cc\
 			sphere.cc\
 			frustum.cc\
+			frustum2d.cc\
+			room.cc\
+			planewithfrustum.cc\
+			polynomial_frustum.cc\
 			contour1s.cc\
 			contour1s_analytical.cc
 
@@ -30,6 +34,10 @@ contourinclude_HEADERS = circle.h\
 			 plane.h\
 			 sphere.h\
 			 frustum.h\
+			 frustum2d.h\
+			 room.h\
+			 planewithfrustum.h\
+			 polynomial_frustum.h\
 			 contour_continuum.h\
 			 contour1s.h\
 			 contour1s_analytical.h

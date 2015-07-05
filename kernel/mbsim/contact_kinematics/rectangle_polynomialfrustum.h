@@ -155,8 +155,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double & g, ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, double g, ContourPointData *cpData) {
+      virtual void updateg(double t, double & g, ContourPointData *cpData, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec& wb, double g, ContourPointData *cpData) {
         throw MBSimError("(ContactKinematicsRectanglePolynomialFrustum::updatewb): not implemented!");
       }
 
@@ -167,7 +167,7 @@ namespace MBSim {
       /*!
        * \brief set the values for the contact kinematics for the frustum due to the given x and phi
        */
-      void setFrustumOrienationKinematics(const double & x, const double & phi, ContourPointData * cpData);
+      void setFrustumOrienationKinematics(double t, const double & x, const double & phi, ContourPointData * cpData);
 
       /***************************************************/
       /*!
@@ -176,19 +176,19 @@ namespace MBSim {
        *
        * If there is contact the position and the cpData information is setted right away
        */
-      bool cpLocationInRectangle(double & g, ContourPointData * cpData);
+      bool cpLocationInRectangle(double t, double & g, ContourPointData * cpData);
 
       /*!
        * \brief if the unique contact point cannot be found a grid is walked through and a weighted sum results in the contact point
        * \return true (if) or false (if there is no contact at one of the corner points)
        */
-      bool gridContact(double & g, ContourPointData * cpData);
+      bool gridContact(double t, double & g, ContourPointData * cpData);
 
       /*!
        * \brief checks if there is a contact point at one of the corner points
        * \return true (if) or false (if there is no contact at one of the corner points)
        */
-      bool cornerContact(double & g, ContourPointData * cpData);
+      bool cornerContact(double t, double & g, ContourPointData * cpData);
 
       /*!
        * \brief checks if there is a contact on one edge of the rectangle
@@ -196,7 +196,7 @@ namespace MBSim {
        *
        * \todo: unefficient and only finding (one) intersection point --> There should always be two intersection points and then using the middle or something
        */
-      bool edgeContact(double & g, ContourPointData * cpData);
+      bool edgeContact(double t, double & g, ContourPointData * cpData);
 
       /*!
        * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal in world coordinates
@@ -212,20 +212,20 @@ namespace MBSim {
        * \param n normal of the frustum
        * \return contour point in world coordinates of the contour point on the frustum
        */
-      fmatvec::Vec3 computeContourPoint(const double & x, const fmatvec::Vec3 & n);
+      fmatvec::Vec3 computeContourPoint(double t, const double & x, const fmatvec::Vec3 & n);
 
       /*!
        * \brief check if frustum point identified by coordinate x is possible contact point
        * \param x height-coordinate of possible contact point
        * \param n normal vector of the rectangle
        */
-      int checkPossibleContactPoint(const double & x, const fmatvec::Vec3 & n);
+      int checkPossibleContactPoint(double t, const double & x, const fmatvec::Vec3 & n);
 
       /*!
        * \brief compute distance between given point and rectangle
        * \param point Given point in world coordinates
        */
-      double distance2Rectangle(const fmatvec::Vec3 & point);
+      double distance2Rectangle(double t, const fmatvec::Vec3 & point);
 
       /*!
        * \brief updates the grid for the discrete contact point approximation

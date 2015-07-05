@@ -71,61 +71,59 @@ namespace MBSim {
        * \param contour parameter
        * \return possible contact-distance at contour parameter
        */
-      virtual double operator[](const Arg& x) { return nrm2(getWrD(t,x)); }
+      virtual double operator[](const Arg& x) { return nrm2(getWrD(x)); }
 
       /*!
        * \param contour parameter
        * \return helping distance vector at contour parameter
        */
-      virtual fmatvec::Vec3 getWrD(double t, const Arg& x) = 0;
+      virtual fmatvec::Vec3 getWrD(const Arg& x) = 0;
       /*************************************************/
   };
 
-//  /*!
-//   * \brief root function for pairing Contour1s and Point
-//   * \author Roland Zander
-//   * \date 2009-04-21 contour point data included (Thorsten Schindler)
-//   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
-//   * \todo improve performance statement TODO
-//   */
-//  class FuncPairContour1sPoint : public DistanceFunction<double(double)> {
-//    public:
-//      /*!
-//       * \brief constructor
-//       * \param point contour or general rigid contour reduced to point of reference
-//       * \param contour with one contour parameter
-//       */
-//      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp() {}
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      double operator()(const double &alpha) {
-//        fmatvec::Vec3 Wd = getWrD(alpha);
-//        fmatvec::Vec3 Wt = cp.getFrameOfReference().getOrientation().col(1);
-//        return Wt.T() * Wd;
-//      }
-//
-//      fmatvec::Vec3 getWrD(const double &alpha) {
-//        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-//        cp.getLagrangeParameterPosition()(0) = alpha;
-//        contour->computeRootFunctionPosition(cp);
-//        contour->computeRootFunctionFirstTangent(cp);
-//        //}
-//        return point->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
-//      }
-//      /*************************************************/
-//
-//    private:
-//      /**
-//       * \brief contours
-//       */
-//      Contour1s *contour;
-//      Point *point;
-//
-//      /**
-//       * \brief contour point data for saving old values
-//       */
-//      ContourPointData cp;
-//  };
+  /*!
+   * \brief root function for pairing Contour1s and Point
+   * \author Roland Zander
+   * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
+   * \todo improve performance statement TODO
+   */
+  class FuncPairContour1sPoint : public DistanceFunction<double(double)> {
+    public:
+      /*!
+       * \brief constructor
+       * \param point contour or general rigid contour reduced to point of reference
+       * \param contour with one contour parameter
+       */
+      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp() {}
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      double operator()(const double &alpha) {
+        cp.getLagrangeParameterPosition()(0) = alpha;
+        fmatvec::Vec3 Wd = getWrD(alpha);
+        fmatvec::Vec3 Wt = contour->getWu(t,cp);
+        return Wt.T() * Wd;
+      }
+
+      fmatvec::Vec3 getWrD(const double &alpha) {
+        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
+        cp.getLagrangeParameterPosition()(0) = alpha;
+        return contour->getPosition(t,cp) - point->getFrame()->getPosition(t);
+      }
+      /*************************************************/
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour1s *contour;
+      Point *point;
+
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
+  };
 //
 //  /*!
 //   * \brief root function for pairing Contour2s and Point
@@ -220,347 +218,350 @@ namespace MBSim {
 //      ContourPointData cp;
 //  };
 //
-//  /*!
-//   * \brief root function for pairing ContourInterpolation and Point
-//   * \author Roland Zander
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   */
-//  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::VecV(fmatvec::VecV)> {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param point contour
-//       * \param contour based on interpolation
-//       */
-//      FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      fmatvec::VecV operator()(const fmatvec::VecV &alpha) {
-//        fmatvec::Mat3xV Wt = contour->computeWt(alpha);
-//        fmatvec::Vec3 WrOC[2];
-//        WrOC[0] = point->getFrame()->getPosition();
-//        WrOC[1] = contour->getWrOC(alpha);
-//        return Wt.T() * (WrOC[1] - WrOC[0]);
-//      }
-//
-//      fmatvec::Vec3 getWrD(const fmatvec::VecV &alpha) {
-//        return contour->getWrOC(alpha) - point->getFrame()->getPosition();
-//      }
-//      /*************************************************/
-//
-//    private:
-//      /**
-//       * \brief contours
-//       */
-//      ContourInterpolation *contour;
-//      Point *point;
-//  };
-//
-//  /*!
-//   * \brief base root function for planar pairing ConeSection and Circle
-//   * \author Thorsten Schindler
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   */
-//  class FuncPairConeSectionCircle : public DistanceFunction<double(double)> {
-//    public:
-//      /*!
-//       * \brief constructor
-//       * \param radius of circle
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       * \default conesection in circle
-//       */
-//      FuncPairConeSectionCircle(double R_,double a_,double b_) : R(R_), a(a_), b(b_), sec_IN_ci(true) {}
-//
-//      /*!
-//       * \brief constructor
-//       * \param radius of circle
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       * \param conesection in circle
-//       */
-//      FuncPairConeSectionCircle(double R_, double a_, double b_, bool sec_IN_ci_) :
-//          R(R_), a(a_), b(b_), sec_IN_ci(sec_IN_ci_) {
-//      }
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      virtual double operator()(const double &phi) = 0;
-//      double operator[](const double &phi);
-//      virtual fmatvec::Vec3 getWrD(const double &phi) = 0;
-//      /*************************************************/
-//
-//      /* GETTER / SETTER */
-//      void setDiffVec(fmatvec::Vec3 d_);
-//
-//      void setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_);
-//      /*************************************************/
-//
-//    protected:
-//      /**
-//       * \brief radius of circle as well as length in b1- and b2-direction
-//       */
-//      double R, a, b;
-//
-//      /**
-//       * \brief cone-section in circle
-//       */
-//      bool sec_IN_ci;
-//
-//      /**
-//       * \brief normed base-vectors of cone-section
-//       */
-//      fmatvec::Vec3 b1, b2;
-//
-//      /**
-//       * \brief distance-vector of cone-section- and circle-midpoint
-//       */
-//      fmatvec::Vec3 d;
-//  };
-//
-//  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) {
-//    d = d_;
-//  }
-//  inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_) {
-//    b1 = b1_;
-//    b2 = b2_;
-//  }
-//  inline double FuncPairConeSectionCircle::operator[](const double &phi) {
-//    if (sec_IN_ci)
-//      return R - nrm2(getWrD(phi));
-//    else
-//      return nrm2(getWrD(phi)) - R;
-//  }
-//
-//  /*!
-//   * \brief root function for planar pairing Ellipse and Circle
-//   * \author Roland Zander
-//   * \author Thorsten Schindler
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   */
-//  class FuncPairEllipseCircle : public FuncPairConeSectionCircle {
-//    public:
-//      /*!
-//       * \brief constructor
-//       * \param radius of circle
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       * \default conesection in circle
-//       */
-//      FuncPairEllipseCircle(double R_, double a_, double b_) :
-//          FuncPairConeSectionCircle(R_, a_, b_) {
-//      }
-//
-//      /*!
-//       * \brief constructor
-//       * \param radius of circle
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       * \param conesection in circle
-//       */
-//      FuncPairEllipseCircle(double R_, double a_, double b_, bool el_IN_ci_) :
-//          FuncPairConeSectionCircle(R_, a_, b_, el_IN_ci_) {
-//      }
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      double operator()(const double &phi);
-//      fmatvec::Vec3 getWrD(const double &phi);
-//      /*************************************************/
-//
-//      /* GETTER / SETTER */
-//      void setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_);
-//      /*************************************************/
-//  };
-//
-//  inline void FuncPairEllipseCircle::setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_) {
-//    setSectionCOS(b1e_, b2e_);
-//  }
-//  inline double FuncPairEllipseCircle::operator()(const double &phi) {
-//    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cos(phi) + 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sin(phi) + ((a * a) - (b * b)) * sin(2 * phi);
-//  }
-//  inline fmatvec::Vec3 FuncPairEllipseCircle::getWrD(const double &phi) {
-//    return d + b1 * a * cos(phi) + b2 * b * sin(phi);
-//  }
-//
-//  /*!
-//   * \brief root function for planar pairing Hyperbola and Circle
-//   * \author Bastian Esefeld
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   */
-//  class FuncPairHyperbolaCircle : public FuncPairConeSectionCircle {
-//    public:
-//      /*!
-//       * \brief constructor
-//       * \param radius of circle
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       * \default conesection in circle
-//       */
-//      FuncPairHyperbolaCircle(double R_, double a_, double b_) :
-//          FuncPairConeSectionCircle(R_, a_, b_) {
-//      }
-//
-//      /*!
-//       * \brief constructor
-//       * \param radius of circle
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       * \param conesection in circle
-//       */
-//      FuncPairHyperbolaCircle(double R_, double a_, double b_, bool hy_IN_ci_) :
-//          FuncPairConeSectionCircle(R_, a_, b_, hy_IN_ci_) {
-//      }
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      double operator()(const double &phi);
-//      fmatvec::Vec3 getWrD(const double &phi);
-//      /*************************************************/
-//  };
-//
-//  inline double FuncPairHyperbolaCircle::operator()(const double &phi) {
-//    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cosh(phi) - 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sinh(phi) - ((a * a) + (b * b)) * sinh(2 * phi);
-//  }
-//  inline fmatvec::Vec3 FuncPairHyperbolaCircle::getWrD(const double &phi) {
-//    return d + b1 * a * cosh(phi) + b2 * b * sinh(phi);
-//  }
-//
-//  /*!
-//   * \brief base Jacobian of root function for planar pairing ConeSection and Circle
-//   * \author Thorsten Schindler
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   */
-//  class JacobianPairConeSectionCircle : public Function<double(double)> {
-//    public:
-//      /*!
-//       * \brief constructor
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       */
-//      JacobianPairConeSectionCircle(double a_, double b_) :
-//          a(a_), b(b_) {
-//      }
-//
-//      /* GETTER / SETTER */
-//      void setDiffVec(fmatvec::Vec3 d_);
-//      void setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_);
-//      /*************************************************/
-//
-//    protected:
-//      /**
-//       * \brief length in b1- and b2-direction
-//       */
-//      double a, b;
-//
-//      /**
-//       * \brief normed base-vectors of cone-section
-//       */
-//      fmatvec::Vec3 b1, b2;
-//
-//      /**
-//       * \brief distance-vector of circle- and cone-section-midpoint
-//       */
-//      fmatvec::Vec3 d;
-//  };
-//
-//  inline void JacobianPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) {
-//    d = d_;
-//  }
-//  inline void JacobianPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_) {
-//    b1 = b1_;
-//    b2 = b2_;
-//  }
-//
-//  /*!
-//   * \brief Jacobian of root function for planar pairing Ellipse and Circle
-//   * \author Thorsten Schindler
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   */
-//  class JacobianPairEllipseCircle : public JacobianPairConeSectionCircle {
-//    public:
-//      /*!
-//       * \brief constructor
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       */
-//      JacobianPairEllipseCircle(double a_, double b_) :
-//          JacobianPairConeSectionCircle(a_, b_) {
-//      }
-//
-//      /* INHERITED INTERFACE OF FUNCTION */
-//      double operator()(const double &phi);
-//      /*************************************************/
-//  };
-//
-//  inline double JacobianPairEllipseCircle::operator()(const double &phi) {
-//    return 2. * (b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * sin(phi) + a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * cos(phi) + ((a * a) - (b * b)) * cos(2 * phi));
-//  }
-//
-//  /*!
-//   * \brief Jacobian of root function for planar pairing Hyperbola and Circle
-//   * \author Thorsten Schindler
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   */
-//  class JacobianPairHyperbolaCircle : public JacobianPairConeSectionCircle {
-//    public:
-//      /*!
-//       * \brief constructor
-//       * \param length of first semi-axis
-//       * \param length of second semi-axis
-//       */
-//      JacobianPairHyperbolaCircle(double a_, double b_) :
-//          JacobianPairConeSectionCircle(a_, b_) {
-//      }
-//
-//      /* INHERITED INTERFACE OF FUNCTION */
-//      double operator()(const double &phi);
-//      /*************************************************/
-//  };
-//
-//  inline double JacobianPairHyperbolaCircle::operator()(const double &phi) {
-//    return -2 * (b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * sinh(phi) + a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * cosh(phi) + ((a * a) + (b * b)) * cosh(2 * phi));
-//  }
-//
-//  /*!
-//   * \brief root function for pairing Contour1s and Line
-//   * \author Roland Zander
-//   * \date 2009-07-10 some comments (Thorsten Schindler)
-//   * \todo change to new kernel_dev
-//   */
-//  class FuncPairContour1sLine : public DistanceFunction<double(double)> {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param line
-//       * \param contour1s
-//       */
-//      FuncPairContour1sLine(Line* line_, Contour1s *contour_) :
-//          contour(contour_), line(line_) {
-//      }
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      virtual double operator()(const double &s) {
-//        THROW_MBSIMERROR("(FuncPairContour1sLine::operator): Not implemented!");
-//        //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
-//        //fmatvec::Vec WnL = line->computeWn();
-//        //return trans(WtC)*WnL;
-//      }
-//
-//      virtual fmatvec::Vec3 getWrD(const double &s) {
-//        THROW_MBSIMERROR("(FuncPairContour1sLine::getWrD): Not implemented!");
-//        //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
-//        //fmatvec::Vec Wn = contour->computeWn(s);
-//        //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());
-//        //return Wn*g;
-//      }
-//
-//      virtual double operator[](const double &s) {
-//        return nrm2(getWrD(s));
-//      }
-//      /*************************************************/
-//
-//    private:
-//      Contour1s *contour;
-//      Line *line;
-//  };
+  /*!
+   * \brief root function for pairing ContourInterpolation and Point
+   * \author Roland Zander
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   */
+  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::VecV(fmatvec::VecV)> {
+    public:
+      /**
+       * \brief constructor
+       * \param point contour
+       * \param contour based on interpolation
+       */
+      FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      fmatvec::VecV operator()(const fmatvec::VecV &alpha) {
+        cp.getLagrangeParameterPosition() = alpha;
+        return (contour->getWu(t,cp)).T() * (contour->getPosition(t,cp) - point->getFrame()->getPosition(t));
+      }
+
+      fmatvec::Vec3 getWrD(const fmatvec::VecV &alpha) {
+        cp.getLagrangeParameterPosition() = alpha;
+        return contour->getPosition(t,cp) - point->getFrame()->getPosition(t);
+      }
+      /*************************************************/
+
+    private:
+      /**
+       * \brief contours
+       */
+      ContourInterpolation *contour;
+      Point *point;
+
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
+  };
+
+  /*!
+   * \brief base root function for planar pairing ConeSection and Circle
+   * \author Thorsten Schindler
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   */
+  class FuncPairConeSectionCircle : public DistanceFunction<double(double)> {
+    public:
+      /*!
+       * \brief constructor
+       * \param radius of circle
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       * \default conesection in circle
+       */
+      FuncPairConeSectionCircle(double R_,double a_,double b_) : R(R_), a(a_), b(b_), sec_IN_ci(true) {}
+
+      /*!
+       * \brief constructor
+       * \param radius of circle
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       * \param conesection in circle
+       */
+      FuncPairConeSectionCircle(double R_, double a_, double b_, bool sec_IN_ci_) :
+          R(R_), a(a_), b(b_), sec_IN_ci(sec_IN_ci_) {
+      }
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      virtual double operator()(const double &phi) = 0;
+      double operator[](const double &phi);
+      virtual fmatvec::Vec3 getWrD(const double &phi) = 0;
+      /*************************************************/
+
+      /* GETTER / SETTER */
+      void setDiffVec(fmatvec::Vec3 d_);
+
+      void setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_);
+      /*************************************************/
+
+    protected:
+      /**
+       * \brief radius of circle as well as length in b1- and b2-direction
+       */
+      double R, a, b;
+
+      /**
+       * \brief cone-section in circle
+       */
+      bool sec_IN_ci;
+
+      /**
+       * \brief normed base-vectors of cone-section
+       */
+      fmatvec::Vec3 b1, b2;
+
+      /**
+       * \brief distance-vector of cone-section- and circle-midpoint
+       */
+      fmatvec::Vec3 d;
+  };
+
+  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) {
+    d = d_;
+  }
+  inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_) {
+    b1 = b1_;
+    b2 = b2_;
+  }
+  inline double FuncPairConeSectionCircle::operator[](const double &phi) {
+    if (sec_IN_ci)
+      return R - nrm2(getWrD(phi));
+    else
+      return nrm2(getWrD(phi)) - R;
+  }
+
+  /*!
+   * \brief root function for planar pairing Ellipse and Circle
+   * \author Roland Zander
+   * \author Thorsten Schindler
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   */
+  class FuncPairEllipseCircle : public FuncPairConeSectionCircle {
+    public:
+      /*!
+       * \brief constructor
+       * \param radius of circle
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       * \default conesection in circle
+       */
+      FuncPairEllipseCircle(double R_, double a_, double b_) :
+          FuncPairConeSectionCircle(R_, a_, b_) {
+      }
+
+      /*!
+       * \brief constructor
+       * \param radius of circle
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       * \param conesection in circle
+       */
+      FuncPairEllipseCircle(double R_, double a_, double b_, bool el_IN_ci_) :
+          FuncPairConeSectionCircle(R_, a_, b_, el_IN_ci_) {
+      }
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      double operator()(const double &phi);
+      fmatvec::Vec3 getWrD(const double &phi);
+      /*************************************************/
+
+      /* GETTER / SETTER */
+      void setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_);
+      /*************************************************/
+  };
+
+  inline void FuncPairEllipseCircle::setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_) {
+    setSectionCOS(b1e_, b2e_);
+  }
+  inline double FuncPairEllipseCircle::operator()(const double &phi) {
+    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cos(phi) + 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sin(phi) + ((a * a) - (b * b)) * sin(2 * phi);
+  }
+  inline fmatvec::Vec3 FuncPairEllipseCircle::getWrD(const double &phi) {
+    return d + b1 * a * cos(phi) + b2 * b * sin(phi);
+  }
+
+  /*!
+   * \brief root function for planar pairing Hyperbola and Circle
+   * \author Bastian Esefeld
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   */
+  class FuncPairHyperbolaCircle : public FuncPairConeSectionCircle {
+    public:
+      /*!
+       * \brief constructor
+       * \param radius of circle
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       * \default conesection in circle
+       */
+      FuncPairHyperbolaCircle(double R_, double a_, double b_) :
+          FuncPairConeSectionCircle(R_, a_, b_) {
+      }
+
+      /*!
+       * \brief constructor
+       * \param radius of circle
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       * \param conesection in circle
+       */
+      FuncPairHyperbolaCircle(double R_, double a_, double b_, bool hy_IN_ci_) :
+          FuncPairConeSectionCircle(R_, a_, b_, hy_IN_ci_) {
+      }
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      double operator()(const double &phi);
+      fmatvec::Vec3 getWrD(const double &phi);
+      /*************************************************/
+  };
+
+  inline double FuncPairHyperbolaCircle::operator()(const double &phi) {
+    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cosh(phi) - 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sinh(phi) - ((a * a) + (b * b)) * sinh(2 * phi);
+  }
+  inline fmatvec::Vec3 FuncPairHyperbolaCircle::getWrD(const double &phi) {
+    return d + b1 * a * cosh(phi) + b2 * b * sinh(phi);
+  }
+
+  /*!
+   * \brief base Jacobian of root function for planar pairing ConeSection and Circle
+   * \author Thorsten Schindler
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   */
+  class JacobianPairConeSectionCircle : public Function<double(double)> {
+    public:
+      /*!
+       * \brief constructor
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       */
+      JacobianPairConeSectionCircle(double a_, double b_) :
+          a(a_), b(b_) {
+      }
+
+      /* GETTER / SETTER */
+      void setDiffVec(fmatvec::Vec3 d_);
+      void setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_);
+      /*************************************************/
+
+    protected:
+      /**
+       * \brief length in b1- and b2-direction
+       */
+      double a, b;
+
+      /**
+       * \brief normed base-vectors of cone-section
+       */
+      fmatvec::Vec3 b1, b2;
+
+      /**
+       * \brief distance-vector of circle- and cone-section-midpoint
+       */
+      fmatvec::Vec3 d;
+  };
+
+  inline void JacobianPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) {
+    d = d_;
+  }
+  inline void JacobianPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_) {
+    b1 = b1_;
+    b2 = b2_;
+  }
+
+  /*!
+   * \brief Jacobian of root function for planar pairing Ellipse and Circle
+   * \author Thorsten Schindler
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   */
+  class JacobianPairEllipseCircle : public JacobianPairConeSectionCircle {
+    public:
+      /*!
+       * \brief constructor
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       */
+      JacobianPairEllipseCircle(double a_, double b_) :
+          JacobianPairConeSectionCircle(a_, b_) {
+      }
+
+      /* INHERITED INTERFACE OF FUNCTION */
+      double operator()(const double &phi);
+      /*************************************************/
+  };
+
+  inline double JacobianPairEllipseCircle::operator()(const double &phi) {
+    return 2. * (b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * sin(phi) + a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * cos(phi) + ((a * a) - (b * b)) * cos(2 * phi));
+  }
+
+  /*!
+   * \brief Jacobian of root function for planar pairing Hyperbola and Circle
+   * \author Thorsten Schindler
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   */
+  class JacobianPairHyperbolaCircle : public JacobianPairConeSectionCircle {
+    public:
+      /*!
+       * \brief constructor
+       * \param length of first semi-axis
+       * \param length of second semi-axis
+       */
+      JacobianPairHyperbolaCircle(double a_, double b_) :
+          JacobianPairConeSectionCircle(a_, b_) {
+      }
+
+      /* INHERITED INTERFACE OF FUNCTION */
+      double operator()(const double &phi);
+      /*************************************************/
+  };
+
+  inline double JacobianPairHyperbolaCircle::operator()(const double &phi) {
+    return -2 * (b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * sinh(phi) + a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * cosh(phi) + ((a * a) + (b * b)) * cosh(2 * phi));
+  }
+
+  /*!
+   * \brief root function for pairing Contour1s and Line
+   * \author Roland Zander
+   * \date 2009-07-10 some comments (Thorsten Schindler)
+   * \todo change to new kernel_dev
+   */
+  class FuncPairContour1sLine : public DistanceFunction<double(double)> {
+    public:
+      /**
+       * \brief constructor
+       * \param line
+       * \param contour1s
+       */
+      FuncPairContour1sLine(Line* line_, Contour1s *contour_) :
+          contour(contour_), line(line_) {
+      }
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      virtual double operator()(const double &s) {
+        THROW_MBSIMERROR("(FuncPairContour1sLine::operator): Not implemented!");
+        //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
+        //fmatvec::Vec WnL = line->computeWn();
+        //return trans(WtC)*WnL;
+      }
+
+      virtual fmatvec::Vec3 getWrD(const double &s) {
+        THROW_MBSIMERROR("(FuncPairContour1sLine::getWrD): Not implemented!");
+        //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
+        //fmatvec::Vec Wn = contour->computeWn(s);
+        //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());
+        //return Wn*g;
+      }
+
+      virtual double operator[](const double &s) {
+        return nrm2(getWrD(s));
+      }
+      /*************************************************/
+
+    private:
+      Contour1s *contour;
+      Line *line;
+  };
 
   /*!
    * \brief root function for pairing Contour1s and Circle
@@ -581,12 +582,12 @@ namespace MBSim {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
-        fmatvec::Vec3 Wd = getWrD(t,alpha);
+        fmatvec::Vec3 Wd = getWrD(alpha);
         fmatvec::Vec3 Wt = contour->getWu(t,cp);
         return Wt.T() * Wd;
       }
 
-      fmatvec::Vec3 getWrD(double t, const double &alpha) {
+      fmatvec::Vec3 getWrD(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
         WrOC[0] = circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getWn(t,cp);
         WrOC[1] = contour->getPosition(t,cp);

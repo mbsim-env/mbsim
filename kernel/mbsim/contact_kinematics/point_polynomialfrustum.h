@@ -102,17 +102,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double& g, ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec& wb, double g, ContourPointData *cpData) {
+      virtual void updateg(double t, double& g, ContourPointData *cpData, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec& wb, double g, ContourPointData *cpData) {
         throw MBSimError("(ContactKinematicsRectanglePolynomialFrustum::updatewb): not implemented!");
       }
 
     protected:
-      /*!
-       * \brief set the values for the contact kinematics for the frustum due to the given x and phi
-       */
-      void setFrustumOrienationKinematics(const double & x, const double & phi, ContourPointData * cpData);
-
       /**
        * \brief contour index of rectangle (in cpData)
        */

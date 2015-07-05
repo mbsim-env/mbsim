@@ -48,6 +48,41 @@ namespace MBSim {
 
   Circle::~Circle() {}
 
+  Vec3 Circle::getKs(ContourPointData &cp) {
+    Vec3 Ks(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    Ks(0)=-r*sin(a);
+    Ks(1)=r*cos(a);
+    Ks(2)=0;
+    return Ks;
+  }
+
+  Vec3 Circle::getKt(ContourPointData &cp) {
+    Vec3 Kt(NONINIT);
+    Kt(0)=0;
+    Kt(1)=0;
+    Kt(2)=1;
+    return Kt;
+  }
+
+  Vec3 Circle::getParDer1Kn(ContourPointData &cp) {
+    Vec3 parDer1Kn(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    parDer1Kn(0)=-sin(a);
+    parDer1Kn(1)=cos(a);
+    parDer1Kn(2)=0;
+    return parDer1Kn;
+  }
+
+  Vec3 Circle::getParDer1Ku(ContourPointData &cp) {
+    Vec3 parDer1Ku(NONINIT);
+    double a = cp.getLagrangeParameterPosition()(0);
+    parDer1Ku(0)=-cos(a);
+    parDer1Ku(1)=-sin(a);
+    parDer1Ku(2)=0;
+    return parDer1Ku;
+  }
+
   Vec2 Circle::getLagrangeParameter(const Vec3& WrPoint) {
     Vec2 LagrangeParameter;
 

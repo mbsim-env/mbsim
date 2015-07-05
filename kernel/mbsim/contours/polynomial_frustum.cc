@@ -183,26 +183,30 @@ namespace MBSim {
     return sphereRadius;
   }
 
-  Vec3 PolynomialFrustum::getEnclosingSphereCenter() {
+  Vec3 PolynomialFrustum::getEnclosingSphereCenter(double t) {
     Vec3 center;
     center(0) = height / 2;
-    return R->getPosition() + R->getOrientation() * center;
+    return R->getPosition(t) + R->getOrientation(t) * center;
   }
 
   const fmatvec::Vec & PolynomialFrustum::getPolynomialParameters() {
     return parameters;
   }
 
-  Vec3 PolynomialFrustum::computePoint(const double & x, const double & phi) {
+  Vec3 PolynomialFrustum::getKrPS(ContourPointData &cp) {
     Vec3 point(NONINIT);
+    double x = cp.getLagrangeParameterPosition()(0);
+    double phi = cp.getLagrangeParameterPosition()(1);
     point(0) = x;
     point(1) = getValue(x) * cos(phi);
     point(2) = getValue(x) * sin(phi);
     return point;
   }
 
-  Vec3 PolynomialFrustum::computeNormal(const double & x, const double & phi) {
+  Vec3 PolynomialFrustum::getKn(ContourPointData &cp) {
     Vec3 normal(NONINIT);
+    double x = cp.getLagrangeParameterPosition()(0);
+    double phi = cp.getLagrangeParameterPosition()(1);
     const double f = getValue(x);
     normal(0) =  f * getValueD1(x);
     normal(1) = - f * cos(phi);
@@ -210,8 +214,10 @@ namespace MBSim {
     return -normal/nrm2(normal);
   }
 
-  Vec3 PolynomialFrustum::computeTangentRadial(const double & x, const double & phi) {
+  Vec3 PolynomialFrustum::getKu(ContourPointData &cp) {
     Vec3 tangent(NONINIT);
+    double x = cp.getLagrangeParameterPosition()(0);
+    double phi = cp.getLagrangeParameterPosition()(1);
     const double fd = getValueD1(x);
     tangent(0) = 1;
     tangent(1) = fd * cos(phi);
@@ -219,12 +225,14 @@ namespace MBSim {
     return tangent/nrm2(tangent);
   }
 
-  Vec3 PolynomialFrustum::computeTangentAzimuthal(const double & x, const double & phi) {
+  Vec3 PolynomialFrustum::getKv(ContourPointData &cp) {
     Vec3 tangent(NONINIT);
+    double x = cp.getLagrangeParameterPosition()(0);
+    double phi = cp.getLagrangeParameterPosition()(1);
     const double f = getValue(x);
     tangent(0) = 0;
-    tangent(1) = - f * sin(phi);
-    tangent(2) = f * cos(phi);
+    tangent(1) = f * sin(phi);
+    tangent(2) = -f * cos(phi);
     return tangent/nrm2(tangent);
   }
 
@@ -243,6 +251,18 @@ namespace MBSim {
     }
 
     sphereRadius = (temp1 > temp) ? temp1 : temp;
+  }
+
+  Vec3 PolynomialFrustum::getWn(double t, ContourPointData &cp) {
+    return R->getOrientation() * getKn(cp);
+  }
+
+  Vec3 PolynomialFrustum::getWu(double t, ContourPointData &cp) {
+    return R->getOrientation() * getKu(cp);
+  }
+
+  Vec3 PolynomialFrustum::getWv(double t, ContourPointData &cp) {
+    return R->getOrientation() * getKv(cp);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

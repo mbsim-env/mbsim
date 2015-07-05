@@ -58,7 +58,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
-    Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0);
+    Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation(t).col(0);
     Vec3 n2 = cpData[isphere].getFrameOfReference().getOrientation(t).col(0);
     Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity(t);
     Vec3 vC2 = cpData[isphere].getFrameOfReference().getVelocity(t);

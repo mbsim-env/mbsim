@@ -44,22 +44,20 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidPlane::updateg(double &g, ContourPointData *cpData, int index) {
-    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation());
-    cpData[icircle].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
-    cpData[icircle].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
-    cpData[icircle].getFrameOfReference().getOrientation().set(2, plane->getFrame()->getOrientation().col(2));
+  void ContactKinematicsCircleSolidPlane::updateg(double t, double &g, ContourPointData *cpData, int index) {
+    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation(t));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    cpData[icircle].getFrameOfReference().getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
     Vec3 Wd;
-    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
-    Vec3 Wb = circlesolid->getFrame()->getOrientation().col(2);
+    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation(false).col(0);
+    Vec3 Wb = circlesolid->getFrame()->getOrientation(t).col(2);
     double t_EC = Wn.T()*Wb;
     if(t_EC>0) {
       Wb *= -1.;
       t_EC *= -1;	
     }
-    //cout << Wn << endl;
-    //cout << Wb << endl;
     Vec3 z_EC = Wn - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
     if(z_EC_nrm2 <= 1e-8) { // infinite possible contact points
@@ -68,14 +66,9 @@ namespace MBSim {
     else { // exactly one possible contact point
       Wd =  (circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC) - plane->getFrame()->getPosition();
     }
-    //cout << z_EC<<endl;
-    //cout << Wd << endl;
-    //cout << Wn << endl;
     g = Wn.T()*Wd;
-    //cout << g << endl;
     cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
-    cpData[iplane].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g);
-
+    cpData[iplane].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition(false) - Wn*g);
   }
 
 }

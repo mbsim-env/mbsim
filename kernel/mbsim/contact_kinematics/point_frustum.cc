@@ -67,38 +67,35 @@ namespace MBSim {
 
         Vec3 b = Wd-s*Wa;
         b /= d;
-        cpData[ifrustum].getFrameOfReference().getOrientation().set(0,  cos(phi)*b - sin(phi)*Wa);
-        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
+        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0,  cos(phi)*b - sin(phi)*Wa);
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
         g = (d-r_h)*cos(phi);
       }
       else { // contact on inner surface
         double  phi = atan((r(1) - r(0))/h); // half cone angle
         Vec3 b = Wd-s*Wa;
         b /= d;
-        cpData[ifrustum].getFrameOfReference().getOrientation().set(0, sin(phi)*Wa - cos(phi)*b);
-        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
+        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, sin(phi)*Wa - cos(phi)*b);
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
         g = (r_h-d)*cos(phi);
       }
 
-    //Set positions
-    cpData[ipoint].getFrameOfReference().getPosition()= point->getFrame()->getPosition();
-    cpData[ifrustum].getFrameOfReference().getPosition() =  cpData[ipoint].getFrameOfReference().getPosition() + cpData[ipoint].getFrameOfReference().getOrientation().col(0)*g;
+      //Set positions
+      cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
+      cpData[ifrustum].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition(false) + cpData[ipoint].getFrameOfReference().getOrientation(false).col(0)*g);
 
-    /*Set tangential (=friction) directions*/
-    // radial direction
-    if(outCont)
-      cpData[ifrustum].getFrameOfReference().getOrientation().set(1, (Wa + sin(phi)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi));
-    else
-      cpData[ifrustum].getFrameOfReference().getOrientation().set(1, (Wa - sin(phi)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi));
+      /*Set tangential (=friction) directions*/
+      // radial direction
+      if(outCont)
+        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, (Wa + sin(phi)*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0))/cos(phi));
+      else
+        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, (Wa - sin(phi)*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0))/cos(phi));
 
-    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
+      cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
 
-    //azimuthal
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ifrustum].getFrameOfReference().getOrientation().col(0),cpData[ifrustum].getFrameOfReference().getOrientation().col(1)));
-    cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[ifrustum].getFrameOfReference().getOrientation().col(2));
-
-
-
+      //azimuthal
+      cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, crossProduct(cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0),cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1)));
+      cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, cpData[ifrustum].getFrameOfReference().getOrientation(false).col(2));
     }
   }
 

@@ -163,6 +163,14 @@ namespace MBSim {
     return 0;
   }
 
+  Vec3 Contour::getParDer1Wn(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getParDer1Kn(cp);
+  }
+
+  Vec3 Contour::getParDer2Wn(double t, ContourPointData &cp) {
+    return R->getOrientation(t)*getParDer2Kn(cp);
+  }
+
   Vec3 Contour::getParDer1Wu(double t, ContourPointData &cp) {
     return R->getOrientation(t)*getParDer1Ku(cp);
   }
@@ -189,6 +197,13 @@ namespace MBSim {
 
   Vec3 Contour::getWt(double t, ContourPointData &cp) {
     return R->getOrientation(t)*getKt(cp);
+  }
+
+  Mat3x2 Contour::getWN(double t, ContourPointData &cp) {
+    Mat3x2 WN(NONINIT);
+    WN.set(0,getParDer1Wn(t,cp));
+    WN.set(1,getParDer2Wn(t,cp));
+    return WN;
   }
 
   Mat3x2 Contour::getWR(double t, ContourPointData &cp) {

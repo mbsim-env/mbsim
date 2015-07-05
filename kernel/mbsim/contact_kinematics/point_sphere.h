@@ -37,10 +37,8 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double &g, ContourPointData *cpData, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, ContourPointData *cpData) { throw MBSimError("(ContactKinematicsPointSphere:updatewb): Not implemented!"); }
-      //virtual void stage1(double &g, std::vector<ContourPointData> &cpData);
-      //virtual void stage2(double g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void updateg(double t, double &g, ContourPointData *cpData, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, ContourPointData *cpData) { throw MBSimError("(ContactKinematicsPointSphere:updatewb): Not implemented!"); }
       /***************************************************/
 
     private:

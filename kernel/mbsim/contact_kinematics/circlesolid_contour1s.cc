@@ -79,7 +79,7 @@ namespace MBSim {
 
     cpData[icontour1s].getLagrangeParameterPosition()(0) = search.slv();
 
-    cpData[icontour1s].getFrameOfReference().getPosition(false) = contour1s->getPosition(t,cpData[icontour1s]);
+    cpData[icontour1s].getFrameOfReference().setPosition(contour1s->getPosition(t,cpData[icontour1s]));
     cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->getWn(t,cpData[icontour1s]));
     cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->getWu(t,cpData[icontour1s]));
     cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->getWv(t,cpData[icontour1s]));
@@ -89,7 +89,7 @@ namespace MBSim {
     cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(1));
     cpData[icircle].getFrameOfReference().getOrientation(false).set(2, cpData[icontour1s].getFrameOfReference().getOrientation(false).col(2));
 
-    Vec3 WrD = func->getWrD(t,cpData[icontour1s].getLagrangeParameterPosition()(0));
+    Vec3 WrD = func->getWrD(cpData[icontour1s].getLagrangeParameterPosition()(0));
     g = -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0).T()*WrD;
   }
 

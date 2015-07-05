@@ -81,19 +81,19 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsSpherePolynomialFrustum::updateg(double & g, ContourPointData * cpData, int index) {
+  void ContactKinematicsSpherePolynomialFrustum::updateg(double t, double & g, ContourPointData * cpData, int index) {
     /*Geometry*/
     //sphere center in coordinates of frustum
-    Vec3 rF = frustum->getFrameOfReference()->getPosition();
-    Vec3 rS = sphere->getFrame()->getPosition();
-    SqrMat3 AWF = frustum->getFrameOfReference()->getOrientation();
+    Vec3 rF = frustum->getFrame()->getPosition(t);
+    Vec3 rS = sphere->getFrame()->getPosition(t);
+    SqrMat3 AWF = frustum->getFrame()->getOrientation();
 
     // CoG of Sphere in coordinates of frustum
     Vec3 COG_S = AWF.T() * (rS - rF);
 
     /*construct the sphere enclosing the frustum*/
     //take center of the frustum as center of the sphere
-    Vec3 COG_FencS = AWF.T() * (frustum->getEnclosingSphereCenter() - rF);
+    Vec3 COG_FencS = AWF.T() * (frustum->getEnclosingSphereCenter(t) - rF);
 
     //search the radius of the circumsphere
     double rad_sph = frustum->getEnclosingSphereRadius();
@@ -111,21 +111,26 @@ namespace MBSim {
         if(x(0) > 0 and x(0) < frustum->getHeight()) {
           double phi = ArcTan(COG_S(1), COG_S(2));
 
-          //Orientation
-          cpData[ifrustum].getFrameOfReference().getOrientation().set(0, AWF * frustum->computeNormal(x(0), phi));
-          cpData[ifrustum].getFrameOfReference().getOrientation().set(1, AWF * frustum->computeTangentRadial(x(0), phi));
-          cpData[ifrustum].getFrameOfReference().getOrientation().set(2, - AWF * frustum->computeTangentAzimuthal(x(0), phi));
+          Vec2 zeta1(NONINIT);
+          zeta1(0) = x(0);
+          zeta1(1) = phi;
+          cpData[ifrustum].setLagrangeParameterPosition(zeta1);
 
-          cpData[isphere].getFrameOfReference().getOrientation().set(0, - cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
-          cpData[isphere].getFrameOfReference().getOrientation().set(1, - cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
-          cpData[isphere].getFrameOfReference().getOrientation().set(2, cpData[ifrustum].getFrameOfReference().getOrientation().col(2));
+          //Orientation
+          cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, frustum->getWn(t,cpData[ifrustum]));
+          cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, frustum->getWu(t,cpData[ifrustum]));
+          cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, frustum->getWv(t,cpData[ifrustum]));
+
+          cpData[isphere].getFrameOfReference().getOrientation(false).set(0, - cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+          cpData[isphere].getFrameOfReference().getOrientation(false).set(1, - cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
+          cpData[isphere].getFrameOfReference().getOrientation(false).set(2, cpData[ifrustum].getFrameOfReference().getOrientation(false).col(2));
 
           //Position
-          cpData[ifrustum].getFrameOfReference().getPosition() = rF + AWF * frustum->computePoint(x(0), phi);
-          cpData[isphere].getFrameOfReference().getPosition() = rS + cpData[isphere].getFrameOfReference().getOrientation().col(0) * sphere->getRadius();
+          cpData[ifrustum].getFrameOfReference().setPosition(frustum->getPosition(t,cpData[ifrustum]));
+          cpData[isphere].getFrameOfReference().setPosition(rS + cpData[isphere].getFrameOfReference().getOrientation(false).col(0) * sphere->getRadius());
 
           //Distance
-          g = cpData[ifrustum].getFrameOfReference().getOrientation().col(0).T() * (cpData[isphere].getFrameOfReference().getPosition() - cpData[ifrustum].getFrameOfReference().getPosition());
+          g = cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0).T() * (cpData[isphere].getFrameOfReference().getPosition(false) - cpData[ifrustum].getFrameOfReference().getPosition(false));
 
           return;
         }

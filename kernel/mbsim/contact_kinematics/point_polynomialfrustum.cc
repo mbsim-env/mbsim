@@ -124,17 +124,10 @@ namespace MBSim {
     newtonProjectAlongNormal.setDampingFunction(&dampingProjectAlongNormal);
   }
 
-  void ContactKinematicsPointPolynomialFrustum::setFrustumOrienationKinematics(const double & x, const double & phi, ContourPointData * cpData) {
-    SqrMat3 AWF = frustum->getFrame()->getOrientation();
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(0, AWF * frustum->computeNormal(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, signh * AWF * frustum->computeTangentRadial(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, signh * -AWF * frustum->computeTangentAzimuthal(x, phi));
-  }
-
-  void ContactKinematicsPointPolynomialFrustum::updateg(double & g, ContourPointData * cpData, int index) {
+  void ContactKinematicsPointPolynomialFrustum::updateg(double t, double & g, ContourPointData * cpData, int index) {
     /*Geometry*/
     //point in frustum-coordinates
-    Vec3 rPoint = frustum->getFrame()->getOrientation().T() * (point->getFrame()->getPosition() - frustum->getFrame()->getPosition());
+    Vec3 rPoint = frustum->getFrame()->getOrientation(t).T() * (point->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t));
 
 
     const double & h = rPoint(0);
@@ -149,22 +142,29 @@ namespace MBSim {
       Vec x(1,INIT,h);
       x = newtonProjectAlongNormal.solve(x);
 
-      Vec3 contactPointFrustum = frustum->computePoint(x(0), phi);
+      Vec2 zeta1(NONINIT);
+      zeta1(0) = x(0);
+      zeta1(1) = phi;
+      cpData[ifrustum].setLagrangeParameterPosition(zeta1);
 
-      g = frustum->computeNormal(x(0), phi).T() * (rPoint - contactPointFrustum);
+      Vec3 contactPointFrustum = frustum->getKrPS(cpData[ifrustum]);
+
+      g = frustum->getKn(cpData[ifrustum]).T() * (rPoint - contactPointFrustum);
 
       if (g < 0.) {
         //Frustum
         Vec3 rF = frustum->getFrame()->getPosition();
         SqrMat3 AWF = frustum->getFrame()->getOrientation();
-        cpData[ifrustum].getFrameOfReference().getPosition() = rF + AWF * contactPointFrustum;
-        setFrustumOrienationKinematics(x(0), phi, cpData);
+        cpData[ifrustum].getFrameOfReference().setPosition(rF + AWF * contactPointFrustum);
+        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, frustum->getWn(t,cpData[ifrustum]));
+        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, signh * frustum->getWu(t,cpData[ifrustum]));
+        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, signh * frustum->getWv(t,cpData[ifrustum]));
 
         //Rectangle
-        cpData[ipoint].getFrameOfReference().getPosition() = rF + AWF  * rPoint;
-        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
-        cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
-        cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[ifrustum].getFrameOfReference().getOrientation().col(2));
+        cpData[ipoint].getFrameOfReference().setPosition(rF + AWF  * rPoint);
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
+        cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, cpData[ifrustum].getFrameOfReference().getOrientation(false).col(2));
 
       }
     }

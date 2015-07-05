@@ -88,10 +88,10 @@ namespace MBSim {
     msg(Debug) << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
-  void ContactKinematicsPointPlaneWithFrustum::updateg(double &g, ContourPointData* cpData, int index) {
+  void ContactKinematicsPointPlaneWithFrustum::updateg(double t, double &g, ContourPointData* cpData, int index) {
 
-    Vec3 WrOPoint = point->getFrame()->getPosition();
-    Vec3 WrOPlane = plane->getFrame()->getPosition();
+    Vec3 WrOPoint = point->getFrame()->getPosition(t);
+    Vec3 WrOPlane = plane->getFrame()->getPosition(t);
     Vec3 WnContour = plane->getFrame()->getOrientation().col(0);
     Vec3 WrPlanePoint = -WrOPlane+WrOPoint;
     double d = nrm2(crossProduct(WnContour, WrPlanePoint));
@@ -203,15 +203,15 @@ namespace MBSim {
     msg(Debug) << "WrCP=" << trans(WrCP) << endl;
     msg(Debug) << "========================" << endl;
 
-    cpData[ipoint].getFrameOfReference().getPosition() = WrOPoint;
-    cpData[iplane].getFrameOfReference().getPosition() =  WrCP;
+    cpData[ipoint].getFrameOfReference().setPosition(WrOPoint);
+    cpData[iplane].getFrameOfReference().setPosition(WrCP);
 
-    cpData[iplane].getFrameOfReference().getOrientation().set(0, Wn);
-    cpData[iplane].getFrameOfReference().getOrientation().set(1, Wt);
-    cpData[iplane].getFrameOfReference().getOrientation().set(2, -Wb);
-    cpData[ipoint].getFrameOfReference().getOrientation().set(0, -Wn);
-    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -Wt);
-    cpData[ipoint].getFrameOfReference().getOrientation().set(2, -Wb);
+    cpData[iplane].getFrameOfReference().getOrientation(false).set(0, Wn);
+    cpData[iplane].getFrameOfReference().getOrientation(false).set(1, Wt);
+    cpData[iplane].getFrameOfReference().getOrientation(false).set(2, -Wb);
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -Wn);
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -Wt);
+    cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, -Wb);
   }
 }
 
