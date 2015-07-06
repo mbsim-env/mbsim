@@ -182,14 +182,6 @@ namespace MBSim {
 
       PJT[0].resize(nu[0]);
       PJR[0].resize(nu[0]);
-      if(constraint) {
-        for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
-          (*i)->getJacobianOfTranslation(2,false).resize(nu[0]);
-          (*i)->getJacobianOfRotation(2,false).resize(nu[0]);
-        }
-        Z.getJacobianOfTranslation(2,false).resize(nu[0]);
-        Z.getJacobianOfRotation(2,false).resize(nu[0]);
-      }
 
       PJT[1].resize(nu[1]);
       PJR[1].resize(nu[1]);
@@ -490,12 +482,16 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobians2(double t) {
+    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
+      (*i)->getJacobianOfTranslation(2,false).resize();
+      (*i)->getJacobianOfRotation(2,false).resize();
+    }
     if(updateByReference) {
-      Z.getJacobianOfTranslation(2,false).set(i02,Index(0,R->getJacobianOfTranslation(2,false).cols()-1), R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2));
-      Z.getJacobianOfRotation(2,false).set(i02,Index(0,R->getJacobianOfRotation(2,false).cols()-1), R->getJacobianOfRotation(t,2));
+      Z.getJacobianOfTranslation(2,false).resize() = R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2);
+      Z.getJacobianOfRotation(2,false).resize() = R->getJacobianOfRotation(t,2);
     } else {
-      Z.getJacobianOfTranslation(2,false).set(i02,Index(0,K->getJacobianOfTranslation(2,false).cols()-1), R->getOrientation(t)*getPJT(t));
-      Z.getJacobianOfRotation(2,false).set(i02,Index(0,K->getJacobianOfRotation(2,false).cols()-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);
+      Z.getJacobianOfTranslation(2,false).resize() = R->getOrientation(t)*getPJT(t);
+      Z.getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->getOrientation(t)*PJR[0];
     }
   }
 
