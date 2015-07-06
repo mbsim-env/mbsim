@@ -68,20 +68,20 @@ namespace MBSim {
 
   void FixedRelativeFrame::updatePositions(double t) { 
     setOrientation(R->getOrientation(t)*ARP);
-    WrRP = R->getOrientation(t)*RrRP; 
-    setPosition(R->getPosition(t) + WrRP);
+    WrRP = R->getOrientation()*RrRP;
+    setPosition(R->getPosition() + WrRP);
     updatePos = false;
   }
 
   void FixedRelativeFrame::updateVelocities(double t) { 
     setAngularVelocity(R->getAngularVelocity(t));
-    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))); 
+    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)));
     updateVel = false;
   }
 
   void FixedRelativeFrame::updateAccelerations(double t) { 
     setAngularAcceleration(R->getAngularAcceleration(t));
-    setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))));
     updateAcc = false;
   }
 
