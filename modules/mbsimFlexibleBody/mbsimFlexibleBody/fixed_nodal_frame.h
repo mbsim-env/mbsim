@@ -34,7 +34,7 @@ namespace MBSimFlexibleBody {
     public:
       FixedNodalFrame(const std::string &name = "dummy") : Frame(name), R(0), ARP(fmatvec::SqrMat3(fmatvec::EYE)), E(fmatvec::Eye()), nq(0) { }
 
-      FixedNodalFrame(const std::string &name, const fmatvec::Vec3 &r, const fmatvec::Mat3xV &Phi_, const fmatvec::Mat3xV &Psi_, const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const FixedNodalFrame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A), E(fmatvec::Eye()), Phi(Phi_), Psi(Psi_), nq(0) { }
+      FixedNodalFrame(const std::string &name, const fmatvec::Vec3 &r, const fmatvec::Mat3xV &Phi_, const fmatvec::Mat3xV &Psi_, const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A), E(fmatvec::Eye()), Phi(Phi_), Psi(Psi_), nq(0) { }
 
       std::string getType() const { return "FixedNodalFrame"; }
 
@@ -45,6 +45,7 @@ namespace MBSimFlexibleBody {
 
       void updateqRef(const fmatvec::Vec& ref) { q>>ref; }
       void updateqdRef(const fmatvec::Vec& ref) { qd>>ref; }
+      void updateqddRef(const fmatvec::Vec& ref) { qdd>>ref; }
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
@@ -55,30 +56,28 @@ namespace MBSimFlexibleBody {
       void setsigma0(const fmatvec::Vector<fmatvec::Fixed<6>, double > &sigma0_) { sigma0 = sigma0_; }
       void setsigmahel(const fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> &sigmahel_) { sigmahel = sigmahel_; }
       void setsigmahen(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
-      void setFrameOfReference(const FixedNodalFrame *frame) { R = frame; }
+      void setFrameOfReference(Frame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
       void setPhi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Phi_) { Phi = Phi_.getM0(); K0F = Phi_.getM1(); }
       void setPsi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Psi_) { Psi = Psi_.getM0(); K0M = Psi_.getM1(); }
       void setsigma(const Taylor<fmatvec::Vector<fmatvec::Fixed<6>, double >,fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>,std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > &sigma_) { sigma0 = sigma_.getM0(); sigmahel = sigma_.getM1(); sigmahen = sigma_.getM2(); }
 
-      void setJacobianOfDeformation(const fmatvec::MatV &J, int j=0) { WJD[j] = J; }
-      fmatvec::MatV& getJacobianOfDeformation(int j=0) { return WJD[j]; }
-      const fmatvec::MatV& getJacobianOfDeformation(int j=0) const { return WJD[j]; }
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
       const Frame* getFrameOfReference() const { return R; }
-      const fmatvec::Vec3& getWrRP() const { return WrRP; }
 
-      void updateRelativePosition(); 
-      void updateRelativeOrientation();
-      void updatePosition();
-      void updateOrientation();
-      void updateVelocity();
-      void updateAngularVelocity();
-      void updateStateDependentVariables();
-      void updateJacobians(int j=0);
-      void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud); 
+      const fmatvec::Mat3xV& getGlobalPhi() { return WPhi; }
+      const fmatvec::Mat3xV& getGlobalPsi() { return WPsi; }
+
+      const fmatvec::Vec3& getGlobalRelativePosition(double t);
+      const fmatvec::Mat3xV& getGlobalPhi(double t);
+      const fmatvec::Mat3xV& getGlobalPsi(double t);
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateAccelerations(double t);
+      void updateJacobians(double t, int j=0);
+      void updateGyroscopicAccelerations(double t);
 
       virtual void plot(double t, double dt = 1); 
 
@@ -86,7 +85,7 @@ namespace MBSimFlexibleBody {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
-      const FixedNodalFrame *R;
+      Frame *R;
       fmatvec::Vec3 RrRP, WrRP;
       fmatvec::SqrMat3 ARP, APK, E;
       fmatvec::Mat3xV WPhi, WPsi, Phi, Psi;
@@ -95,7 +94,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahel;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahen;
       fmatvec::MatV WJD[2];
-      fmatvec::Vec q, qd;
+      fmatvec::Vec q, qd, qdd;
       int nq;
       std::string saved_frameOfReference;
   };

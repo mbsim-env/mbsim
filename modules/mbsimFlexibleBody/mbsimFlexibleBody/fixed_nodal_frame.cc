@@ -43,6 +43,7 @@ namespace MBSimFlexibleBody {
         Psi.resize(nq);
       q.resize(nq);
       qd.resize(nq);
+      qdd.resize(nq);
       Frame::init(stage);
     }
     else if(stage==plotting) {
@@ -60,65 +61,68 @@ namespace MBSimFlexibleBody {
       Frame::init(stage);
   }
       
-  void FixedNodalFrame::updateRelativePosition() {
-    WPhi = R->getOrientation()*Phi; 
-    WPsi = R->getOrientation()*Psi; 
-    WrRP = R->getOrientation()*RrRP + WPhi*q; 
+  const Vec3& FixedNodalFrame::getGlobalRelativePosition(double t) {
+    if(updatePos) updatePositions(t);
+    return WrRP;
   }
 
-  void FixedNodalFrame::updateRelativeOrientation() {
-    APK = E+tilde(Psi*q); 
+  const Mat3xV& FixedNodalFrame::getGlobalPhi(double t) {
+    if(updatePos) updatePositions(t);
+    return WPhi;
   }
 
-  void FixedNodalFrame::updatePosition() {
-    updateRelativePosition(); 
-    setPosition(R->getPosition() + WrRP); 
+  const Mat3xV& FixedNodalFrame::getGlobalPsi(double t) {
+    if(updatePos) updatePositions(t);
+    return WPsi;
   }
 
-  void FixedNodalFrame::updateOrientation() {
-    updateRelativeOrientation(); 
-    setOrientation(R->getOrientation()*ARP*APK); 
-  }
-
-  void FixedNodalFrame::updateVelocity() {
-    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrRP) + WPhi*qd); 
-  } 
-
-  void FixedNodalFrame::updateAngularVelocity() {
-    setAngularVelocity(R->getAngularVelocity() + WPsi*qd); 
-  }
-
-  void FixedNodalFrame::updateStateDependentVariables() {
-    updatePosition();
-    updateOrientation();
-    updateVelocity();
-    updateAngularVelocity();
-  }
-
-  void FixedNodalFrame::updateJacobians(int j) {
+  void FixedNodalFrame::updatePositions(double t) {
+    APK = E+tilde(Psi*q);
+    setOrientation(R->getOrientation(t)*ARP*APK);
     if(K0F.size()) {
       MatVx3 PhigeoT(nq,NONINIT);
       for(int i=0; i<3; i++)
         PhigeoT.set(i,K0F[i]*q);
       WPhi = R->getOrientation()*(Phi + PhigeoT.T()); 
     }
+    else
+      WPhi = R->getOrientation()*Phi;
     if(K0M.size()) {
       MatVx3 PsigeoT(nq,NONINIT);
       for(int i=0; i<3; i++)
         PsigeoT.set(i,K0M[i]*q);
       WPsi = R->getOrientation()*(Psi + PsigeoT.T()); 
     }
-    fmatvec::SqrMat3 tWrRP = tilde(WrRP);
-    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tWrRP*R->getJacobianOfRotation(j) + WPhi*R->getJacobianOfDeformation(j),j);
-    setJacobianOfRotation(R->getJacobianOfRotation(j) + WPsi*R->getJacobianOfDeformation(j),j);
-    setJacobianOfDeformation(R->getJacobianOfDeformation(j),j);
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(j) - tWrRP*R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrRP)) + 2.*crossProduct(R->getAngularVelocity(),WPhi*qd),j);
-    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),WPsi*qd),j);
+    else
+      WPsi = R->getOrientation()*Psi;
+    WrRP = R->getOrientation()*RrRP + WPhi*q;
+    setPosition(R->getPosition() + WrRP);
+    updatePos = false;
   }
 
-  void FixedNodalFrame::updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
-    setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
-    setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
+  void FixedNodalFrame::updateVelocities(double t) {
+    setAngularVelocity(R->getAngularVelocity(t) + getGlobalPsi(t)*qd);
+    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)) + getGlobalPhi(t)*qd);
+    updateVel = false;
+  }
+
+  void FixedNodalFrame::updateAccelerations(double t) {
+    setAngularAcceleration(R->getAngularAcceleration(t) +  crossProduct(R->getAngularVelocity(t),getGlobalPsi(t)*qd) + getGlobalPsi(t)*qdd);
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd) + getGlobalPhi()*qdd);
+    updateAcc = false;
+  }
+
+  void FixedNodalFrame::updateJacobians(double t, int j) {
+    setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j) + getGlobalPhi(t)*R->getJacobianOfDeformation(t,j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j) + getGlobalPsi()*R->getJacobianOfDeformation(j),j);
+    setJacobianOfDeformation(R->getJacobianOfDeformation(j),j);
+    updateJac[j] = false;
+  }
+
+  void FixedNodalFrame::updateGyroscopicAccelerations(double t) {
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))) + 2.*crossProduct(R->getAngularVelocity(t),getGlobalPhi(t)*qd));
+    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + crossProduct(R->getAngularVelocity(),getGlobalPsi()*qd));
+    updateGA = false;
   }
 
   void FixedNodalFrame::plot(double t, double dt) {

@@ -113,7 +113,7 @@ AC_SUBST([requires])
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
-AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody.pc schema/Makefile xmldoc/Makefile doc/Makefile doc/doxyfile xmldoc/Doxyfile])
+AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody/flexible_body/Makefile mbsimFlexibleBody.pc schema/Makefile xmldoc/Makefile doc/Makefile doc/doxyfile xmldoc/Doxyfile])
 
 AC_OUTPUT
 

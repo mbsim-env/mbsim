@@ -48,34 +48,36 @@ namespace MBSimFlexibleBody {
        */
       virtual ~FlexibleBodyFFR();
 
-      virtual void updatedq(double t, double dt);
-      virtual void updateqd(double t); 
-      virtual void updateT(double t);
-      virtual void updateh(double t, int j=0);
-      virtual void updatehInverseKinetics(double t, int j=0);
-      virtual void updateStateDerivativeDependentVariables(double t);
-      virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
-      virtual void updateStateDependentVariables(double t) { 
-        updateKinematicsForSelectedFrame(t); 
-        updateKinematicsForRemainingFramesAndContours(t); 
-      }
-      virtual void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
-      void updateJacobians0(double t) { 
-        updateJacobiansForSelectedFrame0(t); 
-        updateJacobiansForRemainingFramesAndContours(t,0); 
-      }
-      void updateJacobians1(double t) { 
-        updateJacobiansForRemainingFramesAndContours1(t); 
-      }
+      void updatedq(double t, double dt);
+      void updateqd(double t);
+      void updateT(double t);
+      void updateh(double t, int j=0);
+      void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
+      void updateGeneralizedCoordinates(double t);
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateAccelerations(double t);
+      void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
+      void updateGyroscopicAccelerations(double t);
+      void updateJacobians0(double t);
+      void updateJacobians1(double t) { }
+      void updatePJ(double t);
+      void updateMb(double t);
+      void updatehb(double t);
+      void updateKJ(double t, int j=0) { (this->*updateKJ_[j])(t); }
+      void updateKJ0(double t);
+      void updateKJ1(double t);
+      void (FlexibleBodyFFR::*updateKJ_[2])(double t);
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void updateqRef(const fmatvec::Vec& ref);
       virtual void updateuRef(const fmatvec::Vec& ref);
+      virtual void updateudRef(const fmatvec::Vec& ref, int i=0);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
+      virtual void updateLLM(double t, int i=0) { (this->*updateLLM_)(t,i); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
 
@@ -83,27 +85,6 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const { return "FlexibleBodyFFR"; }
       virtual void plot(double t, double dt=1);
       /*****************************************************/
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \brief updates kinematics of kinematic Frame starting from reference Frame
-       */
-      virtual void updateKinematicsForSelectedFrame(double t);
-      /**
-       * \brief updates JACOBIAN for kinematics starting from reference Frame
-       */
-      virtual void updateJacobiansForSelectedFrame0(double t); 
-
-      /**
-       * \brief updates kinematics for remaining Frames starting with and from cog Frame
-       */
-      virtual void updateKinematicsForRemainingFramesAndContours(double t);
-
-      /**
-       * \brief updates remaining JACOBIANS for kinematics starting with and from cog Frame
-       */
-      virtual void updateJacobiansForRemainingFramesAndContours(double t, int j=0);
-      virtual void updateJacobiansForRemainingFramesAndContours1(double t);
 
       /* GETTER / SETTER */
 
@@ -174,7 +155,7 @@ namespace MBSimFlexibleBody {
       MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* getRotation() { return fAPK; }
 
       double getMass() const { return m; }
-      FixedNodalFrame* getFrameK() { return K; };
+      MBSim::Frame* getFrameK() { return K; };
 
       // Interface for basic data
       /**
@@ -266,20 +247,34 @@ namespace MBSimFlexibleBody {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      const fmatvec::Mat3xV& getWJTrel() const {return WJTrel;}
-      const fmatvec::Mat3xV& getWJRrel() const {return WJRrel;}
-      fmatvec::Mat3xV& getWJTrel() {return WJTrel;}
-      fmatvec::Mat3xV& getWJRrel() {return WJRrel;}
-      fmatvec::Vec& getqRel() {return qRel;}
-      fmatvec::Vec& getuRel() {return uRel;}
-      fmatvec::Mat& getTRel() {return TRel;}
-      fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
-      fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
+      fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
+      fmatvec::Vec& getuRel(bool check=true) { assert((not check) or (not updGC)); return uRel; }
+      fmatvec::Mat& getTRel(bool check=true) { assert((not check) or (not updT)); return TRel; }
+      void setqRel(const fmatvec::Vec &q);
+      void setuRel(const fmatvec::Vec &u);
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
 
       bool transformCoordinates() const {return fTR!=NULL;}
+
+      void resetUpToDate();
+      const fmatvec::Vec& getqRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRel; }
+      const fmatvec::Vec& getuRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRel; }
+      const fmatvec::VecV& getqTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qTRel; }
+      const fmatvec::VecV& getqRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRRel; }
+      const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel; }
+      const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel; }
+      const fmatvec::Mat& getTRel(double t) { if(updT) updateT(t); return TRel; }
+      const fmatvec::Vec3& getGlobalRelativePosition(double t);
+      const fmatvec::Vec3& getGlobalRelativeVelocity(double t);
+      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t);
+      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updatePJ(t); return PJTT; }
+      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updatePJ(t); return PJRR; }
+      const fmatvec::SymMatV& getMb(double t) { if(updMb) updateMb(t); return M_; }
+      const fmatvec::VecV& gethb(double t) { if(updMb) updateMb(t); return h_; }
+      const fmatvec::MatV& getKJ(double t, int j=0) { if(updKJ[j]) updateKJ(t,j); return KJ[j]; }
+      const fmatvec::VecV& getKi(double t) { if(updKJ[0]) updateKJ(t,0); return Ki; }
 
     protected:
       // Basic input data
@@ -315,7 +310,7 @@ namespace MBSimFlexibleBody {
       // Number of mode shapes 
       int ne;
 
-      FixedNodalFrame *K;
+      MBSim::Frame *K;
 
       /**
        * \brief TODO
@@ -326,11 +321,6 @@ namespace MBSimFlexibleBody {
        * \brief boolean to use body fixed Frame for rotation
        */
       bool coordinateTransformation;
-
-      /**
-       * JACOBIAN of translation, rotation and their derivatives in parent system
-       */
-      fmatvec::Mat3xV PJT[2], PJR[2];
 
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
@@ -379,17 +369,17 @@ namespace MBSimFlexibleBody {
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (FlexibleBodyFFR::*facLLM_)(int i);
+      void (FlexibleBodyFFR::*updateLLM_)(double t, int i);
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
        */
-      void facLLMConst(int i=0) {};
+      void updateLLMConst(double t, int i=0) { }
 
       /**
        * \brief Cholesky decomposition of time dependent mass matrix
        */
-      void facLLMNotConst(int i=0) { Object::facLLM(i); }
+      void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
       void (FlexibleBodyFFR::*updateJacobians_[2])(double t); 
 
@@ -405,17 +395,16 @@ namespace MBSimFlexibleBody {
 
       MBSim::Frame *frameForJacobianOfRotation;
 
-      std::vector<FixedNodalFrame*> RBF;
-      std::vector<MBSim::CompoundContour*> RBC;
-
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iqE, iuT, iuR, iuE;
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
+      bool updGC, updT, updMb, updKJ[2];
+
       fmatvec::SymMatV M_;
       fmatvec::VecV h_;
       fmatvec::MatV KJ[2];
-      fmatvec::VecV Ki[2];
+      fmatvec::VecV Ki;
 
       void determineSID();
       void prefillMassMatrix();
