@@ -302,7 +302,7 @@ namespace MBSim {
       T.init(Eye());
 
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
-        SThetaS = JMJT(static_cast<FixedRelativeFrame*>(frameForInertiaTensor)->getRelativeOrientation(),SThetaS) - m*JTJ(tilde(static_cast<FixedRelativeFrame*>(frameForInertiaTensor)->getRelativePosition()));
+        SThetaS = JMJT(C->getOrientation(0.).T()*frameForInertiaTensor->getOrientation(0.),SThetaS) - m*JTJ(tilde(frameForInertiaTensor->getPosition(0.)-C->getPosition(0.)));
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -433,7 +433,7 @@ namespace MBSim {
 
     WrPK = R->getOrientation(t)*PrPK;
     Z.setOrientation(R->getOrientation()*APK);
-    Z.setPosition(R->getPosition(t) + WrPK);
+    Z.setPosition(R->getPosition() + WrPK);
 
     updPos = false;
   }
