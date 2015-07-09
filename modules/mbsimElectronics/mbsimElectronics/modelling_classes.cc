@@ -239,7 +239,7 @@ namespace MBSimElectronics {
     }
   }
 
-  ElectronicComponent::ElectronicComponent() : branch(0), vz(0), Q(0), I(0) {
+  ElectronicComponent::ElectronicComponent() : branch(0), vz(0), Q(0), I(0), updQ(true), updI(true) {
     branch = &tmpbranch;
   }
 
@@ -252,5 +252,15 @@ namespace MBSimElectronics {
     vz = vz_;
     branch=branch_;
   }
-}
 
+  void ElectronicComponent::updateCharge(double t) {
+    Q = branch->getCharge(t)(0)*vz;
+    updQ = false;
+  }
+
+  void ElectronicComponent::updateCurrent(double t) {
+    I = branch->getCurrent(t)(0)*vz;
+    updI = false;
+  }
+
+}

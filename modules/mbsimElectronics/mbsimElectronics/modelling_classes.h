@@ -44,7 +44,8 @@ namespace MBSimElectronics {
       std::vector<Terminal*> terminal;
       Branch* branch;
       double vz;
-      double Q,I;
+      double Q, I;
+      bool updQ, updI;
     public:
       ElectronicComponent();
       ~ElectronicComponent();
@@ -56,6 +57,10 @@ namespace MBSimElectronics {
       Branch* getBranch() {return branch;}
       void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList);
       double getvz() const { return vz;}
+      virtual void updateCharge(double t);
+      virtual void updateCurrent(double t);
+      double getCurrent(double t) { if(updI) updateCurrent(t); return I; }
+      double getCharge(double t) { if(updQ) updateCharge(t); return Q; }
   };
 
 }

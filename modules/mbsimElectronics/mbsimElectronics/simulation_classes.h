@@ -4,14 +4,15 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/mbsim_event.h"
 #include "modelling_classes.h"
 #include <string>
 //#include <mbsim/utils/function.h>
 
-namespace MBSimControl {
-class Signal;
-}
+//namespace MBSimControl {
+//  class Signal;
+//}
 
 namespace MBSimElectronics {
 
@@ -24,9 +25,6 @@ namespace MBSimElectronics {
       Mesh(const std::string &name) : MBSim::Object(name), precessor(0) {}
       void calcqSize() { qSize = 1;}
       void calcuSize(int j) { uSize[j] = (j==0) ? 1 : 0;}
-      void updateStateDependentVariables(double t) {};
-      void updateJacobians(double t, int j=0) {};
-      void updateInverseKineticsJacobians(double t) {};
       void init(InitStage stage);
       void setPrecessor(Object* obj) {precessor = obj;}
       void addBranch(Branch* branch_) {branch.push_back(branch_);}
@@ -47,18 +45,22 @@ namespace MBSimElectronics {
       std::vector<Branch*> connectedBranch;
       int flag;
       Object* precessor;
+      bool updQ, updI;
     public:
-      Branch(const std::string &name) : Object(name), Q(1), I(1), flag(0), precessor(0) {}
+      Branch(const std::string &name) : Object(name), Q(1), I(1), flag(0), precessor(0), updQ(true), updI(true) { }
       void calcuSize(int j) { uSize[j] = (j==0) ? 0 : 1;}
-      void updateStateDependentVariables(double t);
-      void updateJacobians(double t, int j=0) {};
-      void updateInverseKineticsJacobians(double t) {};
-      const fmatvec::Mat& getJacobian(int j) const {return J[j];}
-      fmatvec::Mat& getJacobian(int j) {return J[j];}
-      const fmatvec::Vec& getCurrent() const {return I;}
-      fmatvec::Vec& getCurrent() {return I;}
-      const fmatvec::Vec& getCharge() const {return Q;}
-      fmatvec::Vec& getCharge() {return Q;}
+      void updateCharge(double t);
+      void updateCurrent(double t);
+//      void updateJacobian(double t, int j=0);
+      const fmatvec::Mat& getJacobian(int j, bool check=true) const { return J[j];}
+      fmatvec::Mat& getJacobian(int j, bool check=true) { return J[j];}
+//      const fmatvec::Mat& getJacobian(double t, int j) { if(updI) updateJacobian(t,j); return J[j]; }
+      const fmatvec::Vec& getCurrent(bool check=true) const { assert((not check) or (not updI)); return I; }
+      fmatvec::Vec& getCurrent(bool check=true) { assert((not check) or (not updI)); return I; }
+      const fmatvec::Vec& getCurrent(double t) { if(updI) updateCurrent(t); return I; }
+      const fmatvec::Vec& getCharge(bool check=true) const { assert((not check) or (not updQ)); return Q; }
+      fmatvec::Vec& getCharge(bool check=true) { assert((not check) or (not updQ)); return Q; }
+      const fmatvec::Vec& getCharge(double t) { if(updQ) updateCharge(t); return Q; }
       void setvz(double vz_, Mesh* mesh);
       void connect(Mesh *mesh_) {mesh.push_back(mesh_);mesh_->addBranch(this);vz.push_back(0);}
       void clearMeshList() {mesh.clear();}
@@ -76,9 +78,7 @@ namespace MBSimElectronics {
       void setFlag(int f) { flag = f; }
       int getFlag() const { return flag; }
       void setPrecessor(Object* obj) {precessor = obj;}
-      void updateh0Fromh1(double t); 
-      void updateW0FromW1(double t); 
-      void updateV0FromV1(double t);
+      void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
@@ -98,7 +98,9 @@ namespace MBSimElectronics {
       void calclaSize(int j);
       void updateg(double t);
       void updategd(double t);
+      void updateGeneralizedSetValuedForces(double t);
       void updateW(double t, int j=0);
+      void updateh(double t, int j=0);
       void plot(double t, double dt = 1); 
       virtual std::string getName() const {return Link::getName();}
       virtual void setName(std::string name) {Link::setName(name);}
@@ -119,6 +121,7 @@ namespace MBSimElectronics {
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
+      void resetUpToDate() { Link::resetUpToDate(); updQ = true; updI = true; }
       /*****************************************************/
   };
 
@@ -127,8 +130,8 @@ namespace MBSimElectronics {
       double R;
     public:
       Resistor(const std::string &name);
-      void updateh(double t, int j=0);
       void setResistance(double R_) { R = R_;}
+      void updateGeneralizedSingleValuedForces(double t);
       std::string getType() const { return "Resistor"; }
   };
 
@@ -137,21 +140,18 @@ namespace MBSimElectronics {
       double C;
     public:
       Capacitor(const std::string &name);
-      void updateh(double t, int j=0);
       void setCapacity(double C_) { C = C_;}
+      void updateGeneralizedSingleValuedForces(double t);
       std::string getType() const { return "Capacitor"; }
   };
 
   class VoltageSource : public ElectronicLink {
     protected:
-      //MBSim::Function1<fmatvec::Vec,double> *voltageSignal;
-      MBSimControl::Signal *voltageSignal;
+      MBSim::Function<fmatvec::VecV(double)> *voltageSignal;
     public:
       VoltageSource(const std::string &name);
-      void updateh(double t, int j=0);
-      void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
-      //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
-      void init(InitStage stage);
+      void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
+      void updateGeneralizedSingleValuedForces(double t);
       std::string getType() const { return "VoltageSource"; }
   };
 
@@ -161,31 +161,27 @@ namespace MBSimElectronics {
    public:
       Diode(const std::string &name);
       void setSetValued(bool flag) {sv = flag;}
-      void updateh(double t, int j=0);
+      void updateGeneralizedSingleValuedForces(double t);
       bool isSetValued() const {return sv;}
       virtual bool isSingleValued() const {return not sv;}
-      void checkImpactsForTermination(double dt);
-      void solveImpactsGaussSeidel(double dt);
+      void checkImpactsForTermination(double t, double dt);
+      void solveImpactsGaussSeidel(double t, double dt);
       std::string getType() const { return "Diode"; }
   };
 
   class Switch : public ElectronicLink {
     protected:
-      //MBSim::Function1<fmatvec::Vec,double> *voltageSignal;
-      MBSimControl::Signal *voltageSignal;
-      double U0;
+      MBSim::Function<fmatvec::VecV(double)> *voltageSignal;
       bool sv;
     public:
       Switch(const std::string &name);
       void setSetValued(bool flag) {sv = flag;}
       bool isSetValued() const {return sv;}
       virtual bool isSingleValued() const {return not sv;}
-      void updateh(double t, int j=0);
-      void updateW(double t, int j=0);
-      void checkImpactsForTermination(double dt);
-      void solveImpactsGaussSeidel(double dt);
-      void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
-      //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
+      void updateGeneralizedSingleValuedForces(double t);
+      void checkImpactsForTermination(double t, double dt);
+      void solveImpactsGaussSeidel(double t, double dt);
+      void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
       void init(InitStage stage);
       std::string getType() const { return "Switch"; }
   };
@@ -199,11 +195,9 @@ namespace MBSimElectronics {
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}
       void plot(double t, double dt = 1); 
-      void updateStateDependentVariables(double t) {};
-      void updateJacobians(double t, int j=0) {};
-      void updateInverseKineticsJacobians(double t) {};
       virtual std::string getName() const {return Object::getName();}
       virtual void setName(std::string name) {Object::setName(name);}
+      void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
@@ -216,7 +210,6 @@ namespace MBSimElectronics {
       Inductor(const std::string &name);
       void updateM(double t, int j=0); 
       void setInductance(double L_) { L = L_;}
-      void updateStateDependentVariables(double t);
   };
 
 }
