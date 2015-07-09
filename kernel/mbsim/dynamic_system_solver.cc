@@ -557,7 +557,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsGaussSeidel(double t, double dt) {
-    checkImpactsForTermination(dt);
+    checkImpactsForTermination(t,dt);
     if (term)
       return 0;
 
