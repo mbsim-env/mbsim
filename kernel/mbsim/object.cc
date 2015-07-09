@@ -204,11 +204,11 @@ namespace MBSim {
   }
 
   void Object::updaterRef(const Vec& rParent, int i) {
-    r[i] >> rParent(uInd[i], uInd[i] + uSize[i] - 1);
+    r[i] >> rParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updaterdtRef(const Vec& rdtParent, int i) {
-    rdt[i] >> rdtParent(uInd[i], uInd[i] + uSize[i] - 1);
+    rdt[i] >> rdtParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updateTRef(const Mat &TParent) {
