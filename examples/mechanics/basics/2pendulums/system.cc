@@ -1,6 +1,6 @@
 #include "system.h"
 #include "pendulum.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/frame.h"
 

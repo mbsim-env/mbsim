@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "test_group.h"
 #include "mbsim/environment.h"

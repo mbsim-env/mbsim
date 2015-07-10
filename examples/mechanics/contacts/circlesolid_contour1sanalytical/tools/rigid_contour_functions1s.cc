@@ -43,7 +43,6 @@ double calculateLocalAlpha(const double& alpha) {
   }
 }
 
-
 Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u , int discretization) { 
   Mat ContourMat;
   Vec rCOG;
@@ -128,187 +127,7 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   return erg;
 }
 
-FuncCrPC::FuncCrPC() : ContourFunction1s(), tab_operator(0), tab_T(0), tab_B(0), tab_N(0), tab_curvature(0) {
-  Cb(0)=1;
-  operator_ = &FuncCrPC::operatorPPolynom;
-  computeT_ = &FuncCrPC::computeTPPolynom;
-  computeB_ = &FuncCrPC::computeBPPolynom;
-  computeN_ = &FuncCrPC::computeNPPolynom;
-  computeCurvature_ = &FuncCrPC::computeCurvaturePPolynom;
-}
-
-FuncCrPC::~FuncCrPC() {
-  delete tab_operator;
-  delete tab_T;
-  delete tab_B;
-  delete tab_N;
-  delete tab_curvature;
-}
-
-void FuncCrPC::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
-  Mat angleYZ=ContourXY2angleXY(YZ, 1., rYZ , discretization); 
-  pp_y.setXF(angleYZ.col(0), angleYZ.col(1), PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
-  pp_z.setXF(angleYZ.col(0), angleYZ.col(2), PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
-}   
-
-//void FuncCrPC::init(const double& alpha) {
-//  const Vec CrPC = operator()(alpha);
-//  const Vec Ct = diff1(alpha);
-//  Cb = crossProduct(CrPC,Ct);
-//  Cb = Cb/nrm2(Cb);  
-//}
-
-void FuncCrPC::enableTabularFit(double tabularFitLength) {
-  vector<double> a;
-  a.push_back(0);
-  while(a.back()<2.*M_PI) {
-    Vec p1=operator()(a.back());
-    class PointDistance : public MBSim::Function<double(double)> {
-      public:
-        PointDistance(Vec p1_, FuncCrPC * f_, double d_) : p1(p1_), f(f_), d(d_) {}
-        double operator()(const double &alpha) {
-          Vec p2=(*f)(alpha);
-          return nrm2(p2-p1)-d;
-        }
-      private:
-        Vec p1;
-        FuncCrPC * f;
-        double d;
-    };
-    PointDistance g(p1, this, tabularFitLength);
-    RegulaFalsi solver(&g);
-    solver.setTolerance(epsroot());
-    a.push_back(solver.solve(a.back(), a.back()+M_PI/4.));
-  }
-  Vec phi(a.size(), INIT, 0);
-  MatVx3 O(a.size(), INIT, 0);
-  MatVx3 T(a.size(), INIT, 0);
-  MatVx3 B(a.size(), INIT, 0);
-  MatVx3 N(a.size(), INIT, 0);
-  Vec curve(a.size(), INIT, 0);
-  for (unsigned int i=0; i<a.size(); i++) {
-    double alp=a[i]/a.back()*2.*M_PI;
-    phi(i)=alp;
-    O.set(i, operator()(alp).T());
-    T.set(i, this->computeT(alp).T());
-    B.set(i, this->computeB(alp).T());
-    N.set(i, this->computeN(alp).T());
-    curve(i)=this->computeCurvature(alp);
-  }
-  tab_operator = new TabularFunction<Vec3(double)>(phi, Mat(O));
-  tab_T = new TabularFunction<Vec3(double)>(phi, Mat(T));
-  tab_B = new TabularFunction<Vec3(double)>(phi, Mat(B));
-  tab_N = new TabularFunction<Vec3(double)>(phi, Mat(N));
-  tab_curvature = new TabularFunction<Vec3(double)>(phi, curve);
-
-  operator_ = &FuncCrPC::operatorTabular;
-  computeT_ = &FuncCrPC::computeTTabular;
-  computeB_ = &FuncCrPC::computeBTabular;
-  computeN_ = &FuncCrPC::computeNTabular;
-  computeCurvature_ = &FuncCrPC::computeCurvatureTabular;
-}
-
-Vec3 FuncCrPC::diff1(const double& alpha) {
-  Vec3 f(NONINIT);
-  const double alphaLoc=calculateLocalAlpha(alpha);
-  f(0) = 0;
-  f(1) = (pp_y).parDer(alphaLoc)(0); 
-  f(2) = (pp_z).parDer(alphaLoc)(0); 
-  return f;
-}
-
-Vec3 FuncCrPC::diff2(const double& alpha) {
-  Vec3 f(NONINIT);
-  const double alphaLoc=calculateLocalAlpha(alpha);
-  f(0) = 0;
-  f(1) = (pp_y).parDerParDer(alphaLoc)(0); 
-  f(2) = (pp_z).parDerParDer(alphaLoc)(0); 
-  return f;
-}
-
-Vec3 FuncCrPC::operatorPPolynom(const double& alpha) {
-  Vec f(3,NONINIT);
-  const double alphaLoc=calculateLocalAlpha(alpha);
-  f(0) = 0;
-  f(1) = pp_y(alphaLoc)(0); 
-  f(2) = pp_z(alphaLoc)(0); 
-  return f;
-} 
-
-Vec3 FuncCrPC::operatorTabular(const double& alpha) {
-  return (*tab_operator)(calculateLocalAlpha(alpha));
-}
-
-Vec3 FuncCrPC::computeTPPolynom(const double& alpha) {
-  const Vec T = -diff1(alpha);
-  return T/nrm2(T); 
-}
-
-Vec3 FuncCrPC::computeTTabular(const double& alpha) {
-  return (*tab_T)(calculateLocalAlpha(alpha));
-}
-
-Vec3 FuncCrPC::computeNPPolynom(const double& alpha) { 
-  const Vec3 N = crossProduct(diff1(alpha), Cb);
-  // const Vec3 N = crossProduct(diff1(alpha), computeBPPolynom(alpha));
-  return N/nrm2(N);
-}
-
-Vec3 FuncCrPC::computeNTabular(const double& alpha) {
-  return (*tab_N)(calculateLocalAlpha(alpha));
-}
-
-Vec3 FuncCrPC::computeBPPolynom(const double& alpha) {
-  // const Vec3 B = crossProduct(operator()(alpha), diff1(alpha));
-  // return B/nrm2(B);
-  return Cb;
-}
-
-Vec3 FuncCrPC::computeBTabular(const double& alpha) {
-  return (*tab_B)(calculateLocalAlpha(alpha));
-}
-
-double FuncCrPC::computeCurvaturePPolynom(const double& alpha) {
-  const Vec3 rs = diff1(alpha);
-  const double nrm2rs = nrm2(rs);
-  return nrm2(crossProduct(rs,diff2(alpha)))/(nrm2rs*nrm2rs*nrm2rs);
-}
-
-double FuncCrPC::computeCurvatureTabular(const double& alpha) {
-  return (*tab_curvature)(calculateLocalAlpha(alpha))(0);
-}
-
-  double FuncCrPC::calculateLocalAlpha(const double& alpha) {
-    if ((alpha>0) && (alpha<2.*M_PI))
-      return alpha;
-    else {
-      double a=fmod(alpha, 2.*M_PI);
-      if(a<0) 
-        a+=2.*M_PI;
-      return a;
-    }
-  }
-
-void FuncCrPC::initializeUsingXML(DOMElement * element) {
-  ContourFunction1s::initializeUsingXML(element);
-/* DOMElement * e;
-  e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
-  Mat YZ=Element::getMat(e);
-  int dis=1;
-  e=element->FirstChildElement(MBSIMVALVETRAINNS"discretization");
-  if (e)
-    dis=atoi(e->GetText());
-  Vec rYZ(3);
-  e=element->FirstChildElement(MBSIMVALVETRAINNS"rYZ");
-  if (e)
-    rYZ=Element::getVec(e, 3);
-  setYZ(YZ, dis, rYZ);
-  e=element->FirstChildElement(MBSIMVALVETRAINNS"enableTabularFit");
-  if (e)
-    enableTabularFit(Element::getDouble(e->FirstChildElement(MBSIMVALVETRAINNS"fitLength")));*/
-}
-
-FuncCrPC_PlanePolar::FuncCrPC_PlanePolar() : ContourFunction1s(), Cb(Vec("[1; 0; 0]")), pp_r(0), alphaSave(0.), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
+FuncCrPC_PlanePolar::FuncCrPC_PlanePolar() : Cb(Vec("[1; 0; 0]")), pp_r(0), alphaSave(0.), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
 }
 
 FuncCrPC_PlanePolar::~FuncCrPC_PlanePolar() {
@@ -325,75 +144,33 @@ void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   updateData(1.);
 }   
 
-Vec3 FuncCrPC_PlanePolar::operator()(const double& alpha, const void * ) {
+Vec3 FuncCrPC_PlanePolar::operator()(const double& alpha) {
   updateData(alpha);
   Vec3 f(NONINIT);
-  f(0) = 0;
-  f(1) = rSave*calphaSave;
-  f(2) = rSave*salphaSave;
+  f(2) = 0;
+  f(0) = rSave*calphaSave;
+  f(1) = rSave*salphaSave;
   return f;
 } 
 
-Vec3 FuncCrPC_PlanePolar::diff1(const double& alpha) {
+Vec3 FuncCrPC_PlanePolar::parDer(const double& alpha) {
   updateData(alpha);
   Vec3 f(NONINIT);
-  f(0) = 0;
-  f(1) = drdalphaSave*calphaSave-rSave*salphaSave;
-  f(2) = drdalphaSave*salphaSave+rSave*calphaSave;
+  f(2) = 0;
+  f(0) = drdalphaSave*calphaSave-rSave*salphaSave;
+  f(1) = drdalphaSave*salphaSave+rSave*calphaSave;
   return f;
 }
 
-Vec3 FuncCrPC_PlanePolar::diff2(const double& alpha) {
+Vec3 FuncCrPC_PlanePolar::parDerParDer(const double& alpha) {
   updateData(alpha);
   const double s1=-rSave+d2rdalpha2Save;
   const double s2=2.*drdalphaSave;
   Vec3 f(NONINIT);
-  f(0) = 0;
-  f(1) = s1*calphaSave-s2*salphaSave;
-  f(2) = s1*salphaSave+s2*calphaSave;
+  f(2) = 0;
+  f(0) = s1*calphaSave-s2*salphaSave;
+  f(1) = s1*salphaSave+s2*calphaSave;
   return f;
-}
-
-Vec3 FuncCrPC_PlanePolar::computeT(const double& alpha) {
-  const Vec3 T = -diff1(alpha);
-  return T/sqrt(T(1)*T(1)+T(2)*T(2));
-}
-
-Vec3 FuncCrPC_PlanePolar::computeN(const double& alpha) { 
-  updateData(alpha);
-  Vec3 N(NONINIT);
-  N(0) = 0;
-  N(1) = drdalphaSave*salphaSave+rSave*calphaSave;
-  N(2) = -drdalphaSave*calphaSave+rSave*salphaSave;
-  return N/sqrt(N(1)*N(1)+N(2)*N(2));
-}
-
-Vec3 FuncCrPC_PlanePolar::computeB(const double& alpha) {
-  return Cb;
-}
-
-double FuncCrPC_PlanePolar::computeCurvature(const double& alpha) {
-  updateData(alpha);
-  const double r2=rSave*rSave;
-  const double drdalphaSave2=drdalphaSave*drdalphaSave;
-  const double numer=r2+2.*drdalphaSave2-rSave*d2rdalpha2Save;
-  const double denomfactor=r2+drdalphaSave2;
-  return abs(numer/sqrt(denomfactor*denomfactor*denomfactor));
-}
-
-double FuncCrPC_PlanePolar::computeR(const double& alpha) {
-  updateData(alpha);
-  return rSave;
-}
-
-double FuncCrPC_PlanePolar::computedRdAlpha(const double& alpha) {
-  updateData(alpha);
-  return drdalphaSave;
-}
-
-double FuncCrPC_PlanePolar::computed2RdAlpha2(const double& alpha) {
-  updateData(alpha);
-  return d2rdalpha2Save;
 }
 
 void FuncCrPC_PlanePolar::updateData(const double& alpha) {
@@ -406,10 +183,3 @@ void FuncCrPC_PlanePolar::updateData(const double& alpha) {
     d2rdalpha2Save=pp_r->parDerParDer(alphaSave)(0);
   }
 }
-
-void FuncCrPC_PlanePolar::initializeUsingXML(DOMElement * element) {
-  ContourFunction1s::initializeUsingXML(element);
-}
-
-
-

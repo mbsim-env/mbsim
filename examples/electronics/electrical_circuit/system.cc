@@ -25,10 +25,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addModel(inductorL);
   VoltageSource *voltageSource = new VoltageSource("VoltageSource");
   addModel(voltageSource);
-  MBSimControl::FunctionSensor * sensorVoltageSource = new MBSimControl::FunctionSensor("SensorVoltageSource");
-  addLink(sensorVoltageSource);
-  sensorVoltageSource->setFunction(new Signal);
-  voltageSource->setVoltageSignal(sensorVoltageSource);
+  voltageSource->setVoltageSignal(new Signal);
 
   connectTerminal(voltageSource->getTerminal("A"),inductorL->getTerminal("A"));
   connectTerminal(inductorL->getTerminal("B"),resistor->getTerminal("A"));

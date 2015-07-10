@@ -1,4 +1,5 @@
 #include "system.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/environment.h"
@@ -8,7 +9,6 @@
 
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
-#include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/signal_function.h"
@@ -23,7 +23,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;
-using namespace CasADi;
+using namespace casadi;
 
 Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
@@ -136,13 +136,13 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   basisControl->setInputSignal(basePositionDiff);
   basisControl->setPID(4000., 0., 200.);
 
-  SignalProcessingSystemSensor * basisControlOut = new SignalProcessingSystemSensor("BaseControlOut");
-  addLink(basisControlOut);
-  basisControlOut->setSignalProcessingSystem(basisControl);
+//  SignalProcessingSystemSensor * basisControlOut = new SignalProcessingSystemSensor("BaseControlOut");
+//  addLink(basisControlOut);
+//  basisControlOut->setSignalProcessingSystem(basisControl);
 
   SignalTimeDiscretization * bDis = new SignalTimeDiscretization("BaseDis");
   addLink(bDis);
-  bDis->setInputSignal(basisControlOut);
+  bDis->setInputSignal(basisControl);
 
   KineticExcitation *motorBasis = new KineticExcitation("MotorBasis");
   addLink(motorBasis);
@@ -177,13 +177,13 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   armControl->setInputSignal(armPositionDiff);
   armControl->setPID(4000., 0., 200.);
 
-  SignalProcessingSystemSensor * armControlOut = new SignalProcessingSystemSensor("ArmControlOut");
-  addLink(armControlOut);
-  armControlOut->setSignalProcessingSystem(armControl);
+//  SignalProcessingSystemSensor * armControlOut = new SignalProcessingSystemSensor("ArmControlOut");
+//  addLink(armControlOut);
+//  armControlOut->setSignalProcessingSystem(armControl);
 
   SignalTimeDiscretization * aDis = new SignalTimeDiscretization("ArmDis");
   addLink(aDis);
-  aDis->setInputSignal(armControlOut);
+  aDis->setInputSignal(armControl);
 
   KineticExcitation *motorArm = new KineticExcitation("MotorArm");
   addLink(motorArm);
@@ -218,13 +218,13 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitzeControl->setInputSignal(spitzePositionDiff);
   spitzeControl->setPID(4000., 0., 200.);
 
-  SignalProcessingSystemSensor * spitzeControlOut = new SignalProcessingSystemSensor("SpitzeControlOut");
-  addLink(spitzeControlOut);
-  spitzeControlOut->setSignalProcessingSystem(spitzeControl);
+//  SignalProcessingSystemSensor * spitzeControlOut = new SignalProcessingSystemSensor("SpitzeControlOut");
+//  addLink(spitzeControlOut);
+//  spitzeControlOut->setSignalProcessingSystem(spitzeControl);
 
   SignalTimeDiscretization * sDis = new SignalTimeDiscretization("SpitzeDis");
   addLink(sDis);
-  sDis->setInputSignal(spitzeControlOut);
+  sDis->setInputSignal(spitzeControl);
 
   KineticExcitation *motorSpitze = new KineticExcitation("MotorSpitze");
   addLink(motorSpitze);

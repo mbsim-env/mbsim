@@ -1,5 +1,5 @@
 #include "system.h"
-
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/utils/utils.h"
 #include "fmatvec/function.h"

@@ -3,10 +3,12 @@
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/sensor.h"
+#include "mbsimControl/signal_function.h"
 
 using namespace fmatvec;
 using namespace std;
 using namespace MBSimElectronics;
+using namespace MBSimControl;
 using namespace MBSim;
 
 extern bool setValued;
@@ -23,18 +25,11 @@ class VoltageSensor : public MBSimControl::Sensor {
     void setComponent(MBSimElectronics::ElectronicLink *comp_) {comp = comp_;}
     VoltageSensor(const std::string &name) : Sensor(name) { }
     std::string getType() const { return "VoltageSensor"; }
-    void updateh(double t, int j=0) { 
-      s = comp->getla(); 
+    void updateSignal(double t) {
+      s = comp->getGeneralizedSingleValuedForce(t);
+      upds = false;
     }
-    int getSignalSize() { return 1; }
-    void init(InitStage stage) {
-      if(stage==preInit) {
-        MBSimControl::Sensor::init(stage);
-        addDependency(comp);
-      }
-      else
-        MBSimControl::Sensor::init(stage);
-    }
+    int getSignalSize() const { return 1; }
 };
 
 
@@ -51,24 +46,15 @@ class SwitchSignal : public MBSimControl::Signal {
       uref = 11.3;
       K=8.2;
     }
-    void updateg(double t) {
+    void updateSignal(double t) {
       double ug = u1+mod(t,T)/T*(uu-u1);
-      h = uref+1/K*ug;
-    }
-    void updateh(double t, int j=0) {
-      double UR = inputSignal->getSignal()(0);
+      h = uref+1./K*ug;
+      double UR = inputSignal->getSignal(t)(0);
       s = VecV(1, INIT, (-UR <= h ? 0 : 100));
+      upds = false;
     }
     void setInputSignal(Signal *input) {inputSignal = input;}
-    int getSignalSize() { return 1; }
-    void init(InitStage stage) {
-      if(stage==preInit) {
-        MBSimControl::Signal::init(stage);
-        addDependency(inputSignal);
-      }
-      else
-        MBSimControl::Signal::init(stage);
-    }
+    int getSignalSize() const { return 1; }
 };
 
 class Signal : public MBSim::Function<fmatvec::VecV(double)> {
@@ -84,11 +70,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   VoltageSource *voltageSource = new VoltageSource("VoltageSource");
   addModel(voltageSource);
-  //voltageSource->setVoltageSignal(new Signal);
-  MBSimControl::FunctionSensor * fs = new MBSimControl::FunctionSensor("SensorVoltageSource");
-  addLink(fs);
-  fs->setFunction(new Signal);
-  voltageSource->setVoltageSignal(fs);
+  voltageSource->setVoltageSignal(new ::Signal);
 
   Inductor *inductorL = new Inductor("InductorL");
   inductorL->setInductance(0.0001);
@@ -138,7 +120,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SwitchSignal *sw = new SwitchSignal("SwitchSignal");
   addLink(sw);
   sw->setInputSignal(vs);
-  eswitch->setVoltageSignal(sw);
+  eswitch->setVoltageSignal(new SignalFunction<VecV(double)>(sw));
 }
 
 

@@ -3,7 +3,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/symbolic_functions.h"
-#include "mbsim/observers/frame_observer.h"
+#include "mbsim/observers/kinematics_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
@@ -63,7 +63,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
   body1->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
 
-  FrameObserver *o = new FrameObserver("Observer");
+  AbsoluteKinematicsObserver *o = new AbsoluteKinematicsObserver("Observer");
   addObserver(o);
   o->setFrame(body1->getFrame("C"));
   o->enableOpenMBVVelocity();

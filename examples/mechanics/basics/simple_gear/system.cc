@@ -1,5 +1,6 @@
 #include "system.h"
 #include "mbsim/environment.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/basic_functions.h"

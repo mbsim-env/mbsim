@@ -2,6 +2,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
 #include "mbsimPowertrain/differential_gear.h"

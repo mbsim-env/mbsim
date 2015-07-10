@@ -1,4 +1,5 @@
 #include "system.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
@@ -18,7 +19,6 @@
 #include "mbsimControl/signal_function.h"
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
-#include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/frame_sensors.h"
@@ -35,7 +35,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 using namespace MBSimControl;
-using namespace CasADi;
+using namespace casadi;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Schwerkraft
@@ -384,16 +384,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Regler->setInputSignal(Regelfehler);
   Regler->setPID(10000.,1000.,0.);
 
-  // Konvertierung
-  SignalProcessingSystemSensor *Reglerausgang = new SignalProcessingSystemSensor("Reglerausgang");
-  addLink(Reglerausgang);
-  Reglerausgang->setSignalProcessingSystem(Regler);
+  //// Konvertierung
+  //SignalProcessingSystemSensor *Reglerausgang = new SignalProcessingSystemSensor("Reglerausgang");
+  //addLink(Reglerausgang);
+  //Reglerausgang->setSignalProcessingSystem(Regler);
 
   // Aktuator
   KineticExcitation *Antrieb = new KineticExcitation("Antrieb");
   addLink(Antrieb);
   Antrieb->setMomentDirection("[0;0;1]");
-  Antrieb->setMomentFunction(new SignalFunction<VecV(double)>(Reglerausgang));
+  Antrieb->setMomentFunction(new SignalFunction<VecV(double)>(Regler));
 
   Antrieb->connect(this->getFrame("I"),Crank->getFrameForKinematics());
 

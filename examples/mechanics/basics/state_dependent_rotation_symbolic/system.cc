@@ -6,7 +6,7 @@
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/nested_functions.h"
-#include "mbsim/observers/frame_observer.h"
+#include "mbsim/observers/kinematics_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
@@ -69,7 +69,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->enableOpenMBVWeight();
   body->enableOpenMBVJointForce();
   body->enableOpenMBVJointMoment();
-  FrameObserver *o = new FrameObserver("Observer");
+  AbsoluteKinematicsObserver *o = new AbsoluteKinematicsObserver("Observer");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
  // boost::shared_ptr<OpenMBV::Arrow> arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();

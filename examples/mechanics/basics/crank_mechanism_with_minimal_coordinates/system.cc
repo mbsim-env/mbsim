@@ -1,4 +1,5 @@
 #include "system.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/constraint.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"

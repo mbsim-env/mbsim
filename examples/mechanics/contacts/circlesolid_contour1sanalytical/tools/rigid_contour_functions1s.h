@@ -21,80 +21,23 @@
 #define RIGID_CONTOUR_FUNCTION1S_H
 
 #include <mbsim/functions/piecewise_polynom_function.h>
-#include <mbsim/utils/contour_functions.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
   template<class Ret> class TabularFunction;
 };
 
-class FuncCrPC : public MBSim::ContourFunction1s {
-  public:
-    FuncCrPC();
-    ~FuncCrPC();
-    
-    void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3, fmatvec::INIT, 0));
-
-    // void init(const double& alpha);
-    void enableTabularFit(double tabularFitLength);
-    
-    fmatvec::Vec3 operator()(const double& alpha, const void * =NULL) {return (this->*operator_)(alpha); }
-    fmatvec::Vec3 diff1(const double& alpha); // Tangente in C
-    fmatvec::Vec3 diff2(const double& alpha); // 2. Ableitung in C
-    fmatvec::Vec3 computeT(const double& alpha) {return (this->*computeT_)(alpha); }
-    fmatvec::Vec3 computeB(const double& alpha) {return (this->*computeB_)(alpha); }
-    fmatvec::Vec3 computeN(const double& alpha) {return (this->*computeN_)(alpha); }
-    double computeCurvature(const double& alpha) {return (this->*computeCurvature_)(alpha); }
-
-    virtual void initializeUsingXML(xercesc::DOMElement * element);
-  private:
-    fmatvec::Vec3 Cb;
-    MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> pp_y;
-    MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> pp_z;
-    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_operator;
-    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_T;
-    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_B;
-    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_N;
-    MBSim::TabularFunction<fmatvec::Vec3(double)> * tab_curvature;
-
-    fmatvec::Vec3 (FuncCrPC::*operator_)(const double& alpha);
-    fmatvec::Vec3 operatorPPolynom(const double& alpha);
-    fmatvec::Vec3 operatorTabular(const double& alpha);
-    fmatvec::Vec3 (FuncCrPC::*computeT_)(const double& alpha);
-    fmatvec::Vec3 computeTPPolynom(const double& alpha);
-    fmatvec::Vec3 computeTTabular(const double& alpha);
-    fmatvec::Vec3 (FuncCrPC::*computeN_)(const double& alpha);
-    fmatvec::Vec3 computeNPPolynom(const double& alpha);
-    fmatvec::Vec3 computeNTabular(const double& alpha);
-    fmatvec::Vec3 (FuncCrPC::*computeB_)(const double& alpha);
-    fmatvec::Vec3 computeBPPolynom(const double& alpha);
-    fmatvec::Vec3 computeBTabular(const double& alpha);
-    double (FuncCrPC::*computeCurvature_)(const double& alpha);
-    double computeCurvaturePPolynom(const double& alpha);
-    double computeCurvatureTabular(const double& alpha);
- 
-    double calculateLocalAlpha(const double& alpha);
-};  
-
-class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
+class FuncCrPC_PlanePolar : public MBSim::Function<fmatvec::Vec3(double)> {
   public:
     FuncCrPC_PlanePolar();
     ~FuncCrPC_PlanePolar();
   
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3,fmatvec::INIT, 0));
 
-    fmatvec::Vec3 operator()(const double& alpha, const void * =NULL);
-    fmatvec::Vec3 diff1(const double& alpha); // Tangente in C
-    fmatvec::Vec3 diff2(const double& alpha); // 2. Ableitung in C
-    fmatvec::Vec3 computeT(const double& alpha);
-    fmatvec::Vec3 computeB(const double& alpha);
-    fmatvec::Vec3 computeN(const double& alpha);
-    double computeCurvature(const double& alpha);
+    fmatvec::Vec3 operator()(const double& alpha);
+    fmatvec::Vec3 parDer(const double& alpha); // Tangente in C
+    fmatvec::Vec3 parDerParDer(const double& alpha); // 2. Ableitung in C
 
-    double computeR(const double &alpha);
-    double computedRdAlpha(const double &alpha);
-    double computed2RdAlpha2(const double &alpha);
-  
-    virtual void initializeUsingXML(xercesc::DOMElement * element);
   private:
     const fmatvec::Vec3 Cb;
     MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> * pp_r;
