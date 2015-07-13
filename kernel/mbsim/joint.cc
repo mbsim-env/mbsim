@@ -457,7 +457,7 @@ namespace MBSim {
       RowVec jp1 = Jprox.row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
-      Vec diff = fifl->diff(la(i), gdn(i), gd(i), rFactor(i));
+      Vec diff = fifl->diff(La(i), gdn(i), gd(i), rFactor(i));
 
       jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+i)
       for (int j = 0; j < G.size(); j++)
@@ -468,7 +468,7 @@ namespace MBSim {
       RowVec jp1 = Jprox.row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
-      Vec diff = fiml->diff(la(i), gdn(i), gd(i), rFactor(i));
+      Vec diff = fiml->diff(La(i), gdn(i), gd(i), rFactor(i));
 
       jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+i)
       for (int j = 0; j < G.size(); j++)
