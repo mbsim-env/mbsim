@@ -142,7 +142,7 @@ namespace MBSim {
   }
 
   void MechanicalLink::updaterRef(const Vec &rParent, int j) {
-  for(unsigned i=0; i<frame.size(); i++) {
+    for(unsigned i=0; i<frame.size(); i++) {
       int hInd =  frame[i]->gethInd(j);
       Index I = Index(hInd,hInd+frame[i]->gethSize(j)-1);
       r[j][i]>>rParent(I);
