@@ -111,21 +111,22 @@ namespace MBSimHydraulics {
     return JLocal;
   }
 
-  void RigidHLine::updateStateDependentVariables(double t) {
+  void RigidHLine::updateQ(double t) {
     if(dependency.size()==0)
       Q(0)=u(0);
     else {
       Q.init(0);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
-        Q+=(dependencyOnOutflow[i])->getQIn();
+        Q+=(dependencyOnOutflow[i])->getQ(t);
       for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
-        Q-=(dependencyOnInflow[i])->getQIn();
+        Q-=(dependencyOnInflow[i])->getQ(t);
     }
+    updQ = false;
   }
 
   void RigidHLine::updateh(double t, int j) {
     if (frameOfReference)
-      pressureLossGravity=-trans(frameOfReference->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*HydraulicEnvironment::getInstance()->getSpecificMass()*length;
+      pressureLossGravity=-trans(frameOfReference->getOrientation(t)*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*HydraulicEnvironment::getInstance()->getSpecificMass()*length;
     h[j]-=trans(Jacobian.row(0))*pressureLossGravity;
   }
       
@@ -171,8 +172,8 @@ namespace MBSimHydraulics {
   
   void RigidHLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(Q(0)*6e4);
-      plotVector.push_back(Q(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+      plotVector.push_back(getQ(t)(0)*6e4);
+      plotVector.push_back(getQ()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       if (frameOfReference)
         plotVector.push_back(pressureLossGravity*1e-5);
       HLine::plot(t, dt);
@@ -203,15 +204,15 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedLine,  MBSIMHYDRAULICS%"ConstrainedLine")
 
-  void ConstrainedLine::updateStateDependentVariables(double t) {
-    Q(0)=(*QFun)(t);
+  void ConstrainedLine::updateQ(double t) {
+    Q(0)=(*QFunction)(t);
+    updQ = false;
   }
 
   void ConstrainedLine::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
-    MBSim::Function<double(double)> * qf=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()); 
-    setQFunction(qf);
+    setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
   void ConstrainedLine::init(InitStage stage) {
@@ -224,27 +225,24 @@ namespace MBSimHydraulics {
     }
     else
       HLine::init(stage);
-    QFun->init(stage);
+    QFunction->init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FluidPump,  MBSIMHYDRAULICS%"FluidPump")
 
-  Vec FluidPump::getQIn() {return QSignal->getSignal(); }
-  Vec FluidPump::getQOut() {return -1.*QSignal->getSignal(); }
+  void FluidPump::updateQ(double t) {
+    Q(0) = (*QFunction)(t);
+    updQ = false;
+  }
 
   void FluidPump::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
-    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"volumeflowSignal");
-    QSignalString=E(e)->getAttribute("ref");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"volumeflowFunction");
+    setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
   void FluidPump::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      HLine::init(stage);
-      if (QSignalString!="")
-        setQSignal(getByPath<Signal>(QSignalString));
-    }
-    else if (stage==preInit) {
+    if (stage==preInit) {
       Object::init(stage); // no check of connected lines
       if (!nFrom && !nTo) 
         THROW_MBSIMERROR("needs at least one connected node!");
@@ -257,17 +255,14 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StatelessOrifice,  MBSIMHYDRAULICS%"StatelessOrMBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Element, ")
 
-  Vec StatelessOrifice::getQIn() {return this->calculateQ(); }
-  Vec StatelessOrifice::getQOut() {return -1.*(this->calculateQ()); }
-
   void StatelessOrifice::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
-    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowPressureSignal");
-    inflowSignalString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowPressureSignal");
-    outflowSignalString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"openingSignal");
-    openingSignalString=E(e)->getAttribute("ref");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowPressureFunction");
+    setInflowFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowPressureFunction");
+    setOutflowFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"openingFunction");
+    setOpeningFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
@@ -277,16 +272,7 @@ namespace MBSimHydraulics {
   }
 
   void StatelessOrifice::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      HLine::init(stage);
-      if (inflowSignalString!="")
-        setInflowSignal(getByPath<Signal>(inflowSignalString));
-      if (outflowSignalString!="")
-        setOutflowSignal(getByPath<Signal>(outflowSignalString));
-      if (openingSignalString!="")
-        setOpeningSignal(getByPath<Signal>(openingSignalString));
-    }
-    else if (stage==preInit) {
+    if (stage==preInit) {
       Object::init(stage); // no check of connected lines
       if (!nFrom && !nTo) 
         THROW_MBSIMERROR("needs at least one connected node!");
@@ -318,6 +304,7 @@ namespace MBSimHydraulics {
 
   void StatelessOrifice::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive)==enabled) {
+      double Q = getQ(t)(0);
       plotVector.push_back(pIn*1e-5);
       plotVector.push_back(pOut*1e-5);
       plotVector.push_back(dp*1e-5);
@@ -325,17 +312,17 @@ namespace MBSimHydraulics {
       plotVector.push_back(opening*1e3);
       plotVector.push_back(area*1e6);
       plotVector.push_back(sqrt_dp*sqrt(1e-5));
-      plotVector.push_back(calculateQ()(0)*6e4);
+      plotVector.push_back(Q*6e4);
       HLine::plot(t, dt);
     }
   }
 
-  Vec StatelessOrifice::calculateQ() {
-    /*const double*/ pIn=(inflowSignal->getSignal())(0);
-    /*const double*/ pOut=(outflowSignal->getSignal())(0);
-    /*const double*/ dp=fabs(pIn-pOut);
-    /*const double*/ sign=((pIn-pOut)<0)?-1.:1.;
-    /*const double*/ opening=openingSignal->getSignal()(0);
+  void StatelessOrifice::updateQ(double t) {
+    pIn=(*inflowFunction)(t);
+    pOut=(*outflowFunction)(t);
+    dp=fabs(pIn-pOut);
+    sign=((pIn-pOut)<0)?-1.:1.;
+    opening=(*openingFunction)(t);
     if (opening<0)
       opening=0;
     if (calcAreaModus==0) { // wie <GammaCheckvalveClosablePressureLoss>
@@ -350,7 +337,7 @@ namespace MBSimHydraulics {
     else
       throw runtime_error("Error in StatelessOrifice::calculateQ");
 
-    /*double*/ sqrt_dp=0;
+    sqrt_dp=0;
     const double dpReg=.1e5;
     if (dp>dpReg)
       sqrt_dp=sqrt(dp);
@@ -363,7 +350,8 @@ namespace MBSimHydraulics {
       sqrt_dp=a2*dp*dp+a1*dp+a0;
     }
 
-    return Vec(1, INIT, sign*area*alpha*sqrt_dp);    
+    Q(0) = sign*area*alpha*sqrt_dp;
+    updQ = false;
   }
 
 }

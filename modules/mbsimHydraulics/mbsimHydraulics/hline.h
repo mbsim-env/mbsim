@@ -27,10 +27,6 @@ namespace MBSim {
   class Frame;
 }
 
-namespace MBSimControl {
-  class Signal;
-}
-
 namespace MBSimHydraulics {
 
   class HNode;
@@ -40,13 +36,13 @@ namespace MBSimHydraulics {
   /*! HLine */
   class HLine : public MBSim::Object {
     public:
-      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), Jacobian(), frameOfReference(NULL), saved_frameOfReference("") {};
+      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), Q(1), Jacobian(), frameOfReference(NULL), updQ(true), saved_frameOfReference("") { }
       virtual std::string getType() const { return "HLine"; }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateStateDependentVariables(double t) {};
-      virtual void updateJacobians(double t, int j=0) {};
-      virtual void updateInverseKineticsJacobians(double t) {};
+      void updateh(double t, int j=0) { }
+      void updateJacobians(double t, int j=0) { }
+      void updateInverseKineticsJacobians(double t) { }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
@@ -58,30 +54,35 @@ namespace MBSimHydraulics {
       void setDirection(fmatvec::Vec dir) {direction=((nrm2(dir)>0)?dir/nrm2(dir):fmatvec::Vec(3, fmatvec::INIT, 0)); }
       HNode * getFromNode() { return nFrom; }
       HNode * getToNode() {return nTo; }
-      void setOutflowRelative(bool rel=true) {nToRelative=rel; }
-      void setInflowRelative(bool rel=true) {nFromRelative=rel; }
+      void setOutflowRelative(bool rel=true) { nToRelative=rel; }
+      void setInflowRelative(bool rel=true) { nFromRelative=rel; }
+      fmatvec::VecV getInflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
+      fmatvec::VecV getOutflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
 
-      virtual fmatvec::Vec getQIn() = 0;
-      virtual fmatvec::Vec getQOut() = 0;
-      virtual fmatvec::Vec getInflowFactor() = 0;
-      virtual fmatvec::Vec getOutflowFactor() = 0;
-      virtual fmatvec::Mat& getJacobian() {return Jacobian; }
-      
-      void updateM(double t, int j=0) {M[j]=Mlocal; }
+      const fmatvec::VecV& getQ(double t) { if(updQ) updateQ(t); return Q; }
+      const fmatvec::VecV& getQ(bool check=true) const { assert((not check) or (not updQ)); return Q; }
+      const fmatvec::MatV& getJacobian() const { return Jacobian; }
+
+      virtual void updateQ(double t) { }
+      void updateM(double t, int j=0) { M[j]=Mlocal; }
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
       virtual Element* getDependency() const { return 0; }
 
+      void resetUpToDate() { updQ = true; }
+
     protected:
       HNode * nFrom;
       HNode * nTo;
       bool nFromRelative, nToRelative;
-      fmatvec::Vec direction;
-      fmatvec::SymMat Mlocal;
-      fmatvec::Mat Jacobian;
+      fmatvec::VecV direction;
+      fmatvec::SymMatV Mlocal;
+      fmatvec::VecV Q;
+      fmatvec::MatV Jacobian;
       MBSim::Frame * frameOfReference;
+      bool updQ;
     private:
       std::string saved_frameOfReference;
   };
@@ -89,7 +90,7 @@ namespace MBSimHydraulics {
   /*! RigidHLine */
   class RigidHLine : public HLine {
     public:
-      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0), Q(fmatvec::Vec(1)) {}
+      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0) { }
       virtual std::string getType() const { return "RigidHLine"; }
       
       void setLength(double length_) {length=length_; }
@@ -97,15 +98,11 @@ namespace MBSimHydraulics {
       void addInflowDependencyOnOutflow(RigidHLine* line);
       void addInflowDependencyOnInflow(RigidHLine* line);
 
-      virtual fmatvec::Vec getQIn() {return Q; }
-      virtual fmatvec::Vec getQOut() {return -Q; }
-      virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
-      virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }
       void calcuSize(int j=0) {uSize[j]=(dependency.size()?0:1); }
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
-      virtual void updateStateDependentVariables(double t);
+      void updateQ(double t);
       void updateh(double t, int j=0);
       void updateM(double t, int j=0);
       
@@ -116,7 +113,6 @@ namespace MBSimHydraulics {
     protected:
       double pressureLossGravity;
       double length;
-      fmatvec::Vec Q;
       std::vector<RigidHLine*> dependencyOnOutflow, dependencyOnInflow;
       std::vector<std::string> refDependencyOnOutflowString, refDependencyOnInflowString;
   };
@@ -124,91 +120,73 @@ namespace MBSimHydraulics {
   /*! ConstrainedLine */
   class ConstrainedLine : public HLine {
     public:
-      ConstrainedLine(const std::string &name="") : HLine(name), QFun(NULL), Q(1) {}
+      ConstrainedLine(const std::string &name="") : HLine(name), QFunction(NULL) { }
       virtual std::string getType() const { return "ConstrainedLine"; }
       
-      void setQFunction(MBSim::Function<double(double)> * QFun_) {
-        QFun=QFun_;
-        QFun->setParent(this);
-        QFun->setName("Q");
+      void setQFunction(MBSim::Function<double(double)> * QFunction_) {
+        QFunction=QFunction_;
+        QFunction->setParent(this);
+        QFunction->setName("Q");
       }
 
-      virtual fmatvec::Vec getQIn() {return Q; }
-      virtual fmatvec::Vec getQOut() {return -Q; }
-      virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
-      virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
-      void calcqSize() {qSize=0; }
-      void calcuSize(int j) {uSize[j]=0; }
+      void calcqSize() { qSize=0; }
+      void calcuSize(int j) { uSize[j]=0; }
       
-      virtual void updateStateDependentVariables(double t);
-      void updateh(double t, int j=0) {};
+      void updateQ(double t);
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       
     private:
-      MBSim::Function<double(double)> * QFun;
-      fmatvec::Vec Q;
+      MBSim::Function<double(double)> * QFunction;
   };
 
   /*! FluidPump */
   class FluidPump : public HLine {
     public:
-      FluidPump(const std::string &name="") : HLine(name), QSignal(NULL), QSignalString(""), Q(1) {}
+      FluidPump(const std::string &name="") : HLine(name), QFunction(NULL) { }
       virtual std::string getType() const { return "FluidPump"; }
       
-      void setQSignal(MBSimControl::Signal * QSignal_) {QSignal=QSignal_; }
+      void setQFunction(MBSim::Function<double(double)> * QFunction_) { QFunction=QFunction_; }
 
-      virtual fmatvec::Vec getQIn();
-      virtual fmatvec::Vec getQOut();
-      virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
-      virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
-      void calcqSize() {qSize=0; }
-      void calcuSize(int j) {uSize[j]=0; }
+      void calcqSize() { qSize=0; }
+      void calcuSize(int j) { uSize[j]=0; }
       
-      void updateh(double t, int j=0) {};
+      void updateQ(double t);
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       
     private:
-      MBSimControl::Signal * QSignal;
-      std::string QSignalString;
-      fmatvec::Vec Q;
+      MBSim::Function<double(double)> *QFunction;
   };
 
   /*! StatelessOrifice */
   class StatelessOrifice : public HLine {
     public:
-      StatelessOrifice(const std::string &name="") : HLine(name), inflowSignal(NULL), outflowSignal(NULL), openingSignal(NULL), inflowSignalString(""), outflowSignalString(""), openingSignalString(""), diameter(0), alpha(0.), calcAreaModus(0) {}
+      StatelessOrifice(const std::string &name="") : HLine(name), inflowFunction(NULL), outflowFunction(NULL), openingFunction(NULL), diameter(0), alpha(0.), calcAreaModus(0) {}
       virtual std::string getType() const { return "StatelessOrifice"; }
       
-      void setInflowSignal(MBSimControl::Signal * inflowSignal_) {inflowSignal=inflowSignal_; }
-      void setOutflowSignal(MBSimControl::Signal * outflowSignal_) {outflowSignal=outflowSignal_; }
-      void setDiameter(double diameter_) {diameter=diameter_; }
-      void setOpeningSignal(MBSimControl::Signal * openingSignal_) {openingSignal=openingSignal_; }
-      void setAlpha(double alpha_) {alpha=alpha_; }
-      void setCalcAreaModus(int calcAreaModus_) {calcAreaModus=calcAreaModus_; }
+      void setInflowFunction(MBSim::Function<double(double)> *inflowFunction_) { inflowFunction=inflowFunction_; }
+      void setOutflowFunction(MBSim::Function<double(double)> *outflowFunction_) { outflowFunction=outflowFunction_; }
+      void setOpeningFunction(MBSim::Function<double(double)> *openingFunction_) { openingFunction=openingFunction_; }
+      void setDiameter(double diameter_) { diameter=diameter_; }
+      void setAlpha(double alpha_) { alpha=alpha_; }
+      void setCalcAreaModus(int calcAreaModus_) { calcAreaModus=calcAreaModus_; }
 
-      virtual fmatvec::Vec getQIn();
-      virtual fmatvec::Vec getQOut();
-      virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
-      virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
-      void calcqSize() {qSize=0; }
-      void calcuSize(int j) {uSize[j]=0; }
+      void calcqSize() { qSize=0; }
+      void calcuSize(int j) { uSize[j]=0; }
       
-      void updateh(double t, int j=0) {};
+      void updateQ(double t);
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void plot(double t, double dt);
       
     private:
-      MBSimControl::Signal *inflowSignal, *outflowSignal, *openingSignal;
-      std::string inflowSignalString, outflowSignalString, openingSignalString;
+      MBSim::Function<double(double)> *inflowFunction, *outflowFunction, *openingFunction;
       double diameter, alpha;
       int calcAreaModus;
-      fmatvec::Vec calculateQ();
 
       double pIn, pOut, dp, sign, opening, area, sqrt_dp;
   };

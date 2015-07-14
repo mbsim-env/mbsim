@@ -40,7 +40,7 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0) {
+  HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0), updQHyd(true) {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -122,6 +122,7 @@ namespace MBSimHydraulics {
       Link::init(stage);
       gd.resize(1);
       la.resize(1);
+      laSV.resize(1);
       nLines=connectedLines.size();
       for (unsigned int i=0; i<nLines; i++) {
         connectedLines[i].sign = 
@@ -226,27 +227,22 @@ namespace MBSimHydraulics {
     }
   }
 
-  void HNode::updategd(double t) {
+  void HNode::updateQHyd(double t) {
     QHyd=0;
     for (unsigned int i=0; i<nLines; i++)
-      QHyd-=((connectedLines[i].inflow) ?
-          connectedLines[i].line->getQOut() :
-          connectedLines[i].line->getQIn())(0);
+      QHyd-=((connectedLines[i].inflow) ? -connectedLines[i].line->getQ(t) : connectedLines[i].line->getQ(t))(0);
     for (unsigned int i=0; i<connected0DOFLines.size(); i++)
-      QHyd-=((connected0DOFLines[i].inflow) ?
-          connected0DOFLines[i].line->getQOut() :
-          connected0DOFLines[i].line->getQIn())(0);
-    gd(0)=-QHyd;
+      QHyd-=((connected0DOFLines[i].inflow) ? -connected0DOFLines[i].line->getQ(t) : connected0DOFLines[i].line->getQ(t))(0);
+  }
+
+  void HNode::updategd(double t) {
+    gd(0)=-getQHyd(t);
   }
 
   void HNode::updateh(double t, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      h[j][i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
+      h[j][i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * getGeneralizedSingleValuedForce(t);
     }
-  }
-
-  void HNode::updater(double t, int j) {
-    msg(Info) << "HNode \"" << getPath() << "\": updater()" << endl; 
   }
 
   void HNode::plot(double t, double dt) {
@@ -290,9 +286,9 @@ namespace MBSimHydraulics {
     pFun->init(stage);
   }
 
-  void ConstrainedNode::updateg(double t) {
-    HNode::updateg(t);
-    la(0)=(*pFun)(t);
+  void ConstrainedNode::updateGeneralizedSingleValuedForces(double t) {
+    laSV(0) = (*pFun)(t);
+    updlaSV = false;
   }
 
   void ConstrainedNode::initializeUsingXML(DOMElement *element) {
@@ -306,7 +302,7 @@ namespace MBSimHydraulics {
   void EnvironmentNode::init(InitStage stage) {
     if (stage==unknownStage) {
       HNode::init(stage);
-      la(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      laSV(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
     else
       HNode::init(stage);
@@ -334,13 +330,12 @@ namespace MBSimHydraulics {
         msg(Warn) << "ElasticNode \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
       }
-      la(0)=p0;
+      laSV(0)=p0;
       x0=Vec(1, INIT, p0);
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
       bulkModulus = new OilBulkModulus(name, E0, pinf, kappa, fracAir);
-      E=(*bulkModulus)(la(0));
     }
     else
       HNode::init(stage);
@@ -363,18 +358,16 @@ namespace MBSimHydraulics {
   }
 
   void ElasticNode::updatexd(double t) {
-    E=(*bulkModulus)(la(0));
-    xd(0)=E/V*QHyd;
+    xd(0)=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0))/V*getQHyd(t);
   }
 
   void ElasticNode::updatedx(double t, double dt) {
-    E=(*bulkModulus)(la(0));
-    xd(0)=E/V*QHyd*dt;
+    xd(0)=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0))/V*getQHyd(t)*dt;
   }
 
   void ElasticNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(E*1e-6);
+      plotVector.push_back((*bulkModulus)(getGeneralizedSingleValuedForce(t)(0))*1e-6);
       HNode::plot(t, dt);
     }
   }
@@ -420,8 +413,8 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNode::updaterFactors() {
-    const double *a = ds->getGs()();
+  void RigidNode::updaterFactors(double t) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
 
     double sum = 0;
@@ -439,26 +432,26 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNode::solveImpactsFixpointSingle(double dt) {
-    const double *a = ds->getGs()();
+  void RigidNode::solveImpactsFixpointSingle(double t, double dt) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
     
-    la(0) = gil->project(la(0), gdn, gd(0), rFactor(0));
+    La(0) = gil->project(La(0), gdn, gd(0), rFactor(0));
   }
 
-  void RigidNode::solveConstraintsFixpointSingle() {
-    const double *a = ds->getGs()();
+  void RigidNode::solveConstraintsFixpointSingle(double t) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -467,26 +460,26 @@ namespace MBSimHydraulics {
     la(0) = gfl->project(la(0), gdd, rFactor(0));
   }
 
-  void RigidNode::solveImpactsGaussSeidel(double dt) {
-    const double *a = ds->getGs()();
+  void RigidNode::solveImpactsGaussSeidel(double t, double dt) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
 
-    la(0) = gil->solve(a[ia[laInd]], gdn, gd(0));
+    La(0) = gil->solve(a[ia[laInd]], gdn, gd(0));
   }
 
-  void RigidNode::solveConstraintsGaussSeidel() {
-    const double *a = ds->getGs()();
+  void RigidNode::solveConstraintsGaussSeidel(double t) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -495,26 +488,26 @@ namespace MBSimHydraulics {
     la(0) = gfl->solve(a[ia[laInd]], gdd);
   }
 
-  void RigidNode::solveImpactsRootFinding(double dt) {
-    const double *a = ds->getGs()();
+  void RigidNode::solveImpactsRootFinding(double t, double dt) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
 
-    res(0) = la(0) - gil->project(la(0), gdn, gd(0), rFactor(0));
+    res(0) = La(0) - gil->project(La(0), gdn, gd(0), rFactor(0));
   }
 
-  void RigidNode::solveConstraintsRootFinding() {
-    const double *a = ds->getGs()();
+  void RigidNode::solveConstraintsRootFinding(double t) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -523,23 +516,23 @@ namespace MBSimHydraulics {
     res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0));
   }
 
-  void RigidNode::jacobianImpacts() {
+  void RigidNode::jacobianImpacts(double t) {
     const SqrMat Jprox = ds->getJprox();
-    const SqrMat G = ds->getG();
+    const SqrMat G = ds->getG(t);
 
     RowVec jp1=Jprox.row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
-    Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0));
+    Vec diff = gil->diff(La(0), gdn, gd(0), rFactor(0));
 
     jp1 = e1-diff(0)*e1;
     for(int j=0; j<G.size(); j++) 
       jp1(j) -= diff(1)*G(laInd,j);
   }
 
-  void RigidNode::jacobianConstraints() {
+  void RigidNode::jacobianConstraints(double t) {
     const SqrMat Jprox = ds->getJprox();
-    const SqrMat G = ds->getG();
+    const SqrMat G = ds->getG(t);
 
     RowVec jp1=Jprox.row(laInd);
     RowVec e1(jp1.size());
@@ -551,27 +544,27 @@ namespace MBSimHydraulics {
       jp1(j) -= diff(1)*G(laInd,j);
   }
 
-  void RigidNode::checkImpactsForTermination(double dt) {
-    const double *a = ds->getGs()();
+  void RigidNode::checkImpactsForTermination(double t, double dt) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
 
-    if(!gil->isFulfilled(la(0),gdn,gd(0),LaTol,gdTol))
+    if(!gil->isFulfilled(La(0),gdn,gd(0),LaTol,gdTol))
       ds->setTermination(false);
   }
 
-  void RigidNode::checkConstraintsForTermination() {
-    const double *a = ds->getGs()();
+  void RigidNode::checkConstraintsForTermination(double t) {
+    const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -612,6 +605,10 @@ namespace MBSimHydraulics {
         HNode::init(stage);
       }
     }
+    else if (stage==unknownStage) {
+      HNode::init(stage);
+      laSV(0) = pCav;
+    }
     else
       HNode::init(stage);
     if(gfl) gfl->init(stage);
@@ -634,7 +631,7 @@ namespace MBSimHydraulics {
 
   void RigidCavitationNode::checkActive(int j) {
     if(j==1) 
-      active=(g(0)<=0);
+      active=(x(0)<=0);
     else if(j==3) {
       if (active) {
         if (gdn <= gdTol)
@@ -655,18 +652,8 @@ namespace MBSimHydraulics {
     return changed;
   }
 
-  void RigidCavitationNode::updateg(double t) {
-    if (g.size())
-      g(0)=x(0);
-  }
-
-  void RigidCavitationNode::updateh(double t, int j) {
-    la(0) = pCav;
-    HNode::updateh(t, j);
-  }
-
   void RigidCavitationNode::updateStopVector(double t) {
-    sv(0) = isActive() ? (la(0)-pCav)*1e-5 : -x(0)*6e4;
+    sv(0) = isActive() ? (getGeneralizedForce(t)(0)-pCav)*1e-5 : -x(0)*6e4;
   }
 
   void RigidCavitationNode::updateW(double t, int j) {
@@ -677,11 +664,11 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::updatexd(double t) {
-    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0) : -QHyd;
+    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0) : -getQHyd(t);
   }
 
   void RigidCavitationNode::updatedx(double t, double dt) {
-    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0)*dt : -QHyd*dt;
+    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0)*dt : -getQHyd(t)*dt;
   }
 
   void RigidCavitationNode::checkRoot() {
@@ -869,27 +856,13 @@ namespace MBSimHydraulics {
 
   void PressurePump::initializeUsingXML(DOMElement * element) {
     HNode::initializeUsingXML(element);
-    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"pressureSignal");
-    pSignalString=E(e)->getAttribute("ref");
+    DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"pressureFunction");
+    setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
-  void PressurePump::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      HNode::init(stage);
-      if (pSignalString!="")
-        setpSignal(getByPath<MBSimControl::Signal>(pSignalString));
-    }
-    else if (stage==preInit) {
-      HNode::init(stage);
-      addDependency(pSignal);
-    }
-    else
-      HNode::init(stage);
-  }
-
-  void PressurePump::updateg(double t) {
-    HNode::updateg(t);
-    la(0)=(pSignal->getSignal())(0);
+  void PressurePump::updateGeneralizedSingleValuedForces(double t) {
+    laSV(0)=(*pFunction)(t);
+    laSV = false;
   }
 
 }
