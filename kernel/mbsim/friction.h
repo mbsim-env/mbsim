@@ -42,11 +42,11 @@ namespace MBSim {
     public:
       GeneralizedFriction(const std::string &name="");
       ~GeneralizedFriction();
-      void updateForceDirections(double t);
       void updateGeneralizedVelocities(double t);
+      void updateForceDirections(double t);
+      void updateGeneralizedSingleValuedForces(double t);
       void updateg(double t) { }
       void updategd(double t) { gd = getGeneralizedRelativeVelocity(t); }
-      void updateGeneralizedSingleValuedForces(double t);
       void updateh(double t, int i=0);
 
       bool isActive() const { return true; }

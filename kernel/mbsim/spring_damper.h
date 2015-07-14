@@ -20,6 +20,7 @@
 #define _SPRINGDAMPER_H_
 
 #include "mbsim/mechanical_link.h"
+#include "mbsim/body_link.h"
 #include <mbsim/floating_relative_frame.h>
 #include "mbsim/functions/function.h"
 
@@ -177,11 +178,11 @@ namespace MBSim {
       std::string saved_ref1, saved_ref2;
   };
 
-  class GeneralizedSpringDamper : public MechanicalLink {
+  class GeneralizedSpringDamper : public RigidBodyLink {
     protected:
       Function<double(double,double)> *func;
       double l0;
-      std::vector<RigidBody*> body;
+      RigidBody *body[2];
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
@@ -189,11 +190,11 @@ namespace MBSim {
       GeneralizedSpringDamper(const std::string &name="");
       ~GeneralizedSpringDamper();
 
-      void updateForceDirections(double t);
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
+//      void updatePositions(double t);
+//      void updateForceDirections(double t);
+//      void updateGeneralizedPositions(double t);
+//      void updateGeneralizedVelocities(double t);
       void updateGeneralizedSingleValuedForces(double t);
-      void updateh(double, int i=0);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
@@ -216,8 +217,6 @@ namespace MBSim {
 
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
-
-      void updatehRef(const fmatvec::Vec &hParent, int j=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {

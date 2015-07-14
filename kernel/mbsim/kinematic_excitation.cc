@@ -49,21 +49,10 @@ namespace MBSim {
     updPos = false;
   }
 
-  void KinematicExcitation::updateg(double) {
-    g = rrel;
-  }
-
-  void KinematicExcitation::updategd(double) {
-    gd = vrel;
-  }
-
-  void KinematicExcitation::updateW(double t, int j) {
-    if(j==0) {
-      W[j][0]-=body->getJRel(t,j).T();
-    } else {
-      W[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*(body->getFrameOfReference()->getOrientation(t)*body->getPJT(t)) + body->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*(body->getFrameOfReference()->getOrientation(t)*body->getPJR(t));
-      W[j][1]+=C.getJacobianOfTranslation(t,j).T()*(body->getFrameOfReference()->getOrientation(t)*body->getPJT(t)) + C.getJacobianOfRotation(t,j).T()*(body->getFrameOfReference()->getOrientation(t)*body->getPJR(t));
-    }
+  void KinematicExcitation::updateForceDirections(double t) {
+    DF = body->getFrameOfReference()->getOrientation(t)*body->getPJT(t);
+    DM = body->getFrameOfReference()->getOrientation()*body->getPJR(t);
+    updFD = false;
   }
 
   void KinematicExcitation::updateGeneralizedSetValuedForces(double t) {
@@ -76,14 +65,29 @@ namespace MBSim {
     updlaSV = false;
   }
 
-  void KinematicExcitation::updateh(double t, int j) {
+  void KinematicExcitation::updateg(double) {
+    g = rrel;
+  }
+
+  void KinematicExcitation::updategd(double) {
+    gd = vrel;
+  }
+
+   void KinematicExcitation::updateh(double t, int j) {
     if(j==0) {
-      h[j][0]-=body->getJRel(t,j).T()*getSingleValuedForce(t);
+      h[j][0]-=body->getJRel(t,j).T()*getGeneralizedSingleValuedForce(t);
     } else {
-      Vec3 WF = body->getFrameOfReference()->getOrientation(t)*body->getPJT(t)*getGeneralizedSingleValuedForce(t);
-      Vec3 WM = body->getFrameOfReference()->getOrientation(t)*body->getPJR(t)*getGeneralizedSingleValuedForce(t);
-      h[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*WF + body->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*WM;
-      h[j][1]+=C.getJacobianOfTranslation(t,j).T()*WF + C.getJacobianOfRotation(t,j).T()*WM;
+      h[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+      h[j][1]+=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + C.getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
+    }
+  }
+
+  void KinematicExcitation::updateW(double t, int j) {
+    if(j==0) {
+      W[j][0]-=body->getJRel(t,j).T();
+    } else {
+      W[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSetValuedForceDirection(t) + body->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSetValuedMomentDirection(t);
+      W[j][1]+=C.getJacobianOfTranslation(t,j).T()*getSetValuedForceDirection(t) + C.getJacobianOfRotation(t,j).T()*getSetValuedMomentDirection(t);
     }
   }
 

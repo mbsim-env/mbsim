@@ -39,10 +39,11 @@ namespace MBSim {
     public:
       KinematicExcitation(const std::string &name);
       void updatePositions(double t);
-      void updateg(double t);
-      void updategd(double t);
+      void updateForceDirections(double t);
       void updateGeneralizedSetValuedForces(double t);
       void updateGeneralizedSingleValuedForces(double t);
+      void updateg(double t);
+      void updategd(double t);
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
