@@ -348,15 +348,13 @@ namespace MBSim {
       /** a pointer to Frame "C" */
       FixedRelativeFrame *C;
 
-      fmatvec::Vec aT, aR;
-
       fmatvec::Vec qRel, uRel;
       fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
       fmatvec::Mat TRel;
 
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
-      fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
+      fmatvec::Mat3xV PJTT, PJRR;
 
       Constraint *constraint;
 

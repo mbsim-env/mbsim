@@ -20,39 +20,27 @@
 #ifndef _KINEMATIC_EXCITATION_H_
 #define _KINEMATIC_EXCITATION_H_
 
-#include "mbsim/mechanical_link.h"
-#include "mbsim/rigid_body.h"
-#include "mbsim/floating_relative_frame.h"
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
-#endif
+#include "mbsim/body_link.h"
+#include "mbsim/functions/auxiliary_functions.h"
 
 namespace MBSim {
 
-  class KinematicExcitation : public MechanicalLink {
+  class RigidBody;
+
+  class KinematicExcitation : public RigidBodyLink {
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
-      RigidBody* body;
-      FloatingRelativeFrame C;
+      std::string saved_DependentBody;
     public:
       KinematicExcitation(const std::string &name);
-      void updatePositions(double t);
-      void updateg(double t);
-      void updategd(double t);
       void updateGeneralizedSetValuedForces(double t);
       void updateGeneralizedSingleValuedForces(double t);
-      void updateh(double t, int i=0);
-      void updateW(double t, int i=0);
-      void updatehRef(const fmatvec::Vec &hParent, int j=0);
-      void updateWRef(const fmatvec::Mat &WParent, int j=0);
-      void setDependentBody(RigidBody* body_) {body = body_;}
+      void setDependentBody(RigidBody* body_) { body[0] = body_; }
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       void init(InitStage stage);
-      bool isSetValued() const;
+      bool isSetValued() const { return func?false:true; }
       void calclaSize(int j);
       void calcgSize(int j);
       void calcgdSize(int j);
@@ -62,32 +50,6 @@ namespace MBSim {
         func->setParent(this);
         func->setName("Force");
       }
-
-      void plot(double t, double dt=1);
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize a force arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        FArrow=ombv.createOpenMBV(); 
-      }
-      void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { FArrow=arrow; }
-
-      /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        MArrow=ombv.createOpenMBV(); 
-      }
-      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { MArrow=arrow; }
-#endif
-
-      void resetUpToDate() { MechanicalLink::resetUpToDate(); C.resetUpToDate(); }
-
-    protected:
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
-#endif
-
   };
 
   class GeneralizedPositionExcitation : public KinematicExcitation {
