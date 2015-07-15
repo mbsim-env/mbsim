@@ -358,15 +358,8 @@ namespace MBSim {
       connect(body[1]);
       RigidBodyLink::init(stage);
     }
-    else if(stage==preInit) {
-      RigidBodyLink::init(stage);
-      addDependency(func->getDependency());
-    }
     else if(stage==resize) {
       RigidBodyLink::init(stage);
-      rrel.resize(1);
-      vrel.resize(1);
-      laSV.resize(1);
       ratio.resize(RigidBodyLink::body.size());
       ratio[0] = -1;
       ratio[ratio.size()-1] = 1;
@@ -388,7 +381,6 @@ namespace MBSim {
         THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
       if(body[1]->getuRelSize()!=1)
         THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
-
       RigidBodyLink::init(stage);
     }
     else
@@ -437,16 +429,6 @@ namespace MBSim {
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
-    }
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      RigidBodyLink::setOpenMBVForce(ombv.createOpenMBV(e));
-    }
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      RigidBodyLink::setOpenMBVMoment(ombv.createOpenMBV(e));
     }
 #endif
   }

@@ -63,19 +63,6 @@ namespace MBSim {
       }
       RigidBodyLink::init(stage);
     }
-    else if(stage==resize) {
-      RigidBodyLink::init(stage);
-      rrel.resize(1);
-      vrel.resize(1);
-      if(isSetValued()) {
-        g.resize(1);
-        gd.resize(1);
-        la.resize(1);
-        laMV.resize(1);
-      }
-      else
-        laSV.resize(1);
-    }
     else {
       RigidBodyLink::init(stage);
     }
