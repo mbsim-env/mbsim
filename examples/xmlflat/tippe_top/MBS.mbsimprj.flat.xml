@@ -133,6 +133,16 @@
         <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
       </MBSimEnvironment>
     </environments>
+    <solverParameters>
+      <tolerances>
+        <projection>1e-15</projection>
+        <g>1e-6</g>
+        <gd>1e-6</gd>
+        <gdd>1e-8</gdd>
+        <la>1e-8</la>
+        <La>1e-6</La>
+      </tolerances>
+    </solverParameters>
   </DynamicSystemSolver>
   <LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
     <startTime>0</startTime>
@@ -140,7 +150,7 @@
     <plotStepSize>1e-3</plotStepSize>
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
-    <initialStepSize>1e-13</initialStepSize>
+    <initialStepSize>1e-8</initialStepSize>
     <minimalStepSize>0</minimalStepSize>
     <maximalStepSize>0</maximalStepSize>
     <plotOnRoot>false</plotOnRoot>
