@@ -221,7 +221,7 @@ namespace MBSim {
   }
 
   void DirectionalSpringDamper::updateh(double t, int j) {
-    h[j][0]-=frame[0]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
+    h[j][0]-=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
     h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
   }
 
