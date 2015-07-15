@@ -204,9 +204,6 @@ namespace MBSim {
 
       TRel.resize(nq,nu[0],Eye());
 
-      WJTrel.resize(nu[0]);
-      WJRrel.resize(nu[0]);
-
       updateM_ = &RigidBody::updateMNotConst;
       updateLLM_ = &RigidBody::updateLLMNotConst;
     }

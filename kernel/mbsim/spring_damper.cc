@@ -341,37 +341,10 @@ namespace MBSim {
     delete func;
   }
 
-//  void GeneralizedSpringDamper::updatePositions(double t) {
-//    for(unsigned i=0; i<body.size(); i++) {
-//      C[i].setPosition(body[i]->getFrameForKinematics()->getPosition(t));
-//      C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());
-//    }
-//    updPos = false;
-//  }
-//
   void GeneralizedSpringDamper::updateGeneralizedSingleValuedForces(double t) {
     laSV(0) = -(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
     updlaSV = false;
   }
-//
-//  void GeneralizedSpringDamper::updateForceDirections(double t) {
-//    DF = body[1]->getFrameOfReference()->getOrientation(t)*body[1]->getPJT(t);
-//    DM = body[1]->getFrameOfReference()->getOrientation()*body[1]->getPJR();
-//    updFD = false;
-//  }
-
-  //void GeneralizedSpringDamper::updateGeneralizedPositions(double t) {
-  //  rrel.init(0);
-  //  for(unsigned i=0; i<body.size(); i++)
-  //    rrel+=body[i]->getqRel(t)*sign[i];
-  //}
-
-  //void GeneralizedSpringDamper::updateGeneralizedVelocities(double t) {
-  //  vrel.init(0);
-  //  for(unsigned i=0; i<body.size(); i++)
-  //    vrel+=body[i]->getuRel(t)*sign[i];
-  //  updvrel = false;
-  //}
 
   void GeneralizedSpringDamper::init(InitStage stage) {
     if(stage==resolveXMLPath) {
