@@ -20,39 +20,27 @@
 #include <config.h>
 #include "mbsim/kinematic_excitation.h"
 #include "mbsim/fixed_relative_frame.h"
-#include "mbsim/dynamic_system_solver.h"
-#include <openmbvcppinterface/group.h>
+#include "mbsim/rigid_body.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  KinematicExcitation::KinematicExcitation(const string &name) : MechanicalLink(name), func(0), body(0), C("F") {
-    C.setParent(this);
+  KinematicExcitation::KinematicExcitation(const string &name) : RigidBodyLink(name), func(0) {
+    body.resize(1);
+    ratio.resize(1);
+    ratio[0] = 1;
   }
 
   void KinematicExcitation::calclaSize(int j) {
-    laSize = body->getuRelSize();
+    laSize = body[0]->getuRelSize();
   }
   void KinematicExcitation::calcgSize(int j) {
-    gSize = body->getuRelSize();
+    gSize = body[0]->getuRelSize();
   }
   void KinematicExcitation::calcgdSize(int j) {
-    gdSize = body->getuRelSize();
-  }
-
-  void KinematicExcitation::updatePositions(double t) {
-    WrP0P1 = body->getFrameForKinematics()->getPosition(t)-body->getFrameOfReference()->getPosition(t);
-    C.setPosition(body->getFrameForKinematics()->getPosition());
-    C.setOrientation(body->getFrameOfReference()->getOrientation());
-    updPos = false;
-  }
-
-  void KinematicExcitation::updateForceDirections(double t) {
-    DF = body->getFrameOfReference()->getOrientation(t)*body->getPJT(t);
-    DM = body->getFrameOfReference()->getOrientation()*body->getPJR(t);
-    updFD = false;
+    gdSize = body[0]->getuRelSize();
   }
 
   void KinematicExcitation::updateGeneralizedSetValuedForces(double t) {
@@ -65,185 +53,45 @@ namespace MBSim {
     updlaSV = false;
   }
 
-  void KinematicExcitation::updateg(double) {
-    g = rrel;
-  }
-
-  void KinematicExcitation::updategd(double) {
-    gd = vrel;
-  }
-
-   void KinematicExcitation::updateh(double t, int j) {
-    if(j==0) {
-      h[j][0]-=body->getJRel(t,j).T()*getGeneralizedSingleValuedForce(t);
-    } else {
-      h[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + body->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
-      h[j][1]+=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + C.getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
-    }
-  }
-
-  void KinematicExcitation::updateW(double t, int j) {
-    if(j==0) {
-      W[j][0]-=body->getJRel(t,j).T();
-    } else {
-      W[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSetValuedForceDirection(t) + body->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSetValuedMomentDirection(t);
-      W[j][1]+=C.getJacobianOfTranslation(t,j).T()*getSetValuedForceDirection(t) + C.getJacobianOfRotation(t,j).T()*getSetValuedMomentDirection(t);
-    }
-  }
-
-  void KinematicExcitation::updateWRef(const Mat &WParent, int j) {
-    Index J = Index(laInd,laInd+laSize-1);
-    Index I = Index(body->getFrameForKinematics()->gethInd(j),body->getFrameForKinematics()->gethInd(j)+body->getFrameForKinematics()->gethSize(j)-1);
-
-    W[j][0]>>WParent(I,J);
-    I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->gethSize(j)-1);
-    W[j][1]>>WParent(I,J);
-  } 
-
-  void KinematicExcitation::updatehRef(const Vec &hParent, int j) {
-    Index I = Index(body->gethInd(j),body->gethInd(j)+body->gethSize(j)-1);
-    h[j][0]>>hParent(I);
-    I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->gethSize(j)-1);
-    h[j][1]>>hParent(I);
-  } 
-
-  bool KinematicExcitation::isSetValued() const {
-    return func?false:true;
-  }
-
- void KinematicExcitation::init(InitStage stage) {
-    if(stage==unknownStage) {
-      //MechanicalLink::init(stage);
-
-      h[0].push_back(Vec(body->getFrameForKinematics()->gethSize()));
-      h[1].push_back(Vec(6));
-      W[0].push_back(Mat(body->getFrameForKinematics()->gethSize(),laSize));
-      W[1].push_back(Mat(6,laSize));
-      h[0].push_back(Vec(body->getFrameOfReference()->gethSize()));
-      h[1].push_back(Vec(6));
-      W[0].push_back(Mat(body->getFrameOfReference()->gethSize(),laSize));
-      W[1].push_back(Mat(6,laSize));
-
-      C.setFrameOfReference(body->getFrameOfReference());
-    }
-    else if(stage==resize) {
-      MechanicalLink::init(stage);
-      rrel.resize(gSize);
-      vrel.resize(gdSize);
-      if(isSetValued()) {
-        g.resize(gSize);
-        gd.resize(gdSize);
-        la.resize(laSize);
-        laMV.resize(laSize);
-      }
-      else
-        laSV.resize(laSize);
-    }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-      //plotColumns.push_back("la(0)");
-      if(getPlotFeature(plotRecursive)==enabled) {
-        MechanicalLink::init(stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-        if(getPlotFeature(openMBV)==enabled) {
-          if(FArrow) {
-            FArrow->setName("Force");
-            openMBVForceGrp->addObject(FArrow);
-          }
-          if(MArrow) {
-            MArrow->setName("Moment");
-            openMBVForceGrp->addObject(MArrow);
-          }
-        }
-#endif
-      }
-    }
-    else {
-      MechanicalLink::init(stage);
-    }
+  void KinematicExcitation::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if (saved_DependentBody!="")
+        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+      RigidBodyLink::init(stage);
+    } else
+      RigidBodyLink::init(stage);
     if(func) func->init(stage);
   }
 
-  void KinematicExcitation::plot(double t,double dt) {
-    //plotVector.push_back(la(0));
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled) {
-        if(FArrow) {
-          vector<double> data;
-          data.push_back(t);
-          Vec3 WF = -body->getFrameOfReference()->getOrientation()*body->getPJT()*la;
-          Vec3 WrOS=body->getFrameC()->getPosition();
-          data.push_back(WrOS(0));
-          data.push_back(WrOS(1));
-          data.push_back(WrOS(2));
-          data.push_back(WF(0));
-          data.push_back(WF(1));
-          data.push_back(WF(2));
-          data.push_back(1.0);
-          FArrow->append(data);
-        }
-        if(MArrow) {
-          vector<double> data;
-          data.push_back(t);
-          Vec3 WM = -body->getFrameOfReference()->getOrientation()*body->getPJR()*la;
-          Vec3 WrOS=body->getFrameC()->getPosition();
-          data.push_back(WrOS(0));
-          data.push_back(WrOS(1));
-          data.push_back(WrOS(2));
-          data.push_back(WM(0));
-          data.push_back(WM(1));
-          data.push_back(WM(2));
-          data.push_back(1.0);
-          MArrow->append(data);
-        }
-      }
-#endif
-      MechanicalLink::plot(t,dt);
-    }
-  }
-
   void GeneralizedPositionExcitation::calcxSize() {
-    if(!f) xSize = body->getqRelSize();
+    if(!f) xSize = body[0]->getqRelSize();
   }
 
   void GeneralizedPositionExcitation::init(InitStage stage) {
-    if(stage==preInit) {
-      KinematicExcitation::init(stage);
-      addDependency(f->getDependency());
-    }
-    else
-      KinematicExcitation::init(stage);
+    KinematicExcitation::init(stage);
     f->init(stage);
   }
 
   void GeneralizedPositionExcitation::updateGeneralizedPositions(double t) {
-    rrel=body->getqRel(t)-(*f)(t);
+    rrel=body[0]->getqRel(t)-(*f)(t);
     updrrel = false;
   } 
 
   void GeneralizedPositionExcitation::updateGeneralizedVelocities(double t) {
-    vrel=body->getuRel(t)-f->parDer(t);
+    vrel=body[0]->getuRel(t)-f->parDer(t);
     updvrel = false;
   }
 
   void GeneralizedPositionExcitation::updatewb(double t) {
-    wb += body->getjRel(t)-f->parDerParDer(t);
+    wb += body[0]->getjRel(t)-f->parDerParDer(t);
   }
 
   void GeneralizedVelocityExcitation::calcxSize() {
-    xSize = body->getqRelSize();
-    cout << "--------------------------------------------------" << endl;
-    cout << xSize << endl;
+    xSize = body[0]->getqRelSize();
   }
 
   void GeneralizedVelocityExcitation::init(InitStage stage) {
-    if(stage==preInit) {
-      KinematicExcitation::init(stage);
-      addDependency(f->getDependency());
-    }
-    else
-      KinematicExcitation::init(stage);
+    KinematicExcitation::init(stage);
     f->init(stage);
   }
 
@@ -252,45 +100,40 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityExcitation::updateGeneralizedPositions(double t) {
-    rrel=body->getqRel(t)-x;
+    rrel=body[0]->getqRel(t)-x;
     updrrel = false;
   } 
 
   void GeneralizedVelocityExcitation::updateGeneralizedVelocities(double t) {
-    vrel=body->getuRel(t)-(*f)(x,t);
+    vrel=body[0]->getuRel(t)-(*f)(x,t);
     updvrel = false;
   }
 
   void GeneralizedVelocityExcitation::updatewb(double t) {
-    wb += body->getjRel(t)-(f->parDer1(x,t)*xd + f->parDer2(x,t));
+    wb += body[0]->getjRel(t)-(f->parDer1(x,t)*xd + f->parDer2(x,t));
   }
 
   void GeneralizedAccelerationExcitation::calcxSize() {
-    xSize = body->getqRelSize()+body->getuRelSize();
+    xSize = body[0]->getqRelSize()+body[0]->getuRelSize();
   }
 
   void GeneralizedAccelerationExcitation::init(InitStage stage) {
-    if(stage==preInit) {
-      KinematicExcitation::init(stage);
-      addDependency(f->getDependency());
-    }
-    else
-      KinematicExcitation::init(stage);
+    KinematicExcitation::init(stage);
     f->init(stage);
   }
 
   void GeneralizedAccelerationExcitation::updatexd(double t) {
-    xd(0,body->getqRelSize()-1) = x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
-    xd(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1) = (*f)(x,t);
+    xd(0,body[0]->getqRelSize()-1) = x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
+    xd(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1) = (*f)(x,t);
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedPositions(double t) {
-    rrel=body->getqRel(t)-x(0,body->getqRelSize()-1);
+    rrel=body[0]->getqRel(t)-x(0,body[0]->getqRelSize()-1);
     updrrel = false;
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedVelocities(double t) {
-    vrel=body->getuRel(t)-x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
+    vrel=body[0]->getuRel(t)-x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
     updvrel = false;
   }
 
