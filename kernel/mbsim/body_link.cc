@@ -191,8 +191,8 @@ namespace MBSim {
       for(unsigned int i=0; i<body.size(); i++) {
         DF.push_back(Mat3xV(iF.size()));
         DM.push_back(Mat3xV(iM.size()));
-        RF.push_back(Mat3xV(laSize));
-        RM.push_back(Mat3xV(laSize));
+        RF.push_back(Mat3xV(vrel.size()));
+        RM.push_back(Mat3xV(vrel.size()));
         h[0].push_back(Vec(body[i]->getFrameForKinematics()->gethSize()));
         h[1].push_back(Vec(6));
         W[0].push_back(Mat(body[i]->getFrameForKinematics()->gethSize(),laSize));

@@ -45,9 +45,6 @@ namespace MBSim {
       void init(InitStage stage);
       bool isSetValued() const { return func?false:true; }
       bool isSingleValued() const { return not(isSetValued()); }
-      void calclaSize(int j) { laSize = 1; }
-      void calcgSize(int j) { gSize = 1; }
-      void calcgdSize(int j) { gdSize = 1; }
 
       void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
         func=func_;
