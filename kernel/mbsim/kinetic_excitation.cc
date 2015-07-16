@@ -34,6 +34,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
 
   KineticExcitation::KineticExcitation(const string &name) : FloatingFrameToFrameLink(name), F(NULL), M(NULL) {
+    refFrameID = 1;
   }
 
   KineticExcitation::~KineticExcitation() {
