@@ -44,6 +44,11 @@ namespace MBSim {
       fmatvec::Index iF, iM;
     public:
       RigidBodyLink(const std::string &name="");
+
+      void calclaSize(int j) { laSize = 1; }
+      void calcgSize(int j) { gSize = 1; }
+      void calcgdSize(int j) { gdSize = 1; }
+
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
       void updateg(double t);
