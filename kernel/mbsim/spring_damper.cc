@@ -39,46 +39,12 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
 
-  SpringDamper::SpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0)
+  SpringDamper::SpringDamper(const string &name) : FrameToFrameLink(name), func(NULL), l0(0)
   {}
 
   SpringDamper::~SpringDamper() {
     delete func;
   }
-
-  void SpringDamper::updateForceDirections(double t) {
-    if(getGeneralizedRelativePosition(t)(0)>epsroot())
-      DF=getGlobalRelativePosition(t)/rrel(0);
-    else
-      DF.init(0);
-    updFD = false;
-  }
-
-  void SpringDamper::updateh(double t, int j) {
-    h[j][0]-=frame[0]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
-    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
-  }
-  
-  void SpringDamper::updatePositions(double t) {
-    WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    updPos = false;
-  }
-
-  void SpringDamper::updateVelocities(double t) {
-    WvP0P1=frame[1]->getVelocity(t) - frame[0]->getVelocity(t);
-    updVel = false;
-  }
-
-  void SpringDamper::updateGeneralizedPositions(double t) {
-    rrel(0)=nrm2(getGlobalRelativePosition(t));
-    updrrel = false;
-  }
-
-  void SpringDamper::updateGeneralizedVelocities(double t) {
-    vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
-    updvrel = false;
-  }
-
 
   void SpringDamper::updateGeneralizedSingleValuedForces(double t) {
     laSV(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
@@ -87,33 +53,8 @@ namespace MBSim {
     updlaSV = false;
   }
 
-  void SpringDamper::connect(Frame *frame0, Frame* frame1) {
-    MechanicalLink::connect(frame0);
-    MechanicalLink::connect(frame1);
-  }
-
   void SpringDamper::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_ref1!="" && saved_ref2!="")
-        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(not(frame.size()))
-        THROW_MBSIMERROR("No connection given!");
-      MechanicalLink::init(stage);
-    }
-    else if(stage==preInit) {
-      MechanicalLink::init(stage);
-      addDependency(func->getDependency());
-    }
-    else if(stage==resize) {
-      MechanicalLink::init(stage);
-      rrel.resize(1);
-      vrel.resize(1);
-      laSV.resize(1);
-      DF.resize(1);
-      iF = Index(0, 0);
-      iM = Index(0, -1);
-    }
-    else if(stage==plotting) {
+    if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -124,11 +65,11 @@ namespace MBSim {
           }
         }
 #endif
-        MechanicalLink::init(stage);
+        FrameToFrameLink::init(stage);
       }
     }
     else
-      MechanicalLink::init(stage);
+      FrameToFrameLink::init(stage);
     func->init(stage);
   }
 
@@ -155,30 +96,22 @@ namespace MBSim {
         }
       }
 #endif
-      MechanicalLink::plot(t,dt);
+      FrameToFrameLink::plot(t,dt);
     }
   }
 
   void SpringDamper::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
+    FrameToFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
     if(e) l0 = Element::getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref1=E(e)->getAttribute("ref1");
-    saved_ref2=E(e)->getAttribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
-    }
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      setOpenMBVForce(ombv.createOpenMBV(e));
     }
 #endif
   }

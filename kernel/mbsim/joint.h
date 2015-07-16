@@ -20,13 +20,7 @@
 #ifndef _JOINT_H_
 #define _JOINT_H_
 
-#include "mbsim/mechanical_link.h"
-#include "mbsim/floating_relative_frame.h"
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
-#endif
+#include "mbsim/floating_frame_to_frame_link.h"
 
 namespace MBSim {
 
@@ -45,7 +39,7 @@ namespace MBSim {
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    * \todo hSize Frame C
    */
-  class Joint : public MechanicalLink {
+  class Joint : public FloatingFrameToFrameLink {
     public:
       /**
        * \brief constructor
@@ -59,18 +53,9 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateForceDirections(double t);
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
       void updateGeneralizedSingleValuedForces(double t);
       void updateGeneralizedSetValuedForces(double t);
       void updatewb(double t);
-      void updateW(double t, int i = 0);
-      void updateh(double t, int i = 0);
-      void updateg(double t);
-      void updategd(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -81,19 +66,10 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void calclaSize(int j);
-      virtual void calcgSize(int j);
-      virtual void calcgdSize(int j);
-      virtual void calcrFactorSize(int j);
-      virtual void calccorrSize(int j);
       virtual bool isSetValued() const;
       virtual bool isSingleValued() const;
-      virtual bool isActive() const {
-        return true;
-      }
-      virtual bool gActiveChanged() {
-        return false;
-      }
+      virtual bool isActive() const { return true; }
+      virtual bool gActiveChanged() { return false; }
       virtual void solveImpactsFixpointSingle(double t, double dt);
       virtual void solveConstraintsFixpointSingle(double t);
       virtual void solveImpactsGaussSeidel(double t, double dt);
@@ -105,18 +81,6 @@ namespace MBSim {
       virtual void updaterFactors(double t);
       virtual void checkImpactsForTermination(double t, double dt);
       virtual void checkConstraintsForTermination(double t);
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt = 1);
-      /***************************************************/
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \brief \param first frame to connect
-       * \brief second frame to connect
-       */
-      virtual void connect(Frame *frame1, Frame* frame2);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -134,48 +98,12 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
-      /** \brief The frame of reference ID for the force/moment direction vectors.
-       * If ID=0 (default) the first frame, if ID=1 the second frame is used.
-       */
-      void setFrameOfReferenceID(int ID) {
-        refFrameID = ID;
-      }
-
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      virtual std::string getType() const {
-        return "Joint";
-      }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize a force arrow acting on frame2 */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        setOpenMBVForce(ombv.createOpenMBV());
-      }
-
-      /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-        setOpenMBVMoment(ombv.createOpenMBV());
-      }
-#endif
-
-    void resetUpToDate() { MechanicalLink::resetUpToDate(); C.resetUpToDate(); }
+      virtual std::string getType() const { return "Joint"; }
 
     protected:
-      /**
-       * \brief frame of reference the force is defined in
-       */
-      Frame *refFrame;
-      int refFrameID;
-
-      /**
-       * \brief local force and moment direction
-       */
-      fmatvec::Mat3xV forceDir, momentDir;
-
       /**
        * \brief translational JACOBIAN (not empty for e.g. prismatic joints)
        */
@@ -205,14 +133,6 @@ namespace MBSim {
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
        */
       fmatvec::Vec gdn, gdd;
-
-      /**
-       * \brief own frame located in second partner with same orientation as first partner 
-       */
-      FloatingRelativeFrame C;
-
-    private:
-      std::string saved_ref1, saved_ref2;
   };
 
   class InverseKineticsJoint : public Joint {

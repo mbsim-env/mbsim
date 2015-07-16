@@ -36,32 +36,14 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
 
-  Joint::Joint(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(0), ffl(0), fml(0), fifl(0), fiml(0), C("F") {
-    C.setParent(this);
+  Joint::Joint(const string &name) : FloatingFrameToFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0) {
   }
 
   Joint::~Joint() {
-    if (ffl) {
-      delete ffl;
-      ffl = 0;
-    }
-    if (fml) {
-      delete fml;
-      fml = 0;
-    }
-    if (fifl) {
-      delete fifl;
-      fifl = 0;
-    }
-    if (fiml) {
-      delete fiml;
-      fiml = 0;
-    }
-  }
-
-  void Joint::connect(Frame* frame0, Frame* frame1) {
-    MechanicalLink::connect(frame0);
-    MechanicalLink::connect(frame1);
+    delete ffl;
+    delete fml;
+    delete fifl;
+    delete fiml;
   }
 
   void Joint::updatewb(double t) {
@@ -70,47 +52,6 @@ namespace MBSim {
 
     wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t) - C.getGyroscopicAccelerationOfTranslation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
     wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t) - C.getGyroscopicAccelerationOfRotation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
-  }
-
-  void Joint::updateW(double t, int j) {
-    W[j][0] -= C.getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t) + C.getJacobianOfRotation(t,j).T() * getSetValuedMomentDirection(t);
-    W[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t) + frame[1]->getJacobianOfRotation(t,j).T() * getSetValuedMomentDirection(t);
-  }
-
-  void Joint::updateh(double t, int j) {
-    h[j][0] -= C.getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t) + C.getJacobianOfRotation(t,j).T() * getSingleValuedMoment(t);
-    h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t) + frame[1]->getJacobianOfRotation(t,j).T() * getSingleValuedMoment(t);
-  }
-
-  void Joint::updatePositions(double t) {
-    WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setPosition(frame[1]->getPosition());
-    C.setOrientation(frame[0]->getOrientation());
-    updPos = false;
-  }
-
-  void Joint::updateVelocities(double t) {
-    WvP0P1 = frame[1]->getVelocity(t) - C.getVelocity(t);
-    WomP0P1 = frame[1]->getAngularVelocity(t) - C.getAngularVelocity(t);
-    updVel = false;
-  }
-
-  void Joint::updateForceDirections(double t) {
-    DF = refFrame->getOrientation(t) * forceDir;
-    DM = refFrame->getOrientation(t) * momentDir;
-    updFD = false;
-  }
-
-  void Joint::updateGeneralizedPositions(double t) {
-    rrel.set(iF, getGlobalForceDirection(t).T() * getGlobalRelativePosition(t));
-    rrel.set(iM, x);
-    updrrel = false;
-  }
-
-  void Joint::updateGeneralizedVelocities(double t) {
-    vrel.set(iF, getGlobalForceDirection(t).T() * getGlobalRelativeVelocity(t));
-    vrel.set(iM, getGlobalMomentDirection(t).T() * getGlobalRelativeAngularVelocity(t));
-    updvrel = false;
   }
 
   void Joint::updateGeneralizedSetValuedForces(double t) {
@@ -130,16 +71,6 @@ namespace MBSim {
     updlaSV = false;
   }
 
-  void Joint::updateg(double t) {
-    g(iF) = getGeneralizedRelativePosition(t)(iF);
-    g(iM) = rrel(iM);;
-  }
-
-  void Joint::updategd(double t) {
-    gd(iF) = getGeneralizedRelativeVelocity(t)(iF);
-    gd(iM) = vrel(iM);
-  }
-
   void Joint::updatexd(double t) {
     xd = getGeneralizedRelativeVelocity(t)(iM);
   }
@@ -149,37 +80,13 @@ namespace MBSim {
   }
 
   void Joint::calcxSize() {
-    MechanicalLink::calcxSize();
+    FloatingFrameToFrameLink::calcxSize();
     xSize = momentDir.cols();
   }
 
   void Joint::init(InitStage stage) {
-    if (stage == resolveXMLPath) {
-      if (saved_ref1 != "" && saved_ref2 != "")
-        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(not(frame.size()))
-        THROW_MBSIMERROR("no connection given!");
-      MechanicalLink::init(stage);
-    }
-    else if (stage == resize) {
-      MechanicalLink::init(stage);
-
-      iF = Index(0, forceDir.cols() - 1);
-      iM = Index(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
-      rrel.resize(forceDir.cols() + momentDir.cols());
-      vrel.resize(forceDir.cols() + momentDir.cols());
-      g.resize(forceDir.cols() + momentDir.cols());
-      gd.resize(forceDir.cols() + momentDir.cols());
-      la.resize(forceDir.cols() + momentDir.cols());
-      if(isSetValued())
-        laMV.resize(forceDir.cols() + momentDir.cols());
-      else
-        laSV.resize(forceDir.cols() + momentDir.cols());
-      gdd.resize(gdSize);
-      gdn.resize(gdSize);
-    }
-    else if (stage == unknownStage) {
-      MechanicalLink::init(stage);
+    if (stage == unknownStage) {
+      FloatingFrameToFrameLink::init(stage);
 
       if (ffl) {
         fifl = new BilateralImpact;
@@ -189,17 +96,6 @@ namespace MBSim {
         fiml = new BilateralImpact;
         fiml->setParent(this);
       }
-
-      if (forceDir.cols())
-        DF = forceDir;
-      else {
-      }
-      if (momentDir.cols())
-        DM = momentDir;
-      else {
-      }
-
-      C.setFrameOfReference(frame[0]);
 
       JT.resize(3 - forceDir.cols());
       if (forceDir.cols() == 2)
@@ -212,45 +108,13 @@ namespace MBSim {
         JT.set(0, computeTangential(forceDir.col(0)));
         JT.set(1, crossProduct(forceDir.col(0), JT.col(0)));
       }
-      refFrame = refFrameID ? frame[1] : frame[0];
-    }
-    else if (stage == plotting) {
-      updatePlotFeatures();
-      if (getPlotFeature(plotRecursive) == enabled) {
-        MechanicalLink::init(stage);
-      }
     }
     else
-      MechanicalLink::init(stage);
+      FloatingFrameToFrameLink::init(stage);
     if(ffl) ffl->init(stage);
     if(fml) fml->init(stage);
     if(fifl) fifl->init(stage);
     if(fiml) fiml->init(stage);
-  }
-
-  void Joint::calclaSize(int j) {
-    MechanicalLink::calclaSize(j);
-    laSize = forceDir.cols() + momentDir.cols();
-  }
-
-  void Joint::calcgSize(int j) {
-    MechanicalLink::calcgSize(j);
-    gSize = forceDir.cols() + momentDir.cols();
-  }
-
-  void Joint::calcgdSize(int j) {
-    MechanicalLink::calcgdSize(j);
-    gdSize = forceDir.cols() + momentDir.cols();
-  }
-
-  void Joint::calcrFactorSize(int j) {
-    MechanicalLink::calcrFactorSize(j);
-    rFactorSize = isSetValued() ? forceDir.cols() + momentDir.cols() : 0;
-  }
-
-  void Joint::calccorrSize(int j) {
-    MechanicalLink::calccorrSize(j);
-    corrSize = forceDir.cols() + momentDir.cols();
   }
 
   bool Joint::isSetValued() const {
@@ -585,17 +449,9 @@ namespace MBSim {
       momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
   }
 
-  void Joint::plot(double t, double dt) {
-    if (getPlotFeature(plotRecursive) == enabled) {
-      MechanicalLink::plot(t, dt);
-    }
-  }
-
   void Joint::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if (e)
-      refFrameID = getInt(e);
+    FloatingFrameToFrameLink::initializeUsingXML(element);
+    DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if (e)
       setForceDirection(getMat(e, 3, 0));
@@ -608,26 +464,10 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentLaw");
     if (e)
       setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
-    e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref1 = E(e)->getAttribute("ref1");
-    saved_ref2 = E(e)->getAttribute("ref2");
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
-      setOpenMBVForce(ombv.createOpenMBV(e));
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toDoubleHead, OpenMBV::Arrow::toPoint, 1, 1);
-      setOpenMBVMoment(ombv.createOpenMBV(e));
-    }
-#endif
   }
 
   DOMElement* Joint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
+    DOMElement *ele0 = FloatingFrameToFrameLink::writeXMLFile(parent);
 //    if (forceDir.cols()) {
 //      addElementText(ele0, MBSIM%"forceDirection", forceDir);
 //      DOMElement *ele1 = new DOMElement(MBSIM%"forceLaw");

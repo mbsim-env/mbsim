@@ -19,6 +19,7 @@
 #ifndef _SPRINGDAMPER_H_
 #define _SPRINGDAMPER_H_
 
+#include "mbsim/frame_to_frame_link.h"
 #include "mbsim/mechanical_link.h"
 #include "mbsim/body_link.h"
 #include <mbsim/floating_relative_frame.h>
@@ -37,7 +38,7 @@ namespace MBSim {
    * This class connects two frames and applies a force in it, which depends in the
    * distance and relative velocity between the two frames.
    */
-  class SpringDamper : public MechanicalLink {
+  class SpringDamper : public FrameToFrameLink {
     protected:
       Function<double(double,double)> *func;
       double l0;
@@ -47,16 +48,7 @@ namespace MBSim {
     public:
       SpringDamper(const std::string &name="");
       ~SpringDamper();
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateForceDirections(double t);
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
       void updateGeneralizedSingleValuedForces(double t);
-      void updateh(double t, int i=0);
-
-      /** \brief Connect the SpringDamper to frame1 and frame2 */
-      void connect(Frame *frame1, Frame* frame2);
 
       /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }
@@ -89,15 +81,7 @@ namespace MBSim {
         OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency);
         coilspringOpenMBV=ombv.createOpenMBV();
       }
-
-      /** \brief Visualize a force arrow acting on each of both connected frames */
-     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        setOpenMBVForce(ombv.createOpenMBV());
-      }
 #endif
-    private:
-      std::string saved_ref1, saved_ref2;
   };
 
   /** \brief A spring damper force law.
