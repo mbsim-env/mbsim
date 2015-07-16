@@ -33,8 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
 
-  KineticExcitation::KineticExcitation(const string &name) : MechanicalLink(name), refFrame(NULL), refFrameID(1), F(NULL), M(NULL), C("F") {
-    C.setParent(this);
+  KineticExcitation::KineticExcitation(const string &name) : FloatingFrameToFrameLink(name), F(NULL), M(NULL) {
   }
 
   KineticExcitation::~KineticExcitation() {
@@ -44,78 +43,30 @@ namespace MBSim {
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_ref!="")
-        connect(getByPath<Frame>(saved_ref));
-      else if(saved_ref1!="" && saved_ref2!="")
-        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(not(frame.size()))
-        THROW_MBSIMERROR("no connection given!");
-      if(frame.size()==1) {
-        Frame *buf = frame[0];
-        connect(buf);
-        frame[0]=ds->getFrame("I");
-      }
-      MechanicalLink::init(stage);
-    }
-    else if(stage==preInit) {
-      MechanicalLink::init(stage);
-      if(F) addDependency(F->getDependency());
-      if(M) addDependency(M->getDependency());
+      FloatingFrameToFrameLink::init(stage);
+      if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
+      if(frame[0]==NULL) frame[0]=ds->getFrame("I");
     }
     else if(stage==resize) {
-      iF = Index(0, forceDir.cols() - 1);
-      iM = Index(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
-      laSV.resize(forceDir.cols() + momentDir.cols());
+      FloatingFrameToFrameLink::init(stage);
+      rrel.resize();
+      vrel.resize();
     }
     else if(stage==unknownStage) {
-      MechanicalLink::init(stage);
-      if(F) assert((*F)(0).size()==forceDir.cols());
-      if(M) assert((*M)(0).size()==momentDir.cols());
-      refFrame=refFrameID?frame[1]:frame[0];
-      C.setFrameOfReference(frame[0]);
-    }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-      MechanicalLink::init(stage);
+      if(F  and ((*F)(0).size()!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
+      if(M  and ((*M)(0).size()!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
+      FloatingFrameToFrameLink::init(stage);
     }
     else
-      MechanicalLink::init(stage);
+      FloatingFrameToFrameLink::init(stage);
     if(F) F->init(stage);
     if(M) M->init(stage);
-  }
-
-  void KineticExcitation::connect(Frame *frame0, Frame* frame1) {
-    MechanicalLink::connect(frame0);
-    MechanicalLink::connect(frame1);
-  }
-
-  void KineticExcitation::updatePositions(double t) {
-    WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setPosition(frame[1]->getPosition());
-    C.setOrientation(frame[0]->getOrientation());
-    updPos = false;
-  }
-
-  void KineticExcitation::updateForceDirections(double t) {
-    DF = refFrame->getOrientation(t)*forceDir;
-    DM = refFrame->getOrientation(t)*momentDir;
-    updFD = false;
   }
 
   void KineticExcitation::updateGeneralizedSingleValuedForces(double t) {
     if(F) laSV.set(iF,(*F)(t));
     if(M) laSV.set(iM,(*M)(t));
     updlaSV = false;
-  }
-
-  void KineticExcitation::updateh(double t, int j) {
-    h[j][0]-=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + C.getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
-    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t) + frame[1]->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t);
-  }
-
-  void KineticExcitation::calclaSize(int j) {
-    MechanicalLink::calclaSize(j);
-    laSize=forceDir.cols()+momentDir.cols();
   }
 
   void KineticExcitation::setForceDirection(const Mat3xV &fd) {
@@ -147,10 +98,8 @@ namespace MBSim {
   }
 
   void KineticExcitation::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if(e) refFrameID=getInt(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
+    FloatingFrameToFrameLink::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     if(e) setForceFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
@@ -159,29 +108,11 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    if(E(e)->hasAttribute("ref"))
-      saved_ref=E(e)->getAttribute("ref");
-    else {
-      saved_ref1=E(e)->getAttribute("ref1");
-      saved_ref2=E(e)->getAttribute("ref2");
-    }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      setOpenMBVForce(ombv.createOpenMBV(e));
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      setOpenMBVMoment(ombv.createOpenMBV(e));
-    }
-#endif
+    if(E(e)->hasAttribute("ref")) saved_ref=E(e)->getAttribute("ref");
   }
 
   DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
+    DOMElement *ele0 = FloatingFrameToFrameLink::writeXMLFile(parent);
 //    if(refFrame) {
 //      DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
 //      ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path

@@ -118,30 +118,29 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
 
-  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : MechanicalLink(name), func(NULL), l0(0), refFrame(NULL), C("F") {
-    C.setParent(this);
+  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : FloatingFrameToFrameLink(name), func(NULL), l0(0) {
   }
 
   DirectionalSpringDamper::~DirectionalSpringDamper() {
     delete func;
   }
 
-  void DirectionalSpringDamper::updateForceDirections(double t) {
-    DF=refFrame->getOrientation()*forceDir; // force direction in world system
-    updFD = false;
-  }
+//  void DirectionalSpringDamper::updateForceDirections(double t) {
+//    DF=refFrame->getOrientation()*forceDir; // force direction in world system
+//    updFD = false;
+//  }
 
   void DirectionalSpringDamper::updatePositions(double t) {
-    WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setPosition(frame[1]->getPosition());
+    WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
+    C.setPosition(frame[1]->getPosition() - getGlobalForceDirection(t)*(getGlobalForceDirection(t).T()*WrP0P1));;
     C.setOrientation(frame[0]->getOrientation());
     updPos = false;
   }
 
-  void DirectionalSpringDamper::updateVelocities(double t) {
-    WvP0P1=frame[1]->getVelocity(t) - C.getVelocity(t);
-    updVel = false;
-  }
+//  void DirectionalSpringDamper::updateVelocities(double t) {
+//    WvP0P1=frame[1]->getVelocity(t) - C.getVelocity(t);
+//    updVel = false;
+//  }
 
   void DirectionalSpringDamper::updateGeneralizedPositions(double t) {
     rrel=getGlobalForceDirection(t).T()*getGlobalRelativePosition(t);
@@ -153,43 +152,18 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void DirectionalSpringDamper::updateh(double t, int j) {
-    h[j][0]-=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
-    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
-  }
+//  void DirectionalSpringDamper::updateh(double t, int j) {
+//    h[j][0]-=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
+//    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
+//  }
 
   void DirectionalSpringDamper::updateGeneralizedSingleValuedForces(double t) {
     laSV(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
     updlaSV = false;
   }
 
-  void DirectionalSpringDamper::connect(Frame *frame0, Frame* frame1) {
-    MechanicalLink::connect(frame0);
-    MechanicalLink::connect(frame1);
-  }
-
   void DirectionalSpringDamper::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_ref1!="" && saved_ref2!="")
-        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(not(frame.size()))
-        THROW_MBSIMERROR("No connection given!");
-      MechanicalLink::init(stage);
-    }
-    else if(stage==preInit) {
-      MechanicalLink::init(stage);
-      addDependency(func->getDependency());
-    }
-    else if(stage==resize) {
-      MechanicalLink::init(stage);
-      rrel.resize(1);
-      vrel.resize(1);
-      laSV.resize(1);
-      DF.resize(1);
-      iF = Index(0, 0);
-      iM = Index(0, -1);
-    }
-    else if(stage==plotting) {
+    if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -200,15 +174,11 @@ namespace MBSim {
           }
         }
 #endif
-        MechanicalLink::init(stage);
+        FloatingFrameToFrameLink::init(stage);
       }
     }
-    else if(stage==unknownStage) {
-      refFrame=frame[0];
-      MechanicalLink::init(stage);
-    }
     else
-      MechanicalLink::init(stage);
+      FloatingFrameToFrameLink::init(stage);
     func->init(stage);
   }
 
@@ -235,32 +205,24 @@ namespace MBSim {
         }
       }
 #endif
-      MechanicalLink::plot(t,dt);
+      FloatingFrameToFrameLink::plot(t,dt);
     }
   }
 
   void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
+    FloatingFrameToFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     setForceDirection(getVec(e,3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
     if(e) l0 = Element::getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref1=E(e)->getAttribute("ref1");
-    saved_ref2=E(e)->getAttribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
-    }
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      setOpenMBVForce(ombv.createOpenMBV(e));
     }
 #endif
   }

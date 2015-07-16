@@ -85,7 +85,12 @@ namespace MBSim {
   }
 
   void Joint::init(InitStage stage) {
-    if (stage == unknownStage) {
+    if (stage == resize) {
+      FloatingFrameToFrameLink::init(stage);
+      gdd.resize(gdSize);
+      gdn.resize(gdSize);
+    }
+    else if (stage == unknownStage) {
       FloatingFrameToFrameLink::init(stage);
 
       if (ffl) {
@@ -451,19 +456,14 @@ namespace MBSim {
 
   void Joint::initializeUsingXML(DOMElement *element) {
     FloatingFrameToFrameLink::initializeUsingXML(element);
-    DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
-    if (e)
-      setForceDirection(getMat(e, 3, 0));
+    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
+    if(e) setForceDirection(getMat(e,3,0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceLaw");
-    if (e)
-      setForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+    if(e) setForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
-    if (e)
-      setMomentDirection(getMat(e, 3, 0));
+    if(e) setMomentDirection(getMat(e,3,0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"momentLaw");
-    if (e)
-      setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
+    if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
   }
 
   DOMElement* Joint::writeXMLFile(DOMNode *parent) {
