@@ -17,10 +17,15 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _MECHANICAL_LINK_H_
-#define _MECHANICAL_LINK_H_
+#ifndef _CONTOUR_TO_CONTOUR_LINK_H_
+#define _CONTOUR_TO_CONTOUR_LINK_H_
 
 #include "link.h"
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
+#endif
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
@@ -29,11 +34,8 @@ namespace OpenMBV {
 }
 #endif
 
-namespace H5 {
-  class Group;
-}
-
 namespace MBSim {
+
   class Contour;
 
   /** 
@@ -45,18 +47,18 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-08-19 fix in dhdu referencing (Thorsten Schindler)
    */
-  class MechanicalLink : public Link {
+  class ContourToContourLink : public Link {
     public:
       /**
        * \brief constructor
        * \param name of link machanics
        */
-      MechanicalLink(const std::string &name);
+      ContourToContourLink(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~MechanicalLink();
+      virtual ~ContourToContourLink();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatedhdz(double t);
@@ -82,23 +84,9 @@ namespace MBSim {
       virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
       /***************************************************/
 
-      /*GETTER / SETTER*/
-      const std::vector<Contour*> & getContour() const { return contour; }
-      /*****************/
-
-      /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
-      /**
-       * \param frame to add to link frame vector
-       */
-      virtual void connect(Frame *frame_);
-
-      /**
-       * \param contour to add to link contour vector
-       */
-      virtual void connect(Contour *contour_);
-
-      const std::vector<Frame*>& getFrame() const {
-        return frame;
+      void connect(Contour *contour0, Contour* contour1) {
+        contour[0] = contour0;
+        contour[1] = contour1;
       }
 
       void resetUpToDate() { Link::resetUpToDate(); updPos = true; updVel = true; updFD = true; updFSV = true; updFMV = true; updRMV = true; }
@@ -142,15 +130,7 @@ namespace MBSim {
        */
       fmatvec::Index iF, iM;
 
-      /**
-       * \brief array in which all frames are listed, connecting bodies via a link
-       */
-      std::vector<Frame*> frame;
-
-      /** 
-       * \brief array in which all contours are listed, connecting bodies via link
-       */
-      std::vector<Contour*> contour;
+      Contour* contour[2];
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;

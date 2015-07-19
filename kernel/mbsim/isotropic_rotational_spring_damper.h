@@ -19,8 +19,7 @@
 #ifndef _ISOTROPICROTATIONALSPRINGDAMPER_H_
 #define _ISOTROPICROTATIONALSPRINGDAMPER_H_
 
-#include "mbsim/mechanical_link.h"
-#include "mbsim/frame.h"
+#include "mbsim/floating_frame_to_frame_link.h"
 
 namespace MBSim {
 
@@ -34,7 +33,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2012-03-21 initial commit (Thorsten Schindler)
    */
-  class IsotropicRotationalSpringDamper : public MechanicalLink {
+  class IsotropicRotationalSpringDamper : public FloatinFrameToFrameLink {
     public:
       /**
        * \brief constructor
@@ -47,29 +46,18 @@ namespace MBSim {
        */
       virtual ~IsotropicRotationalSpringDamper();
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateh(double t, int i = 0);
-      virtual void updateg(double t);
-      virtual void updategd(double t);
+      virtual void updateGeneralizedPositions(double t);
+      virtual void updateGeneralizedVelocities(double t);
       /***************************************************/
 
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void init(InitStage stage);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual bool isActive() const {
-        return true;
-      }
-      virtual bool gActiveChanged() {
-        return false;
-      }
-      virtual bool isSingleValued() const {
-        return true;
-      }
+      virtual bool isActive() const { return true; }
+      virtual bool gActiveChanged() { return false; }
+      virtual bool isSingleValued() const { return true; }
       /***************************************************/
-
-      void connect(Frame *frame1, Frame* frame2);
 
       /* SETTER */
       void setParameters(double c_, double d_, double alpha0_) {
@@ -77,25 +65,14 @@ namespace MBSim {
         d = d_;
         alpha0 = alpha0_;
       }
-      void setMomentDirection(const fmatvec::Mat& md);
+
+      void setMomentDirection(const fmatvec::Mat3xV& md);
 
     private:
       /**
        * \brief stiffness, damping, relaxed angle
        */
       double c, d, alpha0;
-
-      /**
-       * which angle projections should be used
-       */
-      fmatvec::Mat momentDir;
-      fmatvec::Index IR;
-
-      /**
-       * \brief global moment direction
-       */
-      fmatvec::Mat Wm;
-
   };
 
 }

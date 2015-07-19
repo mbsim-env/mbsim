@@ -20,14 +20,8 @@
 #ifndef _CONTACT_H_
 #define _CONTACT_H_
 
-#include <mbsim/mechanical_link.h>
 #include <mbsim/single_contact.h>
 #include <map>
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -51,7 +45,7 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class Contact : public MechanicalLink {
+  class Contact : public Link {
     public:
       /*!
        * \brief constructor
@@ -86,6 +80,7 @@ namespace MBSim {
       virtual void updateWRef(const fmatvec::Mat &ref, int j = 0);
       virtual void updateVRef(const fmatvec::Mat &ref, int j = 0);
       virtual void updatehRef(const fmatvec::Vec &hRef, int j = 0);
+      virtual void updaterRef(const fmatvec::Vec &hRef, int j = 0);
       virtual void updatewbRef(const fmatvec::Vec &ref);
       virtual void updatelaRef(const fmatvec::Vec& ref);
       virtual void updateLaRef(const fmatvec::Vec& ref);
@@ -124,7 +119,6 @@ namespace MBSim {
       virtual void updaterFactors(double t);
       virtual void checkConstraintsForTermination(double t);
       virtual void checkImpactsForTermination(double t, double dt);
-      using MechanicalLink::connect;
       virtual void checkActive(double t, int j);
       virtual void setlaTol(double tol);
       virtual void setLaTol(double tol);
@@ -260,6 +254,8 @@ namespace MBSim {
        * \brief list of the single contact kinematics
        */
       std::vector<ContactKinematics*> contactKinematics;
+
+      std::vector<Contour*> contour[2];
 
       /*!
        * \brief names for the contact kinematics

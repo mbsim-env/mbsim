@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/mechanical_link.h"
+#include "mbsim/contour_to_contour_link.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/contour.h"
 #include "mbsim/utils/eps.h"
@@ -34,22 +34,22 @@ using namespace boost;
 
 namespace MBSim {
 
-  MechanicalLink::MechanicalLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+  ContourToContourLink::ContourToContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
   }
 
-  MechanicalLink::~MechanicalLink() {}
+  ContourToContourLink::~ContourToContourLink() {}
 
-  void MechanicalLink::updatedhdz(double t) {
+  void ContourToContourLink::updatedhdz(double t) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void MechanicalLink::plot(double t, double dt) {
+  void ContourToContourLink::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVArrowF) {
         vector<double> data;
         data.push_back(t); 
-        Vec3 toPoint=frame[1]->getPosition();
+        Vec3 toPoint=contour[1]->getFrame()->getPosition(t);
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
         data.push_back(toPoint(2));
@@ -63,7 +63,7 @@ namespace MBSim {
       if(openMBVArrowM) {
         vector<double> data;
         data.push_back(t); 
-        Vec3 toPoint=frame[1]->getPosition();
+        Vec3 toPoint=contour[1]->getFrame()->getPosition(t);
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
         data.push_back(toPoint(2));
@@ -79,100 +79,77 @@ namespace MBSim {
     }
   }
 
-  void MechanicalLink::closePlot() {
+  void ContourToContourLink::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Link::closePlot();
     }
   }
 
-  void MechanicalLink::updateWRef(const Mat& WParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
-      W[j][i]>>WParent(I,J);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
+  void ContourToContourLink::updateWRef(const Mat& WParent, int j) {
+    for(unsigned i=0; i<2; i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
       W[j][i]>>WParent(I,J);
     }
   } 
 
-  void MechanicalLink::updateVRef(const Mat& VParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      V[j][i]>>VParent(I,J);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
+  void ContourToContourLink::updateVRef(const Mat& VParent, int j) {
+    for(unsigned i=0; i<2; i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->gethSize(j)-1);
       V[j][i]>>VParent(I,J);
     }
   } 
 
-  void MechanicalLink::updatehRef(const Vec &hParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      h[j][i]>>hParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
+  void ContourToContourLink::updatehRef(const Vec &hParent, int j) {
+    for(unsigned i=0; i<2; i++) {
       Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->gethSize(j)-1);
       h[j][i]>>hParent(I);
     }
   } 
 
-  void MechanicalLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void ContourToContourLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void MechanicalLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void ContourToContourLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void MechanicalLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      dhdt[i]>>dhdtParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
+  void ContourToContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+    for(unsigned i=0; i<2; i++) {
       Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->gethSize(j)-1);
       dhdt[i]>>dhdtParent(I);
     }
   }
 
-  void MechanicalLink::updaterRef(const Vec &rParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      int hInd =  frame[i]->gethInd(j);
-      Index I = Index(hInd,hInd+frame[i]->gethSize(j)-1);
-      r[j][i]>>rParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
+  void ContourToContourLink::updaterRef(const Vec &rParent, int j) {
+    for(unsigned i=0; i<2; i++) {
       int hInd =  contour[i]->gethInd(j);
       Index I = Index(hInd,hInd+contour[i]->getFrame()->gethSize(j)-1);
       r[j][i]>>rParent(I);
     }
   } 
 
-  void MechanicalLink::updateSingleValuedForces(double t) { 
+  void ContourToContourLink::updateSingleValuedForces(double t) {
     F = getGlobalForceDirection(t)*getGeneralizedSingleValuedForce(t)(iF);
     M = getGlobalMomentDirection(t)*getGeneralizedSingleValuedForce(t)(iM);
     updFSV = false;
   }
 
-  void MechanicalLink::updateSetValuedForces(double t) { 
+  void ContourToContourLink::updateSetValuedForces(double t) {
     F = getGlobalForceDirection(t)*getGeneralizedSetValuedForce(t)(iF);
     M = getGlobalMomentDirection(t)*getGeneralizedSetValuedForce(t)(iM);
     updFMV = false;
   }
 
-  void MechanicalLink::updateSetValuedForceDirections(double t) { 
+  void ContourToContourLink::updateSetValuedForceDirections(double t) {
     RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
     RM.set(Index(0,2), Index(iM), getGlobalMomentDirection(t));
     updRMV = false;
   }
 
-  void MechanicalLink::init(InitStage stage) {
+  void ContourToContourLink::init(InitStage stage) {
     if(stage==resize) {
       Link::init(stage);
       RF.resize(laSize);
@@ -181,18 +158,7 @@ namespace MBSim {
     else if(stage==unknownStage) {
       Link::init(stage);
 
-      for(unsigned int i=0; i<frame.size(); i++) {
-        W[0].push_back(Mat(0,0,NONINIT));
-        V[0].push_back(Mat(0,0,NONINIT));
-        h[0].push_back(Vec(0,NONINIT));
-        W[1].push_back(Mat(0,0,NONINIT));
-        V[1].push_back(Mat(0,0,NONINIT));
-        h[1].push_back(Vec(0,NONINIT));
-        r[0].push_back(Vec(0,NONINIT));
-        r[1].push_back(Vec(0,NONINIT));
-      }
-
-      for(unsigned int i=0; i<contour.size(); i++) {
+      for(unsigned int i=0; i<2; i++) {
         W[0].push_back(Mat(0,0,NONINIT));
         V[0].push_back(Mat(0,0,NONINIT));
         h[0].push_back(Vec(0,NONINIT));
@@ -226,14 +192,6 @@ namespace MBSim {
     }
     else
       Link::init(stage);
-  }
-
-  void MechanicalLink::connect(Frame *frame_) {
-    frame.push_back(frame_);
-  }
-
-  void MechanicalLink::connect(Contour *contour_) {
-    contour.push_back(contour_);
   }
 
 }

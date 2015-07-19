@@ -47,7 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
-  SingleContact::SingleContact(const string &name) : MechanicalLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
+  SingleContact::SingleContact(const string &name) : ContourToContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
@@ -243,7 +243,7 @@ namespace MBSim {
   }
 
   void SingleContact::updatelaRef(const Vec& laParent) {
-    MechanicalLink::updatelaRef(laParent);
+    ContourToContourLink::updatelaRef(laParent);
     if (laSize) {
       int laIndSizeNormal = 0;
       if (fcl->isSetValued()) {
@@ -257,7 +257,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateLaRef(const Vec& LaParent) {
-    MechanicalLink::updateLaRef(LaParent);
+    ContourToContourLink::updateLaRef(LaParent);
     if (laSize) {
       int laIndSizeNormal = 0;
       if (fcl->isSetValued()) {
@@ -271,7 +271,7 @@ namespace MBSim {
   }
 
   void SingleContact::updategdRef(const Vec& gdParent) {
-    MechanicalLink::updategdRef(gdParent);
+    ContourToContourLink::updategdRef(gdParent);
     if (gdSize) {
       int gdIndSizeNormal = 0;
       if (fcl->isSetValued()) {
@@ -284,12 +284,12 @@ namespace MBSim {
   }
 
   void SingleContact::calcxSize() {
-    MechanicalLink::calcxSize();
+    ContourToContourLink::calcxSize();
     xSize = 0;
   }
 
   void SingleContact::calclaSize(int j) {
-    MechanicalLink::calclaSize(j);
+    ContourToContourLink::calclaSize(j);
     if (j == 0) { // IA
       //Add 1 to lambda size if normal force law is setValued
       if (fcl->isSetValued())
@@ -359,7 +359,7 @@ namespace MBSim {
   }
 
   void SingleContact::calcgSize(int j) {
-    MechanicalLink::calcgSize(j);
+    ContourToContourLink::calcgSize(j);
     if (j == 0) { // IA
       gSize = 1;
     }
@@ -375,7 +375,7 @@ namespace MBSim {
 
   void SingleContact::calcgdSize(int j) {
     // TODO: avoid code duplication for maintenance
-    MechanicalLink::calcgdSize(j);
+    ContourToContourLink::calcgdSize(j);
     if (j == 0) { // all contacts
       // add 1 to gdSize if normal force law is setValued
       if (fcl->isSetValued())
@@ -435,7 +435,7 @@ namespace MBSim {
   }
 
   void SingleContact::calcrFactorSize(int j) {
-    MechanicalLink::calcrFactorSize(j);
+    ContourToContourLink::calcrFactorSize(j);
     int addition = 0;
     if(fcl->isSetValued())
       addition += 1;
@@ -454,7 +454,7 @@ namespace MBSim {
   }
 
   void SingleContact::calcsvSize() {
-    MechanicalLink::calcsvSize();
+    ContourToContourLink::calcsvSize();
 
     //Add length due to normal direction
     svSize = fcl->isSetValued() ? 1 : 0;
@@ -465,14 +465,14 @@ namespace MBSim {
   }
 
   void SingleContact::calcLinkStatusSize() {
-    MechanicalLink::calcLinkStatusSize();
+    ContourToContourLink::calcLinkStatusSize();
     //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusSize = 1;
     LinkStatus.resize(LinkStatusSize);
   }
 
   void SingleContact::calcLinkStatusRegSize() {
-    MechanicalLink::calcLinkStatusRegSize();
+    ContourToContourLink::calcLinkStatusRegSize();
     //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusRegSize = 1;
     LinkStatusReg.resize(LinkStatusRegSize);
@@ -482,12 +482,10 @@ namespace MBSim {
     if (stage == resolveXMLPath) {
       if (saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
-      if(not(contour.size()))
-        THROW_MBSIMERROR("no connection given!");
-      MechanicalLink::init(stage);
+      ContourToContourLink::init(stage);
     }
     else if (stage == resize) {
-      MechanicalLink::init(stage);
+      ContourToContourLink::init(stage);
 
       iF = Index(0,1+getFrictionDirections()-1);
       iM = Index(0,-1);
@@ -534,9 +532,27 @@ namespace MBSim {
 
       cpData[0].getFrameOfReference().init(stage);
       cpData[1].getFrameOfReference().init(stage);
-   }
+    }
     else if (stage == unknownStage) {
-      MechanicalLink::init(stage);
+      ContourToContourLink::init(stage);
+
+      if(contour[0]==NULL or contour[1]==NULL)
+        THROW_MBSIMERROR("Not all connections are given!");
+
+      if (contactKinematics == 0) {
+        contactKinematics = contour[0]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
+        if (contactKinematics == 0) {
+          contactKinematics = contour[1]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
+          if (contactKinematics == 0) {
+            contactKinematics = contour[0]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
+            if (contactKinematics == 0) {
+              contactKinematics = contour[1]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
+              if (contactKinematics == 0)
+                THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour[0]->getType() + "\" and Contour\"" + contour[1]->getType() + "\"!");
+            }
+          }
+        }
+      }
 
       if(fcl->isSetValued())
         iT = Index(1, getFrictionDirections());
@@ -554,7 +570,7 @@ namespace MBSim {
       gddTBuf.resize(getFrictionDirections());
     }
     else if (stage == preInit) {
-      MechanicalLink::init(stage);
+      ContourToContourLink::init(stage);
 
       gActive = 1;
       gActive0 = 1;
@@ -599,7 +615,7 @@ namespace MBSim {
           }
         }
 #endif
-        MechanicalLink::init(stage);
+        ContourToContourLink::init(stage);
 //        if (getPlotFeature(linkKinematics) == enabled) {
 //          plotColumns.push_back("g[" + numtostr(i) + "](" + numtostr(0) + ")");
 //          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
@@ -613,7 +629,7 @@ namespace MBSim {
 //        PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
 //        setPlotFeature(linkKinematics, disabled);
 //        setPlotFeature(generalizedLinkForce, disabled);
-//        MechanicalLink::init(stage);
+//        ContourToContourLink::init(stage);
 //        setPlotFeature(linkKinematics, pfKinematics);
 //        setPlotFeature(generalizedLinkForce, pfKinetics);
       }
@@ -624,7 +640,7 @@ namespace MBSim {
         throw new MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
     else {
-      MechanicalLink::init(stage);
+      ContourToContourLink::init(stage);
     }
     if(fcl) fcl->init(stage);
     if(fdf) fdf->init(stage);
@@ -772,7 +788,7 @@ namespace MBSim {
 //      PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
 //      setPlotFeature(linkKinematics, disabled);
 //      setPlotFeature(generalizedLinkForce, disabled);
-      MechanicalLink::plot(t, dt);
+      ContourToContourLink::plot(t, dt);
 //      setPlotFeature(linkKinematics, pfKinematics);
 //      setPlotFeature(generalizedLinkForce, pfKinetics);
     }
@@ -780,7 +796,7 @@ namespace MBSim {
 
   void SingleContact::closePlot() {
     if (getPlotFeature(plotRecursive) == enabled) {
-      MechanicalLink::closePlot();
+      ContourToContourLink::closePlot();
     }
   }
 
@@ -1353,13 +1369,6 @@ namespace MBSim {
       THROW_MBSIMERROR("Internal error");
   }
 
-  int SingleContact::getFrictionDirections() {
-    if (fdf)
-      return fdf->getFrictionDirections();
-    else
-      return 0;
-  }
-
   int SingleContact::getFrictionDirections() const {
     if (fdf)
       return fdf->getFrictionDirections();
@@ -1367,23 +1376,22 @@ namespace MBSim {
       return 0;
   }
 
-  void SingleContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/) {
-    MechanicalLink::connect(contour0);
-    MechanicalLink::connect(contour1);
-    contactKinematics = contactKinematics_;
-
-    if (contactKinematics == 0)
-      contactKinematics = contour0->findContactPairingWith(contour0->getType(), contour1->getType());
-    if (contactKinematics == 0)
-      contactKinematics = contour1->findContactPairingWith(contour1->getType(), contour0->getType());
-    if (contactKinematics == 0)
-      contactKinematics = contour0->findContactPairingWith(contour1->getType(), contour0->getType());
-    if (contactKinematics == 0)
-      contactKinematics = contour1->findContactPairingWith(contour0->getType(), contour1->getType());
-    if (contactKinematics == 0)
-      THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
-
-  }
+//  void SingleContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_) {
+//    ContourToContourLink::connect(contour0, contour1);
+//    contactKinematics = contactKinematics_;
+//
+//    if (contactKinematics == 0)
+//      contactKinematics = contour0->findContactPairingWith(contour0->getType(), contour1->getType());
+//    if (contactKinematics == 0)
+//      contactKinematics = contour1->findContactPairingWith(contour1->getType(), contour0->getType());
+//    if (contactKinematics == 0)
+//      contactKinematics = contour0->findContactPairingWith(contour1->getType(), contour0->getType());
+//    if (contactKinematics == 0)
+//      contactKinematics = contour1->findContactPairingWith(contour0->getType(), contour1->getType());
+//    if (contactKinematics == 0)
+//      THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
+//
+//  }
 
   void SingleContact::applyh(double t, int j) {
   }
@@ -1416,7 +1424,7 @@ namespace MBSim {
 //  }
 
   void SingleContact::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
+    ContourToContourLink::initializeUsingXML(element);
     DOMElement *e;
 
     //Set contact law
@@ -1520,7 +1528,7 @@ namespace MBSim {
   }
 
   void SingleContact::calccorrSize(int j) {
-    MechanicalLink::calccorrSize(j);
+    ContourToContourLink::calccorrSize(j);
     if (j == 1) { // IG
       corrSize = gActive;
     }
@@ -1565,7 +1573,7 @@ namespace MBSim {
   }
 
   void SingleContact::resetUpToDate() {
-    MechanicalLink::resetUpToDate();
+    ContourToContourLink::resetUpToDate();
     cpData[0].getFrameOfReference().resetUpToDate();
     cpData[1].getFrameOfReference().resetUpToDate();
   }

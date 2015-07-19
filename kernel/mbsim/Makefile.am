@@ -23,9 +23,9 @@ spring_damper.cc\
 friction.cc\
 extern_generalized_io.cc\
 link.cc\
-mechanical_link.cc\
 frame_to_frame_link.cc\
 floating_frame_to_frame_link.cc\
+contour_to_contour_link.cc\
 body_link.cc\
 kinetic_excitation.cc\
 kinematic_excitation.cc\
@@ -75,9 +75,9 @@ spring_damper.h\
 friction.h\
 extern_generalized_io.h\
 link.h\
-mechanical_link.h\
 frame_to_frame_link.h\
 floating_frame_to_frame_link.h\
+contour_to_contour_link.h\
 body_link.h\
 kinetic_excitation.h\
 kinematic_excitation.h\

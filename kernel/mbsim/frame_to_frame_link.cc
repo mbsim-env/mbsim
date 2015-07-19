@@ -172,8 +172,6 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(frame[0]==NULL or frame[1]==NULL)
-        THROW_MBSIMERROR("Not all connections are given!");
       Link::init(stage);
     }
     else if(stage==resize) {
@@ -196,6 +194,12 @@ namespace MBSim {
         h[i].resize(2);
         r[i].resize(2);
       }
+    }
+    else if(stage==unknownStage) {
+      Link::init(stage);
+
+      if(frame[0]==NULL or frame[1]==NULL)
+        THROW_MBSIMERROR("Not all connections are given!");
     }
     else if(stage==plotting) {
       updatePlotFeatures();

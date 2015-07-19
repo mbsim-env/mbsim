@@ -20,13 +20,7 @@
 #ifndef _SINGLE_CONTACT_H_
 #define _SINGLE_CONTACT_H_
 
-#include <mbsim/mechanical_link.h>
-#include <map>
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
-#endif
+#include <mbsim/contour_to_contour_link.h>
 
 namespace MBSim {
 
@@ -51,7 +45,7 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class SingleContact: public MechanicalLink {
+  class SingleContact: public ContourToContourLink {
     public:
       /*!
        * \brief constructor
@@ -115,7 +109,6 @@ namespace MBSim {
       virtual void updaterFactors(double t);
       virtual void checkConstraintsForTermination(double t);
       virtual void checkImpactsForTermination(double t, double dt);
-      using MechanicalLink::connect;
       virtual void checkActive(double t, int j);
 //      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
 //      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
@@ -196,7 +189,6 @@ namespace MBSim {
       /**
        * \return number of considered friction directions
        */
-      virtual int getFrictionDirections();
       virtual int getFrictionDirections() const;
 
       /*! connect two contours
@@ -206,7 +198,7 @@ namespace MBSim {
        *
        * REMARK: The contact frame of the first contour is used to plot the contacts data in
        */
-      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
+//      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
 
       /*!
        * \brief apply forces to the h-vector
