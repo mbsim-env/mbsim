@@ -29,7 +29,6 @@ namespace MBSim {
   class GeneralizedImpactLaw;
   class FrictionForceLaw;
   class FrictionImpactLaw;
-  class ContourPointData;
 
   /*! \brief class for contacts
    * \author Martin Foerg
@@ -170,8 +169,6 @@ namespace MBSim {
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
       ContactKinematics* getContactKinematics() const { return contactKinematics; }
-      ContourPointData* & getcpData() { return cpData; }
-      ContourPointData* getcpData() const { return cpData; }
       fmatvec::Vec & getlaN() { return laN; }
       fmatvec::Vec getlaN() const { return laN; }
       fmatvec::Vec & getlaT() { return laT; }
@@ -200,14 +197,7 @@ namespace MBSim {
        */
 //      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
 
-      /*!
-       * \brief apply forces to the h-vector
-       * \param t time of the integration
-       * \param j position in h-vector (0 or 1)
-       */
-      void applyh(double t, int j);
-
-      void getCurvatures(fmatvec::Vec & r) const;
+//      void getCurvatures(fmatvec::Vec & r) const;
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -243,11 +233,6 @@ namespace MBSim {
        * \brief force law defining relation between tangential velocities and forces impulses
       */
       FrictionImpactLaw *ftil;
-
-      /**
-       * \brief vector of frames for definition of relative contact situation
-       */
-      ContourPointData* cpData;
 
       /*!
        * \brief force in normal direction

@@ -21,6 +21,7 @@
 #define _CONTOUR_TO_CONTOUR_LINK_H_
 
 #include "link.h"
+#include "contour_pdata.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -89,6 +90,9 @@ namespace MBSim {
         contour[1] = contour1;
       }
 
+//      ContourPointData* getcpData() { return cpData; }
+//      const ContourPointData* getcpData() const { return cpData; }
+
       void resetUpToDate() { Link::resetUpToDate(); updPos = true; updVel = true; updFD = true; updFSV = true; updFMV = true; updRMV = true; }
       virtual void updateForceDirections(double t) { }
       void updateSingleValuedForces(double t);
@@ -131,6 +135,8 @@ namespace MBSim {
       fmatvec::Index iF, iM;
 
       Contour* contour[2];
+
+      ContourPointData cpData[2];
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;

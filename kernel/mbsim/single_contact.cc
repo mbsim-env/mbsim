@@ -47,7 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
-  SingleContact::SingleContact(const string &name) : ContourToContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
+  SingleContact::SingleContact(const string &name) : ContourToContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
@@ -68,8 +68,6 @@ namespace MBSim {
      if(fnil) { delete fnil; fnil=0; }
      if(ftil) { delete ftil; ftil=0; }*/
 
-    if (cpData)
-      delete[] cpData;
     if (gdActive)
       delete[] gdActive;
     if (gddActive)
@@ -506,32 +504,8 @@ namespace MBSim {
       else
         laSV.resize(1 + getFrictionDirections());
 
-      // clear container first, because InitStage resize is called twice (before and after the reorganization)
-      if (cpData)
-        delete[] cpData;
-
       if (getFrictionDirections() == 0)
         gdActive[1] = false;
-
-      cpData = new ContourPointData[2];
-
-      cpData[0].getFrameOfReference().setParent(this);
-      cpData[1].getFrameOfReference().setParent(this);
-//      cpData[0].getFrameOfReference().setUpdateGlobalRelativePositionByParent();
-//      cpData[1].getFrameOfReference().setUpdateGlobalRelativePositionByParent();
-      cpData[0].getFrameOfReference().setFrameOfReference(contour[0]->getFrameOfReference());
-      cpData[1].getFrameOfReference().setFrameOfReference(contour[1]->getFrameOfReference());
-
-      cpData[0].getFrameOfReference().setName("0");
-      cpData[1].getFrameOfReference().setName("1");
-
-      cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(0), 0);
-      cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(1), 1);
-      cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(0), 0);
-      cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(1), 1);
-
-      cpData[0].getFrameOfReference().init(stage);
-      cpData[1].getFrameOfReference().init(stage);
     }
     else if (stage == unknownStage) {
       ContourToContourLink::init(stage);
@@ -1393,12 +1367,9 @@ namespace MBSim {
 //
 //  }
 
-  void SingleContact::applyh(double t, int j) {
-  }
-
-  void SingleContact::getCurvatures(Vec & r) const {
-    contactKinematics->getCurvatures(r, cpData);
-  }
+//  void SingleContact::getCurvatures(Vec & r) const {
+//    contactKinematics->getCurvatures(r, cpData);
+//  }
 
 //  void SingleContact::LinearImpactEstimation(Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
 //    if (gActive) {

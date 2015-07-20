@@ -154,6 +154,21 @@ namespace MBSim {
       Link::init(stage);
       RF.resize(laSize);
       RM.resize(laSize);
+      cpData[0].getFrameOfReference().setParent(this);
+      cpData[1].getFrameOfReference().setParent(this);
+      cpData[0].getFrameOfReference().setFrameOfReference(contour[0]->getFrameOfReference());
+      cpData[1].getFrameOfReference().setFrameOfReference(contour[1]->getFrameOfReference());
+
+      cpData[0].getFrameOfReference().setName("0");
+      cpData[1].getFrameOfReference().setName("1");
+
+      cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(0), 0);
+      cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(1), 1);
+      cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(0), 0);
+      cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(1), 1);
+
+      cpData[0].getFrameOfReference().init(stage);
+      cpData[1].getFrameOfReference().init(stage);
     }
     else if(stage==unknownStage) {
       Link::init(stage);
