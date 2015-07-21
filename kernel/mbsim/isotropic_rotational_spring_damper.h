@@ -19,7 +19,7 @@
 #ifndef _ISOTROPICROTATIONALSPRINGDAMPER_H_
 #define _ISOTROPICROTATIONALSPRINGDAMPER_H_
 
-#include "mbsim/floating_frame_to_frame_link.h"
+#include "mbsim/floating_frame_link.h"
 
 namespace MBSim {
 
@@ -33,7 +33,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2012-03-21 initial commit (Thorsten Schindler)
    */
-  class IsotropicRotationalSpringDamper : public FloatinFrameToFrameLink {
+  class IsotropicRotationalSpringDamper : public FloatinFrameLink {
     public:
       /**
        * \brief constructor

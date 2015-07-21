@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/contour_to_contour_link.h"
+#include "mbsim/contour_link.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/contour.h"
 #include "mbsim/utils/eps.h"
@@ -34,16 +34,16 @@ using namespace boost;
 
 namespace MBSim {
 
-  ContourToContourLink::ContourToContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+  ContourLink::ContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
   }
 
-  ContourToContourLink::~ContourToContourLink() {}
+  ContourLink::~ContourLink() {}
 
-  void ContourToContourLink::updatedhdz(double t) {
+  void ContourLink::updatedhdz(double t) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void ContourToContourLink::plot(double t, double dt) {
+  void ContourLink::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVArrowF) {
@@ -79,13 +79,13 @@ namespace MBSim {
     }
   }
 
-  void ContourToContourLink::closePlot() {
+  void ContourLink::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Link::closePlot();
     }
   }
 
-  void ContourToContourLink::updateWRef(const Mat& WParent, int j) {
+  void ContourLink::updateWRef(const Mat& WParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       Index J = Index(laInd, laInd + laSize - 1);
@@ -93,7 +93,7 @@ namespace MBSim {
     }
   } 
 
-  void ContourToContourLink::updateVRef(const Mat& VParent, int j) {
+  void ContourLink::updateVRef(const Mat& VParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       Index J = Index(laInd, laInd + laSize - 1);
@@ -101,29 +101,29 @@ namespace MBSim {
     }
   } 
 
-  void ContourToContourLink::updatehRef(const Vec &hParent, int j) {
+  void ContourLink::updatehRef(const Vec &hParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       h[j][i] >> hParent(I);
     }
   } 
 
-  void ContourToContourLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void ContourLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void ContourToContourLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void ContourLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void ContourToContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+  void ContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
       Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->gethSize(j)-1);
       dhdt[i]>>dhdtParent(I);
     }
   }
 
-  void ContourToContourLink::updaterRef(const Vec &rParent, int j) {
+  void ContourLink::updaterRef(const Vec &rParent, int j) {
     for(unsigned i=0; i<2; i++) {
       int hInd =  contour[i]->gethInd(j);
       Index I = Index(hInd,hInd+contour[i]->getFrame()->gethSize(j)-1);
@@ -131,17 +131,17 @@ namespace MBSim {
     }
   } 
 
-  void ContourToContourLink::updateh(double t, int j) {
+  void ContourLink::updateh(double t, int j) {
     h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
     h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
   }
 
-  void ContourToContourLink::updateW(double t, int j) {
+  void ContourLink::updateW(double t, int j) {
     W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
     W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
   }
 
-  void ContourToContourLink::updateForceDirections(double t) {
+  void ContourLink::updateForceDirections(double t) {
     DF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
     if (DF.cols()>1) {
       DF.set(1, cpData[0].getFrameOfReference().getOrientation().col(1));
@@ -151,25 +151,25 @@ namespace MBSim {
     updFD = false;
   }
 
-  void ContourToContourLink::updateSingleValuedForces(double t) {
+  void ContourLink::updateSingleValuedForces(double t) {
     F = getGlobalForceDirection(t)*getGeneralizedSingleValuedForce(t)(iF);
     M = getGlobalMomentDirection(t)*getGeneralizedSingleValuedForce(t)(iM);
     updFSV = false;
   }
 
-  void ContourToContourLink::updateSetValuedForces(double t) {
+  void ContourLink::updateSetValuedForces(double t) {
     F = getGlobalForceDirection(t)*getGeneralizedSetValuedForce(t)(iF);
     M = getGlobalMomentDirection(t)*getGeneralizedSetValuedForce(t)(iM);
     updFMV = false;
   }
 
-  void ContourToContourLink::updateSetValuedForceDirections(double t) {
+  void ContourLink::updateSetValuedForceDirections(double t) {
     RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
     RM.set(Index(0,2), Index(iM), getGlobalMomentDirection(t));
     updRMV = false;
   }
 
-  void ContourToContourLink::init(InitStage stage) {
+  void ContourLink::init(InitStage stage) {
     if(stage==resize) {
       Link::init(stage);
       RF.resize(laSize);

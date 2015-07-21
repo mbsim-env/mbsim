@@ -29,7 +29,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) :
-      FloatinFrameToFrameLink(name), c(0.), d(0.), alpha0(0.) {
+      FloatinFrameLink(name), c(0.), d(0.), alpha0(0.) {
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {

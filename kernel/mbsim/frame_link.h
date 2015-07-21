@@ -17,28 +17,26 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTOUR_TO_CONTOUR_LINK_H_
-#define _CONTOUR_TO_CONTOUR_LINK_H_
+#ifndef _FRAME_LINK_H_
+#define _FRAME_LINK_H_
 
 #include "link.h"
-#include "contour_pdata.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Group;
   class Arrow;
 }
 #endif
 
+namespace H5 {
+  class Group;
+}
+
 namespace MBSim {
-
-  class Contour;
-
   /** 
    * \brief general link to one or more objects
    * \author Martin Foerg
@@ -48,34 +46,31 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-08-19 fix in dhdu referencing (Thorsten Schindler)
    */
-  class ContourToContourLink : public Link {
+  class FrameLink : public Link {
     public:
       /**
        * \brief constructor
        * \param name of link machanics
        */
-      ContourToContourLink(const std::string &name);
+      FrameLink(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~ContourToContourLink();
+      virtual ~FrameLink();
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateh(double t, int i=0);
-      virtual void updateW(double t, int i=0);
-      virtual void updatedhdz(double t);
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void init(InitStage stage);
-      /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Link"; }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
+
+      void initializeUsingXML(xercesc::DOMElement *element);
+
+      void updateh(double t, int i=0);
+      void updatedhdz(double t);
 
       /* INHERITED INTERFACE OF LINK */
       virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
@@ -87,16 +82,21 @@ namespace MBSim {
       virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
       /***************************************************/
 
-      void connect(Contour *contour0, Contour* contour1) {
-        contour[0] = contour0;
-        contour[1] = contour1;
+      /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
+      /**
+       * \param frame to add to link frame vector
+       */
+      void connect(Frame *frame0, Frame* frame1) {
+        frame[0] = frame0;
+        frame[1] = frame1;
       }
 
-//      ContourPointData* getcpData() { return cpData; }
-//      const ContourPointData* getcpData() const { return cpData; }
-
       void resetUpToDate() { Link::resetUpToDate(); updPos = true; updVel = true; updFD = true; updFSV = true; updFMV = true; updRMV = true; }
-      virtual void updateForceDirections(double t);
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateForceDirections(double t);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updateSingleValuedForces(double t);
       void updateSetValuedForces(double t);
       void updateSetValuedForceDirections(double t);
@@ -104,19 +104,18 @@ namespace MBSim {
       const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
       const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
       const fmatvec::Mat3xV& getGlobalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF; }
-      const fmatvec::Mat3xV& getGlobalMomentDirection(double t) { if(updFD) updateForceDirections(t); return DM; }
       const fmatvec::Vec3& getSingleValuedForce(double t) { if(updFSV) updateSingleValuedForces(t); return F; }
-      const fmatvec::Vec3& getSingleValuedMoment(double t) { if(updFSV) updateSingleValuedForces(t); return M; }
       const fmatvec::Vec3& getSetValuedForce(double t) { if(updFMV) updateSetValuedForces(t); return F; }
-      const fmatvec::Vec3& getSetValuedMoment(double t) { if(updFMV) updateSetValuedForces(t); return M; }
       const fmatvec::Vec3& getForce(double t) { return isSetValued()?getSetValuedForce(t):getSingleValuedForce(t); }
-      const fmatvec::Vec3& getMoment(double t) { return isSetValued()?getSetValuedMoment(t):getSingleValuedMoment(t); }
       const fmatvec::Mat3xV& getSetValuedForceDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RF; }
-      const fmatvec::Mat3xV& getSetValuedMomentDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RM; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize a force arrow */
+     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        setOpenMBVForce(ombv.createOpenMBV());
+      }
       void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
-      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowM = arrow; }
 #endif
 
     protected:
@@ -125,20 +124,21 @@ namespace MBSim {
        */
       fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
 
-      fmatvec::Mat3xV DF, DM;
+      fmatvec::Mat3xV DF;
 
-      fmatvec::Vec3 F, M;
+      fmatvec::Vec3 F;
 
-      fmatvec::Mat3xV RF, RM;
+      fmatvec::Mat3xV RF;
 
       /**
        * \brief indices of forces and torques
        */
-      fmatvec::Index iF, iM;
+      fmatvec::Index iF;
 
-      Contour* contour[2];
-
-      ContourPointData cpData[2];
+      /**
+       * \brief array in which all frames are listed, connecting bodies via a link
+       */
+      Frame *frame[2];
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;
@@ -147,6 +147,9 @@ namespace MBSim {
 #endif
 
       bool updPos, updVel, updFD, updFSV, updFMV, updRMV;
+
+    private:
+      std::string saved_ref1, saved_ref2;
   };
 }
 

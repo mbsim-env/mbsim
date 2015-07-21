@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLOATING_FRAME_TO_FRAME_LINK_H_
-#define _FLOATING_FRAME_TO_FRAME_LINK_H_
+#ifndef _FLOATING_FRAME_LINK_H_
+#define _FLOATING_FRAME_LINK_H_
 
 #include "mbsim/link.h"
 #include "mbsim/floating_relative_frame.h"
@@ -47,18 +47,18 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-08-19 fix in dhdu referencing (Thorsten Schindler)
    */
-  class FloatingFrameToFrameLink : public Link {
+  class FloatingFrameLink : public Link {
     public:
       /**
        * \brief constructor
        * \param name of link machanics
        */
-      FloatingFrameToFrameLink(const std::string &name);
+      FloatingFrameLink(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~FloatingFrameToFrameLink();
+      virtual ~FloatingFrameLink();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatedhdz(double t);

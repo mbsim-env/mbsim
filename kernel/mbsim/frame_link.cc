@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/frame_to_frame_link.h"
+#include "mbsim/frame_link.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
@@ -37,16 +37,16 @@ using namespace boost;
 
 namespace MBSim {
 
-  FrameToFrameLink::FrameToFrameLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+  FrameLink::FrameLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
   }
 
-  FrameToFrameLink::~FrameToFrameLink() {}
+  FrameLink::~FrameLink() {}
 
-  void FrameToFrameLink::updatedhdz(double t) {
+  void FrameLink::updatedhdz(double t) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void FrameToFrameLink::plot(double t, double dt) {
+  void FrameLink::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVArrowF) {
@@ -68,13 +68,13 @@ namespace MBSim {
     }
   }
 
-  void FrameToFrameLink::closePlot() {
+  void FrameLink::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Link::closePlot();
     }
   }
 
-  void FrameToFrameLink::updateWRef(const Mat& WParent, int j) {
+  void FrameLink::updateWRef(const Mat& WParent, int j) {
     for(unsigned i=0; i<2; i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
@@ -82,7 +82,7 @@ namespace MBSim {
     }
   } 
 
-  void FrameToFrameLink::updateVRef(const Mat& VParent, int j) {
+  void FrameLink::updateVRef(const Mat& VParent, int j) {
     for(unsigned i=0; i<2; i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
@@ -90,29 +90,29 @@ namespace MBSim {
     }
   } 
 
-  void FrameToFrameLink::updatehRef(const Vec &hParent, int j) {
+  void FrameLink::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<2; i++) {
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
       h[j][i]>>hParent(I);
     }
   } 
 
-  void FrameToFrameLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void FrameLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void FrameToFrameLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void FrameLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void FrameToFrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+  void FrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
       dhdt[i]>>dhdtParent(I);
     }
   }
 
-  void FrameToFrameLink::updaterRef(const Vec &rParent, int j) {
+  void FrameLink::updaterRef(const Vec &rParent, int j) {
     for(unsigned i=0; i<2; i++) {
       int hInd =  frame[i]->gethInd(j);
       Index I = Index(hInd,hInd+frame[i]->gethSize(j)-1);
@@ -120,17 +120,17 @@ namespace MBSim {
     }
   } 
 
-  void FrameToFrameLink::updateSingleValuedForces(double t) { 
+  void FrameLink::updateSingleValuedForces(double t) { 
     F = getGlobalForceDirection(t)*getGeneralizedSingleValuedForce(t)(iF);
     updFSV = false;
   }
 
-  void FrameToFrameLink::updateSetValuedForces(double t) { 
+  void FrameLink::updateSetValuedForces(double t) { 
     F = getGlobalForceDirection(t)*getGeneralizedSetValuedForce(t)(iF);
     updFMV = false;
   }
 
-  void FrameToFrameLink::updateForceDirections(double t) {
+  void FrameLink::updateForceDirections(double t) {
     if(getGeneralizedRelativePosition(t)(0)>epsroot())
       DF=getGlobalRelativePosition(t)/rrel(0);
     else
@@ -138,37 +138,37 @@ namespace MBSim {
     updFD = false;
   }
 
-  void FrameToFrameLink::updateh(double t, int j) {
+  void FrameLink::updateh(double t, int j) {
     h[j][0]-=frame[0]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
     h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
   }
   
-  void FrameToFrameLink::updatePositions(double t) {
+  void FrameLink::updatePositions(double t) {
     WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
     updPos = false;
   }
 
-  void FrameToFrameLink::updateVelocities(double t) {
+  void FrameLink::updateVelocities(double t) {
     WvP0P1=frame[1]->getVelocity(t) - frame[0]->getVelocity(t);
     updVel = false;
   }
 
-  void FrameToFrameLink::updateGeneralizedPositions(double t) {
+  void FrameLink::updateGeneralizedPositions(double t) {
     rrel(0)=nrm2(getGlobalRelativePosition(t));
     updrrel = false;
   }
 
-  void FrameToFrameLink::updateGeneralizedVelocities(double t) {
+  void FrameLink::updateGeneralizedVelocities(double t) {
     vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
     updvrel = false;
   }
 
-  void FrameToFrameLink::updateSetValuedForceDirections(double t) { 
+  void FrameLink::updateSetValuedForceDirections(double t) { 
     RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
     updRMV = false;
   }
 
-  void FrameToFrameLink::init(InitStage stage) {
+  void FrameLink::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
@@ -226,7 +226,7 @@ namespace MBSim {
       Link::init(stage);
   }
 
-  void FrameToFrameLink::initializeUsingXML(DOMElement *element) {
+  void FrameLink::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1=E(e)->getAttribute("ref1");

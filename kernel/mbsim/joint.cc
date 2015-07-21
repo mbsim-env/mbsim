@@ -36,7 +36,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
 
-  Joint::Joint(const string &name) : FloatingFrameToFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0) {
+  Joint::Joint(const string &name) : FloatingFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0) {
   }
 
   Joint::~Joint() {
@@ -80,18 +80,18 @@ namespace MBSim {
   }
 
   void Joint::calcxSize() {
-    FloatingFrameToFrameLink::calcxSize();
+    FloatingFrameLink::calcxSize();
     xSize = momentDir.cols();
   }
 
   void Joint::init(InitStage stage) {
     if (stage == resize) {
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
       gdd.resize(gdSize);
       gdn.resize(gdSize);
     }
     else if (stage == unknownStage) {
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
 
       if (ffl) {
         fifl = new BilateralImpact;
@@ -115,7 +115,7 @@ namespace MBSim {
       }
     }
     else
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
     if(ffl) ffl->init(stage);
     if(fml) fml->init(stage);
     if(fifl) fifl->init(stage);
@@ -455,7 +455,7 @@ namespace MBSim {
   }
 
   void Joint::initializeUsingXML(DOMElement *element) {
-    FloatingFrameToFrameLink::initializeUsingXML(element);
+    FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceLaw");
@@ -467,7 +467,7 @@ namespace MBSim {
   }
 
   DOMElement* Joint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FloatingFrameToFrameLink::writeXMLFile(parent);
+    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
 //    if (forceDir.cols()) {
 //      addElementText(ele0, MBSIM%"forceDirection", forceDir);
 //      DOMElement *ele1 = new DOMElement(MBSIM%"forceLaw");

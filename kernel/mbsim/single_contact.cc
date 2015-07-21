@@ -47,7 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
-  SingleContact::SingleContact(const string &name) : ContourToContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
+  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
@@ -195,7 +195,7 @@ namespace MBSim {
   }
 
   void SingleContact::updatelaRef(const Vec& laParent) {
-    ContourToContourLink::updatelaRef(laParent);
+    ContourLink::updatelaRef(laParent);
     if (laSize) {
       int laIndSizeNormal = 0;
       if (fcl->isSetValued()) {
@@ -209,7 +209,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateLaRef(const Vec& LaParent) {
-    ContourToContourLink::updateLaRef(LaParent);
+    ContourLink::updateLaRef(LaParent);
     if (laSize) {
       int laIndSizeNormal = 0;
       if (fcl->isSetValued()) {
@@ -223,7 +223,7 @@ namespace MBSim {
   }
 
   void SingleContact::updategdRef(const Vec& gdParent) {
-    ContourToContourLink::updategdRef(gdParent);
+    ContourLink::updategdRef(gdParent);
     if (gdSize) {
       int gdIndSizeNormal = 0;
       if (fcl->isSetValued()) {
@@ -236,12 +236,12 @@ namespace MBSim {
   }
 
   void SingleContact::calcxSize() {
-    ContourToContourLink::calcxSize();
+    ContourLink::calcxSize();
     xSize = 0;
   }
 
   void SingleContact::calclaSize(int j) {
-    ContourToContourLink::calclaSize(j);
+    ContourLink::calclaSize(j);
     if (j == 0) { // IA
       //Add 1 to lambda size if normal force law is setValued
       if (fcl->isSetValued())
@@ -311,7 +311,7 @@ namespace MBSim {
   }
 
   void SingleContact::calcgSize(int j) {
-    ContourToContourLink::calcgSize(j);
+    ContourLink::calcgSize(j);
     if (j == 0) { // IA
       gSize = 1;
     }
@@ -327,7 +327,7 @@ namespace MBSim {
 
   void SingleContact::calcgdSize(int j) {
     // TODO: avoid code duplication for maintenance
-    ContourToContourLink::calcgdSize(j);
+    ContourLink::calcgdSize(j);
     if (j == 0) { // all contacts
       // add 1 to gdSize if normal force law is setValued
       if (fcl->isSetValued())
@@ -387,7 +387,7 @@ namespace MBSim {
   }
 
   void SingleContact::calcrFactorSize(int j) {
-    ContourToContourLink::calcrFactorSize(j);
+    ContourLink::calcrFactorSize(j);
     int addition = 0;
     if(fcl->isSetValued())
       addition += 1;
@@ -406,7 +406,7 @@ namespace MBSim {
   }
 
   void SingleContact::calcsvSize() {
-    ContourToContourLink::calcsvSize();
+    ContourLink::calcsvSize();
 
     //Add length due to normal direction
     svSize = fcl->isSetValued() ? 1 : 0;
@@ -417,14 +417,14 @@ namespace MBSim {
   }
 
   void SingleContact::calcLinkStatusSize() {
-    ContourToContourLink::calcLinkStatusSize();
+    ContourLink::calcLinkStatusSize();
     //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusSize = 1;
     LinkStatus.resize(LinkStatusSize);
   }
 
   void SingleContact::calcLinkStatusRegSize() {
-    ContourToContourLink::calcLinkStatusRegSize();
+    ContourLink::calcLinkStatusRegSize();
     //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusRegSize = 1;
     LinkStatusReg.resize(LinkStatusRegSize);
@@ -434,10 +434,10 @@ namespace MBSim {
     if (stage == resolveXMLPath) {
       if (saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
-      ContourToContourLink::init(stage);
+      ContourLink::init(stage);
     }
     else if (stage == resize) {
-      ContourToContourLink::init(stage);
+      ContourLink::init(stage);
 
       iF = Index(0,1+getFrictionDirections()-1);
       iM = Index(0,-1);
@@ -462,7 +462,7 @@ namespace MBSim {
         gdActive[1] = false;
     }
     else if (stage == unknownStage) {
-      ContourToContourLink::init(stage);
+      ContourLink::init(stage);
 
       if(contour[0]==NULL or contour[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");
@@ -498,7 +498,7 @@ namespace MBSim {
       gddTBuf.resize(getFrictionDirections());
     }
     else if (stage == preInit) {
-      ContourToContourLink::init(stage);
+      ContourLink::init(stage);
 
       gActive = 1;
       gActive0 = 1;
@@ -543,7 +543,7 @@ namespace MBSim {
           }
         }
 #endif
-        ContourToContourLink::init(stage);
+        ContourLink::init(stage);
 //        if (getPlotFeature(linkKinematics) == enabled) {
 //          plotColumns.push_back("g[" + numtostr(i) + "](" + numtostr(0) + ")");
 //          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
@@ -557,7 +557,7 @@ namespace MBSim {
 //        PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
 //        setPlotFeature(linkKinematics, disabled);
 //        setPlotFeature(generalizedLinkForce, disabled);
-//        ContourToContourLink::init(stage);
+//        ContourLink::init(stage);
 //        setPlotFeature(linkKinematics, pfKinematics);
 //        setPlotFeature(generalizedLinkForce, pfKinetics);
       }
@@ -568,7 +568,7 @@ namespace MBSim {
         throw new MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
     else {
-      ContourToContourLink::init(stage);
+      ContourLink::init(stage);
     }
     if(fcl) fcl->init(stage);
     if(fdf) fdf->init(stage);
@@ -716,7 +716,7 @@ namespace MBSim {
 //      PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
 //      setPlotFeature(linkKinematics, disabled);
 //      setPlotFeature(generalizedLinkForce, disabled);
-      ContourToContourLink::plot(t, dt);
+      ContourLink::plot(t, dt);
 //      setPlotFeature(linkKinematics, pfKinematics);
 //      setPlotFeature(generalizedLinkForce, pfKinetics);
     }
@@ -724,7 +724,7 @@ namespace MBSim {
 
   void SingleContact::closePlot() {
     if (getPlotFeature(plotRecursive) == enabled) {
-      ContourToContourLink::closePlot();
+      ContourLink::closePlot();
     }
   }
 
@@ -1305,7 +1305,7 @@ namespace MBSim {
   }
 
 //  void SingleContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_) {
-//    ContourToContourLink::connect(contour0, contour1);
+//    ContourLink::connect(contour0, contour1);
 //    contactKinematics = contactKinematics_;
 //
 //    if (contactKinematics == 0)
@@ -1349,7 +1349,7 @@ namespace MBSim {
 //  }
 
   void SingleContact::initializeUsingXML(DOMElement *element) {
-    ContourToContourLink::initializeUsingXML(element);
+    ContourLink::initializeUsingXML(element);
     DOMElement *e;
 
     //Set contact law
@@ -1453,7 +1453,7 @@ namespace MBSim {
   }
 
   void SingleContact::calccorrSize(int j) {
-    ContourToContourLink::calccorrSize(j);
+    ContourLink::calccorrSize(j);
     if (j == 1) { // IG
       corrSize = gActive;
     }
@@ -1498,7 +1498,7 @@ namespace MBSim {
   }
 
   void SingleContact::resetUpToDate() {
-    ContourToContourLink::resetUpToDate();
+    ContourLink::resetUpToDate();
     cpData[0].getFrameOfReference().resetUpToDate();
     cpData[1].getFrameOfReference().resetUpToDate();
   }

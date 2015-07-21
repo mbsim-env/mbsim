@@ -20,7 +20,7 @@
 #ifndef _KINETICEXCITATION_H_
 #define _KINETICEXCITATION_H_
 
-#include <mbsim/floating_frame_to_frame_link.h>
+#include <mbsim/floating_frame_link.h>
 #include <mbsim/functions/function.h>
 
 namespace MBSim {
@@ -31,7 +31,7 @@ namespace MBSim {
    * \date 2009-08-11 some comments (Thorsten Schindler)
    * \date 2013-01-09 second frame for action-reaction law (Martin Förg)
    */
-  class KineticExcitation : public FloatingFrameToFrameLink {
+  class KineticExcitation : public FloatingFrameLink {
     public:
       /**
        * \brief constructor
@@ -77,7 +77,7 @@ namespace MBSim {
       /** \brief see setForce */
       void setMomentFunction(Function<fmatvec::VecV(double)> *func);
 
-      using FloatingFrameToFrameLink::connect;
+      using FloatingFrameLink::connect;
 
       /**
        * \param frame to connect

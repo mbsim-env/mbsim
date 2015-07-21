@@ -20,7 +20,7 @@
 #ifndef _JOINT_H_
 #define _JOINT_H_
 
-#include "mbsim/floating_frame_to_frame_link.h"
+#include "mbsim/floating_frame_link.h"
 
 namespace MBSim {
 
@@ -39,7 +39,7 @@ namespace MBSim {
    * \date 2014-09-16 contact forces are calculated on acceleration level (Thorsten Schindler)
    * \todo hSize Frame C
    */
-  class Joint : public FloatingFrameToFrameLink {
+  class Joint : public FloatingFrameLink {
     public:
       /**
        * \brief constructor

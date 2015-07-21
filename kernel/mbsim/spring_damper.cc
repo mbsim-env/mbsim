@@ -39,7 +39,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
 
-  SpringDamper::SpringDamper(const string &name) : FrameToFrameLink(name), func(NULL), l0(0)
+  SpringDamper::SpringDamper(const string &name) : FrameLink(name), func(NULL), l0(0)
   {}
 
   SpringDamper::~SpringDamper() {
@@ -65,11 +65,11 @@ namespace MBSim {
           }
         }
 #endif
-        FrameToFrameLink::init(stage);
+        FrameLink::init(stage);
       }
     }
     else
-      FrameToFrameLink::init(stage);
+      FrameLink::init(stage);
     func->init(stage);
   }
 
@@ -96,12 +96,12 @@ namespace MBSim {
         }
       }
 #endif
-      FrameToFrameLink::plot(t,dt);
+      FrameLink::plot(t,dt);
     }
   }
 
   void SpringDamper::initializeUsingXML(DOMElement *element) {
-    FrameToFrameLink::initializeUsingXML(element);
+    FrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
@@ -118,7 +118,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
 
-  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : FloatingFrameToFrameLink(name), func(NULL), l0(0) {
+  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : FloatingFrameLink(name), func(NULL), l0(0) {
   }
 
   DirectionalSpringDamper::~DirectionalSpringDamper() {
@@ -174,11 +174,11 @@ namespace MBSim {
           }
         }
 #endif
-        FloatingFrameToFrameLink::init(stage);
+        FloatingFrameLink::init(stage);
       }
     }
     else
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
     func->init(stage);
   }
 
@@ -205,12 +205,12 @@ namespace MBSim {
         }
       }
 #endif
-      FloatingFrameToFrameLink::plot(t,dt);
+      FloatingFrameLink::plot(t,dt);
     }
   }
 
   void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
-    FloatingFrameToFrameLink::initializeUsingXML(element);
+    FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     setForceDirection(getVec(e,3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");

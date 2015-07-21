@@ -19,8 +19,8 @@
 #ifndef _SPRINGDAMPER_H_
 #define _SPRINGDAMPER_H_
 
-#include "mbsim/frame_to_frame_link.h"
-#include "mbsim/floating_frame_to_frame_link.h"
+#include "mbsim/frame_link.h"
+#include "mbsim/floating_frame_link.h"
 #include "mbsim/body_link.h"
 #include "mbsim/functions/function.h"
 
@@ -37,7 +37,7 @@ namespace MBSim {
    * This class connects two frames and applies a force in it, which depends in the
    * distance and relative velocity between the two frames.
    */
-  class SpringDamper : public FrameToFrameLink {
+  class SpringDamper : public FrameLink {
     protected:
       Function<double(double,double)> *func;
       double l0;
@@ -87,7 +87,7 @@ namespace MBSim {
    * This class connects two frames and applies a force in it, which depends in the
    * distance and relative velocity between the two frames.
    */
-  class DirectionalSpringDamper : public FloatingFrameToFrameLink {
+  class DirectionalSpringDamper : public FloatingFrameLink {
     protected:
       double dist;
       Function<double(double,double)> *func;

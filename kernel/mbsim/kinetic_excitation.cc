@@ -33,7 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
 
-  KineticExcitation::KineticExcitation(const string &name) : FloatingFrameToFrameLink(name), F(NULL), M(NULL) {
+  KineticExcitation::KineticExcitation(const string &name) : FloatingFrameLink(name), F(NULL), M(NULL) {
     refFrameID = 1;
   }
 
@@ -44,22 +44,22 @@ namespace MBSim {
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
       if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
       if(frame[0]==NULL) frame[0]=ds->getFrame("I");
     }
     else if(stage==resize) {
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
       rrel.resize();
       vrel.resize();
     }
     else if(stage==unknownStage) {
       if(F  and ((*F)(0).size()!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
       if(M  and ((*M)(0).size()!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
     }
     else
-      FloatingFrameToFrameLink::init(stage);
+      FloatingFrameLink::init(stage);
     if(F) F->init(stage);
     if(M) M->init(stage);
   }
@@ -99,7 +99,7 @@ namespace MBSim {
   }
 
   void KineticExcitation::initializeUsingXML(DOMElement *element) {
-    FloatingFrameToFrameLink::initializeUsingXML(element);
+    FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat(e,3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
@@ -113,7 +113,7 @@ namespace MBSim {
   }
 
   DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FloatingFrameToFrameLink::writeXMLFile(parent);
+    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
 //    if(refFrame) {
 //      DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
 //      ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path

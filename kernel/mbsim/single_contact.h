@@ -20,7 +20,7 @@
 #ifndef _SINGLE_CONTACT_H_
 #define _SINGLE_CONTACT_H_
 
-#include <mbsim/contour_to_contour_link.h>
+#include <mbsim/contour_link.h>
 
 namespace MBSim {
 
@@ -44,7 +44,7 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class SingleContact: public ContourToContourLink {
+  class SingleContact: public ContourLink {
     public:
       /*!
        * \brief constructor
