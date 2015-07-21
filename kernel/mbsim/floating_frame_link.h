@@ -39,13 +39,8 @@ namespace H5 {
 
 namespace MBSim {
   /** 
-   * \brief general link to one or more objects
+   * \brief floating frame link
    * \author Martin Foerg
-   * \date 2009-03-26 some comments (Thorsten Schindler)
-   * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
-   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
-   * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
-   * \date 2009-08-19 fix in dhdu referencing (Thorsten Schindler)
    */
   class FloatingFrameLink : public Link {
     public:

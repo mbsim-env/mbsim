@@ -55,19 +55,6 @@ namespace MBSim {
   }
 
   SingleContact::~SingleContact() {
-
-    //TODO: who deletes contactKinamtics if contact is used in a multi-contact?
-//    if (contactKinematics) {
-//      delete contactKinematics;
-//      contactKinematics = 0;
-//    }
-    /* Delete will fail if the same object is used for more than one Contact.
-     * TODO: A delete concept (who deletes what) is still missing in MBSim.
-     if(fcl) { delete fcl; fcl=0; }
-     if(fdf) { delete fdf; fdf=0; }
-     if(fnil) { delete fnil; fnil=0; }
-     if(ftil) { delete ftil; ftil=0; }*/
-
     if (gdActive)
       delete[] gdActive;
     if (gddActive)
@@ -544,22 +531,6 @@ namespace MBSim {
         }
 #endif
         ContourLink::init(stage);
-//        if (getPlotFeature(linkKinematics) == enabled) {
-//          plotColumns.push_back("g[" + numtostr(i) + "](" + numtostr(0) + ")");
-//          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
-//            plotColumns.push_back("gd[" + numtostr(i) + "](" + numtostr(j) + ")");
-//        }
-//        if (getPlotFeature(generalizedLinkForce) == enabled) {
-//          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
-//            plotColumns.push_back("la[" + numtostr(i) + "](" + numtostr(j) + ")");
-//        }
-//        PlotFeatureStatus pfKinematics = getPlotFeature(linkKinematics);
-//        PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
-//        setPlotFeature(linkKinematics, disabled);
-//        setPlotFeature(generalizedLinkForce, disabled);
-//        ContourLink::init(stage);
-//        setPlotFeature(linkKinematics, pfKinematics);
-//        setPlotFeature(generalizedLinkForce, pfKinetics);
       }
 
     }
@@ -650,7 +621,6 @@ namespace MBSim {
           }
         }
         // arrows
-        // normal force
         vector<double> data;
         if (contactArrow) {
           data.push_back(t);
@@ -679,46 +649,7 @@ namespace MBSim {
         }
       }
 #endif
-      //if (getPlotFeature(linkKinematics) == enabled) {
-      //  bool flag = fcl->isSetValued();
-      //  plotVector.push_back(g(0)); //gN
-      //  if ((flag && gActive) || (!flag && fcl->isActive(g(0), 0))) {
-      //    plotVector.push_back(gdN(0)); //gd-Normal
-      //    for (int j = 0; j < getFrictionDirections(); j++)
-      //      plotVector.push_back(gdT(j)); //gd-Tangential
-      //  }
-      //  else {
-      //    for (int j = 0; j < 1 + getFrictionDirections(); j++)
-      //      plotVector.push_back(numeric_limits<double>::quiet_NaN()); //gd
-      //  }
-      //}
-      //if (getPlotFeature(generalizedLinkForce) == enabled) {
-      //  if (gActive && gdActive[0]) {
-      //    plotVector.push_back(laN(0) / (fcl->isSetValued() ? dt : 1.));
-      //    if (gdActive[1]) {
-      //      for (int j = 0; j < getFrictionDirections(); j++)
-      //        plotVector.push_back(laT(j) / (fdf->isSetValued() ? dt : 1.));
-      //    }
-      //    else {
-      //      if (fdf) {
-      //        Vec buf = fdf->dlaTdlaN(gdT, laN(0)) * laN(0);
-      //        for (int j = 0; j < getFrictionDirections(); j++)
-      //          plotVector.push_back(buf(j) / (fdf->isSetValued() ? dt : 1.));
-      //      }
-      //    }
-      //  }
-      //  else {
-      //    for (int j = 0; j < 1 + getFrictionDirections(); j++)
-      //      plotVector.push_back(0);
-      //  }
-      //}
-//      PlotFeatureStatus pfKinematics = getPlotFeature(linkKinematics);
-//      PlotFeatureStatus pfKinetics = getPlotFeature(generalizedLinkForce);
-//      setPlotFeature(linkKinematics, disabled);
-//      setPlotFeature(generalizedLinkForce, disabled);
       ContourLink::plot(t, dt);
-//      setPlotFeature(linkKinematics, pfKinematics);
-//      setPlotFeature(generalizedLinkForce, pfKinetics);
     }
   }
 
@@ -1304,50 +1235,6 @@ namespace MBSim {
       return 0;
   }
 
-//  void SingleContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_) {
-//    ContourLink::connect(contour0, contour1);
-//    contactKinematics = contactKinematics_;
-//
-//    if (contactKinematics == 0)
-//      contactKinematics = contour0->findContactPairingWith(contour0->getType(), contour1->getType());
-//    if (contactKinematics == 0)
-//      contactKinematics = contour1->findContactPairingWith(contour1->getType(), contour0->getType());
-//    if (contactKinematics == 0)
-//      contactKinematics = contour0->findContactPairingWith(contour1->getType(), contour0->getType());
-//    if (contactKinematics == 0)
-//      contactKinematics = contour1->findContactPairingWith(contour0->getType(), contour1->getType());
-//    if (contactKinematics == 0)
-//      THROW_MBSIMERROR("(Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
-//
-//  }
-
-//  void SingleContact::getCurvatures(Vec & r) const {
-//    contactKinematics->getCurvatures(r, cpData);
-//  }
-
-//  void SingleContact::LinearImpactEstimation(Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
-//    if (gActive) {
-//      gAct_(*IndActive_) = g(0);
-//      (*IndActive_)++;
-//    }
-//    else {
-//      for (unsigned int i = 0; i < 2; i++)
-//        contour[i]->updateKinematicsForFrame(cpData[i], Frame::velocities);
-//      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation().col(0);
-//      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity() - cpData[0].getFrameOfReference().getVelocity();
-//      gdInActive_(*IndInActive_) = Wn.T() * WvD;
-//      gInActive_(*IndInActive_) = g(0);
-//      (*IndInActive_)++;
-//    }
-//  }
-//
-//  void SingleContact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {
-//    if (gActive)
-//      (*sizeActive_)++;
-//    else
-//      (*sizeInActive_)++;
-//  }
-
   void SingleContact::initializeUsingXML(DOMElement *element) {
     ContourLink::initializeUsingXML(element);
     DOMElement *e;
@@ -1497,11 +1384,4 @@ namespace MBSim {
     ds->setRootID(max(ds->getRootID(), rootID));
   }
 
-  void SingleContact::resetUpToDate() {
-    ContourLink::resetUpToDate();
-    cpData[0].getFrameOfReference().resetUpToDate();
-    cpData[1].getFrameOfReference().resetUpToDate();
-  }
-
 }
-

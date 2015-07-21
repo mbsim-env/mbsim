@@ -200,8 +200,6 @@ namespace MBSim {
 
       void checkRoot(double t);
 
-      void resetUpToDate();
-
     protected:
       /**
        * \brief used contact kinematics

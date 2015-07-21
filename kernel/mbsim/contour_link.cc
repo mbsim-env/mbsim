@@ -229,5 +229,17 @@ namespace MBSim {
       Link::init(stage);
   }
 
+  void ContourLink::resetUpToDate() {
+    Link::resetUpToDate();
+    updPos = true;
+    updVel = true;
+    updFD = true;
+    updFSV = true;
+    updFMV = true;
+    updRMV = true;
+    cpData[0].getFrameOfReference().resetUpToDate();
+    cpData[1].getFrameOfReference().resetUpToDate();
+  }
+
 }
 

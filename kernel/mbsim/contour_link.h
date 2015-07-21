@@ -40,13 +40,8 @@ namespace MBSim {
   class Contour;
 
   /** 
-   * \brief general link to one or more objects
+   * \brief contour link
    * \author Martin Foerg
-   * \date 2009-03-26 some comments (Thorsten Schindler)
-   * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
-   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
-   * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
-   * \date 2009-08-19 fix in dhdu referencing (Thorsten Schindler)
    */
   class ContourLink : public Link {
     public:
@@ -95,7 +90,7 @@ namespace MBSim {
 //      ContourPointData* getcpData() { return cpData; }
 //      const ContourPointData* getcpData() const { return cpData; }
 
-      void resetUpToDate() { Link::resetUpToDate(); updPos = true; updVel = true; updFD = true; updFSV = true; updFMV = true; updRMV = true; }
+      void resetUpToDate();
       virtual void updateForceDirections(double t);
       void updateSingleValuedForces(double t);
       void updateSetValuedForces(double t);
@@ -150,5 +145,5 @@ namespace MBSim {
   };
 }
 
-#endif /* _LINK_MECHANICS_H_ */
+#endif
 
