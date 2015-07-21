@@ -491,16 +491,15 @@ namespace MBSim {
     return ele0;
   }
 
-  InverseKineticsJoint::InverseKineticsJoint(const string &name) :
-      Joint(name), body(0) {
+  InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(0) {
   }
 
   void InverseKineticsJoint::calcbSize() {
-    bSize = body ? body->getuRelSize() : 0;
+    if(body) bSize = body->getPJT(0,false).cols();
   }
 
   void InverseKineticsJoint::updateb(double t) {
-    if (bSize) {
+    if(body) {
       b(Index(0, bSize - 1), Index(0, 2)) = body->getPJT(t).T();
       b(Index(0, bSize - 1), Index(3, 5)) = body->getPJR(t).T();
     }

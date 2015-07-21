@@ -26,7 +26,7 @@ link.cc\
 frame_link.cc\
 floating_frame_link.cc\
 contour_link.cc\
-body_link.cc\
+rigid_body_link.cc\
 kinetic_excitation.cc\
 kinematic_excitation.cc\
 mbsim_event.cc\
@@ -78,7 +78,7 @@ link.h\
 frame_link.h\
 floating_frame_link.h\
 contour_link.h\
-body_link.h\
+rigid_body_link.h\
 kinetic_excitation.h\
 kinematic_excitation.h\
 mbsim_event.h\

@@ -20,7 +20,7 @@
 #ifndef _KINEMATIC_EXCITATION_H_
 #define _KINEMATIC_EXCITATION_H_
 
-#include "mbsim/body_link.h"
+#include "mbsim/rigid_body_link.h"
 #include "mbsim/functions/auxiliary_functions.h"
 
 namespace MBSim {

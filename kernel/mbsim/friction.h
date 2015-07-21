@@ -19,7 +19,7 @@
 #ifndef _FRICTION_H_
 #define _FRICTION_H_
 
-#include "mbsim/body_link.h"
+#include "mbsim/rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 namespace MBSim {

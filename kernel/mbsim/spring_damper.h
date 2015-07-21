@@ -21,7 +21,7 @@
 
 #include "mbsim/frame_link.h"
 #include "mbsim/floating_frame_link.h"
-#include "mbsim/body_link.h"
+#include "mbsim/rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

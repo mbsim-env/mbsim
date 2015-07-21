@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _BODY_LINK_H_
-#define _BODY_LINK_H_
+#ifndef _RIGID_BODY_LINK_H_
+#define _RIGID_BODY_LINK_H_
 
 #include "mbsim/link.h"
 #include "mbsim/floating_relative_frame.h"
