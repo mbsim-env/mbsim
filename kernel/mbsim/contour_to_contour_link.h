@@ -62,6 +62,8 @@ namespace MBSim {
       virtual ~ContourToContourLink();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
+      virtual void updateh(double t, int i=0);
+      virtual void updateW(double t, int i=0);
       virtual void updatedhdz(double t);
       /***************************************************/
 
@@ -94,7 +96,7 @@ namespace MBSim {
 //      const ContourPointData* getcpData() const { return cpData; }
 
       void resetUpToDate() { Link::resetUpToDate(); updPos = true; updVel = true; updFD = true; updFSV = true; updFMV = true; updRMV = true; }
-      virtual void updateForceDirections(double t) { }
+      virtual void updateForceDirections(double t);
       void updateSingleValuedForces(double t);
       void updateSetValuedForces(double t);
       void updateSetValuedForceDirections(double t);

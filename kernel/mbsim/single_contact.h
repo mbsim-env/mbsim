@@ -59,14 +59,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t);
-      virtual void updateW(double t, int i=0);
       virtual void updateV(double t, int i=0);
-      virtual void updateh(double t, int i=0);
       virtual void updateGeneralizedSetValuedForces(double t);
       virtual void updateGeneralizedSingleValuedForces(double t);
       virtual void updateGeneralizedPositions(double t);
       virtual void updateGeneralizedVelocities(double t);
-      virtual void updateForceDirections(double t);
       virtual void updatePositions(double t);
       virtual void updateVelocities(double t);
       virtual void updateg(double t);
@@ -75,9 +72,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat &ref, int j=0);
-      virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, int j=0);
       virtual void updatelaRef(const fmatvec::Vec& ref);
       virtual void updateLaRef(const fmatvec::Vec& ref);
       virtual void updategdRef(const fmatvec::Vec& ref);

@@ -109,21 +109,6 @@ namespace MBSim {
     updlaSV = false;
   }
 
-  void SingleContact::updateForceDirections(double t) {
-    DF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
-    if (getFrictionDirections()) {
-      DF.set(1, cpData[0].getFrameOfReference().getOrientation().col(1));
-      if (getFrictionDirections() > 1)
-        DF.set(2, cpData[0].getFrameOfReference().getOrientation().col(2));
-    }
-    updFD = false;
-  }
-
-  void SingleContact::updateW(double t, int j) {
-    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
-    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
-  }
-
   void SingleContact::updateV(double t, int j) {
     if (getFrictionDirections()) {
       if (fdf->isSetValued()) {
@@ -133,11 +118,6 @@ namespace MBSim {
         }
       }
     }
-  }
-
-  void SingleContact::updateh(double t, int j) {
-    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
-    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
   }
 
   void SingleContact::updateGeneralizedPositions(double t) {
@@ -211,32 +191,6 @@ namespace MBSim {
       sv(0) = getGeneralizedRelativePosition(t)(0);
       if (getFrictionDirections())
         sv(1) = 1;
-    }
-  }
-
-  void SingleContact::updateWRef(const Mat& WParent, int j) {
-    for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
-      int hInd = contour[i]->gethInd(j);
-      Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
-      Index J = Index(laInd, laInd + laSize - 1);
-      W[j][i] >> WParent(I, J);
-    }
-  }
-
-  void SingleContact::updateVRef(const Mat& VParent, int j) {
-    for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
-      int hInd = contour[i]->gethInd(j);
-      Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
-      Index J = Index(laInd, laInd + laSize - 1);
-      V[j][i] >> VParent(I, J);
-    }
-  }
-
-  void SingleContact::updatehRef(const Vec& hParent, int j) {
-    for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
-      int hInd = contour[i]->gethInd(j);
-      Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
-      h[j][i] >> hParent(I);
     }
   }
 

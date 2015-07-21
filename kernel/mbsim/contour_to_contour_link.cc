@@ -86,25 +86,25 @@ namespace MBSim {
   }
 
   void ContourToContourLink::updateWRef(const Mat& WParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
-      W[j][i]>>WParent(I,J);
+    for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
+      Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
+      Index J = Index(laInd, laInd + laSize - 1);
+      W[j][i] >> WParent(I, J);
     }
   } 
 
   void ContourToContourLink::updateVRef(const Mat& VParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->gethSize(j)-1);
-      V[j][i]>>VParent(I,J);
+    for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
+      Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
+      Index J = Index(laInd, laInd + laSize - 1);
+      V[j][i] >> VParent(I, J);
     }
   } 
 
   void ContourToContourLink::updatehRef(const Vec &hParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->gethSize(j)-1);
-      h[j][i]>>hParent(I);
+    for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
+      Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
+      h[j][i] >> hParent(I);
     }
   } 
 
@@ -130,6 +130,26 @@ namespace MBSim {
       r[j][i]>>rParent(I);
     }
   } 
+
+  void ContourToContourLink::updateh(double t, int j) {
+    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
+    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
+  }
+
+  void ContourToContourLink::updateW(double t, int j) {
+    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
+    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
+  }
+
+  void ContourToContourLink::updateForceDirections(double t) {
+    DF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
+    if (DF.cols()>1) {
+      DF.set(1, cpData[0].getFrameOfReference().getOrientation().col(1));
+      if (DF.cols()>2)
+        DF.set(2, cpData[0].getFrameOfReference().getOrientation().col(2));
+    }
+    updFD = false;
+  }
 
   void ContourToContourLink::updateSingleValuedForces(double t) {
     F = getGlobalForceDirection(t)*getGeneralizedSingleValuedForce(t)(iF);
