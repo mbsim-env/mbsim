@@ -86,10 +86,6 @@ namespace MBSim {
         }
       Link::init(stage);
     }
-    else if(stage==preInit) {
-      Link::init(stage);
-      addDependency(connectedObject);
-    }
     else if(stage==resize) {
       Link::init(stage);
       g.resize(1);
