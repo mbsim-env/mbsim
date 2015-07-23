@@ -251,6 +251,7 @@ namespace MBSimHydraulics {
     }
     else
       HLine::init(stage);
+    QFunction->init(stage);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StatelessOrifice,  MBSIMHYDRAULICS%"StatelessOrMBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Element, ")
@@ -300,6 +301,9 @@ namespace MBSimHydraulics {
     }
     else
       HLine::init(stage);
+    inflowFunction->init(stage);
+    outflowFunction->init(stage);
+    openingFunction->init(stage);
   }
 
   void StatelessOrifice::plot(double t, double dt) {

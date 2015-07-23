@@ -76,7 +76,7 @@ namespace MBSimHydraulics {
   
   void RigidLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(fabs(Q(0))*ReynoldsFactor);
+      plotVector.push_back(fabs(getQ(t)(0))*ReynoldsFactor);
       RigidHLine::plot(t, dt);
     }
   }
@@ -94,6 +94,7 @@ namespace MBSimHydraulics {
 
   ClosableRigidLine::~ClosableRigidLine() {
     delete cpL;
+    delete cpLFunction;
   }
 
   void ClosableRigidLine::setClosablePressureLoss(ClosablePressureLoss * cpL_) {
@@ -102,21 +103,16 @@ namespace MBSimHydraulics {
     cpL->setName("cpL");
   }
 
-  bool ClosableRigidLine::isClosed() const {
-   return (cpLSignal->getSignal()(0)<cpLMinValue);
+  bool ClosableRigidLine::isClosed(double t) const {
+    return ((*cpLFunction)(t)<cpLMinValue);
   }
 
-  double ClosableRigidLine::getRegularizedValue() const {
-    return isClosed()?cpLMinValue:cpLSignal->getSignal()(0);
+  double ClosableRigidLine::getRegularizedValue(double t) const {
+    return isClosed(t)?cpLMinValue:(*cpLFunction)(t);
   }
 
   void ClosableRigidLine::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if(refSignalString!="")
-        setSignal(getByPath<MBSimControl::Signal>(refSignalString));
-      RigidLine::init(stage);
-    }
-    else if (stage==modelBuildup) {
+    if (stage==modelBuildup) {
       if (cpLBilateral)
          ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_BilateralClosablePressureLoss", this, cpL, true, false));
      else
@@ -127,6 +123,7 @@ namespace MBSimHydraulics {
     else
       RigidLine::init(stage);
     cpL->init(stage);
+    cpLFunction->init(stage);
   }
 
   void ClosableRigidLine::initializeUsingXML(DOMElement * element) {
@@ -135,17 +132,13 @@ namespace MBSimHydraulics {
     DOMElement * ee=e->getFirstElementChild();
     ClosablePressureLoss *p=MBSim::ObjectFactory::createAndInit<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
-    ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"checksizeSignal");
-    refSignalString=E(ee)->getAttribute("ref");
+    ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"checksizeFunction");
+    setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(ee->getFirstElementChild())); 
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalChecksizeValue");
     setMinimalValue(getDouble(ee));
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"setValued");
     if (ee)
       setBilateral(true);
-  }
-
-  Element* ClosableRigidLine::getDependency() const { 
-    return cpLSignal;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnidirectionalRigidLine,  MBSIMHYDRAULICS%"UnidirectionalRigidLine")

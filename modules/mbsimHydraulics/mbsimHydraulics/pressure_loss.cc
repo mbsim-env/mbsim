@@ -36,11 +36,11 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  Element* PressureLoss::getDependency() const {
-    cout << "---------------------------------- dep " << endl;
-    cout << line->getDependency() << endl;
-
-    return line->getDependency();
+  void PressureLoss:init(InitStage stage) {
+   if(stage==preInit) {
+      Function<double(double)>::init(stage);
+      if(t==-1) throw;
+    }
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SerialResistanceLinePressureLoss,  MBSIMHYDRAULICS%"SerialResistanceLinePressureLoss")
@@ -298,7 +298,7 @@ namespace MBSimHydraulics {
         cNeg*=rho/2./A/A;
       initialized=true;
     }
-    const double areaRel=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double areaRel=((const ClosableRigidLine*)(line))->getRegularizedValue(t);
     if (Q<0)
       return cNeg*Q*fabs(Q)/areaRel/areaRel;
     else
@@ -323,7 +323,7 @@ namespace MBSimHydraulics {
       c=12.*eta*l/b;
       initialized=true;
     }
-    const double h=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double h=((const ClosableRigidLine*)(line))->getRegularizedValue(t);
     return c/h/h/h*Q;
   }
 
@@ -348,7 +348,7 @@ namespace MBSimHydraulics {
       zetaFactor=rho/2.*((const RigidLine*)(line))->getLength();
       initialized=true;
     }
-    const double diameter=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double diameter=((const ClosableRigidLine*)(line))->getRegularizedValue(t);
     const double area=M_PI*diameter*diameter/4.;
     const double Re=fabs(Q)*diameter/area/nu;
     double lambda=0;
@@ -377,7 +377,7 @@ namespace MBSimHydraulics {
       c=rho/2./area/area;
       initialized=true;
     }
-    double alphaRel=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    double alphaRel=((const ClosableRigidLine*)(line))->getRegularizedValue(t);
     if (alphaRel>1.)
       alphaRel=1.;
     return (1./(alphaRel * alphaRel * alpha2) - 1.)*c*Q*fabs(Q);
@@ -406,7 +406,7 @@ namespace MBSimHydraulics {
       c=rho/2./alpha/alpha/M_PI/M_PI;
       initialized=true;
     }
-    const double x=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double x=((const ClosableRigidLine*)(line))->getRegularizedValue(t);
     const double fx=x*(2.*rBall*siga/coga + x*siga/coga/coga );
     return c/fx/fx*fabs(Q)*Q;
   }
@@ -431,7 +431,7 @@ namespace MBSimHydraulics {
       c=rho/2./area/area;
       initialized=true;
     }
-    const double xOpen=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double xOpen=((const ClosableRigidLine*)(line))->getRegularizedValue(t);
     const double hdivd0=xOpen/d0;
     const double beta2=.8/hdivd0;
     const double beta3=.14/hdivd0/hdivd0;
@@ -454,7 +454,7 @@ namespace MBSimHydraulics {
       denom[1]=4.*sqrt(rBall2-rOpen2);
       initialized=true;
     }
-    const double xOpen=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double xOpen=((const ClosableRigidLine*)(line))->getRegularizedValue(t);
     const double xOpen2=xOpen*xOpen;
     const double xOpen4=xOpen2*xOpen2;
     return c*(xOpen2+xOpen*numer[1]+numer[0])/(xOpen2+xOpen*denom[1]+denom[0])/xOpen4 * Q * fabs(Q);

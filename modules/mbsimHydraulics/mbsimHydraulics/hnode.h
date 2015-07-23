@@ -255,17 +255,17 @@ namespace MBSimHydraulics {
       void updatedx(double t, double dt);
       void checkRoot();
 
-      void updaterFactors();
-      void solveImpactsFixpointSingle(double dt);
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel(double dt);
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding(double dt);
-      void solveConstraintsRootFinding();
-      void jacobianImpacts();
-      void jacobianConstraints();
-      void checkImpactsForTermination(double dt);
-      void checkConstraintsForTermination();
+      void updaterFactors(double t);
+      void solveImpactsFixpointSingle(double t, double dt);
+      void solveConstraintsFixpointSingle(double t);
+      void solveImpactsGaussSeidel(double t, double dt);
+      void solveConstraintsGaussSeidel(double t);
+      void solveImpactsRootFinding(double t, double dt);
+      void solveConstraintsRootFinding(double t);
+      void jacobianImpacts(double t);
+      void jacobianConstraints(double t);
+      void checkImpactsForTermination(double t, double dt);
+      void checkConstraintsForTermination(double t);
     protected:
       double pCav;
     private:
@@ -283,6 +283,8 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "PressurePump"; }
 
       void setpFunction(MBSim::Function<double(double)> *pFunction_) { pFunction=pFunction_; }
+
+      void init(InitStage stage);
 
       void updateGeneralizedSingleValuedForces(double t);
       void initializeUsingXML(xercesc::DOMElement *element);

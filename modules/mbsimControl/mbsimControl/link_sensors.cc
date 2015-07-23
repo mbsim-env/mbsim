@@ -43,10 +43,6 @@ namespace MBSimControl {
         setLink(getByPath<Link>(linkString));
       Sensor::init(stage);
     }
-    else if(stage==preInit) {
-      Link::init(stage);
-      addDependency(link);
-    }
     else
       Sensor::init(stage);
   }

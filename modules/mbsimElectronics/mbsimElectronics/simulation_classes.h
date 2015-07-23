@@ -182,7 +182,6 @@ namespace MBSimElectronics {
       void checkImpactsForTermination(double t, double dt);
       void solveImpactsGaussSeidel(double t, double dt);
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
-      void init(InitStage stage);
       std::string getType() const { return "Switch"; }
   };
 

@@ -44,10 +44,6 @@ namespace MBSimControl {
         setSignalProcessingSystem(getByPath<SignalProcessingSystem>(spsString));
       Sensor::init(stage);
     }
-    else if(stage==preInit) {
-      Sensor::init(stage);
-      addDependency(sps);
-    }
     else
       Sensor::init(stage);
   }

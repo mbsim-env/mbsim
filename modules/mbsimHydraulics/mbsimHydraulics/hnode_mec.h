@@ -80,14 +80,24 @@ namespace MBSimHydraulics {
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
       virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
 
+      double getQMec(double t) { if(updQMec) updateQMec(t); return QMec; }
+      double getQMecTrans(double t) { if(updQMec) updateQMec(t); return QMecTrans; }
+      double getQMecRot(double t) { if(updQMec) updateQMec(t); return QMecRot; }
+      double getQMec(bool check=true) const { assert((not check) or (not updQMec)); return QMec; }
+      double getQMecTrans(bool check=true) const { assert((not check) or (not updQMec)); return QMecTrans; }
+      double getQMecRot(bool check=true) const { assert((not check) or (not updQMec)); return QMecRot; }
+      virtual void updateQMec(double t);
+
       void updateh(double t, int j=0);
-      void updatedhdz(double t);
-      virtual void updater(double t, int j=0);
+      void updater(double t, int j=0);
       void updategd(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
+      void updatedhdz(double t);
 
       void plot(double t, double dt);
+
+      void resetUpToDate() { updQMec = true; }
 
     protected:
       std::vector<connectedTransFrameStruct> connectedTransFrames;
@@ -95,6 +105,7 @@ namespace MBSimHydraulics {
       double QMecTrans, QMecRot, QMec;
       double V0;
       unsigned int nTrans, nRot;
+      bool updQMec;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<boost::shared_ptr<OpenMBV::Arrow> > openMBVArrows;
       double openMBVArrowSize;
@@ -123,7 +134,7 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateg(double t);
+      void updateGeneralizedSingleValuedForces(double t);
 
       virtual bool isSingleValued() const {return true;}
 
@@ -199,17 +210,17 @@ namespace MBSimHydraulics {
       void updategd(double t);
       void updateW(double t, int j=0);
 
-      void updaterFactors();
-      void solveImpactsFixpointSingle(double dt);
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel(double dt);
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding(double dt);
-      void solveConstraintsRootFinding();
-      void jacobianImpacts();
-      void jacobianConstraints();
-      void checkImpactsForTermination(double dt);
-      void checkConstraintsForTermination();
+      void updaterFactors(double t);
+      void solveImpactsFixpointSingle(double t, double dt);
+      void solveConstraintsFixpointSingle(double t);
+      void solveImpactsGaussSeidel(double t, double dt);
+      void solveConstraintsGaussSeidel(double t);
+      void solveImpactsRootFinding(double t, double dt);
+      void solveConstraintsRootFinding(double t);
+      void jacobianImpacts(double t);
+      void jacobianConstraints(double t);
+      void checkImpactsForTermination(double t, double dt);
+      void checkConstraintsForTermination(double t);
     private:
       double gdn, gdd;
       MBSim::GeneralizedForceLaw * gfl;

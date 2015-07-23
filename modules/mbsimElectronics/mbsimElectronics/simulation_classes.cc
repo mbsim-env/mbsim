@@ -300,15 +300,6 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Switch::init(InitStage stage) {
-    if(stage==preInit) {
-      ElectronicLink::init(stage);
-      addDependency(voltageSignal);
-    }
-    else
-      ElectronicLink::init(stage);
-  }
-
   void Switch::updateGeneralizedSingleValuedForces(double t) {
     double gdLim = 0.01;
     double U0 = (*voltageSignal)(t)(0);

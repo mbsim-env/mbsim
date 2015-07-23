@@ -47,10 +47,6 @@ namespace MBSimControl {
         setInputSignal(getByPath<Signal>(inputSignalString));
       Link::init(stage);
     }
-    else if(stage==preInit) {
-      Link::init(stage);
-      addDependency(inputSignal);
-    }
     else
       Link::init(stage);
   }

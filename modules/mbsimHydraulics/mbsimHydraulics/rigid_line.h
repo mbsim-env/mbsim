@@ -58,31 +58,28 @@ namespace MBSimHydraulics {
   /*! ClosableRigidLine */
   class ClosableRigidLine : public RigidLine {
     public:
-      ClosableRigidLine(const std::string &name="") : RigidLine(name), cpL(NULL), cpLSignal(NULL), cpLMinValue(0), cpLBilateral(false), refSignalString("") {}
+      ClosableRigidLine(const std::string &name="") : RigidLine(name), cpL(NULL), cpLFunction(NULL), cpLMinValue(0), cpLBilateral(false) {}
       ~ClosableRigidLine();
       virtual std::string getType() const { return "ClosableRigidLine"; }
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_);
       ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
-      void setSignal(MBSimControl::Signal * s) {cpLSignal = s; }
-      MBSimControl::Signal * getSignal() const {return cpLSignal; }
+      void setFunction(MBSim::Function<double(double)> * s) {cpLFunction = s; }
+      MBSim::Function<double(double)> * geFunction() const {return cpLFunction; }
       void setMinimalValue(double v) {cpLMinValue=v; }
       double getMinimalValue() const {return cpLMinValue; }
       void setBilateral(bool b=true) {cpLBilateral=b; }
-      bool isClosed() const;
-      double getRegularizedValue() const;
+      bool isClosed(double t) const;
+      double getRegularizedValue(double t) const;
 
       void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement *element);
-
-      Element* getDependency() const;
     private:
       ClosablePressureLoss * cpL;
-      MBSimControl::Signal * cpLSignal;
+      MBSim::Function<double(double)> * cpLFunction;
       double cpLMinValue;
       bool cpLBilateral;
-      std::string refSignalString;
   };
 
 
