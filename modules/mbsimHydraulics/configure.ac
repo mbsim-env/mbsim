@@ -22,7 +22,7 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
+PKG_CHECK_MODULES(DEPS, mbsimControl)
 
 dnl Enable debugging 
 AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
