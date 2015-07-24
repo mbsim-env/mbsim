@@ -1061,7 +1061,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations(double t, double dt) {
-    La = slvLS(G, -(gd + W[0].T() * slvLLFac(LLM[0], h[0]) * dt));
+    La = slvLS(getG(t), -(getgd(t) + getW(t).T() * slvLLFac(getLLM(t), geth(t)) * dt));
     return 1;
   }
 
