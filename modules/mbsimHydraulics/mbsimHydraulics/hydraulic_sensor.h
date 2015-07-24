@@ -32,7 +32,7 @@ namespace MBSimHydraulics {
       FlowSensor(const std::string &name="") : MBSimControl::Sensor(name), line(NULL), lineString("") {}
       std::string getType() const { return "FlowSensor"; }
       int getSignalSize() const { return 1; }
-      void updateh(double t, int j=0);
+      void updateSignal(double t);
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setHLine(HLine * line_) {line=line_; }
@@ -46,7 +46,7 @@ namespace MBSimHydraulics {
       PressureSensor(const std::string &name="") : MBSimControl::Sensor(name), node(NULL), nodeString("") {}
       std::string getType() const { return "PressureSensor"; }
       int getSignalSize() const { return 1; }
-      void updateh(double t, int j=0);
+      void updateSignal(double t);
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setHNode(HNode * node_) {node=node_; }

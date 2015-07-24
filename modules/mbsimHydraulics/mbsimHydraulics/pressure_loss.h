@@ -23,10 +23,6 @@
 #include "mbsim/element.h"
 #include <mbsim/functions/function.h>
 
-namespace MBSim {
-  template <class Sig> class TabularFunction;
-}
-
 namespace MBSimHydraulics {
 
   class HydlinePressureloss;
@@ -41,11 +37,11 @@ namespace MBSimHydraulics {
       PressureLoss() : line(0), initialized(false), t(-1) {}
       virtual void setLine(const HLine *line_) { line = line_; }
       void setTime(double t_) { t = t_; }
-      void init(InitStage stage);
+//      void init(InitStage stage);
     protected:
-      double t;
       const HLine *line;
       bool initialized;
+      double t;
   };
 
 

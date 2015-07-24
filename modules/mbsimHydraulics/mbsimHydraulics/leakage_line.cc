@@ -39,48 +39,39 @@ namespace MBSimHydraulics {
     delete lpl;
   }
 
-  double LeakageLine::getGapLength() const {
-    return ((glSignal)?glSignal->getSignal()(0):length);
+  double LeakageLine::getGapLength(double t) const {
+    return (glFunction)?(*glFunction)(t):length;
   }
 
-  double LeakageLine::getSurface1Velocity() const {
-    return ((s1vSignal)?s1vSignal->getSignal()(0):0);
+  double LeakageLine::getSurface1Velocity(double t) const {
+    return (s1vFunction)?(*s1vFunction)(t):0;
   }
 
-  double LeakageLine::getSurface2Velocity() const {
-    return ((s2vSignal)?s2vSignal->getSignal()(0):0);
+  double LeakageLine::getSurface2Velocity(double t) const {
+    return (s2vFunction)?(*s2vFunction)(t):0;
   }
 
   void LeakageLine::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      RigidHLine::init(stage);
-      if (s1vPath!="")
-        setSurface1VelocitySignal(getByPath<Signal>(s1vPath));
-      if (s2vPath!="")
-        setSurface2VelocitySignal(getByPath<Signal>(s2vPath));
-      if (glPath!="")
-        setGapLengthSignal(getByPath<Signal>(glPath));
-    }
-    else if (stage==modelBuildup) {
+    if (stage==modelBuildup) {
       ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_LeakagePressureLoss", this, lpl, false, false));
       RigidHLine::init(stage);
     }
     else
       RigidHLine::init(stage);
     lpl->init(stage);
+    s1vFunction->init(stage);
+    s2vFunction->init(stage);
+    glFunction->init(stage);
   }
 
   void LeakageLine::initializeUsingXML(DOMElement * element) {
     RigidHLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"firstSurfaceVelocity");
-    if (e)
-      s1vPath=E(e)->getAttribute("ref");
+    if (e) setSurface1VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"secondSurfaceVelocity");
-    if (e)
-      s2vPath=E(e)->getAttribute("ref");
+    if (e) setSurface2VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"gapLength");
-    if (e)
-      glPath=E(e)->getAttribute("ref");
+    if (e) setGapLengthFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneLeakageLine,  MBSIMHYDRAULICS%"PlaneLeakageLine")

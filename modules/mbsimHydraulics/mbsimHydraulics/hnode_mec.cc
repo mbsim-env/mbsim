@@ -318,8 +318,7 @@ namespace MBSimHydraulics {
   }
 
   void HNodeMec::updategd(double t) {
-    HNode::updategd(t);
-    gd(0)+=getQMec(t);
+    gd(0)=getQMec(t)-getQHyd(t);
   }
 
   void HNodeMec::updateh(double t, int j) {
@@ -542,13 +541,13 @@ namespace MBSimHydraulics {
   void ElasticNodeMec::updatexd(double t) {
     HNodeMec::updatexd(t);
     E=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0));
-    xd(1)=-E/x(0)*getgd(t)(0);
+    xd(1)=-E/x(0)*(getQMec(t)-getQHyd(t));
   }
 
   void ElasticNodeMec::updatedx(double t, double dt) {
     HNodeMec::updatedx(t, dt);
     E=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0));
-    xd(1)=-E/x(0)*getgd(t)(0)*dt;
+    xd(1)=-E/x(0)*(getQMec(t)-getQHyd(t))*dt;
   }
 
   void ElasticNodeMec::plot(double t, double dt) {
@@ -696,14 +695,14 @@ namespace MBSimHydraulics {
     const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
 
-    la(0) = gil->project(la(0), gdn, gd(0), rFactor(0));
+    La(0) = gil->project(La(0), gdn, gd(0), rFactor(0));
   }
 
   void RigidNodeMec::solveConstraintsFixpointSingle(double t) {
@@ -724,14 +723,14 @@ namespace MBSimHydraulics {
     const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     gdn = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
 
-    la(0) = gil->solve(a[ia[laInd]], gdn, gd(0));
+    La(0) = gil->solve(a[ia[laInd]], gdn, gd(0));
   }
 
   void RigidNodeMec::solveConstraintsGaussSeidel(double t) {
@@ -752,14 +751,14 @@ namespace MBSimHydraulics {
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
 
-    res(0) = la(0) - gil->project(la(0), gdn, gd(0), rFactor(0));
+    res(0) = La(0) - gil->project(La(0), gdn, gd(0), rFactor(0));
   }
 
   void RigidNodeMec::solveConstraintsRootFinding(double t) {
@@ -783,7 +782,7 @@ namespace MBSimHydraulics {
     RowVec jp1=Jprox.row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
-    Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0));
+    Vec diff = gil->diff(La(0), gdn, gd(0), rFactor(0));
 
     jp1 = e1-diff(0)*e1;
     for(int j=0; j<G.size(); j++) 
@@ -808,14 +807,14 @@ namespace MBSimHydraulics {
     const double *a = ds->getGs(t)();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &LaMBS = ds->getLa();
     const Vec &b = ds->getb();
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
+      gdn += a[j]*LaMBS(ja[j]);
 
-    if(!gil->isFulfilled(la(0),gdn,gd(0),LaTol,gdTol))
+    if(!gil->isFulfilled(La(0),gdn,gd(0),LaTol,gdTol))
       ds->setTermination(false);
   }
 

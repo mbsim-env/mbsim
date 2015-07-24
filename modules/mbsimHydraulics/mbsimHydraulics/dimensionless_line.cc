@@ -75,38 +75,24 @@ namespace MBSimHydraulics {
     delete lpl;
   }
 
-  double Leakage0DOF::getGapLength() const {
-    return ((glSignal)?glSignal->getSignal()(0):length);
+  double Leakage0DOF::getGapLength(double t) const {
+    return (glFunction)?(*glFunction)(t):length;
   }
 
-  double Leakage0DOF::getSurface1Velocity() const {
-    return ((s1vSignal)?s1vSignal->getSignal()(0):0);
+  double Leakage0DOF::getSurface1Velocity(double t) const {
+    return (s1vFunction)?(*s1vFunction)(t):0;
   }
 
-  double Leakage0DOF::getSurface2Velocity() const {
-    return ((s2vSignal)?s2vSignal->getSignal()(0):0);
+  double Leakage0DOF::getSurface2Velocity(double t) const {
+    return (s2vFunction)?(*s2vFunction)(t):0;
   }
 
   void Leakage0DOF::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      DimensionlessLine::init(stage);
-      if (s1vPath!="")
-        setSurface1VelocitySignal(getByPath<Signal>(s1vPath));
-      if (s2vPath!="")
-        setSurface2VelocitySignal(getByPath<Signal>(s2vPath));
-      if (glPath!="")
-        setGapLengthSignal(getByPath<Signal>(glPath));
-    }
-    if (stage==preInit) {
-      DimensionlessLine::init(stage);
-      addDependency(lpl->getDependency());
-      addDependency(s1vSignal);
-      addDependency(s2vSignal);
-      addDependency(glSignal);
-    }
-    else
-      DimensionlessLine::init(stage);
+    DimensionlessLine::init(stage);
     lpl->init(stage);
+    s1vFunction->init(stage);
+    s2vFunction->init(stage);
+    glFunction->init(stage);
   }
 
   void Leakage0DOF::updateStateDependentVariables(double t) {
@@ -117,14 +103,11 @@ namespace MBSimHydraulics {
   void Leakage0DOF::initializeUsingXML(DOMElement * element) {
     DimensionlessLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"firstSurfaceVelocity");
-    if (e)
-      s1vPath=E(e)->getAttribute("ref");
+    if (e) setSurface1VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"secondSurfaceVelocity");
-    if (e)
-      s2vPath=E(e)->getAttribute("ref");
+    if (e) setSurface2VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"gapLength");
-    if (e)
-      glPath=E(e)->getAttribute("ref");
+    if (e) setGapLengthFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneLeakage0DOF,  MBSIMHYDRAULICS%"PlaneLeakage0DOF")

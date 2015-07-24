@@ -24,10 +24,6 @@
 #include <mbsim/functions/function.h>
 #include <boost/shared_ptr.hpp>
 
-namespace MBSimControl {
-  class Signal;
-}
-
 namespace MBSimHydraulics {
 
   class ClosableRigidLine;
@@ -52,7 +48,11 @@ namespace MBSimHydraulics {
       } 
       void setMinimalRelativeAlpha(double minRelAlpha_);
       void setOffset(double off) {offset=off; }
-      void setRelativePositionSignal(MBSimControl::Signal * s) {position = s; }
+      void setRelativePositionFunction(MBSim::Function<double(double)> * s) {
+        position = boost::shared_ptr<MBSim::Function<double(double)> >(s); 
+        position->setParent(this);
+        position->setName("Position");
+      }
       void setSetValued(bool setValued=true);
       void setPInflow(HLine * hl);
       void setAOutflow(HLine * hl);
@@ -64,12 +64,10 @@ namespace MBSimHydraulics {
       ClosableRigidLine * lPA, * lPB, * lAT, * lBT;
       RigidNode * nP, * nA, * nB, * nT;
       double offset;
-      boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
-      MBSimControl::Signal * position;
-      MBSimControl::Signal * checkSizeSignalPA, * checkSizeSignalPB, * checkSizeSignalAT, * checkSizeSignalBT;
+      boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA, position;
+      MBSim::Function<double(double)> * checkSizeFunctionPA, * checkSizeFunctionPB, * checkSizeFunctionAT, * checkSizeFunctionBT;
     
     private:
-      std::string positionString;
       std::string nPInflowString, nAOutflowString, nBOutflowString, nTOutflowString;
       bool pRACC;
   };

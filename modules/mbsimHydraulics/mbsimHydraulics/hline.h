@@ -71,7 +71,7 @@ namespace MBSimHydraulics {
 
       virtual Element* getDependency() const { return 0; }
 
-      void resetUpToDate() { updQ = true; }
+      void resetUpToDate() { MBSim::Object::resetUpToDate(); updQ = true; }
 
     protected:
       HNode * nFrom;

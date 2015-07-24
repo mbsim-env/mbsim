@@ -37,37 +37,27 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  class ControlvalveAreaSignal : public Signal {
+  class ControlvalveAreaFunction : public MBSim::Function<double(double)> {
     public:
-      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
+      ControlvalveAreaFunction(const string& name, double factor_, double offset_, boost::shared_ptr<MBSim::Function<double(double)> > position_, boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
+        setName(name);
       }
 
-      void init(InitStage stage) {
-        if(stage==resize) {
-          Signal::init(stage);
-          s.resize(1);
-        }
-        else
-          Signal::init(stage);
-      }
-
-      int getSignalSize() const { return 1; }
-
-      void updateh(double t, int j) {
-        double x=factor*position->getSignal()(0)+offset;
+      double operator()(const double& t) {
+        double x=factor*(*position)(t)+offset;
         x=(x>1.)?1.:x;
         x=(x<0.)?0.:x;
-        s(0)=(*relAlphaPA)(x);
+        return (*relAlphaPA)(x);
       }
     private:
       double factor, offset;
-      Signal * position;
+      boost::shared_ptr<MBSim::Function<double(double)> > position;
       boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
   };
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Controlvalve43, MBSIMHYDRAULICS%"Controlvalve43")
 
-  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString(""), pRACC(false) {
+  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), checkSizeFunctionPA(NULL), checkSizeFunctionPB(NULL), checkSizeFunctionAT(NULL), checkSizeFunctionBT(NULL), pRACC(false) {
     addObject(lPA);
     lPA->setDirection(Vec(3, INIT, 0));
     lPA->setFrameOfReference(getFrame("I"));
@@ -146,8 +136,7 @@ namespace MBSimHydraulics {
 
   void Controlvalve43::init(InitStage stage) {
     if (stage==resolveXMLPath) {
-      if (positionString!="")
-        setRelativePositionSignal(getByPath<Signal>(positionString));
+
       if (nPInflowString!="")
         setPInflow(getByPath<HLine>(nPInflowString));
       if (nAOutflowString!="")
@@ -157,30 +146,26 @@ namespace MBSimHydraulics {
       if (nTOutflowString!="")
         setTOutflow(getByPath<HLine>(nTOutflowString));
 
-      checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAlphaPA", 1., 0., position, relAlphaPA);
-      addLink(checkSizeSignalPA);
-      checkSizeSignalPB = new ControlvalveAreaSignal("RelativeAlphaPB", -1., 1., position, relAlphaPA);
-      addLink(checkSizeSignalPB);
-      checkSizeSignalAT = new ControlvalveAreaSignal("RelativeAlphaAT", -1., 1.+offset, position, relAlphaPA);
-      addLink(checkSizeSignalAT);
-      checkSizeSignalBT = new ControlvalveAreaSignal("RelativeAlphaBT", 1., offset, position, relAlphaPA);
-      addLink(checkSizeSignalBT);
+      checkSizeFunctionPA = new ControlvalveAreaFunction("RelativeAlphaPA", 1., 0., position, relAlphaPA);
+      checkSizeFunctionPB = new ControlvalveAreaFunction("RelativeAlphaPB", -1., 1., position, relAlphaPA);
+      checkSizeFunctionAT = new ControlvalveAreaFunction("RelativeAlphaAT", -1., 1.+offset, position, relAlphaPA);
+      checkSizeFunctionBT = new ControlvalveAreaFunction("RelativeAlphaBT", 1., offset, position, relAlphaPA);
 
-      lPA->setSignal(checkSizeSignalPA);
-      lPB->setSignal(checkSizeSignalPB);
-      lAT->setSignal(checkSizeSignalAT);
-      lBT->setSignal(checkSizeSignalBT);
+      lPA->setFunction(checkSizeFunctionPA);
+      lPB->setFunction(checkSizeFunctionPB);
+      lAT->setFunction(checkSizeFunctionAT);
+      lBT->setFunction(checkSizeFunctionBT);
 
       Group::init(stage);
 
       if (pRACC) {
         fstream o;
         o.open(name.c_str(), ios::out);
-        o << "#1: SignalValue" << endl;
-        o << "#2: " << checkSizeSignalPA->getName() << endl;
-        o << "#3: " << checkSizeSignalAT->getName() << endl;
-        o << "#4: " << checkSizeSignalBT->getName() << endl;
-        o << "#5: " << checkSizeSignalPB->getName() << endl;
+        o << "#1: FunctionValue" << endl;
+        o << "#2: " << checkSizeFunctionPA->getName() << endl;
+        o << "#3: " << checkSizeFunctionAT->getName() << endl;
+        o << "#4: " << checkSizeFunctionBT->getName() << endl;
+        o << "#5: " << checkSizeFunctionPB->getName() << endl;
         for (double x=0; x<=1; x+=.01) {
           o << x;
           double xPA=+1.*x+0.;
@@ -203,6 +188,11 @@ namespace MBSimHydraulics {
     else
       Group::init(stage);
     relAlphaPA->init(stage);
+    position->init(stage);
+    checkSizeFunctionPA->init(stage);
+    checkSizeFunctionPB->init(stage);
+    checkSizeFunctionAT->init(stage);
+    checkSizeFunctionBT->init(stage);
   }
 
   void Controlvalve43::initializeUsingXML(DOMElement * element) {
@@ -222,8 +212,7 @@ namespace MBSimHydraulics {
       aT=getDouble(e);
     setAlpha(a, aT);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativeAlphaPA");
-    MBSim::Function<double(double)> * relAlphaPA_=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()); 
-    setPARelativeAlphaFunction(relAlphaPA_);
+    setPARelativeAlphaFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalRelativeAlpha");
     setMinimalRelativeAlpha(getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bilateralConstrained");
@@ -232,7 +221,7 @@ namespace MBSimHydraulics {
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"offset");
     setOffset(getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePosition");
-    positionString=E(e)->getAttribute("ref");
+    setRelativePositionFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowP");
     nPInflowString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowA");

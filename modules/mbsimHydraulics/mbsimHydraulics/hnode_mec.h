@@ -97,7 +97,7 @@ namespace MBSimHydraulics {
 
       void plot(double t, double dt);
 
-      void resetUpToDate() { updQMec = true; }
+      void resetUpToDate() { HNode::resetUpToDate(); updQMec = true; }
 
     protected:
       std::vector<connectedTransFrameStruct> connectedTransFrames;

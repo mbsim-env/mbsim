@@ -36,12 +36,12 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  void PressureLoss:init(InitStage stage) {
-   if(stage==preInit) {
-      Function<double(double)>::init(stage);
-      if(t==-1) throw;
-    }
-  }
+//  void PressureLoss::init(InitStage stage) {
+//   if(stage==preInit) {
+//      Function<double(double)>::init(stage);
+//      if(t<0) throw;
+//    }
+//  }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SerialResistanceLinePressureLoss,  MBSIMHYDRAULICS%"SerialResistanceLinePressureLoss")
 
@@ -287,6 +287,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeAreaZetaClosablePressureLoss,  MBSIMHYDRAULICS%"RelativeAreaZetaClosablePressureLoss")
 
   double RelativeAreaZetaClosablePressureLoss::operator()(const double& Q) {
+    if(t<0) throw;
     if (!initialized) {
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       double d=((const RigidLine*)(line))->getDiameter();
@@ -318,6 +319,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GapHeightClosablePressureLoss,  MBSIMHYDRAULICS%"GapHeightClosablePressureLoss")
 
   double GapHeightClosablePressureLoss::operator()(const double& Q) {
+    if(t<0) throw;
     if (!initialized) {
       double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
       c=12.*eta*l/b;
@@ -336,6 +338,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ReynoldsClosablePressureLoss,  MBSIMHYDRAULICS%"ReynoldsClosablePressureLoss")
 
   double ReynoldsClosablePressureLoss::operator()(const double& Q) {
+    if(t<0) throw;
     if (!initialized) {
       nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
@@ -369,6 +372,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeAlphaClosablePressureLoss,  MBSIMHYDRAULICS%"RelativeAlphaClosablePressureLoss")
 
   double RelativeAlphaClosablePressureLoss::operator()(const double& Q) {
+    if(t<0) throw;
     if (!initialized) {
       double d=((const RigidLine*)(line))->getDiameter();
       double area=M_PI*d*d/4.;
@@ -399,6 +403,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GammaCheckvalveClosablePressureLoss,  MBSIMHYDRAULICS%"GammaCheckvalveClosablePressureLoss")
 
   double GammaCheckvalveClosablePressureLoss::operator()(const double& Q) {
+    if(t<0) throw;
     if (!initialized) {
       siga=sin(gamma);
       coga=cos(gamma);
@@ -423,6 +428,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(IdelchickCheckvalveClosablePressureLoss,  MBSIMHYDRAULICS%"IdelchickCheckvalveClosablePressureLoss")
 
   double IdelchickCheckvalveClosablePressureLoss::operator()(const double& Q) {
+    if(t<0) throw;
     if (!initialized) {
       double d=((const RigidLine*)(line))->getDiameter();
       double area=M_PI*d*d*.25;
@@ -441,6 +447,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConeCheckvalveClosablePressureLoss,  MBSIMHYDRAULICS%"ConeCheckvalveClosablePressureLoss")
 
   double ConeCheckvalveClosablePressureLoss::operator()(const double& Q) {
+    if(t<0) throw;
     if (!initialized) {
       double d=((const RigidLine*)(line))->getDiameter();
       double rOpen=d/2.;
@@ -470,6 +477,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneLeakagePressureLoss,  MBSIMHYDRAULICS%"PlaneLeakagePressureLoss")
 
   double PlaneLeakagePressureLoss::operator()(const double& pVorQ) {
+    if(t<0) throw;
     if (!initialized) {
       if (((HLine*)(line))->getJacobian().rows())
         stateless=false;
@@ -491,16 +499,16 @@ namespace MBSimHydraulics {
     }
     if (stateless) {
       const double dp=pVorQ;
-      const double gl=((const PlaneLeakage0DOF*)(line))->getGapLength();
-      const double s1v=((const PlaneLeakage0DOF*)(line))->getSurface1Velocity();
-      const double s2v=((const PlaneLeakage0DOF*)(line))->getSurface2Velocity();
+      const double gl=((const PlaneLeakage0DOF*)(line))->getGapLength(t);
+      const double s1v=((const PlaneLeakage0DOF*)(line))->getSurface1Velocity(t);
+      const double s2v=((const PlaneLeakage0DOF*)(line))->getSurface2Velocity(t);
       return xdfac*(s1v+s2v) + pVfac/gl*dp;
     }
     else {
       const double Q=pVorQ;
-      const double gl=((const PlaneLeakageLine*)(line))->getGapLength();
-      const double s1v=((const PlaneLeakageLine*)(line))->getSurface1Velocity();
-      const double s2v=((const PlaneLeakageLine*)(line))->getSurface2Velocity();
+      const double gl=((const PlaneLeakageLine*)(line))->getGapLength(t);
+      const double s1v=((const PlaneLeakageLine*)(line))->getSurface1Velocity(t);
+      const double s2v=((const PlaneLeakageLine*)(line))->getSurface2Velocity(t);
       return -(Q-xdfac*(s1v+s2v))*gl/pVfac;
     }
   }
@@ -508,6 +516,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EccentricCircularLeakagePressureLoss,  MBSIMHYDRAULICS%"EccentricCircularLeakagePressureLoss")
 
   double EccentricCircularLeakagePressureLoss::operator()(const double& pVorQ) {
+    if(t<0) throw;
     if (!initialized) {
       if (((HLine*)(line))->getJacobian().rows())
         stateless=false;
@@ -533,16 +542,16 @@ namespace MBSimHydraulics {
     }
     if (stateless) {
       const double dp=pVorQ;
-      const double gl=((const CircularLeakage0DOF*)(line))->getGapLength();
-      const double s1v=((const CircularLeakage0DOF*)(line))->getSurface1Velocity();
-      const double s2v=((const CircularLeakage0DOF*)(line))->getSurface2Velocity();
+      const double gl=((const CircularLeakage0DOF*)(line))->getGapLength(t);
+      const double s1v=((const CircularLeakage0DOF*)(line))->getSurface1Velocity(t);
+      const double s2v=((const CircularLeakage0DOF*)(line))->getSurface2Velocity(t);
       return xdfac*(s1v+s2v) + pVfac/gl*dp;
     }
     else {
       const double Q=pVorQ;
-      const double gl=((const CircularLeakageLine*)(line))->getGapLength();
-      const double s1v=((const CircularLeakageLine*)(line))->getSurface1Velocity();
-      const double s2v=((const CircularLeakageLine*)(line))->getSurface2Velocity();
+      const double gl=((const CircularLeakageLine*)(line))->getGapLength(t);
+      const double s1v=((const CircularLeakageLine*)(line))->getSurface1Velocity(t);
+      const double s2v=((const CircularLeakageLine*)(line))->getSurface2Velocity(t);
       return - (Q-xdfac*(s1v+s2v))*gl/pVfac;
     }
   }
@@ -557,6 +566,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RealCircularLeakagePressureLoss,  MBSIMHYDRAULICS%"RealCircularLeakagePressureLoss")
 
   double RealCircularLeakagePressureLoss::operator()(const double& pVorQ) {
+    if(t<0) throw;
     if (!initialized) {
       if (((HLine*)(line))->getJacobian().rows())
         stateless=false;
@@ -579,16 +589,16 @@ namespace MBSimHydraulics {
     // vgl. Spurk Stroemungslehre S.162, (6.65)
     if (stateless) {
       const double dp=pVorQ;
-      const double gl=((const CircularLeakage0DOF*)(line))->getGapLength();
-      const double vI=((const CircularLeakage0DOF*)(line))->getSurface1Velocity();
-      const double vO=((const CircularLeakage0DOF*)(line))->getSurface2Velocity();
+      const double gl=((const CircularLeakage0DOF*)(line))->getGapLength(t);
+      const double vI=((const CircularLeakage0DOF*)(line))->getSurface1Velocity(t);
+      const double vO=((const CircularLeakage0DOF*)(line))->getSurface2Velocity(t);
       return vIfac*vI + vOfac*vO - pVfac/gl*dp;
     }
     else {
       const double Q=pVorQ;
-      const double gl=((const CircularLeakageLine*)(line))->getGapLength();
-      const double vI=((const CircularLeakageLine*)(line))->getSurface1Velocity();
-      const double vO=((const CircularLeakageLine*)(line))->getSurface2Velocity();
+      const double gl=((const CircularLeakageLine*)(line))->getGapLength(t);
+      const double vI=((const CircularLeakageLine*)(line))->getSurface1Velocity(t);
+      const double vO=((const CircularLeakageLine*)(line))->getSurface2Velocity(t);
       return (Q-vOfac*vO-vIfac*vI)*gl/pVfac;
     }
   }

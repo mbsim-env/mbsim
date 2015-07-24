@@ -65,7 +65,7 @@ namespace MBSimHydraulics {
       void setClosablePressureLoss(ClosablePressureLoss * cpL_);
       ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
       void setFunction(MBSim::Function<double(double)> * s) {cpLFunction = s; }
-      MBSim::Function<double(double)> * geFunction() const {return cpLFunction; }
+      MBSim::Function<double(double)> * getFunction() const {return cpLFunction; }
       void setMinimalValue(double v) {cpLMinValue=v; }
       double getMinimalValue() const {return cpLMinValue; }
       void setBilateral(bool b=true) {cpLBilateral=b; }

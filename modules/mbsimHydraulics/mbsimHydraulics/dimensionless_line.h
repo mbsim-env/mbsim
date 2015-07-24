@@ -54,16 +54,16 @@ namespace MBSimHydraulics {
 
   class Leakage0DOF : public DimensionlessLine {
     public:
-      Leakage0DOF(const std::string &name) : DimensionlessLine(name), lpl(NULL), s1vSignal(NULL), s2vSignal(NULL), glSignal(NULL), s1vPath(""), s2vPath(""), glPath("") {}
+      Leakage0DOF(const std::string &name) : DimensionlessLine(name), lpl(NULL), s1vFunction(NULL), s2vFunction(NULL), glFunction(NULL) {}
       ~Leakage0DOF();
       virtual std::string getType() const { return "Leakage0DOF"; }
 
-      void setGapLengthSignal(MBSimControl::Signal * s) {glSignal=s; }
-      double getGapLength() const;
-      void setSurface1VelocitySignal(MBSimControl::Signal * s) {s1vSignal=s; }
-      double getSurface1Velocity() const;
-      void setSurface2VelocitySignal(MBSimControl::Signal * s) {s2vSignal=s; }
-      double getSurface2Velocity() const;
+      void setGapLengthFunction(MBSim::Function<double(double)> * s) {glFunction=s; }
+      double getGapLength(double t) const;
+      void setSurface1VelocityFunction(MBSim::Function<double(double)> * s) {s1vFunction=s; }
+      double getSurface1Velocity(double t) const;
+      void setSurface2VelocityFunction(MBSim::Function<double(double)> * s) {s2vFunction=s; }
+      double getSurface2Velocity(double t) const;
 
       void init(InitStage stage);
 
@@ -73,8 +73,7 @@ namespace MBSimHydraulics {
     protected:
       LeakagePressureLoss * lpl;
     private:
-      MBSimControl::Signal *s1vSignal, *s2vSignal, *glSignal;
-      std::string s1vPath, s2vPath, glPath;
+      MBSim::Function<double(double)> *s1vFunction, *s2vFunction, *glFunction;
   };
 
   class PlaneLeakage0DOF : public Leakage0DOF {

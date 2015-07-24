@@ -32,6 +32,7 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimControl/object_sensors.h"
+#include "mbsimControl/signal_function.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/boost_parameters.h"
@@ -57,20 +58,20 @@ namespace MBSimHydraulics {
   class colorLink : public Link {
     public:
       colorLink(const std::string &name, const shared_ptr<OpenMBV::DynamicColoredBody> &body_, ClosableRigidLine * l_) : Link(name), body(body_), l(l_) {}
-      void updateWRef(const fmatvec::Mat&, int){}
-      void updateVRef(const fmatvec::Mat&, int){}
-      void updatehRef(const fmatvec::Vec&, int){}
-      void updatedhdqRef(const fmatvec::Mat&, int){}
-      void updatedhduRef(const fmatvec::SqrMat&, int){}
-      void updatedhdtRef(const fmatvec::Vec&, int){}
-      void updaterRef(const fmatvec::Vec&, int) {}
-      bool isActive() const {return false; }
-      bool gActiveChanged() {return false; }
+      void updateWRef(const fmatvec::Mat&, int) { }
+      void updateVRef(const fmatvec::Mat&, int) { }
+      void updatehRef(const fmatvec::Vec&, int) { }
+      void updatedhdqRef(const fmatvec::Mat&, int) { }
+      void updatedhduRef(const fmatvec::SqrMat&, int) { }
+      void updatedhdtRef(const fmatvec::Vec&, int) { }
+      void updaterRef(const fmatvec::Vec&, int) { }
+      bool isActive() const { return false; }
+      bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
-      void init(InitStage stage) {}
-      void updateg(double t) {}
-      void updategd(double t) {body->setDynamicColor((l->isClosed())?.9:.1); }
-      void plot(double t, double dt) {}
+      void init(InitStage stage) { }
+      void updateg(double t)  { }
+      void updategd(double t) { }
+      void plot(double t, double dt) { Link::plot(t); body->setDynamicColor((l->isClosed(t))?.9:.1); }
     private:
       shared_ptr<OpenMBV::DynamicColoredBody> body;
       ClosableRigidLine * l;
@@ -92,7 +93,7 @@ namespace MBSimHydraulics {
                                                  addLink(spring);
                                                  addLink(xOpen);
 
-                                                 line->setSignal(xOpen);
+                                                 line->setFunction(new SignalFunction<double(double)>(xOpen));
                                                }
 
   void Checkvalve::setFrameOfReference(Frame * ref) {ballSeat->setFrameOfReference(ref); }

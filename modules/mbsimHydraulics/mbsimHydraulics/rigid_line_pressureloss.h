@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
       // Methods for update-Process
       // ================================
       void updateg(double t); /* zdotStandard */
-      void checkActive(int j); /* update */
+      void checkActive(double t, int j); /* update */
       //void checkActivegdn(); // event-driven
       bool gActiveChanged(); /* update */
       bool isActive() const {return active; }
@@ -76,6 +76,7 @@ namespace MBSimHydraulics {
       void calclaSize(int j) {laSize=active?1:0; }
       //void calclaSizeForActiveg() {laSize=0; } // event-driven
       void calcrFactorSize(int j) {rFactorSize=active?1:0; }
+      void updateGeneralizedSingleValuedForces(double t);
       void updategd(double t); /* zdotStandard */
       void updateStopVector(double t); // event-driven
       void updateh(double t, int j); /* zdotStandard */
@@ -86,18 +87,18 @@ namespace MBSimHydraulics {
       // ================================
       // Methods for solve-Process
       // ================================
-      void checkRoot();
-      void updaterFactors();
-      void solveImpactsFixpointSingle(double dt);
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel(double dt);
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding(double dt);
-      void solveConstraintsRootFinding();
-      void jacobianImpacts();
-      void jacobianConstraints();
-      void checkImpactsForTermination(double dt);
-      void checkConstraintsForTermination();
+      void checkRoot(double t);
+      void updaterFactors(double t);
+      void solveImpactsFixpointSingle(double t, double dt);
+      void solveConstraintsFixpointSingle(double t);
+      void solveImpactsGaussSeidel(double t, double dt);
+      void solveConstraintsGaussSeidel(double t);
+      void solveImpactsRootFinding(double t, double dt);
+      void solveConstraintsRootFinding(double t);
+      void jacobianImpacts(double t);
+      void jacobianConstraints(double t);
+      void checkImpactsForTermination(double t, double dt);
+      void checkConstraintsForTermination(double t);
       // ==== END Methods for solve-Process ===
 
 
@@ -107,7 +108,6 @@ namespace MBSimHydraulics {
       bool unilateral, bilateral;
       double gdn, gdd;
       double dpMin;
-      double laSmooth;
 
       LinePressureLoss * linePressureLoss;
       ClosablePressureLoss * closablePressureLoss;

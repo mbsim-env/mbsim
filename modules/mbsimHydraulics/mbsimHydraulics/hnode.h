@@ -97,7 +97,7 @@ namespace MBSimHydraulics {
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void resetUpToDate() { updQHyd = true; }
+      void resetUpToDate() { MBSim::Link::resetUpToDate(); updQHyd = true; }
 
     protected:
       std::vector<connectedLinesStruct> connectedLines;
@@ -166,7 +166,7 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updatexRef(const fmatvec::Vec &xParent);
+      void updateGeneralizedSingleValuedForces(double t);
 
       void updatexd(double t);
       void updatedx(double t, double dt);
@@ -245,15 +245,17 @@ namespace MBSimHydraulics {
       void initializeUsingXML(xercesc::DOMElement *element);
       void plot(double t, double dt);
 
-      void checkActive(int j);
+      void checkActive(double t, int j);
       //void checkActivegdn();
       bool gActiveChanged();
 
-      void updateStopVector(double t);
+      void updateGeneralizedSingleValuedForces(double t);
+      void updateg(double t);
       void updateW(double t, int j=0);
       void updatexd(double t);
       void updatedx(double t, double dt);
-      void checkRoot();
+      void updateStopVector(double t);
+      void checkRoot(double t);
 
       void updaterFactors(double t);
       void solveImpactsFixpointSingle(double t, double dt);

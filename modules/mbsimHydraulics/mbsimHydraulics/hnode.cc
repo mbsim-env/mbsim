@@ -248,7 +248,7 @@ namespace MBSimHydraulics {
 
   void HNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(la(0)*1e-5/(isActive()?dt:1.));
+      plotVector.push_back(getGeneralizedForce(t)(0)*1e-5);
       if(getPlotFeature(debug)==enabled) {
         plotVector.push_back(getQHyd(t)*6e4);
         plotVector.push_back(QHyd*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
@@ -263,7 +263,7 @@ namespace MBSimHydraulics {
         data.push_back(0);
         data.push_back(0);
         data.push_back(0);
-        data.push_back(la(0)/(isSetValued()?dt:1.));
+        data.push_back(getGeneralizedForce(t)(0));
         openMBVSphere->append(data);
       }
 #endif
@@ -353,9 +353,9 @@ namespace MBSimHydraulics {
     fracAir=getDouble(e);
   }
 
-  void ElasticNode::updatexRef(const Vec &xParent) {
-    HNode::updatexRef(xParent);
-    la >> x;
+  void ElasticNode::updateGeneralizedSingleValuedForces(double t) {
+    laSV = x;
+    updlaSV = false;
   }
 
   void ElasticNode::updatexd(double t) {
@@ -402,7 +402,7 @@ namespace MBSimHydraulics {
   void RigidNode::updategd(double t) {
     HNode::updategd(t);
     if (t<epsroot()) {
-      if (fabs(getQHyd(t))>epsroot())
+      if (fabs(QHyd)>epsroot())
         msg(Warn) << "RigidNode \"" << getPath() << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
     }
   }
@@ -630,7 +630,7 @@ namespace MBSimHydraulics {
     setCavitationPressure(getDouble(e));
   }
 
-  void RigidCavitationNode::checkActive(int j) {
+  void RigidCavitationNode::checkActive(double t, int j) {
     if(j==1) 
       active=(x(0)<=0);
     else if(j==3) {
@@ -653,8 +653,13 @@ namespace MBSimHydraulics {
     return changed;
   }
 
-  void RigidCavitationNode::updateStopVector(double t) {
-    sv(0) = isActive() ? (getGeneralizedForce(t)(0)-pCav)*1e-5 : -x(0)*6e4;
+  void RigidCavitationNode::updateGeneralizedSingleValuedForces(double t) {
+    laSV(0) = pCav;
+    updlaSV = false;
+  }
+
+  void RigidCavitationNode::updateg(double t) {
+    g(0)=x(0);
   }
 
   void RigidCavitationNode::updateW(double t, int j) {
@@ -672,7 +677,11 @@ namespace MBSimHydraulics {
     xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0)*dt : -getQHyd(t)*dt;
   }
 
-  void RigidCavitationNode::checkRoot() {
+  void RigidCavitationNode::updateStopVector(double t) {
+    sv(0) = isActive() ? (getGeneralizedForce(t)(0)-pCav)*1e-5 : -x(0)*6e4;
+  }
+
+  void RigidCavitationNode::checkRoot(double t) {
     if(jsv(0)) {
       if(active) {
         active = false;
@@ -684,7 +693,6 @@ namespace MBSimHydraulics {
       }
     }
   }
-
 
   void RigidCavitationNode::updaterFactors(double t) {
     const double *a = ds->getGs(t)();
