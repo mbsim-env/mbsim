@@ -123,6 +123,7 @@ namespace MBSimHydraulics {
       gd.resize(1);
       la.resize(1);
       laSV.resize(1);
+      laMV.resize(1);
       nLines=connectedLines.size();
       for (unsigned int i=0; i<nLines; i++) {
         connectedLines[i].sign = 
