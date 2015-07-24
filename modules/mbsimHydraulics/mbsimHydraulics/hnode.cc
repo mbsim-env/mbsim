@@ -400,6 +400,11 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage);
  }
 
+  void RigidNode::updateGeneralizedSetValuedForces(double t) {
+    laMV = la;
+    updlaMV = false;
+  }
+
   void RigidNode::updategd(double t) {
     HNode::updategd(t);
     if (t<epsroot()) {

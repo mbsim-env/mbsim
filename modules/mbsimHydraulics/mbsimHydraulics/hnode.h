@@ -199,6 +199,8 @@ namespace MBSimHydraulics {
       //void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize(int j) {rFactorSize=1; }
 
+      void updateGeneralizedSetValuedForces(double t);
+
       void updategd(double t);
       void updateW(double t, int j=0);
 
