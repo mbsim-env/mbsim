@@ -1,0 +1,6 @@
+<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <import>from math import pi</import>
+  <scalarParameter name="freq1">pi</scalarParameter>
+  <scalarParameter name="freq2">pi/3</scalarParameter>
+  <scalarParameter name="v0y">1</scalarParameter>
+</Parameter>
