@@ -9,6 +9,7 @@ class Line : public Object {
   protected:
     fmatvec::Mat J;
     double flowrate;
+    bool updJ;
   public:
     Line(std::string name);
     void updateStateDependentVariables(double);
@@ -20,11 +21,12 @@ class Line : public Object {
     void calcqSize() { qSize=0; }
     void calcuSize(int j);
     void updateM(double, int k);
-    fmatvec::Mat getJ() { return J; }
-    void updateJacobians(double,int k);
+    fmatvec::Mat getJ(double t) { if(updJ) updateJacobians(t); return J; }
+    void updateJacobians(double t ,int k=0);
     double getFlowrate() { return flowrate; }
     void init(InitStage stage);
     void plot(double t, double dt=1);
+    void resetUpToDate() { Object::resetUpToDate(); updJ = true; }
 };
 
 }
