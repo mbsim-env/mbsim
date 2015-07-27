@@ -124,10 +124,14 @@ namespace MBSimHydraulics {
     updQ = false;
   }
 
-  void RigidHLine::updateh(double t, int j) {
+  void RigidHLine::updatePressureLossGravity(double t) {
     if (frameOfReference)
       pressureLossGravity=-trans(frameOfReference->getOrientation(t)*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*HydraulicEnvironment::getInstance()->getSpecificMass()*length;
-    h[j]-=trans(Jacobian.row(0))*pressureLossGravity;
+    updPLG = false;
+  }
+
+  void RigidHLine::updateh(double t, int j) {
+    h[j]-=trans(Jacobian.row(0))*getPressureLossGravity(t);
   }
       
   void RigidHLine::updateM(double t, int j) {
@@ -175,7 +179,7 @@ namespace MBSimHydraulics {
       plotVector.push_back(getQ(t)(0)*6e4);
       plotVector.push_back(getQ()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       if (frameOfReference)
-        plotVector.push_back(pressureLossGravity*1e-5);
+        plotVector.push_back(getPressureLossGravity(t)*1e-5);
       HLine::plot(t, dt);
     }
   }

@@ -59,9 +59,9 @@ namespace MBSimHydraulics {
     else
       RigidHLine::init(stage);
     lpl->init(stage);
-    s1vFunction->init(stage);
-    s2vFunction->init(stage);
-    glFunction->init(stage);
+    if(s1vFunction) s1vFunction->init(stage);
+    if(s2vFunction) s2vFunction->init(stage);
+    if(glFunction) glFunction->init(stage);
   }
 
   void LeakageLine::initializeUsingXML(DOMElement * element) {
@@ -105,6 +105,8 @@ namespace MBSimHydraulics {
 
   void CircularLeakageLine::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
     lpl=clpl;
+    lpl->setParent(this);
+    lpl->setName("lpl");
   }
 
   void CircularLeakageLine::init(InitStage stage) {
@@ -116,6 +118,7 @@ namespace MBSimHydraulics {
     }
     else
       LeakageLine::init(stage);
+    lpl->init(stage);
   }
 
   void CircularLeakageLine::initializeUsingXML(DOMElement * element) {

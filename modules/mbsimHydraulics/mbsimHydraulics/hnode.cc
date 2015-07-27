@@ -337,7 +337,7 @@ namespace MBSimHydraulics {
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
-      bulkModulus = new OilBulkModulus(name, E0, pinf, kappa, fracAir);
+      bulkModulus = new OilBulkModulus(path, E0, pinf, kappa, fracAir);
     }
     else
       HNode::init(stage);
@@ -724,7 +724,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -738,7 +738,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -752,7 +752,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -770,7 +770,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -786,7 +786,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -800,7 +800,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -842,7 +842,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -857,7 +857,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)

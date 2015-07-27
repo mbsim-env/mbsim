@@ -90,7 +90,7 @@ namespace MBSimHydraulics {
   /*! RigidHLine */
   class RigidHLine : public HLine {
     public:
-      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0) { }
+      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0), updPLG(true) { }
       virtual std::string getType() const { return "RigidHLine"; }
       
       void setLength(double length_) {length=length_; }
@@ -102,6 +102,9 @@ namespace MBSimHydraulics {
       void calcuSize(int j=0) {uSize[j]=(dependency.size()?0:1); }
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
+      void updatePressureLossGravity(double t);
+      double getPressureLossGravity(double t) { if(updPLG) updatePressureLossGravity(t); return pressureLossGravity; }
+
       void updateQ(double t);
       void updateh(double t, int j=0);
       void updateM(double t, int j=0);
@@ -110,11 +113,14 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void plot(double t, double dt);
       
+      void resetUpToDate() { HLine::resetUpToDate(); updPLG = true; }
+
     protected:
       double pressureLossGravity;
       double length;
       std::vector<RigidHLine*> dependencyOnOutflow, dependencyOnInflow;
       std::vector<std::string> refDependencyOnOutflowString, refDependencyOnInflowString;
+      bool updPLG;
   };
 
   /*! ConstrainedLine */

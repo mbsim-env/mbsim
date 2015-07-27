@@ -22,10 +22,6 @@
 
 #include "mbsimHydraulics/hline.h"
 
-namespace MBSimControl {
-  class Signal;
-}
-
 namespace MBSimHydraulics {
 
   class LinePressureLoss;
@@ -64,7 +60,11 @@ namespace MBSimHydraulics {
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_);
       ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
-      void setFunction(MBSim::Function<double(double)> * s) {cpLFunction = s; }
+      void setFunction(MBSim::Function<double(double)> * s) {
+        cpLFunction = s;
+        cpLFunction->setParent(this);
+        cpLFunction->setName("cpLFunction");
+      }
       MBSim::Function<double(double)> * getFunction() const {return cpLFunction; }
       void setMinimalValue(double v) {cpLMinValue=v; }
       double getMinimalValue() const {return cpLMinValue; }

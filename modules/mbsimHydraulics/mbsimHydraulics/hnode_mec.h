@@ -170,7 +170,7 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updatexRef(const fmatvec::Vec &xParent);
+      void updateGeneralizedSingleValuedForces(double t);
 
       void updatexd(double t);
       void updatedx(double t, double dt);

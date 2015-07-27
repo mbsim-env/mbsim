@@ -36,11 +36,23 @@ namespace MBSimHydraulics {
       ~LeakageLine();
       virtual std::string getType() const { return "LeakageLine"; }
 
-      void setGapLengthFunction(MBSim::Function<double(double)> * s) {glFunction=s; }
+      void setGapLengthFunction(MBSim::Function<double(double)> * s) {
+        glFunction=s;
+        glFunction->setParent(this);
+        glFunction->setName("glFunction");
+      }
       double getGapLength(double t) const;
-      void setSurface1VelocityFunction(MBSim::Function<double(double)> * s) {s1vFunction=s; }
+      void setSurface1VelocityFunction(MBSim::Function<double(double)> * s) {
+        s1vFunction=s;
+        s1vFunction->setParent(this);
+        s1vFunction->setName("s1vFunction");
+      }
       double getSurface1Velocity(double t) const;
-      void setSurface2VelocityFunction(MBSim::Function<double(double)> * s) {s2vFunction=s; }
+      void setSurface2VelocityFunction(MBSim::Function<double(double)> * s) {
+        s2vFunction=s;
+        s2vFunction->setParent(this);
+        s2vFunction->setName("s2vFunction");
+      }
       double getSurface2Velocity(double t) const;
 
       void init(InitStage stage);

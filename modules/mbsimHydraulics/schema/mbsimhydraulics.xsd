@@ -812,7 +812,7 @@
         Modell eines ebenen Leckagespaltes.
         Der Druckverlust berechnet sich zu
         <object class="eqn">p_V = \frac{12 \, \eta \, |l|}{b \, h^3} \left[ Q + \frac{h \, b}{2} \, \left(v_1 + v_2\right) \right]</object>
-        Die Länge des Leckagespaltes wird dabei entweder konstant gehalten oder an die Länge des gapLength-Signals angepasst. Die Geschwindigkeiten v1 und v2 entsprechen den Geschwindigkeiten der beiden anderen Signaleingänge. Dieser Summand wird nur berücksichtigt, falls die Signaleingänge gesetzt sind.
+        Die Länge des Leckagespaltes wird dabei entweder konstant gehalten oder an die Länge des gapLength-Funktion angepasst. Die Geschwindigkeiten v1 und v2 entsprechen den Geschwindigkeiten der beiden anderen Funktionseingänge. Dieser Summand wird nur berücksichtigt, falls die Funktionskeingänge gesetzt sind.
         Als Geschwindigkeit muss die Geschwindigkeit der Grenzflächen in Richtung der Länge l angegeben werden.
       </xs:documentation>
     </xs:annotation>
@@ -1068,9 +1068,11 @@
     <xs:complexContent>
       <xs:extension base="HLineType">
         <xs:sequence>
-          <xs:element name="volumeflowSignal">
+          <xs:element name="volumeflowFunction">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1089,25 +1091,31 @@
     <xs:complexContent>
       <xs:extension base="HLineType">
         <xs:sequence>
-          <xs:element name="inflowPressureSignal">
+          <xs:element name="inflowPressureFunction">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="outflowPressureSignal">
+          <xs:element name="outflowPressureFunction">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="openingSignal">
+          <xs:element name="openingFunction">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="diameter" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                d=dF*dSignal
+                d=dF*dFunction
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1136,7 +1144,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Hydraulische Leitung mit veränderbarem Druckverlust.
-        Die Größe des Druckverlustes wird über das Kontroll-Signal festgelegt, wobei ein minimaler Wert für eine Regularisierung anzugeben ist.
+        Die Größe des Druckverlustes wird über die Kontrollfunktion festgelegt, wobei ein minimaler Wert für eine Regularisierung anzugeben ist.
         Bei der Verwendung eines Time-Stepping-Algorithmuses kann zudem festgelegt werden, dass keine Regularisierung erfolgt, sondern dass bei der Unterschreitung des eingestellten Grenzwertes eine Sperrung des Durchflusses erfolgt.
       </xs:documentation>
     </xs:annotation>
@@ -1149,14 +1157,16 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="ClosablePressureLoss"/>
-                <xs:element name="checksizeSignal">
+                <xs:element name="checksizeFunction">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
                       Stellgröße zur Bestimmung der Eigenschaften der zugeordneten Druckverlustberechnung.
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
-                    <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+                    <xs:sequence>
+                      <xs:element ref="mbsim:Function"/>
+                    </xs:sequence>
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="minimalChecksizeValue" type="pv:nounitScalar">
@@ -1237,7 +1247,9 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="secondSurfaceVelocity" minOccurs="0">
@@ -1247,7 +1259,9 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="gapLength" minOccurs="0">
@@ -1257,7 +1271,9 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1380,7 +1396,9 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="secondSurfaceVelocity" minOccurs="0">
@@ -1390,7 +1408,9 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="gapLength" minOccurs="0">
@@ -1400,7 +1420,9 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1753,9 +1775,11 @@
     <xs:complexContent>
       <xs:extension base="HNodeType">
         <xs:sequence>
-          <xs:element name="pressureSignal">
+          <xs:element name="pressureFunction">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2076,11 +2100,13 @@
           <xs:element name="relativePosition">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Signal zur Steuerung der relativen Ventilöffnungsfläche
+                Funktion zur Steuerung der relativen Ventilöffnungsfläche
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="inflowP">

@@ -112,6 +112,7 @@ namespace MBSimHydraulics {
         r[0].push_back(Vec(j));
         r[1].push_back(Vec(j));
         sv.resize(1);
+        laMV.resize(1);
       }
     }
     else if (stage==plotting) {
@@ -172,6 +173,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updateg(double t) {
+    throw;
     if (unilateral) gd=line->getQ(t);
   }
 
@@ -199,7 +201,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updategd(double t) {
-    if (!unilateral) gd=line->getQ(t);
+    if (!unilateral and isActive()) gd=line->getQ(t);
   }
 
   void RigidLinePressureLoss::updateStopVector(double t) {
@@ -210,16 +212,31 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updateGeneralizedSingleValuedForces(double t) {
-    if (linePressureLoss)
+    if (linePressureLoss) {
+      linePressureLoss->setTime(t);
       laSV(0)=(*linePressureLoss)(line->getQ(t)(0));
-    else if (closablePressureLoss)
+    }
+    else if (closablePressureLoss) {
+      closablePressureLoss->setTime(t);
       laSV(0)=(*closablePressureLoss)(line->getQ(t)(0));
-    else if (leakagePressureLoss)
+    }
+    else if (leakagePressureLoss) {
+      leakagePressureLoss->setTime(t);
       laSV(0)=(*leakagePressureLoss)(line->getQ(t)(0));
+    }
     else if (unilateral || unidirectionalPressureLoss) {
+      unidirectionalPressureLoss->setTime(t);
       laSV(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(line->getQ(t)(0)));
     }
     updlaSV = false;
+  }
+
+  void RigidLinePressureLoss::updateGeneralizedSetValuedForces(double t) {
+    if(isActive())
+      laMV = la;
+    else
+      laMV = getGeneralizedSingleValuedForce(t);
+    updlaMV = false;
   }
 
   void RigidLinePressureLoss::updateh(double t, int j) {
@@ -272,7 +289,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -286,7 +303,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -300,7 +317,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -316,7 +333,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -332,7 +349,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -346,7 +363,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -388,7 +405,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -403,7 +420,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb();
+    const Vec &b = ds->getb(false);
     
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
