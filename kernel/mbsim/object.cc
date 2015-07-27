@@ -137,9 +137,9 @@ namespace MBSim {
       }
       if (getPlotFeature(rightHandSide) == enabled) {
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(h[0](i));
+          plotVector.push_back(geth(t)(i));
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(r[0](i) / dt);
+          plotVector.push_back(getr(t)(i));
       }
       if (getPlotFeature(energy) == enabled) {
         double Ttemp = computeKineticEnergy();
