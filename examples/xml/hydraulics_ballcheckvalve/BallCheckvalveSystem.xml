@@ -158,8 +158,16 @@
       <direction>[0;1;0]</direction>
       -->
       <length>gapLength</length>
-      <firstSurfaceVelocity ref="../Link[pistonSpeed]"/>
-      <secondSurfaceVelocity ref="../Link[housingSpeed]"/>
+      <firstSurfaceVelocity>
+        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+          <returnSignal ref="../../Link[pistonSpeed]"/>
+        </SignalFunction>
+      </firstSurfaceVelocity>
+      <secondSurfaceVelocity>
+        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+          <returnSignal ref="../../Link[housingSpeed]"/>
+        </SignalFunction>
+      </secondSurfaceVelocity>
       <innerRadius>pistonRadius</innerRadius>
       <height>gapDiameter</height>
       <circularLeakagePressureLoss>
