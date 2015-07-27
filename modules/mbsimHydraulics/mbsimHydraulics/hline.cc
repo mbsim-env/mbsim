@@ -67,7 +67,6 @@ namespace MBSimHydraulics {
       setDirection(getVec(e,3));
     }
   }
- 
 
   void RigidHLine::addInflowDependencyOnOutflow(RigidHLine * line) {
     setInflowRelative(true);
@@ -113,14 +112,15 @@ namespace MBSimHydraulics {
 
   void RigidHLine::updateQ(double t) {
     if(dependency.size()==0)
-      Q(0)=u(0);
+      QIn(0)=u(0);
     else {
-      Q.init(0);
+      QIn.init(0);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
-        Q+=(dependencyOnOutflow[i])->getQ(t);
+        QIn+=(dependencyOnOutflow[i])->getQIn(t);
       for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
-        Q-=(dependencyOnInflow[i])->getQ(t);
+        QIn-=(dependencyOnInflow[i])->getQIn(t);
     }
+    QOut = -QIn;
     updQ = false;
   }
 
@@ -176,8 +176,8 @@ namespace MBSimHydraulics {
   
   void RigidHLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(getQ(t)(0)*6e4);
-      plotVector.push_back(getQ()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+      plotVector.push_back(getQIn(t)(0)*6e4);
+      plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       if (frameOfReference)
         plotVector.push_back(getPressureLossGravity(t)*1e-5);
       HLine::plot(t, dt);
@@ -209,7 +209,8 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedLine,  MBSIMHYDRAULICS%"ConstrainedLine")
 
   void ConstrainedLine::updateQ(double t) {
-    Q(0)=(*QFunction)(t);
+    QIn(0)=(*QFunction)(t);
+    QOut = -QIn;
     updQ = false;
   }
 
@@ -235,7 +236,8 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FluidPump,  MBSIMHYDRAULICS%"FluidPump")
 
   void FluidPump::updateQ(double t) {
-    Q(0) = (*QFunction)(t);
+    QIn(0) = (*QFunction)(t);
+    QOut = -QIn;
     updQ = false;
   }
 
@@ -312,7 +314,7 @@ namespace MBSimHydraulics {
 
   void StatelessOrifice::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive)==enabled) {
-      double Q = getQ(t)(0);
+      double Q = getQIn(t)(0);
       plotVector.push_back(pIn*1e-5);
       plotVector.push_back(pOut*1e-5);
       plotVector.push_back(dp*1e-5);
@@ -358,7 +360,8 @@ namespace MBSimHydraulics {
       sqrt_dp=a2*dp*dp+a1*dp+a0;
     }
 
-    Q(0) = sign*area*alpha*sqrt_dp;
+    QIn(0) = sign*area*alpha*sqrt_dp;
+    QOut = -QIn;
     updQ = false;
   }
 

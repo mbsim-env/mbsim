@@ -34,7 +34,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlowSensor, MBSIMHYDRAULICS%"FlowSensor")
 
   void FlowSensor::updateSignal(double t) {
-    s = line->getQ(t); 
+    s = line->getQIn(t);
     upds = false;
   }
 

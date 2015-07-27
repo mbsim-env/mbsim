@@ -174,7 +174,7 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateg(double t) {
     throw;
-    if (unilateral) gd=line->getQ(t);
+    if (unilateral) gd=line->getQIn(t);
   }
 
   void RigidLinePressureLoss::checkActive(double t, int j) {
@@ -182,7 +182,7 @@ namespace MBSimHydraulics {
       if (bilateral)
         active=(((ClosableRigidLine*)line)->getFunction()->operator()(t)<((ClosableRigidLine*)line)->getMinimalValue());
       else if (unilateral)
-        active=(line->getQ(t)(0)<=(active?gdTol:0));
+        active=(line->getQIn(t)(0)<=(active?gdTol:0));
     }
     else if(j==3) {
       if (unilateral && active)
@@ -201,32 +201,32 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updategd(double t) {
-    if (!unilateral and isActive()) gd=line->getQ(t);
+    if (!unilateral and isActive()) gd=line->getQIn(t);
   }
 
   void RigidLinePressureLoss::updateStopVector(double t) {
     if (bilateral)
       sv(0)=((ClosableRigidLine*)(line))->getFunction()->operator()(t)-((ClosableRigidLine*)(line))->getMinimalValue();
     else if (unilateral)
-      sv(0)=isActive()?(getGeneralizedSetValuedForce(t)(0)-dpMin)*1e-5:-line->getQ(t)(0)*6e4;
+      sv(0)=isActive()?(getGeneralizedSetValuedForce(t)(0)-dpMin)*1e-5:-line->getQIn(t)(0)*6e4;
   }
 
   void RigidLinePressureLoss::updateGeneralizedSingleValuedForces(double t) {
     if (linePressureLoss) {
       linePressureLoss->setTime(t);
-      laSV(0)=(*linePressureLoss)(line->getQ(t)(0));
+      laSV(0)=(*linePressureLoss)(line->getQIn(t)(0));
     }
     else if (closablePressureLoss) {
       closablePressureLoss->setTime(t);
-      laSV(0)=(*closablePressureLoss)(line->getQ(t)(0));
+      laSV(0)=(*closablePressureLoss)(line->getQIn(t)(0));
     }
     else if (leakagePressureLoss) {
       leakagePressureLoss->setTime(t);
-      laSV(0)=(*leakagePressureLoss)(line->getQ(t)(0));
+      laSV(0)=(*leakagePressureLoss)(line->getQIn(t)(0));
     }
     else if (unilateral || unidirectionalPressureLoss) {
       unidirectionalPressureLoss->setTime(t);
-      laSV(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(line->getQ(t)(0)));
+      laSV(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(line->getQIn(t)(0)));
     }
     updlaSV = false;
   }

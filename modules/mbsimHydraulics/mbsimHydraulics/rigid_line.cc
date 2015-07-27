@@ -76,7 +76,7 @@ namespace MBSimHydraulics {
   
   void RigidLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(fabs(getQ(t)(0))*ReynoldsFactor);
+      plotVector.push_back(fabs(getQIn(t)(0))*ReynoldsFactor);
       RigidHLine::plot(t, dt);
     }
   }

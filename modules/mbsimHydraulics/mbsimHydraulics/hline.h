@@ -36,7 +36,7 @@ namespace MBSimHydraulics {
   /*! HLine */
   class HLine : public MBSim::Object {
     public:
-      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), Q(1), Jacobian(), frameOfReference(NULL), updQ(true), saved_frameOfReference("") { }
+      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), QIn(1), QOut(1), Jacobian(), frameOfReference(NULL), updQ(true), saved_frameOfReference("") { }
       virtual std::string getType() const { return "HLine"; }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -59,8 +59,10 @@ namespace MBSimHydraulics {
       fmatvec::VecV getInflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
       fmatvec::VecV getOutflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
 
-      const fmatvec::VecV& getQ(double t) { if(updQ) updateQ(t); return Q; }
-      const fmatvec::VecV& getQ(bool check=true) const { assert((not check) or (not updQ)); return Q; }
+      const fmatvec::VecV& getQIn(double t) { if(updQ) updateQ(t); return QIn; }
+      const fmatvec::VecV& getQOut(double t) { if(updQ) updateQ(t); return QOut; }
+      const fmatvec::VecV& getQIn(bool check=true) const { assert((not check) or (not updQ)); return QIn; }
+      const fmatvec::VecV& getQOut(bool check=true) const { assert((not check) or (not updQ)); return QOut; }
       const fmatvec::MatV& getJacobian() const { return Jacobian; }
 
       virtual void updateQ(double t) { }
@@ -79,7 +81,7 @@ namespace MBSimHydraulics {
       bool nFromRelative, nToRelative;
       fmatvec::VecV direction;
       fmatvec::SymMatV Mlocal;
-      fmatvec::VecV Q;
+      fmatvec::VecV QIn, QOut;
       fmatvec::MatV Jacobian;
       MBSim::Frame * frameOfReference;
       bool updQ;

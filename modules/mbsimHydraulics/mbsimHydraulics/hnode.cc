@@ -231,10 +231,13 @@ namespace MBSimHydraulics {
   void HNode::updateQHyd(double t) {
     QHyd=0;
     for (unsigned int i=0; i<nLines; i++)
-      QHyd-=((connectedLines[i].inflow) ? -connectedLines[i].line->getQ(t) : connectedLines[i].line->getQ(t))(0);
+      QHyd-=((connectedLines[i].inflow) ?
+          connectedLines[i].line->getQOut(t) :
+          connectedLines[i].line->getQIn(t))(0);
     for (unsigned int i=0; i<connected0DOFLines.size(); i++)
-      QHyd-=((connected0DOFLines[i].inflow) ? -connected0DOFLines[i].line->getQ(t) : connected0DOFLines[i].line->getQ(t))(0);
-    updQHyd = false;
+      QHyd-=((connected0DOFLines[i].inflow) ?
+          connected0DOFLines[i].line->getQOut(t) :
+          connected0DOFLines[i].line->getQIn(t))(0);
   }
 
   void HNode::updategd(double t) {
