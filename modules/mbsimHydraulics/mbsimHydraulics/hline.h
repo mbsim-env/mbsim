@@ -56,8 +56,8 @@ namespace MBSimHydraulics {
       HNode * getToNode() {return nTo; }
       void setOutflowRelative(bool rel=true) { nToRelative=rel; }
       void setInflowRelative(bool rel=true) { nFromRelative=rel; }
-      fmatvec::VecV getInflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
-      fmatvec::VecV getOutflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
+      virtual fmatvec::VecV getInflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
+      virtual fmatvec::VecV getOutflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
 
       const fmatvec::VecV& getQIn(double t) { if(updQ) updateQ(t); return QIn; }
       const fmatvec::VecV& getQOut(double t) { if(updQ) updateQ(t); return QOut; }

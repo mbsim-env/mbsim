@@ -36,7 +36,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticLineGalerkin,  MBSIMHYDRAULICS%"ElasticLineGalerkin")
 
-  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(NULL), plotVecW(), plotVecWS(), QIn(1), QOut(1), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints() {
+  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(NULL), plotVecW(), plotVecWS(), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints() {
   }
 
   void ElasticLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
@@ -70,7 +70,7 @@ namespace MBSimHydraulics {
       HLine::init(stage);
       Area=M_PI*d*d/4.;
       if (direction.size()>0)
-        g=trans(((DynamicSystem*)parent)->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
+        g=trans(((DynamicSystem*)parent)->getFrame("I")->getOrientation(false)*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
       else
         g=0;
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
@@ -145,11 +145,17 @@ namespace MBSimHydraulics {
     else if (stage==unknownStage) {
       HLine::init(stage);
       u0 = inv(MatIntWWT)*WInt*Q0; 
-      //      plotParameters();
+      //plotParameters();
     }
     else
       HLine::init(stage);
 
+  }
+
+  void ElasticLineGalerkin::updateQ(double t) {
+    QIn(0)=Area*trans(wA)*u;
+    QOut(0)=-Area*trans(wE)*u;
+    updQ = false;
   }
 
   void ElasticLineGalerkin::updateT(double t) {
@@ -160,13 +166,7 @@ namespace MBSimHydraulics {
     M[j]=MFac;
   }
 
-  void ElasticLineGalerkin::updateStateDependentVariables(double t) {
-    QIn(0)=Area*trans(wA)*u;
-    QOut(0)=-Area*trans(wE)*u;
-  }
-
   void ElasticLineGalerkin::updateh(double t, int j) {
-    HLine::updateh(t);
     h[j] = (-k*WInt + p0*(wE-wA))*Area - D*u - K*q;
   }
 

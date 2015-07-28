@@ -37,7 +37,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticLineVariational,  MBSIMHYDRAULICS%"ElasticLineVariational")
 
-  ElasticLineVariational::ElasticLineVariational(const string &name) : HLine(name), p0(0), fracAir(0), r(0), l(0), relPlotPoints(0), window_function_type(BlackmanHarris), n(9), QIn(1), QOut(1), wO(0), wI(0), hq(0), hu(0), hp0(0), cu(0), y(0), Tlocal(0,0), relPlot(0,0), Mlocal(0) {
+  ElasticLineVariational::ElasticLineVariational(const string &name) : HLine(name), p0(0), fracAir(0), r(0), l(0), relPlotPoints(0), window_function_type(BlackmanHarris), n(9), wO(0), wI(0), hq(0), hu(0), hp0(0), cu(0), Tlocal(0,0), relPlot(0,0), Mlocal(0) {
   }
 
   void ElasticLineVariational::init(InitStage stage) {
@@ -185,8 +185,6 @@ namespace MBSimHydraulics {
       for (int i=0; i<n; i++)
         Jacobian(i, i)=1.;
 
-      y.resize(n, INIT, 0);
-
       relPlot.resize(n, relPlotPoints.size());
       for (int j=0; j<relPlotPoints.size(); j++)
         for (int i=0; i<n; i++)
@@ -201,7 +199,7 @@ namespace MBSimHydraulics {
         for (int i=0; i<relPlotPoints.size(); i++)
           plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
         if(getPlotFeature(state)==enabled)
-          for (int i=0; i<y.size(); i++)
+          for (int i=0; i<n; i++)
             plotColumns.push_back("y("+numtostr(i)+")");
         HLine::init(stage);
       }
@@ -215,16 +213,14 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
 
-  void ElasticLineVariational::updateStateDependentVariables(double t) {
+  void ElasticLineVariational::updateQ(double t) {
     QIn(0)=trans(wO)*u;
     QOut(0)=trans(wI)*u;
-    for (int i=0; i<n; i++)
-      y(i)=cu(i)*u(i);
+    updQ = false;
   }
 
   void ElasticLineVariational::updateh(double t, int j) {
-    HLine::updateh(t);
-    h[j]=hp0.copy();
+    h[j]=hp0;
     for (int i=1; i<n; i++)
       h[j](i)+=hq(i-1)*q(i-1);
     for (int i=0; i<n; i++)
@@ -233,12 +229,15 @@ namespace MBSimHydraulics {
 
   void ElasticLineVariational::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
+      VecV y(n,NONINIT);
+      for (int i=0; i<n; i++)
+        y(i) = cu(i)*u(i);
       plotVector.push_back(QIn(0)*6e4);
       plotVector.push_back(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
         plotVector.push_back((nFrom->getla()(0)*(1-relPlotPoints(i))+nTo->getla()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
       if(getPlotFeature(state)==enabled)
-        for (int i=0; i<y.size(); i++)
+        for (int i=0; i<n; i++)
           plotVector.push_back(y(i));
       HLine::plot(t,dt);
     }

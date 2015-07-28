@@ -64,14 +64,14 @@ namespace MBSimHydraulics {
 
       fmatvec::Vec getQIn() {return QIn; }
       fmatvec::Vec getQOut() {return QOut; }
-      fmatvec::Vec getInflowFactor() {return -Area*wE; }
-      fmatvec::Vec getOutflowFactor() {return Area*wA; }
+      fmatvec::VecV getInflowFactor() {return -Area*wE; }
+      fmatvec::VecV getOutflowFactor() {return Area*wA; }
 
       void init(InitStage stage);
       void calcqSize() {qSize=mdim; }
       void calcuSize(int j) {uSize[j]=mdim; }
 
-      void updateStateDependentVariables(double t);
+      void updateQ(double t);
       void updateh(double t, int j=0);
       void updateT(double t);
       void updateM(double t, int j=0);
@@ -89,7 +89,6 @@ namespace MBSimHydraulics {
       fmatvec::SqrMat phi;
       ansatz_function * ansatz;
       fmatvec::Mat plotVecW, plotVecWS;
-      fmatvec::Vec QIn, QOut;
       double l, d, Area;
 
     protected:

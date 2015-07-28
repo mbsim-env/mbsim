@@ -238,6 +238,7 @@ namespace MBSimHydraulics {
       QHyd-=((connected0DOFLines[i].inflow) ?
           connected0DOFLines[i].line->getQOut(t) :
           connected0DOFLines[i].line->getQIn(t))(0);
+    updQHyd = false;
   }
 
   void HNode::updategd(double t) {
@@ -245,9 +246,8 @@ namespace MBSimHydraulics {
   }
 
   void HNode::updateh(double t, int j) {
-    for (unsigned int i=0; i<nLines; i++) {
-      h[j][i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * getGeneralizedSingleValuedForce(t);
-    }
+    for (unsigned int i=0; i<nLines; i++)
+      h[j][i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * getGeneralizedSingleValuedForce(t)(0);
   }
 
   void HNode::plot(double t, double dt) {

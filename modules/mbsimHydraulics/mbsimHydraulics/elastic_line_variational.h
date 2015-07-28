@@ -63,16 +63,14 @@ namespace MBSimHydraulics {
       /*! print system state vector */
       void printLineStateSpace(bool print=true) {printStateSpace=print; }
 
-      fmatvec::Vec getQIn() {return QIn; }
-      fmatvec::Vec getQOut() {return QOut; }
-      fmatvec::Vec getInflowFactor() {return wI; }
-      fmatvec::Vec getOutflowFactor() {return wO; }
+      fmatvec::VecV getInflowFactor() {return wI; }
+      fmatvec::VecV getOutflowFactor() {return wO; }
 
       void init(InitStage stage);
       void calcqSize() {qSize=n-1; }
       void calcuSize(int j) {uSize[j]=n; }
 
-      void updateStateDependentVariables(double t);
+      void updateQ(double t);
       void updateh(double t, int j=0);
       void updateT(double t) {T=Tlocal; }
       void updateM(double t, int j=0) {M[j]=Mlocal; }
@@ -90,8 +88,8 @@ namespace MBSimHydraulics {
       bool printStateSpace;
 
     private:
-      fmatvec::Vec QIn, QOut, wO, wI;
-      fmatvec::Vec hq, hu, hp0, cu, y;
+      fmatvec::VecV wO, wI;
+      fmatvec::Vec hq, hu, hp0, cu;
       fmatvec::Mat Tlocal, relPlot;
       fmatvec::SymMat Mlocal;
       
