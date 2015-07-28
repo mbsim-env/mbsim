@@ -98,6 +98,8 @@ namespace MBSimEHD {
       // on one- or two-dimensional domain
       // Michael Hofer, 22.03.2015
 
+      friend class EHDMesh;
+
     public:
       // Constructor for element
       //

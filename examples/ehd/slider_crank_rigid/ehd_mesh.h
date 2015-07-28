@@ -17,6 +17,9 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#ifndef _EHD_MESH_H_
+#define _EHD_MESH_H_
+
 #include "ehd_pressure_element.h"
 
 #include <fmatvec/fmatvec.h>
@@ -26,67 +29,152 @@ namespace MBSimEHD {
 
   //TODO: copy class from matlab
 
-//  class EHDMesh {
-//    public:
-//      /** \brief type of boundary condition */
-//      enum EHDBoundaryConditionType {
-//        dbc, nbc, per1, per2
-//      };
-//      /** \brief type of boundary condition */
-//      enum EHDBoundaryConditionPosition {
-//        x1m, x1p, x2m, x2p
-//      };
-//
-//      /*!
-//       * \brief Constructor
-//       */
-//      EHDMesh();
-//
-//      /*!
-//       * \brief destructor
-//       */
-//      ~EHDMesh();
-//
-//      /*
-//       *    Set boundary of domain
-//
-//            Input:
-//              msh:        Object of msh
-//              type:       Type of boundary
-//                          ('dbc', 'nbc', 'per1', 'per2')
-//              boundary:   Lower or upper boundary of domain
-//                          ('x1-', 'x1+', 'x2-', 'x2+')
-//       */
-//      void Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary);
-//
-//    private:
-//      EHDElement ele;        // Object of element
-//
-//      int nele;       // Number of elements
-//      int nnod;       // Number of nodes
-//      int ndof;       // Number of DOFs
-//      int nfree;      // Number of free DOFs (without dbc and per2 DOFs)
-//
-//      int neled[2];      // Number of elements in spatial directions
-//      int nnodd[2];      // Number of nodes in spatial directions
-//      fmatvec::MatVx2I hd;         // Element size in spatial directions (rectilinear mesh)
-//
-//      std::vector<double> pos;        // Node positions
-//      fmatvec::MatVI locX;
-//      //std::vector<std::vector<int> > locX;       // Location matrix for geometry
-//      fmatvec::MatVI locD;       // Location matrix for solution
-//
-//dbc      ;        // DOFs at Dirichlet boundary
-//      nbc;// DOFs at Neumman boundary
-//      per1;// DOFs at periodic boundary 1
-//      per2;// DOFs at periodic boundary 2 (to be eliminated)
-//      freedofs;// Free DOFs (without dbc and per2 DOFs)
-//
-//      /*!
-//       * \brief comment
-//       */
-//      fmatvec::VecV Pos1(const double & boundary[2]);
-//
-//    };
+  class EHDMesh {
+    public:
+      /** \brief type of boundary condition */
+      enum EHDBoundaryConditionType {
+        dbc, nbc, per1, per2
+      };
+      /** \brief type of boundary condition */
+      enum EHDBoundaryConditionPosition {
+        x1m, x1p, x2m, x2p
+      };
 
+      //          Constructor for regular structured mesh
+
+      //          Input:
+      //            ele:    Object of element for discretization
+      //            xb:     Lower and upper boundary of domain
+      //                     [x1l, x1u; x2l, x2u]
+      //            neled:  Number of elements in spatial directions
+      //                     [nelex1; nelex2]
+      //
+      //          Output:
+      //            msh:    Object of created mesh
+      EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled);
+
+      //          Constructor for user structured Mesh
+
+      //          Input:
+      //            ele:    Object of element for discretization
+      //            xb:     Lower and upper boundary of domain
+      //                     [x1l, x1u; x2l, x2u]
+      //            neled:  Number of elements in spatial directions
+      //                     [nelex1; nelex2]
+      //            hd:     Element sizes in spatial directions
+      //                    {[h1x1, h2x1, ...], [h1x2, h2x2, ...]}
+      //
+      //          Output:
+      //            msh:    Object of created mesh
+      EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2I & hd);
+
+      /*!
+       * \brief destructor
+       */
+      ~EHDMesh();
+
+
+      //      Set boundary of domain
+      //
+      //      Input:
+      //        msh:        Object of msh
+      //        type:       Type of boundary
+      //                    ('dbc', 'nbc', 'per1', 'per2')
+      //        boundary:   Lower or upper boundary of domain
+      //                    ('x1m', 'x1p', 'x2m', 'x2p')
+      void Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary);
+
+      // Finish mesh generation
+      void FinishMesh();
+
+    private:
+      EHDElement ele;        // Object of class pressure element
+
+      int nele;       // Number of elements
+      int nnod;       // Number of nodes
+      int ndof;       // Number of DOFs
+      int nfree;      // Number of free DOFs (without dbc and per2 DOFs)
+
+      fmatvec::VecInt neled;      // Number of elements in spatial directions
+      fmatvec::VecInt nnodd;      // Number of nodes in spatial directions
+      fmatvec::MatVx2I hd;         // Element size in spatial directions (rectilinear mesh)
+
+      std::vector<double> pos;        // Node positions
+      fmatvec::MatVI locX;
+      //std::vector<std::vector<int> > locX;       // Location matrix for geometry
+      fmatvec::MatVI locD;       // Location matrix for solution
+
+      fmatvec::VecInt dbc;        // DOFs at Dirichlet boundary
+      fmatvec::VecInt nbc;        // DOFs at Neumman boundary
+      fmatvec::VecInt per1;       // DOFs at periodic boundary 1
+      fmatvec::VecInt per2;       // DOFs at periodic boundary 2 (to be eliminated)
+      fmatvec::VecInt freedofs;   // Free DOFs (without dbc and per2 DOFs)
+
+      fmatvec::VecV Pos1(const double & boundary[2]);
+
+    };
+
+    //  Node positions for one-dimensional case
+    //   Input:
+    //     xb:     Lower and upper boundary of domain
+    //
+    //   Output:
+    //     pos:    Node positions x_i^k (i: direction, k: node)
+    //             [x_1^1; x_1^2; x_1^3; ...]
+    fmatvec::VecV Pos1D(const fmatvec::MatVx2 & xb);
+
+    //  Node positions for two-dimensional case
+    //   Input:
+    //     xb:     Lower and upper boundary of domain
+    //
+    //   Output:
+    //     pos:    Node positions x_i^k (i: direction, k: node)
+    //             [x_1^1; x_1^2; x_1^3; ...]
+    fmatvec::VecV Pos2D(const fmatvec::MatVx2 & xb);
+
+    //    Location matrix for positions and solution for line elements
+    //
+    //    Input:
+    //      nnodval:    Number of nodal values, e.g. for one-dimensional case:
+    //                  1 for pressure and position (locD = locX)
+    //
+    //    Output:
+    //      loc:        Location matrix with global DOFs associated to
+    //                  element DOFs in each row (locD), same for number of
+    //                  node positions (locX)
+    fmatvec::MatVI LocLine(const int & nnodval);
+
+
+    //    Location matrix for positions and solution for quad elements
+    //
+    //    Input:
+    //      nnodval:    Number of nodal values, e.g. for two-dimensional case:
+    //                  1 for pressure (locD) and 2 for positions (locX) or
+    //                  2 for displacements and positions (locD = locX)
+    //
+    //    Output:
+    //      loc:        Location matrix with global DOFs associated to
+    //                  element DOFs in each row (locD), same for number of
+    //                  node positions (locX)
+    fmatvec::MatVI LocQuad(const int & nnodval);
+
+    //    DOFs at boundary of one-dimensional domain
+    //
+    //    Input:
+    //      boundary:   Lower or upper boundary of domain
+    //
+    //    Output:
+    //      b:          DOFs at boundary
+    fmatvec::VecInt Boundary1D(const EHDBoundaryConditionPosition & boundary);
+
+    //    DOFs at boundary of two-dimensional domain
+    //
+    //    Input:
+    //      boundary:   Lower or upper boundary of domain
+    //
+    //    Output:
+    //      b:          DOFs at boundary
+    fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
   }
+
+#endif
