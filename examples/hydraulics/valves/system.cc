@@ -32,10 +32,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   l23->setDirection(Vec(3, INIT, 0));
   l23->setDiameter(3e-3);
   l23->setLength(.1);
-  FunctionSensor * l23s = new FunctionSensor("Valveposition23");
-  addLink(l23s);
-  l23s->setFunction(new TabularFunction<VecV(double)>(Vec("[0; .19; .21; .29; .31; .69; .71; .79; .81; 1]"), "[0;   0;   1;   1;   0;  0;    1;   1; 0; 0]"));
-  l23->setSignal(l23s);
+  l23->setFunction(new TabularFunction<double(double)>(Vec("[0; .19; .21; .29; .31; .69; .71; .79; .81; 1]"), "[0;   0;   1;   1;   0;  0;    1;   1; 0; 0]"));
   l23->setMinimalValue(.01);
   if (unilateral)
     l23->setBilateral();

@@ -6,6 +6,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimHydraulics/checkvalve.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsimHydraulics/pressure_loss.h"

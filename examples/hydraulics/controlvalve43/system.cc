@@ -58,10 +58,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   cv->setMinimalRelativeAlpha(.05);
   cv->setOffset(.05);
   cv->setPARelativeAlphaFunction(new TabularFunction<double(double)>(Vec("[0; .2; .45; 1]"), "[1; 1; 0; 0]"));
-  FunctionSensor * cvs = new FunctionSensor("Valve43Position");
-  addLink(cvs);
-  cvs->setFunction(new TabularFunction<VecV(double)>(Vec("[0; .3; .7; 1]"), "[0; 0; 1; 1]"));
-  cv->setRelativePositionSignal(cvs);
+  cv->setRelativePositionFunction(new TabularFunction<double(double)>(Vec("[0; .3; .7; 1]"), "[0; 0; 1; 1]"));
 
   ConstrainedNode * nP = new ConstrainedNode("n_source_P");
   nP->setpFunction(new ConstantFunction<double(double)>(5e5));
