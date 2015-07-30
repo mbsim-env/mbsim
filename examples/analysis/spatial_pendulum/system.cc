@@ -1,11 +1,10 @@
 #include "system.h"
-#include "mbsim/frame.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-//#include "mbsim/functions/symbolic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
@@ -15,6 +14,7 @@
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
+//using namespace CasADi;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
