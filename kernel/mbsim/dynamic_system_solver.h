@@ -230,6 +230,7 @@ namespace MBSim {
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
       const fmatvec::Vec& getlaParent() const { return laParent; }
+      const fmatvec::Vec& getLaParent() const { return LaParent; }
       const fmatvec::Vec& getgdParent() const { return gdParent; }
       const fmatvec::Vec& getresParent() const { return resParent; }
       const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
@@ -532,8 +533,6 @@ namespace MBSim {
 
       void setRootID(int ID) {rootID = ID;}
       int getRootID() const {return rootID;}
-      void setq(const fmatvec::Vec& q_){ q = q_;}
-      void setLa(const fmatvec::Vec& La_){ La = La_;}
 
       void resetUpToDate();
 

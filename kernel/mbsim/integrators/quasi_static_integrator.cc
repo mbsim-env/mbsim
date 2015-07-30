@@ -155,7 +155,7 @@ namespace MBSimIntegrator {
       for (int i = 0; i < la.size(); i++)
         la(i) = qla(q.size() + i);
 
-      system.setLa(la);
+      system.setla(la);
 
       // todo: check whether the plot make the openMBV unstable.
       if ((step * stepPlot - integrationSteps) < 0) {
@@ -224,29 +224,15 @@ namespace MBSimIntegrator {
 
     // set the q of system to be the input q
     sys->setq(qla(0, qSize - 1));
-    sys->setLa(qla(qSize, qlaSize - 1));
-
-    throw;
-//    sys->updateStateDependentVariables(t);
-    sys->updateg(t); // for joint, gap distance need also be updated.
-//    sys->checkActive(1);   // todo: flag = 1, gap distance level
-//    sys->updategd(t);  //todo:  ??? gd is needed for updating h
-//    sys->updateT(t);
-    sys->updateJacobians(t); // needed for calculating W.
-    sys->updateh(t);
-//    sys->updateM(t);  // todo: needed?
-    if ((qlaSize - qSize) > 0)
-      sys->updateW(t);
-//    sys->updateV(t);  //not needed, because updateV is only needed for contact calculation
-//    sys->updateG(t);  //  todo: not needed, because la is not solved by contact iteration
+    sys->setla(qla(qSize, qlaSize - 1));
 
     // get the new h vector
-    Vec hg;
-    hg.resize(qla.size());
+    Vec hg(qla.size());
 
     // need new h, W, g, input la (not from the system, but from the input value),
-    hg(0, qSize - 1) = sys->geth() + sys->getW() * qla(qSize, qlaSize - 1);
-    hg(qSize, qlaSize - 1) = sys->getg().copy();
+    sys->resetUpToDate();
+    hg(0, qSize - 1) = sys->geth(t) + sys->getW(t) * qla(qSize, qlaSize - 1);
+    hg(qSize, qlaSize - 1) = sys->getg(t).copy();
 
 //    cout << "t = "  << t << "\n";
 //    cout << "sys.geth() = "  <<  sys->geth().T() << "\n";
