@@ -23,11 +23,11 @@
 #include "ehd_pressure_element.h"
 
 #include <fmatvec/fmatvec.h>
+#include <mbsim/mbsim_event.h>
 
+#include <string>
 
 namespace MBSimEHD {
-
-  //TODO: copy class from matlab
 
   class EHDMesh {
     public:
@@ -66,7 +66,7 @@ namespace MBSimEHD {
       //
       //          Output:
       //            msh:    Object of created mesh
-      EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2I & hd);
+      EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2 & hd);
 
       /*!
        * \brief destructor
@@ -85,10 +85,72 @@ namespace MBSimEHD {
       void Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary);
 
       // Finish mesh generation
-      void FinishMesh();
+      void FinishMesh(void);
+
+      //  Node positions for one-dimensional case
+      //   Input:
+      //     xb:     Lower and upper boundary of domain
+      //
+      //   Output:
+      //     pos:    Node positions x_i^k (i: direction, k: node)
+      //             [x_1^1; x_1^2; x_1^3; ...]
+      fmatvec::VecV Pos1D(const fmatvec::MatVx2 & xb);
+
+      //  Node positions for two-dimensional case
+      //   Input:
+      //     xb:     Lower and upper boundary of domain
+      //
+      //   Output:
+      //     pos:    Node positions x_i^k (i: direction, k: node)
+      //             [x_1^1; x_1^2; x_1^3; ...]
+      fmatvec::VecV Pos2D(const fmatvec::MatVx2 & xb);
+
+      //    Location matrix for positions and solution for line elements
+      //
+      //    Input:
+      //      nnodval:    Number of nodal values, e.g. for one-dimensional case:
+      //                  1 for pressure and position (locD = locX)
+      //
+      //    Output:
+      //      loc:        Location matrix with global DOFs associated to
+      //                  element DOFs in each row (locD), same for number of
+      //                  node positions (locX)
+      fmatvec::MatVI LocLine(const int & nnodval);
+
+
+      //    Location matrix for positions and solution for quad elements
+      //
+      //    Input:
+      //      nnodval:    Number of nodal values, e.g. for two-dimensional case:
+      //                  1 for pressure (locD) and 2 for positions (locX) or
+      //                  2 for displacements and positions (locD = locX)
+      //
+      //    Output:
+      //      loc:        Location matrix with global DOFs associated to
+      //                  element DOFs in each row (locD), same for number of
+      //                  node positions (locX)
+      fmatvec::MatVI LocQuad(const int & nnodval);
+
+      //    DOFs at boundary of one-dimensional domain
+      //
+      //    Input:
+      //      boundary:   Lower or upper boundary of domain
+      //
+      //    Output:
+      //      b:          DOFs at boundary
+      fmatvec::VecInt Boundary1D(const EHDBoundaryConditionPosition & boundary);
+
+      //    DOFs at boundary of two-dimensional domain
+      //
+      //    Input:
+      //      boundary:   Lower or upper boundary of domain
+      //
+      //    Output:
+      //      b:          DOFs at boundary
+      fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
 
     private:
-      EHDElement ele;        // Object of class pressure element
+      PressureElement ele;        // Object of class pressure element
 
       int nele;       // Number of elements
       int nnod;       // Number of nodes
@@ -97,84 +159,20 @@ namespace MBSimEHD {
 
       fmatvec::VecInt neled;      // Number of elements in spatial directions
       fmatvec::VecInt nnodd;      // Number of nodes in spatial directions
-      fmatvec::MatVx2I hd;         // Element size in spatial directions (rectilinear mesh)
+      fmatvec::MatVx2 hd;         // Element size in spatial directions (rectilinear mesh)
 
-      std::vector<double> pos;        // Node positions
-      fmatvec::MatVI locX;
-      //std::vector<std::vector<int> > locX;       // Location matrix for geometry
+      fmatvec::VecV pos;        // Node positions
+      fmatvec::MatVI locX;            // Location matrix for geometry
       fmatvec::MatVI locD;       // Location matrix for solution
 
-      fmatvec::VecInt dbc;        // DOFs at Dirichlet boundary
-      fmatvec::VecInt nbc;        // DOFs at Neumman boundary
-      fmatvec::VecInt per1;       // DOFs at periodic boundary 1
-      fmatvec::VecInt per2;       // DOFs at periodic boundary 2 (to be eliminated)
+      fmatvec::VecInt dbcV;        // DOFs at Dirichlet boundary
+      fmatvec::VecInt nbcV;        // DOFs at Neumman boundary
+      fmatvec::VecInt per1V;       // DOFs at periodic boundary 1
+      fmatvec::VecInt per2V;       // DOFs at periodic boundary 2 (to be eliminated)
       fmatvec::VecInt freedofs;   // Free DOFs (without dbc and per2 DOFs)
-
-      fmatvec::VecV Pos1(const double & boundary[2]);
 
     };
 
-    //  Node positions for one-dimensional case
-    //   Input:
-    //     xb:     Lower and upper boundary of domain
-    //
-    //   Output:
-    //     pos:    Node positions x_i^k (i: direction, k: node)
-    //             [x_1^1; x_1^2; x_1^3; ...]
-    fmatvec::VecV Pos1D(const fmatvec::MatVx2 & xb);
-
-    //  Node positions for two-dimensional case
-    //   Input:
-    //     xb:     Lower and upper boundary of domain
-    //
-    //   Output:
-    //     pos:    Node positions x_i^k (i: direction, k: node)
-    //             [x_1^1; x_1^2; x_1^3; ...]
-    fmatvec::VecV Pos2D(const fmatvec::MatVx2 & xb);
-
-    //    Location matrix for positions and solution for line elements
-    //
-    //    Input:
-    //      nnodval:    Number of nodal values, e.g. for one-dimensional case:
-    //                  1 for pressure and position (locD = locX)
-    //
-    //    Output:
-    //      loc:        Location matrix with global DOFs associated to
-    //                  element DOFs in each row (locD), same for number of
-    //                  node positions (locX)
-    fmatvec::MatVI LocLine(const int & nnodval);
-
-
-    //    Location matrix for positions and solution for quad elements
-    //
-    //    Input:
-    //      nnodval:    Number of nodal values, e.g. for two-dimensional case:
-    //                  1 for pressure (locD) and 2 for positions (locX) or
-    //                  2 for displacements and positions (locD = locX)
-    //
-    //    Output:
-    //      loc:        Location matrix with global DOFs associated to
-    //                  element DOFs in each row (locD), same for number of
-    //                  node positions (locX)
-    fmatvec::MatVI LocQuad(const int & nnodval);
-
-    //    DOFs at boundary of one-dimensional domain
-    //
-    //    Input:
-    //      boundary:   Lower or upper boundary of domain
-    //
-    //    Output:
-    //      b:          DOFs at boundary
-    fmatvec::VecInt Boundary1D(const EHDBoundaryConditionPosition & boundary);
-
-    //    DOFs at boundary of two-dimensional domain
-    //
-    //    Input:
-    //      boundary:   Lower or upper boundary of domain
-    //
-    //    Output:
-    //      b:          DOFs at boundary
-    fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
   }
 
 #endif
