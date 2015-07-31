@@ -24,7 +24,7 @@
 #ifndef _MASSLESS_SPRING_DAMPER_
 #define _MASSLESS_SPRING_DAMPER_
 
-#include "mbsimControl/signal_processing_system.h"
+#include "mbsimControl/signal_.h"
 
 namespace MBSimControl {
 
@@ -32,36 +32,42 @@ namespace MBSimControl {
    * \brief Massless Spring Damper (PT1)
    * \author Markus Schneider
    */
-//  class MasslessSpringDamper : public SignalProcessingSystem {
-//
-//    public:   
-//      MasslessSpringDamper(const std::string& name="");
-//      virtual std::string getType() const {return "MasslessSpringDamper"; }
-//      void initializeUsingXML(xercesc::DOMElement * element);
-//      
-//      void calcxSize() {xSize=1; }
-//      fmatvec::VecV calculateOutput() {return x.copy(); }
-//      
-//      void init(InitStage stage);
-//
-//      void updatedx(double t, double dt);
-//      void updatexd(double t);
-//      
-//      void plot(double t,double dt);
-//      
-//      void setSpringStiffness(double c_) {c=c_; }
-//      void setBasicSpringForce(double F0_) {F0=F0_; }
-//      void setDampingCoefficient(double d_) {dPos=d_; }
-//      void setNegativeDampingCoefficient(double d_) {dNeg=d_; }
-//      void setFrictionForce(double FFric_) {FFricPos=FFric_; }
-//      void setNegativeFrictionForce(double FFric_) {FFricNeg=FFric_; }
-//      void setMinimumPositionValue(double xMin_) {xMin=xMin_; }
-//      void setMaximumPositionValue(double xMax_) {xMax=xMax_; }
-//
-//    private:
-//      double c, F0, dPos, dNeg, FFricPos, FFricNeg, xMin, xMax;
-//      double xdLocal;
-//  };
+  class MasslessSpringDamper : public Signal {
+
+    public:
+      MasslessSpringDamper(const std::string& name="");
+      virtual std::string getType() const {return "MasslessSpringDamper"; }
+      void initializeUsingXML(xercesc::DOMElement * element);
+
+      void calcxSize() {xSize=1; }
+
+      void init(InitStage stage);
+
+      void updateSignal(double t) { s = x; upds = false; }
+
+      void updatedx(double t, double dt);
+      void updatexd(double t);
+
+      void plot(double t,double dt);
+
+      void setSpringStiffness(double c_) {c=c_; }
+      void setBasicSpringForce(double F0_) {F0=F0_; }
+      void setDampingCoefficient(double d_) {dPos=d_; }
+      void setNegativeDampingCoefficient(double d_) {dNeg=d_; }
+      void setFrictionForce(double FFric_) {FFricPos=FFric_; }
+      void setNegativeFrictionForce(double FFric_) {FFricNeg=FFric_; }
+      void setMinimumPositionValue(double xMin_) {xMin=xMin_; }
+      void setMaximumPositionValue(double xMax_) {xMax=xMax_; }
+
+      void setInputSignal(Signal * inputSignal_) { inputSignal=inputSignal_; }
+      int getSignalSize() const { return inputSignal->getSignalSize(); }
+
+    private:
+      double c, F0, dPos, dNeg, FFricPos, FFricNeg, xMin, xMax;
+      double xdLocal;
+      Signal * inputSignal;
+      std::string inputSignalString;
+  };
 }
 
 #endif

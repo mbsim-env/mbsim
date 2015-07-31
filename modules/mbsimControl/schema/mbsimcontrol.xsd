@@ -412,27 +412,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SignalProcessingSystemSensor" substitutionGroup="Sensor" type="SignalProcessingSystemSensorType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Sensor, zur Konvertierung des Ausgangs eines <i>SignalProcessingSystem</i>s in ein Sensor-Signal.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="SignalProcessingSystemSensorType">
-    <xs:complexContent>
-      <xs:extension base="SensorType">
-        <xs:sequence>
-          <xs:element name="signalProcessingSystem">
-            <xs:complexType>
-              <xs:attribute name="ref" type="mbsim:LinkReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="LinkSensor" abstract="true" substitutionGroup="Sensor" type="LinkSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -585,26 +564,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SignalProcessingSystem" substitutionGroup="mbsim:Link" type="SignalProcessingSystemType"/>
-  <xs:complexType name="SignalProcessingSystemType">
+  <xs:element name="LinearTransferSystem" substitutionGroup="Signal" type="LinearTransferSystemType"/>
+  <xs:complexType name="LinearTransferSystemType">
     <xs:complexContent>
-      <xs:extension base="mbsim:LinkType">
+      <xs:extension base="SignalType">
         <xs:sequence>
           <xs:element name="inputSignal">
             <xs:complexType>
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="LinearTransferSystem" substitutionGroup="SignalProcessingSystem" type="LinearTransferSystemType"/>
-  <xs:complexType name="LinearTransferSystemType">
-    <xs:complexContent>
-      <xs:extension base="SignalProcessingSystemType">
-        <xs:sequence>
           <xs:choice>
             <xs:element name="pidType">
               <xs:complexType>
@@ -649,7 +618,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="MasslessSpringDamper" substitutionGroup="SignalProcessingSystem" type="MasslessSpringDamperType">
+  <xs:element name="MasslessSpringDamper" substitutionGroup="Signal" type="MasslessSpringDamperType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Feder-Dämpfer System, bei dem die Masse vernachlässigt wird. <br/>
@@ -659,7 +628,7 @@
   </xs:element>
   <xs:complexType name="MasslessSpringDamperType">
     <xs:complexContent>
-      <xs:extension base="SignalProcessingSystemType">
+      <xs:extension base="SignalType">
         <xs:sequence>
           <xs:sequence>
             <xs:element name="springStiffness" type="pv:stiffnessScalar">

@@ -58,7 +58,7 @@ namespace MBSimControl {
       void setGain(double P);
       void showABCD();
 
-      void setInputSignal(Signal * inputSignal_) {inputSignal=inputSignal_; }
+      void setInputSignal(Signal * inputSignal_) { inputSignal=inputSignal_; }
       int getSignalSize() const { return inputSignal->getSignalSize(); }
 
     protected:

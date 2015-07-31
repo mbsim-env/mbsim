@@ -35,112 +35,119 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MasslessSpringDamper, MBSIMCONTROL%"MasslessSpringDamper")
-//
-//  MasslessSpringDamper::MasslessSpringDamper(const string& name) : SignalProcessingSystem(name), c(0), F0(0), dPos(0), dNeg(0), FFricPos(0), FFricNeg(1./epsroot()), xMin(-1./epsroot()), xMax(1./epsroot()) {
-//  }
-//
-//  void MasslessSpringDamper::initializeUsingXML(DOMElement * element) {
-//    SignalProcessingSystem::initializeUsingXML(element);
-//    DOMElement * e;
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"springStiffness");
-//    setSpringStiffness(getDouble(e));
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"basicSpringForce");
-//    setBasicSpringForce(getDouble(e));
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"dampingCoefficient");
-//    setDampingCoefficient(getDouble(e));
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeDampingCoefficient");
-//    if (e)
-//      setNegativeDampingCoefficient(getDouble(e));
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frictionForce");
-//    if (e)
-//      setFrictionForce(getDouble(e));
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeFrictionForce");
-//    if (e)
-//      setNegativeFrictionForce(getDouble(e));
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalPositionValue");
-//    if (e)
-//      setMinimumPositionValue(getDouble(e));
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalPositionValue");
-//    if (e)
-//      setMaximumPositionValue(getDouble(e));
-//  }
-//
-//  void MasslessSpringDamper::updatedx(double t, double dt) {
-//    const double F=(inputSignal->getSignal())(0);
-//    double h=F+F0-c*x(0);
-//    if (h<0) {
-//      if (x(0)<xMin)
-//        xd(0)=0;
-//      else {
-//        h+=FFricNeg;
-//        if (h>0)
-//          h=0;
-//        xd(0)=h/dNeg;
-//      }
-//    }
-//    else {
-//      if (x(0)>xMax)
-//        xd(0)=0;
-//      else {
-//        h-=FFricPos;
-//        if (h<0)
-//          h=0;
-//        xd(0)=h/dPos;
-//      }
-//    }
-//    xdLocal=xd(0);
-//    xd(0)*=dt;
-//  }
-//
-//  void MasslessSpringDamper::updatexd(double t) {
-//    const double F=(inputSignal->getSignal())(0);
-//    double h=F+F0-c*x(0);
-//    if (h<0) {
-//      if (x(0)<xMin)
-//        xd(0)=0;
-//      else {
-//        h+=FFricNeg;
-//        if (h>0)
-//          h=0;
-//        xd(0)=h/dNeg;
-//      }
-//    }
-//    else {
-//      if (x(0)>xMax)
-//        xd(0)=0;
-//      else {
-//        h-=FFricPos;
-//        if (h<0)
-//          h=0;
-//        xd(0)=h/dPos;
-//      }
-//    }
-//    xdLocal=xd(0);
-//    /*
-//     *const double F=(inputSignal->getSignal())(0);
-//     *const double h=F+F0-c*x(0);
-//     *if (h<0) {
-//     *  if (x(0)<xMin)
-//     *    xd(0)=0;
-//     *  else
-//     *    xd(0)=h/dNeg;
-//     *}
-//     *else {
-//     *  if (x(0)>xMax)
-//     *    xd(0)=0;
-//     *  else
-//     *    xd(0)=h/dPos;
-//     *}
-//     *xdLocal=xd(0);
-//     */
-//  }
-//
-//  void MasslessSpringDamper::init(InitStage stage) {
-//    if (stage==resize) {
-//      SignalProcessingSystem::init(stage);
-//      x.resize(xSize, INIT, 0);
-//    }
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MasslessSpringDamper, MBSIMCONTROL%"MasslessSpringDamper")
+
+  MasslessSpringDamper::MasslessSpringDamper(const string& name) : Signal(name), c(0), F0(0), dPos(0), dNeg(0), FFricPos(0), FFricNeg(1./epsroot()), xMin(-1./epsroot()), xMax(1./epsroot()), inputSignal(NULL) {
+  }
+
+  void MasslessSpringDamper::initializeUsingXML(DOMElement * element) {
+    Signal::initializeUsingXML(element);
+    DOMElement * e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    inputSignalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"springStiffness");
+    setSpringStiffness(getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"basicSpringForce");
+    setBasicSpringForce(getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"dampingCoefficient");
+    setDampingCoefficient(getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeDampingCoefficient");
+    if (e)
+      setNegativeDampingCoefficient(getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frictionForce");
+    if (e)
+      setFrictionForce(getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeFrictionForce");
+    if (e)
+      setNegativeFrictionForce(getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalPositionValue");
+    if (e)
+      setMinimumPositionValue(getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalPositionValue");
+    if (e)
+      setMaximumPositionValue(getDouble(e));
+  }
+
+  void MasslessSpringDamper::updatedx(double t, double dt) {
+    const double F=(inputSignal->getSignal(t))(0);
+    double h=F+F0-c*x(0);
+    if (h<0) {
+      if (x(0)<xMin)
+        xd(0)=0;
+      else {
+        h+=FFricNeg;
+        if (h>0)
+          h=0;
+        xd(0)=h/dNeg;
+      }
+    }
+    else {
+      if (x(0)>xMax)
+        xd(0)=0;
+      else {
+        h-=FFricPos;
+        if (h<0)
+          h=0;
+        xd(0)=h/dPos;
+      }
+    }
+    xdLocal=xd(0);
+    xd(0)*=dt;
+  }
+
+  void MasslessSpringDamper::updatexd(double t) {
+    const double F=(inputSignal->getSignal(t))(0);
+    double h=F+F0-c*x(0);
+    if (h<0) {
+      if (x(0)<xMin)
+        xd(0)=0;
+      else {
+        h+=FFricNeg;
+        if (h>0)
+          h=0;
+        xd(0)=h/dNeg;
+      }
+    }
+    else {
+      if (x(0)>xMax)
+        xd(0)=0;
+      else {
+        h-=FFricPos;
+        if (h<0)
+          h=0;
+        xd(0)=h/dPos;
+      }
+    }
+    xdLocal=xd(0);
+    /*
+     *const double F=(inputSignal->getSignal())(0);
+     *const double h=F+F0-c*x(0);
+     *if (h<0) {
+     *  if (x(0)<xMin)
+     *    xd(0)=0;
+     *  else
+     *    xd(0)=h/dNeg;
+     *}
+     *else {
+     *  if (x(0)>xMax)
+     *    xd(0)=0;
+     *  else
+     *    xd(0)=h/dPos;
+     *}
+     *xdLocal=xd(0);
+     */
+  }
+
+  void MasslessSpringDamper::init(InitStage stage) {
+    if (stage==resolveXMLPath) {
+      if (inputSignalString!="")
+        setInputSignal(getByPath<Signal>(inputSignalString));
+      Signal::init(stage);
+    }
+    else if (stage==resize) {
+      Signal::init(stage);
+      x.resize(xSize, INIT, 0);
+    }
 //    else if (stage==plotting) {
 //      updatePlotFeatures();
 //      if(getPlotFeature(plotRecursive)==enabled) {
@@ -148,35 +155,34 @@ namespace MBSimControl {
 //          plotColumns.push_back("Position");
 //          plotColumns.push_back("Velocity");
 //        }
-//        SignalProcessingSystem::init(stage);
+//        Signal::init(stage);
 //      }
 //    }
-//    else if (stage==unknownStage) {
-//      assert(dPos>epsroot());
-//      if (fabs(dNeg)<epsroot())
-//        dNeg=dPos;
-//      assert(dNeg>epsroot());
-//
-//      assert(!(FFricPos<0));
-//      if (fabs(FFricNeg) > (1./epsroot()-1))
-//        FFricNeg=FFricPos;
-//      assert(!(FFricNeg<0));
-//
-//      SignalProcessingSystem::init(stage);
-//    }
-//    else
-//      SignalProcessingSystem::init(stage);
-//  }
-//
-//  void MasslessSpringDamper::plot(double t, double dt) {
-//    VecV y=calculateOutput();
+    else if (stage==unknownStage) {
+      assert(dPos>epsroot());
+      if (fabs(dNeg)<epsroot())
+        dNeg=dPos;
+      assert(dNeg>epsroot());
+
+      assert(!(FFricPos<0));
+      if (fabs(FFricNeg) > (1./epsroot()-1))
+        FFricNeg=FFricPos;
+      assert(!(FFricNeg<0));
+
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  void MasslessSpringDamper::plot(double t, double dt) {
 //    if(getPlotFeature(plotRecursive)==enabled) {
 //      if (getPlotFeature(globalPosition)==enabled) {
-//        plotVector.push_back(y(0));
+//        plotVector.push_back(x(0));
 //        plotVector.push_back(xdLocal);
 //      }
 //    }
-//    SignalProcessingSystem::plot(t,dt);
-//  }
+    Signal::plot(t,dt);
+  }
 
 }
