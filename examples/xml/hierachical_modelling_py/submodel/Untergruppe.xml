@@ -36,6 +36,10 @@
           else:
             x=8
           ret=myfunc(m1/2)
+
+          # check registerPath
+          mbxmlutils.registerPath('dummy.dat')
+          mbxmlutils.load('dummy.dat')
           
           # just a dummy statement to check for "inline" imports
           import os.path
