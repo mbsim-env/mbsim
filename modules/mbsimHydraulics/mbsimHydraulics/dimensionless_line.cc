@@ -58,8 +58,8 @@ namespace MBSimHydraulics {
 
   void DimensionlessLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(Q(0)*6e4);
-      plotVector.push_back(Q(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+      plotVector.push_back(getQIn(t)(0)*6e4);
+      plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       HLine::plot(t, dt);
     }
   }
@@ -90,14 +90,16 @@ namespace MBSimHydraulics {
   void Leakage0DOF::init(InitStage stage) {
     DimensionlessLine::init(stage);
     lpl->init(stage);
-    s1vFunction->init(stage);
-    s2vFunction->init(stage);
-    glFunction->init(stage);
+    if(s1vFunction) s1vFunction->init(stage);
+    if(s2vFunction) s2vFunction->init(stage);
+    if(glFunction) glFunction->init(stage);
   }
 
-  void Leakage0DOF::updateStateDependentVariables(double t) {
-    const double dp=nTo->getla()(0)-nFrom->getla()(0);
-    Q(0)=(*lpl)(dp);
+  void Leakage0DOF::updateQ(double t) {
+    lpl->setTime(t);
+    QIn(0)=(*lpl)(nTo->getGeneralizedForce(t)(0)-nFrom->getGeneralizedForce(t)(0));
+    QOut = -QIn;
+    updQ = false;
   }
 
   void Leakage0DOF::initializeUsingXML(DOMElement * element) {
@@ -114,6 +116,7 @@ namespace MBSimHydraulics {
 
   void PlaneLeakage0DOF::setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl) {
     lpl=plpl;
+    lpl->setParent(this);
     lpl->setLine(this);
   }
 
@@ -132,6 +135,7 @@ namespace MBSimHydraulics {
 
   void CircularLeakage0DOF::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
     lpl=clpl;
+    lpl->setParent(this);
     lpl->setLine(this);
   }
 

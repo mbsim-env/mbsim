@@ -207,6 +207,8 @@ namespace MBSimHydraulics {
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 
+      void updateGeneralizedSetValuedForces(double t);
+
       void updategd(double t);
       void updateW(double t, int j=0);
 

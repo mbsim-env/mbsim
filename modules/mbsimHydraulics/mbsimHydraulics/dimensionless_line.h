@@ -27,14 +27,12 @@ namespace MBSimHydraulics {
   /*! DimensionlessLine */
   class DimensionlessLine : public HLine {
     public:
-      DimensionlessLine(const std::string &name) : HLine(name), Q(1), length(0) {}
+      DimensionlessLine(const std::string &name) : HLine(name), length(0) {}
       virtual std::string getType() const { return "DimensionlessLine"; }
       
       void setLength(double length_) {length=length_; }
       double getLength() const {return length; }
 
-      virtual fmatvec::Vec getQIn() {return Q; }
-      virtual fmatvec::Vec getQOut() {return -Q; }
       virtual fmatvec::VecV getInflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
       virtual fmatvec::VecV getOutflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }
@@ -44,7 +42,6 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void plot(double t, double dt);
     protected:
-      fmatvec::Vec Q;
       double length;
   };
   
@@ -58,16 +55,25 @@ namespace MBSimHydraulics {
       ~Leakage0DOF();
       virtual std::string getType() const { return "Leakage0DOF"; }
 
-      void setGapLengthFunction(MBSim::Function<double(double)> * s) {glFunction=s; }
+      void setGapLengthFunction(MBSim::Function<double(double)> * s) {
+        glFunction=s;
+        glFunction->setParent(this);
+      }
       double getGapLength(double t) const;
-      void setSurface1VelocityFunction(MBSim::Function<double(double)> * s) {s1vFunction=s; }
+      void setSurface1VelocityFunction(MBSim::Function<double(double)> * s) {
+        s1vFunction=s;
+        s1vFunction->setParent(this);
+      }
       double getSurface1Velocity(double t) const;
-      void setSurface2VelocityFunction(MBSim::Function<double(double)> * s) {s2vFunction=s; }
+      void setSurface2VelocityFunction(MBSim::Function<double(double)> * s) {
+        s2vFunction=s;
+        s2vFunction->setParent(this);
+      }
       double getSurface2Velocity(double t) const;
 
       void init(InitStage stage);
 
-      void updateStateDependentVariables(double t);
+      void updateQ(double t);
 
       void initializeUsingXML(xercesc::DOMElement * element);
     protected:

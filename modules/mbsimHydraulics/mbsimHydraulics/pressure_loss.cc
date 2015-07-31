@@ -222,7 +222,7 @@ namespace MBSimHydraulics {
 
   void TurbulentTubeFlowLinePressureLoss::init(InitStage stage) {
     LinePressureLoss::init(stage);
-    lambdaTabular->init(stage);
+    if(lambdaTabular) lambdaTabular->init(stage);
   }
 
   void TurbulentTubeFlowLinePressureLoss::initializeUsingXML(DOMElement * element) {

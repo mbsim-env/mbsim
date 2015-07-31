@@ -633,6 +633,13 @@ namespace MBSimHydraulics {
     gd >> wb;
   }
 
+  void RigidNodeMec::updateGeneralizedSetValuedForces(double t) {
+    cout << "updateGeneralizedSetValuedForces" << endl;
+    cout << la << endl;
+    laMV = la;
+    updlaMV = false;
+  }
+
   void RigidNodeMec::updategd(double t) {
     HNodeMec::updategd(t);
     if (t<epsroot()) {

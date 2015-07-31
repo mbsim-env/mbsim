@@ -58,7 +58,7 @@ namespace MBSimHydraulics {
       SerialResistanceLinePressureLoss() : LinePressureLoss() {}
       ~SerialResistanceLinePressureLoss();
       void setLine(const HLine *line_) { line = line_; for(unsigned int i=0; i<slp.size(); i++) slp[i]->setLine(line); }
-      void addLinePressureLoss(LinePressureLoss * l) { slp.push_back(l); }
+      void addLinePressureLoss(LinePressureLoss * l) { slp.push_back(l); slp[slp.size()-1]->setParent(this); }
       double operator()(const double& Q);
       void init(MBSim::Element::InitStage stage);
       void initializeUsingXML(xercesc::DOMElement * element);
