@@ -52,23 +52,24 @@
           y-x
         </SymbolicFunction>
       </function>
-      </inputSignal>
     </BinarySignalOperation>
-    <SignalProcessingSystemSensor name="ControlOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <signalProcessingSystem ref="../Link[LTI]"/>
-    </SignalProcessingSystemSensor>
-    <SignalLimitation name="ControlOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Link[ControlOutput]"/>
-      <minimalValue>0-5</minimalValue>
-      <maximalValue>1+5</maximalValue>
-    </SignalLimitation>
-    <SignalProcessingSystemSensor name="PT1ControlvalveOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <signalProcessingSystem ref="../Link[PT1Controlvalve]"/>
-    </SignalProcessingSystemSensor>
-    <SignalLimitation name="PT1ControlvalveOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <inputSignal ref="../Link[PT1ControlvalveOutput]"/>
-      <minimalValue>0</minimalValue>
-      <maximalValue>1</maximalValue>
-    </SignalLimitation>
+    <UnarySignalOperation name="ControlOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Link[LTI]"/>
+      <function>
+        <BoundedFunction xmlns="http://mbsim.berlios.de/MBSim">
+          <lowerBound>0-5</lowerBound>
+          <upperBound>1+5</upperBound>
+         </BoundedFunction>
+      </function>
+    </UnarySignalOperation>
+    <UnarySignalOperation name="PT1ControlvalveOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Link[PT1Controlvalve]"/>
+      <function>
+        <BoundedFunction xmlns="http://mbsim.berlios.de/MBSim">
+          <lowerBound>0</lowerBound>
+          <upperBound>1</upperBound>
+         </BoundedFunction>
+      </function>
+    </UnarySignalOperation>
   </links>
 </Group>

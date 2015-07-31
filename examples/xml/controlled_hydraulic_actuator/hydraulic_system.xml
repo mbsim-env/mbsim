@@ -17,7 +17,11 @@
       <minimalRelativeAlpha>.05</minimalRelativeAlpha>
       <bilateralConstrained/>
       <offset>.05</offset>
-      <relativePosition ref="../../Group[Control]/Link[PT1ControlvalveOutputLimitted]"/>
+      <relativePosition>
+         <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+          <returnSignal ref="../../../Group[Control]/Link[PT1ControlvalveOutputLimitted]"/>
+        </SignalFunction>
+      </relativePosition>
       <inflowP ref="../Object[lineP]"/>
       <outflowA ref="../Object[lineA]"/>
       <outflowB ref="../Object[lineB]"/>
