@@ -324,6 +324,8 @@ namespace MBSimIntegrator {
     LS = LStmp_T1;
     while(! ExitIntegration) 
     {
+      system.resetUpToDate();
+
       while(StepFinished==0) 
       {
         dtHalf     = dt/2.0;
@@ -345,13 +347,15 @@ namespace MBSimIntegrator {
               // one step integration (A)
               zT1 << zi;
               qT1 += sysT1->deltaq(zT1,t,dt);
-              sysT1->update(zT1,t+dt,1);
-              sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dt;
+              system.resetUpToDate();
+//              sysT1->update(zT1,t+dt,1);
+              sysT1->getb(false) << sysT1->getgd(t) + sysT1->getW(t).T()*slvLLFac(sysT1->getLLM(t),sysT1->geth(t))*dt;
               iterA  = sysT1->solveImpacts(t,dt);
               getAllSetValuedla(la1d,la1dSizes,SetValuedLinkListT1);
-              la1d/=dt;
+//              la1d/=dt;
               uT1 += sysT1->deltau(zT1,t+dt,dt);
               xT1 += sysT1->deltax(zT1,t+dt,dt);
+              system.resetUpToDate();
               // wird jetzt von testTolerances() direkt aufgerufen; nach jedem erfolgreichen Schritt!
               //              if (FlagGapControl) {
               //                sysT1->updateStateDependentVariables(t+dt);
@@ -367,13 +371,15 @@ namespace MBSimIntegrator {
               if (calcJobBT1) {
                 zT1  << zi;
                 qT1 += sysT1->deltaq(zT1,t,dtHalf);
-                sysT1->update(zT1,t+dtHalf,1);
-                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
+                system.resetUpToDate();
+//                sysT1->update(zT1,t+dtHalf,1);
+                sysT1->getb(false) << sysT1->getgd(t) + sysT1->getW(t).T()*slvLLFac(sysT1->getLLM(t),sysT1->geth(t))*dtHalf;
                 iterB1  = sysT1->solveImpacts(t,dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT1);
-                la2b/=dtHalf;
+//                la2b/=dtHalf;
                 uT1 += sysT1->deltau(zT1,t+dtHalf,dtHalf);
                 xT1 += sysT1->deltax(zT1,t+dtHalf,dtHalf);
+                system.resetUpToDate();
                 sysT1->getLinkStatus(LStmp_T1,t+dtHalf);
                 LSB1 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
@@ -385,11 +391,13 @@ namespace MBSimIntegrator {
 
                 zT1  << zi;
                 qT1 += sysT1->deltaq(zT1,t,dtThird);
-                sysT1->update(zT1,t+dtThird,1);
-                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
+                system.resetUpToDate();
+//                sysT1->update(zT1,t+dtThird,1);
+                sysT1->getb(false) << sysT1->getgd(t) + sysT1->getW(t).T()*slvLLFac(sysT1->getLLM(t),sysT1->geth(t))*dtThird;
                 sysT1->solveImpacts(t,dtThird);
                 uT1 += sysT1->deltau(zT1,t+dtThird,dtThird);
                 xT1 += sysT1->deltax(zT1,t+dtThird,dtThird); 
+                system.resetUpToDate();
                 singleStepsT1++;
                 z3b << zT1;
               }
@@ -401,13 +409,15 @@ namespace MBSimIntegrator {
               if (calcJobBT2) {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtHalf);
-                sysT2->update(zT2,t+dtHalf,1);
-                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dtHalf,1);
+                sysT2->getb(false) << sysT2->getgd(t) + sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtHalf;
                 iterB1  = sysT2->solveImpacts(t,dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
-                la2b/=dtHalf;
+//                la2b/=dtHalf;
                 uT2 += sysT2->deltau(zT2,t+dtHalf,dtHalf);
                 xT2 += sysT2->deltax(zT2,t+dtHalf,dtHalf);
+                system.resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2,t+dtHalf);
                 LSB1 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
@@ -419,21 +429,25 @@ namespace MBSimIntegrator {
               if (calcJobC) {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtQuarter);
-                sysT2->update(zT2,t+dtQuarter,1);
-                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dtQuarter,1);
+                sysT2->getb(false) << sysT2->getgd(t)+sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtQuarter;
                 iterC1 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtQuarter,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtQuarter,dtQuarter);
+                system.resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2,t+dtQuarter);
                 LSC1 = LStmp_T2;
                 ConstraintsChangedC =  changedLinkStatus(LSC1,LS,indexLSException);
 
                 qT2 += sysT2->deltaq(zT2,t+dtQuarter,dtQuarter);
-                sysT2->update(zT2,t+dtHalf);
-                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dtHalf);
+                sysT2->getb(false) << sysT2->getgd(t)+sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtQuarter;
                 iterC2 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtHalf,dtQuarter);
+                system.resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2,t+dtHalf);
                 LSC2 = LStmp_T2;
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC2,LSC1,indexLSException);
@@ -444,18 +458,22 @@ namespace MBSimIntegrator {
               if (calcJobE12T2) {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtThird);
-                sysT2->update(zT2,t+dtThird,1);
-                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dtThird,1);
+                sysT2->getb(false) << sysT2->getgd(t) + sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtThird;
                 sysT2->solveImpacts(dtThird);
                 uT2 += sysT2->deltau(zT2,t+dtThird,dtThird);
                 xT2 += sysT2->deltax(zT2,t+dtThird,dtThird);
+                system.resetUpToDate();
 
                 qT2 += sysT2->deltaq(zT2,t+dtThird,dtThird);
-                sysT2->update(zT2,t+2.0*dtThird);
-                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+2.0*dtThird);
+                sysT2->getb(false) << sysT2->getgd(t) + sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtThird;
                 sysT2->solveImpacts(dtThird);
                 uT2 += sysT2->deltau(zT2,t+2.0*dtThird,dtThird);
                 xT2 += sysT2->deltax(zT2,t+2.0*dtThird,dtThird);
+                system.resetUpToDate();
                 singleStepsT2+=2;
                 z3b << zT2;
               }
@@ -467,32 +485,38 @@ namespace MBSimIntegrator {
               if(calcJobD) {
                 zT3  << zi;
                 qT3 += sysT3->deltaq(zT3,t,dtSixth);
-                sysT3->update(zT3,t+dtSixth,1);
-                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                system.resetUpToDate();
+//                sysT3->update(zT3,t+dtSixth,1);
+                sysT3->getb(false) << sysT3->getgd(t) + sysT3->getW(t).T()*slvLLFac(sysT3->getLLM(t),sysT3->geth(t))*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtSixth,dtSixth);
+                system.resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3,t+dtSixth);
                 LSD1 = LStmp_T3;
                 ConstraintsChangedD = changedLinkStatus(LSD1,LS,indexLSException);
 
                 qT3 += sysT3->deltaq(zT3,t+dtSixth,dtSixth);
-                sysT3->update(zT3,t+dtThird);
-                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                system.resetUpToDate();
+//                sysT3->update(zT3,t+dtThird);
+                sysT3->getb(false) << sysT3->getgd(t) + sysT3->getW(t).T()*slvLLFac(sysT3->getLLM(t),sysT3->geth(t))*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtThird,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtThird,dtSixth);
+                system.resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3,t+dtThird);
                 LSD2 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD2,LSD1,indexLSException);
 
 
                 qT3 += sysT3->deltaq(zT3,t+dtThird,dtSixth);
-                sysT3->update(zT3,t+dtHalf);
-                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                system.resetUpToDate();
+//                sysT3->update(zT3,t+dtHalf);
+                sysT3->getb(false) << sysT3->getgd(t) + sysT3->getW(t).T()*slvLLFac(sysT3->getLLM(t),sysT3->geth(t))*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtHalf,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtHalf,dtSixth);
+                system.resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3,t+dtHalf);
                 LSD3 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD3,LSD2,indexLSException);
@@ -528,11 +552,13 @@ namespace MBSimIntegrator {
               if (calcJobBT1 && calcBlock2) {
                 zT1  << z2b;
                 qT1 += sysT1->deltaq(zT1,t+dtHalf,dtHalf);
-                sysT1->update(zT1,t+dt,1);
-                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
+                system.resetUpToDate();
+//                sysT1->update(zT1,t+dt,1);
+                sysT1->getb(false) << sysT1->getgd(t) + sysT1->getW(t).T()*slvLLFac(sysT1->getLLM(t),sysT1->geth(t))*dtHalf;
                 iterB2  = sysT1->solveImpacts(dtHalf);
                 uT1 += sysT1->deltau(zT1,t+dt,dtHalf);
                 xT1 += sysT1->deltax(zT1,t+dt,dtHalf);
+                system.resetUpToDate();
                 sysT1->getLinkStatus(LStmp_T1,t+dt);
                 LSB2 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
@@ -542,11 +568,13 @@ namespace MBSimIntegrator {
               if (calcJobB2RET1 && calcBlock2) { //B2RE
                 zT1 << zStern;
                 qT1 += sysT1->deltaq(zT1,t+dtHalf,dtHalf);
-                sysT1->update(zT1,t+dt,1);
-                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
+                system.resetUpToDate();
+//                sysT1->update(zT1,t+dt,1);
+                sysT1->getb(false) << sysT1->getgd(t) + sysT1->getW(t).T()*slvLLFac(sysT1->getLLM(t),sysT1->geth(t))*dtHalf;
                 iterB2RE  = sysT1->solveImpacts(dtHalf);
                 uT1 += sysT1->deltau(zT1,t+dt,dtHalf);
                 xT1 += sysT1->deltax(zT1,t+dt,dtHalf);
+                system.resetUpToDate();
                 singleStepsT1++;
                 z2dRE << zT1;
               }
@@ -554,18 +582,22 @@ namespace MBSimIntegrator {
               if (calcJobE23T1 && calcBlock2) {
                 zT1  << z3b;
                 qT1 += sysT1->deltaq(zT1,t+dtThird,dtThird);
-                sysT1->update(zT1,t+2.0*dtThird,1);
-                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
+                system.resetUpToDate();
+//                sysT1->update(zT1,t+2.0*dtThird,1);
+                sysT1->getb(false) << sysT1->getgd(t) + sysT1->getW(t).T()*slvLLFac(sysT1->getLLM(t),sysT1->geth(t))*dtThird;
                 sysT1->solveImpacts(dtThird);
                 uT1 += sysT1->deltau(zT1,t+2.0*dtThird,dtThird);
                 xT1 += sysT1->deltax(zT1,t+2.0*dtThird,dtThird);
+                system.resetUpToDate();
 
                 qT1 += sysT1->deltaq(zT1,t+2.0*dtThird,dtThird);
-                sysT1->update(zT1,t+dt);
-                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
+                system.resetUpToDate();
+//                sysT1->update(zT1,t+dt);
+                sysT1->getb(false) << sysT1->getgd(t) + sysT1->getW(t).T()*slvLLFac(sysT1->getLLM(t),sysT1->geth(t))*dtThird;
                 sysT1->solveImpacts(dtThird);
                 uT1 += sysT1->deltau(zT1,t+dt,dtThird);
                 xT1 += sysT1->deltax(zT1,t+dt,dtThird);
+                system.resetUpToDate();
                 singleStepsT1+=2;
                 z3d << zT1;
               } 
@@ -577,19 +609,23 @@ namespace MBSimIntegrator {
                 if (method) zT2 << z4b;
                 else zT2 << zStern; 
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtQuarter);
-                sysT2->update(zT2,t+dtHalf+dtQuarter,1);
-                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dtHalf+dtQuarter,1);
+                sysT2->getb(false) << sysT2->getgd(t)+sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtQuarter;
                 iterC3  = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf+dtQuarter,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtHalf+dtQuarter,dtQuarter);
+                system.resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2,t+dtHalf+dtQuarter);
                 LSC3 = LStmp_T2;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf+dtQuarter,dtQuarter);
-                sysT2->update(zT2,t+dt);
-                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dt);
+                sysT2->getb(false) << sysT2->getgd(t)+sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtQuarter;
                 iterC4 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dt,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dt,dtQuarter);
+                system.resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2,t+dt);
                 LSC4 = LStmp_T2;
                 ConstraintsChangedC = changedLinkStatus(LSC2,LSC3,indexLSException);
@@ -602,28 +638,32 @@ namespace MBSimIntegrator {
               if (calcJobBT2 && calcBlock2) {
                 zT2  << z2b;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtHalf);
-                sysT2->update(zT2,t+dt,1);
-                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dt,1);
+                sysT2->getb(false) << sysT2->getgd(t) + sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtHalf;
                 iterB2  = sysT2->solveImpacts(dtHalf);
                 uT2 += sysT2->deltau(zT2,t+dt,dtHalf);
                 xT2 += sysT2->deltax(zT2,t+dt,dtHalf);
+                system.resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2,t+dt);
                 LSB2 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
 
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
-                la2b/=dtHalf;
+//                la2b/=dtHalf;
                 singleStepsT2++;
                 z2d << zT2; 
               }
               if (calcJobB2RET2 && calcBlock2) { //B2RE
                 zT2 << zStern;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtHalf);
-                sysT2->update(zT2,t+dt,1);
-                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dt,1);
+                sysT2->getb(false) << sysT2->getgd(t) + sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtHalf;
                 iterB2RE  = sysT2->solveImpacts(dtHalf);
                 uT2 += sysT2->deltau(zT2,t+dt,dtHalf);
                 xT2 += sysT2->deltax(zT2,t+dt,dtHalf);
+                system.resetUpToDate();
                 singleStepsT2++;
                 z2dRE << zT2;
               }
@@ -631,11 +671,13 @@ namespace MBSimIntegrator {
               if (calcJobE3T2 && calcBlock2) {
                 zT2  << z3b;
                 qT2 += sysT2->deltaq(zT2,t+2.0*dtThird,dtThird);
-                sysT2->update(zT2,t+dt,1);
-                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
+                system.resetUpToDate();
+//                sysT2->update(zT2,t+dt,1);
+                sysT2->getb() << sysT2->getgd(t) + sysT2->getW(t).T()*slvLLFac(sysT2->getLLM(t),sysT2->geth(t))*dtThird;
                 sysT2->solveImpacts(dtThird);
                 uT2 += sysT2->deltau(zT2,t+dt,dtThird);
                 xT2 += sysT2->deltax(zT2,t+dt,dtThird);
+                system.resetUpToDate();
                 singleStepsT2++;
                 z3d << zT2;
               }
@@ -647,31 +689,37 @@ namespace MBSimIntegrator {
                 if (method) zT3  << z6b;
                 else zT3<<zStern;
                 qT3 += sysT3->deltaq(zT3,t+dtHalf,dtSixth);
-                sysT3->update(zT3,t+4.0*dtSixth,1);
-                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                system.resetUpToDate();
+//                sysT3->update(zT3,t+4.0*dtSixth,1);
+                sysT3->getb() << sysT3->getgd(t) + sysT3->getW(t).T()*slvLLFac(sysT3->getLLM(t),sysT3->geth(t))*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+4.0*dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+4.0*dtSixth,dtSixth);
+                system.resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3,t+4.0*dtSixth);
                 LSD4 = LStmp_T3;
                 ConstraintsChangedD =  changedLinkStatus(LSD4,LSD3,indexLSException);
 
                 qT3 += sysT3->deltaq(zT3,t+4.0*dtSixth,dtSixth);
-                sysT3->update(zT3,t+5.0*dtSixth);
-                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                system.resetUpToDate();
+//                sysT3->update(zT3,t+5.0*dtSixth);
+                sysT3->getb() << sysT3->getgd(t) + sysT3->getW(t).T()*slvLLFac(sysT3->getLLM(t),sysT3->geth(t))*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+5.0*dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+5.0*dtSixth,dtSixth);
+                system.resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3,t+5.0*dtSixth);
                 LSD5 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD4,LSD5,indexLSException);
 
                 qT3 += sysT3->deltaq(zT3,t+5.0*dtSixth,dtSixth);
-                sysT3->update(zT3,t+dt);
-                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                system.resetUpToDate();
+//                sysT3->update(zT3,t+dt);
+                sysT3->getb() << sysT3->getgd(t) + sysT3->getW(t).T()*slvLLFac(sysT3->getLLM(t),sysT3->geth(t))*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dt,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dt,dtSixth);
+                system.resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3,t+dt);
                 LSD6 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD5,LSD6,indexLSException);
@@ -1332,7 +1380,7 @@ namespace MBSimIntegrator {
     for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
       sizeLink = SetValuedLinkList[i]->getlaSize();
       if (SetValuedLinkList[i]->isActive())
-        la_(j,j+sizeLink-1) = SetValuedLinkList[i]->getla();
+        la_(j,j+sizeLink-1) = SetValuedLinkList[i]->getLa();
       else 
         la_(j,j+sizeLink-1).init(0.0);
       j+=sizeLink;  
@@ -1348,9 +1396,9 @@ namespace MBSimIntegrator {
       if (! SetValuedLinkList[i]->isActive())
         SetValuedLinkList[i]->deletelaRef();
       if(sizeLink >= la_Sizes(i)) 
-        SetValuedLinkList[i]->getla()(0,la_Sizes(i)-1) = la_(j,j+la_Sizes(i)-1);
+        SetValuedLinkList[i]->getLa()(0,la_Sizes(i)-1) = la_(j,j+la_Sizes(i)-1);
       else
-        SetValuedLinkList[i]->getla()(0,sizeLink-1) = la_(j,j+sizeLink-1);
+        SetValuedLinkList[i]->getLa()(0,sizeLink-1) = la_(j,j+sizeLink-1);
       j+=la_Sizes(i);  
     }     
   }
