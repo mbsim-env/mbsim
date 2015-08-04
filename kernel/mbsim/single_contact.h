@@ -103,8 +103,8 @@ namespace MBSim {
       virtual void checkConstraintsForTermination(double t);
       virtual void checkImpactsForTermination(double t, double dt);
       virtual void checkActive(double t, int j);
-//      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
-//      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
+      virtual void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
+      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
  
       /***************************************************/
 

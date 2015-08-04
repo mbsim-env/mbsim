@@ -133,7 +133,7 @@ namespace MBSim {
       virtual void setgInd(int gInd_);
       virtual void setgdInd(int gdInd_);
       virtual void setrFactorInd(int rFactorInd_);
-      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_);
+      virtual void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
       virtual void updatecorrRef(const fmatvec::Vec& ref);
       virtual void updatecorr(int j);

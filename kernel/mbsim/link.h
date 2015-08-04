@@ -351,12 +351,12 @@ namespace MBSim {
        * \param gAct gap distance of active links (return)
        * \param IndActive index for gActive; incremented with size after storage (return and input)
       */
-      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_){};
+      virtual void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_) { }
       
       /**
        * \brief calculates the number of active and inactive unilateral constraints and increments sizeActive/sizeInActive
        */
-      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {};
+      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) { }
       virtual void updatecorr(int j) { corr.init(0); }
       virtual void updatecorrRef(const fmatvec::Vec &ref);
       virtual void calccorrSize(int j) { corrSize = 0; }

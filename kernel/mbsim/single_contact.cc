@@ -1384,4 +1384,27 @@ namespace MBSim {
     ds->setRootID(max(ds->getRootID(), rootID));
   }
 
+  void SingleContact::LinearImpactEstimation(double t, Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
+    if (gActive) {
+      gAct_(*IndActive_) = getGeneralizedRelativePosition(t)(0);
+      (*IndActive_)++;
+    }
+    else {
+      // TODO check if already computed
+      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation(t).col(0);
+      // TODO check if already computed
+      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity(t) - cpData[0].getFrameOfReference().getVelocity(t);
+      gdInActive_(*IndInActive_) = Wn.T() * WvD;
+      gInActive_(*IndInActive_) = getGeneralizedRelativePosition(t)(0);
+      (*IndInActive_)++;
+    }
+  }
+
+  void SingleContact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {
+    if (gActive)
+      (*sizeActive_)++;
+    else
+      (*sizeInActive_)++;
+  }
+
 }

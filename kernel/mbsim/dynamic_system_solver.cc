@@ -941,7 +941,7 @@ namespace MBSim {
       msg(Warn) << "\nError: no convergence." << endl;
       if (stopIfNoConvergence) {
         if (dropContactInfo)
-          dropContactMatrices();
+          dropContactMatrices(t);
         THROW_MBSIMERROR("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
@@ -978,7 +978,7 @@ namespace MBSim {
       msg(Warn) << "\nError: no convergence." << endl;
       if (stopIfNoConvergence) {
         if (dropContactInfo)
-          dropContactMatrices();
+          dropContactMatrices(t);
         THROW_MBSIMERROR("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
@@ -1367,20 +1367,20 @@ namespace MBSim {
     return info.str();
   }
 
-  void DynamicSystemSolver::dropContactMatrices() {
+  void DynamicSystemSolver::dropContactMatrices(double t) {
     msg(Info) << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");
 
-    contactDrop << "constraint functions g" << endl << g << endl << endl;
+    contactDrop << "constraint functions g" << endl << getg(t) << endl << endl;
     contactDrop << endl;
-    contactDrop << "mass matrix M" << endl << M[0] << endl << endl;
-    contactDrop << "generalized force vector h" << endl << h[0] << endl << endl;
-    contactDrop << "generalized force directions W" << endl << W[0] << endl << endl;
-    contactDrop << "generalized force directions V" << endl << V[0] << endl << endl;
-    contactDrop << "mass action matrix G" << endl << G << endl << endl;
-    contactDrop << "vector wb" << endl << wb << endl << endl;
+    contactDrop << "mass matrix M" << endl << getM(t) << endl << endl;
+    contactDrop << "generalized force vector h" << endl << geth(t) << endl << endl;
+    contactDrop << "generalized force directions W" << endl << getW(t) << endl << endl;
+    contactDrop << "generalized force directions V" << endl << getV(t) << endl << endl;
+    contactDrop << "mass action matrix G" << endl << getG(t) << endl << endl;
+    contactDrop << "vector wb" << endl << getwb(t) << endl << endl;
     contactDrop << endl;
-    contactDrop << "constraint velocities gp" << endl << gd << endl << endl;
+    contactDrop << "constraint velocities gp" << endl << getgd(t) << endl << endl;
     contactDrop << "non-holonomic part in gp; b" << endl << b << endl << endl;
     contactDrop << "Lagrange multipliers la" << endl << la << endl << endl;
     contactDrop << "Lagrange multipliers La" << endl << La << endl << endl;

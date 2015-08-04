@@ -2358,7 +2358,7 @@ namespace MBSimIntegrator {
     nInActive=0;
     nActive=0;
     for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++) 
-      SetValuedLinkListT1[i]->LinearImpactEstimation(gInActive,gdInActive,&nInActive,gUniActive,&nActive);
+      SetValuedLinkListT1[i]->LinearImpactEstimation(t,gInActive,gdInActive,&nInActive,gUniActive,&nActive);
   }
 
   bool AutoTimeSteppingSSCIntegrator::changedLinkStatus(const VecInt &L1, const VecInt &L2, int ex) {

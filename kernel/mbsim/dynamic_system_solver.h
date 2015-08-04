@@ -439,7 +439,7 @@ namespace MBSim {
       /**
        * writes a file with relevant matrices for debugging
        */
-      void dropContactMatrices();
+      void dropContactMatrices(double t);
 
       /**
        * \brief handler for user interrupt signal
