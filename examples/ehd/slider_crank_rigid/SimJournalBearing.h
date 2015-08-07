@@ -10,6 +10,7 @@
 
 using namespace fmatvec;
 using namespace MBSimEHD;
+using namespace std;
 
 void TestLubricants(Lubricant & lubT1, Lubricant & lubT2) {
   // Synthetic paraffnic oil (lot 3) at two different temperatures, see
@@ -93,6 +94,7 @@ msh.Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
 msh.FinishMesh();
 
 //TODO: Testing (compare with matlab stuff) -->>  how to do?
+cout << msh.getpos() << endl;
 
 return 0;
 

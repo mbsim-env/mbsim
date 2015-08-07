@@ -149,6 +149,10 @@ namespace MBSimEHD {
       //      b:          DOFs at boundary
       fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
 
+      fmatvec::VecV getpos() {
+        return pos;
+      }
+
     private:
       EHDPressureElement ele;        // Object of class pressure element
 
