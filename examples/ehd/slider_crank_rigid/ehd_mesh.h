@@ -73,7 +73,6 @@ namespace MBSimEHD {
        */
       ~EHDMesh();
 
-
       //      Set boundary of domain
       //
       //      Input:
@@ -117,7 +116,6 @@ namespace MBSimEHD {
       //                  node positions (locX)
       fmatvec::MatVI LocLine(const int & nnodval);
 
-
       //    Location matrix for positions and solution for quad elements
       //
       //    Input:
@@ -153,6 +151,14 @@ namespace MBSimEHD {
         return pos;
       }
 
+      fmatvec::MatVI getlocX() {
+        return locX;
+      }
+
+      fmatvec::MatVI getlocD() {
+        return locD;
+      }
+
     private:
       EHDPressureElement ele;        // Object of class pressure element
 
@@ -175,8 +181,8 @@ namespace MBSimEHD {
       fmatvec::VecInt per2V;       // DOFs at periodic boundary 2 (to be eliminated)
       fmatvec::VecInt freedofs;   // Free DOFs (without dbc and per2 DOFs)
 
-    };
+  };
 
-  }
+}
 
 #endif

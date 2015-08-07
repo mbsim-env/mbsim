@@ -102,10 +102,31 @@ myfile.open("msh_pos_matlab.txt");
 std::string str((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
 myfile.close();
+
 string final("["+str+"]");
 cout << final.c_str() << endl;
 VecV matlCmp(final.c_str());
-cout << nrm2(matlCmp - msh.getpos())  << endl;
+cout << "Difference in pos: " << nrm2(matlCmp - msh.getpos())  << endl;
+
+myfile.open("msh_locx_matlab.txt");
+str = string((std::istreambuf_iterator<char>(myfile)),
+                 std::istreambuf_iterator<char>());
+myfile.close();
+
+final = string("["+str+"]");
+cout << final.c_str() << endl;
+MatVI matlCmpMatVI(final.c_str());
+cout << "Difference in locX: " << matlCmpMatVI - msh.getlocX()  << endl;
+
+myfile.open("msh_locd_matlab.txt");
+str = string((std::istreambuf_iterator<char>(myfile)),
+                 std::istreambuf_iterator<char>());
+myfile.close();
+
+final = string("["+str+"]");
+cout << final.c_str() << endl;
+MatVI matlCmpMatlocD(final.c_str());
+cout << "Difference in locD: " << matlCmpMatlocD - msh.getlocD()  << endl;
 
 return 0;
 
