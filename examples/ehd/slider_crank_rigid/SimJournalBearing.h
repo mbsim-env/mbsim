@@ -77,15 +77,18 @@ TestLubricants(lubT1, lubT2);
 EHDPressureElement ele("quad9", 4);
 
 // Create computational mesh (half fluid domain)
-Vec2 yb;
+RowVec2 yb;
 yb(0)= 0;
 yb(1) = 2 * M_PI * sys.getR2();
-Vec2 zb;
+RowVec2 zb;
 zb(0) = -1 * sys.getL() / 2;
 zb(1) = 0;
 MatVx2 xb(2);
 xb.set(0, yb);
 xb.set(1, zb);
+
+cout << xb << endl;
+
 EHDMesh msh(ele, xb, VecInt("[20; 3]"));
 
 msh.Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
@@ -94,7 +97,15 @@ msh.Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
 msh.FinishMesh();
 
 //TODO: Testing (compare with matlab stuff) -->>  how to do?
-cout << msh.getpos() << endl;
+ifstream myfile;
+myfile.open("msh_pos_matlab.txt");
+std::string str((std::istreambuf_iterator<char>(myfile)),
+                 std::istreambuf_iterator<char>());
+myfile.close();
+string final("["+str+"]");
+cout << final.c_str() << endl;
+VecV matlCmp(final.c_str());
+cout << nrm2(matlCmp - msh.getpos())  << endl;
 
 return 0;
 
