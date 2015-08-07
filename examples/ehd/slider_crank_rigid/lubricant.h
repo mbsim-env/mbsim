@@ -30,7 +30,7 @@ namespace MBSimEHD {
 
   class Lubricant {
 
-      friend class PressureElement;
+      friend class EHDPressureElement;
 
     public:
       enum ViscosityPressureModel {
@@ -103,12 +103,12 @@ namespace MBSimEHD {
       double pr;             // Reference pressure for dimensionless description
 
       // Constants for Roelands formula, in Ns/m^2 and N/m^2
-      const double etaInf = 6.31e-5;
-      const double cp = 1.96e8;
+      double etaInf = 6.31e-5;
+      double cp = 1.96e8;
 
       // Constants for Dowson Higginson formula, in m^2/N
-      const double a = 0.6e-9;
-      const double b = 1.7e-9;
+      double a = 0.6e-9;
+      double b = 1.7e-9;
 
   };
 }

@@ -154,14 +154,14 @@ namespace MBSimEHD {
     return shape;
   }
 
-  PressureElement::PressureElement(const std::string & shapeName, const int & ngp) {
+  EHDPressureElement::EHDPressureElement(const std::string & shapeName, const int & ngp) {
     //  // Define ent properties
     shape = ElementShapes(shapeName);
     ndof = shape.nnod * ndofpernod;
     this->ngp = ngp;
   }
 
-  void PressureElement::EvaluateElement(const int & e, const VecV & pose, const VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, MatV & kTe) {
+  void EHDPressureElement::EvaluateElement(const int & e, const VecV & pose, const VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, MatV & kTe) {
 
     // Define abbreviations
     int ndime = shape.ndim;
@@ -485,7 +485,7 @@ namespace MBSimEHD {
     }
   }
 
-  void PressureElement::GetShapeFunctions(const fmatvec::VecV & pose, const fmatvec::VecV &xi, fmatvec::RowVecV & Np, fmatvec::Mat2xV & Npdx, fmatvec::Mat3xV & Ndxdx, fmatvec::Mat2xV & Nx, double & detJ) {
+  void EHDPressureElement::GetShapeFunctions(const fmatvec::VecV & pose, const fmatvec::VecV &xi, fmatvec::RowVecV & Np, fmatvec::Mat2xV & Npdx, fmatvec::Mat3xV & Ndxdx, fmatvec::Mat2xV & Nx, double & detJ) {
 
 // Define abbreviation
     int ndime = shape.ndim;
@@ -571,7 +571,7 @@ namespace MBSimEHD {
     }
   }
 
-  void PressureElement::EvaluatePenaltyLaw(const double & p, double & fP, double & fPdp) {
+  void EHDPressureElement::EvaluatePenaltyLaw(const double & p, double & fP, double & fPdp) {
     //Compute penalty term and its derivative with respect to p
     if (p < 0) {
       fP = -pp * p;

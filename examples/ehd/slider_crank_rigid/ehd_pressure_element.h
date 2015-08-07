@@ -93,7 +93,7 @@ namespace MBSimEHD {
   // ElementShape (see above)
   ElementShape ElementShapes(const std::string & shapeName);
 
-  class PressureElement {
+  class EHDPressureElement {
       // Pressure-based element for solving Reynolds equation
       // on one- or two-dimensional domain
       // Michael Hofer, 22.03.2015
@@ -109,7 +109,7 @@ namespace MBSimEHD {
       //
       // Output:
       //   ele:        Object of element
-      PressureElement(const std::string & shapeName, const int & ngp);
+      EHDPressureElement(const std::string & shapeName, const int & ngp);
 
       // Evaluate element
       //

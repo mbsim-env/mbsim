@@ -51,7 +51,7 @@ namespace MBSimEHD {
       //
       //          Output:
       //            msh:    Object of created mesh
-      EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled);
+      EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled);
 
       //          Constructor for user structured Mesh
 
@@ -66,7 +66,7 @@ namespace MBSimEHD {
       //
       //          Output:
       //            msh:    Object of created mesh
-      EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2 & hd);
+      EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2 & hd);
 
       /*!
        * \brief destructor
@@ -150,7 +150,7 @@ namespace MBSimEHD {
       fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
 
     private:
-      PressureElement ele;        // Object of class pressure element
+      EHDPressureElement ele;        // Object of class pressure element
 
       int nele;       // Number of elements
       int nnod;       // Number of nodes

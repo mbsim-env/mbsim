@@ -26,7 +26,7 @@ using namespace MBSim;
 
 namespace MBSimEHD {
 
-  EHDMesh::EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled) :
+  EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled) :
       ele(ele) {
     int nele_tmp;
 
@@ -87,7 +87,7 @@ namespace MBSimEHD {
 
   }
 
-  EHDMesh::EHDMesh(const PressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2 & hd) :
+  EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2 & hd) :
       ele(ele), hd(hd) {
     int nele_tmp;
     int ndim = ele.shape.ndim;

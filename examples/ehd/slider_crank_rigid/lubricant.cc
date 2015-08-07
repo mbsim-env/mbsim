@@ -27,6 +27,10 @@ using namespace MBSim;
 using namespace std;
 
 namespace MBSimEHD {
+  Lubricant::Lubricant() {
+
+  }
+
   Lubricant::Lubricant(const double & eta0, const double & rho0, const double & alphaOrZ, const bool & isAlpha, const ViscosityPressureModel & viscModel, const DensityPressureModel & densModel, const double & pr) :
       eta0(eta0), rho0(rho0), pr(pr) {
 
@@ -45,7 +49,10 @@ namespace MBSimEHD {
 
     // Save reference pressure if a dimensionless description is
     // used
-    if (viscModel == constVisc or viscModel == Roelands or viscModel == Barus or densModel == constDen or densModel == DowsonHigginson)
+    if (not(
+        (viscModel == constVisc or viscModel == Roelands or viscModel == Barus) and
+        (densModel == constDen or densModel == DowsonHigginson)
+        ))
       throw MBSimError("No reference pressure for dimensionless description defined.");
 
   }

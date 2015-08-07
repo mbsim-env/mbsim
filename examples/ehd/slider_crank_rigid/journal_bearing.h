@@ -28,7 +28,7 @@ namespace MBSimEHD {
 // Michael Hofer, 09.01.2015
   class JournalBearing {
 
-      friend class PressureElement;
+      friend class EHDPressureElement;
 
     public:
       // Constructor
@@ -100,6 +100,18 @@ namespace MBSimEHD {
       //TODO: fit to MBSim SqrMat3 etc. --> use the mbsim functions!!
       void AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat2 & AFK) const;
 
+      void setomega1(double om1) {
+        omega1 = om1;
+      }
+
+      void setFr(double Fr_) {
+        Fr = Fr_;
+      }
+
+      fmatvec::SqrMat3 getM1() {
+        return M1;
+      }
+
     private:
 // Geometry
       double R1;      // Radius of journal
@@ -118,11 +130,11 @@ namespace MBSimEHD {
       double Fr;                     // Radial force revolving with journal
 
 // State variables
-      fmatvec::Vec2 IxS1 = "[0, 0]";
+      fmatvec::Vec2 IxS1 = "[0; 0]";
 // Position of journal center point
-      fmatvec::Vec2 IxS2 = "[0, 0]";          // Position of bearing shell center point
-      fmatvec::Vec2 IuS1 = "[0, 0]";          // Velocity of journal center point
-      fmatvec::Vec2 IuS2 = "[0, 0]";          // Velocity of bearing shell center point
+      fmatvec::Vec2 IxS2 = "[0; 0]";          // Position of bearing shell center point
+      fmatvec::Vec2 IuS1 = "[0; 0]";          // Velocity of journal center point
+      fmatvec::Vec2 IuS2 = "[0; 0]";          // Velocity of bearing shell center point
       double phi1 = 0;          // Angle of journal
       double phi2 = 0;          // Angle of bearing shell
       double omega1 = 0;          // Angular velocity of journal
