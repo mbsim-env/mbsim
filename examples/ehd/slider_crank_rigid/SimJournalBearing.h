@@ -87,10 +87,12 @@ xb.set(0, yb);
 xb.set(1, zb);
 EHDMesh msh(ele, xb, VecInt("[20; 3]"));
 
-//Boundary(msh, "dbc", "x2-");    // z = -L / 2
-//Boundary(msh, "per1", "x1-");   // y = 0
-//Boundary(msh, "per2", "x1+");   // y = 2 * pi * R2
-//FinishMesh(msh);
+msh.Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
+msh.Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
+msh.Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
+msh.FinishMesh();
+
+//TODO: Testing (compare with matlab stuff) -->>  how to do?
 
 return 0;
 
