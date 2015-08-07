@@ -112,6 +112,14 @@ namespace MBSimEHD {
         return M1;
       }
 
+      double getR2() {
+        return R2;
+      }
+
+      double getL() {
+        return L;
+      }
+
     private:
 // Geometry
       double R1;      // Radius of journal

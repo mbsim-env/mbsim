@@ -66,7 +66,7 @@ namespace MBSimEHD {
       //
       //          Output:
       //            msh:    Object of created mesh
-      EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2 & hd);
+      EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const std::vector<fmatvec::RowVecV> & hd);
 
       /*!
        * \brief destructor
@@ -158,8 +158,8 @@ namespace MBSimEHD {
       int nfree;      // Number of free DOFs (without dbc and per2 DOFs)
 
       fmatvec::VecInt neled;      // Number of elements in spatial directions
-      fmatvec::VecInt nnodd;      // Number of nodes in spatial directions
-      fmatvec::MatVx2 hd;         // Element size in spatial directions (rectilinear mesh)
+      fmatvec::Vec2I nnodd;      // Number of nodes in spatial directions
+      std::vector<fmatvec::RowVecV> hd;         // Element size in spatial directions (rectilinear mesh)
 
       fmatvec::VecV pos;        // Node positions
       fmatvec::MatVI locX;            // Location matrix for geometry

@@ -40,11 +40,10 @@ namespace MBSimEHD {
     this->neled = neled;
 
     // Create vector with element sizes in spatial directions
-    this->hd = MatVx2(ndim, INIT, 0);
     for (int i = 0; i < ndim; i++) {
-      for (int j = 0; i < neled(i); j++) {
-        this->hd(j, i) = Hd(i) / neled(i);  //TODO: Is there a possibility to init whole column or row ??
-      }
+      hd.push_back(RowVecV(neled(i), INIT, 0.));
+      for(int j = 0; j < neled(i); j++)
+        hd[i](j) = Hd(i) / neled(i);
     }
 
     // Compute total number of elements
@@ -87,78 +86,82 @@ namespace MBSimEHD {
 
   }
 
-  EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const fmatvec::MatVx2 & hd) :
+  EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const std::vector<fmatvec::RowVecV> & hd) :
       ele(ele), hd(hd) {
-    int nele_tmp;
-    int ndim = ele.shape.ndim;
-    double s;
-    fmatvec::VecV Hd = xb.col(1) - xb.col(0);
-    this->neled = neled;
+    /*
+     * TODO...
 
-    // Compute number of elements in spatial directions
-    this->neled = VecInt(2, INIT, 0);
+     int nele_tmp;
+     int ndim = ele.shape.ndim;
+     double s;
+     fmatvec::VecV Hd = xb.col(1) - xb.col(0);
+     this->neled = neled;
 
-    for (int i = 0; i < ndim; i++) {
-      s = 0;
-      for (int j = 0; j < hd.rows(); j++) {
-        s = s + hd(j, i);
-      }
-      if (nrm1(s - Hd(i)) > 1e-12) {   // TODO: write function sum in fmatvec
-        throw MBSim::MBSimError("EHD mesh boundary is not compatible to defined mesh!");
-      }
-    }
+     // Compute number of elements in spatial directions
+     this->neled = VecInt(2, INIT, 0);
 
-    // Count number of elements in spatial directions
-    for (int i = 0; i < ndim; i++) {
-      int j = 0;
-      while (hd(i, j) > 0) {
-        j++;
-      }
-      this->neled(i) = j;
-    }
+     for (int i = 0; i < ndim; i++) {
+     s = 0;
+     for (int j = 0; j < hd.rows(); j++) {
+     s = s + hd(j, i);
+     }
+     if (nrm1(s - Hd(i)) > 1e-12) {   // TODO: write function sum in fmatvec
+     throw MBSim::MBSimError("EHD mesh boundary is not compatible to defined mesh!");
+     }
+     }
 
-    // Compute total number of elements
-    nele_tmp = 1;
-    for (int i = 0; i < ndim; i++) {
-      nele_tmp = nele_tmp * this->neled(i);
-    }
-    this->nele = nele_tmp;
+     // Count number of elements in spatial directions
+     for (int i = 0; i < ndim; i++) {
+     int j = 0;
+     while (hd(i, j) > 0) {
+     j++;
+     }
+     this->neled(i) = j;
+     }
 
-    // Compute node positions and build location matrices
-    if (ele.shape.name == "line2" || ele.shape.name == "line3") {
-      this->pos = Pos1D(xb);
-      this->locX = LocLine(ndim);
-      this->locD = LocLine(ele.ndofpernod);
-    }
-    else if (ele.shape.name == "quad4" || ele.shape.name == "quad8" || ele.shape.name == "quad9") {
-      this->pos = Pos2D(xb);
-      this->locX = LocQuad(ndim);
-      this->locD = LocQuad(ele.ndofpernod);
-    }
-    else if (ele.shape.name == "quad8on") {
-      //                       msh.pos = Pos2D(msh, xb);
-      //                       locX1 = LocQuad(msh, ndim);
-      //                       msh.locX = locX1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
-      //                           5, 6, 13, 14, 7, 8, 15, 16]);
-      //                       locD1 = LocQuad(msh, ele.ndofpernod);
-      //                       if ele.ndofpernod == 1
-      //                           msh.locD = locD1(:, [1, 5, 2, 6, 3, 7, 4, 8]);
-      //                       elseif ele.ndofpernod == 2
-      //                           msh.locD = locD1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
-      //                           5, 6, 13, 14, 7, 8, 15, 16]);
-      throw MBSim::MBSimError("type quad8on of element shape not yet implemented!");
-    }
-    else {
-      throw MBSim::MBSimError("Wrong type of element shape!");
-    }
+     // Compute total number of elements
+     nele_tmp = 1;
+     for (int i = 0; i < ndim; i++) {
+     nele_tmp = nele_tmp * this->neled(i);
+     }
+     this->nele = nele_tmp;
 
-    // Compute total number of DOFs
-    this->ndof = this->nnod * ele.ndofpernod;
+     // Compute node positions and build location matrices
+     if (ele.shape.name == "line2" || ele.shape.name == "line3") {
+     this->pos = Pos1D(xb);
+     this->locX = LocLine(ndim);
+     this->locD = LocLine(ele.ndofpernod);
+     }
+     else if (ele.shape.name == "quad4" || ele.shape.name == "quad8" || ele.shape.name == "quad9") {
+     this->pos = Pos2D(xb);
+     this->locX = LocQuad(ndim);
+     this->locD = LocQuad(ele.ndofpernod);
+     }
+     else if (ele.shape.name == "quad8on") {
+     //                       msh.pos = Pos2D(msh, xb);
+     //                       locX1 = LocQuad(msh, ndim);
+     //                       msh.locX = locX1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
+     //                           5, 6, 13, 14, 7, 8, 15, 16]);
+     //                       locD1 = LocQuad(msh, ele.ndofpernod);
+     //                       if ele.ndofpernod == 1
+     //                           msh.locD = locD1(:, [1, 5, 2, 6, 3, 7, 4, 8]);
+     //                       elseif ele.ndofpernod == 2
+     //                           msh.locD = locD1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
+     //                           5, 6, 13, 14, 7, 8, 15, 16]);
+     throw MBSim::MBSimError("type quad8on of element shape not yet implemented!");
+     }
+     else {
+     throw MBSim::MBSimError("Wrong type of element shape!");
+     }
+
+     // Compute total number of DOFs
+     this->ndof = this->nnod * ele.ndofpernod;
+     */
+  }
+
+  EHDMesh::~EHDMesh() {
 
   }
-//  EHDMesh::~EHDMesh() {
-//
-//  }
 
   void EHDMesh::Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary) {
     // Get DOFs at boundary
@@ -242,14 +245,18 @@ namespace MBSimEHD {
     for (int i = 0; i < this->per2V.size(); i++) {
       b = false;
       for (int j = 0; j < this->locD.rows(); j++) {
-        for (int k=0; k<this->locD.cols(); k++){
-          if (this->locD(j,k) == this->per2V(i)) {
-            this->locD(j,k) = this->per1V(i);
+        for (int k = 0; k < this->locD.cols(); k++) {
+          if (this->locD(j, k) == this->per2V(i)) {
+            this->locD(j, k) = this->per1V(i);
             b = true;
           }
-          if (b) {break;}
+          if (b) {
+            break;
+          }
         }
-        if (b) {break;}
+        if (b) {
+          break;
+        }
       }
     }
     // ToDo: Look for matlab find-function in c++: msh.locD(msh.locD == msh.per2(i)) = msh.per1(i);
@@ -259,7 +266,7 @@ namespace MBSimEHD {
     // Define abbreviations
     int ndim = 1;
 
-    int nnodde[2] = {this->ele.shape.nnodd[0],this->ele.shape.nnodd[1]};
+    int nnodde[2] = {this->ele.shape.nnodd[0], this->ele.shape.nnodd[1]};
 
     // Compute number of nodes in spatial directions
     this->nnodd(0) = this->neled(0) * (nnodde[0] - 1) + 1;
@@ -268,7 +275,7 @@ namespace MBSimEHD {
     this->nnod = this->nnodd(0);
 
     // Get element sizes
-    VecV hd1 = this->hd.col(0);
+    RowVecV hd1 = this->hd[0];
 
     // Compute node positions
     fmatvec::VecV pos = VecV(this->nnod * ndim, INIT, 1);
@@ -304,11 +311,11 @@ namespace MBSimEHD {
     this->nnod = this->nnodd(0) * this->nnodd(1) - pow(ser, 2) * this->nele;
 
     // Get element sizes in spatial directions
-    fmatvec::VecV hd1 = this->hd.col(0);
-    fmatvec::VecV hd2 = this->hd.col(1);
+    RowVecV hd1 = this->hd[0];
+    RowVecV hd2 = this->hd[1];
 
     // Compute node positions
-    fmatvec::VecV pos = VecV(this->nnod * ndim, INIT, 1);
+    fmatvec::VecV pos = VecV(this->nnod * ndim, INIT, 0.);
 
     int l = 0;
     double xd[2] = {0, 0};
@@ -318,40 +325,40 @@ namespace MBSimEHD {
         for (int e1 = 0; e1 < this->neled(0); e1++) {
           for (int i = 0; i < nnodde[0] - 1; i++) {
             if ((i % (ser + 1)) == 0 || (j % (ser + 1)) == 0) {   // ????
-              pos(l) = xb(1, 1) + i * hd1(e1) / (nnodde[0] - 1) + xd[0];
+              pos(l) = xb(0, 0) + i * hd1(e1) / (nnodde[0] - 1) + xd[0];
               l++;
-              pos(l) = xb(2, 1) + j * hd2(e2) / (nnodde[1] - 1) + xd[1];
+              pos(l) = xb(1, 0) + j * hd2(e2) / (nnodde[1] - 1) + xd[1];
               l++;
             }
           }
           xd[0] = xd[0] + hd1(e1);
         }
         // last node in column
-        pos(l) = xb(1, 2);
+        pos(l) = xb(0, 1);
         l++;
-        pos(l) = xb(2, 1) + j * hd2(e2) / (nnodde[1] - 1) + xd[1];
+        pos(l) = xb(1, 0) + j * hd2(e2) / (nnodde[1] - 1) + xd[1];
         l++;
       }
       xd[1] = xd[1] + hd2(e2);
     }
     // last node row
     xd[0] = 0;
-    int j = nnodde[1]-1;
+    int j = nnodde[1] - 1;
     for (int e1 = 0; e1 < this->neled(0); e1++) {
       for (int i = 0; i < nnodde[0] - 1; i++) {
         if ((i % (ser + 1)) == 0 || (j % (ser + 1)) == 0) {
-          pos(l) = xb(1, 1) + i * hd1(e1) / (nnodde[0] - 1) + xd[0];
+          pos(l) = xb(0, 0) + i * hd1(e1) / (nnodde[0] - 1) + xd[0];
           l++;
-          pos(l) = xb(2, 2);
+          pos(l) = xb(1, 1);
           l++;
         }
       }
       xd[0] = xd[0] + hd1(e1);
     }
     // last node
-    pos(l) = xb(1, 2);
+    pos(l) = xb(0, 1);
     l++;
-    pos(l) = xb(2, 2);
+    pos(l) = xb(1, 1);
     l++;
 
     return pos;
@@ -384,7 +391,7 @@ namespace MBSimEHD {
   fmatvec::MatVI EHDMesh::LocQuad(const int & nnodval) {
     fmatvec::MatVI loc = MatVI(this->nele, this->ele.shape.nnod * nnodval, INIT, 0);
     int e = 0;
-    int d1,d2;
+    int d1, d2;
 
     // Define abbreviations
     int nnodde[2] = {this->ele.shape.nnodd[0], this->ele.shape.nnodd[1]};
@@ -394,7 +401,7 @@ namespace MBSimEHD {
     // Build location matrix
     for (int e2 = 0; e2 < this->neled(1); e2++) {
       for (int e1 = 0; e1 < this->neled(0); e1++) {
-        e = e1 + (e2 - 1) * this->neled(0);
+        e = e1 + e2 * this->neled(0);
         for (int i = 0; i < nnodval; i++) {
           d1 = (nnodde[0] - 1) * nnodval;
           d2 = (this->nnodd(0) * (this->nnodd(1) - 1) - this->neled(0) * pow(ser, 2)) * nnodval;

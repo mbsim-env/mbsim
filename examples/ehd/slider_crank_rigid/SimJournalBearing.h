@@ -4,6 +4,7 @@
 #include <fmatvec/fmatvec.h>
 
 #include "ehd_pressure_element.h"
+#include "ehd_mesh.h"
 #include "journal_bearing.h"
 #include "lubricant.h"
 
@@ -75,9 +76,17 @@ TestLubricants(lubT1, lubT2);
 EHDPressureElement ele("quad9", 4);
 
 // Create computational mesh (half fluid domain)
-//yb = [0, 1] * 2 * pi * sys.R2;
-//zb = [-1, 0] * sys.L / 2;
-//msh = Mesh(ele, [yb; zb], [20; 3]);
+Vec2 yb;
+yb(0)= 0;
+yb(1) = 2 * M_PI * sys.getR2();
+Vec2 zb;
+zb(0) = -1 * sys.getL() / 2;
+zb(1) = 0;
+MatVx2 xb(2);
+xb.set(0, yb);
+xb.set(1, zb);
+EHDMesh msh(ele, xb, VecInt("[20; 3]"));
+
 //Boundary(msh, "dbc", "x2-");    // z = -L / 2
 //Boundary(msh, "per1", "x1-");   // y = 0
 //Boundary(msh, "per2", "x1+");   // y = 2 * pi * R2
