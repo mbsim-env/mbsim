@@ -37,14 +37,11 @@
         </SymbolicFunction>
       </function>
     </BinarySignalOperation>
-    <SignalProcessingSystemSensor name="controllerOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <signalProcessingSystem ref="../Link[pidController]"/>
-    </SignalProcessingSystemSensor>
     <KineticExcitation name="motor" xmlns="http://mbsim.berlios.de/MBSim">
       <momentDirection>[0 0 1]'</momentDirection> <!-- optional -->
       <momentFunction>
         <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
-          <returnSignal ref="../../Link[controllerOutput]"/>
+          <returnSignal ref="../../Link[pidController]"/>
         </SignalFunction>
       </momentFunction>
       <connect ref1="../Frame[I]" ref2="../../Object[Crank]/Frame[B2]"/>
