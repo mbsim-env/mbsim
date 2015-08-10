@@ -138,14 +138,14 @@ namespace MBSimEHD {
       double Fr;                     // Radial force revolving with journal
 
 // State variables
-      fmatvec::Vec2 IxS1 = "[0; 0]";
+      fmatvec::Vec2 IxS1 = "[1e-5; 0]";
 // Position of journal center point
       fmatvec::Vec2 IxS2 = "[0; 0]";          // Position of bearing shell center point
       fmatvec::Vec2 IuS1 = "[0; 0]";          // Velocity of journal center point
       fmatvec::Vec2 IuS2 = "[0; 0]";          // Velocity of bearing shell center point
       double phi1 = 0;          // Angle of journal
       double phi2 = 0;          // Angle of bearing shell
-      double omega1 = 0;          // Angular velocity of journal
+      double omega1 = 100;          // Angular velocity of journal
       double omega2 = 0;          // Angular velocity of bearing shell
 
 // Dimensionless description

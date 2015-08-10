@@ -75,7 +75,7 @@ namespace MBSimEHD {
     VecV wgp1D(ngp1D);
     GaussPoints1D(ngp1D, xigp1D, wgp1D);
 
-    int k = 1;
+    int k = 0;
     for (int j = 0; j < ngp1D; j++) {
       for (int i = 0; i < ngp1D; i++) {
         xigp(k, 0) = xigp1D(i, 0);
@@ -93,8 +93,8 @@ namespace MBSimEHD {
     // Build shape function matrix
     MatV Nm(nnodval, nnodval * nnode);
     for (int i = 0; i < nnode; i++) {
-      for (int j = 1; j < nnodval; j++) {
-        Nm(j, nnodval * (i - 1) + j) = S(i);
+      for (int j = 0; j < nnodval; j++) {
+        Nm(j, nnodval * i + j) = S(i);
         /*TODO: the matlab code is not fully understood here.
          * It says that instead of the RowVecV-input of "N" it could also handle the derivatives "Ndxi" or "Ndxidxi".
          * Yet the operator "S(i)" (i.e. N(i) in matlab) is not clear as it gets strange elements.
@@ -161,25 +161,25 @@ namespace MBSimEHD {
     this->ngp = ngp;
   }
 
-  void EHDPressureElement::EvaluateElement(const int & e, const VecV & pose, const VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, MatV & kTe) {
+  void EHDPressureElement::EvaluateElement(const int & e, const VecV & pose, const VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, SqrMatV & kTe) const {
 
     // Define abbreviations
     int ndime = shape.ndim;
     int ndofe = ndof;
 
     // Initialize ent matrices and ent vectors
-    MatV ke(ndofe, ndofe);
-    MatV ce(ndofe, ndofe);
+    SqrMatV ke(ndofe);
+    SqrMatV ce(ndofe);
     VecV s0e(ndofe); //TODO: Vec?
     VecV sPe(ndofe); //TODO: Vec?
     VecV sSUPGe(ndofe); //TODO: Vec?
 
     // Initialize nodal derivatives of ent vectors
-    MatV skedd(ndofe, ndofe);
-    MatV scedd(ndofe, ndofe);
-    MatV s0edd(ndofe, ndofe);
-    MatV sPedd(ndofe, ndofe);
-    MatV sSUPGedd(ndofe, ndofe);
+    SqrMatV skedd(ndofe);
+    SqrMatV scedd(ndofe);
+    SqrMatV s0edd(ndofe);
+    SqrMatV sPedd(ndofe);
+    SqrMatV sSUPGedd(ndofe);
 
     // Define reference values for dimensionless description
     bool dimLess = sys.dimLess;
@@ -485,7 +485,7 @@ namespace MBSimEHD {
     }
   }
 
-  void EHDPressureElement::GetShapeFunctions(const fmatvec::VecV & pose, const fmatvec::VecV &xi, fmatvec::RowVecV & Np, fmatvec::Mat2xV & Npdx, fmatvec::Mat3xV & Ndxdx, fmatvec::Mat2xV & Nx, double & detJ) {
+  void EHDPressureElement::GetShapeFunctions(const fmatvec::VecV & pose, const fmatvec::VecV &xi, fmatvec::RowVecV & Np, fmatvec::Mat2xV & Npdx, fmatvec::Mat3xV & Ndxdx, fmatvec::Mat2xV & Nx, double & detJ) const {
 
 // Define abbreviation
     int ndime = shape.ndim;
@@ -527,11 +527,14 @@ namespace MBSimEHD {
     //TODO: check if the determinant is really correct here!
     VecVI ipiv(J.size());
 
-    SqrMatV JLU = facLU(JLU, ipiv);
+    SqrMatV JLU = facLU(J, ipiv);
 
     detJ = 0;
     for (int i = 0; i < JLU.cols(); i++)
       detJ *= JLU(i, i);
+
+    detJ = J(0,0) * J(1,1) - J(0,1)*J(1,0);
+    cout << detJ << endl;
 
 // Determine spatial gradient of Np (Npdx = Ndx)
     Npdx = slvLUFac(JLU, Npdxi, ipiv);
@@ -571,7 +574,7 @@ namespace MBSimEHD {
     }
   }
 
-  void EHDPressureElement::EvaluatePenaltyLaw(const double & p, double & fP, double & fPdp) {
+  void EHDPressureElement::EvaluatePenaltyLaw(const double & p, double & fP, double & fPdp) const {
     //Compute penalty term and its derivative with respect to p
     if (p < 0) {
       fP = -pp * p;

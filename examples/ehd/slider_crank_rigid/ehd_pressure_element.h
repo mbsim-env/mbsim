@@ -123,7 +123,7 @@ namespace MBSimEHD {
       // Output:
       //   re:     Element residuum
       //   kTe:    Element tangential matrix
-      void EvaluateElement(const int & e, const fmatvec::VecV & pose, const fmatvec::VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, fmatvec::MatV & kTe);
+      void EvaluateElement(const int & e, const fmatvec::VecV & pose, const fmatvec::VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, fmatvec::SqrMatV & kTe) const;
 
       // Return shape function matrices at parametric point xi
       //
@@ -138,7 +138,7 @@ namespace MBSimEHD {
       //   Ndxdx:  Second spatial derivatives of N
       //   Nx:     Matrix of shape functions for geometry
       //   detJ:   Element Jacobi determinant
-      void GetShapeFunctions(const fmatvec::VecV & pose, const fmatvec::VecV &xi, fmatvec::RowVecV & Np, fmatvec::Mat2xV & Npdx, fmatvec::Mat3xV & Ndxdx, fmatvec::Mat2xV & Nx, double & detJ);
+      void GetShapeFunctions(const fmatvec::VecV & pose, const fmatvec::VecV &xi, fmatvec::RowVecV & Np, fmatvec::Mat2xV & Npdx, fmatvec::Mat3xV & Ndxdx, fmatvec::Mat2xV & Nx, double & detJ) const;
 
       // Evaluate linear penalty law
       //
@@ -149,7 +149,11 @@ namespace MBSimEHD {
       // Output:
       //   fP:     Penalty term
       //   fPdp:   Derivative of fP with respect to p
-      void EvaluatePenaltyLaw(const double & p, double & fP, double & fPdp);
+      void EvaluatePenaltyLaw(const double & p, double & fP, double & fPdp) const;
+
+      int getndof() {
+        return ndof;
+      }
 
     private:
       ElementShape shape;              // Properties of element shape

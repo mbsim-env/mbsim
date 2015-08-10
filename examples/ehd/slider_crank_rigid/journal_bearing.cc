@@ -52,7 +52,7 @@ namespace MBSimEHD {
 
   void JournalBearing::Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy) const {
 
-    double y = x(1);
+    double y = x(0);
     if (dimLess) {
       y = y * xrF;
     }
@@ -85,7 +85,7 @@ namespace MBSimEHD {
   void JournalBearing::Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) const {
 
     VecV y(1);
-    y(0) = x(1);
+    y(0) = x(0);
     if (dimLess) {
       y = y * xrF;
     }

@@ -147,27 +147,43 @@ namespace MBSimEHD {
       //      b:          DOFs at boundary
       fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
 
-      fmatvec::VecV getpos() {
+      int getndof() const {
+        return ndof;
+      }
+
+      int getnele() const {
+        return nele;
+      }
+
+      const EHDPressureElement & getElement() const {
+        return ele;
+      }
+
+      fmatvec::VecV getpos() const {
         return pos;
       }
 
-      fmatvec::MatVI getlocX() {
+      fmatvec::MatVI getlocX() const {
         return locX;
       }
 
-      fmatvec::MatVI getlocD() {
+      fmatvec::MatVI getlocD() const {
         return locD;
       }
-      fmatvec::VecInt getper1() {
+
+      fmatvec::VecInt getper1() const {
         return per1V;
       }
-      fmatvec::VecInt getper2() {
+
+      fmatvec::VecInt getper2() const {
         return per2V;
       }
-      fmatvec::VecInt getdbc() {
+
+      fmatvec::VecInt getdbc() const {
         return dbcV;
       }
-      fmatvec::VecInt getnbc() {
+
+      fmatvec::VecInt getnbc() const {
         return nbcV;
       }
 
