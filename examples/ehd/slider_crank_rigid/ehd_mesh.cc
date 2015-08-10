@@ -213,7 +213,6 @@ namespace MBSimEHD {
     fmatvec::VecInt ndof_dbc_per2;
     int k = this->ndof;
     int n = 0;
-    bool b;
 
     // Set free DOFs (without Dirichlet and periodic boundary 2)
     for (int i = 0; i < this->ndof; i++) {
@@ -243,19 +242,12 @@ namespace MBSimEHD {
 
     // Eliminate DOFs of per2 with per1 in location matrix
     for (int i = 0; i < this->per2V.size(); i++) {
-      b = false;
       for (int j = 0; j < this->locD.rows(); j++) {
         for (int k = 0; k < this->locD.cols(); k++) {
           if (this->locD(j, k) == this->per2V(i)) {
             this->locD(j, k) = this->per1V(i);
-            b = true;
+            break; //jump out of element
           }
-          if (b) {
-            break;
-          }
-        }
-        if (b) {
-          break;
         }
       }
     }

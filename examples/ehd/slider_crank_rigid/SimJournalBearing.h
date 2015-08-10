@@ -93,6 +93,10 @@ msh.Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
 msh.Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
 msh.Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
 msh.FinishMesh();
+cout << msh.getper1() << endl;
+cout << msh.getper2() << endl;
+cout << msh.getdbc() << endl;
+cout << msh.getnbc() << endl;
 
 //TODO: Testing (compare with matlab stuff) -->>  how to do?
 ifstream myfile;

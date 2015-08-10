@@ -158,6 +158,18 @@ namespace MBSimEHD {
       fmatvec::MatVI getlocD() {
         return locD;
       }
+      fmatvec::VecInt getper1() {
+        return per1V;
+      }
+      fmatvec::VecInt getper2() {
+        return per2V;
+      }
+      fmatvec::VecInt getdbc() {
+        return dbcV;
+      }
+      fmatvec::VecInt getnbc() {
+        return nbcV;
+      }
 
     private:
       EHDPressureElement ele;        // Object of class pressure element
