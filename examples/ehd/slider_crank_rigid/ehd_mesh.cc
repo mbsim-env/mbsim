@@ -284,13 +284,13 @@ namespace MBSimEHD {
     int l = 0;
     for (int e = 0; e < this->neled(0); e++) {
       for (int i = 0; i < nnodde[0] - 1; i++) {
-        pos(l) = xb(1, 1) + i * hd1(e) / (nnodde[0] - 1) + xd1;
+        pos(l) = xb(0, 0) + i * hd1(e) / (nnodde[0] - 1) + xd1;
         l++;
       }
       xd1 = xd1 + hd1(e);
     }
     // last node
-    pos(l) = xb(1, 2);
+    pos(l) = xb(0, 1);
 
     return pos;
 
