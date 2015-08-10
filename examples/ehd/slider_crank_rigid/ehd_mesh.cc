@@ -42,7 +42,7 @@ namespace MBSimEHD {
     // Create vector with element sizes in spatial directions
     for (int i = 0; i < ndim; i++) {
       hd.push_back(RowVecV(neled(i), INIT, 0.));
-      for(int j = 0; j < neled(i); j++)
+      for (int j = 0; j < neled(i); j++)
         hd[i](j) = Hd(i) / neled(i);
     }
 
@@ -404,11 +404,11 @@ namespace MBSimEHD {
         e = e1 + e2 * this->neled(0);
         for (int i = 0; i < nnodval; i++) {
           d1 = (nnodde[0] - 1) * nnodval;
-          d2 = (this->nnodd(0) * (this->nnodd(1) - 1) - this->neled(0) * pow(ser, 2)) * nnodval;
-          loc(e, i) = i + 1 + d1 * e1 + d2 * e2;
-          loc(e, i + nnodval) = i + 1 + d1 * (e1 + 1) + d2 * e2;
-          loc(e, i + 2 * nnodval) = i + 1 + d1 * (e1 + 1) + d2 * (e2 + 1);
-          loc(e, i + 3 * nnodval) = i + 1 + d1 * e1 + d2 * (e2 + 1);
+          d2 = (this->nnodd(0) * (nnodde[1] - 1) - this->neled(0) * pow(ser, 2)) * nnodval;
+          loc(e, i) = (i + 1) + d1 * e1 + d2 * e2;
+          loc(e, i + nnodval) = (i + 1) + d1 * (e1 + 1) + d2 * e2;
+          loc(e, i + 2 * nnodval) = (i + 1) + d1 * (e1 + 1) + d2 * (e2 + 1);
+          loc(e, i + 3 * nnodval) = (i + 1) + d1 * e1 + d2 * (e2 + 1);
           if ((shapeName == "quad8") || (shapeName == "quad9") || (shapeName == "quad8on")) {
             loc(e, i + 4 * nnodval) = loc(e, i) + nnodval;
             loc(e, i + 5 * nnodval) = loc(e, i + nnodval) + (this->nnodd(0) - ser * (e1 + 1)) * nnodval;

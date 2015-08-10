@@ -87,8 +87,6 @@ MatVx2 xb(2);
 xb.set(0, yb);
 xb.set(1, zb);
 
-cout << xb << endl;
-
 EHDMesh msh(ele, xb, VecInt("[20; 3]"));
 
 msh.Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
