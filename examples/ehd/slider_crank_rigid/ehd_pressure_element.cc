@@ -34,31 +34,31 @@ namespace MBSimEHD {
 
     if (ngp == 1) {
       xigp(0, 0) = 0;
-      wgp(0) = 2;
+      wgp(0) = 2.;
     }
     else if (ngp == 2) {
-      xigp(0, 0) = -1 / sqrt(3);
-      xigp(1, 0) = 1 / sqrt(3);
-      wgp(0) = 1;
-      wgp(1) = 1;
+      xigp(0, 0) = -1. / sqrt(3.);
+      xigp(1, 0) = 1. / sqrt(3.);
+      wgp(0) = 1.;
+      wgp(1) = 1.;
     }
     else if (ngp == 3) {
-      xigp(0, 0) = -sqrt(3 / 5);
+      xigp(0, 0) = -sqrt(3. / 5.);
       xigp(1, 0) = 0;
-      xigp(2, 0) = sqrt(3 / 5);
-      wgp(0) = 5 / 9;
-      wgp(1) = 8 / 9;
-      wgp(2) = 5 / 9;
+      xigp(2, 0) = sqrt(3. / 5.);
+      wgp(0) = 5. / 9.;
+      wgp(1) = 8. / 9.;
+      wgp(2) = 5. / 9.;
     }
     else if (ngp == 4) {
-      xigp(0, 0) = -sqrt((15 + sqrt(120)) / 35);
-      xigp(1, 0) = -sqrt((15 - sqrt(120)) / 35);
-      xigp(2, 0) = sqrt((15 - sqrt(120)) / 35);
-      xigp(3, 0) = sqrt((15 + sqrt(120)) / 35);
-      wgp(0) = (18 - sqrt(30)) / 36;
-      wgp(1) = (18 + sqrt(30)) / 36;
-      wgp(2) = (18 + sqrt(30)) / 36;
-      wgp(3) = (18 - sqrt(30)) / 36;
+      xigp(0, 0) = -sqrt((15. + sqrt(120.)) / 35.);
+      xigp(1, 0) = -sqrt((15. - sqrt(120.)) / 35.);
+      xigp(2, 0) = sqrt((15. - sqrt(120.)) / 35.);
+      xigp(3, 0) = sqrt((15. + sqrt(120.)) / 35.);
+      wgp(0) = (18. - sqrt(30.)) / 36.;
+      wgp(1) = (18. + sqrt(30.)) / 36.;
+      wgp(2) = (18. + sqrt(30.)) / 36.;
+      wgp(3) = (18. - sqrt(30.)) / 36.;
     }
     else
       throw MBSimError("Only up to four Gauss points implemented.");
@@ -183,21 +183,20 @@ namespace MBSimEHD {
 
     // Define reference values for dimensionless description
     bool dimLess = sys.dimLess;
-    double hr = 0; //TODO: find out what happens in the non dimLess case as hr is not defined then (looking at the matlab code)
-    double xr = 0; //TODO: find out what happens in the non dimLess case as xr is not defined then (looking at the matlab code)
-    double lambda = 0; //TODO: find out what happens in the non dimLess case as lambda is not defined then (looking at the matlab code)
+
+    //declared here for dimless case later
+    double hr = sys.hrF;
+    double xr = sys.xrF;
+    double lambda = 0;
 
     if (dimLess) {
-      double hr = sys.hrF;
       double pr = lub.pr;
       double eta0 = lub.eta0;
-      double xr = sys.xrF;
-      double lambda = pow(hr, 2) * pr / (xr * eta0);
+      lambda = pow(hr, 2) * pr / (xr * eta0);
     }
-    else
-      cout << "WARNING: Now in the non-dimLess case and hr, xr and lambda are used later but are not properly initialized..." << endl;
 
     // Retrieve Gauss points and weights
+    //TODO: is constant for all times?! --> outside of this function
     MatVx2 xigp(ngp);
     VecV wgp(ngp);
     if (ndime == 1) {
@@ -236,13 +235,13 @@ namespace MBSimEHD {
 
 // Retrieve film thickness and spatial derivatives at x
       double h1, h2, h1dy, h2dy; //TODO: correct type?
-      sys.Thickness(x, e, g, h1, h2, h1dy, h2dy);
+      sys.Thickness(x, e, g, h1, h2, h1dy, h2dy); //TODO: write interface with MBSim!
       double h = h2 - h1;
       double hdy = h2dy - h1dy;
 
 // Retrieve surface velocities and spatial derivatives at x
       double u1, u2, v1, v2, v1dy, v2dy; //TODO: correct type?
-      sys.Velocities(x, e, g, u1, u2, v1, v2, v1dy, v2dy);
+      sys.Velocities(x, e, g, u1, u2, v1, v2, v1dy, v2dy); //TODO: write interface with MBSim!
       //TODO: for interface later make Vec3 for all velocities
 
 // Retrieve fluid parameters and their derivatives at p
@@ -358,6 +357,7 @@ namespace MBSimEHD {
       // Use penalty regularization only if penalty parameter > 0
 
       if (pp > 0) {
+        //TODO: (probably) not needed as LCP-solver will be used
         // Evaluate penalty law
         double fP, fPdp;
         EvaluatePenaltyLaw(p, fP, fPdp);
@@ -483,6 +483,7 @@ namespace MBSimEHD {
     scedd = ce + scedd;
 
     // Compute element residuum and element tangential matrix
+    //TODO: maybe add the possible non-zero terms, e.g. the stabilization, inside the if-statements
     re = (ke + ce) * de + s0e + sPe + sSUPGe;
     kTe = skedd + scedd + s0edd + sPedd + sSUPGedd;
 

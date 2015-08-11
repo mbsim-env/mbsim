@@ -8,9 +8,12 @@
 #include "journal_bearing.h"
 #include "lubricant.h"
 
-using namespace fmatvec;
-using namespace MBSimEHD;
+#include <mbsim/utils/utils.h>
+
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimEHD;
 
 void TestLubricants(Lubricant & lubT1, Lubricant & lubT2) {
   // Synthetic paraffnic oil (lot 3) at two different temperatures, see
@@ -45,107 +48,6 @@ void TestLubricants(Lubricant & lubT1, Lubricant & lubT2) {
   lubT2 = Lubricant(eta0T2, rho0T2, 0, false, Lubricant::constVisc, Lubricant::constDen);
   //lubT2 = Lubricant(eta0T2, rho0T2, ZT2, false, "Roelands", "constant");
   //lubT2 = Lubricant(eta0T2, rho0T2, alphaT2, true, "Barus", "DowsonHigginson");
-}
-
-VecV subVec(const VecV & origVec, const VecVI & indVec) {
-  VecV newVec(indVec.size(), NONINIT);
-
-  for(int i = 0; i < indVec.size(); i++) {
-    newVec(i) = origVec(indVec(i)-1);
-  }
-
-  return newVec;
-}
-
-SqrMatV subMat(const SqrMatV & origMat, const VecVI & indVec) {
-  SqrMatV newMat(indVec.size(), NONINIT);
-
-  for(int i = 0; i < indVec.size(); i++) {
-    for(int j = 0; j < indVec.size(); j++) {
-      newMat(i,j) = origMat(indVec(i)-1,indVec(j)-1);
-    }
-  }
-
-  return newMat;
-}
-
-
-void PressureAssembly(const VecV & D, const JournalBearing & sys, const EHDMesh & msh, const Lubricant & lub, VecV & R, SqrMatV & KT) {
-// Assemble element residuum vector and element tangent matrix
-// Michael Hofer, 18.01.2015
-//
-// Input:
-//   D:      Global vector with nodal values for pressure
-//   sys:    Object of system
-//   msh:    Object of mesh
-//   lub:    Object of lubricant
-//
-// Output:
-//   R:      Global residuum vector
-//   KT:     Global tangential matrix
-
-// Define abbreviations
-  int ndof = msh.getndof();
-  int nele = msh.getnele();
-  EHDPressureElement ele = msh.getElement(); //TODO: is this a copy?
-  int ndofe = ele.getndof();
-
-// Initialize row and value vector for residuum vector
-  VecV rR(ndofe * nele);
-  VecV vR(ndofe * nele);
-
-// Initialize row, coloumn and value vector for tangential matrix
-  VecV rKT(ndofe * ndofe * nele);
-  VecV cKT(ndofe * ndofe * nele);
-  VecV vKT(ndofe * ndofe * nele);
-
-  R = VecV(ndof);
-  KT = SqrMatV(ndof);
-
-// Loop through all elements to assemble element residuum vector and
-// element tangent matrix
-  int i = 0;
-  int j = 0;
-  VecV posV = msh.getpos();
-
-  for (int e = 0; e < nele; e++) {
-    // Extract element location vector for geometry and pressure
-    RowVecVI locXe = msh.getlocX().row(e);
-    RowVecVI locDe = msh.getlocD().row(e);
-
-    // Extract positions of element nodes and vector with nodal values
-    VecV pose = subVec(posV, locXe.T());
-
-    VecV de = subVec(D, locDe.T());
-
-    // Evaluate element
-    VecV re;
-    SqrMatV kTe;
-    msh.getElement().EvaluateElement(e, pose, de, sys, lub, re, kTe);
-
-
-    // Assembly
-    for (int row = 0; row < ndofe; row++) {
-      R(locDe(row)-1) += re(row);
-//      i = i + 1;
-//      rR(i) = locDe(row);
-//      vR(i) = re(row);
-      for (int col = 0; col < ndofe; col++) {
-        KT(locDe(row)-1,locDe(col)-1) += kTe(row,col);
-//        j = j + 1;
-//        rKT(j) = locDe(row);
-//        cKT(j) = locDe(col);
-//        vKT(j) = kTe(row, col);
-      }
-    }
-  }
-
-// Finally set up sparse residuum vector and sparse tangential matrix
-  //TODO: sparse=?
-//  R = sparse(rR, 1, vR, ndof, 1);
-//  R = rR;
-//  KT = sparse(rKT, cKT, vKT, ndof, ndof);
-//  KT = rKT;
 }
 
 int SimJournalBearing() {
@@ -196,23 +98,22 @@ int SimJournalBearing() {
   VecV R;
   SqrMatV KT;
   VecV D(msh.getndof());
-  PressureAssembly(D, sys, msh, lubT2, R, KT);
+  msh.PressureAssembly(D, sys, lubT2, R, KT);
 
   VecV P(msh.getndof());
   VecV Pfree(msh.getnfree());
   VecInt fdofs(msh.getfreedofs());
-  VecVI ipiv(subMat(KT,fdofs).rows());
-  SqrMatV JLU = facLU(subMat(KT,fdofs), ipiv);
-  Pfree = slvLUFac(JLU, subVec(R,fdofs), ipiv);
+  VecVI ipiv(subMat(KT, fdofs, -1).rows());
+  SqrMatV JLU = facLU(subMat(KT, fdofs, -1), ipiv);
+  Pfree = slvLUFac(JLU, subVec(R, fdofs, -1), ipiv);
 
-  for (int i=0; i<msh.getnfree(); i++){
-    P(fdofs(i)-1) = Pfree(i);
+  for (int i = 0; i < msh.getnfree(); i++) {
+    P(fdofs(i) - 1) = Pfree(i);
   }
 
 //  cout << R << endl;
 //  cout << KT.col(1) << endl;
   cout << P << endl;
-
 
 //TODO: Testing (compare with matlab stuff) -->>  how to do?
   ifstream myfile;

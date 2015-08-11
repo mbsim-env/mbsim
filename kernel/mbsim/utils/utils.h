@@ -73,6 +73,25 @@ namespace MBSim {
       return s.str();
     }
 
+  /*!
+   * \brief create a subvector out of a full vector
+   *
+   * \param origMat original matrix
+   * \param indMat  indices that should be used
+   * \param diffInd constant index shift
+   * \return newMatrix
+   *
+   * \todo: (much copy work done here! and not implemented for all types / in general)
+   */
+  fmatvec::VecV subVec(const fmatvec::VecV & origVec, const fmatvec::VecVI & indVec, const int diffInd = 0);
+
+  /*!
+   * \brief create a submatrix out of a full matrx (see subVec)
+   */
+  fmatvec::SqrMatV subMat(const fmatvec::SqrMatV & origMat, const fmatvec::VecVI & indVec, const int diffInd = 0);
+
+
+
   inline xercesc::DOMNode* toXML(const std::string &str, xercesc::DOMNode* parent) {
     return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%str);
   }

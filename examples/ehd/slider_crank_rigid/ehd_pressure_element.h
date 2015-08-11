@@ -162,7 +162,7 @@ namespace MBSimEHD {
       int ngp;                // Number of Gauss points for integration
 
       bool squeeze = true;     // Flag for consideration of squeeze terms
-      double pp;                 // Penalty parameter (positive?!)
+      double pp = 0;                 // Penalty parameter (positive?!)
       bool SUPG = false;  // Flag for SUPG method
   };
 

@@ -19,6 +19,7 @@
 
 #include "ehd_mesh.h"
 #include "ehd_pressure_element.h"
+#include <mbsim/utils/utils.h>
 #include <mbsim/mbsim_event.h>
 
 using namespace fmatvec;
@@ -504,6 +505,83 @@ namespace MBSimEHD {
 
     return b;
 
+  }
+
+  void EHDMesh::PressureAssembly(const VecV & D, const JournalBearing & sys, const Lubricant & lub, VecV & R, SqrMatV & KT) {
+    // Assemble element residuum vector and element tangent matrix
+    // Michael Hofer, 18.01.2015
+    //
+    // Input:
+    //   D:      Global vector with nodal values for pressure
+    //   sys:    Object of system
+    //   msh:    Object of mesh
+    //   lub:    Object of lubricant
+    //
+    // Output:
+    //   R:      Global residuum vector
+    //   KT:     Global tangential matrix
+
+    // Define abbreviations
+    int ndof = getndof();
+    int nele = getnele();
+    EHDPressureElement ele = getElement(); //TODO: is this a copy?
+    int ndofe = ele.getndof();
+
+    // Initialize row and value vector for residuum vector
+    VecV rR(ndofe * nele);
+    VecV vR(ndofe * nele);
+
+    // Initialize row, coloumn and value vector for tangential matrix
+    VecV rKT(ndofe * ndofe * nele);
+    VecV cKT(ndofe * ndofe * nele);
+    VecV vKT(ndofe * ndofe * nele);
+
+    R = VecV(ndof);
+    KT = SqrMatV(ndof);
+
+    // Loop through all elements to assemble element residuum vector and
+    // element tangent matrix
+    int i = 0;
+    int j = 0;
+    VecV posV = getpos();
+
+    for (int e = 0; e < nele; e++) {
+      // Extract element location vector for geometry and pressure
+      RowVecVI locXe = getlocX().row(e);
+      RowVecVI locDe = getlocD().row(e);
+
+      // Extract positions of element nodes and vector with nodal values
+      VecV pose = subVec(posV, locXe.T(), -1);
+
+      VecV de = subVec(D, locDe.T(), -1);
+
+      // Evaluate element
+      VecV re;
+      SqrMatV kTe;
+      ele.EvaluateElement(e, pose, de, sys, lub, re, kTe);
+
+      // Assembly
+      for (int row = 0; row < ndofe; row++) {
+        R(locDe(row) - 1) += re(row);
+        //      i = i + 1;
+        //      rR(i) = locDe(row);
+        //      vR(i) = re(row);
+        for (int col = 0; col < ndofe; col++) {
+          KT(locDe(row) - 1, locDe(col) - 1) += kTe(row, col);
+          //        j = j + 1;
+          //        rKT(j) = locDe(row);
+          //        cKT(j) = locDe(col);
+          //        vKT(j) = kTe(row, col);
+        }
+      }
+    }
+
+    // Finally set up sparse residuum vector and sparse tangential matrix
+    //TODO: sparse=?
+    //  R = sparse(rR, 1, vR, ndof, 1);
+    //  R = rR;
+    //  KT = sparse(rKT, cKT, vKT, ndof, ndof);
+    //  KT = rKT;
   }
 
 }
