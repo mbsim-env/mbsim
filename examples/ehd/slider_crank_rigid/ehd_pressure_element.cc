@@ -323,7 +323,7 @@ namespace MBSimEHD {
       // Compute nodal derivative of f
       // TODO: Add terms with velocity w1 and w2 if required
       double fdp;
-      if (dimLess) {
+      if (not dimLess) {
         fdp = -rhodp * (hdy * (v1 + v2) / 2 + h * (v1dy + v2dy) / 2);
         if (squeeze) {
           fdp = fdp - rhodp * (u2 - u1 - v2 * h2dy + v1 * h1dy);
@@ -346,6 +346,7 @@ namespace MBSimEHD {
       scedd = scedd + Np.T() * pdx.T() * betadd * detJ * w;
       s0edd = s0edd - Np.T() * fdd * detJ * w;
 
+
       // Note: At this point skedd and scedd are not completed
       //       (matrices ke and ce are missing). The missing
       //       parts are added after the integration loop.
@@ -355,6 +356,7 @@ namespace MBSimEHD {
       // --------------------------------------------------------
 
       // Use penalty regularization only if penalty parameter > 0
+
       if (pp > 0) {
         // Evaluate penalty law
         double fP, fPdp;
@@ -474,15 +476,16 @@ namespace MBSimEHD {
 //      sSUPGedd = sSUPGedd + (tau * Npdx.T() * beta * Rdd + R * Npdx.T() * beta * taudd + R * tau * Npdx.T() * betadd) * detJ * w;
 //    }
       }
-
-// Finish computation of nodal derivatives of element vectors
-      skedd = ke + skedd;
-      scedd = ce + scedd;
-
-// Compute element residuum and element tangential matrix
-      re = (ke + ce) * de + s0e + sPe + sSUPGe;
-      kTe = skedd + scedd + s0edd + sPedd + sSUPGedd;
     }
+
+    // Finish computation of nodal derivatives of element vectors
+    skedd = ke + skedd;
+    scedd = ce + scedd;
+
+    // Compute element residuum and element tangential matrix
+    re = (ke + ce) * de + s0e + sPe + sSUPGe;
+    kTe = skedd + scedd + s0edd + sPedd + sSUPGedd;
+
   }
 
   void EHDPressureElement::GetShapeFunctions(const fmatvec::VecV & pose, const fmatvec::VecV &xi, fmatvec::RowVecV & Np, fmatvec::Mat2xV & Npdx, fmatvec::Mat3xV & Ndxdx, fmatvec::Mat2xV & Nx, double & detJ) const {
@@ -533,11 +536,20 @@ namespace MBSimEHD {
     for (int i = 0; i < JLU.cols(); i++)
       detJ *= JLU(i, i);
 
+    //TODO: determinant is working for 2D element:
     detJ = J(0,0) * J(1,1) - J(0,1)*J(1,0);
-    cout << detJ << endl;
+    SqrMatV Jinv(2);
+    Jinv(0,0) = J(1,1);
+    Jinv(0,1) = -J(0,1);
+    Jinv(1,0) = -J(1,0);
+    Jinv(1,1) = J(0,0);
+    Jinv = Jinv / detJ;
 
 // Determine spatial gradient of Np (Npdx = Ndx)
-    Npdx = slvLUFac(JLU, Npdxi, ipiv);
+    // Npdx = slvLUFac(JLU, Npdxi, ipiv); // TODO does not work
+
+    Npdx = Jinv * Npdxi;
+
     //Npdx = J  \ Npdxi;
 
     MatV G;

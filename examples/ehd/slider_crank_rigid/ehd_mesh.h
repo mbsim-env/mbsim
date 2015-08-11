@@ -151,6 +151,14 @@ namespace MBSimEHD {
         return ndof;
       }
 
+      int getnfree() const {
+        return nfree;
+      }
+
+      fmatvec::VecInt getfreedofs() const {
+        return freedofs;
+      }
+
       int getnele() const {
         return nele;
       }

@@ -57,6 +57,18 @@ VecV subVec(const VecV & origVec, const VecVI & indVec) {
   return newVec;
 }
 
+SqrMatV subMat(const SqrMatV & origMat, const VecVI & indVec) {
+  SqrMatV newMat(indVec.size(), NONINIT);
+
+  for(int i = 0; i < indVec.size(); i++) {
+    for(int j = 0; j < indVec.size(); j++) {
+      newMat(i,j) = origMat(indVec(i)-1,indVec(j)-1);
+    }
+  }
+
+  return newMat;
+}
+
 
 void PressureAssembly(const VecV & D, const JournalBearing & sys, const EHDMesh & msh, const Lubricant & lub, VecV & R, SqrMatV & KT) {
 // Assemble element residuum vector and element tangent matrix
@@ -110,6 +122,7 @@ void PressureAssembly(const VecV & D, const JournalBearing & sys, const EHDMesh 
     VecV re;
     SqrMatV kTe;
     msh.getElement().EvaluateElement(e, pose, de, sys, lub, re, kTe);
+
 
     // Assembly
     for (int row = 0; row < ndofe; row++) {
@@ -168,7 +181,7 @@ int SimJournalBearing() {
   yb(1) = 2 * M_PI * sys.getR2();
   RowVec2 zb;
   zb(0) = -1 * sys.getL() / 2;
-  zb(1) = 0;
+  zb(1) = 1 * sys.getL() / 2;
   MatVx2 xb(2);
   xb.set(0, yb);
   xb.set(1, zb);
@@ -183,16 +196,23 @@ int SimJournalBearing() {
   VecV R;
   SqrMatV KT;
   VecV D(msh.getndof());
-  PressureAssembly(D, sys, msh, lubT1, R, KT);
+  PressureAssembly(D, sys, msh, lubT2, R, KT);
 
-  cout << R << endl;
-  cout << KT << endl;
+  VecV P(msh.getndof());
+  VecV Pfree(msh.getnfree());
+  VecInt fdofs(msh.getfreedofs());
+  VecVI ipiv(subMat(KT,fdofs).rows());
+  SqrMatV JLU = facLU(subMat(KT,fdofs), ipiv);
+  Pfree = slvLUFac(JLU, subVec(R,fdofs), ipiv);
 
+  for (int i=0; i<msh.getnfree(); i++){
+    P(fdofs(i)-1) = Pfree(i);
+  }
 
-//cout << msh.getper1() << endl;
-//cout << msh.getper2() << endl;
-//cout << msh.getdbc() << endl;
-//cout << msh.getnbc() << endl;
+//  cout << R << endl;
+//  cout << KT.col(1) << endl;
+  cout << P << endl;
+
 
 //TODO: Testing (compare with matlab stuff) -->>  how to do?
   ifstream myfile;
