@@ -507,7 +507,7 @@ namespace MBSimEHD {
 
   }
 
-  void EHDMesh::PressureAssembly(const VecV & D, const JournalBearing & sys, VecV & R, SqrMatV & KT) {
+  void EHDMesh::PressureAssembly(const VecV & D, const JournalBearing & sys) {
     // Assemble element residuum vector and element tangent matrix
     // Michael Hofer, 18.01.2015
     //
@@ -536,6 +536,7 @@ namespace MBSimEHD {
     VecV cKT(ndofe * ndofe * nele);
     VecV vKT(ndofe * ndofe * nele);
 
+    //TODO: should be possible to make it once and then never again (only set to zero...)
     R = VecV(ndof);
     KT = SqrMatV(ndof);
 

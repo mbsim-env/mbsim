@@ -148,7 +148,7 @@ namespace MBSimEHD {
       fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
 
 
-      void PressureAssembly(const fmatvec::VecV & D, const JournalBearing & sys, fmatvec::VecV & R, fmatvec::SqrMatV & KT);
+      void PressureAssembly(const fmatvec::VecV & D, const JournalBearing & sys);
 
       int getndof() const {
         return ndof;
@@ -198,6 +198,14 @@ namespace MBSimEHD {
         return nbcV;
       }
 
+      fmatvec::VecV getR() const {
+        return R;
+      }
+
+      fmatvec::SqrMatV getKT() const {
+        return KT;
+      }
+
     private:
       EHDPressureElement ele;        // Object of class pressure element
 
@@ -219,6 +227,16 @@ namespace MBSimEHD {
       fmatvec::VecInt per1V;       // DOFs at periodic boundary 1
       fmatvec::VecInt per2V;       // DOFs at periodic boundary 2 (to be eliminated)
       fmatvec::VecInt freedofs;   // Free DOFs (without dbc and per2 DOFs)
+
+      /*!
+       * \brief residual vector after pressure assembly
+       */
+      fmatvec::VecV R;
+
+      /*!
+       * \brief stiffness matrix after pressure assembly
+       */
+      fmatvec::SqrMatV KT;
 
   };
 
