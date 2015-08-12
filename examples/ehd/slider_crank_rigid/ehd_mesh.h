@@ -148,7 +148,7 @@ namespace MBSimEHD {
       fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
 
 
-      void PressureAssembly(const fmatvec::VecV & D, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & R, fmatvec::SqrMatV & KT);
+      void PressureAssembly(const fmatvec::VecV & D, const JournalBearing & sys, fmatvec::VecV & R, fmatvec::SqrMatV & KT);
 
       int getndof() const {
         return ndof;

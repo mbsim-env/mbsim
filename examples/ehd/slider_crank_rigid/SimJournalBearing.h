@@ -76,6 +76,7 @@ int SimJournalBearing() {
 
 // Create object of element used for discretization
   EHDPressureElement ele("quad9", 4);
+  ele.setLubricant(lubT2);
 
 // Create computational mesh (half fluid domain)
   RowVec2 yb;
@@ -98,7 +99,7 @@ int SimJournalBearing() {
   VecV R;
   SqrMatV KT;
   VecV D(msh.getndof());
-  msh.PressureAssembly(D, sys, lubT2, R, KT);
+  msh.PressureAssembly(D, sys, R, KT);
 
   VecV P(msh.getndof());
   VecV Pfree(msh.getnfree());

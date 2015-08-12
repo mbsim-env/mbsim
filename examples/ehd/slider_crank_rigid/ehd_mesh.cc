@@ -507,7 +507,7 @@ namespace MBSimEHD {
 
   }
 
-  void EHDMesh::PressureAssembly(const VecV & D, const JournalBearing & sys, const Lubricant & lub, VecV & R, SqrMatV & KT) {
+  void EHDMesh::PressureAssembly(const VecV & D, const JournalBearing & sys, VecV & R, SqrMatV & KT) {
     // Assemble element residuum vector and element tangent matrix
     // Michael Hofer, 18.01.2015
     //
@@ -558,7 +558,7 @@ namespace MBSimEHD {
       // Evaluate element
       VecV re;
       SqrMatV kTe;
-      ele.EvaluateElement(e, pose, de, sys, lub, re, kTe);
+      ele.EvaluateElement(e, pose, de, sys, re, kTe);
 
       // Assembly
       for (int row = 0; row < ndofe; row++) {

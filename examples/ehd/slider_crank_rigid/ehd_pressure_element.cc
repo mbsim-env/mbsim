@@ -161,7 +161,7 @@ namespace MBSimEHD {
     this->ngp = ngp;
   }
 
-  void EHDPressureElement::EvaluateElement(const int & e, const VecV & pose, const VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, SqrMatV & kTe) const {
+  void EHDPressureElement::EvaluateElement(const int & e, const VecV & pose, const VecV & de, const JournalBearing & sys, fmatvec::VecV & re, SqrMatV & kTe) const {
 
     // Define abbreviations
     int ndime = shape.ndim;

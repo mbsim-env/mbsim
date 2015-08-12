@@ -123,7 +123,7 @@ namespace MBSimEHD {
       // Output:
       //   re:     Element residuum
       //   kTe:    Element tangential matrix
-      void EvaluateElement(const int & e, const fmatvec::VecV & pose, const fmatvec::VecV & de, const JournalBearing & sys, const Lubricant & lub, fmatvec::VecV & re, fmatvec::SqrMatV & kTe) const;
+      void EvaluateElement(const int & e, const fmatvec::VecV & pose, const fmatvec::VecV & de, const JournalBearing & sys,fmatvec::VecV & re, fmatvec::SqrMatV & kTe) const;
 
       // Return shape function matrices at parametric point xi
       //
@@ -155,6 +155,10 @@ namespace MBSimEHD {
         return ndof;
       }
 
+      void setLubricant(const Lubricant & lub_) {
+        lub = lub_;
+      }
+
     private:
       ElementShape shape;              // Properties of element shape
       int ndofpernod = 1;     // Number of DOFs per node
@@ -164,6 +168,11 @@ namespace MBSimEHD {
       bool squeeze = true;     // Flag for consideration of squeeze terms
       double pp = 0;                 // Penalty parameter (positive?!)
       bool SUPG = false;  // Flag for SUPG method
+
+      /*!
+       * \brief lubricant of the Finite-Element
+       */
+      Lubricant lub;
   };
 
 //
