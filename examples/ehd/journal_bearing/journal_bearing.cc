@@ -1,9 +1,9 @@
 #include "journal_bearing.h"
 #include "cylindersolid_cylinderhollow_ehd.h"
 #include "ehd_force_law.h"
+#include "ehd_contact.h"
 
 #include "mbsim/joint.h"
-#include "mbsim/contact.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/circle_hollow.h"
@@ -181,12 +181,12 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
 
   // ---------- LINK-DEFINTIION
   // Contact Between rod and crank (EHD-Contact)
-  Contact * ctJouHou = new Contact("Contact_Journal_Housing");
+  EHDContact * ctJouHou = new EHDContact("Contact_Journal_Housing");
   addLink(ctJouHou);
   EHDForceLaw *fL = new EHDForceLaw();
   ctJouHou->setNormalForceLaw(fL);
   ctJouHou->enableOpenMBVContactPoints(1e-5);
-//  ctJouHou->enableOpenMBVNormalForce();
+  ctJouHou->enableOpenMBVNormalForce(1e-6);
   ContactKinematicsCylinderSolidCylinderHollowEHD *cK = new ContactKinematicsCylinderSolidCylinderHollowEHD();
   ctJouHou->connect(housing_cFru, journal_cFru, cK);
 
