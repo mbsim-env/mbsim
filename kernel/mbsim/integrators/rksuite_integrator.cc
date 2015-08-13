@@ -37,7 +37,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RKSuiteIntegrator, MBSIMINT%"RKSuiteIntegrator")
 
-  RKSuiteIntegrator::RKSuiteIntegrator() : method(2), thres(1,INIT,1e-10), rTol(1e-6), dt0(0), ndworkarray(100000), messages(0), integrationSteps(0), t(0), tPlot(0), s0(0), time(0), z(0), zdGot(0), zMax(0) {
+  RKSuiteIntegrator::RKSuiteIntegrator() : method(RK45), thres(1,INIT,1e-10), rTol(1e-6), dt0(0), ndworkarray(100000), messages(0), integrationSteps(0), t(0), tPlot(0), s0(0), time(0), z(0), zdGot(0), zMax(0) {
   }
 
   void RKSuiteIntegrator::preIntegrate(DynamicSystemSolver& system_) {
@@ -81,8 +81,9 @@ namespace MBSimIntegrator {
     int result=0, errass=0;
     double tEND=tEnd+dtPlot; // tEND must be greater than tEnd
     char task='U';
+    int method_ = method;
 
-    SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method, &task,
+    SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method_, &task,
         &errass, &dt0, dworkarray, &ndworkarray, &messages);
 
     while((tStop-t)>epsroot()) {
@@ -137,15 +138,13 @@ namespace MBSimIntegrator {
   void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method23");
-    if (e)
-      setMethod(1);
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method45");
-    if (e)
-      setMethod(2);
-    e=E(element)->getFirstElementChildNamed(MBSIMINT%"method78");
-    if (e)
-      setMethod(3);
+    e = E(element)->getFirstElementChildNamed(MBSIMINT%"method");
+    if(e) {
+      string methodStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(methodStr=="RK23") method=RK23;
+      if(methodStr=="RK45") method=RK45;
+      if(methodStr=="RK78") method=RK78;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"relativeToleranceScalar");
     setrTol(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"thresholdScalar");

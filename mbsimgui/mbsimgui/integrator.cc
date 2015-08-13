@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "integrator.h"
-#include "integrator_properties.h"
+#include "basic_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -292,9 +292,9 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RKSuiteIntegrator::RKSuiteIntegrator() : initialStepSize(0,false) {
+  RKSuiteIntegrator::RKSuiteIntegrator() : method(0,false), initialStepSize(0,false) {
 
-    type.setProperty(new RKSuiteTypeProperty);
+    method.setProperty(new TextProperty("RK45", MBSIMINT%"method", true));
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINT%"relativeToleranceScalar"));
@@ -311,7 +311,7 @@ namespace MBSimGUI {
 
   void RKSuiteIntegrator::initializeUsingXML(DOMElement *element) {
     Integrator::initializeUsingXML(element);
-    type.initializeUsingXML(element);
+    method.initializeUsingXML(element);
     relTol.initializeUsingXML(element);
     threshold.initializeUsingXML(element);
     initialStepSize.initializeUsingXML(element);
@@ -319,7 +319,7 @@ namespace MBSimGUI {
 
   DOMElement* RKSuiteIntegrator::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Integrator::writeXMLFile(parent);
-    type.writeXMLFile(ele0);
+    method.writeXMLFile(ele0);
     relTol.writeXMLFile(ele0);
     threshold.writeXMLFile(ele0);
     initialStepSize.writeXMLFile(ele0);

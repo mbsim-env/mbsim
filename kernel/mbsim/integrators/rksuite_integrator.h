@@ -29,6 +29,12 @@ namespace MBSimIntegrator {
     This integrator uses rksuite from http://www.netlib.org . */
   class RKSuiteIntegrator : public Integrator {
     public:
+      enum Method {
+        RK23=1,
+        RK45,
+        RK78
+      };
+
       /**
        * \brief constructor
        */
@@ -44,7 +50,7 @@ namespace MBSimIntegrator {
       void postIntegrate(MBSim::DynamicSystemSolver& system);
 
       /* GETTER / SETTER */
-      void setMethod(int method_) {method = method_;}
+      void setMethod(Method method_) {method = method_;}
       void setrTol(double rTol_) {rTol = rTol_;}
       void setThreshold(const fmatvec::Vec &thres_) {thres = thres_;}
       void setThreshold(double thres_) {thres = fmatvec::Vec(1,fmatvec::INIT,thres_);}
@@ -63,7 +69,7 @@ namespace MBSimIntegrator {
 
       static int zSize;
 
-      int method;
+      Method method;
       /** Absolute Toleranz */
       fmatvec::Vec thres;
       /** Relative Toleranz */

@@ -100,3 +100,21 @@
    ...
    fun:_ZN10MBXMLUtils10InitXercesC1Ev
 }
+
+# CASADI
+{
+   Casadi only on build system
+   Memcheck:Cond
+   fun:_ZNSt10_HashtableIjSt4pairIKjN6casadi7WeakRefEESaIS4_ESt10_Select1stIS4_ESt8equal_toIjESt4hashIjENSt8__detail18_Mod_range_hashingENSC_20_Default_ranged_hashENSC_20_Prime_rehash_policyELb0ELb0ELb0EE13_M_rehash_auxEjSt17integral_constantIbLb0EE
+   fun:_ZNSt10_HashtableIjSt4pairIKjN6casadi7WeakRefEESaIS4_ESt10_Select1stIS4_ESt8equal_toIjESt4hashIjENSt8__detail18_Mod_range_hashingENSC_20_Default_ranged_hashENSC_20_Prime_rehash_policyELb0ELb0ELb0EE9_M_insertIS0_IjS3_EEENSC_14_Node_iteratorIS4_Lb0ELb0EEEOT_St17integral_constantIbLb0EE
+   fun:_ZN6casadi8Sparsity12assignCachedEiiPKiS2_
+   fun:_ZN6casadi8Sparsity12assignCachedEiiRKSt6vectorIiSaIiEES5_
+   fun:_ZN6casadi8SparsityC1EiiRKSt6vectorIiSaIiEES5_
+   fun:_ZN6casadi8Sparsity7tripletEiiRKSt6vectorIiSaIiEES5_RS3_b
+   fun:_ZN6casadi8Sparsity7tripletEiiRKSt6vectorIiSaIiEES5_
+   fun:_ZN6casadi6MatrixINS_9SXElementEE3setERKS2_bRKNS0_IiEE
+   fun:_ZN6casadi6MatrixINS_9SXElementEE3setERKS2_bRKNS0_IiEES7_
+   fun:_ZN6casadi6MatrixINS_9SXElementEE3setERKS2_bRKNS_5SliceES7_
+   fun:_ZN6casadi9SubMatrixINS_6MatrixINS_9SXElementEEENS_5SliceES4_EaSERKS3_
+   ...
+}

@@ -136,7 +136,7 @@ namespace MBSimGUI {
     virtual std::string getType() const { return "RKSuiteIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
     protected:
-    ExtProperty type, relTol, threshold, initialStepSize;
+    ExtProperty method, relTol, threshold, initialStepSize;
   };
 
 }
