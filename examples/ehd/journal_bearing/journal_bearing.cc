@@ -179,14 +179,45 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   housing->getFrameC()->enableOpenMBV(0.7e-1); //-CoG-frame
   housing_cFru->enableOpenMBV(_diffuseColor = "[0.2;0.3;0.6]", _transparency = 0.3); //contour
 
-  // ---------- LINK-DEFINTIION
-  // Contact Between rod and crank (EHD-Contact)
+  /* LINK-DEFINTIION */
+  // Contact Between journal and housing (EHD-Contact)
   EHDContact * ctJouHou = new EHDContact("Contact_Journal_Housing");
   addLink(ctJouHou);
+
+  //create lubricant
+  Lubricant lub;
+  lub = Lubricant(0.414, 839, 0.43, false, Lubricant::Roelands, Lubricant::DowsonHigginson); //lubT1
+  lub = Lubricant(0.0109, 778, 0, false, Lubricant::constVisc, Lubricant::constDen);//lubT2
+
+  // discretization
+  EHDPressureElement ele("quad9", 4);
+  ele.setLubricant(lub);
+
+// Create computational mesh (half fluid domain)
+  RowVec2 yb;
+  yb(0) = 0;
+  yb(1) = 2 * M_PI * housing_radius;
+  RowVec2 zb;
+  zb(0) = -housing_length / 2;
+  zb(1) = housing_length / 2; //TODO: differently in matlab!!
+  MatVx2 xb(2);
+  xb.set(0, yb);
+  xb.set(1, zb);
+
+  EHDMesh msh(ele, xb, VecInt("[20; 3]"));
+
+  msh.Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
+  msh.Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
+  msh.Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
+  msh.FinishMesh();
+
+  //TODO: do we need a normal force law or is the mesh the normal force law??
   EHDForceLaw *fL = new EHDForceLaw();
   ctJouHou->setNormalForceLaw(fL);
   ctJouHou->enableOpenMBVContactPoints(1e-5);
   ctJouHou->enableOpenMBVNormalForce(1e-6);
+
+  //contact kinematics (delivers the info for the mesh)
   ContactKinematicsCylinderSolidCylinderHollowEHD *cK = new ContactKinematicsCylinderSolidCylinderHollowEHD();
   ctJouHou->connect(housing_cFru, journal_cFru, cK);
 

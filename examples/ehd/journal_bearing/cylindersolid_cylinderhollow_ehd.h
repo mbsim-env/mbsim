@@ -34,6 +34,80 @@ namespace MBSimEHD {
    */
   class ContactKinematicsEHDInterface : public MBSim::ContactKinematics {
 
+    public:
+      // Film thickness and derivatives
+      //
+      // Input:
+      //   sys:    Object of system
+      //   y:      Point inside fluid domain (y-coordinate)
+      //   e(~):   Element number in spatial discretization
+      //   g(~):   Gauss point number in element corresponding to x
+      //
+      // Output:
+      //   h1:     Distance from bearing shell center point to point
+      //           on journal surface
+      //   h2:     Distance from bearing shell center point to point
+      //           on inner bearing shell surface
+      //   h1dy:   Derivative of h1 with respect to y
+      //   h2dy:   Derivative of h2 with respect to y
+      virtual void Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy) = 0;
+
+      // Velocities on journal and inner bearing shell surface and
+      // derivatives
+      //
+      // Input:
+      //   sys:    Object of system
+      //   x:      Point inside fluid domain y or [y; z]
+      //   e(~):   Element number in spatial discretization
+      //   g(~):   Gauss point number in element corresponding to x
+      //
+      // Output:
+      //   u1, v1: Velocities on journal surface
+      //   u2, v2: Velocities on inner bearing shell surface
+      //   v1dy:   Derivative of v1 with respect to y
+      //   v2dy:   Derivative of v2 with respect to y
+      virtual void Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) = 0;
+
+
+      /*!
+       * \brief retrieve characteristic size for film thickness
+       */
+      double gethrF() {
+        return hrF;
+      }
+
+      /*!
+       * \brief retrieve characteristic size for fluid domain
+       */
+      double getxrF() {
+        return xrF;
+      }
+
+
+      void setdimless(bool dimless_) {
+        dimLess = dimless_;
+      }
+
+      bool getdimless() {
+        return dimLess;
+      }
+
+    protected:
+      /*!
+       * \brief Flag for dimensionless description
+       */
+      bool dimLess;
+
+      /*!
+       * \brief Characteristic size for fluid domain
+       */
+      double xrF;
+
+      /*!
+       * \brief Characteristic size for film thickness
+       */
+      double hrF;
+
   };
 
   /**
@@ -46,6 +120,8 @@ namespace MBSimEHD {
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index = 0);
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData);
+      virtual void Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy);
+      virtual void Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy);
       /***************************************************/
 
       fmatvec::Vec3 getWrD();
@@ -91,6 +167,43 @@ namespace MBSimEHD {
        * \brief relative angular velocity
        */
       fmatvec::Vec3 omegaRel;
+
+      /*
+       * \brief Radial eccentricity in coordinate system F
+       */
+      double er;
+
+      /*!
+       * \brief Tangential eccentricity in coordinate system F
+       */
+      double et;
+
+      /*
+       * \brief Auxiliary length variable
+       */
+      double r1;
+
+    private:
+      // Radial and tangential eccentricity in coordinate system F
+      // and auxiliary length variable
+      //
+      // Input:
+      //   y:      Coordinate of fluid domain
+      void Eccentricity(const double & y);
+
+      // Mapping between y-coordinate of fluid domain (unwrapped
+      // inner bearing shell surface) and angle phi of rotated
+      // coordinate system F
+      //
+      // Input:
+      //   sys:    Object of system
+      //   y:      Coordinate of fluid domain
+      //
+      // Output:
+      //   phi:    Angle of rotated coordinate system F
+      //   AFK:    Rotation matrix
+      //TODO: fit to MBSim SqrMat3 etc. --> use the mbsim functions!!
+      void AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat2 & AFK);
 
   };
 

@@ -84,7 +84,7 @@ int SimJournalBearing() {
   yb(1) = 2 * M_PI * sys.getR2();
   RowVec2 zb;
   zb(0) = -1 * sys.getL() / 2;
-  zb(1) = 1 * sys.getL() / 2;
+  zb(1) = 1 * sys.getL() / 2; //TODO: differently in matlab!!
   MatVx2 xb(2);
   xb.set(0, yb);
   xb.set(1, zb);
