@@ -772,14 +772,6 @@ namespace MBSim {
     setForceFunction(f);
   }
 
-//  void RegularizedUnilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
-//    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-//      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-//        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
-//      }
-//    }
-//  }
-
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MaxwellUnilateralConstraint, MBSIM%"MaxwellUnilateralConstraint")
 //
 //  MaxwellUnilateralConstraint::MaxwellUnilateralConstraint(const double & damping, const double & gapLimit) :
@@ -1004,14 +996,6 @@ namespace MBSim {
     Function<double(double,double)> *f = ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
   }
-
-//  void RegularizedBilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
-//    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-//      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-//        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
-//      }
-//    }
-//  }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedPlanarFriction, MBSIM%"RegularizedPlanarFriction")
 

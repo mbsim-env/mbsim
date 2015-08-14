@@ -38,6 +38,8 @@ using namespace boost;
 namespace MBSim {
 
   FrameLink::FrameLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+    frame[0] = NULL;
+    frame[1] = NULL;
   }
 
   FrameLink::~FrameLink() {}

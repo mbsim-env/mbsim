@@ -35,6 +35,8 @@ using namespace boost;
 namespace MBSim {
 
   ContourLink::ContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+    contour[0] = NULL;
+    contour[1] = NULL;
   }
 
   ContourLink::~ContourLink() {}

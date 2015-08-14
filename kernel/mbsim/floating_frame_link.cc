@@ -38,6 +38,8 @@ using namespace boost;
 namespace MBSim {
 
   FloatingFrameLink::FloatingFrameLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true), refFrame(NULL), refFrameID(0), C("F") {
+    frame[0] = NULL;
+    frame[1] = NULL;
     C.setParent(this);
   }
 
