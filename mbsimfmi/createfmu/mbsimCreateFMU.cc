@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
     dss->initialize();
 
     // create DOM of modelDescription.xml
-    boost::shared_ptr<DOMDocument> modelDescDoc(parser->createDocument());
+    boost::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
 
     // root element fmiModelDescription and its attributes
     cout<<"Create the modelDescription.xml file."<<endl;
