@@ -330,7 +330,7 @@ namespace MBSim {
   void GeneralizedVelocityConstraint::initializeUsingXML(DOMElement* element) {
     KinematicConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
-    if (e)
+    if(e)
       x0 = getVec(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
@@ -378,8 +378,8 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates(double t) {
-    bd->getqRel() = x(0,bd->getqRelSize()-1);
-    bd->getuRel() = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
+    bd->getqRel(false) = x(0,bd->getqRelSize()-1);
+    bd->getuRel(false) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
     updGC = false;
   }
 
