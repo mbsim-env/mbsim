@@ -1,7 +1,7 @@
 SUBDIRS =  .
   
 lib_LTLIBRARIES = libmbsimHydraulics.la
-libmbsimHydraulics_la_LDFLAGS = -version-info @LIBMBSIMHYDRAULICS_VERSION_INFO@
+libmbsimHydraulics_la_LDFLAGS = -avoid-version
 libmbsimHydraulics_la_SOURCES = \
   environment.cc \
   hline.cc \

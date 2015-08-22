@@ -1,7 +1,7 @@
 SUBDIRS =  .
   
 lib_LTLIBRARIES = libmbsimControl.la
-libmbsimControl_la_LDFLAGS = -version-info @LIBMBSIM_CONTROL_VERSION_INFO@
+libmbsimControl_la_LDFLAGS = -avoid-version
 libmbsimControl_la_SOURCES = \
   signal_.cc\
   object_sensors.cc\

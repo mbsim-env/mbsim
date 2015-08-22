@@ -23,10 +23,10 @@ using namespace MBXMLUtils;
 namespace {
   // some platform dependent values
 #ifdef _WIN32
-  string SHEXT("-0.dll");
+  string SHEXT(".dll");
   string LIBDIR="bin";
 #else
-  string SHEXT(".so.0");
+  string SHEXT(".so");
   string LIBDIR="lib";
 #endif
 }

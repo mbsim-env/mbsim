@@ -25,11 +25,9 @@ namespace {
 #ifdef _WIN32
   string USERENVVAR("USERNAME");
   path LIBDIR="bin";
-  string SHEXT_(".dll");
 #else
   string USERENVVAR("USER");
   path LIBDIR="lib";
-  string SHEXT_(".so");
 #endif
 
   void copyShLibToFMU(const boost::shared_ptr<DOMParser> &parser,
@@ -420,8 +418,8 @@ int main(int argc, char *argv[]) {
     }
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
-    copyShLibToFMU(parserNoneVali, fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_), path("binaries")/FMIOS,
-                   getInstallPath()/"lib"/("mbsim"+SHEXT_));
+    copyShLibToFMU(parserNoneVali, fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), path("binaries")/FMIOS,
+                   getInstallPath()/"lib"/("mbsim"+SHEXT));
     cout<<endl;
 
     fmuFile.close();

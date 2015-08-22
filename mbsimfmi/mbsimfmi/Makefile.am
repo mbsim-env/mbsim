@@ -18,16 +18,19 @@ libmbsim_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
 libmbsimxml_fmi_la_SOURCES = fmiinstance_xml.cc
 libmbsimxml_fmi_la_CPPFLAGS = $(FMUXMLDEPS_CFLAGS)
 libmbsimxml_fmi_la_LIBADD = libmbsim_fmi.la $(FMUXMLDEPS_LIBS) ../general/libfmivariables.la $(FMUDEPS_LIBS)
+libmbsimxml_fmi_la_LDFLAGS = -avoid-version
 
 # build main FMU library for XML models with parameters (preprocessing is included in the FMU)
 libmbsimppxml_fmi_la_SOURCES = fmiinstance_ppxml.cc
 libmbsimppxml_fmi_la_CPPFLAGS = $(FMUPPXMLDEPS_CFLAGS)
 libmbsimppxml_fmi_la_LIBADD = libmbsim_fmi.la ../general/libxmlpputils.la $(FMUPPXMLDEPS_LIBS) ../general/libfmivariables.la $(FMUDEPS_LIBS)
+libmbsimppxml_fmi_la_LDFLAGS = -avoid-version
 
 # build main FMU library for source models
 libmbsimsrc_fmi_la_SOURCES = fmiinstance_src.cc
 libmbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS) $(MBXMLUTILSBASEDEPS_CFLAGS)
 libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la ../general/libfmivariables.la $(FMUDEPS_LIBS) $(MBXMLUTILSBASEDEPS_LIBS)
+libmbsimsrc_fmi_la_LDFLAGS = -avoid-version
 
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk

@@ -91,21 +91,6 @@ int main() {
 ], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
    [AC_MSG_RESULT([no])])
 
-dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
-dnl current: 	The most recent interface number that this library implements. 
-dnl revision: 	The implementation number of the current interface. 
-dnl age: 	The difference between the newest and oldest interfaces that
-dnl		this library implements. In other words, the library implements all the
-dnl 		interface numbers in the range from number current (age<=current).
-LIBMBSIM_CURRENT=0
-LIBMBSIM_REVISION=0
-LIBMBSIM_AGE=0
-AC_SUBST([LIBMBSIM_CURRENT])
-AC_SUBST([LIBMBSIM_REVISION])
-AC_SUBST([LIBMBSIM_AGE])
-LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
-AC_SUBST([LIBMBSIM_VERSION_INFO])
-
 dnl Check for MinGW
 AC_CANONICAL_HOST
 if test "_$host_os" = "_mingw32" ; then

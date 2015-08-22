@@ -1,7 +1,7 @@
 SUBDIRS =  .
   
 lib_LTLIBRARIES = libmbsimPowertrain.la
-libmbsimPowertrain_la_LDFLAGS = -version-info @LIBMBSIMELECTRONICS_VERSION_INFO@
+libmbsimPowertrain_la_LDFLAGS = -avoid-version
 libmbsimPowertrain_la_SOURCES = planetary_gear.cc\
 			    differential_gear.cc\
 			    cardan_shaft.cc
