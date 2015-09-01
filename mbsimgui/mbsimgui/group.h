@@ -40,6 +40,7 @@ namespace MBSimGUI {
     std::vector<Group*> group;
     std::vector<Object*> object;
     std::vector<Link*> link;
+    std::vector<Constraint*> constraint;
     std::vector<Observer*> observer;
     std::vector<Element*> removedElement;
 
@@ -64,18 +65,21 @@ namespace MBSimGUI {
     int getNumberOfGroups() {return group.size();}
     int getNumberOfObjects() {return object.size();}
     int getNumberOfLinks() {return link.size();}
+    int getNumberOfConstraints() {return constraint.size();}
     int getNumberOfObservers() {return observer.size();}
     Frame* getFrame(int i) const {return frame[i];}
     Contour* getContour(int i) const {return contour[i];}
     Object* getObject(int i) const {return object[i];}
     Group* getGroup(int i) const {return group[i];}
     Link* getLink(int i) const {return link[i];}
+    Constraint* getConstraint(int i) const {return constraint[i];}
     Observer* getObserver(int i) const {return observer[i];}
     Frame* getFrame(const std::string &name) const;
     Contour* getContour(const std::string &name) const;
     Object* getObject(const std::string &name) const;
     Group* getGroup(const std::string &name) const;
     Link* getLink(const std::string &name) const;
+    Constraint* getConstraint(const std::string &name) const;
     Observer* getObserver(const std::string &name) const;
 
     void addFrame(Frame *frame);
@@ -83,6 +87,7 @@ namespace MBSimGUI {
     void addGroup(Group *group);
     void addObject(Object *object);
     void addLink(Link *link);
+    void addConstraint(Constraint *constraint);
     void addObserver(Observer *observer);
     void removeElement(Element *element);
     ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}

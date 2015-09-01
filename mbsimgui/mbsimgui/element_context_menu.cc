@@ -114,6 +114,8 @@ namespace MBSimGUI {
     addMenu(menu);
     menu = new LinkContextContextMenu(element, "Add link");
     addMenu(menu);
+    menu = new ConstraintContextContextMenu(element, "Add constraint");
+    addMenu(menu);
     menu = new ObserverContextContextMenu(element, "Add observer");
     addMenu(menu);
     action = new QAction("Add model", this);
@@ -138,6 +140,8 @@ namespace MBSimGUI {
       if(object) return mw->addObject(object);
       Link *link = Link::readXMLFile(file.toStdString(),element);
       if(link) return mw->addLink(link);
+      Constraint *constraint = Constraint::readXMLFile(file.toStdString(),element);
+      if(constraint) return mw->addConstraint(constraint);
       Observer *observer = Observer::readXMLFile(file.toStdString(),element);
       if(observer) return mw->addObserver(observer);
     }
@@ -242,8 +246,6 @@ namespace MBSimGUI {
   ObjectContextContextMenu::ObjectContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QMenu *menu = new BodyContextContextMenu(element, "Add body");
     addMenu(menu);
-    menu = new ConstraintContextContextMenu(element, "Add constraint");
-    addMenu(menu);
   }
 
   BodyContextContextMenu::BodyContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -275,23 +277,23 @@ namespace MBSimGUI {
   }
 
   void ConstraintContextContextMenu::addGearConstraint() {
-    mw->addObject(new GearConstraint("GearConstraint",element));
+    mw->addConstraint(new GearConstraint("GearConstraint",element));
   }
 
   void ConstraintContextContextMenu::addGeneralizedPositionConstraint() {
-    mw->addObject(new GeneralizedPositionConstraint("GeneralizedPositionConstraint",element));
+    mw->addConstraint(new GeneralizedPositionConstraint("GeneralizedPositionConstraint",element));
   }
 
   void ConstraintContextContextMenu::addGeneralizedVelocityConstraint() {
-    mw->addObject(new GeneralizedVelocityConstraint("GeneralizedVelocityConstraint",element));
+    mw->addConstraint(new GeneralizedVelocityConstraint("GeneralizedVelocityConstraint",element));
   }
 
   void ConstraintContextContextMenu::addGeneralizedAccelerationConstraint() {
-    mw->addObject(new GeneralizedAccelerationConstraint("GeneralizedAccelerationConstraint",element));
+    mw->addConstraint(new GeneralizedAccelerationConstraint("GeneralizedAccelerationConstraint",element));
   }
 
   void ConstraintContextContextMenu::addJointConstraint() {
-    mw->addObject(new JointConstraint("JointConstraint",element));
+    mw->addConstraint(new JointConstraint("JointConstraint",element));
   }
 
   LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -435,10 +437,7 @@ namespace MBSimGUI {
   SignalContextContextMenu::SignalContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QMenu *menu = new SensorContextContextMenu(element,"Add sensor");
     addMenu(menu);
-    QAction *action = new QAction("Add signal addition", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addSignalAddition()));
-    addAction(action);
-    action = new QAction("Add PID controller", this);
+    QAction *action = new QAction("Add PID controller", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPIDController()));
     addAction(action);
     action = new QAction("Add unary signal operation", this);
@@ -452,10 +451,6 @@ namespace MBSimGUI {
   void SignalContextContextMenu::addSensor() {
     SensorContextContextMenu menu(element);
     menu.exec(QCursor::pos());
-  }
-
-  void SignalContextContextMenu::addSignalAddition() {
-    mw->addLink(new SignalAddition("SignalAddition",element));
   }
 
   void SignalContextContextMenu::addPIDController() {

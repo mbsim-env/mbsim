@@ -134,16 +134,6 @@ namespace MBSimGUI {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"RigidBody")
       return new RigidBody(E(element)->getAttribute("name"),parent);
-    else if(E(element)->getTagName()==MBSIM%"GearConstraint")
-      return new GearConstraint(E(element)->getAttribute("name"),parent);
-    else if(E(element)->getTagName()==MBSIM%"GeneralizedPositionConstraint")
-      return new GeneralizedPositionConstraint(E(element)->getAttribute("name"),parent);
-    else if(E(element)->getTagName()==MBSIM%"GeneralizedVelocityConstraint")
-      return new GeneralizedVelocityConstraint(E(element)->getAttribute("name"),parent);
-    else if(E(element)->getTagName()==MBSIM%"GeneralizedAccelerationConstraint")
-      return new GeneralizedAccelerationConstraint(E(element)->getAttribute("name"),parent);
-    else if(E(element)->getTagName()==MBSIM%"JointConstraint")
-      return new JointConstraint(E(element)->getAttribute("name"),parent);
     return 0;
   }
 
@@ -189,8 +179,6 @@ namespace MBSimGUI {
       return new FunctionSensor(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"SignalProcessingSystemSensor")
       return new SignalProcessingSystemSensor(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIMCONTROL%"SignalAddition")
-      return new SignalAddition(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"PIDController")
       return new PIDController(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"UnarySignalOperation")
@@ -201,6 +189,27 @@ namespace MBSimGUI {
       return new LinearTransferSystem(E(element)->getAttribute("name"),parent);
     return 0;
   }  
+
+  Constraint* ObjectFactory::createConstraint(DOMElement *element, Element *parent) {
+    if(element==NULL) return NULL;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      return (*i)->createConstraint(element,parent);
+    return 0;
+  }
+  Constraint* MBSimObjectFactory::createConstraint(DOMElement *element, Element *parent) {
+    if(element==0) return 0;
+    else if(E(element)->getTagName()==MBSIM%"GearConstraint")
+      return new GearConstraint(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"GeneralizedPositionConstraint")
+      return new GeneralizedPositionConstraint(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"GeneralizedVelocityConstraint")
+      return new GeneralizedVelocityConstraint(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"GeneralizedAccelerationConstraint")
+      return new GeneralizedAccelerationConstraint(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"JointConstraint")
+      return new JointConstraint(E(element)->getAttribute("name"),parent);
+    return 0;
+  }
 
   Observer* ObjectFactory::createObserver(DOMElement *element, Element *parent) {
     if(element==NULL) return NULL;

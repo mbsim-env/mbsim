@@ -37,6 +37,7 @@ namespace MBSimGUI {
   class Object;
   class ExtraDynamic;
   class Link;
+  class Constraint;
   class Observer;
   class TextWidget;
 
@@ -84,12 +85,14 @@ namespace MBSimGUI {
     virtual int getNumberOfObjects() {return 0;}
     virtual int getNumberOfExtraDynamics() {return 0;}
     virtual int getNumberOfLinks() {return 0;}
+    virtual int getNumberOfConstraints() {return 0;}
     virtual int getNumberOfObservers() {return 0;}
     virtual Frame* getFrame(int i) const {return 0;}
     virtual Contour* getContour(int i) const {return 0;}
     virtual Group* getGroup(int i) const {return 0;}
     virtual Object* getObject(int i) const {return 0;}
     virtual Link* getLink(int i) const {return 0;}
+    virtual Constraint* getConstraint(int i) const {return 0;}
     virtual Observer* getObserver(int i) const {return 0;}
     virtual Frame* getFrame(const std::string &name) const {return 0;}
     virtual void addFrame(Frame *frame) {}
@@ -97,6 +100,7 @@ namespace MBSimGUI {
     virtual void addGroup(Group *group) {}
     virtual void addObject(Object *object) {}
     virtual void addLink(Link *link) {}
+    virtual void addConstraint(Constraint *constraint) {}
     virtual void addObserver(Observer *observer) {}
     virtual void removeElement(Element *element) {}
     const std::string& getID() const { return ID; }

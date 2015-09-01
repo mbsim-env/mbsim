@@ -185,6 +185,22 @@ namespace MBSimGUI {
       ExtProperty fo, fi;
   };
 
+  class BinaryNestedFunction : public Function {
+    public:
+      BinaryNestedFunction(const std::string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi1, PropertyFactory *factoryi2);
+      virtual PropertyInterface* clone() const {return new BinaryNestedFunction(*this);}
+      int getArg1Size() const;
+      int getArg2Size() const;
+      inline std::string getType() const { return "BinaryNestedFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      std::string ext;
+      ExtProperty fo, fi1, fi2;
+  };
+
   class PiecewiseDefinedFunction : public Function {
     public:
       PiecewiseDefinedFunction(const std::string &name, Element *parent);

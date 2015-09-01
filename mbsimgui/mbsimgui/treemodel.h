@@ -32,6 +32,7 @@ namespace MBSimGUI {
   class Group;
   class Object;
   class Link;
+  class Constraint;
   class Observer;
   class Parameter;
   class TreeItem;
@@ -71,6 +72,8 @@ namespace MBSimGUI {
       void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
       void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
       void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
+      void createConstraintItem(Constraint *observer, const QModelIndex &parent = QModelIndex());
+
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 
       std::map<std::string, QModelIndex> idEleMap;

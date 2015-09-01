@@ -25,6 +25,7 @@
 #include "contour.h"
 #include "object.h"
 #include "link.h"
+#include "constraint.h"
 #include "observer.h"
 #include "integrator.h"
 #include "objectfactory.h"
@@ -1017,6 +1018,19 @@ namespace MBSimGUI {
     link->setName(link->getName()+toStr(model->getItem(containerIndex)->getID()));
     link->getParent()->addLink(link);
     model->createLinkItem(link,containerIndex);
+    QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+    elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementList->openEditor();
+  }
+
+  void MainWindow::addConstraint(Constraint *constraint) {
+    setProjectChanged(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
+    constraint->setName(constraint->getName()+toStr(model->getItem(containerIndex)->getID()));
+    constraint->getParent()->addConstraint(constraint);
+    model->createConstraintItem(constraint,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();

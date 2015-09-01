@@ -34,44 +34,10 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  class SignalAdditionPropertyFactory : public PropertyFactory {
-    public:
-      SignalAdditionPropertyFactory(Element *element_) : element(element_) { }
-      Property* createProperty(int i=0);
-    protected:
-      Element *element;
-  };
-
-  Property* SignalAdditionPropertyFactory::createProperty(int i) {
-    return new SignalReferenceProperty(element);
-  }
-
   Signal::Signal(const string &str, Element *parent) : Link(str, parent) {
   }
 
   Signal::~Signal() {
-  }
-
-  SignalAddition::SignalAddition(const string &str, Element *parent) : Signal(str, parent) {
-    signalReferences.setProperty(new ListProperty(new SignalAdditionPropertyFactory(this),MBSIMCONTROL%"inputSignal"));
-  }
-
-  void SignalAddition::initialize() {
-    Signal::initialize();
-
-    signalReferences.initialize();
-  }
-
-  DOMElement* SignalAddition::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
-    signalReferences.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* SignalAddition::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Signal::writeXMLFile(parent);
-    signalReferences.writeXMLFile(ele0);
-    return ele0;
   }
 
   PIDController::PIDController(const string &str, Element *parent) : Signal(str, parent) {
@@ -88,7 +54,6 @@ namespace MBSimGUI {
     input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROL%"D"));
     D.setProperty(new ExtPhysicalVarProperty(input));
-
   }
 
   void PIDController::initialize() {
@@ -148,8 +113,8 @@ namespace MBSimGUI {
   }
 
   BinarySignalOperation::BinarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
-    s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"input1Signal"));
-    s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"input2Signal"));
+    s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"firstInputSignal"));
+    s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROL%"secondInputSignal"));
 
     vector<string> var;
     var.push_back("x1");

@@ -52,18 +52,6 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  class SignalAdditionWidgetFactory : public WidgetFactory {
-    public:
-      SignalAdditionWidgetFactory(Element *element_) : element(element_) { }
-      Widget* createWidget(int i=0);
-    protected:
-      Element *element;
-  };
-
-  Widget* SignalAdditionWidgetFactory::createWidget(int i) {
-    return new SignalReferenceWidget(element);
-  }
-
   class GearConstraintWidgetFactory : public WidgetFactory {
     public:
       GearConstraintWidgetFactory(Element* element_, QWidget *parent_=0) : element(element_), parent(parent_) { }
@@ -509,7 +497,7 @@ namespace MBSimGUI {
     u0->resize_(size,1);
   }
 
-  ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(constraint,parent,f) {
+  ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(constraint,parent,f) {
   }
 
   GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
@@ -1500,21 +1488,6 @@ namespace MBSimGUI {
     static_cast<SignalProcessingSystemSensor*>(element)->spsRef.fromWidget(spsRef);
   }
 
-  SignalAdditionPropertyDialog::SignalAdditionPropertyDialog(SignalAddition *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
-    signalReferences = new ExtWidget("Signal references",new ListWidget(new SignalAdditionWidgetFactory(signal),"Signal"));
-    addToTab("General", signalReferences);
-  }
-
-  void SignalAdditionPropertyDialog::toWidget(Element *element) {
-    SignalPropertyDialog::toWidget(element);
-    static_cast<SignalAddition*>(element)->signalReferences.toWidget(signalReferences);
-  }
-
-  void SignalAdditionPropertyDialog::fromWidget(Element *element) {
-    SignalPropertyDialog::fromWidget(element);
-    static_cast<SignalAddition*>(element)->signalReferences.fromWidget(signalReferences);
-  }
-
   PIDControllerPropertyDialog::PIDControllerPropertyDialog(PIDController *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
     sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
     addToTab("General", sRef);
@@ -1584,7 +1557,7 @@ namespace MBSimGUI {
 
     QStringList var;
     var << "x1" << "x2";
-    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var)));
+    f = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,signal)));
     addToTab("General", f);
   }
 

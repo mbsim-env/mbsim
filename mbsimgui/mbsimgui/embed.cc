@@ -36,6 +36,16 @@ namespace MBSimGUI {
     }
 
   template <>
+    Contour* Embed<Contour>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Contour*>(ObjectFactory::getInstance()->createContour(element,parent));
+    }
+
+  template <>
+    Frame* Embed<Frame>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Frame*>(ObjectFactory::getInstance()->createFrame(element,parent));
+    }
+
+  template <>
     Object* Embed<Object>::create(xercesc::DOMElement *element, Element *parent) {
       return static_cast<Object*>(ObjectFactory::getInstance()->createObject(element,parent));
     }
@@ -46,18 +56,13 @@ namespace MBSimGUI {
     }
 
   template <>
+    Constraint* Embed<Constraint>::create(xercesc::DOMElement *element, Element *parent) {
+      return static_cast<Constraint*>(ObjectFactory::getInstance()->createConstraint(element,parent));
+    }
+
+  template <>
     Observer* Embed<Observer>::create(xercesc::DOMElement *element, Element *parent) {
       return static_cast<Observer*>(ObjectFactory::getInstance()->createObserver(element,parent));
-    }
-
-  template <>
-    Contour* Embed<Contour>::create(xercesc::DOMElement *element, Element *parent) {
-      return static_cast<Contour*>(ObjectFactory::getInstance()->createContour(element,parent));
-    }
-
-  template <>
-    Frame* Embed<Frame>::create(xercesc::DOMElement *element, Element *parent) {
-      return static_cast<Frame*>(ObjectFactory::getInstance()->createFrame(element,parent));
     }
 
 }

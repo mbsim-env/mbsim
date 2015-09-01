@@ -29,8 +29,9 @@
 #include "contour.h"
 #include "object.h"
 #include "link.h"
-#include "mainwindow.h"
+#include "constraint.h"
 #include "observer.h"
+#include "mainwindow.h"
 #include "basic_properties.h"
 #include "utils.h"
 #include "embed.h"
@@ -60,30 +61,34 @@ namespace MBSimGUI {
   }
 
   Group::Group(const Group &g) : Element(g), position(g.position), orientation(g.orientation), frameOfReference(g.frameOfReference) {
+    for(unsigned int i=0; i<g.frame.size(); i++)
+      frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
+    for(unsigned int i=0; i<g.contour.size(); i++)
+      contour.push_back(static_cast<Contour*>(g.contour[i]->clone()));;
     for(unsigned int i=0; i<g.group.size(); i++)
       group.push_back(static_cast<Group*>(g.group[i]->clone()));;
     for(unsigned int i=0; i<g.object.size(); i++)
       object.push_back(static_cast<Object*>(g.object[i]->clone()));;
     for(unsigned int i=0; i<g.link.size(); i++)
       link.push_back(static_cast<Link*>(g.link[i]->clone()));;
-    for(unsigned int i=0; i<g.frame.size(); i++)
-      frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
-    for(unsigned int i=0; i<g.contour.size(); i++)
-      contour.push_back(static_cast<Contour*>(g.contour[i]->clone()));;
+    for(unsigned int i=0; i<g.constraint.size(); i++)
+      constraint.push_back(static_cast<Constraint*>(g.constraint[i]->clone()));;
     for(unsigned int i=0; i<g.observer.size(); i++)
       observer.push_back(static_cast<Observer*>(g.observer[i]->clone()));;
   }
 
   Group::~Group() {
+    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
+      delete *i;
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+      delete *i;
     for(vector<Group*>::iterator i = group.begin(); i != group.end(); ++i) 
       delete *i;
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       delete *i;
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       delete *i;
-    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
-      delete *i;
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+    for(vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       delete *i;
     for(vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
       delete *i;
@@ -93,40 +98,45 @@ namespace MBSimGUI {
 
   Group& Group::operator=(const Group &g) {
     Element::operator=(g);
+    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
+      delete *i;
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+      delete *i;
     for(vector<Group*>::iterator i = group.begin(); i != group.end(); ++i) 
       delete *i;
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       delete *i;
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       delete *i;
-    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
-      delete *i;
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+    for(vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       delete *i;
     for(vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
       delete *i;
     for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
       delete *i;
+    frame.clear();
+    contour.clear();
     group.clear();
     object.clear();
     link.clear();
-    frame.clear();
-    contour.clear();
+    constraint.clear();
     observer.clear();
     removedElement.clear();
     position=g.position; 
     orientation=g.orientation; 
     frameOfReference=g.frameOfReference;
+    for(unsigned int i=0; i<g.frame.size(); i++)
+      frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
+    for(unsigned int i=0; i<g.contour.size(); i++)
+      contour.push_back(static_cast<Contour*>(g.contour[i]->clone()));;
     for(unsigned int i=0; i<g.group.size(); i++)
       group.push_back(static_cast<Group*>(g.group[i]->clone()));;
     for(unsigned int i=0; i<g.object.size(); i++)
       object.push_back(static_cast<Object*>(g.object[i]->clone()));;
     for(unsigned int i=0; i<g.link.size(); i++)
       link.push_back(static_cast<Link*>(g.link[i]->clone()));;
-    for(unsigned int i=0; i<g.frame.size(); i++)
-      frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
-    for(unsigned int i=0; i<g.contour.size(); i++)
-      contour.push_back(static_cast<Contour*>(g.contour[i]->clone()));;
+    for(unsigned int i=0; i<g.constraint.size(); i++)
+      constraint.push_back(static_cast<Constraint*>(g.constraint[i]->clone()));;
     for(unsigned int i=0; i<g.observer.size(); i++)
       observer.push_back(static_cast<Observer*>(g.observer[i]->clone()));;
     return *this;
@@ -149,6 +159,9 @@ namespace MBSimGUI {
 
     for(size_t i=0; i<link.size(); i++)
       link[i]->initialize();
+
+    for(size_t i=0; i<constraint.size(); i++)
+      constraint[i]->initialize();
 
     for(size_t i=0; i<observer.size(); i++)
       observer[i]->initialize();
@@ -216,6 +229,10 @@ namespace MBSimGUI {
     link.push_back(link_);
   }
 
+  void Group::addConstraint(Constraint* constraint_) {
+    constraint.push_back(constraint_);
+  }
+
   void Group::addObserver(Observer* observer_) {
     observer.push_back(observer_);
   }
@@ -262,6 +279,15 @@ namespace MBSimGUI {
         if(*it==element) {
           //cout << "erase " << (*it)->getName() << endl;
           link.erase(it);
+          //delete (*it);
+          break;
+        }
+    }
+    else if(dynamic_cast<Constraint*>(element)) {
+      for (vector<Constraint*>::iterator it = constraint.begin() ; it != constraint.end(); ++it)
+        if(*it==element) {
+          //cout << "erase " << (*it)->getName() << endl;
+          constraint.erase(it);
           //delete (*it);
           break;
         }
@@ -357,6 +383,17 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
+    // constraints
+    if(E(element)->getFirstElementChildNamed(MBSIM%"constraints")) {
+      ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints")->getFirstElementChild();
+      Constraint *constraint;
+      while(ELE) {
+        constraint = Embed<Constraint>::createAndInit(ELE,this);
+        if(constraint) addConstraint(constraint);
+        ELE=ELE->getNextElementSibling();
+      }
+    }
+
     // observers
     if(E(element)->getFirstElementChildNamed(MBSIM%"observers")) {
       ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers")->getFirstElementChild();
@@ -414,6 +451,13 @@ namespace MBSimGUI {
     for(size_t i=0; i<link.size(); i++)
       Embed<Link>::writeXML(link[i],ele1);
     ele0->insertBefore( ele1, NULL );
+
+    if(constraint.size()) {
+      ele1 = D(doc)->createElement( MBSIM%"constraints" );
+      for(size_t i=0; i<constraint.size(); i++)
+        Embed<Constraint>::writeXML(constraint[i],ele1);
+      ele0->insertBefore( ele1, NULL );
+    }
 
     if(observer.size()) { 
       ele1 = D(doc)->createElement( MBSIM%"observers" );
@@ -473,6 +517,15 @@ namespace MBSimGUI {
     for(i=0; i<link.size(); i++) {
       if(link[i]->getName() == name)
         return link[i];
+    }
+    return NULL;
+  }
+
+  Constraint* Group::getConstraint(const string &name) const {
+    size_t i;
+    for(i=0; i<constraint.size(); i++) {
+      if(constraint[i]->getName() == name)
+        return constraint[i];
     }
     return NULL;
   }

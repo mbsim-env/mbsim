@@ -26,12 +26,17 @@
 #include "function_properties.h"
 #include "function_property_factory.h"
 #include "ombv_properties.h"
+#include "mainwindow.h"
+#include "embed.h"
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace boost;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   Property* RigidBodyOfReferencePropertyFactory::createProperty(int i) {
     return new RigidBodyOfReferenceProperty("",element,xmlName);
@@ -46,7 +51,15 @@ namespace MBSimGUI {
     return property;
   }
 
-  Constraint::Constraint(const string &str, Element *parent) : Object(str, parent) {
+  Constraint::Constraint(const string &str, Element *parent) : Element(str, parent) {
+  }
+
+  Constraint* Constraint::readXMLFile(const string &filename, Element *parent) {
+    shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
+    DOMElement *e=doc->getDocumentElement();
+    Constraint *constraint=Embed<Constraint>::createAndInit(e,parent);
+    if(constraint) constraint->initialize();
+    return constraint;
   }
 
   GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(str, parent), gearForceArrow(0,false), gearMomentArrow(0,false) {

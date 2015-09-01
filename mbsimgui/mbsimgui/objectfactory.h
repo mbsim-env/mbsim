@@ -33,6 +33,7 @@ namespace MBSimGUI {
   class Group;
   class Object;
   class Link;
+  class Constraint;
   class Observer;
   class Parameter;
   class Environment;
@@ -53,6 +54,7 @@ namespace MBSimGUI {
       virtual Group* createGroup(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Object* createObject(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Link* createLink(xercesc::DOMElement *element, Element *parent) { return NULL; }
+      virtual Constraint* createConstraint(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Observer* createObserver(xercesc::DOMElement *element, Element *parent) { return NULL; }
       virtual Solver* createSolver(xercesc::DOMElement *element) { return NULL; }
       virtual Parameter* createParameter(xercesc::DOMElement *element) { return NULL; }
@@ -76,6 +78,7 @@ namespace MBSimGUI {
       Group* createGroup(xercesc::DOMElement *element, Element *parent);
       Object* createObject(xercesc::DOMElement *element, Element *parent);
       Link* createLink(xercesc::DOMElement *element, Element *parent);
+      Constraint* createConstraint(xercesc::DOMElement *element, Element *parent);
       Observer* createObserver(xercesc::DOMElement *element, Element *parent);
       Solver* createSolver(xercesc::DOMElement *element);
       Parameter* createParameter(xercesc::DOMElement *element);
@@ -97,6 +100,7 @@ namespace MBSimGUI {
       Group* createGroup(xercesc::DOMElement *element, Element *parent);
       Object* createObject(xercesc::DOMElement *element, Element *parent);
       Link* createLink(xercesc::DOMElement *element, Element *parent);
+      Constraint* createConstraint(xercesc::DOMElement *element, Element *parent);
       Observer* createObserver(xercesc::DOMElement *element, Element *parent);
       Solver* createSolver(xercesc::DOMElement *element);
       Parameter* createParameter(xercesc::DOMElement *element);

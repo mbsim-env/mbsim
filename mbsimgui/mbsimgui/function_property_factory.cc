@@ -60,21 +60,23 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunction("NoName",parent);
     if(i==8)
       return new NestedFunction("NoName",parent,new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
-    if(i==9)
-      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"t"),1);
+    if(i==9) {
+      vector<string> var;
+      var.push_back("x");
+      var.push_back("y");
+      return new BinaryNestedFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
+    }
     if(i==10)
-      return new TabularFunction("NoName",parent);
+      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"t"),1);
     if(i==11)
-      return new PiecewisePolynomFunction("NoName",parent);
+      return new TabularFunction("NoName",parent);
     if(i==12)
-      return new SignumFunction("NoName",parent);
+      return new PiecewisePolynomFunction("NoName",parent);
     if(i==13)
-      return new AdditionFunction("NoName",parent);
+      return new SignumFunction("NoName",parent);
     if(i==14)
-      return new MultiplicationFunction("NoName",parent);
-    if(i==15)
       return new FourierFunction("NoName",parent);
-    if(i==16)
+    if(i==15)
       return new SignalFunction("NoName",parent);
     return NULL;
   }
@@ -90,12 +92,11 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"VectorValuedFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
     name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"BinaryNestedFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TabularFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
     name.push_back(MBSIM%"SignumFunction");
-    name.push_back(MBSIM%"AdditionFunction");
-    name.push_back(MBSIM%"MultiplicationFunction");
     name.push_back(MBSIM%"FourierFunction");
     name.push_back(MBSIMCONTROL%"SignalFunction");
     return name;

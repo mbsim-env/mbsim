@@ -369,26 +369,6 @@ namespace MBSimGUI {
     functions.toWidget(static_cast<VectorValuedFunctionWidget*>(widget)->functions);
   }
 
-  //NestedFunction::NestedFunction(const string &ext, const vector<Property*> &property_) {
-  //  fo.setProperty(new ChoiceProperty(MBSIM%"outerFunction",property_));
-  //
-  //  vector<Property*> property;
-  //  vector<string> var;
-  //  if(ext[1]=='V' and ext[2]=='V') {
-  //    var.push_back("q");
-  //    property.push_back(new SymbolicFunction("VV",var));
-  //  }
-  //  else if(ext[1]=='V' and ext[2]=='S') {
-  //    var.push_back("t");
-  //    property.push_back(new SymbolicFunction("VS",var));
-  //    property.push_back(new ConstantFunction);
-  //    property.push_back(new LinearFunction);
-  //    property.push_back(new QuadraticFunction);
-  //    property.push_back(new SinusoidalFunction);
-  //  }
-  //  fi.setProperty(new ChoiceProperty(MBSIM%"innerFunction",property));
-  //}
-
   NestedFunction::NestedFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi) : Function(name,parent) {
     fo.setProperty(new ChoiceProperty2(factoryo,MBSIM%"outerFunction",0));
     fi.setProperty(new ChoiceProperty2(factoryi,MBSIM%"innerFunction",0));
@@ -420,6 +400,49 @@ namespace MBSimGUI {
   void NestedFunction::toWidget(QWidget *widget) {
     fo.toWidget(static_cast<NestedFunctionWidget*>(widget)->fo);
     fi.toWidget(static_cast<NestedFunctionWidget*>(widget)->fi);
+  }
+
+  BinaryNestedFunction::BinaryNestedFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi1, PropertyFactory *factoryi2) : Function(name,parent) {
+    fo.setProperty(new ChoiceProperty2(factoryo,MBSIM%"outerFunction",0));
+    fi1.setProperty(new ChoiceProperty2(factoryi1,MBSIM%"firstInnerFunction",0));
+    fi2.setProperty(new ChoiceProperty2(factoryi2,MBSIM%"secondInnerFunction",0));
+  }
+
+  int BinaryNestedFunction::getArg1Size() const {
+    //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi1.getProperty())->getProperty())->getArg1Size();
+    return 0;
+  }
+
+  int BinaryNestedFunction::getArg2Size() const {
+    //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi2.getProperty())->getProperty())->getArg1Size();
+    return 0;
+  }
+
+  DOMElement* BinaryNestedFunction::initializeUsingXML(DOMElement *element) {
+    fo.initializeUsingXML(element);
+    fi1.initializeUsingXML(element);
+    fi2.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* BinaryNestedFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    fo.writeXMLFile(ele0);
+    fi1.writeXMLFile(ele0);
+    fi2.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void BinaryNestedFunction::fromWidget(QWidget *widget) {
+    fo.fromWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fo);
+    fi1.fromWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi1);
+    fi2.fromWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi2);
+  }
+
+  void BinaryNestedFunction::toWidget(QWidget *widget) {
+    fo.toWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fo);
+    fi1.toWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi1);
+    fi2.toWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi2);
   }
 
   PiecewiseDefinedFunction::PiecewiseDefinedFunction(const string &name, Element *parent) : Function(name,parent) {

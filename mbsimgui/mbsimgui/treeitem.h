@@ -87,6 +87,14 @@ namespace MBSimGUI {
       virtual QMenu* createContextMenu() {return new LinkContextContextMenu(element);}
   };
 
+  class ConstraintItemData : public BasicItemData {
+    private:
+      Element *element;
+    public:
+      ConstraintItemData(Element *element_) : BasicItemData("constraints",""), element(element_) {}
+      virtual QMenu* createContextMenu() {return new ConstraintContextContextMenu(element);}
+  };
+
   class ObserverItemData : public BasicItemData {
     private:
       Element *element;

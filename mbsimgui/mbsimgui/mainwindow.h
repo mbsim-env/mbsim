@@ -56,6 +56,7 @@ namespace MBSimGUI {
   class Group;
   class Object;
   class Link;
+  class Constraint;
   class Observer;
   class Parameter;
   class ParameterList;
@@ -102,6 +103,7 @@ namespace MBSimGUI {
       void addGroup(Group *group);
       void addObject(Object *object);
       void addLink(Link *link);
+      void addConstraint(Constraint *constraint);
       void addObserver(Observer *observer);
       void highlightObject(const std::string &ID);
       const std::string& getHighlightedObject() const {return currentID;}

@@ -32,19 +32,6 @@ namespace MBSimGUI {
       ~Signal(); 
   };
 
-  class SignalAddition : public Signal {
-    friend class SignalAdditionPropertyDialog;
-    public:
-    SignalAddition(const std::string &str, Element *parent);
-    virtual std::string getType() const { return "SignalAddition"; }
-    void initialize();
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new SignalAdditionPropertyDialog(this);}
-    protected:
-    ExtProperty signalReferences;
-  };
-
   class PIDController : public Signal {
     friend class PIDControllerPropertyDialog;
     public:

@@ -88,12 +88,13 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory2 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory2(const QStringList &var_) : name(SymbolicFunctionWidgetFactory2::getNames()), var(var_) { }
+      SymbolicFunctionWidgetFactory2(const QStringList &var_, Element *parent_) : parent(parent_), name(SymbolicFunctionWidgetFactory2::getNames()), var(var_) { }
       QWidget* createWidget(int i=0);
       static std::vector<QString> getNames();
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
+      Element *parent;
       std::vector<QString> name;
       QStringList var;
   };

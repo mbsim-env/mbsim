@@ -222,9 +222,8 @@ namespace MBSimGUI {
     public:
       SignalContextContextMenu(Element *signal, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addSensor();
-      void addSignalAddition();
+    protected slots:
+      void addSensor();
       void addPIDController();
       void addUnarySignalOperation();
       void addBinarySignalOperation();

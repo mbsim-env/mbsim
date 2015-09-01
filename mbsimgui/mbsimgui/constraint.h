@@ -44,9 +44,10 @@ namespace MBSimGUI {
       Element *element;
   };
 
-  class Constraint : public Object {
+  class Constraint : public Element {
     public:
       Constraint(const std::string &str, Element *parent);
+      static Constraint* readXMLFile(const std::string &filename, Element *parent);
   };
 
   class GearConstraint : public Constraint {

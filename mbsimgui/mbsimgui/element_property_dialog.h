@@ -76,7 +76,6 @@ namespace MBSimGUI {
   class AbsoluteAngularVelocitySensor;
   class FunctionSensor;
   class SignalProcessingSystemSensor;
-  class SignalAddition;
   class PIDController;
   class UnarySignalOperation;
   class BinarySignalOperation;
@@ -237,7 +236,7 @@ namespace MBSimGUI {
       RigidBody *body;
   };
 
-  class ConstraintPropertyDialog : public ObjectPropertyDialog {
+  class ConstraintPropertyDialog : public ElementPropertyDialog {
 
     public:
       ConstraintPropertyDialog(Constraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -576,16 +575,6 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *spsRef;
-  };
-
-  class SignalAdditionPropertyDialog : public SignalPropertyDialog {
-
-    public:
-      SignalAdditionPropertyDialog(SignalAddition *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
-    protected:
-      ExtWidget *signalReferences;
   };
 
   class PIDControllerPropertyDialog : public SignalPropertyDialog {

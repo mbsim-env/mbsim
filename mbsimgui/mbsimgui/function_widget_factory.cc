@@ -49,21 +49,22 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunctionWidget(parent);
     if(i==8)
       return new NestedFunctionWidget(new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
-    if(i==9)
-      return new SymbolicFunctionWidget(QStringList("t"),1,3);
+    if(i==9) {
+      QStringList var;
+      var << "q" << "t";
+      return new BinaryNestedFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+    }
     if(i==10)
-      return new TabularFunctionWidget(1);
+      return new SymbolicFunctionWidget(QStringList("t"),1,3);
     if(i==11)
-      return new PiecewisePolynomFunctionWidget(1);
+      return new TabularFunctionWidget(1);
     if(i==12)
-      return new SignumFunctionWidget(1);
+      return new PiecewisePolynomFunctionWidget(1);
     if(i==13)
-      return new AdditionFunctionWidget(parent,1);
+      return new SignumFunctionWidget(1);
     if(i==14)
-      return new MultiplicationFunctionWidget(parent,1);
-    if(i==15)
       return new FourierFunctionWidget(1);
-    if(i==16)
+    if(i==15)
       return new SignalFunctionWidget(parent);
     return NULL;
   }
@@ -79,12 +80,11 @@ namespace MBSimGUI {
     name.push_back("Vector valued function");
     name.push_back("Piecewise defined function");
     name.push_back("Nested function");
+    name.push_back("Binary nested function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
     name.push_back("Piecewise polynom function");
     name.push_back("Signum function");
-    name.push_back("Addition function");
-    name.push_back("Multiplication function");
     name.push_back("Fourier function");
     name.push_back("Signal function");
     return name;
@@ -112,7 +112,7 @@ namespace MBSimGUI {
     if(i==9)
       return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
-      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q")));
+      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q"),parent));
     if(i==11)
       return new PiecewisePolynomFunctionWidget(3);
     return NULL;
@@ -185,7 +185,7 @@ namespace MBSimGUI {
     if(i==9)
       return new RotationAboutFixedAxisWidget;
     if(i==10)
-      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q")));
+      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q"),parent));
     if(i==11)
       return new SymbolicFunctionWidget(QStringList("q"),1,3);
     return NULL;
@@ -269,7 +269,7 @@ namespace MBSimGUI {
     if(i==2) {
       QStringList var;
       var << "q" << "t";
-      return new ExtWidget("Function r=r(q,t)",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var)));
+      return new ExtWidget("Function r=r(q,t)",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,parent)));
     }
     return NULL;
   }
@@ -332,7 +332,7 @@ namespace MBSimGUI {
     if(i==0)
       return new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
     if(i==1)
-      return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("q"))));
+      return new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(QStringList("q"),parent)));
     return NULL;
   }
 
