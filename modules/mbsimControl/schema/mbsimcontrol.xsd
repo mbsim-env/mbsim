@@ -709,7 +709,7 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="function" minOccurs="0">
+          <xs:element name="function">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               TODO
             </xs:documentation></xs:annotation>
@@ -745,7 +745,7 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="function" minOccurs="0">
+          <xs:element name="function">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               TODO
             </xs:documentation></xs:annotation>
