@@ -5,7 +5,7 @@
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbsimxml/mbsimxml.h>
 #include <mbsim/objectfactory.h>
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include "../general/xmlpp_utils.h"
 #include "boost/filesystem/fstream.hpp"
@@ -14,10 +14,11 @@ using namespace std;
 using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace boost::filesystem;
+using namespace boost;
 
 namespace {
   void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
-                                      boost::shared_ptr<Preprocess::XPathParamSet> &param);
+                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, Eval &eval);
 }
 
 namespace MBSimFMI {
@@ -44,22 +45,28 @@ namespace MBSimFMI {
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim XML model file."<<endl;
     boost::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile);
+    xercesc::DOMElement *ele=doc->getDocumentElement();
+
+    // create a clean evaluator (get the evaluator name first form the dom)
+    string evalName="octave"; // default evaluator
+    xercesc::DOMElement *evaluator=E(ele)->getFirstElementChildNamed(PV%"evaluator");
+    if(evaluator)
+      evalName=X()%E(evaluator)->getFirstTextChild()->getData();
+    shared_ptr<Eval> eval=Eval::createEvaluator(evalName);
 
     // set param according data in var
     boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-    convertVariableToXPathParamSet(varSim.size(), var, param);
+    convertVariableToXPathParamSet(varSim.size(), var, param, *eval);
 
     // preprocess XML file
-    OctEval octEval;
     vector<path> dependencies;
-    xercesc::DOMElement *ele=doc->getDocumentElement();
     msg(Debug)<<"Preprocess MBSim XML model."<<endl;
-    Preprocess::preprocess(validatingParser, octEval, dependencies, ele, param);
+    Preprocess::preprocess(validatingParser, *eval, dependencies, ele, param);
 
     // convert the parameter set from the mbxmlutils preprocessor to a "Variable" vector
     msg(Debug)<<"Convert XML parameters to FMI parameters."<<endl;
     vector<boost::shared_ptr<Variable> > xmlParam;
-    convertXPathParamSetToVariable(param, xmlParam);
+    convertXPathParamSetToVariable(param, xmlParam, *eval);
     // build a set of all Parameter's in var
     set<string> useParam;
     for(vector<boost::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it)
@@ -79,7 +86,7 @@ namespace MBSimFMI {
     // create object for DynamicSystemSolver
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
     doc->normalizeDocument();
-    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(doc->getDocumentElement()->getFirstElementChild()));
+    dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver")));
   }
 
 }
@@ -112,7 +119,7 @@ namespace {
   }
 
   void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
-                                      boost::shared_ptr<Preprocess::XPathParamSet> &param) {
+                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, Eval &eval) {
     Preprocess::ParamSet &p=param->insert(make_pair(
       "/{"+MBSIMXML.getNamespaceURI()+"}MBSimProject[1]/{"+MBSIM.getNamespaceURI()+"}DynamicSystemSolver[1]",
       Preprocess::ParamSet())).first->second;
@@ -122,36 +129,33 @@ namespace {
         continue;
       // handle string parameters (can only be scalars)
       if((*it)->getDatatypeChar()=='s')
-        p.push_back(make_pair((*it)->getName(), octave_value((*it)->getValue(string()))));
+        p.push_back(make_pair((*it)->getName(), eval.create((*it)->getValue(string()))));
       // handle none string parameters (can be scalar, vector or matrix)
       else {
         // get name and type (scalar, vector or matrix)
         string name=(*it)->getName();
         size_t poss=name.find('[');
-        OctEval::ValueType type=OctEval::ScalarType;
+        Eval::ValueType type=Eval::ScalarType;
         if(poss!=string::npos) {
-          type=OctEval::VectorType;
+          type=Eval::VectorType;
           if(name.substr(poss+1).find(',')!=string::npos)
-            type=OctEval::MatrixType;
+            type=Eval::MatrixType;
         }
         name=name.substr(0, poss);
-        octave_value value;
+        shared_ptr<void> value;
         switch(type) {
-          case OctEval::ScalarType:
-            value=getValueAsDouble(**it);
+          case Eval::ScalarType:
+            value=eval.create(getValueAsDouble(**it));
             break;
-          case OctEval::VectorType: {
+          case Eval::VectorType: {
             vector<double> vec;
             for(; it!=var.end() && name==getName(**it); ++it)
               vec.push_back(getValueAsDouble(**it));
             --it;
-            Matrix m(vec.size(), 1);
-            for(int i=0; i<vec.size(); ++i)
-              m(i)=vec[i];
-            value=m;
+            value=eval.create(vec);
             break;
           }
-          case OctEval::MatrixType: {
+          case Eval::MatrixType: {
             vector<vector<double> > mat;
             for(; it!=var.end() && name==getName(**it);) {
               vector<double> row;
@@ -160,11 +164,7 @@ namespace {
               mat.push_back(row);
             }
             --it;
-            Matrix m(mat.size(), mat[0].size());
-            for(int r=0; r<mat.size(); ++r)
-              for(int c=0; c<mat[r].size(); ++c)
-                m(c*m.rows()+r)=mat[r][c];
-            value=m;
+            value=eval.create(mat);
             break;
           }
           default:

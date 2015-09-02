@@ -38,7 +38,7 @@
     schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
 
   <xs:simpleType name="SignalReferenceType">
-    <xs:restriction base="pv:stringPartialOctEval">
+    <xs:restriction base="pv:stringPartialEval">
       <!-- pattern value="/?((\.\.|Group\[X\])/)*(Link\[X\]|Link\[X\])" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
@@ -148,7 +148,7 @@
               <xs:attribute name="ref" type="mbsim:ObjectReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="index" type="pv:integerFullOctEval">
+          <xs:element name="index" type="pv:integerFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Index der generalisierten Koordinate

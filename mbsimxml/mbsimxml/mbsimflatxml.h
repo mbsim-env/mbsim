@@ -5,8 +5,11 @@
 #include <sstream>
 #include <set>
 #include <boost/filesystem/fstream.hpp>
+#include <mbxmlutilshelper/dom.h>
 
 namespace MBSim {
+
+  const MBXMLUtils::NamespaceURI MBSIMXML("http://mbsim.berlios.de/MBSimXML");
 
   //! A string buffer which prefixes every line.
   class PrefixedStringBuf : public std::stringbuf {

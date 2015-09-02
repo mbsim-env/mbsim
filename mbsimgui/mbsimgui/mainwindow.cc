@@ -41,11 +41,12 @@
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <xercesc/dom/DOMException.hpp>
 #ifdef WIN32
 # define putenv _putenv
 #endif
@@ -65,9 +66,9 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
-  OctEval *MainWindow::octEval=NULL;
+  shared_ptr<Eval> MainWindow::eval;
   vector<boost::filesystem::path> dependencies;
-  NewParamLevel *MainWindow::octEvalParamLevel=NULL;
+  NewParamLevel *MainWindow::evalParamLevel=NULL;
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
     // use html output of MBXMLUtils
@@ -99,8 +100,8 @@ namespace MBSimGUI {
     initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
-    octEval=new MBXMLUtils::OctEval(&dependencies);
-    octEvalParamLevel=new NewParamLevel(*octEval);
+    eval=Eval::createEvaluator("octave", &dependencies);
+    evalParamLevel=new NewParamLevel(*eval);
 
     QMenu *GUIMenu=new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
@@ -331,7 +332,6 @@ namespace MBSimGUI {
     delete mbsimThread;
     bfs::remove_all(uniqueTempDir);
     bfs::remove("./.MBS.mbsimprj.xml");
-    delete octEval;
   }
 
   void MainWindow::setProjectChanged(bool changed) { 
@@ -688,7 +688,7 @@ namespace MBSimGUI {
   }
 
   // update model parameters including additional paramters from paramList
-  void MainWindow::updateOctaveParameters(Element *element) {
+  void MainWindow::updateParameters(Element *element) {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     vector<Element*> parents = element->getParents();
     Parameters param;
@@ -715,18 +715,18 @@ namespace MBSimGUI {
     try {
       D(doc)->validate();
 
-      // remove all parameters from octave using delete and new NewParamLevel
+      // remove all parameters from evaluator using delete and new NewParamLevel
       // (this will not work for nested parameters in embed!???)
-      delete octEvalParamLevel;
-      octEvalParamLevel=new NewParamLevel(*octEval);
+      delete evalParamLevel;
+      evalParamLevel=new NewParamLevel(*eval);
       // add parameter
-      octEval->addParamSet(doc->getDocumentElement());
+      eval->addParamSet(doc->getDocumentElement());
     }
     catch(runtime_error error) {
-      message = string("An exception occurred in updateOctaveParameters: ") + error.what();
+      message = string("An exception occurred in updateParameters: ") + error.what();
     }
     catch(...) {
-      message = "An unknown exception occurred in updateOctaveParameters.";
+      message = "An unknown exception occurred in updateParameters.";
     }
     cout << message << endl;
   }

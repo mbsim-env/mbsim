@@ -275,7 +275,10 @@ namespace MBSimFMI {
 
     // initialize stop vector
     sv.resize(dss->getsvSize());
+    svLast.resize(dss->getsvSize());
     jsv.resize(dss->getsvSize(), fmatvec::INIT, 0); // init with 0 = no shift in all indices
+    // initialize last stop vector with initial stop vector state
+    dss->getsv(z, svLast, time);
 
     // plot initial state
     dss->plot(z, time);
@@ -358,27 +361,33 @@ namespace MBSimFMI {
   template void FMIInstance::getValue<bool,   fmiBoolean>(const fmiValueReference vr[], size_t nvr, fmiBoolean value[]);
   template void FMIInstance::getValue<string, fmiString> (const fmiValueReference vr[], size_t nvr, fmiString value[]);
 
-  // MBSim shift
-  // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.
-  // Since MBSim requires this information we have to generate it here.
+  // shift point
   void FMIInstance::eventUpdate(fmiBoolean intermediateResults, fmiEventInfo* eventInfo) {
     // initialize eventInfo fields (except next time event)
     eventInfo->iterationConverged=true;
     eventInfo->stateValueReferencesChanged=false;
     eventInfo->stateValuesChanged=false;
     eventInfo->terminateSimulation=false;
+    eventInfo->upcomingTimeEvent=false;
 
-    // state event = root = stop vector event
+    // ***** state event = root = stop vector event *****
+
+    // Note: The FMI interface does not provide a jsv integer vector as e.g. the LSODAR integrator does.
+    // Since MBSim requires this information we have to generate it here. For this we:
+    // * store the stop vector after the last event (shift point) in the variable svLast
+    // * compare the current sv with svLast using the FMI state event condition (see below)
+    // * set all entries in jsv to 1 if the this condition matches
 
     // get current stop vector
     if(updateEventIndicatorsRequired) {
       dss->getsv(z, sv, time);
       updateEventIndicatorsRequired=false;
     }
-    // check if sv in near zero: if so set jsv to 1 and set shiftRequired
+    // compare last (svLast) and current (sv) stop vector, based on the FMI standard
+    // shift equation: (sv(i)>0) != (svLast(i)>0): build jsv and set shiftRequired
     bool shiftRequired=false;
     for(int i=0; i<sv.size(); ++i)
-      if(fabs(sv(i))<1e-12) {
+      if((svLast(i)>0) != (sv(i)>0)) { // use 0 to check for ==0
         jsv(i)=1;
         shiftRequired=true; // set shiftRequired: a MBSim shift call is required (at least 1 entry in jsv is 1)
       }
@@ -387,28 +396,29 @@ namespace MBSimFMI {
     if(shiftRequired) {
       // shift MBSim system
       dss->shift(z, jsv, time);
-      // A MBSim shift always changes state values (non-smooth-mechanic)
+      // A MBSim shift always changes state values (at least by a minimal projection)
       // This must be reported to the environment (the integrator must be resetted in this case).
       eventInfo->stateValuesChanged=true;
 
       // everything may depend on a changed (shifted) system -> update required on next getXXX
       updateDerivativesRequired=true;
-      updateEventIndicatorsRequired=true;
       updateValueRequired=true;
+      // get current stop vector with is now also the last stop vector
+      dss->getsv(z, sv, time);
+      svLast=sv;
+      updateEventIndicatorsRequired=false; // we have the stop vector always updated
     }
 
-    // time event (currently only for plotting)
+    // ***** time event (currently only for plotting) *****
 
     switch(predefinedParameterStruct.plotMode) {
       case EverynthCompletedStep:
       case NextCompletedStepAfterSampleTime:
         // no next time event
-        eventInfo->upcomingTimeEvent=false;
         break;
       case SampleTime:
         // next time event
         eventInfo->upcomingTimeEvent=true;
-        eventInfo->nextEventTime=nextPlotTime;
 
         // next event wenn plotting with sample time and we currently match that time
         if(fabs(time-nextPlotTime)<1.0e-10) {
@@ -418,8 +428,14 @@ namespace MBSimFMI {
           nextPlotTime=time+predefinedParameterStruct.plotStepSize;
           eventInfo->nextEventTime=nextPlotTime;
         }
+        else
+          eventInfo->nextEventTime=nextPlotTime;
         break;
     }
+
+    // ***** step event (currently only for plotting) *****
+
+    // not used currently (see completedIntegratorStep) -> maybe check for required drift correction and apply it
   }
 
   void FMIInstance::getContinuousStates(fmiReal states[], size_t nx) {

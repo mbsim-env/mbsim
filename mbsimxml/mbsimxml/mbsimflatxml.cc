@@ -134,11 +134,22 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   shared_ptr<xercesc::DOMDocument> doc=parser->parse(argv[startArg]);
   DOMElement *e=doc->getDocumentElement();
 
+  // check root element
+  if(E(e)->getTagName()!=MBSim::MBSIMXML%"MBSimProject")
+    throw runtime_error("Root element must be {"+MBSim::MBSIMXML.getNamespaceURI()+"}MBSimProject.");
+  // check evaluator
+  DOMElement *evaluator=E(e)->getFirstElementChildNamed(PV%"evaluator");
+  if(!evaluator)
+    Deprecated::registerMessage("No {"+PV.getNamespaceURI()+"}evaluator element defined.", e);
+  if(evaluator && X()%E(evaluator)->getFirstTextChild()->getData()!="xmlflat")
+    throw runtime_error("The evaluator must be 'xmlflat'.");
+
   // create object for DynamicSystemSolver and check correct type
-  dss=ObjectFactory::createAndInit<DynamicSystemSolver>(e->getFirstElementChild());
+  e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+  dss=ObjectFactory::createAndInit<DynamicSystemSolver>(e);
 
   // create object for Solver and check correct type
-  solver=ObjectFactory::createAndInit<Solver>(e->getFirstElementChild()->getNextElementSibling());
+  solver=ObjectFactory::createAndInit<Solver>(e->getNextElementSibling());
 
   return 0;
 }

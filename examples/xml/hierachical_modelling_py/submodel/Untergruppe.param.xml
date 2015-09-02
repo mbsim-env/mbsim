@@ -1,0 +1,7 @@
+<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <scalarParameter name="h1">0.5</scalarParameter>
+  <scalarParameter name="h2">h1</scalarParameter>
+  <import>import sys; sys.path.append('../'+pathPrefix+'modules'); import mymodule</import>
+  <import>import mbxmlutils</import>
+  <import>import numpy</import>
+</Parameter>

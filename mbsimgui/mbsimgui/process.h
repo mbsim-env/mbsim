@@ -38,7 +38,7 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBXMLUtils {
   class DOMParser;
-  class OctEval;
+  class Eval;
 }
 
 namespace MBSimGUI {

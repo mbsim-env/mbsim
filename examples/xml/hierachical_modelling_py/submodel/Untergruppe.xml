@@ -2,7 +2,7 @@
 <Group name="Untergruppe" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <position>[cot(2)/cot(2);0*det([4,5;6,3]);0]</position><!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
+  <position>[(1/math.tan(2))/(1/math.tan(2)),0*555,0]</position><!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
   <orientation>
     <pv:cardan unit="degree">
       <pv:alpha>0</pv:alpha>
@@ -20,34 +20,37 @@
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>
-        <![CDATA[
-        % If more than one octave statement is given, the value for the
-        % element is taken from the octave variable named 'ret'.
-        % Note that the characters '<', '>' and '&' are not allowed in XML text
-        % elements. You must quote them with '&lt;', '&gt;' and '&amp;' or use
-        % a CDATA section as used here.
-        % This code for the element 'mass' is just the same as '<mass>m1</mass>'.
-        function r=myfunc(a)
-          r=2*a;
-        end
-        if 1 & 2, x=9; else x=8; end
-        ret=myfunc(m1/2);
+        <![CDATA[# If more than one python statement is given, the value for the
+          # element is taken from the python variable named 'ret'.
+          # Note that the characters '<', '>' and '&' are not allowed in XML text
+          # elements. You must quote them with '&lt;', '&gt;' and '&amp;' or use
+          # a CDATA section as used here.
+     # comments may be indented arbitarily as well as empty lines
+       
+          # This code for the element 'mass' is just the same as '<mass>m1</mass>'.
+          # Take care of correct python indentation!
+          def myfunc(a):
+            return 2*a
+          if 1 and 2:
+            x=9
+          else:
+            x=8
+          ret=myfunc(m1/2)
 
-        % check registerPath
-        registerPath('dummy.dat')
-        load('dummy.dat')
-
-        % just a dummy statement to check for octave m-files
-        interp1([1,2,3,4],[4,6,1,2],[1.2,2.3]);
-        % just a dummy statement to check for octave oct-files including PKG_ADD files
-        chol2inv(1);
+          # check registerPath
+          mbxmlutils.registerPath('dummy.dat')
+          mbxmlutils.load('dummy.dat')
+          
+          # just a dummy statement to check for "inline" imports
+          import os.path
+          os.path.basename('abc/cde.txt')
         ]]>
       </mass>
-      <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+      <inertiaTensor>[[1,0,0] , [0,1,0] , [0,0,1]]</inertiaTensor>
       <stateDependentTranslation>
         <LinearTranslation>
           <translationVectors>
-            [0; myMFunction(1); 0]
+            [[0], [mymodule.myPyFunction(1)], [0]]
           </translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
@@ -57,8 +60,8 @@
             <size>h1</size>
             <offset>1</offset>
           </enableOpenMBV>
-          <relativePosition>[0;-h1/2;0]</relativePosition>
-          <relativeOrientation>rotateAboutX(0)</relativeOrientation>
+          <relativePosition>[0,-h1/2,0]</relativePosition>
+          <relativeOrientation>mbxmlutils.rotateAboutX(0)</relativeOrientation>
         </FixedRelativeFrame>
         <pv:Embed>
           <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
@@ -67,12 +70,12 @@
       <contours/>
       <openMBVRigidBody>
         <ombv:Cuboid name="dummy" outLine="m1==m2">
-          <ombv:diffuseColor>[0;1;1]</ombv:diffuseColor>
+          <ombv:diffuseColor>[0,1,1]</ombv:diffuseColor>
           <ombv:transparency>0.2</ombv:transparency>
-          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:initialTranslation>[0,0,0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0,0,0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:length>[h1;h1;h1]</ombv:length>
+          <ombv:length>[h1,h1,h1]</ombv:length>
         </ombv:Cuboid>
       </openMBVRigidBody>
     </RigidBody>
@@ -83,7 +86,7 @@
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>m2</mass>
-      <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+      <inertiaTensor>[[1,0,0] , [0,1,0] , [0,0,1]]</inertiaTensor>
       <stateDependentTranslation>
         <TranslationAlongYAxis/>
       </stateDependentTranslation>
@@ -93,7 +96,7 @@
             <size>h2</size>
             <offset>1</offset>
           </enableOpenMBV>
-          <relativePosition>[0;-h2/2;0]</relativePosition>
+          <relativePosition>[0,-h2/2,0]</relativePosition>
           <relativeOrientation>
             <pv:cardan>
               <pv:alpha>0</pv:alpha>
@@ -106,11 +109,11 @@
       <contours/>
       <openMBVRigidBody>
         <IvBody name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
-          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
-          <initialTranslation>[0;0;0]</initialTranslation>
-          <initialRotation>[0;0;0]</initialRotation>
+          <diffuseColor>[0.3333,1,0.3333]</diffuseColor>
+          <initialTranslation>[0,0,0]</initialTranslation>
+          <initialRotation>[0,0,0]</initialRotation>
           <scaleFactor>1.5</scaleFactor>
-          <ivFileName>['../' ivdir '/hat.iv']</ivFileName>
+          <ivFileName>'../'+ivdir+'/hat.iv'</ivFileName>
           <creaseEdges unit="degree">30</creaseEdges>
         </IvBody>
       </openMBVRigidBody>

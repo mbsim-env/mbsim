@@ -22,7 +22,7 @@
 #include "kinematic_functions_widgets.h"
 #include "extended_widgets.h"
 #include "mainwindow.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -66,7 +66,7 @@ namespace MBSimGUI {
   }
 
   int LinearTranslation::getArg1Size() const {
-    string str = OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
+    string str = MainWindow::eval->cast<CodeString>(MainWindow::eval->stringToValue(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue()));
     vector<vector<string> > A = strToMat(str);
     return A.size()?A[0].size():0;
   }

@@ -23,7 +23,7 @@
 #include "dialogs.h"
 #include <QtGui>
 #include "mainwindow.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 
 using namespace std;
 
@@ -34,7 +34,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    inputWidget.push_back(new PhysicalVariableWidget(new OctaveExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
+    inputWidget.push_back(new PhysicalVariableWidget(new ExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
 
     QPushButton *evalButton = new QPushButton("Eval");
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
@@ -89,7 +89,7 @@ namespace MBSimGUI {
 
   void ExtPhysicalVarWidget::openEvalDialog() {
     evalInput = inputCombo->currentIndex();
-    QString str = QString::fromStdString(MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(getValue().toStdString())));
+    QString str = QString::fromStdString(MainWindow::eval->cast<MBXMLUtils::CodeString>(MainWindow::eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
     vector<vector<QString> > A = strToMat(str);
     if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {

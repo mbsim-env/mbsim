@@ -6,8 +6,6 @@
 
 namespace MBSim {
 
-  const MBXMLUtils::NamespaceURI MBSIMXML("http://mbsim.berlios.de/MBSimXML");
-
   void generateMBSimXMLSchema(const boost::filesystem::path &mbsimxml_xsd, const boost::filesystem::path &MBXMLUTILSSCHEMA);
 
 }

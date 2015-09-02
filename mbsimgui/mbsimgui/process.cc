@@ -23,7 +23,7 @@
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbxmlutils/preprocess.h>
 #include "mbsim/dynamic_system_solver.h"
@@ -171,11 +171,11 @@ namespace MBSimGUI {
       D(doc)->validate();
 
       vector<boost::filesystem::path> dependencies;
-      OctEval octEval(&dependencies);
+      boost::shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
 
       // Praeprozessor starten
       DOMElement *mainxmlele=doc->getDocumentElement();
-      Preprocess::preprocess(parser, octEval, dependencies, mainxmlele);
+      Preprocess::preprocess(parser, *eval, dependencies, mainxmlele);
     }
     catch(exception &ex) {
       errText = ex.what();

@@ -1,24 +1,14 @@
-#include <mbxmlutils/preprocess.h>
-#include "../config.h" // preprocess.h/octeval.h will undefine macro, hence include config.h after this file
-#include <iostream>
-#include <boost/filesystem.hpp>
+#include "config.h"
+#include <mbxmlutils/eval.h>
 #include <mbsimxml/mbsimflatxml.h>
-#include <mbxmlutilshelper/dom.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/shared_library.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
 #include <mbsimxml/mbsimxml.h>
-#include <boost/lexical_cast.hpp>
-#include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/algorithm/string.hpp>
-#include <boost/scope_exit.hpp>
-#include <octave/version.h>
-#include <octave/defaults.h>
-
 #include "zip.h"
-
 #include <../general/fmi_variables.h>
 #include <../general/xmlpp_utils.h>
 #include <../general/mbsimsrc_fmi.h>
@@ -114,11 +104,10 @@ int main(int argc, char *argv[]) {
 
     vector<boost::shared_ptr<Variable> > xmlParam;
 
+    boost::shared_ptr<Eval> eval;
+
     // Create dss from XML file
     if(xmlFile) {
-      // create octave
-      OctEval octEval(&dependencies);
-
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all plugins."<<endl;
       generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
@@ -129,13 +118,20 @@ int main(int argc, char *argv[]) {
       boost::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies);
       DOMElement *modelEle=modelDoc->getDocumentElement();
 
+      // create a clean evaluator (get the evaluator name first form the dom)
+      string evalName="octave"; // default evaluator
+      DOMElement *evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
+      if(evaluator)
+        evalName=X()%E(evaluator)->getFirstTextChild()->getData();
+      eval=Eval::createEvaluator(evalName, &dependencies);
+
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
       boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-      Preprocess::preprocess(parser, octEval, dependencies, modelEle, param);
+      Preprocess::preprocess(parser, *eval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
-      convertXPathParamSetToVariable(param, xmlParam);
+      convertXPathParamSetToVariable(param, xmlParam, *eval);
       // remove all variables which are not in useParam
       vector<boost::shared_ptr<Variable> > xmlParam2;
       for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
@@ -153,6 +149,15 @@ int main(int argc, char *argv[]) {
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
 
       if(xmlParam.empty()) {
+        // adapt the evaluator in the dom
+        if(evaluator)
+          E(evaluator)->getFirstTextChild()->setData(X()%"xmlflat");
+        else {
+          evaluator=D(modelDoc)->createElement(PV%"evaluator");
+          evaluator->appendChild(modelDoc->createTextNode(X()%"xmlflat"));
+          modelEle->insertBefore(evaluator, modelEle->getFirstChild());
+        }
+
         cout<<"Copy preprocessed XML model file to FMU."<<endl;
         // no parameters -> save preprocessed model to FMU
         string ppModelStr;
@@ -191,11 +196,11 @@ int main(int argc, char *argv[]) {
       // create object for DynamicSystemSolver
       // Note: The document modelEle must be normalized (done above, see above)
       cout<<"Build up the model."<<endl;
-      dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(modelEle->getFirstElementChild()));
+      DOMElement *dssEle=E(modelEle)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+      dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(dssEle));
 
       // create object for Integrator (just to get the start/end time for DefaultExperiment)
-      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(
-        modelEle->getFirstElementChild()->getNextElementSibling()));
+      integrator.reset(ObjectFactory::createAndInit<MBSimIntegrator::Integrator>(dssEle->getNextElementSibling()));
     }
     // Create dss from shared library
     else {
@@ -227,7 +232,7 @@ int main(int argc, char *argv[]) {
     dss->initialize();
 
     // create DOM of modelDescription.xml
-    boost::shared_ptr<DOMDocument> modelDescDoc(parser->createDocument());
+    boost::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
 
     // root element fmiModelDescription and its attributes
     cout<<"Create the modelDescription.xml file."<<endl;
@@ -375,66 +380,19 @@ int main(int argc, char *argv[]) {
         }
         cout<<endl;
 
-        cout<<"Copy octave casadi wrapper and dependencies to FMU."<<endl;
-        // note: casadi.oct is copied automatically with all other octave oct files later
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR/"@swig_ref");
-          srcIt!=directory_iterator(); ++srcIt) {
-          cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/LIBDIR/"@swig_ref"/srcIt->path().filename(), srcIt->path());
-        }
-        cout<<endl;
-
-        cout<<"Copy MBXMLUtils m-files to FMU."<<endl;
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbxmlutils"/"octave");
-          srcIt!=directory_iterator(); ++srcIt) {
-          cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"octave"/srcIt->path().filename(), srcIt->path());
-        }
-        cout<<endl;
-
         cout<<"Copy MBXMLUtils measurement.xml file to FMU."<<endl;
         fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"xml"/"measurement.xml",
           getInstallPath()/"share"/"mbxmlutils"/"xml"/"measurement.xml");
 
-        // get octave prefix
-        path octave_prefix(getInstallPath()); // use octave in install path
-        if(!exists(octave_prefix/"share"/"octave")) // if not found use octave in system path
-          octave_prefix=OCTAVE_PREFIX;
-        // get octave libdir without octave_prefix
-        path octave_libdir(string(OCTAVE_LIBDIR).substr(string(OCTAVE_PREFIX).length()+1));
-        // get octave octfiledir without octave_prefix
-        path octave_octfiledir(string(OCTAVE_OCTFILEDIR).substr(string(OCTAVE_PREFIX).length()+1));
-        // get octave fcnfiledir without octave_prefix
-        path octave_fcnfiledir(string(OCTAVE_FCNFILEDIR).substr(string(OCTAVE_PREFIX).length()+1));
-
-        cout<<"Copy octave m-files to FMU."<<endl;
-        path dir=octave_prefix/octave_fcnfiledir;
-        depth=distance(dir.begin(), dir.end());
-        for(recursive_directory_iterator srcIt=recursive_directory_iterator(octave_prefix/octave_fcnfiledir);
-            srcIt!=recursive_directory_iterator(); ++srcIt) {
-          if(is_directory(*srcIt)) // skip directories
-            continue;
-          path::iterator dstIt=srcIt->path().begin();
-          for(int i=0; i<depth; ++i) ++dstIt;
-          path dst;
-          for(; dstIt!=srcIt->path().end(); ++dstIt)
-            dst/=*dstIt;
+        map<path, pair<path, bool> > &files=eval->requiredFiles();
+        cout<<"Copy files required by the evaluator and dependencies to FMU."<<endl;
+        for(map<path, pair<path, bool> >::iterator it=files.begin(); it!=files.end(); ++it) {
           cout<<"."<<flush;
-          fmuFile.add(path("resources")/"local"/octave_fcnfiledir/dst, srcIt->path());
-        }
-        cout<<endl;
-
-        cout<<"Copy octave oct-files to FMU."<<endl;
-        // octave oct-files are copied to $FMU/resources/local/$LIBDIR since their are also all dependent libraries
-        // installed (and are found their due to Linux rpath or Windows alternate search order flag).
-        for(directory_iterator srcIt=directory_iterator(getInstallPath()/LIBDIR); srcIt!=directory_iterator(); ++srcIt) {
-          cout<<"."<<flush;
-          if(srcIt->path().extension()==".oct")
-            copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/srcIt->path().filename(),
-                           path("resources")/"local"/LIBDIR, srcIt->path());
-          if(srcIt->path().filename()=="PKG_ADD")
-            fmuFile.add(path("resources")/"local"/LIBDIR/srcIt->path().filename(),
-                        srcIt->path());
+          if(!it->second.second)
+            fmuFile.add(path("resources")/"local"/it->second.first/it->first.filename(), it->first);
+          else
+            copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/it->second.first/it->first.filename(),
+                           path("resources")/"local"/LIBDIR, it->first);
         }
         cout<<endl;
       }
@@ -491,7 +449,7 @@ namespace {
     // check if *.deplibs file exits
     path depFile=src.parent_path()/(src.filename().string()+".deplibs");
     if(!exists(depFile)) {
-      cerr<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
+      cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
       return;
     }
 
@@ -517,7 +475,7 @@ namespace {
       }
 
       // not found
-      cerr<<"Warning: Dependent library "<<file<<" not found.\nThis dependent libraries will be missing in the FMU."<<endl;
+      cerr<<endl<<"Warning: Dependent library "<<file<<" not found.\nThis dependent libraries will be missing in the FMU."<<endl;
     }
   }
 

@@ -22,7 +22,7 @@
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "mainwindow.h"
-#include <mbxmlutils/octeval.h>
+#include <mbxmlutils/eval.h>
 #include <QtGui>
 
 using namespace std;
@@ -66,7 +66,7 @@ namespace MBSimGUI {
   }
 
   int LinearTranslationWidget::getArg1Size() const {
-    string str = MBXMLUtils::OctEval::cast<string>(MainWindow::octEval->stringToOctValue(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString()));
+    string str = MainWindow::eval->cast<MBXMLUtils::CodeString>(MainWindow::eval->stringToValue(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString()));
     vector<vector<string> > A = strToMat(str);
     return A.size()?A[0].size():0;
   }
