@@ -584,5 +584,12 @@ namespace MBSimEHD {
     //  KT = rKT;
   }
 
+  void EHDMesh::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
+    VecV D(getndof()); //TODO: what is D, initial value for the solution?
+    PressureAssembly(D);
+
+    //TODO: add the computation of the forces here!!
+  }
+
 }
 

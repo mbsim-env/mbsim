@@ -30,7 +30,14 @@ using namespace std;
 namespace MBSimEHD {
 
   void ContactKinematicsCylinderSolidCylinderHollowEHD::assignContours(const vector<Contour*> &contour) {
-    if (dynamic_cast<Frustum*>(contour[0])) {
+    if (not (dynamic_cast<Frustum*>(contour[0]) and dynamic_cast<Frustum*>(contour[1]))) {
+      throw MBSimError("Must be two frustums!");
+    }
+
+    Vec2 rs0 = static_cast<Frustum*>(contour[0])->getRadii();
+    Vec2 rs1 = static_cast<Frustum*>(contour[1])->getRadii();
+
+    if (rs0(0) < rs1(0)) {
       isolid = 0;
       ihollow = 1;
     }
@@ -38,13 +45,14 @@ namespace MBSimEHD {
       isolid = 1;
       ihollow = 0;
     }
+
     solid = static_cast<Frustum*>(contour[isolid]);
     hollow = static_cast<Frustum*>(contour[ihollow]);
 
     // Check the sizes of the radii (must be the same to be a cylinder and save them
     Vec2 rs = solid->getRadii();
     if (rs(1) - rs(0) > macheps()) {
-      throw MBSimError("Raidus must match!");
+      throw MBSimError("The two radii of the solid must match to be cylinder!");
     }
     else {
       rSolid = rs(0);
@@ -52,10 +60,14 @@ namespace MBSimEHD {
 
     Vec2 rh = hollow->getRadii();
     if (rh(1) - rh(0) > macheps()) {
-      throw MBSimError("Raidus must match!");
+      throw MBSimError("The two radii of the hollow must match to be cylinder!");
     }
     else {
       rHollow = rh(0);
+    }
+
+    if (rSolid >= rHollow) {
+      throw MBSimError("Radius of the solid must be smaller than radius of the hollow!");
     }
 
   }
@@ -221,8 +233,12 @@ namespace MBSimEHD {
     // Note: K coincides with I for fixed bearing shell (phi2 = 0)
     double omega1 = nrm2(solid->getFrameOfReference()->getAngularVelocity());
     double omega2 = nrm2(hollow->getFrameOfReference()->getAngularVelocity());
-    fmatvec::Vec2 IuS1 = solid->getFrameOfReference()->getVelocity()(0,1);
-    fmatvec::Vec2 IuS2 = hollow->getFrameOfReference()->getVelocity()(0,1);
+    fmatvec::Vec2 IuS1;
+    IuS1(0) = solid->getFrameOfReference()->getVelocity()(0);
+    IuS1(1) = solid->getFrameOfReference()->getVelocity()(1);
+    fmatvec::Vec2 IuS2;
+    IuS2(0) = hollow->getFrameOfReference()->getVelocity()(0);
+    IuS2(1) = hollow->getFrameOfReference()->getVelocity()(1);
     u1 = AFK.row(0) * IuS1 + omega1 * et;
     v1 = AFK.row(1) * IuS1 + omega1 * r1;
 
@@ -248,12 +264,18 @@ namespace MBSimEHD {
 
     // Compute eccentricity in coordinate system K
     // Note: K coincides with I for fixed bearing shell (phi2 = 0)
-    fmatvec::Vec2 IxS1 = solid->getFrameOfReference()->getPosition()(0,1); //TODO: is IxS1 the center position?!
-    fmatvec::Vec2 IxS2 = hollow->getFrameOfReference()->getPosition()(0,1);
+    fmatvec::Vec2 IxS1;      //TODO: is IxS1 the center position?!
+    fmatvec::Vec2 IxS2;
+    IxS1(0) = solid->getFrameOfReference()->getPosition()(0);
+    IxS1(1) = solid->getFrameOfReference()->getPosition()(1);
+    IxS2(0) = hollow->getFrameOfReference()->getPosition()(0);
+    IxS2(1) = hollow->getFrameOfReference()->getPosition()(1);
+
     Vec2 Ke(IxS1 - IxS2);
 
     // Transform eccentricity into coordinate system F
     er = AFK.row(0) * Ke;
+    cout << IxS1 << IxS2 << endl;
     et = AFK.row(1) * Ke;
 
     // Compute auxiliary length variable

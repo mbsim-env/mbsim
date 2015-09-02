@@ -204,16 +204,15 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   xb.set(0, yb);
   xb.set(1, zb);
 
-  EHDMesh msh(ele, xb, VecInt("[20; 3]"));
+  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 3]"));
 
-  msh.Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
-  msh.Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
-  msh.Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
-  msh.FinishMesh();
+  msh->Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
+  msh->Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
+  msh->Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
+  msh->FinishMesh();
 
-  //TODO: do we need a normal force law or is the mesh the normal force law??
-  EHDForceLaw *fL = new EHDForceLaw();
-  ctJouHou->setNormalForceLaw(fL);
+//  EHDForceLaw *fL = new EHDForceLaw();
+  ctJouHou->setNormalForceLaw(msh);
   ctJouHou->enableOpenMBVContactPoints(1e-5);
   ctJouHou->enableOpenMBVNormalForce(1e-6);
 

@@ -158,6 +158,10 @@ namespace MBSimEHD {
         lub = lub_;
       }
 
+      void setContactKinemaitcs(ContactKinematicsEHDInterface * cK_) {
+        cK = cK_;
+      }
+
     private:
       ElementShape shape;              // Properties of element shape
       int ndofpernod = 1;     // Number of DOFs per node

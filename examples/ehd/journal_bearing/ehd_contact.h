@@ -15,8 +15,6 @@
 
 namespace MBSimEHD {
   
-
-
   class EHDContact : public MBSim::Contact {
     public:
       EHDContact(const std::string & name);
@@ -25,6 +23,8 @@ namespace MBSimEHD {
       void setMesh(EHDMesh * msh_) {
         msh = msh_;
       }
+
+      virtual void init(MBSim::Element::InitStage stage);
 
       virtual void updateh(double t, int j);
 

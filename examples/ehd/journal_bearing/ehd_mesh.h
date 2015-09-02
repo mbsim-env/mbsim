@@ -23,13 +23,15 @@
 #include "ehd_pressure_element.h"
 
 #include <fmatvec/fmatvec.h>
+
+#include <mbsim/constitutive_laws.h>
 #include <mbsim/mbsim_event.h>
 
 #include <string>
 
 namespace MBSimEHD {
 
-  class EHDMesh {
+  class EHDMesh : public MBSim::GeneralizedForceLaw {
     public:
       /** \brief type of boundary condition */
       enum EHDBoundaryConditionType {
@@ -147,8 +149,14 @@ namespace MBSimEHD {
       //      b:          DOFs at boundary
       fmatvec::VecInt Boundary2D(const EHDBoundaryConditionPosition & boundary);
 
-
+      /*!
+       * \todo: description
+       */
       void PressureAssembly(const fmatvec::VecV & D);
+
+      virtual void setContactKinematics(ContactKinematicsEHDInterface * cK) {
+        ele.setContactKinemaitcs(cK);
+      }
 
       int getndof() const {
         return ndof;
@@ -205,6 +213,13 @@ namespace MBSimEHD {
       fmatvec::SqrMatV getKT() const {
         return KT;
       }
+
+      /* INHERITED FUNCTIONS*/
+      virtual bool isSetValued() const {
+        return false;
+      }
+      virtual void computeSmoothForces(std::vector<std::vector<MBSim::SingleContact> > & contacts);
+      /**********************/
 
     private:
       EHDPressureElement ele;        // Object of class pressure element

@@ -18,6 +18,7 @@
  */
 
 #include "ehd_force_law.h"
+#include "ehd_mesh.h"
 #include "cylindersolid_cylinderhollow_ehd.h"
 
 #include <mbsim/single_contact.h>
@@ -28,18 +29,23 @@ using namespace fmatvec;
 using namespace xercesc;
 using namespace MBXMLUtils;
 
-EHDForceLaw::EHDForceLaw() {
+EHDForceLaw::EHDForceLaw(EHDMesh * msh) :
+    msh(msh) {
 
 }
 
 EHDForceLaw::~EHDForceLaw() {
+  delete msh;
 }
 
 void EHDForceLaw::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
+  //TODO: initialize the values needed in the following subroutines!
+  VecV D(msh->getndof()); //TODO: what is D?
+  msh->PressureAssembly(D);
 // Here the force computation for all contact pairings happens
   for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
     for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-      (*jter).getlaN()(0) = 1e7*nrm2((static_cast<ContactKinematicsCylinderSolidCylinderHollowEHD*>(jter->getContactKinematics()))->getWrD());
+      (*jter).getlaN()(0) = 1e7 * nrm2((static_cast<ContactKinematicsCylinderSolidCylinderHollowEHD*>(jter->getContactKinematics()))->getWrD());
     }
   }
 }
