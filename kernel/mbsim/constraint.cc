@@ -105,7 +105,7 @@ namespace MBSim {
     }
   }
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &dT_, const Mat3xV &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, double t_, vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), t(t_), i1(i1_), i2(i2_) {}
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
@@ -122,14 +122,14 @@ namespace MBSim {
       nq += dq;
     }
 
-    int nT = dT.cols();
-    int nR = dR.cols();
+    Mat3xV dT = refFrame->getOrientation(t)*forceDir;
+    Mat3xV dR = refFrame->getOrientation(t)*momentDir;
 
-    if(nT) 
-      res(Range<Var,Var>(0,nT-1)) = dT.T()*(frame1->getPosition(t)-frame2->getPosition(t)); 
+    if(dT.cols())
+      res(Range<Var,Var>(0,dT.cols()-1)) = dT.T()*(frame1->getPosition(t)-frame2->getPosition(t));
 
-    if(nR) 
-      res(Range<Var,Var>(nT,nT+nR-1)) = dR.T()*AIK2Cardan(frame1->getOrientation().T()*frame2->getOrientation()); 
+    if(dR.cols())
+      res(Range<Var,Var>(dT.cols(),dT.cols()+dR.cols()-1)) = dR.T()*AIK2Cardan(frame1->getOrientation().T()*frame2->getOrientation());
 
     return res;
   } 
@@ -542,10 +542,7 @@ namespace MBSim {
   }
 
   void JointConstraint::updateGeneralizedCoordinates(double t) {
-    dT = forceDir;
-    dR = momentDir;
-
-    Residuum f(bd1,bd2,dT,dR,frame1,frame2,t,if1,if2);
+    Residuum f(bd1,bd2,forceDir,momentDir,frame1,frame2,refFrame,t,if1,if2);
     MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
     if(newton.getInfo()!=0)
@@ -554,6 +551,8 @@ namespace MBSim {
       bd1[i]->setqRel(q(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)
       bd2[i]->setqRel(q(Iq2[i]));
+    dT = refFrame->getOrientation(t)*forceDir;
+    dR = refFrame->getOrientation(t)*momentDir;
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
