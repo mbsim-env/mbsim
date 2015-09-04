@@ -24,6 +24,8 @@ libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 contourincludedir = $(includedir)/mbsim/contours
 contourinclude_HEADERS = circle.h\
+			 circle_hollow.h\
+			 circle_solid.h\
 			 rectangle.h\
 			 line.h\
 			 line_segment.h\
