@@ -500,43 +500,50 @@ namespace MBSim {
         addDependency(bi);
       if(bi2)
         addDependency(bi2);
-    } 
-    else if(stage==unknownStage) {
       refFrame=refFrameID?frame2:frame1;
+    }
+    else if(stage==resize) {
+      Constraint::init(stage);
+      nq = 0;
+      nu = 0;
+      nh = 0;
+      Iq1.resize(bd1.size());
+      Iu1.resize(bd1.size());
+      Ih1.resize(bd1.size());
+      for(unsigned int i=0; i<bd1.size(); i++) {
+        int dq = bd1[i]->getqRelSize();
+        int du = bd1[i]->getuRelSize();
+        int dh = bd1[i]->gethSize(0);
+        Iq1[i] = Index(nq,nq+dq-1);
+        Iu1[i] = Index(nu,nu+du-1);
+        Ih1[i] = Index(0,dh-1);
+        nq += dq;
+        nu += du;
+        nh = max(nh,dh);
+      }
+      Iq2.resize(bd2.size());
+      Iu2.resize(bd2.size());
+      Ih2.resize(bd2.size());
+      for(unsigned int i=0; i<bd2.size(); i++) {
+        int dq = bd2[i]->getqRelSize();
+        int du = bd2[i]->getuRelSize();
+        int dh = bd2[i]->gethSize(0);
+        Iq2[i] = Index(nq,nq+dq-1);
+        Iu2[i] = Index(nu,nu+du-1);
+        Ih2[i] = Index(0,dh-1);
+        nq += dq;
+        nu += du;
+        nh = max(nh,dh);
+      }
+
+      q.resize(nq);
+      JT.resize(3,nu);
+      JR.resize(3,nu);
     } else
       Constraint::init(stage);
   }
 
   void JointConstraint::initz() {
-    nq = 0;
-    nu = 0;
-    nh = 0;
-    for(unsigned int i=0; i<bd1.size(); i++) {
-      int dq = bd1[i]->getqRelSize();
-      int du = bd1[i]->getuRelSize();
-      int dh = bd1[i]->gethSize(0);
-      Iq1.push_back(Index(nq,nq+dq-1));
-      Iu1.push_back(Index(nu,nu+du-1));
-      Ih1.push_back(Index(0,dh-1));
-      nq += dq;
-      nu += du;
-      nh = max(nh,dh);
-    }
-    for(unsigned int i=0; i<bd2.size(); i++) {
-      int dq = bd2[i]->getqRelSize();
-      int du = bd2[i]->getuRelSize();
-      int dh = bd2[i]->gethSize(0);
-      Iq2.push_back(Index(nq,nq+dq-1));
-      Iu2.push_back(Index(nu,nu+du-1));
-      Ih2.push_back(Index(0,dh-1));
-      nq += dq;
-      nu += du;
-      nh = max(nh,dh);
-    }
-
-    q.resize(nq);
-    JT.resize(3,nu);
-    JR.resize(3,nu);
     if(q0.size())
       q = q0;
   }
