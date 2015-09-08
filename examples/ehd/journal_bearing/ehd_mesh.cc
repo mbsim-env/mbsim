@@ -763,15 +763,20 @@ namespace MBSimEHD {
 
   void EHDMesh::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
     VecV D(getndof());
+    Mat3xV h(3,getndof());
     double TolD = 1e-2; //TODO: TolD and MaxIter outside of this function
     int maxIter = 30;
 
     solvePressure(D,TolD,maxIter);
 
-    VecV h=Cff*D;
+    VecV htemp=Cff*D;
+    for (int i=0; i<getndof(); i++){
+      h(0,i) = htemp(3 * i);
+      h(1,i) = htemp(3 * i + 1);
+      h(2,i) = htemp(3 * i + 2);
+    }
 
-    // integrateForces();
-    //TODO: add the computation of the forces here!!
+    //TODO: add: J^T*h and if rigid Fres=sum(h,2)
 
   }
 
