@@ -256,6 +256,24 @@ namespace MBSimEHD {
     }
   }
 
+  void ContactKinematicsCylinderSolidCylinderHollowEHD::Normalvector(const fmatvec::VecV & x, const int & e, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) {
+    double y = x(0);
+    if (dimLess) {
+      y = y * xrF;
+    }
+
+    double phi;
+    SqrMat2 AFK;
+    AngleCoordSys(y, phi, AFK);
+    n(0)=cos(phi);
+    n(1)=sin(phi);
+
+    t(0,0)=-sin(phi);
+    t(1,0)=cos(phi);
+    t(2,1)=1;
+  }
+
+
   void ContactKinematicsCylinderSolidCylinderHollowEHD::Eccentricity(const double & y) {
     // Get rotation matrix
     double phi;

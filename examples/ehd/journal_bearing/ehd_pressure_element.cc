@@ -170,9 +170,9 @@ namespace MBSimEHD {
     // Initialize ent matrices and ent vectors
     SqrMatV ke(ndofe);
     SqrMatV ce(ndofe);
-    VecV s0e(ndofe); //TODO: Vec?
-    VecV sPe(ndofe); //TODO: Vec?
-    VecV sSUPGe(ndofe); //TODO: Vec?
+    VecV s0e(ndofe);
+    VecV sPe(ndofe);
+    VecV sSUPGe(ndofe);
 
     // Initialize nodal derivatives of ent vectors
     SqrMatV skedd(ndofe);
@@ -482,6 +482,61 @@ namespace MBSimEHD {
     //TODO: maybe add the possible non-zero terms, e.g. the stabilization, inside the if-statements
     re = (ke + ce) * de + s0e + sPe + sSUPGe;
     kTe = skedd + scedd + s0edd + sPedd + sSUPGedd;
+
+  }
+
+  void EHDPressureElement::CalculateForceMatrixElement(const int & e, const fmatvec::VecV & pose, fmatvec::MatV & cffe) const {
+      // Define abbreviations
+      int ndime = shape.ndim;
+      int ndofe = ndof;
+
+
+      // Retrieve Gauss points and weights
+      //TODO: is constant for all times?! --> outside of this function
+      MatVx2 xigp(ngp);
+      VecV wgp(ngp);
+      if (ndime == 1) {
+        GaussPoints1D(ngp, xigp, wgp);
+      }
+      else if (ndime == 2) {
+        GaussPoints2D(ngp, xigp, wgp);
+      }
+      else
+        throw MBSimError("No valid dimension");
+
+      // Loop through all Gauss points to integrate the matrices and the vectors and their nodal derivatives
+      for (int g = 0; g < ngp; g++) {
+        // Extract current Gauss point and weight
+        VecV xi = xigp.row(g).T();
+        double w = wgp(g);
+
+        // Get shape function matrices Np and Nx, spatial gradient
+        // Npdx, second spatial derivatives Ndxdx of shape functions
+        // (only for SUPG) and element Jacobi determinant at xi
+        RowVecV Np;
+        Mat2xV Npdx;
+        Mat3xV Ndxdx;
+        Mat2xV Nx;
+        double detJ;
+        GetShapeFunctions(pose, xi, Np, Npdx, Ndxdx, Nx, detJ); //TODO: is pose constant?
+
+        // Compute position x = [y; z] at xi
+        VecV x = Nx * pose;
+
+        // Retrieve normal direction at x
+        Vec3 n;
+        Mat3x2 t;
+        ck->Normalvector(x, n, t);
+        MatV N = MatV(ndofe*3,ndofe);
+        for (int i=0; i<ndofe; i++){
+          N(i+i*3,i)=n(0);
+          N(1+i+i*3,i)=n(1);
+          N(2+i+i*3,i)=n(2);
+        }
+
+        // Add contribution of current Gauss point to element matrix
+        cffe = cffe + N * (Np.T() * Np) * detJ * w;
+      }
 
   }
 

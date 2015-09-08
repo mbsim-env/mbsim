@@ -125,6 +125,17 @@ namespace MBSimEHD {
       //   kTe:    Element tangential matrix
       void EvaluateElement(const int & e, const fmatvec::VecV & pose, const fmatvec::VecV & de, fmatvec::VecV & re, fmatvec::SqrMatV & kTe) const;
 
+      // Evaluate element
+      //
+      // Input:
+      //   e:      Element number in spatial discretization
+      //   pose:   Spatial positions of element nodes
+      //   sys:    Object of system (TODO: see class JournalBearing -> it is the geometry description which finally should (probably) be covered by the contactKinematics!!!)
+      //
+      // Output:
+      //   cffe:   Element of force matrix
+      void CalculateForceMatrixElement(const int & e, const fmatvec::VecV & pose, fmatvec::MatV & cffe) const;
+
       // Return shape function matrices at parametric point xi
       //
       // Input:

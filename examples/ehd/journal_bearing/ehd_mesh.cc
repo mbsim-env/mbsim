@@ -252,6 +252,9 @@ namespace MBSimEHD {
         }
       }
     }
+
+    ForceMatrixAssembly();
+
     // ToDo: Look for matlab find-function in c++: msh.locD(msh.locD == msh.per2(i)) = msh.per1(i);
   }
 
@@ -584,11 +587,192 @@ namespace MBSimEHD {
     //  KT = rKT;
   }
 
-  void EHDMesh::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
-    VecV D(getndof()); //TODO: what is D, initial value for the solution?
-    PressureAssembly(D);
+  void EHDMesh::ForceMatrixAssembly(void) {
+      // Assemble force matrix
+      // Michael Hofer, 18.01.2015
+      //
+      // Output:
+      //   Cff:    Global force matrix
 
+      // Define abbreviations
+      int ndof = getndof();
+      int nele = getnele();
+      int ndofe = ele.getndof();
+
+      // Initialize row, coloumn and value vector for force matrix
+      VecV rCff(3 * ndofe * ndofe * nele);
+      VecV cCff(ndofe * ndofe * nele);
+      VecV vCff(3 * ndofe * ndofe * nele);
+
+      Cff = MatV(3*ndof,ndof);
+
+      // Loop through all elements to assemble element force matrix
+      int i = 0;
+      int j = 0;
+      VecV posV = getpos();
+
+      for (int e = 0; e < nele; e++) {
+        // Extract element location vector for geometry and pressure
+        RowVecVI locXe = getlocX().row(e);
+        RowVecVI locDe = getlocD().row(e);
+
+        // Extract positions of element nodes and vector with nodal values
+        VecV pose = subVec(posV, locXe.T(), -1);
+
+        // Evaluate element
+        MatV cffe;
+        ele.CalculateForceMatrixElement(e, pose, cffe); //TODO: change evaluate element to match with MBSim! (withou the sys)
+
+        // Assembly
+        for (int k=0; k<3; k++){
+          for (int row = 0; row < ndofe; row++) {
+            for (int col = 0; col < ndofe; col++) {
+              Cff(k * ndof + locDe(row) - 1, locDe(col) - 1) += cffe(k * ndofe + row, col);
+            }
+          }
+        }
+      }
+
+    }
+  void EHDMesh::solvePressure(VecV & D, double & tolD, int & iterMax) {
+  // Newton-Josephy method for solving a nonlinear complementarity
+  // problem (NCP) by linearization in each iteration step resulting
+  // in a linear complementarity problems (LCP)
+  // Michael Hofer, 17.01.2015
+  //
+  // Input:
+  //   D0:         Start point for iteration
+  //   tolD:       Tolerance for increment norm
+  //   iterMax:    Maximal number of iterations
+  //   output:     Flag for command window output
+  //
+  // Output:
+  //   D:          Global vector with nodal solution
+  //
+  // Definition:
+  //   NCP:        0 <= D perp R(D) >= 0
+  //   LCPs:       0 <= Z perp W = -M * Z + Q >= 0 (in each iteration step)
+
+    // Penalty regularization has to be disabled
+        if (ele.pp > 0){
+            ele.pp = 0;
+            throw MBSim::MBSimError("Penalty regularization has to be disabled!");
+        }
+
+        // Define tolerance if not given
+        if (tolD > 1e-1){
+            tolD = 1e-1;
+        }
+
+        // Define maximal number of iterations if not given
+        if (iterMax>50){
+            iterMax = 50;
+        }
+
+//        // Set flag for drawing solution in each iteration step if not given
+//        if nargin < 7 || isempty(iterDraw)
+//            iterDraw = false;
+//        end
+
+        // Define abbreviation
+        VecInt f = getfreedofs();
+        VecInt per1 = getper1();
+        VecInt per2 = getper2();
+        int nfree = getnfree();
+        VecV Dfree = VecV(nfree);
+        VecV Z = VecV(nfree);
+        VecV deltaDeff = VecV(nfree);
+        VecV Q = VecV(nfree);
+        SqrMatV M = SqrMat(nfree);
+
+        // Initialize iteration counter
+        int iter = 0;
+
+//        // Print header for iteration list
+//        if output
+//            fprintf('//-16s//-20s//s\n', 'Iteration', 'Increment norm', 'Goenka iterations');
+//        end
+
+//        // Set arbitrary start set for region1 in Goenka algorithm
+//        region1 = 1:1:(length(f) - 2);
+
+        // Retrieve global residuum vector and global tangential matrix at D
+        PressureAssembly(D);
+        VecV R = getR();
+        SqrMatV KT = getKT();
+
+        // Newton-Josephy iteration loop
+        while (iter < iterMax){
+            // Compute matrix M and vector Q of LCP
+            Dfree = subVec(D,f,-1);
+            M = subMat(-KT,f,-1);
+            Q = subVec(R,f,-1) - M*Dfree;
+//            M = -KT(f, f);
+//            Q = R(f) - KT(f, f) * D(f);
+
+            // TODO Solve LCP: 0 <= Z perp W = -M * Z + Q >= 0
+//            [Z, region1, iterGoenka] = Goenka(M, Q, region1);
+            VecVI ipiv(M.rows());
+            SqrMatV JLU = facLU(-M, ipiv);
+            Z = slvLUFac(JLU, Q, ipiv);
+
+            // Insert new solution at free DOFs
+            for (int i = 0; i < nfree; i++) {
+              D(f(i) - 1) = Z(i);
+            }
+
+            // Compute effective solution increment for convergence check
+            deltaDeff = Z - Dfree;
+
+            // Overwrite solution at eliminated periodic boundary
+            for (int i = 0; i < per2.size(); i++) {
+              D(per2(i)-1) = D(per1(i)-1);
+            }
+
+            // Plot current solution
+//            if iterDraw
+//                switch msh.ele.shape.ndim
+//                    case 1
+//                        DrawPressure1D(D, sys, msh, iter == 0);
+//                    case 2
+//                        DrawPressure2D(D, sys, msh, 'normal', iter == 0);
+//                end
+//                pause(0.001);
+//            end
+
+            // Retrieve global residuum vector and global tangential matrix at new D
+            PressureAssembly(D);
+            R = getR();
+            KT = getKT();
+
+            // Update iteration counter
+            iter = iter + 1;
+
+//            if output
+//                fprintf('//-16d//-20e//d\n', iter, normdeltaDeff, iterGoenka);
+//            end
+            if (fmatvec::nrm2(deltaDeff) < tolD){
+                break;
+            }
+        }
+        if (iter == iterMax){
+          throw MBSim::MBSimError("Newton-Josephy iteration unconverged after ... iterations.");
+        }
+
+  }
+
+  void EHDMesh::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
+    VecV D(getndof());
+    double TolD = 1e-2; //TODO: TolD and MaxIter outside of this function
+    int maxIter = 30;
+
+    solvePressure(D,TolD,maxIter);
+
+    VecV h=Cff*D;
+
+    // integrateForces();
     //TODO: add the computation of the forces here!!
+
   }
 
 }

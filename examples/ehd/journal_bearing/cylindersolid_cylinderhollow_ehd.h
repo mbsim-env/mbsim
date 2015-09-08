@@ -68,6 +68,16 @@ namespace MBSimEHD {
       //   v2dy:   Derivative of v2 with respect to y
       virtual void Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) = 0;
 
+      // Normal vector
+      //
+      // Input:
+      //   y:      Point inside fluid domain (y-coordinate)
+      //   e(~):   Element number in spatial discretization
+      //
+      // Output:
+      //   n:       normal vectors
+      //   t:       tangential vecotrs
+      virtual void Normalvector(const fmatvec::VecV & x, const int & e, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) = 0;
 
       /*!
        * \brief retrieve characteristic size for film thickness
@@ -122,6 +132,7 @@ namespace MBSimEHD {
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData);
       virtual void Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy);
       virtual void Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy);
+      virtual void Normalvector(const fmatvec::VecV & x, const int & e, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t);
       /***************************************************/
 
       fmatvec::Vec3 getWrD();

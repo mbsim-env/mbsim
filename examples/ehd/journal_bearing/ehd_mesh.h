@@ -154,6 +154,17 @@ namespace MBSimEHD {
        */
       void PressureAssembly(const fmatvec::VecV & D);
 
+      /*!
+       * \todo: description
+       */
+      void ForceMatrixAssembly(void);
+
+      /*!
+       * \todo: description
+       */
+      void solvePressure(fmatvec::VecV & D, double & tolD, int & iterMax);
+
+
       virtual void setContactKinematics(ContactKinematicsEHDInterface * cK) {
         ele.setContactKinemaitcs(cK);
       }
@@ -244,14 +255,19 @@ namespace MBSimEHD {
       fmatvec::VecInt freedofs;   // Free DOFs (without dbc and per2 DOFs)
 
       /*!
-       * \brief residual vector after pressure assembly
+       * \residual vector after pressure assembly
        */
       fmatvec::VecV R;
 
       /*!
-       * \brief stiffness matrix after pressure assembly
+       * \stiffness matrix after pressure assembly
        */
       fmatvec::SqrMatV KT;
+
+      /*!
+       * \force calculation matrix
+       */
+      fmatvec::MatV Cff;
 
   };
 
