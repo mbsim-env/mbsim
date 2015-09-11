@@ -94,7 +94,7 @@ int SimJournalBearing() {
   msh.Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
   msh.Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
   msh.Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
-  msh.FinishMesh();
+  msh.finishMesh();
 
   VecV D(msh.getndof());
   msh.PressureAssembly(D, sys);

@@ -22,12 +22,17 @@
 #include "mbsim/contour.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace fmatvec;
 using namespace MBSim;
 using namespace std;
 
 namespace MBSimEHD {
+
+  void ContactKinematicsEHDInterface::updateg(Vec &g, ContourPointData *cpData, int index) {
+    throw MBSimError("updateg-interface is not sufficient for EHD-contact. Use updateKinematics!");
+  }
 
   void ContactKinematicsCylinderSolidCylinderHollowEHD::assignContours(const vector<Contour*> &contour) {
     if (not (dynamic_cast<Frustum*>(contour[0]) and dynamic_cast<Frustum*>(contour[1]))) {
@@ -70,29 +75,53 @@ namespace MBSimEHD {
       throw MBSimError("Radius of the solid must be smaller than radius of the hollow!");
     }
 
+    //initialize values
+    Vec2 h;
+    h(1) = rHollow; //is h2 in [1]
+    for(int i = 0; i < numberOfPotentialContactPoints; i++) {
+      heights.push_back(h);
+      dheightsdy.push_back(Vec2());
+    }
+
   }
 
-  void ContactKinematicsCylinderSolidCylinderHollowEHD::updateg(Vec &g, ContourPointData *cpData, int index) {
-// TODO:   throw MBSimError("Call the Assembly routine here?!");
-//    WrD = solid->getFrame()->getPosition() - hollow->getFrame()->getPosition();
-//    WrDdot = solid->getFrame()->getVelocity() - hollow->getFrame()->getVelocity();
-//    omegaRel = solid->getFrame()->getAngularVelocity() - hollow->getFrame()->getAngularVelocity();
-//
-//    // TODO: the following is not correct for the general case
-//    cpData[ihollow].getFrameOfReference().getPosition() = hollow->getFrame()->getPosition();
-//    cpData[isolid].getFrameOfReference().getPosition() = solid->getFrame()->getPosition();
-//    g(0) = rSolid - rHollow;
-//    if (nrm2(WrD) < macheps()) {
-//      cpData[isolid].getFrameOfReference().setOrientation(solid->getFrame()->getOrientation());
-//    }
-//    else {
-//      cpData[isolid].getFrameOfReference().getOrientation().set(0, WrD / nrm2(WrD));
-//      cpData[isolid].getFrameOfReference().getOrientation().set(2, hollow->getFrame()->getOrientation().col(2));
-//      cpData[isolid].getFrameOfReference().getOrientation().set(1, crossProduct(cpData[isolid].getFrameOfReference().getOrientation().col(2), cpData[isolid].getFrameOfReference().getOrientation().col(0)));
-//    }
-//    cpData[ihollow].getFrameOfReference().getOrientation().set(0, -cpData[isolid].getFrameOfReference().getOrientation().col(0));
-//    cpData[ihollow].getFrameOfReference().getOrientation().set(1, -cpData[isolid].getFrameOfReference().getOrientation().col(1));
-//    cpData[ihollow].getFrameOfReference().getOrientation().set(2, solid->getFrame()->getOrientation().col(2));
+  void ContactKinematicsCylinderSolidCylinderHollowEHD::updateKinematics(const vector<SingleContact> & contacts) {
+    // See [1], Bild 4.4
+
+    WrD = solid->getFrame()->getPosition() - hollow->getFrame()->getPosition();
+    WrDdot = solid->getFrame()->getVelocity() - hollow->getFrame()->getVelocity();
+    omegaRel = solid->getFrame()->getAngularVelocity() - hollow->getFrame()->getAngularVelocity();
+
+    Vec2 h;
+    h(1) = rHollow; //TODO: is constant and could be set at initialization
+
+    for (int i = 0; i < numberOfPotentialContactPoints; i++) {
+      ContourPointData * cpData = contacts[i].getcpData();
+      double y = pos(i);
+
+      // Orientation
+      double phi = y / rHollow;
+      SqrMat3 AKF = BasicRotAIKy(phi);
+      cpData[ihollow].getFrameOfReference().setOrientation(hollow->getFrameOfReference()->getOrientation() * AKF);
+      cpData[isolid].getFrameOfReference().getOrientation().set(0, -cpData[ihollow].getFrameOfReference().getOrientation().col(0));
+      cpData[isolid].getFrameOfReference().getOrientation().set(1, -cpData[ihollow].getFrameOfReference().getOrientation().col(1));
+      cpData[isolid].getFrameOfReference().getOrientation().set(2, cpData[ihollow].getFrameOfReference().getOrientation().col(2));
+
+      //Position
+      SqrMat3 AFI = cpData[ihollow].getFrameOfReference().getOrientation().T();
+      Vec3 e = AFI * WrD;
+
+      // Here the full computation of the Thickness and the velocities should follow to store it once and then just ask for it again
+      double er = e(0);
+      double et = e(1);
+      double r1 = sqrt(pow(rSolid, 2) - pow(et, 2));
+      heights[i] = er + r1;//is h1 in [1] (h2 is constant)
+      dheightsdy[i] = et * heights[i] / (rHollow * r1);
+      //TODO: Add the velocities information as well and save it to a vector or a set!!
+
+      cpData[isolid].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AFI.T().col(0) * heights[i](0);
+      cpData[ihollow].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AFI.T().col(0) * heights[i](1);
+    }
   }
 
   void ContactKinematicsCylinderSolidCylinderHollowEHD::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
@@ -256,7 +285,7 @@ namespace MBSimEHD {
     }
   }
 
-  void ContactKinematicsCylinderSolidCylinderHollowEHD::Normalvector(const fmatvec::VecV & x, const int & e, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) {
+  void ContactKinematicsCylinderSolidCylinderHollowEHD::Normalvector(const fmatvec::VecV & x, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) {
     double y = x(0);
     if (dimLess) {
       y = y * xrF;
@@ -265,14 +294,13 @@ namespace MBSimEHD {
     double phi;
     SqrMat2 AFK;
     AngleCoordSys(y, phi, AFK);
-    n(0)=cos(phi);
-    n(1)=sin(phi);
+    n(0) = cos(phi);
+    n(1) = sin(phi);
 
-    t(0,0)=-sin(phi);
-    t(1,0)=cos(phi);
-    t(2,1)=1;
+    t(0, 0) = -sin(phi);
+    t(1, 0) = cos(phi);
+    t(2, 1) = 1;
   }
-
 
   void ContactKinematicsCylinderSolidCylinderHollowEHD::Eccentricity(const double & y) {
     // Get rotation matrix
@@ -293,7 +321,7 @@ namespace MBSimEHD {
 
     // Transform eccentricity into coordinate system F
     er = AFK.row(0) * Ke;
-    cout << IxS1 << IxS2 << endl;
+//    cout << IxS1 << IxS2 << endl;
     et = AFK.row(1) * Ke;
 
     // Compute auxiliary length variable

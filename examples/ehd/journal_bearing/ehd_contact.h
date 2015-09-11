@@ -22,6 +22,7 @@ namespace MBSimEHD {
 
       virtual void init(MBSim::Element::InitStage stage);
 
+      virtual void updateg(double t);
       virtual void updateh(double t, int j);
 
     private:

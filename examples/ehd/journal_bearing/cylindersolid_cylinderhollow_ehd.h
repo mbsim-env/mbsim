@@ -31,10 +31,19 @@ namespace MBSimEHD {
 
   /*!
    * \brief interface class for all contact kinematics for EHD computation
+   *
+   * Remark: The reference system for the computation of all directions is the hollow-coordinate system.
+   * For the frustum contour the "height"-direction is the y-direction, whereas the x/z-plane is the "circle"-plane
+   *
    */
   class ContactKinematicsEHDInterface : public MBSim::ContactKinematics {
 
+      friend class EHDMesh; //TODO: should only be avoided
+
     public:
+      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index);
+
+      virtual void updateKinematics(const std::vector<MBSim::SingleContact> & contacts) = 0;
       // Film thickness and derivatives
       //
       // Input:
@@ -72,12 +81,11 @@ namespace MBSimEHD {
       //
       // Input:
       //   y:      Point inside fluid domain (y-coordinate)
-      //   e(~):   Element number in spatial discretization
       //
       // Output:
       //   n:       normal vectors
       //   t:       tangential vecotrs
-      virtual void Normalvector(const fmatvec::VecV & x, const int & e, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) = 0;
+      virtual void Normalvector(const fmatvec::VecV & x, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) = 0;
 
       /*!
        * \brief retrieve characteristic size for film thickness
@@ -102,6 +110,10 @@ namespace MBSimEHD {
         return dimLess;
       }
 
+      void setNumberOfPotentialContactPoints(int ncP) {
+        numberOfPotentialContactPoints = ncP;
+      }
+
     protected:
       /*!
        * \brief Flag for dimensionless description
@@ -118,21 +130,33 @@ namespace MBSimEHD {
        */
       double hrF;
 
+      /*!
+       * \brief Node positions x_i^k (i: direction, k: node) for the force computation
+       *
+       * Example 1D: pos = [x_1^1; x_1^2; x_1^3; ...]
+       * Example 2D: pos = [x_1^1; x_2^1; x_1^2; x_2^2; ...]
+       */
+      fmatvec::VecV pos;
+
   };
 
   /**
    * \brief pairing circle outer side to circle inner side for EHD contacts
    * \author Kilian Grundl
+   * \author Michael Hofer
+   *
+   * Refer to
+   *  [1] Michael Hofer: Isotherme elastohydrodynamicse Kontake in Mehrkörpersystemen (Semesterarbeit at Angewandte Mechanik of TU München)
    */
   class ContactKinematicsCylinderSolidCylinderHollowEHD : public ContactKinematicsEHDInterface {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
-      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index = 0);
+      virtual void updateKinematics(const std::vector<MBSim::SingleContact> & contacts);
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData);
       virtual void Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy);
       virtual void Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy);
-      virtual void Normalvector(const fmatvec::VecV & x, const int & e, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t);
+      virtual void Normalvector(const fmatvec::VecV & x, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t);
       /***************************************************/
 
       fmatvec::Vec3 getWrD();
@@ -166,6 +190,8 @@ namespace MBSimEHD {
 
       /*!
        * \brief distance between the center points
+       *
+       * It is "e" in [1] in world coordinates
        */
       fmatvec::Vec3 WrD;
 
@@ -193,6 +219,16 @@ namespace MBSimEHD {
        * \brief Auxiliary length variable
        */
       double r1;
+
+      /*!
+       * \brief saves the h-positions for each spatial position
+       */
+      std::vector<fmatvec::Vec2> heights;
+
+      /*!
+       * \brief saves the derivatives of the height positions with respect to the first spatial coordinate (y)
+       */
+      std::vector<fmatvec::Vec2> dheightsdy;
 
     private:
       // Radial and tangential eccentricity in coordinate system F

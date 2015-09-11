@@ -209,7 +209,7 @@ namespace MBSimEHD {
 
   }
 
-  void EHDMesh::FinishMesh() {
+  void EHDMesh::finishMesh() {
     fmatvec::VecInt ndof = VecInt(this->ndof, INIT, 0);
     fmatvec::VecInt ndof_dbc_per2;
     int k = this->ndof;

@@ -84,7 +84,7 @@ namespace MBSimEHD {
       void Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary);
 
       // Finish mesh generation
-      void FinishMesh(void);
+      void finishMesh(void);
 
       //  Node positions for one-dimensional case
       //   Input:

@@ -66,7 +66,7 @@ namespace MBSim {
       /**
        * \brief compute normal distance, possible contact point positions and orientation (cf. contact.cc)
        * \param g      normal distance
-       * \param cpData contact point parametrisation
+       * \param cpData contact point parameterization
        * \param index  index of the contact point that should be updated
        */
       virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData, int index = 0) = 0;

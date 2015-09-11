@@ -14,22 +14,24 @@ namespace MBSimEHD {
   
   EHDContact::EHDContact(const std::string & name) :
       Contact(name) {
-    // TODO Auto-generated constructor stub
-    
   }
   
+  void EHDContact::updateg(double t) {
+    for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
+      static_cast<ContactKinematicsEHDInterface*>(contactKinematics[cK])->updateKinematics(contacts[cK]);
+    }
+  }
+
   void EHDContact::updateh(double t, int j) {
     //TODO: implement this update-h routine for the EHD-contact
     //TODO: here the values for the h = J^T*F should be computed. Interface wise the force-contact-law (fcl) can (but not must) be used which is our mesh(?)
 
     msh->computeSmoothForces(contacts);
 
-    /* Original code:
-     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-     for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-     jter->applyh(t, j);
-     }
-     */
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->applyh(t, j);
+    }
   }
 
   EHDContact::~EHDContact() {
@@ -37,8 +39,7 @@ namespace MBSimEHD {
   }
 
   void EHDContact::init(Element::InitStage stage) {
-    Contact::init(stage);
-    if (stage == Element::preInit) {
+    if (stage == Element::modelBuildup) {
       // Do some checks and assignments
       if (dynamic_cast<EHDMesh*>(fcl)) {
         msh = static_cast<EHDMesh*>(fcl);
@@ -56,6 +57,9 @@ namespace MBSimEHD {
         throw MBSimError("A EHDContact may only have one contact kinematics (by now...?)");
       }
     }
+
+    // Has to be done afterwards as the msh needs to know the contact kinematics
+    Contact::init(stage);
   }
 
 } /* namespace MBSimEHD */

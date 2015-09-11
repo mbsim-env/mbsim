@@ -134,7 +134,7 @@ namespace MBSimEHD {
       //
       // Output:
       //   cffe:   Element of force matrix
-      void CalculateForceMatrixElement(const int & e, const fmatvec::VecV & pose, fmatvec::MatV & cffe) const;
+      void CalculateForceMatrixElement(const int & e, const fmatvec::VecV & pose, fmatvec::SqrMatV & cffe) const;
 
       // Return shape function matrices at parametric point xi
       //
@@ -169,8 +169,8 @@ namespace MBSimEHD {
         lub = lub_;
       }
 
-      void setContactKinemaitcs(ContactKinematicsEHDInterface * cK_) {
-        cK = cK_;
+      void setContactKinematics(ContactKinematicsEHDInterface * cK_) {
+        ck = cK_;
       }
 
     private:
@@ -191,7 +191,7 @@ namespace MBSimEHD {
       /*!
        * \brief contact kinematics for calls inside Evaluate Element
        */
-      ContactKinematicsEHDInterface * cK;
+      ContactKinematicsEHDInterface * ck;
   };
 
 //

@@ -182,11 +182,11 @@ namespace MBSimEHD {
     SqrMatV sSUPGedd(ndofe);
 
     // Define reference values for dimensionless description
-    bool dimLess = cK->getdimless();
+    bool dimLess = ck->getdimless();
 
     //declared here for dimless case later
-    double hr = cK->gethrF();
-    double xr = cK->getxrF();
+    double hr = ck->gethrF();
+    double xr = ck->getxrF();
     double lambda = 0;
 
     if (dimLess) {
@@ -233,13 +233,13 @@ namespace MBSimEHD {
 
       // Retrieve film thickness and spatial derivatives at x
       double h1, h2, h1dy, h2dy; //TODO: correct type?
-      cK->Thickness(x, e, g, h1, h2, h1dy, h2dy); //TODO: write interface with MBSim!
+      ck->Thickness(x, e, g, h1, h2, h1dy, h2dy); //TODO: write interface with MBSim
       double h = h2 - h1;
       double hdy = h2dy - h1dy;
 
       // Retrieve surface velocities and spatial derivatives at x
       double u1, u2, v1, v2, v1dy, v2dy; //TODO: correct type?
-      cK->Velocities(x, e, g, u1, u2, v1, v2, v1dy, v2dy); //TODO: write interface with MBSim!
+      ck->Velocities(x, e, g, u1, u2, v1, v2, v1dy, v2dy); //TODO: write interface with MBSim!
       //TODO: for interface later make Vec3 for all velocities
 
       // Retrieve fluid parameters and their derivatives at p
@@ -485,7 +485,7 @@ namespace MBSimEHD {
 
   }
 
-  void EHDPressureElement::CalculateForceMatrixElement(const int & e, const fmatvec::VecV & pose, fmatvec::MatV & cffe) const {
+  void EHDPressureElement::CalculateForceMatrixElement(const int & e, const fmatvec::VecV & pose, fmatvec::SqrMatV & cffe) const {
       // Define abbreviations
       int ndime = shape.ndim;
       int ndofe = ndof;
@@ -520,22 +520,8 @@ namespace MBSimEHD {
         double detJ;
         GetShapeFunctions(pose, xi, Np, Npdx, Ndxdx, Nx, detJ); //TODO: is pose constant?
 
-        // Compute position x = [y; z] at xi
-        VecV x = Nx * pose;
-
-        // Retrieve normal direction at x
-        Vec3 n;
-        Mat3x2 t;
-        ck->Normalvector(x, n, t);
-        MatV N = MatV(ndofe*3,ndofe);
-        for (int i=0; i<ndofe; i++){
-          N(i+i*3,i)=n(0);
-          N(1+i+i*3,i)=n(1);
-          N(2+i+i*3,i)=n(2);
-        }
-
         // Add contribution of current Gauss point to element matrix
-        cffe = cffe + N * (Np.T() * Np) * detJ * w;
+        cffe = cffe + (Np.T() * Np) * detJ * w;
       }
 
   }

@@ -22,69 +22,14 @@
 #include <mbsim/utils/utils.h>
 #include <mbsim/mbsim_event.h>
 
+using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 
 namespace MBSimEHD {
 
   EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled) :
-      ele(ele) {
-    int nele_tmp;
-
-    // Get spatial dimension according to used element shape
-    int ndim = ele.shape.ndim; // friend class!
-
-    // Create vector with domain size in spatial directions
-    fmatvec::VecV Hd = xb.col(1) - xb.col(0);
-
-    // Save number of elements in spatial directions
-    this->neled = neled;
-
-    // Create vector with element sizes in spatial directions
-    for (int i = 0; i < ndim; i++) {
-      hd.push_back(RowVecV(neled(i), INIT, 0.));
-      for (int j = 0; j < neled(i); j++)
-        hd[i](j) = Hd(i) / neled(i);
-    }
-
-    // Compute total number of elements
-    nele_tmp = 1;
-    for (int i = 0; i < ndim; i++) {
-      nele_tmp = nele_tmp * this->neled(i);
-    }
-    this->nele = nele_tmp;
-
-    // Compute node positions and build location matrices
-    if (ele.shape.name == "line2" || ele.shape.name == "line3") {
-      this->pos = Pos1D(xb);
-      this->locX = LocLine(ndim);
-      this->locD = LocLine(ele.ndofpernod);
-    }
-    else if (ele.shape.name == "quad4" || ele.shape.name == "quad8" || ele.shape.name == "quad9") {
-      this->pos = Pos2D(xb);
-      this->locX = LocQuad(ndim);
-      this->locD = LocQuad(ele.ndofpernod);
-    }
-    else if (ele.shape.name == "quad8on") {
-      //                       msh.pos = Pos2D(msh, xb);
-      //                       locX1 = LocQuad(msh, ndim);
-      //                       msh.locX = locX1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
-      //                           5, 6, 13, 14, 7, 8, 15, 16]);
-      //                       locD1 = LocQuad(msh, ele.ndofpernod);
-      //                       if ele.ndofpernod == 1
-      //                           msh.locD = locD1(:, [1, 5, 2, 6, 3, 7, 4, 8]);
-      //                       elseif ele.ndofpernod == 2
-      //                           msh.locD = locD1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
-      //                           5, 6, 13, 14, 7, 8, 15, 16]);
-      throw MBSim::MBSimError("type quad8on of element shape not yet implemented!");
-    }
-    else {
-      throw MBSim::MBSimError("Wrong type of element shape!");
-    }
-
-    // Compute total number of DOFs
-    this->ndof = this->nnod * ele.ndofpernod;
-
+      ele(ele), xb(xb), neled(neled) {
   }
 
   EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const std::vector<fmatvec::RowVecV> & hd) :
@@ -164,6 +109,20 @@ namespace MBSimEHD {
 
   }
 
+  void EHDMesh::init(MBSim::Element::InitStage stage) {
+    GeneralizedForceLaw::init(stage);
+    if (stage == MBSim::Element::modelBuildup) {
+      initializeMesh();
+      finishMesh();
+    }
+    else if (stage == MBSim::Element::resize) {
+      D = fmatvec::VecV(ndof);
+    }
+    else if (stage == MBSim::Element::calculateLocalInitialValues) {
+      ForceMatrixAssembly();
+    }
+  }
+
   void EHDMesh::Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary) {
     // Get DOFs at boundary
     fmatvec::VecInt b;
@@ -209,7 +168,62 @@ namespace MBSimEHD {
 
   }
 
-  void EHDMesh::FinishMesh() {
+  void EHDMesh::initializeMesh() {
+    // Get spatial dimension according to used element shape
+    int ndim = ele.shape.ndim; // friend class!
+
+    // Create vector with domain size in spatial directions
+    fmatvec::VecV Hd = xb.col(1) - xb.col(0);
+
+    // Create vector with element sizes in spatial directions
+    for (int i = 0; i < ndim; i++) {
+      hd.push_back(RowVecV(neled(i), INIT, 0.));
+      for (int j = 0; j < neled(i); j++)
+        hd[i](j) = Hd(i) / neled(i);
+    }
+
+    // Compute total number of elements
+    int nele_tmp = 1;
+    for (int i = 0; i < ndim; i++) {
+      nele_tmp = nele_tmp * this->neled(i);
+    }
+    this->nele = nele_tmp;
+
+    // Compute node positions and build location matrices
+    if (ele.shape.name == "line2" || ele.shape.name == "line3") {
+      ck->pos = Pos1D(xb);
+      this->locX = LocLine(ndim);
+      this->locD = LocLine(ele.ndofpernod);
+    }
+    else if (ele.shape.name == "quad4" || ele.shape.name == "quad8" || ele.shape.name == "quad9") {
+      ck->pos = Pos2D(xb);
+      this->locX = LocQuad(ndim);
+      this->locD = LocQuad(ele.ndofpernod);
+    }
+    else if (ele.shape.name == "quad8on") {
+      //                       msh.pos = Pos2D(msh, xb);
+      //                       locX1 = LocQuad(msh, ndim);
+      //                       msh.locX = locX1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
+      //                           5, 6, 13, 14, 7, 8, 15, 16]);
+      //                       locD1 = LocQuad(msh, ele.ndofpernod);
+      //                       if ele.ndofpernod == 1
+      //                           msh.locD = locD1(:, [1, 5, 2, 6, 3, 7, 4, 8]);
+      //                       elseif ele.ndofpernod == 2
+      //                           msh.locD = locD1(:, [1, 2, 9, 10, 3, 4, 11, 12, ...
+      //                           5, 6, 13, 14, 7, 8, 15, 16]);
+      throw MBSim::MBSimError("type quad8on of element shape not yet implemented!");
+    }
+    else {
+      throw MBSim::MBSimError("Wrong type of element shape!");
+    }
+
+    // Compute total number of DOFs
+    ndof = nnod * ele.ndofpernod;
+
+    ck->setNumberOfPotentialContactPoints(nnod); //TODO: really bad hack --> the mesh takes some kinematics tasks which should be done by the contact kinematics
+  }
+
+  void EHDMesh::finishMesh() {
     fmatvec::VecInt ndof = VecInt(this->ndof, INIT, 0);
     fmatvec::VecInt ndof_dbc_per2;
     int k = this->ndof;
@@ -252,8 +266,6 @@ namespace MBSimEHD {
         }
       }
     }
-
-    ForceMatrixAssembly();
 
     // ToDo: Look for matlab find-function in c++: msh.locD(msh.locD == msh.per2(i)) = msh.per1(i);
   }
@@ -510,7 +522,7 @@ namespace MBSimEHD {
 
   }
 
-  void EHDMesh::PressureAssembly(const VecV & D) {
+  void EHDMesh::PressureAssembly() {
     // Assemble element residuum vector and element tangent matrix
     // Michael Hofer, 18.01.2015
     //
@@ -525,18 +537,16 @@ namespace MBSimEHD {
     //   KT:     Global tangential matrix
 
     // Define abbreviations
-    int ndof = getndof();
-    int nele = getnele();
     int ndofe = ele.getndof();
 
     // Initialize row and value vector for residuum vector
-    VecV rR(ndofe * nele);
-    VecV vR(ndofe * nele);
+//    VecV rR(ndofe * nele);
+//    VecV vR(ndofe * nele);
 
     // Initialize row, coloumn and value vector for tangential matrix
-    VecV rKT(ndofe * ndofe * nele);
-    VecV cKT(ndofe * ndofe * nele);
-    VecV vKT(ndofe * ndofe * nele);
+//    VecV rKT(ndofe * ndofe * nele);
+//    VecV cKT(ndofe * ndofe * nele);
+//    VecV vKT(ndofe * ndofe * nele);
 
     //TODO: should be possible to make it once and then never again (only set to zero...)
     R = VecV(ndof);
@@ -546,7 +556,6 @@ namespace MBSimEHD {
     // element tangent matrix
     int i = 0;
     int j = 0;
-    VecV posV = getpos();
 
     for (int e = 0; e < nele; e++) {
       // Extract element location vector for geometry and pressure
@@ -554,7 +563,7 @@ namespace MBSimEHD {
       RowVecVI locDe = getlocD().row(e);
 
       // Extract positions of element nodes and vector with nodal values
-      VecV pose = subVec(posV, locXe.T(), -1);
+      VecV pose = subVec(ck->pos, locXe.T(), -1);
 
       VecV de = subVec(D, locDe.T(), -1);
 
@@ -588,105 +597,92 @@ namespace MBSimEHD {
   }
 
   void EHDMesh::ForceMatrixAssembly(void) {
-      // Assemble force matrix
-      // Michael Hofer, 18.01.2015
-      //
-      // Output:
-      //   Cff:    Global force matrix
+    // Assemble force matrix
+    // Michael Hofer, 18.01.2015
+    //
+    // Output:
+    //   Cff:    Global force matrix
 
-      // Define abbreviations
-      int ndof = getndof();
-      int nele = getnele();
-      int ndofe = ele.getndof();
+    // Define abbreviations
+    int ndof = getndof();
+    int nele = getnele();
+    int ndofe = ele.getndof();
 
-      // Initialize row, coloumn and value vector for force matrix
-      VecV rCff(3 * ndofe * ndofe * nele);
-      VecV cCff(ndofe * ndofe * nele);
-      VecV vCff(3 * ndofe * ndofe * nele);
+    // Initialize row, coloumn and value vector for force matrix
+    VecV rCff(ndofe * ndofe * nele);
+    VecV cCff(ndofe * ndofe * nele);
+    VecV vCff(ndofe * ndofe * nele);
 
-      Cff = MatV(3*ndof,ndof);
+    Cff = SqrMatV(ndof);
 
-      // Loop through all elements to assemble element force matrix
-      int i = 0;
-      int j = 0;
-      VecV posV = getpos();
+    // Loop through all elements to assemble element force matrix
+    int i = 0;
+    int j = 0;
 
-      for (int e = 0; e < nele; e++) {
-        // Extract element location vector for geometry and pressure
-        RowVecVI locXe = getlocX().row(e);
-        RowVecVI locDe = getlocD().row(e);
+    for (int e = 0; e < nele; e++) {
+      // Extract element location vector for geometry and pressure
+      RowVecVI locXe = getlocX().row(e);
+      RowVecVI locDe = getlocD().row(e);
 
-        // Extract positions of element nodes and vector with nodal values
-        VecV pose = subVec(posV, locXe.T(), -1);
+      // Extract positions of element nodes and vector with nodal values
+      VecV pose = subVec(ck->pos, locXe.T(), -1);
 
-        // Evaluate element
-        MatV cffe;
-        ele.CalculateForceMatrixElement(e, pose, cffe); //TODO: change evaluate element to match with MBSim! (withou the sys)
+      // Evaluate element
+      SqrMatV cffe(ndofe);
+      ele.CalculateForceMatrixElement(e, pose, cffe); //TODO: change evaluate element to match with MBSim! (withou the sys)
 
-        // Assembly
-        for (int k=0; k<3; k++){
-          for (int row = 0; row < ndofe; row++) {
-            for (int col = 0; col < ndofe; col++) {
-              Cff(k * ndof + locDe(row) - 1, locDe(col) - 1) += cffe(k * ndofe + row, col);
-            }
-          }
+      // Assembly
+      for (int rowe = 0; rowe < ndofe; rowe++) {
+        for (int cole = 0; cole < ndofe; cole++) {
+          Cff(locDe(rowe) - 1, locDe(cole) - 1) += cffe(rowe, cole);
         }
       }
-
     }
-  void EHDMesh::solvePressure(VecV & D, double & tolD, int & iterMax) {
-  // Newton-Josephy method for solving a nonlinear complementarity
-  // problem (NCP) by linearization in each iteration step resulting
-  // in a linear complementarity problems (LCP)
-  // Michael Hofer, 17.01.2015
-  //
-  // Input:
-  //   D0:         Start point for iteration
-  //   tolD:       Tolerance for increment norm
-  //   iterMax:    Maximal number of iterations
-  //   output:     Flag for command window output
-  //
-  // Output:
-  //   D:          Global vector with nodal solution
-  //
-  // Definition:
-  //   NCP:        0 <= D perp R(D) >= 0
-  //   LCPs:       0 <= Z perp W = -M * Z + Q >= 0 (in each iteration step)
+
+  }
+  void EHDMesh::solvePressure(const double & tolD, const int & iterMax) {
+    // Newton-Josephy method for solving a nonlinear complementarity
+    // problem (NCP) by linearization in each iteration step resulting
+    // in a linear complementarity problems (LCP)
+    // Michael Hofer, 17.01.2015
+    //
+    // Input:
+    //   D0:         Start point for iteration
+    //   tolD:       Tolerance for increment norm
+    //   iterMax:    Maximal number of iterations
+    //   output:     Flag for command window output
+    //
+    // Output:
+    //   D:          Global vector with nodal solution
+    //
+    // Definition:
+    //   NCP:        0 <= D perp R(D) >= 0
+    //   LCPs:       0 <= Z perp W = -M * Z + Q >= 0 (in each iteration step)
 
     // Penalty regularization has to be disabled
-        if (ele.pp > 0){
-            ele.pp = 0;
-            throw MBSim::MBSimError("Penalty regularization has to be disabled!");
-        }
-
-        // Define tolerance if not given
-        if (tolD > 1e-1){
-            tolD = 1e-1;
-        }
-
-        // Define maximal number of iterations if not given
-        if (iterMax>50){
-            iterMax = 50;
-        }
+    if (ele.pp > 0) {
+      ele.pp = 0;
+      throw MBSim::MBSimError("Penalty regularization has to be disabled!");
+    }
 
 //        // Set flag for drawing solution in each iteration step if not given
 //        if nargin < 7 || isempty(iterDraw)
 //            iterDraw = false;
 //        end
 
-        // Define abbreviation
-        VecInt f = getfreedofs();
-        VecInt per1 = getper1();
-        VecInt per2 = getper2();
-        int nfree = getnfree();
-        VecV Dfree = VecV(nfree);
-        VecV Z = VecV(nfree);
-        VecV deltaDeff = VecV(nfree);
-        VecV Q = VecV(nfree);
-        SqrMatV M = SqrMat(nfree);
+    // Define abbreviation
+    VecInt f = getfreedofs();
+    VecInt per1 = getper1();
+    VecInt per2 = getper2();
+    int nfree = getnfree();
+    VecV Dfree = VecV(nfree);
+    VecV Z = VecV(nfree);
+    VecV deltaDeff = VecV(nfree);
+    VecV Q = VecV(nfree);
+    SqrMatV M = SqrMat(nfree);
 
-        // Initialize iteration counter
-        int iter = 0;
+    // Initialize iteration counter
+    int iter = 0;
 
 //        // Print header for iteration list
 //        if output
@@ -696,40 +692,47 @@ namespace MBSimEHD {
 //        // Set arbitrary start set for region1 in Goenka algorithm
 //        region1 = 1:1:(length(f) - 2);
 
-        // Retrieve global residuum vector and global tangential matrix at D
-        PressureAssembly(D);
-        VecV R = getR();
-        SqrMatV KT = getKT();
+    // Retrieve global residuum vector and global tangential matrix at D
+    D = VecV(ndof); //using old solution is not successful
+    PressureAssembly();
 
-        // Newton-Josephy iteration loop
-        while (iter < iterMax){
-            // Compute matrix M and vector Q of LCP
-            Dfree = subVec(D,f,-1);
-            M = subMat(-KT,f,-1);
-            Q = subVec(R,f,-1) - M*Dfree;
+    // Newton-Josephy iteration loop
+    int info;
+    while (iter < iterMax) {
+      // Compute matrix M and vector Q of LCP
+      Dfree = subVec(D, f, -1);
+      M = subMat(KT, f, -1);
+      VecV Rfree = subVec(-R, f, -1);
+      Q = Rfree + M * Dfree;
+
+      //TODO: here is the solution
+//      LinearComplementarityProblem lcp(M,Q);
+//      Z = lcp.solve(Dfree);
 //            M = -KT(f, f);
 //            Q = R(f) - KT(f, f) * D(f);
 
-            // TODO Solve LCP: 0 <= Z perp W = -M * Z + Q >= 0
+      // TODO Solve LCP: 0 <= Z perp W = -M * Z + Q >= 0
 //            [Z, region1, iterGoenka] = Goenka(M, Q, region1);
-            VecVI ipiv(M.rows());
-            SqrMatV JLU = facLU(-M, ipiv);
-            Z = slvLUFac(JLU, Q, ipiv);
+      VecVI ipiv(M.rows());
+      Z = slvLU(M, Rfree, info);
+//      SqrMatV JLU = facLU(M, ipiv);
+//      Z = slvLUFac(JLU, Rfree, ipiv);
 
-            // Insert new solution at free DOFs
-            for (int i = 0; i < nfree; i++) {
-              D(f(i) - 1) = Z(i);
-            }
+      // UPDATE of full D-vector with new solution
+      // Insert new solution at free DOFs
+      for (int i = 0; i < nfree; i++) {
+        D(f(i) - 1) += Z(i);
+      }
 
-            // Compute effective solution increment for convergence check
-            deltaDeff = Z - Dfree;
+      // Compute effective solution increment for convergence check
+      deltaDeff = Z;
 
-            // Overwrite solution at eliminated periodic boundary
-            for (int i = 0; i < per2.size(); i++) {
-              D(per2(i)-1) = D(per1(i)-1);
-            }
+      // Overwrite solution at eliminated periodic boundary
+      for (int i = 0; i < per2.size(); i++) {
+        D(per2(i) - 1) = D(per1(i) - 1);
+      }
 
-            // Plot current solution
+      // Plot current solution
 //            if iterDraw
 //                switch msh.ele.shape.ndim
 //                    case 1
@@ -740,44 +743,42 @@ namespace MBSimEHD {
 //                pause(0.001);
 //            end
 
-            // Retrieve global residuum vector and global tangential matrix at new D
-            PressureAssembly(D);
-            R = getR();
-            KT = getKT();
+      // Retrieve global residuum vector and global tangential matrix at new D
+//      cout << "Res before = " << nrm1(R) << endl;
+      PressureAssembly();
+//      cout << "Res after = " << nrm1(R) << endl;
 
-            // Update iteration counter
-            iter = iter + 1;
+      // Update iteration counter
+      iter = iter + 1;
+
+      cout << nrm1(R) << endl;
 
 //            if output
 //                fprintf('//-16d//-20e//d\n', iter, normdeltaDeff, iterGoenka);
 //            end
-            if (fmatvec::nrm2(deltaDeff) < tolD){
-                break;
-            }
-        }
-        if (iter == iterMax){
-          throw MBSim::MBSimError("Newton-Josephy iteration unconverged after ... iterations.");
-        }
+      if (fmatvec::nrm1(R) < tolD) {
+        break;
+      }
+    }
+    if (iter == iterMax) {
+      throw MBSim::MBSimError("Newton-Josephy iteration unconverged after " + numtostr(iter) + " iterations.");
+    }
 
   }
 
   void EHDMesh::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
-    VecV D(getndof());
-    Mat3xV h(3,getndof());
     double TolD = 1e-2; //TODO: TolD and MaxIter outside of this function
     int maxIter = 30;
 
-    solvePressure(D,TolD,maxIter);
+    solvePressure(TolD, maxIter);
 
-    VecV htemp=Cff*D;
-    for (int i=0; i<getndof(); i++){
-      h(0,i) = htemp(3 * i);
-      h(1,i) = htemp(3 * i + 1);
-      h(2,i) = htemp(3 * i + 2);
+    VecV laN = Cff * D;
+
+    for (int i = 0; i < contacts.size(); i++) {
+      for (int j = 0; j < contacts[i].size(); j++) {
+        contacts[i][j].getlaN()(0) = laN(j + i * contacts.size()); //TODO: is the index correct?
+      }
     }
-
-    //TODO: add: J^T*h and if rigid Fres=sum(h,2)
-
   }
 
 }

@@ -70,22 +70,22 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   // geometrical characteristics
   //ROD
   double journal_radius = 22.5e-3;
-  double journal_length = 140e-3;
-  double journal_mass = 2; //0.038; // m1
+  double journal_length = 2.2e-2;
+  double journal_mass = 10;  // m1
   SymMat journal_inertia(3, INIT, 0.);
   journal_inertia(0, 0) = 1.; // DUMMY
   journal_inertia(1, 1) = 1.; // DUMMY
-  journal_inertia(2, 2) = journal_mass / 12. * journal_length * journal_length; // J1
+  journal_inertia(2, 2) = 1; //journal_mass / 12. * journal_length * journal_length; // J1
 
   //CRANK
-  double clearing = 1e-3;
+  double clearing = 1.7e-5;
   double housing_radius = journal_radius + clearing;
   double housing_length = journal_length + 10e-3;
-  double housing_mass = 1; //0.038; // m1
+  double housing_mass = 10;
   SymMat housing_inertia(3, INIT, 0.);
   housing_inertia(0, 0) = 1.; // DUMMY
   housing_inertia(1, 1) = 1.; // DUMMY
-  housing_inertia(2, 2) = housing_mass / 12. * housing_length * housing_length; // J1
+  housing_inertia(2, 2) = 1.;//housing_mass / 12. * housing_length * housing_length; // J1
 
   /*
    * JOURNAL
@@ -96,12 +96,14 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   // kinematics
   journal->setFrameOfReference(getFrameI());
   journal->setTranslation(new TranslationAlongAxesXY<VecV>());
+  VecV q0Journal("[1e-5;0]");
+  journal->setInitialGeneralizedPosition(q0Journal);
   //TODO: spatial movement: journal->setTranslation(new TranslationAlongAxesXYZ<VecV>());
 
   bool fixedRotation = true;
   if (fixedRotation) {
     // Define kinematically the angle (omega is the angular velocity)
-    double omega = 3.141592 * 100;
+    double omega = 100;
     SX t=SX::sym("t"); // symbolic variable for time
     SX angleExp = omega*t; // expression for the angle
     SXFunction angleFuncSX(t,angleExp); // SXfunction for the angle
@@ -209,7 +211,6 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   msh->Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
   msh->Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
   msh->Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
-  msh->FinishMesh();
 
 //  EHDForceLaw *fL = new EHDForceLaw();
   ctJouHou->setNormalForceLaw(msh);

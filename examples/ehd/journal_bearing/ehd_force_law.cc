@@ -40,14 +40,15 @@ EHDForceLaw::~EHDForceLaw() {
 
 void EHDForceLaw::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
   //TODO: initialize the values needed in the following subroutines!
-  VecV D(msh->getndof()); //TODO: what is D?
-  msh->PressureAssembly(D);
-// Here the force computation for all contact pairings happens
-  for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-    for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-      (*jter).getlaN()(0) = 1e7 * nrm2((static_cast<ContactKinematicsCylinderSolidCylinderHollowEHD*>(jter->getContactKinematics()))->getWrD());
-    }
-  }
+  throw MBSimError("Not used anymore --> use EHD_Mesh which is a force law as well!");
+//  VecV D(msh->getndof()); //TODO: what is D?
+//  msh->PressureAssembly(D);
+//// Here the force computation for all contact pairings happens
+//  for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+//    for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+//      (*jter).getlaN()(0) = 1e7 * nrm2((static_cast<ContactKinematicsCylinderSolidCylinderHollowEHD*>(jter->getContactKinematics()))->getWrD());
+//    }
+//  }
 }
 
 void EHDForceLaw::initializeUsingXML(xercesc::DOMElement* element) {
