@@ -288,6 +288,11 @@ namespace MBSimEHD {
       ContactKinematicsEHDInterface * ck;
 
       /*!
+       * \brief save boundary conditions
+       */
+      std::map<EHDBoundaryConditionPosition,EHDBoundaryConditionType> boundaries;
+
+      /*!
        * \todo: description
        */
       void PressureAssembly();
@@ -298,6 +303,11 @@ namespace MBSimEHD {
        * \todo: it implements the first constructor possibility coming from matlab, the second one is missing!
        */
       void initializeMesh();
+
+      /*!
+       * \brief evaluate the given boundary conditions
+       */
+      void evaluateBoundary();
 
       /*
        * \brief Finish mesh generation

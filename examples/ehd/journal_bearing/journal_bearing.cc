@@ -69,7 +69,8 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
 
   // geometrical characteristics
   //ROD
-  double journal_radius = 22.5e-3;
+  double clearing = 1.7e-5;
+  double journal_radius = 22.5e-3 - clearing;
   double journal_length = 2.2e-2;
   double journal_mass = 10;  // m1
   SymMat journal_inertia(3, INIT, 0.);
@@ -78,9 +79,8 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   journal_inertia(2, 2) = 1; //journal_mass / 12. * journal_length * journal_length; // J1
 
   //CRANK
-  double clearing = 1.7e-5;
   double housing_radius = journal_radius + clearing;
-  double housing_length = journal_length + 10e-3;
+  double housing_length = journal_length;
   double housing_mass = 10;
   SymMat housing_inertia(3, INIT, 0.);
   housing_inertia(0, 0) = 1.; // DUMMY
@@ -200,8 +200,8 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   yb(0) = 0;
   yb(1) = 2 * M_PI * housing_radius;
   RowVec2 zb;
-  zb(0) = -housing_length / 2;
-  zb(1) = housing_length / 2; //TODO: differently in matlab!!
+  zb(0) = 0;
+  zb(1) = housing_length; //TODO: differently in matlab!!
   MatVx2 xb(2);
   xb.set(0, yb);
   xb.set(1, zb);
@@ -215,7 +215,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
 //  EHDForceLaw *fL = new EHDForceLaw();
   ctJouHou->setNormalForceLaw(msh);
   ctJouHou->enableOpenMBVContactPoints(1e-5);
-  ctJouHou->enableOpenMBVNormalForce(1e-6);
+  ctJouHou->enableOpenMBVNormalForce(1e-4);
 
   //contact kinematics (delivers the info for the mesh)
   ContactKinematicsCylinderSolidCylinderHollowEHD *cK = new ContactKinematicsCylinderSolidCylinderHollowEHD();

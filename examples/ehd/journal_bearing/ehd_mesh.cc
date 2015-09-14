@@ -113,6 +113,7 @@ namespace MBSimEHD {
     GeneralizedForceLaw::init(stage);
     if (stage == MBSim::Element::modelBuildup) {
       initializeMesh();
+      evaluateBoundary();
       finishMesh();
     }
     else if (stage == MBSim::Element::resize) {
@@ -124,53 +125,61 @@ namespace MBSimEHD {
   }
 
   void EHDMesh::Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary) {
-    // Get DOFs at boundary
-    fmatvec::VecInt b;
-    if (ele.shape.ndim == 1) {
-      b = Boundary1D(boundary);
-    }
-    else if (ele.shape.ndim == 2) {
-      b = Boundary2D(boundary);
-    }
-    else {
-      throw MBSimError("Wrong dimension of element shape!");
-    }
+    boundaries.insert(std::pair<EHDBoundaryConditionPosition, EHDBoundaryConditionType>(boundary, type));
+  }
 
-    // Decide between type of boundary
-    // Note: The indexing 1:1:end is used to get a row vector,
-    // because union(x, b) with an empty set x = [] would create
-    // a coloumn vector
+  void EHDMesh::evaluateBoundary() {
+    for (map<EHDBoundaryConditionPosition,EHDBoundaryConditionType>::iterator i = boundaries.begin() ; i != boundaries.end() ; i ++ ) {
+      EHDBoundaryConditionPosition boundary = i->first;
+      EHDBoundaryConditionType type = i->second;
+      // Get DOFs at boundary
+      fmatvec::VecInt b;
+      if (ele.shape.ndim == 1) {
+        b = Boundary1D(boundary);
+      }
+      else if (ele.shape.ndim == 2) {
+        b = Boundary2D(boundary);
+      }
+      else {
+        throw MBSimError("Wrong dimension of element shape!");
+      }
 
-    // ToDo: Check if union is needed
-    if (type == dbc) {
+      // Decide between type of boundary
+      // Note: The indexing 1:1:end is used to get a row vector,
+      // because union(x, b) with an empty set x = [] would create
+      // a coloumn vector
+
+      // ToDo: Check if union is needed
+      if (type == dbc) {
 //      dbc = union(dbc, b);
-      dbcV = b;
-    }
-    else if (type == nbc) {
+        dbcV = b;
+      }
+      else if (type == nbc) {
 //      nbc = union(nbc, b);
-      nbcV = b;
-    }
-    else if (type == per1) {
+        nbcV = b;
+      }
+      else if (type == per1) {
 //      per1 = union(per1, b);
-      per1V = b;
-    }
-    else if (type == per2) {
+        per1V = b;
+      }
+      else if (type == per2) {
 //      per1 = union(per2, b);
-      per2V = b;
-    }
-    else {
-      throw MBSimError("Wrong type of boundary!");
-    }
+        per2V = b;
+      }
+      else {
+        throw MBSimError("Wrong type of boundary!");
+      }
 
-    // ToDo: Check if needed
-    // msh.dbc = setdiff(msh.dbc, msh.per2);
-    // msh.nbc = setdiff(msh.nbc, msh.per2);
+      // ToDo: Check if needed
+      // msh.dbc = setdiff(msh.dbc, msh.per2);
+      // msh.nbc = setdiff(msh.nbc, msh.per2);
 
+    }
   }
 
   void EHDMesh::initializeMesh() {
     // Get spatial dimension according to used element shape
-    int ndim = ele.shape.ndim; // friend class!
+    int ndim = ele.shape.ndim;      // friend class!
 
     // Create vector with domain size in spatial directions
     fmatvec::VecV Hd = xb.col(1) - xb.col(0);
@@ -220,7 +229,7 @@ namespace MBSimEHD {
     // Compute total number of DOFs
     ndof = nnod * ele.ndofpernod;
 
-    ck->setNumberOfPotentialContactPoints(nnod); //TODO: really bad hack --> the mesh takes some kinematics tasks which should be done by the contact kinematics
+    ck->setNumberOfPotentialContactPoints(nnod);        //TODO: really bad hack --> the mesh takes some kinematics tasks which should be done by the contact kinematics
   }
 
   void EHDMesh::finishMesh() {
@@ -570,7 +579,7 @@ namespace MBSimEHD {
       // Evaluate element
       VecV re;
       SqrMatV kTe;
-      ele.EvaluateElement(e, pose, de, re, kTe); //TODO: change evaluate element to match with MBSim! (withou the sys)
+      ele.EvaluateElement(e, pose, de, re, kTe);    //TODO: change evaluate element to match with MBSim! (withou the sys)
 
       // Assembly
       for (int row = 0; row < ndofe; row++) {
@@ -629,7 +638,7 @@ namespace MBSimEHD {
 
       // Evaluate element
       SqrMatV cffe(ndofe);
-      ele.CalculateForceMatrixElement(e, pose, cffe); //TODO: change evaluate element to match with MBSim! (withou the sys)
+      ele.CalculateForceMatrixElement(e, pose, cffe);    //TODO: change evaluate element to match with MBSim! (withou the sys)
 
       // Assembly
       for (int rowe = 0; rowe < ndofe; rowe++) {
@@ -693,16 +702,16 @@ namespace MBSimEHD {
 //        region1 = 1:1:(length(f) - 2);
 
     // Retrieve global residuum vector and global tangential matrix at D
-    D = VecV(ndof); //using old solution is not successful
-    PressureAssembly();
+    D = VecV(ndof);    //using old solution is not successful
 
     // Newton-Josephy iteration loop
     int info;
     while (iter < iterMax) {
       // Compute matrix M and vector Q of LCP
+      PressureAssembly();
       Dfree = subVec(D, f, -1);
       M = subMat(KT, f, -1);
-      VecV Rfree = subVec(-R, f, -1);
+      VecV Rfree = subVec(-R, f, -1); //TODO: assemble -R directly?
       Q = Rfree + M * Dfree;
 
       //TODO: here is the solution
@@ -732,6 +741,8 @@ namespace MBSimEHD {
         D(per2(i) - 1) = D(per1(i) - 1);
       }
 
+//      cout << D << endl;
+
       // Plot current solution
 //            if iterDraw
 //                switch msh.ele.shape.ndim
@@ -744,19 +755,15 @@ namespace MBSimEHD {
 //            end
 
       // Retrieve global residuum vector and global tangential matrix at new D
-//      cout << "Res before = " << nrm1(R) << endl;
-      PressureAssembly();
-//      cout << "Res after = " << nrm1(R) << endl;
-
       // Update iteration counter
       iter = iter + 1;
 
-      cout << nrm1(R) << endl;
+//      cout << nrm1(deltaDeff) << endl;
 
 //            if output
 //                fprintf('//-16d//-20e//d\n', iter, normdeltaDeff, iterGoenka);
 //            end
-      if (fmatvec::nrm1(R) < tolD) {
+      if (fmatvec::nrm1(deltaDeff) < tolD) {
         break;
       }
     }
@@ -773,6 +780,8 @@ namespace MBSimEHD {
     solvePressure(TolD, maxIter);
 
     VecV laN = Cff * D;
+
+    cout << D << endl;
 
     for (int i = 0; i < contacts.size(); i++) {
       for (int j = 0; j < contacts[i].size(); j++) {

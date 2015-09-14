@@ -21,10 +21,10 @@ int main(int argc, char* argv[]) {
   /* Integrator settings*/
 
   TimeSteppingIntegrator integrator;
-  integrator.setStepSize(1e-5);
+  integrator.setStepSize(1e-6);
 //  RADAU5Integrator integrator;
-  integrator.setEndTime(2e-2);
-  integrator.setPlotStepSize(1e-4);
+  integrator.setEndTime(2e-3);
+  integrator.setPlotStepSize(1e-6);
 
   // integrate the system
   integrator.integrate(*sys);

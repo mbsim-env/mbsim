@@ -92,35 +92,43 @@ namespace MBSimEHD {
     WrDdot = solid->getFrame()->getVelocity() - hollow->getFrame()->getVelocity();
     omegaRel = solid->getFrame()->getAngularVelocity() - hollow->getFrame()->getAngularVelocity();
 
-    Vec2 h;
-    h(1) = rHollow; //TODO: is constant and could be set at initialization
+    Vec3 r; //position of node in F-coordinate system
 
+    int posCounter = 0;
     for (int i = 0; i < numberOfPotentialContactPoints; i++) {
       ContourPointData * cpData = contacts[i].getcpData();
-      double y = pos(i);
+      double y = pos(posCounter++);
+      double z = pos(posCounter++);
 
       // Orientation
       double phi = y / rHollow;
       SqrMat3 AKF = BasicRotAIKy(phi);
-      cpData[ihollow].getFrameOfReference().setOrientation(hollow->getFrameOfReference()->getOrientation() * AKF);
+      SqrMat3 AIF = hollow->getFrameOfReference()->getOrientation() * AKF;
+      cpData[ihollow].getFrameOfReference().getOrientation().set(0, - AIF.col(0));
+      cpData[ihollow].getFrameOfReference().getOrientation().set(1, hollow->getFrameOfReference()->getOrientation().col(1));
+      cpData[ihollow].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ihollow].getFrameOfReference().getOrientation().col(0), cpData[ihollow].getFrameOfReference().getOrientation().col(1)));
       cpData[isolid].getFrameOfReference().getOrientation().set(0, -cpData[ihollow].getFrameOfReference().getOrientation().col(0));
       cpData[isolid].getFrameOfReference().getOrientation().set(1, -cpData[ihollow].getFrameOfReference().getOrientation().col(1));
       cpData[isolid].getFrameOfReference().getOrientation().set(2, cpData[ihollow].getFrameOfReference().getOrientation().col(2));
 
       //Position
-      SqrMat3 AFI = cpData[ihollow].getFrameOfReference().getOrientation().T();
-      Vec3 e = AFI * WrD;
+      Vec3 e = AIF.T() * WrD;
 
       // Here the full computation of the Thickness and the velocities should follow to store it once and then just ask for it again
       double er = e(0);
       double et = e(1);
       double r1 = sqrt(pow(rSolid, 2) - pow(et, 2));
-      heights[i] = er + r1;//is h1 in [1] (h2 is constant)
-      dheightsdy[i] = et * heights[i] / (rHollow * r1);
+      heights[i](0) = er + r1;//is h1 in [1] (h2 is constant)
+      dheightsdy[i](0) = et * heights[i](0) / (rHollow * r1);
       //TODO: Add the velocities information as well and save it to a vector or a set!!
 
-      cpData[isolid].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AFI.T().col(0) * heights[i](0);
-      cpData[ihollow].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AFI.T().col(0) * heights[i](1);
+      r(0) = heights[i](0);
+      r(1) = z;
+
+      cpData[isolid].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AIF * r;
+
+      r(0) = heights[i](1);
+      cpData[ihollow].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AIF * r;
     }
   }
 
