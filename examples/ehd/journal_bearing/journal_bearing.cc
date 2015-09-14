@@ -103,7 +103,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   bool fixedRotation = true;
   if (fixedRotation) {
     // Define kinematically the angle (omega is the angular velocity)
-    double omega = 100;
+    double omega = 500;
     SX t=SX::sym("t"); // symbolic variable for time
     SX angleExp = omega*t; // expression for the angle
     SXFunction angleFuncSX(t,angleExp); // SXfunction for the angle
