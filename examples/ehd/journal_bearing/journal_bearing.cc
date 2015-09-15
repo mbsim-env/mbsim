@@ -64,7 +64,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
 
   //Add gravity to the system
   Vec grav(3, INIT, 0.);
-  grav(1) = -9.81; // in negative y-direction
+  grav(1) = -0*9.81; // in negative y-direction
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // geometrical characteristics
@@ -96,7 +96,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   // kinematics
   journal->setFrameOfReference(getFrameI());
   journal->setTranslation(new TranslationAlongAxesXY<VecV>());
-  VecV q0Journal("[1e-5;0]");
+  VecV q0Journal("[0e-5;0]");
   journal->setInitialGeneralizedPosition(q0Journal);
   //TODO: spatial movement: journal->setTranslation(new TranslationAlongAxesXYZ<VecV>());
 
@@ -124,6 +124,16 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   //kinetics
   journal->setMass(journal_mass);
   journal->setInertiaTensor(journal_inertia);
+
+  // Add radial force to journal
+  double Fr = 2.5e3;
+  KineticExcitation *force = new KineticExcitation("Unwucht");
+  force->setForceFunction(new ConstantFunction<VecV(double)>(Fr));
+  force->setForceDirection(Vec("[1;0;0]"));
+  force->connect(journal->getFrameC());
+  force->enableOpenMBVForce(5e-5);
+  this->addLink(force);
+
 
   //Add contour to journal
   Vec3 cFruRefPos;
@@ -206,16 +216,17 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   xb.set(0, yb);
   xb.set(1, zb);
 
-  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 3]"));
+  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 4]"));
 
-  msh->Boundary(EHDMesh::dbc, EHDMesh::x2m);    // z = -L / 2
+  msh->Boundary(EHDMesh::dbc, EHDMesh::x2m);
+  msh->Boundary(EHDMesh::dbc, EHDMesh::x2p);    // z = -L / 2
   msh->Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
   msh->Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
 
 //  EHDForceLaw *fL = new EHDForceLaw();
   ctJouHou->setNormalForceLaw(msh);
   ctJouHou->enableOpenMBVContactPoints(1e-5);
-  ctJouHou->enableOpenMBVNormalForce(1e-4);
+  ctJouHou->enableOpenMBVNormalForce(1e-3);
 
   //contact kinematics (delivers the info for the mesh)
   ContactKinematicsCylinderSolidCylinderHollowEHD *cK = new ContactKinematicsCylinderSolidCylinderHollowEHD();

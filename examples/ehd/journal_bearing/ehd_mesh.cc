@@ -129,7 +129,7 @@ namespace MBSimEHD {
   }
 
   void EHDMesh::evaluateBoundary() {
-    for (map<EHDBoundaryConditionPosition,EHDBoundaryConditionType>::iterator i = boundaries.begin() ; i != boundaries.end() ; i ++ ) {
+    for (map<EHDBoundaryConditionPosition, EHDBoundaryConditionType>::iterator i = boundaries.begin(); i != boundaries.end(); i++) {
       EHDBoundaryConditionPosition boundary = i->first;
       EHDBoundaryConditionType type = i->second;
       // Get DOFs at boundary
@@ -152,7 +152,25 @@ namespace MBSimEHD {
       // ToDo: Check if union is needed
       if (type == dbc) {
 //      dbc = union(dbc, b);
-        dbcV = b;
+        if (dbcV.size()==0) {
+          dbcV = b;
+        }
+        else{
+          int size_dbcV = dbcV.size();
+          VecInt b_old = dbcV;
+          int j=0;
+          dbcV.resize(dbcV.size()+b.size());
+          for (int i=0; i<size_dbcV; i++){
+            dbcV(i)=b_old(j);
+            j++;
+          }
+          j=0;
+          for (int i=size_dbcV; i<dbcV.size(); i++){
+            dbcV(i)=b(j);
+            j++;
+          }
+        }
+
       }
       else if (type == nbc) {
 //      nbc = union(nbc, b);
@@ -247,6 +265,7 @@ namespace MBSimEHD {
     for (int j = 0; j < (this->per2V.size()); j++) {
       ndof_dbc_per2(this->per2V(j) - 1) = 0;
     }
+    cout << dbcV << endl;
     for (int j = 0; j < this->dbcV.size(); j++) {
       ndof_dbc_per2(this->dbcV(j) - 1) = 0;
     }
@@ -767,6 +786,11 @@ namespace MBSimEHD {
         break;
       }
     }
+    for (int i = 0; i < nfree; i++) {
+      if (D(f(i) - 1) < 0) {
+        D(f(i) - 1) = 0;
+      }
+    }
     if (iter == iterMax) {
       throw MBSim::MBSimError("Newton-Josephy iteration unconverged after " + numtostr(iter) + " iterations.");
     }
@@ -781,7 +805,7 @@ namespace MBSimEHD {
 
     VecV laN = Cff * D;
 
-    cout << D << endl;
+    // cout << D << endl;
 
     for (int i = 0; i < contacts.size(); i++) {
       for (int j = 0; j < contacts[i].size(); j++) {
