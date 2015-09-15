@@ -116,7 +116,7 @@ namespace MBSimEHD {
 
       // Here the full computation of the Thickness and the velocities should follow to store it once and then just ask for it again
       double er = e(0);
-      double et = e(2); //1
+      double et = e(2);
       double r1 = sqrt(pow(rSolid, 2) - pow(et, 2));
       heights[i](0) = er + r1;//is h1 in [1] (h2 is constant)
       dheightsdy[i](0) = et * heights[i](0) / (rHollow * r1);
@@ -272,10 +272,10 @@ namespace MBSimEHD {
     double omega2 = nrm2(hollow->getFrameOfReference()->getAngularVelocity());
     fmatvec::Vec2 IuS1;
     IuS1(0) = solid->getFrameOfReference()->getVelocity()(0);
-    IuS1(1) = solid->getFrameOfReference()->getVelocity()(2); //1
+    IuS1(1) = solid->getFrameOfReference()->getVelocity()(2);
     fmatvec::Vec2 IuS2;
     IuS2(0) = hollow->getFrameOfReference()->getVelocity()(0);
-    IuS2(1) = hollow->getFrameOfReference()->getVelocity()(2);//1
+    IuS2(1) = hollow->getFrameOfReference()->getVelocity()(2);
     u1 = AFK.row(0) * IuS1 + omega1 * et;
     v1 = AFK.row(1) * IuS1 + omega1 * r1;
 
@@ -321,9 +321,9 @@ namespace MBSimEHD {
     fmatvec::Vec2 IxS1;      //TODO: is IxS1 the center position?!
     fmatvec::Vec2 IxS2;
     IxS1(0) = solid->getFrameOfReference()->getPosition()(0);
-    IxS1(1) = solid->getFrameOfReference()->getPosition()(2); //(1)
+    IxS1(1) = solid->getFrameOfReference()->getPosition()(2);
     IxS2(0) = hollow->getFrameOfReference()->getPosition()(0);
-    IxS2(1) = hollow->getFrameOfReference()->getPosition()(2);//(1)
+    IxS2(1) = hollow->getFrameOfReference()->getPosition()(2);
 
     Vec2 Ke(IxS1 - IxS2);
 
