@@ -321,6 +321,29 @@ namespace MBSimEHD {
 
   };
 
+//  class EHDMeshResidualFunction : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
+//
+//    public:
+//    fmatvec::Vec operator()(const fmatvec::Vec & x) {
+//      msh.pressureAssembly();
+//      return msh.getR();
+//    }
+//
+//    private:
+//      EHDMesh msh;
+//  };
+//
+//  class EHDMeshResidualJacobianFunction : public MBSim::NewtonJacobianFunction {
+//
+//    public:
+//    fmatvec::SqrMat operator()(const fmatvec::Vec & x) {
+//      return msh.getKT();
+//    }
+//
+//    private:
+//      EHDMesh msh;
+//  };
+
 }
 
 #endif

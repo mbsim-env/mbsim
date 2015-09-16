@@ -109,7 +109,7 @@ namespace MBSimEHD {
       cpData[ihollow].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ihollow].getFrameOfReference().getOrientation().col(0), cpData[ihollow].getFrameOfReference().getOrientation().col(1)));
       cpData[isolid].getFrameOfReference().getOrientation().set(0, -cpData[ihollow].getFrameOfReference().getOrientation().col(0));
       cpData[isolid].getFrameOfReference().getOrientation().set(1, -cpData[ihollow].getFrameOfReference().getOrientation().col(1));
-      cpData[isolid].getFrameOfReference().getOrientation().set(2, cpData[ihollow].getFrameOfReference().getOrientation().col(2));
+      cpData[isolid].getFrameOfReference().getOrientation().set(2, -cpData[ihollow].getFrameOfReference().getOrientation().col(2));
 
       //Position
       Vec3 e = AIF.T() * WrD;

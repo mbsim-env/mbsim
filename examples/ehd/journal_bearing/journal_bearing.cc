@@ -64,7 +64,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
 
   //Add gravity to the system
   Vec grav(3, INIT, 0.);
-  grav(1) = -0*9.81; // in negative y-direction
+  grav(1) = -9.81; // in negative y-direction
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // geometrical characteristics
@@ -202,7 +202,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   lub = Lubricant(0.0109, 778, 0, false, Lubricant::constVisc, Lubricant::constDen);//lubT2
 
   // discretization
-  EHDPressureElement ele("quad9", 4);
+  EHDPressureElement ele("quad4", 4);
   ele.setLubricant(lub);
 
 // Create computational mesh (half fluid domain)
@@ -216,7 +216,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   xb.set(0, yb);
   xb.set(1, zb);
 
-  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 4]"));
+  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 6]"));
 
   msh->Boundary(EHDMesh::dbc, EHDMesh::x2m);
   msh->Boundary(EHDMesh::dbc, EHDMesh::x2p);    // z = -L / 2

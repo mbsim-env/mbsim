@@ -703,15 +703,16 @@ namespace MBSimEHD {
     VecInt per1 = getper1();
     VecInt per2 = getper2();
     int nfree = getnfree();
-    VecV Dfree = VecV(nfree);
-    VecV Z = VecV(nfree);
-    VecV deltaDeff = VecV(nfree);
-    VecV Q = VecV(nfree);
-    SqrMatV M = SqrMat(nfree);
+    Vec Dfree = Vec(nfree);
+    Vec Z = Vec(nfree);
+    Vec Zsol = Vec(2*nfree);
+    Vec deltaDeff = Vec(nfree);
+    Vec Q = Vec(nfree);
+    SqrMat M = SqrMat(nfree);
+
 
     // Initialize iteration counter
     int iter = 0;
-
 //        // Print header for iteration list
 //        if output
 //            fprintf('//-16s//-20s//s\n', 'Iteration', 'Increment norm', 'Goenka iterations');
@@ -729,51 +730,39 @@ namespace MBSimEHD {
       // Compute matrix M and vector Q of LCP
       PressureAssembly();
       Dfree = subVec(D, f, -1);
-      M = subMat(KT, f, -1);
-      VecV Rfree = subVec(-R, f, -1); //TODO: assemble -R directly?
-      Q = Rfree + M * Dfree;
+      M = subMat2(KT, f, -1);  // TODO: subMat for SqrMat
+      VecV Rfree = subVec(R, f, -1); //TODO: assemble -R directly?
+      Q = Rfree - M*Dfree;
 
       //TODO: here is the solution
-//      LinearComplementarityProblem lcp(M,Q);
-//      Z = lcp.solve(Dfree);
-//            M = -KT(f, f);
-//            Q = R(f) - KT(f, f) * D(f);
+      LinearComplementarityProblem lcp(M,Q);
+      lcp.setStrategy(LinearComplementarityProblem::LCPSolvingStrategy(2));
+      lcp.setSystem(M,Q);
 
-      // TODO Solve LCP: 0 <= Z perp W = -M * Z + Q >= 0
-//            [Z, region1, iterGoenka] = Goenka(M, Q, region1);
-      VecVI ipiv(M.rows());
-      Z = slvLU(M, Rfree, info);
+      // Z = lcp.solve(Dfree);
+      Zsol = lcp.solve(Dfree);
+
 //      SqrMatV JLU = facLU(M, ipiv);
 //      Z = slvLUFac(JLU, Rfree, ipiv);
 
       // UPDATE of full D-vector with new solution
       // Insert new solution at free DOFs
       for (int i = 0; i < nfree; i++) {
-        D(f(i) - 1) += Z(i);
+        Z(i) = Zsol(nfree+i);
+        D(f(i) - 1) += Zsol(nfree + i);
       }
 
       // Compute effective solution increment for convergence check
       deltaDeff = Z;
+
 
       // Overwrite solution at eliminated periodic boundary
       for (int i = 0; i < per2.size(); i++) {
         D(per2(i) - 1) = D(per1(i) - 1);
       }
 
-//      cout << D << endl;
+      // cout << D << endl;
 
-      // Plot current solution
-//            if iterDraw
-//                switch msh.ele.shape.ndim
-//                    case 1
-//                        DrawPressure1D(D, sys, msh, iter == 0);
-//                    case 2
-//                        DrawPressure2D(D, sys, msh, 'normal', iter == 0);
-//                end
-//                pause(0.001);
-//            end
-
-      // Retrieve global residuum vector and global tangential matrix at new D
       // Update iteration counter
       iter = iter + 1;
 
@@ -782,15 +771,17 @@ namespace MBSimEHD {
 //            if output
 //                fprintf('//-16d//-20e//d\n', iter, normdeltaDeff, iterGoenka);
 //            end
+      break;
+
       if (fmatvec::nrm1(deltaDeff) < tolD) {
         break;
       }
     }
-    for (int i = 0; i < nfree; i++) {
-      if (D(f(i) - 1) < 0) {
-        D(f(i) - 1) = 0;
-      }
-    }
+//    for (int i = 0; i < nfree; i++) {
+//      if (D(f(i) - 1) < 0) {
+//        D(f(i) - 1) = 0;
+//      }
+//    }
     if (iter == iterMax) {
       throw MBSim::MBSimError("Newton-Josephy iteration unconverged after " + numtostr(iter) + " iterations.");
     }
