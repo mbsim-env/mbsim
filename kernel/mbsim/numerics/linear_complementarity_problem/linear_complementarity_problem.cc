@@ -73,7 +73,7 @@ namespace MBSim {
     }
   }
 
-  LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL_ /*= 0*/) :
+  LinearComplementarityProblem::LinearComplementarityProblem(const SqrMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL_ /*= 0*/) :
       strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_), lemkeSolver(), newtonSolver(0), newtonFunction(0), jacobianFunction(0), criteriaNewton(0), fixpointSolver(0), fixpointFunction(0), criteriaFixedpoint(0), DEBUGLEVEL(DEBUGLEVEL_) {
 
     //set properties
@@ -96,8 +96,13 @@ namespace MBSim {
   }
 
   void LinearComplementarityProblem::setSystem(const SymMat & M_, const Vec & q_) {
+    setSystem(Sym2Sqr(M_), q_);
+  }
+
+  void LinearComplementarityProblem::setSystem(const SqrMat & M_, const Vec & q_) {
+
     q.resize() = q_;
-    M.resize() = Sym2Sqr(M_);
+    M.resize() = M_;
 
     /*set different solvers*/
     //Lemke
@@ -254,7 +259,7 @@ namespace MBSim {
 //          }
 //        }
       }
-      else if(lemkeSolver.getInfo() != 0) {
+      else if (lemkeSolver.getInfo() != 0) {
         //Switch back strategy in case shortened Lemke has failed but reformulated were succesfull
         strategy = oldStrategy;
       }
