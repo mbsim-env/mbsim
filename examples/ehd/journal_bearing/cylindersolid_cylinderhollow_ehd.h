@@ -193,12 +193,12 @@ namespace MBSimEHD {
        *
        * It is "e" in [1] in world coordinates
        */
-      fmatvec::Vec3 WrD;
+      fmatvec::Vec3 IrC1C2;
 
       /*!
        * \brief relative velocity between the center points
        */
-      fmatvec::Vec3 WrDdot;
+      fmatvec::Vec3 IvC1C2;
 
       /*!
        * \brief relative angular velocity

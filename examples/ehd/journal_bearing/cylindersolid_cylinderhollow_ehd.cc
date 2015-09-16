@@ -88,8 +88,8 @@ namespace MBSimEHD {
   void ContactKinematicsCylinderSolidCylinderHollowEHD::updateKinematics(const vector<SingleContact> & contacts) {
     // See [1], Bild 4.4 but here: y-direction is height direction of cylinder and z-direction (of F-coordinate system) is the azimuthal direction
 
-    WrD = solid->getFrame()->getPosition() - hollow->getFrame()->getPosition();
-    WrDdot = solid->getFrame()->getVelocity() - hollow->getFrame()->getVelocity();
+    IrC1C2 = solid->getFrame()->getPosition() - hollow->getFrame()->getPosition();
+    IvC1C2 = solid->getFrame()->getVelocity() - hollow->getFrame()->getVelocity();
     omegaRel = solid->getFrame()->getAngularVelocity() - hollow->getFrame()->getAngularVelocity();
 
     Vec3 r; //position of node in F-coordinate system
@@ -105,14 +105,15 @@ namespace MBSimEHD {
       SqrMat3 AKF = BasicRotAIKy(phi);
       SqrMat3 AIF = hollow->getFrameOfReference()->getOrientation() * AKF;
       cpData[ihollow].getFrameOfReference().getOrientation().set(0, - AIF.col(0));
-      cpData[ihollow].getFrameOfReference().getOrientation().set(1, hollow->getFrameOfReference()->getOrientation().col(1));
+      cpData[ihollow].getFrameOfReference().getOrientation().set(1, hollow->getFrameOfReference()->getOrientation().col(1)); //TODO holds not for frustum, only cylinder
       cpData[ihollow].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ihollow].getFrameOfReference().getOrientation().col(0), cpData[ihollow].getFrameOfReference().getOrientation().col(1)));
+
       cpData[isolid].getFrameOfReference().getOrientation().set(0, -cpData[ihollow].getFrameOfReference().getOrientation().col(0));
       cpData[isolid].getFrameOfReference().getOrientation().set(1, -cpData[ihollow].getFrameOfReference().getOrientation().col(1));
-      cpData[isolid].getFrameOfReference().getOrientation().set(2, -cpData[ihollow].getFrameOfReference().getOrientation().col(2));
+      cpData[isolid].getFrameOfReference().getOrientation().set(2, cpData[ihollow].getFrameOfReference().getOrientation().col(2));
 
       //Position
-      Vec3 e = AIF.T() * WrD;
+      Vec3 e = AIF.T() * IrC1C2;
 
       // Here the full computation of the Thickness and the velocities should follow to store it once and then just ask for it again
       double er = e(0);
@@ -349,10 +350,10 @@ namespace MBSimEHD {
   }
 
   fmatvec::Vec3 ContactKinematicsCylinderSolidCylinderHollowEHD::getWrD() {
-    return WrD;
+    return IrC1C2;
   }
   fmatvec::Vec3 ContactKinematicsCylinderSolidCylinderHollowEHD::getWrDdot() {
-    return WrDdot;
+    return IvC1C2;
   }
   fmatvec::Vec3 ContactKinematicsCylinderSolidCylinderHollowEHD::getomegaRel() {
     return omegaRel;
