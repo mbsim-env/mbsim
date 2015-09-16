@@ -9,13 +9,13 @@ SET (mbsimEHD_VERSION_MINOR 1)
 #############################################
 ### Options
 #############################################
-OPTION(BUILD_mbsimEHD_SHARED "Build the libraries shared." ON)
-
-IF(BUILD_mbsimEHD_SHARED)
-  SET(mbsimEHD_LIBRARY_TYPE SHARED)
-ELSE(BUILD_mbsimEHD_SHARED)
-  SET(mbsimEHD_LIBRARY_TYPE STATIC)
-ENDIF(BUILD_mbsimEHD_SHARED)
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+else(COMPILER_SUPPORTS_CXX11)
+        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif(COMPILER_SUPPORTS_CXX11)
 
 #############################################
 ### Search for dependencies
