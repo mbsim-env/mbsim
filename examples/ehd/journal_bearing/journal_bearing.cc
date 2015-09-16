@@ -1,7 +1,6 @@
 #include "journal_bearing.h"
-#include "cylindersolid_cylinderhollow_ehd.h"
-#include "ehd_force_law.h"
-#include "ehd_contact.h"
+#include "mbsimEHD/cylindersolid_cylinderhollow_ehd.h"
+#include "mbsimEHD/ehd_contact.h"
 
 #include "mbsim/joint.h"
 #include "mbsim/contours/frustum.h"
@@ -32,7 +31,6 @@
 #include <openmbvcppinterface/arrow.h> // Contact
 #endif
 
-using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace MBSimEHD;
 using namespace fmatvec;

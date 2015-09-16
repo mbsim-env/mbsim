@@ -34,5 +34,11 @@ link_directories(${MBSIM_LIBRARY_DIRS})
 add_subdirectory(mbsimEHD)
 
 #############################################
+###  Installing
+#############################################
+configure_file("mbsimEHD.pc.in" "mbsimEHD.pc" @ONLY)
+install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/mbsimEHD.pc"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
+#############################################
 ### Set some properties
 #############################################

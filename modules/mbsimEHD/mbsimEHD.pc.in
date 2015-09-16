@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: mbsimEHD
+Description: mbsimEHD is an add-on for EHD contacts to the mbsim-kernel
+Requires: mbsim
+Version: 
+Libs: -L${libdir} -lmbsimEHD
+Cflags: -I${includedir}
+
