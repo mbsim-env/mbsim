@@ -91,6 +91,8 @@ namespace MBSim {
   fmatvec::SqrMatV subMat(const fmatvec::SqrMatV & origMat, const fmatvec::VecVI & indVec, const int diffInd = 0);
 
 
+  fmatvec::SqrMat subMat2(const fmatvec::SqrMatV & origMat, const fmatvec::VecVI & indVec, const int diffInd = 0);
+
 
   inline xercesc::DOMNode* toXML(const std::string &str, xercesc::DOMNode* parent) {
     return parent->getOwnerDocument()->createTextNode(MBXMLUtils::X()%str);

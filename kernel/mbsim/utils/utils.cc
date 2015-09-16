@@ -125,4 +125,16 @@ namespace MBSim {
     return newMat;
   }
 
+  SqrMat subMat2(const SqrMatV & origMat, const VecVI & indVec, const int diffInd) {
+    SqrMat newMat(indVec.size(), NONINIT);
+
+    for(int i = 0; i < indVec.size(); i++) {
+      for(int j = 0; j < indVec.size(); j++) {
+        newMat(i,j) = origMat(indVec(i)+diffInd,indVec(j)+diffInd);
+      }
+    }
+
+    return newMat;
+  }
+
 }
