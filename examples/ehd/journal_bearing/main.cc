@@ -12,6 +12,9 @@ int main(int argc, char* argv[]) {
   // create the system: Here the complete defintion is done
   JournalBearingSystem *sys = new JournalBearingSystem("MBS");
 
+  //plot every second plot step
+  sys->setFlushEvery(2);
+
   // just some solver settings for the solution of the non-smooth contact/impact laws
 //  sys->setStopIfNoConvergence(true,true);
 

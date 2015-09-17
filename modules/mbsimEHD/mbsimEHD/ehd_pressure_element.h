@@ -21,6 +21,7 @@
 #define _EHD_PRESSURE_ELEMENT_H_
 
 #include "lubricant.h"
+#include "element_shapes.h"
 #include "contact_kinematics/cylindersolid_cylinderhollow_ehd.h"
 
 #include <fmatvec/fmatvec.h>
@@ -42,30 +43,6 @@ namespace MBSimEHD {
   // Note:
   //   For the case nnodval = 1 this function is not needed, i.e. Nm = N
   fmatvec::MatV ShapeFctMat(const fmatvec::RowVecV N, const int & nnodval);
-
-  //   shape:      Struct with element shape properties
-  //               ndim:   Spatial dimension
-  //               nnod:   Number of nodes
-  //               nnodd:  Number of nodes in spatial directions
-  //               ser:    Number of additional nodes located at
-  //                       element boundary (serendipity elements)
-  struct ElementShape {
-      int ndim;
-      int nnod;
-      int nnodd[2];
-      int ser;
-      std::string name;
-  };
-
-  // Element shape properties
-  // Michael Hofer, 24.03.2015
-  //
-  // Input:
-  //   shapeName:  Name of element shape
-  //
-  // Output:
-  // ElementShape (see above)
-  ElementShape ElementShapes(const std::string & shapeName);
 
   class EHDPressureElement {
       // Pressure-based element for solving Reynolds equation

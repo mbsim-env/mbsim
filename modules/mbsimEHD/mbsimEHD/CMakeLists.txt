@@ -7,6 +7,7 @@ add_library(mbsimEHD SHARED
     ehd_pressure_element.cc
     ehd_contact.cc
     ehd_mesh.cc
+    element_shapes.cc
     lubricant.cc
     contact_kinematics/cylindersolid_cylinderhollow_ehd.cc
     numerics/lagrange_shape_functions.cc)
