@@ -38,6 +38,32 @@ namespace MBSim {
    */
   static double pW[15][2] = {{0., 2.}, {-0.57735026919, 1.}, {0.57735026919, 1}, {-0.774596669241, 5. / 9.}, {0., 8. / 9}, {0.774596669241, 5. / 9.}, {-0.861136311594053, 0.347854845137454}, {-0.339981043584856, 0.652145154862546}, {0.339981043584856, 0.652145154862546}, {0.861136311594053, 0.347854845137454}, {-0.906179845938664, 0.236926885056189}, {-0.538469310105683, 0.478628670499366}, {0, 0.568888888888889}, {0.538469310105683, 0.478628670499366}, {0.906179845938664, 0.236926885056189}};
 
+  // Gauss points and weights for one-dimensional case
+  // Michael Hofer, 17.12.2014
+  //
+  // Input:
+  //   ngp:    Number of Gauss points
+  //
+  // Output:
+  //   xigp:   Vector with Gauss points
+  //   wgp:    Vector with Gauss weights
+  void GaussPoints1D(int ngp, fmatvec::MatVx2 & xigp, fmatvec::VecV & wgp);
+
+  // Gauss points and weights for two-dimensional case
+  // using two one-dimensional Gauss tables
+  // Michael Hofer, 22.03.2014
+  //
+  // Input:
+  //   ngp:    Number of Gauss points
+  //
+  // Output:
+  //   xigp:   Vector with Gauss points
+  //   wgp:    Vector with Gauss weights
+  //
+  // TODO: Use hardcoded Gauss table for two-dimensional case instead of
+  //       using two one-dimensional Gauss tables to save performance
+  void GaussPoints2D(int ngp, fmatvec::MatVx2 & xigp, fmatvec::VecV & wgp);
+
   template <class Ret>
   class GaussLegendreQuadrature {
     public:
