@@ -21,7 +21,7 @@
 #define _EHD_PRESSURE_ELEMENT_H_
 
 #include "lubricant.h"
-#include "cylindersolid_cylinderhollow_ehd.h"
+#include "contact_kinematics/cylindersolid_cylinderhollow_ehd.h"
 
 #include <fmatvec/fmatvec.h>
 

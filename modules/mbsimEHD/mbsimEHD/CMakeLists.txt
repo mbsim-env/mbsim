@@ -5,10 +5,10 @@
 # add the project library with the sources
 add_library(mbsimEHD SHARED 
     ehd_pressure_element.cc
-    cylindersolid_cylinderhollow_ehd.cc
     ehd_contact.cc
     ehd_mesh.cc
     lubricant.cc
+    contact_kinematics/cylindersolid_cylinderhollow_ehd.cc
     numerics/lagrange_shape_functions.cc)
     
 SET_TARGET_PROPERTIES(mbsimEHD PROPERTIES COMPILE_FLAGS "${MBSIM_CFLAGS_STR}")
