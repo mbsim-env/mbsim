@@ -1,14 +1,16 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8.12)
 
-PROJECT(mbsimEHD C CXX)
+PROJECT(mbsimEHD)
 
 ### The version number
 SET (mbsimEHD_VERSION_MAJOR 0)
 SET (mbsimEHD_VERSION_MINOR 1)
 
 #############################################
-### Options
+### Options #################################
 #############################################
+
+### Use features of c++11 (to avoid warnings only)
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
@@ -18,27 +20,29 @@ else(COMPILER_SUPPORTS_CXX11)
 endif(COMPILER_SUPPORTS_CXX11)
 
 #############################################
-### Search for dependencies
+### Search for dependencies #################
 #############################################
-find_package(PkgConfig) # Use PkgConfig for searching
-pkg_check_modules(MBSIM mbsim>=4.0.0)
 
-# Add for linkage
+### Use PkgConfig for searching
+include(FindPkgConfig) 
+pkg_check_modules(MBSIM REQUIRED mbsim>=4.0.0)
+
+### mbsim
+# Add for linkage: the include directories as well as the link-directories 
 include_directories(${MBSIM_INCLUDE_DIRS})
 link_directories(${MBSIM_LIBRARY_DIRS})
+# prepare the cflags for the build-process --> the *_CFLAGS-variable comes as a semicolon-separated list, which has to bea space-separated list  
+string (REPLACE ";" " " MBSIM_CFLAGS_STR "${MBSIM_CFLAGS}")
 
 #############################################
-### Include the subdirectories
+### Include the subdirectories ##############
 #############################################
-
 add_subdirectory(mbsimEHD)
 
 #############################################
-###  Installing
+###  Installing #############################
 #############################################
+###  Install the pkg-config file
 configure_file("mbsimEHD.pc.in" "mbsimEHD.pc" @ONLY)
 install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/mbsimEHD.pc"
         DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
-#############################################
-### Set some properties
-#############################################

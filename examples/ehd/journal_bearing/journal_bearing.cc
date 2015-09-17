@@ -1,6 +1,8 @@
 #include "journal_bearing.h"
+
 #include "mbsimEHD/cylindersolid_cylinderhollow_ehd.h"
 #include "mbsimEHD/ehd_contact.h"
+#include "mbsimEHD/ehd_mesh.h"
 
 #include "mbsim/joint.h"
 #include "mbsim/contours/frustum.h"
@@ -222,7 +224,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   msh->Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
 
 //  EHDForceLaw *fL = new EHDForceLaw();
-  ctJouHou->setNormalForceLaw(msh);
+  ctJouHou->setMesh(msh);
   ctJouHou->enableOpenMBVContactPoints(1e-5);
   ctJouHou->enableOpenMBVNormalForce(1e-3);
 

@@ -154,6 +154,10 @@ namespace MBSimEHD {
     return shape;
   }
 
+  EHDPressureElement::EHDPressureElement() :
+    ngp(0), ndof(0), ck(0) {
+  }
+
   EHDPressureElement::EHDPressureElement(const std::string & shapeName, const int & ngp) {
     //  // Define ent properties
     shape = ElementShapes(shapeName);
@@ -604,7 +608,7 @@ namespace MBSimEHD {
 //      J(1, 1) * J(2, 2) + J(1, 2) * J(2, 1)];
 //    }
 //    else {
-//      throw MBSimError("Wrong dimension!");
+//      THROW_MBSIMERROR("Wrong dimension!");
 //    }
 //
 //// Compute matrix C1

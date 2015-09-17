@@ -8,13 +8,12 @@
 #ifndef EHDCONTACT_H_
 #define EHDCONTACT_H_
 
-#include "ehd_mesh.h"
-
-#include "mbsim/contact.h"
-
+#include <mbsim/contact.h>
 
 namespace MBSimEHD {
   
+  class EHDMesh;
+
   class EHDContact : public MBSim::Contact {
     public:
       EHDContact(const std::string & name);
@@ -25,7 +24,9 @@ namespace MBSimEHD {
       virtual void updateg(double t);
       virtual void updateh(double t, int j);
 
-    private:
+      void setMesh(EHDMesh * msh_);
+
+    protected:
       /*!
        * \brief mesh used in the Contact
        *

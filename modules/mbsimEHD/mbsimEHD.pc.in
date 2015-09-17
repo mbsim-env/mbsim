@@ -8,5 +8,5 @@ Description: mbsimEHD is an add-on for EHD contacts to the mbsim-kernel
 Requires: mbsim
 Version: 
 Libs: -L${libdir} -lmbsimEHD
-Cflags: -I${includedir}
+Cflags: -I${includedir} -std=c++11
 

@@ -2,24 +2,17 @@
 ### Include the subdirectories
 #############################################
 
-
-
-#############################################
-### Add sources
-#############################################
-
-SET(mbsimEHD_SRCS
-    cylindersolid_cylinderhollow_ehd.h  cylindersolid_cylinderhollow_ehd.cc
-    ehd_contact.h                       ehd_contact.cc
-    ehd_mesh.h                          ehd_mesh.cc
-    ehd_pressure_element.h              ehd_pressure_element.cc
-    lagrange_shape_functions.h          lagrange_shape_functions.cc
-    lubricant.h                         lubricant.cc
-    )
-
-
-### Set sublibrary
-add_library(mbsimEHD SHARED ${mbsimEHD_SRCS})
+# add the project library with the sources
+add_library(mbsimEHD SHARED 
+    ehd_pressure_element.cc
+    cylindersolid_cylinderhollow_ehd.cc
+    ehd_contact.cc
+    ehd_mesh.cc
+    lagrange_shape_functions.cc
+    lubricant.cc)
+    
+SET_TARGET_PROPERTIES(mbsimEHD PROPERTIES COMPILE_FLAGS "${MBSIM_CFLAGS_STR}")
+target_link_libraries(mbsimEHD ${MBSIM_LDFLAGS})
 
 #############################################
 ### Install the library

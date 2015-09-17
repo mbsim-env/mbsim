@@ -23,6 +23,7 @@
 #include "mbsim/contours/frustum.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include <mbsim/mbsim_event.h>
 
 using namespace fmatvec;
 using namespace MBSim;

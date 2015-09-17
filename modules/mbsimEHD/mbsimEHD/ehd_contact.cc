@@ -6,14 +6,17 @@
  */
 
 #include "ehd_contact.h"
+#include "ehd_mesh.h"
+#include <mbsim/mbsim_event.h>
 
 using namespace fmatvec;
 using namespace MBSim;
+using namespace std;
 
 namespace MBSimEHD {
   
   EHDContact::EHDContact(const std::string & name) :
-      Contact(name) {
+      Contact(name), msh(0) {
   }
   
   void EHDContact::updateg(double t) {
@@ -35,31 +38,34 @@ namespace MBSimEHD {
   }
 
   EHDContact::~EHDContact() {
-    // TODO Auto-generated destructor stub
+    if (msh)
+      delete msh;
   }
 
   void EHDContact::init(Element::InitStage stage) {
     if (stage == Element::modelBuildup) {
       // Do some checks and assignments
-      if (dynamic_cast<EHDMesh*>(fcl)) {
-        msh = static_cast<EHDMesh*>(fcl);
-      }
-      else {
-        throw MBSimError("The Normal contact force law in the EHD-Contact has to be an EHDMesh!");
+      if (msh == NULL) {
+        THROW_MBSIMERROR("No mesh provided for the EHD-Contact!");
       }
       if (contactKinematics.size() != 1) {
-        throw MBSimError("A EHDContact must have one contact kinematics (by now...?)");
+        THROW_MBSIMERROR("A EHDContact must have one contact kinematics (by now...?)");
       }
       if (dynamic_cast<ContactKinematicsEHDInterface*>(contactKinematics[0])) {
         msh->setContactKinematics(static_cast<ContactKinematicsEHDInterface*>(contactKinematics[0]));
       }
       else {
-        throw MBSimError("A EHDContact may only have one contact kinematics (by now...?)");
+        THROW_MBSIMERROR("A EHDContact may only have one contact kinematics (by now...?)");
       }
     }
 
     // Has to be done afterwards as the msh needs to know the contact kinematics
     Contact::init(stage);
+  }
+
+  void EHDContact::setMesh(EHDMesh * msh_) {
+    msh = msh_;
+    fcl = msh_;
   }
 
 } /* namespace MBSimEHD */

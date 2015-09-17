@@ -18,9 +18,10 @@
  */
 
 #include "ehd_mesh.h"
-#include "ehd_pressure_element.h"
 #include <mbsim/utils/utils.h>
 #include <mbsim/mbsim_event.h>
+#include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
+#include <mbsim/functions/function.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -28,12 +29,16 @@ using namespace MBSim;
 
 namespace MBSimEHD {
 
+  EHDMesh::EHDMesh() :
+    GeneralizedForceLaw(0), nnod(0), ndof(0), nele(0), nfree(0), ck(0) {
+  }
+
   EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled) :
-      ele(ele), xb(xb), neled(neled) {
+    GeneralizedForceLaw(0), ele(ele), xb(xb), neled(neled) {
   }
 
   EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const std::vector<fmatvec::RowVecV> & hd) :
-      ele(ele), hd(hd) {
+    GeneralizedForceLaw(0),  ele(ele), hd(hd) {
     /*
      * TODO...
 
@@ -110,7 +115,7 @@ namespace MBSimEHD {
   }
 
   void EHDMesh::init(MBSim::Element::InitStage stage) {
-    GeneralizedForceLaw::init(stage);
+    Element::init(stage);
     if (stage == MBSim::Element::modelBuildup) {
       initializeMesh();
       evaluateBoundary();
@@ -141,7 +146,7 @@ namespace MBSimEHD {
         b = Boundary2D(boundary);
       }
       else {
-        throw MBSimError("Wrong dimension of element shape!");
+        THROW_MBSIMERROR("Wrong dimension of element shape!");
       }
 
       // Decide between type of boundary
@@ -152,21 +157,21 @@ namespace MBSimEHD {
       // ToDo: Check if union is needed
       if (type == dbc) {
 //      dbc = union(dbc, b);
-        if (dbcV.size()==0) {
+        if (dbcV.size() == 0) {
           dbcV = b;
         }
-        else{
+        else {
           int size_dbcV = dbcV.size();
           VecInt b_old = dbcV;
-          int j=0;
-          dbcV.resize(dbcV.size()+b.size());
-          for (int i=0; i<size_dbcV; i++){
-            dbcV(i)=b_old(j);
+          int j = 0;
+          dbcV.resize(dbcV.size() + b.size());
+          for (int i = 0; i < size_dbcV; i++) {
+            dbcV(i) = b_old(j);
             j++;
           }
-          j=0;
-          for (int i=size_dbcV; i<dbcV.size(); i++){
-            dbcV(i)=b(j);
+          j = 0;
+          for (int i = size_dbcV; i < dbcV.size(); i++) {
+            dbcV(i) = b(j);
             j++;
           }
         }
@@ -185,7 +190,7 @@ namespace MBSimEHD {
         per2V = b;
       }
       else {
-        throw MBSimError("Wrong type of boundary!");
+        THROW_MBSIMERROR("Wrong type of boundary!");
       }
 
       // ToDo: Check if needed
@@ -705,11 +710,10 @@ namespace MBSimEHD {
     int nfree = getnfree();
     Vec Dfree = Vec(nfree);
     Vec Z = Vec(nfree);
-    Vec Zsol = Vec(2*nfree);
+    Vec Zsol = Vec(2 * nfree);
     Vec deltaDeff = Vec(nfree);
     Vec Q = Vec(nfree);
     SqrMat M = SqrMat(nfree);
-
 
     // Initialize iteration counter
     int iter = 0;
@@ -732,12 +736,12 @@ namespace MBSimEHD {
       Dfree = subVec(D, f, -1);
       M = subMat2(KT, f, -1);  // TODO: subMat for SqrMat
       VecV Rfree = subVec(R, f, -1); //TODO: assemble -R directly?
-      Q = Rfree - M*Dfree;
+      Q = Rfree - M * Dfree;
 
       //TODO: here is the solution
-      LinearComplementarityProblem lcp(M,Q);
+      LinearComplementarityProblem lcp(M, Q);
       lcp.setStrategy(LinearComplementarityProblem::LCPSolvingStrategy(2));
-      lcp.setSystem(M,Q);
+      lcp.setSystem(M, Q);
 
       // Z = lcp.solve(Dfree);
       Zsol = lcp.solve(Dfree);
@@ -748,13 +752,12 @@ namespace MBSimEHD {
       // UPDATE of full D-vector with new solution
       // Insert new solution at free DOFs
       for (int i = 0; i < nfree; i++) {
-        Z(i) = Zsol(nfree+i);
+        Z(i) = Zsol(nfree + i);
         D(f(i) - 1) += Zsol(nfree + i);
       }
 
       // Compute effective solution increment for convergence check
       deltaDeff = Z;
-
 
       // Overwrite solution at eliminated periodic boundary
       for (int i = 0; i < per2.size(); i++) {

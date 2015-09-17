@@ -25,7 +25,6 @@
 #include <fmatvec/fmatvec.h>
 
 #include <mbsim/constitutive_laws.h>
-#include <mbsim/mbsim_event.h>
 
 #include <string>
 
@@ -42,8 +41,10 @@ namespace MBSimEHD {
         x1m, x1p, x2m, x2p
       };
 
-      //          Constructor for regular structured mesh
+      // standard constructor
+      EHDMesh();
 
+      //          Constructor for regular structured mesh
       //          Input:
       //            ele:    Object of element for discretization
       //            neled:  Number of elements in spatial directions
@@ -51,7 +52,6 @@ namespace MBSimEHD {
       EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled);
 
       //          Constructor for user structured Mesh
-
       //          Input:
       //            ele:    Object of element for discretization
       //            xb:     Lower and upper boundary of domain

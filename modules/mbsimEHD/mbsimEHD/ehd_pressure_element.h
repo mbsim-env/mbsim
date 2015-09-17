@@ -101,6 +101,10 @@ namespace MBSimEHD {
       friend class EHDMesh;
 
     public:
+
+      //Standard constructor
+      EHDPressureElement();
+
       // Constructor for element
       //
       // Input:
