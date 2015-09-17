@@ -138,6 +138,16 @@ namespace MBSimEHD {
        */
       fmatvec::VecV pos;
 
+      /*!
+       * \brief saves the h-positions for each spatial position of pos
+       */
+      std::vector<fmatvec::Vec2> heightsPos;
+
+      /*!
+       * \brief saves the derivatives of the height positions with respect to the first spatial coordinate (y) of pos
+       */
+      std::vector<fmatvec::Vec2> dheightsdyPos;
+
   };
 
   /**
@@ -219,16 +229,6 @@ namespace MBSimEHD {
        * \brief Auxiliary length variable
        */
       double r1;
-
-      /*!
-       * \brief saves the h-positions for each spatial position
-       */
-      std::vector<fmatvec::Vec2> heights;
-
-      /*!
-       * \brief saves the derivatives of the height positions with respect to the first spatial coordinate (y)
-       */
-      std::vector<fmatvec::Vec2> dheightsdy;
 
     private:
       // Radial and tangential eccentricity in coordinate system F

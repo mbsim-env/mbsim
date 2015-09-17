@@ -80,8 +80,8 @@ namespace MBSimEHD {
     Vec2 h;
     h(1) = rHollow; //is h2 in [1]
     for(int i = 0; i < numberOfPotentialContactPoints; i++) {
-      heights.push_back(h);
-      dheightsdy.push_back(Vec2());
+      heightsPos.push_back(h);
+      dheightsdyPos.push_back(Vec2());
     }
 
   }
@@ -92,6 +92,10 @@ namespace MBSimEHD {
     IrC1C2 = solid->getFrame()->getPosition() - hollow->getFrame()->getPosition();
     IvC1C2 = solid->getFrame()->getVelocity() - hollow->getFrame()->getVelocity();
     omegaRel = solid->getFrame()->getAngularVelocity() - hollow->getFrame()->getAngularVelocity();
+
+    if(nrm2(IrC1C2) > rHollow - rSolid) {
+      throw MBSimError("Penetration active");
+    }
 
     Vec3 r; //position of node in F-coordinate system
 
@@ -120,16 +124,16 @@ namespace MBSimEHD {
       double er = e(0);
       double et = e(2);
       double r1 = sqrt(pow(rSolid, 2) - pow(et, 2));
-      heights[i](0) = er + r1;//is h1 in [1] (h2 is constant)
-      dheightsdy[i](0) = et * heights[i](0) / (rHollow * r1);
+      heightsPos[i](0) = er + r1;//is h1 in [1] (h2 is constant)
+      dheightsdyPos[i](0) = et * heightsPos[i](0) / (rHollow * r1);
       //TODO: Add the velocities information as well and save it to a vector or a set!!
 
-      r(0) = heights[i](0);
+      r(0) = heightsPos[i](0);
       r(1) = z;
 
       cpData[isolid].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AIF * r;
 
-      r(0) = heights[i](1);
+      r(0) = heightsPos[i](1);
       cpData[ihollow].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AIF * r;
     }
   }
@@ -235,7 +239,7 @@ namespace MBSimEHD {
 
     // Check if the film thickness is smaller than zero, meaning
     // if there is a penetration of the contacting bodies
-    if (h2 - h1 < 0)
+    if (h2 < h1)
       throw MBSimError("Film thickness is smaller than zero, i.e. h < 0.");
 
     if (dimLess) {

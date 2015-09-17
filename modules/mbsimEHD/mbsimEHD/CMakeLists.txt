@@ -8,8 +8,8 @@ add_library(mbsimEHD SHARED
     cylindersolid_cylinderhollow_ehd.cc
     ehd_contact.cc
     ehd_mesh.cc
-    lagrange_shape_functions.cc
-    lubricant.cc)
+    lubricant.cc
+    numerics/lagrange_shape_functions.cc)
     
 SET_TARGET_PROPERTIES(mbsimEHD PROPERTIES COMPILE_FLAGS "${MBSIM_CFLAGS_STR}")
 target_link_libraries(mbsimEHD ${MBSIM_LDFLAGS})

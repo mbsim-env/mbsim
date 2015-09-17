@@ -127,6 +127,8 @@ namespace MBSimEHD {
     else if (stage == MBSim::Element::calculateLocalInitialValues) {
       ForceMatrixAssembly();
     }
+
+    ele.init(stage);
   }
 
   void EHDMesh::Boundary(EHDBoundaryConditionType type, EHDBoundaryConditionPosition boundary) {
@@ -270,7 +272,6 @@ namespace MBSimEHD {
     for (int j = 0; j < (this->per2V.size()); j++) {
       ndof_dbc_per2(this->per2V(j) - 1) = 0;
     }
-    cout << dbcV << endl;
     for (int j = 0; j < this->dbcV.size(); j++) {
       ndof_dbc_per2(this->dbcV(j) - 1) = 0;
     }

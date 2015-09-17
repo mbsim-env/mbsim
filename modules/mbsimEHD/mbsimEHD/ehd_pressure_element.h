@@ -29,32 +29,6 @@
 
 namespace MBSimEHD {
 
-  // Gauss points and weights for one-dimensional case
-  // Michael Hofer, 17.12.2014
-  //
-  // Input:
-  //   ngp:    Number of Gauss points
-  //
-  // Output:
-  //   xigp:   Vector with Gauss points
-  //   wgp:    Vector with Gauss weights
-  void GaussPoints1D(int ngp, fmatvec::MatVx2 & xigp, fmatvec::VecV & wgp);
-
-  // Gauss points and weights for two-dimensional case
-  // using two one-dimensional Gauss tables
-  // Michael Hofer, 22.03.2014
-  //
-  // Input:
-  //   ngp:    Number of Gauss points
-  //
-  // Output:
-  //   xigp:   Vector with Gauss points
-  //   wgp:    Vector with Gauss weights
-  //
-  // TODO: Use hardcoded Gauss table for two-dimensional case instead of
-  //       using two one-dimensional Gauss tables to save performance
-  void GaussPoints2D(int ngp, fmatvec::MatVx2 & xigp, fmatvec::VecV & wgp);
-
   // Build shape function matrix
   // Michael Hofer, 20.03.2015
   //
@@ -114,6 +88,11 @@ namespace MBSimEHD {
       // Output:
       //   ele:        Object of element
       EHDPressureElement(const std::string & shapeName, const int & ngp);
+
+      /*!
+       * \brief initialize following the MBSim-init stages
+       */
+      void init(MBSim::Element::InitStage stage);
 
       // Evaluate element
       //
@@ -176,7 +155,7 @@ namespace MBSimEHD {
         ck = cK_;
       }
 
-    private:
+    protected:
       ElementShape shape;              // Properties of element shape
       int ndofpernod = 1;     // Number of DOFs per node
       int ndof;               // Number of DOFs (= ndofpernod * nnod)
@@ -195,6 +174,16 @@ namespace MBSimEHD {
        * \brief contact kinematics for calls inside Evaluate Element
        */
       ContactKinematicsEHDInterface * ck;
+
+      /*!
+       * \brief spatial positions of the gauss-points of the element
+       */
+      fmatvec::MatVx2 xigp;
+
+      /*!
+       * \brief weights of the gauss-points
+       */
+      fmatvec::VecV wgp;
   };
 
 //

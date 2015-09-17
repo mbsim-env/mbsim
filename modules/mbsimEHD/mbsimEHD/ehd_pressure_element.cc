@@ -20,8 +20,9 @@
 
 #include "ehd_pressure_element.h"
 
-#include "lagrange_shape_functions.h"
+#include "numerics/lagrange_shape_functions.h"
 
+#include <mbsim/numerics/gaussian_quadratur.h>
 #include <mbsim/mbsim_event.h>
 
 using namespace std;
@@ -29,62 +30,6 @@ using namespace MBSim;
 using namespace fmatvec;
 
 namespace MBSimEHD {
-
-  void GaussPoints1D(int ngp, fmatvec::MatVx2 & xigp, fmatvec::VecV & wgp) {
-
-    if (ngp == 1) {
-      xigp(0, 0) = 0;
-      wgp(0) = 2.;
-    }
-    else if (ngp == 2) {
-      xigp(0, 0) = -1. / sqrt(3.);
-      xigp(1, 0) = 1. / sqrt(3.);
-      wgp(0) = 1.;
-      wgp(1) = 1.;
-    }
-    else if (ngp == 3) {
-      xigp(0, 0) = -sqrt(3. / 5.);
-      xigp(1, 0) = 0;
-      xigp(2, 0) = sqrt(3. / 5.);
-      wgp(0) = 5. / 9.;
-      wgp(1) = 8. / 9.;
-      wgp(2) = 5. / 9.;
-    }
-    else if (ngp == 4) {
-      xigp(0, 0) = -sqrt((15. + sqrt(120.)) / 35.);
-      xigp(1, 0) = -sqrt((15. - sqrt(120.)) / 35.);
-      xigp(2, 0) = sqrt((15. - sqrt(120.)) / 35.);
-      xigp(3, 0) = sqrt((15. + sqrt(120.)) / 35.);
-      wgp(0) = (18. - sqrt(30.)) / 36.;
-      wgp(1) = (18. + sqrt(30.)) / 36.;
-      wgp(2) = (18. + sqrt(30.)) / 36.;
-      wgp(3) = (18. - sqrt(30.)) / 36.;
-    }
-    else
-      throw MBSimError("Only up to four Gauss points implemented.");
-
-  }
-
-  void GaussPoints2D(int ngp, fmatvec::MatVx2 & xigp, fmatvec::VecV & wgp) {
-
-    int ngp1D = sqrt(ngp);
-    if (ngp1D % 1 != 0)
-      throw MBSimError("No quadratic number of Gauss points.");
-
-    MatVx2 xigp1D(ngp1D);
-    VecV wgp1D(ngp1D);
-    GaussPoints1D(ngp1D, xigp1D, wgp1D);
-
-    int k = 0;
-    for (int j = 0; j < ngp1D; j++) {
-      for (int i = 0; i < ngp1D; i++) {
-        xigp(k, 0) = xigp1D(i, 0);
-        xigp(k, 1) = xigp1D(j, 0);
-        wgp(k) = wgp1D(i) * wgp1D(j);
-        k = k + 1;
-      }
-    }
-  }
 
   fmatvec::MatV ShapeFctMat(const fmatvec::RowVecV S, const int & nnodval) {
     // Get number of element nodes
@@ -155,14 +100,32 @@ namespace MBSimEHD {
   }
 
   EHDPressureElement::EHDPressureElement() :
-    ngp(0), ndof(0), ck(0) {
+      ngp(0), ndof(0), ck(0) {
   }
 
-  EHDPressureElement::EHDPressureElement(const std::string & shapeName, const int & ngp) {
+  void EHDPressureElement::init(MBSim::Element::InitStage stage) {
+
+    // Retrieve Gauss points and weights
+    if (stage == MBSim::Element::modelBuildup) {
+      xigp << MatVx2(ngp);
+      wgp << VecV(ngp);
+      if (shape.ndim == 1) {
+        GaussPoints1D(ngp, xigp, wgp);
+      }
+      else if (shape.ndim == 2) {
+        GaussPoints2D(ngp, xigp, wgp);
+      }
+      else
+        throw MBSimError("No valid dimension");
+    }
+
+  }
+
+  EHDPressureElement::EHDPressureElement(const std::string & shapeName, const int & ngp_) {
     //  // Define ent properties
     shape = ElementShapes(shapeName);
     ndof = shape.nnod * ndofpernod;
-    this->ngp = ngp;
+    ngp = ngp_;
   }
 
   void EHDPressureElement::EvaluateElement(const int & e, const VecV & pose, const VecV & de, fmatvec::VecV & re, SqrMatV & kTe) const {
@@ -198,19 +161,6 @@ namespace MBSimEHD {
       double eta0 = lub.eta0;
       lambda = pow(hr, 2) * pr / (xr * eta0);
     }
-
-    // Retrieve Gauss points and weights
-    //TODO: is constant for all times?! --> outside of this function
-    MatVx2 xigp(ngp);
-    VecV wgp(ngp);
-    if (ndime == 1) {
-      GaussPoints1D(ngp, xigp, wgp);
-    }
-    else if (ndime == 2) {
-      GaussPoints2D(ngp, xigp, wgp);
-    }
-    else
-      throw MBSimError("No valid dimension");
 
     // Loop through all Gauss points to integrate the matrices and the vectors and their nodal derivatives
     for (int g = 0; g < ngp; g++) {
@@ -490,43 +440,42 @@ namespace MBSimEHD {
   }
 
   void EHDPressureElement::CalculateForceMatrixElement(const int & e, const fmatvec::VecV & pose, fmatvec::SqrMatV & cffe) const {
-      // Define abbreviations
-      int ndime = shape.ndim;
-      int ndofe = ndof;
+    // Define abbreviations
+    int ndime = shape.ndim;
+    int ndofe = ndof;
 
+    // Retrieve Gauss points and weights
+    //TODO: is constant for all times?! --> outside of this function
+    MatVx2 xigp(ngp);
+    VecV wgp(ngp);
+    if (ndime == 1) {
+      GaussPoints1D(ngp, xigp, wgp);
+    }
+    else if (ndime == 2) {
+      GaussPoints2D(ngp, xigp, wgp);
+    }
+    else
+      throw MBSimError("No valid dimension");
 
-      // Retrieve Gauss points and weights
-      //TODO: is constant for all times?! --> outside of this function
-      MatVx2 xigp(ngp);
-      VecV wgp(ngp);
-      if (ndime == 1) {
-        GaussPoints1D(ngp, xigp, wgp);
-      }
-      else if (ndime == 2) {
-        GaussPoints2D(ngp, xigp, wgp);
-      }
-      else
-        throw MBSimError("No valid dimension");
+    // Loop through all Gauss points to integrate the matrices and the vectors and their nodal derivatives
+    for (int g = 0; g < ngp; g++) {
+      // Extract current Gauss point and weight
+      VecV xi = xigp.row(g).T();
+      double w = wgp(g);
 
-      // Loop through all Gauss points to integrate the matrices and the vectors and their nodal derivatives
-      for (int g = 0; g < ngp; g++) {
-        // Extract current Gauss point and weight
-        VecV xi = xigp.row(g).T();
-        double w = wgp(g);
+      // Get shape function matrices Np and Nx, spatial gradient
+      // Npdx, second spatial derivatives Ndxdx of shape functions
+      // (only for SUPG) and element Jacobi determinant at xi
+      RowVecV Np;
+      Mat2xV Npdx;
+      Mat3xV Ndxdx;
+      Mat2xV Nx;
+      double detJ;
+      GetShapeFunctions(pose, xi, Np, Npdx, Ndxdx, Nx, detJ); //TODO: is pose constant?
 
-        // Get shape function matrices Np and Nx, spatial gradient
-        // Npdx, second spatial derivatives Ndxdx of shape functions
-        // (only for SUPG) and element Jacobi determinant at xi
-        RowVecV Np;
-        Mat2xV Npdx;
-        Mat3xV Ndxdx;
-        Mat2xV Nx;
-        double detJ;
-        GetShapeFunctions(pose, xi, Np, Npdx, Ndxdx, Nx, detJ); //TODO: is pose constant?
-
-        // Add contribution of current Gauss point to element matrix
-        cffe = cffe + (Np.T() * Np) * detJ * w;
-      }
+      // Add contribution of current Gauss point to element matrix
+      cffe = cffe + (Np.T() * Np) * detJ * w;
+    }
 
   }
 
