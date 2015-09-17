@@ -38,8 +38,6 @@ namespace MBSimEHD {
   }
 
   EHDContact::~EHDContact() {
-    if (msh)
-      delete msh;
   }
 
   void EHDContact::init(Element::InitStage stage) {
