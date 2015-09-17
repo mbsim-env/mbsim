@@ -783,7 +783,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MaxwellUnilateralConstraint, MBSIM%"MaxwellUnilateralConstraint")
 
   MaxwellUnilateralConstraint::MaxwellUnilateralConstraint(const double & damping, const double & gapLimit) :
-      LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
+      LCP(SqrMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
 
   }
 

@@ -65,12 +65,13 @@ namespace MBSim {
        * \param mediumEigVal        parameter for finding the start solution for the reformulated system
        * \param DEBUGLEVEL  Define output (information) level
        */
-      LinearComplementarityProblem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_, const LCPSolvingStrategy & strategy_ = Standard, const JacobianType & jacobianType_ = LCPSpecial, const unsigned int & DEBUGLEVEL = 0);
+      LinearComplementarityProblem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const LCPSolvingStrategy & strategy_ = Standard, const JacobianType & jacobianType_ = LCPSpecial, const unsigned int & DEBUGLEVEL = 0);
 
       virtual ~LinearComplementarityProblem();
 
       /*GETTER / SETTER*/
       void setSystem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_);
+      void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_);
       void setStrategy(const LCPSolvingStrategy & strategy_) {
         strategy = strategy_;
         oldStrategy = strategy_;

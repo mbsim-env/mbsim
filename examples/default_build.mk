@@ -45,7 +45,7 @@ rpath: $(OBJECTS)
 
 # compile source with pkg-config options from PACKAGES
 %.o: %.cc
-	$(CXX) -c $(PIC) -o $@ $< $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES))
+	$(CXX) -c $(PIC) -g -o $@ $< $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES))
 
 # generate make rules for all source files using gcc -M with pkg-config options from PACKAGES
 %.d: %.cc

@@ -12,7 +12,7 @@ int main (int argc, char* argv[])
   System *sys = new System("TS");
   sys->initialize();
 
-  HETS2Integrator integrator;
+  TimeSteppingIntegrator integrator;
   integrator.setEndTime(0.1);
   integrator.setStepSize(1e-4);
   integrator.setPlotStepSize(1e-4);

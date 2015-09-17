@@ -53,7 +53,7 @@ namespace MBSim {
        */
       virtual ~GeneralizedForceLaw() { if(forceFunc) delete forceFunc; forceFunc = NULL; };
 
-      void init(Element::InitStage stage) {
+      virtual void init(Element::InitStage stage) {
         Element::init(stage);
         if(forceFunc)
           forceFunc->init(stage);

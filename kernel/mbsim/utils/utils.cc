@@ -103,4 +103,38 @@ namespace MBSim {
     return newMat;
   }
 
+  VecV subVec(const VecV & origVec, const VecVI & indVec, const int diffInd) {
+    VecV newVec(indVec.size(), NONINIT);
+
+    for(int i = 0; i < indVec.size(); i++) {
+      newVec(i) = origVec(indVec(i)+diffInd);
+    }
+
+    return newVec;
+  }
+
+  SqrMatV subMat(const SqrMatV & origMat, const VecVI & indVec, const int diffInd) {
+    SqrMatV newMat(indVec.size(), NONINIT);
+
+    for(int i = 0; i < indVec.size(); i++) {
+      for(int j = 0; j < indVec.size(); j++) {
+        newMat(i,j) = origMat(indVec(i)+diffInd,indVec(j)+diffInd);
+      }
+    }
+
+    return newMat;
+  }
+
+  SqrMat subMat2(const SqrMatV & origMat, const VecVI & indVec, const int diffInd) {
+    SqrMat newMat(indVec.size(), NONINIT);
+
+    for(int i = 0; i < indVec.size(); i++) {
+      for(int j = 0; j < indVec.size(); j++) {
+        newMat(i,j) = origMat(indVec(i)+diffInd,indVec(j)+diffInd);
+      }
+    }
+
+    return newMat;
+  }
+
 }

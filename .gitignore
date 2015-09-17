@@ -204,3 +204,13 @@ thirdparty/nurbs++/test-driver
 thirdparty/nurbs++/tests/Makefile.in
 thirdparty/nurbs++/tests/matrix/Makefile.in
 thirdparty/nurbs++/tests/nurbs/Makefile.in
+*.cproject
+*.project
+*.o
+*.lo
+*.d
+*Integrator.plt
+*Integrator.sum
+*.h5
+*.ombv.xml*
+*BUILD
