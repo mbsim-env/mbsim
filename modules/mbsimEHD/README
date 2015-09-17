@@ -1,4 +1,4 @@
-FlexibleBody
+EHD-Module
 ===========
 
 Necessary:
@@ -7,23 +7,18 @@ Necessary:
 
 Installation:
 ===========
-	1. 
-        aclocal
-        autoheader
-        libtoolize -c --force
-        autoconf
-        automake -a -c --force
-			                
-	2. 
-		    ./configure
+CMake is used as build system.
 
-	      important options
-
-  		  --prefix=PREFIX (where to install the library)
-        -help (further options)
+1. create a build-directory
+   mkdir BUILD
+   cd BUILD
+   
+2. run cmake in the BUILD Directory
+   cmake ..
+   
+   important options:
+     -DCMAKE_INSTALL_PREFIX=PREFIX (where to install the library)
     
-  3. 
-        make
-
-	4. 
-        make install 
+3. Build (and install) the library
+   make 
+   (make install)
