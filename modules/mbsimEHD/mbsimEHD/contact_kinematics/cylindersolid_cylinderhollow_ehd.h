@@ -91,6 +91,21 @@ namespace MBSimEHD {
        */
       fmatvec::Vec3 omegaRel;
 
+      /*!
+       * \brief Angle coordinate
+       */
+      double phi;
+
+      /*!
+       * \brief rotation matrix from F to K
+       */
+      fmatvec::SqrMat3 AKF;
+
+      /*!
+       * \brief rotation matrix from F to I
+       */
+      fmatvec::SqrMat3 AIF;
+
       /*
        * \brief Radial eccentricity in coordinate system F
        */
@@ -113,20 +128,6 @@ namespace MBSimEHD {
       // Input:
       //   y:      Coordinate of fluid domain
       void Eccentricity(const double & y);
-
-      // Mapping between y-coordinate of fluid domain (unwrapped
-      // inner bearing shell surface) and angle phi of rotated
-      // coordinate system F
-      //
-      // Input:
-      //   sys:    Object of system
-      //   y:      Coordinate of fluid domain
-      //
-      // Output:
-      //   phi:    Angle of rotated coordinate system F
-      //   AFK:    Rotation matrix
-      //TODO: fit to MBSim SqrMat3 etc. --> use the mbsim functions!!
-      void AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat3 & AFK);
 
   };
 

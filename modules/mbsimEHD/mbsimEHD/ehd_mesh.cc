@@ -717,7 +717,7 @@ namespace MBSimEHD {
     SqrMat M = SqrMat(nfree);
 
     // test variable
-    bool solveLCP = false;
+    bool solveLCP = true;
     bool sommerfeldGuembel = true;
 
     // Initialize iteration counter
