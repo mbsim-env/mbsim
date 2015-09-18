@@ -202,7 +202,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   lub = Lubricant(0.0109, 778, 0, false, Lubricant::constVisc, Lubricant::constDen);//lubT2
 
   // discretization
-  EHDPressureElement ele("quad9", 4);
+  EHDPressureElement ele("quad4", 4);
   ele.setLubricant(lub);
 
 // Create computational mesh (half fluid domain)
@@ -226,7 +226,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
 //  EHDForceLaw *fL = new EHDForceLaw();
   ctJouHou->setMesh(msh);
   ctJouHou->enableOpenMBVContactPoints(1e-5);
-  ctJouHou->enableOpenMBVNormalForce(1e-3);
+  ctJouHou->enableOpenMBVNormalForce(5e-5);
 
   //contact kinematics (delivers the info for the mesh)
   ContactKinematicsCylinderSolidCylinderHollowEHD *cK = new ContactKinematicsCylinderSolidCylinderHollowEHD();

@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 //  integrator.setStepSize(1e-5);
   RADAU5Integrator integrator;
   integrator.setEndTime(9e-3);
-  integrator.setPlotStepSize(1e-5);
+  integrator.setPlotStepSize(5e-5);
 
   // integrate the system
   integrator.integrate(*sys);
