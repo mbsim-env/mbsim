@@ -1,6 +1,6 @@
 #include "journal_bearing.h"
 
-#include "mbsimEHD/cylindersolid_cylinderhollow_ehd.h"
+#include "mbsimEHD/contact_kinematics/cylindersolid_cylinderhollow_ehd.h"
 #include "mbsimEHD/ehd_contact.h"
 #include "mbsimEHD/ehd_mesh.h"
 
@@ -202,7 +202,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   lub = Lubricant(0.0109, 778, 0, false, Lubricant::constVisc, Lubricant::constDen);//lubT2
 
   // discretization
-  EHDPressureElement ele("quad4", 4);
+  EHDPressureElement ele("quad9", 4);
   ele.setLubricant(lub);
 
 // Create computational mesh (half fluid domain)
@@ -216,7 +216,7 @@ JournalBearingSystem::JournalBearingSystem(const string &projectName) :
   xb.set(0, yb);
   xb.set(1, zb);
 
-  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 6]"));
+  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 5]"));
 
   msh->Boundary(EHDMesh::dbc, EHDMesh::x2m);
   msh->Boundary(EHDMesh::dbc, EHDMesh::x2p);    // z = -L / 2

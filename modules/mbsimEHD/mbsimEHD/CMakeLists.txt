@@ -24,5 +24,5 @@ install(TARGETS mbsimEHD
   LIBRARY DESTINATION lib)
 
 install(DIRECTORY ./
-  DESTINATION include/mbsimEHD/
+  DESTINATION include/mbsimEHD
   FILES_MATCHING PATTERN "*.h")
