@@ -63,49 +63,6 @@ namespace MBSimEHD {
        */
       virtual fmatvec::VecV updateKinematics(const fmatvec::Vec2 & alpha, MBSim::Frame::Feature ff = MBSim::Frame::all) = 0;
 
-      // Film thickness and derivatives
-      //
-      // Input:
-      //   sys:    Object of system
-      //   y:      Point inside fluid domain (y-coordinate)
-      //   e(~):   Element number in spatial discretization
-      //   g(~):   Gauss point number in element corresponding to x
-      //
-      // Output:
-      //   h1:     Distance from bearing shell center point to point
-      //           on journal surface
-      //   h2:     Distance from bearing shell center point to point
-      //           on inner bearing shell surface
-      //   h1dy:   Derivative of h1 with respect to y
-      //   h2dy:   Derivative of h2 with respect to y
-      virtual void Thickness(const fmatvec::VecV & x, double & h1, double & h2, double & h1dy, double & h2dy) = 0;
-
-      // Velocities on journal and inner bearing shell surface and
-      // derivatives
-      //
-      // Input:
-      //   sys:    Object of system
-      //   x:      Point inside fluid domain y or [y; z]
-      //   e(~):   Element number in spatial discretization
-      //   g(~):   Gauss point number in element corresponding to x
-      //
-      // Output:
-      //   u1, v1: Velocities on journal surface
-      //   u2, v2: Velocities on inner bearing shell surface
-      //   v1dy:   Derivative of v1 with respect to y
-      //   v2dy:   Derivative of v2 with respect to y
-      virtual void Velocities(const fmatvec::VecV & x, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) = 0;
-
-      // Normal vector
-      //
-      // Input:
-      //   y:      Point inside fluid domain (y-coordinate)
-      //
-      // Output:
-      //   n:       normal vectors
-      //   t:       tangential vecotrs
-      virtual void Normalvector(const fmatvec::VecV & x, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) = 0;
-
       /*!
        * \brief retrieve characteristic size for film thickness
        */
