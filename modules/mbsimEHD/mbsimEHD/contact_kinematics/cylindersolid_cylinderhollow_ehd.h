@@ -128,7 +128,7 @@ namespace MBSimEHD {
       //   phi:    Angle of rotated coordinate system F
       //   AFK:    Rotation matrix
       //TODO: fit to MBSim SqrMat3 etc. --> use the mbsim functions!!
-      void AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat2 & AFK);
+      void AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat3 & AFK);
 
   };
 

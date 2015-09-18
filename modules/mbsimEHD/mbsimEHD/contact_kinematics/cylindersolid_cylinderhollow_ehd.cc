@@ -258,7 +258,7 @@ namespace MBSimEHD {
     }
 
     double phi;
-    SqrMat2 AFK;
+    SqrMat3 AFK;
     AngleCoordSys(y, phi, AFK);
 
     Eccentricity(y);
@@ -268,7 +268,7 @@ namespace MBSimEHD {
     Thickness(x, void1, void1, void1, h2, void1, void1);
 
     // Compute derivative of second line from rotation matrix AFK
-    RowVec2 AFKdphi2;
+    RowVec3 AFKdphi2;
     AFKdphi2(0) = -cos(phi);
     AFKdphi2(1) = -sin(phi);
 
@@ -276,10 +276,10 @@ namespace MBSimEHD {
     // Note: K coincides with I for fixed bearing shell (phi2 = 0)
     double omega1 = nrm2(solid->getFrameOfReference()->getAngularVelocity());
     double omega2 = nrm2(hollow->getFrameOfReference()->getAngularVelocity());
-    fmatvec::Vec2 IuS1;
+    fmatvec::Vec3 IuS1;
     IuS1(0) = solid->getFrameOfReference()->getVelocity()(0);
     IuS1(1) = solid->getFrameOfReference()->getVelocity()(2);
-    fmatvec::Vec2 IuS2;
+    fmatvec::Vec3 IuS2;
     IuS2(0) = hollow->getFrameOfReference()->getVelocity()(0);
     IuS2(1) = hollow->getFrameOfReference()->getVelocity()(2);
     u1 = AFK.row(0) * IuS1 + omega1 * et;
@@ -306,7 +306,7 @@ namespace MBSimEHD {
     }
 
     double phi;
-    SqrMat2 AFK;
+    SqrMat3 AFK;
     AngleCoordSys(y, phi, AFK);
     n(0) = cos(phi);
     n(1) = sin(phi);
@@ -319,19 +319,19 @@ namespace MBSimEHD {
   void ContactKinematicsCylinderSolidCylinderHollowEHD::Eccentricity(const double & y) {
     // Get rotation matrix
     double phi;
-    SqrMat2 AFK;
+    SqrMat3 AFK;
     AngleCoordSys(y, phi, AFK);
 
     // Compute eccentricity in coordinate system K
     // Note: K coincides with I for fixed bearing shell (phi2 = 0)
-    fmatvec::Vec2 IxS1;      //TODO: is IxS1 the center position?!
-    fmatvec::Vec2 IxS2;
+    fmatvec::Vec3 IxS1;      //TODO: is IxS1 the center position?!
+    fmatvec::Vec3 IxS2;
     IxS1(0) = solid->getFrameOfReference()->getPosition()(0);
     IxS1(1) = solid->getFrameOfReference()->getPosition()(2);
     IxS2(0) = hollow->getFrameOfReference()->getPosition()(0);
     IxS2(1) = hollow->getFrameOfReference()->getPosition()(2);
 
-    Vec2 Ke(IxS1 - IxS2);
+    Vec3 Ke(IxS1 - IxS2);
 
     // Transform eccentricity into coordinate system F
     er = AFK.row(0) * Ke;
@@ -342,7 +342,7 @@ namespace MBSimEHD {
     r1 = sqrt(pow(rSolid, 2) - pow(et, 2));
   }
 
-  void ContactKinematicsCylinderSolidCylinderHollowEHD::AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat2 & AFK) {
+  void ContactKinematicsCylinderSolidCylinderHollowEHD::AngleCoordSys(const double & y, double & phi, fmatvec::SqrMat3 & AFK) {
 
 // Define mapping
     phi = y / rHollow;
@@ -352,6 +352,7 @@ namespace MBSimEHD {
     AFK(0, 1) = sin(phi);
     AFK(1, 0) = -sin(phi);
     AFK(1, 1) = cos(phi);
+    AFK(2, 2) = 1;
   }
 
   fmatvec::Vec3 ContactKinematicsCylinderSolidCylinderHollowEHD::getWrD() {

@@ -30,15 +30,15 @@ using namespace MBSim;
 namespace MBSimEHD {
 
   EHDMesh::EHDMesh() :
-    GeneralizedForceLaw(0), nnod(0), ndof(0), nele(0), nfree(0), ck(0) {
+      GeneralizedForceLaw(0), nnod(0), ndof(0), nele(0), nfree(0), ck(0) {
   }
 
   EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled) :
-    GeneralizedForceLaw(0), ele(ele), xb(xb), neled(neled) {
+      GeneralizedForceLaw(0), ele(ele), xb(xb), neled(neled) {
   }
 
   EHDMesh::EHDMesh(const EHDPressureElement & ele, const fmatvec::MatVx2 & xb, const fmatvec::VecInt & neled, const std::vector<fmatvec::RowVecV> & hd) :
-    GeneralizedForceLaw(0),  ele(ele), hd(hd) {
+      GeneralizedForceLaw(0), ele(ele), hd(hd) {
     /*
      * TODO...
 
@@ -716,6 +716,10 @@ namespace MBSimEHD {
     Vec Q = Vec(nfree);
     SqrMat M = SqrMat(nfree);
 
+    // test variable
+    bool solveLCP = false;
+    bool sommerfeldGuembel = true;
+
     // Initialize iteration counter
     int iter = 0;
 //        // Print header for iteration list
@@ -736,25 +740,38 @@ namespace MBSimEHD {
       PressureAssembly();
       Dfree = subVec(D, f, -1);
       M = subMat2(KT, f, -1);  // TODO: subMat for SqrMat
-      VecV Rfree = subVec(R, f, -1); //TODO: assemble -R directly?
+      VecV Rfree = subVec(R, f, -1);
       Q = Rfree - M * Dfree;
 
       //TODO: here is the solution
-      LinearComplementarityProblem lcp(M, Q);
-      lcp.setStrategy(LinearComplementarityProblem::LCPSolvingStrategy(2));
-      lcp.setSystem(M, Q);
+      if (solveLCP) {
+        LinearComplementarityProblem lcp(M, Q);
+        lcp.setStrategy(LinearComplementarityProblem::LCPSolvingStrategy(2));
+        lcp.setSystem(M, Q);
 
-      // Z = lcp.solve(Dfree);
-      Zsol = lcp.solve(Dfree);
+        // Z = lcp.solve(Dfree);
+        Zsol = lcp.solve(Dfree);
+        for (int i = 0; i < nfree; i++) {
+          Z(i) = Zsol(nfree + i);
+        }
+      }
+      else {
 
 //      SqrMatV JLU = facLU(M, ipiv);
-//      Z = slvLUFac(JLU, Rfree, ipiv);
+      Z = slvLU(M, -Rfree); //TODO: assemble -R directly?
 
+      if(sommerfeldGuembel) {
+        for(int i = 0; i < Z.size(); i++) {
+          if(Z(i) < 0)
+            Z(i) = 0;
+        }
+      }
+
+      }
       // UPDATE of full D-vector with new solution
       // Insert new solution at free DOFs
       for (int i = 0; i < nfree; i++) {
-        Z(i) = Zsol(nfree + i);
-        D(f(i) - 1) += Zsol(nfree + i);
+        D(f(i) - 1) += Z(i);
       }
 
       // Compute effective solution increment for convergence check
