@@ -41,6 +41,7 @@ namespace MBSimEHD {
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
       virtual void updateKinematics(const std::vector<MBSim::SingleContact> & contacts);
+      virtual fmatvec::VecV updateKinematics(const fmatvec::Vec2 & alpha, MBSim::Frame::Feature ff = MBSim::Frame::all);
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData);
       virtual void Thickness(const fmatvec::VecV & x, double & h1, double & h2, double & h1dy, double & h2dy);
       virtual void Velocities(const fmatvec::VecV & x, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy);

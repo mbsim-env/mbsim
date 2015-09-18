@@ -21,6 +21,7 @@
 #define _CONTACT_KINEMATICS_EHD_INTERFACE_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
+#include "mbsim/frame.h"
 
 namespace MBSimEHD {
 
@@ -39,6 +40,29 @@ namespace MBSimEHD {
       virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index);
 
       virtual void updateKinematics(const std::vector<MBSim::SingleContact> & contacts) = 0;
+
+      /*!
+       * \brief interface function for the mesh-positions to update the necessary entries at certain positions x (either nodes or gauss-points, or...)
+       *
+       * \param   x   position of the surface coordinate
+       * \param   ff  the frame feature signalizes what should be computed.
+       *              If all (=default) is active, the complete vector should be returned
+       *              If position is active, only the position information is computed
+       * \return  A vector of not specified length holding the certain information which is needed. It holds the following order
+       *          h1    distance of the surfaces in first direction
+       *          h2    distance of the surfaces in second direction
+       *          dh1d1 spatial derivative of h1 in the first direction(=dh1dy)
+       *          dh2d1 spatial derivative of h2 in the first direction(=dh2dy)
+       *          u1    Velocity in first direction of the first surface
+       *          u2    Velocity in second direction of the first surface
+       *          v1    Velocity in first direction of the second surface
+       *          v2    Velocity in second direction of the second surface
+       *          dv1d1
+       *          dv1d2
+       * \todo: this is maybe not the best interface as it does not consider all possibilites. At the current state however
+       */
+      virtual fmatvec::VecV updateKinematics(const fmatvec::Vec2 & alpha, MBSim::Frame::Feature ff = MBSim::Frame::all) = 0;
+
       // Film thickness and derivatives
       //
       // Input:

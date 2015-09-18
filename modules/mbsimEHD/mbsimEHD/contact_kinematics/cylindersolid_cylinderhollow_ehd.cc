@@ -79,7 +79,7 @@ namespace MBSimEHD {
     //initialize values
     Vec2 h;
     h(1) = rHollow; //is h2 in [1]
-    for(int i = 0; i < numberOfPotentialContactPoints; i++) {
+    for (int i = 0; i < numberOfPotentialContactPoints; i++) {
       heightsPos.push_back(h);
       dheightsdyPos.push_back(Vec2());
     }
@@ -93,7 +93,7 @@ namespace MBSimEHD {
     IvC1C2 = solid->getFrame()->getVelocity() - hollow->getFrame()->getVelocity();
     omegaRel = solid->getFrame()->getAngularVelocity() - hollow->getFrame()->getAngularVelocity();
 
-    if(nrm2(IrC1C2) > rHollow - rSolid) {
+    if (nrm2(IrC1C2) > rHollow - rSolid) {
       throw MBSimError("Penetration active");
     }
 
@@ -106,10 +106,10 @@ namespace MBSimEHD {
       double z = pos(posCounter++);
 
       // Orientation
-      double phi =  - y / rHollow;
+      double phi = -y / rHollow;
       SqrMat3 AKF = BasicRotAIKy(phi);
       SqrMat3 AIF = hollow->getFrameOfReference()->getOrientation() * AKF;
-      cpData[ihollow].getFrameOfReference().getOrientation().set(0, - AIF.col(0));
+      cpData[ihollow].getFrameOfReference().getOrientation().set(0, -AIF.col(0));
       cpData[ihollow].getFrameOfReference().getOrientation().set(1, hollow->getFrameOfReference()->getOrientation().col(1)); //TODO holds not for frustum, only cylinder
       cpData[ihollow].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ihollow].getFrameOfReference().getOrientation().col(0), cpData[ihollow].getFrameOfReference().getOrientation().col(1)));
 
@@ -124,7 +124,7 @@ namespace MBSimEHD {
       double er = e(0);
       double et = e(2);
       double r1 = sqrt(pow(rSolid, 2) - pow(et, 2));
-      heightsPos[i](0) = er + r1;//is h1 in [1] (h2 is constant)
+      heightsPos[i](0) = er + r1; //is h1 in [1] (h2 is constant)
       dheightsdyPos[i](0) = et * heightsPos[i](0) / (rHollow * r1);
       //TODO: Add the velocities information as well and save it to a vector or a set!!
 
@@ -136,6 +136,87 @@ namespace MBSimEHD {
       r(0) = heightsPos[i](1);
       cpData[ihollow].getFrameOfReference().getPosition() = hollow->getFrameOfReference()->getPosition() + AIF * r;
     }
+  }
+
+  fmatvec::VecV ContactKinematicsCylinderSolidCylinderHollowEHD::updateKinematics(const fmatvec::Vec2 & alpha, MBSim::Frame::Feature ff) {
+    //The frame feature is ignored by now and all values are computed every time!
+    VecV ret(10);
+
+    double y = alpha(0);
+    if (dimLess) {
+      y = y * xrF;
+    }
+
+    double phi;
+    SqrMat3 AFK;
+    AngleCoordSys(y, phi, AFK);
+
+    Eccentricity(y);
+
+    // Compute distances h1 and h2
+    double & h1 = ret(0);
+    double & h2 = ret(1);
+    double & h1dy = ret(2);
+    double & h2dy = ret(3);
+    double & u1 = ret(4);
+    double & u2 = ret(5);
+    double & v1 = ret(6);
+    double & v2 = ret(7);
+    double & v1dy = ret(8);
+    double & v2dy = ret(9);
+
+    h1 = er + r1;
+    h2 = rHollow;
+
+    // Compute derivatives of h1 and h2 with respect to y
+
+    h1dy = et * h1 / (rHollow * r1);
+
+    // Check if the film thickness is smaller than zero, meaning
+    // if there is a penetration of the contacting bodies
+    if (h2 < h1)
+      throw MBSimError("Film thickness is smaller than zero, i.e. h < 0.");
+
+
+    if (dimLess) {
+      h1 /= hrF;
+      h2 /= hrF;
+      h1dy = h1dy * xrF / hrF;
+//      h2dy = h2dy * xrF / hrF;
+    }
+
+    // Compute derivative of second line from rotation matrix AFK
+    RowVec3 AFKdphi2;
+    AFKdphi2(0) = -cos(phi);
+    AFKdphi2(1) = -sin(phi);
+
+    // Compute velocities on journal surface
+    // Note: K coincides with I for fixed bearing shell (phi2 = 0)
+    double omega1 = nrm2(solid->getFrameOfReference()->getAngularVelocity());
+    double omega2 = nrm2(hollow->getFrameOfReference()->getAngularVelocity());
+    fmatvec::Vec3 IuS1;
+    IuS1(0) = solid->getFrameOfReference()->getVelocity()(0);
+    IuS1(1) = solid->getFrameOfReference()->getVelocity()(2);
+    fmatvec::Vec3 IuS2;
+    IuS2(0) = hollow->getFrameOfReference()->getVelocity()(0);
+    IuS2(1) = hollow->getFrameOfReference()->getVelocity()(2);
+    u1 = AFK.row(0) * IuS1 + omega1 * et;
+    v1 = AFK.row(1) * IuS1 + omega1 * r1;
+
+    // Compute velocities on inner bearing shell surface
+    u2 = AFK.row(0) * IuS2;
+    v2 = AFK.row(1) * IuS2 + omega2 * h2;
+
+    // Compute derivative of tangential velocities
+    v1dy = 1 / rHollow * (AFKdphi2 * IuS1 + omega1 * et * er / r1);
+    v2dy = 1 / rHollow * AFKdphi2 * IuS2;
+
+    if (dimLess) {
+      v1dy = v1dy * xrF;
+      v2dy = v2dy * xrF;
+    }
+
+    return ret;
   }
 
   void ContactKinematicsCylinderSolidCylinderHollowEHD::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {

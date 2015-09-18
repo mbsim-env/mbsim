@@ -137,14 +137,25 @@ namespace MBSimEHD {
       VecV pdx = Npdx * de;
 
       // Retrieve film thickness and spatial derivatives at x
-      double h1, h2, h1dy, h2dy; //TODO: correct type?
-      ck->Thickness(x, h1, h2, h1dy, h2dy); //TODO: write interface with MBSim
+      VecV kin = ck->updateKinematics(x);
+      const double & h1 = kin(0);
+      const double & h2 = kin(1);
+      const double & h1dy = kin(2);
+      const double & h2dy = kin(3);
+      const double & u1 = kin(4);
+      const double & u2 = kin(5);
+      const double & v1 = kin(6);
+      const double & v2 = kin(7);
+      const double & v1dy = kin(8);
+      const double & v2dy = kin(9);
+//      double h1, h2, h1dy, h2dy; //TODO: correct type?
+//      ck->Thickness(x, h1, h2, h1dy, h2dy); //TODO: write interface with MBSim
       double h = h2 - h1;
       double hdy = h2dy - h1dy;
-
-      // Retrieve surface velocities and spatial derivatives at x
-      double u1, u2, v1, v2, v1dy, v2dy; //TODO: correct type?
-      ck->Velocities(x, u1, u2, v1, v2, v1dy, v2dy); //TODO: write interface with MBSim!
+//
+//      // Retrieve surface velocities and spatial derivatives at x
+//      double u1, u2, v1, v2, v1dy, v2dy; //TODO: correct type?
+//      ck->Velocities(x, u1, u2, v1, v2, v1dy, v2dy); //TODO: write interface with MBSim!
       //TODO: for interface later make Vec3 for all velocities
 
       // Retrieve fluid parameters and their derivatives at p
