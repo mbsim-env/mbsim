@@ -54,7 +54,7 @@ namespace MBSimEHD {
       //           on inner bearing shell surface
       //   h1dy:   Derivative of h1 with respect to y
       //   h2dy:   Derivative of h2 with respect to y
-      virtual void Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy) = 0;
+      virtual void Thickness(const fmatvec::VecV & x, double & h1, double & h2, double & h1dy, double & h2dy) = 0;
 
       // Velocities on journal and inner bearing shell surface and
       // derivatives
@@ -70,7 +70,7 @@ namespace MBSimEHD {
       //   u2, v2: Velocities on inner bearing shell surface
       //   v1dy:   Derivative of v1 with respect to y
       //   v2dy:   Derivative of v2 with respect to y
-      virtual void Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) = 0;
+      virtual void Velocities(const fmatvec::VecV & x, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) = 0;
 
       // Normal vector
       //

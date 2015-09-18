@@ -42,9 +42,8 @@ namespace MBSimEHD {
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
       virtual void updateKinematics(const std::vector<MBSim::SingleContact> & contacts);
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData);
-      virtual void Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy);
-      virtual void Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy);
-      virtual void Normalvector(const fmatvec::VecV & x, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t);
+      virtual void Thickness(const fmatvec::VecV & x, double & h1, double & h2, double & h1dy, double & h2dy);
+      virtual void Velocities(const fmatvec::VecV & x, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy);
       /***************************************************/
 
       fmatvec::Vec3 getWrD();

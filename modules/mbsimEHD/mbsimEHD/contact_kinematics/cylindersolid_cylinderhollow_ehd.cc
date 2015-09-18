@@ -219,7 +219,7 @@ namespace MBSimEHD {
 //  }
   }
 
-  void ContactKinematicsCylinderSolidCylinderHollowEHD::Thickness(const fmatvec::VecV & x, const int & e, const int & g, double & h1, double & h2, double & h1dy, double & h2dy) {
+  void ContactKinematicsCylinderSolidCylinderHollowEHD::Thickness(const fmatvec::VecV & x, double & h1, double & h2, double & h1dy, double & h2dy) {
 
     double y = x(0);
     if (dimLess) {
@@ -250,7 +250,7 @@ namespace MBSimEHD {
     }
   }
 
-  void ContactKinematicsCylinderSolidCylinderHollowEHD::Velocities(const fmatvec::VecV & x, const int & e, const int & g, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) {
+  void ContactKinematicsCylinderSolidCylinderHollowEHD::Velocities(const fmatvec::VecV & x, double & u1, double & u2, double & v1, double & v2, double & v1dy, double & v2dy) {
 
     double y = x(0);
     if (dimLess) {
@@ -265,7 +265,7 @@ namespace MBSimEHD {
 
     double h2;
     double void1;
-    Thickness(x, void1, void1, void1, h2, void1, void1);
+    Thickness(x, void1, h2, void1, void1);
 
     // Compute derivative of second line from rotation matrix AFK
     RowVec3 AFKdphi2;
@@ -297,23 +297,6 @@ namespace MBSimEHD {
       v1dy = v1dy * xrF;
       v2dy = v2dy * xrF;
     }
-  }
-
-  void ContactKinematicsCylinderSolidCylinderHollowEHD::Normalvector(const fmatvec::VecV & x, fmatvec::Vec3 & n, fmatvec::Mat3x2 & t) {
-    double y = x(0);
-    if (dimLess) {
-      y = y * xrF;
-    }
-
-    double phi;
-    SqrMat3 AFK;
-    AngleCoordSys(y, phi, AFK);
-    n(0) = cos(phi);
-    n(1) = sin(phi);
-
-    t(0, 0) = -sin(phi);
-    t(1, 0) = cos(phi);
-    t(2, 1) = 1;
   }
 
   void ContactKinematicsCylinderSolidCylinderHollowEHD::Eccentricity(const double & y) {
