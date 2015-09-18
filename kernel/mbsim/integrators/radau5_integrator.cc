@@ -171,8 +171,9 @@ namespace MBSimIntegrator {
     //integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();
 
-    cout.unsetf (ios::scientific);
     cout << endl;
+    cout.unsetf (ios::scientific);
+    cout << "Integration time: " << time << " [s]" << endl;
   }
 
   void RADAU5Integrator::initializeUsingXML(DOMElement *element) {
