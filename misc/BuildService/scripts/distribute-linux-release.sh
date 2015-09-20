@@ -34,6 +34,13 @@ $PREFIX/bin/fmuCheck.*
 $PREFIX/lib/mbsimsrc_fmi.so
 $PREFIX/lib/mbsimppxml_fmi.so
 $PREFIX/lib/mbsimxml_fmi.so
+$PREFIX/lib/libmbsimControl.so
+$PREFIX/lib/libmbsimElectronics.so
+$PREFIX/lib/libmbsimFlexibleBody.so
+$PREFIX/lib/libmbsimHydraulics.so
+$PREFIX/lib/libmbsimInterface.so
+$PREFIX/lib/libmbsimPowertrain.so
+$PREFIX/lib/libmbxmlutils-eval-octave.so
 /usr/bin/h5copy
 /usr/bin/h5diff
 /usr/bin/h5dump
