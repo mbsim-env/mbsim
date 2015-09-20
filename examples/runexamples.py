@@ -148,6 +148,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
+debugOpts.add_argument("--enableAlphaPy", action="store_true", help="Also run MBS.mbsimprj.alpha_py.xml examples")
 
 # parse command line options
 args = argparser.parse_args()
@@ -673,7 +674,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
   # make baseDir a relative path
   baseDir=os.path.relpath(baseDir)
   for root, dirs, _ in os.walk(baseDir):
-    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml"))
+    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml")) or (args.enableAlphaPy and os.path.isfile(pj(root, "MBS.mbsimprj.alpha_py.xml")))
     flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
@@ -730,7 +731,7 @@ def runExample(resultQueue, example):
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt, outfiles=executeSrcExample(executeFD, example)
-      elif os.path.isfile("MBS.mbsimprj.xml"):
+      elif os.path.isfile("MBS.mbsimprj.xml") or os.path.isfile("MBS.mbsimprj.alpha_py.xml"):
         executeRet, dt, outfiles=executeXMLExample(executeFD, example)
       elif os.path.isfile("MBS.mbsimprj.flat.xml"):
         executeRet, dt, outfiles=executeFlatXMLExample(executeFD, example)
@@ -991,8 +992,11 @@ def executeSrcExample(executeFD, example):
 
 # execute the XML example in the current directory (write everything to fd executeFD)
 def executeXMLExample(executeFD, example):
-  # we handle MBS.mbsimprj.xml and FMI.mbsimprj.xml files here
-  prjFile=glob.glob("*.mbsimprj.xml")[0]
+  # we handle MBS.mbsimprj.xml, MBS.mbsimprj.alpha_py.xml and FMI.mbsimprj.xml files here
+  if   os.path.isfile("MBS.mbsimprj.xml"):          prjFile="MBS.mbsimprj.xml"
+  elif os.path.isfile("MBS.mbsimprj.alpha_py.xml"): prjFile="MBS.mbsimprj.alpha_py.xml"
+  elif os.path.isfile("FMI.mbsimprj.xml"):          prjFile="FMI.mbsimprj.xml"
+  else: raise RuntimeError("Internal error: Unknown ppxml file.")
 
   print("Running command:", file=executeFD)
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+[prjFile]))
