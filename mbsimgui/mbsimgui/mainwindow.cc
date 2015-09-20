@@ -721,7 +721,7 @@ namespace MBSimGUI {
       // add parameter
       eval->addParamSet(doc->getDocumentElement());
     }
-    catch(runtime_error error) {
+    catch(const exception &error) {
       message = string("An exception occurred in updateParameters: ") + error.what();
     }
     catch(...) {
