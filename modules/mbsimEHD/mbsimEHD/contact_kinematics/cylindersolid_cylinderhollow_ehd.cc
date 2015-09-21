@@ -31,10 +31,6 @@ using namespace std;
 
 namespace MBSimEHD {
 
-  void ContactKinematicsEHDInterface::updateg(Vec &g, ContourPointData *cpData, int index) {
-    throw MBSimError("updateg-interface is not sufficient for EHD-contact. Use updateKinematics!");
-  }
-
   void ContactKinematicsCylinderSolidCylinderHollowEHD::assignContours(const vector<Contour*> &contour) {
     if (not (dynamic_cast<Frustum*>(contour[0]) and dynamic_cast<Frustum*>(contour[1]))) {
       throw MBSimError("Must be two frustums!");
