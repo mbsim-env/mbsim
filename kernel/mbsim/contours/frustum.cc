@@ -21,13 +21,11 @@
 #include "mbsim/contours/frustum.h"
 #include <mbsim/utils/utils.h>
 
-
 #include <fmatvec/fmatvec.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
 #endif
-
 
 using namespace std;
 using namespace fmatvec;
@@ -37,27 +35,46 @@ using namespace boost;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Frustum, MBSIM%"Frustum")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Frustum, MBSIM % "Frustum")
 
   void Frustum::init(InitStage stage) {
-    if(stage==plotting) {
+    if (stage == plotting) {
       updatePlotFeatures();
-  
-      if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
-        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r(0));
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r(1));
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
+
+      if (getPlotFeature(plotRecursive) == enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if (getPlotFeature(openMBV) == enabled && openMBVRigidBody) {
+          static_pointer_cast < OpenMBV::Frustum > (openMBVRigidBody)->setInitialTranslation(0., h, 0.);
+          static_pointer_cast < OpenMBV::Frustum > (openMBVRigidBody)->setInitialRotation(3. / 2. * M_PI, 0, 0.);
+          static_pointer_cast < OpenMBV::Frustum > (openMBVRigidBody)->setBaseRadius(r(0));
+          static_pointer_cast < OpenMBV::Frustum > (openMBVRigidBody)->setTopRadius(r(1));
+          static_pointer_cast < OpenMBV::Frustum > (openMBVRigidBody)->setHeight(h);
         }
-  #endif
+#endif
         RigidContour::init(stage);
       }
     }
     else
       RigidContour::init(stage);
+  }
+
+  void Frustum::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
+    if (ff == Frame::position) {
+      const double & hCurr = cp.getLagrangeParameterPosition()(0);
+      const double & phi = cp.getLagrangeParameterPosition()(1);
+      Vec3 KrP;
+      KrP(1) = hCurr; // height coordinate is the y-position
+
+      double currRad = hCurr / h * (r(1) - r(0)) + r(0);
+
+      KrP(0) = cos(phi) * currRad;
+      KrP(2) = sin(phi) * currRad;
+
+      cp.getFrameOfReference().getPosition() = getReferencePosition() + getReferenceOrientation() * KrP;
+    }
+    else {
+      RigidContour::updateKinematicsForFrame(cp, ff);
+    }
   }
 
   //TODO: Same function as in flexible_body_2s_13_mfr_mindlin (transformCW) --> this is just the transformation into cylindrical coordinates --> get it into utils?
@@ -81,33 +98,33 @@ namespace MBSim {
   void Frustum::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"baseRadius");
-    r(0)=getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"topRadius");
-    r(1)=getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"height");
-    h=getDouble(e);
-    if (E(element)->getFirstElementChildNamed(MBSIM%"solid"))
-      outCont=true;
+    e = E(element)->getFirstElementChildNamed(MBSIM % "baseRadius");
+    r(0) = getDouble(e);
+    e = E(element)->getFirstElementChildNamed(MBSIM % "topRadius");
+    r(1) = getDouble(e);
+    e = E(element)->getFirstElementChildNamed(MBSIM % "height");
+    h = getDouble(e);
+    if (E(element)->getFirstElementChildNamed(MBSIM % "solid"))
+      outCont = true;
     else
-      outCont=false;
+      outCont = false;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
-    if(e) {
+    e = E(element)->getFirstElementChildNamed(MBSIM % "enableOpenMBV");
+    if (e) {
       OpenMBVFrustum ombv;
-      openMBVRigidBody=ombv.createOpenMBV(e); 
+      openMBVRigidBody = ombv.createOpenMBV(e);
     }
 #endif
   }
 
   DOMElement* Frustum::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Contour::writeXMLFile(parent);
- //   addElementText(ele0,MBSIM%"baseRadius",r(0));
- //   addElementText(ele0,MBSIM%"topRadius",r(1));
- //   addElementText(ele0,MBSIM%"height",h);
- //   addElementText(ele0,MBSIM%"solid",outCont);
- //   if(openMBVRigidBody)
- //     ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
+    //   addElementText(ele0,MBSIM%"baseRadius",r(0));
+    //   addElementText(ele0,MBSIM%"topRadius",r(1));
+    //   addElementText(ele0,MBSIM%"height",h);
+    //   addElementText(ele0,MBSIM%"solid",outCont);
+    //   if(openMBVRigidBody)
+    //     ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
     return ele0;
   }
 

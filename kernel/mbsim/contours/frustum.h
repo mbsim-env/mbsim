@@ -52,6 +52,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
+      virtual void updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff);
       virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /***************************************************/
 
