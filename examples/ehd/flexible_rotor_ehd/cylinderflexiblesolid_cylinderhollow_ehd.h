@@ -66,6 +66,9 @@ namespace MBSimEHD {
       MBSimFlexibleBody::CylinderFlexible *solid;
       MBSim::Frustum *hollow;
 
+      /*!
+       * \brief updates the positions of the contact points into the two contour point datas
+       */
       virtual void updatePointKinematics(MBSim::ContourPointData & cpSolid, MBSim::ContourPointData & cpHollow);
 
       /*!

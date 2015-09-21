@@ -90,24 +90,12 @@ namespace MBSimEHD {
     for (int i = 0; i < numberOfPotentialContactPoints; i++) {
 
       ContourPointData * cpData = contacts[i].getcpData();
-      cpData[ihollow].getLagrangeParameterPosition()(0) = pos(posCounter++);
-      cpData[ihollow].getLagrangeParameterPosition()(1) = pos(posCounter++);
+      cpData[ihollow].getLagrangeParameterPosition()(0) = pos(posCounter++); // z or height direction
+      cpData[ihollow].getLagrangeParameterPosition()(1) = pos(posCounter++); // phi or azimuthal direction
 
-      const double & z = cpData[ihollow].getLagrangeParameterPosition()(0);
+      const double & z = cpData[ihollow].getLagrangeParameterPosition()(1);
 
       updatePointKinematics(cpData[isolid], cpData[ihollow]);
-
-      // distance between the two points
-      Vec WrD = cpData[ihollow].getFrameOfReference().getPosition() - cpData[isolid].getFrameOfReference().getPosition();
-
-      //Orientation
-      cpData[ihollow].getFrameOfReference().getOrientation().set(0, -AIF.col(0));
-      cpData[ihollow].getFrameOfReference().getOrientation().set(1, hollow->getFrameOfReference()->getOrientation().col(1)); //TODO holds not for frustum, only cylinder
-      cpData[ihollow].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ihollow].getFrameOfReference().getOrientation().col(0), cpData[ihollow].getFrameOfReference().getOrientation().col(1)));
-
-      cpData[isolid].getFrameOfReference().getOrientation().set(0, -cpData[ihollow].getFrameOfReference().getOrientation().col(0));
-      cpData[isolid].getFrameOfReference().getOrientation().set(1, -cpData[ihollow].getFrameOfReference().getOrientation().col(1));
-      cpData[isolid].getFrameOfReference().getOrientation().set(2, cpData[ihollow].getFrameOfReference().getOrientation().col(2));
     }
   }
 
@@ -209,7 +197,7 @@ namespace MBSimEHD {
   void ContactKinematicsCylinderFlexibleSolidCylinderHollowEHD::updatePointKinematics(MBSim::ContourPointData & cpSolid, MBSim::ContourPointData & cpHollow) {
     // compute the rotation matrices
     phi = cpHollow.getLagrangeParameterPosition()(1);
-    AKF = BasicRotAIKy(phi);
+    AKF = BasicRotAKIy(phi);
     AIF = hollow->getFrameOfReference()->getOrientation() * AKF;
 
     hollow->updateKinematicsForFrame(cpHollow, Frame::position);
@@ -238,6 +226,23 @@ namespace MBSimEHD {
 
     // kinematics for azimuthal contact search
     solid->updateKinematicsForFrame(cpSolid, Frame::position_cosy);
+
+    // distance between the surface of the hollow and the center point of the solid
+    Vec3 WrD = cpHollow.getFrameOfReference().getPosition() - cpSolid.getFrameOfReference().getPosition();
+
+    //TODO this is not the complete correct computation
+    Vec3 n = WrD / nrm2(WrD);
+
+    cpSolid.getFrameOfReference().getPosition() += n * rSolid;
+
+    //Orientation
+    cpHollow.getFrameOfReference().getOrientation().set(0, -AIF.col(0));
+    cpHollow.getFrameOfReference().getOrientation().set(1, hollow->getFrameOfReference()->getOrientation().col(1)); //TODO holds not for frustum, only cylinder
+    cpHollow.getFrameOfReference().getOrientation().set(2, crossProduct(cpHollow.getFrameOfReference().getOrientation().col(0), cpHollow.getFrameOfReference().getOrientation().col(1)));
+
+    cpSolid.getFrameOfReference().getOrientation().set(0, -cpHollow.getFrameOfReference().getOrientation().col(0));
+    cpSolid.getFrameOfReference().getOrientation().set(1, -cpHollow.getFrameOfReference().getOrientation().col(1));
+    cpSolid.getFrameOfReference().getOrientation().set(2, cpHollow.getFrameOfReference().getOrientation().col(2));
   }
 
   void ContactKinematicsCylinderFlexibleSolidCylinderHollowEHD::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {

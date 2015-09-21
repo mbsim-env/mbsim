@@ -190,27 +190,27 @@ FlexibleRotorEHD::FlexibleRotorEHD(const string &projectName) :
   ele.setLubricant(lub);
 
 // Create computational mesh (half fluid domain)
-  RowVec2 yb;
+  RowVec2 yb; //first coordinate direction is height direction
   yb(0) = 0;
-  yb(1) = 2 * M_PI;
-  RowVec2 zb;
+  yb(1) = b_GLS;
+  RowVec2 zb; //second coordinate diretion is azimuthal direction
   zb(0) = 0;
-  zb(1) = b_GLS;
+  zb(1) = 2 * M_PI;
   MatVx2 xb(2);
   xb.set(0, yb);
   xb.set(1, zb);
 
-  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[20; 5]"));
+  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[5; 20]"));
 
-  msh->Boundary(EHDMesh::dbc, EHDMesh::x2m);
-  msh->Boundary(EHDMesh::dbc, EHDMesh::x2p);    // z = -L / 2
-  msh->Boundary(EHDMesh::per1, EHDMesh::x1m);   // y = 0
-  msh->Boundary(EHDMesh::per2, EHDMesh::x1p);   // y = 2 * pi * R2
+  msh->Boundary(EHDMesh::dbc, EHDMesh::x1m);
+  msh->Boundary(EHDMesh::dbc, EHDMesh::x1p);
+  msh->Boundary(EHDMesh::per1, EHDMesh::x2m);
+  msh->Boundary(EHDMesh::per2, EHDMesh::x2p);
 
 //  EHDForceLaw *fL = new EHDForceLaw();
   ctBeamHou->setMesh(msh);
-  ctBeamHou->enableOpenMBVContactPoints(1e-5);
-  ctBeamHou->enableOpenMBVNormalForce(5e-5);
+  ctBeamHou->enableOpenMBVContactPoints(1e-3);
+  ctBeamHou->enableOpenMBVNormalForce();
 
   //contact kinematics (delivers the info for the mesh)
   ContactKinematicsCylinderFlexibleSolidCylinderHollowEHD *cK = new ContactKinematicsCylinderFlexibleSolidCylinderHollowEHD();
