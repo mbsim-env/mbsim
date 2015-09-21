@@ -38,6 +38,11 @@ namespace MBSimEHD {
    */
   class ContactKinematicsCylinderSolidCylinderHollowEHD : public ContactKinematicsEHDInterface {
     public:
+      /*!
+       * \brief destructor
+       */
+      virtual ~ContactKinematicsCylinderSolidCylinderHollowEHD();
+
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
       virtual void updateKinematics(const std::vector<MBSim::SingleContact> & contacts);

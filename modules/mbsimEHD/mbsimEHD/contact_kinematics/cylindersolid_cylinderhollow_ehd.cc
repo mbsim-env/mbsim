@@ -31,6 +31,10 @@ using namespace std;
 
 namespace MBSimEHD {
 
+  ContactKinematicsCylinderSolidCylinderHollowEHD::~ContactKinematicsCylinderSolidCylinderHollowEHD() {
+
+  }
+
   void ContactKinematicsCylinderSolidCylinderHollowEHD::assignContours(const vector<Contour*> &contour) {
     if (not (dynamic_cast<Frustum*>(contour[0]) and dynamic_cast<Frustum*>(contour[1]))) {
       throw MBSimError("Must be two frustums!");

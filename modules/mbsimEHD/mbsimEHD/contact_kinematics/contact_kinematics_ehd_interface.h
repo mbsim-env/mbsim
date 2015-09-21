@@ -37,7 +37,14 @@ namespace MBSimEHD {
       friend class EHDMesh; //TODO: should only be avoided
 
     public:
-      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index);
+      /**
+       * \brief destructor
+       */
+      virtual ~ContactKinematicsEHDInterface();
+
+      /*INERITED INTERFACE*/
+      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index = 0);
+      /*END INHERITED INTERFACE*/
 
       virtual void updateKinematics(const std::vector<MBSim::SingleContact> & contacts) = 0;
 

@@ -22,6 +22,10 @@
 
 namespace MBSimEHD {
 
+  ContactKinematicsEHDInterface::~ContactKinematicsEHDInterface() {
+
+  }
+
   void ContactKinematicsEHDInterface::updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index) {
     throw MBSim::MBSimError("updateg-interface is not sufficient for EHD-contact. Use updateKinematics!");
   }
