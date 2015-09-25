@@ -203,8 +203,12 @@ namespace MBSimEHD {
     hollow->updateKinematicsForFrame(cpHollow, Frame::position);
 
     /* longitudinal contact search */
-    bool searchAtAll = false;
-    if (searchAtAll) {
+    bool searchLongitudinal = false;
+    // in case the hollow and the solid to share the same coordinate length coordinate direction
+    // (and no longitudinal relative movement is done)
+    // then no longitudinal search is needed!!
+
+    if (searchLongitudinal) {
       PointHelper ptContour(cpHollow.getFrameOfReference().getPosition());
       FuncPairContour1sPoint func(&ptContour, solid);
       Contact1sSearch search(&func);
@@ -227,12 +231,13 @@ namespace MBSimEHD {
     // kinematics for azimuthal contact search
     solid->updateKinematicsForFrame(cpSolid, Frame::position_cosy);
 
-    // distance between the surface of the hollow and the center point of the solid
+    // distance between the surface of the hollow and the center-line point of the solid
     Vec3 WrD = cpHollow.getFrameOfReference().getPosition() - cpSolid.getFrameOfReference().getPosition();
 
     //TODO this is not the complete correct computation
     Vec3 n = WrD / nrm2(WrD);
 
+    // update the position at the surface of the solid
     cpSolid.getFrameOfReference().getPosition() += n * rSolid;
 
     //Orientation

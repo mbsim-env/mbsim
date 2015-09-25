@@ -200,7 +200,7 @@ FlexibleRotorEHD::FlexibleRotorEHD(const string &projectName) :
   xb.set(0, yb);
   xb.set(1, zb);
 
-  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[5; 20]"));
+  EHDMesh * msh = new EHDMesh(ele, xb, VecInt("[3; 10]"));
 
   msh->Boundary(EHDMesh::dbc, EHDMesh::x1m);
   msh->Boundary(EHDMesh::dbc, EHDMesh::x1p);
