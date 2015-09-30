@@ -124,72 +124,55 @@ namespace MBSimEHD {
 
     updatePointKinematics(cpSolid, cpHollow);
 
+    Vec3 WrD = cpHollow.getFrameOfReference().getPosition() - cpSolid.getFrameOfReference().getPosition();
+
     // Compute distances h1 and h2
     //TODO: ...
-//    h1 = er + r1;
-//    h2 = rHollow;
-//
-//    if (ff == Frame::position)
-//      return ret;
-//
-//// Compute derivatives of h1 and h2 with respect to y
-//
-//    h1dy = et * h1 / (rHollow * r1);
-//
-//// Check if the film thickness is smaller than zero, meaning
-//// if there is a penetration of the contacting bodies
-//    if (h2 < h1)
-//      throw MBSimError("Film thickness is smaller than zero, i.e. h < 0.");
-//
-//    if (dimLess) {
-//      h1 /= hrF;
-//      h2 /= hrF;
-//      h1dy = h1dy * xrF / hrF;
-////      h2dy = h2dy * xrF / hrF;
-//    }
-//
-//    Vec3 r;
-//    r(0) = h1;
-//    r(1) = alpha(1);
-//    r = hollow->getFrameOfReference()->getPosition() + AIF * r - solid->getFrameOfReference()->getPosition();
-//    Vec3 Fu1 = solid->getFrameOfReference()->getVelocity();
-//    Fu1 += crossProduct(solid->getFrameOfReference()->getAngularVelocity(), r);
-//    Fu1 = AIF.T() * Fu1; //Transform in F-system
-//
-//    Vec3 Fu2 = AIF.T() * (hollow->getFrameOfReference()->getVelocity() + crossProduct(hollow->getFrameOfReference()->getAngularVelocity(), AIF.col(0) * h2));
-//
-//    u1 = Fu1(0); //AKF.col(0).T() * IuS1 + omega1 * et;
-//    v1 = Fu1(2); //AKF.col(1).T() * IuS1 + omega1 * r1;
-//
-//// Compute velocities on inner bearing shell surface
-//    u2 = Fu2(0); //AKF.col(0).T() * IuS2;
-//    v2 = Fu2(2); //AKF.col(1).T() * IuS2 + omega2 * h2;
-//
-//// Compute velocities on journal surface
-//// Note: K coincides with I for fixed bearing shell (phi2 = 0)
-////    double omega1 = hollow->getFrameOfReference()->getOrientation().col(1).T() * solid->getFrameOfReference()->getAngularVelocity();
-////    double omega2 = hollow->getFrameOfReference()->getOrientation().col(1).T() * hollow->getFrameOfReference()->getAngularVelocity();
-////    fmatvec::Vec3 IuS1;
-////    IuS1(0) = solid->getFrameOfReference()->getVelocity()(0);
-////    IuS1(1) = solid->getFrameOfReference()->getVelocity()(2);
-////    fmatvec::Vec3 IuS2;
-////    IuS2(0) = hollow->getFrameOfReference()->getVelocity()(0);
-////    IuS2(1) = hollow->getFrameOfReference()->getVelocity()(2);
-//
-////    // Compute derivative of second line from rotation matrix AFK
-////    RowVec3 AFKdphi2;
-////    AFKdphi2(0) = -cos(phi);
-////    AFKdphi2(1) = -sin(phi);
-//
-//// Compute derivative of tangential velocities
-////TODO: transform this (old) velocity components correctly, such that it holds for all coordinate configurations
-////    v1dy = 1 / rHollow * (AFKdphi2 * IuS1 + omega1 * et * er / r1);
-////    v2dy = 1 / rHollow * AFKdphi2 * IuS2;
-//
-//    if (dimLess) {
-//      v1dy = v1dy * xrF;
-//      v2dy = v2dy * xrF;
-//    }
+    h1 = cpSolid.getFrameOfReference().getOrientation().col(0).T() * cpSolid.getFrameOfReference().getPosition();
+    h2 = rHollow;
+
+    // Compute derivatives of h1 and h2 with respect to y
+//    h1dy = et * h1 / (rHollow * r1); //TODO: should be similar to the cylinder-cylinder case!
+
+    // Check if the film thickness is smaller than zero, meaning
+    // if there is a penetration of the contacting bodies
+    if (h2 < h1)
+      throw MBSimError("Film thickness is smaller than zero, i.e. h < 0.");
+
+    if (dimLess) {
+      h1 /= hrF;
+      h2 /= hrF;
+      h1dy = h1dy * xrF / hrF;
+//      h2dy = h2dy * xrF / hrF;
+    }
+
+    Vec3 r;
+    r(0) = h1;
+    r(1) = alpha(1);
+
+    //TODO: update the velocities and then compute the surface velocities!
+    solid->updateKinematicsForFrame(cpSolid, Frame::velocities);
+
+    r = hollow->getFrameOfReference()->getPosition() + AIF * r - solid->getFrameOfReference()->getPosition();
+
+    //Fu1 and Fu2 are the velocities on the surfaces in the F-directions 1 and 2
+    Vec3 Fu1 = solid->getFrameOfReference()->getVelocity();
+    Fu1 += crossProduct(solid->getFrameOfReference()->getAngularVelocity(), r);
+    Fu1 = AIF.T() * Fu1; //Transform in F-system
+
+    Vec3 Fu2 = AIF.T() * (hollow->getFrameOfReference()->getVelocity() + crossProduct(hollow->getFrameOfReference()->getAngularVelocity(), AIF.col(0) * h2));
+
+    u1 = Fu1(0);
+    v1 = Fu1(2);
+
+// Compute velocities on inner bearing shell surface
+    u2 = Fu2(0);
+    v2 = Fu2(2);
+
+    if (dimLess) {
+      v1dy = v1dy * xrF;
+      v2dy = v2dy * xrF;
+    }
 
     return ret;
   }
