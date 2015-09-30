@@ -6,7 +6,7 @@ includedir=${prefix}/include
 Name: mbsimEHD
 Description: mbsimEHD is an add-on for EHD contacts to the mbsim-kernel
 Requires: mbsim
-Version: 
+Version: @mbsimEHD_VERSION@
 Libs: -L${libdir} -lmbsimEHD
 Cflags: -I${includedir} -std=c++11
 

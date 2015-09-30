@@ -1,6 +1,6 @@
 #include "journal_bearing.h"
 
-#include "mbsimEHD/contact_kinematics/cylindersolid_cylinderhollow_ehd.h"
+#include <mbsimEHD/contact_kinematics/cylindersolid_cylinderhollow_ehd.h>
 #include "mbsimEHD/ehd_contact.h"
 #include "mbsimEHD/ehd_mesh.h"
 

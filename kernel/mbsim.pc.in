@@ -1,13 +1,13 @@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-includedir=@includedir@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
 bindir=${exec_prefix}/bin
 
 Name: mbsim
 Description: mbsim is a multi-body simulation library.
-Requires: @requires@
-Version: @VERSION@
-Libs: -L${libdir} -lmbsim -l@BOOST_SYSTEM_LIB@
-Cflags: -I${includedir} @DEFINES@ @openmbv_compilerflag@
+Requires: openmbvcppinterface
+Version: @mbsim_VERSION@
+Libs: -L${libdir} -lmbsim
+Cflags: -I${includedir} -DHAVE_OPENMBVCPPINTERFACE @DEFINES@ @openmbv_compilerflag@
 

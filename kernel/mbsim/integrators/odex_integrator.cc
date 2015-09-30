@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include "FC.h"
 #include <mbsim/dynamic_system_solver.h>
 #include "fortran/fortran_wrapper.h"
 #include "odex_integrator.h"
