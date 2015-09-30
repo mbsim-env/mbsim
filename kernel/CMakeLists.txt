@@ -3,8 +3,8 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.8.12)
 PROJECT(mbsim Fortran C CXX)
 
 ### The version number
-SET (mbsim_VERSION_MAJOR 4)
-SET (mbsim_VERSION_MINOR 0)
+SET (mbsim_MAJOR_VERSION 4)
+SET (mbsim_MINOR_VERSION 0)
 SET (mbsim_PATCH_VERSION 0)
 set(mbsim_VERSION ${mbsim_MAJOR_VERSION}.${mbsim_MINOR_VERSION}.${mbsim_PATCH_VERSION})
 
