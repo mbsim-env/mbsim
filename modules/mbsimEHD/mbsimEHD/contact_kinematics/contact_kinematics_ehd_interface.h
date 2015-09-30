@@ -20,7 +20,7 @@
 #ifndef _CONTACT_KINEMATICS_EHD_INTERFACE_H_
 #define _CONTACT_KINEMATICS_EHD_INTERFACE_H_
 
-#include "mbsim/contact_kinematics/contact_kinematics.h"
+#include <mbsim/contact_kinematics/contact_kinematics.h>
 
 namespace MBSimEHD {
 

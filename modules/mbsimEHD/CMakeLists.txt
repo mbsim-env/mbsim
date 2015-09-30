@@ -3,8 +3,10 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.8.12)
 PROJECT(mbsimEHD)
 
 ### The version number
-SET (mbsimEHD_VERSION_MAJOR 0)
-SET (mbsimEHD_VERSION_MINOR 1)
+SET (mbsimEHD_MAJOR_VERSION 0)
+SET (mbsimEHD_MINOR_VERSION 2)
+SET (mbsimEHD_PATCH_VERSION 0)
+set(mbsimEHD_VERSION ${mbsimEHD_MAJOR_VERSION}.${mbsimEHD_MINOR_VERSION}.${mbsimEHD_PATCH_VERSION})
 
 #############################################
 ### Options #################################

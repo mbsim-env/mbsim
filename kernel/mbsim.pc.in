@@ -6,8 +6,8 @@ bindir=${exec_prefix}/bin
 
 Name: mbsim
 Description: mbsim is a multi-body simulation library.
-Requires: @requires@
+Requires: openmbvcppinterface
 Version: @mbsim_VERSION@
-Libs: -L${libdir} -lmbsim -l@BOOST_SYSTEM_LIB@
-Cflags: -I${includedir} @DEFINES@ @openmbv_compilerflag@
+Libs: -L${libdir} -lmbsim
+Cflags: -I${includedir} -DHAVE_OPENMBVCPPINTERFACE @DEFINES@ @openmbv_compilerflag@
 
