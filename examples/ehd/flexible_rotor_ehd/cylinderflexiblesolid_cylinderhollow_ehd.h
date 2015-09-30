@@ -21,6 +21,7 @@
 #define _CONTACT_KINEMATICS_CYLINDERFLEXIBLESOLID_CYLINDERHOLLOW_EHD_H_
 
 #include <mbsimEHD/contact_kinematics/contact_kinematics_ehd_interface.h>
+#include <mbsim/frame.h>
 
 namespace MBSim {
   class Frustum;

@@ -11,4 +11,6 @@
 
 #cmakedefine HAVE_ANSICSIGNAL 1
 
+#cmakedefine HAVE_BOOST_TYPE_TRAITS_HPP 1
+
 #endif

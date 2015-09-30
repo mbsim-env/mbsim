@@ -33,7 +33,7 @@ pkg_check_modules(MBSIM REQUIRED mbsim>=4.0.0)
 # Add for linkage: the include directories as well as the link-directories 
 include_directories(${MBSIM_INCLUDE_DIRS})
 link_directories(${MBSIM_LIBRARY_DIRS})
-# prepare the cflags for the build-process --> the *_CFLAGS-variable comes as a semicolon-separated list, which has to bea space-separated list  
+# prepare the cflags for the build-process --> the *_CFLAGS-variable comes as a semicolon-separated list, which has to be space-separated list  
 string (REPLACE ";" " " MBSIM_CFLAGS_STR "${MBSIM_CFLAGS}")
 
 #############################################

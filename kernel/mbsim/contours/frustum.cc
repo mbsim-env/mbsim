@@ -18,7 +18,7 @@
  */
 
 #include<config.h>
-#include "mbsim/contours/frustum.h"
+#include "frustum.h"
 #include <mbsim/utils/utils.h>
 
 #include <fmatvec/fmatvec.h>

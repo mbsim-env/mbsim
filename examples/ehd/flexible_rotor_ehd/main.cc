@@ -18,7 +18,7 @@ int main (int argc, char* argv[]) {
 
   integrator.integrate(*sys);
 
-  cout << "finished"<<endl;
+  cout << "finished" << endl;
 
   delete sys;
 

@@ -38,6 +38,8 @@ string (REPLACE ";" " " OPENMBVCPPINTERFACE_CFLAGS_STR "${OPENMBVCPPINTERFACE_CF
 # Check for ANSICSIGNAL
 INCLUDE (CheckIncludeFiles)
 check_include_files("signal.h" HAVE_ANSICSIGNAL)
+check_include_files("boost/type_traits.hpp" HAVE_BOOST_TYPE_TRAITS_HPP)
+
 
 #############################################
 ### Include the subdirectories ##############

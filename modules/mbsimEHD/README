@@ -7,18 +7,19 @@ Necessary:
 
 Installation:
 ===========
-CMake is used as build system.
+CMake is used as build system. Assuming you are in the directory of this README-file
 
 1. create a build-directory
-   mkdir BUILD
-   cd BUILD
+   > mkdir BUILD
+   > cd BUILD
    
 2. run cmake in the BUILD Directory
-   cmake ..
+   > cmake <options> ..
    
    important options:
      -DCMAKE_INSTALL_PREFIX=PREFIX (where to install the library)
+     -DCMAKE_BUILD_TYPE=None/Debug/Release (Release is the default)
     
 3. Build (and install) the library
-   make 
-   (make install)
+   > make 
+  (> make install)
