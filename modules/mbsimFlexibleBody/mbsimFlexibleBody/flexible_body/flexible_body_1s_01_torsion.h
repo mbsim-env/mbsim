@@ -21,9 +21,9 @@
 #ifndef BODY_FLEXIBLE_1S_01_TORSION_H_
 #define BODY_FLEXIBLE_1S_01_TORSION_H_
 
-#include "body_flexible.h"
+#include "mbsimFlexibleBody/flexible_body.h"
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
 //  class Contour1sFlexible;
 
@@ -32,20 +32,20 @@ namespace MBSim {
    * \author Roland Zander
    * \author Rainer Britz
    */
-  class BodyFlexible1s01Torsion : public BodyFlexible1s {
+  class BodyFlexible1s01Torsion : public FlexibleBodyContinuum<double> {
     protected:
       int n;
-      double E, rho, A, I , l;
+      double E, rho, A, I, l;
       //    Vec JGeneralized(const double &s); // nur zur Kompatibilitaet
 
-      Vec sTangent;
-      Mat Wt;
-      Vec Wn, CrOC, CvC;
+      fmatvec::Vec sTangent;
+      fmatvec::Mat Wt;
+      fmatvec::Vec Wn, CrOC, CvC;
 
       // KOS-Definition und Lage des ersten Knoten im Weltsystem
       //    Mat Jges;
-      Vec Axis; /* Enspricht der neutralen Faser */
-      Vec WrON00,WrON0;
+      fmatvec::Vec Axis; /* Enspricht der neutralen Faser */
+      fmatvec::Vec WrON00, WrON0;
 
       void init(InitStage stage);
       void initMatrizes();
@@ -57,62 +57,92 @@ namespace MBSim {
 
       void updateh(double t);
 
-
     public:
 
-      BodyFlexible1s01Torsion(const string &name);
+      BodyFlexible1s01Torsion(const std::string &name);
       /*! set number of polynom shape functions
-      */
-      void setNumberShapeFunctions(int n_); 
+       */
+      void setNumberShapeFunctions(int n_);
       /*! set cross-sectional area
-      */
-      void setCrossSectionalArea(double A_){A     = A_;}
+       */
+      void setCrossSectionalArea(double A_) {
+        A = A_;
+      }
       /*! set moment of inertia
-      */ 
-      void setMomentInertia(double I_){I     = I_;}
+       */
+      void setMomentInertia(double I_) {
+        I = I_;
+      }
       /*! set E-modul
-      */ 
-      void setEModul(double E_){E     = E_;}
+       */
+      void setEModul(double E_) {
+        E = E_;
+      }
       /*! set mass density
-      */ 
-      void setDensity(double rho_){rho   = rho_;}
+       */
+      void setDensity(double rho_) {
+        rho = rho_;
+      }
       /*! set length of axis
-      */ 
-      void setLength(double l_){l   = l_;}
+       */
+      void setLength(double l_) {
+        l = l_;
+      }
       /*! set initial rotational velocity
-      */
-      void setInitialRotationVelocity(double omega0)  {u0(1) = omega0;}
+       */
+      void setInitialRotationVelocity(double omega0) {
+        u0(1) = omega0;
+      }
       /*! \attic set initial rotational velocity, method kept for compatibility
-      */ 
-      void setInitialRotation(double omega0)  {setInitialRotationVelocity(omega0);}
+       */
+      void setInitialRotation(double omega0) {
+        setInitialRotationVelocity(omega0);
+      }
 
       /*     void addPort(const string &name, const double &S); */
       /*     using BodyFlexible1s::addPort; */
 
-      Mat computeJacobianMatrix(const ContourPointData &S_); // virtual of body_flexible
+      fmatvec::Mat computeJacobianMatrix(const MBSim::ContourPointData &S_); // virtual of body_flexible
 
-      Mat computeWt  (const ContourPointData &S_){return Axis; }
-      Vec computeWn  (const ContourPointData &S_){return Vec(3); }
-      Vec computeWrOC(const ContourPointData &S_){return WrON00 + S_.alpha(0) * Axis;}
-      Vec computeWvC (const ContourPointData &S_){return Vec(3); }
-
+      fmatvec::Mat computeWt(const MBSim::ContourPointData &S_) {
+        return Axis;
+      }
+      fmatvec::Vec computeWn(const MBSim::ContourPointData &S_) {
+        return fmatvec::Vec(3);
+      }
+      fmatvec::Vec computeWrOC(const MBSim::ContourPointData &S_) {
+        return WrON00 + S_.alpha(0) * Axis;
+      }
+      fmatvec::Vec computeWvC(const MBSim::ContourPointData &S_) {
+        return fmatvec::Vec(3);
+      }
 
       /*! \return true
-      */
-      bool hasConstMass() const {return true;}
+       */
+      bool hasConstMass() const {
+        return true;
+      }
 
       /*! NULL-function, since mass matrix is constant*/
-      void facLLM() {}
+      void facLLM() {
+      }
 
       /* Jacobi Matrix der Rotation */
-      void setJR(const Vec &JR_) {assert(JR_.cols()==1); JR = JR_; Axis = JR_;};
+      void setJR(const fmatvec::Vec &JR_) {
+        assert(JR_.cols() == 1);
+        JR = JR_.copy();
+        Axis = JR_;
+      }
+      ;
 
       // Lage des Ursprungs des Wellensystems im WKOS 
       // Per Default liegt es im Ursprung des WKOS
-      void setWrON00(const Vec &WrON00_) {WrON00 = WrON00_;}
+      void setWrON00(const fmatvec::Vec &WrON00_) {
+        WrON00 = WrON00_;
+      }
 
       /** Steifigkeitsmatrix */
-      SymMat K;
+      fmatvec::SymMat K;
 
   };
 

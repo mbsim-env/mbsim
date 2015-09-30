@@ -21,7 +21,7 @@
 
 #include <config.h>
 #include <iostream>
-#include <finite_element_linear_external_lumped_node.h>
+#include "finite_element_linear_external_lumped_node.h"
 
 using namespace std;
 using namespace fmatvec;

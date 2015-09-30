@@ -19,16 +19,20 @@
  */
 
 #include <config.h>
-#include "body_flexible_1s_01_torsion.h"
-#include "frame.h"
-#include "dynamic_system_solver.h"
-#include "contact_flexible.h"
-#include "contact_rigid.h"
-#include "contour.h"
+#include "flexible_body_1s_01_torsion.h"
+#include "mbsim/frame.h"
+#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/contact.h"
+#include "mbsim/contour.h"
 
-namespace MBSim {
+using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
 
-  BodyFlexible1s01Torsion::BodyFlexible1s01Torsion(const string &name) : BodyFlexible1s(name), E(0),rho(0),A(0),I(0), Wt(3,2), Wn(3), CrOC(3), CvC(3), WrON00(3), WrON0(3) {
+namespace MBSimFlexibleBody {
+
+  BodyFlexible1s01Torsion::BodyFlexible1s01Torsion(const string &name) :
+      FlexibleBodyContinuum<double>(name), E(0), rho(0), A(0), I(0), Wt(3, 2), Wn(3), CrOC(3), CvC(3), WrON00(3), WrON0(3) {
   }
 
   void BodyFlexible1s01Torsion::setNumberShapeFunctions(int n_) {
@@ -42,11 +46,11 @@ namespace MBSim {
   }
 
   void BodyFlexible1s01Torsion::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if (stage == unknownStage) {
       BodyFlexible1s::init(stage);
-      assert(0<n);
+      assert(0 < n);
 
-      JT = Mat(0,0);
+      JT = Mat(0, 0);
 
       initMatrizes();
     }
@@ -54,33 +58,30 @@ namespace MBSim {
       BodyFlexible1s::init(stage);
   }
 
-
-  void BodyFlexible1s01Torsion::initMatrizes()
-  {
+  void BodyFlexible1s01Torsion::initMatrizes() {
     //Massenmatrix
-    K=SymMat(n,INIT,0.0);
-    for(int i=1;i<=n;i++){
-      for(int j =i; j<=n;j++){
-	M(i-1,j-1)=1.0/(double (i+j-1));
-	if(i!=1) K(i-1,j-1)=1.0/(double (i+j-3));
+    K = SymMat(n, INIT, 0.0);
+    for (int i = 1; i <= n; i++) {
+      for (int j = i; j <= n; j++) {
+        M(i - 1, j - 1) = 1.0 / (double(i + j - 1));
+        if (i != 1)
+          K(i - 1, j - 1) = 1.0 / (double(i + j - 3));
       }
     }
     LLM = facLL(M);
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
-  void BodyFlexible1s01Torsion::updateh(double t)
-  {
-    h = -K*q;
+//oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+//------------------------------------------------------------------------------
+  void BodyFlexible1s01Torsion::updateh(double t) {
+    h = -K * q;
 
     sumUpForceElements(t);
   }
 
-
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //----------------------------------------------------------------------
-  //----------------------------------------------------------------------
+//oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
 
   void BodyFlexible1s01Torsion::updateStateDependentVariables(double t) {
     sTangent = Vec(0);
@@ -91,32 +92,32 @@ namespace MBSim {
   }
 
   void BodyFlexible1s01Torsion::updatePorts(double t) {
-    for(unsigned int i=0; i<frame.size(); i++) {
-      double s=S_Port[i].alpha(0);
+    for (unsigned int i = 0; i < frame.size(); i++) {
+      double s = S_Port[i].alpha(0);
       /* Ermittlung der Position in Achsrichtung  ist konstant */
-      frame[i]->setWrOP(WrON00 + Axis*s*l);
+      frame[i]->setWrOP(WrON00 + Axis * s * l);
       /* Ermittlung der Geschwindigkeiten */
-      frame[i]->setWvP (Vec(3,INIT,0)); 
+      frame[i]->setWvP(Vec(3, INIT, 0));
       /* Winkelgeschwindigkeit der Welle
        * am Ort des Ports.
        * Transformierte der Jacobimatrix*generalisierte Geschwindigkeiten
        * Jacobimatrix entspricht den Ansatzfunktionen
        */
-      frame[i]->setWomegaP(Axis*trans( computeJacobianMatrix(S_Port[i]) )*u); 
+      frame[i]->setWomegaP(Axis * trans(computeJacobianMatrix(S_Port[i])) * u);
     }
   }
 
   Mat BodyFlexible1s01Torsion::computeJacobianMatrix(const ContourPointData &S_) {
     double s = S_.alpha(0);
-    Mat Jacobian(n,1);
+    Mat Jacobian(n, 1);
 
-    for(int i =0;i<n;i++){
-      if(i==0)
-	Jacobian(i,0)=1;
+    for (int i = 0; i < n; i++) {
+      if (i == 0)
+        Jacobian(i, 0) = 1;
       else
-	Jacobian(i,0)=pow(s,i);
+        Jacobian(i, 0) = pow(s, i);
     }
-    return Jacobian;  
+    return Jacobian;
   }
 
 }
