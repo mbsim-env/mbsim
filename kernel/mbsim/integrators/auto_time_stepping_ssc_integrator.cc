@@ -19,6 +19,7 @@
  */
 
 #include <config.h>
+#include "FC.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/element.h"
 #include "mbsim/link.h"

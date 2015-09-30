@@ -73,7 +73,7 @@ namespace MBSim {
     begin_d = clock();
   }
 
-  double StopWatch::stop() {
+  double StopWatch::stop(bool reset) {
     end_d = clock();
     double IntTime = end_d - begin_d;
     IntTime /= CLOCKS_PER_SEC;

@@ -31,6 +31,7 @@ using namespace std;
 #endif
 
 using namespace fmatvec;
+using namespace MBSim;
 
 namespace MBSimIntegrator {
 
@@ -53,7 +54,7 @@ namespace MBSimIntegrator {
       system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
       system.updatelaRef(system.getlaParent()(0,system.getlaSize()-1));
       system.updategdRef(system.getgdParent()(0,system.getgdSize()-1));
-      if(system.getImpactSolver() == RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
+      if(system.getImpactSolver() == DynamicSystemSolver::RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
       system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
     }
     system.updategd(t);
@@ -123,7 +124,7 @@ namespace MBSimIntegrator {
       Mat dhdq = system.dhdq(t);
       Mat dhdu = system.dhdu(t);
 
-      Vector<int> ipiv(M.size());
+      VecInt ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
       Vec heff = h+theta*dhdq*T*u*dt;
       system.getG().resize() = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));

@@ -20,7 +20,7 @@
 #include <config.h>
 #include "lcp_reformulation_functions.h"
 
-#include <mbsim/utils/nonsmooth_algebra.h>
+#include <mbsim/numerics/nonsmooth_algebra.h>
 #include <mbsim/mbsim_event.h>
 
 #include <iostream>

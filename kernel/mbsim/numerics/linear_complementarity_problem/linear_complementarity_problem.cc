@@ -24,7 +24,7 @@
 
 #include "linear_complementarity_problem.h"
 
-#include <mbsim/utils/nonsmooth_algebra.h>
+#include <mbsim/numerics/nonsmooth_algebra.h>
 #include <mbsim/utils/stopwatch.h>
 #include <mbsim/mbsim_event.h>
 

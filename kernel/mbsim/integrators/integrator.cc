@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#include "FC.h"
 #include <cstdlib>
 #include "integrator.h"
 #include "mbsim/element.h"

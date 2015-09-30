@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include "FC.h"
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/utils.h>
 #include "fortran/fortran_wrapper.h"

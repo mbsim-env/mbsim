@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#include "FC.h"
 #include <mbsim/dynamic_system_solver.h>
 #include "rksuite_integrator.h"
 #include <mbsim/utils/eps.h>

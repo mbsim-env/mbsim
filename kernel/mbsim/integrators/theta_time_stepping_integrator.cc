@@ -19,7 +19,7 @@
  */
 
 #include <config.h>
-
+#include "FC.h"
 #include "mbsim/integrators/theta_time_stepping_integrator.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/eps.h"
