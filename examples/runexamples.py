@@ -1348,7 +1348,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       data.append([
         (h5CurFile.filename,""),
         (datasetName,""),
-        ('label '+label+' not in ref.',"d"),
+        ('label '+label[0]+' not in ref.',"d"),
         ('failed',"d")
       ])
       nrAll[0]+=1
