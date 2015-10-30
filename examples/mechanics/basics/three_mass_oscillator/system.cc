@@ -122,7 +122,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   KineticExcitation *a = new KineticExcitation("Anregung");
   addLink(a);
   a->setForceDirection(Vec("[0;1;0]"));
-  a->setForceFunction(new ConstantFunction<VecV(double)>(-10));
+  a->setForceFunction(new ConstantFunction<VecV(double)>(VecV(1, INIT, -10)));
   a->connect(k3->getFrame("fTop"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
