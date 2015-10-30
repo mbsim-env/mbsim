@@ -367,9 +367,12 @@ def main():
   print('<h1>MBSim, OpenMBV, ... Build Results</h1>', file=mainFD)
 
   print('<dl class="dl-horizontal">', file=mainFD)
-  print('  <dt>Called command</dt><dd><code>', file=mainFD)
+  print('''<dt>Called Command</dt><dd><div class="dropdown">
+  <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
+  </button>
+  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
-  print('  </code></dd>', file=mainFD)
+  print('</code></div></dd>', file=mainFD)
   print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
   print('  <dt>End time</dt><dd><span id="STILLRUNNINGORABORTED" class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)

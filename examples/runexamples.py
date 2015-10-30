@@ -443,9 +443,12 @@ def main():
 
   print('<h1>MBSim runexamples Results</h1>', file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
-  print('  <dt>Called command</dt><dd><code>', file=mainFD)
+  print('''<dt>Called Command</dt><dd><div class="dropdown">
+  <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
+  </button>
+  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
-  print('  </code></dd>', file=mainFD)
+  print('</code></div></dd>', file=mainFD)
   print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   global timeID
   timeID=datetime.datetime.now()
@@ -540,7 +543,7 @@ def main():
   print('''<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">
   <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
     </span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">
- 'Update references<span class="caret"> </span></a></div>
+ Update references<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
     <p>Update the references of the selected examples before next build</p>
     <p>
