@@ -187,4 +187,31 @@ namespace MBSimGUI {
     return e;
   }
 
+  Cuboid::Cuboid(const string &str, Element *parent) : Contour(str,parent) {
+
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", MBSIM%"length"));
+    length.setProperty(new ExtPhysicalVarProperty(input));
+
+    visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
+
+  }
+
+  Cuboid::~Cuboid() {
+  }
+
+  DOMElement* Cuboid::initializeUsingXML(DOMElement *element) {
+    Contour::initializeUsingXML(element);
+    length.initializeUsingXML(element);
+    visu.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* Cuboid::writeXMLFile(DOMNode *parent) {
+    DOMElement *e = Contour::writeXMLFile(parent);
+    length.writeXMLFile(e);
+    visu.writeXMLFile(e);
+    return e;
+  }
+
 }

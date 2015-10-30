@@ -179,4 +179,46 @@ namespace MBSimGUI {
     return ele0;
   }
 
+  ExternSignalSource::ExternSignalSource(const string &str, Element *parent) : Signal(str, parent) {
+    sourceSize.setProperty(new IntegerProperty(1,MBSIMCONTROL%"sourceSize"));
+  }
+
+  void ExternSignalSource::initialize() {
+    Signal::initialize();
+    sourceSize.initialize();
+  }
+
+  DOMElement* ExternSignalSource::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    sourceSize.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ExternSignalSource::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Signal::writeXMLFile(parent);
+    sourceSize.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  ExternSignalSink::ExternSignalSink(const string &str, Element *parent) : Signal(str, parent) {
+    inputSignal.setProperty(new SignalOfReferenceProperty("",this,MBSIMCONTROL%"inputSignal"));
+  }
+
+  void ExternSignalSink::initialize() {
+    Signal::initialize();
+    inputSignal.initialize();
+  }
+
+  DOMElement* ExternSignalSink::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    inputSignal.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ExternSignalSink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Signal::writeXMLFile(parent);
+    inputSignal.writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

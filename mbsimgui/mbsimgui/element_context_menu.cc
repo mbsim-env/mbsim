@@ -207,6 +207,9 @@ namespace MBSimGUI {
     action = new QAction("Add solid circle", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addCircleSolid()));
     addAction(action);
+    action = new QAction("Add cuboid", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addCuboid()));
+    addAction(action);
   }
 
   void ContourContextContextMenu::addPoint() {
@@ -227,6 +230,10 @@ namespace MBSimGUI {
 
   void ContourContextContextMenu::addCircleSolid() {
     mw->addContour(new CircleSolid("CircleSolid",element));
+  }
+
+  void ContourContextContextMenu::addCuboid() {
+    mw->addContour(new Cuboid("Cuboid",element));
   }
 
   GroupContextContextMenu::GroupContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -447,6 +454,12 @@ namespace MBSimGUI {
     action = new QAction("Add binary signal operation", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addBinarySignalOperation()));
     addAction(action);
+    action = new QAction("Add extern signal source", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSource()));
+    addAction(action);
+    action = new QAction("Add extern signal sink", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSink()));
+    addAction(action);
   }
 
   void SignalContextContextMenu::addSensor() {
@@ -468,6 +481,14 @@ namespace MBSimGUI {
 
   void SignalContextContextMenu::addBinarySignalOperation() {
     mw->addLink(new BinarySignalOperation("BinarySignalOperation",element));
+  }
+
+  void SignalContextContextMenu::addExternSignalSource() {
+    mw->addLink(new ExternSignalSource("ExternSignalSource",element));
+  }
+
+  void SignalContextContextMenu::addExternSignalSink() {
+    mw->addLink(new ExternSignalSink("ExternSignalSink",element));
   }
 
   SensorContextContextMenu::SensorContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
