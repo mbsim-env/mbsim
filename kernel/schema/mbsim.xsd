@@ -2471,6 +2471,44 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="CompoundContour" substitutionGroup="RigidContour" abstract="true"  type="CompoundContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Basisklasse für Gruppen von Kontouren.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="CompoundContourType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Cuboid" substitutionGroup="CompoundContour" type="CuboidType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Quaderkontour bestehenden aus 8 Punkten, 6 Flächen und 12 Kanten.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="CuboidType">
+    <xs:complexContent>
+      <xs:extension base="CompoundContourType">
+        <xs:sequence>
+          <xs:element name="length" type="pv:lengthVector"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Plane" substitutionGroup="RigidContour" type="PlaneType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

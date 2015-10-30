@@ -30,12 +30,16 @@
 using namespace std;
 using namespace fmatvec;
 using namespace boost;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
   Cuboid::Cuboid(const string &name, Frame *R) : CompoundContour(name,R), lx(1.0), ly(1.0), lz(1.0) { }
 
   Cuboid::Cuboid(const string &name, double lx_, double ly_, double lz_, Frame *R) : CompoundContour(name,R), lx(lx_), ly(ly_), lz(lz_) { }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Cuboid, MBSIM%"Cuboid")
 
   void Cuboid::init(InitStage stage) {
     if(stage==preInit) {
@@ -314,6 +318,24 @@ namespace MBSim {
 
   void Cuboid::plot(double t, double dt) {
     RigidContour::plot(t,dt);
+  }
+
+  void Cuboid::initializeUsingXML(DOMElement *element) {
+    CompoundContour::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
+    setLength(getVec3(e));
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(e) {
+      DOMElement *d, *t;
+      d=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
+      t=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
+      if( d &&  t) enableOpenMBV(_diffuseColor=getVec3(d), _transparency=getDouble(t));
+      if(!d &&  t) enableOpenMBV(                          _transparency=getDouble(t));
+      if( d && !t) enableOpenMBV(_diffuseColor=getVec3(d)                            );
+      if(!d && !t) enableOpenMBV(                                                    );
+    }
+#endif
   }
 
 }
