@@ -287,7 +287,7 @@ namespace MBSim {
       r(0) = -lx/2.0;
       r(1) = -ly/2.0;
       r(2) = 0;
-      frame = new FixedRelativeFrame("E11",r,BasicRotAIKx(M_PI/2)*BasicRotAIKy(3*M_PI/4),R);
+      frame = new FixedRelativeFrame("E11",r,BasicRotAIKx(-M_PI/2)*BasicRotAIKy(3*M_PI/4),R);
       addFrame(frame);
       edge = new Edge("Edge11");
       edge->setLength(lz);
