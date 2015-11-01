@@ -1546,6 +1546,9 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
+    if(msgAct(Debug))
+      msg(Debug) << "System shift at t = " << t << "." << endl;
+
     if (q() != zParent()) {
       updatezRef(zParent);
     }
