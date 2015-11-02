@@ -1097,7 +1097,7 @@ namespace MBSim {
     int iter = 0;
     while (nrmInf(g - corr) >= tolProj) {
       if (++iter > 500) {
-        msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed!" << endl;
+        msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed at t = " << t << "!" << endl;
         break;
       }
       Vec mu = slvLS(Gv, -g + W[0].T() * nu + corr);

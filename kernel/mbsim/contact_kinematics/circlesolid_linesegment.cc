@@ -44,8 +44,8 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidLineSegment::updateg(Vec &g, ContourPointData *cpData, int index) {
 
-    const Vec3 WC=circlesolid->getFrame()->getPosition();
-    const Vec3 WL=linesegment->getFrame()->getPosition();
+    const Vec3 &WC=circlesolid->getFrame()->getPosition();
+    const Vec3 &WL=linesegment->getFrame()->getPosition();
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);
     const Vec3 WL0=WL-linesegment->getLength()/2*WLdir;
     const double s=WLdir.T() * (-WL0+WC);
@@ -74,7 +74,34 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleSolidLineSegment::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
-    throw MBSimError("Not implemented!");
+    const Vec3 &WC=circlesolid->getFrame()->getPosition();
+    const Vec3 &WL=linesegment->getFrame()->getPosition();
+    const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);
+    const Vec3 WL0=WL-linesegment->getLength()/2*WLdir;
+    const double s=WLdir.T() * (-WL0+WC);
+
+    if ((s>=0) && (s<=linesegment->getLength())) {
+      Vec3 v2 = cpData[icircle].getFrameOfReference().getOrientation().col(2);
+      Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);
+      Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
+      Vec3 u2 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
+      Vec3 &vC1 = cpData[iline].getFrameOfReference().getVelocity();
+      Vec3 &vC2 = cpData[icircle].getFrameOfReference().getVelocity();
+      Vec3 &Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
+      Vec3 &Om2 = cpData[icircle].getFrameOfReference().getAngularVelocity();
+      double r = circlesolid->getRadius();
+
+      double ad2 = -v2.T()*(Om2-Om1);
+      double ad1 = u1.T()*(vC2-vC1) - r*ad2;
+      Vec3 s2 = u2*r;
+
+      wb(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+
+      if(wb.size() > 1) 
+        wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+    }
+    else
+      throw runtime_error("ContactKinematicsCircleSolidLineSegment::updatewb not implemented for contact on edge.");
   }
       
   void ContactKinematicsCircleSolidLineSegment::computeCurvatures(Vec &r, ContourPointData* cpData) {

@@ -50,6 +50,7 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_;}
       double getLength() const { return length; }
+      void setThickness(double thickness_) { thickness = thickness_; }
       double getThickness() const {return thickness;}
       /***************************************************/
 
