@@ -211,25 +211,39 @@ class ExternGeneralizedIOVelocityOutput : public Variable {
 //! FMI input variable for MBSim::ExternSignalSource
 class ExternSignalSourceInput : public Variable {
   public:
-    ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
-      "ExternSignalSource", Input, 'r'), sig(sig_) {}
+    ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_, int idx_) :
+      Variable(mbsimPathToFMIName(sig_->getPath())+"["+boost::lexical_cast<std::string>(idx_)+"]",
+        "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    void setValue(const double &v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
-    const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
+    void setValue(const double &v) {
+      fmatvec::VecV curv = sig->getSignal();
+      curv(idx) = v;
+      sig->setSignal(curv);
+    }
+    const double& getValue(const double&) {
+      value=sig->getSignal()(idx);
+      return value;
+    }
   protected:
     MBSimControl::ExternSignalSource *sig;
+    int idx;
     double value; // MISSING: remove this variable if getSignal returns a const reference!!!
 };
 
 //! FMI output variable for MBSim::ExternSignalSink
 class ExternSignalSinkOutput : public Variable {
   public:
-    ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
-      "ExternSignalSink", Output, 'r'), sig(sig_) {}
+    ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_, int idx_) :
+      Variable(mbsimPathToFMIName(sig_->getPath())+"["+boost::lexical_cast<std::string>(idx_)+"]",
+        "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
+    const double& getValue(const double&) {
+      value=sig->getSignal()(idx);
+      return value;
+    }
   protected:
     MBSimControl::ExternSignalSink *sig;
+    int idx;
     double value; // MISSING: remove this variable if getSignal returns a const reference!!!
 };
 

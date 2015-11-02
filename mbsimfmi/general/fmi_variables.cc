@@ -66,17 +66,18 @@ void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
       var.push_back(boost::make_shared<ExternGeneralizedIOPositionOutput>(genIO));
       var.push_back(boost::make_shared<ExternGeneralizedIOVelocityOutput>(genIO));
     }
-    // for ExternSignalSource create one input variable
+    // for ExternSignalSource create one input variable for each element of the signal vector
     MBSimControl::ExternSignalSource *sigSource=dynamic_cast<MBSimControl::ExternSignalSource*>(*it);
-    if(sigSource) {
-      var.push_back(boost::make_shared<ExternSignalSourceInput>(sigSource));
-      (*--var.end())->setValue(double(0.0)); // default value
-    }
-    // for ExternSignalSink create one output variable
+    if(sigSource)
+      for(int idx=0; idx<sigSource->getSignal().size(); idx++) {
+        var.push_back(boost::make_shared<ExternSignalSourceInput>(sigSource, idx));
+        (*--var.end())->setValue(double(0.0)); // default value
+      }
+    // for ExternSignalSink create one output variable for each element of the signal vector
     MBSimControl::ExternSignalSink *sigSink=dynamic_cast<MBSimControl::ExternSignalSink*>(*it);
-    if(sigSink) {
-      var.push_back(boost::make_shared<ExternSignalSinkOutput>(sigSink));
-    }
+    if(sigSink)
+      for(int idx=0; idx<sigSink->getSignal().size(); idx++)
+        var.push_back(boost::make_shared<ExternSignalSinkOutput>(sigSink, idx));
     // ADD HERE MORE MBSIM TYPES WHICH SHOULD BECOME FMI INPUTS/OUTPUTS
   }
 }

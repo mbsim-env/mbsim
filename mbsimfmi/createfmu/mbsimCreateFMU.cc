@@ -219,15 +219,15 @@ int main(int argc, char *argv[]) {
       integrator.reset();
     }
 
-    // build list of value references
-    cout<<"Create model input/output variables."<<endl;
-    addModelInputOutputs(var, dss.get());
-
     // disable all plotting (we wont any output here)
     dss->setPlotFeatureRecursive(Element::plotRecursive, Element::disabled);
     // initialize dss
     cout<<"Initialize the model."<<endl;
     dss->initialize();
+
+    // build list of value references
+    cout<<"Create model input/output variables."<<endl;
+    addModelInputOutputs(var, dss.get());
 
     // create DOM of modelDescription.xml
     boost::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
