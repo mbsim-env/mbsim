@@ -212,6 +212,10 @@ namespace MBSimFMI {
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);
 
+    // initialize dss
+    msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
+    dss->initialize();
+
     // create model IO vars
     msg(Debug)<<"Create model input/output variables."<<endl;
     addModelInputOutputs(varSim, dss.get());
@@ -263,11 +267,9 @@ namespace MBSimFMI {
     BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
     create_directories(predefinedParameterStruct.outputDir);
     current_path(predefinedParameterStruct.outputDir);
-    // initialize dss
-    msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
-    dss->initialize();
 
     // initialize state
+    msg(Debug)<<"Initialize initial conditions of the DynamicSystemSolver."<<endl;
     z.resize(dss->getzSize());
     zd.resize(dss->getzSize());
     dss->initz(z);
