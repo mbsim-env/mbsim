@@ -34,6 +34,7 @@ namespace MBSimGUI {
   class Sphere;
   class CircleSolid;
   class Cuboid;
+  class LineSegment;
   class DynamicSystemSolver;
   class Group;
   class Object;
@@ -185,6 +186,16 @@ namespace MBSimGUI {
 
     public:
       CuboidPropertyDialog(Cuboid *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *length, *visu;
+  };
+
+  class LineSegmentPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      LineSegmentPropertyDialog(LineSegment *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:

@@ -94,6 +94,7 @@ namespace MBSimGUI {
       void addSphere();
       void addCircleSolid();
       void addCuboid();
+      void addLineSegment();
 
     protected:
       Element *element;

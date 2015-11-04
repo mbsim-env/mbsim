@@ -107,6 +107,8 @@ namespace MBSimGUI {
       return new CircleSolid(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"Cuboid")
       return new Cuboid(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"LineSegment")
+      return new LineSegment(E(element)->getAttribute("name"),parent);
     return 0;
   }
 
