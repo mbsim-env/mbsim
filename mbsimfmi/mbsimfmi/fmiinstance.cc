@@ -217,6 +217,9 @@ namespace MBSimFMI {
     PredefinedParameterStruct predefinedParameterStructSim;
     msg(Debug)<<"Create predefined parameters."<<endl;
     addPredefinedParameters(varSim, predefinedParameterStructSim);
+    
+    // create output directory
+    create_directories(predefinedParameterStruct.outputDir);
 
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);
@@ -227,7 +230,6 @@ namespace MBSimFMI {
     path savedCurDir=current_path();
     // restore current dir on scope exit
     BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
-    create_directories(predefinedParameterStruct.outputDir);
     current_path(predefinedParameterStruct.outputDir);
 
     // initialize dss (must be done before addModelInputOutputs because references in MBSim may be resolved for this;
