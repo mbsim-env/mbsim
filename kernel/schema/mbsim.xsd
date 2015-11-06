@@ -1457,7 +1457,9 @@
         <xs:sequence>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-               tbd
+              Wenn zwei Angriffspunkte angegeben sind definiert 0 den unter ref1 angegebenen Frame und 1 den unter
+              ref2 angegebenen Frame. Wenn nur ein Angriffspunkt angegeben ist definiert 0 das global Referenzsystem /Frame[I]
+              und 1 den unter ref angegebenen Frame.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:sequence minOccurs="0">
@@ -1465,7 +1467,7 @@
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Definiert die Wirkrichtung der Kraftanregung(en).
                   Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
-                  im KOS <code>frameOfReference</code>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                  im KOS <code>frameOfReferenceID</code>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
                   zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
               </xs:documentation></xs:annotation>
             </xs:element>
@@ -1485,7 +1487,7 @@
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Definiert die Wirkrichtung der Momentenanregung(en).
                   Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
-                  im KOS <code>frameOfReference</code>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
+                  im KOS <code>frameOfReferenceID</code>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
                   zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
               </xs:documentation></xs:annotation>
             </xs:element>
