@@ -47,18 +47,24 @@ int main(int argc, char *argv[]) {
       cout<<"a parameter name of the DynamicSystemSolver Embed element which should be"<<endl;
       cout<<"provided as an FMU parameter. Note that only parameters which do not depend"<<endl;
       cout<<"on any other parameters are allowed. If no --param option is given all are exported."<<endl;
+      cout<<"Use --noparam to ignore all parameters defined the DynamicSystemSolver Embed element."<<endl;
       return 0;
     }
 
-    // get --param
+    // get parameters
     int optcount=0;
     set<string> useParam;
     bool compress=true;
+    bool noParam=false;
     for(int i=1; i<argc-1; ++i) {
       if(string(argv[i])=="--param")
         useParam.insert(argv[i+1]);
       if(string(argv[i])=="--nocompress") {
         compress=false;
+        optcount++;
+      }
+      if(string(argv[i])=="--noparam") {
+        noParam=true;
         optcount++;
       }
     }
@@ -137,7 +143,7 @@ int main(int argc, char *argv[]) {
         size_t pos=name.find('[');
         if(pos!=string::npos)
           name=name.substr(0, pos);
-        if(useParam.size()==0 || useParam.find(name)!=useParam.end()) {
+        if(!noParam && (useParam.size()==0 || useParam.find(name)!=useParam.end())) {
           cout<<"Using DynamicSystemSolver parameter '"<<name<<"'."<<endl;
           xmlParam2.push_back(*it);
         }
@@ -184,7 +190,7 @@ int main(int argc, char *argv[]) {
             if(it->is_absolute())
               throw runtime_error("A XML model file with parameters may only reference files by a relative path.\n"
                                   "However the model references the absolute file '"+it->string()+"'.\n"+
-                                  "Remove all --param options OR rework the model to not contain any absolute file path.");
+                                  "Use the --noparam options OR rework the model to not contain any absolute file path.");
             cout<<"."<<flush;
             fmuFile.add(path("resources")/"model"/current_path().relative_path()/(*it), *it);
           }
