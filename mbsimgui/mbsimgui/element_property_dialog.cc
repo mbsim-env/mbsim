@@ -302,6 +302,30 @@ namespace MBSimGUI {
     static_cast<Cuboid*>(element)->visu.fromWidget(visu);
   }
 
+  LineSegmentPropertyDialog::LineSegmentPropertyDialog(LineSegment *line, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(line,parent,f) {
+    addTab("Visualisation",1);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 1));
+    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
+    addToTab("General", length);
+
+    visu = new ExtWidget("OpenMBV LineSegment",new MBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation", visu);
+  }
+
+  void LineSegmentPropertyDialog::toWidget(Element *element) {
+    ContourPropertyDialog::toWidget(element);
+    static_cast<LineSegment*>(element)->length.toWidget(length);
+    static_cast<LineSegment*>(element)->visu.toWidget(visu);
+  }
+
+  void LineSegmentPropertyDialog::fromWidget(Element *element) {
+    ContourPropertyDialog::fromWidget(element);
+    static_cast<LineSegment*>(element)->length.fromWidget(length);
+    static_cast<LineSegment*>(element)->visu.fromWidget(visu);
+  }
+
   GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {
     if(kinematics) {
       addTab("Kinematics",1);

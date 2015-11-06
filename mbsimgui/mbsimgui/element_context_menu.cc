@@ -210,6 +210,9 @@ namespace MBSimGUI {
     action = new QAction("Add cuboid", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addCuboid()));
     addAction(action);
+    action = new QAction("Add line segment", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addLineSegment()));
+    addAction(action);
   }
 
   void ContourContextContextMenu::addPoint() {
@@ -234,6 +237,10 @@ namespace MBSimGUI {
 
   void ContourContextContextMenu::addCuboid() {
     mw->addContour(new Cuboid("Cuboid",element));
+  }
+
+  void ContourContextContextMenu::addLineSegment() {
+    mw->addContour(new LineSegment("LineSegment",element));
   }
 
   GroupContextContextMenu::GroupContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

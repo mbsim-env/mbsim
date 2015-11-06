@@ -88,11 +88,19 @@ namespace MBSimFMI {
       "modelDescription.xml";
     boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
 
+    // add all predefined parameters
+    addPredefinedParameters(var, predefinedParameterStruct);
+    size_t numPredefParam=var.size();
     // create FMI variables from modelDescription.xml file
     msg(Debug)<<"Generate call variables as VariableStore objects. Used until fmiInitialize is called."<<endl;
     size_t vr=0;
     for(xercesc::DOMElement *scalarVar=E(doc->getDocumentElement())->getFirstElementChildNamed("ModelVariables")->getFirstElementChild();
         scalarVar; scalarVar=scalarVar->getNextElementSibling(), ++vr) {
+      // skip all predefined parameters which are already added by addPredefinedParameters above
+      if(vr<numPredefParam)
+        continue;
+
+      // now add all other parameters
       msg(Debug)<<"Generate variable '"<<E(scalarVar)->getAttribute("name")<<"'"<<endl;
       if(vr!=boost::lexical_cast<size_t>(E(scalarVar)->getAttribute("valueReference")))
         throw runtime_error("Internal error: valueReference missmatch!");
@@ -206,13 +214,15 @@ namespace MBSimFMI {
 
     // predefined variables used during simulation
     std::vector<boost::shared_ptr<Variable> > varSim;
+    PredefinedParameterStruct predefinedParameterStructSim;
     msg(Debug)<<"Create predefined parameters."<<endl;
-    addPredefinedParameters(varSim, predefinedParameterStruct);
+    addPredefinedParameters(varSim, predefinedParameterStructSim);
 
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);
 
     // save the current dir and change to outputDir -> MBSim will create output files in the current dir
+    // this must be done before the dss is initialized since dss->initialize creates files in the current dir)
     msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
     path savedCurDir=current_path();
     // restore current dir on scope exit
@@ -220,11 +230,12 @@ namespace MBSimFMI {
     create_directories(predefinedParameterStruct.outputDir);
     current_path(predefinedParameterStruct.outputDir);
 
-    // initialize dss
+    // initialize dss (must be done before addModelInputOutputs because references in MBSim may be resolved for this;
+    // must be done after the current dir is set (temporarily) to the output dir)
     msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
     dss->initialize();
 
-    // create model IO vars
+    // create model IO vars (before this call the dss must be initialized)
     msg(Debug)<<"Create model input/output variables."<<endl;
     addModelInputOutputs(varSim, dss.get());
 
@@ -267,6 +278,8 @@ namespace MBSimFMI {
     }
     // var is now no longer needed since we use varSim now.
     var=varSim;
+    // predefinedParameterStruct is now no longer needed since we use predefinedParameterStructSim now.
+    predefinedParameterStruct=predefinedParameterStructSim;
 
     // initialize state
     msg(Debug)<<"Initialize initial conditions of the DynamicSystemSolver."<<endl;
