@@ -89,7 +89,7 @@ namespace MBSimFMI {
     boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
 
     // add all predefined parameters
-    addPredefinedParameters(var, predefinedParameterStruct);
+    addPredefinedParameters(var, predefinedParameterStruct, true);
     size_t numPredefParam=var.size();
     // create FMI variables from modelDescription.xml file
     msg(Debug)<<"Generate call variables as VariableStore objects. Used until fmiInitialize is called."<<endl;
@@ -214,9 +214,8 @@ namespace MBSimFMI {
 
     // predefined variables used during simulation
     std::vector<boost::shared_ptr<Variable> > varSim;
-    PredefinedParameterStruct predefinedParameterStructSim;
     msg(Debug)<<"Create predefined parameters."<<endl;
-    addPredefinedParameters(varSim, predefinedParameterStructSim);
+    addPredefinedParameters(varSim, predefinedParameterStruct, false);
     
     // create output directory
     create_directories(predefinedParameterStruct.outputDir);
@@ -280,8 +279,6 @@ namespace MBSimFMI {
     }
     // var is now no longer needed since we use varSim now.
     var=varSim;
-    // predefinedParameterStruct is now no longer needed since we use predefinedParameterStructSim now.
-    predefinedParameterStruct=predefinedParameterStructSim;
 
     // initialize state
     msg(Debug)<<"Initialize initial conditions of the DynamicSystemSolver."<<endl;

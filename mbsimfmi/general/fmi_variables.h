@@ -64,7 +64,8 @@ struct PredefinedParameterStruct {
 //! add all FMI predefined parameters to var.
 //! The values of all predefined parameters are stored in the struct PredefinedParameterStruct.
 void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
-                             PredefinedParameterStruct &predefinedParameterStruct);
+                             PredefinedParameterStruct &predefinedParameterStruct,
+                             bool setToDefaultValue);
 
 //! add all FMI input/outputs used by the MBSim dss to var.
 void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,

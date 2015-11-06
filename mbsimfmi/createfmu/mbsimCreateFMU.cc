@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     PredefinedParameterStruct predefinedParameterStruct;
     cout<<"Create predefined parameters."<<endl;
     vector<boost::shared_ptr<Variable> > var;
-    addPredefinedParameters(var, predefinedParameterStruct);
+    addPredefinedParameters(var, predefinedParameterStruct, true);
 
     vector<boost::shared_ptr<Variable> > xmlParam;
 

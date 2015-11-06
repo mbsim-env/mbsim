@@ -12,12 +12,14 @@ namespace MBSimFMI {
 
 // create predefined parameters
 void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
-                             PredefinedParameterStruct &predefinedParameterStruct) {
+                             PredefinedParameterStruct &predefinedParameterStruct,
+                             bool setToDefaultValue) {
   // output directory
   var.push_back(boost::make_shared<PredefinedParameter<std::string> >("Output directory",
     "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(predefinedParameterStruct.outputDir)));
   // default value: current dir
-  (*--var.end())->setValue(std::string("."));
+  if(setToDefaultValue)
+    (*--var.end())->setValue(std::string("."));
 
   // plot mode
   // generate enumeration list
@@ -35,19 +37,22 @@ void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
   var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.mode",
     "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(predefinedParameterStruct.plotMode), plotModeList));
   // default value
-  (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));
+  if(setToDefaultValue)
+    (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));
 
   // plot at each n-th integrator step
   var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
     "... n-th completed integrator step", boost::ref(predefinedParameterStruct.plotEachNStep)));
   // default value: every 5-th step
-  (*--var.end())->setValue(int(5));
+  if(setToDefaultValue)
+    (*--var.end())->setValue(int(5));
 
   // plot every dt
   var.push_back(boost::make_shared<PredefinedParameter<double> >("Plot.sample time",
     "... sample point with this sample time", boost::ref(predefinedParameterStruct.plotStepSize)));
   // default value: every 1ms
-  (*--var.end())->setValue(double(0.001));
+  if(setToDefaultValue)
+    (*--var.end())->setValue(double(0.001));
 
   // ADD HERE MORE PREDEFINED PARAMETERS
 }
