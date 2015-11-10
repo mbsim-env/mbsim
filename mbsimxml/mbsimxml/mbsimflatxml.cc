@@ -124,8 +124,8 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   // setup message streams
   static PrefixedStringBuf infoBuf("Info:    ", cout);
   static PrefixedStringBuf warnBuf("Warning: ", cerr);
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<ostream>(&infoBuf));
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&warnBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<bool>(true), boost::make_shared<ostream>(&infoBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<bool>(true), boost::make_shared<ostream>(&warnBuf));
 
   loadPlugins();
 
