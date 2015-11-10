@@ -118,6 +118,8 @@ namespace MBSim {
       point->setFrameOfReference(frame);
       addContour(point);
 
+      double thicknessFactor = 0.5;
+
       r(0) = -lx/2.0;
       r(1) = 0;
       r(2) = 0;
@@ -126,6 +128,7 @@ namespace MBSim {
       Rectangle *rectangle = new Rectangle("Face1");
       rectangle->setYLength(ly);
       rectangle->setZLength(lz);
+      rectangle->setThickness(lx*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -137,6 +140,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face2");
       rectangle->setYLength(ly);
       rectangle->setZLength(lz);
+      rectangle->setThickness(lx*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -148,6 +152,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face3");
       rectangle->setYLength(ly);
       rectangle->setZLength(lx);
+      rectangle->setThickness(lz*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -159,6 +164,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face4");
       rectangle->setYLength(ly);
       rectangle->setZLength(lx);
+      rectangle->setThickness(lz*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -170,6 +176,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face5");
       rectangle->setYLength(lx);
       rectangle->setZLength(lz);
+      rectangle->setThickness(ly*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -181,6 +188,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face6");
       rectangle->setYLength(lx);
       rectangle->setZLength(lz);
+      rectangle->setThickness(ly*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -191,6 +199,7 @@ namespace MBSim {
       addFrame(frame);
       Edge *edge = new Edge("Edge1");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -201,6 +210,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge2");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -211,6 +221,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge3");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -221,6 +232,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge4");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -231,6 +243,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge5");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -241,6 +254,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge6");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -251,6 +265,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge7");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -261,6 +276,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge8");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -271,6 +287,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge9");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -281,6 +298,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge10");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -291,6 +309,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge11");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -301,6 +320,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge12");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
