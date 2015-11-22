@@ -132,10 +132,10 @@ int main(int argc, char *argv[]) {
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
       boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-      Preprocess::preprocess(parser, *eval, dependencies, modelEle, param);
+      Preprocess::preprocess(parser, eval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
-      convertXPathParamSetToVariable(param, xmlParam, *eval);
+      convertXPathParamSetToVariable(param, xmlParam, eval);
       // remove all variables which are not in useParam
       vector<boost::shared_ptr<Variable> > xmlParam2;
       for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {

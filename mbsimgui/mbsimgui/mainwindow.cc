@@ -65,9 +65,8 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
-  shared_ptr<Eval> MainWindow::eval;
   vector<boost::filesystem::path> dependencies;
-  NewParamLevel *MainWindow::evalParamLevel=NULL;
+
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
     // use html output of MBXMLUtils
@@ -100,7 +99,6 @@ namespace MBSimGUI {
 
     MBSimObjectFactory::initialize();
     eval=Eval::createEvaluator("octave", &dependencies);
-    evalParamLevel=new NewParamLevel(*eval);
 
     QMenu *GUIMenu=new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
@@ -714,10 +712,11 @@ namespace MBSimGUI {
     try {
       D(doc)->validate();
 
-      // remove all parameters from evaluator using delete and new NewParamLevel
-      // (this will not work for nested parameters in embed!???)
-      delete evalParamLevel;
-      evalParamLevel=new NewParamLevel(*eval);
+      // create a new empty evaluator
+      // Note: do not use "eval.reset(); eval=..." or something like this here since this will possibly deinit
+      // static part of the evaluator and then reinit these and will be time consuming.
+      eval=Eval::createEvaluator("octave", &dependencies);
+
       // add parameter
       eval->addParamSet(doc->getDocumentElement());
     }

@@ -29,6 +29,8 @@ using namespace std;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   TranslationAlongFixedAxisWidget::TranslationAlongFixedAxisWidget() {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -66,7 +68,7 @@ namespace MBSimGUI {
   }
 
   int LinearTranslationWidget::getArg1Size() const {
-    string str = MainWindow::eval->cast<MBXMLUtils::CodeString>(MainWindow::eval->stringToValue(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString()));
+    string str = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(static_cast<ExtPhysicalVarWidget*>(A->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString()));
     vector<vector<string> > A = strToMat(str);
     return A.size()?A[0].size():0;
   }

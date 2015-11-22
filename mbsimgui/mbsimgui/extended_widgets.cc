@@ -29,6 +29,8 @@ using namespace std;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> inputWidget_, int evalIndex) : inputWidget(inputWidget_), evalInput(0) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
@@ -89,7 +91,7 @@ namespace MBSimGUI {
 
   void ExtPhysicalVarWidget::openEvalDialog() {
     evalInput = inputCombo->currentIndex();
-    QString str = QString::fromStdString(MainWindow::eval->cast<MBXMLUtils::CodeString>(MainWindow::eval->stringToValue(getValue().toStdString())));
+    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
     vector<vector<QString> > A = strToMat(str);
     if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {
