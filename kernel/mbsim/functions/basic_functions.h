@@ -33,16 +33,18 @@ namespace MBSim {
   template<typename Ret, typename Arg>
     class ConstantFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       protected:
-        Ret a0;
+        double a0;
       public:
-        ConstantFunction() {}
-        ConstantFunction(Ret a0_) : a0(a0_) {}
-        Ret operator()(const Arg &x) { return a0; }
+        ConstantFunction(double a0_=0) : a0(a0_) {}
+        typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+        Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a0); }
+        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return FromDouble<Ret>::cast(0); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
         void initializeUsingXML(xercesc::DOMElement *element) {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
-          a0=FromMatStr<Ret>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
+          a0=Element::getDouble(e);
         }
-        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return NULL; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; }
     };
 
   template<typename Sig> class LinearFunction; 

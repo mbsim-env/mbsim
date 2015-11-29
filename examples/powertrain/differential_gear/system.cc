@@ -69,19 +69,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV(double)>(VecV(1, INIT, 1.1/100.)));
+  ke->setMomentFunction(new ConstantFunction<VecV(double)>(1.1/100.));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("LeftOutputShaft"))->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV(double)>(VecV(1, INIT, 0.99/100.)));
+  ke->setMomentFunction(new ConstantFunction<VecV(double)>(0.99/100.));
 
   ke = new KineticExcitation("MAbR");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("RightOutputShaft"))->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV(double)>(VecV(1, INIT, 1/100.)));
+  ke->setMomentFunction(new ConstantFunction<VecV(double)>(1/100.));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   boost::shared_ptr<OpenMBV::Frustum> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();

@@ -3387,7 +3387,7 @@
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
-          <xs:element name="a0" type="pv:unknownMatrix">
+          <xs:element name="a0" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.

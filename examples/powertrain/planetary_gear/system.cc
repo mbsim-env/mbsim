@@ -29,7 +29,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(planetaryGear->getObject("Sun"))->getFrame("C"));
   ke->setMomentDirection("[0;0;1]");
-  ke->setMomentFunction(new ConstantFunction<VecV(double)>(VecV(1, INIT, 0.1)));
+  ke->setMomentFunction(new ConstantFunction<VecV(double)>(0.1));
 
 //  ke = new KineticExcitation("MT");
 //  addLink(ke);
