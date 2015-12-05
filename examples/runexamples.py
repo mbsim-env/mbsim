@@ -387,7 +387,7 @@ def main():
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
   <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
-  <script type="text/javascript" src="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/mbsimBuildServiceClient.js"></script>
+  <script type="text/javascript" src="http://h2508405.stratoserver.net/mbsim/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
