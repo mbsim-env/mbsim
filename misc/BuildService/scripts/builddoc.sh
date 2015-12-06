@@ -1,11 +1,6 @@
 #!/bin/sh
 
-if [ $# -ne 1 ]; then
-  echo "Usage: $0 <doc-dir>"
-  exit
-fi
-
-cd $1
+cd /home/mbsim/linux64-dailydebug/mbsim/misc/html/doc
 CURDIR=$(pwd)
 
 for MAINFILE in $(find -name main.tex); do

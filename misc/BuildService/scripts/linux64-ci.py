@@ -12,12 +12,12 @@ env=os.environ.copy()
 env['CXXFLAGS']='-O0 -g'
 env['CFLAGS']='-O0 -g'
 env['INSTALL']='/usr/bin/install -c -p'
-env['PKG_CONFIG_PATH']='/home/user/3rdparty/casadi-local-linux32/lib/pkgconfig'
-env['LD_LIBRARY_PATH']=env.get('LD_LIBRARY_PATH', '')+':/home/user/3rdparty/casadi-local-linux32/lib'
+env['PKG_CONFIG_PATH']='/home/mbsim/linux64-ci/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-linux64/lib/pkgconfig:/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig'
+env['LD_LIBRARY_PATH']=env.get('LD_LIBRARY_PATH', '')+':/home/mbsim/3rdparty/casadi-local-linux64/lib'
 
 # config files
 scriptdir=os.path.dirname(__file__)
-configFilename="/home/user/BuildServiceConfig/mbsimBuildService.conf"
+configFilename="/home/mbsim/BuildServiceConfig/mbsimBuildService.conf"
 
 def checkToBuild(tobuild):
   # read file config file
@@ -69,6 +69,6 @@ while True:
   else:
     break
 
-subprocess.check_call([scriptdir+"/build.py", "--rotate", "30", "-j", "2", "--fmatvecBranch", fmatvecBranch, "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", "/home/user/MBSimContinuousIntegration", "--prefix", "/home/user/MBSimContinuousIntegration/local", "--reportOutDir", "/var/www/html/mbsim-env/MBSimContinuousIntegration/report", "--url", "http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimContinuousIntegration/report", "--buildType", "Continuous Integration Build:", "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-boost-locale-lib=boost_locale-mt", "--with-swigpath=/home/user/Updates/local/bin", "--passToRunexamples", "--disableCompare", "--disableMakeClean", "xmlflat/hierachical_modelling", "xml/hierachical_modelling", "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"], env=env)
+subprocess.check_call([scriptdir+"/build.py", "--rotate", "30", "-j", "2", "--fmatvecBranch", fmatvecBranch, "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", "/home/mbsim/linux64-ci", "--prefix", "/home/mbsim/linux64-ci/local", "--reportOutDir", "/var/www/html/mbsim/linux64-ci/report", "--url", "http://h2508405.stratoserver.net/mbsim/linux64-ci/report", "--buildType", "Linux64 Continuous Integration: ", "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--passToRunexamples", "--disableCompare", "--disableMakeClean", "xmlflat/hierachical_modelling", "xml/hierachical_modelling", "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"], env=env)
 # build done, return with code 1 or other code !=0 returned from subprocess.check_call exception
 sys.exit(1)

@@ -14,11 +14,11 @@ function killStoppedProcesses() {
   done
 }
 
-COMMANDS="build-linux-debug.sh build-linux-release.sh build-windows-release.sh"
+COMMANDS="linux64-dailydebug.sh linux64-dailyrelease.sh win64-dailyrelease.sh"
 MAXTIME=5 # in hours
 killStoppedProcesses "$COMMANDS" $MAXTIME
 
-COMMANDS="build-linux-ci.py"
+COMMANDS="linux64-ci.py"
 MAXTIME=2 # in hours
 killStoppedProcesses "$COMMANDS" $MAXTIME
 

@@ -13,6 +13,7 @@ import datetime
 import fileinput
 import shutil
 import codecs
+import simplesandbox
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -272,11 +273,13 @@ def main():
   # set docDir
   global docDir
   if args.prefix==None:
+    raise RuntimeError("MISSING: calling without --prefix is currently not supported. sandboxing is missing")
     output=subprocess.check_output([pj(args.sourceDir, "openmbv"+args.binSuffix, "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
     for opt in output.split():
       match=re.search("'?--prefix[= ]([^']*)'?", opt)
       if match!=None:
         docDir=pj(match.expand("\\1"), "share", "mbxmlutils", "doc")
+        args.prefixAuto=match.expand("\\1")
         break
   else:
     docDir=pj(args.prefix, "share", "mbxmlutils", "doc")
@@ -430,7 +433,7 @@ def main():
   for tool in set(toolDependencies)-set(orderedBuildTools):
     print('<tr>', file=mainFD)
     print('<td>'+tool.replace('/', u'/\u200B')+'</td>', file=mainFD)
-    for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    for i in range(0, 5-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
       print('<td>-</td>', file=mainFD)
     print('</tr>', file=mainFD)
   mainFD.flush()
@@ -665,28 +668,36 @@ def configure(tool, mainFD):
       # pre configure
       os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["aclocal"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
+      if simplesandbox.call(["aclocal"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["autoheader"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoheader failed")
+      if simplesandbox.call(["autoheader"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoheader failed")
       print("\n\nRUNNING libtoolize\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["libtoolize", "-c"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("libtoolize failed")
+      if simplesandbox.call(["libtoolize", "-c"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("libtoolize failed")
       print("\n\nRUNNING automake\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["automake", "-a", "-c"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
+      if simplesandbox.call(["automake", "-a", "-c"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["autoconf"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
+      if simplesandbox.call(["autoconf"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["autoreconf"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
+      if simplesandbox.call(["autoreconf"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
       # configure
       os.chdir(savedDir)
       os.chdir(pj(args.sourceDir, buildTool(tool)))
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
-        if subprocess.call(["./config.status", "--recheck"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+        if simplesandbox.call(["./config.status", "--recheck"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
       else:
         command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
-        if subprocess.call(command, stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+        if simplesandbox.call(command, envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
     else:
       print("configure disabled", file=configureFD); configureFD.flush()
 
@@ -719,12 +730,16 @@ def make(tool, mainFD):
       errStr=""
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
-        if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make clean failed; "
+        if simplesandbox.call(["make", "clean"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
-      if subprocess.call(["make", "-k", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make failed; "
+      if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
-        if subprocess.call(["make", "-k", "install"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make install failed; "
+        if simplesandbox.call(["make", "-k", "install"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"],
+                              shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
     else:
       print("make disabled", file=makeFD); makeFD.flush()
@@ -751,7 +766,8 @@ def check(tool, mainFD):
   if not args.disableMakeCheck:
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
-    if subprocess.call(["make", "-j", str(args.j), "check"], stderr=subprocess.STDOUT, stdout=checkFD)==0:
+    if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                          stderr=subprocess.STDOUT, stdout=checkFD)==0:
       result="done"
     else:
       result="failed"
@@ -799,11 +815,16 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
       # make doc
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make clean failed; "
+      if simplesandbox.call(["make", "clean"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "-k"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
+      if simplesandbox.call(["make", "-k"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"],
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "-k", "install"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
+      if simplesandbox.call(["make", "-k", "install"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"],
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
 
       # copy doc
@@ -862,7 +883,8 @@ def runexamples(mainFD):
   print("")
   print("Output of runexamples.py")
   print("")
-  ret=subprocess.call(command, stderr=subprocess.STDOUT)
+  ret=simplesandbox.call(command, envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=[".", pj(args.reportOutDir, "runexamples_report")],
+                         stderr=subprocess.STDOUT)
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
@@ -927,12 +949,14 @@ def mypostargparse(args):
 
   runAgain=False
   for argname in passArgNames:
+    if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname)==None: raise RuntimeError("Invalid argument: "+argname) # security check
     value=eval("args."+argname)
     if value!=None:
       for argname2 in passArgNames:
         if "--"+argname2 in value:
           runAgain=True
           exec('args.'+argname+'=value[0:value.index("--"+argname2)]')
+          if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname2)==None: raise RuntimeError("Invalid argument: "+argname2) # security check
           exec('args.'+argname2+'=value[value.index("--"+argname2)+1:]')
 
   if runAgain:

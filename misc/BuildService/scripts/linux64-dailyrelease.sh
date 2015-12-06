@@ -1,8 +1,8 @@
 #! /bin/sh
 
-SRCDIR=/home/user/MBSimLinux
-OUTDIR=/var/www/html/mbsim-env/MBSimLinux
-URL=http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimLinux
+SRCDIR=/home/mbsim/linux64-dailyrelease
+OUTDIR=/var/www/html/mbsim/linux64-dailyrelease
+URL=http://h2508405.stratoserver.net/mbsim/linux64-dailyrelease
 
 
 
@@ -13,9 +13,9 @@ cat << EOF > $OUTDIR/report_distribute/result.rss.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Daily Linux Release Build</title>
+    <title>Linux64 Daily Release</title>
     <link>$URL/report_distribute/distribute.out</link>
-    <description>Daily Linux Release Build: Result RSS feed of the MBSim daily Linux build/distribution</description>
+    <description>Linux64 Daily Release: Result RSS feed of the MBSim daily Linux64 build/distribution</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="$URL/report_distribute/result.rss.xml" rel="self" type="application/rss+xml"/>
@@ -23,7 +23,7 @@ EOF
 if [ $1 -eq 1 ]; then
 cat << EOF >> $OUTDIR/report_distribute/result.rss.xml
     <item>
-      <title>Daily Linux Release Build: creating distribution failed</title>
+      <title>Linux64 Daily Release: creating distribution failed</title>
       <link>$URL/report_distribute/distribute.out</link>
       <guid isPermaLink="false">$URL/report_distribute/rss_id_$DATE1</guid>
       <pubDate>$DATE2</pubDate>
@@ -32,7 +32,7 @@ EOF
 fi
 cat << EOF >> $OUTDIR/report_distribute/result.rss.xml
     <item>
-      <title>Linux Release Build: Dummy feed item. Just ignore it.</title>
+      <title>Linux64 Daily Release: Dummy feed item. Just ignore it.</title>
       <link>$URL/report_distribute/distribute.out</link>
       <guid isPermaLink="false">$URL/report_distribute/rss_id_1359206848</guid>
       <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
@@ -46,14 +46,14 @@ rss 0
 
 rm -rf $SRCDIR/local/share/mbxmlutils
 
-export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig:/home/user/3rdparty/casadi-local-linux32/lib/pkgconfig
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/3rdparty/casadi-local-linux32/lib
+export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-linux64/lib/pkgconfig:/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/mbsim/3rdparty/casadi-local-linux64/lib
 
-$SRCDIR/mbsim/misc/BuildService/scripts/build.py --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-boost-locale-lib=boost_locale-mt --with-swigpath=/home/user/Updates/local/bin --passToRunexamples --disableCompare --disableValidate
+##$(dirname $0)/build.py --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux64 Daily Release: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin --passToRunexamples --disableCompare --disableValidate xmlflat/hierachical_modelling xml/hierachical_modelling xml/time_dependent_kinematics xml/hydraulics_ballcheckvalve fmi/simple_test fmi/hierachical_modelling fmi/sphere_on_plane mechanics/basics/hierachical_modelling mechanics/basics/time_dependent_kinematics
 
 RET=0
 
-$SRCDIR/mbsim/misc/BuildService/scripts/distribute-linux-release.sh &> $OUTDIR/report_distribute/distribute.out
+$(dirname $0)/linux64-dailyrelease-distribute.sh &> $OUTDIR/report_distribute/distribute.out
 test $? -ne 0 && RET=1
 
 cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
