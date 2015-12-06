@@ -35,12 +35,12 @@ if len(checkedExamples)>0:
 # build and run all examples
 os.environ["CXXFLAGS"]="-O0 -g"
 os.environ["CFLAGS"]="-O0 -g"
-#mfmfsubprocess.call([SCRIPTDIR+"/build.py", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--reportOutDir", "/var/www/html/mbsim/linux64-dailydebug/report", "--url", "http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/report", "--buildType", "Linux64-DailyDebug: ", "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin"])
+subprocess.call([SCRIPTDIR+"/build.py", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--reportOutDir", "/var/www/html/mbsim/linux64-dailydebug/report", "--url", "http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/report", "--buildType", "Linux64-DailyDebug: ", "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin"])
 
 # update references for download
 os.chdir(SRCDIR+"/mbsim/examples")
-#mfmfsimplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references"],
-#mfmf                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"])
+simplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references"],
+                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"])
 os.chdir(CURDIR)
 
 # run examples with valgrind
