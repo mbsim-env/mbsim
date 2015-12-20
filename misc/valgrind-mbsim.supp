@@ -17,16 +17,16 @@
    octave does not free several memory allocated during the initial loading (not problematic since only called ones)
    Memcheck:Leak
    ...
-   obj:/usr/lib*/octave/*/liboctinterp.so*
-   fun:*
+   obj:*/liboctinterp.so*
+   ...
    fun:_dl_init
 }
 {
    octave does not free several memory allocated during the initial loading (not problematic since only called ones)
    Memcheck:Leak
    ...
-   obj:/usr/lib*/octave/*/liboctave.so*
-   fun:*
+   obj:*/liboctave.so*
+   ...
    fun:_dl_init
 }
 {
@@ -64,14 +64,6 @@
    Memcheck:Leak
    ...
    obj:*/liboctave.so.1
-   ...
-   fun:dlopen@@GLIBC_2.1
-}
-{
-   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
-   Memcheck:Leak
-   ...
-   obj:*/liboctinterp.so.1
    ...
    fun:dlopen@@GLIBC_2.1
 }
