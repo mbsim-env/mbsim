@@ -30,7 +30,7 @@ timeID=None
 argparser = argparse.ArgumentParser(
 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 description='''
-Build MBSim, OpenMBV and all other tools.
+Building the MBSim-Environment.
 
 After building, runexamples.py is called by this script.
 All unknown options are passed to runexamples.py.
@@ -308,11 +308,11 @@ def main():
     print('<head>', file=docFD)
     print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=docFD)
     print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
-    print('  <title>MBSim, OpenMBV, ... Documentation</title>', file=docFD)
+    print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
     print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=docFD)
     print('</head>', file=docFD)
     print('<body style="margin:1em">', file=docFD)
-    print('<h1>MBSim, OpenMBV, ... Documentation</h1>', file=docFD)
+    print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
     print('<div class="panel panel-success">', file=docFD)
     print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Documentation</div>', file=docFD)
     print('  <ul class="list-group">', file=docFD)
@@ -353,11 +353,11 @@ def main():
   print('<head>', file=mainFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=mainFD)
-  print('  <title>MBSim, OpenMBV, ... Build Results</title>', file=mainFD)
+  print('  <title>Build Results of the MBSim-Environment</title>', file=mainFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
-  print('  <link rel="alternate" type="application/rss+xml" title="MBSim, OpenMBV, ... Build Results" href="../result.rss.xml"/>', file=mainFD)
+  print('  <link rel="alternate" type="application/rss+xml" title="Build Results of the MBSim-Environment" href="../result.rss.xml"/>', file=mainFD)
   print('</head>', file=mainFD)
   print('<body style="margin:1em">', file=mainFD)
   print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
@@ -370,7 +370,7 @@ def main():
   print('  } );', file=mainFD)
   print('</script>', file=mainFD)
 
-  print('<h1>MBSim, OpenMBV, ... Build Results</h1>', file=mainFD)
+  print('<h1>Build Results of the MBSim-Environment</h1>', file=mainFD)
 
   print('<dl class="dl-horizontal">', file=mainFD)
   print('''<dt>Called Command</dt><dd><div class="dropdown">
@@ -912,9 +912,9 @@ def writeRSSFeed(nrFailed):
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>%sMBSim, OpenMBV, ... Build Results</title>
+    <title>%sBuild Results of TheMBSim-Environment</title>
     <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last build of The MBSim-Environment</description>
+    <description>%sResult RSS feed of the last build of the MBSim-Environment</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)

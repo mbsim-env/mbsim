@@ -254,7 +254,7 @@ cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dl
 
 # README.txt
 cat << EOF > $DISTDIR/README.txt
-Using The MBSim-Environment:
+Using the MBSim-Environment:
 ============================
 
 - Unpack the archive to an arbitary directory (already done)

@@ -269,7 +269,7 @@ cp /usr/lib64/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
 
 # README.txt
 cat << EOF > $DISTDIR/README.txt
-Using The MBSim-Environment:
+Using the MBSim-Environment:
 ============================
 
 NOTE
