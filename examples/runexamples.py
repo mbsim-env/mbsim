@@ -280,7 +280,7 @@ def main():
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
-  args.updateURL="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/references" # default value
+  args.updateURL="http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/references" # default value
   args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
@@ -410,8 +410,8 @@ def main():
       });
 
       // if this is the current example table from the build server and is finished than enable the reference update
-      if(($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/" ||
-          $(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") &&
+      if(($(location).attr('href')=="http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/" ||
+          $(location).attr('href')=="http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/index.html") &&
           $("#FINISHED").length>0) {
         // show reference update and status
         $("#UPDATEREFERENCES").css("display", "block");
@@ -1624,7 +1624,7 @@ def writeRSSFeed(nrFailed, nrTotal):
   <channel>
     <title>%sMBSim runexample.py Result</title>
     <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last runexample.py run of MBSim and Co.</description>
+    <description>%sResult RSS feed of the last runexample.py run of The MBSim-Environment</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)

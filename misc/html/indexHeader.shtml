@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+  <title>Directory Index of <!--#echo var="REQUEST_URI" --></title>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
+</head>
+<body style="margin:1em">
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('table').addClass("table table-striped table-hover table-bordered table-condensed");
+    $('table tr:nth-child(1)').wrap("<thead></thead>" );
+    $("img[src='/icons/back.gif']").replaceWith('<span class="glyphicon glyphicon-level-up"> </span>');
+    $("img[src='/icons/folder.gif']").replaceWith('<span class="glyphicon glyphicon-folder-open"> </span>');
+    $("img[src='/icons/layout.gif']").replaceWith('<span class="glyphicon glyphicon-file"> </span>');
+    $("img[src='/icons/compressed.gif']").replaceWith('<span class="glyphicon glyphicon-compressed"> </span>');
+    $("img[src='/icons/unknown.gif']").replaceWith('<span class="glyphicon glyphicon-question-sign"> </span>');
+    $('table').dataTable({paging: false, columnDefs: [{width: "1em", targets: 0 }]});
+  });
+</script>
+<h1>Directory Index</h1>
+
+<div class="panel panel-success">
+  <div class="panel-heading"><h4><span class="glyphicon glyphicon-list"></span>&nbsp;<!--#echo var="REQUEST_URI" --></h4></div>
+  <div class="panel-body">
