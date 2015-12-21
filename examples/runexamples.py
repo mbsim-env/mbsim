@@ -1624,7 +1624,7 @@ def writeRSSFeed(nrFailed, nrTotal):
   <channel>
     <title>%sMBSim runexample.py Result</title>
     <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last runexample.py run of MBSim and Co.</description>
+    <description>%sResult RSS feed of the last runexample.py run of The MBSim-Environment</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
