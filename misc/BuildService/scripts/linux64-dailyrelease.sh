@@ -3,6 +3,7 @@
 SRCDIR=/home/mbsim/linux64-dailyrelease
 OUTDIR=/var/www/html/mbsim/linux64-dailyrelease
 URL=http://h2508405.stratoserver.net/mbsim/linux64-dailyrelease
+SCRIPTDIR=$(dirname $(realpath $0))
 
 
 
@@ -48,18 +49,24 @@ rm -rf $SRCDIR/local/share/mbxmlutils
 
 export PKG_CONFIG_PATH=$SRCDIR/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-linux64/lib/pkgconfig:/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/mbsim/3rdparty/casadi-local-linux64/lib
+export CXXFLAGS="-g -O2"
+export CFLAGS="-g -O2"
+export FFLAGS="-g -O2"
 
-##$(dirname $0)/build.py --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux64 Daily Release: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin --passToRunexamples --disableCompare --disableValidate xmlflat/hierachical_modelling xml/hierachical_modelling xml/time_dependent_kinematics xml/hydraulics_ballcheckvalve fmi/simple_test fmi/hierachical_modelling fmi/sphere_on_plane mechanics/basics/hierachical_modelling mechanics/basics/time_dependent_kinematics
+$(dirname $0)/build.py --rotate 14 -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux64 Daily Release: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin --passToRunexamples --disableCompare --disableValidate xmlflat/hierachical_modelling xml/hierachical_modelling xml/time_dependent_kinematics xml/hydraulics_ballcheckvalve fmi/simple_test fmi/hierachical_modelling fmi/sphere_on_plane mechanics/basics/hierachical_modelling mechanics/basics/time_dependent_kinematics
 
 RET=0
 
-$(dirname $0)/linux64-dailyrelease-distribute.sh &> $OUTDIR/report_distribute/distribute.out
-test $? -ne 0 && RET=1
+#mfmf $(dirname $0)/linux64-dailyrelease-distribute.sh &> $OUTDIR/report_distribute/distribute.out
+#mfmf test $? -ne 0 && RET=1
 
-cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
-cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx-debug.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
-test $? -ne 0 && RET=1
+#mfmf cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
+#mfmf cp $SRCDIR/dist_mbsim/mbsim-linux-shared-build-xxx-debug.tar.bz2 $OUTDIR/download/ &>> $OUTDIR/report_distribute/distribute.out
+#mfmf test $? -ne 0 && RET=1
 
 if [ $RET -ne 0 ]; then
   rss 1
 fi
+
+
+$SCRIPTDIR/mergeFeeds.py

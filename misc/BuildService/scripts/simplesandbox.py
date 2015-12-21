@@ -1,31 +1,60 @@
 #!/usr/bin/python
 
 import os
+import signal
 import subprocess
 
-def call(cmd, envvar=[], shareddir=[], stdout=None, stderr=None):
-  sharedGroup="mbsim_mbsimsb" # user this group as shared group (read- and writeable by both)
-  user="mbsimsb" # username of the sandboxed user
+sbuser="mbsimsb" # username of the sandboxed user
+sbuserID="1001" # user id of the sandboxed user
+userID="1000" # user id of the user using the sandbox
 
+global sigStore, shareddirStore
+sigStore={}
+shareddirStore=[]
+
+def cleanup(shareddir=None):
+  global sigStore, shareddirStore
+  signal.signal(signal.SIGINT, sigStore['INT'])
+  signal.signal(signal.SIGTERM, sigStore['TERM'])
+  signal.signal(signal.SIGHUP, sigStore['HUP'])
+  signal.signal(signal.SIGQUIT, sigStore['QUIT'])
   # fix permissions (as the local user)
-  if len(shareddir)>0:
-    for d in shareddir:
-      subprocess.call(["sudo", "/home/mbsim/chown_mbsim_mbsimsb.sh", "mbsimsb", os.path.realpath(d)])
-  # build command for execution on remote side
-  # change current dir
-  cmdString="cd "+os.getcwd()+";"
-  # set envars
-  for v in envvar:
-    cmdString+="export "+v+"="+os.environ[v]+";"
-  # add user supplied command and save return value
-  cmdString+=" ".join(cmd)
-  # run command remotely (as the remote user)
-  ret=subprocess.call(["ssh", user+"@localhost", cmdString], stdout=stdout, stderr=stderr)
-  # fix permissions (as the local user)
-  if len(shareddir)>0:
-    for d in shareddir:
-      subprocess.call(["sudo", "/home/mbsim/chown_mbsim_mbsimsb.sh", "mbsim", os.path.realpath(d)])
-  return ret
+  if shareddir!=None and len(shareddir)>0:
+    subprocess.check_call([os.path.dirname(__file__)+"/chown_mbsim_mbsimsb", userID]+shareddir)
+  if shareddir==None and len(shareddirStore)>0:
+    subprocess.check_call([os.path.dirname(__file__)+"/chown_mbsim_mbsimsb", userID]+shareddirStore)
+
+def handler(signum, frame):
+  print('Recived signal '+str(signum)+': cleanup and reraise signal.')
+  cleanup()
+  os.kill(os.getpid(), signum)
+
+def call(cmd, envvar=[], shareddir=[], stdout=None, stderr=None):
+  global sigStore, shareddirStore
+  shareddirStore=shareddirStore+shareddir
+  sigStore['INT']=signal.signal(signal.SIGINT, handler)
+  sigStore['TERM']=signal.signal(signal.SIGTERM, handler)
+  sigStore['HUP']=signal.signal(signal.SIGHUP, handler)
+  sigStore['QUIT']=signal.signal(signal.SIGQUIT, handler)
+
+  ret=1
+  try:
+    # fix permissions (as the local user)
+    if len(shareddir)>0:
+      subprocess.check_call([os.path.dirname(__file__)+"/chown_mbsim_mbsimsb", sbuserID]+shareddir)
+    # build command for execution on remote side
+    # change current dir
+    cmdString='cd "'+os.getcwd()+'";'
+    # set envars
+    for v in envvar:
+      cmdString+='export '+v+'="'+os.environ[v]+'";'
+    # add user supplied command and save return value
+    cmdString+='"'+'" "'.join(cmd)+'"'
+    # run command remotely (as the remote user)
+    ret=subprocess.call(["ssh", sbuser+"@localhost", cmdString], stdout=stdout, stderr=stderr)
+  finally:
+    cleanup(shareddir)
+    return ret
 
 
 

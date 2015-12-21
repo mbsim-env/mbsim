@@ -83,6 +83,9 @@ passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAIN
 # parse command line options
 args=argparser.parse_args() # modified by mypostargparse
 
+# pass these envvar to simplesandbox.call
+simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS"]
+
 htmlEscapeTable={
   "&": "&amp;",
   '"': "&quot;",
@@ -668,22 +671,22 @@ def configure(tool, mainFD):
       # pre configure
       os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["aclocal"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoheader"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoheader failed")
       print("\n\nRUNNING libtoolize\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["libtoolize", "-c"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("libtoolize failed")
       print("\n\nRUNNING automake\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["automake", "-a", "-c"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoconf"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoreconf"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
       # configure
       os.chdir(savedDir)
@@ -691,12 +694,12 @@ def configure(tool, mainFD):
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
-        if simplesandbox.call(["./config.status", "--recheck"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+        if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
       else:
         command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
-        if simplesandbox.call(command, envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+        if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
     else:
       print("configure disabled", file=configureFD); configureFD.flush()
@@ -730,14 +733,14 @@ def make(tool, mainFD):
       errStr=""
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
-        if simplesandbox.call(["make", "clean"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+        if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
                               stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
-      if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
-        if simplesandbox.call(["make", "-k", "install"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"],
+        if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
                               shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
                               stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
@@ -766,7 +769,7 @@ def check(tool, mainFD):
   if not args.disableMakeCheck:
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
-    if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+    if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
                           stderr=subprocess.STDOUT, stdout=checkFD)==0:
       result="done"
     else:
@@ -815,14 +818,14 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
       # make doc
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
-      if simplesandbox.call(["make", "clean"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=["."],
+      if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
                             stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
-      if simplesandbox.call(["make", "-k"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"],
+      if simplesandbox.call(["make", "-k"], envvar=simplesandboxEnvvars,
                             shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
                             stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
-      if simplesandbox.call(["make", "-k", "install"], envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"],
+      if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
                             shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
                             stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
@@ -883,7 +886,8 @@ def runexamples(mainFD):
   print("")
   print("Output of runexamples.py")
   print("")
-  ret=simplesandbox.call(command, envvar=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH"], shareddir=[".", pj(args.reportOutDir, "runexamples_report")],
+  if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
+  ret=simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report")],
                          stderr=subprocess.STDOUT)
 
   if ret==0:
@@ -910,7 +914,7 @@ def writeRSSFeed(nrFailed):
   <channel>
     <title>%sMBSim, OpenMBV, ... Build Results</title>
     <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last build of MBSim and Co.</description>
+    <description>%sResult RSS feed of the last build of The MBSim-Environment</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)

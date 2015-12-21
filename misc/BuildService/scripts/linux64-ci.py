@@ -6,17 +6,29 @@ import fcntl
 import json
 import time
 import sys
+import mergeFeeds
+
+# run only one instance of this program at the same time
+running=map(lambda x: int(x), subprocess.check_output(["/usr/sbin/pidof", "-x", os.path.basename(__file__)]).split()) # get all this processes
+running.remove(os.getpid()) # remove this process itself
+if len(running)>0: # to nothing if a process is already running
+  sys.exit(0)
+
+
+
+scriptdir=os.path.dirname(os.path.realpath(__file__))
+SRCDIR="/home/mbsim/linux64-ci"
 
 # set build enironment
 env=os.environ.copy()
 env['CXXFLAGS']='-O0 -g'
 env['CFLAGS']='-O0 -g'
-env['INSTALL']='/usr/bin/install -c -p'
-env['PKG_CONFIG_PATH']='/home/mbsim/linux64-ci/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-linux64/lib/pkgconfig:/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig'
-env['LD_LIBRARY_PATH']=env.get('LD_LIBRARY_PATH', '')+':/home/mbsim/3rdparty/casadi-local-linux64/lib'
+env['FFLAGS']='-O0 -g'
+env['PKG_CONFIG_PATH']=SRCDIR+'/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-linux64/lib/pkgconfig:'+\
+                       '/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig'
+env['LD_LIBRARY_PATH']='/home/mbsim/3rdparty/casadi-local-linux64/lib'
 
 # config files
-scriptdir=os.path.dirname(__file__)
 configFilename="/home/mbsim/BuildServiceConfig/mbsimBuildService.conf"
 
 def checkToBuild(tobuild):
@@ -62,13 +74,13 @@ mbsimBranch=tobuild['mbsim'].encode('utf-8')
 
 # wait at least 2 minutes after the timestamp to give the user the chance to update also other repos
 while True:
-  delta=tobuild['timestamp']+2*60 - time.time()
+  delta=tobuild['timestamp']+1*60 - time.time()
   if delta>0:
     time.sleep(delta)
     tobuild=checkToBuild(tobuild)
   else:
     break
 
-subprocess.check_call([scriptdir+"/build.py", "--rotate", "30", "-j", "2", "--fmatvecBranch", fmatvecBranch, "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", "/home/mbsim/linux64-ci", "--prefix", "/home/mbsim/linux64-ci/local", "--reportOutDir", "/var/www/html/mbsim/linux64-ci/report", "--url", "http://h2508405.stratoserver.net/mbsim/linux64-ci/report", "--buildType", "Linux64 Continuous Integration: ", "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--passToRunexamples", "--disableCompare", "--disableMakeClean", "xmlflat/hierachical_modelling", "xml/hierachical_modelling", "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"], env=env)
-# build done, return with code 1 or other code !=0 returned from subprocess.check_call exception
-sys.exit(1)
+subprocess.check_call([scriptdir+"/build.py", "--rotate", "30", "-j", "2", "--fmatvecBranch", fmatvecBranch, "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local", "--reportOutDir", "/var/www/html/mbsim/linux64-ci/report", "--url", "http://h2508405.stratoserver.net/mbsim/linux64-ci/report", "--buildType", "Linux64 Continuous Integration: ", "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--passToRunexamples", "--disableCompare", "--disableMakeClean", "xmlflat/hierachical_modelling", "xml/hierachical_modelling", "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"], env=env)
+
+mergeFeeds.run()

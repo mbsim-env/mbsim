@@ -164,6 +164,7 @@ fi
 TMPINCFILE=$DISTBASEDIR/distribute.inc.cc
 rm -f $TMPINCFILE
 for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/\|/mbsimfmi/"); do
+  test $F == /home/mbsim/linux64-dailyrelease/local/include/hdf5serie/interface_creatoroperator_iter.h && continue
   echo "#include <$F>" | sed -re "s/(.*getsharedlibpath_impl\.h.*)/#define MBXMLUTILS_SHAREDLIBNAME dummy\n\1/" | sed -re "s/(.*getsharedlibpath\.h.*)/#define MBXMLUTILS_SHAREDLIBNAME dummy\n\1/" >> $TMPINCFILE
 done
 TMPDEPFILE=$DISTBASEDIR/distribute.dep
@@ -268,8 +269,8 @@ cp /usr/lib64/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
 
 # README.txt
 cat << EOF > $DISTDIR/README.txt
-Using of the MBSim and Co. Package:
-===================================
+Using The MBSim-Environment:
+============================
 
 NOTE
 This binary Linux build requires a Linux distribution with glibc >= 2.15.
