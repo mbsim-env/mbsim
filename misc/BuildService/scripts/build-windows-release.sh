@@ -2,7 +2,7 @@
 
 SRCDIR=/home/user/MBSimWindows
 OUTDIR=/var/www/html/mbsim-env/MBSimWindows
-URL=http://h2508405.stratoserver.net/mbsim/MBSimWindows
+URL=http://www.mbsim-env.de/mbsim/MBSimWindows
 
 
 

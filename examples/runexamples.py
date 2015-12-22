@@ -280,7 +280,7 @@ def main():
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
-  args.updateURL="http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/references" # default value
+  args.updateURL="http://www.mbsim-env.de/mbsim/linux64-dailydebug/references" # default value
   args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
@@ -383,7 +383,7 @@ def main():
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
   <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
-  <script type="text/javascript" src="http://h2508405.stratoserver.net/mbsim/mbsimBuildServiceClient.js"></script>
+  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -410,8 +410,8 @@ def main():
       });
 
       // if this is the current example table from the build server and is finished than enable the reference update
-      if(($(location).attr('href')=="http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/" ||
-          $(location).attr('href')=="http://h2508405.stratoserver.net/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/index.html") &&
+      if(($(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/" ||
+          $(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/index.html") &&
           $("#FINISHED").length>0) {
         // show reference update and status
         $("#UPDATEREFERENCES").css("display", "block");
