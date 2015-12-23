@@ -21,6 +21,7 @@
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "dialogs.h"
+#include "custom_widgets.h"
 #include <mbxmlutils/eval.h>
 #include <vector>
 #include <QtGui>
@@ -664,7 +665,7 @@ namespace MBSimGUI {
       //box[i]->setText("0");
       layout->addWidget(box[i], i, 0);
     }
-    unit = new QComboBox;
+    unit = new CustomComboBox;
     unit->addItems(angleUnits());
     unit->setCurrentIndex(1);
     mainlayout->addWidget(unit);
@@ -715,7 +716,7 @@ namespace MBSimGUI {
     box = new QLineEdit(this);
     box->setPlaceholderText("0");
     layout->addWidget(box);
-    unit = new QComboBox;
+    unit = new CustomComboBox;
     unit->addItems(angleUnits());
     unit->setCurrentIndex(1);
     mainlayout->addWidget(unit);
@@ -737,7 +738,7 @@ namespace MBSimGUI {
     QHBoxLayout *layout = new QHBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
-    unit = new QComboBox;
+    unit = new CustomComboBox;
     unit->addItems(units);
     unit->setCurrentIndex(defaultUnit);
     layout->addWidget(widget);

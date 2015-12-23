@@ -36,17 +36,17 @@ namespace MBSimGUI {
   extern QDir mbsDir;
   extern MainWindow *mw;
 
-  LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : QComboBox(parent), element(element_) {
+  LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
     connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
   }
 
   void LocalFrameComboBox::showPopup() {
-    QComboBox::showPopup();
+    CustomComboBox::showPopup();
     highlightObject(currentText());
   }
 
   void LocalFrameComboBox::hidePopup() {
-    QComboBox::hidePopup();
+    CustomComboBox::hidePopup();
     if(oldID!="") {
       mw->highlightObject(oldID);
       oldID="";
@@ -61,17 +61,17 @@ namespace MBSimGUI {
       mw->highlightObject(selection->getID());
   }
 
-  ParentFrameComboBox::ParentFrameComboBox(Element *element_, QWidget *parent) : QComboBox(parent), element(element_) {
+  ParentFrameComboBox::ParentFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
     connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
   }
 
   void ParentFrameComboBox::showPopup() {
-    QComboBox::showPopup();
+    CustomComboBox::showPopup();
     highlightObject(currentText());
   }
 
   void ParentFrameComboBox::hidePopup() {
-    QComboBox::hidePopup();
+    CustomComboBox::hidePopup();
     if(oldID!="") {
       mw->highlightObject(oldID);
       oldID="";
@@ -478,7 +478,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    value = new QComboBox;
+    value = new CustomComboBox;
     value->addItems(names);
     value->setCurrentIndex(currentIndex);
     layout->addWidget(value);
@@ -497,7 +497,7 @@ namespace MBSimGUI {
   }
 
   TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) { 
-    text = new QComboBox;
+    text = new CustomComboBox;
     text->setEditable(editable);
     for(unsigned int i=0; i<list.size(); i++)
       text->addItem(list[i]);
@@ -619,7 +619,7 @@ namespace MBSimGUI {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    status = new QComboBox;
+    status = new CustomComboBox;
     status->addItem("enabled");
     status->addItem("disabled");
     layout->addWidget(status);
@@ -740,11 +740,11 @@ namespace MBSimGUI {
     tree->setHeaderLabels(labels);
     layout->addWidget(tree,0,0,2,1);
 
-    type = new QComboBox;
+    type = new CustomComboBox;
     type->addItems(type_);
     layout->addWidget(type,0,1);
 
-    value = new QComboBox;
+    value = new CustomComboBox;
     value->setEditable(true);
     value->addItems(value_);
     layout->addWidget(value,1,1);
