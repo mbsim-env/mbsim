@@ -21,7 +21,7 @@ try:
     def __init__(self, rw):
       self.rw=rw
     def __enter__(self):
-      configFilename="/home/user/BuildServiceConfig/mbsimBuildService.conf"
+      configFilename="/home/mbsim/BuildServiceConfig/mbsimBuildService.conf"
       if self.rw:
         self.fd=open(configFilename, 'r+')
         fcntl.lockf(self.fd, fcntl.LOCK_EX)
@@ -41,12 +41,12 @@ try:
         fcntl.lockf(self.fd, fcntl.LOCK_UN)
         self.fd.close()
   
-  # default response
-  defaultOutput=True
-  response_data={'success': False, 'message': "Internal error: Unknown action."}
-  
   # get the script action = path info after the script url
   action=os.environ.get('PATH_INFO', None)
+  
+  # default response
+  defaultOutput=True
+  response_data={'success': False, 'message': "Internal error: Unknown action: "+action}
 
   def checkCredicals(config):
     # get login and athmac by http get methode
@@ -192,33 +192,33 @@ try:
   # return current checked examples
   if action=="/getcibranches":
     with ConfigFile(False) as config: pass
-    # not json input via http post required
+    # no json input via http post required
     # return branches for CI
-      # worker function to make github api requests in parallel
+    # worker function to make github api requests in parallel
     def getBranch(url, out):
       out.extend([b['name'] for b in requests.get(url).json()])
-      # output data placeholder, request url and thread object placeholder. all per thread (reponame)
-      out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
-      url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
-           'hdf5serie': 'https://api.github.com/repos/mbsim-env/hdf5serie/branches',
-           'openmbv': 'https://api.github.com/repos/mbsim-env/openmbv/branches',
-           'mbsim': 'https://api.github.com/repos/mbsim-env/mbsim/branches'}
-      thread={}
-      # make all calls in parallel
-      for reponame in out:
+    # output data placeholder, request url and thread object placeholder. all per thread (reponame)
+    out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
+    url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
+         'hdf5serie': 'https://api.github.com/repos/mbsim-env/hdf5serie/branches',
+         'openmbv': 'https://api.github.com/repos/mbsim-env/openmbv/branches',
+         'mbsim': 'https://api.github.com/repos/mbsim-env/mbsim/branches'}
+    thread={}
+    # make all calls in parallel
+    for reponame in out:
       thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], out[reponame]))
-        thread[reponame].start()
-      # wait for all calls
-      for reponame in out:
-        thread[reponame].join(10)
-      curcibranch=config['curcibranch']
-      response_data['success']=True
-      response_data['message']="Continuous integration braches loaded."
-      response_data['curcibranch']=curcibranch
-      response_data['fmatvecbranch']=out['fmatvec']
-      response_data['hdf5seriebranch']=out['hdf5serie']
-      response_data['openmbvbranch']=out['openmbv']
-      response_data['mbsimbranch']=out['mbsim']
+      thread[reponame].start()
+    # wait for all calls
+    for reponame in out:
+      thread[reponame].join(10)
+    curcibranch=config['curcibranch']
+    response_data['success']=True
+    response_data['message']="Continuous integration braches loaded."
+    response_data['curcibranch']=curcibranch
+    response_data['fmatvecbranch']=out['fmatvec']
+    response_data['hdf5seriebranch']=out['hdf5serie']
+    response_data['openmbvbranch']=out['openmbv']
+    response_data['mbsimbranch']=out['mbsim']
 
   # return current checked examples
   if action=="/addcibranch":

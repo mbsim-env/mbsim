@@ -2,7 +2,7 @@
 
 SRCDIR=/home/user/MBSimWindows
 OUTDIR=/var/www/html/mbsim-env/MBSimWindows
-URL=http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimWindows
+URL=http://www.mbsim-env.de/mbsim/MBSimWindows
 
 
 
@@ -65,3 +65,7 @@ test $? -ne 0 && RET=1
 if [ $RET -ne 0 ]; then
   rss 1
 fi
+
+
+
+# mergeFeeds

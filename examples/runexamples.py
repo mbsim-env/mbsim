@@ -94,11 +94,7 @@ argparser = argparse.ArgumentParser(
 
 mainOpts=argparser.add_argument_group('Main Options')
 mainOpts.add_argument("directories", nargs="*", default=os.curdir,
-  help='''A directory to run (recursively). If prefixed with '^' remove the directory form the current list
-          If starting with '@' read directories from the file after the '@'. This file must provide
-          the directories as a list of strings under the "checkedExamples" name in JSON format. Each directory
-          in the file may itself be prefixed with ^ or @.
-          Note that the directories in the file (JSON name "checkedExamples") is cleared, hence the file is modified.''')
+  help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
 mainOpts.add_argument("--action", default="report", type=str,
   help='''The action of this script:
           'report': run examples and report results (default);
@@ -284,7 +280,7 @@ def main():
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
-  args.updateURL="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/references" # default value
+  args.updateURL="http://www.mbsim-env.de/mbsim/linux64-dailydebug/references" # default value
   args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
@@ -387,7 +383,7 @@ def main():
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
   <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
-  <script type="text/javascript" src="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/mbsimBuildServiceClient.js"></script>
+  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -414,8 +410,8 @@ def main():
       });
 
       // if this is the current example table from the build server and is finished than enable the reference update
-      if(($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/" ||
-          $(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") &&
+      if(($(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/" ||
+          $(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/index.html") &&
           $("#FINISHED").length>0) {
         // show reference update and status
         $("#UPDATEREFERENCES").css("display", "block");
@@ -650,25 +646,6 @@ def sortDirectories(directoriesSet, dirs):
 
 # handle the --filter option: add/remove to directoriesSet
 def addExamplesByFilter(baseDir, directoriesSet):
-  # if staring with @ use dirs from file defined by @<filename>: in JSON format
-  if baseDir[0]=="@":
-    # read file
-    fd=open(baseDir[1:], 'r+')
-    fcntl.lockf(fd, fcntl.LOCK_EX)
-    config=json.load(fd)
-    # add examples
-    for d in config['checkedExamples']:
-      addExamplesByFilter(d, directoriesSet)
-    # clear checkedExamples
-    config['checkedExamples']=[]
-    # write file
-    fd.seek(0);
-    json.dump(config, fd)
-    fd.truncate();
-    fcntl.lockf(fd, fcntl.LOCK_UN)
-    fd.close()
-    return
-
   if baseDir[0]!="^": # add dir
     addOrDiscard=directoriesSet.add
   else: # remove dir
@@ -1647,7 +1624,7 @@ def writeRSSFeed(nrFailed, nrTotal):
   <channel>
     <title>%sMBSim runexample.py Result</title>
     <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last runexample.py run of MBSim and Co.</description>
+    <description>%sResult RSS feed of the last runexample.py run of the MBSim-Environment</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
     <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)

@@ -1,0 +1,38 @@
+#!/usr/bin/python
+
+#        ALLPIDS=$(pstree -lAp $PID | sed -re "s/-[\+-]-/\n/g" | sed -re "s/.*\(([0-9]+)\).*/\1/g")
+#        echo "$(date) KILL $ALLPIDS"
+#        kill $ALLPIDS
+#        sleep 10s
+#        kill -9 $ALLPIDS
+
+import subprocess
+import datetime
+import re
+import os
+import signal
+
+def killCrashedProcess(name, timedelta):
+  try:
+    for pid in subprocess.check_output(["/usr/sbin/pidof", "-x", name]).split():
+      startTime=datetime.datetime.strptime(subprocess.check_output(["ps", "-p", pid, "-o", "lstart="]).rstrip(), "%c")
+      curTime=datetime.datetime.now()
+      if curTime-startTime>timedelta:
+        print("Killing program "+name+" with pid "+pid+" and all childs.")
+        line=subprocess.check_output(["pstree", "-lAp", pid]).rstrip()
+        for p in re.sub("[^(]*\(([0-9]+)\)", r'\1 ', line).split():
+          os.kill(int(p), signal.SIGTERM)
+        time.sleep(10)
+        for p in re.sub("[^(]*\(([0-9]+)\)", r'\1 ', line).split():
+          os.kill(int(p), 9)
+  except:
+    pass
+
+killCrashedProcess("linux64-dailydebug.py", datetime.timedelta(hours=5))
+killCrashedProcess("linux64-dailyrelease.sh", datetime.timedelta(hours=5))
+killCrashedProcess("win64-dailyrelease.sh", datetime.timedelta(hours=5))
+
+killCrashedProcess("linux64-ci.py", datetime.timedelta(hours=2))
+
+killCrashedProcess("mergeFeeds.py", datetime.timedelta(hours=1))
+killCrashedProcess("builddoc.py", datetime.timedelta(hours=1))
