@@ -13,7 +13,7 @@ scriptdir=os.path.dirname(os.path.realpath(__file__))
 os.chdir("/home/mbsim/linux64-dailydebug/mbsim/misc/html/doc")
 curdir=os.getcwd()
 
-failed=False
+nrDocFailed=0
 f=open("/var/www/html/mbsim/doc_manualsbuild.log", "w")
 print("Logfile of the build process of the manuals. Generated on "+str(datetime.datetime.now()), file=f)
 print("", file=f)
@@ -22,12 +22,12 @@ for texMain in glob.glob("*/main.tex"):
   os.chdir(os.path.dirname(texMain))
 
   if simplesandbox.call([scriptdir+"/builddocsb.py"], shareddir=["."], stderr=subprocess.STDOUT, stdout=f)!=0:
-    failed=True
+    nrDocFailed+=1
   f.flush()
 
   os.chdir(curdir)
 f.close()
 
-if failed:
-  addBuildSystemFeed.add("build-manuals", "Building Manuals", "Building the latex manuals failed.",
+if nrDocFailed>0:
+  addBuildSystemFeed.add("build-manuals", "Building Manuals Failed", str(nrDocFailed)+" of "+str(len(glob.glob("*/main.tex")))+" manuals failed to build.",
                          "http://www.mbsim-env.de/mbsim/doc/")

@@ -47,7 +47,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--rotate", "14", "-j", "2", "--sourc
 #mfmf f=open(OUTDIR+"/report_distribute/distribute.out", "w")
 #mfmf if subprocess.call([SCRIPTDIR+"/win64-dailyrelease-distribute.sh"], stderr=subprocess.STDOUT, stdout=f)!=0:
 #mfmf   import addBuildSystemFeed
-#mfmf   addBuildSystemFeed.add("win64-dailyrelease-distribution", "Distribution: win64-dailyrelease",
+#mfmf   addBuildSystemFeed.add("win64-dailyrelease-distribution", "Distribution Failed: win64-dailyrelease",
 #mfmf                          "Unable to create the binary distribution file.", URL+"/report_distribute/distribute.out")
 #mfmf f.close()
 #mfmf 
