@@ -1,9 +1,5 @@
-CLEANFILES = -r html/ Latex/
-
-docdir = @datadir@/doc/@PACKAGE@
-
-doc_DATA = html/*
-
-html/*:
-all-local: clean doxyfile
-	@doxygen@ doxyfile
+include $(prefix)/share/fmatvec/doxy_template/doxy.mk
+all-local: doxytempl.all
+clean-local: doxytempl.clean
+install-data-local: doxytempl.install
+uninstall-local: doxytempl.uninstall

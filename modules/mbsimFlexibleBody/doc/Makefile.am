@@ -1,9 +1,5 @@
-CLEANFILES = -r html/
-
-docdir = @datadir@/doc/@PACKAGE@
-
-doc_DATA = html/*
-
-html/*:
-all-local: clean doxyfile
-	TEXINPUTS="@abs_top_srcdir@/doc:" @doxygen@ doxyfile
+include $(prefix)/share/fmatvec/doxy_template/doxy.mk
+all-local: doxytempl.all
+clean-local: doxytempl.clean
+install-data-local: doxytempl.install
+uninstall-local: doxytempl.uninstall

@@ -79,7 +79,7 @@
       <tbody>
         <tr><td><span class="_element">&lt;element&gt;</span></td><td>A XML element of name 'element'</td></tr>
         <tr><td><span class="label label-warning">namespace</span></td><td>A XML namespace of name 'namespace'</td></tr>
-        <tr><td><span class="label label-primary">type</span></td><td>A XML element or attribute type of name 'type'</td></tr>
+        <tr><td><span class="label label-info">type</span></td><td>A XML element or attribute type of name 'type'</td></tr>
       </tbody>
     </table>
 
@@ -158,7 +158,7 @@
     <xsl:param name="NAME_NAME" select="translate(substring(@name,string-length(substring-before(@name,':'))+1),':','')"/>
     <li>
       <a class="glyphicon glyphicon-unchecked _linkpointer"/>
-      <a class="label label-primary _type">
+      <a class="label label-info _type">
         <xsl:attribute name="href"><xsl:apply-templates mode="GENLINK" select="@name"/></xsl:attribute>
         <xsl:value-of select="$NAME_NAME"/></a>
       <xsl:text> </xsl:text><small><span class="label label-warning"><xsl:value-of select="$NS_NAME"/></span></small>
