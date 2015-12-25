@@ -21,6 +21,7 @@
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "dialogs.h"
+#include "custom_widgets.h"
 #include <QtGui>
 #include "mainwindow.h"
 #include <mbxmlutils/eval.h>
@@ -42,7 +43,7 @@ namespace MBSimGUI {
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
     evalDialog = new EvalDialog(0);
 
-    inputCombo = new QComboBox;
+    inputCombo = new CustomComboBox;
     stackedWidget = new QStackedWidget;
     connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
     connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(inputDialogChanged(int)));
@@ -108,7 +109,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    comboBox = new QComboBox;
+    comboBox = new CustomComboBox;
     for(int i=0; i<factory->getSize(); i++)
       comboBox->addItem(factory->getName(i));
     layout->addWidget(comboBox);
