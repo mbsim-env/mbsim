@@ -436,11 +436,11 @@ done
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
-  rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2
-  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2 $(find -name "*.debug"))
-  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2"
+  rm -f $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2 $(find -name "*.debug"))
+  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2"
 
-  rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2
-  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 --exclude=\*.debug mbsim)
-  echo "Created MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
+  rm -f $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx.tar.bz2
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx.tar.bz2 --exclude=\*.debug mbsim)
+  echo "Created MBSim archive at $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx.tar.bz2"
 fi
