@@ -454,11 +454,11 @@ done
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
-  rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip
-  (cd $DISTBASEDIR; zip $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip $(find -name "*.debug"))
-  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip"
+  rm -f $DISTBASEDIR/mbsim-env-win64-shared-build-xxx-debug.zip
+  (cd $DISTBASEDIR; zip $DISTBASEDIR/mbsim-env-win64-shared-build-xxx-debug.zip $(find -name "*.debug"))
+  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-env-win64-shared-build-xxx-debug.zip"
 
-  rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip
-  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip mbsim --exclude \*.debug)
-  echo "Created MBSim archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip"
+  rm -f $DISTBASEDIR/mbsim-env-win64-shared-build-xxx.zip
+  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-env-win64-shared-build-xxx.zip mbsim --exclude \*.debug)
+  echo "Created MBSim archive at $DISTBASEDIR/mbsim-env-win64-shared-build-xxx.zip"
 fi

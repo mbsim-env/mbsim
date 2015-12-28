@@ -41,7 +41,7 @@ ombvSchema =None
 mbsimXMLSchema=None
 timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
-# the following examples will fail: do not report them in the RSS feed as errors
+# the following examples will fail: do not report them in the Atom feed as errors
 willFail=set([
   # unknown large difference to reference solution (caused by mbsimFlexibleBody?)
   pj("mechanics", "contacts", "self_siphoning_beads"),
@@ -136,7 +136,7 @@ cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The tim
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
 outOpts.add_argument("--url", type=str,
-  help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
+  help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
 outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
 debugOpts=argparser.add_argument_group('Debugging and other Options')
@@ -145,6 +145,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--enableAlphaPy", action="store_true", help="Also run MBS.mbsimprj.alpha_py.xml examples")
+debugOpts.add_argument("--buildSystemDir", default=None, type=str, help="The dir to the scripts of the build system")
 
 # parse command line options
 args = argparser.parse_args()
@@ -364,8 +365,6 @@ def main():
     listExamples()
     return 0
 
-  # write empty RSS feed
-  writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
   print('''<!DOCTYPE html>
@@ -377,7 +376,6 @@ def main():
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
-    <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>
   </head>
   <body style="margin:1em">
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
@@ -445,7 +443,6 @@ def main():
   <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('</code></div></dd>', file=mainFD)
-  print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   global timeID
   timeID=datetime.datetime.now()
   timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
@@ -466,7 +463,7 @@ def main():
     print('                  <a class="btn btn-info btn-xs" href="../../index.html"><span class="glyphicon glyphicon-eject"> </span> parent</a>', file=mainFD)
   print('                    </dd>', file=mainFD)
   print('</dl>', file=mainFD)
-  print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> A example with grey text is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
+  print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> A example with grey text is a example which may fail and is therefore not reported as an error in the Atom feed.</p>', file=mainFD)
 
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
@@ -581,7 +578,7 @@ def main():
     print(line, end="")
 
   # write RSS feed
-  writeRSSFeed(len(failedExamples), len(retAll))
+  writeAtomFeed(len(failedExamples), len(retAll))
 
   # print result summary to console
   if len(failedExamples)>0:
@@ -1615,41 +1612,18 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 
 
-def writeRSSFeed(nrFailed, nrTotal):
-  rssFN="result.rss.xml"
-  rssFD=codecs.open(pj(args.reportOutDir, os.pardir, rssFN), "w", encoding="utf-8")
-  print('''\
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>%sMBSim runexample.py Result</title>
-    <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last runexample.py run of the MBSim-Environment</description>
-    <language>en-us</language>
-    <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
+def writeAtomFeed(nrFailed, nrTotal):
+  # do not write a feed if --buildSystemDir is not used
+  if args.buildSystemDir==None:
+    return
+  # load the add feed module
+  sys.path.append(args.buildSystemDir)
+  import addBuildSystemFeed
+  # add a new feed if examples have failed
   if nrFailed>0:
-    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
-    print('''\
-    <item>
-      <title>%s%d of %d examples failed</title>
-      <link>%s/result_%010d/index.html</link>
-      <guid isPermaLink="false">%s/result_%010d/rss_id_%s</guid>
-      <pubDate>%s</pubDate>
-    </item>'''%(args.buildType, nrFailed, nrTotal,
-           args.url, currentID,
-           args.url, currentID, datetime.datetime.utcnow().strftime("%s"),
-           datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
-  print('''\
-    <item>
-      <title>%sDummy feed item. Just ignore it.</title>
-      <link>%s/result_current/index.html</link>
-      <guid isPermaLink="false">%s/result_current/rss_id_1359206848</guid>
-      <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
-    </item>
-  </channel>
-</rss>'''%(args.buildType, args.url, args.url), file=rssFD)
-  rssFD.close()
+    addBuildSystemFeed(args.buildType+"MBSim runexample", args.buildType+"MBSim runexample Result",
+      "%d of %d examples failed"%(nrFailed, nrTotal),
+      "%s/result_%010d/index.html"%(args.url, currentID))
 
 
 

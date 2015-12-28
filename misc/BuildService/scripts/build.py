@@ -20,6 +20,7 @@ else:
   import urllib.request as myurllib
 
 # global variables
+scriptdir=os.path.dirname(os.path.realpath(__file__))
 toolDependencies=dict()
 toolXMLDocCopyDir=dict()
 toolDoxyDocCopyDir=dict()
@@ -70,7 +71,7 @@ outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
 outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
-outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
+outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
 outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: 'Daily Build: ')")
 outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
@@ -163,7 +164,7 @@ def main():
   global toolDoxyDocCopyDir
 
   toolDependencies={
-    #   |ToolName   |WillFail (if WillFail is true no RSS Feed error is reported if this Tool fails somehow)
+    #   |ToolName   |WillFail (if WillFail is true no Atom Feed error is reported if this Tool fails somehow)
     pj('fmatvec'): [False, set([ # depends on
       ])],
     pj('hdf5serie', 'h5plotserie'): [False, set([ # depends on
@@ -357,7 +358,6 @@ def main():
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
-  print('  <link rel="alternate" type="application/rss+xml" title="Build Results of the MBSim-Environment" href="../result.rss.xml"/>', file=mainFD)
   print('</head>', file=mainFD)
   print('<body style="margin:1em">', file=mainFD)
   print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
@@ -379,7 +379,6 @@ def main():
   <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('</code></div></dd>', file=mainFD)
-  print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
   print('  <dt>End time</dt><dd><span id="STILLRUNNINGORABORTED" class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
@@ -410,12 +409,9 @@ def main():
   orderedBuildTools=list()
   sortBuildTools(buildTools, orderedBuildTools)
 
-  # write empty RSS feed
-  writeRSSFeed(0) # nrFailed == 0 => write empty RSS feed
-
   print('<h2>Build Status</h2>', file=mainFD)
   print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
-  print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
+  print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the Atom feed.</p>', file=mainFD)
 
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
   print('<thead><tr>', file=mainFD)
@@ -470,8 +466,8 @@ def main():
     line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
     print(line, end="")
 
-  # write RSS feed
-  writeRSSFeed(ret)
+  # write Atom feed
+  writeAtomFeed(ret)
 
   if ret>0:
     print("\nERROR: At least one build failed!!!!!");
@@ -880,6 +876,7 @@ def runexamples(mainFD):
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(["--currentID", str(currentID)])
   command.extend(["--timeID", timeID.strftime("%Y-%m-%dT%H:%M:%S")])
+  command.extend(["--buildSystemDir", scriptdir])
   command.extend(args.passToRunexamples)
 
   print("")
@@ -905,41 +902,12 @@ def runexamples(mainFD):
 
 
 
-def writeRSSFeed(nrFailed):
-  rssFN="result.rss.xml"
-  rssFD=codecs.open(pj(args.reportOutDir, os.pardir, rssFN), "w", encoding="utf-8")
-  print('''\
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>%sBuild Results of TheMBSim-Environment</title>
-    <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last build of the MBSim-Environment</description>
-    <language>en-us</language>
-    <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
+def writeAtomFeed(nrFailed):
   if nrFailed>0:
-    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
-    print('''\
-    <item>
-      <title>%sBuild failed</title>
-      <link>%s/result_%010d/index.html</link>
-      <guid isPermaLink="false">%s/result_%010d/rss_id_%s</guid>
-      <pubDate>%s</pubDate>
-    </item>'''%(args.buildType,
-           args.url, currentID,
-           args.url, currentID, datetime.datetime.utcnow().strftime("%s"),
-           datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
-  print('''\
-    <item>
-      <title>%sDummy feed item. Just ignore it.</title>
-      <link>%s/result_current/index.html</link>
-      <guid isPermaLink="false">%s/result_current/rss_id_1359206848</guid>
-      <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
-    </item>
-  </channel>
-</rss>'''%(args.buildType, args.url, args.url), file=rssFD)
-  rssFD.close()
+    import addBuildSystemFeed
+    addBuildSystemFeed.add(args.buildType, args.buildType+"Build Failed",
+                           "At least "+str(nrFailed)+" build has failed. See the linked web page for more details.",
+                           args.url+"/result_%010d"%(currentID)+"/index.html")
 
 
 
