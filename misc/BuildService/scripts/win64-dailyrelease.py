@@ -13,7 +13,7 @@ URL="http://www.mbsim-env.de/mbsim/win64-dailyrelease"
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 
 
-os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-win64/lib/pkgconfig:/home/mbsim/3rdparty/coin-local-win64/lib/pkgconfig:/usr/x86_64-w64-mingw32/sys-root/mingw/lib/pkgconfig:/home/mbsim/3rdparty/xerces-c-local-win64/lib/pkgconfig"
+os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-win64/lib/pkgconfig:/home/mbsim/3rdparty/coin-local-win64/lib/pkgconfig:/usr/x86_64-w64-mingw32/sys-root/mingw/lib/pkgconfig:/home/mbsim/3rdparty/xerces-c-local-win64/lib/pkgconfig:/home/mbsim/3rdparty/libarchive-local-win64/lib/pkgconfig"
 os.environ["WINEPATH"]="/usr/x86_64-w64-mingw32/sys-root/mingw/bin;/home/mbsim/3rdparty/lapack-local-win64/bin"
 os.environ["CXXFLAGS"]="-g -O2"
 os.environ["CFLAGS"]="-g -O2"

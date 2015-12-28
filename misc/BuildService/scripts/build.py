@@ -159,6 +159,7 @@ def main():
   args.reportOutDir=os.path.abspath(args.reportOutDir)
 
   # all tools to be build including the tool dependencies
+  global scriptdir
   global toolDependencies
   global toolXMLDocCopyDir
   global toolDoxyDocCopyDir
@@ -467,7 +468,7 @@ def main():
     print(line, end="")
 
   # write Atom feed
-  writeAtomFeed(ret)
+  writeAtomFeed(currentID, ret)
 
   if ret>0:
     print("\nERROR: At least one build failed!!!!!");
@@ -902,7 +903,7 @@ def runexamples(mainFD):
 
 
 
-def writeAtomFeed(nrFailed):
+def writeAtomFeed(currentID, nrFailed):
   if nrFailed>0:
     import addBuildSystemFeed
     addBuildSystemFeed.add(args.buildType+"-build", "Build: "+args.buildType,
