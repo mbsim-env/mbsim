@@ -75,7 +75,7 @@ namespace MBSimGUI {
   }
 
   VectorParameterPropertyDialog::VectorParameterPropertyDialog(VectorParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    value = new ExtWidget("Value",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
     addToTab("General", value);
   }
 
