@@ -125,7 +125,7 @@ cfgOpts.add_argument("--disableMakeClean", action="store_true", help="disable ma
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
-cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
+cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: linux64-dailydebug)")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
@@ -372,7 +372,7 @@ def main():
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MBSim runexamples Results</title>
+    <title>MBSim runexamples Results: %s</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
@@ -433,9 +433,9 @@ def main():
         });
       }
     });
-  </script>''', file=mainFD)
+  </script>'''%(args.buildType), file=mainFD)
 
-  print('<h1>MBSim runexamples Results</h1>', file=mainFD)
+  print('<h1>MBSim runexamples Results: <small>%s</small></h1>'%(args.buildType), file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
   print('''<dt>Called Command</dt><dd><div class="dropdown">
   <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
@@ -819,7 +819,7 @@ def runExample(resultQueue, example):
       print('<head>', file=htmlOutputFD)
       print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=htmlOutputFD)
       print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
-      print('  <title>Validate XML Files</title>', file=htmlOutputFD)
+      print('  <title>Validate XML Files: %s</title>'%(args.buildType), file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
@@ -832,7 +832,7 @@ def runExample(resultQueue, example):
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
       print('  } );', file=htmlOutputFD)
       print('</script>', file=htmlOutputFD)
-      print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
+      print('<h1>Validate XML Files: <small>%s</small></h1>'%(args.buildType), file=htmlOutputFD)
       print('<dl class="dl-horizontal">', file=htmlOutputFD)
       print('<dt>Example:</dt><dd>'+example[0]+'</dd>', file=htmlOutputFD)
       print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=htmlOutputFD)
@@ -1094,11 +1094,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<head>', file=diffHTMLPlotFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=diffHTMLPlotFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
-  print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
+  print('  <title>Difference Plot: %s</title>'%(args.buildType), file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:1em">', file=diffHTMLPlotFD)
-  print('<h1>Difference Plot</h1>', file=diffHTMLPlotFD)
+  print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
   print('<dt>Example:</dt><dd>'+example+'</dd>', file=diffHTMLPlotFD)
   print('<dt>File:</dt><dd>'+filename+'</dd>', file=diffHTMLPlotFD)
@@ -1346,7 +1346,7 @@ def compareExample(example, compareFN):
   print('<head>', file=compareFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=compareFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
-  print('  <title>Compare Results</title>', file=compareFD)
+  print('  <title>Compare Results: %s</title>'%(args.buildType), file=compareFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)
   print('</head>', file=compareFD)
@@ -1395,7 +1395,7 @@ def compareExample(example, compareFN):
       $('#SortThisTable').DataTable().columns.adjust().draw();
     });
     </script>''', file=compareFD)
-  print('<h1>Compare Results</h1>', file=compareFD)
+  print('<h1>Compare Results: <small>%s</small></h1>'%(args.buildType), file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
   print('<dt>Example:</dt><dd>'+example+'</dd>', file=compareFD)
   print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=compareFD)
@@ -1621,8 +1621,8 @@ def writeAtomFeed(nrFailed, nrTotal):
   import addBuildSystemFeed
   # add a new feed if examples have failed
   if nrFailed>0:
-    addBuildSystemFeed(args.buildType+"MBSim runexample", args.buildType+"MBSim runexample Result",
-      "%d of %d examples failed"%(nrFailed, nrTotal),
+    addBuildSystemFeed(args.buildType+"-examples", "Examples: "+args.buildType,
+      "%d of %d examples failed."%(nrFailed, nrTotal),
       "%s/result_%010d/index.html"%(args.url, currentID))
 
 
