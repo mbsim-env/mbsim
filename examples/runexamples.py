@@ -130,7 +130,7 @@ cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
   help="VALGRIND: add special arguments and handling for valgrind")
-cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables")
+cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 
 outOpts=argparser.add_argument_group('Output Options')
@@ -330,7 +330,7 @@ def main():
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
   # create mbsimxml schema
   mbsimXMLSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
-  subprocess.check_call([pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])
+  subprocess.check_call(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -578,7 +578,7 @@ def main():
     print(line, end="")
 
   # write RSS feed
-  writeAtomFeed(len(failedExamples), len(retAll))
+  writeAtomFeed(currentID, len(failedExamples), len(retAll))
 
   # print result summary to console
   if len(failedExamples)>0:
@@ -896,6 +896,14 @@ def runExample(resultQueue, example):
 
 
 
+# if args.exeEXt is set we must prefix every command with wine
+def exePrefix():
+  if args.exeExt=="":
+    return []
+  else:
+    return ["wine"]
+
+
 # prefix the simultion with this parameter.
 # this is normaly just args.prefixSimulation but may be extended by keywords of args.prefixSimulationKeyword.
 def prefixSimulation(example, id):
@@ -958,7 +966,7 @@ def executeSrcExample(executeFD, example):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'src')+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+  ret=[subprocessCall(prefixSimulation(example, 'src')+exePrefix()+[pj(os.curdir, "main"+args.exeExt)], executeFD,
                       env=mainEnv, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -980,7 +988,7 @@ def executeXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'xml')+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+  ret=[subprocessCall(prefixSimulation(example, 'xml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
                       [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -996,7 +1004,7 @@ def executeFlatXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'fxml')+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+  ret=[subprocessCall(prefixSimulation(example, 'fxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
                       executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1011,7 +1019,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  comm=[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
+  comm=exePrefix()+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
@@ -1030,7 +1038,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   endTime=[]
   if 'MBSIM_SET_MINIMAL_TEND' in os.environ:
     endTime=['-s', '0.01']
-  comm=[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
+  comm=exePrefix()+[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
@@ -1599,7 +1607,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         list(map(lambda x: print(x, end=" ", file=outputFD), [mbxmlutilsvalidate, curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
+        if subprocessCall(exePrefix()+[mbxmlutilsvalidate, curType[1], pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
           print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
@@ -1612,7 +1620,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 
 
-def writeAtomFeed(nrFailed, nrTotal):
+def writeAtomFeed(currentID, nrFailed, nrTotal):
   # do not write a feed if --buildSystemDir is not used
   if args.buildSystemDir==None:
     return
@@ -1621,7 +1629,7 @@ def writeAtomFeed(nrFailed, nrTotal):
   import addBuildSystemFeed
   # add a new feed if examples have failed
   if nrFailed>0:
-    addBuildSystemFeed(args.buildType+"-examples", "Examples: "+args.buildType,
+    addBuildSystemFeed.add(args.buildType+"-examples", "Examples: "+args.buildType,
       "%d of %d examples failed."%(nrFailed, nrTotal),
       "%s/result_%010d/index.html"%(args.url, currentID))
 
