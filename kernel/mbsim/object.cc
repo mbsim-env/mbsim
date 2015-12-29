@@ -264,9 +264,24 @@ namespace MBSim {
   }
 
   void Object::initz() {
-    q = (q0.size() == 0) ? Vec(qSize, INIT, 0) : q0;
-    u = (u0.size() == 0) ? Vec(uSize[0], INIT, 0) : u0;
-    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
+    if(q0() == NULL)
+      q.init(0);
+    else if(q0.size() == q.size())
+      q = q0;
+    else
+      THROW_MBSIMERROR("(Object::initz): size of q0 does not match");
+    if(u0() == NULL)
+      u.init(0);
+    else if(u0.size() == u.size())
+      u = u0;
+    else
+      THROW_MBSIMERROR("(Object::initz): size of u0 does not match");
+    if(x0() == NULL)
+      x.init(0);
+    else if(x0.size() == x.size())
+      x = x0;
+    else
+      THROW_MBSIMERROR("(Object::initz): size of x0 does not match");
   }
 
   void Object::writez(H5::GroupBase *group) {
