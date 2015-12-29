@@ -471,7 +471,7 @@ namespace MBSimGUI {
       string str = "arg"+toStr(i);
       if(E(element)->hasAttribute(str))
         static_cast<TextProperty*>(argname[i-1].getProperty())->setText(E(element)->getAttribute(str.c_str()));
-      str = "arg"+toStr(i)+"dim";
+      str = "arg"+toStr(i)+"Dim";
       if(E(element)->hasAttribute(str))
         static_cast<IntegerProperty*>(argdim[i-1].getProperty())->setValue(atoi(E(element)->getAttribute(str.c_str()).c_str()));
     }
