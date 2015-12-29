@@ -3,14 +3,14 @@
 import xml.etree.ElementTree
 import datetime
 
-def add(subid, title, summary, link):
+def add(category, title, summary, link):
   NS_="http://www.w3.org/2005/Atom"
   NS="{"+NS_+"}"
   xml.etree.ElementTree.register_namespace("", NS_)
 
   # read feed
-  # mfmf lock file on read
-  tree=xml.etree.ElementTree.parse('/var/www/html/mbsim/buildsystem.atom')
+  # MISSING lock file on read
+  tree=xml.etree.ElementTree.parse('/var/www/html/mbsim/buildsystem.atom.xml')
   elefeed=tree.getroot()
 
   curtime=datetime.datetime.utcnow()
@@ -23,10 +23,12 @@ def add(subid, title, summary, link):
 
   # add new entry
   eleentry=xml.etree.ElementTree.Element(NS+"entry")
-  elefeed.append(eleentry)
+  elefeed.insert(5, eleentry)
   eleid=xml.etree.ElementTree.Element(NS+"id")
   eleentry.append(eleid)
-  eleid.text="http://www.mbsim-env.de/atom/mbsim-env-build-system/"+subid+"/"+curtime.strftime("%s")
+  eleid.text="http://www.mbsim-env.de/atom/mbsim-env-build-system/"+curtime.strftime("%s")
+  elecategory=xml.etree.ElementTree.Element(NS+"category", term=category)
+  eleentry.append(elecategory)
   elelink=xml.etree.ElementTree.Element(NS+"link", href=link)
   eleentry.append(elelink)
   eletitle=xml.etree.ElementTree.Element(NS+"title")
@@ -40,5 +42,5 @@ def add(subid, title, summary, link):
   eleupdated.text=curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
 
   # write feed
-  tree.write('/var/www/html/mbsim/buildsystem.atom')
-  # mfmf unlock file after write
+  tree.write('/var/www/html/mbsim/buildsystem.atom.xml')
+  # MISSING unlock file after write

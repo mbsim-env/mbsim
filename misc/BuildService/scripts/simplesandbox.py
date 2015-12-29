@@ -47,11 +47,15 @@ def call(cmd, envvar=[], shareddir=[], stdout=None, stderr=None):
     cmdString='cd "'+os.getcwd()+'";'
     # set envars
     for v in envvar:
+      if not v in os.environ:
+        continue
       cmdString+='export '+v+'="'+os.environ[v]+'";'
     # add user supplied command and save return value
     cmdString+='"'+'" "'.join(cmd)+'"'
     # run command remotely (as the remote user)
     ret=subprocess.call(["ssh", sbuser+"@localhost", cmdString], stdout=stdout, stderr=stderr)
+  except:
+    print("simplesandbox failed!")
   finally:
     cleanup(shareddir)
     return ret

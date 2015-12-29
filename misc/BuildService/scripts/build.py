@@ -72,7 +72,7 @@ outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="t
 outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
 outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
-outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: 'Daily Build: ')")
+outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
 outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
 passOpts=argparser.add_argument_group('Options beeing passed to other commands')
@@ -85,7 +85,7 @@ passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAIN
 args=argparser.parse_args() # modified by mypostargparse
 
 # pass these envvar to simplesandbox.call
-simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS"]
+simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "WINEPATH", "CXXFLAGS", "CFLAGS", "FFLAGS"]
 
 htmlEscapeTable={
   "&": "&amp;",
@@ -159,6 +159,7 @@ def main():
   args.reportOutDir=os.path.abspath(args.reportOutDir)
 
   # all tools to be build including the tool dependencies
+  global scriptdir
   global toolDependencies
   global toolXMLDocCopyDir
   global toolDoxyDocCopyDir
@@ -354,7 +355,7 @@ def main():
   print('<head>', file=mainFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=mainFD)
-  print('  <title>Build Results of the MBSim-Environment</title>', file=mainFD)
+  print('  <title>Build Results of MBSim-Env: <small>%s</small></title>'%(args.buildType), file=mainFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
@@ -370,7 +371,7 @@ def main():
   print('  } );', file=mainFD)
   print('</script>', file=mainFD)
 
-  print('<h1>Build Results of the MBSim-Environment</h1>', file=mainFD)
+  print('<h1>Build Results of MBSim-Env: <small>%s</small></h1>'%(args.buildType), file=mainFD)
 
   print('<dl class="dl-horizontal">', file=mainFD)
   print('''<dt>Called Command</dt><dd><div class="dropdown">
@@ -467,7 +468,7 @@ def main():
     print(line, end="")
 
   # write Atom feed
-  writeAtomFeed(ret)
+  writeAtomFeed(currentID, ret)
 
   if ret>0:
     print("\nERROR: At least one build failed!!!!!");
@@ -902,11 +903,11 @@ def runexamples(mainFD):
 
 
 
-def writeAtomFeed(nrFailed):
+def writeAtomFeed(currentID, nrFailed):
   if nrFailed>0:
     import addBuildSystemFeed
-    addBuildSystemFeed.add(args.buildType, args.buildType+"Build Failed",
-                           "At least "+str(nrFailed)+" build has failed. See the linked web page for more details.",
+    addBuildSystemFeed.add(args.buildType+"-build", "Build: "+args.buildType,
+                           "At least "+str(nrFailed)+" project failed.",
                            args.url+"/result_%010d"%(currentID)+"/index.html")
 
 

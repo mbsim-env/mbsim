@@ -29,5 +29,5 @@ for texMain in glob.glob("*/main.tex"):
 f.close()
 
 if failed:
-  addBuildSystemFeed.add("manualdoc", "Building Manuals Failed", "Building the latex manuals failed.",
+  addBuildSystemFeed.add("build-manuals", "Building Manuals", "Building the latex manuals failed.",
                          "http://www.mbsim-env.de/mbsim/doc/")

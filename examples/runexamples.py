@@ -125,12 +125,12 @@ cfgOpts.add_argument("--disableMakeClean", action="store_true", help="disable ma
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
-cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
+cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: linux64-dailydebug)")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
   help="VALGRIND: add special arguments and handling for valgrind")
-cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables")
+cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 
 outOpts=argparser.add_argument_group('Output Options')
@@ -330,7 +330,7 @@ def main():
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
   # create mbsimxml schema
   mbsimXMLSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
-  subprocess.check_call([pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])
+  subprocess.check_call(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -372,7 +372,7 @@ def main():
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MBSim runexamples Results</title>
+    <title>MBSim runexamples Results: %s</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
@@ -433,9 +433,9 @@ def main():
         });
       }
     });
-  </script>''', file=mainFD)
+  </script>'''%(args.buildType), file=mainFD)
 
-  print('<h1>MBSim runexamples Results</h1>', file=mainFD)
+  print('<h1>MBSim runexamples Results: <small>%s</small></h1>'%(args.buildType), file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
   print('''<dt>Called Command</dt><dd><div class="dropdown">
   <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
@@ -578,7 +578,7 @@ def main():
     print(line, end="")
 
   # write RSS feed
-  writeAtomFeed(len(failedExamples), len(retAll))
+  writeAtomFeed(currentID, len(failedExamples), len(retAll))
 
   # print result summary to console
   if len(failedExamples)>0:
@@ -819,7 +819,7 @@ def runExample(resultQueue, example):
       print('<head>', file=htmlOutputFD)
       print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=htmlOutputFD)
       print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
-      print('  <title>Validate XML Files</title>', file=htmlOutputFD)
+      print('  <title>Validate XML Files: %s</title>'%(args.buildType), file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
@@ -832,7 +832,7 @@ def runExample(resultQueue, example):
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
       print('  } );', file=htmlOutputFD)
       print('</script>', file=htmlOutputFD)
-      print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
+      print('<h1>Validate XML Files: <small>%s</small></h1>'%(args.buildType), file=htmlOutputFD)
       print('<dl class="dl-horizontal">', file=htmlOutputFD)
       print('<dt>Example:</dt><dd>'+example[0]+'</dd>', file=htmlOutputFD)
       print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=htmlOutputFD)
@@ -894,6 +894,14 @@ def runExample(resultQueue, example):
     resultQueue.put([example, resultStr, runExampleRet])
     return runExampleRet
 
+
+
+# if args.exeEXt is set we must prefix every command with wine
+def exePrefix():
+  if args.exeExt=="":
+    return []
+  else:
+    return ["wine"]
 
 
 # prefix the simultion with this parameter.
@@ -958,7 +966,7 @@ def executeSrcExample(executeFD, example):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'src')+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+  ret=[subprocessCall(prefixSimulation(example, 'src')+exePrefix()+[pj(os.curdir, "main"+args.exeExt)], executeFD,
                       env=mainEnv, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -980,7 +988,7 @@ def executeXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'xml')+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+  ret=[subprocessCall(prefixSimulation(example, 'xml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
                       [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -996,7 +1004,7 @@ def executeFlatXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'fxml')+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+  ret=[subprocessCall(prefixSimulation(example, 'fxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
                       executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1011,7 +1019,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  comm=[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
+  comm=exePrefix()+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
@@ -1030,7 +1038,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   endTime=[]
   if 'MBSIM_SET_MINIMAL_TEND' in os.environ:
     endTime=['-s', '0.01']
-  comm=[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
+  comm=exePrefix()+[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
@@ -1094,11 +1102,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<head>', file=diffHTMLPlotFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=diffHTMLPlotFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
-  print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
+  print('  <title>Difference Plot: %s</title>'%(args.buildType), file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:1em">', file=diffHTMLPlotFD)
-  print('<h1>Difference Plot</h1>', file=diffHTMLPlotFD)
+  print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
   print('<dt>Example:</dt><dd>'+example+'</dd>', file=diffHTMLPlotFD)
   print('<dt>File:</dt><dd>'+filename+'</dd>', file=diffHTMLPlotFD)
@@ -1346,7 +1354,7 @@ def compareExample(example, compareFN):
   print('<head>', file=compareFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=compareFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
-  print('  <title>Compare Results</title>', file=compareFD)
+  print('  <title>Compare Results: %s</title>'%(args.buildType), file=compareFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)
   print('</head>', file=compareFD)
@@ -1395,7 +1403,7 @@ def compareExample(example, compareFN):
       $('#SortThisTable').DataTable().columns.adjust().draw();
     });
     </script>''', file=compareFD)
-  print('<h1>Compare Results</h1>', file=compareFD)
+  print('<h1>Compare Results: <small>%s</small></h1>'%(args.buildType), file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
   print('<dt>Example:</dt><dd>'+example+'</dd>', file=compareFD)
   print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=compareFD)
@@ -1599,7 +1607,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         list(map(lambda x: print(x, end=" ", file=outputFD), [mbxmlutilsvalidate, curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
+        if subprocessCall(exePrefix()+[mbxmlutilsvalidate, curType[1], pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
           print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
@@ -1612,7 +1620,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 
 
-def writeAtomFeed(nrFailed, nrTotal):
+def writeAtomFeed(currentID, nrFailed, nrTotal):
   # do not write a feed if --buildSystemDir is not used
   if args.buildSystemDir==None:
     return
@@ -1621,8 +1629,8 @@ def writeAtomFeed(nrFailed, nrTotal):
   import addBuildSystemFeed
   # add a new feed if examples have failed
   if nrFailed>0:
-    addBuildSystemFeed(args.buildType+"MBSim runexample", args.buildType+"MBSim runexample Result",
-      "%d of %d examples failed"%(nrFailed, nrTotal),
+    addBuildSystemFeed.add(args.buildType+"-examples", "Examples: "+args.buildType,
+      "%d of %d examples failed."%(nrFailed, nrTotal),
       "%s/result_%010d/index.html"%(args.url, currentID))
 
 

@@ -42,7 +42,7 @@ if len(checkedExamples)>0:
 if subprocess.call([SCRIPTDIR+"/build.py", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
                  "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--reportOutDir",
                  "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
-                 "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "Linux64-DailyDebug: ",
+                 "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
                  "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt",
                  "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
                  "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.37.x86_64/include -I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.37.x86_64/include/linux"])!=0:
@@ -68,7 +68,7 @@ if simplesandbox.call(["./runexamples.py", "--rotate", "14", "-j", "2", "--repor
                     "--prefixSimulationKeyword=VALGRIND", "--prefixSimulation",
                     "valgrind --trace-children=yes --trace-children-skip=*/rm --num-callers=150 --gen-suppressions=all --suppressions="+
                     SRCDIR+"/mbsim_valgrind/misc/valgrind-mbsim.supp --leak-check=full", "--disableCompare", "--disableValidate",
-                    "--buildType", "Linux64-DailyDebug-valgrind: "],
+                    "--buildType", "linux64-dailydebug-examples-valgrind: "],
                    shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report"],
                    envvar=simplesandboxEnvvars+["MBSIM_SET_MINIMAL_TEND"])!=0:
   print("runing examples with valgrind failed.")
