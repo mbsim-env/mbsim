@@ -414,6 +414,8 @@ namespace MBSimGUI {
     u0 = new ExtWidget("Initial generalized velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", u0);
 
+    connect(q0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
+    connect(u0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 
     R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true);
@@ -452,17 +454,11 @@ namespace MBSimGUI {
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
     addToTab("Kinematics", translation);
-
-    // connect(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    // connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    // connect(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
     addToTab("Kinematics", rotation);
-
-    //  connect(static_cast<const ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget()),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    //  connect(rotation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    //  connect(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
