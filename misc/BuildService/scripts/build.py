@@ -85,7 +85,9 @@ passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAIN
 args=argparser.parse_args() # modified by mypostargparse
 
 # pass these envvar to simplesandbox.call
-simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "WINEPATH", "CXXFLAGS", "CFLAGS", "FFLAGS"]
+simplesandboxEnvvars=["PKG_CONFIG_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS", # general required envvars
+                      "LD_LIBRARY_PATH", # Linux specific required envvars
+                      "WINEPATH", "PLATFORM", "CXX", "MOC", "UIC", "RCC"] # Windows specific required envvars
 
 htmlEscapeTable={
   "&": "&amp;",
@@ -885,7 +887,7 @@ def runexamples(mainFD):
   print("Output of runexamples.py")
   print("")
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
-  ret=simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report")],
+  ret=simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"), "/var/www/html/mbsim/buildsystem.atom.xml"],
                          stderr=subprocess.STDOUT)
 
   if ret==0:
