@@ -48,7 +48,7 @@ namespace MBSimGUI {
 
     amplitude.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMANALYSER%"amplitude",vector<string>(2,"")),"",4));
 
-    mode.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMANALYSER%"mode",vector<string>(2,"kg")),"",4));
+    mode.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMANALYSER%"mode",vector<string>(2,"")),"",4));
 
     determineEquilibriumState.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMANALYSER%"determineEquilibriumState",vector<string>(2,"")),"",4));
 
