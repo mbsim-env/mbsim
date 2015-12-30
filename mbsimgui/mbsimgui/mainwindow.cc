@@ -36,7 +36,7 @@
 #include "embedding_view.h"
 #include "solver_view.h"
 #include "embed.h"
-#include "process.h"
+#include "mbsim_process.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
