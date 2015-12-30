@@ -123,6 +123,8 @@ namespace MBSimGUI {
     widget = factory->createWidget(index);
     layout->addWidget(widget);
     updateWidget();
+    emit Widget::resize_();
+    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
   }
 
   ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active) : QGroupBox(name), widget(widget_) {
@@ -138,6 +140,7 @@ namespace MBSimGUI {
     }
     setLayout(layout);
     layout->addWidget(widget);
+    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
     //  QPushButton *fold = new QPushButton("+");
     //  fold->setCheckable(true);
     //  layout->addWidget(fold);
@@ -259,7 +262,7 @@ namespace MBSimGUI {
       list->setCurrentRow(0);
 
     if(emitSignals) {
-      emit resize_();
+      emit Widget::resize_();
     }
   }
 
@@ -271,7 +274,7 @@ namespace MBSimGUI {
       delete list->takeItem(i);
     }
     //  if(emitSignals) {
-    emit resize_();
+    emit Widget::resize_();
     //  }
   }
 

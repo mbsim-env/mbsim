@@ -82,6 +82,7 @@ nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   options.moc.cc \
+		   widget.moc.cc \
 		   basic_widgets.moc.cc \
 		   variable_widgets.moc.cc \
 		   function_widget.moc.cc \
