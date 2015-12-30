@@ -1049,8 +1049,8 @@ namespace MBSimGUI {
 
   void MainWindow::removeParameter() {
     setProjectChanged(true);
-    QModelIndex index = elementList->selectionModel()->currentIndex();
-    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = embeddingList->selectionModel()->currentIndex().parent();
+    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     Element *element=static_cast<Element*>(model->getItem(index)->getItemData());
     EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     QModelIndex pindex = embeddingList->selectionModel()->currentIndex();
