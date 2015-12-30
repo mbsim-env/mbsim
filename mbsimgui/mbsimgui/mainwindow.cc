@@ -940,6 +940,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeElement() {
+    setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
