@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "process.h"
+#include "mbsim_process.h"
 #include <iostream>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
