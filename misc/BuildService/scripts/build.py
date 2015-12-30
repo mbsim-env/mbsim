@@ -20,6 +20,7 @@ else:
   import urllib.request as myurllib
 
 # global variables
+global scriptdir
 scriptdir=os.path.dirname(os.path.realpath(__file__))
 toolDependencies=dict()
 toolXMLDocCopyDir=dict()
@@ -161,7 +162,6 @@ def main():
   args.reportOutDir=os.path.abspath(args.reportOutDir)
 
   # all tools to be build including the tool dependencies
-  global scriptdir
   global toolDependencies
   global toolXMLDocCopyDir
   global toolDoxyDocCopyDir
