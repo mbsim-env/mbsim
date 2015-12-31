@@ -1629,7 +1629,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
   import addBuildSystemFeed
   # add a new feed if examples have failed
   if nrFailed>0:
-    addBuildSystemFeed.add(args.buildType+"-examples", "Examples: "+args.buildType,
+    addBuildSystemFeed.add(args.buildType+"-examples", "Examples Failed: "+args.buildType,
       "%d of %d examples failed."%(nrFailed, nrTotal),
       "%s/result_%010d/index.html"%(args.url, currentID))
 
