@@ -301,6 +301,7 @@ namespace MBSim {
         resParent.resize(getlaSize());
       gParent.resize(getgSize());
       gdParent.resize(getgdSize());
+      zParent.resize(getzSize());
       zdParent.resize(getzSize());
       udParent1.resize(getuSize(1));
       hParent[0].resize(getuSize(0));
@@ -330,6 +331,7 @@ namespace MBSim {
       updatejsvRef(jsvParent);
       updateLinkStatusRef(LinkStatusParent);
       updateLinkStatusRegRef(LinkStatusRegParent);
+      updatezRef(zParent);
       updatezdRef(zdParent);
       updateudRef(udParent1, 1);
       updateudallRef(udParent1, 1);
