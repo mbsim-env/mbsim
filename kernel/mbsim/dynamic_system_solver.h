@@ -576,6 +576,11 @@ namespace MBSim {
       fmatvec::Vec gdParent;
 
       /**
+       * \brief state
+       */
+      fmatvec::Vec zParent;
+
+      /**
        * \brief differentiated state
        */
       fmatvec::Vec zdParent;
