@@ -82,13 +82,13 @@ namespace MBSim {
 
     if ((s>=0) && (s<=linesegment->getLength())) {
       Vec3 v2 = cpData[icircle].getFrameOfReference().getOrientation(t).col(2);
-      Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation()t.col(0);
+      Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation(t).col(0);
       Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
       Vec3 u2 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
-      Vec3 &vC1 = cpData[iline].getFrameOfReference().getVelocity()t;
-      Vec3 &vC2 = cpData[icircle].getFrameOfReference().getVelocity(t);
-      Vec3 &Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
-      Vec3 &Om2 = cpData[icircle].getFrameOfReference().getAngularVelocity();
+      Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity(t);
+      Vec3 vC2 = cpData[icircle].getFrameOfReference().getVelocity(t);
+      Vec3 Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
+      Vec3 Om2 = cpData[icircle].getFrameOfReference().getAngularVelocity();
       double r = circlesolid->getRadius();
 
       double ad2 = -v2.T()*(Om2-Om1);
