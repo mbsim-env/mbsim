@@ -422,6 +422,8 @@ namespace MBSim {
       const fmatvec::VecV& getGeneralizedSetValuedForce(double t) { if(updlaMV) updateGeneralizedSetValuedForces(t); return laMV; }
       const fmatvec::VecV& getGeneralizedForce(double t) { return isSetValued()?getGeneralizedSetValuedForce(t):getGeneralizedSingleValuedForce(t); }
 
+      fmatvec::VecV& getGeneralizedSingleValuedForce(bool check=true) {  assert((not check) or (not updlaSV)); return laSV; }
+
       /**
        * \brief saves contact forces for use as starting value in next time step
        */

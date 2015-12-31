@@ -8,6 +8,7 @@ body.cc\
 constitutive_laws.cc\
 contact.cc\
 single_contact.cc\
+maxwell_contact.cc\
 contour.cc\
 environment.cc\
 frame.cc\
@@ -56,6 +57,7 @@ mbsiminclude_HEADERS = \
 body.h\
 contact.h\
 single_contact.h\
+maxwell_contact.h\
 contour.h\
 contour_pdata.h\
 constitutive_laws.h\

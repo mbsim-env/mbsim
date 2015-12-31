@@ -744,7 +744,29 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 
-//  /*!
+  /*!
+   * \brief A force law that computes the normal force of many contact kinematics based on the Maxwell-Force-Law
+   * \author Kilian Grundl
+   * \date 30-07-2012 start of development
+   */
+  class MaxwellUnilateralConstraint : public GeneralizedForceLaw {
+    public:
+      /*!
+       * \brief constructor
+       */
+      MaxwellUnilateralConstraint() { }
+
+      /*!
+       * \brief destructor
+       */
+      virtual ~MaxwellUnilateralConstraint() { }
+
+      /* INHERITED INTERFACE */
+      virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
+      virtual bool remainsActive(double s, double sTol) {return true; }
+      virtual bool isSetValued() const { return false; }
+  };
+
 //   * \brief A force law that computes the normal force of many contact kinematics based on the Maxwell-Force-Law
 //   * \author Kilian Grundl
 //   * \date 30-07-2012 start of development
