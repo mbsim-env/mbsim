@@ -25,7 +25,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--rotate", "14", "-j", "2", "--sourc
 f=open(OUTDIR+"/report_distribute/distribute.out", "w")
 if subprocess.call([SCRIPTDIR+"/linux64-dailyrelease-distribute.sh"], stderr=subprocess.STDOUT, stdout=f)!=0:
   import addBuildSystemFeed
-  addBuildSystemFeed.add("linux64-dailyrelease-distribution", "Distribution: linux64-dailyrelease",
+  addBuildSystemFeed.add("linux64-dailyrelease-distribution", "Distribution Failed: linux64-dailyrelease",
                          "Unable to create the binary distribution file.", URL+"/report_distribute/distribute.out")
 f.close()
 
