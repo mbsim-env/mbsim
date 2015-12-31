@@ -21,6 +21,7 @@
 #define _BASIC_WIDGETS_H_
 
 #include "extended_widgets.h"
+#include "custom_widgets.h"
 #include <QLineEdit>
 #include <QSpinBox>
 
@@ -49,7 +50,7 @@ namespace MBSimGUI {
   class SignalBrowser;
   class ExtWidget;
 
-  class LocalFrameComboBox : public QComboBox {
+  class LocalFrameComboBox : public CustomComboBox {
     Q_OBJECT
     public:
       LocalFrameComboBox(Element *element, QWidget *parent = 0);
@@ -62,7 +63,7 @@ namespace MBSimGUI {
       void highlightObject(const QString &str);
   };
 
-  class ParentFrameComboBox : public QComboBox {
+  class ParentFrameComboBox : public CustomComboBox {
     Q_OBJECT
     public:
       ParentFrameComboBox(Element *element, QWidget *parent = 0);

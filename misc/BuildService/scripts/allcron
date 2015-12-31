@@ -1,8 +1,0 @@
-#!/bin/sh
-
-/home/user/MBSimDailyBuild/mbsim/misc/BuildService/scripts/build-linux-debug.sh &> /var/log/user/MBSimDailyBuild.log
-/home/user/MBSimLinux/mbsim/misc/BuildService/scripts/build-linux-release.sh &> /var/log/user/MBSimLinux.log
-/home/user/MBSimWindows/mbsim/misc/BuildService/scripts/build-windows-release.sh &> /var/log/user/MBSimWindows.log
-/home/user/MBSimDailyBuild/mbsim/misc/BuildService/scripts/mergeFeeds.sh &> /var/log/user/feedMerge.log
-
-/home/user/MBSimDailyBuild/mbsim/misc/BuildService/scripts/builddoc.sh /var/www/html/mbsim-env/doc &> /var/log/user/builddoc.log

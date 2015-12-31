@@ -43,7 +43,7 @@ namespace MBSim {
           xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
           a0=Element::getDouble(e);
         }
-        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
+        xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; }
     };
 
   template<typename Sig> class LinearFunction; 

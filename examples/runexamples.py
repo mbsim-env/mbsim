@@ -41,7 +41,7 @@ ombvSchema =None
 mbsimXMLSchema=None
 timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
-# the following examples will fail: do not report them in the RSS feed as errors
+# the following examples will fail: do not report them in the Atom feed as errors
 willFail=set([
   # unknown large difference to reference solution (caused by mbsimFlexibleBody?)
   pj("mechanics", "contacts", "self_siphoning_beads"),
@@ -94,11 +94,7 @@ argparser = argparse.ArgumentParser(
 
 mainOpts=argparser.add_argument_group('Main Options')
 mainOpts.add_argument("directories", nargs="*", default=os.curdir,
-  help='''A directory to run (recursively). If prefixed with '^' remove the directory form the current list
-          If starting with '@' read directories from the file after the '@'. This file must provide
-          the directories as a list of strings under the "checkedExamples" name in JSON format. Each directory
-          in the file may itself be prefixed with ^ or @.
-          Note that the directories in the file (JSON name "checkedExamples") is cleared, hence the file is modified.''')
+  help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
 mainOpts.add_argument("--action", default="report", type=str,
   help='''The action of this script:
           'report': run examples and report results (default);
@@ -129,18 +125,18 @@ cfgOpts.add_argument("--disableMakeClean", action="store_true", help="disable ma
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
-cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
+cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: linux64-dailydebug)")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
   help="VALGRIND: add special arguments and handling for valgrind")
-cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables")
+cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
 outOpts.add_argument("--url", type=str,
-  help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
+  help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
 outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
 debugOpts=argparser.add_argument_group('Debugging and other Options')
@@ -148,6 +144,8 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
+debugOpts.add_argument("--enableAlphaPy", action="store_true", help="Also run MBS.mbsimprj.alpha_py.xml examples")
+debugOpts.add_argument("--buildSystemDir", default=None, type=str, help="The dir to the scripts of the build system")
 
 # parse command line options
 args = argparser.parse_args()
@@ -283,7 +281,7 @@ def main():
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
-  args.updateURL="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/references" # default value
+  args.updateURL="http://www.mbsim-env.de/mbsim/linux64-dailydebug/references" # default value
   args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
@@ -332,7 +330,7 @@ def main():
   ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
   # create mbsimxml schema
   mbsimXMLSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
-  subprocess.check_call([pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])
+  subprocess.check_call(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -367,8 +365,6 @@ def main():
     listExamples()
     return 0
 
-  # write empty RSS feed
-  writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
   print('''<!DOCTYPE html>
@@ -376,17 +372,16 @@ def main():
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MBSim runexamples Results</title>
+    <title>MBSim runexamples Results: %s</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
-    <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="../result.rss.xml"/>
   </head>
   <body style="margin:1em">
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
   <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
   <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
-  <script type="text/javascript" src="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/mbsimBuildServiceClient.js"></script>
+  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -413,8 +408,8 @@ def main():
       });
 
       // if this is the current example table from the build server and is finished than enable the reference update
-      if(($(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/" ||
-          $(location).attr('href')=="http://www4.amm.mw.tu-muenchen.de:8080/mbsim-env/MBSimDailyBuild/report/result_current/runexamples_report/result_current/index.html") &&
+      if(($(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/" ||
+          $(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/index.html") &&
           $("#FINISHED").length>0) {
         // show reference update and status
         $("#UPDATEREFERENCES").css("display", "block");
@@ -438,14 +433,16 @@ def main():
         });
       }
     });
-  </script>''', file=mainFD)
+  </script>'''%(args.buildType), file=mainFD)
 
-  print('<h1>MBSim runexamples Results</h1>', file=mainFD)
+  print('<h1>MBSim runexamples Results: <small>%s</small></h1>'%(args.buildType), file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
-  print('  <dt>Called command</dt><dd><code>', file=mainFD)
+  print('''<dt>Called Command</dt><dd><div class="dropdown">
+  <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
+  </button>
+  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
-  print('  </code></dd>', file=mainFD)
-  print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
+  print('</code></div></dd>', file=mainFD)
   global timeID
   timeID=datetime.datetime.now()
   timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
@@ -466,7 +463,7 @@ def main():
     print('                  <a class="btn btn-info btn-xs" href="../../index.html"><span class="glyphicon glyphicon-eject"> </span> parent</a>', file=mainFD)
   print('                    </dd>', file=mainFD)
   print('</dl>', file=mainFD)
-  print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> A example with grey text is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
+  print('<hr/><p><span class="glyphicon glyphicon-info-sign"> </span> A example with grey text is a example which may fail and is therefore not reported as an error in the Atom feed.</p>', file=mainFD)
 
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
@@ -539,7 +536,7 @@ def main():
   print('''<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">
   <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
     </span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">
- 'Update references<span class="caret"> </span></a></div>
+ Update references<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
     <p>Update the references of the selected examples before next build</p>
     <p>
@@ -581,7 +578,7 @@ def main():
     print(line, end="")
 
   # write RSS feed
-  writeRSSFeed(len(failedExamples), len(retAll))
+  writeAtomFeed(currentID, len(failedExamples), len(retAll))
 
   # print result summary to console
   if len(failedExamples)>0:
@@ -646,25 +643,6 @@ def sortDirectories(directoriesSet, dirs):
 
 # handle the --filter option: add/remove to directoriesSet
 def addExamplesByFilter(baseDir, directoriesSet):
-  # if staring with @ use dirs from file defined by @<filename>: in JSON format
-  if baseDir[0]=="@":
-    # read file
-    fd=open(baseDir[1:], 'r+')
-    fcntl.lockf(fd, fcntl.LOCK_EX)
-    config=json.load(fd)
-    # add examples
-    for d in config['checkedExamples']:
-      addExamplesByFilter(d, directoriesSet)
-    # clear checkedExamples
-    config['checkedExamples']=[]
-    # write file
-    fd.seek(0);
-    json.dump(config, fd)
-    fd.truncate();
-    fcntl.lockf(fd, fcntl.LOCK_UN)
-    fd.close()
-    return
-
   if baseDir[0]!="^": # add dir
     addOrDiscard=directoriesSet.add
   else: # remove dir
@@ -673,7 +651,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
   # make baseDir a relative path
   baseDir=os.path.relpath(baseDir)
   for root, dirs, _ in os.walk(baseDir):
-    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml"))
+    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml")) or (args.enableAlphaPy and os.path.isfile(pj(root, "MBS.mbsimprj.alpha_py.xml")))
     flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
@@ -730,7 +708,7 @@ def runExample(resultQueue, example):
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt, outfiles=executeSrcExample(executeFD, example)
-      elif os.path.isfile("MBS.mbsimprj.xml"):
+      elif os.path.isfile("MBS.mbsimprj.xml") or os.path.isfile("MBS.mbsimprj.alpha_py.xml"):
         executeRet, dt, outfiles=executeXMLExample(executeFD, example)
       elif os.path.isfile("MBS.mbsimprj.flat.xml"):
         executeRet, dt, outfiles=executeFlatXMLExample(executeFD, example)
@@ -841,7 +819,7 @@ def runExample(resultQueue, example):
       print('<head>', file=htmlOutputFD)
       print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=htmlOutputFD)
       print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
-      print('  <title>Validate XML Files</title>', file=htmlOutputFD)
+      print('  <title>Validate XML Files: %s</title>'%(args.buildType), file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
       print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
@@ -854,7 +832,7 @@ def runExample(resultQueue, example):
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
       print('  } );', file=htmlOutputFD)
       print('</script>', file=htmlOutputFD)
-      print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
+      print('<h1>Validate XML Files: <small>%s</small></h1>'%(args.buildType), file=htmlOutputFD)
       print('<dl class="dl-horizontal">', file=htmlOutputFD)
       print('<dt>Example:</dt><dd>'+example[0]+'</dd>', file=htmlOutputFD)
       print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=htmlOutputFD)
@@ -916,6 +894,14 @@ def runExample(resultQueue, example):
     resultQueue.put([example, resultStr, runExampleRet])
     return runExampleRet
 
+
+
+# if args.exeEXt is set we must prefix every command with wine
+def exePrefix():
+  if args.exeExt=="":
+    return []
+  else:
+    return ["wine"]
 
 
 # prefix the simultion with this parameter.
@@ -980,7 +966,7 @@ def executeSrcExample(executeFD, example):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'src')+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+  ret=[subprocessCall(prefixSimulation(example, 'src')+exePrefix()+[pj(os.curdir, "main"+args.exeExt)], executeFD,
                       env=mainEnv, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -991,15 +977,18 @@ def executeSrcExample(executeFD, example):
 
 # execute the XML example in the current directory (write everything to fd executeFD)
 def executeXMLExample(executeFD, example):
-  # we handle MBS.mbsimprj.xml and FMI.mbsimprj.xml files here
-  prjFile=glob.glob("*.mbsimprj.xml")[0]
+  # we handle MBS.mbsimprj.xml, MBS.mbsimprj.alpha_py.xml and FMI.mbsimprj.xml files here
+  if   os.path.isfile("MBS.mbsimprj.xml"):          prjFile="MBS.mbsimprj.xml"
+  elif os.path.isfile("MBS.mbsimprj.alpha_py.xml"): prjFile="MBS.mbsimprj.alpha_py.xml"
+  elif os.path.isfile("FMI.mbsimprj.xml"):          prjFile="FMI.mbsimprj.xml"
+  else: raise RuntimeError("Internal error: Unknown ppxml file.")
 
   print("Running command:", file=executeFD)
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+[prjFile]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'xml')+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+  ret=[subprocessCall(prefixSimulation(example, 'xml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
                       [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1015,7 +1004,7 @@ def executeFlatXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'fxml')+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+  ret=[subprocessCall(prefixSimulation(example, 'fxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
                       executeFD, maxExecutionTime=args.maxExecutionTime)]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -1030,7 +1019,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  comm=[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
+  comm=exePrefix()+[pj(mbsimBinDir, "mbsimCreateFMU"+args.exeExt), '--nocompress', fmiInputFile]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
@@ -1049,7 +1038,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   endTime=[]
   if 'MBSIM_SET_MINIMAL_TEND' in os.environ:
     endTime=['-s', '0.01']
-  comm=[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
+  comm=exePrefix()+[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
@@ -1113,11 +1102,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<head>', file=diffHTMLPlotFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=diffHTMLPlotFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
-  print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
+  print('  <title>Difference Plot: %s</title>'%(args.buildType), file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:1em">', file=diffHTMLPlotFD)
-  print('<h1>Difference Plot</h1>', file=diffHTMLPlotFD)
+  print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
   print('<dt>Example:</dt><dd>'+example+'</dd>', file=diffHTMLPlotFD)
   print('<dt>File:</dt><dd>'+filename+'</dd>', file=diffHTMLPlotFD)
@@ -1341,7 +1330,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
       data.append([
         (h5CurFile.filename,""),
         (datasetName,""),
-        ('label '+label+' not in ref.',"d"),
+        ('label '+label[0]+' not in ref.',"d"),
         ('failed',"d")
       ])
       nrAll[0]+=1
@@ -1365,7 +1354,7 @@ def compareExample(example, compareFN):
   print('<head>', file=compareFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=compareFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
-  print('  <title>Compare Results</title>', file=compareFD)
+  print('  <title>Compare Results: %s</title>'%(args.buildType), file=compareFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)
   print('</head>', file=compareFD)
@@ -1414,7 +1403,7 @@ def compareExample(example, compareFN):
       $('#SortThisTable').DataTable().columns.adjust().draw();
     });
     </script>''', file=compareFD)
-  print('<h1>Compare Results</h1>', file=compareFD)
+  print('<h1>Compare Results: <small>%s</small></h1>'%(args.buildType), file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
   print('<dt>Example:</dt><dd>'+example+'</dd>', file=compareFD)
   print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=compareFD)
@@ -1618,7 +1607,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         list(map(lambda x: print(x, end=" ", file=outputFD), [mbxmlutilsvalidate, curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocessCall([mbxmlutilsvalidate, curType[1], pj(root, filename)],
+        if subprocessCall(exePrefix()+[mbxmlutilsvalidate, curType[1], pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
           print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
@@ -1631,41 +1620,18 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 
 
-def writeRSSFeed(nrFailed, nrTotal):
-  rssFN="result.rss.xml"
-  rssFD=codecs.open(pj(args.reportOutDir, os.pardir, rssFN), "w", encoding="utf-8")
-  print('''\
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>%sMBSim runexample.py Result</title>
-    <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last runexample.py run of MBSim and Co.</description>
-    <language>en-us</language>
-    <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
+def writeAtomFeed(currentID, nrFailed, nrTotal):
+  # do not write a feed if --buildSystemDir is not used
+  if args.buildSystemDir==None:
+    return
+  # load the add feed module
+  sys.path.append(args.buildSystemDir)
+  import addBuildSystemFeed
+  # add a new feed if examples have failed
   if nrFailed>0:
-    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
-    print('''\
-    <item>
-      <title>%s%d of %d examples failed</title>
-      <link>%s/result_%010d/index.html</link>
-      <guid isPermaLink="false">%s/result_%010d/rss_id_%s</guid>
-      <pubDate>%s</pubDate>
-    </item>'''%(args.buildType, nrFailed, nrTotal,
-           args.url, currentID,
-           args.url, currentID, datetime.datetime.utcnow().strftime("%s"),
-           datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
-  print('''\
-    <item>
-      <title>%sDummy feed item. Just ignore it.</title>
-      <link>%s/result_current/index.html</link>
-      <guid isPermaLink="false">%s/result_current/rss_id_1359206848</guid>
-      <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
-    </item>
-  </channel>
-</rss>'''%(args.buildType, args.url, args.url), file=rssFD)
-  rssFD.close()
+    addBuildSystemFeed.add(args.buildType+"-examples", "Examples Failed: "+args.buildType,
+      "%d of %d examples failed."%(nrFailed, nrTotal),
+      "%s/result_%010d/index.html"%(args.url, currentID))
 
 
 

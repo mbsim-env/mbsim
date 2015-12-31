@@ -33,6 +33,8 @@ namespace MBSimGUI {
   class Plane;
   class Sphere;
   class CircleSolid;
+  class Cuboid;
+  class LineSegment;
   class DynamicSystemSolver;
   class Group;
   class Object;
@@ -82,6 +84,8 @@ namespace MBSimGUI {
   class TextWidget;
   class VecWidget;
   class ExtWidget;
+  class ExternSignalSource;
+  class ExternSignalSink;
 
   class ElementPropertyDialog : public PropertyDialog {
 
@@ -175,6 +179,26 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *radius, *visu;
+  };
+
+  class CuboidPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      CuboidPropertyDialog(Cuboid *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *length, *visu;
+  };
+
+  class LineSegmentPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      LineSegmentPropertyDialog(LineSegment *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *length, *visu;
   };
 
   class GroupPropertyDialog : public ElementPropertyDialog {
@@ -605,6 +629,26 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *s1Ref, *s2Ref, *f;
+  };
+
+  class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {
+
+    public:
+      ExternSignalSourcePropertyDialog(ExternSignalSource *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *sourceSize;
+  };
+
+  class ExternSignalSinkPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      ExternSignalSinkPropertyDialog(ExternSignalSink *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *inputSignal;
   };
 
 }

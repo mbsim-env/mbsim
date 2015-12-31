@@ -31,12 +31,16 @@
 using namespace std;
 using namespace fmatvec;
 using namespace boost;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
   Cuboid::Cuboid(const string &name, Frame *R) : CompoundContour(name,R), lx(1.0), ly(1.0), lz(1.0) { }
 
   Cuboid::Cuboid(const string &name, double lx_, double ly_, double lz_, Frame *R) : CompoundContour(name,R), lx(lx_), ly(ly_), lz(lz_) { }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Cuboid, MBSIM%"Cuboid")
 
   void Cuboid::init(InitStage stage) {
     if(stage==preInit) {
@@ -115,6 +119,8 @@ namespace MBSim {
       point->setFrameOfReference(frame);
       addContour(point);
 
+      double thicknessFactor = 0.5;
+
       r(0) = -lx/2.0;
       r(1) = 0;
       r(2) = 0;
@@ -123,6 +129,7 @@ namespace MBSim {
       Rectangle *rectangle = new Rectangle("Face1");
       rectangle->setYLength(ly);
       rectangle->setZLength(lz);
+      rectangle->setThickness(lx*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -134,6 +141,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face2");
       rectangle->setYLength(ly);
       rectangle->setZLength(lz);
+      rectangle->setThickness(lx*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -145,6 +153,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face3");
       rectangle->setYLength(ly);
       rectangle->setZLength(lx);
+      rectangle->setThickness(lz*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -156,6 +165,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face4");
       rectangle->setYLength(ly);
       rectangle->setZLength(lx);
+      rectangle->setThickness(lz*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -167,6 +177,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face5");
       rectangle->setYLength(lx);
       rectangle->setZLength(lz);
+      rectangle->setThickness(ly*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -178,6 +189,7 @@ namespace MBSim {
       rectangle = new Rectangle("Face6");
       rectangle->setYLength(lx);
       rectangle->setZLength(lz);
+      rectangle->setThickness(ly*thicknessFactor);
       rectangle->setFrameOfReference(frame);
       addContour(rectangle);
 
@@ -188,6 +200,7 @@ namespace MBSim {
       addFrame(frame);
       Edge *edge = new Edge("Edge1");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -198,6 +211,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge2");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -208,6 +222,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge3");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -218,6 +233,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge4");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -228,6 +244,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge5");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -238,6 +255,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge6");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -248,6 +266,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge7");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -258,6 +277,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge8");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -268,6 +288,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge9");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -278,16 +299,18 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge10");
       edge->setLength(lx);
+      edge->setThickness(min(ly, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
       r(0) = -lx/2.0;
       r(1) = -ly/2.0;
       r(2) = 0;
-      frame = new FixedRelativeFrame("E11",r,BasicRotAIKx(M_PI/2)*BasicRotAIKy(3*M_PI/4),R);
+      frame = new FixedRelativeFrame("E11",r,BasicRotAIKx(-M_PI/2)*BasicRotAIKy(3*M_PI/4),R);
       addFrame(frame);
       edge = new Edge("Edge11");
       edge->setLength(lz);
+      edge->setThickness(min(lx, ly)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -298,6 +321,7 @@ namespace MBSim {
       addFrame(frame);
       edge = new Edge("Edge12");
       edge->setLength(ly);
+      edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
 
@@ -315,6 +339,24 @@ namespace MBSim {
 
   void Cuboid::plot(double t, double dt) {
     RigidContour::plot(t,dt);
+  }
+
+  void Cuboid::initializeUsingXML(DOMElement *element) {
+    CompoundContour::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
+    setLength(getVec3(e));
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(e) {
+      DOMElement *d, *t;
+      d=E(e)->getFirstElementChildNamed(MBSIM%"diffuseColor");
+      t=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
+      if( d &&  t) enableOpenMBV(_diffuseColor=getVec3(d), _transparency=getDouble(t));
+      if(!d &&  t) enableOpenMBV(                          _transparency=getDouble(t));
+      if( d && !t) enableOpenMBV(_diffuseColor=getVec3(d)                            );
+      if(!d && !t) enableOpenMBV(                                                    );
+    }
+#endif
   }
 
 }

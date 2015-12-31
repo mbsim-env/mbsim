@@ -93,8 +93,7 @@ namespace MBSimGUI {
       MainWindow(QStringList &arg);
       ~MainWindow();
       boost::shared_ptr<MBXMLUtils::DOMParser> parser;
-      static boost::shared_ptr<MBXMLUtils::Eval> eval;
-      static MBXMLUtils::NewParamLevel *evalParamLevel;
+      boost::shared_ptr<MBXMLUtils::Eval> eval;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter);

@@ -27,14 +27,14 @@ namespace {
 
   // some platform dependent file suffixes, directory names, ...
 #ifdef _WIN32
-  std::string SHEXT("-0.dll");
+  std::string SHEXT(".dll");
   #ifdef _WIN64
   std::string FMIOS("win64");
   #else
   std::string FMIOS("win32");
   #endif
 #else
-  std::string SHEXT(".so.0");
+  std::string SHEXT(".so");
   #ifdef __x86_64__
   std::string FMIOS("linux64");
   #else
@@ -64,7 +64,8 @@ struct PredefinedParameterStruct {
 //! add all FMI predefined parameters to var.
 //! The values of all predefined parameters are stored in the struct PredefinedParameterStruct.
 void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
-                             PredefinedParameterStruct &predefinedParameterStruct);
+                             PredefinedParameterStruct &predefinedParameterStruct,
+                             bool setToDefaultValue);
 
 //! add all FMI input/outputs used by the MBSim dss to var.
 void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
@@ -211,25 +212,39 @@ class ExternGeneralizedIOVelocityOutput : public Variable {
 //! FMI input variable for MBSim::ExternSignalSource
 class ExternSignalSourceInput : public Variable {
   public:
-    ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
-      "ExternSignalSource", Input, 'r'), sig(sig_) {}
+    ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_, int idx_) :
+      Variable(mbsimPathToFMIName(sig_->getPath())+"["+boost::lexical_cast<std::string>(idx_)+"]",
+        "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    void setValue(const double &v) { sig->setSignal(fmatvec::VecV(1, fmatvec::INIT, v)); }
-    const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
+    void setValue(const double &v) {
+      fmatvec::VecV curv = sig->getSignal();
+      curv(idx) = v;
+      sig->setSignal(curv);
+    }
+    const double& getValue(const double&) {
+      value=sig->getSignal()(idx);
+      return value;
+    }
   protected:
     MBSimControl::ExternSignalSource *sig;
+    int idx;
     double value; // MISSING: remove this variable if getSignal returns a const reference!!!
 };
 
 //! FMI output variable for MBSim::ExternSignalSink
 class ExternSignalSinkOutput : public Variable {
   public:
-    ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_) : Variable(mbsimPathToFMIName(sig_->getPath()),
-      "ExternSignalSink", Output, 'r'), sig(sig_) {}
+    ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_, int idx_) :
+      Variable(mbsimPathToFMIName(sig_->getPath())+"["+boost::lexical_cast<std::string>(idx_)+"]",
+        "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    const double& getValue(const double&) { value=sig->getSignal()(0); return value; }
+    const double& getValue(const double&) {
+      value=sig->getSignal()(idx);
+      return value;
+    }
   protected:
     MBSimControl::ExternSignalSink *sig;
+    int idx;
     double value; // MISSING: remove this variable if getSignal returns a const reference!!!
 };
 

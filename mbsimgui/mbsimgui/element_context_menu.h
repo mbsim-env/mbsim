@@ -93,6 +93,8 @@ namespace MBSimGUI {
       void addPlane();
       void addSphere();
       void addCircleSolid();
+      void addCuboid();
+      void addLineSegment();
 
     protected:
       Element *element;
@@ -227,6 +229,8 @@ namespace MBSimGUI {
       void addPIDController();
       void addUnarySignalOperation();
       void addBinarySignalOperation();
+      void addExternSignalSource();
+      void addExternSignalSink();
 
     protected:
       Element *element;

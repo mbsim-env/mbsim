@@ -342,6 +342,7 @@ namespace MBSim {
         resParent.resize(getlaSize());
       gParent.resize(getgSize());
       gdParent.resize(getgdSize());
+      zParent.resize(getzSize());
       zdParent.resize(getzSize());
       udParent1.resize(getuSize(1));
       hParent[0].resize(getuSize(0));
@@ -373,6 +374,7 @@ namespace MBSim {
       updatejsvRef(jsvParent);
       updateLinkStatusRef(LinkStatusParent);
       updateLinkStatusRegRef(LinkStatusRegParent);
+      updatezRef(zParent);
       updatezdRef(zdParent);
       updateudRef(udParent1, 1);
       updateudallRef(udParent1, 1);
@@ -1200,7 +1202,7 @@ namespace MBSim {
     int iter = 0;
     while (nrmInf(getg(t) - corr) >= tolProj) {
       if (++iter > 500) {
-        msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed!" << endl;
+        msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed at t = " << t << "!" << endl;
         break;
       }
       Vec mu = slvLS(Gv, -getg(t) + getW(0,false).T() * nu + corr);
@@ -1655,8 +1657,12 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
+    if(msgAct(Debug))
+      msg(Debug) << "System shift at t = " << t << "." << endl;
+
     resetUpToDate();
     useOldla = false;
+
     if (q() != zParent()) {
       updatezRef(zParent);
     }

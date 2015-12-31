@@ -38,8 +38,12 @@ namespace MBSimGUI {
   };
 
   class Widget : public QWidget, public WidgetInterface {
+    Q_OBJECT
     public:
       Widget() {}
+      using WidgetInterface::resize_;
+    signals:
+      void resize_();
   };
 
   class WidgetFactory {

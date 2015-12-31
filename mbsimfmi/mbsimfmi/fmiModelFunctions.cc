@@ -23,10 +23,10 @@ using namespace MBXMLUtils;
 namespace {
   // some platform dependent values
 #ifdef _WIN32
-  string SHEXT("-0.dll");
+  string SHEXT(".dll");
   string LIBDIR="bin";
 #else
-  string SHEXT(".so.0");
+  string SHEXT(".so");
   string LIBDIR="lib";
 #endif
 }
@@ -50,8 +50,19 @@ extern "C" {
     try {
       string fmuDir=MBXMLUtils::getFMUWrapperSharedLibPath();
       size_t s=string::npos;
+      // replace /./ with /
+      while((s=fmuDir.find("/./"))!=string::npos)
+        fmuDir.replace(s, 3, "/");
+      while((s=fmuDir.find("\\.\\"))!=string::npos)
+        fmuDir.replace(s, 3, "/");
+      while((s=fmuDir.find("\\./"))!=string::npos)
+        fmuDir.replace(s, 3, "/");
+      while((s=fmuDir.find("/.\\"))!=string::npos)
+        fmuDir.replace(s, 3, "/");
+      // remove trailing /binaries/<os>/mbism.so
       for(int i=0; i<3; ++i)
         s=fmuDir.find_last_of("/\\", s)-1;
+      // load main mbsim FMU library
       SharedLibrary lib(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT);
       fmiInstanceCreatePtr fmiInstanceCreate=reinterpret_cast<fmiInstanceCreatePtr>(lib.getAddress("fmiInstanceCreate"));
       return new pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >(lib,

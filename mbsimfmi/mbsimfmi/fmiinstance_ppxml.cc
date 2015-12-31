@@ -18,7 +18,7 @@ using namespace boost;
 
 namespace {
   void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
-                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, Eval &eval);
+                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval);
 }
 
 namespace MBSimFMI {
@@ -56,17 +56,17 @@ namespace MBSimFMI {
 
     // set param according data in var
     boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-    convertVariableToXPathParamSet(varSim.size(), var, param, *eval);
+    convertVariableToXPathParamSet(varSim.size(), var, param, eval);
 
     // preprocess XML file
     vector<path> dependencies;
     msg(Debug)<<"Preprocess MBSim XML model."<<endl;
-    Preprocess::preprocess(validatingParser, *eval, dependencies, ele, param);
+    Preprocess::preprocess(validatingParser, eval, dependencies, ele, param);
 
     // convert the parameter set from the mbxmlutils preprocessor to a "Variable" vector
     msg(Debug)<<"Convert XML parameters to FMI parameters."<<endl;
     vector<boost::shared_ptr<Variable> > xmlParam;
-    convertXPathParamSetToVariable(param, xmlParam, *eval);
+    convertXPathParamSetToVariable(param, xmlParam, eval);
     // build a set of all Parameter's in var
     set<string> useParam;
     for(vector<boost::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it)
@@ -119,7 +119,7 @@ namespace {
   }
 
   void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
-                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, Eval &eval) {
+                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval) {
     Preprocess::ParamSet &p=param->insert(make_pair(
       "/{"+MBSIMXML.getNamespaceURI()+"}MBSimProject[1]/{"+MBSIM.getNamespaceURI()+"}DynamicSystemSolver[1]",
       Preprocess::ParamSet())).first->second;
@@ -129,7 +129,7 @@ namespace {
         continue;
       // handle string parameters (can only be scalars)
       if((*it)->getDatatypeChar()=='s')
-        p.push_back(make_pair((*it)->getName(), eval.create((*it)->getValue(string()))));
+        p.push_back(make_pair((*it)->getName(), eval->create((*it)->getValue(string()))));
       // handle none string parameters (can be scalar, vector or matrix)
       else {
         // get name and type (scalar, vector or matrix)
@@ -145,14 +145,14 @@ namespace {
         shared_ptr<void> value;
         switch(type) {
           case Eval::ScalarType:
-            value=eval.create(getValueAsDouble(**it));
+            value=eval->create(getValueAsDouble(**it));
             break;
           case Eval::VectorType: {
             vector<double> vec;
             for(; it!=var.end() && name==getName(**it); ++it)
               vec.push_back(getValueAsDouble(**it));
             --it;
-            value=eval.create(vec);
+            value=eval->create(vec);
             break;
           }
           case Eval::MatrixType: {
@@ -164,7 +164,7 @@ namespace {
               mat.push_back(row);
             }
             --it;
-            value=eval.create(mat);
+            value=eval->create(mat);
             break;
           }
           default:

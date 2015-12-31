@@ -266,6 +266,54 @@ namespace MBSimGUI {
     static_cast<CircleSolid*>(element)->visu.fromWidget(visu);
   }
 
+  CuboidPropertyDialog::CuboidPropertyDialog(Cuboid *circle, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(circle,parent,f) {
+    addTab("Visualisation",1);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new VecWidget(3), lengthUnits(), 4));
+    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
+    addToTab("General", length);
+
+    visu = new ExtWidget("OpenMBV Cuboid",new MBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation", visu);
+  }
+
+  void CuboidPropertyDialog::toWidget(Element *element) {
+    ContourPropertyDialog::toWidget(element);
+    static_cast<Cuboid*>(element)->length.toWidget(length);
+    static_cast<Cuboid*>(element)->visu.toWidget(visu);
+  }
+
+  void CuboidPropertyDialog::fromWidget(Element *element) {
+    ContourPropertyDialog::fromWidget(element);
+    static_cast<Cuboid*>(element)->length.fromWidget(length);
+    static_cast<Cuboid*>(element)->visu.fromWidget(visu);
+  }
+
+  LineSegmentPropertyDialog::LineSegmentPropertyDialog(LineSegment *line, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(line,parent,f) {
+    addTab("Visualisation",1);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 1));
+    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
+    addToTab("General", length);
+
+    visu = new ExtWidget("OpenMBV LineSegment",new MBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation", visu);
+  }
+
+  void LineSegmentPropertyDialog::toWidget(Element *element) {
+    ContourPropertyDialog::toWidget(element);
+    static_cast<LineSegment*>(element)->length.toWidget(length);
+    static_cast<LineSegment*>(element)->visu.toWidget(visu);
+  }
+
+  void LineSegmentPropertyDialog::fromWidget(Element *element) {
+    ContourPropertyDialog::fromWidget(element);
+    static_cast<LineSegment*>(element)->length.fromWidget(length);
+    static_cast<LineSegment*>(element)->visu.fromWidget(visu);
+  }
+
   GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {
     if(kinematics) {
       addTab("Kinematics",1);
@@ -354,6 +402,8 @@ namespace MBSimGUI {
     u0 = new ExtWidget("Initial generalized velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", u0);
 
+    connect(q0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
+    connect(u0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 
     R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true);
@@ -392,17 +442,11 @@ namespace MBSimGUI {
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
     addToTab("Kinematics", translation);
-
-    // connect(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    // connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    // connect(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
     addToTab("Kinematics", rotation);
-
-    //  connect(static_cast<const ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget()),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    //  connect(rotation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-    //  connect(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
@@ -1573,6 +1617,36 @@ namespace MBSimGUI {
     static_cast<BinarySignalOperation*>(element)->s1Ref.fromWidget(s1Ref);
     static_cast<BinarySignalOperation*>(element)->s2Ref.fromWidget(s2Ref);
     static_cast<BinarySignalOperation*>(element)->f.fromWidget(f);
+  }
+
+  ExternSignalSourcePropertyDialog::ExternSignalSourcePropertyDialog(ExternSignalSource *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+    sourceSize = new ExtWidget("Lenght of input vector",new SpinBoxWidget(1, 1, 1000));
+    addToTab("General", sourceSize);
+  }
+
+  void ExternSignalSourcePropertyDialog::toWidget(Element *element) {
+    SignalPropertyDialog::toWidget(element);
+    static_cast<ExternSignalSource*>(element)->sourceSize.toWidget(sourceSize);
+  }
+
+  void ExternSignalSourcePropertyDialog::fromWidget(Element *element) {
+    SignalPropertyDialog::fromWidget(element);
+    static_cast<ExternSignalSource*>(element)->sourceSize.fromWidget(sourceSize);
+  }
+
+  ExternSignalSinkPropertyDialog::ExternSignalSinkPropertyDialog(ExternSignalSink *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+    inputSignal = new ExtWidget("Signal of reference",new SignalOfReferenceWidget(signal,0));
+    addToTab("General", inputSignal);
+  }
+
+  void ExternSignalSinkPropertyDialog::toWidget(Element *element) {
+    SignalPropertyDialog::toWidget(element);
+    static_cast<ExternSignalSink*>(element)->inputSignal.toWidget(inputSignal);
+  }
+
+  void ExternSignalSinkPropertyDialog::fromWidget(Element *element) {
+    SignalPropertyDialog::fromWidget(element);
+    static_cast<ExternSignalSink*>(element)->inputSignal.fromWidget(inputSignal);
   }
 
 }

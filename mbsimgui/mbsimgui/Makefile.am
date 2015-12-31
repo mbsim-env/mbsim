@@ -71,7 +71,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   solver_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
-		   process.cc \
+		   mbsim_process.cc \
 		   main.cc \
 		   embed.cc \
 		   solver.cc 
@@ -82,6 +82,7 @@ nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   options.moc.cc \
+		   widget.moc.cc \
 		   basic_widgets.moc.cc \
 		   variable_widgets.moc.cc \
 		   function_widget.moc.cc \
@@ -99,7 +100,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   embedding_view.moc.cc \
 		   solver_view.moc.cc \
 		   dialogs.moc.cc  \
-		   process.moc.cc
+		   mbsim_process.moc.cc
 
 mbsimgui_HEADERS = 
 		   

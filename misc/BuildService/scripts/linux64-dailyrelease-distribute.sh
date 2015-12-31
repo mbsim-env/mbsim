@@ -14,10 +14,10 @@ set -o pipefail
 # MBSIM
 ##############################################################################
 
-DISTBASEDIR=/home/user/MBSimLinux/dist_mbsim
+DISTBASEDIR=/home/mbsim/linux64-dailyrelease/dist_mbsim
 
-SRCDIR=/home/user/MBSimLinux
-PREFIX=/home/user/MBSimLinux/local
+SRCDIR=/home/mbsim/linux64-dailyrelease
+PREFIX=/home/mbsim/linux64-dailyrelease/local
 
 BINFILES="
 $PREFIX/bin/h5dumpserie
@@ -31,9 +31,16 @@ $PREFIX/bin/openmbv
 $PREFIX/lib/casadi_oct.oct
 $PREFIX/bin/mbsimCreateFMU
 $PREFIX/bin/fmuCheck.*
-$PREFIX/lib/mbsimsrc_fmi.so
-$PREFIX/lib/mbsimppxml_fmi.so
-$PREFIX/lib/mbsimxml_fmi.so
+$PREFIX/lib/libmbsimsrc_fmi.so
+$PREFIX/lib/libmbsimppxml_fmi.so
+$PREFIX/lib/libmbsimxml_fmi.so
+$PREFIX/lib/libmbsimControl.so
+$PREFIX/lib/libmbsimElectronics.so
+$PREFIX/lib/libmbsimFlexibleBody.so
+$PREFIX/lib/libmbsimHydraulics.so
+$PREFIX/lib/libmbsimInterface.so
+$PREFIX/lib/libmbsimPowertrain.so
+$PREFIX/lib/libmbxmlutils-eval-octave.so
 /usr/bin/h5copy
 /usr/bin/h5diff
 /usr/bin/h5dump
@@ -44,10 +51,6 @@ $PREFIX/lib/mbsimxml_fmi.so
 /usr/bin/h5repart
 /usr/bin/h5stat
 /usr/bin/octave
-/usr/lib/libgtk-x11-2.0.so.0
-/usr/lib/libgnomeui-2.so.0
-/usr/lib/libgnomevfs-2.so.0
-/usr/lib/libgconf-2.so.4
 "
 # Note: libgtk-x11, libgnomeui, libgnomevfs and libgconf are loaded at runtime by QGtkStyle, hence we must
 # include these to the release including all dependencies
@@ -62,7 +65,7 @@ mbsimxml
 "
 
 OCTAVEMDIR="/usr/share/octave/$(octave-config --version)/m"
-OCTAVEOCTDIR="/usr/lib/octave/$(octave-config --version)/oct"
+OCTAVEOCTDIR="/usr/lib64/octave/$(octave-config --version)/oct"
 
 
 
@@ -83,11 +86,11 @@ done
 DISTDIR=$DISTBASEDIR/mbsim
 
 # PKG config
-export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig:/home/user/3rdparty/casadi-local-linux32/lib/pkgconfig
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/3rdparty/casadi-local-linux32/lib
+export PKG_CONFIG_PATH=/home/mbsim/linux64-dailyrelease/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi-local-linux64/lib/pkgconfig:/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/mbsim/3rdparty/casadi-local-linux64/lib
 # get includes and libs of all packages required for compiling mbsim source examples
-SRCINC=$(pkg-config --cflags mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
-SRCLIB=$(pkg-config --libs   mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain)
+SRCINC=$(pkg-config --cflags mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain Coin QtGui)
+SRCLIB=$(pkg-config --libs   mbsim mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsimInterface mbsimPowertrain Coin QtGui)
 
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
@@ -107,8 +110,8 @@ for F in $BINFILES; do
   ldd $F | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
 done
 # get dependent libs for Qt plugins
-ldd /usr/lib/qt4/plugins/imageformats/libqsvg.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
-ldd /usr/lib/qt4/plugins/iconengines/libqsvgicon.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
+ldd /usr/lib64/qt4/plugins/imageformats/libqsvg.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
+ldd /usr/lib64/qt4/plugins/iconengines/libqsvgicon.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
 # copy dependent libs
 sort $TMPSOFILE | uniq > $TMPSOFILE.uniq
 for F in $(cat $TMPSOFILE); do
@@ -161,7 +164,8 @@ fi
 TMPINCFILE=$DISTBASEDIR/distribute.inc.cc
 rm -f $TMPINCFILE
 for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimInterface/\|/mbsimtinyxml/\|/mbsimxml/\|/openmbvcppinterface/\|/mbsimfmi/"); do
-  echo "#include <$F>" >> $TMPINCFILE
+  test $F == /home/mbsim/linux64-dailyrelease/local/include/hdf5serie/interface_creatoroperator_iter.h && continue
+  echo "#include <$F>" | sed -re "s/(.*getsharedlibpath_impl\.h.*)/#define MBXMLUTILS_SHAREDLIBNAME dummy\n\1/" | sed -re "s/(.*getsharedlibpath\.h.*)/#define MBXMLUTILS_SHAREDLIBNAME dummy\n\1/" >> $TMPINCFILE
 done
 TMPDEPFILE=$DISTBASEDIR/distribute.dep
 rm -f $TMPDEPFILE
@@ -202,7 +206,7 @@ for F in $(rpm -qa | grep -e "^glibc-" -e "^mesa-" | xargs rpm -ql | grep -e "\.
   rm -f $DISTDIR/lib/$F &> /dev/null
 done
 # SPECIAL ACTIONS
-cp -uL /usr/lib/libQtXml.so.4 $DISTDIR/lib/. # required by QSvg-plugin
+cp -uL /usr/lib64/libQtXml.so.4 $DISTDIR/lib/. # required by QSvg-plugin
 rm -f $DISTDIR/include/sys/select.h
 rm -f $DISTDIR/include/features.h
 (cd $DISTDIR/lib; ln -s liblapack.so.3 liblapack.so)
@@ -260,13 +264,13 @@ chmod +x $DISTDIR/bin/mbsim-config
 # Qt plugins
 mkdir -p $DISTDIR/bin/imageformats
 mkdir -p $DISTDIR/bin/iconengines
-cp /usr/lib/qt4/plugins/imageformats/libqsvg.so $DISTDIR/bin/imageformats
-cp /usr/lib/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
+cp /usr/lib64/qt4/plugins/imageformats/libqsvg.so $DISTDIR/bin/imageformats
+cp /usr/lib64/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
 
 # README.txt
 cat << EOF > $DISTDIR/README.txt
-Using of the MBSim and Co. Package:
-===================================
+Using the MBSim-Environment:
+============================
 
 NOTE
 This binary Linux build requires a Linux distribution with glibc >= 2.15.
@@ -432,11 +436,11 @@ done
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
-  rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2
-  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2 $(find -name "*.debug"))
-  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx-debug.tar.bz2"
+  rm -f $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2 $(find -name "*.debug"))
+  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2"
 
-  rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2
-  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 --exclude=\*.debug mbsim)
-  echo "Created MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
+  rm -f $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx.tar.bz2
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx.tar.bz2 --exclude=\*.debug mbsim)
+  echo "Created MBSim archive at $DISTBASEDIR/mbsim-env-linux64-shared-build-xxx.tar.bz2"
 fi

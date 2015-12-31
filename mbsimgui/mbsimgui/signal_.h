@@ -71,6 +71,32 @@ namespace MBSimGUI {
     ExtProperty s1Ref, s2Ref, f;
   };
 
+  class ExternSignalSource : public Signal {
+    friend class ExternSignalSourcePropertyDialog;
+    public:
+      ExternSignalSource(const std::string &str, Element *parent); 
+      virtual std::string getType() const { return "ExternSignalSource"; }
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void initialize();
+      ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSourcePropertyDialog(this);}
+    protected:
+      ExtProperty sourceSize;
+  };
+
+  class ExternSignalSink : public Signal {
+    friend class ExternSignalSinkPropertyDialog;
+    public:
+      ExternSignalSink(const std::string &str, Element *parent); 
+      virtual std::string getType() const { return "ExternSignalSink"; }
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void initialize();
+      ElementPropertyDialog* createPropertyDialog() {return new ExternSignalSinkPropertyDialog(this);}
+    protected:
+      ExtProperty inputSignal;
+  };
+
 }
 
 #endif

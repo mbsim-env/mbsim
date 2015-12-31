@@ -13,12 +13,15 @@ import datetime
 import fileinput
 import shutil
 import codecs
+import simplesandbox
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
   import urllib.request as myurllib
 
 # global variables
+global scriptdir
+scriptdir=os.path.dirname(os.path.realpath(__file__))
 toolDependencies=dict()
 toolXMLDocCopyDir=dict()
 toolDoxyDocCopyDir=dict()
@@ -29,7 +32,7 @@ timeID=None
 argparser = argparse.ArgumentParser(
 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 description='''
-Build MBSim, OpenMBV and all other tools.
+Building the MBSim-Environment.
 
 After building, runexamples.py is called by this script.
 All unknown options are passed to runexamples.py.
@@ -69,8 +72,8 @@ outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
 outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
-outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
-outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: 'Daily Build: ')")
+outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
+outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
 outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
 passOpts=argparser.add_argument_group('Options beeing passed to other commands')
@@ -81,6 +84,11 @@ passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAIN
 
 # parse command line options
 args=argparser.parse_args() # modified by mypostargparse
+
+# pass these envvar to simplesandbox.call
+simplesandboxEnvvars=["PKG_CONFIG_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS", # general required envvars
+                      "LD_LIBRARY_PATH", # Linux specific required envvars
+                      "WINEPATH", "PLATFORM", "CXX", "MOC", "UIC", "RCC"] # Windows specific required envvars
 
 htmlEscapeTable={
   "&": "&amp;",
@@ -159,7 +167,7 @@ def main():
   global toolDoxyDocCopyDir
 
   toolDependencies={
-    #   |ToolName   |WillFail (if WillFail is true no RSS Feed error is reported if this Tool fails somehow)
+    #   |ToolName   |WillFail (if WillFail is true no Atom Feed error is reported if this Tool fails somehow)
     pj('fmatvec'): [False, set([ # depends on
       ])],
     pj('hdf5serie', 'h5plotserie'): [False, set([ # depends on
@@ -272,11 +280,13 @@ def main():
   # set docDir
   global docDir
   if args.prefix==None:
+    raise RuntimeError("MISSING: calling without --prefix is currently not supported. sandboxing is missing")
     output=subprocess.check_output([pj(args.sourceDir, "openmbv"+args.binSuffix, "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
     for opt in output.split():
       match=re.search("'?--prefix[= ]([^']*)'?", opt)
       if match!=None:
         docDir=pj(match.expand("\\1"), "share", "mbxmlutils", "doc")
+        args.prefixAuto=match.expand("\\1")
         break
   else:
     docDir=pj(args.prefix, "share", "mbxmlutils", "doc")
@@ -302,11 +312,11 @@ def main():
     print('<head>', file=docFD)
     print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=docFD)
     print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
-    print('  <title>MBSim, OpenMBV, ... Documentation</title>', file=docFD)
+    print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
     print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=docFD)
     print('</head>', file=docFD)
     print('<body style="margin:1em">', file=docFD)
-    print('<h1>MBSim, OpenMBV, ... Documentation</h1>', file=docFD)
+    print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
     print('<div class="panel panel-success">', file=docFD)
     print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Documentation</div>', file=docFD)
     print('  <ul class="list-group">', file=docFD)
@@ -347,11 +357,10 @@ def main():
   print('<head>', file=mainFD)
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=mainFD)
-  print('  <title>MBSim, OpenMBV, ... Build Results</title>', file=mainFD)
+  print('  <title>Build Results of MBSim-Env: <small>%s</small></title>'%(args.buildType), file=mainFD)
   print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
   print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
-  print('  <link rel="alternate" type="application/rss+xml" title="MBSim, OpenMBV, ... Build Results" href="../result.rss.xml"/>', file=mainFD)
   print('</head>', file=mainFD)
   print('<body style="margin:1em">', file=mainFD)
   print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
@@ -364,13 +373,15 @@ def main():
   print('  } );', file=mainFD)
   print('</script>', file=mainFD)
 
-  print('<h1>MBSim, OpenMBV, ... Build Results</h1>', file=mainFD)
+  print('<h1>Build Results of MBSim-Env: <small>%s</small></h1>'%(args.buildType), file=mainFD)
 
   print('<dl class="dl-horizontal">', file=mainFD)
-  print('  <dt>Called command</dt><dd><code>', file=mainFD)
+  print('''<dt>Called Command</dt><dd><div class="dropdown">
+  <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
+  </button>
+  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
-  print('  </code></dd>', file=mainFD)
-  print('  <dt>RSS Feed</dt><dd><span class="octicon octicon-rss"></span>&nbsp;Use the feed "auto-discovery" of this page or click <a href="../result.rss.xml">here</a></dd>', file=mainFD)
+  print('</code></div></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
   print('  <dt>End time</dt><dd><span id="STILLRUNNINGORABORTED" class="text-danger"><b>still running or aborted</b></span><!--E_ENDTIME--></dd>', file=mainFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
@@ -401,12 +412,9 @@ def main():
   orderedBuildTools=list()
   sortBuildTools(buildTools, orderedBuildTools)
 
-  # write empty RSS feed
-  writeRSSFeed(0) # nrFailed == 0 => write empty RSS feed
-
   print('<h2>Build Status</h2>', file=mainFD)
   print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
-  print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
+  print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the Atom feed.</p>', file=mainFD)
 
   print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
   print('<thead><tr>', file=mainFD)
@@ -427,7 +435,7 @@ def main():
   for tool in set(toolDependencies)-set(orderedBuildTools):
     print('<tr>', file=mainFD)
     print('<td>'+tool.replace('/', u'/\u200B')+'</td>', file=mainFD)
-    for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    for i in range(0, 5-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
       print('<td>-</td>', file=mainFD)
     print('</tr>', file=mainFD)
   mainFD.flush()
@@ -461,8 +469,8 @@ def main():
     line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
     print(line, end="")
 
-  # write RSS feed
-  writeRSSFeed(ret)
+  # write Atom feed
+  writeAtomFeed(currentID, ret)
 
   if ret>0:
     print("\nERROR: At least one build failed!!!!!");
@@ -662,28 +670,36 @@ def configure(tool, mainFD):
       # pre configure
       os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["aclocal"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
+      if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["autoheader"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoheader failed")
+      if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoheader failed")
       print("\n\nRUNNING libtoolize\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["libtoolize", "-c"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("libtoolize failed")
+      if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("libtoolize failed")
       print("\n\nRUNNING automake\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["automake", "-a", "-c"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
+      if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["autoconf"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
+      if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
-      if subprocess.call(["autoreconf"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
+      if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
       # configure
       os.chdir(savedDir)
       os.chdir(pj(args.sourceDir, buildTool(tool)))
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
-        if subprocess.call(["./config.status", "--recheck"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+        if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."],
+                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
       else:
         command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
-        if subprocess.call(command, stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+        if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."],
+                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
     else:
       print("configure disabled", file=configureFD); configureFD.flush()
 
@@ -716,12 +732,16 @@ def make(tool, mainFD):
       errStr=""
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
-        if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make clean failed; "
+        if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
+                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
-      if subprocess.call(["make", "-k", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make failed; "
+      if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
-        if subprocess.call(["make", "-k", "install"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make install failed; "
+        if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
+                              shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
     else:
       print("make disabled", file=makeFD); makeFD.flush()
@@ -748,7 +768,8 @@ def check(tool, mainFD):
   if not args.disableMakeCheck:
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
-    if subprocess.call(["make", "-j", str(args.j), "check"], stderr=subprocess.STDOUT, stdout=checkFD)==0:
+    if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
+                          stderr=subprocess.STDOUT, stdout=checkFD)==0:
       result="done"
     else:
       result="failed"
@@ -796,11 +817,16 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
       # make doc
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make clean failed; "
+      if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
+                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "-k"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
+      if simplesandbox.call(["make", "-k"], envvar=simplesandboxEnvvars,
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
-      if subprocess.call(["make", "-k", "install"], stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
+      if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
 
       # copy doc
@@ -853,13 +879,16 @@ def runexamples(mainFD):
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(["--currentID", str(currentID)])
   command.extend(["--timeID", timeID.strftime("%Y-%m-%dT%H:%M:%S")])
+  command.extend(["--buildSystemDir", scriptdir])
   command.extend(args.passToRunexamples)
 
   print("")
   print("")
   print("Output of runexamples.py")
   print("")
-  ret=subprocess.call(command, stderr=subprocess.STDOUT)
+  if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
+  ret=simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"), "/var/www/html/mbsim/buildsystem.atom.xml"],
+                         stderr=subprocess.STDOUT)
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
@@ -876,41 +905,12 @@ def runexamples(mainFD):
 
 
 
-def writeRSSFeed(nrFailed):
-  rssFN="result.rss.xml"
-  rssFD=codecs.open(pj(args.reportOutDir, os.pardir, rssFN), "w", encoding="utf-8")
-  print('''\
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>%sMBSim, OpenMBV, ... Build Results</title>
-    <link>%s/result_current/index.html</link>
-    <description>%sResult RSS feed of the last build of MBSim and Co.</description>
-    <language>en-us</language>
-    <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/%s" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url, rssFN), file=rssFD)
+def writeAtomFeed(currentID, nrFailed):
   if nrFailed>0:
-    currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
-    print('''\
-    <item>
-      <title>%sBuild failed</title>
-      <link>%s/result_%010d/index.html</link>
-      <guid isPermaLink="false">%s/result_%010d/rss_id_%s</guid>
-      <pubDate>%s</pubDate>
-    </item>'''%(args.buildType,
-           args.url, currentID,
-           args.url, currentID, datetime.datetime.utcnow().strftime("%s"),
-           datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
-  print('''\
-    <item>
-      <title>%sDummy feed item. Just ignore it.</title>
-      <link>%s/result_current/index.html</link>
-      <guid isPermaLink="false">%s/result_current/rss_id_1359206848</guid>
-      <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
-    </item>
-  </channel>
-</rss>'''%(args.buildType, args.url, args.url), file=rssFD)
-  rssFD.close()
+    import addBuildSystemFeed
+    addBuildSystemFeed.add(args.buildType+"-build", "Build: "+args.buildType,
+                           "At least "+str(nrFailed)+" project failed.",
+                           args.url+"/result_%010d"%(currentID)+"/index.html")
 
 
 
@@ -924,12 +924,14 @@ def mypostargparse(args):
 
   runAgain=False
   for argname in passArgNames:
+    if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname)==None: raise RuntimeError("Invalid argument: "+argname) # security check
     value=eval("args."+argname)
     if value!=None:
       for argname2 in passArgNames:
         if "--"+argname2 in value:
           runAgain=True
           exec('args.'+argname+'=value[0:value.index("--"+argname2)]')
+          if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname2)==None: raise RuntimeError("Invalid argument: "+argname2) # security check
           exec('args.'+argname2+'=value[value.index("--"+argname2)+1:]')
 
   if runAgain:

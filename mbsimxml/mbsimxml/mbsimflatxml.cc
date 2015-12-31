@@ -25,10 +25,10 @@ namespace {
 boost::filesystem::path relLibName(const string &base) {
 #ifndef _WIN32
   static const boost::filesystem::path subDir("lib");
-  return subDir/("lib"+base+".so.0");
+  return subDir/("lib"+base+".so");
 #else
   static const boost::filesystem::path subDir("bin");
-  return subDir/("lib"+base+"-0.dll");
+  return subDir/("lib"+base+".dll");
 #endif
 }
 
@@ -124,8 +124,8 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   // setup message streams
   static PrefixedStringBuf infoBuf("Info:    ", cout);
   static PrefixedStringBuf warnBuf("Warning: ", cerr);
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<ostream>(&infoBuf));
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<ostream>(&warnBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<bool>(true), boost::make_shared<ostream>(&infoBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<bool>(true), boost::make_shared<ostream>(&warnBuf));
 
   loadPlugins();
 

@@ -25,11 +25,9 @@ namespace {
 #ifdef _WIN32
   string USERENVVAR("USERNAME");
   path LIBDIR="bin";
-  string SHEXT_(".dll");
 #else
   string USERENVVAR("USER");
   path LIBDIR="lib";
-  string SHEXT_(".so");
 #endif
 
   void copyShLibToFMU(const boost::shared_ptr<DOMParser> &parser,
@@ -49,18 +47,24 @@ int main(int argc, char *argv[]) {
       cout<<"a parameter name of the DynamicSystemSolver Embed element which should be"<<endl;
       cout<<"provided as an FMU parameter. Note that only parameters which do not depend"<<endl;
       cout<<"on any other parameters are allowed. If no --param option is given all are exported."<<endl;
+      cout<<"Use --noparam to ignore all parameters defined the DynamicSystemSolver Embed element."<<endl;
       return 0;
     }
 
-    // get --param
+    // get parameters
     int optcount=0;
     set<string> useParam;
     bool compress=true;
+    bool noParam=false;
     for(int i=1; i<argc-1; ++i) {
       if(string(argv[i])=="--param")
         useParam.insert(argv[i+1]);
       if(string(argv[i])=="--nocompress") {
         compress=false;
+        optcount++;
+      }
+      if(string(argv[i])=="--noparam") {
+        noParam=true;
         optcount++;
       }
     }
@@ -100,7 +104,7 @@ int main(int argc, char *argv[]) {
     PredefinedParameterStruct predefinedParameterStruct;
     cout<<"Create predefined parameters."<<endl;
     vector<boost::shared_ptr<Variable> > var;
-    addPredefinedParameters(var, predefinedParameterStruct);
+    addPredefinedParameters(var, predefinedParameterStruct, true);
 
     vector<boost::shared_ptr<Variable> > xmlParam;
 
@@ -128,10 +132,10 @@ int main(int argc, char *argv[]) {
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
       boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
-      Preprocess::preprocess(parser, *eval, dependencies, modelEle, param);
+      Preprocess::preprocess(parser, eval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
-      convertXPathParamSetToVariable(param, xmlParam, *eval);
+      convertXPathParamSetToVariable(param, xmlParam, eval);
       // remove all variables which are not in useParam
       vector<boost::shared_ptr<Variable> > xmlParam2;
       for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
@@ -139,7 +143,7 @@ int main(int argc, char *argv[]) {
         size_t pos=name.find('[');
         if(pos!=string::npos)
           name=name.substr(0, pos);
-        if(useParam.size()==0 || useParam.find(name)!=useParam.end()) {
+        if(!noParam && (useParam.size()==0 || useParam.find(name)!=useParam.end())) {
           cout<<"Using DynamicSystemSolver parameter '"<<name<<"'."<<endl;
           xmlParam2.push_back(*it);
         }
@@ -186,7 +190,7 @@ int main(int argc, char *argv[]) {
             if(it->is_absolute())
               throw runtime_error("A XML model file with parameters may only reference files by a relative path.\n"
                                   "However the model references the absolute file '"+it->string()+"'.\n"+
-                                  "Remove all --param options OR rework the model to not contain any absolute file path.");
+                                  "Use the --noparam options OR rework the model to not contain any absolute file path.");
             cout<<"."<<flush;
             fmuFile.add(path("resources")/"model"/current_path().relative_path()/(*it), *it);
           }
@@ -221,15 +225,15 @@ int main(int argc, char *argv[]) {
       integrator.reset();
     }
 
-    // build list of value references
-    cout<<"Create model input/output variables."<<endl;
-    addModelInputOutputs(var, dss.get());
-
     // disable all plotting (we wont any output here)
     dss->setPlotFeatureRecursive(Element::plotRecursive, Element::disabled);
     // initialize dss
     cout<<"Initialize the model."<<endl;
     dss->initialize();
+
+    // build list of value references
+    cout<<"Create model input/output variables."<<endl;
+    addModelInputOutputs(var, dss.get());
 
     // create DOM of modelDescription.xml
     boost::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
@@ -420,8 +424,8 @@ int main(int argc, char *argv[]) {
     }
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
-    copyShLibToFMU(parserNoneVali, fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT_), path("binaries")/FMIOS,
-                   getInstallPath()/"lib"/("mbsim"+SHEXT_));
+    copyShLibToFMU(parserNoneVali, fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), path("binaries")/FMIOS,
+                   getInstallPath()/"lib"/("mbsim"+SHEXT));
     cout<<endl;
 
     fmuFile.close();

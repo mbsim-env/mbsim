@@ -22,6 +22,7 @@
 #include "function_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "custom_widgets.h"
 #include <QtGui>
 
 using namespace std;
@@ -32,7 +33,7 @@ namespace MBSimGUI {
 
     layout = new QVBoxLayout;
     layout->setMargin(0);
-    funcList = new QComboBox;
+    funcList = new CustomComboBox;
     funcList->addItem(tr("Linear regularized bilateral constraint"));
     layout->addWidget(funcList);
     setLayout(layout);
@@ -54,7 +55,7 @@ namespace MBSimGUI {
 
     layout = new QVBoxLayout;
     layout->setMargin(0);
-    funcList = new QComboBox;
+    funcList = new CustomComboBox;
     funcList->addItem(tr("Linear regularized unilateral constraint"));
     layout->addWidget(funcList);
     setLayout(layout);
@@ -103,7 +104,7 @@ namespace MBSimGUI {
 
     layout = new QVBoxLayout;
     layout->setMargin(0);
-    funcList = new QComboBox;
+    funcList = new CustomComboBox;
     funcList->addItem(tr("Linear regularized coulomb friction"));
     funcList->addItem(tr("Symbolic friction function"));
     layout->addWidget(funcList);
@@ -134,7 +135,7 @@ namespace MBSimGUI {
 
     layout = new QVBoxLayout;
     layout->setMargin(0);
-    funcList = new QComboBox;
+    funcList = new CustomComboBox;
     funcList->addItem(tr("Linear regularized coulomb friction"));
     layout->addWidget(funcList);
     setLayout(layout);
@@ -176,7 +177,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    comboBox = new QComboBox;
+    comboBox = new CustomComboBox;
     comboBox->addItem(tr("Bilateral constraint"));
     comboBox->addItem(tr("Regularized bilateral constraint"));
     comboBox->addItem(tr("Unilateral constraint"));
@@ -206,7 +207,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    comboBox = new QComboBox;
+    comboBox = new CustomComboBox;
     comboBox->addItem(tr("Bilateral impact"));
     comboBox->addItem(tr("Unilateral Newton impact"));
     layout->addWidget(comboBox);
@@ -230,7 +231,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    comboBox = new QComboBox;
+    comboBox = new CustomComboBox;
     comboBox->addItem(tr("Planar coulomb friction"));
     comboBox->addItem(tr("Regularized planar friction"));
     comboBox->addItem(tr("Spatial coulomb friction"));
@@ -260,7 +261,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    comboBox = new QComboBox;
+    comboBox = new CustomComboBox;
     comboBox->addItem(tr("Planar coloumb impact"));
     comboBox->addItem(tr("Spatial coloumb impact"));
     layout->addWidget(comboBox);

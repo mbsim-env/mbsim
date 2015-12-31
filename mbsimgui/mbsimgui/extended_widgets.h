@@ -109,7 +109,6 @@ namespace MBSimGUI {
     WidgetFactory *factory;
 
     signals:
-    void resize_();
     void widgetChanged();
   };
 
@@ -157,8 +156,6 @@ namespace MBSimGUI {
       void removeElements(int n=1);
     void changeCurrent(int idx);
     void currentIndexChanged(int idx);
-    signals:
-    void resize_();
   };
 
   class ChoiceWidgetFactory : public WidgetFactory {

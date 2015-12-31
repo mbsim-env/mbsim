@@ -46,10 +46,13 @@ namespace MBSim {
       std::string getType() const { return "Cuboid"; }
       /***************************************************/
 
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+
       /* GETTER / SETTER */
       void setXLength(double lx_) { lx = lx_; }
       void setYLength(double ly_) { ly = ly_; }
       void setZLength(double lz_) { lz = lz_; }
+      void setLength(const fmatvec::Vec3 &length) { lx = length(0); ly = length(1); lz = length(2); }
       /***************************************************/
 
       virtual void plot(double t, double dt = 1);

@@ -9,7 +9,7 @@
 
 // rethrow a catched exception after prefixing the what() string with the FMI variable name
 #define RETHROW_VR(vr) \
-  catch(const exception &ex) { \
+  catch(const std::exception &ex) { \
     rethrowVR(vr, ex); \
   } \
   catch(...) { \
@@ -17,6 +17,7 @@
   }
 
 using namespace std;
+using namespace boost;
 using namespace boost::filesystem;
 using namespace MBSim;
 using namespace MBSimControl;
@@ -25,7 +26,7 @@ using namespace MBXMLUtils;
 namespace {
 
   template<class Datatype>
-  void addPreInitVariable(const xercesc::DOMElement *scalarVar, std::vector<boost::shared_ptr<MBSimFMI::Variable> > &var) {
+  void addPreInitVariable(const xercesc::DOMElement *scalarVar, vector<shared_ptr<MBSimFMI::Variable> > &var) {
     // get type
     MBSimFMI::Type type;
     if     (E(scalarVar)->getAttribute("causality")=="internal" && E(scalarVar)->getAttribute("variability")=="parameter")
@@ -39,18 +40,18 @@ namespace {
     // get default
     Datatype defaultValue;
     if(E(scalarVar->getFirstElementChild())->hasAttribute("start"))
-      defaultValue=boost::lexical_cast<Datatype>(E(scalarVar->getFirstElementChild())->getAttribute("start"));
+      defaultValue=lexical_cast<Datatype>(E(scalarVar->getFirstElementChild())->getAttribute("start"));
     // create preprocessing variable
-    var.push_back(boost::make_shared<MBSimFMI::VariableStore<Datatype> >(E(scalarVar)->getAttribute("name"), type, defaultValue));
+    var.push_back(make_shared<MBSimFMI::VariableStore<Datatype> >(E(scalarVar)->getAttribute("name"), type, defaultValue));
   }
 
 }
 
 namespace MBSimFMI {
 
-  boost::shared_ptr<FMIInstanceBase> fmiInstanceCreate(fmiString instanceName_, fmiString GUID,
+  shared_ptr<FMIInstanceBase> fmiInstanceCreate(fmiString instanceName_, fmiString GUID,
                                                        fmiCallbackFunctions functions, fmiBoolean loggingOn) {
-    return boost::make_shared<FMIInstance>(instanceName_, GUID, functions, loggingOn);
+    return make_shared<FMIInstance>(instanceName_, GUID, functions, loggingOn);
   }
 
   // A MBSim FMI instance. Called by fmiInstantiateModel
@@ -65,9 +66,9 @@ namespace MBSimFMI {
     debugBuffer(logger, this, instanceName, fmiOK,      "debug") {
 
     // use the per FMIInstance provided buffers for all subsequent fmatvec::Atom objects
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  boost::make_shared<ostream>(&infoBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  boost::make_shared<ostream>(&warnBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, boost::make_shared<ostream>(&debugBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  make_shared<bool>(true),  make_shared<ostream>(&infoBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  make_shared<bool>(true),  make_shared<ostream>(&warnBuffer));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, make_shared<bool>(false), make_shared<ostream>(&debugBuffer));
     // also use these streams for this object.
     // Note: we can not create a FMIInstance object with the correct streams but we can adopt the streams now!
     adoptMessageStreams(); // note: no arg means adopt the current (static) message streams (set above)
@@ -86,15 +87,23 @@ namespace MBSimFMI {
     msg(Debug)<<"Read modelDescription file."<<endl;
     path modelDescriptionXMLFile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path().parent_path()/
       "modelDescription.xml";
-    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
+    shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
 
+    // add all predefined parameters
+    addPredefinedParameters(var, predefinedParameterStruct, true);
+    size_t numPredefParam=var.size();
     // create FMI variables from modelDescription.xml file
     msg(Debug)<<"Generate call variables as VariableStore objects. Used until fmiInitialize is called."<<endl;
     size_t vr=0;
     for(xercesc::DOMElement *scalarVar=E(doc->getDocumentElement())->getFirstElementChildNamed("ModelVariables")->getFirstElementChild();
         scalarVar; scalarVar=scalarVar->getNextElementSibling(), ++vr) {
+      // skip all predefined parameters which are already added by addPredefinedParameters above
+      if(vr<numPredefParam)
+        continue;
+
+      // now add all other parameters
       msg(Debug)<<"Generate variable '"<<E(scalarVar)->getAttribute("name")<<"'"<<endl;
-      if(vr!=boost::lexical_cast<size_t>(E(scalarVar)->getAttribute("valueReference")))
+      if(vr!=lexical_cast<size_t>(E(scalarVar)->getAttribute("valueReference")))
         throw runtime_error("Internal error: valueReference missmatch!");
       // add variable
       if(E(scalarVar)->getFirstElementChildNamed("Real"))
@@ -177,7 +186,7 @@ namespace MBSimFMI {
   void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
+        throw runtime_error("No such value reference "+lexical_cast<string>(vr[i]));
       try { var[vr[i]]->setValue(CppDatatype(value[i])); } RETHROW_VR(vr[i])
     }
     // everything may depend on inputs -> update required on next getXXX
@@ -194,9 +203,11 @@ namespace MBSimFMI {
   void FMIInstance::initialize(fmiBoolean toleranceControlled, fmiReal relativeTolerance, fmiEventInfo* eventInfo) {
     // after the ctor call another FMIInstance ctor may be called, hence we need to reset the message streams here
     // use the per FMIInstance provided buffers for all subsequent fmatvec::Atom objects
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  boost::make_shared<ostream>(&infoBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  boost::make_shared<ostream>(&warnBuffer));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, boost::make_shared<ostream>(&debugBuffer));
+    shared_ptr<bool> a;
+    shared_ptr<ostream> s;
+    getMessageStream(fmatvec::Atom::Info,  a, s); fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  a, s);
+    getMessageStream(fmatvec::Atom::Warn,  a, s); fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn,  a, s);
+    getMessageStream(fmatvec::Atom::Debug, a, s); fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug, a, s);
 
     // set eventInfo (except next event time)
     eventInfo->iterationConverged=true;
@@ -205,14 +216,30 @@ namespace MBSimFMI {
     eventInfo->terminateSimulation=false;
 
     // predefined variables used during simulation
-    std::vector<boost::shared_ptr<Variable> > varSim;
+    vector<shared_ptr<Variable> > varSim;
     msg(Debug)<<"Create predefined parameters."<<endl;
-    addPredefinedParameters(varSim, predefinedParameterStruct);
+    addPredefinedParameters(varSim, predefinedParameterStruct, false);
+    
+    // create output directory
+    create_directories(predefinedParameterStruct.outputDir);
 
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);
 
-    // create model IO vars
+    // save the current dir and change to outputDir -> MBSim will create output files in the current dir
+    // this must be done before the dss is initialized since dss->initialize creates files in the current dir)
+    msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
+    path savedCurDir=current_path();
+    // restore current dir on scope exit
+    BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
+    current_path(predefinedParameterStruct.outputDir);
+
+    // initialize dss (must be done before addModelInputOutputs because references in MBSim may be resolved for this;
+    // must be done after the current dir is set (temporarily) to the output dir)
+    msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
+    dss->initialize();
+
+    // create model IO vars (before this call the dss must be initialized)
     msg(Debug)<<"Create model input/output variables."<<endl;
     addModelInputOutputs(varSim, dss.get());
 
@@ -220,11 +247,11 @@ namespace MBSimFMI {
     // Now we copy all values from var to varSim (varSim is generated above).
     if(var.size()!=varSim.size())
       throw runtime_error("The number of parameters from modelDescription.xml and model differ: "
-                          +boost::lexical_cast<string>(var.size())+", "+boost::lexical_cast<string>(varSim.size())+". "+
+                          +lexical_cast<string>(var.size())+", "+lexical_cast<string>(varSim.size())+". "+
                           "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
-    vector<boost::shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
+    vector<shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
     size_t vr=0;
-    for(vector<boost::shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt, ++vr) {
+    for(vector<shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt, ++vr) {
       try {
         // check for a change of the model topologie
         if((*varSimIt)->getName()!=(*varIt)->getName())
@@ -233,8 +260,8 @@ namespace MBSimFMI {
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getType()!=(*varIt)->getType())
           throw runtime_error("Variable type (parameter, input, output) from modelDescription.xml and model does not match: "
-                              +boost::lexical_cast<string>((*varIt)->getType())+", "
-                              +boost::lexical_cast<string>((*varSimIt)->getType())+". "+
+                              +lexical_cast<string>((*varIt)->getType())+", "
+                              +lexical_cast<string>((*varSimIt)->getType())+". "+
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getDatatypeChar()!=(*varIt)->getDatatypeChar())
           throw runtime_error(string("Variable datatype from modelDescription.xml and model does not match: ")
@@ -256,18 +283,8 @@ namespace MBSimFMI {
     // var is now no longer needed since we use varSim now.
     var=varSim;
 
-    // save the current dir and change to outputDir -> MBSim will create output files in the current dir
-    msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
-    path savedCurDir=current_path();
-    // restore current dir on scope exit
-    BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
-    create_directories(predefinedParameterStruct.outputDir);
-    current_path(predefinedParameterStruct.outputDir);
-    // initialize dss
-    msg(Debug)<<"Initialize DynamicSystemSolver."<<endl;
-    dss->initialize();
-
     // initialize state
+    msg(Debug)<<"Initialize initial conditions of the DynamicSystemSolver."<<endl;
     z.resize(dss->getzSize());
     zd.resize(dss->getzSize());
     dss->initz(z);
@@ -351,7 +368,7 @@ namespace MBSimFMI {
     }
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
+        throw runtime_error("No such value reference "+lexical_cast<string>(vr[i]));
       try { value[i]=cppDatatypeToFMIDatatype<FMIDatatype, CppDatatype>(var[vr[i]]->getValue(CppDatatype())); } RETHROW_VR(vr[i])
     }
   }
@@ -468,13 +485,13 @@ namespace MBSimFMI {
   // FMI helper functions
 
   // print exceptions using the FMI logger
-  void FMIInstance::logException(const exception &ex) {
+  void FMIInstance::logException(const std::exception &ex) {
     logger(this, instanceName.c_str(), fmiError, "error", ex.what());
   }
 
   // rethrow a exception thrown during a operation on a valueReference: prefix the exception text with the variable name.
   void FMIInstance::rethrowVR(size_t vr, const std::exception &ex) {
-    throw runtime_error(string("In variable '#")+var[vr]->getDatatypeChar()+boost::lexical_cast<string>(vr)+"#': "+ex.what());
+    throw runtime_error(string("In variable '#")+var[vr]->getDatatypeChar()+lexical_cast<string>(vr)+"#': "+ex.what());
   }
 
 }

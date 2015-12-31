@@ -21,6 +21,7 @@
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "dialogs.h"
+#include "custom_widgets.h"
 #include <QtGui>
 #include "mainwindow.h"
 #include <mbxmlutils/eval.h>
@@ -28,6 +29,8 @@
 using namespace std;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> inputWidget_, int evalIndex) : inputWidget(inputWidget_), evalInput(0) {
     QHBoxLayout *layout = new QHBoxLayout;
@@ -40,7 +43,7 @@ namespace MBSimGUI {
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
     evalDialog = new EvalDialog(0);
 
-    inputCombo = new QComboBox;
+    inputCombo = new CustomComboBox;
     stackedWidget = new QStackedWidget;
     connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
     connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(inputDialogChanged(int)));
@@ -89,7 +92,7 @@ namespace MBSimGUI {
 
   void ExtPhysicalVarWidget::openEvalDialog() {
     evalInput = inputCombo->currentIndex();
-    QString str = QString::fromStdString(MainWindow::eval->cast<MBXMLUtils::CodeString>(MainWindow::eval->stringToValue(getValue().toStdString())));
+    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
     vector<vector<QString> > A = strToMat(str);
     if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {
@@ -106,7 +109,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    comboBox = new QComboBox;
+    comboBox = new CustomComboBox;
     for(int i=0; i<factory->getSize(); i++)
       comboBox->addItem(factory->getName(i));
     layout->addWidget(comboBox);
@@ -120,6 +123,8 @@ namespace MBSimGUI {
     widget = factory->createWidget(index);
     layout->addWidget(widget);
     updateWidget();
+    emit Widget::resize_();
+    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
   }
 
   ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active) : QGroupBox(name), widget(widget_) {
@@ -135,6 +140,7 @@ namespace MBSimGUI {
     }
     setLayout(layout);
     layout->addWidget(widget);
+    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
     //  QPushButton *fold = new QPushButton("+");
     //  fold->setCheckable(true);
     //  layout->addWidget(fold);
@@ -256,7 +262,7 @@ namespace MBSimGUI {
       list->setCurrentRow(0);
 
     if(emitSignals) {
-      emit resize_();
+      emit Widget::resize_();
     }
   }
 
@@ -268,7 +274,7 @@ namespace MBSimGUI {
       delete list->takeItem(i);
     }
     //  if(emitSignals) {
-    emit resize_();
+    emit Widget::resize_();
     //  }
   }
 

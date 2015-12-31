@@ -34,6 +34,13 @@ $PREFIX/bin/fmuCheck.*
 $PREFIX/lib/mbsimsrc_fmi.dll
 $PREFIX/lib/mbsimppxml_fmi.dll
 $PREFIX/lib/mbsimxml_fmi.dll
+$PREFIX/bin/libmbsimControl.dll
+$PREFIX/bin/libmbsimElectronics.dll
+$PREFIX/bin/libmbsimFlexibleBody.dll
+$PREFIX/bin/libmbsimHydraulics.dll
+$PREFIX/bin/libmbsimInterface.dll
+$PREFIX/bin/libmbsimPowertrain.dll
+$PREFIX/bin/libmbxmlutils-eval-octave.dll
 $PREFIX/bin/tools/h5copy.exe
 $PREFIX/bin/tools/h5diff.exe
 $PREFIX/bin/tools/h5dump.exe
@@ -44,15 +51,7 @@ $PREFIX/bin/tools/h5repack.exe
 $PREFIX/bin/tools/h5repart.exe
 $PREFIX/bin/tools/h5stat.exe
 $PREFIX/bin/octave.exe
-$PREFIX/bin/libmbsimElectronics-0.dll
-$PREFIX/bin/libmbsimPowertrain-0.dll
 "
-# Note: all mbsim modules are not linked with mbsimflatxml (plugins). Hence we add all *-0.dll files in local/bin
-# to BINFILES, but only those which hava a corresponding *.dll.a file in local/lib. This is required since we copy all files in
-# local/lib but not all in local/bin (hence the *-0.dll files are not included if we dont do so)
-for F in $(cd $PREFIX/lib -name; find -name "*.dll.a" | sed -re "s|(.*)\.dll.a$|$PREFIX/bin/\1-0.dll|"); do
-  ls $F 2> /dev/null && BINFILES="$BINFILES $F"
-done
 
 SHAREDIRS="
 doc
@@ -255,8 +254,8 @@ cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dl
 
 # README.txt
 cat << EOF > $DISTDIR/README.txt
-Using of the MBSim and Co. Package:
-===================================
+Using the MBSim-Environment:
+============================
 
 - Unpack the archive to an arbitary directory (already done)
   (Note: It is recommended, that the full directory path where the archive
@@ -455,11 +454,11 @@ done
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
-  rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip
-  (cd $DISTBASEDIR; zip $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip $(find -name "*.debug"))
-  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx-debug.zip"
+  rm -f $DISTBASEDIR/mbsim-env-win64-shared-build-xxx-debug.zip
+  (cd $DISTBASEDIR; zip $DISTBASEDIR/mbsim-env-win64-shared-build-xxx-debug.zip $(find -name "*.debug"))
+  echo "Created MBSim-debug archive at $DISTBASEDIR/mbsim-env-win64-shared-build-xxx-debug.zip"
 
-  rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip
-  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip mbsim --exclude \*.debug)
-  echo "Created MBSim archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip"
+  rm -f $DISTBASEDIR/mbsim-env-win64-shared-build-xxx.zip
+  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-env-win64-shared-build-xxx.zip mbsim --exclude \*.debug)
+  echo "Created MBSim archive at $DISTBASEDIR/mbsim-env-win64-shared-build-xxx.zip"
 fi

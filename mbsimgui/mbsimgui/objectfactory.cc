@@ -105,6 +105,10 @@ namespace MBSimGUI {
       return new Sphere(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"CircleSolid")
       return new CircleSolid(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"Cuboid")
+      return new Cuboid(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"LineSegment")
+      return new LineSegment(E(element)->getAttribute("name"),parent);
     return 0;
   }
 
@@ -187,6 +191,10 @@ namespace MBSimGUI {
       return new BinarySignalOperation(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
       return new LinearTransferSystem(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")
+      return new ExternSignalSource(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
+      return new ExternSignalSink(E(element)->getAttribute("name"),parent);
     return 0;
   }  
 

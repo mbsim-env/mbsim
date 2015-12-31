@@ -73,21 +73,6 @@ if (test "_$nurbsPKGCONF" = "_No"); then
   fi
 fi
 
-dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
-dnl current: 	The most recent interface number that this library implements. 
-dnl revision: 	The implementation number of the current interface. 
-dnl age: 	The difference between the newest and oldest interfaces that
-dnl		this library implements. In other words, the library implements all the
-dnl 		interface numbers in the range from number current (age<=current).
-LIBMBSIMFLEXIBLEBODY_CURRENT=0
-LIBMBSIMFLEXIBLEBODY_REVISION=0
-LIBMBSIMFLEXIBLEBODY_AGE=0
-AC_SUBST([LIBMBSIMFLEXIBLEBODY_CURRENT])
-AC_SUBST([LIBMBSIMFLEXIBLEBODY_REVISION])
-AC_SUBST([LIBMBSIMFLEXIBLEBODY_AGE])
-LIBMBSIMFLEXIBLEBODY_VERSION_INFO=$LIBMBSIMFLEXIBLEBODY_CURRENT:$LIBMBSIMFLEXIBLEBODY_REVISION:$LIBMBSIMFLEXIBLEBODY_AGE
-AC_SUBST([LIBMBSIMFLEXIBLEBODY_VERSION_INFO])
-
 CPPFLAGS="$CPPFLAGS"
 
 dnl needed for XML

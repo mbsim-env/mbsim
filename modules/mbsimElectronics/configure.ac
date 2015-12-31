@@ -39,21 +39,6 @@ else
   FFLAGS="$FFLAGS -g -O2"
 fi
 
-dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
-dnl current: 	The most recent interface number that this library implements. 
-dnl revision: 	The implementation number of the current interface. 
-dnl age: 	The difference between the newest and oldest interfaces that
-dnl		this library implements. In other words, the library implements all the
-dnl 		interface numbers in the range from number current (age<=current).
-LIBMBSIMELECTRONICS_CURRENT=0
-LIBMBSIMELECTRONICS_REVISION=0
-LIBMBSIMELECTRONICS_AGE=0
-AC_SUBST([LIBMBSIMELECTRONICS_CURRENT])
-AC_SUBST([LIBMBSIMELECTRONICS_REVISION])
-AC_SUBST([LIBMBSIMELECTRONICS_AGE])
-LIBMBSIMELECTRONICS_VERSION_INFO=$LIBMBSIMELECTRONICS_CURRENT:$LIBMBSIMELECTRONICS_REVISION:$LIBMBSIMELECTRONICS_AGE
-AC_SUBST([LIBMBSIMELECTRONICS_VERSION_INFO])
-
 CPPFLAGS="$CPPFLAGS -Wall -Werror"
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])

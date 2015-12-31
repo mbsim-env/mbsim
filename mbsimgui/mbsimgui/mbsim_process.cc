@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "process.h"
+#include "mbsim_process.h"
 #include <iostream>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -175,7 +175,7 @@ namespace MBSimGUI {
 
       // Praeprozessor starten
       DOMElement *mainxmlele=doc->getDocumentElement();
-      Preprocess::preprocess(parser, *eval, dependencies, mainxmlele);
+      Preprocess::preprocess(parser, eval, dependencies, mainxmlele);
     }
     catch(exception &ex) {
       errText = ex.what();

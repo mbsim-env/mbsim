@@ -159,8 +159,12 @@ namespace MBSimIntegrator {
           tPlot = tStop;
       }
       if(istate==3) {
+        if(plotOnRoot) { // plot before shifting
+          system->plot(z, t);
+          system->plotAtSpecialEvent(t);
+        }
         system->shift(z, jsv, t);
-        if(plotOnRoot) {
+        if(plotOnRoot) { // plot after shifting
           system->plot(z, t);
           system->plotAtSpecialEvent(t);
         }

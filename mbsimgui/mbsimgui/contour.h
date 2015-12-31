@@ -105,6 +105,32 @@ namespace MBSimGUI {
     ExtProperty radius, visu;
   };
 
+  class Cuboid : public Contour {
+    friend class CuboidPropertyDialog;
+    public:
+    Cuboid(const std::string &str, Element *parent);
+    ~Cuboid();
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    std::string getType() const { return "Cuboid"; }
+    ElementPropertyDialog* createPropertyDialog() {return new CuboidPropertyDialog(this);}
+    protected:
+    ExtProperty length, visu;
+  };
+
+  class LineSegment : public Contour {
+    friend class LineSegmentPropertyDialog;
+    public:
+    LineSegment(const std::string &str, Element *parent);
+    ~LineSegment();
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    std::string getType() const { return "LineSegment"; }
+    ElementPropertyDialog* createPropertyDialog() {return new LineSegmentPropertyDialog(this);}
+    protected:
+    ExtProperty length, visu;
+  };
+
 }
 
 #endif
