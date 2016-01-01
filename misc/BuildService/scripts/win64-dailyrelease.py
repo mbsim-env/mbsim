@@ -30,7 +30,7 @@ os.environ["RCC"]="/usr/x86_64-w64-mingw32/bin/rcc"
 os.environ["PLATFORM"]="Windows" # required for source code examples
 os.environ["CXX"]="x86_64-w64-mingw32-g++" # required for source code examples
 
-if subprocess.call([SCRIPTDIR+"/build.py", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
+if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
   SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease",
   "--passToConfigure", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
   "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.37.x86_64/include -I"+SCRIPTDIR+"/buildPreparation/windows",

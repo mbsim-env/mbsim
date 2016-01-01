@@ -34,6 +34,7 @@ else:
   import urllib.request as myurllib
 
 # global variables
+scriptDir=os.path.dirname(os.path.realpath(__file__))
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
@@ -145,7 +146,7 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--enableAlphaPy", action="store_true", help="Also run MBS.mbsimprj.alpha_py.xml examples")
-debugOpts.add_argument("--buildSystemDir", default=None, type=str, help="The dir to the scripts of the build system")
+debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to the scripts of the build system must be passed.")
 
 # parse command line options
 args = argparser.parse_args()
@@ -299,8 +300,6 @@ def main():
     args.prefixSimulation=args.prefixSimulation.split(' ')
   else:
     args.prefixSimulation=[]
-  global scriptDir
-  scriptDir=os.path.dirname(os.path.realpath(__file__))
 
   # rotate (modifies args.reportOutDir)
   rotateOutput()
@@ -933,7 +932,6 @@ def getOutFilesAndAdaptRet(example, ret):
       # transform xml file to html file (in reportOutDir)
       htmlFile=xmlFile[:-4]+".html"
       outFiles.append(htmlFile)
-      global scriptDir
       subprocess.call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
                        pj(scriptDir, 'valgrindXMLToHTML.xsl')])
       os.remove(xmlFile)
@@ -1621,11 +1619,11 @@ def validateXML(example, consoleOutput, htmlOutputFD):
 
 
 def writeAtomFeed(currentID, nrFailed, nrTotal):
-  # do not write a feed if --buildSystemDir is not used
-  if args.buildSystemDir==None:
+  # do not write a feed if --buildSystemRun is not used
+  if args.buildSystemRun==None:
     return
   # load the add feed module
-  sys.path.append(args.buildSystemDir)
+  sys.path.append(args.buildSystemRun)
   import addBuildSystemFeed
   # add a new feed if examples have failed
   if nrFailed>0:

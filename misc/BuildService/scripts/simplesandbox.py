@@ -8,12 +8,10 @@ sbuser="mbsimsb" # username of the sandboxed user
 sbuserID="1001" # user id of the sandboxed user
 userID="1000" # user id of the user using the sandbox
 
-global sigStore, shareddirStore
 sigStore={}
 shareddirStore=[]
 
 def cleanup(shareddir=None):
-  global sigStore, shareddirStore
   signal.signal(signal.SIGINT, sigStore['INT'])
   signal.signal(signal.SIGTERM, sigStore['TERM'])
   signal.signal(signal.SIGHUP, sigStore['HUP'])
@@ -29,7 +27,12 @@ def handler(signum, frame):
   cleanup()
   os.kill(os.getpid(), signum)
 
-def call(cmd, envvar=[], shareddir=[], stdout=None, stderr=None):
+def call(cmd, envvar=[], shareddir=[], stdout=None, stderr=None, buildSystemRun=False):
+  # normal call (WITHOUT a simple sandbox)
+  if not buildSystemRun:
+    return subprocess.call(cmd, stdout=stdout, stderr=stderr)
+
+  # simple sandbox call
   global sigStore, shareddirStore
   shareddirStore=shareddirStore+shareddir
   sigStore['INT']=signal.signal(signal.SIGINT, handler)

@@ -21,7 +21,7 @@ f.flush()
 for texMain in glob.glob("*/main.tex"):
   os.chdir(os.path.dirname(texMain))
 
-  if simplesandbox.call([scriptdir+"/builddocsb.py"], shareddir=["."], stderr=subprocess.STDOUT, stdout=f)!=0:
+  if simplesandbox.call([scriptdir+"/builddocsb.py"], shareddir=["."], stderr=subprocess.STDOUT, stdout=f, buildSystemRun=True)!=0:
     nrDocFailed+=1
   f.flush()
 

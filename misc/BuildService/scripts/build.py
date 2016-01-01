@@ -20,7 +20,6 @@ else:
   import urllib.request as myurllib
 
 # global variables
-global scriptdir
 scriptdir=os.path.dirname(os.path.realpath(__file__))
 toolDependencies=dict()
 toolXMLDocCopyDir=dict()
@@ -67,6 +66,7 @@ cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo ch
 cfgOpts.add_argument("--hdf5serieBranch", default="", help='In the hdf5serierepo checkout the branch HDF5SERIEBRANCH')
 cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
 cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
+cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -474,8 +474,6 @@ def main():
 
   if ret>0:
     print("\nERROR: At least one build failed!!!!!");
-  if retRunExamples>0:
-    print("\nERROR: runexamples failed!!!!!");
 
   return ret+retRunExamples
 
@@ -671,22 +669,28 @@ def configure(tool, mainFD):
       os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoheader failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("autoheader failed")
       print("\n\nRUNNING libtoolize\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("libtoolize failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("libtoolize failed")
       print("\n\nRUNNING automake\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("autoconf failed")
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("autoreconf failed")
       # configure
       os.chdir(savedDir)
       os.chdir(pj(args.sourceDir, buildTool(tool)))
@@ -694,12 +698,14 @@ def configure(tool, mainFD):
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
         if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."],
-                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+                              stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+          raise RuntimeError("configure failed")
       else:
         command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
         if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."],
-                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+                              stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+          raise RuntimeError("configure failed")
     else:
       print("configure disabled", file=configureFD); configureFD.flush()
 
@@ -733,15 +739,18 @@ def make(tool, mainFD):
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
         if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
-                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make clean failed; "
+                              stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
+          errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
       if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make failed; "
+                            stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
         if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
                               shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
-                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make install failed; "
+                              stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
+          errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
     else:
       print("make disabled", file=makeFD); makeFD.flush()
@@ -769,7 +778,7 @@ def check(tool, mainFD):
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
     if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
-                          stderr=subprocess.STDOUT, stdout=checkFD)==0:
+                          stderr=subprocess.STDOUT, stdout=checkFD, buildSystemRun=args.buildSystemRun)==0:
       result="done"
     else:
       result="failed"
@@ -818,15 +827,18 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make clean failed; "
+                            stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k"], envvar=simplesandboxEnvvars,
                             shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
-                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
+                            stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
                             shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
-                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
+                            stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
 
       # copy doc
@@ -852,7 +864,7 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
   if docDirName=="doc" and not args.disableDoxygen or \
      docDirName=="xmldoc" and not args.disableXMLDoc:
     print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
-      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-success"), file=mainFD)
+      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'">'+result+'</a>', file=mainFD)
     print('</td>', file=mainFD)
   docFD.close()
@@ -879,7 +891,8 @@ def runexamples(mainFD):
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(["--currentID", str(currentID)])
   command.extend(["--timeID", timeID.strftime("%Y-%m-%dT%H:%M:%S")])
-  command.extend(["--buildSystemDir", scriptdir])
+  if args.buildSystemRun:
+    command.extend(["--buildSystemRun", scriptdir])
   command.extend(args.passToRunexamples)
 
   print("")
@@ -888,7 +901,7 @@ def runexamples(mainFD):
   print("")
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
   ret=simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"), "/var/www/html/mbsim/buildsystem.atom.xml"],
-                         stderr=subprocess.STDOUT)
+                         stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun)
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
@@ -906,11 +919,12 @@ def runexamples(mainFD):
 
 
 def writeAtomFeed(currentID, nrFailed):
-  if nrFailed>0:
-    import addBuildSystemFeed
-    addBuildSystemFeed.add(args.buildType+"-build", "Build: "+args.buildType,
-                           "At least "+str(nrFailed)+" project failed.",
-                           args.url+"/result_%010d"%(currentID)+"/index.html")
+  if args.buildSystemRun:
+    if nrFailed>0:
+      import addBuildSystemFeed
+      addBuildSystemFeed.add(args.buildType+"-build", "Build: "+args.buildType,
+                             "At least "+str(nrFailed)+" project failed.",
+                             args.url+"/result_%010d"%(currentID)+"/index.html")
 
 
 
