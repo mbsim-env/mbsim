@@ -104,7 +104,7 @@
       <a href="http://validator.w3.org/check?uri=referer">
         <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
       </a>
-      Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by <a href="http://mbsim.berlios.de">MBSimXML</a><xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
+      Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
     </p>
     </body></html>
   </xsl:template>
