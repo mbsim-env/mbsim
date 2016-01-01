@@ -900,8 +900,8 @@ def runexamples(mainFD):
   print("Output of runexamples.py")
   print("")
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
-  ret=simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"), "/var/www/html/mbsim/buildsystem.atom.xml"],
-                         stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun)
+  ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"), "/var/www/html/mbsim/buildsystem.atom.xml"],
+                             stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun))
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+

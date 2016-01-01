@@ -932,8 +932,8 @@ def getOutFilesAndAdaptRet(example, ret):
       # transform xml file to html file (in reportOutDir)
       htmlFile=xmlFile[:-4]+".html"
       outFiles.append(htmlFile)
-      subprocess.call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
-                       pj(scriptDir, 'valgrindXMLToHTML.xsl')])
+      subprocess.check_call(['Xalan', '-o', pj(args.reportOutDir, example[0], htmlFile), xmlFile,
+                            pj(scriptDir, 'valgrindXMLToHTML.xsl')])
       os.remove(xmlFile)
     return outFiles
   return []
@@ -964,8 +964,8 @@ def executeSrcExample(executeFD, example):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'src')+exePrefix()+[pj(os.curdir, "main"+args.exeExt)], executeFD,
-                      env=mainEnv, maxExecutionTime=args.maxExecutionTime)]
+  ret=[abs(subprocessCall(prefixSimulation(example, 'src')+exePrefix()+[pj(os.curdir, "main"+args.exeExt)], executeFD,
+                          env=mainEnv, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
@@ -986,8 +986,8 @@ def executeXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'xml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
-                      [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime)]
+  ret=[abs(subprocessCall(prefixSimulation(example, 'xml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
+                          [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
@@ -1002,8 +1002,8 @@ def executeFlatXMLExample(executeFD, example):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[subprocessCall(prefixSimulation(example, 'fxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
-                      executeFD, maxExecutionTime=args.maxExecutionTime)]
+  ret=[abs(subprocessCall(prefixSimulation(example, 'fxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsimprj.flat.xml"],
+                          executeFD, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
@@ -1021,7 +1021,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret1=[subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/5)]
+  ret1=[abs(subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/5))]
   outFiles1=getOutFilesAndAdaptRet(example, ret1)
 
   # get fmuChecker executable
@@ -1040,7 +1040,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
-  ret2=[subprocessCall(prefixSimulation(example, 'fmuchk')+comm, executeFD, maxExecutionTime=args.maxExecutionTime)]
+  ret2=[abs(subprocessCall(prefixSimulation(example, 'fmuchk')+comm, executeFD, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
@@ -1475,7 +1475,8 @@ def compareExample(example, compareFN):
       h5CurFile.close()
   if gnuplotProcess!=None:
     gnuplotProcess.stdin.close()
-    gnuplotProcess.wait()
+    if gnuplotProcess.wait()!=0:
+      raise RuntimeError("Generating the SVG file using gnuplot failed.")
   # files in current but not in reference
   refFiles=glob.glob(pj("reference", "*.h5"))
   for curFile in glob.glob("*.h5"):
