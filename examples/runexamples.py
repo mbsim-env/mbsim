@@ -126,7 +126,7 @@ cfgOpts.add_argument("--disableMakeClean", action="store_true", help="disable ma
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
-cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: linux64-dailydebug)")
+cfgOpts.add_argument("--buildType", default="local", type=str, help="Description of the build type (e.g: linux64-dailydebug)")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
@@ -581,9 +581,7 @@ def main():
 
   # print result summary to console
   if len(failedExamples)>0:
-    print('\n'+str(len(failedExamples))+' examples have failed.')
-  else:
-    print('\nAll examples have passed.')
+    print('\nERROR: '+str(len(failedExamples))+' of '+str(len(retAll))+' examples have failed.')
 
   return mainRet
 
@@ -1625,12 +1623,12 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
     return
   # load the add feed module
   sys.path.append(args.buildSystemRun)
-  import addBuildSystemFeed
+  import buildSystemState
   # add a new feed if examples have failed
-  if nrFailed>0:
-    addBuildSystemFeed.add(args.buildType+"-examples", "Examples Failed: "+args.buildType,
-      "%d of %d examples failed."%(nrFailed, nrTotal),
-      "%s/result_%010d/index.html"%(args.url, currentID))
+  buildSystemState.update(args.buildType+"-examples", "Examples Failed: "+args.buildType,
+    "%d of %d examples failed."%(nrFailed, nrTotal),
+    "%s/result_%010d/index.html"%(args.url, currentID),
+    nrFailed, nrTotal)
 
 
 

@@ -14,6 +14,7 @@ import fileinput
 import shutil
 import codecs
 import simplesandbox
+import buildSystemState
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -73,7 +74,7 @@ outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="t
 outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
 outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
-outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
+outOpts.add_argument("--buildType", default="local", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
 outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
 
 passOpts=argparser.add_argument_group('Options beeing passed to other commands')
@@ -392,10 +393,13 @@ def main():
   print('</dl>', file=mainFD)
   print('<hr/>', file=mainFD)
 
-  ret=0
+  nrFailed=0
+  nrRun=0
   # update all repositories
+  if not args.disableUpdate:
+    nrRun+=1
   if repoUpdate(mainFD)!=0:
-    ret+=1
+    nrFailed+=1
 
   # force build
   buildTools=set()
@@ -416,7 +420,7 @@ def main():
   print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
   print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the Atom feed.</p>', file=mainFD)
 
-  print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
+  print('<table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
   print('<th><span class="glyphicon glyphicon-folder-open"></span>&nbsp;Tool</th>', file=mainFD)
   if not args.disableConfigure:
@@ -444,10 +448,11 @@ def main():
   retRunExamples=0
   nr=1
   for tool in orderedBuildTools:
-    r1, r2=build(nr, len(orderedBuildTools), tool, mainFD)
+    nrFailedLocal, nrRunLocal, retRunExamplesLocal=build(nr, len(orderedBuildTools), tool, mainFD)
     if toolDependencies[tool][0]==False:
-      ret+=r1
-      retRunExamples+=r2
+      nrFailed+=nrFailedLocal
+      nrRun+=nrRunLocal
+      retRunExamples+=retRunExamplesLocal
     nr+=1
 
   print('</tbody></table>', file=mainFD)
@@ -469,13 +474,17 @@ def main():
     line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
     print(line, end="")
 
-  # write Atom feed
-  writeAtomFeed(currentID, ret)
+  # update build system state
+  if args.buildSystemRun:
+    buildSystemState.update(args.buildType+"-build", "Build Failed: "+args.buildType,
+                            "%d of %d build parts failed."%(nrFailed, nrRun),
+                            args.url+"/result_%010d"%(currentID)+"/index.html",
+                            nrFailed, nrRun)
 
-  if ret>0:
-    print("\nERROR: At least one build failed!!!!!");
+  if nrFailed>0:
+    print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
 
-  return ret+retRunExamples
+  return nrFailed+retRunExamples
 
 
 
@@ -541,7 +550,7 @@ def repoUpdate(mainFD):
     print('Updating repositories: ', end="")
 
   print('<h2>Repository State</h2>', file=mainFD)
-  print('<table style="width:auto;" class="table table-striped table-hover table-bordered compact">', file=mainFD)
+  print('<table style="width:auto;" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
   print('<th><span class="octicon octicon-repo"></span>&nbsp;Repository</th>', file=mainFD)
   print('<th><span class="octicon octicon-git-branch"></span>&nbsp;Branch</th>', file=mainFD)
@@ -608,7 +617,8 @@ def repoUpdate(mainFD):
 def build(nr, nrAll, tool, mainFD):
   print("Building "+str(nr)+"/"+str(nrAll)+": "+tool+": ", end=""); sys.stdout.flush()
 
-  ret=0
+  nrFailed=0
+  nrRun=0
   retRunExamples=0
 
   # start row, including tool name
@@ -627,7 +637,9 @@ def build(nr, nrAll, tool, mainFD):
   else:
     # configure
     print("configure", end=""); sys.stdout.flush()
-    ret+=configure(tool, mainFD)
+    failed, run=configure(tool, mainFD)
+    nrFailed+=failed
+    nrRun+=run
 
     # cd to build dir
     os.chdir(savedDir)
@@ -635,26 +647,34 @@ def build(nr, nrAll, tool, mainFD):
 
     # make
     print(", make", end=""); sys.stdout.flush()
-    ret+=make(tool, mainFD)
+    failed, run=make(tool, mainFD)
+    nrFailed+=failed
+    nrRun+=run
 
     # make check
     print(", check", end=""); sys.stdout.flush()
-    ret+=check(tool, mainFD)
+    failed, run=check(tool, mainFD)
+    nrFailed+=failed
+    nrRun+=run
 
     # doxygen
     print(", doxygen-doc", end=""); sys.stdout.flush()
-    ret+=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
+    failed, run=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
+    nrFailed+=failed
+    nrRun+=run
 
     # xmldoc
     print(", xml-doc", end=""); sys.stdout.flush()
-    ret+=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+    failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+    nrFailed+=failed
+    nrRun+=run
   os.chdir(savedDir)
 
   print("")
   print('</tr>', file=mainFD)
   mainFD.flush()
 
-  return ret, retRunExamples
+  return nrFailed, nrRun, retRunExamples
 
 
 
@@ -663,8 +683,10 @@ def configure(tool, mainFD):
   configureFD=codecs.open(pj(args.reportOutDir, tool, "configure.txt"), "w", encoding="utf-8")
   copyConfigLog=False
   savedDir=os.getcwd()
+  run=0
   try:
     if not args.disableConfigure:
+      run=1
       # pre configure
       os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
@@ -725,15 +747,17 @@ def configure(tool, mainFD):
   os.chdir(savedDir)
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
 def make(tool, mainFD):
   makeFD=codecs.open(pj(args.reportOutDir, tool, "make.txt"), "w", encoding="utf-8")
+  run=0
   try:
     if not args.disableMake:
+      run=1
       # make
       errStr=""
       if not args.disableMakeClean:
@@ -767,14 +791,16 @@ def make(tool, mainFD):
   mainFD.flush()
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
 def check(tool, mainFD):
   checkFD=codecs.open(pj(args.reportOutDir, tool, "check.txt"), "w", encoding="utf-8")
+  run=0
   if not args.disableMakeCheck:
+    run=1
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
     if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
@@ -805,8 +831,8 @@ def check(tool, mainFD):
   mainFD.flush()
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
@@ -816,13 +842,15 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
        docDirName=="xmldoc" and not args.disableXMLDoc:
       print('<td>not available</td>', file=mainFD)
     mainFD.flush()
-    return 0
+    return 0, 0
 
   docFD=codecs.open(pj(args.reportOutDir, tool, docDirName+".txt"), "w", encoding="utf-8")
   savedDir=os.getcwd()
   os.chdir(docDirName)
+  run=0
   try:
     if not disabled:
+      run=1
       # make doc
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
@@ -871,8 +899,8 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
   mainFD.flush()
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
@@ -886,8 +914,7 @@ def runexamples(mainFD):
   command=["./runexamples.py", "-j", str(args.j)]
   if args.url!=None:
     command.extend(["--url", args.url+"/result_%010d/runexamples_report"%(currentID)])
-  if args.buildType!="":
-    command.extend(["--buildType", args.buildType])
+  command.extend(["--buildType", args.buildType])
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(["--currentID", str(currentID)])
   command.extend(["--timeID", timeID.strftime("%Y-%m-%dT%H:%M:%S")])
@@ -900,7 +927,8 @@ def runexamples(mainFD):
   print("Output of runexamples.py")
   print("")
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
-  ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"), "/var/www/html/mbsim/buildsystem.atom.xml"],
+  ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"),
+                             "/var/www/html/mbsim/buildsystemstate"],
                              stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun))
 
   if ret==0:
@@ -915,16 +943,6 @@ def runexamples(mainFD):
   mainFD.flush()
 
   return ret
-
-
-
-def writeAtomFeed(currentID, nrFailed):
-  if args.buildSystemRun:
-    if nrFailed>0:
-      import addBuildSystemFeed
-      addBuildSystemFeed.add(args.buildType+"-build", "Build: "+args.buildType,
-                             "At least "+str(nrFailed)+" project failed.",
-                             args.url+"/result_%010d"%(currentID)+"/index.html")
 
 
 

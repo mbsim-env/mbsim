@@ -45,10 +45,11 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
   print("win64-dailyrelease failed.")
 
 #mfmf f=open(OUTDIR+"/report_distribute/distribute.out", "w")
-#mfmf if subprocess.call([SCRIPTDIR+"/win64-dailyrelease-distribute.sh"], stderr=subprocess.STDOUT, stdout=f)!=0:
-#mfmf   import addBuildSystemFeed
-#mfmf   addBuildSystemFeed.add("win64-dailyrelease-distribution", "Distribution Failed: win64-dailyrelease",
-#mfmf                          "Unable to create the binary distribution file.", URL+"/report_distribute/distribute.out")
+#mfmf ret=subprocess.call([SCRIPTDIR+"/win64-dailyrelease-distribute.sh"], stderr=subprocess.STDOUT, stdout=f)
+#mfmf import buildSystemState
+#mfmf buildSystemState.update("win64-dailyrelease-distribution", "Distribution Failed: win64-dailyrelease",
+#mfmf                         "Unable to create the binary distribution file.", URL+"/report_distribute/distribute.out",
+#mfmf                         0 if ret==0 else 1, 1)
 #mfmf f.close()
 #mfmf 
 #mfmf shutil.copy(SRCDIR+"/dist_mbsim/mbsim-env-win64-shared-build-xxx.zip", OUTDIR+"/download/")
