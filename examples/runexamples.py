@@ -558,12 +558,17 @@ def main():
   </div>
 </div>
 <hr/>
-<p class="text-right small">
+<span class="pull-left small">
+  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+</span>
+<span class="pull-right small">
+  Generated on %s by runexamples.py
   <a href="http://validator.w3.org/check?uri=referer">
     <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
   </a>
-  Generated on %s by runexamples.py
-</p>
+</span>
 <span id="FINISHED" style="display:none"> </span>
 </body>
 </html>'''%(str(timeID)), file=mainFD)
@@ -863,13 +868,18 @@ def runExample(resultQueue, example):
         runExampleRet=1
       # write footer
       print('</tbody></table>', file=htmlOutputFD)
-      print('<hr/>', file=htmlOutputFD)
-      print('<p class="text-right small">', file=htmlOutputFD)
-      print('  <a href="http://validator.w3.org/check?uri=referer">', file=htmlOutputFD)
-      print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=htmlOutputFD)
-      print('  </a>', file=htmlOutputFD)
+      print('<hr/>',  file=htmlOutputFD)
+      print('<span class="pull-left small">',  file=htmlOutputFD)
+      print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
+      print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
+      print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
+      print('</span>',  file=htmlOutputFD)
+      print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
-      print('</p>', file=htmlOutputFD)
+      print('  <a href="http://validator.w3.org/check?uri=referer">',  file=htmlOutputFD)
+      print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>',  file=htmlOutputFD)
+      print('  </a>',  file=htmlOutputFD)
+      print('</span>',  file=htmlOutputFD)
       print('</body>', file=htmlOutputFD)
       print('</html>', file=htmlOutputFD)
 
@@ -1128,12 +1138,17 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<p><span class="glyphicon glyphicon-info-sign"> </span> A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
   print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
   print('<hr/>', file=diffHTMLPlotFD)
-  print('<p class="text-right small">', file=diffHTMLPlotFD)
+  print('<span class="pull-left small">', file=diffHTMLPlotFD)
+  print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
+  print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
+  print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
+  print('</span>', file=diffHTMLPlotFD)
+  print('<span class="pull-right small">', file=diffHTMLPlotFD)
+  print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
   print('  <a href="http://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
   print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=diffHTMLPlotFD)
   print('  </a>', file=diffHTMLPlotFD)
-  print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
-  print('</p>', file=diffHTMLPlotFD)
+  print('</span>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
@@ -1507,12 +1522,17 @@ def compareExample(example, compareFN):
   # print html footer
   print('</tbody></table>', file=compareFD)
   print('<hr/>', file=compareFD)
-  print('<p class="text-right small">', file=compareFD)
+  print('<span class="pull-left small">', file=compareFD)
+  print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
+  print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
+  print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
+  print('</span>', file=compareFD)
+  print('<span class="pull-right small">', file=compareFD)
+  print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
   print('  <a href="http://validator.w3.org/check?uri=referer">', file=compareFD)
   print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=compareFD)
   print('  </a>', file=compareFD)
-  print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
-  print('</p>', file=compareFD)
+  print('</span>', file=compareFD)
   print('</body>', file=compareFD)
   print('</html>', file=compareFD)
 
