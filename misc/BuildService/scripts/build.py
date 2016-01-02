@@ -27,78 +27,94 @@ toolXMLDocCopyDir=dict()
 toolDoxyDocCopyDir=dict()
 docDir=None
 timeID=None
-
-# command line option definition
-argparser = argparse.ArgumentParser(
-formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-description='''
-Building the MBSim-Environment.
-
-After building, runexamples.py is called by this script.
-All unknown options are passed to runexamples.py.
-'''
-)
-
-mainOpts=argparser.add_argument_group('Main Options')
-mainOpts.add_argument("--sourceDir", type=str, required=True,
-  help="The base source/build directory (see --srcSuffix/--binSuffix for VPATH builds")
-configOpts=mainOpts.add_mutually_exclusive_group(required=True)
-configOpts.add_argument("--prefix", type=str, help="run configure using this directory as prefix option")
-configOpts.add_argument("--recheck", action="store_true",
-  help="run config.status --recheck instead of configure")
-
-cfgOpts=argparser.add_argument_group('Configuration Options')
-cfgOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only make and runexamples.py)")
-cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
-  help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
-
-cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
-cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
-cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
-cfgOpts.add_argument("--disableMakeInstall", action="store_true", help="Do not 'make install'")
-cfgOpts.add_argument("--disableMake", action="store_true", help="Do not 'make clean', 'make' and 'make install'")
-cfgOpts.add_argument("--disableMakeCheck", action="store_true", help="Do not 'make check'")
-cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
-cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
-cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
-cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
-cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
-cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
-cfgOpts.add_argument("--hdf5serieBranch", default="", help='In the hdf5serierepo checkout the branch HDF5SERIEBRANCH')
-cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
-cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
-cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
-
-outOpts=argparser.add_argument_group('Output Options')
-outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
-outOpts.add_argument("--docOutDir", type=str,
-  help="Copy the documention to this directory. If not given do not copy")
-outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
-outOpts.add_argument("--buildType", default="local", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
-outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
-
-passOpts=argparser.add_argument_group('Options beeing passed to other commands')
-passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
-  help="pass all following options, up to but not including the next --passTo* argument, to runexamples.py.")
-passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAINDER,
-  help="pass all following options, up to but not including the next --passTo* argument, to configure.")
-
-# parse command line options
-args=argparser.parse_args() # modified by mypostargparse
+args=None
 
 # pass these envvar to simplesandbox.call
 simplesandboxEnvvars=["PKG_CONFIG_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS", # general required envvars
                       "LD_LIBRARY_PATH", # Linux specific required envvars
                       "WINEPATH", "PLATFORM", "CXX", "MOC", "UIC", "RCC"] # Windows specific required envvars
 
-htmlEscapeTable={
-  "&": "&amp;",
-  '"': "&quot;",
-  "'": "&apos;",
-  ">": "&gt;",
-  "<": "&lt;",
-}
+def parseArguments():
+  # command line option definition
+  argparser=argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description='''Building the MBSim-Environment.
+  
+  After building, runexamples.py is called by this script.
+  All unknown options are passed to runexamples.py.'''
+  )
+  
+  mainOpts=argparser.add_argument_group('Main Options')
+  mainOpts.add_argument("--sourceDir", type=str, required=True,
+    help="The base source/build directory (see --srcSuffix/--binSuffix for VPATH builds")
+  configOpts=mainOpts.add_mutually_exclusive_group(required=True)
+  configOpts.add_argument("--prefix", type=str, help="run configure using this directory as prefix option")
+  configOpts.add_argument("--recheck", action="store_true",
+    help="run config.status --recheck instead of configure")
+  
+  cfgOpts=argparser.add_argument_group('Configuration Options')
+  cfgOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only make and runexamples.py)")
+  cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
+    help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
+  
+  cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
+  cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
+  cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
+  cfgOpts.add_argument("--disableMakeInstall", action="store_true", help="Do not 'make install'")
+  cfgOpts.add_argument("--disableMake", action="store_true", help="Do not 'make clean', 'make' and 'make install'")
+  cfgOpts.add_argument("--disableMakeCheck", action="store_true", help="Do not 'make check'")
+  cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
+  cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
+  cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
+  cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
+  cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
+  cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
+  cfgOpts.add_argument("--hdf5serieBranch", default="", help='In the hdf5serierepo checkout the branch HDF5SERIEBRANCH')
+  cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
+  cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
+  cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
+  
+  outOpts=argparser.add_argument_group('Output Options')
+  outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
+  outOpts.add_argument("--docOutDir", type=str,
+    help="Copy the documention to this directory. If not given do not copy")
+  outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
+  outOpts.add_argument("--buildType", default="local", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
+  outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
+  
+  passOpts=argparser.add_argument_group('Options beeing passed to other commands')
+  passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
+    help="pass all following options, up to but not including the next --passToConfigure argument, to runexamples.py.")
+  passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAINDER,
+    help="pass all following options, up to but not including the next --passToRunexamples argument, to configure.")
+  
+  # parse command line options:
+   
+  # parse all options before --passToConfigure and/or --passToRunexamples by argparser. 
+  passTo1=min(sys.argv.index("--passToConfigure"  ) if "--passToConfigure"   in sys.argv else len(sys.argv),
+              sys.argv.index("--passToRunexamples") if "--passToRunexamples" in sys.argv else len(sys.argv))
+  passTo2=max(sys.argv.index("--passToConfigure"  ) if "--passToConfigure"   in sys.argv else len(sys.argv),
+              sys.argv.index("--passToRunexamples") if "--passToRunexamples" in sys.argv else len(sys.argv))
+  global args
+  args=argparser.parse_args(args=sys.argv[1:passTo1]) # do not pass REMAINDER arguments
+  # assign the options after --passToConfigure and/or --passToRunexamples to args.passTo...
+  if "--passToConfigure" in sys.argv[passTo1:passTo2]:
+    args.passToConfigure=sys.argv[passTo1+1:passTo2]
+  if "--passToRunexamples" in sys.argv[passTo1:passTo2]:
+    args.passToRunexamples=sys.argv[passTo1+1:passTo2]
+  if "--passToConfigure" in sys.argv[passTo2:]:
+    args.passToConfigure=sys.argv[passTo2+1:]
+  if "--passToRunexamples" in sys.argv[passTo2:]:
+    args.passToRunexamples=sys.argv[passTo2+1:]
+
 def htmlEscape(text):
+  htmlEscapeTable={
+    "&": "&amp;",
+    '"': "&quot;",
+    "'": "&apos;",
+    ">": "&gt;",
+    "<": "&lt;",
+  }
   return "".join(htmlEscapeTable.get(c,c) for c in text)
 
 # rotate
@@ -158,7 +174,7 @@ def rotateOutput():
 
 # the main routine being called ones
 def main():
-  mypostargparse(args)
+  parseArguments()
   args.sourceDir=os.path.abspath(args.sourceDir)
   args.reportOutDir=os.path.abspath(args.reportOutDir)
 
@@ -943,31 +959,6 @@ def runexamples(mainFD):
   mainFD.flush()
 
   return ret
-
-
-
-# split mulitple "nargs=argparse.REMAINDER" arguments to the corresponding ones
-def mypostargparse(args):
-  # get all passTo* args
-  passArgNames=list()
-  for argname in args.__dict__:
-    if argname.find("passTo")==0:
-      passArgNames.append(argname)
-
-  runAgain=False
-  for argname in passArgNames:
-    if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname)==None: raise RuntimeError("Invalid argument: "+argname) # security check
-    value=eval("args."+argname)
-    if value!=None:
-      for argname2 in passArgNames:
-        if "--"+argname2 in value:
-          runAgain=True
-          exec('args.'+argname+'=value[0:value.index("--"+argname2)]')
-          if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname2)==None: raise RuntimeError("Invalid argument: "+argname2) # security check
-          exec('args.'+argname2+'=value[value.index("--"+argname2)+1:]')
-
-  if runAgain:
-    mypostargparse(args)
 
 
 
