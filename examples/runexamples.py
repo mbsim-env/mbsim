@@ -537,7 +537,9 @@ def main():
     </span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">
  Update references<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
-    <p>Update the references of the selected examples before next build</p>
+    <p>Update the references of the selected examples before next build
+       <small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small>
+    </p>
     <p>
       <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
       <strong id="LOGINUSER">unknwon</strong>
