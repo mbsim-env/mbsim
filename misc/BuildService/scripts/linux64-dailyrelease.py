@@ -23,12 +23,10 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
   print("linux64-dailyrelease failed.")
 
 f=open(OUTDIR+"/report_distribute/distribute.out", "w")
-ret=subprocess.call([SCRIPTDIR+"/linux64-dailyrelease-distribute.sh"], stderr=subprocess.STDOUT, stdout=f)
+ret=subprocess.call([SCRIPTDIR+"/distribute.py", "/home/mbsim/linux64-dailyrelease/local", "--distFile",
+                    OUTDIR+"/download/mbsim-env-linux64-shared-build-xxx"], stderr=subprocess.STDOUT, stdout=f)
 import buildSystemState
 buildSystemState.update("linux64-dailyrelease-distribution", "Distribution Failed: linux64-dailyrelease",
                         "Unable to create the binary distribution file.", URL+"/report_distribute/distribute.out",
                         0 if ret==0 else 1, 1)
 f.close()
-
-shutil.copy(SRCDIR+"/dist_mbsim/mbsim-env-linux64-shared-build-xxx.tar.bz2", OUTDIR+"/download/")
-shutil.copy(SRCDIR+"/dist_mbsim/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2", OUTDIR+"/download/")
