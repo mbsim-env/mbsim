@@ -5,7 +5,9 @@ import os
 import time
 import email
 import subprocess
+import simplesandbox
 import shutil
+import buildSystemState
 
 SRCDIR="/home/mbsim/linux64-dailyrelease"
 OUTDIR="/var/www/html/mbsim/linux64-dailyrelease"
@@ -23,9 +25,11 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
   print("linux64-dailyrelease failed.")
 
 f=open(OUTDIR+"/report_distribute/distribute.out", "w")
-ret=subprocess.call([SCRIPTDIR+"/distribute.py", "/home/mbsim/linux64-dailyrelease/local", "--distFile",
-                    OUTDIR+"/download/mbsim-env-linux64-shared-build-xxx"], stderr=subprocess.STDOUT, stdout=f)
-import buildSystemState
+ret=simplesandbox.call([SCRIPTDIR+"/distribute.py", "/home/mbsim/linux64-dailyrelease/local", "--distFile",
+                       OUTDIR+"/download/mbsim-env-linux64-shared-build-xxx"],
+                       shareddir=[OUTDIR+"/download"],
+                       buildSystemRun=True,
+                       stderr=subprocess.STDOUT, stdout=f)
 buildSystemState.update("linux64-dailyrelease-distribution", "Distribution Failed: linux64-dailyrelease",
                         "Unable to create the binary distribution file.", URL+"/report_distribute/distribute.out",
                         0 if ret==0 else 1, 1)
