@@ -480,6 +480,7 @@ def main():
 
   # add links to distribution for the two release builds
   if args.buildType=="linux64-dailyrelease" or args.buildType=="win64-dailyrelease":
+    print('<p></p>', file=mainFD)
     print('<div class="panel panel-warning">', file=mainFD)
     print('  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Binary Distribution</div>', file=mainFD)
     print('  <div class="panel-body">', file=mainFD)
@@ -975,7 +976,7 @@ def runexamples(mainFD):
   else:
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '">examples failed</a></td>', file=mainFD)
-  for i in range(0, 3-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
 
   mainFD.flush()

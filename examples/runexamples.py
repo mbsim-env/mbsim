@@ -38,7 +38,7 @@ scriptDir=os.path.dirname(os.path.realpath(__file__))
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
-ombvSchema =None
+ombvSchema=None
 mbsimXMLSchema=None
 timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
@@ -208,11 +208,12 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   # stop the execution time guard thread
   if maxExecutionTime>0:
     if killed.isSet():
-      return None # return None to indicate that the program was terminated/killed
+      return subprocessCall.timedOutErrorCode # return to indicate that the program was terminated/killed
     else:
       guard.cancel()
   # return the return value ot the called programm
   return ret
+subprocessCall.timedOutErrorCode=1000000
 
 # rotate
 def rotateOutput():
@@ -726,7 +727,7 @@ def runExample(resultQueue, example):
         dt=0
         outfiles=[]
       executeFD.close()
-    if executeRet==None or executeRet!=0: runExampleRet=1
+    if executeRet!=0: runExampleRet=1
     # get reference time
     refTime=example[1]
     # print result to resultStr
@@ -736,11 +737,11 @@ def runExample(resultQueue, example):
       resultStr+='<tr class="text-muted">'
     resultStr+='<td>'+example[0].replace('/', u'/\u200B')+'</td>'
     if not args.disableRun:
-      if executeRet==None or executeRet!=0:
+      if executeRet!=0:
         resultStr+='<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
       else:
         resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
-      if executeRet==None:
+      if executeRet==subprocessCall.timedOutErrorCode:
         resultStr+='timed out'
       elif executeRet!=0:
         resultStr+='failed'
@@ -937,7 +938,7 @@ def getOutFilesAndAdaptRet(example, ret):
       if "</valgrindoutput>" not in content: # incomplete valgrind output -> a skipped trace children
         os.remove(xmlFile)
         continue
-      if "<error>" in content and ret[0]!=None:
+      if "<error>" in content and ret[0]!=subprocessCall.timedOutErrorCode:
         ret[0]=1
       # transform xml file to html file (in reportOutDir)
       htmlFile=xmlFile[:-4]+".html"
@@ -1056,8 +1057,8 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
 
   # return
-  if ret1[0]==None or ret2[0]==None:
-    ret=None
+  if ret1[0]==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode:
+    ret=subprocessCall.timedOutErrorCode
   else:
     ret=abs(ret1[0])+abs(ret2[0])
   outFiles=[]
@@ -1072,7 +1073,10 @@ def executeFMIXMLExample(executeFD, example):
   # create and run FMU
   ret2, dt, outFiles2=executeFMIExample(executeFD, example, "FMI.mbsimprj.xml")
   # return
-  ret=abs(ret1)+abs(ret2)
+  if ret1==subprocessCall.timedOutErrorCode or ret2==subprocessCall.timedOutErrorCode:
+    ret=subprocessCall.timedOutErrorCode
+  else:
+    ret=abs(ret1)+abs(ret2)
   outFiles=[]
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
