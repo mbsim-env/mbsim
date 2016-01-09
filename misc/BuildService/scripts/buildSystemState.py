@@ -9,8 +9,8 @@ def update(buildType, title, summary, link, nrFailed, nrRun):
   stateDir='/var/www/html/mbsim/buildsystemstate'
 
   # update build system state
-  createStateSVGFile(stateDir+"/"+buildType+".nrFailed.svg", nrFailed, nrFailed==0)
-  createStateSVGFile(stateDir+"/"+buildType+".nrPassed.svg", nrRun-nrFailed, True)
+  createStateSVGFile(stateDir+"/"+buildType+".nrFailed.svg", nrFailed, "#5cb85c" if nrFailed==0 else "#d9534f")
+  createStateSVGFile(stateDir+"/"+buildType+".nrAll.svg", nrRun, "#777")
 
   # add to Atom feed on failure
   if nrFailed>0:
@@ -57,11 +57,7 @@ def update(buildType, title, summary, link, nrFailed, nrRun):
     fcntl.lockf(fd, fcntl.LOCK_UN) # unlock lockfile
     fd.close() # close lockfile
 
-def createStateSVGFile(filename, nr, ok):
-  dangerColor="#d9534f"
-  successColor="#5cb85c"
-  color=successColor if ok else dangerColor
-
+def createStateSVGFile(filename, nr, color):
   fd=open(filename, "w")
   print('''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="36" height="20">

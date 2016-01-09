@@ -477,6 +477,18 @@ def main():
     nr+=1
 
   print('</tbody></table>', file=mainFD)
+
+  # add links to distribution for the two release builds
+  if args.buildType=="linux64-dailyrelease" or args.buildType=="win64-dailyrelease":
+    print('<div class="panel panel-warning">', file=mainFD)
+    print('  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Binary Distribution</div>', file=mainFD)
+    print('  <div class="panel-body">', file=mainFD)
+    print('  <b><a href="distribute/mbsim-env-win64-shared-build-xxx.zip">Download</a></b> -', file=mainFD)
+    print('  <a href="distribute/mbsim-env-win64-shared-build-xxx-debug.zip">Debug-Info</a> -', file=mainFD)
+    print('  <a href="distribute/log.txt">Log-File</a>', file=mainFD)
+    print('  </div>', file=mainFD)
+    print('</div>', file=mainFD)
+
   print('<hr/>', file=mainFD)
   print('<span class="pull-left small">', file=mainFD)
   print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=mainFD)
