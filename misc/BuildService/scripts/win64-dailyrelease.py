@@ -50,13 +50,15 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
   "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"])!=0:
   print("win64-dailyrelease failed.")
 
-f=open(OUTDIR+"/report_distribute/distribute.out", "w")
+buildNr=os.readlink(OUTDIR+"/report/result_current")
+os.mkdir(OUTDIR+"/report/"+buildNr+"/distribute")
+f=open(OUTDIR+"/report/"+buildNr+"/distribute/log.txt", "w")
 ret=simplesandbox.call([SCRIPTDIR+"/distribute.py", "/home/mbsim/win64-dailyrelease/local", "--distFile",
-                       OUTDIR+"/download/mbsim-env-win64-shared-build-xxx"],
-                       shareddir=[OUTDIR+"/download"],
+                       OUTDIR+"/report/"+buildNr+"/distribute/mbsim-env-win64-shared-build-xxx"],
+                       shareddir=[OUTDIR+"/report/"+buildNr+"/distribute"],
                        buildSystemRun=True,
                        stderr=subprocess.STDOUT, stdout=f)
 buildSystemState.update("win64-dailyrelease-distribution", "Distribution Failed: win64-dailyrelease",
-                        "Unable to create the binary distribution file.", URL+"/report_distribute/distribute.out",
+                        "Unable to create the binary distribution file.", URL+"/report/"+buildNr+"/distribute/log.txt",
                         0 if ret==0 else 1, 1)
 f.close()
