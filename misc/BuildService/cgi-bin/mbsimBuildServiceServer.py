@@ -94,7 +94,7 @@ try:
     <title>Save Login in Browser</title>
   </head>
   <body style="margin:1em">
-    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
     <script type="text/javascript">
       $(document).ready(function() {
         // helper function: return the query string as a json object

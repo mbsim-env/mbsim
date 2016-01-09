@@ -31,7 +31,7 @@
     <head>
       <title>MBSimXML - XML Documentation</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
       <style type="text/css">
         *._element { font-family:monospace; font-weight:bold; }
         *._type { font-family:monospace; }
@@ -39,7 +39,7 @@
         *._displaynone { display:none; }
         *._linkpointer { cursor:pointer; }
       </style>
-      <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
       <script type="text/javascript">
         <![CDATA[
         $(document).ready(function() {
