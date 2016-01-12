@@ -57,6 +57,7 @@ def parseArguments():
   cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
     help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
   
+  cfgOpts.add_argument("--enableCleanPrefix", action="store_true", help="Remove the prefix dir completely before starting")
   cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
   cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
   cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
@@ -418,6 +419,11 @@ def main():
     nrRun+=1
   if repoUpdate(mainFD)!=0:
     nrFailed+=1
+
+  # clean prefix dir
+  if args.enableCleanPrefix and os.path.isdir(args.prefix if args.prefix!=None else args.prefixAuto):
+    shutil.rmtree(args.prefix if args.prefix!=None else args.prefixAuto)
+    os.makedirs(args.prefix if args.prefix!=None else args.prefixAuto)
 
   # force build
   buildTools=set()

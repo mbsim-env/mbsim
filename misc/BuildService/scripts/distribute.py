@@ -119,11 +119,13 @@ def addFileToDist(name, arcname, addDepLibs=True):
             subprocess.check_call(["objcopy", "--add-gnu-debuglink="+outdir+"/"+basename+".debug", outdir+"/"+basename])
             if platform=="linux":
               distFile.add(outdir+"/"+basename, arcname)
-              if name.startswith("/home/"): # do not add debug files of system files
+              # only add debug files of mbsim-env
+              if name.startswith("/home/mbsim/linux64-dailyrelease/") or name.startswith("/home/mbsim/win64-dailyrelease/"):
                 distDebugFile.add(outdir+"/"+basename+".debug", arcname+".debug")
             if platform=="win":
               distFile.write(outdir+"/"+basename, arcname)
-              if name.startswith("/home/"): # do not add debug files of system files
+              # only add debug files of mbsim-env
+              if name.startswith("/home/mbsim/linux64-dailyrelease/") or name.startswith("/home/mbsim/win64-dailyrelease/"):
                 distDebugFile.write(outdir+"/"+basename+".debug", arcname+".debug")
           finally:
             if os.path.exists(outdir+"/"+basename): os.remove(outdir+"/"+basename)
