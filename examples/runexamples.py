@@ -833,7 +833,7 @@ def runExample(resultQueue, example):
       print('</script>', file=htmlOutputFD)
       print('<h1>Validate XML Files: <small>%s</small></h1>'%(args.buildType), file=htmlOutputFD)
       print('<dl class="dl-horizontal">', file=htmlOutputFD)
-      print('<dt>Example:</dt><dd>'+example[0]+'</dd>', file=htmlOutputFD)
+      print('<dt>Example:</dt><dd>'+example[0].replace('/', u'/\u200B')+'</dd>', file=htmlOutputFD)
       print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=htmlOutputFD)
       currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
       parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+1))))
@@ -891,7 +891,7 @@ def runExample(resultQueue, example):
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
-    resultStr='<tr><td>'+example[0]+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>'
+    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>'
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -1114,7 +1114,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<body style="margin:1em">', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
-  print('<dt>Example:</dt><dd>'+example+'</dd>', file=diffHTMLPlotFD)
+  print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=diffHTMLPlotFD)
   print('<dt>File:</dt><dd>'+filename+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Dataset:</dt><dd>'+datasetName+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Label:</dt><dd>'+label+' (column %d)</dd>'%(column), file=diffHTMLPlotFD)
@@ -1127,11 +1127,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
     navA="/../.."
     navB="/runexamples_report/result_current"
   print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%
-    (parDirs, navA, currentID-1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, currentID-1, navB, example.replace('/', u'/\u200B')+u"/\u200B"+filename+u"/\u200B"+datasetName+u"/\u200B"+str(column)+u"/\u200Bdiffplot.html"), file=diffHTMLPlotFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%
-    (parDirs, navA, currentID+1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, currentID+1, navB, example.replace('/', u'/\u200B')+u"/\u200B"+filename+u"/\u200B"+datasetName+u"/\u200B"+str(column)+u"/\u200Bdiffplot.html"), file=diffHTMLPlotFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
-    (parDirs, navA, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, navB, example.replace('/', u'/\u200B')+u"/\u200B"+filename+u"/\u200B"+datasetName+u"/\u200B"+str(column)+u"/\u200Bdiffplot.html"), file=diffHTMLPlotFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/%s%s%s/compare.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
     (parDirs, myurllib.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
   print('</dl>', file=diffHTMLPlotFD)
@@ -1413,7 +1413,7 @@ def compareExample(example, compareFN):
     </script>''', file=compareFD)
   print('<h1>Compare Results: <small>%s</small></h1>'%(args.buildType), file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
-  print('<dt>Example:</dt><dd>'+example+'</dd>', file=compareFD)
+  print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=compareFD)
   print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=compareFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   parDirs="/".join(list(map(lambda x: "..", range(0, example.count(os.sep)+1))))

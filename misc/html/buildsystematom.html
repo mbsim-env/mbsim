@@ -23,10 +23,10 @@
           var ret=[];
           entry.each(function() {
             var title=$($(this).get(0).getElementsByTagNameNS(NS, "title")).text();
-            var summary=$($(this).get(0).getElementsByTagNameNS(NS, "summary")).text();
+            var content=$($(this).get(0).getElementsByTagNameNS(NS, "content")).text();
             var link=$($(this).get(0).getElementsByTagNameNS(NS, "link")).attr("href");
             var updated=$($(this).get(0).getElementsByTagNameNS(NS, "updated")).text();
-            ret.push([updated, title, '<a href="'+link+'">'+summary+'</a>']);
+            ret.push([updated, title, '<a href="'+link+'">'+content+'</a>']);
           });
           return ret;
         }
@@ -44,7 +44,7 @@
     <tr>
       <th><span class="glyphicon glyphicon-time"></span>&nbsp;Time</th>
       <th><span class="glyphicon glyphicon-comment"></span>&nbsp;Title</th>
-      <th><span class="glyphicon glyphicon-align-left"></span>&nbsp;Summary</th>
+      <th><span class="glyphicon glyphicon-align-left"></span>&nbsp;Content</th>
     </tr>
   </thead>
 </table>
