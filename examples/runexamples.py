@@ -378,7 +378,7 @@ def main():
   </head>
   <body style="margin:1em">
   <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
-  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/mbsimBuildServiceClient.js"></script>
+  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/html/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -530,7 +530,7 @@ def main():
     print('  </div>', file=mainFD)
     print('</div>', file=mainFD)
 
-  print('''<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">
+  print('''<div id="UPDATEREFERENCES" class="panel panel-warning" style="display:none">
   <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
     </span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">
  Update references<span class="caret"> </span></a></div>
@@ -541,12 +541,12 @@ def main():
     <p>
       <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
       <strong id="LOGINUSER">unknwon</strong>
-      <button id="LOGINBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-in">
+      <button id="LOGINBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
         </span>&nbsp;Login <span class="octicon octicon-logo-github"></span></button>
-      <button id="LOGOUTBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+      <button id="LOGOUTBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
     </p>
     <p>
-      <button id="SAVEBUTTON" disabled="disabled" type="button"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
+      <button id="SAVEBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
     </p>
   </div>
 </div>

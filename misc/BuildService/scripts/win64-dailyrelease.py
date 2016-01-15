@@ -2,12 +2,7 @@
 
 from __future__ import print_function # to enable the print function for backward compatiblity with python2
 import os
-import time
-import email
 import subprocess
-import simplesandbox
-import shutil
-import buildSystemState
 
 SRCDIR="/home/mbsim/win64-dailyrelease"
 OUTDIR="/var/www/html/mbsim/win64-dailyrelease"
@@ -32,7 +27,7 @@ os.environ["RCC"]="/usr/x86_64-w64-mingw32/bin/rcc"
 os.environ["PLATFORM"]="Windows" # required for source code examples
 os.environ["CXX"]="x86_64-w64-mingw32-g++" # required for source code examples
 
-if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
+if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
   SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease",
   "--enableCleanPrefix", "--passToConfigure", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
   "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.37.x86_64/include -I"+SCRIPTDIR+"/buildPreparation/windows",
@@ -49,16 +44,3 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
   "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling",
   "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"])!=0:
   print("win64-dailyrelease failed.")
-
-buildNr=os.readlink(OUTDIR+"/report/result_current")
-os.mkdir(OUTDIR+"/report/"+buildNr+"/distribute")
-f=open(OUTDIR+"/report/"+buildNr+"/distribute/log.txt", "w")
-ret=simplesandbox.call([SCRIPTDIR+"/distribute.py", "/home/mbsim/win64-dailyrelease/local", "--distFile",
-                       OUTDIR+"/report/"+buildNr+"/distribute/mbsim-env-win64-shared-build-xxx"],
-                       shareddir=[OUTDIR+"/report/"+buildNr+"/distribute"],
-                       buildSystemRun=True,
-                       stderr=subprocess.STDOUT, stdout=f)
-buildSystemState.update("win64-dailyrelease-distribution", "Distribution Failed: win64-dailyrelease",
-                        "Unable to create the binary distribution file.", URL+"/report/"+buildNr+"/distribute/log.txt",
-                        0 if ret==0 else 1, 1)
-f.close()

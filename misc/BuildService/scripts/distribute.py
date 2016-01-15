@@ -9,15 +9,18 @@ import glob
 import tarfile
 import zipfile
 import subprocess
-import StringIO
 import time
 import re
 import shutil
+if sys.version_info[0]==2: # to unify python 2 and python 3
+  from StringIO import StringIO as myStringIO
+else:
+  from io import BytesIO as myStringIO
 
 args=None
 platform=None
-distFile=None
-distDebugFile=None
+distArchive=None
+debugArchive=None
 
 
 
@@ -52,12 +55,12 @@ def parseArguments():
     description="Create a Distribution of the MBSim-Environment.")
   
   argparser.add_argument("prefix", type=str, help="The directory to distribute (the --prefix dir)")
-  argparser.add_argument("--distFile", type=str, required=True, help="Output file basename (without extension) of the distribution archive")
+  argparser.add_argument("--outDir", type=str, required=True, help="Output dir of the distribution archive")
 
   global args
   args=argparser.parse_args()
   args.prefix=os.path.abspath(args.prefix)
-  args.distFile=os.path.abspath(args.distFile)
+  args.outDir=os.path.abspath(args.outDir)
 
 
 
@@ -78,33 +81,35 @@ def addFileToDist(name, arcname, addDepLibs=True):
     raise RuntimeError("Directory links are not supported.")
   # file link -> add as link and also add the dereferenced file
   if os.path.islink(name):
-    distFile.add(name, arcname) # add link
+    distArchive.add(name, arcname) # add link
     link=os.readlink(name) # add also the reference
     if "/" in link: # but only if to the same dire
-      raise RuntimeError("Only links to the same dir are supported.")
+      raise RuntimeError("Only links to the same dir are supported but "+name+" points to "+link+".")
     addFileToDist(os.path.dirname(name)+"/"+link, os.path.dirname(arcname)+"/"+link) # recursive call
   # file -> add as file
   elif os.path.isfile(name):
     # file type
-    content=subprocess.check_output(["file", name])
+    content=subprocess.check_output(["file", name]).decode('utf-8')
     if re.search('ELF [0-9]+-bit LSB', content)!=None or re.search('PE32\+? executable', content)!=None:
       # binary file
       # fix rpath (remove all absolute componentes from rpath)
-      outdir=os.path.dirname(args.distFile)
+      tmpDir="/tmp/distribute_temp_dir"
+      if not os.path.isdir(tmpDir):
+        os.mkdir(tmpDir)
       basename=os.path.basename(name)
       try:
-        shutil.copy(name, outdir+"/"+basename+".rpath")
+        shutil.copy(name, tmpDir+"/"+basename+".rpath")
         fnull=open(os.devnull, 'w')
         if re.search('ELF [0-9]+-bit LSB', content)!=None:
           try:
-            for line in subprocess.check_output(["chrpath", "-l", outdir+"/"+basename+".rpath"]).splitlines():
+            for line in subprocess.check_output(["chrpath", "-l", tmpDir+"/"+basename+".rpath"]).decode('utf-8').splitlines():
               match=re.search(".* RPATH=(.*)", line)
               if match!=None:
                 vnewrpath=[]
                 for p in match.expand("\\1").split(':'):
                   if p[0]!='/':
                     vnewrpath.append(p)
-                if subprocess.call(["chrpath", "-r", ":".join(vnewrpath), outdir+"/"+basename+".rpath"], stdout=fnull)!=0:
+                if subprocess.call(["chrpath", "-r", ":".join(vnewrpath), tmpDir+"/"+basename+".rpath"], stdout=fnull)!=0:
                   raise RuntimeError("chrpath -r ... failed")
                 break
           except subprocess.CalledProcessError as ex:
@@ -114,30 +119,30 @@ def addFileToDist(name, arcname, addDepLibs=True):
            (re.search('PE32\+? executable', content)!=None and re.search('stripped to external PDB', content)==None):
           # not stripped binary file
           try:
-            subprocess.check_call(["objcopy", "--only-keep-debug", outdir+"/"+basename+".rpath", outdir+"/"+basename+".debug"])
-            subprocess.check_call(["objcopy", "--strip-all", outdir+"/"+basename+".rpath", outdir+"/"+basename])
-            subprocess.check_call(["objcopy", "--add-gnu-debuglink="+outdir+"/"+basename+".debug", outdir+"/"+basename])
+            subprocess.check_call(["objcopy", "--only-keep-debug", tmpDir+"/"+basename+".rpath", tmpDir+"/"+basename+".debug"])
+            subprocess.check_call(["objcopy", "--strip-all", tmpDir+"/"+basename+".rpath", tmpDir+"/"+basename])
+            subprocess.check_call(["objcopy", "--add-gnu-debuglink="+tmpDir+"/"+basename+".debug", tmpDir+"/"+basename])
             if platform=="linux":
-              distFile.add(outdir+"/"+basename, arcname)
+              distArchive.add(tmpDir+"/"+basename, arcname)
               # only add debug files of mbsim-env
               if name.startswith("/home/mbsim/linux64-dailyrelease/") or name.startswith("/home/mbsim/win64-dailyrelease/"):
-                distDebugFile.add(outdir+"/"+basename+".debug", arcname+".debug")
+                debugArchive.add(tmpDir+"/"+basename+".debug", arcname+".debug")
             if platform=="win":
-              distFile.write(outdir+"/"+basename, arcname)
+              distArchive.write(tmpDir+"/"+basename, arcname)
               # only add debug files of mbsim-env
               if name.startswith("/home/mbsim/linux64-dailyrelease/") or name.startswith("/home/mbsim/win64-dailyrelease/"):
-                distDebugFile.write(outdir+"/"+basename+".debug", arcname+".debug")
+                debugArchive.write(tmpDir+"/"+basename+".debug", arcname+".debug")
           finally:
-            if os.path.exists(outdir+"/"+basename): os.remove(outdir+"/"+basename)
-            if os.path.exists(outdir+"/"+basename+".debug"): os.remove(outdir+"/"+basename+".debug")
+            if os.path.exists(tmpDir+"/"+basename): os.remove(tmpDir+"/"+basename)
+            if os.path.exists(tmpDir+"/"+basename+".debug"): os.remove(tmpDir+"/"+basename+".debug")
         else:
           # stripped binary file
           if platform=="linux":
-            distFile.add(outdir+"/"+basename+".rpath", arcname)
+            distArchive.add(tmpDir+"/"+basename+".rpath", arcname)
           if platform=="win":
-            distFile.write(outdir+"/"+basename+".rpath", arcname)
+            distArchive.write(tmpDir+"/"+basename+".rpath", arcname)
       finally:
-        if os.path.exists(outdir+"/"+basename+".rpath"): os.remove(outdir+"/"+basename+".rpath")
+        if os.path.exists(tmpDir+"/"+basename+".rpath"): os.remove(tmpDir+"/"+basename+".rpath")
       # add also all dependent libs to the lib/bin dir
       if addDepLibs and addDepsFor(name):
         for deplib in deplibs.depLibs(name):
@@ -149,16 +154,16 @@ def addFileToDist(name, arcname, addDepLibs=True):
     else:
       # none binary file
       if platform=="linux":
-        distFile.add(name, arcname)
+        distArchive.add(name, arcname)
       if platform=="win":
-        distFile.write(name, arcname)
+        distArchive.write(name, arcname)
   # dir -> add recursively
   elif os.path.isdir(name):
     for dirpath, dirnames, filenames in os.walk(name):
       for file in filenames:
         addFileToDist(dirpath+"/"+file, arcname+dirpath[len(name):]+"/"+file)
   else:
-    raise RuntimeError("Unknown file type.")
+    raise RuntimeError("Unknown file type: "+name)
 addFileToDist.content=set()
 
 def addStrToDist(text, arcname, exeBit=False):
@@ -168,9 +173,9 @@ def addStrToDist(text, arcname, exeBit=False):
     tarinfo.mtime=time.time()
     if exeBit:
       tarinfo.mode=0o755
-    distFile.addfile(tarinfo, StringIO.StringIO(text))
+    distArchive.addfile(tarinfo, myStringIO(text.encode('utf8')))
   if platform=="win":
-    distFile.writestr(arcname, text)
+    distArchive.writestr(arcname, text)
 
 
 
@@ -183,6 +188,19 @@ def addQtPlugins():
   if platform=="win":
     addFileToDist("/usr/x86_64-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll", "mbsim-env/bin/imageformats/qsvg4.dll")
     addFileToDist("/usr/x86_64-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll", "mbsim-env/bin/iconengines/qsvgicon4.dll")
+
+
+
+def addRepoState():
+  text='This build was done with the following repository states (sha1 commit id):\n\n'
+  savedDir=os.getcwd()
+  for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
+    os.chdir(args.prefix+"/../"+repo)
+    commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%H', 'HEAD']).decode('utf-8').rstrip()
+    text+=repo+": "+commitid+"\n"
+  os.chdir(savedDir)
+
+  addStrToDist(text, 'mbsim-env/RepoState.txt')
 
 
 
@@ -420,7 +438,7 @@ def addExamples():
     "xml/time_dependent_kinematics",
     "xml/hydraulics_ballcheckvalve",
   ]:
-    for file in subprocess.check_output(["git", "ls-files"], cwd=args.prefix+"/../mbsim/examples/"+ex).rstrip().splitlines():
+    for file in subprocess.check_output(["git", "ls-files"], cwd=args.prefix+"/../mbsim/examples/"+ex).decode('utf-8').rstrip().splitlines():
       addFileToDist(args.prefix+"/../mbsim/examples/"+ex+"/"+file, "mbsim-env/examples/"+ex+"/"+file)
 
 
@@ -434,22 +452,27 @@ def main():
   print("Create binary distribution")
   print("")
 
-  global distFile, distDebugFile
+  global distArchive, debugArchive
   if platform=="linux":
-    distFile=tarfile.open(args.distFile+".tar.bz2", mode='w:bz2')
-    distDebugFile=tarfile.open(args.distFile+"-debug.tar.bz2", mode='w:bz2')
+    distArchiveName="mbsim-env-linux64-shared-build-xxx.tar.bz2"
+    debugArchiveName="mbsim-env-linux64-shared-build-xxx-debug.tar.bz2"
+    distArchive=tarfile.open(args.outDir+"/"+distArchiveName, mode='w:bz2')
+    debugArchive=tarfile.open(args.outDir+"/"+debugArchiveName, mode='w:bz2')
   if platform=="win":
-    distFile=zipfile.ZipFile(args.distFile+".zip", mode='w', compression=zipfile.ZIP_DEFLATED)
-    distDebugFile=zipfile.ZipFile(args.distFile+"-debug.zip", mode='w', compression=zipfile.ZIP_DEFLATED)
+    distArchiveName="mbsim-env-win64-shared-build-xxx.zip"
+    debugArchiveName="mbsim-env-win64-shared-build-xxx-debug.zip"
+    distArchive=zipfile.ZipFile(args.outDir+"/"+distArchiveName, mode='w', compression=zipfile.ZIP_DEFLATED)
+    debugArchive=zipfile.ZipFile(args.outDir+"/"+debugArchiveName, mode='w', compression=zipfile.ZIP_DEFLATED)
  
   # add special files
+  addRepoState()
   addReadme()
   addMBSimEnvTest()
   addQtConf()
 
   # add prefix
   print("Add prefix dir of mbsim-env")
-  addFileToDist(args.prefix, "mbsim-env")
+  addFileToDist(prefix, "mbsim-env")
   # add octave
   addOctave()
 
@@ -457,16 +480,19 @@ def main():
   addQtPlugins()
 
   # add some examples
-  addExamples()
+  addExamples(prefix)
 
   # close archives
   print("")
   print("Finished")
-  distFile.close()
-  distDebugFile.close()
+  distArchive.close()
+  debugArchive.close()
+
+  return distArchiveName, debugArchiveName
 
 
 
 if __name__=="__main__":
-  mainRet=main()
-  exit(mainRet)
+  distArchiveName, debugArchiveName=main()
+  print("distArchiveName="+distArchiveName)
+  print("debugArchiveName="+debugArchiveName)

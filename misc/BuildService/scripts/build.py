@@ -67,6 +67,7 @@ def parseArguments():
   cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
   cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
   cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
+  cfgOpts.add_argument("--enableDistribution", action="store_true", help="Create a release distribution archive (only usefull on the buildsystem)")
   cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
   cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
   cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
@@ -255,17 +256,6 @@ def main():
         pj('mbsim', 'mbsimxml'),
         pj('mbsim', 'modules', 'mbsimControl')
       ])],
-    pj('mbsim', 'examples'): [False, set([ # depends on
-        pj('mbsim', 'mbsimxml'),
-        pj('mbsim', 'mbsimfmi'),
-        pj('mbsim', 'kernel'),
-        pj('mbsim', 'modules', 'mbsimHydraulics'),
-        pj('mbsim', 'modules', 'mbsimFlexibleBody'),
-        pj('mbsim', 'modules', 'mbsimPowertrain'),
-        pj('mbsim', 'modules', 'mbsimElectronics'),
-        pj('mbsim', 'modules', 'mbsimControl'),
-        pj('mbsim', 'modules', 'mbsimInterface')
-      ])]
   }
   toolXMLDocCopyDir={
     pj("mbsim", "kernel"):                       set(["http___mbsim_berlios_de_MBSim", "http___mbsim_berlios_de_MBSimIntegrator"]),
@@ -375,23 +365,24 @@ def main():
 
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
-  print('<!DOCTYPE html>', file=mainFD)
-  print('<html lang="en">', file=mainFD)
-  print('<head>', file=mainFD)
-  print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
-  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=mainFD)
-  print('  <title>Build Results of MBSim-Env: <small>%s</small></title>'%(args.buildType), file=mainFD)
-  print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=mainFD)
-  print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
-  print('</head>', file=mainFD)
-  print('<body style="margin:1em">', file=mainFD)
-  print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript">', file=mainFD)
-  print('  $(document).ready(function() {', file=mainFD)
-  print("    $.fn.dataTableExt.sErrMode = 'throw';", file=mainFD)
-  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});", file=mainFD)
-  print('  } );', file=mainFD)
-  print('</script>', file=mainFD)
+  print('''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build Results of MBSim-Env: <small>%s</small></title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
+  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
+</head>
+<body style="margin:1em">
+<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+<script type="text/javascript" src="http://www.mbsim-env.de/mbsim/html/mbsimBuildServiceClient.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $.fn.dataTableExt.sErrMode = 'throw';
+    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});
+  } );
+</script>'''%(args.buildType), file=mainFD)
 
   print('<h1>Build Results of MBSim-Env: <small>%s</small></h1>'%(args.buildType), file=mainFD)
 
@@ -469,29 +460,32 @@ def main():
   mainFD.flush()
 
   # build the other tools in order
-  retRunExamples=0
   nr=1
   for tool in orderedBuildTools:
-    nrFailedLocal, nrRunLocal, retRunExamplesLocal=build(nr, len(orderedBuildTools), tool, mainFD)
+    nrFailedLocal, nrRunLocal=build(nr, len(orderedBuildTools), tool, mainFD)
     if toolDependencies[tool][0]==False:
       nrFailed+=nrFailedLocal
       nrRun+=nrRunLocal
-      retRunExamples+=retRunExamplesLocal
     nr+=1
 
-  print('</tbody></table>', file=mainFD)
+  # run examples
+  runExamplesErrorCode=0
+  if not args.disableRunExamples:
+    savedDir=os.getcwd()
+    os.chdir(pj(args.sourceDir, "mbsim", "examples"))
+    print("Run runexamples.py in "+os.getcwd()); sys.stdout.flush()
+    runExamplesErrorCode=runexamples(mainFD)
+    os.chdir(savedDir)
 
-  # add links to distribution for the two release builds
-  if args.buildType=="linux64-dailyrelease" or args.buildType=="win64-dailyrelease":
-    print('<p></p>', file=mainFD)
-    print('<div class="panel panel-warning">', file=mainFD)
-    print('  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Binary Distribution</div>', file=mainFD)
-    print('  <div class="panel-body">', file=mainFD)
-    print('  <b><a href="distribute/mbsim-env-win64-shared-build-xxx.zip">Download</a></b> -', file=mainFD)
-    print('  <a href="distribute/mbsim-env-win64-shared-build-xxx-debug.zip">Debug-Info</a> -', file=mainFD)
-    print('  <a href="distribute/log.txt">Log-File</a>', file=mainFD)
-    print('  </div>', file=mainFD)
-    print('</div>', file=mainFD)
+  # create distribution
+  if args.enableDistribution:
+    nrRun=nrRun+1
+    print("Create distribution"); sys.stdout.flush()
+    cdRet, distArchiveName=createDistribution(mainFD)
+    if cdRet!=0:
+      nrFailed=nrFailed+1
+
+  print('</tbody></table>', file=mainFD)
 
   print('<hr/>', file=mainFD)
   print('<span class="pull-left small">', file=mainFD)
@@ -526,7 +520,7 @@ def main():
   if nrFailed>0:
     print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
 
-  return nrFailed+retRunExamples
+  return nrFailed+abs(runExamplesErrorCode)
 
 
 
@@ -661,7 +655,6 @@ def build(nr, nrAll, tool, mainFD):
 
   nrFailed=0
   nrRun=0
-  retRunExamples=0
 
   # start row, including tool name
   if toolDependencies[tool][0]==False:
@@ -672,51 +665,48 @@ def build(nr, nrAll, tool, mainFD):
   mainFD.flush()
 
   savedDir=os.getcwd()
-  if tool==pj("mbsim", "examples"):
-    os.chdir(pj(args.sourceDir, srcTool(tool)))
-    print("runexamples.py", end=""); sys.stdout.flush()
-    retRunExamples+=runexamples(mainFD)
-  else:
-    # configure
-    print("configure", end=""); sys.stdout.flush()
-    failed, run=configure(tool, mainFD)
-    nrFailed+=failed
-    nrRun+=run
 
-    # cd to build dir
-    os.chdir(savedDir)
-    os.chdir(pj(args.sourceDir, buildTool(tool)))
+  # configure
+  print("configure", end=""); sys.stdout.flush()
+  failed, run=configure(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # make
-    print(", make", end=""); sys.stdout.flush()
-    failed, run=make(tool, mainFD)
-    nrFailed+=failed
-    nrRun+=run
+  # cd to build dir
+  os.chdir(savedDir)
+  os.chdir(pj(args.sourceDir, buildTool(tool)))
 
-    # make check
-    print(", check", end=""); sys.stdout.flush()
-    failed, run=check(tool, mainFD)
-    nrFailed+=failed
-    nrRun+=run
+  # make
+  print(", make", end=""); sys.stdout.flush()
+  failed, run=make(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # doxygen
-    print(", doxygen-doc", end=""); sys.stdout.flush()
-    failed, run=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
-    nrFailed+=failed
-    nrRun+=run
+  # make check
+  print(", check", end=""); sys.stdout.flush()
+  failed, run=check(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # xmldoc
-    print(", xml-doc", end=""); sys.stdout.flush()
-    failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
-    nrFailed+=failed
-    nrRun+=run
+  # doxygen
+  print(", doxygen-doc", end=""); sys.stdout.flush()
+  failed, run=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
+  nrFailed+=failed
+  nrRun+=run
+
+  # xmldoc
+  print(", xml-doc", end=""); sys.stdout.flush()
+  failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+  nrFailed+=failed
+  nrRun+=run
+
   os.chdir(savedDir)
 
   print("")
   print('</tr>', file=mainFD)
   mainFD.flush()
 
-  return nrFailed, nrRun, retRunExamples
+  return nrFailed, nrRun
 
 
 
@@ -951,6 +941,8 @@ def runexamples(mainFD):
     mainFD.flush()
     return 0
 
+  print('<tr><td>Run examples</td>', file=mainFD); mainFD.flush()
+
   # runexamples.py command
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   command=["./runexamples.py", "-j", str(args.j)]
@@ -981,10 +973,42 @@ def runexamples(mainFD):
       '">examples failed</a></td>', file=mainFD)
   for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD)
 
   mainFD.flush()
 
   return ret
+
+
+
+def createDistribution(mainFD):
+  print('<tr><td>Create distribution</td>', file=mainFD); mainFD.flush()
+  os.mkdir(pj(args.reportOutDir, "distribute"))
+  distLog=codecs.open(pj(args.reportOutDir, "distribute", "log.txt"), "w", encoding="utf-8")
+  distArchiveName="failed"
+  distributeErrorCode=simplesandbox.call([pj(scriptdir, "distribute.py"), "--outDir", pj(args.reportOutDir, "distribute"),
+                                         args.prefix if args.prefix!=None else args.prefixAuto],
+                                         buildSystemRun=args.buildSystemRun, shareddir=[pj(args.reportOutDir, "distribute")],
+                                         stderr=subprocess.STDOUT, stdout=distLog)
+  distLog.close()
+  if distributeErrorCode==0:
+    lines=codecs.open(pj(args.reportOutDir, "distribute", "log.txt"), "r", encoding="utf-8").readlines()
+    distArchiveName=[x[len("distArchiveName="):] for x in lines if x.startswith("distArchiveName=")][0].rstrip()
+    debugArchiveName=[x[len("debugArchiveName="):] for x in lines if x.startswith("debugArchiveName=")][0].rstrip()
+    print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;'+
+          '<a href="'+myurllib.pathname2url(pj("distribute", "log.txt"))+'">done</a> - '+
+          '<a href="'+myurllib.pathname2url(pj("distribute", distArchiveName))+'"><b>Download</b></a> - '+
+          '<a href="'+myurllib.pathname2url(pj("distribute", debugArchiveName))+'">Debug-Info</a>'+
+          '</td>', file=mainFD)
+  else:
+    print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;'+
+          '<a href="'+myurllib.pathname2url(pj("distribute", "log.txt"))+'">failed</a>'+
+          '</td>', file=mainFD)
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD); mainFD.flush()
+
+  return distributeErrorCode, distArchiveName
 
 
 

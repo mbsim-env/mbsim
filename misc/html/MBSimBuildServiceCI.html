@@ -68,7 +68,7 @@
           sel.empty();
           response.curcibranch.forEach(function(branch) {
             sel.append('<tr><td>#'+nr.toString()+'</td>'+
-                           '<td><button class="DELCIBRANCH" value="'+JSON.stringify(branch).replace(/"/g, "'")+
+                           '<td><button disabled="disabled" class="DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
                               '" disabled="disabled" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
                            '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.fmatvec+'</span></td>'+
                            '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.hdf5serie+'</span></td>'+
@@ -121,9 +121,9 @@ where CI is always active) must be activated manually for CI. This can be done o
 <p>
   <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
   <strong id="LOGINUSER">unknwon</strong>
-  <button id="LOGINBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-in"></span>&nbsp;Login
+  <button id="LOGINBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in"></span>&nbsp;Login using
     <span class="octicon octicon-logo-github"></span></button>
-  <button id="LOGOUTBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+  <button id="LOGOUTBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
 </p>
 
 <h2>CI Branch Combinations</h2>
@@ -156,15 +156,15 @@ where CI is always active) must be activated manually for CI. This can be done o
   <div class="panel-body">
     <dl class="dl-horizontal">
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="FMATVEC_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="FMATVEC_BRANCH"> </select></dd>
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="HDF5SERIE_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="HDF5SERIE_BRANCH"> </select></dd>
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="OPENMBV_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="OPENMBV_BRANCH"> </select></dd>
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="MBSIM_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="MBSIM_BRANCH"> </select></dd>
     </dl>
-    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
+    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
   </div>
 </div>
 
