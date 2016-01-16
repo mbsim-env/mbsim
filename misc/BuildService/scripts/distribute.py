@@ -192,6 +192,8 @@ def addQtPlugins():
 
 
 def addRepoState():
+  print("Add repository state")
+
   text='This build was done with the following repository states (sha1 commit id):\n\n'
   savedDir=os.getcwd()
   for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
@@ -472,7 +474,7 @@ def main():
 
   # add prefix
   print("Add prefix dir of mbsim-env")
-  addFileToDist(prefix, "mbsim-env")
+  addFileToDist(args.prefix, "mbsim-env")
   # add octave
   addOctave()
 
@@ -480,7 +482,7 @@ def main():
   addQtPlugins()
 
   # add some examples
-  addExamples(prefix)
+  addExamples()
 
   # close archives
   print("")
