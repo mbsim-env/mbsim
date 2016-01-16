@@ -380,17 +380,21 @@ def main():
 <script type="text/javascript">
   $(document).ready(function() {
     $.fn.dataTableExt.sErrMode = 'throw';
-    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});
-  } );
-</script>'''%(args.buildType), file=mainFD)
+    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});'''%(args.buildType), file=mainFD)
 
-  print('<h1>Build Results of MBSim-Env: <small>%s</small></h1>'%(args.buildType), file=mainFD)
+  if args.enableDistribution:
+    releaseGeneration1(mainFD)
 
-  print('<dl class="dl-horizontal">', file=mainFD)
-  print('''<dt>Called Command</dt><dd><div class="dropdown">
+  print('''  } );
+</script>
+
+<h1>Build Results of MBSim-Env: <small>%s</small></h1>
+
+<dl class="dl-horizontal">
+<dt>Called Command</dt><dd><div class="dropdown">
   <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
   </button>
-  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
+  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">'''%(args.buildType), file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('</code></div></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
@@ -486,6 +490,9 @@ def main():
       nrFailed=nrFailed+1
 
   print('</tbody></table>', file=mainFD)
+
+  if args.enableDistribution and nrFailed==0 and runExamplesErrorCode==0:
+    releaseGeneration2(mainFD, distArchiveName)
 
   print('<hr/>', file=mainFD)
   print('<span class="pull-left small">', file=mainFD)
@@ -617,6 +624,7 @@ def repoUpdate(mainFD):
     # get branch and commit
     branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%h', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
+    commitidfull=subprocess.check_output(['git', 'log', '-n', '1', '--format=%H', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitsub=subprocess.check_output(['git', 'log', '-n', '1', '--format=%s', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitshort="<code>"+commitid+"</code>: "+htmlEscape(commitsub)
     commitlong=subprocess.check_output(['git', 'log', '-n', '1', '--format=Commit: %H%nAuthor: %an%nDate:   %ad%n%s%n%b', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
@@ -633,7 +641,8 @@ def repoUpdate(mainFD):
         "ok-sign alert-success" if retlocal==0 else "exclamation-sign alert-danger",
         repo,
         "passed" if retlocal==0 else "failed"), file=mainFD)
-    print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+'</td>', file=mainFD)
+    print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+
+          '<span id="COMMITID_%s" style="display:none">%s</span></td>'%(repo, commitidfull), file=mainFD)
     print('</tr>', file=mainFD)
 
   print('</tbody></table>', file=mainFD)
@@ -1009,6 +1018,115 @@ def createDistribution(mainFD):
   print('</tr>', file=mainFD); mainFD.flush()
 
   return distributeErrorCode, distArchiveName
+
+
+
+def releaseGeneration1(mainFD):
+  print('''    // no initial communication needed -> set OK status
+    statusMessage({success: true, message: "ready"}); // no initial communication needed -> set OK status
+    // when a release version is entered update the button text
+    $("#RELEASEVERSION").keyup(function() {
+      curRelStr=$("#RELEASEVERSION").val();
+      $(".RELSTR").each(function() {
+        $(this).text(curRelStr);
+      })
+    });
+    // when the release button is clicked
+    $("#RELEASEBUTTON").click(function() {
+      // check if all checkboxes are checked
+      checkBoxUnchecked=false;
+      $(".RELEASECHECK").each(function() {
+        if(!$(this).prop("checked"))
+          checkBoxUnchecked=true;
+      });
+      // get data
+      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
+                distArchiveName: $("#DISTARCHIVENAME").text(),
+                relStr: $("#RELEASEVERSION").val(),
+                commitid: {fmatvec:   $("#COMMITID_fmatvec").text(),
+                           hdf5serie: $("#COMMITID_hdf5serie").text(),
+                           openmbv:   $("#COMMITID_openmbv").text(),
+                           mbsim:     $("#COMMITID_mbsim").text()}};
+      if(checkBoxUnchecked || data.relStr=="")
+        statusMessage({success: false, message: "You must first check all checklist items above and define the release string!"});
+      else {
+        statusCommunicating();
+        // send data to server
+        $.ajax({url: cgiPath+"/releasedistribution",
+                dataType: "json", type: "POST", data: JSON.stringify(data)
+              }).done(function(response) {
+          statusMessage(response);
+        });
+      }
+    });''', file=mainFD)
+
+def releaseGeneration2(mainFD, distArchiveName):
+  # default values
+  relStr="x.y"
+  relArchiveNamePrefix=re.sub("(.*-)xxx\..*", "\\1",  distArchiveName)
+  relArchiveNamePostfix=re.sub(".*-xxx(\..*)", "\\1",  distArchiveName)
+  tagNamePrefix="release/"
+  tagNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx.*", "-\\1", distArchiveName)
+
+  print('''<div class="panel panel-warning">
+  <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
+    </span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
+ Release this distribution<span class="caret"> </span></a></div>
+  <div class="panel-body panel-collapse collapse" id="collapseReleaseGeneration">
+    <p>Releasing this distribution will</p>
+    <ul>
+      <li>tag the commits of the repositories, shown at the top, on GitHub.</li>
+      <li>copy the above distribution (<b>Download</b> - Debug-Info) to the <a href="../../../releases">release directory</a>.</li>
+    </ul>
+    <p>When releasing a distribution you have</p>
+    <div style="margin-left:1.5em">
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to check that the corresponding debug build works including all examples.
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to check that the corresponging valgrind-examples of the debug build works.
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to download the distribution and check it manually on a native OS (at least
+        using the test script .../mbsim-env/bin/mbsim-env-test[.bat]).
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        to release the Windows and Linux release builds at the same commit state using the same "release version" string!
+      </label></div>
+    </div>
+    <p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
+    <div>
+      <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
+      <strong id="LOGINUSER">unknwon</strong>
+      <button id="LOGINBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
+        </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
+      <button id="LOGOUTBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+    </div>
+    <div>
+      <span id="DISTARCHIVENAME" style="display:none">%s</span>
+      <div>
+        <label for="RELEASEVERSION">Release version: </label>
+        <input type="text" class="form-control" id="RELEASEVERSION" placeholder="%s">
+      </div>
+    </div>
+    <div>
+      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
+    </div>
+    <p><small>(This will create an annotated git tag on the MBSim-Env repositories on GitHub with your GitHub account.)</small></p>
+  </div>
+</div>
+<div id="STATUSPANEL" class="panel panel-info">
+  <div class="panel-heading"><span class="glyphicon glyphicon-info-sign">
+    </span>&nbsp;<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Status message</div>
+  <div class="panel-body">
+    <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
+  </div>
+</div>'''%(distArchiveName, relStr, relArchiveNamePrefix, relStr, relArchiveNamePostfix,
+                                    tagNamePrefix,        relStr, tagNamePostfix), file=mainFD)
 
 
 

@@ -15,6 +15,7 @@ try:
   import time
   import threading
   import fcntl
+  import datetime
 
   # config file: this will lock the config file
   class ConfigFile:
@@ -70,7 +71,8 @@ try:
           response_data['message']="Invalid access token hmac! Maybe the login was faked! If not, try to relogin again."
         else:
           # check whether this login is permitted to save data on the server (query github collaborators)
-          headers={'Authorization': 'token '+access_token}
+          headers={'Authorization': 'token '+access_token,
+                   'Accept': 'application/vnd.github.v3+json'}
           response=requests.get('https://api.github.com/teams/1451964/memberships/%s'%(login), headers=headers)
           if response.status_code!=200:
             response_data['success']=False
@@ -142,7 +144,8 @@ try:
         else:
           access_token=response['access_token']
           # get github login name using github API request
-          headers={'Authorization': 'token '+access_token}
+          headers={'Authorization': 'token '+access_token,
+                   'Accept': 'application/vnd.github.v3+json'}
           response=requests.get('https://api.github.com/user', headers=headers).json()
           login=response['login']
           # save login and access token in a dictionary on the server
@@ -195,8 +198,8 @@ try:
     # no json input via http post required
     # return branches for CI
     # worker function to make github api requests in parallel
-    def getBranch(url, out):
-      out.extend([b['name'] for b in requests.get(url).json()])
+    def getBranch(url, headers, out):
+      out.extend([b['name'] for b in requests.get(url, headers=headers).json()])
     # output data placeholder, request url and thread object placeholder. all per thread (reponame)
     out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
     url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
@@ -205,8 +208,9 @@ try:
          'mbsim': 'https://api.github.com/repos/mbsim-env/mbsim/branches'}
     thread={}
     # make all calls in parallel
+    headers={'Accept': 'application/vnd.github.v3+json'}
     for reponame in out:
-      thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], out[reponame]))
+      thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], headers, out[reponame]))
       thread[reponame].start()
     # wait for all calls
     for reponame in out:
@@ -273,7 +277,8 @@ try:
     else:
       with ConfigFile(False) as config: pass
       access_token=config['login_access_token'][login]
-      headers={'Authorization': 'token '+access_token}
+      headers={'Authorization': 'token '+access_token,
+               'Accept': 'application/vnd.github.v3+json'}
       response=requests.get('https://api.github.com/user', headers=headers).json()
       response_data['success']=True
       response_data['message']="User information returned."
@@ -308,6 +313,19 @@ try:
         response_data['success']=True
         response_data['message']="OK"
 
+  # copy distribution to release and tag on github
+  if action=="/releasedistribution":
+    with ConfigFile(False) as config: pass
+    data, response_data=checkCredicals(config)
+    if response_data['success']:
+      # MISSING not implemented
+      response_data['success']=False
+      response_data['message']="Releasing a distribution is not implemented till now on the server side, sorry! "+
+                               "(Got the following data: distArchiveName="+data['distArchiveName']+", relStr="+data['relStr']+", "+
+                               "commitid_fmatvec="+data['commitid']['fmatvec']+", "+
+                               "commitid_hdf5serie="+data['commitid']['hdf5serie']+", "+
+                               "commitid_openmbv="+data['commitid']['openmbv']+", "+
+                               "commitid_mbsim="+data['commitid']['mbsim']+")"
 
 except:
   # reset all output and generate a json error message

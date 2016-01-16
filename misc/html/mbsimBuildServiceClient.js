@@ -28,6 +28,7 @@ function statusMessage(response) {
     statuspanel.removeClass("panel-info");
     statuspanel.removeClass("panel-success");
     statuspanel.addClass("panel-danger");
+    $(document.body).animate({'scrollTop': $('#STATUSPANEL').offset().top}, 750);
   }
   statusmsg.text(response.message);
   // enable the buttons
