@@ -80,10 +80,8 @@ $(document).ready(function() {
             }).done(function(response) {
         if(!response.success)
           $('#LOGINUSER').text("Internal error: +"+response.message);
-        else {
-          $('#LOGINUSERIMG').attr("src", response.avatarurl);
+        else
           $('#LOGINUSER').text(response.username);
-        }
       });
     }
     else {
