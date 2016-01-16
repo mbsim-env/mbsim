@@ -17,7 +17,8 @@
     $("img[src='/icons/layout.gif']").replaceWith('<span class="glyphicon glyphicon-file"> </span>');
     $("img[src='/icons/compressed.gif']").replaceWith('<span class="glyphicon glyphicon-compressed"> </span>');
     $("img[src='/icons/unknown.gif']").replaceWith('<span class="glyphicon glyphicon-question-sign"> </span>');
-    $('table').dataTable({paging: false, columnDefs: [{width: "1em", targets: 0 }]});
+    $('table').dataTable({paging: false, columnDefs: [{width: "1em", targets: 0 }],
+                          order: [[2, 'des']]});
   });
 </script>
 <h1>Directory Index</h1>
