@@ -1100,7 +1100,7 @@ def releaseGeneration2(mainFD, distArchiveName):
     </div>
     <p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
     <div>
-      <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
+      <span class="octicon octicon-person"></span>&nbsp;
       <strong id="LOGINUSER">unknwon</strong>
       <button id="LOGINBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
         </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
