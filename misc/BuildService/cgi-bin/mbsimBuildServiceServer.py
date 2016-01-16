@@ -276,14 +276,9 @@ try:
       response_data['message']="Not logged in."
     else:
       with ConfigFile(False) as config: pass
-      access_token=config['login_access_token'][login]
-      headers={'Authorization': 'token '+access_token,
-               'Accept': 'application/vnd.github.v3+json'}
-      response=requests.get('https://api.github.com/user', headers=headers).json()
       response_data['success']=True
       response_data['message']="User information returned."
-      response_data['username']=response['name']+" ("+login+")"
-      response_data['avatarurl']=response['avatar_url']
+      response_data['username']=login
 
   # react on web hooks
   if action=="/webhook":
@@ -320,11 +315,14 @@ try:
     if response_data['success']:
       # MISSING not implemented
       response_data['success']=False
-      response_data['message']="Releasing a distribution is not implemented till now on the server side, sorry! "+
-                               "(Got the following data: distArchiveName="+data['distArchiveName']+", relStr="+data['relStr']+", "+
-                               "commitid_fmatvec="+data['commitid']['fmatvec']+", "+
-                               "commitid_hdf5serie="+data['commitid']['hdf5serie']+", "+
-                               "commitid_openmbv="+data['commitid']['openmbv']+", "+
+      response_data['message']="Releasing a distribution is not implemented till now on the server side, sorry! "+\
+                               "(Got the following data: "+\
+                               "distArchiveName="+data['distArchiveName']+", "+\
+                               "reportOutDir="+data['reportOutDir']+", "+\
+                               "relStr="+data['relStr']+", "+\
+                               "commitid_fmatvec="+data['commitid']['fmatvec']+", "+\
+                               "commitid_hdf5serie="+data['commitid']['hdf5serie']+", "+\
+                               "commitid_openmbv="+data['commitid']['openmbv']+", "+\
                                "commitid_mbsim="+data['commitid']['mbsim']+")"
 
 except:

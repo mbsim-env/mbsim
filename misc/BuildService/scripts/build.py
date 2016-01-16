@@ -1042,6 +1042,7 @@ def releaseGeneration1(mainFD):
       // get data
       var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
                 distArchiveName: $("#DISTARCHIVENAME").text(),
+                reportOutDir: $("#REPORTOUTDIR").text(),
                 relStr: $("#RELEASEVERSION").val(),
                 commitid: {fmatvec:   $("#COMMITID_fmatvec").text(),
                            hdf5serie: $("#COMMITID_hdf5serie").text(),
@@ -1108,6 +1109,7 @@ def releaseGeneration2(mainFD, distArchiveName):
     </div>
     <div>
       <span id="DISTARCHIVENAME" style="display:none">%s</span>
+      <span id="REPORTOUTDIR" style="display:none">%s</span>
       <div>
         <label for="RELEASEVERSION">Release version: </label>
         <input type="text" class="form-control" id="RELEASEVERSION" placeholder="%s">
@@ -1125,8 +1127,8 @@ def releaseGeneration2(mainFD, distArchiveName):
   <div class="panel-body">
     <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
   </div>
-</div>'''%(distArchiveName, relStr, relArchiveNamePrefix, relStr, relArchiveNamePostfix,
-                                    tagNamePrefix,        relStr, tagNamePostfix), file=mainFD)
+</div>'''%(distArchiveName, args.reportOutDir, relStr, relArchiveNamePrefix, relStr, relArchiveNamePostfix,
+           tagNamePrefix, relStr, tagNamePostfix), file=mainFD)
 
 
 
