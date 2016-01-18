@@ -449,7 +449,7 @@ namespace MBSim {
        * \brief constructor
        */
       PlanarStribeckFriction(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
-        fmu->setParent(this);
+        if(fmu) fmu->setParent(this);
       }
 
       /**
@@ -472,7 +472,14 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
       virtual bool isSetValued() const { return true; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual std::string getType() const { return "PlanarStribeckFriction"; }
       /***************************************************/
+
+      void setFrictionFunction(Function<double(double)> *fmu_) {
+        fmu = fmu_;
+        if(fmu) fmu->setParent(this);
+      }
 
     protected:
       /**
@@ -493,7 +500,7 @@ namespace MBSim {
        * \brief constructor
        */
       SpatialStribeckFriction(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
-        fmu->setParent(this);
+        if(fmu) fmu->setParent(this);
       }
 
       /**
@@ -516,7 +523,14 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
       virtual bool isSetValued() const { return true; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual std::string getType() const { return "SpatialStribeckFriction"; }
       /***************************************************/
+
+      void setFrictionFunction(Function<double(double)> *fmu_) {
+        fmu = fmu_;
+        if(fmu) fmu->setParent(this);
+      }
 
     protected:
       /**
@@ -643,7 +657,7 @@ namespace MBSim {
        * \brief constructor
        */
       PlanarStribeckImpact(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
-        fmu->setParent(this);
+        if(fmu) fmu->setParent(this);
       }
 
       /**
@@ -663,9 +677,16 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 1; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual std::string getType() const { return "PlanarStribeckImpact"; }
       /***************************************************/
 
       double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
+
+      void setFrictionFunction(Function<double(double)> *fmu_) {
+        fmu = fmu_;
+        if(fmu) fmu->setParent(this);
+      }
 
     protected:
       /**
@@ -686,7 +707,7 @@ namespace MBSim {
        * \brief constructor
        */
       SpatialStribeckImpact(Function<double(double)> *fmu_=NULL) : fmu(fmu_) {
-        fmu->setParent(this);
+        if(fmu) fmu->setParent(this);
       }
 
       /**
@@ -706,9 +727,16 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 2; }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual std::string getType() const { return "SpatialStribeckImpact"; }
       /***************************************************/
 
       double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
+
+      void setFrictionFunction(Function<double(double)> *fmu_) {
+        fmu = fmu_;
+        if(fmu) fmu->setParent(this);
+      }
 
     protected:
       /**

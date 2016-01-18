@@ -173,6 +173,36 @@ namespace MBSimGUI {
       ExtProperty frictionCoefficient;
   };
 
+  class PlanarStribeckFriction : public FrictionForceLaw {
+
+    public:
+      PlanarStribeckFriction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new PlanarStribeckFriction(*this);}
+      std::string getType() const { return "PlanarStribeckFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty frictionFunction;
+  };
+
+  class SpatialStribeckFriction : public FrictionForceLaw {
+
+    public:
+      SpatialStribeckFriction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new SpatialStribeckFriction(*this);}
+      std::string getType() const { return "SpatialStribeckFriction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty frictionFunction;
+  };
+
   class RegularizedPlanarFriction : public FrictionForceLaw {
 
     public:
@@ -241,6 +271,36 @@ namespace MBSimGUI {
 
     protected:
       ExtProperty frictionCoefficient;
+  };
+
+  class PlanarStribeckImpact : public FrictionImpactLaw {
+
+    public:
+      PlanarStribeckImpact(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new PlanarStribeckImpact(*this);}
+      std::string getType() const { return "PlanarStribeckImpact"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty frictionFunction;
+  };
+
+  class SpatialStribeckImpact : public FrictionImpactLaw {
+
+    public:
+      SpatialStribeckImpact(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new SpatialStribeckImpact(*this);}
+      std::string getType() const { return "SpatialStribeckImpact"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty frictionFunction;
   };
 
   class GeneralizedForceLawChoiceProperty : public Property {
