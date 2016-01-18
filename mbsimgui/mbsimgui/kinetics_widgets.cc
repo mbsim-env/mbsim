@@ -23,6 +23,7 @@
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "custom_widgets.h"
+#include "function_widget_factory.h"
 #include <QtGui>
 
 using namespace std;
@@ -100,6 +101,24 @@ namespace MBSimGUI {
     layout->addWidget(frictionCoefficient);
   }
 
+  PlanarStribeckFrictionWidget::PlanarStribeckFrictionWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    layout->addWidget(frictionFunction);
+  }
+
+  SpatialStribeckFrictionWidget::SpatialStribeckFrictionWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    layout->addWidget(frictionFunction);
+  }
+
   RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
 
     layout = new QVBoxLayout;
@@ -171,6 +190,24 @@ namespace MBSimGUI {
     layout->addWidget(frictionCoefficient);
   }
 
+  PlanarStribeckImpactWidget::PlanarStribeckImpactWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    layout->addWidget(frictionFunction);
+  }
+
+  SpatialStribeckImpactWidget::SpatialStribeckImpactWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    layout->addWidget(frictionFunction);
+  }
+
   GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget() : generalizedForceLaw(0) {
 
     layout = new QVBoxLayout;
@@ -233,8 +270,10 @@ namespace MBSimGUI {
 
     comboBox = new CustomComboBox;
     comboBox->addItem(tr("Planar coulomb friction"));
+    comboBox->addItem(tr("Planar stribeck friction"));
     comboBox->addItem(tr("Regularized planar friction"));
     comboBox->addItem(tr("Spatial coulomb friction"));
+    comboBox->addItem(tr("Spatial stribeck friction"));
     comboBox->addItem(tr("Regularized spatial friction"));
     layout->addWidget(comboBox);
     connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionLaw(int)));
@@ -246,11 +285,15 @@ namespace MBSimGUI {
     delete frictionForceLaw;
     if(index==0)
       frictionForceLaw = new PlanarCoulombFrictionWidget;  
-    if(index==1)
+    else if(index==1)
+      frictionForceLaw = new PlanarStribeckFrictionWidget;
+    else if(index==2)
       frictionForceLaw = new RegularizedPlanarFrictionWidget;  
-    if(index==2)
+    else if(index==3)
       frictionForceLaw = new SpatialCoulombFrictionWidget;  
-    if(index==3)
+    else if(index==4)
+      frictionForceLaw = new SpatialStribeckFrictionWidget;
+    else if(index==5)
       frictionForceLaw = new RegularizedSpatialFrictionWidget;  
     layout->addWidget(frictionForceLaw);
   }
@@ -263,7 +306,9 @@ namespace MBSimGUI {
 
     comboBox = new CustomComboBox;
     comboBox->addItem(tr("Planar coloumb impact"));
+    comboBox->addItem(tr("Planar stribeck impact"));
     comboBox->addItem(tr("Spatial coloumb impact"));
+    comboBox->addItem(tr("Spatial stribeck impact"));
     layout->addWidget(comboBox);
     connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionImpactLaw(int)));
     defineFrictionImpactLaw(0);
@@ -275,7 +320,11 @@ namespace MBSimGUI {
     if(index==0)
       frictionImpactLaw = new PlanarCoulombImpactWidget;  
     else if(index==1)
+      frictionImpactLaw = new PlanarStribeckImpactWidget;
+    else if(index==2)
       frictionImpactLaw = new SpatialCoulombImpactWidget;  
+    else if(index==3)
+      frictionImpactLaw = new SpatialStribeckImpactWidget;
     layout->addWidget(frictionImpactLaw);
   }
 
