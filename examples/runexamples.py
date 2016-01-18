@@ -38,7 +38,7 @@ scriptDir=os.path.dirname(os.path.realpath(__file__))
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
-ombvSchema =None
+ombvSchema=None
 mbsimXMLSchema=None
 timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
@@ -208,11 +208,12 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   # stop the execution time guard thread
   if maxExecutionTime>0:
     if killed.isSet():
-      return None # return None to indicate that the program was terminated/killed
+      return subprocessCall.timedOutErrorCode # return to indicate that the program was terminated/killed
     else:
       guard.cancel()
   # return the return value ot the called programm
   return ret
+subprocessCall.timedOutErrorCode=1000000
 
 # rotate
 def rotateOutput():
@@ -372,15 +373,12 @@ def main():
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MBSim runexamples Results: %s</title>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
     <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
-    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
   </head>
   <body style="margin:1em">
-  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
-  <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>
-  <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
-  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/mbsimBuildServiceClient.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/html/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -532,23 +530,22 @@ def main():
     print('  </div>', file=mainFD)
     print('</div>', file=mainFD)
 
-  print('''<div id="UPDATEREFERENCES" class="panel panel-info" style="display:none">
+  print('''<div id="UPDATEREFERENCES" class="panel panel-warning" style="display:none">
   <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
     </span>&nbsp;<a data-toggle="collapse" href="#collapseUpdateReferences">
  Update references<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseUpdateReferences">
-    <p>Update the references of the selected examples before next build
-       <small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small>
-    </p>
+    <p>Update the references of the selected examples before next build.</p>
+    <p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
     <p>
-      <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
+      <span class="octicon octicon-person"></span>&nbsp;
       <strong id="LOGINUSER">unknwon</strong>
-      <button id="LOGINBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-in">
-        </span>&nbsp;Login <span class="octicon octicon-logo-github"></span></button>
-      <button id="LOGOUTBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+      <button id="LOGINBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
+        </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
+      <button id="LOGOUTBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
     </p>
     <p>
-      <button id="SAVEBUTTON" disabled="disabled" type="button"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
+      <button id="SAVEBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-ok"></span>&nbsp;Save changes</button>
     </p>
   </div>
 </div>
@@ -726,7 +723,7 @@ def runExample(resultQueue, example):
         dt=0
         outfiles=[]
       executeFD.close()
-    if executeRet==None or executeRet!=0: runExampleRet=1
+    if executeRet!=0: runExampleRet=1
     # get reference time
     refTime=example[1]
     # print result to resultStr
@@ -736,11 +733,11 @@ def runExample(resultQueue, example):
       resultStr+='<tr class="text-muted">'
     resultStr+='<td>'+example[0].replace('/', u'/\u200B')+'</td>'
     if not args.disableRun:
-      if executeRet==None or executeRet!=0:
+      if executeRet!=0:
         resultStr+='<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
       else:
         resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'
-      if executeRet==None:
+      if executeRet==subprocessCall.timedOutErrorCode:
         resultStr+='timed out'
       elif executeRet!=0:
         resultStr+='failed'
@@ -824,13 +821,10 @@ def runExample(resultQueue, example):
       print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=htmlOutputFD)
       print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
       print('  <title>Validate XML Files: %s</title>'%(args.buildType), file=htmlOutputFD)
-      print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=htmlOutputFD)
-      print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=htmlOutputFD)
+      print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:1em">', file=htmlOutputFD)
-      print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=htmlOutputFD)
-      print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=htmlOutputFD)
-      print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=htmlOutputFD)
+      print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
       print('<script type="text/javascript">', file=htmlOutputFD)
       print('  $(document).ready(function() {', file=htmlOutputFD)
       print("    $('#SortThisTable').dataTable({'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ], 'pageLength': 25, 'aaSorting': [], stateSave: true});", file=htmlOutputFD)
@@ -838,7 +832,7 @@ def runExample(resultQueue, example):
       print('</script>', file=htmlOutputFD)
       print('<h1>Validate XML Files: <small>%s</small></h1>'%(args.buildType), file=htmlOutputFD)
       print('<dl class="dl-horizontal">', file=htmlOutputFD)
-      print('<dt>Example:</dt><dd>'+example[0]+'</dd>', file=htmlOutputFD)
+      print('<dt>Example:</dt><dd>'+example[0].replace('/', u'/\u200B')+'</dd>', file=htmlOutputFD)
       print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=htmlOutputFD)
       currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
       parDirs="/".join(list(map(lambda x: "..", range(0, example[0].count(os.sep)+1))))
@@ -896,7 +890,7 @@ def runExample(resultQueue, example):
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
-    resultStr='<tr><td>'+example[0]+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>'
+    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>'
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -937,7 +931,7 @@ def getOutFilesAndAdaptRet(example, ret):
       if "</valgrindoutput>" not in content: # incomplete valgrind output -> a skipped trace children
         os.remove(xmlFile)
         continue
-      if "<error>" in content and ret[0]!=None:
+      if "<error>" in content and ret[0]!=subprocessCall.timedOutErrorCode:
         ret[0]=1
       # transform xml file to html file (in reportOutDir)
       htmlFile=xmlFile[:-4]+".html"
@@ -1056,8 +1050,8 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
 
   # return
-  if ret1[0]==None or ret2[0]==None:
-    ret=None
+  if ret1[0]==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode:
+    ret=subprocessCall.timedOutErrorCode
   else:
     ret=abs(ret1[0])+abs(ret2[0])
   outFiles=[]
@@ -1072,7 +1066,10 @@ def executeFMIXMLExample(executeFD, example):
   # create and run FMU
   ret2, dt, outFiles2=executeFMIExample(executeFD, example, "FMI.mbsimprj.xml")
   # return
-  ret=abs(ret1)+abs(ret2)
+  if ret1==subprocessCall.timedOutErrorCode or ret2==subprocessCall.timedOutErrorCode:
+    ret=subprocessCall.timedOutErrorCode
+  else:
+    ret=abs(ret1)+abs(ret2)
   outFiles=[]
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
@@ -1111,12 +1108,12 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=diffHTMLPlotFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
   print('  <title>Difference Plot: %s</title>'%(args.buildType), file=diffHTMLPlotFD)
-  print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
+  print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:1em">', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
   print('<dl class="dl-horizontal">', file=diffHTMLPlotFD)
-  print('<dt>Example:</dt><dd>'+example+'</dd>', file=diffHTMLPlotFD)
+  print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=diffHTMLPlotFD)
   print('<dt>File:</dt><dd>'+filename+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Dataset:</dt><dd>'+datasetName+'</dd>', file=diffHTMLPlotFD)
   print('<dt>Label:</dt><dd>'+label+' (column %d)</dd>'%(column), file=diffHTMLPlotFD)
@@ -1129,11 +1126,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
     navA="/../.."
     navB="/runexamples_report/result_current"
   print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%
-    (parDirs, navA, currentID-1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, currentID-1, navB, example.replace('/', u'/\u200B')+u"/\u200B"+filename+u"/\u200B"+datasetName+u"/\u200B"+str(column)+u"/\u200Bdiffplot.html"), file=diffHTMLPlotFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%
-    (parDirs, navA, currentID+1, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, currentID+1, navB, example.replace('/', u'/\u200B')+u"/\u200B"+filename+u"/\u200B"+datasetName+u"/\u200B"+str(column)+u"/\u200Bdiffplot.html"), file=diffHTMLPlotFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
-    (parDirs, navA, navB, example+"/"+filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"), file=diffHTMLPlotFD)
+    (parDirs, navA, navB, example.replace('/', u'/\u200B')+u"/\u200B"+filename+u"/\u200B"+datasetName+u"/\u200B"+str(column)+u"/\u200Bdiffplot.html"), file=diffHTMLPlotFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/%s%s%s/compare.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
     (parDirs, myurllib.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
   print('</dl>', file=diffHTMLPlotFD)
@@ -1368,13 +1365,10 @@ def compareExample(example, compareFN):
   print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=compareFD)
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
   print('  <title>Compare Results: %s</title>'%(args.buildType), file=compareFD)
-  print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=compareFD)
-  print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=compareFD)
+  print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body style="margin:1em">', file=compareFD)
-  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=compareFD)
-  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=compareFD)
-  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=compareFD)
+  print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)
   print('''<script type="text/javascript">
     $(document).ready(function() {
       $('#SortThisTable').dataTable({
@@ -1418,7 +1412,7 @@ def compareExample(example, compareFN):
     </script>''', file=compareFD)
   print('<h1>Compare Results: <small>%s</small></h1>'%(args.buildType), file=compareFD)
   print('<dl class="dl-horizontal">', file=compareFD)
-  print('<dt>Example:</dt><dd>'+example+'</dd>', file=compareFD)
+  print('<dt>Example:</dt><dd>'+example.replace('/', u'/\u200B')+'</dd>', file=compareFD)
   print('<dt>Time ID:</dt><dd>'+str(timeID)+'</dd>', file=compareFD)
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   parDirs="/".join(list(map(lambda x: "..", range(0, example.count(os.sep)+1))))

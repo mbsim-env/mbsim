@@ -64,6 +64,7 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
+  QCoreApplication::setLibraryPaths(QStringList()); // do not load plugins from buildin defaults
   QApplication app(argc, argv);
   app.setOrganizationName("MBSimGUI");
   QLocale::setDefault(QLocale::C);

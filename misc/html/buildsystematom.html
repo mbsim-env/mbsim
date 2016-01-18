@@ -4,12 +4,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MBSim-Env Feed List</title>
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
 </head>
 <body style="margin:1em">
-<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
-<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>
+<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
 <script type="text/javascript">
   $(document).ready(function() {
     curtime=new Date();
@@ -25,10 +23,10 @@
           var ret=[];
           entry.each(function() {
             var title=$($(this).get(0).getElementsByTagNameNS(NS, "title")).text();
-            var summary=$($(this).get(0).getElementsByTagNameNS(NS, "summary")).text();
+            var content=$($(this).get(0).getElementsByTagNameNS(NS, "content")).text();
             var link=$($(this).get(0).getElementsByTagNameNS(NS, "link")).attr("href");
             var updated=$($(this).get(0).getElementsByTagNameNS(NS, "updated")).text();
-            ret.push([updated, title, '<a href="'+link+'">'+summary+'</a>']);
+            ret.push([updated, title, '<a href="'+link+'">'+content+'</a>']);
           });
           return ret;
         }
@@ -46,7 +44,7 @@
     <tr>
       <th><span class="glyphicon glyphicon-time"></span>&nbsp;Time</th>
       <th><span class="glyphicon glyphicon-comment"></span>&nbsp;Title</th>
-      <th><span class="glyphicon glyphicon-align-left"></span>&nbsp;Summary</th>
+      <th><span class="glyphicon glyphicon-align-left"></span>&nbsp;Content</th>
     </tr>
   </thead>
 </table>

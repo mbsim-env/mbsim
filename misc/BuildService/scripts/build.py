@@ -57,6 +57,7 @@ def parseArguments():
   cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
     help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
   
+  cfgOpts.add_argument("--enableCleanPrefix", action="store_true", help="Remove the prefix dir completely before starting")
   cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
   cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
   cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
@@ -66,6 +67,7 @@ def parseArguments():
   cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
   cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
   cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
+  cfgOpts.add_argument("--enableDistribution", action="store_true", help="Create a release distribution archive (only usefull on the buildsystem)")
   cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
   cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
   cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
@@ -254,17 +256,6 @@ def main():
         pj('mbsim', 'mbsimxml'),
         pj('mbsim', 'modules', 'mbsimControl')
       ])],
-    pj('mbsim', 'examples'): [False, set([ # depends on
-        pj('mbsim', 'mbsimxml'),
-        pj('mbsim', 'mbsimfmi'),
-        pj('mbsim', 'kernel'),
-        pj('mbsim', 'modules', 'mbsimHydraulics'),
-        pj('mbsim', 'modules', 'mbsimFlexibleBody'),
-        pj('mbsim', 'modules', 'mbsimPowertrain'),
-        pj('mbsim', 'modules', 'mbsimElectronics'),
-        pj('mbsim', 'modules', 'mbsimControl'),
-        pj('mbsim', 'modules', 'mbsimInterface')
-      ])]
   }
   toolXMLDocCopyDir={
     pj("mbsim", "kernel"):                       set(["http___mbsim_berlios_de_MBSim", "http___mbsim_berlios_de_MBSimIntegrator"]),
@@ -330,7 +321,7 @@ def main():
     print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=docFD)
     print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
     print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
-    print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=docFD)
+    print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
     print('</head>', file=docFD)
     print('<body style="margin:1em">', file=docFD)
     print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
@@ -374,34 +365,36 @@ def main():
 
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
-  print('<!DOCTYPE html>', file=mainFD)
-  print('<html lang="en">', file=mainFD)
-  print('<head>', file=mainFD)
-  print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
-  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=mainFD)
-  print('  <title>Build Results of MBSim-Env: <small>%s</small></title>'%(args.buildType), file=mainFD)
-  print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
-  print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
-  print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
-  print('</head>', file=mainFD)
-  print('<body style="margin:1em">', file=mainFD)
-  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript">', file=mainFD)
-  print('  $(document).ready(function() {', file=mainFD)
-  print("    $.fn.dataTableExt.sErrMode = 'throw';", file=mainFD)
-  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});", file=mainFD)
-  print('  } );', file=mainFD)
-  print('</script>', file=mainFD)
+  print('''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build Results of MBSim-Env: <small>%s</small></title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
+  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
+</head>
+<body style="margin:1em">
+<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+<script type="text/javascript" src="http://www.mbsim-env.de/mbsim/html/mbsimBuildServiceClient.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $.fn.dataTableExt.sErrMode = 'throw';
+    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});'''%(args.buildType), file=mainFD)
 
-  print('<h1>Build Results of MBSim-Env: <small>%s</small></h1>'%(args.buildType), file=mainFD)
+  if args.enableDistribution:
+    releaseGeneration1(mainFD)
 
-  print('<dl class="dl-horizontal">', file=mainFD)
-  print('''<dt>Called Command</dt><dd><div class="dropdown">
+  print('''  } );
+</script>
+
+<h1>Build Results of MBSim-Env: <small>%s</small></h1>
+
+<dl class="dl-horizontal">
+<dt>Called Command</dt><dd><div class="dropdown">
   <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
   </button>
-  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
+  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">'''%(args.buildType), file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('</code></div></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
@@ -421,6 +414,11 @@ def main():
     nrRun+=1
   if repoUpdate(mainFD)!=0:
     nrFailed+=1
+
+  # clean prefix dir
+  if args.enableCleanPrefix and os.path.isdir(args.prefix if args.prefix!=None else args.prefixAuto):
+    shutil.rmtree(args.prefix if args.prefix!=None else args.prefixAuto)
+    os.makedirs(args.prefix if args.prefix!=None else args.prefixAuto)
 
   # force build
   buildTools=set()
@@ -466,17 +464,36 @@ def main():
   mainFD.flush()
 
   # build the other tools in order
-  retRunExamples=0
   nr=1
   for tool in orderedBuildTools:
-    nrFailedLocal, nrRunLocal, retRunExamplesLocal=build(nr, len(orderedBuildTools), tool, mainFD)
+    nrFailedLocal, nrRunLocal=build(nr, len(orderedBuildTools), tool, mainFD)
     if toolDependencies[tool][0]==False:
       nrFailed+=nrFailedLocal
       nrRun+=nrRunLocal
-      retRunExamples+=retRunExamplesLocal
     nr+=1
 
+  # run examples
+  runExamplesErrorCode=0
+  if not args.disableRunExamples:
+    savedDir=os.getcwd()
+    os.chdir(pj(args.sourceDir, "mbsim", "examples"))
+    print("Run runexamples.py in "+os.getcwd()); sys.stdout.flush()
+    runExamplesErrorCode=runexamples(mainFD)
+    os.chdir(savedDir)
+
+  # create distribution
+  if args.enableDistribution:
+    nrRun=nrRun+1
+    print("Create distribution"); sys.stdout.flush()
+    cdRet, distArchiveName=createDistribution(mainFD)
+    if cdRet!=0:
+      nrFailed=nrFailed+1
+
   print('</tbody></table>', file=mainFD)
+
+  if args.enableDistribution and nrFailed==0 and runExamplesErrorCode==0:
+    releaseGeneration2(mainFD, distArchiveName)
+
   print('<hr/>', file=mainFD)
   print('<span class="pull-left small">', file=mainFD)
   print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=mainFD)
@@ -510,7 +527,7 @@ def main():
   if nrFailed>0:
     print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
 
-  return nrFailed+retRunExamples
+  return nrFailed+abs(runExamplesErrorCode)
 
 
 
@@ -607,6 +624,7 @@ def repoUpdate(mainFD):
     # get branch and commit
     branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%h', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
+    commitidfull=subprocess.check_output(['git', 'log', '-n', '1', '--format=%H', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitsub=subprocess.check_output(['git', 'log', '-n', '1', '--format=%s', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitshort="<code>"+commitid+"</code>: "+htmlEscape(commitsub)
     commitlong=subprocess.check_output(['git', 'log', '-n', '1', '--format=Commit: %H%nAuthor: %an%nDate:   %ad%n%s%n%b', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
@@ -623,7 +641,8 @@ def repoUpdate(mainFD):
         "ok-sign alert-success" if retlocal==0 else "exclamation-sign alert-danger",
         repo,
         "passed" if retlocal==0 else "failed"), file=mainFD)
-    print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+'</td>', file=mainFD)
+    print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+
+          '<span id="COMMITID_%s" style="display:none">%s</span></td>'%(repo, commitidfull), file=mainFD)
     print('</tr>', file=mainFD)
 
   print('</tbody></table>', file=mainFD)
@@ -645,7 +664,6 @@ def build(nr, nrAll, tool, mainFD):
 
   nrFailed=0
   nrRun=0
-  retRunExamples=0
 
   # start row, including tool name
   if toolDependencies[tool][0]==False:
@@ -656,51 +674,48 @@ def build(nr, nrAll, tool, mainFD):
   mainFD.flush()
 
   savedDir=os.getcwd()
-  if tool==pj("mbsim", "examples"):
-    os.chdir(pj(args.sourceDir, srcTool(tool)))
-    print("runexamples.py", end=""); sys.stdout.flush()
-    retRunExamples+=runexamples(mainFD)
-  else:
-    # configure
-    print("configure", end=""); sys.stdout.flush()
-    failed, run=configure(tool, mainFD)
-    nrFailed+=failed
-    nrRun+=run
 
-    # cd to build dir
-    os.chdir(savedDir)
-    os.chdir(pj(args.sourceDir, buildTool(tool)))
+  # configure
+  print("configure", end=""); sys.stdout.flush()
+  failed, run=configure(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # make
-    print(", make", end=""); sys.stdout.flush()
-    failed, run=make(tool, mainFD)
-    nrFailed+=failed
-    nrRun+=run
+  # cd to build dir
+  os.chdir(savedDir)
+  os.chdir(pj(args.sourceDir, buildTool(tool)))
 
-    # make check
-    print(", check", end=""); sys.stdout.flush()
-    failed, run=check(tool, mainFD)
-    nrFailed+=failed
-    nrRun+=run
+  # make
+  print(", make", end=""); sys.stdout.flush()
+  failed, run=make(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # doxygen
-    print(", doxygen-doc", end=""); sys.stdout.flush()
-    failed, run=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
-    nrFailed+=failed
-    nrRun+=run
+  # make check
+  print(", check", end=""); sys.stdout.flush()
+  failed, run=check(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # xmldoc
-    print(", xml-doc", end=""); sys.stdout.flush()
-    failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
-    nrFailed+=failed
-    nrRun+=run
+  # doxygen
+  print(", doxygen-doc", end=""); sys.stdout.flush()
+  failed, run=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
+  nrFailed+=failed
+  nrRun+=run
+
+  # xmldoc
+  print(", xml-doc", end=""); sys.stdout.flush()
+  failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+  nrFailed+=failed
+  nrRun+=run
+
   os.chdir(savedDir)
 
   print("")
   print('</tr>', file=mainFD)
   mainFD.flush()
 
-  return nrFailed, nrRun, retRunExamples
+  return nrFailed, nrRun
 
 
 
@@ -935,6 +950,8 @@ def runexamples(mainFD):
     mainFD.flush()
     return 0
 
+  print('<tr><td>Run examples</td>', file=mainFD); mainFD.flush()
+
   # runexamples.py command
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   command=["./runexamples.py", "-j", str(args.j)]
@@ -963,12 +980,155 @@ def runexamples(mainFD):
   else:
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '">examples failed</a></td>', file=mainFD)
-  for i in range(0, 3-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD)
 
   mainFD.flush()
 
   return ret
+
+
+
+def createDistribution(mainFD):
+  print('<tr><td>Create distribution</td>', file=mainFD); mainFD.flush()
+  os.mkdir(pj(args.reportOutDir, "distribute"))
+  distLog=codecs.open(pj(args.reportOutDir, "distribute", "log.txt"), "w", encoding="utf-8")
+  distArchiveName="failed"
+  distributeErrorCode=simplesandbox.call([pj(scriptdir, "distribute.py"), "--outDir", pj(args.reportOutDir, "distribute"),
+                                         args.prefix if args.prefix!=None else args.prefixAuto],
+                                         buildSystemRun=args.buildSystemRun, shareddir=[pj(args.reportOutDir, "distribute")],
+                                         stderr=subprocess.STDOUT, stdout=distLog)
+  distLog.close()
+  if distributeErrorCode==0:
+    lines=codecs.open(pj(args.reportOutDir, "distribute", "log.txt"), "r", encoding="utf-8").readlines()
+    distArchiveName=[x[len("distArchiveName="):] for x in lines if x.startswith("distArchiveName=")][0].rstrip()
+    debugArchiveName=[x[len("debugArchiveName="):] for x in lines if x.startswith("debugArchiveName=")][0].rstrip()
+    print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;'+
+          '<a href="'+myurllib.pathname2url(pj("distribute", "log.txt"))+'">done</a> - '+
+          '<a href="'+myurllib.pathname2url(pj("distribute", distArchiveName))+'"><b>Download</b></a> - '+
+          '<a href="'+myurllib.pathname2url(pj("distribute", debugArchiveName))+'">Debug-Info</a>'+
+          '</td>', file=mainFD)
+  else:
+    print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;'+
+          '<a href="'+myurllib.pathname2url(pj("distribute", "log.txt"))+'">failed</a>'+
+          '</td>', file=mainFD)
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD); mainFD.flush()
+
+  return distributeErrorCode, distArchiveName
+
+
+
+def releaseGeneration1(mainFD):
+  print('''    // no initial communication needed -> set OK status
+    statusMessage({success: true, message: "ready"}); // no initial communication needed -> set OK status
+    // when a release version is entered update the button text
+    $("#RELEASEVERSION").keyup(function() {
+      curRelStr=$("#RELEASEVERSION").val();
+      $(".RELSTR").each(function() {
+        $(this).text(curRelStr);
+      })
+    });
+    // when the release button is clicked
+    $("#RELEASEBUTTON").click(function() {
+      // check if all checkboxes are checked
+      checkBoxUnchecked=false;
+      $(".RELEASECHECK").each(function() {
+        if(!$(this).prop("checked"))
+          checkBoxUnchecked=true;
+      });
+      // get data
+      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
+                distArchiveName: $("#DISTARCHIVENAME").text(),
+                reportOutDir: $("#REPORTOUTDIR").text(),
+                relStr: $("#RELEASEVERSION").val(),
+                commitid: {fmatvec:   $("#COMMITID_fmatvec").text(),
+                           hdf5serie: $("#COMMITID_hdf5serie").text(),
+                           openmbv:   $("#COMMITID_openmbv").text(),
+                           mbsim:     $("#COMMITID_mbsim").text()}};
+      if(checkBoxUnchecked || data.relStr=="")
+        statusMessage({success: false, message: "You must first check all checklist items above and define the release string!"});
+      else {
+        statusCommunicating();
+        // send data to server
+        $.ajax({url: cgiPath+"/releasedistribution",
+                dataType: "json", type: "POST", data: JSON.stringify(data)
+              }).done(function(response) {
+          statusMessage(response);
+        });
+      }
+    });''', file=mainFD)
+
+def releaseGeneration2(mainFD, distArchiveName):
+  # default values
+  relStr="x.y"
+  relArchiveNamePrefix=re.sub("(.*-)xxx\..*", "\\1",  distArchiveName)
+  relArchiveNamePostfix=re.sub(".*-xxx(\..*)", "\\1",  distArchiveName)
+  tagNamePrefix="release/"
+  tagNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx.*", "-\\1", distArchiveName)
+
+  print('''<div class="panel panel-warning">
+  <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
+    </span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
+ Release this distribution<span class="caret"> </span></a></div>
+  <div class="panel-body panel-collapse collapse" id="collapseReleaseGeneration">
+    <p>Releasing this distribution will</p>
+    <ul>
+      <li>tag the commits of the repositories, shown at the top, on GitHub.</li>
+      <li>copy the above distribution (<b>Download</b> - Debug-Info) to the <a href="../../../releases">release directory</a>.</li>
+    </ul>
+    <p>When releasing a distribution you have</p>
+    <div style="margin-left:1.5em">
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to check that the corresponding debug build works including all examples.
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to check that the corresponging valgrind-examples of the debug build works.
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to download the distribution and check it manually on a native OS (at least
+        using the test script .../mbsim-env/bin/mbsim-env-test[.bat]).
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        to release the Windows and Linux release builds at the same commit state using the same "release version" string!
+      </label></div>
+    </div>
+    <p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
+    <div>
+      <span class="octicon octicon-person"></span>&nbsp;
+      <strong id="LOGINUSER">unknwon</strong>
+      <button id="LOGINBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
+        </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
+      <button id="LOGOUTBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+    </div>
+    <div>
+      <span id="DISTARCHIVENAME" style="display:none">%s</span>
+      <span id="REPORTOUTDIR" style="display:none">%s</span>
+      <div>
+        <label for="RELEASEVERSION">Release version: </label>
+        <input type="text" class="form-control" id="RELEASEVERSION" placeholder="%s">
+      </div>
+    </div>
+    <div>
+      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
+    </div>
+    <p><small>(This will create an annotated git tag on the MBSim-Env repositories on GitHub with your GitHub account.)</small></p>
+  </div>
+</div>
+<div id="STATUSPANEL" class="panel panel-info">
+  <div class="panel-heading"><span class="glyphicon glyphicon-info-sign">
+    </span>&nbsp;<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Status message</div>
+  <div class="panel-body">
+    <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
+  </div>
+</div>'''%(distArchiveName, args.reportOutDir, relStr, relArchiveNamePrefix, relStr, relArchiveNamePostfix,
+           tagNamePrefix, relStr, tagNamePostfix), file=mainFD)
 
 
 

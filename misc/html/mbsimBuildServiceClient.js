@@ -28,6 +28,7 @@ function statusMessage(response) {
     statuspanel.removeClass("panel-info");
     statuspanel.removeClass("panel-success");
     statuspanel.addClass("panel-danger");
+    $(document.body).animate({'scrollTop': $('#STATUSPANEL').offset().top}, 750);
   }
   statusmsg.text(response.message);
   // enable the buttons
@@ -79,10 +80,8 @@ $(document).ready(function() {
             }).done(function(response) {
         if(!response.success)
           $('#LOGINUSER').text("Internal error: +"+response.message);
-        else {
-          $('#LOGINUSERIMG').attr("src", response.avatarurl);
+        else
           $('#LOGINUSER').text(response.username);
-        }
       });
     }
     else {
