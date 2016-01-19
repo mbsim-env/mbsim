@@ -1070,8 +1070,7 @@ def releaseGeneration2(mainFD, distArchiveName):
   tagNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx.*", "-\\1", distArchiveName)
 
   print('''<div class="panel panel-warning">
-  <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
-    </span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
+  <div class="panel-heading"><span class="glyphicon glyphicon-cloud-upload"></span><span class="octicon octicon-tag"></span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
  Release this distribution<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseReleaseGeneration">
     <p>Releasing this distribution will</p>
@@ -1116,7 +1115,7 @@ def releaseGeneration2(mainFD, distArchiveName):
       </div>
     </div>
     <div>
-      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
+      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
     </div>
     <p><small>(This will create an annotated git tag on the MBSim-Env repositories on GitHub with your GitHub account.)</small></p>
   </div>

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from __future__ import print_function # to enable the print function for backward compatiblity with python2
+import json
 
 try:
 
@@ -8,7 +9,6 @@ try:
   import os
   import urlparse
   import requests
-  import json
   import hmac
   import hashlib
   import sys
@@ -17,8 +17,10 @@ try:
   import fcntl
   import datetime
   import Cookie
+  import re
+  import shutil
 
-  # config file: this will lock the config file
+  # config file: this will lock the config file for the lifetime of this object
   class ConfigFile:
     def __init__(self, rw):
       self.rw=rw
@@ -37,9 +39,9 @@ try:
       return self.config
     def __exit__(self, exc_type, exc_value, traceback):
       if self.rw:
-        self.fd.seek(0);
+        self.fd.seek(0)
         json.dump(self.config, self.fd)
-        self.fd.truncate();
+        self.fd.truncate()
         fcntl.lockf(self.fd, fcntl.LOCK_UN)
         self.fd.close()
   
@@ -247,7 +249,7 @@ try:
             add=False
             break
         if add:
-          curcibranch.append(newcibranch);
+          curcibranch.append(newcibranch)
         response_data['message']='New CI branch combination saved.'
 
   # return current checked examples
@@ -330,17 +332,93 @@ try:
     response_data=checkCredicals(config)
     data=json.load(sys.stdin)
     if response_data['success']:
-      # MISSING not implemented
-      response_data['success']=False
-      response_data['message']="Releasing a distribution is not implemented till now on the server side, sorry! "+\
-                               "(Got the following data: "+\
-                               "distArchiveName="+data['distArchiveName']+", "+\
-                               "reportOutDir="+data['reportOutDir']+", "+\
-                               "relStr="+data['relStr']+", "+\
-                               "commitid_fmatvec="+data['commitid']['fmatvec']+", "+\
-                               "commitid_hdf5serie="+data['commitid']['hdf5serie']+", "+\
-                               "commitid_openmbv="+data['commitid']['openmbv']+", "+\
-                               "commitid_mbsim="+data['commitid']['mbsim']+")"
+      data['relStr']=data['relStr']+"-TESTING_DO_NOT_USE"#mfmf testing: delete this line
+      # generate tagname, platform and relArchiveName
+      tagName=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "release/"+data['relStr']+"-\\1", data['distArchiveName'])
+      platform=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "\\1", data['distArchiveName'])
+      relArchiveName=re.sub("(mbsim-env-.*-shared-build-)xxx(\..*)", "\\g<1>"+data['relStr']+"\\2", data['distArchiveName'])
+      # access token from config file and standard http header
+      access_token=config['login_access_token'][data['login']]
+      headers={'Authorization': 'token '+access_token,
+               'Accept': 'application/vnd.github.v3+json'}
+      # the default response -> is changed/appended later
+      response_data['success']=True
+      response_data['message']=""
+      # the current time -> the create date of the tag object
+      curtime=datetime.datetime.utcnow()
+      # get user name -> is used in the tag object
+      response=requests.get('https://api.github.com/user', headers=headers).json()
+      name=response['name']
+      email=response['email']
+      # create tag object and reference for all repositories
+      data['commitid']['mdtest']='de85f2642ec61d6a62fe87d3e3d2cef18669d620'#mfmf testing: delete this line
+      org="friedrichatgc"# mfmf testing: delete this line
+      repos=['mdtest']# mfmf testing: delete this lin
+      #mfmf org="mbsim-env"
+      #mfmf repos=['fmatvec', 'hdf5serie', 'openmbv', 'mbsim']
+      for repo in repos:
+        # create the git tag object
+        createTagData={"tag": tagName,
+                       "message": "Release "+data['relStr']+" of MBSim-Env for "+platform+"\n"+\
+                                  "\n"+\
+                                  "The binary "+platform+" release can be downloaded from\n"+\
+                                  "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
+                                  "Please note that this binary release includes a full build of MBSim-Env not only of this repository.\n"+\
+                                  "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.\n",
+                       "object": data['commitid'][repo],
+                       "type": "commit",
+                       "tagger": {
+                         "name": name,
+                         "email": name,
+                         "date": curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
+                      }}
+        response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/git/tags',
+                               headers=headers, data=json.dumps(createTagData))
+        # check if the create was successfull
+        if response.status_code!=201:
+          # not successfull -> set response_data and continue with next repo
+          response_data['success']=False
+          response_data['message']=response_data['message']+" "+\
+            "Unable to create the git tag object for repo "+repo+". Please check the tag status of (at least) this repository manually."
+        else:
+          # git tag object created -> get the tag object id
+          tagObjectID=response.json()['sha']
+          # create the github ref
+          createRefData={"ref": "refs/tags/"+tagName,
+                         "sha": tagObjectID}
+          response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/git/refs',
+                                 headers=headers, data=json.dumps(createRefData))
+          # check if the create was successfull
+          if response.status_code!=201:
+            # not successfull -> set response_data and continue with next repo
+            response_data['success']=False
+            response_data['message']=response_data['message']+" "+\
+              "Unable to create the git reference for repo "+repo+". Please check the tag status of (at least) this repository manually."
+          else:
+            # git ref object created -> create GitHub release info
+            createRelData={"tag_name": tagName,
+                           "name": "Release "+data['relStr']+" of MBSim-Env for "+platform,
+                           "body": "The binary "+platform+" release can be downloaded from\n"+\
+                                   "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
+                                   "Please note that this binary release includes a full build of MBSim-Env not only of this repository. "+\
+                                   "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.",
+                           "draft": False,
+                           "prerelease": False}
+            response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/releases',
+                                   headers=headers, data=json.dumps(createRelData))
+            # check if the update was successfull
+            if response.status_code!=201:
+              # not successfull -> set response_data and continue with next repo
+              response_data['success']=False
+              response_data['message']=response_data['message']+" "+\
+                "Unable to create the GitHub release info for repo "+repo+". Please check the tag/release status of (at least) this repository manually."
+      # set message if everything was done Successfully
+      if response_data['success']==True:
+        response_data['message']="Successfully released and tagged this distribution."
+        # copy the distribution to the release dir
+        srcFile=data['reportOutDir']+"/distribute/"+data['distArchiveName']
+        dstFile="/var/www/html/mbsim/releases/"+relArchiveName
+        shutil.copyfile(srcFile, dstFile)
 
 except:
   # reset all output and generate a json error message
