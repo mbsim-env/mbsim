@@ -106,7 +106,7 @@ namespace MBSimGUI {
     setLayout(layout);
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
     layout->addWidget(frictionFunction);
   }
 
@@ -115,7 +115,7 @@ namespace MBSimGUI {
     setLayout(layout);
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
     layout->addWidget(frictionFunction);
   }
 
@@ -124,7 +124,8 @@ namespace MBSimGUI {
     layout = new QVBoxLayout;
     layout->setMargin(0);
     funcList = new CustomComboBox;
-    funcList->addItem(tr("Linear regularized coulomb friction"));
+    funcList->addItem(tr("Linear regularized Coulomb friction"));
+    funcList->addItem(tr("Linear regularized Stribeck friction"));
     funcList->addItem(tr("Symbolic friction function"));
     layout->addWidget(funcList);
     setLayout(layout);
@@ -138,6 +139,12 @@ namespace MBSimGUI {
       layout->removeWidget(frictionForceFunc);
       delete frictionForceFunc;
       frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
+      layout->addWidget(frictionForceFunc);
+    }
+    else if(index==1) {
+      layout->removeWidget(frictionForceFunc);
+      delete frictionForceFunc;
+      frictionForceFunc = new LinearRegularizedStribeckFrictionWidget;
       layout->addWidget(frictionForceFunc);
     }
     else {
@@ -155,7 +162,8 @@ namespace MBSimGUI {
     layout = new QVBoxLayout;
     layout->setMargin(0);
     funcList = new CustomComboBox;
-    funcList->addItem(tr("Linear regularized coulomb friction"));
+    funcList->addItem(tr("Linear regularized Coulomb friction"));
+    funcList->addItem(tr("Linear regularized Stribeck friction"));
     layout->addWidget(funcList);
     setLayout(layout);
     connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
@@ -168,6 +176,12 @@ namespace MBSimGUI {
       layout->removeWidget(frictionForceFunc);
       delete frictionForceFunc;
       frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
+      layout->addWidget(frictionForceFunc);
+    }
+    else {
+      layout->removeWidget(frictionForceFunc);
+      delete frictionForceFunc;
+      frictionForceFunc = new LinearRegularizedStribeckFrictionWidget;
       layout->addWidget(frictionForceFunc);
     }
   }
@@ -195,7 +209,7 @@ namespace MBSimGUI {
     setLayout(layout);
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
     layout->addWidget(frictionFunction);
   }
 
@@ -204,7 +218,7 @@ namespace MBSimGUI {
     setLayout(layout);
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    frictionFunction = new ExtWidget("Friction coefficient function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
     layout->addWidget(frictionFunction);
   }
 
@@ -269,11 +283,11 @@ namespace MBSimGUI {
     setLayout(layout);
 
     comboBox = new CustomComboBox;
-    comboBox->addItem(tr("Planar coulomb friction"));
-    comboBox->addItem(tr("Planar stribeck friction"));
+    comboBox->addItem(tr("Planar Coulomb friction"));
+    comboBox->addItem(tr("Planar Stribeck friction"));
     comboBox->addItem(tr("Regularized planar friction"));
-    comboBox->addItem(tr("Spatial coulomb friction"));
-    comboBox->addItem(tr("Spatial stribeck friction"));
+    comboBox->addItem(tr("Spatial Coulomb friction"));
+    comboBox->addItem(tr("Spatial Stribeck friction"));
     comboBox->addItem(tr("Regularized spatial friction"));
     layout->addWidget(comboBox);
     connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionLaw(int)));
@@ -305,10 +319,10 @@ namespace MBSimGUI {
     setLayout(layout);
 
     comboBox = new CustomComboBox;
-    comboBox->addItem(tr("Planar coloumb impact"));
-    comboBox->addItem(tr("Planar stribeck impact"));
-    comboBox->addItem(tr("Spatial coloumb impact"));
-    comboBox->addItem(tr("Spatial stribeck impact"));
+    comboBox->addItem(tr("Planar Coloumb impact"));
+    comboBox->addItem(tr("Planar Stribeck impact"));
+    comboBox->addItem(tr("Spatial Coloumb impact"));
+    comboBox->addItem(tr("Spatial Stribeck impact"));
     layout->addWidget(comboBox);
     connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionImpactLaw(int)));
     defineFrictionImpactLaw(0);

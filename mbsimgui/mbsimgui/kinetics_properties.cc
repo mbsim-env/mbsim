@@ -278,6 +278,8 @@ namespace MBSimGUI {
     delete frictionForceFunc;
     if(index==0)
       frictionForceFunc = new LinearRegularizedCoulombFriction("NoName",this);  
+    else if(index==1)
+      frictionForceFunc = new LinearRegularizedStribeckFriction("NoName",this);
     else {
       vector<string> var;
       var.push_back("gd");
@@ -293,8 +295,10 @@ namespace MBSimGUI {
     if(e1) {
       if(E(e1)->getTagName() == MBSIM%"LinearRegularizedCoulombFriction")
         index = 0;
-      else if(E(e1)->getTagName() == MBSIM%"SymbolicFunction")
+      if(E(e1)->getTagName() == MBSIM%"LinearRegularizedStribeckFriction")
         index = 1;
+      else if(E(e1)->getTagName() == MBSIM%"SymbolicFunction")
+        index = 2;
     }
     defineFunction(index);
     frictionForceFunc->initializeUsingXML(e->getFirstElementChild());
@@ -319,14 +323,20 @@ namespace MBSimGUI {
     delete frictionForceFunc;
     if(index==0)
       frictionForceFunc = new LinearRegularizedCoulombFriction("NoName",this);  
+    else
+      frictionForceFunc = new LinearRegularizedStribeckFriction("NoName",this);
   }
 
   DOMElement* RegularizedSpatialFriction::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
     DOMElement *e1 = e->getFirstElementChild();
-    if(e1 && E(e1)->getTagName() == MBSIM%"LinearRegularizedCoulombFriction")
+    if(e1) {
+    if(E(e1)->getTagName() == MBSIM%"LinearRegularizedCoulombFriction")
       index = 0;
+    else if(E(e1)->getTagName() == MBSIM%"LinearRegularizedStribeckFriction")
+      index = 1;
+    }
     defineFunction(0);
     frictionForceFunc->initializeUsingXML(e->getFirstElementChild());
     return e;

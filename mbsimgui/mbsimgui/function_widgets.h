@@ -314,6 +314,17 @@ namespace MBSimGUI {
     ExtWidget *gd, *mu;
   };
 
+  class LinearRegularizedStribeckFrictionWidget: public FunctionWidget {
+
+    friend class LinearRegularizedStribeckFriction;
+
+    public:
+    LinearRegularizedStribeckFrictionWidget();
+
+    private:
+    ExtWidget *gd, *mu;
+  };
+
   class SignalFunctionWidget: public FunctionWidget {
 
     friend class SignalFunction;

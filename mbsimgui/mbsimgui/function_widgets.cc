@@ -527,6 +527,22 @@ namespace MBSimGUI {
     layout->addWidget(mu);
   }
 
+  LinearRegularizedStribeckFrictionWidget::LinearRegularizedStribeckFrictionWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.01"),velocityUnits(),0));
+    gd = new ExtWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(gd);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+    mu = new ExtWidget("Friction function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)),false);
+    layout->addWidget(mu);
+  }
+
   SignalFunctionWidget::SignalFunctionWidget(Element *element) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
