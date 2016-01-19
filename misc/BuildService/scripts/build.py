@@ -322,6 +322,7 @@ def main():
     print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
     print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
     print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
+    print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=docFD)
     print('</head>', file=docFD)
     print('<body style="margin:1em">', file=docFD)
     print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
@@ -340,9 +341,9 @@ def main():
     print('</div>', file=docFD)
     print('<hr/>', file=docFD)
     print('<span class="pull-left small">', file=docFD)
-    print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=docFD)
-    print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=docFD)
-    print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=docFD)
+    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=docFD)
+    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=docFD)
+    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=docFD)
     print('</span>', file=docFD)
     print('<span class="pull-right small">', file=docFD)
     print('  Generated on %s'%(str(timeID)), file=docFD)
@@ -373,10 +374,11 @@ def main():
   <title>Build Results of MBSim-Env: <small>%s</small></title>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
   <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
 <body style="margin:1em">
 <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
-<script type="text/javascript" src="http://www.mbsim-env.de/mbsim/html/mbsimBuildServiceClient.js"></script>
+<script type="text/javascript" src="../../../html/mbsimBuildServiceClient.js"></script>
 <script type="text/javascript">
   $(document).ready(function() {
     $.fn.dataTableExt.sErrMode = 'throw';
@@ -496,9 +498,9 @@ def main():
 
   print('<hr/>', file=mainFD)
   print('<span class="pull-left small">', file=mainFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=mainFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=mainFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=mainFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=mainFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=mainFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=mainFD)
   print('</span>', file=mainFD)
   print('<span class="pull-right small">', file=mainFD)
   print('  Generated on %s'%(str(timeID)), file=mainFD)
