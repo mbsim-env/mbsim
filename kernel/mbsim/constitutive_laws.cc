@@ -468,6 +468,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarStribeckFriction, MBSIM%"PlanarStribeckFriction")
+
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), (*fmu)(0) * fabs(laN)));
   }
@@ -510,6 +512,15 @@ namespace MBSim {
     return Vec(1, INIT, -(*fmu)(fabs(gd(0))) * sign(gd(0)));
   }
 
+  void PlanarStribeckFriction::initializeUsingXML(DOMElement *element) {
+    FrictionForceLaw::initializeUsingXML(element);
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionFunction");
+    setFrictionFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialStribeckFriction, MBSIM%"SpatialStribeckFriction")
+
   Vec SpatialStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return proxCT3D(la - r * gdn, (*fmu)(nrm2(gdn)) * fabs(laN));
   }
@@ -547,6 +558,13 @@ namespace MBSim {
 
   Vec SpatialStribeckFriction::dlaTdlaN(const Vec& gd, double laN) {
     return -(*fmu)(nrm2(gd)) * gd / nrm2(gd);
+  }
+
+  void SpatialStribeckFriction::initializeUsingXML(DOMElement *element) {
+    FrictionForceLaw::initializeUsingXML(element);
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionFunction");
+    setFrictionFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
   }
 
   DOMElement* FrictionImpactLaw::writeXMLFile(DOMNode *parent) { 
@@ -675,6 +693,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarStribeckImpact, MBSIM%"PlanarStribeckImpact")
+
   Vec PlanarStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), (*fmu)(fabs(gdn(0))) * fabs(laN)));
   }
@@ -720,6 +740,15 @@ namespace MBSim {
       return 0;
   }
 
+  void PlanarStribeckImpact::initializeUsingXML(DOMElement *element) {
+    FrictionImpactLaw::initializeUsingXML(element);
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionFunction");
+    setFrictionFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialStribeckImpact, MBSIM%"SpatialStribeckImpact")
+
   Vec SpatialStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la - r * gdn, (*fmu)(nrm2(gdn)) * fabs(laN));
   }
@@ -760,6 +789,13 @@ namespace MBSim {
       return 1;
     else
       return 0;
+  }
+
+  void SpatialStribeckImpact::initializeUsingXML(DOMElement *element) {
+    FrictionImpactLaw::initializeUsingXML(element);
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionFunction");
+    setFrictionFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedUnilateralConstraint, MBSIM%"RegularizedUnilateralConstraint")

@@ -143,6 +143,28 @@ namespace MBSimGUI {
     ExtWidget* frictionCoefficient;
   };
 
+  class PlanarStribeckFrictionWidget : public FrictionForceLawWidget {
+
+    friend class PlanarStribeckFriction;
+
+    public:
+    PlanarStribeckFrictionWidget();
+    virtual QString getType() const { return "PlanarStribeckFriction"; }
+    protected:
+    ExtWidget* frictionFunction;
+  };
+
+  class SpatialStribeckFrictionWidget : public FrictionForceLawWidget {
+
+    friend class SpatialStribeckFriction;
+
+    public:
+    SpatialStribeckFrictionWidget();
+    virtual QString getType() const { return "SpatialStribeckFriction"; }
+    protected:
+    ExtWidget* frictionFunction;
+  };
+
   class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
     Q_OBJECT
 
@@ -200,6 +222,28 @@ namespace MBSimGUI {
     virtual QString getType() const { return "SpatialCoulombImpact"; }
     protected:
     ExtWidget* frictionCoefficient;
+  };
+
+  class PlanarStribeckImpactWidget : public FrictionImpactLawWidget {
+
+    friend class PlanarStribeckImpact;
+
+    public:
+    PlanarStribeckImpactWidget();
+    virtual QString getType() const { return "PlanarStribeckImpact"; }
+    protected:
+    ExtWidget* frictionFunction;
+  };
+
+  class SpatialStribeckImpactWidget : public FrictionImpactLawWidget {
+
+    friend class SpatialStribeckImpact;
+
+    public:
+    SpatialStribeckImpactWidget();
+    virtual QString getType() const { return "SpatialStribeckImpact"; }
+    protected:
+    ExtWidget* frictionFunction;
   };
 
   class GeneralizedForceLawChoiceWidget : public Widget {

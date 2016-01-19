@@ -348,6 +348,22 @@ namespace MBSimGUI {
       ExtProperty gd, mu;
   };
 
+  class LinearRegularizedStribeckFriction: public Function {
+    public:
+      LinearRegularizedStribeckFriction(const std::string &name, Element *parent);
+
+      virtual PropertyInterface* clone() const {return new LinearRegularizedStribeckFriction(*this);}
+      virtual std::string getType() const { return "LinearRegularizedStribeckFriction"; }
+
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    private:
+      ExtProperty gd, mu;
+  };
+
   class SignalFunction : public Function {
     public:
       SignalFunction(const std::string &name, Element *parent); 

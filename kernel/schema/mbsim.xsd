@@ -3008,6 +3008,54 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="SpatialStribeckFriction" substitutionGroup="FrictionForceLaw" type="SpatialStribeckFrictionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert räumliche Stribeck-Reibung auf Beschleunigungsebene.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="SpatialStribeckFrictionType">
+    <xs:complexContent>
+      <xs:extension base="FrictionForceLawType">
+        <xs:sequence>
+          <xs:element name="frictionFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PlanarStribeckFriction" substitutionGroup="FrictionForceLaw" type="PlanarStribeckFrictionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert ebene Stribeck-Reibung auf Beschleunigungsebene.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="PlanarStribeckFrictionType">
+    <xs:complexContent>
+      <xs:extension base="FrictionForceLawType">
+        <xs:sequence>
+          <xs:element name="frictionFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="FrictionImpactLaw" abstract="true" type="FrictionImpactLawType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse zur Beschreibung von Reibgesetzen auf Geschwindigkeitsebene. 
@@ -3052,6 +3100,54 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="SpatialStribeckImpact" substitutionGroup="FrictionImpactLaw" type="SpatialStribeckImpactType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert räumliche Stribeck-Reibung auf Geschwindigkeitssebene.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="SpatialStribeckImpactType">
+    <xs:complexContent>
+      <xs:extension base="FrictionImpactLawType">
+        <xs:sequence>
+          <xs:element name="frictionFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PlanarStribeckImpact" substitutionGroup="FrictionImpactLaw" type="PlanarStribeckImpactType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert ebene Stribeck-Reibung auf Geschwindigkeitssebene.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="PlanarStribeckImpactType">
+    <xs:complexContent>
+      <xs:extension base="FrictionImpactLawType">
+        <xs:sequence>
+          <xs:element name="frictionFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="Function" abstract="true" substitutionGroup="Element" type="FunctionType">
     <xs:annotation>

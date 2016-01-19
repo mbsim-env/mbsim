@@ -348,7 +348,7 @@ def main():
     print('<span class="pull-right small">', file=docFD)
     print('  Generated on %s'%(str(timeID)), file=docFD)
     print('  <a href="http://validator.w3.org/check?uri=referer">', file=docFD)
-    print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
+    print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
     print('  </a>', file=docFD)
     print('</span>', file=docFD)
     print('</body>', file=docFD)
@@ -373,7 +373,7 @@ def main():
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Build Results of MBSim-Env: <small>%s</small></title>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
-  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
+  <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
   <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
 <body style="margin:1em">
@@ -505,7 +505,7 @@ def main():
   print('<span class="pull-right small">', file=mainFD)
   print('  Generated on %s'%(str(timeID)), file=mainFD)
   print('  <a href="http://validator.w3.org/check?uri=referer">', file=mainFD)
-  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
+  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
   print('  </a>', file=mainFD)
   print('</span>', file=mainFD)
   print('</body>', file=mainFD)

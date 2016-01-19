@@ -374,7 +374,7 @@ def main():
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MBSim runexamples Results: %s</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
-    <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
+    <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
   </head>
   <body style="margin:1em">
@@ -565,7 +565,7 @@ def main():
 <span class="pull-right small">
   Generated on %s by runexamples.py
   <a href="http://validator.w3.org/check?uri=referer">
-    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
+    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
   </a>
 </span>
 <span id="FINISHED" style="display:none"> </span>
@@ -874,7 +874,7 @@ def runExample(resultQueue, example):
       print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
       print('  <a href="http://validator.w3.org/check?uri=referer">',  file=htmlOutputFD)
-      print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>',  file=htmlOutputFD)
+      print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>',  file=htmlOutputFD)
       print('  </a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('</body>', file=htmlOutputFD)
@@ -1147,7 +1147,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
   print('  <a href="http://validator.w3.org/check?uri=referer">', file=diffHTMLPlotFD)
-  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=diffHTMLPlotFD)
+  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=diffHTMLPlotFD)
   print('  </a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
@@ -1529,7 +1529,7 @@ def compareExample(example, compareFN):
   print('<span class="pull-right small">', file=compareFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)
   print('  <a href="http://validator.w3.org/check?uri=referer">', file=compareFD)
-  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=compareFD)
+  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=compareFD)
   print('  </a>', file=compareFD)
   print('</span>', file=compareFD)
   print('</body>', file=compareFD)
