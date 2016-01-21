@@ -375,10 +375,11 @@ def main():
     <title>MBSim runexamples Results: %s</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
     <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
   </head>
   <body style="margin:1em">
   <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
-  <script type="text/javascript" src="http://www.mbsim-env.de/mbsim/html/mbsimBuildServiceClient.js"></script>
+  <script type="text/javascript" src="../../../../../html/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -405,8 +406,7 @@ def main():
       });
 
       // if this is the current example table from the build server and is finished than enable the reference update
-      if(($(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/" ||
-          $(location).attr('href')=="http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current/index.html") &&
+      if($(location).attr('href').search("/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current")>=0 &&
           $("#FINISHED").length>0) {
         // show reference update and status
         $("#UPDATEREFERENCES").css("display", "block");
@@ -558,9 +558,9 @@ def main():
 </div>
 <hr/>
 <span class="pull-left small">
-  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
 </span>
 <span class="pull-right small">
   Generated on %s by runexamples.py
@@ -822,6 +822,7 @@ def runExample(resultQueue, example):
       print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=htmlOutputFD)
       print('  <title>Validate XML Files: %s</title>'%(args.buildType), file=htmlOutputFD)
       print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=htmlOutputFD)
+      print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body style="margin:1em">', file=htmlOutputFD)
       print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=htmlOutputFD)
@@ -866,9 +867,9 @@ def runExample(resultQueue, example):
       print('</tbody></table>', file=htmlOutputFD)
       print('<hr/>',  file=htmlOutputFD)
       print('<span class="pull-left small">',  file=htmlOutputFD)
-      print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
-      print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
-      print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
+      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /',  file=htmlOutputFD)
+      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /',  file=htmlOutputFD)
+      print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>',  file=htmlOutputFD)
       print('</span>',  file=htmlOutputFD)
       print('<span class="pull-right small">',  file=htmlOutputFD)
       print('  Generated on %s by runexamples.py'%(str(timeID)), file=htmlOutputFD)
@@ -1109,6 +1110,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=diffHTMLPlotFD)
   print('  <title>Difference Plot: %s</title>'%(args.buildType), file=diffHTMLPlotFD)
   print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=diffHTMLPlotFD)
+  print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body style="margin:1em">', file=diffHTMLPlotFD)
   print('<h1>Difference Plot: <small>%s</small></h1>'%(args.buildType), file=diffHTMLPlotFD)
@@ -1138,9 +1140,9 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
   print('<hr/>', file=diffHTMLPlotFD)
   print('<span class="pull-left small">', file=diffHTMLPlotFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=diffHTMLPlotFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=diffHTMLPlotFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=diffHTMLPlotFD)
   print('</span>', file=diffHTMLPlotFD)
   print('<span class="pull-right small">', file=diffHTMLPlotFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=diffHTMLPlotFD)
@@ -1366,6 +1368,7 @@ def compareExample(example, compareFN):
   print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=compareFD)
   print('  <title>Compare Results: %s</title>'%(args.buildType), file=compareFD)
   print('  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>', file=compareFD)
+  print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body style="margin:1em">', file=compareFD)
   print('<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>', file=compareFD)
@@ -1519,9 +1522,9 @@ def compareExample(example, compareFN):
   print('</tbody></table>', file=compareFD)
   print('<hr/>', file=compareFD)
   print('<span class="pull-left small">', file=compareFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
-  print('  <a href="/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=compareFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=compareFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=compareFD)
   print('</span>', file=compareFD)
   print('<span class="pull-right small">', file=compareFD)
   print('  Generated on %s by runexamples.py'%(str(timeID)), file=compareFD)

@@ -94,6 +94,7 @@ try:
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Save Login in Browser</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
   </head>
   <body style="margin:1em">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
