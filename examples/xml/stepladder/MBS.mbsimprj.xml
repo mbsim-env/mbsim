@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://mbsim.berlios.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Parameter>
+      <scalarParameter name="l" unit="-">1</scalarParameter>
+      <scalarParameter name="b" unit="-">0</scalarParameter>
+      <scalarParameter name="al" unit="-">70/180*pi</scalarParameter>
+      <vectorParameter name="q0" unit="-">
+        <xmlVector>
+          <ele>l/2*cos(al)</ele>
+          <ele>l/2*sin(al)*1.0001</ele>
+          <ele>-al</ele>
+        </xmlVector>
+      </vectorParameter>
+      <scalarParameter name="mu" unit="-">0.2</scalarParameter>
+      <scalarParameter name="a" unit="-">l*cos(al)</scalarParameter>
+      <scalarParameter name="h" unit="-">l*sin(al)</scalarParameter>
+      <scalarParameter name="xG" unit="-">1/(1+mu^2)*(a-mu*h)</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="MBS">
+      <frames>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <?OPENMBV_ID 114?>
+            <size unit="dm">1</size>
+          </enableOpenMBV>
+          <relativeOrientation>
+            <aboutZ xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" unit="degree">90</aboutZ>
+          </relativeOrientation>
+        </FixedRelativeFrame>
+      </frames>
+      <contours>
+        <Line name="Line1">
+          <frameOfReference ref="../Frame[I]"/>
+          <enableOpenMBV>
+            <?OPENMBV_ID 115?>
+            <length unit="m">3</length>
+          </enableOpenMBV>
+        </Line>
+        <Line name="Line2">
+          <frameOfReference ref="../Frame[P1]"/>
+          <enableOpenMBV>
+            <?OPENMBV_ID 116?>
+            <length unit="m">3</length>
+          </enableOpenMBV>
+        </Line>
+      </contours>
+      <groups/>
+      <objects>
+        <Embed xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+          <Parameter/>
+          <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="Stepladder">
+            <initialGeneralizedPosition>
+              <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <ele>q0(1)</ele>
+                <ele>q0(2)</ele>
+                <ele>q0(3)</ele>
+              </xmlVector>
+            </initialGeneralizedPosition>
+            <mass unit="kg">0</mass>
+            <inertiaTensor unit="kg*m^2">
+              <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <row>
+                  <ele>0.01</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0.01</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0.01</ele>
+                </row>
+              </xmlMatrix>
+            </inertiaTensor>
+            <stateDependentTranslation>
+              <TranslationAlongAxesXY/>
+            </stateDependentTranslation>
+            <stateDependentRotation>
+              <RotationAboutZAxis/>
+            </stateDependentRotation>
+            <frames>
+              <FixedRelativeFrame name="P1">
+                <enableOpenMBV>
+                  <?OPENMBV_ID 121?>
+                  <size unit="dm">1</size>
+                </enableOpenMBV>
+                <relativePosition unit="m">
+                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                    <ele>-l/2</ele>
+                    <ele>-b/2</ele>
+                    <ele>0</ele>
+                  </xmlVector>
+                </relativePosition>
+              </FixedRelativeFrame>
+              <FixedRelativeFrame name="P2">
+                <enableOpenMBV>
+                  <?OPENMBV_ID 122?>
+                  <size unit="dm">1</size>
+                </enableOpenMBV>
+                <relativePosition unit="m">
+                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                    <ele>l/2</ele>
+                    <ele>-b/2</ele>
+                    <ele>0</ele>
+                  </xmlVector>
+                </relativePosition>
+              </FixedRelativeFrame>
+            </frames>
+            <contours>
+              <Point name="Point1">
+                <frameOfReference ref="../Frame[P1]"/>
+                <enableOpenMBV>
+                  <?OPENMBV_ID 123?>
+                </enableOpenMBV>
+              </Point>
+              <Point name="Point2">
+                <frameOfReference ref="../Frame[P2]"/>
+                <enableOpenMBV>
+                  <?OPENMBV_ID 124?>
+                </enableOpenMBV>
+              </Point>
+            </contours>
+            <openMBVRigidBody>
+              <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+                <?OPENMBV_ID 117?>
+                <transparency unit="-">0.3</transparency>
+                <initialTranslation unit="m">
+                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </xmlVector>
+                </initialTranslation>
+                <initialRotation unit="rad">
+                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </xmlVector>
+                </initialRotation>
+                <scaleFactor unit="-">1</scaleFactor>
+                <length unit="m">
+                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                    <ele>l</ele>
+                    <ele>b</ele>
+                    <ele>b</ele>
+                  </xmlVector>
+                </length>
+              </Cuboid>
+            </openMBVRigidBody>
+            <enableOpenMBVFrameC>
+              <?OPENMBV_ID 118?>
+              <size unit="dm">1</size>
+            </enableOpenMBVFrameC>
+          </RigidBody>
+        </Embed>
+        <RigidBody name="Mass">
+          <frameOfReference ref="../Object[Stepladder]/Frame[P2]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <timeDependentTranslation>
+            <NestedFunction>
+              <outerFunction>
+                <TranslationAlongXAxis/>
+              </outerFunction>
+              <innerFunction>
+                <LinearFunction>
+                  <a1>-0.1</a1>
+                </LinearFunction>
+              </innerFunction>
+            </NestedFunction>
+          </timeDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+              <?OPENMBV_ID 129?>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="dm">0.5</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <?OPENMBV_ID 130?>
+            <size unit="dm">1</size>
+          </enableOpenMBVFrameC>
+          <enableOpenMBVWeight>
+            <?OPENMBV_ID 129?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVWeight>
+        </RigidBody>
+      </objects>
+      <links>
+        <Contact name="Contact1">
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <tangentialForceLaw>
+            <PlanarCoulombFriction>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombFriction>
+          </tangentialForceLaw>
+          <tangentialImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </tangentialImpactLaw>
+          <connect ref1="../Contour[Line1]" ref2="../Object[Stepladder]/Contour[Point1]"/>
+          <enableOpenMBVNormalForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </Contact>
+        <Contact name="Contact2">
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <tangentialForceLaw>
+            <PlanarCoulombFriction>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombFriction>
+          </tangentialForceLaw>
+          <tangentialImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </tangentialImpactLaw>
+          <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point2]"/>
+          <enableOpenMBVNormalForce>
+            <?OPENMBV_ID 148?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <?OPENMBV_ID 148?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </Contact>
+        <Contact name="Contact3">
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <tangentialForceLaw>
+            <PlanarCoulombFriction>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombFriction>
+          </tangentialForceLaw>
+          <tangentialImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </tangentialImpactLaw>
+          <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point1]"/>
+          <enableOpenMBVNormalForce>
+            <?OPENMBV_ID 157?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <?OPENMBV_ID 157?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </Contact>
+      </links>
+      <observers>
+        <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver1">
+          <frame ref="../Object[Stepladder]/Frame[P1]"/>
+        </AbsoluteKinematicsObserver>
+        <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver2">
+          <frame ref="../Object[Stepladder]/Frame[P2]"/>
+        </AbsoluteKinematicsObserver>
+      </observers>
+      <enableOpenMBVFrameI>
+        <?OPENMBV_ID 113?>
+        <size unit="dm">1</size>
+      </enableOpenMBVFrameI>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+      <solverParameters>
+        <tolerances>
+          <projection unit="-">1e-15</projection>
+          <g unit="-">1e-6</g>
+          <gd unit="-">1e-8</gd>
+          <gdd unit="-">1e-10</gdd>
+          <la unit="-">1e-10</la>
+          <La unit="-">1e-8</La>
+        </tolerances>
+      </solverParameters>
+      <useConstraintSolverForPlot>1</useConstraintSolverForPlot>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">7</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
+    <initialStepSize unit="s">1e-10</initialStepSize>
+    <minimalStepSize unit="s">0</minimalStepSize>
+    <maximalStepSize unit="s">0</maximalStepSize>
+    <plotOnRoot>0</plotOnRoot>
+  </LSODARIntegrator>
+
+</MBSimProject>
