@@ -664,6 +664,11 @@
                 Definiert, ob vor Beginn der Simulation eine Projektion der generalisierten Lagen und Geschwindigkeiten erfolgen soll.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="useConstraintSolverForPlot" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit einem entsprechenden Lösungsverfahren berechnet werden sollen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

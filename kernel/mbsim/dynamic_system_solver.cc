@@ -67,7 +67,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
   DynamicSystemSolver::DynamicSystemSolver(const string &name) :
-      Group(name), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
+      Group(name), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), READZ0(false), truncateSimulationFiles(true) {
     constructor();
   }
 
@@ -1458,6 +1458,9 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialProjection");
     if (e)
       setInitialProjection(Element::getBool(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"useConstraintSolverForPlot");
+    if (e)
+      setUseConstraintSolverForPlot(Element::getBool(e));
   }
 
   DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {
@@ -1773,7 +1776,12 @@ namespace MBSim {
       updateV(t, 0);
       updateG(t);
       updatewb(t);
-      computeConstraintForces(t);
+      if(useConstraintSolverForPlot) {
+        b << W[0].T() * slvLLFac(LLM[0], h[0]) + wb;
+        solveConstraints();
+      }
+      else
+        computeConstraintForces(t);
     }
 
     updater(t, 0);
