@@ -28,7 +28,7 @@ using namespace boost;
 
 namespace MBSimGUI {
 
-  Eigenanalyser::Eigenanalyser() : initialState(0,false), task(0,false), amplitude(0,false), mode(0,false), determineEquilibriumState(0,false), autoUpdate(0,false) {
+  Eigenanalyser::Eigenanalyser() : initialState(0,false), task(0,false), amplitude(0,false), mode(0,false), determineEquilibriumState(0,false), autoUpdate(0,true) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMANALYSER%"startTime"));
@@ -52,7 +52,7 @@ namespace MBSimGUI {
 
     determineEquilibriumState.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMANALYSER%"determineEquilibriumState",vector<string>(2,"")),"",4));
 
-    autoUpdate.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMANALYSER%"autoUpdate",vector<string>(2,"")),"",4));
+    autoUpdate.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMANALYSER%"autoUpdate",vector<string>(2,"")),"",4));
 
   }
 

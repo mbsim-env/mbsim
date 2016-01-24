@@ -403,7 +403,7 @@ namespace MBSimGUI {
     list.push_back("\"eigenmodes\"");
     list.push_back("\"eigenmode\"");
     list.push_back("\"eigenmotion\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,3,true),true);
+    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true);
     addToTab("General",task);
 
     amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
