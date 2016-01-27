@@ -57,9 +57,18 @@ namespace MBSim {
        */
       virtual ~SingleContact();
 
+      void resetUpToDate();
+
+      const double& getGeneralizedNormalForce(double t) { if(updlaN) updateGeneralizedNormalForce(t); return lambdaN; }
+      const fmatvec::VecV& getGeneralizedTangentialForce(double t) { if(updlaT) updateGeneralizedTangentialForce(t); return lambdaT; }
+      const fmatvec::Vec3 getNormalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF.col(0); }
+      const fmatvec::Mat3xV getTangentialForceDirection(double t) { if(updFD) updateForceDirections(t); return DF(fmatvec::Index(0,2),fmatvec::Index(1,DF.cols()-1)); }
+
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t);
       virtual void updateV(double t, int i=0);
+      void updateGeneralizedNormalForce(double t);
+      void updateGeneralizedTangentialForce(double t);
       virtual void updateGeneralizedSetValuedForces(double t);
       virtual void updateGeneralizedSingleValuedForces(double t);
       virtual void updateGeneralizedPositions(double t);
@@ -68,6 +77,8 @@ namespace MBSim {
       virtual void updateVelocities(double t);
       virtual void updateg(double t);
       virtual void updategd(double t);
+      virtual void updateh(double t, int i=0);
+      virtual void updateW(double t, int i=0);
       virtual void updateStopVector(double t);
       /***************************************************/
 
@@ -291,6 +302,13 @@ namespace MBSim {
        * \brief gap acceleration buffer
        */
       fmatvec::Vec gddNBuf, gddTBuf;
+
+      double lambdaN;
+      fmatvec::VecV lambdaT;
+
+      bool updlaN, updlaT;
+
+      fmatvec::Index iMV;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**

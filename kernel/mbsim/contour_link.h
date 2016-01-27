@@ -95,7 +95,7 @@ namespace MBSim {
       virtual void updateForceDirections(double t);
       void updateSingleValuedForces(double t);
       void updateSetValuedForces(double t);
-      void updateSetValuedForceDirections(double t);
+      void updateR(double t);
       const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrP0P1; }
       const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
       const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
@@ -107,8 +107,8 @@ namespace MBSim {
       const fmatvec::Vec3& getSetValuedMoment(double t) { if(updFMV) updateSetValuedForces(t); return M; }
       const fmatvec::Vec3& getForce(double t) { return isSetValued()?getSetValuedForce(t):getSingleValuedForce(t); }
       const fmatvec::Vec3& getMoment(double t) { return isSetValued()?getSetValuedMoment(t):getSingleValuedMoment(t); }
-      const fmatvec::Mat3xV& getSetValuedForceDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RF; }
-      const fmatvec::Mat3xV& getSetValuedMomentDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RM; }
+      const fmatvec::Mat3xV& getRF(double t) { if(updR) updateR(t); return RF; }
+      const fmatvec::Mat3xV& getRM(double t) { if(updR) updateR(t); return RM; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
@@ -142,7 +142,7 @@ namespace MBSim {
       boost::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
 #endif
 
-      bool updPos, updVel, updFD, updFSV, updFMV, updRMV;
+      bool updPos, updVel, updFD, updFSV, updFMV, updR;
   };
 }
 

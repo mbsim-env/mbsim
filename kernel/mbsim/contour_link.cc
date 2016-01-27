@@ -34,7 +34,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  ContourLink::ContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+  ContourLink::ContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updR(true) {
     contour[0] = NULL;
     contour[1] = NULL;
   }
@@ -139,8 +139,8 @@ namespace MBSim {
   }
 
   void ContourLink::updateW(double t, int j) {
-    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
-    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSetValuedForceDirection(t)(Index(0,2),Index(0,laSize-1));
+    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
+    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
   }
 
   void ContourLink::updateForceDirections(double t) {
@@ -165,17 +165,15 @@ namespace MBSim {
     updFMV = false;
   }
 
-  void ContourLink::updateSetValuedForceDirections(double t) {
+  void ContourLink::updateR(double t) {
     RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
     RM.set(Index(0,2), Index(iM), getGlobalMomentDirection(t));
-    updRMV = false;
+    updR = false;
   }
 
   void ContourLink::init(InitStage stage) {
     if(stage==resize) {
       Link::init(stage);
-      RF.resize(laSize);
-      RM.resize(laSize);
       cpData[0].getFrameOfReference().setParent(this);
       cpData[1].getFrameOfReference().setParent(this);
       cpData[0].getFrameOfReference().setFrameOfReference(contour[0]->getFrameOfReference());
@@ -238,7 +236,7 @@ namespace MBSim {
     updFD = true;
     updFSV = true;
     updFMV = true;
-    updRMV = true;
+    updR = true;
     cpData[0].getFrameOfReference().resetUpToDate();
     cpData[1].getFrameOfReference().resetUpToDate();
   }

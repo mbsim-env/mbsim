@@ -313,7 +313,7 @@ namespace MBSim {
       return false;
   }
 
-  Vec PlanarCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
+  Vec PlanarCoulombFriction::dlaTdlaN(const Vec& gd) {
     return Vec(1, INIT, -mu * sign(gd(0)));
   }
 
@@ -451,7 +451,7 @@ namespace MBSim {
       return false;
   }
 
-  Vec SpatialCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
+  Vec SpatialCoulombFriction::dlaTdlaN(const Vec& gd) {
     return -mu * gd / nrm2(gd);
   }
 
@@ -506,7 +506,7 @@ namespace MBSim {
       return false;
   }
 
-  Vec PlanarStribeckFriction::dlaTdlaN(const Vec& gd, double laN) {
+  Vec PlanarStribeckFriction::dlaTdlaN(const Vec& gd) {
     return Vec(1, INIT, -(*fmu)(fabs(gd(0))) * sign(gd(0)));
   }
 
@@ -545,7 +545,7 @@ namespace MBSim {
       return false;
   }
 
-  Vec SpatialStribeckFriction::dlaTdlaN(const Vec& gd, double laN) {
+  Vec SpatialStribeckFriction::dlaTdlaN(const Vec& gd) {
     return -(*fmu)(nrm2(gd)) * gd / nrm2(gd);
   }
 

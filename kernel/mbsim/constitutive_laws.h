@@ -66,8 +66,8 @@ namespace MBSim {
        * \param tolerance
        * \return flag, if force law is active
        */
-      virtual bool isActive(double g, double gTol) { return true; }
-      virtual bool remainsActive(double s, double sTol) { return true; }
+      virtual bool isClosed(double g, double gTol) { return true; }
+      virtual bool remainsClosed(double s, double sTol) { return true; }
 
       /**
        * \brief prox function evaluation
@@ -159,16 +159,14 @@ namespace MBSim {
       virtual ~UnilateralConstraint() { }
 
       /* INHERITED INTERFACE */
-      virtual bool isActive(double g, double gTol) { return g<=gTol; }
-      virtual bool remainsActive(double gd, double gdTol) { return gd<=gdTol; }
+      virtual bool isClosed(double g, double gTol) { return g<=gTol; }
+      virtual bool remainsClosed(double gd, double gdTol) { return gd<=gdTol; }
       virtual double project(double la, double gdn, double r, double laMin=0);
       virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0);
       virtual double solve(double G, double gdn);
       virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0);
       virtual bool isSetValued() const { return true; }
       /***************************************************/
-
-      bool remainsClosed(double s, double sTol) { return s<=sTol; }  // s = gd/gdd
 
       virtual std::string getType() const { return "UnilateralConstraint"; }
   };
@@ -192,7 +190,7 @@ namespace MBSim {
       virtual ~BilateralConstraint() { }
 
       /* INHERITED INTERFACE */
-      virtual bool isActive(double g, double gTol) { return true; }
+      virtual bool isClosed(double g, double gTol) { return true; }
       virtual double project(double la, double gdn, double r, double laMin=0);
       virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0);
       virtual double solve(double G, double gdn);
@@ -331,7 +329,7 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { return fmatvec::Mat(2,2); }
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) { return fmatvec::Vec(2); }
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) { return true; }
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN) { return fmatvec::Vec(2); }
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) { return fmatvec::Vec(2); }
       virtual int getFrictionDirections() = 0;
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) { return 0; }
@@ -383,7 +381,7 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd);
       virtual int getFrictionDirections() { return 1; }
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return mu; }
@@ -421,7 +419,7 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd);
       virtual int getFrictionDirections() { return 2; }
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return mu; }
@@ -467,7 +465,7 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd);
       virtual int getFrictionDirections() { return 1; }
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
@@ -511,7 +509,7 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd);
       virtual int getFrictionDirections() { return 2; }
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
@@ -735,8 +733,8 @@ namespace MBSim {
       virtual ~RegularizedUnilateralConstraint() {};
 
       /* INHERITED INTERFACE */
-      virtual bool isActive(double g, double gTol) { return g<=gTol; }
-      virtual bool remainsActive(double s, double sTol) { return s<=sTol; }
+      virtual bool isClosed(double g, double gTol) { return g<=gTol; }
+      virtual bool remainsClosed(double s, double sTol) { return s<=sTol; }
       virtual bool isSetValued() const { return false; }
 //      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
       /***************************************************/
@@ -762,8 +760,8 @@ namespace MBSim {
       virtual ~MaxwellUnilateralConstraint() { }
 
       /* INHERITED INTERFACE */
-      virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
-      virtual bool remainsActive(double s, double sTol) {return true; }
+      virtual bool isClosed(double g, double gTol) { return g < gTol ? true : false; }
+      virtual bool remainsClosed(double s, double sTol) {return true; }
       virtual bool isSetValued() const { return false; }
   };
 
@@ -784,8 +782,8 @@ namespace MBSim {
 //      virtual ~MaxwellUnilateralConstraint();
 //
 //      /* INHERITED INTERFACE */
-//      virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
-//      virtual bool remainsActive(double s, double sTol) {return true; }
+//      virtual bool isClosed(double g, double gTol) { return g < gTol ? true : false; }
+//      virtual bool remainsClosed(double s, double sTol) {return true; }
 //      virtual bool isSetValued() const { return false; }
 //      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts);
 //      /***************************************************/
@@ -952,8 +950,8 @@ namespace MBSim {
       virtual ~RegularizedBilateralConstraint() {};
 
       /* INHERITED INTERFACE */
-      virtual bool isActive(double g, double gTol) { return true; }
-      virtual bool remainsActive(double s, double sTol) { return true; }
+      virtual bool isClosed(double g, double gTol) { return true; }
+      virtual bool remainsClosed(double s, double sTol) { return true; }
       virtual bool isSetValued() const { return false; }
 //      virtual void computeSmoothForces(std::vector<std::vector<SingleContact> > & contact);
       /***************************************************/
