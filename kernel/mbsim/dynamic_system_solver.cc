@@ -692,7 +692,7 @@ namespace MBSim {
         }
       }
       else
-        jacobianImpacts(t);
+        jacobianImpacts(t,dt);
       Vec dx;
       if (linAlg == LUDecomposition)
         dx >> slvLU(Jprox, res0);

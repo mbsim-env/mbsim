@@ -61,16 +61,13 @@ namespace MBSim {
 
       const double& getGeneralizedNormalForce(double t) { if(updlaN) updateGeneralizedNormalForce(t); return lambdaN; }
       const fmatvec::VecV& getGeneralizedTangentialForce(double t) { if(updlaT) updateGeneralizedTangentialForce(t); return lambdaT; }
-      const fmatvec::Vec3 getNormalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF.col(0); }
-      const fmatvec::Mat3xV getTangentialForceDirection(double t) { if(updFD) updateForceDirections(t); return DF(fmatvec::Index(0,2),fmatvec::Index(1,DF.cols()-1)); }
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t);
       virtual void updateV(double t, int i=0);
       void updateGeneralizedNormalForce(double t);
       void updateGeneralizedTangentialForce(double t);
-      virtual void updateGeneralizedSetValuedForces(double t);
-      virtual void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedForce(double t);
       virtual void updateGeneralizedPositions(double t);
       virtual void updateGeneralizedVelocities(double t);
       virtual void updatePositions(double t);
@@ -109,7 +106,7 @@ namespace MBSim {
       virtual void solveImpactsRootFinding(double t, double dt);
       virtual void solveConstraintsRootFinding(double t);
       virtual void jacobianConstraints(double t);
-      virtual void jacobianImpacts(double t);
+      virtual void jacobianImpacts(double t, double dt);
       virtual void updaterFactors(double t);
       virtual void checkConstraintsForTermination(double t);
       virtual void checkImpactsForTermination(double t, double dt);
@@ -307,8 +304,6 @@ namespace MBSim {
       fmatvec::VecV lambdaT;
 
       bool updlaN, updlaT;
-
-      fmatvec::Index iMV;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**

@@ -713,10 +713,10 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::jacobianImpacts(double t) {
+  void MaxwellContact::jacobianImpacts(double t, double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->jacobianImpacts(t);
+        jter->jacobianImpacts(t,dt);
     }
   }
 
@@ -866,14 +866,14 @@ namespace MBSim {
 
     //Apply damping force
     //TODO: use damping function for that (to be more flexible...)
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        if ((*jter).getGeneralizedRelativePosition(t)(0) < gLim and (*jter).getGeneralizedRelativeVelocity(t)(0) < 0)
-          (*jter).getGeneralizedSingleValuedForce(false)(0) = -dampingCoefficient * (*jter).getGeneralizedRelativeVelocity(t)(0);
-        else
-          (*jter).getGeneralizedSingleValuedForce(false)(0) = 0;
-      }
-    }
+//    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+//      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+//        if ((*jter).getGeneralizedRelativePosition(t)(0) < gLim and (*jter).getGeneralizedRelativeVelocity(t)(0) < 0)
+//          (*jter).getGeneralizedSingleValuedForce(false)(0) = -dampingCoefficient * (*jter).getGeneralizedRelativeVelocity(t)(0);
+//        else
+//          (*jter).getGeneralizedSingleValuedForce(false)(0) = 0;
+//      }
+//    }
 
     if (possibleContactPoints.size()) {
       updateInfluenceMatrix(t);
@@ -896,9 +896,9 @@ namespace MBSim {
         cout << "lambda = " << lambda << endl;
       }
 
-      for (size_t i = 0; i < possibleContactPoints.size(); ++i) {
-        contacts[possibleContactPoints[i].first][possibleContactPoints[i].second].getGeneralizedSingleValuedForce(false)(0) += lambda(i);
-      }
+//      for (size_t i = 0; i < possibleContactPoints.size(); ++i) {
+//        contacts[possibleContactPoints[i].first][possibleContactPoints[i].second].getGeneralizedSingleValuedForce(false)(0) += lambda(i);
+//      }
     }
   }
 

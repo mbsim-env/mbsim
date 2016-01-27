@@ -195,7 +195,7 @@ namespace MBSim {
       /**
        * \brief compute JACOBIAN of contact equations on velocity level
        */
-      virtual int jacobianImpacts(double t);
+      virtual int jacobianImpacts(double t, double dt);
 
       /**
        * \brief validate force laws concerning given tolerances

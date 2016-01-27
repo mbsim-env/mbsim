@@ -301,7 +301,7 @@ namespace MBSim {
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on velocity level
        */
-      virtual void jacobianImpacts(double t) { THROW_MBSIMERROR("(Link::jacobianImpacts): Not implemented."); }
+      virtual void jacobianImpacts(double t, double dt) { THROW_MBSIMERROR("(Link::jacobianImpacts): Not implemented."); }
 
       /**
        * \brief update relaxation factors for contact equations
@@ -415,14 +415,15 @@ namespace MBSim {
       virtual void updateGeneralizedVelocities(double t) { }
       virtual void updateGeneralizedSingleValuedForces(double t) { }
       virtual void updateGeneralizedSetValuedForces(double t) { }
+      virtual void updateGeneralizedForce(double t) { }
 
       const fmatvec::VecV& getGeneralizedRelativePosition(double t) { if(updrrel) updateGeneralizedPositions(t); return rrel; }
       const fmatvec::VecV& getGeneralizedRelativeVelocity(double t) { if(updvrel) updateGeneralizedVelocities(t); return vrel; }
       const fmatvec::VecV& getGeneralizedSingleValuedForce(double t) { if(updlaSV) updateGeneralizedSingleValuedForces(t); return laSV; }
       const fmatvec::VecV& getGeneralizedSetValuedForce(double t) { if(updlaMV) updateGeneralizedSetValuedForces(t); return laMV; }
-      const fmatvec::VecV& getGeneralizedForce(double t) { return isSetValued()?getGeneralizedSetValuedForce(t):getGeneralizedSingleValuedForce(t); }
+      const fmatvec::VecV& getGeneralizedForce(double t) { if(updlaSV) updateGeneralizedForce(t); return laSV; }
 
-      fmatvec::VecV& getGeneralizedSingleValuedForce(bool check=true) {  assert((not check) or (not updlaSV)); return laSV; }
+      fmatvec::VecV& getGeneralizedForce(bool check=true) {  assert((not check) or (not updlaSV)); return laSV; }
 
       /**
        * \brief saves contact forces for use as starting value in next time step

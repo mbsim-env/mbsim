@@ -93,22 +93,15 @@ namespace MBSim {
 
       void resetUpToDate();
       virtual void updateForceDirections(double t);
-      void updateSingleValuedForces(double t);
-      void updateSetValuedForces(double t);
-      void updateR(double t);
+      void updateForce(double t);
+      void updateMoment(double t);
       const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrP0P1; }
       const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
       const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
       const fmatvec::Mat3xV& getGlobalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF; }
       const fmatvec::Mat3xV& getGlobalMomentDirection(double t) { if(updFD) updateForceDirections(t); return DM; }
-      const fmatvec::Vec3& getSingleValuedForce(double t) { if(updFSV) updateSingleValuedForces(t); return F; }
-      const fmatvec::Vec3& getSingleValuedMoment(double t) { if(updFSV) updateSingleValuedForces(t); return M; }
-      const fmatvec::Vec3& getSetValuedForce(double t) { if(updFMV) updateSetValuedForces(t); return F; }
-      const fmatvec::Vec3& getSetValuedMoment(double t) { if(updFMV) updateSetValuedForces(t); return M; }
-      const fmatvec::Vec3& getForce(double t) { return isSetValued()?getSetValuedForce(t):getSingleValuedForce(t); }
-      const fmatvec::Vec3& getMoment(double t) { return isSetValued()?getSetValuedMoment(t):getSingleValuedMoment(t); }
-      const fmatvec::Mat3xV& getRF(double t) { if(updR) updateR(t); return RF; }
-      const fmatvec::Mat3xV& getRM(double t) { if(updR) updateR(t); return RM; }
+      const fmatvec::Vec3& getForce(double t) { if(updF) updateForce(t); return F; }
+      const fmatvec::Vec3& getMoment(double t) { if(updM) updateMoment(t); return M; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
@@ -142,7 +135,7 @@ namespace MBSim {
       boost::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
 #endif
 
-      bool updPos, updVel, updFD, updFSV, updFMV, updR;
+      bool updPos, updVel, updFD, updF, updM, updR;
   };
 }
 

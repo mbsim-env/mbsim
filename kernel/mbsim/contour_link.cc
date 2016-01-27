@@ -34,7 +34,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  ContourLink::ContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updR(true) {
+  ContourLink::ContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updR(true) {
     contour[0] = NULL;
     contour[1] = NULL;
   }
@@ -134,13 +134,13 @@ namespace MBSim {
   } 
 
   void ContourLink::updateh(double t, int j) {
-    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
-    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
+//    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
+//    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
   }
 
   void ContourLink::updateW(double t, int j) {
-    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
-    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
+//    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
+//    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
   }
 
   void ContourLink::updateForceDirections(double t) {
@@ -153,23 +153,21 @@ namespace MBSim {
     updFD = false;
   }
 
-  void ContourLink::updateSingleValuedForces(double t) {
-    F = getGlobalForceDirection(t)*getGeneralizedSingleValuedForce(t)(iF);
-    M = getGlobalMomentDirection(t)*getGeneralizedSingleValuedForce(t)(iM);
-    updFSV = false;
+  void ContourLink::updateForce(double t) {
+    F = getGlobalForceDirection(t)*getGeneralizedForce(t)(iF);
+    updF = false;
   }
 
-  void ContourLink::updateSetValuedForces(double t) {
-    F = getGlobalForceDirection(t)*getGeneralizedSetValuedForce(t)(iF);
-    M = getGlobalMomentDirection(t)*getGeneralizedSetValuedForce(t)(iM);
-    updFMV = false;
+  void ContourLink::updateMoment(double t) {
+    M = getGlobalMomentDirection(t)*getGeneralizedForce(t)(iM);
+    updM = false;
   }
 
-  void ContourLink::updateR(double t) {
-    RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
-    RM.set(Index(0,2), Index(iM), getGlobalMomentDirection(t));
-    updR = false;
-  }
+//  void ContourLink::updateR(double t) {
+//    RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
+//    RM.set(Index(0,2), Index(iM), getGlobalMomentDirection(t));
+//    updR = false;
+//  }
 
   void ContourLink::init(InitStage stage) {
     if(stage==resize) {
@@ -234,8 +232,8 @@ namespace MBSim {
     updPos = true;
     updVel = true;
     updFD = true;
-    updFSV = true;
-    updFMV = true;
+    updF = true;
+    updM = true;
     updR = true;
     cpData[0].getFrameOfReference().resetUpToDate();
     cpData[1].getFrameOfReference().resetUpToDate();

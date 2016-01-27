@@ -115,7 +115,7 @@ namespace MBSim {
       virtual void solveImpactsRootFinding(double t, double dt);
       virtual void solveConstraintsRootFinding(double t);
       virtual void jacobianConstraints(double t);
-      virtual void jacobianImpacts(double t);
+      virtual void jacobianImpacts(double t, double dt);
       virtual void updaterFactors(double t);
       virtual void checkConstraintsForTermination(double t);
       virtual void checkImpactsForTermination(double t, double dt);

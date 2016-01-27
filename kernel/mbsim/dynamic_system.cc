@@ -565,10 +565,10 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::jacobianImpacts(double t) {
+  int DynamicSystem::jacobianImpacts(double t, double dt) {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->jacobianImpacts(t);
+      (*i)->jacobianImpacts(t,dt);
 
     return 0;
   }

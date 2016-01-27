@@ -689,10 +689,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::jacobianImpacts(double t) {
+  void Contact::jacobianImpacts(double t, double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->jacobianImpacts(t);
+        jter->jacobianImpacts(t,dt);
     }
   }
 
