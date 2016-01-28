@@ -154,7 +154,7 @@ namespace MBSim {
       GeneralizedSpringDamper(const std::string &name="");
       ~GeneralizedSpringDamper();
 
-      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedForce(double t);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }

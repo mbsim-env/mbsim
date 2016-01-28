@@ -32,7 +32,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+  RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow.resize(1);
     MArrow.resize(1);
@@ -109,20 +109,16 @@ namespace MBSim {
     updFD = false;
   }
 
-  void RigidBodyLink::updateSingleValuedForces(double t) { 
-    for(unsigned i=0; i<body.size(); i++) {
-      F[i] = getGlobalForceDirection(t,i)*getGeneralizedSingleValuedForce(t)(iF);
-      M[i] = getGlobalMomentDirection(t,i)*getGeneralizedSingleValuedForce(t)(iM);
-    }
-    updFSV = false;
+  void RigidBodyLink::updateForce(double t) { 
+    for(unsigned i=0; i<body.size(); i++)
+      F[i] = getGlobalForceDirection(t,i)*getGeneralizedForce(t)(iF);
+    updF = false;
   }
 
-  void RigidBodyLink::updateSetValuedForces(double t) { 
-    for(unsigned i=0; i<body.size(); i++) {
-      F[i] = getGlobalForceDirection(t,i)*getGeneralizedSetValuedForce(t)(iF);
-      M[i] = getGlobalMomentDirection(t,i)*getGeneralizedSetValuedForce(t)(iM);
-    }
-    updFMV = false;
+  void RigidBodyLink::updateMoment(double t) { 
+    for(unsigned i=0; i<body.size(); i++)
+      M[i] = getGlobalMomentDirection(t,i)*getGeneralizedForce(t)(iM);
+    updM = false;
   }
 
   void RigidBodyLink::updateSetValuedForceDirections(double t) { 
@@ -136,11 +132,11 @@ namespace MBSim {
   void RigidBodyLink::updateh(double t, int j) {
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)
-        h[j][i]+=body[i]->getJRel(t,j).T()*getGeneralizedSingleValuedForce(t)*ratio[i];
+        h[j][i]+=body[i]->getJRel(t,j).T()*getGeneralizedForce(t)*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        h[j][i]+=(body[i]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t,i)  + body[i]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t,i))*ratio[i];
-        h[j][body.size()+i]-=(C[i].getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t,i) + C[i].getJacobianOfRotation(t,j).T()*getSingleValuedMoment(t,i))*ratio[i];
+        h[j][i]+=(body[i]->getFrameForKinematics()->getJacobianOfTranslation(t,j).T()*getForce(t,i)  + body[i]->getFrameForKinematics()->getJacobianOfRotation(t,j).T()*getMoment(t,i))*ratio[i];
+        h[j][body.size()+i]-=(C[i].getJacobianOfTranslation(t,j).T()*getForce(t,i) + C[i].getJacobianOfRotation(t,j).T()*getMoment(t,i))*ratio[i];
       }
     }
   }
@@ -322,8 +318,8 @@ namespace MBSim {
     updPos = true;
     updVel = true;
     updFD = true;
-    updFSV = true;
-    updFMV = true;
+    updF = true;
+    updM = true;
     updRMV = true;
     for(unsigned int i=0; i<C.size(); i++)
       C[i].resetUpToDate();

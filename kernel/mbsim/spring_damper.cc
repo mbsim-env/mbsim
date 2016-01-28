@@ -236,7 +236,7 @@ namespace MBSim {
     delete func;
   }
 
-  void GeneralizedSpringDamper::updateGeneralizedSingleValuedForces(double t) {
+  void GeneralizedSpringDamper::updateGeneralizedForce(double t) {
     laSV(0) = -(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
     updlaSV = false;
   }

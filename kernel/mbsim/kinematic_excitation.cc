@@ -43,13 +43,11 @@ namespace MBSim {
     gdSize = body[0]->getuRelSize();
   }
 
-  void KinematicExcitation::updateGeneralizedSetValuedForces(double t) {
-    laMV = la;
-    updlaMV = false;
-  }
-
-  void KinematicExcitation::updateGeneralizedSingleValuedForces(double t) {
-    laSV = (*func)(getGeneralizedRelativePosition(t),getGeneralizedRelativeVelocity(t));
+  void KinematicExcitation::updateGeneralizedForce(double t) {
+    if(func)
+      laSV = (*func)(getGeneralizedRelativePosition(t),getGeneralizedRelativeVelocity(t));
+    else
+      laSV = la;
     updlaSV = false;
   }
 

@@ -37,7 +37,7 @@ namespace MBSim {
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
       std::vector<FloatingRelativeFrame> C;
-      bool updPos, updVel, updFD, updFSV, updFMV, updRMV;
+      bool updPos, updVel, updFD, updF, updM, updRMV;
       std::vector<fmatvec::Mat3xV> DF, DM;
       std::vector<fmatvec::Vec3> F, M;
       std::vector<fmatvec::Mat3xV> RF, RM;
@@ -56,19 +56,15 @@ namespace MBSim {
       void updatePositions(double t);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
+      void updateForce(double t);
+      void updateMoment(double t);
       void updateForceDirections(double t);
-      void updateSingleValuedForces(double t);
-      void updateSetValuedForces(double t);
       void updateSetValuedForceDirections(double t);
       void updatewb(double t);
       const fmatvec::Mat3xV& getGlobalForceDirection(double t, int i) { if(updFD) updateForceDirections(t); return DF[i]; }
       const fmatvec::Mat3xV& getGlobalMomentDirection(double t, int i) { if(updFD) updateForceDirections(t); return DM[i]; }
-      const fmatvec::Vec3& getSingleValuedForce(double t, int i) { if(updFSV) updateSingleValuedForces(t); return F[i]; }
-      const fmatvec::Vec3& getSingleValuedMoment(double t, int i) { if(updFSV) updateSingleValuedForces(t); return M[i]; }
-      const fmatvec::Vec3& getSetValuedForce(double t, int i) { if(updFMV) updateSetValuedForces(t); return F[i]; }
-      const fmatvec::Vec3& getSetValuedMoment(double t, int i) { if(updFMV) updateSetValuedForces(t); return M[i]; }
-      const fmatvec::Vec3& getForce(double t, int i) { return isSetValued()?getSetValuedForce(t,i):getSingleValuedForce(t,i); }
-      const fmatvec::Vec3& getMoment(double t, int i) { return isSetValued()?getSetValuedMoment(t,i):getSingleValuedMoment(t,i); }
+      const fmatvec::Vec3& getForce(double t, int i) { if(updF) updateForce(t); return F[i]; }
+      const fmatvec::Vec3& getMoment(double t, int i) { if(updM) updateMoment(t); return M[i]; }
       const fmatvec::Mat3xV& getSetValuedForceDirection(double t, int i) { if(updRMV) updateSetValuedForceDirections(t); return RF[i]; }
       const fmatvec::Mat3xV& getSetValuedMomentDirection(double t, int i) { if(updRMV) updateSetValuedForceDirections(t); return RM[i]; }
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
