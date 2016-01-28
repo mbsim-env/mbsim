@@ -54,7 +54,7 @@ namespace MBSim {
 
   void Joint::updatewb(double t) {
     Mat3xV WJT = refFrame->getOrientation(t) * JT;
-    VecV sdT = WJT.T() * (getGlobalRelativeVelocity(t));
+    VecV sdT = WJT.T() * getGlobalRelativeVelocity(t);
 
     wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t) - C.getGyroscopicAccelerationOfTranslation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
     wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t) - C.getGyroscopicAccelerationOfRotation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
@@ -103,7 +103,7 @@ namespace MBSim {
     Vec3 M = (fml and not fml->isSetValued())?getGlobalMomentDirection(t)*getGeneralizedMomentForce(t):Vec3();
 
     h[j][0] -= C.getJacobianOfTranslation(t,j).T() * F + C.getJacobianOfRotation(t,j).T() * M;
-    h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t) + frame[1]->getJacobianOfRotation(t,j).T() * getSingleValuedMoment(t);
+    h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * F + frame[1]->getJacobianOfRotation(t,j).T() * M;
   }
 
   void Joint::updateW(double t, int j) {
