@@ -69,10 +69,10 @@ namespace MBSim {
   void Joint::updateGeneralizedMomentForces(double t) {
     if (fml) {
       if(fml->isSetValued())
-        for (int i = forceDir.cols(), j; i < forceDir.cols() + momentDir.cols(); i++, j++)
+        for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
           lambdaM(j) = la(i);
       else
-        for (int i = forceDir.cols(), j; i < forceDir.cols() + momentDir.cols(); i++, j++)
+        for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
           lambdaM(j) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
     }
     updlaM = false;
