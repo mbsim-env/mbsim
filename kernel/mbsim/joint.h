@@ -53,8 +53,14 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      void updateGeneralizedSingleValuedForces(double t);
-      void updateGeneralizedSetValuedForces(double t);
+      void resetUpToDate();
+      const fmatvec::VecV& getGeneralizedForceForce(double t) { if(updlaF) updateGeneralizedForceForces(t); return lambdaF; }
+      const fmatvec::VecV& getGeneralizedMomentForce(double t) { if(updlaM) updateGeneralizedMomentForces(t); return lambdaM; }
+      void updateGeneralizedForceForces(double t);
+      void updateGeneralizedMomentForces(double t);
+      void updateGeneralizedForce(double t);
+      void updateh(double t, int i=0);
+      void updateW(double t, int i=0);
       void updatewb(double t);
       /***************************************************/
 
@@ -133,6 +139,10 @@ namespace MBSim {
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
        */
       fmatvec::Vec gdn, gdd;
+
+      fmatvec::VecV lambdaF, lambdaM;
+
+      bool updlaF, updlaM;
   };
 
   class InverseKineticsJoint : public Joint {

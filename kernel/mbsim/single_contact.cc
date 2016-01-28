@@ -168,6 +168,7 @@ namespace MBSim {
   void SingleContact::updateW(double t, int j) {
     int i = fcl->isSetValued()?0:1;
     Mat3xV RF = getGlobalForceDirection(t)(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(i,i+laSize-1));
+
     W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
     W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
   }

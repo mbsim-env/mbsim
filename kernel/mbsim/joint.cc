@@ -36,7 +36,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
 
-  Joint::Joint(const string &name) : FloatingFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0) {
+  Joint::Joint(const string &name) : FloatingFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0), updlaF(true), updlaM(true) {
   }
 
   Joint::~Joint() {
@@ -44,6 +44,12 @@ namespace MBSim {
     delete fml;
     delete fifl;
     delete fiml;
+  }
+
+  void Joint::resetUpToDate() {
+    FloatingFrameLink::resetUpToDate();
+    updlaF = true;
+    updlaM = true;
   }
 
   void Joint::updatewb(double t) {
@@ -54,20 +60,33 @@ namespace MBSim {
     wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t) - C.getGyroscopicAccelerationOfRotation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
   }
 
-  void Joint::updateGeneralizedSetValuedForces(double t) {
-    laMV = la;
-    updlaMV = false;
+  void Joint::updateGeneralizedForceForces(double t) {
+    if (ffl) {
+      if(ffl->isSetValued())
+        for (int i = 0; i < forceDir.cols(); i++)
+          lambdaF(i) = la(i);
+      else
+        for (int i = 0; i < forceDir.cols(); i++)
+          lambdaF(i) = (*ffl)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
+    }
+    updlaF = false;
   }
 
-  void Joint::updateGeneralizedSingleValuedForces(double t) {
-    if (ffl) {
-      for (int i = 0; i < forceDir.cols(); i++)
-        laSV(i) = (*ffl)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
-    }
+  void Joint::updateGeneralizedMomentForces(double t) {
     if (fml) {
-      for (int i = forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++)
-        laSV(i) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
+      if(fml->isSetValued())
+        for (int i = forceDir.cols(), j; i < forceDir.cols() + momentDir.cols(); i++, j++)
+          lambdaM(j) = la(i);
+      else
+        for (int i = forceDir.cols(), j; i < forceDir.cols() + momentDir.cols(); i++, j++)
+          lambdaM(j) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
     }
+    updlaM = false;
+  }
+
+  void Joint::updateGeneralizedForce(double t) {
+    laSV.set(Index(0,forceDir.cols()-1),getGeneralizedForceForce(t));
+    laSV.set(Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1),getGeneralizedMomentForce(t));
     updlaSV = false;
   }
 
@@ -77,6 +96,26 @@ namespace MBSim {
 
   void Joint::updatedx(double t, double dt) {
     xd = getGeneralizedRelativeVelocity(t)(iM) * dt;
+  }
+
+  void Joint::updateh(double t, int j) {
+    Vec3 F = (ffl and not ffl->isSetValued())?getGlobalForceDirection(t)*getGeneralizedForceForce(t):Vec3();
+    Vec3 M = (fml and not fml->isSetValued())?getGlobalMomentDirection(t)*getGeneralizedMomentForce(t):Vec3();
+
+    h[j][0] -= C.getJacobianOfTranslation(t,j).T() * F + C.getJacobianOfRotation(t,j).T() * M;
+    h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t) + frame[1]->getJacobianOfRotation(t,j).T() * getSingleValuedMoment(t);
+  }
+
+  void Joint::updateW(double t, int j) {
+    int nF = (ffl and ffl->isSetValued())?forceDir.cols():0;
+    int nM = (fml and fml->isSetValued())?momentDir.cols():0;
+    Mat3xV RF(nF+nM);
+    Mat3xV RM(RF.cols());
+    RF.set(Index(0,2), Index(0,nF-1), getGlobalForceDirection(t)(Index(0,2),Index(0,nF-1)));
+    RM.set(Index(0,2), Index(nF,nF+nM-1), getGlobalMomentDirection(t)(Index(0,2),Index(0,nM-1)));
+
+    W[j][0] -= C.getJacobianOfTranslation(t,j).T() * RF + C.getJacobianOfRotation(t,j).T() * RM;
+    W[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * RF + frame[1]->getJacobianOfRotation(t,j).T() * RM;
   }
 
   void Joint::calcxSize() {
@@ -89,6 +128,8 @@ namespace MBSim {
       FloatingFrameLink::init(stage);
       gdd.resize(gdSize);
       gdn.resize(gdSize);
+      lambdaF.resize(forceDir.cols());
+      lambdaM.resize(momentDir.cols());
     }
     else if (stage == unknownStage) {
       FloatingFrameLink::init(stage);

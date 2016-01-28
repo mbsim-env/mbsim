@@ -260,8 +260,7 @@ namespace MBSim {
         la.resize(size);
         laMV.resize(size);
       }
-      else
-        laSV.resize(size);
+      laSV.resize(size);
       for(unsigned int i=0; i<2; i++) {
         W[i].resize(2);
         V[i].resize(2);
