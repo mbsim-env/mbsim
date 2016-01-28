@@ -46,11 +46,11 @@ namespace MBSim {
     delete func;
   }
 
-  void SpringDamper::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
+  void SpringDamper::updateGeneralizedForceForces(double t) {
+    lambdaF(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
     if(rrel(0)<=epsroot() && abs(laSV(0))>epsroot())
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
-    updlaSV = false;
+    updlaF = false;
   }
 
   void SpringDamper::init(InitStage stage) {
@@ -91,7 +91,7 @@ namespace MBSim {
           data.push_back(WrOToPoint(0));
           data.push_back(WrOToPoint(1));
           data.push_back(WrOToPoint(2));
-          data.push_back(getGeneralizedSingleValuedForce(t)(0));
+          data.push_back(fabs(getGeneralizedForce(t)(0)));
           coilspringOpenMBV->append(data);
         }
       }
@@ -157,9 +157,9 @@ namespace MBSim {
 //    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
 //  }
 
-  void DirectionalSpringDamper::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
-    updlaSV = false;
+  void DirectionalSpringDamper::updateGeneralizedForceForces(double t) {
+    lambdaF(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
+    updlaF = false;
   }
 
   void DirectionalSpringDamper::init(InitStage stage) {
@@ -200,7 +200,7 @@ namespace MBSim {
           data.push_back(WrOToPoint(0));
           data.push_back(WrOToPoint(1));
           data.push_back(WrOToPoint(2));
-          data.push_back(getGeneralizedSingleValuedForce(t)(0));
+          data.push_back(fabs(getGeneralizedForce(t)(0)));
           coilspringOpenMBV->append(data);
         }
       }
@@ -300,7 +300,7 @@ namespace MBSim {
         data.push_back(WrOToPoint(0));
         data.push_back(WrOToPoint(1));
         data.push_back(WrOToPoint(2));
-        data.push_back(getGeneralizedSingleValuedForce(t)(0));
+        data.push_back(fabs(getGeneralizedForce(t)(0)));
         coilspringOpenMBV->append(data);
       }
 #endif

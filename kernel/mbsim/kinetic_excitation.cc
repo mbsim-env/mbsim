@@ -64,10 +64,14 @@ namespace MBSim {
     if(M) M->init(stage);
   }
 
-  void KineticExcitation::updateGeneralizedSingleValuedForces(double t) {
-    if(F) laSV.set(iF,(*F)(t));
-    if(M) laSV.set(iM,(*M)(t));
-    updlaSV = false;
+  void KineticExcitation::updateGeneralizedForceForces(double t) {
+    if(F) lambdaF = (*F)(t);
+    updlaF = false;
+  }
+
+  void KineticExcitation::updateGeneralizedMomentForces(double t) {
+    if(M) lambdaM = (*M)(t);
+    updlaM = false;
   }
 
   void KineticExcitation::setForceDirection(const Mat3xV &fd) {

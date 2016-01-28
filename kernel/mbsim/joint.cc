@@ -36,7 +36,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
 
-  Joint::Joint(const string &name) : FloatingFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0), updlaF(true), updlaM(true) {
+  Joint::Joint(const string &name) : FloatingFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0) {
   }
 
   Joint::~Joint() {
@@ -44,12 +44,6 @@ namespace MBSim {
     delete fml;
     delete fifl;
     delete fiml;
-  }
-
-  void Joint::resetUpToDate() {
-    FloatingFrameLink::resetUpToDate();
-    updlaF = true;
-    updlaM = true;
   }
 
   void Joint::updatewb(double t) {
@@ -82,12 +76,6 @@ namespace MBSim {
           lambdaM(j) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
     }
     updlaM = false;
-  }
-
-  void Joint::updateGeneralizedForce(double t) {
-    laSV.set(Index(0,forceDir.cols()-1),getGeneralizedForceForce(t));
-    laSV.set(Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1),getGeneralizedMomentForce(t));
-    updlaSV = false;
   }
 
   void Joint::updatexd(double t) {
@@ -128,8 +116,6 @@ namespace MBSim {
       FloatingFrameLink::init(stage);
       gdd.resize(gdSize);
       gdn.resize(gdSize);
-      lambdaF.resize(forceDir.cols());
-      lambdaM.resize(momentDir.cols());
     }
     else if (stage == unknownStage) {
       FloatingFrameLink::init(stage);

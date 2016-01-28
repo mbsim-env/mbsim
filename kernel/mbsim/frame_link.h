@@ -86,23 +86,25 @@ namespace MBSim {
         frame[1] = frame1;
       }
 
-      void resetUpToDate() { Link::resetUpToDate(); updPos = true; updVel = true; updFD = true; updFSV = true; updFMV = true; updRMV = true; }
+      void resetUpToDate();
       void updatePositions(double t);
       void updateVelocities(double t);
-      void updateForceDirections(double t);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
-      void updateSingleValuedForces(double t);
-      void updateSetValuedForces(double t);
+      void updateGeneralizedForce(double t);
+      void updateForce(double t);
+      void updateForceDirections(double t);
       void updateSetValuedForceDirections(double t);
+      virtual void updateGeneralizedForceForces(double t) { }
+      virtual void updateGeneralizedMomentForces(double t) { }
       const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrP0P1; }
       const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
       const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
       const fmatvec::Mat3xV& getGlobalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF; }
-      const fmatvec::Vec3& getSingleValuedForce(double t) { if(updFSV) updateSingleValuedForces(t); return F; }
-      const fmatvec::Vec3& getSetValuedForce(double t) { if(updFMV) updateSetValuedForces(t); return F; }
-      const fmatvec::Vec3& getForce(double t) { return isSetValued()?getSetValuedForce(t):getSingleValuedForce(t); }
+      const fmatvec::Vec3& getForce(double t) { if(updF) updateForce(t); return F; }
       const fmatvec::Mat3xV& getSetValuedForceDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RF; }
+      const fmatvec::VecV& getGeneralizedForceForce(double t) { if(updlaF) updateGeneralizedForceForces(t); return lambdaF; }
+      const fmatvec::VecV& getGeneralizedMomentForce(double t) { if(updlaM) updateGeneralizedMomentForces(t); return lambdaM; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow */
@@ -125,6 +127,8 @@ namespace MBSim {
 
       fmatvec::Mat3xV RF;
 
+      fmatvec::VecV lambdaF, lambdaM;
+
       /**
        * \brief indices of forces and torques
        */
@@ -141,7 +145,7 @@ namespace MBSim {
       boost::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
 #endif
 
-      bool updPos, updVel, updFD, updFSV, updFMV, updRMV;
+      bool updPos, updVel, updFD, updF, updRMV, updlaF, updlaM;
 
     private:
       std::string saved_ref1, saved_ref2;

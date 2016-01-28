@@ -37,12 +37,23 @@ using namespace boost;
 
 namespace MBSim {
 
-  FrameLink::FrameLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updFSV(true), updFMV(true), updRMV(true) {
+  FrameLink::FrameLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updRMV(true), updlaF(true), updlaM(true) {
     frame[0] = NULL;
     frame[1] = NULL;
   }
 
   FrameLink::~FrameLink() {}
+
+  void FrameLink::resetUpToDate() { 
+    Link::resetUpToDate();
+    updPos = true;
+    updVel = true;
+    updFD = true;
+    updF = true;
+    updRMV = true;
+    updlaF = true;
+    updlaM = true;
+  }
 
   void FrameLink::updatedhdz(double t) {
     THROW_MBSIMERROR("Internal error");
@@ -122,14 +133,14 @@ namespace MBSim {
     }
   } 
 
-  void FrameLink::updateSingleValuedForces(double t) { 
-    F = getGlobalForceDirection(t)*getGeneralizedSingleValuedForce(t)(iF);
-    updFSV = false;
+  void FrameLink::updateGeneralizedForce(double t) {
+    laSV = getGeneralizedForceForce(t);
+    updlaSV = false;
   }
 
-  void FrameLink::updateSetValuedForces(double t) { 
-    F = getGlobalForceDirection(t)*getGeneralizedSetValuedForce(t)(iF);
-    updFMV = false;
+  void FrameLink::updateForce(double t) {
+    F = getGlobalForceDirection(t)*getGeneralizedForce(t)(iF);
+    updF = false;
   }
 
   void FrameLink::updateForceDirections(double t) {
@@ -141,8 +152,8 @@ namespace MBSim {
   }
 
   void FrameLink::updateh(double t, int j) {
-    h[j][0]-=frame[0]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
-    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
+    h[j][0]-=frame[0]->getJacobianOfTranslation(t,j).T()*getForce(t);
+    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getForce(t);
   }
   
   void FrameLink::updatePositions(double t) {
@@ -188,8 +199,8 @@ namespace MBSim {
         la.resize(1);
         laMV.resize(1);
       }
-      else
-        laSV.resize(1);
+      laSV.resize(1);
+      lambdaF.resize(1);
       for(unsigned int i=0; i<2; i++) {
         W[i].resize(2);
         V[i].resize(2);
