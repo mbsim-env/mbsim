@@ -275,7 +275,6 @@ namespace MBSim {
         RF.resize(size);
         RM.resize(size);
         la.resize(size);
-        laMV.resize(size);
       }
       laSV.resize(size);
       lambdaF.resize(forceDir.cols());

@@ -181,7 +181,6 @@ namespace MBSim {
         g.resize(rrel.size());
         gd.resize(vrel.size());
         la.resize(vrel.size());
-        laMV.resize(vrel.size());
       }
       laSV.resize(vrel.size());
       for(unsigned int i=0; i<body.size(); i++) {

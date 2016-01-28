@@ -481,8 +481,6 @@ namespace MBSim {
       rrel.resize(1);
       vrel.resize(1 + getFrictionDirections());
       laSV.resize(1 + getFrictionDirections());
-      if(isSetValued())
-        laMV.resize(1 + getFrictionDirections());
 
       if (getFrictionDirections() == 0)
         gdActive[1] = false;

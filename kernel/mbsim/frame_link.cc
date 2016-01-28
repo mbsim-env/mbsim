@@ -197,7 +197,6 @@ namespace MBSim {
         gd.resize(1);
         RF.resize(1);
         la.resize(1);
-        laMV.resize(1);
       }
       laSV.resize(1);
       lambdaF.resize(1);

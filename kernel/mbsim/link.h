@@ -409,7 +409,7 @@ namespace MBSim {
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
 
-      void resetUpToDate() { updrrel = true; updvrel = true; updlaSV = true; updlaMV = true; }
+      void resetUpToDate() { updrrel = true; updvrel = true; updlaSV = true; }
 
       virtual void updateGeneralizedPositions(double t) { }
       virtual void updateGeneralizedVelocities(double t) { }
@@ -419,8 +419,6 @@ namespace MBSim {
 
       const fmatvec::VecV& getGeneralizedRelativePosition(double t) { if(updrrel) updateGeneralizedPositions(t); return rrel; }
       const fmatvec::VecV& getGeneralizedRelativeVelocity(double t) { if(updvrel) updateGeneralizedVelocities(t); return vrel; }
-      const fmatvec::VecV& getGeneralizedSingleValuedForce(double t) { if(updlaSV) updateGeneralizedSingleValuedForces(t); return laSV; }
-      const fmatvec::VecV& getGeneralizedSetValuedForce(double t) { if(updlaMV) updateGeneralizedSetValuedForces(t); return laMV; }
       const fmatvec::VecV& getGeneralizedForce(double t) { if(updlaSV) updateGeneralizedForce(t); return laSV; }
 
       fmatvec::VecV& getGeneralizedForce(bool check=true) {  assert((not check) or (not updlaSV)); return laSV; }
@@ -621,9 +619,9 @@ namespace MBSim {
       int corrSize, corrInd;
       fmatvec::Vec corr;
 
-      fmatvec::VecV rrel, vrel, laSV, laMV;
+      fmatvec::VecV rrel, vrel, laSV;
 
-      bool updrrel, updvrel, updlaSV, updlaMV;
+      bool updrrel, updvrel, updlaSV;
   };
 }
 
