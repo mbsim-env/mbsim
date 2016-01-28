@@ -146,9 +146,7 @@ namespace MBSim {
         body = body_;
       }
       virtual void init(InitStage stage);
-      virtual bool isSetValued() const {
-        return true;
-      }
+      virtual bool isSetValued() const { return true; }
 
     protected:
       Body* body;

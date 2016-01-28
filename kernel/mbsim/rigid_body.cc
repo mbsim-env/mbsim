@@ -19,14 +19,15 @@
 
 #include <config.h>
 #include "rigid_body.h"
-#include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/joint.h"
 #include "mbsim/fixed_relative_frame.h"
+#include "mbsim/contour.h"
+#include "mbsim/joint.h"
+#include "mbsim/constitutive_laws.h"
+#include "mbsim/constraint.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/environment.h"
-#include "mbsim/constraint.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/contours/compound_contour.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -344,6 +345,8 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     joint->setForceDirection(Mat3xV(3,EYE));
     joint->setMomentDirection(Mat3xV(3,EYE));
+    joint->setForceLaw(new BilateralConstraint);
+    joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,&Z);
     joint->setBody(this);
     if(FArrow)

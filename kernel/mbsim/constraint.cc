@@ -657,10 +657,14 @@ namespace MBSim {
   void JointConstraint::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
-    if(forceDir.cols())
+    if(forceDir.cols()) {
       joint->setForceDirection(forceDir);
-    if(momentDir.cols())
+      joint->setForceLaw(new BilateralConstraint);
+    }
+    if(momentDir.cols()) {
       joint->setMomentDirection(momentDir);
+      joint->setMomentLaw(new BilateralConstraint);
+    }
     joint->connect(frame1,frame2);
     if(FArrow)
       joint->setOpenMBVForce(FArrow);
