@@ -397,7 +397,7 @@ def main():
           }
         });
         // save current checked examples
-        var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'], checkedExamples: checkedExamples}
+        var data={checkedExamples: checkedExamples}
         $.ajax({url: cgiPath+"/setcheck",
                 dataType: "json", type: "POST", data: JSON.stringify(data)
               }).done(function(response) {
@@ -414,9 +414,7 @@ def main():
 
         // update checked examples using server data
         statusCommunicating();
-        $.ajax({url: cgiPath+"/getcheck",
-                dataType: "json", type: "POST",
-               }).done(function(response) {
+        $.ajax({url: cgiPath+"/getcheck", dataType: "json", type: "GET"}).done(function(response) {
           if(!response.success)
             statusMessage(response);
           else {

@@ -1042,8 +1042,7 @@ def releaseGeneration1(mainFD):
           checkBoxUnchecked=true;
       });
       // get data
-      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
-                distArchiveName: $("#DISTARCHIVENAME").text(),
+      var data={distArchiveName: $("#DISTARCHIVENAME").text(),
                 reportOutDir: $("#REPORTOUTDIR").text(),
                 relStr: $("#RELEASEVERSION").val(),
                 commitid: {fmatvec:   $("#COMMITID_fmatvec").text(),

@@ -16,14 +16,11 @@
     // when the save button is clicked
     $("#APPLYADDCIBRANCH").click(function() {
       statusCommunicating();
-      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
-                addcibranch: {fmatvec: $('#FMATVEC_BRANCH').val(),
+      var data={addcibranch: {fmatvec: $('#FMATVEC_BRANCH').val(),
                               hdf5serie: $('#HDF5SERIE_BRANCH').val(),
                               openmbv: $('#OPENMBV_BRANCH').val(),
                               mbsim: $('#MBSIM_BRANCH').val(), }}
-      $.ajax({url: cgiPath+"/addcibranch",
-              dataType: "json", type: "POST", data: JSON.stringify(data)
-            }).done(function(response) {
+      $.ajax({url: cgiPath+"/addcibranch", dataType: "json", type: "POST", data: JSON.stringify(data)}).done(function(response) {
         if(!response.success)
           statusMessage(response);
         else {
@@ -36,11 +33,8 @@
     // when the delete button is clicked
     $('#CITABLE').on("click", ".DELCIBRANCH", function() {
       statusCommunicating();
-      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
-                delcibranch: JSON.parse($(this).attr('value').replace(/'/g, '"'))}
-      $.ajax({url: cgiPath+"/delcibranch",
-              dataType: "json", type: "POST", data: JSON.stringify(data)
-            }).done(function(response) {
+      var data={delcibranch: JSON.parse($(this).attr('value').replace(/'/g, '"'))}
+      $.ajax({url: cgiPath+"/delcibranch", dataType: "json", type: "POST", data: JSON.stringify(data)}).done(function(response) {
         if(!response.success)
           statusMessage(response);
         else {
@@ -54,10 +48,7 @@
     function updateCurCIBranches(printStatus) {
       if(printStatus)
         statusCommunicating();
-      var loginname=localStorage['GITHUB_LOGIN_NAME'];
-      $.ajax({url: cgiPath+"/getcibranches", async: printStatus,
-              dataType: "json", type: "POST"
-            }).done(function(response) {
+      $.ajax({url: cgiPath+"/getcibranches", async: printStatus, dataType: "json", type: "GET"}).done(function(response) {
         if(!response.success) {
           if(printStatus)
             statusMessage(response);

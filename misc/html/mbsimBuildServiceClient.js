@@ -41,8 +41,7 @@ $(document).ready(function() {
   var loginWindow;
   $("#LOGINBUTTON").click(function() {
     statusCommunicating();
-    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&redirect_uri="+
-      window.location.origin+cgiPath+"/login&scope=read:org");
+    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&scope=read:org");
   })
   // and install a event listener to react on a successfull login on this page
   window.addEventListener("message", loginCallback, false);
@@ -59,14 +58,8 @@ $(document).ready(function() {
   // when the logout button is clicked
   $("#LOGOUTBUTTON").click(function() {
     statusCommunicating();
-    // remove stored login from browser
-    var loginname=localStorage['GITHUB_LOGIN_NAME'];
-    localStorage.removeItem('GITHUB_LOGIN_NAME');
-    localStorage.removeItem('GITHUB_LOGIN_ATHMAC');
-    // and from server
-    $.ajax({url: cgiPath+"/logout",
-            dataType: "json", type: "POST", data: JSON.stringify({login: loginname})
-          }).done(function(response) {
+    // from server
+    $.ajax({url: cgiPath+"/logout", dataType: "json", type: "GET"}).done(function(response) {
       loginStatus();
       statusMessage(response);
     });
@@ -74,19 +67,12 @@ $(document).ready(function() {
 
   // login status
   function loginStatus() {
-    if(localStorage['GITHUB_LOGIN_NAME']) {
-      $.ajax({url: cgiPath+"/getuser",
-              dataType: "json", type: "POST", data: JSON.stringify({login: localStorage['GITHUB_LOGIN_NAME']})
-            }).done(function(response) {
-        if(!response.success)
-          $('#LOGINUSER').text("Internal error: +"+response.message);
-        else
-          $('#LOGINUSER').text(response.username);
-      });
-    }
-    else {
-      $('#LOGINUSER').text("Not logged in");
-    }
+    $.ajax({url: cgiPath+"/getuser", dataType: "json", type: "GET"}).done(function(response) {
+      if(!response.success)
+        $('#LOGINUSER').text("Internal error: "+response.message);
+      else
+        $('#LOGINUSER').text(response.username);
+    });
   }
   loginStatus();
 });
