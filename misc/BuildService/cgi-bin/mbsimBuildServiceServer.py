@@ -16,6 +16,7 @@ try:
   import threading
   import fcntl
   import datetime
+  import Cookie
 
   # config file: this will lock the config file
   class ConfigFile:
@@ -44,20 +45,26 @@ try:
   
   # get the script action = path info after the script url
   action=os.environ.get('PATH_INFO', None)
+  method=os.environ.get('REQUEST_METHOD', None)
   
   # default response
   defaultOutput=True
-  response_data={'success': False, 'message': "Internal error: Unknown action: "+action}
+  response_data={'success': False, 'message': "Internal error: Unknown action or request method: "+action}
 
   def checkCredicals(config):
     # get login and athmac by http get methode
-    data=json.load(sys.stdin)
-    login=data.get('login', None)
-    if login==None:
+    if 'HTTP_COOKIE' in os.environ:
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      login=c['mbsimenvsessionuser'].value
+      athmac=c['mbsimenvsessionid'].value
+    else:
+      login=None
+      athmac=None
+    # check
+    if login==None or athmac==None:
       response_data['success']=False
       response_data['message']="Not logged in. Please login before saving."
     else:
-      athmac=data['athmac']
       # check whether login in already known by the server (logged in)
       if login not in config['login_access_token']:
         response_data['success']=False
@@ -82,10 +89,10 @@ try:
             response_data['message']="Not allowed to save, since your ("+login+") status in the team Developers of the organization mbsim-env is pending."
           else:
             response_data['success']=True
-    return data, response_data
+    return response_data
   
   # login using github
-  if action=="/login":
+  if action=="/login" and method=="GET":
     # get the github code passed provided by html get methode
     query=urlparse.parse_qs(os.environ['QUERY_STRING'])
     if 'error' in query:
@@ -112,51 +119,64 @@ try:
           config['login_access_token'][login]=access_token
           # redirect to the example web side and pass login and access token hmac as http get methode
           athmac=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
+          # create cookie
+          c=Cookie.SimpleCookie()
+          c['mbsimenvsessionuser']=login
+          c['mbsimenvsessionuser']['comment']="Session username of the mbsimenvsessionid cookie"
+          c['mbsimenvsessionuser']['path']='/'
+          #c['mbsimenvsessionuser']['secure']=True #mfmf
+          c['mbsimenvsessionuser']['httponly']=True
+          c['mbsimenvsessionid']=athmac
+          c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
+          c['mbsimenvsessionid']['path']='/'
+          #c['mbsimenvsessionid']['secure']=True #mfmf
+          c['mbsimenvsessionid']['httponly']=True
           defaultOutput=False
           print('Content-Type: text/html')
+          print(c)
           print()
           print('''<!DOCTYPE html>
 <html lang="en">
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Save Login in Browser</title>
+    <title>Set cookie and notify opener windows</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
   </head>
   <body style="margin:1em">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
     <script type="text/javascript">
       $(document).ready(function() {
-        // save login and access token hmac
-        localStorage["GITHUB_LOGIN_NAME"]="%s";
-        localStorage["GITHUB_LOGIN_ATHMAC"]="%s";
         // notify opener window
         window.opener.postMessage("User %s successfully logged in.", window.location);
       })
     </script>
     <h1>Please Wait</h1>
-    <p>Saving login name and hmac of access token in browser.</p>
+    <p>Set cookie in your browser.</p>
     <p>This window should close itself after a short time.</p>
   </body>
-</html>'''%(login, athmac, login))
+</html>'''%(login))
 
   # logout
-  if action=="/logout":
-    # get login which should be logged by html get methode
-    data=json.load(sys.stdin)
-    login=data.get('login', None)
+  if action=="/logout" and method=="GET":
+    # get login
+    if 'HTTP_COOKIE' in os.environ:
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      login=c['mbsimenvsessionuser'].value
+    else:
+      login=None
     if login==None:
       response_data['success']=True
-      response_data['message']="Not logged in."
+      response_data['message']="Nobody to log out."
     else:
       with ConfigFile(True) as config:
         # remove login including access_token from server config
         config['login_access_token'].pop(login, None)
         # generate json response
         response_data['success']=True
-        response_data['message']="Logged "+login+" out from browser and server."
+        response_data['message']="Logged "+login+" out from server."
   
   # return current checked examples
-  if action=="/getcheck":
+  if action=="/getcheck" and method=="GET":
     with ConfigFile(False) as config: pass
     # not json input via http post required
     # return the checkedExamples entries of the config as json response
@@ -165,9 +185,10 @@ try:
     response_data['checkedExamples']=config['checkedExamples']
   
   # save checked examples (if logged in)
-  if action=="/setcheck":
+  if action=="/setcheck" and method=="POST":
     with ConfigFile(True) as config:
-      data, response_data=checkCredicals(config)
+      response_data=checkCredicals(config)
+      data=json.load(sys.stdin)
       if response_data['success']:
         # save checked examples
         config['checkedExamples']=data['checkedExamples']
@@ -176,7 +197,7 @@ try:
         response_data['message']="Successfully saved."
 
   # return current checked examples
-  if action=="/getcibranches":
+  if action=="/getcibranches" and method=="GET":
     with ConfigFile(False) as config: pass
     # no json input via http post required
     # return branches for CI
@@ -208,9 +229,10 @@ try:
     response_data['mbsimbranch']=out['mbsim']
 
   # return current checked examples
-  if action=="/addcibranch":
+  if action=="/addcibranch" and method=="POST":
     with ConfigFile(True) as config:
-      data, response_data=checkCredicals(config)
+      response_data=checkCredicals(config)
+      data=json.load(sys.stdin)
       if response_data['success']:
         # save checked examples
         newcibranch=data['addcibranch']
@@ -226,9 +248,10 @@ try:
         response_data['message']='New CI branch combination saved.'
 
   # return current checked examples
-  if action=="/delcibranch":
+  if action=="/delcibranch" and method=="POST":
     with ConfigFile(True) as config:
-      data, response_data=checkCredicals(config)
+      response_data=checkCredicals(config)
+      data=json.load(sys.stdin)
       if response_data['success']:
         # del ci branch
         delcibranch=data['delcibranch']
@@ -249,22 +272,29 @@ try:
         response_data['message']='CI branch combination deleted.'
 
   # get user information
-  if action=="/getuser":
-    # not json input via http post required
-    # return branches for CI
-    data=json.load(sys.stdin)
-    login=data.get('login', None)
+  if action=="/getuser" and method=="GET":
+    if 'HTTP_COOKIE' in os.environ:
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      login=c['mbsimenvsessionuser'].value
+    else:
+      login=None
     if login==None:
-      response_data['success']=False
-      response_data['message']="Not logged in."
+      response_data['success']=True
+      response_data['username']="Not logged in"
+      response_data['message']="No session ID cookie found on your browser."
     else:
       with ConfigFile(False) as config: pass
-      response_data['success']=True
-      response_data['message']="User information returned."
-      response_data['username']=login
+      if not login in config['login_access_token']:
+        response_data['success']=True
+        response_data['username']="Not logged in"
+        response_data['message']="The username of the browser cookie is not known by the server. Please relogin."
+      else:
+        response_data['success']=True
+        response_data['username']=login
+        response_data['message']="User information returned."
 
   # react on web hooks
-  if action=="/webhook":
+  if action=="/webhook" and method=="POST":
     with ConfigFile(True) as config:
       rawdata=sys.stdin.read()
       sig=os.environ['HTTP_X_HUB_SIGNATURE'][5:]
@@ -292,9 +322,10 @@ try:
         response_data['message']="OK"
 
   # copy distribution to release and tag on github
-  if action=="/releasedistribution":
+  if action=="/releasedistribution" and method=="POST":
     with ConfigFile(False) as config: pass
-    data, response_data=checkCredicals(config)
+    response_data=checkCredicals(config)
+    data=json.load(sys.stdin)
     if response_data['success']:
       # MISSING not implemented
       response_data['success']=False
