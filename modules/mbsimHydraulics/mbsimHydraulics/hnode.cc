@@ -123,7 +123,6 @@ namespace MBSimHydraulics {
       gd.resize(1);
       la.resize(1);
       laSV.resize(1);
-      laMV.resize(1);
       nLines=connectedLines.size();
       for (unsigned int i=0; i<nLines; i++) {
         connectedLines[i].sign = 
@@ -247,7 +246,7 @@ namespace MBSimHydraulics {
 
   void HNode::updateh(double t, int j) {
     for (unsigned int i=0; i<nLines; i++)
-      h[j][i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * getGeneralizedSingleValuedForce(t)(0);
+      h[j][i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * getGeneralizedForce(t)(0);
   }
 
   void HNode::plot(double t, double dt) {
@@ -291,7 +290,7 @@ namespace MBSimHydraulics {
     pFun->init(stage);
   }
 
-  void ConstrainedNode::updateGeneralizedSingleValuedForces(double t) {
+  void ConstrainedNode::updateGeneralizedForce(double t) {
     laSV(0) = (*pFun)(t);
     updlaSV = false;
   }
@@ -357,22 +356,22 @@ namespace MBSimHydraulics {
     fracAir=getDouble(e);
   }
 
-  void ElasticNode::updateGeneralizedSingleValuedForces(double t) {
+  void ElasticNode::updateGeneralizedForce(double t) {
     laSV = x;
     updlaSV = false;
   }
 
   void ElasticNode::updatexd(double t) {
-    xd(0)=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0))/V*getQHyd(t);
+    xd(0)=(*bulkModulus)(getGeneralizedForce(t)(0))/V*getQHyd(t);
   }
 
   void ElasticNode::updatedx(double t, double dt) {
-    xd(0)=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0))/V*getQHyd(t)*dt;
+    xd(0)=(*bulkModulus)(getGeneralizedForce(t)(0))/V*getQHyd(t)*dt;
   }
 
   void ElasticNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back((*bulkModulus)(getGeneralizedSingleValuedForce(t)(0))*1e-6);
+      plotVector.push_back((*bulkModulus)(getGeneralizedForce(t)(0))*1e-6);
       HNode::plot(t, dt);
     }
   }
@@ -403,9 +402,9 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage);
  }
 
-  void RigidNode::updateGeneralizedSetValuedForces(double t) {
-    laMV = la;
-    updlaMV = false;
+  void RigidNode::updateGeneralizedForce(double t) {
+    laSV = la;
+    updlaSV = false;
   }
 
   void RigidNode::updategd(double t) {
@@ -526,7 +525,7 @@ namespace MBSimHydraulics {
     res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0));
   }
 
-  void RigidNode::jacobianImpacts(double t) {
+  void RigidNode::jacobianImpacts(double t, double dt) {
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG(t);
 
@@ -662,7 +661,7 @@ namespace MBSimHydraulics {
     return changed;
   }
 
-  void RigidCavitationNode::updateGeneralizedSingleValuedForces(double t) {
+  void RigidCavitationNode::updateGeneralizedForce(double t) {
     laSV(0) = pCav;
     updlaSV = false;
   }
@@ -812,7 +811,7 @@ namespace MBSimHydraulics {
     res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0), pCav);
   }
 
-  void RigidCavitationNode::jacobianImpacts(double t) {
+  void RigidCavitationNode::jacobianImpacts(double t, double dt) {
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG(t);
 
@@ -883,7 +882,7 @@ namespace MBSimHydraulics {
     pFunction->init(stage);
   }
 
-  void PressurePump::updateGeneralizedSingleValuedForces(double t) {
+  void PressurePump::updateGeneralizedForce(double t) {
     laSV(0)=(*pFunction)(t);
     laSV = false;
   }

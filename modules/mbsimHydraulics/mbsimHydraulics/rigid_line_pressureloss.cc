@@ -34,7 +34,7 @@ using namespace MBSimControl;
 
 namespace MBSimHydraulics {
 
-  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(true), active0(true), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), unidirectionalPressureLoss(NULL), gfl(NULL), gil(NULL) {
+  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(false), active0(false), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), unidirectionalPressureLoss(NULL), gfl(NULL), gil(NULL) {
     pressureLoss->setLine(line);
     if (dynamic_cast<LinePressureLoss*>(pressureLoss))
       linePressureLoss = (LinePressureLoss*)(pressureLoss);
@@ -49,10 +49,14 @@ namespace MBSimHydraulics {
       gfl=new UnilateralConstraint();
       gil=new UnilateralNewtonImpact();
       dpMin=-((UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
+      active=true;
+      active0=true;
     }
     else if (bilateral) {
       gfl=new BilateralConstraint();
       gil=new BilateralImpact();
+      active=true;
+      active0=true;
     }
     if(gfl) {
       gfl->setParent(this);
@@ -112,7 +116,6 @@ namespace MBSimHydraulics {
         r[0].push_back(Vec(j));
         r[1].push_back(Vec(j));
         sv.resize(1);
-        laMV.resize(1);
       }
     }
     else if (stage==plotting) {
@@ -208,41 +211,36 @@ namespace MBSimHydraulics {
     if (bilateral)
       sv(0)=((ClosableRigidLine*)(line))->getFunction()->operator()(t)-((ClosableRigidLine*)(line))->getMinimalValue();
     else if (unilateral)
-      sv(0)=isActive()?(getGeneralizedSetValuedForce(t)(0)-dpMin)*1e-5:-line->getQIn(t)(0)*6e4;
+      sv(0)=isActive()?(getGeneralizedForce(t)(0)-dpMin)*1e-5:-line->getQIn(t)(0)*6e4;
   }
 
-  void RigidLinePressureLoss::updateGeneralizedSingleValuedForces(double t) {
-    if (linePressureLoss) {
-      linePressureLoss->setTime(t);
-      laSV(0)=(*linePressureLoss)(line->getQIn(t)(0));
-    }
-    else if (closablePressureLoss) {
-      closablePressureLoss->setTime(t);
-      laSV(0)=(*closablePressureLoss)(line->getQIn(t)(0));
-    }
-    else if (leakagePressureLoss) {
-      leakagePressureLoss->setTime(t);
-      laSV(0)=(*leakagePressureLoss)(line->getQIn(t)(0));
-    }
-    else if (unilateral || unidirectionalPressureLoss) {
-      unidirectionalPressureLoss->setTime(t);
-      laSV(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(line->getQIn(t)(0)));
+  void RigidLinePressureLoss::updateGeneralizedForce(double t) {
+    if(isActive())
+      laSV = la;
+    else {
+      if (linePressureLoss) {
+        linePressureLoss->setTime(t);
+        laSV(0)=(*linePressureLoss)(line->getQIn(t)(0));
+      }
+      else if (closablePressureLoss) {
+        closablePressureLoss->setTime(t);
+        laSV(0)=(*closablePressureLoss)(line->getQIn(t)(0));
+      }
+      else if (leakagePressureLoss) {
+        leakagePressureLoss->setTime(t);
+        laSV(0)=(*leakagePressureLoss)(line->getQIn(t)(0));
+      }
+      else if (unilateral || unidirectionalPressureLoss) {
+        unidirectionalPressureLoss->setTime(t);
+        laSV(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(line->getQIn(t)(0)));
+      }
     }
     updlaSV = false;
   }
 
-  void RigidLinePressureLoss::updateGeneralizedSetValuedForces(double t) {
-    if(isActive())
-      laMV = la;
-    else
-      laMV = getGeneralizedSingleValuedForce(t);
-    updlaMV = false;
-  }
-
   void RigidLinePressureLoss::updateh(double t, int j) {
-//    if(isSingleValued() or not(active)) {
-    h[j][0]-=trans(line->getJacobian())*getGeneralizedSingleValuedForce(t)(0);
-//    }
+    if(not(active))
+      h[j][0]-=trans(line->getJacobian())*getGeneralizedForce(t)(0);
   }
 
   void RigidLinePressureLoss::updateW(double t, int j) {
@@ -372,7 +370,7 @@ namespace MBSimHydraulics {
     res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0), dpMin);
   }
 
-  void RigidLinePressureLoss::jacobianImpacts(double t) {
+  void RigidLinePressureLoss::jacobianImpacts(double t, double dt) {
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG();
 

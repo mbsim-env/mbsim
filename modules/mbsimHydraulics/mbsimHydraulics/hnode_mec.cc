@@ -330,7 +330,7 @@ namespace MBSimHydraulics {
         (
          connectedTransFrames[i].frame->getOrientation(t) * 
          connectedTransFrames[i].normal
-        ) * getGeneralizedSingleValuedForce(t);
+        ) * getGeneralizedForce(t);
     }
     for (unsigned int i=0; i<nRot; i++) {
       h[j][nTrans+nLines+i] += 
@@ -339,7 +339,7 @@ namespace MBSimHydraulics {
         (
          connectedRotFrames[i].frame->getOrientation(t) * 
          connectedRotFrames[i].normal
-        ) * getGeneralizedSingleValuedForce(t);
+        ) * getGeneralizedForce(t);
     }
   }
 
@@ -474,7 +474,7 @@ namespace MBSimHydraulics {
     pFun->init(stage);
   }
 
-  void ConstrainedNodeMec::updateGeneralizedSingleValuedForces(double t) {
+  void ConstrainedNodeMec::updateGeneralizedForce(double t) {
     laSV(0)=(*pFun)(t);
     updlaSV = false;
   }
@@ -533,20 +533,20 @@ namespace MBSimHydraulics {
       HNodeMec::init(stage);
   }
 
-  void ElasticNodeMec::updateGeneralizedSingleValuedForces(double t) {
+  void ElasticNodeMec::updateGeneralizedForce(double t) {
     laSV(0) = x(1);
     updlaSV = false;
   }
 
   void ElasticNodeMec::updatexd(double t) {
     HNodeMec::updatexd(t);
-    E=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0));
+    E=(*bulkModulus)(getGeneralizedForce(t)(0));
     xd(1)=-E/x(0)*(getQMec(t)-getQHyd(t));
   }
 
   void ElasticNodeMec::updatedx(double t, double dt) {
     HNodeMec::updatedx(t, dt);
-    E=(*bulkModulus)(getGeneralizedSingleValuedForce(t)(0));
+    E=(*bulkModulus)(getGeneralizedForce(t)(0));
     xd(1)=-E/x(0)*(getQMec(t)-getQHyd(t))*dt;
   }
 
@@ -633,11 +633,11 @@ namespace MBSimHydraulics {
     gd >> wb;
   }
 
-  void RigidNodeMec::updateGeneralizedSetValuedForces(double t) {
+  void RigidNodeMec::updateGeneralizedForce(double t) {
     cout << "updateGeneralizedSetValuedForces" << endl;
     cout << la << endl;
-    laMV = la;
-    updlaMV = false;
+    laSV = la;
+    updlaSV = false;
   }
 
   void RigidNodeMec::updategd(double t) {
@@ -782,7 +782,7 @@ namespace MBSimHydraulics {
     res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0));
   }
 
-  void RigidNodeMec::jacobianImpacts(double t) {
+  void RigidNodeMec::jacobianImpacts(double t, double dt) {
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG(t);
 
