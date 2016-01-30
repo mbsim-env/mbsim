@@ -58,14 +58,8 @@ $(document).ready(function() {
   // when the logout button is clicked
   $("#LOGOUTBUTTON").click(function() {
     statusCommunicating();
-    // remove stored login from browser
-    var loginname=localStorage['GITHUB_LOGIN_NAME'];
-    localStorage.removeItem('GITHUB_LOGIN_NAME');
-    localStorage.removeItem('GITHUB_LOGIN_ATHMAC');
-    // and from server
-    $.ajax({url: cgiPath+"/logout",
-            dataType: "json", type: "POST", data: JSON.stringify({login: loginname})
-          }).done(function(response) {
+    // from server
+    $.ajax({url: cgiPath+"/logout", dataType: "json", type: "GET"}).done(function(response) {
       loginStatus();
       statusMessage(response);
     });
@@ -73,19 +67,12 @@ $(document).ready(function() {
 
   // login status
   function loginStatus() {
-    if(localStorage['GITHUB_LOGIN_NAME']) {
-      $.ajax({url: cgiPath+"/getuser",
-              dataType: "json", type: "POST", data: JSON.stringify({login: localStorage['GITHUB_LOGIN_NAME']})
-            }).done(function(response) {
-        if(!response.success)
-          $('#LOGINUSER').text("Internal error: +"+response.message);
-        else
-          $('#LOGINUSER').text(response.username);
-      });
-    }
-    else {
-      $('#LOGINUSER').text("Not logged in");
-    }
+    $.ajax({url: cgiPath+"/getuser", dataType: "json", type: "GET"}).done(function(response) {
+      if(!response.success)
+        $('#LOGINUSER').text("Internal error: "+response.message);
+      else
+        $('#LOGINUSER').text(response.username);
+    });
   }
   loginStatus();
 });
