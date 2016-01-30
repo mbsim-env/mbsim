@@ -1,4 +1,4 @@
-var cgiPath="/cgi-bin/mbsimBuildServiceServer.py";
+var cgiPath="https://www.ssl-id1.de/mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
 
 // indicate start of server commnication
 function statusCommunicating() {
@@ -41,13 +41,13 @@ $(document).ready(function() {
   var loginWindow;
   $("#LOGINBUTTON").click(function() {
     statusCommunicating();
-    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&scope=read:org");
+    loginWindow=window.open("https://github.com/login/oauth/authorize?client_id=987997eb60fc086e9707&scope=read:org,public_repo");
   })
   // and install a event listener to react on a successfull login on this page
   window.addEventListener("message", loginCallback, false);
   function loginCallback(event) {
     // do nothing for wrong origin
-    if(event.origin !== window.location.origin)
+    if(event.origin!=="https://www.ssl-id1.de")
       return;
     // close opened github login window and display the status message
     loginWindow.close();
@@ -59,7 +59,7 @@ $(document).ready(function() {
   $("#LOGOUTBUTTON").click(function() {
     statusCommunicating();
     // from server
-    $.ajax({url: cgiPath+"/logout", dataType: "json", type: "GET"}).done(function(response) {
+    $.ajax({url: cgiPath+"/logout", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
       loginStatus();
       statusMessage(response);
     });
@@ -67,7 +67,7 @@ $(document).ready(function() {
 
   // login status
   function loginStatus() {
-    $.ajax({url: cgiPath+"/getuser", dataType: "json", type: "GET"}).done(function(response) {
+    $.ajax({url: cgiPath+"/getuser", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
       if(!response.success)
         $('#LOGINUSER').text("Internal error: "+response.message);
       else
