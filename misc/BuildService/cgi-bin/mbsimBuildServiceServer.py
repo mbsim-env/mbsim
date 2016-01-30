@@ -83,47 +83,6 @@ try:
           else:
             response_data['success']=True
     return data, response_data
-
-  # generate a html page which stores the login and access token hmac in the browser
-  if action=="/saveLoginInBrowser":
-    defaultOutput=False
-    print('Content-Type: text/html')
-    print()
-    print('''<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Save Login in Browser</title>
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
-  </head>
-  <body style="margin:1em">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        // helper function: return the query string as a json object
-        jQuery.extend({
-          getQueryParameters : function(str) {
-            return (str || document.location.search).replace(/(^\?)/,'').split("&").map(function(n) {
-              return n = n.split("="),this[n[0]] = n[1],this
-            }.bind({}))[0];
-          }
-        });
-        // handle GET string (from a login redirect)
-        var query=$.getQueryParameters();
-        if('login' in query) {
-          // save login and access token hmac
-          localStorage["GITHUB_LOGIN_NAME"]=query.login;
-          localStorage["GITHUB_LOGIN_ATHMAC"]=query.athmac;
-          // notify opener window
-          window.opener.postMessage("User "+query.login+" successfully logged in.", window.location);
-        }
-      })
-    </script>
-    <h1>Please Wait</h1>
-    <p>Saving login name and hmac of access token in browser.</p>
-    <p>This window should close itself after a short time, if not close it manually.</p>
-  </body>
-</html>''')
   
   # login using github
   if action=="/login":
@@ -154,8 +113,31 @@ try:
           # redirect to the example web side and pass login and access token hmac as http get methode
           athmac=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
           defaultOutput=False
-          print('Location: http://%s%s/saveLoginInBrowser?login=%s&athmac=%s'%(os.environ['HTTP_HOST'], os.environ['SCRIPT_NAME'], login, athmac))
+          print('Content-Type: text/html')
           print()
+          print('''<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Save Login in Browser</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+  </head>
+  <body style="margin:1em">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        // save login and access token hmac
+        localStorage["GITHUB_LOGIN_NAME"]="%s";
+        localStorage["GITHUB_LOGIN_ATHMAC"]="%s";
+        // notify opener window
+        window.opener.postMessage("User %s successfully logged in.", window.location);
+      })
+    </script>
+    <h1>Please Wait</h1>
+    <p>Saving login name and hmac of access token in browser.</p>
+    <p>This window should close itself after a short time.</p>
+  </body>
+</html>'''%(login, athmac, login))
 
   # logout
   if action=="/logout":
