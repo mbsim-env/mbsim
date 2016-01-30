@@ -123,13 +123,15 @@ try:
           c=Cookie.SimpleCookie()
           c['mbsimenvsessionuser']=login
           c['mbsimenvsessionuser']['comment']="Session username of the mbsimenvsessionid cookie"
-          c['mbsimenvsessionuser']['path']='/'
-          #c['mbsimenvsessionuser']['secure']=True #mfmf
+          c['mbsimenvsessionuser']['domain']='.www.ssl-id1.de'
+          c['mbsimenvsessionuser']['path']='/mbsim-env.de'
+          c['mbsimenvsessionuser']['secure']=True
           c['mbsimenvsessionuser']['httponly']=True
           c['mbsimenvsessionid']=athmac
           c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
-          c['mbsimenvsessionid']['path']='/'
-          #c['mbsimenvsessionid']['secure']=True #mfmf
+          c['mbsimenvsessionid']['domain']='.www.ssl-id1.de'
+          c['mbsimenvsessionid']['path']='/mbsim-env.de'
+          c['mbsimenvsessionid']['secure']=True
           c['mbsimenvsessionid']['httponly']=True
           defaultOutput=False
           print('Content-Type: text/html')
@@ -147,7 +149,7 @@ try:
     <script type="text/javascript">
       $(document).ready(function() {
         // notify opener window
-        window.opener.postMessage("User %s successfully logged in.", window.location);
+        window.opener.postMessage("User %s successfully logged in.", "http://www.mbsim-env.de");
       })
     </script>
     <h1>Please Wait</h1>
@@ -350,5 +352,7 @@ except:
 # generate response
 if defaultOutput:
   print('Content-Type: application/json')
+  print('Access-Control-Allow-Origin: http://www.mbsim-env.de') # allow CORS from www.mbsim-env.de
+  print('Access-Control-Allow-Credentials: true')
   print()
   print(json.dumps(response_data))
