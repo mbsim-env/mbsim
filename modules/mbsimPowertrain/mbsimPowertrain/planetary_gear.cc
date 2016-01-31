@@ -3,7 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
 #include "mbsim/gear.h"
-#include "mbsim/gearing.h"
+//#include "mbsim/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/fixed_relative_frame.h"
