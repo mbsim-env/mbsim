@@ -837,6 +837,38 @@ namespace MBSimGUI {
     mu.toWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->mu);
   }
 
+  LinearRegularizedStribeckFriction::LinearRegularizedStribeckFriction(const string &name, Element *parent) : Function(name,parent), gd(0,false) {
+
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.01"),"m/s",MBSIM%"marginalVelocity"));
+    gd.setProperty(new ExtPhysicalVarProperty(input));
+
+    mu.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"frictionFunction",0));
+  }
+
+  DOMElement* LinearRegularizedStribeckFriction::initializeUsingXML(DOMElement *element) {
+    gd.initializeUsingXML(element);
+    mu.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearRegularizedStribeckFriction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    gd.writeXMLFile(ele0);
+    mu.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void LinearRegularizedStribeckFriction::fromWidget(QWidget *widget) {
+    gd.fromWidget(static_cast<LinearRegularizedStribeckFrictionWidget*>(widget)->gd);
+    mu.fromWidget(static_cast<LinearRegularizedStribeckFrictionWidget*>(widget)->mu);
+  }
+
+  void LinearRegularizedStribeckFriction::toWidget(QWidget *widget) {
+    gd.toWidget(static_cast<LinearRegularizedStribeckFrictionWidget*>(widget)->gd);
+    mu.toWidget(static_cast<LinearRegularizedStribeckFrictionWidget*>(widget)->mu);
+  }
+
   SignalFunction::SignalFunction(const string &name, Element *parent) : Function(name,parent) {
 
     sRef.setProperty(new SignalOfReferenceProperty("",this,MBSIMCONTROL%"returnSignal"));

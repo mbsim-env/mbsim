@@ -526,6 +526,8 @@ namespace MBSim {
 
       void setInitialProjection(bool initialProjection_) {initialProjection = initialProjection_;}
 
+      void setUseConstraintSolverForPlot(bool useConstraintSolverForPlot_) {useConstraintSolverForPlot = useConstraintSolverForPlot_;}
+
       fmatvec::Mat dhdq(double t, int lb=0, int ub=0);
       fmatvec::Mat dhdu(double t, int lb=0, int ub=0);
       fmatvec::Mat dhdx(double t);
@@ -845,6 +847,7 @@ namespace MBSim {
       bool alwaysConsiderContact;
       bool inverseKinetics;
       bool initialProjection;
+      bool useConstraintSolverForPlot;
 
       fmatvec::Vec corrParent;
 

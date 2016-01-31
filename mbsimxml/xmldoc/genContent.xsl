@@ -31,7 +31,8 @@
     <head>
       <title>MBSimXML - XML Documentation</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+      <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
       <style type="text/css">
         *._element { font-family:monospace; font-weight:bold; }
         *._type { font-family:monospace; }
@@ -39,7 +40,7 @@
         *._displaynone { display:none; }
         *._linkpointer { cursor:pointer; }
       </style>
-      <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
       <script type="text/javascript">
         <![CDATA[
         $(document).ready(function() {
@@ -78,7 +79,7 @@
       <tbody>
         <tr><td><span class="_element">&lt;element&gt;</span></td><td>A XML element of name 'element'</td></tr>
         <tr><td><span class="label label-warning">namespace</span></td><td>A XML namespace of name 'namespace'</td></tr>
-        <tr><td><span class="label label-primary">type</span></td><td>A XML element or attribute type of name 'type'</td></tr>
+        <tr><td><span class="label label-info">type</span></td><td>A XML element or attribute type of name 'type'</td></tr>
       </tbody>
     </table>
 
@@ -100,12 +101,17 @@
       </xsl:apply-templates>
     </ul>
     <hr/>
-    <p class="text-right small">
+    <span class="pull-left small">
+      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+      <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+    </span>
+    <span class="pull-right small">
+      Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
       <a href="http://validator.w3.org/check?uri=referer">
-        <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
+        <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
       </a>
-      Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by <a href="http://mbsim.berlios.de">MBSimXML</a><xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
-    </p>
+    </span>
     </body></html>
   </xsl:template>
 
@@ -152,7 +158,7 @@
     <xsl:param name="NAME_NAME" select="translate(substring(@name,string-length(substring-before(@name,':'))+1),':','')"/>
     <li>
       <a class="glyphicon glyphicon-unchecked _linkpointer"/>
-      <a class="label label-primary _type">
+      <a class="label label-info _type">
         <xsl:attribute name="href"><xsl:apply-templates mode="GENLINK" select="@name"/></xsl:attribute>
         <xsl:value-of select="$NAME_NAME"/></a>
       <xsl:text> </xsl:text><small><span class="label label-warning"><xsl:value-of select="$NS_NAME"/></span></small>

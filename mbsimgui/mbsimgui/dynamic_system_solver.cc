@@ -54,7 +54,7 @@ namespace MBSimGUI {
 
   Environment *Environment::instance=NULL;
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false), initialProjection(0,false) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false), initialProjection(0,false), useConstraintSolverForPlot(0,false) {
 
     vector<string> g(3);
     g[0] = "0";
@@ -67,6 +67,8 @@ namespace MBSimGUI {
     inverseKinetics.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"inverseKinetics",vector<string>(2,"")),"",4));
 
     initialProjection.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"initialProjection",vector<string>(2,"")),"",4));
+
+    useConstraintSolverForPlot.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"useConstraintSolverForPlot",vector<string>(2,"")),"",4));
   }
 
   DOMElement* DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
@@ -88,6 +90,8 @@ namespace MBSimGUI {
 
     initialProjection.initializeUsingXML(element);
 
+    useConstraintSolverForPlot.initializeUsingXML(element);
+
     return element;
   }
 
@@ -106,6 +110,8 @@ namespace MBSimGUI {
     inverseKinetics.writeXMLFile(ele0);
 
     initialProjection.writeXMLFile(ele0);
+
+    useConstraintSolverForPlot.writeXMLFile(ele0);
 
     return ele0;
   }

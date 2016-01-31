@@ -1,11 +1,5 @@
 #!/usr/bin/python
 
-#        ALLPIDS=$(pstree -lAp $PID | sed -re "s/-[\+-]-/\n/g" | sed -re "s/.*\(([0-9]+)\).*/\1/g")
-#        echo "$(date) KILL $ALLPIDS"
-#        kill $ALLPIDS
-#        sleep 10s
-#        kill -9 $ALLPIDS
-
 import subprocess
 import datetime
 import re

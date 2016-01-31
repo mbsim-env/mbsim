@@ -4,9 +4,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Official Build System of the MBSim-Environment</title>
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>
-  <link rel="alternate" type="application/atom+xml" title="MBSim-Env Build-System News" href="../buildsystem.atom.xml"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
+  <link rel="alternate" type="application/atom+xml" title="MBSim-Env Build-System News" href="../buildsystemstate/failures.atom.xml"/>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
 <body style="margin:1em">
 
@@ -17,40 +18,87 @@
 <h2>Release Downloads</h2>
 <div class="panel panel-default">
   <div class="panel-body">
-<a href="../releases">Tested releases are available here</a></div>
+<a href="../releases/">Tested releases are available here</a></div>
 </div>
 
 <h2>Documentation</h2>
 <div class="panel panel-default">
   <div class="panel-body">
-<a href="../papers">Papers</a><br/>
-<a href="doc">Manuals (daily build)</a><br/>
-<a href="../linux64-dailydebug/doc">Doxygen C++-API and XML Interface (daily build)</a>
+<a href="../papers/">Papers</a><br/>
+<a href="doc/">Manuals (daily build)</a><br/>
+<a href="../linux64-dailydebug/doc/">Doxygen C++-API and XML Interface (daily build)</a>
 </div>
 </div>
+
+<h2>Dashboard <small>Current Daily Build Status</small></h2>
+<table style="width:auto" class="table table-striped table-hover table-bordered table-condensed">
+  <thead>
+    <tr>
+      <th><span class="glyphicon glyphicon-option-vertical"></span>&nbsp;Build Type</th>
+      <th><span class="glyphicon glyphicon-option-horizontal"></span>&nbsp;Variant</th>
+      <th><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Failed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>linux64-dailydebug</td>
+      <td>build</td>
+      <td><a href="../linux64-dailydebug/report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-build.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/linux64-dailydebug-build.nrAll.svg"/></td>
+    </tr>
+    <tr>
+      <td>linux64-dailydebug</td>
+      <td>examples</td>
+      <td><a href="../linux64-dailydebug/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-examples.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/linux64-dailydebug-examples.nrAll.svg"/></td>
+    </tr>
+    <tr>
+      <td>linux64-dailydebug</td>
+      <td>valgrind-examples</td>
+      <td><a href="../linux64-dailydebug/report/runexamples_valgrind_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-valgrind-examples.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/linux64-dailydebug-valgrind-examples.nrAll.svg"/></td>
+    </tr>
+    <tr>
+      <td>linux64-dailyrelease</td>
+      <td>build</td>
+      <td><a href="../linux64-dailyrelease/report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailyrelease-build.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/linux64-dailyrelease-build.nrAll.svg"/></td>
+    </tr>
+    <tr>
+      <td>linux64-dailyrelease</td>
+      <td>examples</td>
+      <td><a href="../linux64-dailyrelease/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailyrelease-examples.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/linux64-dailyrelease-examples.nrAll.svg"/></td>
+    </tr>
+    <tr>
+      <td>win64-dailyrelease</td>
+      <td>build</td>
+      <td><a href="../win64-dailyrelease/report/result_current/"><img  alt="image" src="../buildsystemstate/win64-dailyrelease-build.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/win64-dailyrelease-build.nrAll.svg"/></td>
+    </tr>
+    <tr>
+      <td>win64-dailyrelease</td>
+      <td>examples</td>
+      <td><a href="../win64-dailyrelease/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/win64-dailyrelease-examples.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/win64-dailyrelease-examples.nrAll.svg"/></td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td>manuals</td>
+      <td><a href="../doc_manualsbuild.log"><img alt="image" src="../buildsystemstate/build-manuals.nrFailed.svg"/></a> /
+      <img alt="image" src="../buildsystemstate/build-manuals.nrAll.svg"/></td>
+    </tr>
+  </tbody>
+</table>
 
 <h2>Daily Linux64 Debug Build</h2>
 
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux64; Build-Type: debug, not optimized</div>
   <div class="panel-body">
-<p><a href="../linux64-dailydebug/report/result_current">Build report</a></p>
-<p><a href="../linux64-dailydebug/report/result_current/runexamples_report/result_current">Examples report (including result compare)</a></p>
-<a href="../linux64-dailydebug/report/runexamples_valgrind_report/result_current">Valgrind examples report</a>
-  </div>
-</div>
-
-
-
-<h2>Continuous Integration (CI) Linux64 Debug Build</h2>
-
-<div class="panel panel-success">
-  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux64; Build-Type: debug, nt optimized</div>
-  <div class="panel-body">
-<p><span class="glyphicon glyphicon-pencil">
-    </span>&nbsp;<a href="MBSimBuildServiceCI.html">Edit branches used for CI</a></p>
-<p><a href="../linux64-ci/report/result_current">Build report</a></p>
-<p><a href="../linux64-ci/report/result_current/runexamples_report/result_current">Examples report (only some examples)</a></p>
+<p><a href="../linux64-dailydebug/report/result_current/">Build report</a></p>
+<p><a href="../linux64-dailydebug/report/result_current/runexamples_report/result_current/">Examples report (including result compare)</a></p>
+<a href="../linux64-dailydebug/report/runexamples_valgrind_report/result_current/">Valgrind examples report</a>
   </div>
 </div>
 
@@ -61,20 +109,17 @@
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux64; Build-Type: release, optimized</div>
   <div class="panel-body">
-<p><a href="../linux64-dailyrelease/report/result_current">Build report</a></p>
-<p><a href="../linux64-dailyrelease/report/result_current/runexamples_report/result_current">Examples report (only some examples)</a></p>
-<a href="../linux64-dailyrelease/report_distribute/distribute.out">Distribution report</a>
+<p><a href="../linux64-dailyrelease/report/result_current/">Build report</a></p>
+<p><a href="../linux64-dailyrelease/report/result_current/runexamples_report/result_current/">Examples report (only some examples)</a></p>
   </div>
 </div>
 
 <div class="panel panel-warning">
-  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Download</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Binary Distribution</div>
   <div class="panel-body">
-  <b>Linux64 binary release build:
-  <a href="../linux64-dailyrelease/download/mbsim-env-linux64-shared-build-xxx.tar.bz2">MBSim-Env</a></b>
-  <br/>
-  Linux64 binary release debugging symbols:
-  <a href="../linux64-dailyrelease/download/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2">MBSim-Env</a>
+  <b><a href="../linux64-dailyrelease/report/result_current/distribute/mbsim-env-linux64-shared-build-xxx.tar.bz2">Download</a></b> -
+  <a href="../linux64-dailyrelease/report/result_current/distribute/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2">Debug-Info</a> -
+  <a href="../linux64-dailyrelease/report/result_current/distribute/log.txt">Log-File</a>
   </div>
 </div>
 
@@ -85,20 +130,31 @@
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Win64; Build-Type: release, optimized</div>
   <div class="panel-body">
-<p><a href="../win64-dailyrelease/report/result_current">Build report</a></p>
-<p><a href="../win64-dailyrelease/report/result_current/runexamples_report/result_current">Examples report (only some examples)</a></p>
-<a href="../win64-dailyrelease/report_distribute/distribute.out">Distribution report</a>
+<p><a href="../win64-dailyrelease/report/result_current/">Build report</a></p>
+<p><a href="../win64-dailyrelease/report/result_current/runexamples_report/result_current/">Examples report (only some examples)</a></p>
   </div>
 </div>
 
 <div class="panel panel-warning">
-  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Download</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Binary Distribution</div>
   <div class="panel-body">
-  <b>Win64 binary release build:
-  <a href="../win64-dailyrelease/download/mbsim-env-win64-shared-build-xxx.zip">MBSim-Env</a></b>
-  <br/>
-  Win64 binary release debugging symbols:
-  <a href="../win64-dailyrelease/download/mbsim-env-win64-shared-build-xxx-debug.zip">MBSim-Env</a>
+  <b><a href="../win64-dailyrelease/report/result_current/distribute/mbsim-env-win64-shared-build-xxx.zip">Download</a></b> -
+  <a href="../win64-dailyrelease/report/result_current/distribute/mbsim-env-win64-shared-build-xxx-debug.zip">Debug-Info</a> -
+  <a href="../win64-dailyrelease/report/result_current/distribute/log.txt">Log-File</a>
+  </div>
+</div>
+
+
+
+<h2>Continuous Integration (CI) <small>Linux64 Debug Build</small></h2>
+
+<div class="panel panel-success">
+  <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux64; Build-Type: debug, nt optimized</div>
+  <div class="panel-body">
+<p><span class="glyphicon glyphicon-pencil">
+    </span>&nbsp;<a href="MBSimBuildServiceCI.html">Edit branches used for CI</a></p>
+<p><a href="../linux64-ci/report/result_current/">Build report</a></p>
+<p><a href="../linux64-ci/report/result_current/runexamples_report/result_current/">Examples report (only some examples)</a></p>
   </div>
 </div>
 
@@ -108,7 +164,7 @@
 <div class="panel panel-default">
   <div class="panel-body">
     A Atom news feed of all failures of the build system is available via auto discovery
-    of this page, <a href="../buildsystem.atom.xml"><span class="octicon octicon-rss"></span>&nbsp;here at this link</a> and <a href="buildsystematom.html">viewable</a> via the browser.
+    of this page, <a href="../buildsystemstate/failures.atom.xml"><span class="octicon octicon-rss"></span>&nbsp;here at this link</a> and <a href="buildsystematom.html">viewable</a> via the browser.
   </div>
 </div>
 
@@ -117,15 +173,20 @@
 <h2>Source Code</h2>
 <div class="panel panel-default">
   <div class="panel-body">
-<a href="https://github.com/mbsim-env">Git repos of all MBSim-Env projects are hosted on <span class="octicon octicon-logo-github"></span></a></div>
+<a href="https://github.com/mbsim-env/">Git repos of all MBSim-Env projects are hosted on <span class="octicon octicon-logo-github"></span></a></div>
 </div>
 
 <hr/>
-<p class="text-right small">
+<span class="pull-left small">
+  <a href="impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+  <a href="impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+  <a href="impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+</span>
+<span class="pull-right small">
   <a href="http://validator.w3.org/check?uri=referer">
-    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
+    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
   </a>
-</p>
+</span>
 
 </body>
 </html>

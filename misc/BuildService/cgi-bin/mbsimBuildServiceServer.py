@@ -15,6 +15,8 @@ try:
   import time
   import threading
   import fcntl
+  import datetime
+  import Cookie
 
   # config file: this will lock the config file
   class ConfigFile:
@@ -43,20 +45,26 @@ try:
   
   # get the script action = path info after the script url
   action=os.environ.get('PATH_INFO', None)
+  method=os.environ.get('REQUEST_METHOD', None)
   
   # default response
   defaultOutput=True
-  response_data={'success': False, 'message': "Internal error: Unknown action: "+action}
+  response_data={'success': False, 'message': "Internal error: Unknown action or request method: "+action}
 
   def checkCredicals(config):
     # get login and athmac by http get methode
-    data=json.load(sys.stdin)
-    login=data.get('login', None)
-    if login==None:
+    if 'HTTP_COOKIE' in os.environ:
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      login=c['mbsimenvsessionuser'].value
+      athmac=c['mbsimenvsessionid'].value
+    else:
+      login=None
+      athmac=None
+    # check
+    if login==None or athmac==None:
       response_data['success']=False
       response_data['message']="Not logged in. Please login before saving."
     else:
-      athmac=data['athmac']
       # check whether login in already known by the server (logged in)
       if login not in config['login_access_token']:
         response_data['success']=False
@@ -70,7 +78,8 @@ try:
           response_data['message']="Invalid access token hmac! Maybe the login was faked! If not, try to relogin again."
         else:
           # check whether this login is permitted to save data on the server (query github collaborators)
-          headers={'Authorization': 'token '+access_token}
+          headers={'Authorization': 'token '+access_token,
+                   'Accept': 'application/vnd.github.v3+json'}
           response=requests.get('https://api.github.com/teams/1451964/memberships/%s'%(login), headers=headers)
           if response.status_code!=200:
             response_data['success']=False
@@ -80,50 +89,10 @@ try:
             response_data['message']="Not allowed to save, since your ("+login+") status in the team Developers of the organization mbsim-env is pending."
           else:
             response_data['success']=True
-    return data, response_data
-
-  # generate a html page which stores the login and access token hmac in the browser
-  if action=="/saveLoginInBrowser":
-    defaultOutput=False
-    print('Content-Type: text/html')
-    print()
-    print('''<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Save Login in Browser</title>
-  </head>
-  <body style="margin:1em">
-    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        // helper function: return the query string as a json object
-        jQuery.extend({
-          getQueryParameters : function(str) {
-            return (str || document.location.search).replace(/(^\?)/,'').split("&").map(function(n) {
-              return n = n.split("="),this[n[0]] = n[1],this
-            }.bind({}))[0];
-          }
-        });
-        // handle GET string (from a login redirect)
-        var query=$.getQueryParameters();
-        if('login' in query) {
-          // save login and access token hmac
-          localStorage["GITHUB_LOGIN_NAME"]=query.login;
-          localStorage["GITHUB_LOGIN_ATHMAC"]=query.athmac;
-          // notify opener window
-          window.opener.postMessage("User "+query.login+" successfully logged in.", window.location);
-        }
-      })
-    </script>
-    <h1>Please Wait</h1>
-    <p>Saving login name and hmac of access token in browser.</p>
-    <p>This window should close itself after a short time, if not close it manually.</p>
-  </body>
-</html>''')
+    return response_data
   
   # login using github
-  if action=="/login":
+  if action=="/login" and method=="GET":
     # get the github code passed provided by html get methode
     query=urlparse.parse_qs(os.environ['QUERY_STRING'])
     if 'error' in query:
@@ -142,35 +111,75 @@ try:
         else:
           access_token=response['access_token']
           # get github login name using github API request
-          headers={'Authorization': 'token '+access_token}
+          headers={'Authorization': 'token '+access_token,
+                   'Accept': 'application/vnd.github.v3+json'}
           response=requests.get('https://api.github.com/user', headers=headers).json()
           login=response['login']
           # save login and access token in a dictionary on the server
           config['login_access_token'][login]=access_token
           # redirect to the example web side and pass login and access token hmac as http get methode
           athmac=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
+          # create cookie
+          c=Cookie.SimpleCookie()
+          c['mbsimenvsessionuser']=login
+          c['mbsimenvsessionuser']['comment']="Session username of the mbsimenvsessionid cookie"
+          c['mbsimenvsessionuser']['domain']='.www.ssl-id1.de'
+          c['mbsimenvsessionuser']['path']='/mbsim-env.de'
+          c['mbsimenvsessionuser']['secure']=True
+          c['mbsimenvsessionuser']['httponly']=True
+          c['mbsimenvsessionid']=athmac
+          c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
+          c['mbsimenvsessionid']['domain']='.www.ssl-id1.de'
+          c['mbsimenvsessionid']['path']='/mbsim-env.de'
+          c['mbsimenvsessionid']['secure']=True
+          c['mbsimenvsessionid']['httponly']=True
           defaultOutput=False
-          print('Location: http://%s%s/saveLoginInBrowser?login=%s&athmac=%s'%(os.environ['HTTP_HOST'], os.environ['SCRIPT_NAME'], login, athmac))
+          print('Content-Type: text/html')
+          print(c)
           print()
+          print('''<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Set cookie and notify opener windows</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+  </head>
+  <body style="margin:1em">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        // notify opener window
+        window.opener.postMessage("User %s successfully logged in.", "http://www.mbsim-env.de");
+        window.opener.postMessage("User %s successfully logged in.", "https://www.ssl-id1.de");
+      })
+    </script>
+    <h1>Please Wait</h1>
+    <p>Set cookie in your browser.</p>
+    <p>This window should close itself after a short time.</p>
+  </body>
+</html>'''%(login, login))
 
   # logout
-  if action=="/logout":
-    # get login which should be logged by html get methode
-    data=json.load(sys.stdin)
-    login=data.get('login', None)
+  if action=="/logout" and method=="GET":
+    # get login
+    if 'HTTP_COOKIE' in os.environ:
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      login=c['mbsimenvsessionuser'].value
+    else:
+      login=None
     if login==None:
       response_data['success']=True
-      response_data['message']="Not logged in."
+      response_data['message']="Nobody to log out."
     else:
       with ConfigFile(True) as config:
         # remove login including access_token from server config
         config['login_access_token'].pop(login, None)
         # generate json response
         response_data['success']=True
-        response_data['message']="Logged "+login+" out from browser and server."
+        response_data['message']="Logged "+login+" out from server."
   
   # return current checked examples
-  if action=="/getcheck":
+  if action=="/getcheck" and method=="GET":
     with ConfigFile(False) as config: pass
     # not json input via http post required
     # return the checkedExamples entries of the config as json response
@@ -179,9 +188,10 @@ try:
     response_data['checkedExamples']=config['checkedExamples']
   
   # save checked examples (if logged in)
-  if action=="/setcheck":
+  if action=="/setcheck" and method=="POST":
     with ConfigFile(True) as config:
-      data, response_data=checkCredicals(config)
+      response_data=checkCredicals(config)
+      data=json.load(sys.stdin)
       if response_data['success']:
         # save checked examples
         config['checkedExamples']=data['checkedExamples']
@@ -190,13 +200,13 @@ try:
         response_data['message']="Successfully saved."
 
   # return current checked examples
-  if action=="/getcibranches":
+  if action=="/getcibranches" and method=="GET":
     with ConfigFile(False) as config: pass
     # no json input via http post required
     # return branches for CI
     # worker function to make github api requests in parallel
-    def getBranch(url, out):
-      out.extend([b['name'] for b in requests.get(url).json()])
+    def getBranch(url, headers, out):
+      out.extend([b['name'] for b in requests.get(url, headers=headers).json()])
     # output data placeholder, request url and thread object placeholder. all per thread (reponame)
     out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
     url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
@@ -205,8 +215,9 @@ try:
          'mbsim': 'https://api.github.com/repos/mbsim-env/mbsim/branches'}
     thread={}
     # make all calls in parallel
+    headers={'Accept': 'application/vnd.github.v3+json'}
     for reponame in out:
-      thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], out[reponame]))
+      thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], headers, out[reponame]))
       thread[reponame].start()
     # wait for all calls
     for reponame in out:
@@ -221,9 +232,10 @@ try:
     response_data['mbsimbranch']=out['mbsim']
 
   # return current checked examples
-  if action=="/addcibranch":
+  if action=="/addcibranch" and method=="POST":
     with ConfigFile(True) as config:
-      data, response_data=checkCredicals(config)
+      response_data=checkCredicals(config)
+      data=json.load(sys.stdin)
       if response_data['success']:
         # save checked examples
         newcibranch=data['addcibranch']
@@ -239,9 +251,10 @@ try:
         response_data['message']='New CI branch combination saved.'
 
   # return current checked examples
-  if action=="/delcibranch":
+  if action=="/delcibranch" and method=="POST":
     with ConfigFile(True) as config:
-      data, response_data=checkCredicals(config)
+      response_data=checkCredicals(config)
+      data=json.load(sys.stdin)
       if response_data['success']:
         # del ci branch
         delcibranch=data['delcibranch']
@@ -262,26 +275,29 @@ try:
         response_data['message']='CI branch combination deleted.'
 
   # get user information
-  if action=="/getuser":
-    # not json input via http post required
-    # return branches for CI
-    data=json.load(sys.stdin)
-    login=data.get('login', None)
+  if action=="/getuser" and method=="GET":
+    if 'HTTP_COOKIE' in os.environ:
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      login=c['mbsimenvsessionuser'].value
+    else:
+      login=None
     if login==None:
-      response_data['success']=False
-      response_data['message']="Not logged in."
+      response_data['success']=True
+      response_data['username']="Not logged in"
+      response_data['message']="No session ID cookie found on your browser."
     else:
       with ConfigFile(False) as config: pass
-      access_token=config['login_access_token'][login]
-      headers={'Authorization': 'token '+access_token}
-      response=requests.get('https://api.github.com/user', headers=headers).json()
-      response_data['success']=True
-      response_data['message']="User information returned."
-      response_data['username']=response['name']+" ("+login+")"
-      response_data['avatarurl']=response['avatar_url']
+      if not login in config['login_access_token']:
+        response_data['success']=True
+        response_data['username']="Not logged in"
+        response_data['message']="The username of the browser cookie is not known by the server. Please relogin."
+      else:
+        response_data['success']=True
+        response_data['username']=login
+        response_data['message']="User information returned."
 
   # react on web hooks
-  if action=="/webhook":
+  if action=="/webhook" and method=="POST":
     with ConfigFile(True) as config:
       rawdata=sys.stdin.read()
       sig=os.environ['HTTP_X_HUB_SIGNATURE'][5:]
@@ -308,6 +324,23 @@ try:
         response_data['success']=True
         response_data['message']="OK"
 
+  # copy distribution to release and tag on github
+  if action=="/releasedistribution" and method=="POST":
+    with ConfigFile(False) as config: pass
+    response_data=checkCredicals(config)
+    data=json.load(sys.stdin)
+    if response_data['success']:
+      # MISSING not implemented
+      response_data['success']=False
+      response_data['message']="Releasing a distribution is not implemented till now on the server side, sorry! "+\
+                               "(Got the following data: "+\
+                               "distArchiveName="+data['distArchiveName']+", "+\
+                               "reportOutDir="+data['reportOutDir']+", "+\
+                               "relStr="+data['relStr']+", "+\
+                               "commitid_fmatvec="+data['commitid']['fmatvec']+", "+\
+                               "commitid_hdf5serie="+data['commitid']['hdf5serie']+", "+\
+                               "commitid_openmbv="+data['commitid']['openmbv']+", "+\
+                               "commitid_mbsim="+data['commitid']['mbsim']+")"
 
 except:
   # reset all output and generate a json error message
@@ -320,5 +353,7 @@ except:
 # generate response
 if defaultOutput:
   print('Content-Type: application/json')
+  print('Access-Control-Allow-Origin: http://www.mbsim-env.de') # allow CORS from www.mbsim-env.de
+  print('Access-Control-Allow-Credentials: true')
   print()
   print(json.dumps(response_data))

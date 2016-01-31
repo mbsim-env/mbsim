@@ -64,7 +64,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updb(true), READZ0(false), truncateSimulationFiles(true) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updb(true), READZ0(false), truncateSimulationFiles(true) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -1564,6 +1564,9 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialProjection");
     if (e)
       setInitialProjection(Element::getBool(e));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"useConstraintSolverForPlot");
+    if (e)
+      setUseConstraintSolverForPlot(Element::getBool(e));
   }
 
   DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {
@@ -1800,7 +1803,14 @@ namespace MBSim {
       updatezdRef(zdParent);
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
-    if (laSize) computeConstraintForces(t);
+    if (laSize) {
+      if(useConstraintSolverForPlot) {
+        b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
+        solveConstraints(t);
+      }
+      else
+        computeConstraintForces(t);
+    }
 
     updatezd(t);
     if (true) {

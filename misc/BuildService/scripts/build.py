@@ -14,90 +14,109 @@ import fileinput
 import shutil
 import codecs
 import simplesandbox
+import buildSystemState
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
   import urllib.request as myurllib
 
 # global variables
-global scriptdir
 scriptdir=os.path.dirname(os.path.realpath(__file__))
 toolDependencies=dict()
 toolXMLDocCopyDir=dict()
 toolDoxyDocCopyDir=dict()
 docDir=None
 timeID=None
-
-# command line option definition
-argparser = argparse.ArgumentParser(
-formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-description='''
-Building the MBSim-Environment.
-
-After building, runexamples.py is called by this script.
-All unknown options are passed to runexamples.py.
-'''
-)
-
-mainOpts=argparser.add_argument_group('Main Options')
-mainOpts.add_argument("--sourceDir", type=str, required=True,
-  help="The base source/build directory (see --srcSuffix/--binSuffix for VPATH builds")
-configOpts=mainOpts.add_mutually_exclusive_group(required=True)
-configOpts.add_argument("--prefix", type=str, help="run configure using this directory as prefix option")
-configOpts.add_argument("--recheck", action="store_true",
-  help="run config.status --recheck instead of configure")
-
-cfgOpts=argparser.add_argument_group('Configuration Options')
-cfgOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only make and runexamples.py)")
-cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
-  help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
-
-cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
-cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
-cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
-cfgOpts.add_argument("--disableMakeInstall", action="store_true", help="Do not 'make install'")
-cfgOpts.add_argument("--disableMake", action="store_true", help="Do not 'make clean', 'make' and 'make install'")
-cfgOpts.add_argument("--disableMakeCheck", action="store_true", help="Do not 'make check'")
-cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
-cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
-cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
-cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
-cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
-cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
-cfgOpts.add_argument("--hdf5serieBranch", default="", help='In the hdf5serierepo checkout the branch HDF5SERIEBRANCH')
-cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
-cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
-
-outOpts=argparser.add_argument_group('Output Options')
-outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
-outOpts.add_argument("--docOutDir", type=str,
-  help="Copy the documention to this directory. If not given do not copy")
-outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
-outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
-outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
-
-passOpts=argparser.add_argument_group('Options beeing passed to other commands')
-passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
-  help="pass all following options, up to but not including the next --passTo* argument, to runexamples.py.")
-passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAINDER,
-  help="pass all following options, up to but not including the next --passTo* argument, to configure.")
-
-# parse command line options
-args=argparser.parse_args() # modified by mypostargparse
+args=None
 
 # pass these envvar to simplesandbox.call
 simplesandboxEnvvars=["PKG_CONFIG_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS", # general required envvars
                       "LD_LIBRARY_PATH", # Linux specific required envvars
                       "WINEPATH", "PLATFORM", "CXX", "MOC", "UIC", "RCC"] # Windows specific required envvars
 
-htmlEscapeTable={
-  "&": "&amp;",
-  '"': "&quot;",
-  "'": "&apos;",
-  ">": "&gt;",
-  "<": "&lt;",
-}
+def parseArguments():
+  # command line option definition
+  argparser=argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description='''Building the MBSim-Environment.
+  
+  After building, runexamples.py is called by this script.
+  All unknown options are passed to runexamples.py.'''
+  )
+  
+  mainOpts=argparser.add_argument_group('Main Options')
+  mainOpts.add_argument("--sourceDir", type=str, required=True,
+    help="The base source/build directory (see --srcSuffix/--binSuffix for VPATH builds")
+  configOpts=mainOpts.add_mutually_exclusive_group(required=True)
+  configOpts.add_argument("--prefix", type=str, help="run configure using this directory as prefix option")
+  configOpts.add_argument("--recheck", action="store_true",
+    help="run config.status --recheck instead of configure")
+  
+  cfgOpts=argparser.add_argument_group('Configuration Options')
+  cfgOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only make and runexamples.py)")
+  cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
+    help="Force building a tool including its dependencies. Build all, the default, if no second argument is given")
+  
+  cfgOpts.add_argument("--enableCleanPrefix", action="store_true", help="Remove the prefix dir completely before starting")
+  cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update repositories")
+  cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
+  cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
+  cfgOpts.add_argument("--disableMakeInstall", action="store_true", help="Do not 'make install'")
+  cfgOpts.add_argument("--disableMake", action="store_true", help="Do not 'make clean', 'make' and 'make install'")
+  cfgOpts.add_argument("--disableMakeCheck", action="store_true", help="Do not 'make check'")
+  cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
+  cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
+  cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
+  cfgOpts.add_argument("--enableDistribution", action="store_true", help="Create a release distribution archive (only usefull on the buildsystem)")
+  cfgOpts.add_argument("--srcSuffix", default="", help='base tool name suffix for the source dir in --sourceDir (default: "" = no VPATH build)')
+  cfgOpts.add_argument("--binSuffix", default="", help='base tool name suffix for the binary (build) dir in --sourceDir (default: "" = no VPATH build)')
+  cfgOpts.add_argument("--fmatvecBranch", default="", help='In the fmatvec repo checkout the branch FMATVECBRANCH')
+  cfgOpts.add_argument("--hdf5serieBranch", default="", help='In the hdf5serierepo checkout the branch HDF5SERIEBRANCH')
+  cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
+  cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
+  cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
+  
+  outOpts=argparser.add_argument_group('Output Options')
+  outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
+  outOpts.add_argument("--docOutDir", type=str,
+    help="Copy the documention to this directory. If not given do not copy")
+  outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the Atom feed")
+  outOpts.add_argument("--buildType", default="local", type=str, help="A description of the build type (e.g: linux64-dailydebug)")
+  outOpts.add_argument("--rotate", default=3, type=int, help="keep last n results and rotate them")
+  
+  passOpts=argparser.add_argument_group('Options beeing passed to other commands')
+  passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
+    help="pass all following options, up to but not including the next --passToConfigure argument, to runexamples.py.")
+  passOpts.add_argument("--passToConfigure", default=list(), nargs=argparse.REMAINDER,
+    help="pass all following options, up to but not including the next --passToRunexamples argument, to configure.")
+  
+  # parse command line options:
+   
+  # parse all options before --passToConfigure and/or --passToRunexamples by argparser. 
+  passTo1=min(sys.argv.index("--passToConfigure"  ) if "--passToConfigure"   in sys.argv else len(sys.argv),
+              sys.argv.index("--passToRunexamples") if "--passToRunexamples" in sys.argv else len(sys.argv))
+  passTo2=max(sys.argv.index("--passToConfigure"  ) if "--passToConfigure"   in sys.argv else len(sys.argv),
+              sys.argv.index("--passToRunexamples") if "--passToRunexamples" in sys.argv else len(sys.argv))
+  global args
+  args=argparser.parse_args(args=sys.argv[1:passTo1]) # do not pass REMAINDER arguments
+  # assign the options after --passToConfigure and/or --passToRunexamples to args.passTo...
+  if "--passToConfigure" in sys.argv[passTo1:passTo2]:
+    args.passToConfigure=sys.argv[passTo1+1:passTo2]
+  if "--passToRunexamples" in sys.argv[passTo1:passTo2]:
+    args.passToRunexamples=sys.argv[passTo1+1:passTo2]
+  if "--passToConfigure" in sys.argv[passTo2:]:
+    args.passToConfigure=sys.argv[passTo2+1:]
+  if "--passToRunexamples" in sys.argv[passTo2:]:
+    args.passToRunexamples=sys.argv[passTo2+1:]
+
 def htmlEscape(text):
+  htmlEscapeTable={
+    "&": "&amp;",
+    '"': "&quot;",
+    "'": "&apos;",
+    ">": "&gt;",
+    "<": "&lt;",
+  }
   return "".join(htmlEscapeTable.get(c,c) for c in text)
 
 # rotate
@@ -157,7 +176,7 @@ def rotateOutput():
 
 # the main routine being called ones
 def main():
-  mypostargparse(args)
+  parseArguments()
   args.sourceDir=os.path.abspath(args.sourceDir)
   args.reportOutDir=os.path.abspath(args.reportOutDir)
 
@@ -237,17 +256,6 @@ def main():
         pj('mbsim', 'mbsimxml'),
         pj('mbsim', 'modules', 'mbsimControl')
       ])],
-    pj('mbsim', 'examples'): [False, set([ # depends on
-        pj('mbsim', 'mbsimxml'),
-        pj('mbsim', 'mbsimfmi'),
-        pj('mbsim', 'kernel'),
-        pj('mbsim', 'modules', 'mbsimHydraulics'),
-        pj('mbsim', 'modules', 'mbsimFlexibleBody'),
-        pj('mbsim', 'modules', 'mbsimPowertrain'),
-        pj('mbsim', 'modules', 'mbsimElectronics'),
-        pj('mbsim', 'modules', 'mbsimControl'),
-        pj('mbsim', 'modules', 'mbsimInterface')
-      ])]
   }
   toolXMLDocCopyDir={
     pj("mbsim", "kernel"):                       set(["http___mbsim_berlios_de_MBSim", "http___mbsim_berlios_de_MBSimIntegrator"]),
@@ -262,9 +270,9 @@ def main():
   }
   toolDoxyDocCopyDir={
     pj("fmatvec"):                               set(["fmatvec"]),
-    pj("hdf5serie", "hdf5serie"):                set([pj("hdf5serie", "html")]),
-    pj("openmbv", "openmbvcppinterface"):        set([pj("openmbvcppinterface", "html")]),
-    pj("openmbv", "mbxmlutils"):                 set([pj("mbxmlutils", "html")]),
+    pj("hdf5serie", "hdf5serie"):                set(["hdf5serie"]),
+    pj("openmbv", "openmbvcppinterface"):        set(["openmbvcppinterface"]),
+    pj("openmbv", "mbxmlutils"):                 set(["mbxmlutils"]),
     pj("mbsim", "kernel"):                       set(["mbsim"]),
     pj("mbsim", "modules", "mbsimFlexibleBody"): set(["mbsimflexiblebody"]),
     pj("mbsim", "modules", "mbsimControl"):      set(["mbsimcontrol"]),
@@ -313,7 +321,8 @@ def main():
     print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=docFD)
     print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
     print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
-    print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=docFD)
+    print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
+    print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=docFD)
     print('</head>', file=docFD)
     print('<body style="margin:1em">', file=docFD)
     print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
@@ -331,12 +340,17 @@ def main():
     print('  </ul>', file=docFD)
     print('</div>', file=docFD)
     print('<hr/>', file=docFD)
-    print('<p class="text-right small">', file=docFD)
-    print('  <a href="http://validator.w3.org/check?uri=referer">', file=docFD)
-    print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
-    print('  </a>', file=docFD)
+    print('<span class="pull-left small">', file=docFD)
+    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=docFD)
+    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=docFD)
+    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=docFD)
+    print('</span>', file=docFD)
+    print('<span class="pull-right small">', file=docFD)
     print('  Generated on %s'%(str(timeID)), file=docFD)
-    print('</p>', file=docFD)
+    print('  <a href="http://validator.w3.org/check?uri=referer">', file=docFD)
+    print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
+    print('  </a>', file=docFD)
+    print('</span>', file=docFD)
     print('</body>', file=docFD)
     print('</html>', file=docFD)
     docFD.close()
@@ -352,34 +366,37 @@ def main():
 
   # create index.html
   mainFD=codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="utf-8")
-  print('<!DOCTYPE html>', file=mainFD)
-  print('<html lang="en">', file=mainFD)
-  print('<head>', file=mainFD)
-  print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=mainFD)
-  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=mainFD)
-  print('  <title>Build Results of MBSim-Env: <small>%s</small></title>'%(args.buildType), file=mainFD)
-  print('  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>', file=mainFD)
-  print('  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css"/>', file=mainFD)
-  print('  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css"/>', file=mainFD)
-  print('</head>', file=mainFD)
-  print('<body style="margin:1em">', file=mainFD)
-  print('<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"> </script>', file=mainFD)
-  print('<script type="text/javascript">', file=mainFD)
-  print('  $(document).ready(function() {', file=mainFD)
-  print("    $.fn.dataTableExt.sErrMode = 'throw';", file=mainFD)
-  print("    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});", file=mainFD)
-  print('  } );', file=mainFD)
-  print('</script>', file=mainFD)
+  print('''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build Results of MBSim-Env: <small>%s</small></title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
+  <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
+</head>
+<body style="margin:1em">
+<script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
+<script type="text/javascript" src="../../../html/mbsimBuildServiceClient.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $.fn.dataTableExt.sErrMode = 'throw';
+    $('#SortThisTable').dataTable({'lengthMenu': [ [1, 5, 10, 25, -1], [1, 5, 10, 25, 'All'] ], 'pageLength': -1, 'aaSorting': [], stateSave: true});'''%(args.buildType), file=mainFD)
 
-  print('<h1>Build Results of MBSim-Env: <small>%s</small></h1>'%(args.buildType), file=mainFD)
+  if args.enableDistribution:
+    releaseGeneration1(mainFD)
 
-  print('<dl class="dl-horizontal">', file=mainFD)
-  print('''<dt>Called Command</dt><dd><div class="dropdown">
+  print('''  } );
+</script>
+
+<h1>Build Results of MBSim-Env: <small>%s</small></h1>
+
+<dl class="dl-horizontal">
+<dt>Called Command</dt><dd><div class="dropdown">
   <button class="btn btn-default btn-xs" id="calledCommandID" data-toggle="dropdown">show <span class="caret"></span>
   </button>
-  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">''', file=mainFD)
+  <code class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;" aria-labelledby="calledCommandID">'''%(args.buildType), file=mainFD)
   for argv in sys.argv: print(argv.replace('/', u'/\u200B')+' ', file=mainFD)
   print('</code></div></dd>', file=mainFD)
   print('  <dt>Time ID</dt><dd>'+str(timeID)+'</dd>', file=mainFD)
@@ -392,10 +409,18 @@ def main():
   print('</dl>', file=mainFD)
   print('<hr/>', file=mainFD)
 
-  ret=0
+  nrFailed=0
+  nrRun=0
   # update all repositories
+  if not args.disableUpdate:
+    nrRun+=1
   if repoUpdate(mainFD)!=0:
-    ret+=1
+    nrFailed+=1
+
+  # clean prefix dir
+  if args.enableCleanPrefix and os.path.isdir(args.prefix if args.prefix!=None else args.prefixAuto):
+    shutil.rmtree(args.prefix if args.prefix!=None else args.prefixAuto)
+    os.makedirs(args.prefix if args.prefix!=None else args.prefixAuto)
 
   # force build
   buildTools=set()
@@ -416,7 +441,7 @@ def main():
   print('<p><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.<br/>', file=mainFD)
   print('<span class="glyphicon glyphicon-info-sign"></span>&nbsp;A tool name in gray color is a tool which may fail and is therefore not reported as an error in the Atom feed.</p>', file=mainFD)
 
-  print('<table id="SortThisTable" class="table table-striped table-hover table-bordered compact">', file=mainFD)
+  print('<table id="SortThisTable" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
   print('<th><span class="glyphicon glyphicon-folder-open"></span>&nbsp;Tool</th>', file=mainFD)
   if not args.disableConfigure:
@@ -441,23 +466,48 @@ def main():
   mainFD.flush()
 
   # build the other tools in order
-  retRunExamples=0
   nr=1
   for tool in orderedBuildTools:
-    r1, r2=build(nr, len(orderedBuildTools), tool, mainFD)
+    nrFailedLocal, nrRunLocal=build(nr, len(orderedBuildTools), tool, mainFD)
     if toolDependencies[tool][0]==False:
-      ret+=r1
-      retRunExamples+=r2
+      nrFailed+=nrFailedLocal
+      nrRun+=nrRunLocal
     nr+=1
 
+  # run examples
+  runExamplesErrorCode=0
+  if not args.disableRunExamples:
+    savedDir=os.getcwd()
+    os.chdir(pj(args.sourceDir, "mbsim", "examples"))
+    print("Run runexamples.py in "+os.getcwd()); sys.stdout.flush()
+    runExamplesErrorCode=runexamples(mainFD)
+    os.chdir(savedDir)
+
+  # create distribution
+  if args.enableDistribution:
+    nrRun=nrRun+1
+    print("Create distribution"); sys.stdout.flush()
+    cdRet, distArchiveName=createDistribution(mainFD)
+    if cdRet!=0:
+      nrFailed=nrFailed+1
+
   print('</tbody></table>', file=mainFD)
+
+  if args.enableDistribution and nrFailed==0 and runExamplesErrorCode==0:
+    releaseGeneration2(mainFD, distArchiveName)
+
   print('<hr/>', file=mainFD)
-  print('<p class="text-right small">', file=mainFD)
-  print('  <a href="http://validator.w3.org/check?uri=referer">', file=mainFD)
-  print('    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
-  print('  </a>', file=mainFD)
+  print('<span class="pull-left small">', file=mainFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=mainFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=mainFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=mainFD)
+  print('</span>', file=mainFD)
+  print('<span class="pull-right small">', file=mainFD)
   print('  Generated on %s'%(str(timeID)), file=mainFD)
-  print('</p>', file=mainFD)
+  print('  <a href="http://validator.w3.org/check?uri=referer">', file=mainFD)
+  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=mainFD)
+  print('  </a>', file=mainFD)
+  print('</span>', file=mainFD)
   print('</body>', file=mainFD)
   print('</html>', file=mainFD)
 
@@ -469,15 +519,17 @@ def main():
     line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(endTime), line)
     print(line, end="")
 
-  # write Atom feed
-  writeAtomFeed(currentID, ret)
+  # update build system state
+  if args.buildSystemRun:
+    buildSystemState.update(args.buildType+"-build", "Build Failed: "+args.buildType,
+                            "%d of %d build parts failed."%(nrFailed, nrRun),
+                            args.url+"/result_%010d"%(currentID)+"/index.html",
+                            nrFailed, nrRun)
 
-  if ret>0:
-    print("\nERROR: At least one build failed!!!!!");
-  if retRunExamples>0:
-    print("\nERROR: runexamples failed!!!!!");
+  if nrFailed>0:
+    print("\nERROR: %d of %d build parts failed!!!!!"%(nrFailed, nrRun));
 
-  return ret+retRunExamples
+  return nrFailed+abs(runExamplesErrorCode)
 
 
 
@@ -543,7 +595,7 @@ def repoUpdate(mainFD):
     print('Updating repositories: ', end="")
 
   print('<h2>Repository State</h2>', file=mainFD)
-  print('<table style="width:auto;" class="table table-striped table-hover table-bordered compact">', file=mainFD)
+  print('<table style="width:auto;" class="table table-striped table-hover table-bordered table-condensed">', file=mainFD)
   print('<thead><tr>', file=mainFD)
   print('<th><span class="octicon octicon-repo"></span>&nbsp;Repository</th>', file=mainFD)
   print('<th><span class="octicon octicon-git-branch"></span>&nbsp;Branch</th>', file=mainFD)
@@ -574,6 +626,7 @@ def repoUpdate(mainFD):
     # get branch and commit
     branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%h', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
+    commitidfull=subprocess.check_output(['git', 'log', '-n', '1', '--format=%H', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitsub=subprocess.check_output(['git', 'log', '-n', '1', '--format=%s', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitshort="<code>"+commitid+"</code>: "+htmlEscape(commitsub)
     commitlong=subprocess.check_output(['git', 'log', '-n', '1', '--format=Commit: %H%nAuthor: %an%nDate:   %ad%n%s%n%b', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
@@ -590,7 +643,8 @@ def repoUpdate(mainFD):
         "ok-sign alert-success" if retlocal==0 else "exclamation-sign alert-danger",
         repo,
         "passed" if retlocal==0 else "failed"), file=mainFD)
-    print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+'</td>', file=mainFD)
+    print('  <td data-toggle="tooltip" data-placement="bottom" title="'+commitlong+'">'+commitshort+
+          '<span id="COMMITID_%s" style="display:none">%s</span></td>'%(repo, commitidfull), file=mainFD)
     print('</tr>', file=mainFD)
 
   print('</tbody></table>', file=mainFD)
@@ -610,8 +664,8 @@ def repoUpdate(mainFD):
 def build(nr, nrAll, tool, mainFD):
   print("Building "+str(nr)+"/"+str(nrAll)+": "+tool+": ", end=""); sys.stdout.flush()
 
-  ret=0
-  retRunExamples=0
+  nrFailed=0
+  nrRun=0
 
   # start row, including tool name
   if toolDependencies[tool][0]==False:
@@ -622,41 +676,48 @@ def build(nr, nrAll, tool, mainFD):
   mainFD.flush()
 
   savedDir=os.getcwd()
-  if tool==pj("mbsim", "examples"):
-    os.chdir(pj(args.sourceDir, srcTool(tool)))
-    print("runexamples.py", end=""); sys.stdout.flush()
-    retRunExamples+=runexamples(mainFD)
-  else:
-    # configure
-    print("configure", end=""); sys.stdout.flush()
-    ret+=configure(tool, mainFD)
 
-    # cd to build dir
-    os.chdir(savedDir)
-    os.chdir(pj(args.sourceDir, buildTool(tool)))
+  # configure
+  print("configure", end=""); sys.stdout.flush()
+  failed, run=configure(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # make
-    print(", make", end=""); sys.stdout.flush()
-    ret+=make(tool, mainFD)
+  # cd to build dir
+  os.chdir(savedDir)
+  os.chdir(pj(args.sourceDir, buildTool(tool)))
 
-    # make check
-    print(", check", end=""); sys.stdout.flush()
-    ret+=check(tool, mainFD)
+  # make
+  print(", make", end=""); sys.stdout.flush()
+  failed, run=make(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # doxygen
-    print(", doxygen-doc", end=""); sys.stdout.flush()
-    ret+=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
+  # make check
+  print(", check", end=""); sys.stdout.flush()
+  failed, run=check(tool, mainFD)
+  nrFailed+=failed
+  nrRun+=run
 
-    # xmldoc
-    print(", xml-doc", end=""); sys.stdout.flush()
-    ret+=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+  # doxygen
+  print(", doxygen-doc", end=""); sys.stdout.flush()
+  failed, run=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
+  nrFailed+=failed
+  nrRun+=run
+
+  # xmldoc
+  print(", xml-doc", end=""); sys.stdout.flush()
+  failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+  nrFailed+=failed
+  nrRun+=run
+
   os.chdir(savedDir)
 
   print("")
   print('</tr>', file=mainFD)
   mainFD.flush()
 
-  return ret, retRunExamples
+  return nrFailed, nrRun
 
 
 
@@ -665,28 +726,36 @@ def configure(tool, mainFD):
   configureFD=codecs.open(pj(args.reportOutDir, tool, "configure.txt"), "w", encoding="utf-8")
   copyConfigLog=False
   savedDir=os.getcwd()
+  run=0
   try:
     if not args.disableConfigure:
+      run=1
       # pre configure
       os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("aclocal failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoheader failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("autoheader failed")
       print("\n\nRUNNING libtoolize\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("libtoolize failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("libtoolize failed")
       print("\n\nRUNNING automake\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("autoconf failed")
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
       if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
+                            stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+        raise RuntimeError("autoreconf failed")
       # configure
       os.chdir(savedDir)
       os.chdir(pj(args.sourceDir, buildTool(tool)))
@@ -694,12 +763,14 @@ def configure(tool, mainFD):
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
         if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."],
-                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+                              stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+          raise RuntimeError("configure failed")
       else:
         command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
         if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."],
-                              stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("configure failed")
+                              stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
+          raise RuntimeError("configure failed")
     else:
       print("configure disabled", file=configureFD); configureFD.flush()
 
@@ -719,29 +790,34 @@ def configure(tool, mainFD):
   os.chdir(savedDir)
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
 def make(tool, mainFD):
   makeFD=codecs.open(pj(args.reportOutDir, tool, "make.txt"), "w", encoding="utf-8")
+  run=0
   try:
     if not args.disableMake:
+      run=1
       # make
       errStr=""
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
         if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
-                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make clean failed; "
+                              stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
+          errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
       if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make failed; "
+                            stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
         if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
                               shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
-                              stderr=subprocess.STDOUT, stdout=makeFD)!=0: errStr=errStr+"make install failed; "
+                              stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
+          errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
     else:
       print("make disabled", file=makeFD); makeFD.flush()
@@ -758,18 +834,20 @@ def make(tool, mainFD):
   mainFD.flush()
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
 def check(tool, mainFD):
   checkFD=codecs.open(pj(args.reportOutDir, tool, "check.txt"), "w", encoding="utf-8")
+  run=0
   if not args.disableMakeCheck:
+    run=1
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
     if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
-                          stderr=subprocess.STDOUT, stdout=checkFD)==0:
+                          stderr=subprocess.STDOUT, stdout=checkFD, buildSystemRun=args.buildSystemRun)==0:
       result="done"
     else:
       result="failed"
@@ -796,8 +874,8 @@ def check(tool, mainFD):
   mainFD.flush()
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
@@ -807,26 +885,31 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
        docDirName=="xmldoc" and not args.disableXMLDoc:
       print('<td>not available</td>', file=mainFD)
     mainFD.flush()
-    return 0
+    return 0, 0
 
   docFD=codecs.open(pj(args.reportOutDir, tool, docDirName+".txt"), "w", encoding="utf-8")
   savedDir=os.getcwd()
   os.chdir(docDirName)
+  run=0
   try:
     if not disabled:
+      run=1
       # make doc
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
-                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make clean failed; "
+                            stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k"], envvar=simplesandboxEnvvars,
                             shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
-                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make failed; "
+                            stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
                             shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
-                            stderr=subprocess.STDOUT, stdout=docFD)!=0: errStr=errStr+"make install failed; "
+                            stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
+        errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
 
       # copy doc
@@ -852,15 +935,15 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
   if docDirName=="doc" and not args.disableDoxygen or \
      docDirName=="xmldoc" and not args.disableXMLDoc:
     print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;'%("success" if result=="done" else "danger",
-      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-success"), file=mainFD)
+      "ok-sign alert-success" if result=="done" else "exclamation-sign alert-danger"), file=mainFD)
     print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'">'+result+'</a>', file=mainFD)
     print('</td>', file=mainFD)
   docFD.close()
   mainFD.flush()
 
   if result!="done":
-    return 1
-  return 0
+    return 1, run
+  return 0, run
 
 
 
@@ -869,17 +952,19 @@ def runexamples(mainFD):
     mainFD.flush()
     return 0
 
+  print('<tr><td>Run examples</td>', file=mainFD); mainFD.flush()
+
   # runexamples.py command
   currentID=int(os.path.basename(args.reportOutDir)[len("result_"):])
   command=["./runexamples.py", "-j", str(args.j)]
   if args.url!=None:
     command.extend(["--url", args.url+"/result_%010d/runexamples_report"%(currentID)])
-  if args.buildType!="":
-    command.extend(["--buildType", args.buildType])
+  command.extend(["--buildType", args.buildType])
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(["--currentID", str(currentID)])
   command.extend(["--timeID", timeID.strftime("%Y-%m-%dT%H:%M:%S")])
-  command.extend(["--buildSystemDir", scriptdir])
+  if args.buildSystemRun:
+    command.extend(["--buildSystemRun", scriptdir])
   command.extend(args.passToRunexamples)
 
   print("")
@@ -887,8 +972,9 @@ def runexamples(mainFD):
   print("Output of runexamples.py")
   print("")
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
-  ret=simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"), "/var/www/html/mbsim/buildsystem.atom.xml"],
-                         stderr=subprocess.STDOUT)
+  ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"),
+                             "/var/www/html/mbsim/buildsystemstate"],
+                             stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun))
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
@@ -896,8 +982,9 @@ def runexamples(mainFD):
   else:
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(pj("runexamples_report", "result_current", "index.html"))+
       '">examples failed</a></td>', file=mainFD)
-  for i in range(0, 3-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
     print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD)
 
   mainFD.flush()
 
@@ -905,37 +992,143 @@ def runexamples(mainFD):
 
 
 
-def writeAtomFeed(currentID, nrFailed):
-  if nrFailed>0:
-    import addBuildSystemFeed
-    addBuildSystemFeed.add(args.buildType+"-build", "Build: "+args.buildType,
-                           "At least "+str(nrFailed)+" project failed.",
-                           args.url+"/result_%010d"%(currentID)+"/index.html")
+def createDistribution(mainFD):
+  print('<tr><td>Create distribution</td>', file=mainFD); mainFD.flush()
+  os.mkdir(pj(args.reportOutDir, "distribute"))
+  distLog=codecs.open(pj(args.reportOutDir, "distribute", "log.txt"), "w", encoding="utf-8")
+  distArchiveName="failed"
+  distributeErrorCode=simplesandbox.call([pj(scriptdir, "distribute.py"), "--outDir", pj(args.reportOutDir, "distribute"),
+                                         args.prefix if args.prefix!=None else args.prefixAuto],
+                                         buildSystemRun=args.buildSystemRun, shareddir=[pj(args.reportOutDir, "distribute")],
+                                         stderr=subprocess.STDOUT, stdout=distLog)
+  distLog.close()
+  if distributeErrorCode==0:
+    lines=codecs.open(pj(args.reportOutDir, "distribute", "log.txt"), "r", encoding="utf-8").readlines()
+    distArchiveName=[x[len("distArchiveName="):] for x in lines if x.startswith("distArchiveName=")][0].rstrip()
+    debugArchiveName=[x[len("debugArchiveName="):] for x in lines if x.startswith("debugArchiveName=")][0].rstrip()
+    print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;'+
+          '<a href="'+myurllib.pathname2url(pj("distribute", "log.txt"))+'">done</a> - '+
+          '<a href="'+myurllib.pathname2url(pj("distribute", distArchiveName))+'"><b>Download</b></a> - '+
+          '<a href="'+myurllib.pathname2url(pj("distribute", debugArchiveName))+'">Debug-Info</a>'+
+          '</td>', file=mainFD)
+  else:
+    print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;'+
+          '<a href="'+myurllib.pathname2url(pj("distribute", "log.txt"))+'">failed</a>'+
+          '</td>', file=mainFD)
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD); mainFD.flush()
+
+  return distributeErrorCode, distArchiveName
 
 
 
-# split mulitple "nargs=argparse.REMAINDER" arguments to the corresponding ones
-def mypostargparse(args):
-  # get all passTo* args
-  passArgNames=list()
-  for argname in args.__dict__:
-    if argname.find("passTo")==0:
-      passArgNames.append(argname)
+def releaseGeneration1(mainFD):
+  print('''    // no initial communication needed -> set OK status
+    statusMessage({success: true, message: "ready"}); // no initial communication needed -> set OK status
+    // when a release version is entered update the button text
+    $("#RELEASEVERSION").keyup(function() {
+      curRelStr=$("#RELEASEVERSION").val();
+      $(".RELSTR").each(function() {
+        $(this).text(curRelStr);
+      })
+    });
+    // when the release button is clicked
+    $("#RELEASEBUTTON").click(function() {
+      // check if all checkboxes are checked
+      checkBoxUnchecked=false;
+      $(".RELEASECHECK").each(function() {
+        if(!$(this).prop("checked"))
+          checkBoxUnchecked=true;
+      });
+      // get data
+      var data={distArchiveName: $("#DISTARCHIVENAME").text(),
+                reportOutDir: $("#REPORTOUTDIR").text(),
+                relStr: $("#RELEASEVERSION").val(),
+                commitid: {fmatvec:   $("#COMMITID_fmatvec").text(),
+                           hdf5serie: $("#COMMITID_hdf5serie").text(),
+                           openmbv:   $("#COMMITID_openmbv").text(),
+                           mbsim:     $("#COMMITID_mbsim").text()}};
+      if(checkBoxUnchecked || data.relStr=="")
+        statusMessage({success: false, message: "You must first check all checklist items above and define the release string!"});
+      else {
+        statusCommunicating();
+        // send data to server
+        $.ajax({url: cgiPath+"/releasedistribution", xhrFields: {withCredentials: true}, dataType: "json", type: "POST",
+                data: JSON.stringify(data)}).done(function(response) {
+          statusMessage(response);
+        });
+      }
+    });''', file=mainFD)
 
-  runAgain=False
-  for argname in passArgNames:
-    if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname)==None: raise RuntimeError("Invalid argument: "+argname) # security check
-    value=eval("args."+argname)
-    if value!=None:
-      for argname2 in passArgNames:
-        if "--"+argname2 in value:
-          runAgain=True
-          exec('args.'+argname+'=value[0:value.index("--"+argname2)]')
-          if re.match("[_a-zA-Z][_a-zA-Z0-9]*", argname2)==None: raise RuntimeError("Invalid argument: "+argname2) # security check
-          exec('args.'+argname2+'=value[value.index("--"+argname2)+1:]')
+def releaseGeneration2(mainFD, distArchiveName):
+  # default values
+  relStr="x.y"
+  relArchiveNamePrefix=re.sub("(.*-)xxx\..*", "\\1",  distArchiveName)
+  relArchiveNamePostfix=re.sub(".*-xxx(\..*)", "\\1",  distArchiveName)
+  tagNamePrefix="release/"
+  tagNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx.*", "-\\1", distArchiveName)
 
-  if runAgain:
-    mypostargparse(args)
+  print('''<div class="panel panel-warning">
+  <div class="panel-heading"><span class="glyphicon glyphicon-pencil">
+    </span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
+ Release this distribution<span class="caret"> </span></a></div>
+  <div class="panel-body panel-collapse collapse" id="collapseReleaseGeneration">
+    <p>Releasing this distribution will</p>
+    <ul>
+      <li>tag the commits of the repositories, shown at the top, on GitHub.</li>
+      <li>copy the above distribution (<b>Download</b> - Debug-Info) to the <a href="../../../releases">release directory</a>.</li>
+    </ul>
+    <p>When releasing a distribution you have</p>
+    <div style="margin-left:1.5em">
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to check that the corresponding debug build works including all examples.
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to check that the corresponging valgrind-examples of the debug build works.
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        first to download the distribution and check it manually on a native OS (at least
+        using the test script .../mbsim-env/bin/mbsim-env-test[.bat]).
+      </label></div>
+      <div class="checkbox"><label>
+        <input type="checkbox" class="RELEASECHECK"/>
+        to release the Windows and Linux release builds at the same commit state using the same "release version" string!
+      </label></div>
+    </div>
+    <p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
+    <div>
+      <span class="octicon octicon-person"></span>&nbsp;
+      <strong id="LOGINUSER">unknwon</strong>
+      <button id="LOGINBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
+        </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
+      <button id="LOGOUTBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+    </div>
+    <div>
+      <span id="DISTARCHIVENAME" style="display:none">%s</span>
+      <span id="REPORTOUTDIR" style="display:none">%s</span>
+      <div>
+        <label for="RELEASEVERSION">Release version: </label>
+        <input type="text" class="form-control" id="RELEASEVERSION" placeholder="%s">
+      </div>
+    </div>
+    <div>
+      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
+    </div>
+    <p><small>(This will create an annotated git tag on the MBSim-Env repositories on GitHub with your GitHub account.)</small></p>
+  </div>
+</div>
+<div id="STATUSPANEL" class="panel panel-info">
+  <div class="panel-heading"><span class="glyphicon glyphicon-info-sign">
+    </span>&nbsp;<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Status message</div>
+  <div class="panel-body">
+    <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
+  </div>
+</div>'''%(distArchiveName, args.reportOutDir, relStr, relArchiveNamePrefix, relStr, relArchiveNamePostfix,
+           tagNamePrefix, relStr, tagNamePostfix), file=mainFD)
 
 
 

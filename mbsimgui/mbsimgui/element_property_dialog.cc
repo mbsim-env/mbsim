@@ -363,6 +363,9 @@ namespace MBSimGUI {
 
     initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
     addToTab("Extra", initialProjection);
+
+    useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    addToTab("Extra", useConstraintSolverForPlot);
   }
 
   void DynamicSystemSolverPropertyDialog::toWidget(Element *element) {
@@ -371,6 +374,7 @@ namespace MBSimGUI {
     static_cast<DynamicSystemSolver*>(element)->solverParameters.toWidget(solverParameters);
     static_cast<DynamicSystemSolver*>(element)->inverseKinetics.toWidget(inverseKinetics);
     static_cast<DynamicSystemSolver*>(element)->initialProjection.toWidget(initialProjection);
+    static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.toWidget(useConstraintSolverForPlot);
   }
 
   void DynamicSystemSolverPropertyDialog::fromWidget(Element *element) {
@@ -379,6 +383,7 @@ namespace MBSimGUI {
     static_cast<DynamicSystemSolver*>(element)->solverParameters.fromWidget(solverParameters);
     static_cast<DynamicSystemSolver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
     static_cast<DynamicSystemSolver*>(element)->initialProjection.fromWidget(initialProjection);
+    static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.fromWidget(useConstraintSolverForPlot);
   }
 
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {

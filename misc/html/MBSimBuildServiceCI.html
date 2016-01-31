@@ -4,25 +4,24 @@
   <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MBSim Build Service - CI</title>
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="http://octicons.github.com/components/octicons/octicons/octicons.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
 <body style="margin:1em;cursor:progress;">
-<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"> </script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
 <script type="text/javascript" src="mbsimBuildServiceClient.js"></script>
 <script type="text/javascript">
   $(document).ready(function() {
     // when the save button is clicked
     $("#APPLYADDCIBRANCH").click(function() {
       statusCommunicating();
-      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
-                addcibranch: {fmatvec: $('#FMATVEC_BRANCH').val(),
+      var data={addcibranch: {fmatvec: $('#FMATVEC_BRANCH').val(),
                               hdf5serie: $('#HDF5SERIE_BRANCH').val(),
                               openmbv: $('#OPENMBV_BRANCH').val(),
                               mbsim: $('#MBSIM_BRANCH').val(), }}
-      $.ajax({url: cgiPath+"/addcibranch",
-              dataType: "json", type: "POST", data: JSON.stringify(data)
-            }).done(function(response) {
+      $.ajax({url: cgiPath+"/addcibranch", xhrFields: {withCredentials: true}, dataType: "json", type: "POST",
+              data: JSON.stringify(data)}).done(function(response) {
         if(!response.success)
           statusMessage(response);
         else {
@@ -35,11 +34,9 @@
     // when the delete button is clicked
     $('#CITABLE').on("click", ".DELCIBRANCH", function() {
       statusCommunicating();
-      var data={login: localStorage['GITHUB_LOGIN_NAME'], athmac: localStorage['GITHUB_LOGIN_ATHMAC'],
-                delcibranch: JSON.parse($(this).attr('value').replace(/'/g, '"'))}
-      $.ajax({url: cgiPath+"/delcibranch",
-              dataType: "json", type: "POST", data: JSON.stringify(data)
-            }).done(function(response) {
+      var data={delcibranch: JSON.parse($(this).attr('value').replace(/'/g, '"'))}
+      $.ajax({url: cgiPath+"/delcibranch", xhrFields: {withCredentials: true}, dataType: "json", type: "POST",
+              data: JSON.stringify(data)}).done(function(response) {
         if(!response.success)
           statusMessage(response);
         else {
@@ -53,10 +50,8 @@
     function updateCurCIBranches(printStatus) {
       if(printStatus)
         statusCommunicating();
-      var loginname=localStorage['GITHUB_LOGIN_NAME'];
-      $.ajax({url: cgiPath+"/getcibranches", async: printStatus,
-              dataType: "json", type: "POST"
-            }).done(function(response) {
+      $.ajax({url: cgiPath+"/getcibranches", xhrFields: {withCredentials: true}, async: printStatus,
+              dataType: "json", type: "GET"}).done(function(response) {
         if(!response.success) {
           if(printStatus)
             statusMessage(response);
@@ -68,7 +63,7 @@
           sel.empty();
           response.curcibranch.forEach(function(branch) {
             sel.append('<tr><td>#'+nr.toString()+'</td>'+
-                           '<td><button class="DELCIBRANCH" value="'+JSON.stringify(branch).replace(/"/g, "'")+
+                           '<td><button disabled="disabled" class="DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
                               '" disabled="disabled" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
                            '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.fmatvec+'</span></td>'+
                            '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.hdf5serie+'</span></td>'+
@@ -117,19 +112,20 @@ where CI is always active) must be activated manually for CI. This can be done o
 
 <h2>Login Using GitHub</h2>
 <p>To change CI branches you must login with your GitHub account and have apropriate rights.</p>
+<p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
 <p>
-  <span class="octicon octicon-person"></span>&nbsp;<img id="LOGINUSERIMG" height="20" src="#" alt="avatar">
+  <span class="octicon octicon-person"></span>&nbsp;
   <strong id="LOGINUSER">unknwon</strong>
-  <button id="LOGINBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-in"></span>&nbsp;Login
+  <button id="LOGINBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in"></span>&nbsp;Login using
     <span class="octicon octicon-logo-github"></span></button>
-  <button id="LOGOUTBUTTON" disabled="disabled" type="button"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
+  <button id="LOGOUTBUTTON" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="octicon octicon-sign-out"></span>&nbsp;Logout</button>
 </p>
 
 <h2>CI Branch Combinations</h2>
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;Current branch combinations activated for CI</div>
   <div class="panel-body">
-    <table id="CITABLE" class="table table-striped table-hover table-bordered compact">
+    <table style="width:auto" id="CITABLE" class="table table-striped table-hover table-bordered table-condensed">
       <thead>
         <tr>
           <th style="text-align:center;" colspan="2"><span class="octicon octicon-git-branch"></span>&nbsp;CI branch comb.</th>
@@ -155,15 +151,15 @@ where CI is always active) must be activated manually for CI. This can be done o
   <div class="panel-body">
     <dl class="dl-horizontal">
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="FMATVEC_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="FMATVEC_BRANCH"> </select></dd>
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="HDF5SERIE_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="HDF5SERIE_BRANCH"> </select></dd>
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="OPENMBV_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="OPENMBV_BRANCH"> </select></dd>
       <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></dt>
-        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select id="MBSIM_BRANCH"> </select></dd>
+        <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="MBSIM_BRANCH"> </select></dd>
     </dl>
-    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
+    <button id="APPLYADDCIBRANCH" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>
   </div>
 </div>
 
@@ -175,11 +171,16 @@ where CI is always active) must be activated manually for CI. This can be done o
 </div>
 
 <hr/>
-<p class="text-right small">
+<span class="pull-left small">
+  <a href="impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
+  <a href="impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
+  <a href="impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
+</span>
+<span class="pull-right small">
   <a href="http://validator.w3.org/check?uri=referer">
-    <img src="http://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
+    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>
   </a>
-</p>
+</span>
 
 </body>
 </html>

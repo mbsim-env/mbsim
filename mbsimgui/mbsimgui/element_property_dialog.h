@@ -213,7 +213,7 @@ namespace MBSimGUI {
 
   class DynamicSystemSolverPropertyDialog : public GroupPropertyDialog {
     protected:
-      ExtWidget *environment, *solverParameters, *inverseKinetics, *initialProjection;
+      ExtWidget *environment, *solverParameters, *inverseKinetics, *initialProjection, *useConstraintSolverForPlot;
 
     public:
       DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
