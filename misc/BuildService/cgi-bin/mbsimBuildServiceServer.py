@@ -150,13 +150,14 @@ try:
       $(document).ready(function() {
         // notify opener window
         window.opener.postMessage("User %s successfully logged in.", "http://www.mbsim-env.de");
+        window.opener.postMessage("User %s successfully logged in.", "https://www.ssl-id1.de");
       })
     </script>
     <h1>Please Wait</h1>
     <p>Set cookie in your browser.</p>
     <p>This window should close itself after a short time.</p>
   </body>
-</html>'''%(login))
+</html>'''%(login, login))
 
   # logout
   if action=="/logout" and method=="GET":
