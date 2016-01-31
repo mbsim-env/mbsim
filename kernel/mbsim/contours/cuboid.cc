@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/cuboid.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/contours/rectangle.h"
 #include "mbsim/contours/edge.h"
 #include "mbsim/fixed_relative_frame.h"

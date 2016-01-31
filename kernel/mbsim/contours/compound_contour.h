@@ -21,7 +21,6 @@
 #define _COMPOUND_CONTOUR_H_
 
 #include "mbsim/contour.h"
-#include "mbsim/contours/contour_interpolation.h"
 
 namespace MBSim {
 
