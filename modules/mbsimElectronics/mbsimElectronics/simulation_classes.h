@@ -98,7 +98,6 @@ namespace MBSimElectronics {
       void calclaSize(int j);
       void updateg(double t);
       void updategd(double t);
-      void updateGeneralizedSetValuedForces(double t);
       void updateW(double t, int j=0);
       void updateh(double t, int j=0);
       void plot(double t, double dt = 1); 
@@ -131,7 +130,7 @@ namespace MBSimElectronics {
     public:
       Resistor(const std::string &name);
       void setResistance(double R_) { R = R_;}
-      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedForces(double t);
       std::string getType() const { return "Resistor"; }
   };
 
@@ -141,7 +140,7 @@ namespace MBSimElectronics {
     public:
       Capacitor(const std::string &name);
       void setCapacity(double C_) { C = C_;}
-      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedForces(double t);
       std::string getType() const { return "Capacitor"; }
   };
 
@@ -151,7 +150,7 @@ namespace MBSimElectronics {
     public:
       VoltageSource(const std::string &name);
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
-      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedForces(double t);
       std::string getType() const { return "VoltageSource"; }
   };
 
@@ -161,7 +160,7 @@ namespace MBSimElectronics {
    public:
       Diode(const std::string &name);
       void setSetValued(bool flag) {sv = flag;}
-      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedForces(double t);
       bool isSetValued() const {return sv;}
       virtual bool isSingleValued() const {return not sv;}
       void checkImpactsForTermination(double t, double dt);
@@ -178,7 +177,7 @@ namespace MBSimElectronics {
       void setSetValued(bool flag) {sv = flag;}
       bool isSetValued() const {return sv;}
       virtual bool isSingleValued() const {return not sv;}
-      void updateGeneralizedSingleValuedForces(double t);
+      void updateGeneralizedForces(double t);
       void checkImpactsForTermination(double t, double dt);
       void solveImpactsGaussSeidel(double t, double dt);
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}

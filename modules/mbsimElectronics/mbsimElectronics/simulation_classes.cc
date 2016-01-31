@@ -78,7 +78,6 @@ namespace MBSimElectronics {
       gd.resize(1);
       gdn.resize(1);
       lambda.resize(1);
-      laMV.resize(1);
     }
     else
       Link::init(stage);
@@ -90,11 +89,6 @@ namespace MBSimElectronics {
 
   void ElectronicLink::updategd(double t) {
     gd(0) = getCurrent(t);
-  }
-
-  void ElectronicLink::updateGeneralizedSetValuedForces(double t) {
-    laMV = la;
-    updlaMV = false;
   }
 
   void ElectronicLink::plot(double t, double dt) {
@@ -130,7 +124,7 @@ namespace MBSimElectronics {
   }
 
   void ElectronicLink::updateh(double t, int j) {
-    h[j][0] += branch->getJacobian(j).T()*getGeneralizedSingleValuedForce(t)(0)*vz;
+    h[j][0] += branch->getJacobian(j).T()*getGeneralizedForce(t)(0)*vz;
   }
 
   void Mesh::init(InitStage stage) {
@@ -249,10 +243,14 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Diode::updateGeneralizedSingleValuedForces(double t) {
-    double slope=1e4;
-    double I = getCurrent(t);
-    lambda(0) = (I >= 0) ? 0 : -slope*I;
+  void Diode::updateGeneralizedForces(double t) {
+    if(isSetValued())
+      lambda = la;
+    else {
+      double slope=1e4;
+      double I = getCurrent(t);
+      lambda(0) = (I >= 0) ? 0 : -slope*I;
+    }
     updla = false;
   }
 
@@ -300,14 +298,18 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Switch::updateGeneralizedSingleValuedForces(double t) {
-    double gdLim = 0.01;
-    double U0 = (*voltageSignal)(t)(0);
-    double I = getCurrent(t);
-    if(fabs(I) < gdLim)
-      lambda(0) = -U0*I/gdLim;
-    else
-      lambda(0) = I>0?-U0:U0;
+  void Switch::updateGeneralizedForces(double t) {
+    if(isSetValued())
+      lambda = la;
+    else {
+      double gdLim = 0.01;
+      double U0 = (*voltageSignal)(t)(0);
+      double I = getCurrent(t);
+      if(fabs(I) < gdLim)
+        lambda(0) = -U0*I/gdLim;
+      else
+        lambda(0) = I>0?-U0:U0;
+    }
     updla = false;
   }
 
@@ -361,7 +363,7 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Resistor::updateGeneralizedSingleValuedForces(double t) {
+  void Resistor::updateGeneralizedForces(double t) {
     lambda(0) = -R*getCurrent(t);
     updla = false;
   }
@@ -372,7 +374,7 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Capacitor::updateGeneralizedSingleValuedForces(double t) {
+  void Capacitor::updateGeneralizedForces(double t) {
     lambda(0) = -getCharge(t)/C;
     updla = false;
   }
@@ -383,7 +385,7 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void VoltageSource::updateGeneralizedSingleValuedForces(double t) {
+  void VoltageSource::updateGeneralizedForces(double t) {
     lambda(0) = (*voltageSignal)(t)(0);
     updla = false;
   }

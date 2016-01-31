@@ -26,7 +26,7 @@ class VoltageSensor : public MBSimControl::Sensor {
     VoltageSensor(const std::string &name) : Sensor(name) { }
     std::string getType() const { return "VoltageSensor"; }
     void updateSignal(double t) {
-      s = comp->getGeneralizedSingleValuedForce(t);
+      s = comp->getGeneralizedForce(t);
       upds = false;
     }
     int getSignalSize() const { return 1; }
