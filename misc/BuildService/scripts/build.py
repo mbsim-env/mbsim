@@ -270,9 +270,9 @@ def main():
   }
   toolDoxyDocCopyDir={
     pj("fmatvec"):                               set(["fmatvec"]),
-    pj("hdf5serie", "hdf5serie"):                set([pj("hdf5serie", "html")]),
-    pj("openmbv", "openmbvcppinterface"):        set([pj("openmbvcppinterface", "html")]),
-    pj("openmbv", "mbxmlutils"):                 set([pj("mbxmlutils", "html")]),
+    pj("hdf5serie", "hdf5serie"):                set(["hdf5serie"]),
+    pj("openmbv", "openmbvcppinterface"):        set(["openmbvcppinterface"]),
+    pj("openmbv", "mbxmlutils"):                 set(["mbxmlutils"]),
     pj("mbsim", "kernel"):                       set(["mbsim"]),
     pj("mbsim", "modules", "mbsimFlexibleBody"): set(["mbsimflexiblebody"]),
     pj("mbsim", "modules", "mbsimControl"):      set(["mbsimcontrol"]),
