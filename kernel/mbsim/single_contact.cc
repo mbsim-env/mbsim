@@ -104,10 +104,10 @@ namespace MBSim {
     updlaT = false;
   }
 
-  void SingleContact::updateGeneralizedForce(double t) {
-    laSV(0) = getGeneralizedNormalForce(t);
-    laSV.set(Index(1,laSV.size()-1),getGeneralizedTangentialForce(t));
-    updlaSV = false;
+  void SingleContact::updateGeneralizedForces(double t) {
+    lambda(0) = getGeneralizedNormalForce(t);
+    lambda.set(Index(1,lambda.size()-1),getGeneralizedTangentialForce(t));
+    updla = false;
   }
 
   void SingleContact::updateGeneralizedPositions(double t) {
@@ -480,7 +480,7 @@ namespace MBSim {
       gdnT.resize(getFrictionDirections());
       rrel.resize(1);
       vrel.resize(1 + getFrictionDirections());
-      laSV.resize(1 + getFrictionDirections());
+      lambda.resize(1 + getFrictionDirections());
 
       if (getFrictionDirections() == 0)
         gdActive[1] = false;

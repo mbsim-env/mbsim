@@ -474,9 +474,9 @@ namespace MBSimHydraulics {
     pFun->init(stage);
   }
 
-  void ConstrainedNodeMec::updateGeneralizedForce(double t) {
-    laSV(0)=(*pFun)(t);
-    updlaSV = false;
+  void ConstrainedNodeMec::updateGeneralizedForces(double t) {
+    lambda(0)=(*pFun)(t);
+    updla = false;
   }
 
   void ConstrainedNodeMec::initializeUsingXML(DOMElement *element) {
@@ -490,7 +490,7 @@ namespace MBSimHydraulics {
   void EnvironmentNodeMec::init(InitStage stage) {
     if (stage==unknownStage) {
       HNodeMec::init(stage);
-      laSV(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      lambda(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
     else
       HNodeMec::init(stage);
@@ -533,9 +533,9 @@ namespace MBSimHydraulics {
       HNodeMec::init(stage);
   }
 
-  void ElasticNodeMec::updateGeneralizedForce(double t) {
-    laSV(0) = x(1);
-    updlaSV = false;
+  void ElasticNodeMec::updateGeneralizedForces(double t) {
+    lambda(0) = x(1);
+    updla = false;
   }
 
   void ElasticNodeMec::updatexd(double t) {
@@ -633,11 +633,11 @@ namespace MBSimHydraulics {
     gd >> wb;
   }
 
-  void RigidNodeMec::updateGeneralizedForce(double t) {
+  void RigidNodeMec::updateGeneralizedForces(double t) {
     cout << "updateGeneralizedSetValuedForces" << endl;
     cout << la << endl;
-    laSV = la;
-    updlaSV = false;
+    lambda = la;
+    updla = false;
   }
 
   void RigidNodeMec::updategd(double t) {

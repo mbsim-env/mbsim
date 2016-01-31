@@ -110,7 +110,7 @@ namespace MBSimHydraulics {
       dhdu.push_back(SqrMat(j));
       dhdt.push_back(Vec(j));
       gd.resize(1);
-      laSV.resize(1);
+      lambda.resize(1);
       if (isSetValued()) {
         la.resize(1);
         r[0].push_back(Vec(j));
@@ -214,28 +214,28 @@ namespace MBSimHydraulics {
       sv(0)=isActive()?(getGeneralizedForce(t)(0)-dpMin)*1e-5:-line->getQIn(t)(0)*6e4;
   }
 
-  void RigidLinePressureLoss::updateGeneralizedForce(double t) {
+  void RigidLinePressureLoss::updateGeneralizedForces(double t) {
     if(isActive())
-      laSV = la;
+      lambda = la;
     else {
       if (linePressureLoss) {
         linePressureLoss->setTime(t);
-        laSV(0)=(*linePressureLoss)(line->getQIn(t)(0));
+        lambda(0)=(*linePressureLoss)(line->getQIn(t)(0));
       }
       else if (closablePressureLoss) {
         closablePressureLoss->setTime(t);
-        laSV(0)=(*closablePressureLoss)(line->getQIn(t)(0));
+        lambda(0)=(*closablePressureLoss)(line->getQIn(t)(0));
       }
       else if (leakagePressureLoss) {
         leakagePressureLoss->setTime(t);
-        laSV(0)=(*leakagePressureLoss)(line->getQIn(t)(0));
+        lambda(0)=(*leakagePressureLoss)(line->getQIn(t)(0));
       }
       else if (unilateral || unidirectionalPressureLoss) {
         unidirectionalPressureLoss->setTime(t);
-        laSV(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(line->getQIn(t)(0)));
+        lambda(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(line->getQIn(t)(0)));
       }
     }
-    updlaSV = false;
+    updla = false;
   }
 
   void RigidLinePressureLoss::updateh(double t, int j) {

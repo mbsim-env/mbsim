@@ -64,12 +64,12 @@ namespace MBSim {
     if(M) M->init(stage);
   }
 
-  void KineticExcitation::updateGeneralizedForceForces(double t) {
+  void KineticExcitation::updatelaF(double t) {
     if(F) lambdaF = (*F)(t);
     updlaF = false;
   }
 
-  void KineticExcitation::updateGeneralizedMomentForces(double t) {
+  void KineticExcitation::updatelaM(double t) {
     if(M) lambdaM = (*M)(t);
     updlaM = false;
   }

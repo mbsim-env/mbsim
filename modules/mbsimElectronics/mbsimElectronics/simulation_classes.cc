@@ -77,7 +77,7 @@ namespace MBSimElectronics {
       g.resize(1);
       gd.resize(1);
       gdn.resize(1);
-      laSV.resize(1);
+      lambda.resize(1);
       laMV.resize(1);
     }
     else
@@ -252,8 +252,8 @@ namespace MBSimElectronics {
   void Diode::updateGeneralizedSingleValuedForces(double t) {
     double slope=1e4;
     double I = getCurrent(t);
-    laSV(0) = (I >= 0) ? 0 : -slope*I;
-    updlaSV = false;
+    lambda(0) = (I >= 0) ? 0 : -slope*I;
+    updla = false;
   }
 
   void Diode::checkImpactsForTermination(double t, double dt) {
@@ -305,10 +305,10 @@ namespace MBSimElectronics {
     double U0 = (*voltageSignal)(t)(0);
     double I = getCurrent(t);
     if(fabs(I) < gdLim)
-      laSV(0) = -U0*I/gdLim;
+      lambda(0) = -U0*I/gdLim;
     else
-      laSV(0) = I>0?-U0:U0;
-    updlaSV = false;
+      lambda(0) = I>0?-U0:U0;
+    updla = false;
   }
 
   void Switch::checkImpactsForTermination(double t, double dt) {
@@ -362,8 +362,8 @@ namespace MBSimElectronics {
   }
 
   void Resistor::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0) = -R*getCurrent(t);
-    updlaSV = false;
+    lambda(0) = -R*getCurrent(t);
+    updla = false;
   }
 
   Capacitor::Capacitor(const string &name) : ElectronicLink(name), C(1) {
@@ -373,8 +373,8 @@ namespace MBSimElectronics {
   }
 
   void Capacitor::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0) = -getCharge(t)/C;
-    updlaSV = false;
+    lambda(0) = -getCharge(t)/C;
+    updla = false;
   }
 
   VoltageSource::VoltageSource(const string &name) : ElectronicLink(name) {
@@ -384,8 +384,8 @@ namespace MBSimElectronics {
   }
 
   void VoltageSource::updateGeneralizedSingleValuedForces(double t) {
-    laSV(0) = (*voltageSignal)(t)(0);
-    updlaSV = false;
+    lambda(0) = (*voltageSignal)(t)(0);
+    updla = false;
   }
 
 }

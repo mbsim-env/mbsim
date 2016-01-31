@@ -76,7 +76,7 @@ namespace MBSimHydraulics {
       void calclaSize(int j) {laSize=active?1:0; }
       //void calclaSizeForActiveg() {laSize=0; } // event-driven
       void calcrFactorSize(int j) {rFactorSize=active?1:0; }
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
       void updategd(double t); /* zdotStandard */
       void updateStopVector(double t); // event-driven
       void updateh(double t, int j); /* zdotStandard */

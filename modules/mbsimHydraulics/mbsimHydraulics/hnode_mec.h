@@ -134,7 +134,7 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
 
       virtual bool isSingleValued() const {return true;}
 
@@ -170,7 +170,7 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
 
       void updatexd(double t);
       void updatedx(double t, double dt);
@@ -207,7 +207,7 @@ namespace MBSimHydraulics {
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
 
       void updategd(double t);
       void updateW(double t, int j=0);

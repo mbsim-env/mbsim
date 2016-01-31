@@ -47,7 +47,7 @@ namespace MBSim {
     public:
       SpringDamper(const std::string &name="");
       ~SpringDamper();
-      void updateGeneralizedForceForces(double t);
+      void updatelaF(double t);
 
       /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }
@@ -102,7 +102,7 @@ namespace MBSim {
       void updatePositions(double t);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
-      void updateGeneralizedForceForces(double t);
+      void updatelaF(double t);
 
       /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }
@@ -154,7 +154,7 @@ namespace MBSim {
       GeneralizedSpringDamper(const std::string &name="");
       ~GeneralizedSpringDamper();
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }

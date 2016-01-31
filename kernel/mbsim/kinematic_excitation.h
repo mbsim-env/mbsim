@@ -33,7 +33,7 @@ namespace MBSim {
       std::string saved_DependentBody;
     public:
       KinematicExcitation(const std::string &name);
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
       void setDependentBody(RigidBody* body_) { body[0] = body_; }
 
       bool isActive() const { return true; }

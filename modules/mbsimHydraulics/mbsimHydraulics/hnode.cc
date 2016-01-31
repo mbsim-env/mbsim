@@ -122,7 +122,7 @@ namespace MBSimHydraulics {
       Link::init(stage);
       gd.resize(1);
       la.resize(1);
-      laSV.resize(1);
+      lambda.resize(1);
       nLines=connectedLines.size();
       for (unsigned int i=0; i<nLines; i++) {
         connectedLines[i].sign = 
@@ -290,9 +290,9 @@ namespace MBSimHydraulics {
     pFun->init(stage);
   }
 
-  void ConstrainedNode::updateGeneralizedForce(double t) {
-    laSV(0) = (*pFun)(t);
-    updlaSV = false;
+  void ConstrainedNode::updateGeneralizedForces(double t) {
+    lambda(0) = (*pFun)(t);
+    updla = false;
   }
 
   void ConstrainedNode::initializeUsingXML(DOMElement *element) {
@@ -306,7 +306,7 @@ namespace MBSimHydraulics {
   void EnvironmentNode::init(InitStage stage) {
     if (stage==unknownStage) {
       HNode::init(stage);
-      laSV(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      lambda(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
     else
       HNode::init(stage);
@@ -334,7 +334,7 @@ namespace MBSimHydraulics {
         msg(Warn) << "ElasticNode \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
       }
-      laSV(0)=p0;
+      lambda(0)=p0;
       x0=Vec(1, INIT, p0);
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
@@ -356,9 +356,9 @@ namespace MBSimHydraulics {
     fracAir=getDouble(e);
   }
 
-  void ElasticNode::updateGeneralizedForce(double t) {
-    laSV = x;
-    updlaSV = false;
+  void ElasticNode::updateGeneralizedForces(double t) {
+    lambda = x;
+    updla = false;
   }
 
   void ElasticNode::updatexd(double t) {
@@ -402,9 +402,9 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage);
  }
 
-  void RigidNode::updateGeneralizedForce(double t) {
-    laSV = la;
-    updlaSV = false;
+  void RigidNode::updateGeneralizedForces(double t) {
+    lambda = la;
+    updla = false;
   }
 
   void RigidNode::updategd(double t) {
@@ -616,7 +616,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage) {
       HNode::init(stage);
-      laSV(0) = pCav;
+      lambda(0) = pCav;
     }
     else
       HNode::init(stage);
@@ -661,9 +661,9 @@ namespace MBSimHydraulics {
     return changed;
   }
 
-  void RigidCavitationNode::updateGeneralizedForce(double t) {
-    laSV(0) = pCav;
-    updlaSV = false;
+  void RigidCavitationNode::updateGeneralizedForces(double t) {
+    lambda(0) = pCav;
+    updla = false;
   }
 
   void RigidCavitationNode::updateg(double t) {
@@ -882,9 +882,9 @@ namespace MBSimHydraulics {
     pFunction->init(stage);
   }
 
-  void PressurePump::updateGeneralizedForce(double t) {
-    laSV(0)=(*pFunction)(t);
-    laSV = false;
+  void PressurePump::updateGeneralizedForces(double t) {
+    lambda(0)=(*pFunction)(t);
+    lambda = false;
   }
 
 }

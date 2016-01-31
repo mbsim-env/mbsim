@@ -54,7 +54,7 @@ namespace MBSim {
     wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t) - C.getGyroscopicAccelerationOfRotation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
   }
 
-  void Joint::updateGeneralizedForceForces(double t) {
+  void Joint::updatelaF(double t) {
     if (ffl) {
       if(ffl->isSetValued())
         for (int i = 0; i < forceDir.cols(); i++)
@@ -66,7 +66,7 @@ namespace MBSim {
     updlaF = false;
   }
 
-  void Joint::updateGeneralizedMomentForces(double t) {
+  void Joint::updatelaM(double t) {
     if (fml) {
       if(fml->isSetValued())
         for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
@@ -87,8 +87,8 @@ namespace MBSim {
   }
 
   void Joint::updateh(double t, int j) {
-    Vec3 F = (ffl and not ffl->isSetValued())?getGlobalForceDirection(t)*getGeneralizedForceForce(t):Vec3();
-    Vec3 M = (fml and not fml->isSetValued())?getGlobalMomentDirection(t)*getGeneralizedMomentForce(t):Vec3();
+    Vec3 F = (ffl and not ffl->isSetValued())?getGlobalForceDirection(t)*getlaF(t):Vec3();
+    Vec3 M = (fml and not fml->isSetValued())?getGlobalMomentDirection(t)*getlaM(t):Vec3();
 
     h[j][0] -= C.getJacobianOfTranslation(t,j).T() * F + C.getJacobianOfRotation(t,j).T() * M;
     h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * F + frame[1]->getJacobianOfRotation(t,j).T() * M;

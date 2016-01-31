@@ -34,7 +34,7 @@ namespace MBSim {
       std::vector<std::string> saved_IndependentBody;
     public:
       Gear(const std::string &name="");
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
       void setDependentBody(RigidBody* body_) {body[0] = body_;}
       void addTransmission(const Transmission &transmission);
 

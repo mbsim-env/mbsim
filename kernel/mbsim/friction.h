@@ -35,7 +35,7 @@ namespace MBSim {
     public:
       GeneralizedFriction(const std::string &name="");
       ~GeneralizedFriction();
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }

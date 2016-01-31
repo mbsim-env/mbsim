@@ -43,12 +43,12 @@ namespace MBSim {
     connect(transmission.body, transmission.ratio);
   }
 
-  void Gear::updateGeneralizedForce(double t) {
+  void Gear::updateGeneralizedForces(double t) {
     if(func)
-      laSV(0) = -(*func)(getGeneralizedRelativePosition(t)(0),getGeneralizedRelativeVelocity(t)(0));
+      lambda(0) = -(*func)(getGeneralizedRelativePosition(t)(0),getGeneralizedRelativeVelocity(t)(0));
     else
-      laSV = la;
-    updlaSV = false;
+      lambda = la;
+    updla = false;
   }
 
  void Gear::init(InitStage stage) {

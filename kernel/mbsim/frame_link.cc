@@ -133,9 +133,9 @@ namespace MBSim {
     }
   } 
 
-  void FrameLink::updateGeneralizedForce(double t) {
-    laSV = getGeneralizedForceForce(t);
-    updlaSV = false;
+  void FrameLink::updateGeneralizedForces(double t) {
+    lambda = getlaF(t);
+    updla = false;
   }
 
   void FrameLink::updateForce(double t) {
@@ -176,7 +176,7 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void FrameLink::updateSetValuedForceDirections(double t) { 
+  void FrameLink::updateR(double t) {
     RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
     updRMV = false;
   }
@@ -198,7 +198,7 @@ namespace MBSim {
         RF.resize(1);
         la.resize(1);
       }
-      laSV.resize(1);
+      lambda.resize(1);
       lambdaF.resize(1);
       for(unsigned int i=0; i<2; i++) {
         W[i].resize(2);

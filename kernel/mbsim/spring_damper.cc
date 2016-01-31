@@ -46,9 +46,9 @@ namespace MBSim {
     delete func;
   }
 
-  void SpringDamper::updateGeneralizedForceForces(double t) {
+  void SpringDamper::updatelaF(double t) {
     lambdaF(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
-    if(rrel(0)<=epsroot() && abs(laSV(0))>epsroot())
+    if(rrel(0)<=epsroot() && abs(lambda(0))>epsroot())
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
     updlaF = false;
   }
@@ -157,7 +157,7 @@ namespace MBSim {
 //    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
 //  }
 
-  void DirectionalSpringDamper::updateGeneralizedForceForces(double t) {
+  void DirectionalSpringDamper::updatelaF(double t) {
     lambdaF(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
     updlaF = false;
   }
@@ -236,9 +236,9 @@ namespace MBSim {
     delete func;
   }
 
-  void GeneralizedSpringDamper::updateGeneralizedForce(double t) {
-    laSV(0) = -(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
-    updlaSV = false;
+  void GeneralizedSpringDamper::updateGeneralizedForces(double t) {
+    lambda(0) = -(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
+    updla = false;
   }
 
   void GeneralizedSpringDamper::init(InitStage stage) {

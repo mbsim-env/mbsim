@@ -110,13 +110,13 @@ namespace MBSim {
       void updateVelocities(double t);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
       void updateForce(double t);
       void updateMoment(double t);
       void updateForceDirections(double t);
-      void updateSetValuedForceDirections(double t);
-      virtual void updateGeneralizedForceForces(double t) { }
-      virtual void updateGeneralizedMomentForces(double t) { }
+      void updateR(double t);
+      virtual void updatelaF(double t) { }
+      virtual void updatelaM(double t) { }
       const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrP0P1; }
       const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
       const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
@@ -124,10 +124,10 @@ namespace MBSim {
       const fmatvec::Mat3xV& getGlobalMomentDirection(double t) { if(updFD) updateForceDirections(t); return DM; }
       const fmatvec::Vec3& getForce(double t) { if(updF) updateForce(t); return F; }
       const fmatvec::Vec3& getMoment(double t) { if(updM) updateMoment(t); return M; }
-      const fmatvec::Mat3xV& getSetValuedForceDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RF; }
-      const fmatvec::Mat3xV& getSetValuedMomentDirection(double t) { if(updRMV) updateSetValuedForceDirections(t); return RM; }
-      const fmatvec::VecV& getGeneralizedForceForce(double t) { if(updlaF) updateGeneralizedForceForces(t); return lambdaF; }
-      const fmatvec::VecV& getGeneralizedMomentForce(double t) { if(updlaM) updateGeneralizedMomentForces(t); return lambdaM; }
+      const fmatvec::Mat3xV& getRF(double t) { if(updRMV) updateR(t); return RF; }
+      const fmatvec::Mat3xV& getRM(double t) { if(updRMV) updateR(t); return RM; }
+      const fmatvec::VecV& getlaF(double t) { if(updlaF) updatelaF(t); return lambdaF; }
+      const fmatvec::VecV& getlaM(double t) { if(updlaM) updatelaM(t); return lambdaM; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow */

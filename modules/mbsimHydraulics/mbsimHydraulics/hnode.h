@@ -128,7 +128,7 @@ namespace MBSimHydraulics {
         pFun->setName("p");
       }
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
       virtual bool isSingleValued() const {return true;}
@@ -166,7 +166,7 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
 
       void updatexd(double t);
       void updatedx(double t, double dt);
@@ -199,7 +199,7 @@ namespace MBSimHydraulics {
       //void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize(int j) {rFactorSize=1; }
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
 
       void updategd(double t);
       void updateW(double t, int j=0);
@@ -251,7 +251,7 @@ namespace MBSimHydraulics {
       //void checkActivegdn();
       bool gActiveChanged();
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
       void updateg(double t);
       void updateW(double t, int j=0);
       void updatexd(double t);
@@ -290,7 +290,7 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage);
 
-      void updateGeneralizedForce(double t);
+      void updateGeneralizedForces(double t);
       void initializeUsingXML(xercesc::DOMElement *element);
 
     private:

@@ -53,8 +53,8 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      void updateGeneralizedForceForces(double t);
-      void updateGeneralizedMomentForces(double t);
+      void updatelaF(double t);
+      void updatelaM(double t);
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
       void updatewb(double t);
