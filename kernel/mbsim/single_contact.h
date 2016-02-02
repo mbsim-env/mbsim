@@ -177,7 +177,6 @@ namespace MBSim {
 #endif
 
       /* GETTER / SETTER */
-      void setUpdateNormalForceByParent(bool updlaNByParent_) { updlaNByParent = updlaNByParent_; }
       void setNormalForceLaw(GeneralizedForceLaw *fcl_);
       GeneralizedForceLaw * getNormalForceLaw() const {return fcl; }
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
@@ -294,11 +293,6 @@ namespace MBSim {
        */
       unsigned int* gddActive;
 
-      /** 
-       * \brief index for tangential directions in projection matrices
-       */
-      fmatvec::Index iT;
-
       /**
        * \brief new gap velocity after an impact for event driven scheme
        */
@@ -317,7 +311,7 @@ namespace MBSim {
       double lambdaN;
       fmatvec::VecV lambdaT;
 
-      bool updlaN, updlaT, updlaNByParent;
+      bool updlaN, updlaT;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**

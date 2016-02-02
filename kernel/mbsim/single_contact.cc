@@ -47,7 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
-  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), updlaN(true), updlaT(true), updlaNByParent(false)
+  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), updlaN(true), updlaT(true)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
@@ -506,11 +506,6 @@ namespace MBSim {
         }
       }
 
-      if(fcl->isSetValued())
-        iT = Index(1, getFrictionDirections());
-      else
-        iT = Index(0, getFrictionDirections() - 1);
-
       //TODO: check if indices are set correctly?
       laN.resize() >> la(0, 0);
       laT.resize() >> la(1, getFrictionDirections());
@@ -520,20 +515,6 @@ namespace MBSim {
 
       gddNBuf.resize(1);
       gddTBuf.resize(getFrictionDirections());
-
-      if(updlaNByParent)
-        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceP;
-      else if(fcl->isSetValued())
-        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceM;
-      else
-        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceS;
-
-      if(not fdf)
-        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForce0;
-      else if(fdf->isSetValued())
-        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceM;
-      else
-        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceS;
     }
     else if (stage == preInit) {
       ContourLink::init(stage);
@@ -552,6 +533,19 @@ namespace MBSim {
       for (int j = 1 + min(1, getFrictionDirections()); j < 2; j++)
         gddActive[j] = 0;
 
+      if(not fcl)
+        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceP;
+      else if(fcl->isSetValued())
+        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceM;
+      else
+        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceS;
+
+      if(not fdf)
+        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForce0;
+      else if(fdf->isSetValued())
+        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceM;
+      else
+        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceS;
     }
     else if (stage == plotting) {
       updatePlotFeatures();

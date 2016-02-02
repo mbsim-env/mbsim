@@ -51,9 +51,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MaxwellContact, MBSIM%"MaxwellContact")
 
   MaxwellContact::MaxwellContact(const string &name) : Contact(name), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
-
-    fcl = new MaxwellUnilateralConstraint();
-    fcl->setParent(this);
   }
 
   MaxwellContact::~MaxwellContact() {
@@ -94,9 +91,10 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       Contact::init(stage);
+      setNormalForceLaw(new MaxwellUnilateralConstraint);
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->setUpdateNormalForceByParent(true);
+          jter->setNormalForceLaw(fcl);
       }
    }
     else

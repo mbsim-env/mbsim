@@ -341,11 +341,6 @@ namespace MBSim {
 //      if(not(contour.size()))
 //        THROW_MBSIMERROR("no connection given!");
 
-//      //initialize all contour couplings if generalized force law is of maxwell-type
-//      if (dynamic_cast<MaxwellUnilateralConstraint*>(fcl)) {
-//        static_cast<MaxwellUnilateralConstraint*>(fcl)->initializeContourCouplings(this);
-//      }
-
       Link::init(stage);
     }
     else if (stage == preInit) {
@@ -455,14 +450,14 @@ namespace MBSim {
   }
 
   bool Contact::isSetValued() const {
-    bool flag = fcl->isSetValued();
+    bool flag = fcl and fcl->isSetValued();
     if (fdf)
       flag |= fdf->isSetValued();
     return flag;
   }
 
   bool Contact::isSingleValued() const {
-    if (fcl->isSetValued()) {
+    if (fcl and fcl->isSetValued()) {
       if (fdf) {
         return not fdf->isSetValued();
       }
@@ -843,8 +838,10 @@ namespace MBSim {
 
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
-    GeneralizedForceLaw *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
-    setNormalForceLaw(gfl);
+    if(e) {
+      GeneralizedForceLaw *gfl = ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild());
+      setNormalForceLaw(gfl);
+    }
 
     //Get Impact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalImpactLaw");

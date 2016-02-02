@@ -2141,7 +2141,7 @@
     <xs:complexContent>
       <xs:extension base="MechanicalLinkType">
         <xs:sequence>
-          <xs:element name="normalForceLaw">
+          <xs:element name="normalForceLaw" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
             </xs:documentation></xs:annotation>
@@ -2225,6 +2225,29 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="MaxwellContact" substitutionGroup="Contact" type="MaxwellContactType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MaxwellContactType">
+    <xs:complexContent>
+      <xs:extension base="ContactType">
+        <xs:sequence>
+          <xs:element name="InfluenceFunction">
+            <xs:complexType>
+              <xs:sequence>
+               <xs:element ref="InfluenceFunction" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="Frame" substitutionGroup="Element" type="FrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2944,27 +2967,6 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
-
-  <xs:element name="MaxwellUnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="MaxwellUnilateralConstraintType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Konstitutives Gesetz zur Beschreibung einer mit anderen Kontakten gekoppeleten, einseitigen Bindung. 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="MaxwellUnilateralConstraintType">
-    <xs:complexContent>
-      <xs:extension base="GeneralizedForceLawType">
-        <xs:sequence>
-          <xs:element name="InfluenceFunction">
-            <xs:complexType>
-              <xs:sequence>
-               <xs:element ref="InfluenceFunction" maxOccurs="unbounded"/>             
-              </xs:sequence> 
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>  
 
   <xs:element name="FrictionForceLaw" abstract="true" type="FrictionForceLawType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
