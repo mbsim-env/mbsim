@@ -528,7 +528,9 @@ namespace MBSim {
       else
         updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceS;
 
-      if(fdf->isSetValued())
+      if(not fdf)
+        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForce0;
+      else if(fdf->isSetValued())
         updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceM;
       else
         updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceS;
