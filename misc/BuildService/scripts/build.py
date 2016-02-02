@@ -1044,7 +1044,7 @@ def releaseGeneration2(mainFD, distArchiveName):
   tagNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx.*", "-\\1", distArchiveName)
 
   print('''<div class="panel panel-warning">
-  <div class="panel-heading"><span class="glyphicon glyphicon-cloud-upload"></span><span class="octicon octicon-tag"></span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
+  <div class="panel-heading"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;<span class="octicon octicon-tag"></span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
  Release this distribution<span class="caret"> </span></a></div>
   <div class="panel-body panel-collapse collapse" id="collapseReleaseGeneration">
     <p>Releasing this distribution will</p>
@@ -1072,9 +1072,10 @@ def releaseGeneration2(mainFD, distArchiveName):
         to release the Windows and Linux release builds at the same commit state using the same "release version" string!
       </label></div>
     </div>
-    <p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
+    <p><small>(On login this server stores some personal data obtained from GitHub, including an access token. Logout removes these data. You can also revoke the access token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known or checked by this server.)</small></p>
     <div>
       <span class="octicon octicon-person"></span>&nbsp;
+      <img id="LOGINAVATAR" src="" alt="avatar" height="30" width="30"/>&nbsp;
       <strong id="LOGINUSER">unknwon</strong>
       <button id="LOGINBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
         </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
@@ -1088,7 +1089,7 @@ def releaseGeneration2(mainFD, distArchiveName):
         <input type="text" class="form-control" id="RELEASEVERSION" placeholder="%s">
       </div>
     </div>
-    <div>
+    <div style="margin-top:0.5em">
       <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
     </div>
     <p><small>(This will create an annotated git tag on the MBSim-Env repositories on GitHub with your GitHub account.)</small></p>
