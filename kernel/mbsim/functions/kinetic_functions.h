@@ -322,11 +322,13 @@ namespace MBSim {
       InfluenceFunction(){}
       virtual ~InfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
+      void setTime(double t_) { t = t_; }
       virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo)=0;
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
     protected:
-      fmatvec::Vec2 getContourParameters(const std::pair<Contour*, ContourPointData>& contourInfo);
+      double t;
+      fmatvec::Vec2 getContourParameters(double t, const std::pair<Contour*, ContourPointData>& contourInfo);
   };
 
   /*
@@ -342,7 +344,7 @@ namespace MBSim {
       virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
-        if(nrm2(getContourParameters(firstContourInfo)- getContourParameters(secondContourInfo)) < macheps())
+        if(nrm2(getContourParameters(t,firstContourInfo)- getContourParameters(t,secondContourInfo)) < macheps())
           return flexibility;
         else
           return 0;

@@ -33,6 +33,20 @@ namespace MBSim {
   class FrictionImpactLaw;
   class InfluenceFunction;
 
+  class SingleMaxwellContact: public SingleContact {
+
+    friend class MaxwellContact;
+
+    public:
+      /*!
+       * \brief constructor
+       * \param name of contact
+       */
+      SingleMaxwellContact(const std::string &name="") : SingleContact(name) { }
+
+      void updateGeneralizedNormalForce(double t);
+  };
+
   /*! \brief class for contacts
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
@@ -143,7 +157,7 @@ namespace MBSim {
       virtual void setcorrInd(int corrInd_);
       virtual void checkRoot(double t);
 
-      virtual void computeSmoothForces(double t);
+      virtual void updateGeneralizedNormalForce(double t);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Frame>& getOpenMBVFrame() {return openMBVFrame;}
@@ -199,9 +213,6 @@ namespace MBSim {
 
       /* GETTER / SETTER */
 
-      void setNormalForceLaw(GeneralizedForceLaw *fcl_);
-      GeneralizedForceLaw * getNormalForceLaw() const { return fcl; }
-      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
       void setTangentialForceLaw(FrictionForceLaw *fdf_); 
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       void setContactKinematics(ContactKinematics* ck, size_t index = 0) {
@@ -222,7 +233,7 @@ namespace MBSim {
         return NULL;
       }
 
-      const std::vector<std::vector<SingleContact> > & getSubcontacts() const {
+      const std::vector<std::vector<SingleMaxwellContact> > & getSubcontacts() const {
         return contacts;
       }
 
@@ -282,7 +293,7 @@ namespace MBSim {
        * \param cpData       vector of ContourPointDatas
        * \param contactIndex index pair of contact point
        */
-      virtual double computeInfluenceCoefficient(const std::pair<int, int> & contactIndex);
+      virtual double computeInfluenceCoefficient(double t, const std::pair<int, int> & contactIndex);
 
       /**
        * \brief computes the coupling factor for the influence matrix between two contact points (four contours)
@@ -291,7 +302,7 @@ namespace MBSim {
        * \param contactIndex        index pair of contact point
        * \param coupledContactIndex index pair of coupling contact point
        */
-      virtual double computeInfluenceCoefficient(const std::pair<int, int> & contactIndex, const std::pair<int, int> & couplingContactIndex);
+      virtual double computeInfluenceCoefficient(double t, const std::pair<int, int> & contactIndex, const std::pair<int, int> & couplingContactIndex);
 
       /*
        * \brief computes the "material constant" to have a good guess for the lambda-vector
@@ -302,7 +313,7 @@ namespace MBSim {
       /**
        * \brief list of the single sub-contact(-points)
        */
-      std::vector<std::vector<SingleContact> > contacts;
+      std::vector<std::vector<SingleMaxwellContact> > contacts;
 
       /**
        * \brief list of the single contact kinematics

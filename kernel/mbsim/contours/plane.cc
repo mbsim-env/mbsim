@@ -35,8 +35,8 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Plane, MBSIM%"Plane")
 
-  Vec2 Plane::getLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
-    return (R->getOrientation().T() *(WrPoint - R->getPosition()) )(Range<Fixed<1>,Fixed<2> >());
+  Vec2 Plane::getContourParameters(double t, const fmatvec::Vec3 &WrPoint) {
+    return (R->getOrientation(t).T() *(WrPoint - R->getPosition(t)) )(Range<Fixed<1>,Fixed<2> >());
   }
 
  void Plane::initializeUsingXML(DOMElement *element) {

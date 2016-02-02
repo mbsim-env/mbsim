@@ -62,12 +62,14 @@ namespace MBSim {
       const double& getGeneralizedNormalForce(double t) { if(updlaN) updateGeneralizedNormalForce(t); return lambdaN; }
       const fmatvec::VecV& getGeneralizedTangentialForce(double t) { if(updlaT) updateGeneralizedTangentialForce(t); return lambdaT; }
 
+      double& getGeneralizedNormalForce(bool check=true) {  assert((not check) or (not updlaN)); return lambdaN; }
+
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t);
       virtual void updateV(double t, int i=0);
-      void updateGeneralizedNormalForce(double t);
-      void updateGeneralizedTangentialForce(double t);
-      void updateGeneralizedForces(double t);
+      virtual void updateGeneralizedNormalForce(double t);
+      virtual void updateGeneralizedTangentialForce(double t);
+      virtual void updateGeneralizedForces(double t);
       virtual void updateGeneralizedPositions(double t);
       virtual void updateGeneralizedVelocities(double t);
       virtual void updatePositions(double t);
@@ -336,6 +338,7 @@ namespace MBSim {
   };
 
 }
+
 
 #endif /* _SINGLE_CONTACT_H_ */
 

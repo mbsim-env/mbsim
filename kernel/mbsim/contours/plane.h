@@ -86,7 +86,7 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 getWt(double t, ContourPointData &cp) { return R->getOrientation(t).col(2); }
 
-      virtual fmatvec::Vec2 getLagrangeParameter(const fmatvec::Vec3 &WrPoint);
+      virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPoint);
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

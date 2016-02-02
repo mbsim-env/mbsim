@@ -260,7 +260,7 @@ namespace MBSim {
 
       virtual fmatvec::Mat3x2 getWV(double t, ContourPointData &cp);
 
-      virtual fmatvec::Vec2 getContourParameters(const fmatvec::Vec3 &WrPS) {
+      virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPS) {
         THROW_MBSIMERROR("(Contour::getContourParameters): Not implemented.");
         return 0;
       }
