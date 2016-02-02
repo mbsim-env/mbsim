@@ -992,5 +992,12 @@ namespace MBSim {
         jter->resetUpToDate();
     }
   }
+
+  void Contact::updateGeneralizedNormalForce(double t) {
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->updlaN = false;
+  }
+
 }
 

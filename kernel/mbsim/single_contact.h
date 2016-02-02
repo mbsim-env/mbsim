@@ -45,6 +45,9 @@ namespace MBSim {
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
   class SingleContact: public ContourLink {
+
+    friend class Contact;
+
     public:
       /*!
        * \brief constructor
@@ -67,7 +70,11 @@ namespace MBSim {
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t);
       virtual void updateV(double t, int i=0);
-      virtual void updateGeneralizedNormalForce(double t);
+      void updateGeneralizedNormalForce(double t) { (this->*updateGeneralizedNormalForce_)(t); updlaN = false; }
+      void updateGeneralizedNormalForceS(double t);
+      void updateGeneralizedNormalForceM(double t);
+      void updateGeneralizedNormalForceP(double t);
+      void (SingleContact::*updateGeneralizedNormalForce_)(double t);
       virtual void updateGeneralizedTangentialForce(double t);
       virtual void updateGeneralizedForces(double t);
       virtual void updateGeneralizedPositions(double t);
@@ -166,6 +173,7 @@ namespace MBSim {
 #endif
 
       /* GETTER / SETTER */
+      void setUpdateNormalForceByParent(bool updlaNByParent_) { updlaNByParent = updlaNByParent_; }
       void setNormalForceLaw(GeneralizedForceLaw *fcl_);
       GeneralizedForceLaw * getNormalForceLaw() const {return fcl; }
       void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
@@ -305,7 +313,7 @@ namespace MBSim {
       double lambdaN;
       fmatvec::VecV lambdaT;
 
-      bool updlaN, updlaT;
+      bool updlaN, updlaT, updlaNByParent;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**

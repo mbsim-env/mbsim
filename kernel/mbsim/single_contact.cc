@@ -47,7 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
-  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), updlaN(true), updlaT(true)
+  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), updlaN(true), updlaT(true), updlaNByParent(false)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
@@ -76,16 +76,19 @@ namespace MBSim {
     updlaT = true;
   }
 
-  void SingleContact::updateGeneralizedNormalForce(double t) {
-    if(fcl->isSetValued()) {// TODO Functionpointer
+  void SingleContact::updateGeneralizedNormalForceM(double t) {
       if(gdActive[0])
         lambdaN = laN(0);
       else
         lambdaN = 0;
-    }
-    else
-      lambdaN = (*fcl)(getGeneralizedRelativePosition(t)(0), getGeneralizedRelativeVelocity(t)(0));
-    updlaN = false;
+  }
+
+  void SingleContact::updateGeneralizedNormalForceS(double t) {
+    lambdaN = (*fcl)(getGeneralizedRelativePosition(t)(0), getGeneralizedRelativeVelocity(t)(0));
+  }
+
+  void SingleContact::updateGeneralizedNormalForceP(double t) {
+    static_cast<Contact*>(parent)->updateGeneralizedNormalForce(t);
   }
 
   void SingleContact::updateGeneralizedTangentialForce(double t) {
@@ -520,6 +523,13 @@ namespace MBSim {
 
       gddNBuf.resize(1);
       gddTBuf.resize(getFrictionDirections());
+
+      if(updlaNByParent)
+        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceP;
+      else if(fcl->isSetValued())
+        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceM;
+      else
+        updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceS;
     }
     else if (stage == preInit) {
       ContourLink::init(stage);
