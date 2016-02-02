@@ -338,7 +338,9 @@ try:
       platform=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "\\1", data['distArchiveName'])
       relArchiveName=re.sub("(mbsim-env-.*-shared-build-)xxx(\..*)", "\\g<1>"+data['relStr']+"\\2", data['distArchiveName'])
       # access token from config file and standard http header
-      access_token=config['login_access_token'][data['login']]
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      login=c['mbsimenvsessionuser'].value
+      access_token=config['login_access_token'][login]
       headers={'Authorization': 'token '+access_token,
                'Accept': 'application/vnd.github.v3+json'}
       # the default response -> is changed/appended later
