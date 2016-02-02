@@ -53,8 +53,16 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      void updatelaF(double t);
-      void updatelaM(double t);
+      void updatelaF(double t) { (this->*updatelaF_)(t); updlaF = false; }
+      void updatelaM(double t) { (this->*updatelaM_)(t); updlaM = false; }
+      void updatelaF0(double t) { }
+      void updatelaFS(double t);
+      void updatelaFM(double t);
+      void updatelaM0(double t) { }
+      void updatelaMS(double t);
+      void updatelaMM(double t);
+      void (Joint::*updatelaF_)(double t);
+      void (Joint::*updatelaM_)(double t);
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
       void updatewb(double t);

@@ -77,10 +77,10 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedNormalForceM(double t) {
-      if(gdActive[0])
-        lambdaN = laN(0);
-      else
-        lambdaN = 0;
+    if(gdActive[0])
+      lambdaN = laN(0);
+    else
+      lambdaN = 0;
   }
 
   void SingleContact::updateGeneralizedNormalForceS(double t) {

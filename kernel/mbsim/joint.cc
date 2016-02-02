@@ -54,28 +54,24 @@ namespace MBSim {
     wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t) - C.getGyroscopicAccelerationOfRotation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
   }
 
-  void Joint::updatelaF(double t) {
-    if (ffl) {
-      if(ffl->isSetValued())
-        for (int i = 0; i < forceDir.cols(); i++)
-          lambdaF(i) = la(i);
-      else
-        for (int i = 0; i < forceDir.cols(); i++)
-          lambdaF(i) = (*ffl)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
-    }
-    updlaF = false;
+  void Joint::updatelaFM(double t) {
+    for (int i = 0; i < forceDir.cols(); i++)
+      lambdaF(i) = la(i);
   }
 
-  void Joint::updatelaM(double t) {
-    if (fml) {
-      if(fml->isSetValued())
-        for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
-          lambdaM(j) = la(i);
-      else
-        for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
-          lambdaM(j) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
-    }
-    updlaM = false;
+  void Joint::updatelaFS(double t) {
+    for (int i = 0; i < forceDir.cols(); i++)
+      lambdaF(i) = (*ffl)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
+  }
+
+  void Joint::updatelaMM(double t) {
+    for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
+      lambdaM(j) = la(i);
+  }
+
+  void Joint::updatelaMS(double t) {
+    for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
+      lambdaM(j) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
   }
 
   void Joint::updatexd(double t) {
@@ -140,6 +136,18 @@ namespace MBSim {
         JT.set(0, computeTangential(forceDir.col(0)));
         JT.set(1, crossProduct(forceDir.col(0), JT.col(0)));
       }
+      if(not ffl)
+        updatelaF_ = &Joint::updatelaF0;
+      else if(ffl->isSetValued())
+        updatelaF_ = &Joint::updatelaFM;
+      else
+        updatelaF_ = &Joint::updatelaFS;
+      if(not fml)
+        updatelaM_ = &Joint::updatelaM0;
+      else if(fml->isSetValued())
+        updatelaM_ = &Joint::updatelaMM;
+      else
+        updatelaM_ = &Joint::updatelaMS;
     }
     else
       FloatingFrameLink::init(stage);
