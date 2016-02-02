@@ -54,34 +54,33 @@ try:
   response_data={'success': False, 'message': "Internal error: Unknown action or request method: "+action}
 
   def checkCredicals(config):
-    # get login and athmac by http get methode
+    # get sessionid by http get methode
     if 'HTTP_COOKIE' in os.environ:
       c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
-      login=c['mbsimenvsessionuser'].value
-      athmac=c['mbsimenvsessionid'].value
+      sessionid=c['mbsimenvsessionid'].value
     else:
-      login=None
-      athmac=None
+      sessionid=None
     # check
-    if login==None or athmac==None:
+    if sessionid==None:
       response_data['success']=False
       response_data['message']="Not logged in. Please login before saving."
     else:
-      # check whether login in already known by the server (logged in)
-      if login not in config['login_access_token']:
+      # check whether sessionid is known by the server (logged in)
+      if sessionid not in config['session']:
         response_data['success']=False
-        response_data['message']="User "+login+" not known on the server. Please login before saving."
+        response_data['message']="Unknown session ID. Please login before saving."
       else:
         # get access token for login
-        access_token=config['login_access_token'][login]
-        # check whether the athmac is correct
-        if hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()!=athmac:
+        access_token=config['session'][sessionid]['access_token']
+        # check whether the sessionid is correct
+        if hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()!=sessionid:
           response_data['success']=False
           response_data['message']="Invalid access token hmac! Maybe the login was faked! If not, try to relogin again."
         else:
           # check whether this login is permitted to save data on the server (query github collaborators)
           headers={'Authorization': 'token '+access_token,
                    'Accept': 'application/vnd.github.v3+json'}
+          login=config['session'][sessionid]['login']
           response=requests.get('https://api.github.com/teams/1451964/memberships/%s'%(login), headers=headers)
           if response.status_code!=200:
             response_data['success']=False
@@ -117,19 +116,16 @@ try:
                    'Accept': 'application/vnd.github.v3+json'}
           response=requests.get('https://api.github.com/user', headers=headers).json()
           login=response['login']
-          # save login and access token in a dictionary on the server
-          config['login_access_token'][login]=access_token
           # redirect to the example web side and pass login and access token hmac as http get methode
-          athmac=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
+          sessionid=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
+          # save login and access token in a dictionary on the server
+          config['session'][sessionid]={'access_token': access_token,
+                                        'login': login,
+                                        'avatar_url': response['avatar_url'],
+                                        'name': response['name']}
           # create cookie
           c=Cookie.SimpleCookie()
-          c['mbsimenvsessionuser']=login
-          c['mbsimenvsessionuser']['comment']="Session username of the mbsimenvsessionid cookie"
-          c['mbsimenvsessionuser']['domain']='.www.ssl-id1.de'
-          c['mbsimenvsessionuser']['path']='/mbsim-env.de'
-          c['mbsimenvsessionuser']['secure']=True
-          c['mbsimenvsessionuser']['httponly']=True
-          c['mbsimenvsessionid']=athmac
+          c['mbsimenvsessionid']=sessionid
           c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
           c['mbsimenvsessionid']['domain']='.www.ssl-id1.de'
           c['mbsimenvsessionid']['path']='/mbsim-env.de'
@@ -166,19 +162,19 @@ try:
     # get login
     if 'HTTP_COOKIE' in os.environ:
       c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
-      login=c['mbsimenvsessionuser'].value
+      sessionid=c['mbsimenvsessionid'].value
     else:
-      login=None
-    if login==None:
+      sessionid=None
+    if sessionid==None:
       response_data['success']=True
       response_data['message']="Nobody to log out."
     else:
       with ConfigFile(True) as config:
-        # remove login including access_token from server config
-        config['login_access_token'].pop(login, None)
+        # remove sessionid from server config
+        config['session'].pop(sessionid, None)
         # generate json response
         response_data['success']=True
-        response_data['message']="Logged "+login+" out from server."
+        response_data['message']="Logged out from server."
   
   # return current checked examples
   if action=="/getcheck" and method=="GET":
@@ -208,7 +204,7 @@ try:
     # return branches for CI
     # worker function to make github api requests in parallel
     def getBranch(url, headers, out):
-      out.extend([b['name'] for b in requests.get(url, headers=headers).json()])
+      out.extend([b['name'] for b in requests.get(url, headers=headers).json()])#mfmf use authentificated request if possible
     # output data placeholder, request url and thread object placeholder. all per thread (reponame)
     out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
     url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
@@ -280,22 +276,25 @@ try:
   if action=="/getuser" and method=="GET":
     if 'HTTP_COOKIE' in os.environ:
       c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
-      login=c['mbsimenvsessionuser'].value
+      sessionid=c['mbsimenvsessionid'].value
     else:
-      login=None
-    if login==None:
+      sessionid=None
+    if sessionid==None:
       response_data['success']=True
       response_data['username']="Not logged in"
+      response_data['avatar_url']=''
       response_data['message']="No session ID cookie found on your browser."
     else:
       with ConfigFile(False) as config: pass
-      if not login in config['login_access_token']:
+      if not sessionid in config['session']:
         response_data['success']=True
         response_data['username']="Not logged in"
+        response_data['avatar_url']=''
         response_data['message']="The username of the browser cookie is not known by the server. Please relogin."
       else:
         response_data['success']=True
-        response_data['username']=login
+        response_data['username']=config['session'][sessionid]['name']+" ("+config['session'][sessionid]['login']+")"
+        response_data['avatar_url']=config['session'][sessionid]['avatar_url']
         response_data['message']="User information returned."
 
   # react on web hooks
@@ -339,8 +338,8 @@ try:
       relArchiveName=re.sub("(mbsim-env-.*-shared-build-)xxx(\..*)", "\\g<1>"+data['relStr']+"\\2", data['distArchiveName'])
       # access token from config file and standard http header
       c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
-      login=c['mbsimenvsessionuser'].value
-      access_token=config['login_access_token'][login]
+      sessionid=c['mbsimenvsessionid'].value
+      access_token=config['session'][sessionid]['access_token']
       headers={'Authorization': 'token '+access_token,
                'Accept': 'application/vnd.github.v3+json'}
       # the default response -> is changed/appended later
@@ -371,7 +370,7 @@ try:
                        "type": "commit",
                        "tagger": {
                          "name": name,
-                         "email": name,
+                         "email": email,
                          "date": curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
                       }}
         response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/git/tags',

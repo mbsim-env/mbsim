@@ -1098,9 +1098,10 @@ def releaseGeneration2(mainFD, distArchiveName):
         to release the Windows and Linux release builds at the same commit state using the same "release version" string!
       </label></div>
     </div>
-    <p><small>(This server stores your username and an application specific private GitHub access token. Logout removes both data. You can also revoke this token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known by this server but checked by GitHub on login.)</small></p>
+    <p><small>(On login this server stores some personal data obtained from GitHub, including an access token. Logout removes these data. You can also revoke the access token on GitHub at any time to revoke any access of this server on your GitHub account. Your GitHub password is not known or checked by this server.)</small></p>
     <div>
       <span class="octicon octicon-person"></span>&nbsp;
+      <img id="LOGINAVATAR" src="" alt="avatar" height="30" width="30"/>&nbsp;
       <strong id="LOGINUSER">unknwon</strong>
       <button id="LOGINBUTTON" type="button" disabled="disabled" class="btn btn-default btn-sm"><span class="octicon octicon-sign-in">
         </span>&nbsp;Login using <span class="octicon octicon-logo-github"></span></button>
