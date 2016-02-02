@@ -91,20 +91,17 @@ namespace MBSim {
     static_cast<Contact*>(parent)->updateGeneralizedNormalForce(t);
   }
 
-  void SingleContact::updateGeneralizedTangentialForce(double t) {
-    if(fdf) { // TODO wahrscheinlich nicht notwendig
-      if(fdf->isSetValued()) { // TODO Functionpointer
-        if(gdActive[1])
-          lambdaT = laT;
-        else if(gdActive[0])
-          lambdaT = fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections()))) * getGeneralizedNormalForce(t);
-        else
-          lambdaT.init(0);
-        }
-      else
-        lambdaT = (*fdf)(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), fabs(getGeneralizedNormalForce(t)));
-    }
-    updlaT = false;
+  void SingleContact::updateGeneralizedTangentialForceM(double t) {
+    if(gdActive[1])
+      lambdaT = laT;
+    else if(gdActive[0])
+      lambdaT = fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections()))) * getGeneralizedNormalForce(t);
+    else
+      lambdaT.init(0);
+  }
+
+  void SingleContact::updateGeneralizedTangentialForceS(double t) {
+    lambdaT = (*fdf)(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), fabs(getGeneralizedNormalForce(t)));
   }
 
   void SingleContact::updateGeneralizedForces(double t) {
@@ -530,6 +527,11 @@ namespace MBSim {
         updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceM;
       else
         updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceS;
+
+      if(fdf->isSetValued())
+        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceM;
+      else
+        updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceS;
     }
     else if (stage == preInit) {
       ContourLink::init(stage);

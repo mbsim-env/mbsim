@@ -71,11 +71,14 @@ namespace MBSim {
       virtual void updatewb(double t);
       virtual void updateV(double t, int i=0);
       void updateGeneralizedNormalForce(double t) { (this->*updateGeneralizedNormalForce_)(t); updlaN = false; }
+      void updateGeneralizedTangentialForce(double t) { (this->*updateGeneralizedTangentialForce_)(t); updlaT = false; }
       void updateGeneralizedNormalForceS(double t);
       void updateGeneralizedNormalForceM(double t);
       void updateGeneralizedNormalForceP(double t);
+      void updateGeneralizedTangentialForceS(double t);
+      void updateGeneralizedTangentialForceM(double t);
       void (SingleContact::*updateGeneralizedNormalForce_)(double t);
-      virtual void updateGeneralizedTangentialForce(double t);
+      void (SingleContact::*updateGeneralizedTangentialForce_)(double t);
       virtual void updateGeneralizedForces(double t);
       virtual void updateGeneralizedPositions(double t);
       virtual void updateGeneralizedVelocities(double t);
