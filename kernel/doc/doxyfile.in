@@ -2,6 +2,11 @@ PROJECT_BRIEF          = "MBSim Kernel"
 INPUT                  = @top_srcdir@/mbsim
 PROJECT_NAME           = @PACKAGE@
 PROJECT_NUMBER         = @VERSION@
+GENERATE_TAGFILE       = html/mbsim.tag
+TAGFILES               = @prefix@/share/doc/openmbvcppinterface/openmbvcppinterface.tag=../openmbvcppinterface \
+                         @prefix@/share/doc/hdf5serie/hdf5serie.tag=../hdf5serie \
+                         @prefix@/share/doc/mbxmlutils/mbxmlutils.tag=../mbxmlutils \
+                         @prefix@/share/doc/fmatvec/fmatvec.tag=../fmatvec
 IMAGE_PATH             = @srcdir@
 
 @INCLUDE = @prefix@/share/fmatvec/doxy_template/doxyfile_common

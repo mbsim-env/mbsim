@@ -23,8 +23,6 @@ else:
 # global variables
 scriptdir=os.path.dirname(os.path.realpath(__file__))
 toolDependencies=dict()
-toolXMLDocCopyDir=dict()
-toolDoxyDocCopyDir=dict()
 docDir=None
 timeID=None
 args=None
@@ -174,6 +172,64 @@ def rotateOutput():
   if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
   os.makedirs(args.reportOutDir)
 
+# create main documentation page
+def mainDocPage():
+  if args.docOutDir==None:
+    return
+
+  # copy xmldoc
+  if os.path.isdir(pj(args.docOutDir, "xmldoc")): shutil.rmtree(pj(args.docOutDir, "xmldoc"))
+  shutil.copytree(os.path.normpath(docDir), pj(args.docOutDir, "xmldoc"), symlinks=True)
+
+  # copy doc
+  if os.path.isdir(pj(args.docOutDir, "doc")): shutil.rmtree(pj(args.docOutDir, "doc"))
+  shutil.copytree(os.path.normpath(pj(docDir, os.pardir, os.pardir, "doc")), pj(args.docOutDir, "doc"), symlinks=True)
+
+  args.docOutDir=os.path.abspath(args.docOutDir)
+  if not os.path.isdir(pj(args.docOutDir, "xmldoc")): os.makedirs(pj(args.docOutDir, "xmldoc"))
+  if not os.path.isdir(pj(args.docOutDir, "doc")): os.makedirs(pj(args.docOutDir, "doc"))
+  # create doc entry html
+  docFD=codecs.open(pj(args.docOutDir, "index.html"), "w", encoding="utf-8")
+  print('<!DOCTYPE html>', file=docFD)
+  print('<html lang="en">', file=docFD)
+  print('<head>', file=docFD)
+  print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=docFD)
+  print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
+  print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
+  print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
+  print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=docFD)
+  print('</head>', file=docFD)
+  print('<body style="margin:1em">', file=docFD)
+  print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
+  print('<div class="panel panel-success">', file=docFD)
+  print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Documentation</div>', file=docFD)
+  print('  <ul class="list-group">', file=docFD)
+  print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.html"))+'">MBSimXML</a></li>', file=docFD)
+  print('  </ul>', file=docFD)
+  print('</div>', file=docFD)
+  print('<div class="panel panel-info">', file=docFD)
+  print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Doxygen Documentation</div>', file=docFD)
+  print('  <ul class="list-group">', file=docFD)
+  for d in sorted(os.listdir(os.path.normpath(pj(docDir, os.pardir, os.pardir, "doc")))):
+    print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("doc", d, "index.html"))+'">'+d+'</a></li>', file=docFD)
+  print('  </ul>', file=docFD)
+  print('</div>', file=docFD)
+  print('<hr/>', file=docFD)
+  print('<span class="pull-left small">', file=docFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=docFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=docFD)
+  print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=docFD)
+  print('</span>', file=docFD)
+  print('<span class="pull-right small">', file=docFD)
+  print('  Generated on %s'%(str(timeID)), file=docFD)
+  print('  <a href="http://validator.w3.org/check?uri=referer">', file=docFD)
+  print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
+  print('  </a>', file=docFD)
+  print('</span>', file=docFD)
+  print('</body>', file=docFD)
+  print('</html>', file=docFD)
+  docFD.close()
+
 # the main routine being called ones
 def main():
   parseArguments()
@@ -182,8 +238,6 @@ def main():
 
   # all tools to be build including the tool dependencies
   global toolDependencies
-  global toolXMLDocCopyDir
-  global toolDoxyDocCopyDir
 
   toolDependencies={
     #   |ToolName   |WillFail (if WillFail is true no Atom Feed error is reported if this Tool fails somehow)
@@ -257,30 +311,6 @@ def main():
         pj('mbsim', 'modules', 'mbsimControl')
       ])],
   }
-  toolXMLDocCopyDir={
-    pj("mbsim", "kernel"):                       set(["http___mbsim_berlios_de_MBSim", "http___mbsim_berlios_de_MBSimIntegrator"]),
-    pj("mbsim", "modules", "mbsimFlexibleBody"): set(["http___mbsim_berlios_de_MBSimFlexibleBody"]),
-    pj("mbsim", "modules", "mbsimControl"):      set(["http___mbsim_berlios_de_MBSimControl"]),
-    pj("mbsim", "modules", "mbsimInterface"):    set(["http___mbsim_berlios_de_MBSimInterface"]),
-    pj("mbsim", "modules", "mbsimHydraulics"):   set(["http___mbsim_berlios_de_MBSimHydraulics"]),
-    pj("mbsim", "modules", "mbsimPowertrain"):   set(["http___mbsim_berlios_de_MBSimPowertrain"]),
-    pj("mbsim", "mbsimxml"):                     set(["http___mbsim_berlios_de_MBSimXML"]),
-    pj("openmbv", "mbxmlutils"):                 set(["http___openmbv_berlios_de_MBXMLUtils_physicalvariable"]),
-    pj("openmbv", "openmbv"):                    set(["http___openmbv_berlios_de_OpenMBV"])
-  }
-  toolDoxyDocCopyDir={
-    pj("fmatvec"):                               set(["fmatvec"]),
-    pj("hdf5serie", "hdf5serie"):                set(["hdf5serie"]),
-    pj("openmbv", "openmbvcppinterface"):        set(["openmbvcppinterface"]),
-    pj("openmbv", "mbxmlutils"):                 set(["mbxmlutils"]),
-    pj("mbsim", "kernel"):                       set(["mbsim"]),
-    pj("mbsim", "modules", "mbsimFlexibleBody"): set(["mbsimflexiblebody"]),
-    pj("mbsim", "modules", "mbsimControl"):      set(["mbsimcontrol"]),
-    pj("mbsim", "modules", "mbsimInterface"):    set(["mbsiminterface"]),
-    pj("mbsim", "modules", "mbsimElectronics"):  set(["mbsimelectronics"]),
-    pj("mbsim", "modules", "mbsimHydraulics"):   set(["mbsimhydraulics"]),
-    pj("mbsim", "modules", "mbsimPowertrain"):   set(["mbsimpowertrain"])
-  }
 
   # extend the dependencies recursively
   addAllDepencencies()
@@ -308,52 +338,6 @@ def main():
   global timeID
   timeID=datetime.datetime.now()
   timeID=datetime.datetime(timeID.year, timeID.month, timeID.day, timeID.hour, timeID.minute, timeID.second)
-  # write main doc file
-  if args.docOutDir!=None:
-    args.docOutDir=os.path.abspath(args.docOutDir)
-    if not os.path.isdir(pj(args.docOutDir, "xmldoc")): os.makedirs(pj(args.docOutDir, "xmldoc"))
-    if not os.path.isdir(pj(args.docOutDir, "doc")): os.makedirs(pj(args.docOutDir, "doc"))
-    # create doc entry html
-    docFD=codecs.open(pj(args.docOutDir, "index.html"), "w", encoding="utf-8")
-    print('<!DOCTYPE html>', file=docFD)
-    print('<html lang="en">', file=docFD)
-    print('<head>', file=docFD)
-    print('  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">', file=docFD)
-    print('  <meta name="viewport" content="width=device-width, initial-scale=1.0" />', file=docFD)
-    print('  <title>Documentation of the MBSim-Environment</title>', file=docFD)
-    print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
-    print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=docFD)
-    print('</head>', file=docFD)
-    print('<body style="margin:1em">', file=docFD)
-    print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
-    print('<div class="panel panel-success">', file=docFD)
-    print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Documentation</div>', file=docFD)
-    print('  <ul class="list-group">', file=docFD)
-    print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.html"))+'">MBSimXML</a></li>', file=docFD)
-    print('  </ul>', file=docFD)
-    print('</div>', file=docFD)
-    print('<div class="panel panel-info">', file=docFD)
-    print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Doxygen Documentation</div>', file=docFD)
-    print('  <ul class="list-group">', file=docFD)
-    for d in sorted(list(toolDoxyDocCopyDir)):
-      print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("doc", d, "index.html"))+'">'+d+'</a></li>', file=docFD)
-    print('  </ul>', file=docFD)
-    print('</div>', file=docFD)
-    print('<hr/>', file=docFD)
-    print('<span class="pull-left small">', file=docFD)
-    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /', file=docFD)
-    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /', file=docFD)
-    print('  <a href="http://www.mbsim-env.de/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>', file=docFD)
-    print('</span>', file=docFD)
-    print('<span class="pull-right small">', file=docFD)
-    print('  Generated on %s'%(str(timeID)), file=docFD)
-    print('  <a href="http://validator.w3.org/check?uri=referer">', file=docFD)
-    print('    <img src="https://www.w3.org/Icons/valid-html401-blue.png" alt="Valid HTML"/>', file=docFD)
-    print('  </a>', file=docFD)
-    print('</span>', file=docFD)
-    print('</body>', file=docFD)
-    print('</html>', file=docFD)
-    docFD.close()
 
   # start messsage
   print("Started build process.")
@@ -473,6 +457,9 @@ def main():
       nrFailed+=nrFailedLocal
       nrRun+=nrRunLocal
     nr+=1
+
+  # write main doc file
+  mainDocPage()
 
   # run examples
   runExamplesErrorCode=0
@@ -701,13 +688,13 @@ def build(nr, nrAll, tool, mainFD):
 
   # doxygen
   print(", doxygen-doc", end=""); sys.stdout.flush()
-  failed, run=doc(tool, mainFD, args.disableDoxygen, "doc", toolDoxyDocCopyDir)
+  failed, run=doc(tool, mainFD, args.disableDoxygen, "doc")
   nrFailed+=failed
   nrRun+=run
 
   # xmldoc
   print(", xml-doc", end=""); sys.stdout.flush()
-  failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc", toolXMLDocCopyDir)
+  failed, run=doc(tool, mainFD, args.disableXMLDoc, "xmldoc")
   nrFailed+=failed
   nrRun+=run
 
@@ -879,7 +866,7 @@ def check(tool, mainFD):
 
 
 
-def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
+def doc(tool, mainFD, disabled, docDirName):
   if not os.path.isdir(docDirName):
     if docDirName=="doc" and not args.disableDoxygen or \
        docDirName=="xmldoc" and not args.disableXMLDoc:
@@ -911,19 +898,6 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
                             stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
-
-      # copy doc
-      if args.docOutDir!=None:
-        if tool in toolDocCopyDir:
-          for d in toolDocCopyDir[tool]:
-            if docDirName=="xmldoc":
-              srcInfix=os.curdir
-              dstDir=d
-            else:
-              srcInfix=pj(os.pardir, os.pardir, "doc")
-              dstDir=tool
-            if os.path.isdir(pj(args.docOutDir, docDirName, dstDir)): shutil.rmtree(pj(args.docOutDir, docDirName, dstDir))
-            shutil.copytree(os.path.normpath(pj(docDir, srcInfix, d)), pj(args.docOutDir, docDirName, dstDir), symlinks=True)
     else:
       print(docDirName+" disabled", file=docFD); docFD.flush()
 
