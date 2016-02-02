@@ -68,10 +68,14 @@ $(document).ready(function() {
   // login status
   function loginStatus() {
     $.ajax({url: cgiPath+"/getuser", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
-      if(!response.success)
+      if(!response.success) {
         $('#LOGINUSER').text("Internal error: "+response.message);
-      else
+        $('#LOGINAVATAR').attr("src", "");
+      }
+      else {
         $('#LOGINUSER').text(response.username);
+        $('#LOGINAVATAR').attr("src", response.avatar_url);
+      }
     });
   }
   loginStatus();
