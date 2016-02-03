@@ -41,6 +41,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedFriction, MBSIM%"GeneralizedFriction")
 
   GeneralizedFriction::GeneralizedFriction(const string &name) : RigidBodyLink(name), func(NULL), laN(0) {
+    body[0] = NULL;
+    body[1] = NULL;
   }
 
   GeneralizedFriction::~GeneralizedFriction() {
