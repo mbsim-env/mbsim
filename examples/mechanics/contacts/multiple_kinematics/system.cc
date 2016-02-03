@@ -1,7 +1,8 @@
 #include "system.h"
+#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/mbsim_event.h"
-#include "mbsim/contact.h"
+#include "mbsim/maxwell_contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/sphere.h"
@@ -77,14 +78,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   groundBase->addContour(ground);
 
   /* contact */
-  Contact *contact = new Contact("Contact");
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  //fancy stuff
-  contact->enableOpenMBVContactPoints(0.01);
-  contact->enableOpenMBVNormalForce(_scaleLength=0.001);
-  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
-#endif
+  Contact *contact;
 
   double stiffness = 1e5;
   double damping = 10000;
@@ -93,11 +87,11 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     epsilon = 1;
 
   if(contactlaw == 0) { //Maxwell Contact
+    contact = new MaxwellContact("Contact");
     //Normal force
-    InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getName(), 1/stiffness);
-    MaxwellUnilateralConstraint* mfl = new MaxwellUnilateralConstraint(damping);
-    mfl->addContourCoupling(ground, ground, infl);
-    contact->setNormalForceLaw(mfl);
+    InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getName(), 1./stiffness);
+    static_cast<MaxwellContact*>(contact)->addContourCoupling(ground, ground, infl);
+    static_cast<MaxwellContact*>(contact)->setDampingCoefficient(damping);
 
     //Frictional force
 //    contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
@@ -105,6 +99,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if(contactlaw == 1) { //Regularized Unilateral Contact
+    contact = new Contact("Contact");
     //Normal force
     contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
 
@@ -114,6 +109,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if (contactlaw == 2) { //Unilateral Constraint Contact
+    contact = new Contact("Contact");
     //Normal force
     contact->setNormalForceLaw(new UnilateralConstraint);
     contact->setNormalImpactLaw(new UnilateralNewtonImpact(0));
@@ -122,6 +118,13 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
     contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  //fancy stuff
+  contact->enableOpenMBVContactPoints(0.01);
+  contact->enableOpenMBVNormalForce(_scaleLength=0.001);
+  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
+#endif
+
   this->addLink(contact);
 
   // bodies

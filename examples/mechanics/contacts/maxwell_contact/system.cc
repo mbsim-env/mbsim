@@ -11,12 +11,14 @@
 #endif
 
 #include <mbsim/environment.h>
+#include <mbsim/fixed_relative_frame.h>
 #include <mbsim/rigid_body.h>
 #include <mbsim/contours/plane.h>
 #include <mbsim/contours/planewithfrustum.h>
 #include <mbsim/contours/point.h>
 #include <mbsim/contours/circle_solid.h>
 #include <mbsim/contact.h>
+#include <mbsim/maxwell_contact.h>
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
@@ -41,8 +43,8 @@ class CountourCouplingCantileverBeam : public InfluenceFunction {
     }
 
     virtual double operator()(const std::pair<Contour*, ContourPointData>& firstContourInfo, const std::pair<Contour*, ContourPointData>& secondContourInfo) {
-      Vec2 Arg1 = computeLagrangeParameter(firstContourInfo);
-      Vec2 Arg2 = computeLagrangeParameter(secondContourInfo);
+      Vec2 Arg1 = getContourParameters(t,firstContourInfo);
+      Vec2 Arg2 = getContourParameters(t,secondContourInfo);
       double i=Arg1(0);  // it is: i < j
       double j=Arg2(0);
       if(i > j)
@@ -196,13 +198,50 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 //    }
   }
 
-  Contact* contact = new Contact("Contact");
+  Contact *contact;
 
-  //fancy stuff
+  switch (contactType) {
+    case 0: //Maxwell Contact
+    {
+      contact = new MaxwellContact("Contact");
+      //Debug features
+      //contact->setDebuglevel(0);
+
+      CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(E, I);
+      static_cast<MaxwellContact*>(contact)->addContourCoupling(BeamContour, BeamContour, couplingBeam);
+
+      //Force Law (friction)
+//      contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+      contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+    }
+    break;
+
+    case 1: //regularized contact
+    {
+      contact = new Contact("Contact");
+      double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
+      contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
+      contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    }
+    break;
+
+    case 2:
+    {
+      contact = new Contact("Contact");
+      contact->setNormalForceLaw(new UnilateralConstraint);
+      contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.));
+      contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
+      contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+    }
+    break;
+    default:
+      THROW_MBSIMERROR("No valid contactType chosen.");
+  }
+
   contact->enableOpenMBVContactPoints(1.,false);
   contact->enableOpenMBVNormalForce(_scaleLength=0.00001);
   contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
-
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
     stringstream contactname;
@@ -213,49 +252,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
   addLink(contact);
 
-  switch (contactType) {
-    case 0: //Maxwell Contact
-    {
-      MaxwellUnilateralConstraint* mcl = new MaxwellUnilateralConstraint();
-      contact->setNormalForceLaw(mcl);
-      //Debug features
-      mcl->setDebuglevel(0);
-
-      CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(E, I);
-      mcl->addContourCoupling(BeamContour, BeamContour, couplingBeam);
-
-      //Force Law (friction)
-//      contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-      contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
-      contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
-
-    }
-    break;
-
-    case 1: //regularized contact
-    {
-        double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
-        contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
-
-        //Force Law (friction)
-        contact->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-    }
-    break;
-
-    case 2:
-    {
-        contact->setNormalForceLaw(new UnilateralConstraint);
-        contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.));
-
-        //Force Law (friction)
-        contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
-        contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
-    }
-    break;
-    default:
-      THROW_MBSIMERROR("No valid contactType chosen.");
-
-  }
+  //fancy stuff
 
 }
 

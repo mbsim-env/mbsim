@@ -61,7 +61,7 @@
   </objects>
   
   <links>
-   <Contact name="Contact" xmlns="http://mbsim.berlios.de/MBSim">
+   <MaxwellContact name="Contact" xmlns="http://mbsim.berlios.de/MBSim">
       <!--
      <contactForceLaw>
       <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
@@ -72,15 +72,6 @@
       </UnilateralNewtonImpact>      
      </contactImpactLaw>
       -->
-     <normalForceLaw>
-      <MaxwellUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
-        <InfluenceFunction>
-          <FlexibilityInfluenceFunction contourName1="../Contour[Ground]" contourName2="../Contour[Ground]">
-            <Flexibility>1e-5</Flexibility>          
-          </FlexibilityInfluenceFunction>               
-        </InfluenceFunction>                             
-      </MaxwellUnilateralConstraint>      
-     </normalForceLaw>
      <connect ref1="../Contour[Ground]" ref2="../Object[Ball1]/Contour[Sphere]" name="Contact_Uno"/>
      <connect ref1="../Contour[Ground]" ref2="../Object[Ball2]/Contour[Sphere]" name="Contact_Due"/>
      <enableOpenMBVContactPoints>
@@ -89,7 +80,12 @@
      <enableOpenMBVNormalForce>
         <scaleLength>.01</scaleLength>
      </enableOpenMBVNormalForce>
-   </Contact>   
+        <InfluenceFunction>
+          <FlexibilityInfluenceFunction contourName1="../Contour[Ground]" contourName2="../Contour[Ground]">
+            <Flexibility>1e-5</Flexibility>
+          </FlexibilityInfluenceFunction>
+        </InfluenceFunction>
+   </MaxwellContact>
   </links>
   
   <environments>
