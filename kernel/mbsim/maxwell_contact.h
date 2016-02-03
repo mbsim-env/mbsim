@@ -81,6 +81,10 @@ namespace MBSim {
        */
       void addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct);
 
+      void setDampingCoefficient(double d) { dampingCoefficient = d; }
+
+      void setGapLimit(double gLim_) { gLim = gLim_; }
+
      /**
        * \brief saves all possible contacts in a vector
        */
