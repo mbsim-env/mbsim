@@ -136,7 +136,7 @@
       </openMBVRigidBody>
     </RigidBody>
     <!--
-    <CircularLeakageLine name="Leckage" xmlns="http://openmbv.berlios.de/MBSimHydraulics">
+    <CircularLeakageLine name="Leckage" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <frameOfReference ref="../Object[HydraulicActor]/Frame[FPlunger]"/>
       <direction>[0;0;0]</direction>
       <length>.5</length>
