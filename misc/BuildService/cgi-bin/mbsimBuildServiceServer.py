@@ -114,28 +114,33 @@ try:
           # get github login name using github API request
           headers={'Authorization': 'token '+access_token,
                    'Accept': 'application/vnd.github.v3+json'}
-          response=requests.get('https://api.github.com/user', headers=headers).json()
-          login=response['login']
-          # redirect to the example web side and pass login and access token hmac as http get methode
-          sessionid=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
-          # save login and access token in a dictionary on the server
-          config['session'][sessionid]={'access_token': access_token,
-                                        'login': login,
-                                        'avatar_url': response['avatar_url'],
-                                        'name': response['name']}
-          # create cookie
-          c=Cookie.SimpleCookie()
-          c['mbsimenvsessionid']=sessionid
-          c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
-          c['mbsimenvsessionid']['domain']='.www.ssl-id1.de'
-          c['mbsimenvsessionid']['path']='/mbsim-env.de'
-          c['mbsimenvsessionid']['secure']=True
-          c['mbsimenvsessionid']['httponly']=True
-          defaultOutput=False
-          print('Content-Type: text/html')
-          print(c)
-          print()
-          print('''<!DOCTYPE html>
+          response=requests.get('https://api.github.com/user', headers=headers)
+          if response.status_code!=200:
+            response_data['success']=False
+            response_data['message']="Internal error. Cannot get user information."
+          else:
+            response=response.json()
+            login=response['login']
+            # redirect to the example web side and pass login and access token hmac as http get methode
+            sessionid=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
+            # save login and access token in a dictionary on the server
+            config['session'][sessionid]={'access_token': access_token,
+                                          'login': login,
+                                          'avatar_url': response['avatar_url'],
+                                          'name': response['name']}
+            # create cookie
+            c=Cookie.SimpleCookie()
+            c['mbsimenvsessionid']=sessionid
+            c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
+            c['mbsimenvsessionid']['domain']='.www.ssl-id1.de'
+            c['mbsimenvsessionid']['path']='/mbsim-env.de'
+            c['mbsimenvsessionid']['secure']=True
+            c['mbsimenvsessionid']['httponly']=True
+            defaultOutput=False
+            print('Content-Type: text/html')
+            print(c)
+            print()
+            print('''<!DOCTYPE html>
 <html lang="en">
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -204,7 +209,9 @@ try:
     # return branches for CI
     # worker function to make github api requests in parallel
     def getBranch(url, headers, out):
-      out.extend([b['name'] for b in requests.get(url, headers=headers).json()])#mfmf use authentificated request if possible
+      response=requests.get(url, headers=headers)
+      if response.status_code==200:
+        out.extend([b['name'] for b in response.json()])
     # output data placeholder, request url and thread object placeholder. all per thread (reponame)
     out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
     url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
@@ -214,6 +221,12 @@ try:
     thread={}
     # make all calls in parallel
     headers={'Accept': 'application/vnd.github.v3+json'}
+    # use a authentificated request if logged in (to avoid rate limit problems on github)
+    if 'HTTP_COOKIE' in os.environ:
+      c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+      sessionid=c['mbsimenvsessionid'].value
+      if sessionid in config['session']:
+        headers['Authorization']='token '+config['session'][sessionid]['access_token']
     for reponame in out:
       thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], headers, out[reponame]))
       thread[reponame].start()
@@ -331,7 +344,6 @@ try:
     response_data=checkCredicals(config)
     data=json.load(sys.stdin)
     if response_data['success']:
-      data['relStr']=data['relStr']+"-TESTING_DO_NOT_USE"#mfmf testing: delete this line
       # generate tagname, platform and relArchiveName
       tagName=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "release/"+data['relStr']+"-\\1", data['distArchiveName'])
       platform=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "\\1", data['distArchiveName'])
@@ -347,79 +359,82 @@ try:
       response_data['message']=""
       # the current time -> the create date of the tag object
       curtime=datetime.datetime.utcnow()
-      # get user name -> is used in the tag object
-      response=requests.get('https://api.github.com/user', headers=headers).json()
-      name=response['name']
-      email=response['email']
-      # create tag object and reference for all repositories
-      data['commitid']['mdtest']='de85f2642ec61d6a62fe87d3e3d2cef18669d620'#mfmf testing: delete this line
-      org="friedrichatgc"# mfmf testing: delete this line
-      repos=['mdtest']# mfmf testing: delete this lin
-      #mfmf org="mbsim-env"
-      #mfmf repos=['fmatvec', 'hdf5serie', 'openmbv', 'mbsim']
-      for repo in repos:
-        # create the git tag object
-        createTagData={"tag": tagName,
-                       "message": "Release "+data['relStr']+" of MBSim-Env for "+platform+"\n"+\
-                                  "\n"+\
-                                  "The binary "+platform+" release can be downloaded from\n"+\
-                                  "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
-                                  "Please note that this binary release includes a full build of MBSim-Env not only of this repository.\n"+\
-                                  "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.\n",
-                       "object": data['commitid'][repo],
-                       "type": "commit",
-                       "tagger": {
-                         "name": name,
-                         "email": email,
-                         "date": curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
-                      }}
-        response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/git/tags',
-                               headers=headers, data=json.dumps(createTagData))
-        # check if the create was successfull
-        if response.status_code!=201:
-          # not successfull -> set response_data and continue with next repo
-          response_data['success']=False
-          response_data['message']=response_data['message']+" "+\
-            "Unable to create the git tag object for repo "+repo+". Please check the tag status of (at least) this repository manually."
-        else:
-          # git tag object created -> get the tag object id
-          tagObjectID=response.json()['sha']
-          # create the github ref
-          createRefData={"ref": "refs/tags/"+tagName,
-                         "sha": tagObjectID}
-          response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/git/refs',
-                                 headers=headers, data=json.dumps(createRefData))
+      # get user email
+      response=requests.get('https://api.github.com/user/emails', headers=headers)
+      if response.status_code!=200:
+        response_data['success']=False
+        response_data['message']="Internal error. Cannot get email address of user."
+      else:
+        response=response.json()
+        for item in response:
+          if item['primary']:
+            email=item['email']
+        # create tag object and reference for all repositories
+        org="mbsim-env"
+        repos=['fmatvec', 'hdf5serie', 'openmbv', 'mbsim']
+        for repo in repos:
+          # create the git tag object
+          createTagData={"tag": tagName,
+                         "message": "Release "+data['relStr']+" of MBSim-Env for "+platform+"\n"+\
+                                    "\n"+\
+                                    "The binary "+platform+" release can be downloaded from\n"+\
+                                    "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
+                                    "Please note that this binary release includes a full build of MBSim-Env not only of this repository.\n"+\
+                                    "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.\n",
+                         "object": data['commitid'][repo],
+                         "type": "commit",
+                         "tagger": {
+                           "name": config['session'][sessionid]['name'],
+                           "email": email,
+                           "date": curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        }}
+          response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/git/tags',
+                                 headers=headers, data=json.dumps(createTagData))
           # check if the create was successfull
           if response.status_code!=201:
             # not successfull -> set response_data and continue with next repo
             response_data['success']=False
             response_data['message']=response_data['message']+" "+\
-              "Unable to create the git reference for repo "+repo+". Please check the tag status of (at least) this repository manually."
+              "Unable to create the git tag object for repo "+repo+". Please check the tag status of (at least) this repository manually."
           else:
-            # git ref object created -> create GitHub release info
-            createRelData={"tag_name": tagName,
-                           "name": "Release "+data['relStr']+" of MBSim-Env for "+platform,
-                           "body": "The binary "+platform+" release can be downloaded from\n"+\
-                                   "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
-                                   "Please note that this binary release includes a full build of MBSim-Env not only of this repository. "+\
-                                   "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.",
-                           "draft": False,
-                           "prerelease": False}
-            response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/releases',
-                                   headers=headers, data=json.dumps(createRelData))
-            # check if the update was successfull
+            # git tag object created -> get the tag object id
+            tagObjectID=response.json()['sha']
+            # create the github ref
+            createRefData={"ref": "refs/tags/"+tagName,
+                           "sha": tagObjectID}
+            response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/git/refs',
+                                   headers=headers, data=json.dumps(createRefData))
+            # check if the create was successfull
             if response.status_code!=201:
               # not successfull -> set response_data and continue with next repo
               response_data['success']=False
               response_data['message']=response_data['message']+" "+\
-                "Unable to create the GitHub release info for repo "+repo+". Please check the tag/release status of (at least) this repository manually."
-      # set message if everything was done Successfully
-      if response_data['success']==True:
-        response_data['message']="Successfully released and tagged this distribution."
-        # copy the distribution to the release dir
-        srcFile=data['reportOutDir']+"/distribute/"+data['distArchiveName']
-        dstFile="/var/www/html/mbsim/releases/"+relArchiveName
-        shutil.copyfile(srcFile, dstFile)
+                "Unable to create the git reference for repo "+repo+". Please check the tag status of (at least) this repository manually."
+            else:
+              # git ref object created -> create GitHub release info
+              createRelData={"tag_name": tagName,
+                             "name": "Release "+data['relStr']+" of MBSim-Env for "+platform,
+                             "body": "The binary "+platform+" release can be downloaded from\n"+\
+                                     "http://www.mbsim-env.de/mbsim/releases/"+relArchiveName+"\n"+\
+                                     "Please note that this binary release includes a full build of MBSim-Env not only of this repository. "+\
+                                     "Also look at http://www.mbsim-env.de/mbsim/releases for other platforms of this release version.",
+                             "draft": False,
+                             "prerelease": False}
+              response=requests.post('https://api.github.com/repos/'+org+'/'+repo+'/releases',
+                                     headers=headers, data=json.dumps(createRelData))
+              # check if the update was successfull
+              if response.status_code!=201:
+                # not successfull -> set response_data and continue with next repo
+                response_data['success']=False
+                response_data['message']=response_data['message']+" "+\
+                  "Unable to create the GitHub release info for repo "+repo+". Please check the tag/release status of (at least) this repository manually."
+        # set message if everything was done Successfully
+        if response_data['success']==True:
+          response_data['message']="Successfully released and tagged this distribution."
+          # copy the distribution to the release dir
+          srcFile=data['reportOutDir']+"/distribute/"+data['distArchiveName']
+          dstFile="/var/www/html/mbsim/releases/"+relArchiveName
+          shutil.copyfile(srcFile, dstFile)
 
 except:
   # reset all output and generate a json error message

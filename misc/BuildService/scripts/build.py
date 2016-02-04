@@ -1092,7 +1092,7 @@ def releaseGeneration2(mainFD, distArchiveName):
     <div style="margin-top:0.5em">
       <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
     </div>
-    <p><small>(This will create an annotated git tag on the MBSim-Env repositories on GitHub with your GitHub account.)</small></p>
+    <p><small>(NOTE! This will create an annotated git tag with your username and email on the public MBSim-Env repositories on GitHub!)</small></p>
   </div>
 </div>
 <div id="STATUSPANEL" class="panel panel-info">
