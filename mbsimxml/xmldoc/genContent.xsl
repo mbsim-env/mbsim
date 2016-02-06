@@ -67,8 +67,8 @@
       </xsl:for-each>
     </ul>
     <p>The root XML element for MBSimXML is:</p>
-    <a class="_element" href="../http___mbsim_berlios_de_MBSimXML/index.html#MBSimProject">&lt;MBSimProject&gt;</a>
-    <xsl:text> </xsl:text><small><span class="label label-warning">http://mbsim.berlios.de/MBSimXML</span></small>
+    <a class="_element" href="../http___www_mbsim-env_de_MBSimXML/index.html#MBSimProject">&lt;MBSimProject&gt;</a>
+    <xsl:text> </xsl:text><small><span class="label label-warning">http://www.mbsim-env.de/MBSimXML</span></small>
 
     <hr/>
     <h2>Legend</h2>

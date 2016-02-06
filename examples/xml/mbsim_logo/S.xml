@@ -1,4 +1,4 @@
-<Group name="S" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="S" xmlns="http://www.mbsim-env.de/MBSim">
   <frames>
   </frames>
   <contours>
@@ -6,14 +6,14 @@
   <groups>
   </groups>
   <objects>
-    <RigidBody name="S1" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S1" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>0</initialGeneralizedPosition>
       <frameOfReference ref="../../Object[Carrier]/Frame[FS]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(x-hx)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(x-hx)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2, 0; 0, 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -40,7 +40,7 @@
       <contours>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -58,14 +58,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S2" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S2" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S1]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -92,7 +92,7 @@
       <contours>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -110,14 +110,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S3" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S3" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>pi/2-atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S2]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(c*y/4)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(c*y/4)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2, 0; 0, 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -144,7 +144,7 @@
       <contours>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -162,14 +162,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S4" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S4" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>pi/2-atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S3]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -196,7 +196,7 @@
       <contours>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -214,14 +214,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S5" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S5" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S4]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(x-2*hx)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(x-2*hx)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(x-2*hx)*rho)*r^2+1/12*(pi*r^2*(x-2*hx)*rho)*(x-2*hx)^2, 0; 0, 0, 1/4*(pi*r^2*(x-2*hx)*rho)*r^2+1/12*(pi*r^2*(x-2*hx)*rho)*(x-2*hx)^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -248,7 +248,7 @@
       <contours>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -266,14 +266,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S6" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S6" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>-atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S5]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -300,7 +300,7 @@
       <contours>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -318,14 +318,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S7" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S7" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>-pi/2+atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S6]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(c*y/4)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(c*y/4)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2, 0; 0, 0, 1/4*(pi*r^2*(c*y/4)*rho)*r^2+1/12*(pi*r^2*(c*y/4)*rho)*(c*y/4)^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -360,15 +360,15 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <Point name="C1" xmlns="http://mbsim.berlios.de/MBSim">
+        <Point name="C1" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[F3]"/> 
         </Point>
-        <Point name="C2" xmlns="http://mbsim.berlios.de/MBSim">
+        <Point name="C2" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[F4]"/> 
         </Point>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -386,14 +386,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S8" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S8" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>-pi/2+atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S7]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*h*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*h*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2, 0; 0, 0, 1/4*(pi*r^2*h*rho)*r^2+1/12*(pi*r^2*h*rho)*h^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -420,7 +420,7 @@
       <contours>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -438,14 +438,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S9" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S9" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>-atan(hy/hx)</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S8]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(x-hx)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(x-hx)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2, 0; 0, 0, 1/4*(pi*r^2*(x-hx)*rho)*r^2+1/12*(pi*r^2*(x-hx)*rho)*(x-hx)^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -470,12 +470,12 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <Line name="CTop" xmlns="http://mbsim.berlios.de/MBSim">
+        <Line name="CTop" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[F2]"/> 
         </Line>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;0;0.5]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -495,12 +495,12 @@
     </RigidBody>
   </objects>
   <links>
-    <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
+    <Joint name="Joint0" xmlns="http://www.mbsim-env.de/MBSim">
       <momentDirection>[0; 0; 1]</momentDirection>
       <momentLaw>
-        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+        <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
           <forceFunction>
-            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+            <LinearRegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
               <stiffnessCoefficient>jc</stiffnessCoefficient>
               <dampingCoefficient>jd</dampingCoefficient>
             </LinearRegularizedBilateralConstraint>
@@ -509,13 +509,13 @@
       </momentLaw>
       <connect ref1="../../Object[Carrier]/Frame[FS]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
-    <Embed count="8" counterName="nr" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <Joint name="Joint{nr}" xmlns="http://mbsim.berlios.de/MBSim">
+    <Embed count="8" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <Joint name="Joint{nr}" xmlns="http://www.mbsim-env.de/MBSim">
         <momentDirection>[0; 0; 1]</momentDirection>
         <momentLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
             <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <LinearRegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
                 <stiffnessCoefficient>jc</stiffnessCoefficient>
                 <dampingCoefficient>jd</dampingCoefficient>
               </LinearRegularizedBilateralConstraint>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimPlugin name="mbsimControl" xmlns="http://mbsim.berlios.de/MBSimPlugin">
+<MBSimPlugin name="mbsimControl" xmlns="http://www.mbsim-env.de/MBSimPlugin">
   <schemas>
-    <Schema namespace="http://mbsim.berlios.de/MBSimControl"
-            schemaLocation="http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>
+    <Schema namespace="http://www.mbsim-env.de/MBSimControl"
+            schemaLocation="http___www_mbsim-env_de_MBSimControl/mbsimcontrol.xsd"/>
   </schemas>
   <libraries>
     <Library basename="mbsimControl"/>

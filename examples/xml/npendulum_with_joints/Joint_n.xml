@@ -1,5 +1,5 @@
-<Joint name="Gelenk{n+1}" xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<Joint name="Gelenk{n+1}" xmlns="http://www.mbsim-env.de/MBSim"
+  xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
   <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
   <forceLaw>
     <BilateralConstraint/>

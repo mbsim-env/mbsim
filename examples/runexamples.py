@@ -327,7 +327,7 @@ def main():
   # get schema files
   schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
   global ombvSchema, mbsimXMLSchema
-  ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
+  ombvSchema =pj(schemaDir, "http___www_mbsim-env_de_OpenMBV", "openmbv.xsd")
   # create mbsimxml schema
   mbsimXMLSchema=pj(args.reportOutDir, "tmp", "mbsimxml.xsd") # generated it here
   subprocess.check_call(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyGenerateSchema", mbsimXMLSchema])

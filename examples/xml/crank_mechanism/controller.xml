@@ -1,4 +1,4 @@
-<Group name="controller" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="controller" xmlns="http://www.mbsim-env.de/MBSim">
   <frames>
   </frames>
   <contours>
@@ -8,7 +8,7 @@
   <objects>
   </objects>
   <links>
-    <LinearTransferSystem name="pidController" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <LinearTransferSystem name="pidController" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[speedDeviation]"/>
       <pidType>
         <P>controllerKP</P>
@@ -17,18 +17,18 @@
       </pidType>
       <showABCD/> <!-- optional -->
     </LinearTransferSystem>
-    <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../../Object[Crank]"/>
       <index>0</index>
     </GeneralizedVelocitySensor>
-    <FunctionSensor name="crankReferenceSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <FunctionSensor name="crankReferenceSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <function>
-        <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
           <a0>ReferenceSpeed</a0>
         </ConstantFunction>
       </function>
     </FunctionSensor>
-    <SignalAddition name="speedDeviation" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <SignalAddition name="speedDeviation" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[crankReferenceSpeed]">
         <factor>1</factor>
       </inputSignal>
@@ -36,10 +36,10 @@
         <factor>-1</factor>
       </inputSignal>
     </SignalAddition>
-    <SignalProcessingSystemSensor name="controllerOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <SignalProcessingSystemSensor name="controllerOutput" xmlns="http://www.mbsim-env.de/MBSimControl">
       <signalProcessingSystem ref="../Link[pidController]"/>
     </SignalProcessingSystemSensor>
-    <Actuator name="motor" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <Actuator name="motor" xmlns="http://www.mbsim-env.de/MBSimControl">
       <momentDirection>[0 0 -1]'</momentDirection> <!-- optional -->
       <inputSignal ref="../Link[controllerOutput]"/>
       <connect ref1="../../Object[Crank]/Frame[B2]" ref2="../Frame[I]"/>

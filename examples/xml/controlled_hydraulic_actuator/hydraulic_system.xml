@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="HydraulicSystem" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="HydraulicSystem" xmlns="http://www.mbsim-env.de/MBSim">
   <frameOfReference ref="../Frame[I]"/>
   <frames/>
   <contours/>
   <groups>
-    <Controlvalve43 name="Controlvalve" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <Controlvalve43 name="Controlvalve" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <length>.02</length>
       <diameter>.003</diameter>
       <alpha>.7</alpha>
       <relativeAlphaPA>
-        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
           <x>[0; .4; .45; 1]</x>
           <y>[1;  1;  0; 0]</y>
         </TabularFunction>
@@ -25,7 +25,7 @@
     </Controlvalve43>  
   </groups>
   <objects>
-    <RigidLine name="lineP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <RigidLine name="lineP" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
       <direction>[0;0;0]</direction>
       <length>.15</length>
@@ -43,7 +43,7 @@
         </SerialResistanceLinePressureLoss>
       </linePressureLoss>
     </RigidLine>
-    <RigidLine name="lineA" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <RigidLine name="lineA" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
       <direction>[0;0;0]</direction>
       <length>.15</length>
@@ -61,7 +61,7 @@
         </SerialResistanceLinePressureLoss>
       </linePressureLoss>
     </RigidLine>
-    <RigidLine name="lineB" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <RigidLine name="lineB" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
       <direction>[0;0;0]</direction>
       <length>.15</length>
@@ -79,7 +79,7 @@
         </SerialResistanceLinePressureLoss>
       </linePressureLoss>
     </RigidLine>
-    <RigidLine name="lineT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <RigidLine name="lineT" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
       <direction>[0;0;0]</direction>
       <length>.05</length>
@@ -99,15 +99,15 @@
     </RigidLine>
   </objects>
   <links>
-    <ConstrainedNode name="sourceP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <ConstrainedNode name="sourceP" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <outflow ref="../Object[lineP]"/>
       <function>
-        <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
           <a0>40e5</a0>
         </ConstantFunction>
       </function>
     </ConstrainedNode>
-    <EnvironmentNode name="sourceT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <EnvironmentNode name="sourceT" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <inflow ref="../Object[lineT]"/>
     </EnvironmentNode>
   </links>

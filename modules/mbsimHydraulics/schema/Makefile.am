@@ -1,2 +1,2 @@
-schemadir = @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimHydraulics
+schemadir = @MBXMLUTILSSCHEMADIR@/http___www_mbsim-env_de_MBSimHydraulics
 dist_schema_DATA = mbsimhydraulics.xsd

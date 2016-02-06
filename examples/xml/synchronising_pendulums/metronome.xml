@@ -1,4 +1,4 @@
-<Group name="Metronome{i}" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="Metronome{i}" xmlns="http://www.mbsim-env.de/MBSim">
   <frameOfReference ref="../Frame[I{i}]"/>
   <position>[0; 0; 0]</position>
   <orientation>eye(3)</orientation>
@@ -7,14 +7,14 @@
   <groups>
   </groups>
   <objects>
-    <RigidBody name="Base" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="Base" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>[0; eps]</initialGeneralizedPosition>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[fBottom]"/>
       <mass>baseMass</mass>
       <inertiaTensor>baseTheta</inertiaTensor>
       <stateDependentTranslation>
-        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+        <LinearTranslation xmlns="http://www.mbsim-env.de/MBSim">
           <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
@@ -48,7 +48,7 @@
         </Point>
       </contours>
       <openMBVRigidBody>
-        <Cuboid name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Cuboid name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0.9;0;0]</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
@@ -63,13 +63,13 @@
         -</enableOpenMBVFrameC>
       -->
     </RigidBody>
-    <RigidBody name="Pendulum" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="Pendulum" xmlns="http://www.mbsim-env.de/MBSim">
       <frameOfReference ref="../Object[Base]/Frame[fTop]"/>
       <frameForKinematics ref="Frame[fBottom]"/>
       <mass>pendulumMass</mass>
       <inertiaTensor>pendulumTheta</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -100,7 +100,7 @@
       <contours>
       </contours>
       <openMBVRigidBody>
-        <Frustum name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0.7;0;0]</diffuseColor>
           <initialTranslation>[pendulumL/2 0 0]'</initialTranslation>
           <initialRotation>[0 pi/2 0]'</initialRotation>
@@ -119,7 +119,7 @@
         -</enableOpenMBVFrameC>
       -->
     </RigidBody>
-    <RigidBody name="Sphere" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="Sphere" xmlns="http://www.mbsim-env.de/MBSim">
       <frameOfReference ref="../Object[Pendulum]/Frame[fSphere]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>sphereMass</mass>
@@ -127,7 +127,7 @@
       <frames/>
       <contours/>
       <openMBVRigidBody>
-        <Sphere name="X" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Sphere name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0.7;0;0]</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
@@ -144,12 +144,12 @@
     </RigidBody>
   </objects>
   <links>
-    <Joint name="Spring" xmlns="http://mbsim.berlios.de/MBSim">
+    <Joint name="Spring" xmlns="http://www.mbsim-env.de/MBSim">
       <momentDirection>[0 0 1]'</momentDirection>
       <momentLaw>
-        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+        <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
           <forceFunction>
-            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+            <LinearRegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
               <stiffnessCoefficient>metronomeStiffness</stiffnessCoefficient>
               <dampingCoefficient>metronomeStiffness*0.005*2</dampingCoefficient>
             </LinearRegularizedBilateralConstraint>
@@ -158,31 +158,31 @@
       </momentLaw>
       <connect ref1="../Object[Base]/Frame[fTop]" ref2="../Object[Pendulum]/Frame[fBottom]"/>
     </Joint>
-    <Contact name="contactSwing" xmlns="http://mbsim.berlios.de/MBSim">
+    <Contact name="contactSwing" xmlns="http://www.mbsim-env.de/MBSim">
       <normalForceLaw>
-        <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+        <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
       </normalForceLaw>
       <normalImpactLaw>
-        <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
+        <UnilateralNewtonImpact xmlns="http://www.mbsim-env.de/MBSim">
           <restitutionCoefficient>0</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </normalImpactLaw>
       <tangentialForceLaw>
-        <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
+        <PlanarCoulombFriction xmlns="http://www.mbsim-env.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombFriction>
       </tangentialForceLaw>
       <tangentialImpactLaw>
-        <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
+        <PlanarCoulombImpact xmlns="http://www.mbsim-env.de/MBSim">
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombImpact>
       </tangentialImpactLaw>
       <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>
     </Contact>
-    <KineticExcitation name="KineticExcitation" xmlns="http://mbsim.berlios.de/MBSim">
+    <KineticExcitation name="KineticExcitation" xmlns="http://www.mbsim-env.de/MBSim">
       <forceDirection>[0 1 0]'</forceDirection>
       <forceFunction>
-        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
           <x>[-99e99 .1 .15 .2 99e99]'+timalOffset(i)</x>
           <y>[0      0  .05  0  0]'</y>
         </TabularFunction>
@@ -193,23 +193,23 @@
       </enableOpenMBVForce>
     </KineticExcitation>
 
-    <GeneralizedPositionSensor name="AngularSensor" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <GeneralizedPositionSensor name="AngularSensor" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../Object[Pendulum]"/>
       <index>0</index>
     </GeneralizedPositionSensor>
-    <GeneralizedVelocitySensor name="VelocitySensor" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <GeneralizedVelocitySensor name="VelocitySensor" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../Object[Pendulum]"/>
       <index>0</index>
     </GeneralizedVelocitySensor>
 
-    <SignalOperation name="VelocitySensorTanh" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <SignalOperation name="VelocitySensorTanh" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[VelocitySensor]"/>
       <tanh/>
     </SignalOperation>
-    <Function_SSEvaluation name="ExcitationTorque" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <Function_SSEvaluation name="ExcitationTorque" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[AngularSensor]"/>
       <function>
-        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
           <xy>
             <![CDATA[
             x=[-100 -.01 0 .01 1000];
@@ -222,7 +222,7 @@
         </TabularFunction>
       </function>
     </Function_SSEvaluation>
-    <SignalMultiplication name="Excitation" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <SignalMultiplication name="Excitation" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[ExcitationTorque]">
         <exponent>1</exponent>
       </inputSignal>
@@ -230,7 +230,7 @@
         <exponent>3</exponent>
       </inputSignal>
     </SignalMultiplication>
-    <Actuator name="Actuator" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <Actuator name="Actuator" xmlns="http://www.mbsim-env.de/MBSimControl">
       <momentDirection>[0 0 -1]'</momentDirection>
       <inputSignal ref="../Link[Excitation]"/>
       <connect ref1="../Object[Pendulum]/Frame[fBottom]" ref2="../Object[Base]/Frame[fTop]"/>

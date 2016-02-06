@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSimXML">
-  <DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"
-      xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
     <position>[0;0;0]</position><!-- dummy -->
     <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
     <frames>
@@ -139,7 +139,7 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-  <DOPRI5Integrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime>0</startTime>
     <endTime>10.1</endTime>
     <plotStepSize>1e-2</plotStepSize>

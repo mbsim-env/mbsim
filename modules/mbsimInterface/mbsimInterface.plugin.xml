@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimPlugin name="mbsimInterface" xmlns="http://mbsim.berlios.de/MBSimPlugin">
+<MBSimPlugin name="mbsimInterface" xmlns="http://www.mbsim-env.de/MBSimPlugin">
   <schemas>
-    <Schema namespace="http://mbsim.berlios.de/MBSimInterface"
-            schemaLocation="http___mbsim_berlios_de_MBSimInterface/mbsiminterface.xsd"/>
+    <Schema namespace="http://www.mbsim-env.de/MBSimInterface"
+            schemaLocation="http___www_mbsim-env_de_MBSimInterface/mbsiminterface.xsd"/>
   </schemas>
   <libraries>
     <Library basename="mbsimInterface"/>

@@ -1,4 +1,4 @@
-<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <scalarParameter name="pistonMass">7.5e-3</scalarParameter>
   <scalarParameter name="pistonRadius">4.2945e-3</scalarParameter>
   <scalarParameter name="hpcInitialHeight">33e-8/(pi*pistonRadius**2)</scalarParameter>

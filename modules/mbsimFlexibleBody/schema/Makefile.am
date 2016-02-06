@@ -1,2 +1,2 @@
-schemadir = @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimFlexibleBody
+schemadir = @MBXMLUTILSSCHEMADIR@/http___www_mbsim-env_de_MBSimFlexibleBody
 dist_schema_DATA = mbsimflexiblebody.xsd

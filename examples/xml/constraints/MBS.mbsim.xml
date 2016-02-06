@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="TS">
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS">
   <frames>
 </frames>
   <contours>
 </contours>
   <groups>
-    <Embed xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" href="./CrankMechanism.xml" count="1" counterName="n">
-      <Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="./CrankMechanism.xml" count="1" counterName="n">
+      <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="fSize">.01</scalarParameter>
         <scalarParameter name="carrier_Mass">8.5</scalarParameter>
         <scalarParameter name="carrier_Inertia">5e-4</scalarParameter>
@@ -33,7 +33,7 @@
   <links>
 </links>
   <environments>
-    <MBSimEnvironment xmlns="http://mbsim.berlios.de/MBSim">
+    <MBSimEnvironment xmlns="http://www.mbsim-env.de/MBSim">
       <accelerationOfGravity>[0 0 0]'</accelerationOfGravity>
     </MBSimEnvironment>
   </environments>

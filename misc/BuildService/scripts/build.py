@@ -204,7 +204,7 @@ def mainDocPage():
   print('<div class="panel panel-success">', file=docFD)
   print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Documentation</div>', file=docFD)
   print('  <ul class="list-group">', file=docFD)
-  print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___mbsim_berlios_de_MBSimXML", "mbsimxml.html"))+'">MBSimXML</a></li>', file=docFD)
+  print('    <li class="list-group-item"><a href="'+myurllib.pathname2url(pj("xmldoc", "http___www_mbsim-env_de_MBSimXML", "mbsimxml.html"))+'">MBSimXML</a></li>', file=docFD)
   print('  </ul>', file=docFD)
   print('</div>', file=docFD)
   print('<div class="panel panel-info">', file=docFD)

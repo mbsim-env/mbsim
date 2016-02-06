@@ -4,7 +4,7 @@ xml/index.xml: $(top_srcdir)/schema/mbsiminterface.xsd $(top_srcdir)/mbsimInterf
 	doxygen Doxyfile
 
 .mbsiminterface.done: xml/index.xml $(top_srcdir)/schema/mbsiminterface.xsd $(top_srcdir)/mbsimInterface/*.h 
-	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimInterface/mbsiminterface.xsd xml $(srcdir)/figures:$(srcdir)/../doc MBSimInterface MBSim::
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___www_mbsim-env_de_MBSimInterface/mbsiminterface.xsd xml $(srcdir)/figures:$(srcdir)/../doc MBSimInterface MBSim::
 
 
 install-data-local:

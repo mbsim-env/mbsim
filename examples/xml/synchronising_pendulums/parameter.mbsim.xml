@@ -1,4 +1,4 @@
-<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <scalarParameter name="fSize">.01</scalarParameter>
 
   <!-- Geometry-Data of Swing -->

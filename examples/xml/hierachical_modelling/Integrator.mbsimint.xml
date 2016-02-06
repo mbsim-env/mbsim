@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DOPRI5Integrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+<DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>Tend</endTime>
   <plotStepSize>1e-3</plotStepSize>

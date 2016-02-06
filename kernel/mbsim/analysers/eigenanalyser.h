@@ -26,7 +26,7 @@
 
 namespace MBSimAnalyser {
 
-  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://mbsim.berlios.de/MBSimAnalyser");
+  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyser");
 
   /**
    * \brief Eigenanalyser for dynamic systems

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimIntegrator"
+<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimIntegrator"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
-  xmlns="http://mbsim.berlios.de/MBSimIntegrator"
-  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns="http://www.mbsim-env.de/MBSimIntegrator"
+  xmlns:mbsim="http://www.mbsim-env.de/MBSim"
+  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"
+    schemaLocation="../http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd"/>
 
   <xs:element name="Integrator" abstract="true" substitutionGroup="mbsim:Solver" type="IntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">

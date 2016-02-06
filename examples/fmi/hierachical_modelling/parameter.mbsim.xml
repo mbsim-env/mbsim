@@ -1,4 +1,4 @@
-<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <vectorParameter name="rHG">[0;2]</vectorParameter>
   <vectorParameter name="alphaHG">
     <xmlVector>
