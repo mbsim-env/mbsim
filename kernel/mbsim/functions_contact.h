@@ -124,100 +124,96 @@ namespace MBSim {
        */
       ContourPointData cp;
   };
-//
-//  /*!
-//   * \brief root function for pairing Contour2s and Point
-//   * \author Zhan Wang
-//   * \date 2013-12-05
-//   */
-//  class FuncPairContour2sPoint : public DistanceFunction<fmatvec::Vec(fmatvec::Vec)> {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param point contour
-//       * \param contour contour2s surface
-//       */
-//      FuncPairContour2sPoint(Point* point_, Contour2s *contour_) :
-//          contour(contour_), point(point_), cp() {
-//      }
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      fmatvec::Vec operator()(const fmatvec::Vec &alpha) {  // Vec2: U and V direction
-//        fmatvec::Vec3 Wd = getWrD(alpha);
-//        fmatvec::Vec3 Wt1 = cp.getFrameOfReference().getOrientation().col(1);
-//        fmatvec::Vec3 Wt2 = cp.getFrameOfReference().getOrientation().col(2);
-//        fmatvec::Vec Wt(2, fmatvec::NONINIT);  // TODO:: check this?
-//        Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
-//        Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
-//        return Wt;
-//      }
-//
-//      fmatvec::Vec3 getWrD(const fmatvec::Vec &alpha) {
-//        cp.getLagrangeParameterPosition()(0) = alpha(0);
-//        cp.getLagrangeParameterPosition()(1) = alpha(1);
-//        contour->computeRootFunctionPosition(cp);
-//        contour->computeRootFunctionFirstTangent(cp); // TODO:: move these two line into operator() ?? maybe not possible, as when opertor[] is called, the orientation need to be updated
-//        contour->computeRootFunctionSecondTangent(cp);
-//        return point->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
-//      }
-//      /*************************************************/
-//
-//    private:
-//      /**
-//       * \brief contours
-//       */
-//      Contour2s *contour;
-//      Point *point;
-//      /**
-//       * \brief contour point data for saving old values
-//       */
-//      ContourPointData cp;
-//  };
-//
-//  /*!
-//   * \brief root function for pairing CylinderFlexible and CircleHollow
-//   * \author Roland Zander
-//   * \date 2009-04-21 contour point data included (Thorsten Schindler)
-//   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
-//   * \todo improve performance statement TODO
-//   */
-//  class FuncPairContour1sCircleHollow : public DistanceFunction<double(double)> {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param circle hollow contour
-//       * \param contour with one contour parameter
-//       */
-//      FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
-//
-//      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-//      double operator()(const double &alpha) {
-//        fmatvec::Vec3 Wd = getWrD(alpha);
-//        return circle->getFrame()->getOrientation().col(2).T() * Wd;
-//      }
-//
-//      fmatvec::Vec3 getWrD(const double &alpha) {
-//        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-//        cp.getLagrangeParameterPosition()(0) = alpha;
-//        contour->computeRootFunctionPosition(cp);
-//        //}
-//        return circle->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
-//      }
-//      /*************************************************/
-//
-//    private:
-//      /**
-//       * \brief contours
-//       */
-//      Contour1s *contour;
-//      CircleHollow *circle;
-//
-//      /**
-//       * \brief contour point data for saving old values
-//       */
-//      ContourPointData cp;
-//  };
-//
+
+  /*!
+   * \brief root function for pairing Contour2s and Point
+   * \author Zhan Wang
+   * \date 2013-12-05
+   */
+  class FuncPairContour2sPoint : public DistanceFunction<fmatvec::Vec2(fmatvec::Vec2)> {
+    public:
+      /**
+       * \brief constructor
+       * \param point contour
+       * \param contour contour2s surface
+       */
+      FuncPairContour2sPoint(Point* point_, Contour2s *contour_) :
+          contour(contour_), point(point_), cp() {
+      }
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha) {  // Vec2: U and V direction
+        cp.getLagrangeParameterPosition() = alpha;
+        fmatvec::Vec3 Wd = getWrD(alpha);
+        fmatvec::Vec3 Wt1 = contour->getWu(t,cp);
+        fmatvec::Vec3 Wt2 = contour->getWv(t,cp);
+        fmatvec::Vec2 Wt(fmatvec::NONINIT);  // TODO:: check this?
+        Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
+        Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
+        return Wt;
+      }
+
+      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha) {
+        cp.getLagrangeParameterPosition() = alpha;
+        return contour->getPosition(t,cp) - point->getFrame()->getPosition(t);
+      }
+      /*************************************************/
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour2s *contour;
+      Point *point;
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
+  };
+
+  /*!
+   * \brief root function for pairing CylinderFlexible and CircleHollow
+   * \author Roland Zander
+   * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
+   * \todo improve performance statement TODO
+   */
+  class FuncPairContour1sCircleHollow : public DistanceFunction<double(double)> {
+    public:
+      /**
+       * \brief constructor
+       * \param circle hollow contour
+       * \param contour with one contour parameter
+       */
+      FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      double operator()(const double &alpha) {
+        fmatvec::Vec3 Wd = getWrD(alpha);
+        fmatvec::Vec3 Wt = contour->getWu(t,cp);
+        return Wt.T() * Wd;
+      }
+
+      fmatvec::Vec3 getWrD(const double &alpha) {
+        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
+        cp.getLagrangeParameterPosition()(0) = alpha;
+        return contour->getPosition(t,cp) - (circle->getFrame()->getPosition(t) + circle->getRadius() * contour->getWn(t,cp));
+      }
+      /*************************************************/
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour1s *contour;
+      CircleHollow *circle;
+
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
+  };
+
   /*!
    * \brief root function for pairing ContourInterpolation and Point
    * \author Roland Zander
@@ -589,9 +585,7 @@ namespace MBSim {
 
       fmatvec::Vec3 getWrD(const double &alpha) {
         cp.getLagrangeParameterPosition()(0) = alpha;
-        WrOC[0] = circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getWn(t,cp);
-        WrOC[1] = contour->getPosition(t,cp);
-        return WrOC[1] - WrOC[0];
+        return contour->getPosition(t,cp) - (circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getWn(t,cp));
       }
       /***************************************************/
 
@@ -606,11 +600,6 @@ namespace MBSim {
        * \brief contour point data for saving old values
        */
       ContourPointData cp;
-
-      /**
-       * \brief contour point data for saving old values
-       */
-      fmatvec::Vec3 WrOC[2];
   };
 
   /*! 

@@ -42,4 +42,5 @@ contourinclude_HEADERS = circle.h\
 			 polynomial_frustum.h\
 			 contour_continuum.h\
 			 contour1s.h\
-			 contour1s_analytical.h
+			 contour1s_analytical.h\
+			 contour2s.h
