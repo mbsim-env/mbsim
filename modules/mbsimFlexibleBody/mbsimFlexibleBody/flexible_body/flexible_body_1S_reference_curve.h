@@ -97,12 +97,12 @@ namespace MBSimFlexibleBody {
       }
       virtual void GlobalMatrixContribution(int, const fmatvec::SymMat&, fmatvec::SymMat&);
 
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData&, MBSim::Frame::Feature, MBSim::Frame*);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData&, MBSim::Frame*) {
-        throw MBSim::MBSimError("NOT IMPLEMENTED: " + std::string(__func__));
-      }
-
-      virtual void updateKinematicsAtNode(MBSimFlexibleBody::NodeFrame *frame, MBSim::Frame::Feature ff);
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData&, MBSim::Frame::Feature, MBSim::Frame*);
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData&, MBSim::Frame*) {
+//        throw MBSim::MBSimError("NOT IMPLEMENTED: " + std::string(__func__));
+//      }
+//
+//      virtual void updateKinematicsAtNode(MBSimFlexibleBody::NodeFrame *frame, MBSim::Frame::Feature ff);
 
       virtual void setq0(fmatvec::Vec q0_) {
         FlexibleBodyContinuum<double>::setq0(q0_);
@@ -216,7 +216,7 @@ namespace MBSimFlexibleBody {
           return qF(0);
       }
 
-      virtual void updateStateDependentVariables(double t);
+//      virtual void updateStateDependentVariables(double t);
 
       /*!
        * \brief create a neutral phase as a basis for overlaid contours

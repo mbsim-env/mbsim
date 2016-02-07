@@ -7,6 +7,7 @@
 #include <config.h>
 #include "neutral_nurbs_position_2s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/node_frame.h"
 
 using namespace MBSim;
 
@@ -83,13 +84,13 @@ namespace MBSimFlexibleBody {
 
 
 
-  void NeutralNurbsPosition2s::buildNodelist(){
+  void NeutralNurbsPosition2s::buildNodelist(double t){
     NodeFrame frame;
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
         frame.setNodeNumber(nodes(i,j));
-        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::position);
-        Nodelist(i,j) = frame.getPosition();
+//        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::position);
+        Nodelist(i,j) = frame.getPosition(t);
 //        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        cout << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
       }

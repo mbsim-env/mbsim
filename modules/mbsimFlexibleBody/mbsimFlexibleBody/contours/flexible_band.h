@@ -49,21 +49,17 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Frame::Feature ff);   
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual fmatvec::Vec3 computePosition(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::Frame::position_cosy);
-        return cp.getFrameOfReference().getPosition();
-      }
-      virtual fmatvec::Vec3 computeVelocity(MBSim::ContourPointData &cp) {
-        updateKinematicsForFrame(cp, MBSim::Frame::velocity_cosy);
-        return cp.getFrameOfReference().getVelocity();
-      }
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Frame::Feature ff)
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+      virtual fmatvec::Vec3 getPosition(double t, MBSim::ContourPointData &cp);
+      virtual fmatvec::Vec3 getWs(double t, MBSim::ContourPointData &cp) { return getWu(t,cp); }
+      virtual fmatvec::Vec3 getWu(double t, MBSim::ContourPointData &cp);
+//      virtual fmatvec::Vec3 getVelocity(double t, MBSim::ContourPointData &cp);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::position); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
+//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::position); }
+//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
       /***************************************************/
 
       /* GETTER / SETTER */

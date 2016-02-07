@@ -58,39 +58,39 @@ namespace MBSimFlexibleBody {
     Contour1sNeutralFactory::init(stage);
   }
 
-  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {
-    FlexibleBody1SReferenceCurve * parent = static_cast<FlexibleBody1SReferenceCurve*>(this->parent);
-    double tangentialPos = cp.getLagrangeParameterPosition()(0) + parent->gets();
-    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
-      cp.getFrameOfReference().setPosition(parent->computer(tangentialPos, 0, 0));
-    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
-      cp.getFrameOfReference().setVelocity(parent->computev(tangentialPos));
-    if (ff == Frame::normal || ff == Frame::firstTangent || ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
-      Vec3 rdXi = parent->computer(tangentialPos, 1, 0);
-      Vec3 t = rdXi / nrm2(rdXi);
-      // the tangent does not change -> the normal vector is not uniquely defined! --> chose normal that point outwards...
-      Vec3 n = crossProduct(t, - parent->b);
-      cp.getFrameOfReference().getOrientation().set(0, n);
-      cp.getFrameOfReference().getOrientation().set(1, t);
-      cp.getFrameOfReference().getOrientation().set(2, crossProduct(n, t));
-    }
-  }
-
-  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateJacobiansForFrame(MBSim::ContourPointData &cp, int j) {
-
-    FlexibleBody1SReferenceCurve * parent = static_cast<FlexibleBody1SReferenceCurve*>(this->parent);
-    double tangentialPos = cp.getLagrangeParameterPosition()(0) + parent->gets();
-    cp.getFrameOfReference().setJacobianOfTranslation(parent->getFrameOfReference()->getOrientation() * parent->computeP(tangentialPos, 0), j);
-
-    //TODO: anything important concerning the Jacobian of rotation (now the ring is not able to transfer momements, but is that one needed?)
-  }
+//  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {
+//    FlexibleBody1SReferenceCurve * parent = static_cast<FlexibleBody1SReferenceCurve*>(this->parent);
+//    double tangentialPos = cp.getLagrangeParameterPosition()(0) + parent->gets();
+//    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
+//      cp.getFrameOfReference().setPosition(parent->computer(tangentialPos, 0, 0));
+//    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
+//      cp.getFrameOfReference().setVelocity(parent->computev(tangentialPos));
+//    if (ff == Frame::normal || ff == Frame::firstTangent || ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
+//      Vec3 rdXi = parent->computer(tangentialPos, 1, 0);
+//      Vec3 t = rdXi / nrm2(rdXi);
+//      // the tangent does not change -> the normal vector is not uniquely defined! --> chose normal that point outwards...
+//      Vec3 n = crossProduct(t, - parent->b);
+//      cp.getFrameOfReference().getOrientation().set(0, n);
+//      cp.getFrameOfReference().getOrientation().set(1, t);
+//      cp.getFrameOfReference().getOrientation().set(2, crossProduct(n, t));
+//    }
+//  }
+//
+//  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateJacobiansForFrame(MBSim::ContourPointData &cp, int j) {
+//
+//    FlexibleBody1SReferenceCurve * parent = static_cast<FlexibleBody1SReferenceCurve*>(this->parent);
+//    double tangentialPos = cp.getLagrangeParameterPosition()(0) + parent->gets();
+//    cp.getFrameOfReference().setJacobianOfTranslation(parent->getFrameOfReference()->getOrientation() * parent->computeP(tangentialPos, 0), j);
+//
+//    //TODO: anything important concerning the Jacobian of rotation (now the ring is not able to transfer momements, but is that one needed?)
+//  }
   
   MBSim::ContactKinematics * Contour1sNeutralFlexibleBody1SReferenceCurve::findContactPairingWith(std::string type0, std::string type1) {
     return findContactPairingFlexible(type0.c_str(), type1.c_str());
   }
 
-  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateStateDependentVariables(double t) {
-  }
+//  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateStateDependentVariables(double t) {
+//  }
 
 }
 /* namespace MBSimFlexibleBody */

@@ -7,6 +7,7 @@
 #include <config.h>
 #include "neutral_nurbs_position_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/node_frame.h"
 
 using namespace fmatvec;
 using namespace MBSim;
@@ -46,12 +47,12 @@ namespace MBSimFlexibleBody {
     cp.getFrameOfReference().getOrientation().set(2, b);
   }
 
-  void NeutralNurbsPosition1s::buildNodelist() {
+  void NeutralNurbsPosition1s::buildNodelist(double t) {
     NodeFrame frame;
     for (int i = 0; i < nodes.size(); i++) {
       frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::position);
-      Nodelist.set(i, trans(frame.getPosition()));
+//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::position);
+      Nodelist.set(i, trans(frame.getPosition(t)));
     }
 //    cout << "neutralPosition"<< Nodelist << endl << endl;
   }

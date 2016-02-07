@@ -72,8 +72,8 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) {
         THROW_MBSIMERROR("(NurbsCurve1s::findContactPairingWith): Not implemented!");
       }
@@ -94,24 +94,24 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief interpolates the translations with node-data from body
        */
-      void computeCurveTranslations(bool update = false);
+      void computeCurveTranslations(double t, bool update = false);
 
       /*!
        * \brief interpolates the velocities with the node-data from the body
        */
-      void computeCurveVelocities(bool update = false);
+      void computeCurveVelocities(double t, bool update = false);
 
       /*!
        * \brief interpolates the angular velocities with the node-data from the body
        */
-      void computeCurveAngularVelocities(bool update = false);
+      void computeCurveAngularVelocities(double t, bool update = false);
 
       /*!
        * \brief interpolates the Jacobians of translation with the node-data from the body
        * \param interpolate translational jacobian
        * \param interpolate rotational jacobian
        */
-      void computeCurveJacobians(bool trans = true, bool rot = true, bool update = false);
+      void computeCurveJacobians(double t, bool trans = true, bool rot = true, bool update = false);
 
     protected:
       /**

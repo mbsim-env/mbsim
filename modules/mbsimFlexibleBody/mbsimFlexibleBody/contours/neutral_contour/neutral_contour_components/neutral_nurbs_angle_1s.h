@@ -22,10 +22,10 @@ namespace MBSimFlexibleBody {
       virtual void updateAngleNormal(MBSim::ContourPointData &cp) ;
       virtual void updateAngleFirstTangent(MBSim::ContourPointData &cp) ;
       virtual void updateAngleSecondTangent(MBSim::ContourPointData &cp) ;
-      virtual void computeCurve(bool update);
+      virtual void computeCurve(double t, bool update);
 
     protected:
-      virtual void buildNodelist();
+      virtual void buildNodelist(double t);
       /**
       * \brief angle parametrisation
       */

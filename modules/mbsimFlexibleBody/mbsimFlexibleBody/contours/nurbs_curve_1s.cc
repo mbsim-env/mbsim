@@ -35,49 +35,49 @@ namespace MBSimFlexibleBody {
   NurbsCurve1s::~NurbsCurve1s() {
   }
 
-  void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
-    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
-      Vec3 Tmppt = curveTranslations.pointAt(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().setPosition(Tmppt);
-    }
-
-    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-      Vec3 Tmpv = curveVelocities.pointAt(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().setVelocity(Tmpv);
-    }
-
-    if (ff == Frame::angularVelocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-      double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0/2
-      double l0 = L / Elements;
-      if (uStaggered < l0 / 2.)
-        uStaggered = L - l0 / 2. + uStaggered;
-      else
-        uStaggered -= l0 / 2.;
-      Vec3 Tmpav = curveAngularVelocities.pointAt(uStaggered);
-      cp.getFrameOfReference().setAngularAcceleration(Tmpav);
-    }
-  }
-
-  void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
-    cp.getFrameOfReference().getJacobianOfTranslation().resize(qSize);
-    cp.getFrameOfReference().getJacobianOfRotation().resize(qSize); // TODO open structure
-
-    double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
-    double l0 = L / Elements;
-    if (uStaggered < l0 / 2.)
-      uStaggered = L - l0 / 2. + uStaggered;
-    else
-      uStaggered -= l0 / 2.;
-
-    for (int k = 0; k < qSize; k++) {
-      Vec3 TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
-      Vec3 TmpPtRot = CurveJacobiansOfRotation[k].pointAt(uStaggered);
-
-      cp.getFrameOfReference().getJacobianOfTranslation().set(k, TmpPtTrans);
-
-      cp.getFrameOfReference().getJacobianOfRotation().set(k, TmpPtRot);
-    }
-  }
+//  void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
+//    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
+//      Vec3 Tmppt = curveTranslations.pointAt(cp.getLagrangeParameterPosition()(0));
+//      cp.getFrameOfReference().setPosition(Tmppt);
+//    }
+//
+//    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
+//      Vec3 Tmpv = curveVelocities.pointAt(cp.getLagrangeParameterPosition()(0));
+//      cp.getFrameOfReference().setVelocity(Tmpv);
+//    }
+//
+//    if (ff == Frame::angularVelocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
+//      double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0/2
+//      double l0 = L / Elements;
+//      if (uStaggered < l0 / 2.)
+//        uStaggered = L - l0 / 2. + uStaggered;
+//      else
+//        uStaggered -= l0 / 2.;
+//      Vec3 Tmpav = curveAngularVelocities.pointAt(uStaggered);
+//      cp.getFrameOfReference().setAngularAcceleration(Tmpav);
+//    }
+//  }
+//
+//  void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
+//    cp.getFrameOfReference().getJacobianOfTranslation().resize(qSize);
+//    cp.getFrameOfReference().getJacobianOfRotation().resize(qSize); // TODO open structure
+//
+//    double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
+//    double l0 = L / Elements;
+//    if (uStaggered < l0 / 2.)
+//      uStaggered = L - l0 / 2. + uStaggered;
+//    else
+//      uStaggered -= l0 / 2.;
+//
+//    for (int k = 0; k < qSize; k++) {
+//      Vec3 TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
+//      Vec3 TmpPtRot = CurveJacobiansOfRotation[k].pointAt(uStaggered);
+//
+//      cp.getFrameOfReference().getJacobianOfTranslation().set(k, TmpPtTrans);
+//
+//      cp.getFrameOfReference().getJacobianOfRotation().set(k, TmpPtRot);
+//    }
+//  }
 
   void NurbsCurve1s::initContourFromBody(InitStage stage) {
     if (stage == resize) {
@@ -101,9 +101,9 @@ namespace MBSimFlexibleBody {
         CurveJacobiansOfRotation.push_back(NurbsCurve());
       }
 
-      computeCurveTranslations();
-      computeCurveVelocities();
-      computeCurveAngularVelocities();
+      computeCurveTranslations(0);
+      computeCurveVelocities(0);
+      computeCurveAngularVelocities(0);
     }
     else if (stage == worldFrameContourLocation) {
       R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
@@ -111,7 +111,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveTranslations(bool update) {
+  void NurbsCurve1s::computeCurveTranslations(double t, bool update) {
 
     int nodes = Elements;
     if (openStructure)
@@ -120,8 +120,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, Frame::position);
-      Nodelist.set(i, trans(cp.getFrameOfReference().getPosition()));
+      Nodelist.set(i, trans(cp.getFrameOfReference().getPosition(t)));
     }
 
     if (update)
@@ -136,7 +135,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveVelocities(bool update) {
+  void NurbsCurve1s::computeCurveVelocities(double t, bool update) {
     int nodes = Elements;
     if (openStructure)
       nodes++;
@@ -144,8 +143,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, Frame::velocity);
-      Nodelist.set(i, trans(cp.getFrameOfReference().getVelocity()));
+      Nodelist.set(i, trans(cp.getFrameOfReference().getVelocity(t)));
     }
 
     if (update)
@@ -160,7 +158,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveAngularVelocities(bool update) {
+  void NurbsCurve1s::computeCurveAngularVelocities(double t, bool update) {
     int nodes = Elements;
     if (openStructure)
       nodes++;
@@ -168,8 +166,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, Frame::angularVelocity);
-      Nodelist.set(i, trans(cp.getFrameOfReference().getAngularVelocity()));
+      Nodelist.set(i, trans(cp.getFrameOfReference().getAngularVelocity(t)));
     }
 
     if (update)
@@ -184,7 +181,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveJacobians(bool translational, bool rot, bool update) {
+  void NurbsCurve1s::computeCurveJacobians(double t, bool translational, bool rot, bool update) {
 //TODO: All the if's should be unnecessary if every interpolation would be capsulated in two routines
     int nodes = Elements;
     if (openStructure)
@@ -193,20 +190,20 @@ namespace MBSimFlexibleBody {
     MatVx3 NodelistTrans(nodes, NONINIT);
     MatVx3 NodelistRot(nodes, NONINIT);
 
-    for (int i = 0; i < nodes; i++) {
-      if (translational)
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
-      if (rot)
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
-    }
+//    for (int i = 0; i < nodes; i++) {
+//      if (translational)
+//        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
+//      if (rot)
+//        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
+//    }
 
     for (int k = 0; k < qSize; k++) {
       for (int i = 0; i < nodes; i++) {
         if (translational)
-          NodelistTrans.set(i, trans(jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation(0).col(k)));
+          NodelistTrans.set(i, trans(jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation(t,0).col(k)));
 
         if (rot)
-          NodelistRot.set(i, trans(jacobiansRot[i].getFrameOfReference().getJacobianOfRotation(0).col(k)));
+          NodelistRot.set(i, trans(jacobiansRot[i].getFrameOfReference().getJacobianOfRotation(t,0).col(k)));
 
       }
 

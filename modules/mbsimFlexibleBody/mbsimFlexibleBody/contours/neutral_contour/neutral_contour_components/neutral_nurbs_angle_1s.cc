@@ -7,6 +7,7 @@
 #include <config.h>
 #include "neutral_nurbs_angle_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/node_frame.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 
 using namespace MBSim;
@@ -38,10 +39,11 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsAngle1s::update(ContourPointData &cp){
-    Vec3 Tmpv = calculateStaggeredAngle(cp.getLagrangeParameterPosition()(0));
-//    if (Tmpv(2) < - 2 * M_PI)
-//      Tmpv(2) = Tmpv(2) + 2 *M_PI;
-    cp.getFrameOfReference().setAnglesOfOrientation(Tmpv);
+    throw;
+//    Vec3 Tmpv = calculateStaggeredAngle(cp.getLagrangeParameterPosition()(0));
+////    if (Tmpv(2) < - 2 * M_PI)
+////      Tmpv(2) = Tmpv(2) + 2 *M_PI;
+//    cp.getFrameOfReference().setAnglesOfOrientation(Tmpv);
   }
 
   void NeutralNurbsAngle1s::updateAngleNormal(ContourPointData &cp){
@@ -59,31 +61,32 @@ namespace MBSimFlexibleBody {
     cp.getFrameOfReference().getOrientation().set(2, -ANGLE->computeb(Tmpv)); // binormal (cartesian system)
   }
 
-  void NeutralNurbsAngle1s::buildNodelist(){
-    NodeFrame frame;
-    for (int i = 0; i < nodes.size(); i++) {
-      frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::angle);
-      Nodelist.set(i, trans(frame.getAnglesOfOrientation()));
-    }
-//    for (int i = 0; i < degU; i++){
-//      RowVec temp(3,INIT,0);
-//      temp(2) = 2 * M_PI;
-//      temp = trans(contourPoints.at(i).getFrameOfReference().getAnglesOfOrientation()) -temp;
-//
-//      Nodelist.set(numOfNodes + i, temp);
+  void NeutralNurbsAngle1s::buildNodelist(double t){
+    throw;
+//    NodeFrame frame;
+//    for (int i = 0; i < nodes.size(); i++) {
+//      frame.setNodeNumber(nodes(i));
+//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::angle);
+//      Nodelist.set(i, trans(frame.getAnglesOfOrientation()));
 //    }
-    // TODO: only for closed structure
-    RowVec temp(3,INIT,0);
-    temp(2) = 2 * M_PI;
-    temp = trans(frame.getAnglesOfOrientation()) -temp;
-    Nodelist.set(nodes.size(), temp);
-
-//    cout << "neutralAngle"<< Nodelist << endl << endl;
+////    for (int i = 0; i < degU; i++){
+////      RowVec temp(3,INIT,0);
+////      temp(2) = 2 * M_PI;
+////      temp = trans(contourPoints.at(i).getFrameOfReference().getAnglesOfOrientation()) -temp;
+////
+////      Nodelist.set(numOfNodes + i, temp);
+////    }
+//    // TODO: only for closed structure
+//    RowVec temp(3,INIT,0);
+//    temp(2) = 2 * M_PI;
+//    temp = trans(frame.getAnglesOfOrientation()) -temp;
+//    Nodelist.set(nodes.size(), temp);
+//
+////    cout << "neutralAngle"<< Nodelist << endl << endl;
   }
 
-  void NeutralNurbsAngle1s::computeCurve(bool update){  // overwrite the computeCurve as it need open interpolation for both open and closed structure
-    buildNodelist();
+  void NeutralNurbsAngle1s::computeCurve(double t, bool update){  // overwrite the computeCurve as it need open interpolation for both open and closed structure
+    buildNodelist(t);
 
     if (update)
       curve.update(Nodelist);

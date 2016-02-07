@@ -7,6 +7,7 @@
 #include <config.h>
 #include "neutral_nurbs_velocity_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/node_frame.h"
 
 using namespace MBSim;
 
@@ -29,12 +30,12 @@ namespace MBSimFlexibleBody {
     cp.getFrameOfReference().setVelocity(Tmpv);
   }
 
-  void NeutralNurbsVelocity1s::buildNodelist(){
+  void NeutralNurbsVelocity1s::buildNodelist(double t){
     NodeFrame frame;
     for (int i = 0; i < nodes.size(); i++) {
       frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::velocity);
-      Nodelist.set(i, trans(frame.getVelocity()));
+//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::velocity);
+      Nodelist.set(i, trans(frame.getVelocity(t)));
     }
 //    cout << "neutralVelocity"<< Nodelist << endl << endl;
   }

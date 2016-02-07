@@ -42,10 +42,10 @@ namespace MBSimFlexibleBody {
         return "Contour1sNeutralFlexibleBody1SReferenceCurve";
       }
       virtual void init(InitStage stage);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
-      virtual void updateStateDependentVariables(double t);
+//      virtual void updateStateDependentVariables(double t);
 
       double getuMax() const {
         return uMax;

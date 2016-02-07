@@ -29,7 +29,7 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec3 binormalDir;
 
-      virtual void buildNodelist();
+      virtual void buildNodelist(double t);
 
       /*!
        * \brief compute the tangent

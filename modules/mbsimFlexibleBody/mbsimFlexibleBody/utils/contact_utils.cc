@@ -46,7 +46,8 @@ namespace MBSimFlexibleBody {
       return new ContactKinematicsCircleSolidFlexibleBand;
     
     else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
-      return new ContactKinematicsPointFlexibleBand;  
+      return new MBSim::ContactKinematicsPointContour1s;
+      //return new ContactKinematicsPointFlexibleBand;
     
     else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sFlexible")==0)
       return new MBSim::ContactKinematicsPointContour1s;

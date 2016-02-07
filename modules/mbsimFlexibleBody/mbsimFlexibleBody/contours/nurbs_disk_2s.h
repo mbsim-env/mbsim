@@ -71,8 +71,8 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
         return findContactPairingFlexible(type0.c_str(), type1.c_str());
       }
@@ -132,21 +132,21 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief interpolates the surface with node-data from body
        */
-      void computeSurface();
+      void computeSurface(double t);
 #endif
 
 #ifdef HAVE_NURBS
       /*!
        * \brief interpolates the velocities of the surface with the node-data from the body
        */
-      void computeSurfaceVelocities();
+      void computeSurfaceVelocities(double t);
 #endif
 
 #ifdef HAVE_NURBS
       /*! 
        * \brief interpolates the Jacobians of translation of the surface with the node-data from the body
        */
-      void computeSurfaceJacobians();
+      void computeSurfaceJacobians(double t);
 #endif
 
 #ifdef HAVE_NURBS

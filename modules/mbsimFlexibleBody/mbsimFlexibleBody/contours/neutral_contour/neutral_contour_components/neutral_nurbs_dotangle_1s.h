@@ -17,9 +17,9 @@ namespace MBSimFlexibleBody {
       NeutralNurbsDotangle1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbsDotangle1s();
       virtual void update(MBSim::ContourPointData &cp) ;
-      virtual void computeCurve(bool update);
+      virtual void computeCurve(double t, bool update);
     protected:
-      virtual void buildNodelist();
+      virtual void buildNodelist(double t);
   };
 
 } /* namespace MBSimFlexibleBody */

@@ -79,12 +79,12 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame = 0);
-      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame = 0);
+//      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
       virtual void updateJacobiansAtNode(NodeFrame * frame);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       virtual void updateh(double t, int k = 0);
-      virtual void updateStateDependentVariables(double t);
+//      virtual void updateStateDependentVariables(double t);
       virtual void updateJacobians(double t, int k);
       /***************************************************/
 

@@ -18,7 +18,7 @@ namespace MBSimFlexibleBody {
       virtual ~NeutralNurbsVelocity2s();
       virtual void update(MBSim::ContourPointData &cp) ;
     protected:
-      virtual void buildNodelist();
+      virtual void buildNodelist(double t);
   };
 
 } /* namespace MBSimFlexibleBody */

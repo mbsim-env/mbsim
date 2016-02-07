@@ -7,6 +7,7 @@
 #include <config.h>
 #include "neutral_nurbs_local_position_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/node_frame.h"
 
 using namespace MBSim;
 
@@ -24,17 +25,19 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsLocalPosition1s::update(ContourPointData &cp){
-    Vec3 Tmpv = curve.pointAt(cp.getLagrangeParameterPosition()(0));
-    cp.getFrameOfReference().setLocalPosition(Tmpv);
+//    Vec3 Tmpv = curve.pointAt(cp.getLagrangeParameterPosition()(0));
+//    cp.getFrameOfReference().setLocalPosition(Tmpv);
+    throw;
   }
 
-  void NeutralNurbsLocalPosition1s::buildNodelist(){
-    NodeFrame frame;
-    for (int i = 0; i < nodes.size(); i++) {
-      frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame,  Frame::localPosition);
-      Nodelist.set(i, trans(frame.getLocalPosition()));
-    }
+  void NeutralNurbsLocalPosition1s::buildNodelist(double t){
+    throw;
+//    NodeFrame frame;
+//    for (int i = 0; i < nodes.size(); i++) {
+//      frame.setNodeNumber(nodes(i));
+//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame,  Frame::localPosition);
+//      Nodelist.set(i, trans(frame.getLocalPosition()));
+//    }
 //    cout << "neutralLocalPosition"<< Nodelist << endl << endl;
   }
 } /* namespace MBSimFlexibleBody */

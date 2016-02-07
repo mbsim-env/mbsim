@@ -57,46 +57,46 @@ namespace MBSimFlexibleBody {
       }
       /***************************************************/
 
-      /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff) {
-        if (neutral)
-          neutral->updateKinematicsForFrame(cp, ff);
-        else
-          static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, ff); //TODO: avoid asking parent body here!
-      }
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) {
-        if (neutral)
-          neutral->updateJacobiansForFrame(cp);
-        else
-          static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp);
-      }
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
-        if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::Frame::position);
-        else
-          updateKinematicsForFrame(cp, MBSim::Frame::position);
-      }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
-        if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
-        else
-          updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
-      }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
-        if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::Frame::normal);
-        else
-          updateKinematicsForFrame(cp, MBSim::Frame::normal);
-      }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
-        if (neutral)
-          neutral->updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
-        else
-          updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
-      }
+//      /* INHERITED INTERFACE OF CONTOUR */
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff) {
+//        if (neutral)
+//          neutral->updateKinematicsForFrame(cp, ff);
+//        else
+//          static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, ff); //TODO: avoid asking parent body here!
+//      }
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) {
+//        if (neutral)
+//          neutral->updateJacobiansForFrame(cp);
+//        else
+//          static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp);
+//      }
+//      /***************************************************/
+//
+//      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
+//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
+//        if (neutral)
+//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::position);
+//        else
+//          updateKinematicsForFrame(cp, MBSim::Frame::position);
+//      }
+//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
+//        if (neutral)
+//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
+//        else
+//          updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
+//      }
+//      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
+//        if (neutral)
+//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::normal);
+//        else
+//          updateKinematicsForFrame(cp, MBSim::Frame::normal);
+//      }
+//      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
+//        if (neutral)
+//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
+//        else
+//          updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
+//      }
       /***************************************************/
 
       MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {

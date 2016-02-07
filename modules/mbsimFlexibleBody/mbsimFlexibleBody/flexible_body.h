@@ -70,8 +70,10 @@ namespace MBSimFlexibleBody {
       virtual void updateh(double t, int k=0);
       virtual void updateM(double t, int k=0);
       virtual void updatedhdz(double t);
-      virtual void updateStateDependentVariables(double t);
-      virtual void updateJacobians(double t, int k=0);
+//      virtual void updateStateDependentVariables(double t);
+//      virtual void updateJacobians(double t, int k=0);
+      virtual fmatvec::Vec3 getPosition(double t, MBSim::ContourPointData &cp) = 0;
+      virtual fmatvec::Vec3 getWu(double t, MBSim::ContourPointData &cp) = 0;
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
@@ -118,28 +120,28 @@ namespace MBSimFlexibleBody {
        */
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat &locMat, fmatvec::SymMat &gloMat) = 0;
 
-      /**
-       * \brief cartesian kinematic for contour or external frame (normal, tangent, binormal) is set by implementation class
-       * \param data contour parameter
-       * \param ff selection of specific calculations for frames
-       * \param frame optional: external frame, otherwise contour parameters are changed
-       */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0) = 0;
-
-      /*!
-       * \brief cartesian kinematic on a node
-       */
-      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
-    	  THROW_MBSIMERROR("updateKinematicsAtNode(): Not implemented for " + getType()); //TODO: make that interface prettier
-      }
-
-      /**
-       * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class
-       * \param data contour parameter
-       * \param frame: optional external frame, otherwise contour parameters are changed
-       */
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0) = 0;
-      /***************************************************/
+//      /**
+//       * \brief cartesian kinematic for contour or external frame (normal, tangent, binormal) is set by implementation class
+//       * \param data contour parameter
+//       * \param ff selection of specific calculations for frames
+//       * \param frame optional: external frame, otherwise contour parameters are changed
+//       */
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0) = 0;
+//
+//      /*!
+//       * \brief cartesian kinematic on a node
+//       */
+//      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff) {
+//    	  THROW_MBSIMERROR("updateKinematicsAtNode(): Not implemented for " + getType()); //TODO: make that interface prettier
+//      }
+//
+//      /**
+//       * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class
+//       * \param data contour parameter
+//       * \param frame: optional external frame, otherwise contour parameters are changed
+//       */
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0) = 0;
+//      /***************************************************/
 
       /* GETTER / SETTER */
       /*!

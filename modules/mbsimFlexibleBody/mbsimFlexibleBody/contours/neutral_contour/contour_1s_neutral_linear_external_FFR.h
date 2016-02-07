@@ -35,9 +35,9 @@ namespace MBSimFlexibleBody {
       void readTransNodes(std::string file);
 
 
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual void updateStateDependentVariables(double t);
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+//      virtual void updateStateDependentVariables(double t);
 
       /* GETTER / SETTER*/
       fmatvec::VecInt getTransNodes();

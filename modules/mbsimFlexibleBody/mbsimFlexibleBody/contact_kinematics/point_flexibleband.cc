@@ -51,44 +51,46 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsPointFlexibleBand::updateg(double  &g, ContourPointData *cpData, int index) {
-    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
-
-    FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, band); // root function for searching contact parameters
-    Contact1sSearch search(func);
-    search.setNodes(band->getNodes()); // defining search areas for contacts
-
-    if (useLocal) { // select start value from last search
-      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
-    }
-    else { // define start search with regula falsi
-      search.setSearchAll(true);
-      useLocal = true;
-    }
-
-    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
-    cpData[icontour].getLagrangeParameterPosition()(1) = 0.;
-
-    if (cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-      g = 1.;
-    else {
-      band->updateKinematicsForFrame(cpData[icontour], Frame::position_cosy);
-      Vec Wd = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-      Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-      cpData[icontour].getLagrangeParameterPosition()(1) = Wb.T() * Wd; // get contact parameter of second tangential direction
-
-      double width = band->getWidth();
-      if (cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width || -cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width)
-        g = 1.;
-      else { // calculate the normal distance
-        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1) * Wb;
-        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
-        cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
-        cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));
-        g = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
-      }
-    }
-    delete func;
+  void ContactKinematicsPointFlexibleBand::updateg(double t, double  &g, ContourPointData *cpData, int index) {
+    throw;
+//    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition(t)); // position of point
+//
+//    FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, band); // root function for searching contact parameters
+//    func->setTime(t);
+//    Contact1sSearch search(func);
+//    search.setNodes(band->getNodes()); // defining search areas for contacts
+//
+//    if (useLocal) { // select start value from last search
+//      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
+//    }
+//    else { // define start search with regula falsi
+//      search.setSearchAll(true);
+//      useLocal = true;
+//    }
+//
+//    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
+//    cpData[icontour].getLagrangeParameterPosition()(1) = 0.;
+//
+//    if (cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
+//      g = 1.;
+//    else {
+//      band->updateKinematicsForFrame(cpData[icontour], Frame::position_cosy);
+//      Vec Wd = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition();
+//      Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
+//      cpData[icontour].getLagrangeParameterPosition()(1) = Wb.T() * Wd; // get contact parameter of second tangential direction
+//
+//      double width = band->getWidth();
+//      if (cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width || -cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width)
+//        g = 1.;
+//      else { // calculate the normal distance
+//        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1) * Wb;
+//        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
+//        cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
+//        cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));
+//        g = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
+//      }
+//    }
+//    delete func;
   }
 
 }

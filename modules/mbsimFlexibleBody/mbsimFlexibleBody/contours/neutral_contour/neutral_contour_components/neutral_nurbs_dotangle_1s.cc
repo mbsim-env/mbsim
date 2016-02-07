@@ -7,6 +7,7 @@
 #include <config.h>
 #include "neutral_nurbs_dotangle_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/node_frame.h"
 
 using namespace MBSim;
 
@@ -24,30 +25,31 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsDotangle1s::update(ContourPointData &cp) {
-    double uStaggered;
-    double oringnalPosition = cp.getLagrangeParameterPosition()(0);
-
-    if (oringnalPosition < nodeOffset)  // on the first half transElement
-      uStaggered = uMax + oringnalPosition - nodeOffset;
-    else
-      uStaggered = oringnalPosition - nodeOffset;
-
-    Vec3 Tmpv = curve.pointAt(uStaggered);
-    cp.getFrameOfReference().setDotAnglesOfOrientation(Tmpv);
+    throw;
+//    double uStaggered;
+//    double oringnalPosition = cp.getLagrangeParameterPosition()(0);
+//
+//    if (oringnalPosition < nodeOffset)  // on the first half transElement
+//      uStaggered = uMax + oringnalPosition - nodeOffset;
+//    else
+//      uStaggered = oringnalPosition - nodeOffset;
+//
+//    Vec3 Tmpv = curve.pointAt(uStaggered);
+//    cp.getFrameOfReference().setDotAnglesOfOrientation(Tmpv);
   }
 
-  void NeutralNurbsDotangle1s::buildNodelist() {
-    NodeFrame frame;
-    for (int i = 0; i < nodes.size(); i++) {
-      frame.setNodeNumber(nodes(i));
-      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::dotAngle);
-      Nodelist.set(i, trans(frame.getDotAnglesOfOrientation()));
-    }
-//    cout << "neutralDotAngle" << Nodelist << endl << endl;
+  void NeutralNurbsDotangle1s::buildNodelist(double t) {
+//    NodeFrame frame;
+//    for (int i = 0; i < nodes.size(); i++) {
+//      frame.setNodeNumber(nodes(i));
+//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::dotAngle);
+//      Nodelist.set(i, trans(frame.getDotAnglesOfOrientation()));
+//    }
+////    cout << "neutralDotAngle" << Nodelist << endl << endl;
   }
 
-  void NeutralNurbsDotangle1s::computeCurve(bool update) {
-    buildNodelist();
+  void NeutralNurbsDotangle1s::computeCurve(double t, bool update) {
+    buildNodelist(t);
 
     if (update)
       curve.update(Nodelist);

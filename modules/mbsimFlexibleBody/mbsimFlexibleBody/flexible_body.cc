@@ -74,6 +74,7 @@ namespace MBSimFlexibleBody {
       discretization[i]->computeM(qElement[i]); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getM(), M[k]); // assemble
+    cout << M[k] << endl;
   }
 
   void FlexibleBody::updatedhdz(double t) {
@@ -86,11 +87,11 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
-  void FlexibleBody::updateStateDependentVariables(double t) {
-    BuildElements();
-
-    // TODO: Basically the first loop shouldn't be used as it is for frames with a contour-point data that should be killed anyway...
-    //        The idea is to use a contour frame that has all necessary position information
+//  void FlexibleBody::updateStateDependentVariables(double t) {
+//    BuildElements();
+//
+//    // TODO: Basically the first loop shouldn't be used as it is for frames with a contour-point data that should be killed anyway...
+//    //        The idea is to use a contour frame that has all necessary position information
 //    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
 //      updateKinematicsForFrame(S_Frame[i], Frame::all, frame[i]);
 //    }
@@ -104,17 +105,17 @@ namespace MBSimFlexibleBody {
 //    for (size_t i = 0; i < contour.size(); i++) {
 //      contour[i]->updateStateDependentVariables(t);
 //    }
-  }
+//  }
 
-  void FlexibleBody::updateJacobians(double t, int k) {
-    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-      updateJacobiansForFrame(S_Frame[i], frame[i]);
-    }
-    // TODO contour non native?  DONE!
-//    for (size_t i = 0; i < contour.size(); i++) {
-//      contour[i]->updateJacobians;
+//  void FlexibleBody::updateJacobians(double t, int k) {
+//    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
+//      updateJacobiansForFrame(S_Frame[i], frame[i]);
 //    }
-  }
+//    // TODO contour non native?  DONE!
+////    for (size_t i = 0; i < contour.size(); i++) {
+////      contour[i]->updateJacobians;
+////    }
+//  }
 
   void FlexibleBody::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
@@ -127,8 +128,8 @@ namespace MBSimFlexibleBody {
       Body::init(stage);
       T = SqrMat(qSize, fmatvec::EYE);
       for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-        S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(uSize[0]);
-        S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(uSize[0]);
+        S_Frame[i].getFrameOfReference().getJacobianOfTranslation(0,false).resize(uSize[0]);
+        S_Frame[i].getFrameOfReference().getJacobianOfRotation(0,false).resize(uSize[0]);
       }
     }
     else if(stage==plotting) {

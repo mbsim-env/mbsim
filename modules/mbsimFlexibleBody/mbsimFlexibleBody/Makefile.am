@@ -1,10 +1,15 @@
-SUBDIRS = flexible_body .
+SUBDIRS = flexible_body contours contact_kinematics utils .
   
 lib_LTLIBRARIES = libmbsimFlexibleBody.la
 libmbsimFlexibleBody_la_LDFLAGS = -avoid-version
-libmbsimFlexibleBody_la_SOURCES = fixed_nodal_frame.cc
+libmbsimFlexibleBody_la_SOURCES = fixed_nodal_frame.cc\
+				  node_frame.cc\
+				  flexible_body.cc
 
 libmbsimFlexibleBody_la_LIBADD = flexible_body/libflexiblebody.la
+libmbsimFlexibleBody_la_LIBADD += contours/libcontour.la
+libmbsimFlexibleBody_la_LIBADD += contact_kinematics/libcontactkinematics.la
+libmbsimFlexibleBody_la_LIBADD += utils/libutils.la
 libmbsimFlexibleBody_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
 libmbsimFlexibleBody_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)

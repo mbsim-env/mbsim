@@ -23,8 +23,8 @@ namespace MBSimFlexibleBody {
 
   }
 
-  void NeutralNurbs2s::computeCurve(const Vec& uk, const Vec& vl, bool update){
-    buildNodelist();
+  void NeutralNurbs2s::computeCurve(double t, const Vec& uk, const Vec& vl, bool update){
+    buildNodelist(t);
 
 //    if (update)
 //      surface.update(Nodelist);

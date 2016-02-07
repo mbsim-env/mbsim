@@ -21,7 +21,7 @@ namespace MBSimFlexibleBody {
       virtual void updatePositionFirstTangent(MBSim::ContourPointData &cp);
       virtual void updatePositionSecondTangent(MBSim::ContourPointData &cp);
     protected:
-      virtual void buildNodelist();
+      virtual void buildNodelist(double t);
   };
 
 } /* namespace MBSimFlexibleBody */

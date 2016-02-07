@@ -30,10 +30,10 @@ namespace MBSimFlexibleBody {
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
       virtual NeutralNurbsAngle1s* createNeutralAngle();
       virtual NeutralNurbsDotangle1s* createNeutralDotangle();
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
+//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
-      virtual void updateStateDependentVariables(double t);
+//      virtual void updateStateDependentVariables(double t);
 
       void setTransNodes(const fmatvec::VecInt & transNodes_);
       void setRotNodes(const fmatvec::VecInt & rotNodes_);

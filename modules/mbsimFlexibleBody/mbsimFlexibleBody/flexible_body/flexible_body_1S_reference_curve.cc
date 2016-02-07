@@ -618,107 +618,107 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1SReferenceCurve::updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Feature fFeature, MBSim::Frame* frame) {
-    //TODO: use the special neutral contour here for computation (more current concept) and not the old concept
-    if (fFeature == Frame::position) {
-      double xBar = cp.getLagrangeParameterPosition()(0);
-      double xi = xBar - q(0);
-      cp.getFrameOfReference().setPosition(computer(xi, 0, 0));
-    }
-    else {
-      throw MBSim::MBSimError("NOT IMPLEMENTED: " + std::string(__func__));
-    }
-  }
-
-  void FlexibleBody1SReferenceCurve::updateStateDependentVariables(double t) {
-    //TODO_Grundl: Move the following to specific case!
-//    if (0) {
-////Remark: artificially updating Theta to test output from lower to upper bound
-//      q.init(0.);
-//      q(1) = refCurve->getThetaLower() + (refCurve->getThetaUpper() - refCurve->getThetaLower()) * t / 1e-4;
-//
-////      double amp = 1e-2;
-////      double amplitude = -amp + (amp + amp) * t / 1e-4;
-////       first "major" node is locked in t/n direction ...
-////      for (int i = 3; i < qSize; i += nodeDoFs * 2) {
-////        q(i) = amplitude;          // * sin(double(i) / (elements * elementOrder) * 2. * M_PI);
-////        if (i < 4) {
-////          i -= 1;
-////        }
-////      }
-////      for (int i = 3; i < qSize; i += nodeDoFs * 2) {
-////        q(i) = amplitude * sin(double(i) / (elements * elementOrder) * 2. * M_PI);
-////      }
-////      for (int i = 4; i < qSize; i += nodeDoFs * 2) {
-////        q(i) = amplitude * sin(double(i) / (elements * elementOrder) * 2. * M_PI);
-////      }
+//  void FlexibleBody1SReferenceCurve::updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Feature fFeature, MBSim::Frame* frame) {
+//    //TODO: use the special neutral contour here for computation (more current concept) and not the old concept
+//    if (fFeature == Frame::position) {
+//      double xBar = cp.getLagrangeParameterPosition()(0);
+//      double xi = xBar - q(0);
+//      cp.getFrameOfReference().setPosition(computer(xi, 0, 0));
 //    }
-
-    FlexibleBody::updateStateDependentVariables(t);
-
-    if (0) {
-      updateM(0.0, 0);
-      updateh(0.0, 0);
-      ofstream myfile;
-      myfile.open("test.txt", ios::app);
-      myfile.precision(10);
-      myfile << q(1) << "," << h[0](1) << "," << M[0](1, 0) << "," << M[0](1, 1) << ";";
-      myfile.close();
-    }
-
-    if (0) {
-// test basically the curvature energy-functions
-      int n = 1000;
-      Vec kappa(n, NONINIT);
-      Vec dkappadq(n, NONINIT);
-      for (int i = 0; i < n; i++) {
-        double xi = i * length / (n + 1);
-        int eleNo = findElement(xi);
-        FlexibleBody1SReferenceCurveFE * ele = static_cast<FlexibleBody1SReferenceCurveFE*>(discretization[eleNo]);
-        kappa(i) = ele->computeKappan(xi);
-        dkappadq(i) = ele->computedKappandqk(xi, 9);
-      }
-      cout << kappa.T() << ";" << endl;
-      cout << dkappadq.T() << ";" << endl;
-      exit(0);
-    }
-  }
-
-  void FlexibleBody1SReferenceCurve::updateKinematicsAtNode(MBSimFlexibleBody::NodeFrame *frame, MBSim::Frame::Feature ff) {
-    int node = frame->getNodeNumber();
-    double lagrangePos = node * length / elements;
-    bool useRef = false;
-
-// Translational node
-    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
-      if (useRef)
-        frame->setPosition(computerRef(lagrangePos, 0, 0));
-      else
-        frame->setPosition(computer(lagrangePos, 0, 0));
-    }
-    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
-      frame->setVelocity(computev(lagrangePos));
-
-    if (ff == Frame::normal || ff == Frame::firstTangent || ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
-      if (useRef)
-        frame->setOrientation(computeARef(lagrangePos, 0, 0));
-      else {
-        Vec3 rdXi = computer(lagrangePos, 1, 0);
-        Vec3 t = rdXi / nrm2(rdXi);
-        // the tangent does not change -> the normal vector is not uniquely defined! --> chose normal that point outwards...
-        Vec3 n = crossProduct(t, -b);
-        frame->getOrientation().set(0, n);
-        frame->getOrientation().set(1, t);
-        frame->getOrientation().set(2, crossProduct(n, t));
-      }
-    }
-
-//TODO: more infomation needed after all?
-    if (ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
-      frame->getVelocity() = computev(lagrangePos);
-      frame->getAngularVelocity() = Vec3(); // TODO
-    }
-  }
+//    else {
+//      throw MBSim::MBSimError("NOT IMPLEMENTED: " + std::string(__func__));
+//    }
+//  }
+//
+//  void FlexibleBody1SReferenceCurve::updateStateDependentVariables(double t) {
+//    //TODO_Grundl: Move the following to specific case!
+////    if (0) {
+//////Remark: artificially updating Theta to test output from lower to upper bound
+////      q.init(0.);
+////      q(1) = refCurve->getThetaLower() + (refCurve->getThetaUpper() - refCurve->getThetaLower()) * t / 1e-4;
+////
+//////      double amp = 1e-2;
+//////      double amplitude = -amp + (amp + amp) * t / 1e-4;
+//////       first "major" node is locked in t/n direction ...
+//////      for (int i = 3; i < qSize; i += nodeDoFs * 2) {
+//////        q(i) = amplitude;          // * sin(double(i) / (elements * elementOrder) * 2. * M_PI);
+//////        if (i < 4) {
+//////          i -= 1;
+//////        }
+//////      }
+//////      for (int i = 3; i < qSize; i += nodeDoFs * 2) {
+//////        q(i) = amplitude * sin(double(i) / (elements * elementOrder) * 2. * M_PI);
+//////      }
+//////      for (int i = 4; i < qSize; i += nodeDoFs * 2) {
+//////        q(i) = amplitude * sin(double(i) / (elements * elementOrder) * 2. * M_PI);
+//////      }
+////    }
+//
+//    FlexibleBody::updateStateDependentVariables(t);
+//
+//    if (0) {
+//      updateM(0.0, 0);
+//      updateh(0.0, 0);
+//      ofstream myfile;
+//      myfile.open("test.txt", ios::app);
+//      myfile.precision(10);
+//      myfile << q(1) << "," << h[0](1) << "," << M[0](1, 0) << "," << M[0](1, 1) << ";";
+//      myfile.close();
+//    }
+//
+//    if (0) {
+//// test basically the curvature energy-functions
+//      int n = 1000;
+//      Vec kappa(n, NONINIT);
+//      Vec dkappadq(n, NONINIT);
+//      for (int i = 0; i < n; i++) {
+//        double xi = i * length / (n + 1);
+//        int eleNo = findElement(xi);
+//        FlexibleBody1SReferenceCurveFE * ele = static_cast<FlexibleBody1SReferenceCurveFE*>(discretization[eleNo]);
+//        kappa(i) = ele->computeKappan(xi);
+//        dkappadq(i) = ele->computedKappandqk(xi, 9);
+//      }
+//      cout << kappa.T() << ";" << endl;
+//      cout << dkappadq.T() << ";" << endl;
+//      exit(0);
+//    }
+//  }
+//
+//  void FlexibleBody1SReferenceCurve::updateKinematicsAtNode(MBSimFlexibleBody::NodeFrame *frame, MBSim::Frame::Feature ff) {
+//    int node = frame->getNodeNumber();
+//    double lagrangePos = node * length / elements;
+//    bool useRef = false;
+//
+//// Translational node
+//    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
+//      if (useRef)
+//        frame->setPosition(computerRef(lagrangePos, 0, 0));
+//      else
+//        frame->setPosition(computer(lagrangePos, 0, 0));
+//    }
+//    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
+//      frame->setVelocity(computev(lagrangePos));
+//
+//    if (ff == Frame::normal || ff == Frame::firstTangent || ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
+//      if (useRef)
+//        frame->setOrientation(computeARef(lagrangePos, 0, 0));
+//      else {
+//        Vec3 rdXi = computer(lagrangePos, 1, 0);
+//        Vec3 t = rdXi / nrm2(rdXi);
+//        // the tangent does not change -> the normal vector is not uniquely defined! --> chose normal that point outwards...
+//        Vec3 n = crossProduct(t, -b);
+//        frame->getOrientation().set(0, n);
+//        frame->getOrientation().set(1, t);
+//        frame->getOrientation().set(2, crossProduct(n, t));
+//      }
+//    }
+//
+////TODO: more infomation needed after all?
+//    if (ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
+//      frame->getVelocity() = computev(lagrangePos);
+//      frame->getAngularVelocity() = Vec3(); // TODO
+//    }
+//  }
 
   Contour1sNeutralFlexibleBody1SReferenceCurve* FlexibleBody1SReferenceCurve::createNeutralPhase(const std::string & contourName) {
 // add neutral contour to the rod

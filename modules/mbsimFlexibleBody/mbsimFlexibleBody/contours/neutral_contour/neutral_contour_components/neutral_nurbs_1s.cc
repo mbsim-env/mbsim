@@ -24,8 +24,8 @@ namespace MBSimFlexibleBody {
 
   }
 
-  void NeutralNurbs1s::computeCurve(bool update){
-    buildNodelist();
+  void NeutralNurbs1s::computeCurve(double t, bool update){
+    buildNodelist(t);
 
     if (update)
       curve.update(Nodelist);
