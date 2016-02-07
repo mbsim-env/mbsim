@@ -202,37 +202,33 @@ try:
         response_data['success']=True
         response_data['message']="Successfully saved."
 
-  # return current checked examples
+  # return current ci branches of all repos
   if action=="/getcibranches" and method=="GET":
     with ConfigFile(False) as config: pass
-    # no json input via http post required
-    # return branches for CI
-    # worker function to make github api requests in parallel
-    def getBranch(url, headers, out):
-      response=requests.get(url, headers=headers)
-      if response.status_code==200:
-        out.extend([b['name'] for b in response.json()])
-    # output data placeholder, request url and thread object placeholder. all per thread (reponame)
-    out={'fmatvec': [], 'hdf5serie': [], 'openmbv': [], 'mbsim': []}
-    url={'fmatvec': 'https://api.github.com/repos/mbsim-env/fmatvec/branches',
-         'hdf5serie': 'https://api.github.com/repos/mbsim-env/hdf5serie/branches',
-         'openmbv': 'https://api.github.com/repos/mbsim-env/openmbv/branches',
-         'mbsim': 'https://api.github.com/repos/mbsim-env/mbsim/branches'}
-    thread={}
-    # make all calls in parallel
-    headers={'Accept': 'application/vnd.github.v3+json'}
+    repos=['fmatvec', 'hdf5serie', 'openmbv', 'mbsim']
     # use a authentificated request if logged in (to avoid rate limit problems on github)
+    headers={'Accept': 'application/vnd.github.v3+json'}
     if 'HTTP_COOKIE' in os.environ:
       c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
       sessionid=c['mbsimenvsessionid'].value
       if sessionid in config['session']:
         headers['Authorization']='token '+config['session'][sessionid]['access_token']
-    for reponame in out:
-      thread[reponame]=threading.Thread(target=getBranch, args=(url[reponame], headers, out[reponame]))
-      thread[reponame].start()
-    # wait for all calls
-    for reponame in out:
-      thread[reponame].join(10)
+    # worker function to make github api requests in parallel
+    def getBranch(repo, out):
+      response=requests.get('https://api.github.com/repos/mbsim-env/'+repo+'/branches', headers=headers)
+      if response.status_code==200:
+        out.extend([b['name'] for b in response.json()])
+    # start worker threads
+    thread={}
+    out={}
+    for repo in repos:
+      out[repo]=[]
+      thread[repo]=threading.Thread(target=getBranch, args=(repo, out[repo]))
+      thread[repo].start()
+    # wait for all threads
+    for repo in repos:
+      thread[repo].join()
+    # generate output
     curcibranch=config['curcibranch']
     response_data['success']=True
     response_data['message']="Continuous integration braches loaded."
@@ -347,7 +343,7 @@ try:
       # generate tagname, platform and relArchiveName
       tagName=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "release/"+data['relStr']+"-\\1", data['distArchiveName'])
       platform=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "\\1", data['distArchiveName'])
-      relArchiveName=re.sub("(mbsim-env-.*-shared-build-)xxx(\..*)", "\\g<1>"+data['relStr']+"\\2", data['distArchiveName'])
+      relArchiveName=re.sub("mbsim-env-.*-shared-build-xxx(\..*)", "mbsim-env-release-"+data['relStr']+"-"+platform+"\\1", data['distArchiveName'])
       # access token from config file and standard http header
       c=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
       sessionid=c['mbsimenvsessionid'].value
@@ -366,13 +362,15 @@ try:
         response_data['message']="Internal error. Cannot get email address of user."
       else:
         response=response.json()
+        # get primary email
         for item in response:
           if item['primary']:
             email=item['email']
-        # create tag object and reference for all repositories
+        # create tag object, create git reference and create a github release for all repositories
         org="mbsim-env"
         repos=['fmatvec', 'hdf5serie', 'openmbv', 'mbsim']
-        for repo in repos:
+        # worker function to make github api requests in parallel
+        def tagRefRelease(repo, out):
           # create the git tag object
           createTagData={"tag": tagName,
                          "message": "Release "+data['relStr']+" of MBSim-Env for "+platform+"\n"+\
@@ -392,10 +390,9 @@ try:
                                  headers=headers, data=json.dumps(createTagData))
           # check if the create was successfull
           if response.status_code!=201:
-            # not successfull -> set response_data and continue with next repo
-            response_data['success']=False
-            response_data['message']=response_data['message']+" "+\
-              "Unable to create the git tag object for repo "+repo+". Please check the tag status of (at least) this repository manually."
+            # not successfull -> set out
+            out['success']=False
+            out['message']="Unable to create the git tag object for repo "+repo+". Please check the tag status of (at least) this repository manually; "
           else:
             # git tag object created -> get the tag object id
             tagObjectID=response.json()['sha']
@@ -406,10 +403,9 @@ try:
                                    headers=headers, data=json.dumps(createRefData))
             # check if the create was successfull
             if response.status_code!=201:
-              # not successfull -> set response_data and continue with next repo
-              response_data['success']=False
-              response_data['message']=response_data['message']+" "+\
-                "Unable to create the git reference for repo "+repo+". Please check the tag status of (at least) this repository manually."
+              # not successfull -> set out
+              out['success']=False
+              out['message']="Unable to create the git reference for repo "+repo+". Please check the tag status of (at least) this repository manually; "
             else:
               # git ref object created -> create GitHub release info
               createRelData={"tag_name": tagName,
@@ -424,10 +420,25 @@ try:
                                      headers=headers, data=json.dumps(createRelData))
               # check if the update was successfull
               if response.status_code!=201:
-                # not successfull -> set response_data and continue with next repo
-                response_data['success']=False
-                response_data['message']=response_data['message']+" "+\
-                  "Unable to create the GitHub release info for repo "+repo+". Please check the tag/release status of (at least) this repository manually."
+                # not successfull -> set out
+                out['success']=False
+                out['message']="Unable to create the GitHub release info for repo "+repo+". "+\
+                               "Please check the tag/release status of (at least) this repository manually; "
+        # start worker threads
+        thread={}
+        out={}
+        for repo in repos:
+          out[repo]={'success': True, 'message': ''}
+          thread[repo]=threading.Thread(target=tagRefRelease, args=(repo, out[repo]))
+          thread[repo].start()
+        # wait for all threads
+        for repo in repos:
+          thread[repo].join()
+        # combine output of all threads
+        for repo in repos:
+          if not out[repo]['success']:
+            response_data['success']=False
+          response_data['message']=response_data['message']+out[repo]['message']
         # set message if everything was done Successfully
         if response_data['success']==True:
           response_data['message']="Successfully released and tagged this distribution."

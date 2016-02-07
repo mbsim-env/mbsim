@@ -1038,10 +1038,8 @@ def releaseGeneration1(mainFD):
 def releaseGeneration2(mainFD, distArchiveName):
   # default values
   relStr="x.y"
-  relArchiveNamePrefix=re.sub("(.*-)xxx\..*", "\\1",  distArchiveName)
-  relArchiveNamePostfix=re.sub(".*-xxx(\..*)", "\\1",  distArchiveName)
-  tagNamePrefix="release/"
-  tagNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx.*", "-\\1", distArchiveName)
+  relArchiveNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx(\..*)", "\\1\\2",  distArchiveName)
+  tagNamePostfix=re.sub("mbsim-env-(.*)-shared-build-xxx\..*", "\\1", distArchiveName)
 
   print('''<div class="panel panel-warning">
   <div class="panel-heading"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;<span class="octicon octicon-tag"></span>&nbsp;<a data-toggle="collapse" href="#collapseReleaseGeneration">
@@ -1090,7 +1088,7 @@ def releaseGeneration2(mainFD, distArchiveName):
       </div>
     </div>
     <div style="margin-top:0.5em">
-      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>%s<span class="RELSTR">%s</span>%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>%s<span class="RELSTR">%s</span>%s</b></button>
+      <button id="RELEASEBUTTON" type="button" disabled="disabled" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;Release as <b>mbsim-env-release-<span class="RELSTR">%s</span>-%s</b> and <span class="octicon octicon-tag"></span>&nbsp;tag as <b>release/<span class="RELSTR">%s</span>-%s</b></button>
     </div>
     <p><small>(NOTE! This will create an annotated git tag with your username and email on the public MBSim-Env repositories on GitHub!)</small></p>
   </div>
@@ -1101,8 +1099,8 @@ def releaseGeneration2(mainFD, distArchiveName):
   <div class="panel-body">
     <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
   </div>
-</div>'''%(distArchiveName, args.reportOutDir, relStr, relArchiveNamePrefix, relStr, relArchiveNamePostfix,
-           tagNamePrefix, relStr, tagNamePostfix), file=mainFD)
+</div>'''%(distArchiveName, args.reportOutDir, relStr, relStr, relArchiveNamePostfix,
+           relStr, tagNamePostfix), file=mainFD)
 
 
 
