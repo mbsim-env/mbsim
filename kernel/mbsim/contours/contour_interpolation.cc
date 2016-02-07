@@ -39,26 +39,29 @@ namespace MBSim {
   }
 
   Vec3 ContourInterpolation::getWrOC(const ContourPointData &cp) {
-    const Vec2 &s = cp.getLagrangeParameterPosition();
+//    const Vec2 &s = cp.getLagrangeParameterPosition();
     Vec3 r;
-    for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getReferencePosition();
+    throw;
+//    for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getReferencePosition();
     return r;
   }
 
   Vec3 ContourInterpolation::computeWvC(const ContourPointData &cp) {
-    const Vec2 &s = cp.getLagrangeParameterPosition();
+//    const Vec2 &s = cp.getLagrangeParameterPosition();
     Vec3 v;
-    for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getReferenceVelocity();
+    throw;
+//    for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getReferenceVelocity();
     return v;
   }
 
   Mat3xV ContourInterpolation::computeWt(const ContourPointData &cp) {
-    const Vec2 &s = cp.getLagrangeParameterPosition();
+//    const Vec2 &s = cp.getLagrangeParameterPosition();
     Mat3xV t(contourParameters);
+    throw;
 
     for(int i=0; i<contourParameters; i++) {
       Vec3 tTemp = t.col(i);
-      for(int j=0; j<numberOfPoints;j++) tTemp += computePointWeight(s,j,i) * iPoints[j]->getReferencePosition();
+ //     for(int j=0; j<numberOfPoints;j++) tTemp += computePointWeight(s,j,i) * iPoints[j]->getReferencePosition();
       tTemp /= nrm2(tTemp);
     }   
     return t;
