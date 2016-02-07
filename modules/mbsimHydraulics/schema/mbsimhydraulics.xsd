@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimHydraulics"
+<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimHydraulics"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
-  xmlns="http://mbsim.berlios.de/MBSimHydraulics"
-  xmlns:mbsimhydraulics="http://mbsim.berlios.de/MBSimHydraulics"
-  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
-  xmlns:mbsimcontrol="http://mbsim.berlios.de/MBSimControl"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns="http://www.mbsim-env.de/MBSimHydraulics"
+  xmlns:mbsimhydraulics="http://www.mbsim-env.de/MBSimHydraulics"
+  xmlns:mbsim="http://www.mbsim-env.de/MBSim"
+  xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl"
+  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
+  xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"
+    schemaLocation="../http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd"/>
 
-  <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
-    schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/OpenMBV"
+    schemaLocation="../http___www_mbsim-env_de_OpenMBV/openmbv.xsd"/>
 
-  <xs:import namespace="http://mbsim.berlios.de/MBSim"
-    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
-  <xs:import namespace="http://mbsim.berlios.de/MBSimControl"
-    schemaLocation="../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSim"
+    schemaLocation="../http___www_mbsim-env_de_MBSim/mbsim.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSimControl"
+    schemaLocation="../http___www_mbsim-env_de_MBSimControl/mbsimcontrol.xsd"/>
 
   <xs:simpleType name="HLineReferenceType">
     <xs:restriction base="pv:stringPartialEval">

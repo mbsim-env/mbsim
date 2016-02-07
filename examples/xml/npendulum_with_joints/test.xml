@@ -1,5 +1,5 @@
-    <RigidBody name="Stab1" xmlns="http://mbsim.berlios.de/MBSim"
-      xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+    <RigidBody name="Stab1" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
       <initialGeneralizedPosition>[lO;0;pi/2]</initialGeneralizedPosition>
       <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
       <frameOfReference ref="../Frame[I]"/>

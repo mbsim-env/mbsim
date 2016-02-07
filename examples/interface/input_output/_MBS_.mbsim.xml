@@ -1,21 +1,21 @@
 <?xml version="1.0"?>
-<DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="MBS">
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
   <frames/>
   <contours/>
   <groups/>
   <objects>
-    <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="K0">
+    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="K0">
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>0</mass>
       <inertiaTensor>0*eye(3)</inertiaTensor>
       <generalTranslation/>
       <timeDependentRotation>
-        <TimeDependentRotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <TimeDependentRotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0 0 1]'</axisOfRotation>
           <rotationalFunction>
-            <Function1_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
-              <QuadraticFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+            <Function1_SS_from_VS xmlns="http://www.mbsim-env.de/MBSim">
+              <QuadraticFunction1_VS xmlns="http://www.mbsim-env.de/MBSim">
                 <orderOfDerivative>0</orderOfDerivative>
                 <a0>[0 0 0]'</a0>
                 <a1>.25*2*pi*[1 1 1]'</a1>
@@ -26,9 +26,9 @@
         </TimeDependentRotationAboutFixedAxis>
       </timeDependentRotation>
       <guidingVelocityOfRotation>
-        <TimeDependentGuidingVelocity xmlns="http://mbsim.berlios.de/MBSim">
+        <TimeDependentGuidingVelocity xmlns="http://www.mbsim-env.de/MBSim">
           <guidingVelocityFunction>
-            <QuadraticFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+            <QuadraticFunction1_VS xmlns="http://www.mbsim-env.de/MBSim">
               <orderOfDerivative>1</orderOfDerivative>
               <a0>[0 0 0]'</a0>
               <a1>.25*[0 0 2*pi]'</a1>
@@ -38,9 +38,9 @@
         </TimeDependentGuidingVelocity>
       </guidingVelocityOfRotation>
       <derivativeOfGuidingVelocityOfRotation>
-        <TimeDependentDerivativeOfGuidingVelocity xmlns="http://mbsim.berlios.de/MBSim">
+        <TimeDependentDerivativeOfGuidingVelocity xmlns="http://www.mbsim-env.de/MBSim">
           <derivativeOfGuidingVelocityFunction>
-            <QuadraticFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+            <QuadraticFunction1_VS xmlns="http://www.mbsim-env.de/MBSim">
               <orderOfDerivative>2</orderOfDerivative>
               <a0>[0 0 0]'</a0>
               <a1>.25*[0 0 2*pi]'</a1>
@@ -61,19 +61,19 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <CircleHollow xmlns="http://mbsim.berlios.de/MBSim" name="cA">
+        <CircleHollow xmlns="http://www.mbsim-env.de/MBSim" name="cA">
           <frameOfReference ref="../Frame[C]"/>
           <radius>.3</radius>
           <!--<enableOpenMBV/>-->
         </CircleHollow>
-        <CircleSolid xmlns="http://mbsim.berlios.de/MBSim" name="cB">
+        <CircleSolid xmlns="http://www.mbsim-env.de/MBSim" name="cB">
           <frameOfReference ref="../Frame[fA]"/>
           <radius>.05</radius>
           <enableOpenMBV/>
         </CircleSolid>
       </contours>
       <openMBVRigidBody>
-        <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
+        <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diffuseColor>[255 60 128]'/255</diffuseColor>
           <initialTranslation>[0 0 .1]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
@@ -91,7 +91,7 @@
         <offset>1</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="K1">
+    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="K1">
       <initialGeneralizedPosition>[.04 -.004 .5]'</initialGeneralizedPosition>
       <initialGeneralizedVelocity>[.1 -.3 0]'</initialGeneralizedVelocity>
       <frameOfReference ref="../Frame[I]"/>
@@ -99,12 +99,12 @@
       <mass>3.25</mass>
       <inertiaTensor>1e-3*eye(3)</inertiaTensor>
       <stateDependentTranslation>
-        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+        <LinearTranslation xmlns="http://www.mbsim-env.de/MBSim">
           <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
       <stateDependentRotation>
-        <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
+        <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="fA">
@@ -118,14 +118,14 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <CircleSolid xmlns="http://mbsim.berlios.de/MBSim" name="cA">
+        <CircleSolid xmlns="http://www.mbsim-env.de/MBSim" name="cA">
           <frameOfReference ref="../Frame[C]"/>
           <radius>.1</radius>
           <enableOpenMBV/>
         </CircleSolid>
       </contours>
       <openMBVRigidBody>
-        <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
+        <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diffuseColor>[60 255 255]'/255</diffuseColor>
           <initialTranslation>[0 0 .1]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
@@ -143,7 +143,7 @@
         <offset>1</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="K2">
+    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="K2">
       <initialGeneralizedPosition>1</initialGeneralizedPosition>
       <initialGeneralizedVelocity>0</initialGeneralizedVelocity>
       <frameOfReference ref="../Object[K1]/Frame[fA]"/>
@@ -152,7 +152,7 @@
       <inertiaTensor>1e-3*eye(3)</inertiaTensor>
       <generalTranslation/>
       <stateDependentRotation>
-        <RotationAboutZAxis xmlns="http://mbsim.berlios.de/MBSim"/>
+        <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="fA">
@@ -167,18 +167,18 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <CompoundRigidBody xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
+        <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diffuseColor>[100 1 200]'/240</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1</scaleFactor>
-          <Sphere xmlns="http://openmbv.berlios.de/OpenMBV" name="d1">
+          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="d1">
             <initialTranslation>[0 0 0]'</initialTranslation>
             <initialRotation>[0 0 0]'</initialRotation>
             <scaleFactor>1</scaleFactor>
             <radius>.05</radius>
           </Sphere>
-          <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="d2">
+          <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="d2">
             <initialTranslation>[0 0 0]'</initialTranslation>
             <initialRotation>[pi/2 0 0]'</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -198,25 +198,25 @@
     </RigidBody>
   </objects>
   <links>
-    <Contact xmlns="http://mbsim.berlios.de/MBSim" name="C1">
+    <Contact xmlns="http://www.mbsim-env.de/MBSim" name="C1">
       <contactForceLaw>
-        <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+        <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
       </contactForceLaw>
       <contactImpactLaw>
-        <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
+        <UnilateralNewtonImpact xmlns="http://www.mbsim-env.de/MBSim">
           <restitutionCoefficient>.3</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </contactImpactLaw>
       <frictionForceLaw>
         <!--
-        <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
+        <PlanarCoulombFriction xmlns="http://www.mbsim-env.de/MBSim">
           <frictionCoefficient>.1</frictionCoefficient>
         </PlanarCoulombFriction>
 -->
       </frictionForceLaw>
       <frictionImpactLaw>
         <!--
-        <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
+        <PlanarCoulombImpact xmlns="http://www.mbsim-env.de/MBSim">
           <frictionCoefficient>.1</frictionCoefficient>
         </PlanarCoulombImpact>
 -->
@@ -224,7 +224,7 @@
       <connect ref1="../Object[K0]/Contour[cA]" ref2="../Object[K1]/Contour[cA]"/>
       <enableOpenMBVContactPoints>.025</enableOpenMBVContactPoints>
       <openMBVNormalForceArrow>
-        <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
+        <Arrow xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diameter>.01</diameter>
           <headDiameter>.02</headDiameter>
           <headLength>.02</headLength>
@@ -233,7 +233,7 @@
         </Arrow>
       </openMBVNormalForceArrow>
       <openMBVFrictionArrow>
-        <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
+        <Arrow xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diameter>.01</diameter>
           <headDiameter>.02</headDiameter>
           <headLength>.02</headLength>
@@ -242,25 +242,25 @@
         </Arrow>
       </openMBVFrictionArrow>
     </Contact>
-    <Contact xmlns="http://mbsim.berlios.de/MBSim" name="C2">
+    <Contact xmlns="http://www.mbsim-env.de/MBSim" name="C2">
       <contactForceLaw>
-        <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+        <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
       </contactForceLaw>
       <contactImpactLaw>
-        <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
+        <UnilateralNewtonImpact xmlns="http://www.mbsim-env.de/MBSim">
           <restitutionCoefficient>.3</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </contactImpactLaw>
       <frictionForceLaw>
         <!--
-        <PlanarCoulombFriction xmlns="http://mbsim.berlios.de/MBSim">
+        <PlanarCoulombFriction xmlns="http://www.mbsim-env.de/MBSim">
           <frictionCoefficient>.1</frictionCoefficient>
         </PlanarCoulombFriction>
 -->
       </frictionForceLaw>
       <frictionImpactLaw>
         <!--
-        <PlanarCoulombImpact xmlns="http://mbsim.berlios.de/MBSim">
+        <PlanarCoulombImpact xmlns="http://www.mbsim-env.de/MBSim">
           <frictionCoefficient>.1</frictionCoefficient>
         </PlanarCoulombImpact>
 -->
@@ -268,7 +268,7 @@
       <connect ref1="../Object[K0]/Contour[cB]" ref2="../Object[K1]/Contour[cA]"/>
       <enableOpenMBVContactPoints>.025</enableOpenMBVContactPoints>
       <openMBVNormalForceArrow>
-        <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
+        <Arrow xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diameter>.01</diameter>
           <headDiameter>.02</headDiameter>
           <headLength>.02</headLength>
@@ -277,7 +277,7 @@
         </Arrow>
       </openMBVNormalForceArrow>
       <openMBVFrictionArrow>
-        <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
+        <Arrow xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diameter>.01</diameter>
           <headDiameter>.02</headDiameter>
           <headLength>.02</headLength>
@@ -286,13 +286,13 @@
         </Arrow>
       </openMBVFrictionArrow>
     </Contact>
-    <Joint xmlns="http://mbsim.berlios.de/MBSim" name="jointDamping">
+    <Joint xmlns="http://www.mbsim-env.de/MBSim" name="jointDamping">
       <moment>
         <direction>[0 0 1]'</direction>
         <generalizedForceLaw>
-          <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+          <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
             <forceFunction>
-              <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+              <LinearRegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
                 <stiffnessCoefficient>0</stiffnessCoefficient>
                 <dampingCoefficient>.05</dampingCoefficient>
               </LinearRegularizedBilateralConstraint>
@@ -303,22 +303,22 @@
       </moment>
       <connect ref1="../Object[K1]/Frame[fA]" ref2="../Object[K2]/Frame[fA]"/>
     </Joint>
-    <AbsolutePositionSensor xmlns="http://mbsim.berlios.de/MBSimControl" name="K1pxy">
+    <AbsolutePositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="K1pxy">
       <frame ref="../Object[K1]/Frame[C]"/>
       <direction>[1 0 0; 0 1 0]'</direction>
     </AbsolutePositionSensor>
-    <AbsoluteVelocitySensor xmlns="http://mbsim.berlios.de/MBSimControl" name="K1vxy">
+    <AbsoluteVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="K1vxy">
       <frame ref="../Object[K1]/Frame[C]"/>
       <direction>[1 0 0; 0 1 0; 0 0 1]'</direction>
     </AbsoluteVelocitySensor>
-    <AbsolutePositionSensor xmlns="http://mbsim.berlios.de/MBSimControl" name="K2pxy">
+    <AbsolutePositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="K2pxy">
       <frame ref="../Object[K2]/Frame[C]"/>
       <direction>[1 0 0; 0 1 0]'</direction>
     </AbsolutePositionSensor>
-    <ExternSignalSource xmlns="http://mbsim.berlios.de/MBSimControl" name="Ext1">
+    <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="Ext1">
       <sourceSize>1</sourceSize>
     </ExternSignalSource>
-    <ExternSignalSource xmlns="http://mbsim.berlios.de/MBSimControl" name="Ext2">
+    <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="Ext2">
       <sourceSize>2</sourceSize>
     </ExternSignalSource>
   </links>
@@ -329,7 +329,7 @@
     <offset>1</offset>
   </enableOpenMBVFrameI>
   <environments>
-    <MBSimEnvironment xmlns="http://mbsim.berlios.de/MBSim">
+    <MBSimEnvironment xmlns="http://www.mbsim-env.de/MBSim">
       <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>
     </MBSimEnvironment>
   </environments>

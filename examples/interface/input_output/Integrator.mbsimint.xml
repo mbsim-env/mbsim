@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-<TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+<TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>10</endTime>
   <plotStepSize>5e-3</plotStepSize>
@@ -8,7 +8,7 @@
 </TimeSteppingIntegrator>
 -->
 <!--
-<LSODEIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+<LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>4</endTime>
   <plotStepSize>1e-3</plotStepSize>
@@ -21,7 +21,7 @@
 </LSODEIntegrator>
 -->
 <!--
-<LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+<LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>4</endTime>
   <plotStepSize>1e-3</plotStepSize>
@@ -33,10 +33,10 @@
   <plotOnRoot>1</plotOnRoot>
 </LSODARIntegrator>
 -->
-<InterfaceIntegrator xmlns="http://mbsim.berlios.de/MBSimInterface">
-  <startTime xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</startTime>
-  <endTime xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</endTime>
-  <plotStepSize xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</plotStepSize>
+<InterfaceIntegrator xmlns="http://www.mbsim-env.de/MBSimInterface">
+  <startTime xmlns="http://www.mbsim-env.de/MBSimIntegrator">0</startTime>
+  <endTime xmlns="http://www.mbsim-env.de/MBSimIntegrator">0</endTime>
+  <plotStepSize xmlns="http://www.mbsim-env.de/MBSimIntegrator">0</plotStepSize>
   <outputSignals>
     <signal ref="/Group[MBS]/Link[K1pxy]"/>
     <signal ref="/Group[MBS]/Link[K1vxy]"/>
@@ -47,7 +47,7 @@
     <signal ref="/Group[MBS]/ExternSignalSource[Ext2]"/>
   </inputSignals>
   <methodForIPC>
-    <MBSimTcpServer xmlns="http://mbsim.berlios.de/MBSimInterface">
+    <MBSimTcpServer xmlns="http://www.mbsim-env.de/MBSimInterface">
       <port>4567</port>
       <outputPrecision>18</outputPrecision>
     </MBSimTcpServer>

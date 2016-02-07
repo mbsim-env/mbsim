@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSimXML">
-  <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
-    xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
-    xmlns:h="http://mbsim.berlios.de/MBSimHydraulics">
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+    xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
+    xmlns:h="http://www.mbsim-env.de/MBSimHydraulics">
     <frames/>
     <contours/>
     <groups/>
@@ -89,7 +89,7 @@
       </h:HydraulicEnvironment>
     </environments>
   </DynamicSystemSolver>
-  <LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime>0</startTime>
     <endTime>5</endTime>
     <plotStepSize>1e-2</plotStepSize>

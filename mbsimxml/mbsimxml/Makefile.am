@@ -24,8 +24,8 @@ mbsimxml_CPPFLAGS = $(DEPS_CFLAGS)
 mbsimxml_LDADD = ./libmbsimxml.la $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
 mbsimxml_SOURCES = mbsimxml-main.cc
 
-schemadir = @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimXML
+schemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML
 dist_schema_DATA = mbsimproject.xsd
 
-pluginschemadir = @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimPlugin
+pluginschemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimPlugin
 dist_pluginschema_DATA = plugin.xsd

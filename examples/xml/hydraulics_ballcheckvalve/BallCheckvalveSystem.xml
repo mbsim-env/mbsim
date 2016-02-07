@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="BallCheckvalveSystem" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="BallCheckvalveSystem" xmlns="http://www.mbsim-env.de/MBSim">
   <position>[0;-(hpcInitialHeight+pistonHeight-pistonContourRadius);0]</position>
   <orientation>eye(3)</orientation>
   <frames/>
   <contours/>
   <groups>
-    <Checkvalve name="Checkvalve" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <Checkvalve name="Checkvalve" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <basisFrame ref="../Object[Piston]/Frame[CheckvalveF]"/>
       <RigidLine>
         <length>.001</length>
@@ -24,7 +24,7 @@
       </Ball>
       <Spring>
         <forceFunction>
-          <LinearSpringDamperForce xmlns="http://mbsim.berlios.de/MBSim">
+          <LinearSpringDamperForce xmlns="http://www.mbsim-env.de/MBSim">
             <stiffnessCoefficient>cvSpringStiffness</stiffnessCoefficient>
             <dampingCoefficient>cvSpringDamping</dampingCoefficient>
             <unloadedLength>cvMaximalOpening-cvSpringF0/cvSpringStiffness</unloadedLength>
@@ -33,10 +33,10 @@
       </Spring>
       <SeatContact>
         <contactForceLaw>
-          <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+          <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
         </contactForceLaw>
         <contactImpactLaw>
-          <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
+          <UnilateralNewtonImpact xmlns="http://www.mbsim-env.de/MBSim">
             <restitutionCoefficient>.1</restitutionCoefficient>
           </UnilateralNewtonImpact>
         </contactImpactLaw>
@@ -44,10 +44,10 @@
       <maximalOpening>cvMaximalOpening</maximalOpening>
       <MaximalOpeningContact>
         <contactForceLaw>
-          <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+          <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
         </contactForceLaw>
         <contactImpactLaw>
-          <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
+          <UnilateralNewtonImpact xmlns="http://www.mbsim-env.de/MBSim">
             <restitutionCoefficient>.1</restitutionCoefficient>
           </UnilateralNewtonImpact>
         </contactImpactLaw>
@@ -118,7 +118,7 @@
         </CircleSolid>
       </contours>
       <openMBVRigidBody>
-        <Frustum name="Frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="Frustum" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
           <initialTranslation>[0; -pistonHeight/2.; 0]</initialTranslation>
           <initialRotation>[pi/2; 0; 0]</initialRotation>
@@ -136,7 +136,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <!--
-    <CircularLeakage name="circularLeakage" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <CircularLeakage name="circularLeakage" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <frameOfReference ref="../Object[Housing]/Frame[C]"/>
       <direction>[0;1;0]</direction>
       <length>gapLength</length>
@@ -152,19 +152,19 @@
       </pressureLoss>
     </CircularLeakage>
     -->
-    <CircularLeakageLine name="circularLeakage" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <CircularLeakageLine name="circularLeakage" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <!--
       <frameOfReference ref="../Object[Housing]/Frame[C]"/>
       <direction>[0;1;0]</direction>
       -->
       <length>gapLength</length>
       <firstSurfaceVelocity>
-        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+        <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
           <returnSignal ref="../../Link[pistonSpeed]"/>
         </SignalFunction>
       </firstSurfaceVelocity>
       <secondSurfaceVelocity>
-        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+        <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
           <returnSignal ref="../../Link[housingSpeed]"/>
         </SignalFunction>
       </secondSurfaceVelocity>
@@ -193,19 +193,19 @@
         <crossSectionRadius>.0002</crossSectionRadius>
       </enableOpenMBVCoilSpring>
     </SpringDamper>
-    <RelativePositionSensor name="GapLength" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <RelativePositionSensor name="GapLength" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Housing]/Frame[PistonGap]" rel="../Object[Piston]/Frame[CheckvalveF]"/>
       <direction>[0;-1;0]</direction>
     </RelativePositionSensor>
-    <AbsoluteVelocitySensor name="housingSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <AbsoluteVelocitySensor name="housingSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Housing]/Frame[PistonGap]"/>
       <direction>[0;1;0]</direction>
     </AbsoluteVelocitySensor>
-    <AbsoluteVelocitySensor name="pistonSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <AbsoluteVelocitySensor name="pistonSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Piston]/Frame[CheckvalveF]"/>
       <direction>[0;1;0]</direction>
     </AbsoluteVelocitySensor>
-    <EnvironmentNodeMec name="nEnvironment" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <EnvironmentNodeMec name="nEnvironment" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <inflow ref="../Object[circularLeakage]"/>
       <initialVolume>0</initialVolume>
       <translatorialBoundarySourface>
@@ -217,7 +217,7 @@
         <size>.001</size>
       </enableOpenMBVArrows>
     </EnvironmentNodeMec>
-    <ConstrainedNodeMec name="nLPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <ConstrainedNodeMec name="nLPC" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <outflow ref="../Group[Checkvalve]/Object[Line]"/>
       <initialVolume>0</initialVolume>
       <translatorialBoundarySourface>
@@ -229,12 +229,12 @@
         <size>.001</size>
       </enableOpenMBVArrows>
       <function>
-        <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
           <a0>4e5</a0>
         </ConstantFunction>
       </function>
     </ConstrainedNodeMec>
-    <ElasticNodeMec name="nHPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <ElasticNodeMec name="nHPC" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
       <outflow ref="../Object[circularLeakage]"></outflow>
       <inflow ref="../Group[Checkvalve]/Object[Line]"/>
       <initialVolume>hpcV0</initialVolume>

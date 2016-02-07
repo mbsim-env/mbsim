@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSimXML">
-  <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
-      xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
     <position>[0;0;0]</position><!-- dummy -->
     <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
     <frames>
@@ -144,7 +144,7 @@
       </tolerances>
     </solverParameters>
   </DynamicSystemSolver>
-  <LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime>0</startTime>
     <endTime>5</endTime>
     <plotStepSize>1e-3</plotStepSize>

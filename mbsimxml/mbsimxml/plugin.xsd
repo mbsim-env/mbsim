@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimPlugin"
+<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimPlugin"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
-  xmlns="http://mbsim.berlios.de/MBSimPlugin"
+  xmlns="http://www.mbsim-env.de/MBSimPlugin"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="MBSimPlugin">

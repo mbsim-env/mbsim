@@ -1,6 +1,6 @@
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:plugin="http://mbsim.berlios.de/MBSimPlugin"
+  xmlns:plugin="http://www.mbsim-env.de/MBSimPlugin"
   version="1.0">
 
   <xsl:output method="text"/>

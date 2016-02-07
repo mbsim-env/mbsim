@@ -1,4 +1,4 @@
-<Group name="controller" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="controller" xmlns="http://www.mbsim-env.de/MBSim">
   <frames>
   </frames>
   <contours>
@@ -8,7 +8,7 @@
   <objects>
   </objects>
   <links>
-    <LinearTransferSystem name="pidController" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <LinearTransferSystem name="pidController" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[speedDeviation]"/>
       <pidType>
         <P>controllerKP</P>
@@ -17,30 +17,30 @@
       </pidType>
       <showABCD/> <!-- optional -->
     </LinearTransferSystem>
-    <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <object ref="../../Object[Crank]"/>
       <index>0</index>
     </GeneralizedVelocitySensor>
-    <FunctionSensor name="crankReferenceSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <FunctionSensor name="crankReferenceSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
       <function>
-        <ConstantFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
           <a0>ReferenceSpeed</a0>
         </ConstantFunction>
       </function>
     </FunctionSensor>
-    <BinarySignalOperation name="speedDeviation" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <BinarySignalOperation name="speedDeviation" xmlns="http://www.mbsim-env.de/MBSimControl">
       <firstInputSignal ref="../Link[crankReferenceSpeed]"/>
       <secondInputSignal ref="../Link[crankMeasuredSpeed]"/>
       <function>
-       <SymbolicFunction arg1="x" arg2="y" xmlns="http://mbsim.berlios.de/MBSim">
+       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
           x-y
         </SymbolicFunction>
       </function>
     </BinarySignalOperation>
-    <KineticExcitation name="motor" xmlns="http://mbsim.berlios.de/MBSim">
+    <KineticExcitation name="motor" xmlns="http://www.mbsim-env.de/MBSim">
       <momentDirection>[0 0 1]'</momentDirection> <!-- optional -->
       <momentFunction>
-        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+        <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
           <returnSignal ref="../../Link[pidController]"/>
         </SignalFunction>
       </momentFunction>

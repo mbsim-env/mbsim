@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SpringDamper name="EXTERN" xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:control="http://mbsim.berlios.de/MBSimControl">
+<SpringDamper name="EXTERN" xmlns="http://www.mbsim-env.de/MBSim"
+  xmlns:control="http://www.mbsim-env.de/MBSimControl">
   <forceFunction>
     <control:SignalFunction>
       <control:returnSignal ref="../../Link[ExternForce]"/>

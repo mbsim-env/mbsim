@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+<TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>1e-1</endTime>
   <plotStepSize>5e-7*500</plotStepSize>

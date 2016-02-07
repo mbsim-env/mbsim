@@ -1,7 +1,7 @@
-<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim">
+<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim">
   <frames>
-    <Embed count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-      <FixedRelativeFrame name="I{i}" xmlns="http://mbsim.berlios.de/MBSim">
+    <Embed count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <FixedRelativeFrame name="I{i}" xmlns="http://www.mbsim-env.de/MBSim">
         <!--
         -<enableOpenMBV>
           -  <size>fSize</size>
@@ -22,16 +22,16 @@
   <contours>
   </contours>
   <groups>
-    <Embed href="swing.xml" count="1" counterName="X" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
-    <Embed href="metronome.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
-    <Embed href="control.xml" count="3" counterName="i" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"/>
+    <Embed href="swing.xml" count="1" counterName="X" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
+    <Embed href="metronome.xml" count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
+    <Embed href="control.xml" count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
   </groups>
   <objects>
   </objects>
   <links>
   </links>
   <environments>
-    <MBSimEnvironment xmlns="http://mbsim.berlios.de/MBSim">
+    <MBSimEnvironment xmlns="http://www.mbsim-env.de/MBSim">
       <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>
     </MBSimEnvironment>
   </environments>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RigidBody name="Stab{n_pendel+1}" xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<RigidBody name="Stab{n_pendel+1}" xmlns="http://www.mbsim-env.de/MBSim"
+  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
+  xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
   <initialGeneralizedPosition>[lO+lU;-lO-(lU+lO)*(n_pendel-1);0]</initialGeneralizedPosition>
   <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
   <frameOfReference ref="../Frame[Os]"/>
@@ -11,7 +11,7 @@
   <stateDependentTranslation>
     <LinearTranslation>
       <translationVectors>
-        <pv:xmlMatrix xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+        <pv:xmlMatrix xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
           <pv:row>
             <pv:ele>1</pv:ele>
             <pv:ele>0</pv:ele>

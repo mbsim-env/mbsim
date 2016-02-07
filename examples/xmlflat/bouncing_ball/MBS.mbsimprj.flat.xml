@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://mbsim.berlios.de/MBSimXML" name="Project"><?OriginalFilename MBS.mbsimprj.xml?><?LineNr 2?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project"><?OriginalFilename MBS.mbsimprj.xml?><?LineNr 2?>
 
-  <DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="MBS"><?LineNr 4?>
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS"><?LineNr 4?>
     <frames><?LineNr 5?>
       <FixedRelativeFrame name="P1"><?LineNr 6?>
         <enableOpenMBV><?LineNr 7?>
@@ -52,7 +52,7 @@
           </Point>
         </contours>
         <openMBVRigidBody><?LineNr 75?>
-          <Sphere xmlns="http://openmbv.berlios.de/OpenMBV" boundingBox="0" dragger="0" drawMethod="filled" enable="1" localFrame="0" name="Body1" outLine="1" path="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 76?>
+          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" boundingBox="0" dragger="0" drawMethod="filled" enable="1" localFrame="0" name="Body1" outLine="1" path="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 76?>
             <?OPENMBV_ID 6?>
             <transparency unit="-"><?LineNr 78?>0.3</transparency>
             <initialTranslation unit="m"><?LineNr 79?>
@@ -105,7 +105,7 @@
     </environments>
   </DynamicSystemSolver>
 
-  <TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator"><?LineNr 141?>
+  <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator"><?LineNr 141?>
     <startTime unit="s"><?LineNr 142?>0</startTime>
     <endTime unit="s"><?LineNr 143?>1</endTime>
     <plotStepSize unit="s"><?LineNr 144?>0.01</plotStepSize>

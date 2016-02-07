@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ns_2:Parameter xmlns:ns_1="http://mbsim.berlios.de/MBSim" xmlns:ns_4="http://mbsim.berlios.de/MBSimIntegrator" xmlns:ns_2="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" xmlns:ns_5="http://openmbv.berlios.de/OpenMBV">
+<ns_2:Parameter xmlns:ns_1="http://www.mbsim-env.de/MBSim" xmlns:ns_4="http://www.mbsim-env.de/MBSimIntegrator" xmlns:ns_2="http://www.mbsim-env.de/MBXMLUtils" xmlns:ns_5="http://www.mbsim-env.de/OpenMBV">
     <ns_2:scalarParameter name="R">10</ns_2:scalarParameter>
     <ns_2:scalarParameter name="l">2</ns_2:scalarParameter>
     <ns_2:scalarParameter name="h">1</ns_2:scalarParameter>

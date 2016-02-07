@@ -16,10 +16,10 @@ namespace MBSim {
 void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXMLUTILSSCHEMA) {
   vector<pair<string, string> > schema; // pair<namespace, schemaLocation>
 
-  static const NamespaceURI MBSIMPLUGIN("http://mbsim.berlios.de/MBSimPlugin");
+  static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
   boost::shared_ptr<DOMParser> parser;
   parser=DOMParser::create(true);
-  parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___mbsim_berlios_de_MBSimPlugin"/"plugin.xsd");
+  parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd");
 
   // read plugin schemas
   string ns, loc;
@@ -35,14 +35,14 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
   // write MBSimXML schema
   bfs::ofstream file(mbsimxml_xsd);
   file<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"<<endl;
-  file<<"<xs:schema targetNamespace=\"http://mbsim.berlios.de/MBSimXML\""<<endl;
+  file<<"<xs:schema targetNamespace=\"http://www.mbsim-env.de/MBSimXML\""<<endl;
   file<<"  elementFormDefault=\"qualified\""<<endl;
   file<<"  attributeFormDefault=\"unqualified\""<<endl;
-  file<<"  xmlns=\"http://mbsim.berlios.de/MBSimXML\""<<endl;
+  file<<"  xmlns=\"http://www.mbsim-env.de/MBSimXML\""<<endl;
   file<<"  xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"<<endl;
   file<<endl;
   // include the schema for MBSimProject (this imports the MBSim and MBSimIntegrator schemas)
-  file<<"  <xs:include schemaLocation=\""<<MBXMLUTILSSCHEMA.generic_string()<<"/http___mbsim_berlios_de_MBSimXML/mbsimproject.xsd\"/>"<<endl;
+  file<<"  <xs:include schemaLocation=\""<<MBXMLUTILSSCHEMA.generic_string()<<"/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd\"/>"<<endl;
   file<<endl;
   // import all schemas from mbsim modules (plugins)
   for(vector<pair<string, string> >::iterator it=schema.begin(); it!=schema.end(); it++) {

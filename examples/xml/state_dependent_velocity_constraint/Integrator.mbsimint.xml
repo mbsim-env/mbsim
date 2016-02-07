@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LSODEIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+<LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>2</endTime>
   <plotStepSize>1e-2</plotStepSize>

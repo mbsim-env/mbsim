@@ -45,7 +45,7 @@ namespace H5 {
  */
 namespace MBSim {
 
-  const MBXMLUtils::NamespaceURI MBSIM("http://mbsim.berlios.de/MBSim");
+  const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
 
   class DynamicSystemSolver;
 

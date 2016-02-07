@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Group name="ChainTensioner"
-  xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
-  xmlns:v="http://mbsim.berlios.de/MBSimValvetrain"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
-  xmlns:c="http://mbsim.berlios.de/MBSimControl">
+  xmlns="http://www.mbsim-env.de/MBSim"
+  xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
+  xmlns:v="http://www.mbsim-env.de/MBSimValvetrain"
+  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
+  xmlns:h="http://www.mbsim-env.de/MBSimHydraulics"
+  xmlns:c="http://www.mbsim-env.de/MBSimControl">
   <position>[0;0;0]</position>
   <orientation>eye(3)</orientation>
   <frames/>
@@ -179,7 +179,7 @@
       <h:direction>[0;1;0]</h:direction>
       <h:length unit="mm">7</h:length>
       <h:firstSurfaceVelocity>
-        <SignalFunction xmlns="http://mbsim.berlios.de/MBSimControl">
+        <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
           <returnSignal ref="../../Link[PistonVelocity]"/>
         </SignalFunction>
       </h:firstSurfaceVelocity>

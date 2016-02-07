@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://mbsim.berlios.de/MBSimXML">
-  <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
-      xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
     <frames>
       <FixedRelativeFrame name="W">
         <enableOpenMBV>
@@ -88,7 +88,7 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-  <DOPRI5Integrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime>0</startTime>
     <endTime>4</endTime>
     <plotStepSize>1e-3</plotStepSize>

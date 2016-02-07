@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://mbsim.berlios.de/MBSimXML" name="Project">
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
-  <Embed xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="a" unit="-">1</scalarParameter>
       <scalarParameter name="b" unit="-">0.7</scalarParameter>
@@ -11,14 +11,14 @@
       <scalarParameter name="mu0" unit="-">0.2</scalarParameter>
       <scalarParameter name="al" unit="-">atan(mu0+mu1)</scalarParameter>
     </Parameter>
-    <DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="MBS">
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
       <contours/>
       <groups/>
       <objects>
         <RigidBody name="Mass">
           <initialGeneralizedPosition>
-            <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
               <ele>b/2*1.0001</ele>
             </xmlVector>
@@ -26,7 +26,7 @@
           <frameOfReference ref="../Object[Plane]/Frame[C]"/>
           <mass unit="kg">1</mass>
           <inertiaTensor unit="kg*m^2">
-            <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
                 <ele>0.01</ele>
                 <ele>0</ele>
@@ -53,7 +53,7 @@
                 <?OPENMBV_ID 6?>
               </enableOpenMBV>
               <relativePosition unit="m">
-                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
                   <ele>-b/2</ele>
                   <ele>0</ele>
@@ -65,7 +65,7 @@
                 <?OPENMBV_ID 7?>
               </enableOpenMBV>
               <relativePosition unit="m">
-                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>-a/2</ele>
                   <ele>0</ele>
                   <ele>0</ele>
@@ -82,18 +82,18 @@
             </Point>
           </contours>
           <openMBVRigidBody>
-            <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="Body1">
+            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
               <?OPENMBV_ID 2?>
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
-                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
                   <ele>0</ele>
                   <ele>0</ele>
                 </xmlVector>
               </initialTranslation>
               <initialRotation unit="rad">
-                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
                   <ele>0</ele>
                   <ele>0</ele>
@@ -101,7 +101,7 @@
               </initialRotation>
               <scaleFactor unit="-">1</scaleFactor>
               <length unit="m">
-                <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>a</ele>
                   <ele>b</ele>
                   <ele>1</ele>
@@ -120,7 +120,7 @@
         <RigidBody name="Plane">
           <mass unit="kg">1</mass>
           <inertiaTensor unit="kg*m^2">
-            <xmlMatrix xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
                 <ele>0.01</ele>
                 <ele>0</ele>
@@ -145,7 +145,7 @@
               </outerFunction>
               <innerFunction>
                 <SymbolicFunction arg1="t">
-                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>1.01*al*(1-exp(-5*t))</ele>
                   </xmlVector>
                 </SymbolicFunction>
@@ -158,7 +158,7 @@
                 <?OPENMBV_ID 15?>
               </enableOpenMBV>
               <relativeOrientation>
-                <aboutZ xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" unit="degree">90</aboutZ>
+                <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutZ>
               </relativeOrientation>
             </FixedRelativeFrame>
           </frames>
@@ -190,7 +190,7 @@
             <PlanarStribeckFriction>
               <frictionFunction>
                 <SymbolicFunction arg1="gT">
-                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>mu0+mu1/(1+mu2*gT^2)</ele>
                   </xmlVector>
                 </SymbolicFunction>
@@ -201,7 +201,7 @@
             <PlanarStribeckImpact>
               <frictionFunction>
                 <SymbolicFunction arg1="gT">
-                  <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>mu0+mu1/(1+mu2*gT^2)</ele>
                   </xmlVector>
                 </SymbolicFunction>
@@ -234,7 +234,7 @@
       <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
-            <xmlVector xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
               <ele>-9.81</ele>
               <ele>0</ele>
@@ -245,7 +245,7 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
     <endTime unit="s">9.5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>

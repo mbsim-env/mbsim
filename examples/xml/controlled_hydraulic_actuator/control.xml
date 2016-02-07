@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="Control" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="Control" xmlns="http://www.mbsim-env.de/MBSim">
   <frameOfReference ref="../Frame[I]"/>
   <frames/>
   <contours/>
   <groups/>
   <objects/>
   <links>
-    <LinearTransferSystem name="LTI" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <LinearTransferSystem name="LTI" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[DifferencePosition]"/>
       <pidType>
         <P>1000</P>
@@ -14,58 +14,58 @@
         <D>10</D>
       </pidType>
     </LinearTransferSystem>
-    <LinearTransferSystem name="PT1Controlvalve" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <LinearTransferSystem name="PT1Controlvalve" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[ControlOutputLimitted]"/>
       <pt1Type>
         <P>1</P>
         <T>1/25</T>
       </pt1Type>
     </LinearTransferSystem>
-    <RelativePositionSensor name="MassPosition" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <RelativePositionSensor name="MassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
       <direction>[0;1;0]</direction>
     </RelativePositionSensor>
-    <RelativeVelocitySensor name="MassVelocity" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <RelativeVelocitySensor name="MassVelocity" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
       <direction>[0;1;0]</direction>
     </RelativeVelocitySensor>
-    <FunctionSensor name="DesiredPosition" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <FunctionSensor name="DesiredPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <function>
         <!--
-        <SinusoidFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <SinusoidFunction xmlns="http://www.mbsim-env.de/MBSim">
           <amplitude>.1</amplitude>
           <frequency>1</frequency>
           <phase>0</phase>
         </SinusoidFunction>
         -->
-        <TabularFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
           <x>[0; .49; .51; .99; 1.01; 1.49; 1.51; 2]/2</x>
           <y>[0;   0;   1;   1;   -1;   -1;    0; 0]*.05</y>
         </TabularFunction>
       </function>
     </FunctionSensor>
-    <BinarySignalOperation name="DifferencePosition" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <BinarySignalOperation name="DifferencePosition" xmlns="http://www.mbsim-env.de/MBSimControl">
       <firstInputSignal ref="../Link[DesiredPosition]"/>
       <secondInputSignal ref="../Link[MassPosition]"/>
       <function>
-       <SymbolicFunction arg1="x" arg2="y" xmlns="http://mbsim.berlios.de/MBSim">
+       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
           y-x
         </SymbolicFunction>
       </function>
     </BinarySignalOperation>
-    <UnarySignalOperation name="ControlOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <UnarySignalOperation name="ControlOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[LTI]"/>
       <function>
-        <BoundedFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">
           <lowerBound>0-5</lowerBound>
           <upperBound>1+5</upperBound>
          </BoundedFunction>
       </function>
     </UnarySignalOperation>
-    <UnarySignalOperation name="PT1ControlvalveOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
+    <UnarySignalOperation name="PT1ControlvalveOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
       <inputSignal ref="../Link[PT1Controlvalve]"/>
       <function>
-        <BoundedFunction xmlns="http://mbsim.berlios.de/MBSim">
+        <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">
           <lowerBound>0</lowerBound>
           <upperBound>1</upperBound>
          </BoundedFunction>

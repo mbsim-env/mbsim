@@ -1,2 +1,2 @@
-schemadir = @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimPowertrain
+schemadir = @MBXMLUTILSSCHEMADIR@/http___www_mbsim-env_de_MBSimPowertrain
 dist_schema_DATA = mbsimpowertrain.xsd

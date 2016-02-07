@@ -34,7 +34,7 @@ namespace MBSim {
 
 namespace MBSimPowertrain {
 
-  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://mbsim.berlios.de/MBSimPowertrain");
+  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://www.mbsim-env.de/MBSimPowertrain");
 
   class TorsionalStiffness : public MBSim::LinkMechanics {
     protected:

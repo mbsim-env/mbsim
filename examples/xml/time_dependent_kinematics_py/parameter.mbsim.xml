@@ -1,4 +1,4 @@
-<Parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <import>from math import pi</import>
   <scalarParameter name="freq1">pi</scalarParameter>
   <scalarParameter name="freq2">pi/3</scalarParameter>

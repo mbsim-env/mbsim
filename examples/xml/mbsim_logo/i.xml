@@ -1,4 +1,4 @@
-<Group name="i" xmlns="http://mbsim.berlios.de/MBSim">
+<Group name="i" xmlns="http://www.mbsim-env.de/MBSim">
   <frames>
   </frames>
   <contours>
@@ -6,14 +6,14 @@
   <groups>
   </groups>
   <objects>
-    <RigidBody name="S1" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S1" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>pi/2</initialGeneralizedPosition>
       <frameOfReference ref="../../Object[Carrier]/Frame[Fi]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*y*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(y)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2, 0; 0, 0, 1/4*(pi*r^2*y*rho)*r^2+1/12*(pi*r^2*y*rho)*y^2]</inertiaTensor>
       <stateDependentRotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis xmlns="http://www.mbsim-env.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
         </RotationAboutFixedAxis>
       </stateDependentRotation>
@@ -38,12 +38,12 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <Line name="CTop" xmlns="http://mbsim.berlios.de/MBSim">
+        <Line name="CTop" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[F2]"/> 
         </Line>
       </contours>
       <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -61,27 +61,27 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody name="S2" xmlns="http://mbsim.berlios.de/MBSim">
+    <RigidBody name="S2" xmlns="http://www.mbsim-env.de/MBSim">
       <initialGeneralizedPosition>y/2</initialGeneralizedPosition>
       <frameOfReference ref="../Object[S1]/Frame[F2]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>4/3*pi*(2*r)^3*rho</mass>
       <inertiaTensor>2/5*4/3*pi*(2*r)^3*rho*eye(3)</inertiaTensor>
       <stateDependentTranslation>
-        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+        <LinearTranslation xmlns="http://www.mbsim-env.de/MBSim">
           <translationVectors>[1; 0; 0]</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
       <frames>
       </frames>
       <contours>
-        <CircleSolid name="CCircle" xmlns="http://mbsim.berlios.de/MBSim">
+        <CircleSolid name="CCircle" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[C]"/> 
           <radius>2*r</radius>
         </CircleSolid>
       </contours>
       <openMBVRigidBody> 
-        <Sphere name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <Sphere name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
           <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -96,12 +96,12 @@
     </RigidBody>
   </objects>
   <links>
-    <Joint name="Joint0" xmlns="http://mbsim.berlios.de/MBSim">
+    <Joint name="Joint0" xmlns="http://www.mbsim-env.de/MBSim">
       <momentDirection>[0; 0; 1]</momentDirection>
       <momentLaw>
-        <RegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+        <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
           <forceFunction>
-            <LinearRegularizedBilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+            <LinearRegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
               <stiffnessCoefficient>jc</stiffnessCoefficient>
               <dampingCoefficient>jd</dampingCoefficient>
             </LinearRegularizedBilateralConstraint>
@@ -110,11 +110,11 @@
       </momentLaw>
       <connect ref1="../../Object[Carrier]/Frame[Fi]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
-    <Contact name="Contact" xmlns="http://mbsim.berlios.de/MBSim">
+    <Contact name="Contact" xmlns="http://www.mbsim-env.de/MBSim">
       <normalForceLaw>
-        <RegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+        <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
           <forceFunction>
-            <LinearRegularizedUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+            <LinearRegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
               <stiffnessCoefficient>cc</stiffnessCoefficient>
               <dampingCoefficient>cd</dampingCoefficient>
             </LinearRegularizedUnilateralConstraint>

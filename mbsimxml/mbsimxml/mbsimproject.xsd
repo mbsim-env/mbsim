@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimXML"
+<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimXML"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
-  xmlns="http://mbsim.berlios.de/MBSimXML"
-  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns="http://www.mbsim-env.de/MBSimXML"
+  xmlns:mbsim="http://www.mbsim-env.de/MBSim"
+  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://mbsim.berlios.de/MBSim"
-    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
-  <xs:import namespace="http://mbsim.berlios.de/MBSimIntegrator"
-    schemaLocation="../http___mbsim_berlios_de_MBSimIntegrator/mbsimintegrator.xsd"/>
-  <xs:import namespace="http://mbsim.berlios.de/MBSimAnalyser"
-    schemaLocation="../http___mbsim_berlios_de_MBSimAnalyser/mbsimanalyser.xsd"/>
-  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/physicalvariable.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSim"
+    schemaLocation="../http___www_mbsim-env_de_MBSim/mbsim.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSimIntegrator"
+    schemaLocation="../http___www_mbsim-env_de_MBSimIntegrator/mbsimintegrator.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSimAnalyser"
+    schemaLocation="../http___www_mbsim-env_de_MBSimAnalyser/mbsimanalyser.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"
+    schemaLocation="../http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd"/>
 
   <xs:element name="MBSimProject" type="MBSimProjectType">
     <xs:annotation>
