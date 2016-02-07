@@ -18,7 +18,8 @@ libcontour_la_SOURCES = circle.cc\
 			polynomial_frustum.cc\
 			contour1s.cc\
 			contour1s_analytical.cc\
-			contour_interpolation.cc
+			contour_interpolation.cc\
+			contour_quad.cc
 
 libcontour_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -45,4 +46,5 @@ contourinclude_HEADERS = circle.h\
 			 contour1s.h\
 			 contour1s_analytical.h\
 			 contour2s.h\
-			 contour_interpolation.h
+			 contour_interpolation.h\
+			 contour_quad.h
