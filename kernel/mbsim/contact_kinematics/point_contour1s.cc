@@ -75,9 +75,9 @@ namespace MBSim {
       cpData[icontour].getFrameOfReference().getOrientation(false).set(2, contour1s->getWv(t,cpData[icontour]));
 
       cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition(t)); // position of point
-      cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation(false).col(0));
-      cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation(false).col(1));
-      cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation(false).col(2));
+      cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -cpData[icontour].getFrameOfReference().getOrientation(false).col(0));
+      cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -cpData[icontour].getFrameOfReference().getOrientation(false).col(1));
+      cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, cpData[icontour].getFrameOfReference().getOrientation(false).col(2));
       g = cpData[icontour].getFrameOfReference().getOrientation(false).col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition(false) - cpData[icontour].getFrameOfReference().getPosition(false));
     }
     delete func;
