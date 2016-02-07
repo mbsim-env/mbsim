@@ -329,7 +329,10 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { return fmatvec::Mat(2,2); }
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) { return fmatvec::Vec(2); }
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) { return true; }
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) { return fmatvec::Vec(2); }
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd) {
+        THROW_MBSIMERROR("(FrictionForceLaw::dlaTdlaN): Not implemented.");
+        return 0;
+      }
       virtual int getFrictionDirections() = 0;
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) { return 0; }
