@@ -143,6 +143,44 @@ namespace MBSimFlexibleBody {
     return R->getOrientation(t) * tmp;
   }
 
+  void FlexibleBody1s21RCM::getJacobian(double t, ContourPointData &cp) {
+    Index All(0, 3 - 1);
+    Mat Jacobian(qSize, 3, INIT, 0.);
+
+    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
+      double sLocal;
+      int currentElement;
+      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
+      Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement], sLocal);
+      if (currentElement < Elements - 1 || openStructure) {
+        Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
+      }
+      else { // ringstructure
+        Jacobian(Index(5 * currentElement, 5 * currentElement + 4), All) = Jtmp(Index(0, 4), All);
+        Jacobian(Index(0, 2), All) = Jtmp(Index(5, 7), All);
+      }
+    }
+    else if (cp.getContourParameterType() == ContourPointData::node) { // frame on node
+      int node = cp.getNodeNumber();
+      Jacobian(Index(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
+    }
+    else
+      THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+
+    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T());
+    cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation()(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T());
+
+    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
+    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
+
+    if (frame != 0) { // frame should be linked to contour point data
+      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
+      frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
+      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
+      frame->setGyroscopicAccelerationOfRotation(cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
+    }
+  }
+
 //  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, Frame::Frame::Feature ff, Frame *frame) {
 //    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
 //      Vec X = computeState(cp.getLagrangeParameterPosition()(0));

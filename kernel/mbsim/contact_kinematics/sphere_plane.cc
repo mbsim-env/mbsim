@@ -41,42 +41,42 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlane::updateg(double t, double &g, ContourPointData *cpData, int index) {
-    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation(t));
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+  void ContactKinematicsSpherePlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+    cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t));
+    cFrame[isphere]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    cFrame[isphere]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    cFrame[isphere]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation(false).col(0);
+    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
 
     Vec3 Wd = sphere->getFrame()->getPosition(t) - plane->getFrame()->getPosition(t);
 
     g = Wn.T()*Wd - sphere->getRadius();
 
-    cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
-    cpData[iplane].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition(false) - Wn*g);
+    cFrame[isphere]->setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
+    cFrame[iplane]->setPosition(cFrame[isphere]->getPosition(false) - Wn*g);
   }
 
-  void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
-    Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation(t).col(0);
-    Vec3 n2 = cpData[isphere].getFrameOfReference().getOrientation(t).col(0);
-    Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity(t);
-    Vec3 vC2 = cpData[isphere].getFrameOfReference().getVelocity(t);
-    Vec3 Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity(t);
-    Vec3 Om2 = cpData[isphere].getFrameOfReference().getAngularVelocity(t);
+  void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+    Vec3 n1 = cFrame[iplane]->getOrientation(t).col(0);
+    Vec3 n2 = cFrame[isphere]->getOrientation(t).col(0);
+    Vec3 vC1 = cFrame[iplane]->getVelocity(t);
+    Vec3 vC2 = cFrame[isphere]->getVelocity(t);
+    Vec3 Om1 = cFrame[iplane]->getAngularVelocity(t);
+    Vec3 Om2 = cFrame[isphere]->getAngularVelocity(t);
 
-    Vec3 KrPC2 = sphere->getFrame()->getOrientation(t).T()*(cpData[isphere].getFrameOfReference().getPosition(t) - sphere->getFrame()->getPosition(t));
-    cpData[isphere].setLagrangeParameterPosition(computeAnglesOnUnitSphere(KrPC2/sphere->getRadius()));
+    Vec3 KrPC2 = sphere->getFrame()->getOrientation(t).T()*(cFrame[isphere]->getPosition(t) - sphere->getFrame()->getPosition(t));
+    Vec2 zeta = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
 
-    Vec3 u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1);
-    Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2);
-    Vec3 u2 = sphere->getWu(t,cpData[isphere]);
+    Vec3 u1 = cFrame[iplane]->getOrientation().col(1);
+    Vec3 v1 = cFrame[iplane]->getOrientation().col(2);
+    Vec3 u2 = sphere->getWu(t,zeta);
     Vec3 v2 = crossProduct(n2,u2);
 
-    Mat3x2 R1 = plane->getWR(t,cpData[iplane]);
-    Mat3x2 R2 = sphere->getWR(t,cpData[isphere]);
-    Mat3x2 U2 = sphere->getWU(t,cpData[isphere]);
-    Mat3x2 V2 = sphere->getWV(t,cpData[isphere]);
+    Mat3x2 R1 = plane->getWR(t,zeta);
+    Mat3x2 R2 = sphere->getWR(t,zeta);
+    Mat3x2 U2 = sphere->getWU(t,zeta);
+    Mat3x2 V2 = sphere->getWV(t,zeta);
 
     SqrMat A(4,NONINIT);
     A(Index(0,0),Index(0,1)) = -u1.T()*R1;

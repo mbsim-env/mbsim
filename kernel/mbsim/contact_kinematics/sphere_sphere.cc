@@ -34,7 +34,7 @@ namespace MBSim {
     sphere1 = static_cast<Sphere*>(contour[1]);
   }
 
-  void ContactKinematicsSphereSphere::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsSphereSphere::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     Vec3 Wd = sphere1->getFrame()->getPosition(t) - sphere0->getFrame()->getPosition(t);
     double l = nrm2(Wd);
     Wd = Wd/l;
@@ -51,14 +51,14 @@ namespace MBSim {
       t_(2) = 0.0;
     }
     t_ = t_/nrm2(t_);
-    cpData[isphere0].getFrameOfReference().getOrientation(false).set(0, Wd);
-    cpData[isphere1].getFrameOfReference().getOrientation(false).set(0, -cpData[isphere0].getFrameOfReference().getOrientation(false).col(0));
-    cpData[isphere0].getFrameOfReference().getOrientation(false).set(1, t_);
-    cpData[isphere1].getFrameOfReference().getOrientation(false).set(1, -cpData[isphere0].getFrameOfReference().getOrientation(false).col(1));
-    cpData[isphere0].getFrameOfReference().getOrientation(false).set(2, crossProduct(Wd,t_));
-    cpData[isphere1].getFrameOfReference().getOrientation(false).set(2, cpData[isphere0].getFrameOfReference().getOrientation(false).col(2));
-    cpData[isphere0].getFrameOfReference().setPosition(sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd);
-    cpData[isphere1].getFrameOfReference().setPosition(sphere1->getFrame()->getPosition() - sphere1->getRadius() * Wd);
+    cFrame[isphere0]->getOrientation(false).set(0, Wd);
+    cFrame[isphere1]->getOrientation(false).set(0, -cFrame[isphere0]->getOrientation(false).col(0));
+    cFrame[isphere0]->getOrientation(false).set(1, t_);
+    cFrame[isphere1]->getOrientation(false).set(1, -cFrame[isphere0]->getOrientation(false).col(1));
+    cFrame[isphere0]->getOrientation(false).set(2, crossProduct(Wd,t_));
+    cFrame[isphere1]->getOrientation(false).set(2, cFrame[isphere0]->getOrientation(false).col(2));
+    cFrame[isphere0]->setPosition(sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd);
+    cFrame[isphere1]->setPosition(sphere1->getFrame()->getPosition() - sphere1->getRadius() * Wd);
   }
 
 }

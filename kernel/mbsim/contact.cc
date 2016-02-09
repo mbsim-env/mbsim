@@ -759,11 +759,6 @@ namespace MBSim {
 
   }
 
-  void Contact::getCurvatures(Vec & r, int contactKinematicsIndex) const {
-    THROW_MBSIMERROR("Not implemented");
-    //TODO
-  }
-
   void Contact::LinearImpactEstimation(double t, Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)

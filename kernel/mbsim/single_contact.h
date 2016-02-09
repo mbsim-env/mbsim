@@ -212,8 +212,6 @@ namespace MBSim {
        */
 //      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
 
-//      void getCurvatures(fmatvec::Vec & r) const;
-
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       void calccorrSize(int j);

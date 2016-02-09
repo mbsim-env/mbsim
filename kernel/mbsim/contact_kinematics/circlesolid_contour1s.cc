@@ -55,8 +55,8 @@ namespace MBSim {
     if (dynamic_cast<Contour1sAnalytical*>(contour1s)) {
       double minRadius=1./epsroot();
       for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
-        ContourPointData cp(alpha);
-        double radius=1./contour1s->getCurvature(cp);
+        zeta(0) = alpha;
+        double radius=1./contour1s->getCurvature(zeta);
         minRadius=(radius<minRadius)?radius:minRadius;
       }
       if (circle->getRadius()>minRadius)
@@ -65,50 +65,50 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsCircleSolidContour1s::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     func->setTime(t);
     Contact1sSearch search(func);
     search.setNodes(contour1s->getNodes());
 
     if(searchAllCP==false)
-      search.setInitialValue(cpData[icontour1s].getLagrangeParameterPosition()(0));
+      search.setInitialValue(zeta(0));
     else { 
       search.setSearchAll(true);
       searchAllCP=false;
     }
 
-    cpData[icontour1s].getLagrangeParameterPosition()(0) = search.slv();
+    zeta(0) = search.slv();
 
-    cpData[icontour1s].getFrameOfReference().setPosition(contour1s->getPosition(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(0, contour1s->getWn(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(1, contour1s->getWu(t,cpData[icontour1s]));
-    cpData[icontour1s].getFrameOfReference().getOrientation(false).set(2, contour1s->getWv(t,cpData[icontour1s]));
+    cFrame[icontour1s]->setPosition(contour1s->getPosition(t,zeta));
+    cFrame[icontour1s]->getOrientation(false).set(0, contour1s->getWn(t,zeta));
+    cFrame[icontour1s]->getOrientation(false).set(1, contour1s->getWu(t,zeta));
+    cFrame[icontour1s]->getOrientation(false).set(2, contour1s->getWv(t,zeta));
 
-    cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition(t)-circle->getRadius()*cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
-    cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0));
-    cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(1));
-    cpData[icircle].getFrameOfReference().getOrientation(false).set(2, cpData[icontour1s].getFrameOfReference().getOrientation(false).col(2));
+    cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)-circle->getRadius()*cFrame[icontour1s]->getOrientation(false).col(0));
+    cFrame[icircle]->getOrientation(false).set(0, -cFrame[icontour1s]->getOrientation(false).col(0));
+    cFrame[icircle]->getOrientation(false).set(1, -cFrame[icontour1s]->getOrientation(false).col(1));
+    cFrame[icircle]->getOrientation(false).set(2, cFrame[icontour1s]->getOrientation(false).col(2));
 
-    Vec3 WrD = func->getWrD(cpData[icontour1s].getLagrangeParameterPosition()(0));
-    g = -cpData[icontour1s].getFrameOfReference().getOrientation(false).col(0).T()*WrD;
+    Vec3 WrD = func->getWrD(zeta(0));
+    g = -cFrame[icontour1s]->getOrientation(false).col(0).T()*WrD;
   }
 
-  void ContactKinematicsCircleSolidContour1s::updatewb(double t, Vec &wb, double g, ContourPointData* cpData) {
+  void ContactKinematicsCircleSolidContour1s::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     
-    const Vec3 n1 = cpData[icircle].getFrameOfReference().getOrientation(t).col(0);
-    const Vec3 u1 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
+    const Vec3 n1 = cFrame[icircle]->getOrientation(t).col(0);
+    const Vec3 u1 = cFrame[icircle]->getOrientation().col(1);
     const Vec3 R1 = circle->getRadius()*u1;
     const Vec3 N1 = u1;
 
-    const Vec3 u2 = cpData[icontour1s].getFrameOfReference().getOrientation(t).col(1);
-    const Vec3 v2 = cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
-    const Vec3 R2 = contour1s->getWs(t,cpData[icontour1s]);
-    const Vec3 U2 = contour1s->getParDer1Wu(t,cpData[icontour1s]);
+    const Vec3 u2 = cFrame[icontour1s]->getOrientation(t).col(1);
+    const Vec3 v2 = cFrame[icontour1s]->getOrientation().col(2);
+    const Vec3 R2 = contour1s->getWs(t,zeta);
+    const Vec3 U2 = contour1s->getParDer1Wu(t,zeta);
 
-    const Vec3 vC1 = cpData[icircle].getFrameOfReference().getVelocity(t);
-    const Vec3 vC2 = cpData[icontour1s].getFrameOfReference().getVelocity(t);
-    const Vec3 Om1 = cpData[icircle].getFrameOfReference().getAngularVelocity(t);
-    const Vec3 Om2 = cpData[icontour1s].getFrameOfReference().getAngularVelocity(t);
+    const Vec3 vC1 = cFrame[icircle]->getVelocity(t);
+    const Vec3 vC2 = cFrame[icontour1s]->getVelocity(t);
+    const Vec3 Om1 = cFrame[icircle]->getAngularVelocity(t);
+    const Vec3 Om2 = cFrame[icontour1s]->getAngularVelocity(t);
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;
@@ -130,10 +130,5 @@ namespace MBSim {
     }
   }
       
-  void ContactKinematicsCircleSolidContour1s::getCurvatures(fmatvec::Vec &r, ContourPointData* cpData) {
-    r(icircle)=circle->getCurvature(cpData[icircle]);
-    r(icontour1s)=contour1s->getCurvature(cpData[icontour1s]);
-  }
-
 }
 

@@ -52,67 +52,67 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec3 Sphere::getKs(ContourPointData &cp) {
+  Vec3 Sphere::getKs(const fmatvec::Vec2 &zeta) {
     Vec3 Ks(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
-    double b = cp.getLagrangeParameterPosition()(1);
+    double a = zeta(0);
+    double b = zeta(1);
     Ks(0) = -r*sin(a)*cos(b);
     Ks(1) = r*cos(a)*cos(b);
     Ks(2) = 0;
     return Ks;
   }
 
-  Vec3 Sphere::getKt(ContourPointData &cp) {
+  Vec3 Sphere::getKt(const fmatvec::Vec2 &zeta) {
     Vec3 Kt(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
-    double b = cp.getLagrangeParameterPosition()(1);
+    double a = zeta(0);
+    double b = zeta(1);
     Kt(0) = -r*cos(a)*sin(b);
     Kt(1) = -r*sin(a)*sin(b);
     Kt(2) = r*cos(b);
     return Kt;
   }
 
-  Vec3 Sphere::getParDer1Ku(ContourPointData &cp) {
+  Vec3 Sphere::getParDer1Ku(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Ku(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
+    double a = zeta(0);
     parDer1Ku(0) = -cos(a);
     parDer1Ku(1) = -sin(a);
     parDer1Ku(2) = 0;
     return parDer1Ku;
   }
 
-  Vec3 Sphere::getParDer2Ku(ContourPointData &cp) {
+  Vec3 Sphere::getParDer2Ku(const fmatvec::Vec2 &zeta) {
     static Vec3 parDer2Ku;
     return parDer2Ku;
   }
 
-  Vec3 Sphere::getParDer1Kv(ContourPointData &cp) {
+  Vec3 Sphere::getParDer1Kv(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Kv(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
-    double b = cp.getLagrangeParameterPosition()(1);
+    double a = zeta(0);
+    double b = zeta(1);
     parDer1Kv(0) = sin(a)*sin(b);
     parDer1Kv(1) = -cos(a)*sin(b);
     parDer1Kv(2) = 0;
     return parDer1Kv;
   }
 
-  Vec3 Sphere::getParDer2Kv(ContourPointData &cp) {
+  Vec3 Sphere::getParDer2Kv(const fmatvec::Vec2 &zeta) {
     Vec3 parDer2Kv(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
-    double b = cp.getLagrangeParameterPosition()(1);
+    double a = zeta(0);
+    double b = zeta(1);
     parDer2Kv(0) = -cos(a)*cos(b);
     parDer2Kv(1) = -sin(a)*cos(b);
     parDer2Kv(2) = -sin(b);
     return parDer2Kv;
   }
 
-  Vec2 Sphere::getLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
-    Vec3 SrPoint = R->getOrientation().T() * (WrPoint - R->getPosition());
-    Vec2 alpha;
+  Vec2 Sphere::getContourParameters(double t, const fmatvec::Vec3 &WrPoint) {
+    Vec3 SrPoint = R->getOrientation(t).T() * (WrPoint - R->getPosition(t));
+    Vec2 zeta;
     double r = nrm2(SrPoint);
-    alpha(0) = acos(SrPoint(2) / r); // inclination
-    alpha(1) = atan2(SrPoint(1), SrPoint(0)); // azimuth
-    return alpha;
+    zeta(0) = acos(SrPoint(2) / r); // inclination
+    zeta(1) = atan2(SrPoint(1), SrPoint(0)); // azimuth
+    return zeta;
   }
 
   void Sphere::initializeUsingXML(DOMElement *element) {

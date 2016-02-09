@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSphereRectangle::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsSphereRectangle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
     Vec3 sphereInRect = rectangle->getFrame()->getOrientation(t).T() * (sphere->getFrame()->getPosition(t) - rectangle->getFrame()->getPosition(t));
 
@@ -52,12 +52,12 @@ namespace MBSim {
       return;
     }
 
-    cpData[irectangle].getFrameOfReference().setOrientation(rectangle->getFrame()->getOrientation());
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(0, -rectangle->getFrame()->getOrientation().col(0));
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(1, -rectangle->getFrame()->getOrientation().col(1));
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(2, rectangle->getFrame()->getOrientation().col(2));
+    cFrame[irectangle]->setOrientation(rectangle->getFrame()->getOrientation());
+    cFrame[isphere]->getOrientation(false).set(0, -rectangle->getFrame()->getOrientation().col(0));
+    cFrame[isphere]->getOrientation(false).set(1, -rectangle->getFrame()->getOrientation().col(1));
+    cFrame[isphere]->getOrientation(false).set(2, rectangle->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[irectangle].getFrameOfReference().getOrientation(false).col(0);
+    Vec3 Wn = cFrame[irectangle]->getOrientation(false).col(0);
 
     Vec3 Wd = sphere->getFrame()->getPosition() - rectangle->getFrame()->getPosition();
 
@@ -69,11 +69,11 @@ namespace MBSim {
       return;
     }
 
-    cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - Wn * sphere->getRadius());
-    cpData[irectangle].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition(false) - Wn * g);
+    cFrame[isphere]->setPosition(sphere->getFrame()->getPosition() - Wn * sphere->getRadius());
+    cFrame[irectangle]->setPosition(cFrame[isphere]->getPosition(false) - Wn * g);
   }
 
-  void ContactKinematicsSphereRectangle::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
+  void ContactKinematicsSphereRectangle::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     throw new MBSimError("ContactKinematicsSphereRectangle::updatewb(): not implemented yet");
   }
 }

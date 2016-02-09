@@ -33,7 +33,7 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  void ContactKinematicsEdgeEdge::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsEdgeEdge::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     Vec Wd = edge1->getFrame()->getPosition(t) - edge0->getFrame()->getPosition(t);
     Vec Wd0 = edge0->getFrame()->getOrientation(t).col(1);
     Vec Wd1 = edge1->getFrame()->getOrientation(t).col(1);
@@ -54,14 +54,14 @@ namespace MBSim {
         double t1 = t0*trans(Wd1)*Wd0 - trans(Wd1)*Wd;
 
         if(fabs(t1) <= edge1->getLength()/2 and fabs(t0) <= edge0->getLength()/2) {
-          cpData[iedge0].getFrameOfReference().setPosition(edge0->getFrame()->getPosition() + t0*Wd0);
-          cpData[iedge1].getFrameOfReference().setPosition(edge1->getFrame()->getPosition() + t1*Wd1);
-          cpData[iedge0].getFrameOfReference().getOrientation(false).set(0, -Wn);
-          cpData[iedge1].getFrameOfReference().getOrientation(false).set(0, -cpData[iedge0].getFrameOfReference().getOrientation(false).col(0));
-          cpData[iedge0].getFrameOfReference().getOrientation(false).set(1, Wd0);
-          cpData[iedge1].getFrameOfReference().getOrientation(false).set(1, -cpData[iedge0].getFrameOfReference().getOrientation(false).col(1));
-          cpData[iedge0].getFrameOfReference().getOrientation(false).set(2, crossProduct(Wn,Wd0));
-          cpData[iedge1].getFrameOfReference().getOrientation(false).set(2, cpData[iedge0].getFrameOfReference().getOrientation(false).col(2));
+          cFrame[iedge0]->setPosition(edge0->getFrame()->getPosition() + t0*Wd0);
+          cFrame[iedge1]->setPosition(edge1->getFrame()->getPosition() + t1*Wd1);
+          cFrame[iedge0]->getOrientation(false).set(0, -Wn);
+          cFrame[iedge1]->getOrientation(false).set(0, -cFrame[iedge0]->getOrientation(false).col(0));
+          cFrame[iedge0]->getOrientation(false).set(1, Wd0);
+          cFrame[iedge1]->getOrientation(false).set(1, -cFrame[iedge0]->getOrientation(false).col(1));
+          cFrame[iedge0]->getOrientation(false).set(2, crossProduct(Wn,Wd0));
+          cFrame[iedge1]->getOrientation(false).set(2, cFrame[iedge0]->getOrientation(false).col(2));
 
           g = -d;
         }

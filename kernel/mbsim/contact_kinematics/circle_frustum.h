@@ -54,8 +54,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double t, double& g, ContourPointData *cpData, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec& wb, double g, ContourPointData *cpData) { throw MBSimError("(ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
+      virtual void updateg(double t, double& g, std::vector<Frame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -90,6 +90,8 @@ namespace MBSim {
        * \brief local contact search?
        */
       bool LOCALSEARCH;
+
+      fmatvec::Vec2 zeta;
   };
 
   inline void ContactKinematicsCircleFrustum::setDebug(bool DEBUG_) { DEBUG=DEBUG_; }

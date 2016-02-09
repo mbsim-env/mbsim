@@ -65,42 +65,42 @@ namespace MBSim {
     ContourContinuum<double>::init(stage);
   }
 
-  Vec3 Contour1s::getKt(ContourPointData &cp) {
+  Vec3 Contour1s::getKt(const fmatvec::Vec2 &zeta) {
     static Vec3 Kt("[0;0;1]");
     return Kt;
   }
 
-//  Vec3 Contour1s::getPosition(double t, ContourPointData &cp) {
+//  Vec3 Contour1s::getPosition(double t, const fmatvec::Vec2 &zeta) {
 //    return R->getPosition(t) + getGlobalRelativePosition(t,cp);
 //  }
 //
-//  Vec3 Contour1s::getFirstTangent(double t, ContourPointData &cp) {
+//  Vec3 Contour1s::getFirstTangent(double t, const fmatvec::Vec2 &zeta) {
 //    Vec3 T=getDerivativeOfRelativePosition(cp);
 //    return R->getOrientation(t)*T/nrm2(T);
 //  }
 //
-//  Vec3 Contour1s::getSecondTangent(double t, ContourPointData &cp) {
+//  Vec3 Contour1s::getSecondTangent(double t, const fmatvec::Vec2 &zeta) {
 //    return R->getOrientation(t).col(2);
 //  }
 //
-//  Vec3 Contour1s::getNormal(double t, ContourPointData &cp) {
+//  Vec3 Contour1s::getNormal(double t, const fmatvec::Vec2 &zeta) {
 //    static Vec3 B("[0;0;1]");
 //    Vec3 N=crossProduct(getDerivativeOfRelativePosition(cp),B);
 //    return R->getOrientation(t)*N/nrm2(N);
 //  }
 //
-//  Vec3 Contour1s::getDerivativeOfFirstTangent(double t, ContourPointData &cp) {
+//  Vec3 Contour1s::getDerivativeOfFirstTangent(double t, const fmatvec::Vec2 &zeta) {
 //    Vec3 s = getDerivativeOfRelativePosition(cp);
 //    Vec3 sd = getSecondDerivativeOfRelativePosition(cp);
 //    Vec3 U = sd/nrm2(s) - s*((s.T()*sd)/pow(nrm2(s),3));
 //    return R->getOrientation(t)*U;
 //  }
 //
-//  Vec3 Contour1s::getGlobalRelativePosition(double t, ContourPointData &cp) {
+//  Vec3 Contour1s::getGlobalRelativePosition(double t, const fmatvec::Vec2 &zeta) {
 //    return R->getOrientation(t)*getRelativePosition(cp);
 //  }
 //
-//  Vec3 Contour1s::getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp) {
+//  Vec3 Contour1s::getGlobalDerivativeOfRelativePosition(double t, const fmatvec::Vec2 &zeta) {
 //    return R->getOrientation(t)*getDerivativeOfRelativePosition(cp);
 //  }
 
@@ -112,13 +112,14 @@ namespace MBSim {
       data.push_back(t);
       double s = as;
       double ds = (ae - as) / (openMBVSpineExtrusion->getNumberOfSpinePoints() - 1);
+      Vec2 zeta;
 
       // TODO: for open structure one could think of using one more element to print the closure a littel prettier...
 //      if (not openStructure)
 //        ds = (uMax - uMin) / (openMBVBody->getNumberOfSpinePoints() - 2);
       for (int i = 0; i < openMBVSpineExtrusion->getNumberOfSpinePoints() - 1; i++) {
-        ContourPointData cp(s);
-        Vec3 pos = cp.getFrameOfReference().getPosition(t);
+        zeta(0) = s;
+        Vec3 pos = getPosition(t,zeta);
         data.push_back(pos(0)); // global x-position
         data.push_back(pos(1)); // global y-position
         data.push_back(pos(2)); // global z-position
@@ -127,8 +128,8 @@ namespace MBSim {
         s += ds;
       }
       // Avoid s-parameters to be longer than ae!
-      ContourPointData cp(ae);
-      Vec3 pos = cp.getFrameOfReference().getPosition(t);
+      zeta(0) = ae;
+      Vec3 pos = getPosition(t,zeta);
       data.push_back(pos(0)); // global x-position
       data.push_back(pos(1)); // global y-position
       data.push_back(pos(2)); // global z-position

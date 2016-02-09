@@ -54,37 +54,37 @@ namespace MBSim {
      /**
        * \return first tangent in world frame
        * \param t time
-       * \param cp contour position
+       * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWu(double t, ContourPointData &cp) { return getWs(t,cp); }
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
 
       /**
        * \return second tangent in world frame
        * \param t time
-       * \param cp contour position
+       * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWv(double t, ContourPointData &cp) { return getWt(t,cp); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
 
       /**
        * \return second tangent in world frame
        * \param t time
-       * \param cp contour position
+       * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWn(double t, ContourPointData &cp) { return R->getOrientation(t).col(0); }
+      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta) { return R->getOrientation(t).col(0); }
 
      /**
        * \return first tangent in world frame
        * \param t time
-       * \param cp contour position
+       * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWs(double t, ContourPointData &cp) { return R->getOrientation(t).col(1); }
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return R->getOrientation(t).col(1); }
 
       /**
        * \return second tangent in world frame
        * \param t time
-       * \param cp contour position
+       * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWt(double t, ContourPointData &cp) { return R->getOrientation(t).col(2); }
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta) { return R->getOrientation(t).col(2); }
 
       virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPoint);
       /***************************************************/

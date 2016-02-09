@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsSphereFrustum::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsSphereFrustum::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche
@@ -91,10 +91,10 @@ namespace MBSim {
         }
         
         // System of frustum
-        cpData[ifrustum].getFrameOfReference().setPosition(frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse);
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, out*xAchse);
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, out*yAchse);
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, crossProduct(xAchse,yAchse));
+        cFrame[ifrustum]->setPosition(frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse);
+        cFrame[ifrustum]->getOrientation(false).set(0, out*xAchse);
+        cFrame[ifrustum]->getOrientation(false).set(1, out*yAchse);
+        cFrame[ifrustum]->getOrientation(false).set(2, crossProduct(xAchse,yAchse));
       }
 
       else {
@@ -121,17 +121,17 @@ namespace MBSim {
         double v12 = out*(v1+v2);
      
         // System of frustum
-        cpData[ifrustum].getFrameOfReference().setPosition(frustum->getFrame()->getPosition() + (r(0)*xAchse));
-        cpData[ifrustum].getFrameOfReference().setOrientation(AW1 * A);
-        cpData[ifrustum].getFrameOfReference().setPosition(cpData[ifrustum].getFrameOfReference().getPosition(false) + v12*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
+        cFrame[ifrustum]->setPosition(frustum->getFrame()->getPosition() + (r(0)*xAchse));
+        cFrame[ifrustum]->setOrientation(AW1 * A);
+        cFrame[ifrustum]->setPosition(cFrame[ifrustum]->getPosition(false) + v12*cFrame[ifrustum]->getOrientation(false).col(1));
       }
 
       // System of sphere (position)
-      cpData[isphere].getFrameOfReference().setPosition(cpData[ifrustum].getFrameOfReference().getPosition(false) + g*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+      cFrame[isphere]->setPosition(cFrame[ifrustum]->getPosition(false) + g*cFrame[ifrustum]->getOrientation(false).col(0));
       // System of sphere (orientation)
-      cpData[isphere].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
-      cpData[isphere].getFrameOfReference().getOrientation(false).set(1, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
-      cpData[isphere].getFrameOfReference().getOrientation(false).set(2, crossProduct(cpData[isphere].getFrameOfReference().getOrientation(false).col(0),cpData[isphere].getFrameOfReference().getOrientation(false).col(1)));
+      cFrame[isphere]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
+      cFrame[isphere]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
+      cFrame[isphere]->getOrientation(false).set(2, crossProduct(cFrame[isphere]->getOrientation(false).col(0),cFrame[isphere]->getOrientation(false).col(1)));
 
     }
   }

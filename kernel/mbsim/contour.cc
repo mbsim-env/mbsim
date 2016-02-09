@@ -108,6 +108,10 @@ namespace MBSim {
       Element::init(stage);
   }
 
+  Frame* Contour::createContourFrame(const string &name) const {
+    return new Frame(name);
+  }
+
   void Contour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Element::plot(t,dt);
@@ -123,107 +127,107 @@ namespace MBSim {
     }
   }
 
-  Vec3 Contour::getPosition(double t, ContourPointData &cp) {
-    return R->getPosition(t) + getWrPS(t,cp);
+  Vec3 Contour::getPosition(double t, const fmatvec::Vec2 &zeta) {
+    return R->getPosition(t) + getWrPS(t,zeta);
   }
 
-  Vec3 Contour::getWu(double t, ContourPointData &cp) {
-    Vec3 Ws=getWs(t,cp);
+  Vec3 Contour::getWu(double t, const fmatvec::Vec2 &zeta) {
+    Vec3 Ws=getWs(t,zeta);
     return Ws/nrm2(Ws);
   }
 
-  Vec3 Contour::getWv(double t, ContourPointData &cp) {
-    Vec3 Wt=getWt(t,cp);
+  Vec3 Contour::getWv(double t, const fmatvec::Vec2 &zeta) {
+    Vec3 Wt=getWt(t,zeta);
     return Wt/nrm2(Wt);
   }
 
-  Vec3 Contour::getWn(double t, ContourPointData &cp) {
-    Vec3 N=crossProduct(getWs(t,cp),getWt(t,cp));
+  Vec3 Contour::getWn(double t, const fmatvec::Vec2 &zeta) {
+    Vec3 N=crossProduct(getWs(t,zeta),getWt(t,zeta));
     return N/nrm2(N);
   }
 
-  Vec3 Contour::getParDer1Ku(ContourPointData &cp) {
-    Vec3 Ks = getKs(cp);
-    Vec3 parDer1Ks = getParDer1Ks(cp);
+  Vec3 Contour::getParDer1Ku(const fmatvec::Vec2 &zeta) {
+    Vec3 Ks = getKs(zeta);
+    Vec3 parDer1Ks = getParDer1Ks(zeta);
     return parDer1Ks/nrm2(Ks) - Ks*((Ks.T()*parDer1Ks)/pow(nrm2(Ks),3));
   }
 
-  Vec3 Contour::getParDer2Ku(ContourPointData &cp) {
+  Vec3 Contour::getParDer2Ku(const fmatvec::Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer2Ku): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer1Kv(ContourPointData &cp) {
+  Vec3 Contour::getParDer1Kv(const fmatvec::Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer1Kv): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer2Kv(ContourPointData &cp) {
+  Vec3 Contour::getParDer2Kv(const fmatvec::Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer2Kv): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer1Wn(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getParDer1Kn(cp);
+  Vec3 Contour::getParDer1Wn(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getParDer1Kn(zeta);
   }
 
-  Vec3 Contour::getParDer2Wn(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getParDer2Kn(cp);
+  Vec3 Contour::getParDer2Wn(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getParDer2Kn(zeta);
   }
 
-  Vec3 Contour::getParDer1Wu(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getParDer1Ku(cp);
+  Vec3 Contour::getParDer1Wu(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getParDer1Ku(zeta);
   }
 
-  Vec3 Contour::getParDer2Wu(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getParDer2Ku(cp);
+  Vec3 Contour::getParDer2Wu(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getParDer2Ku(zeta);
   }
 
-  Vec3 Contour::getParDer1Wv(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getParDer1Kv(cp);
+  Vec3 Contour::getParDer1Wv(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getParDer1Kv(zeta);
   }
 
-  Vec3 Contour::getParDer2Wv(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getParDer2Kv(cp);
+  Vec3 Contour::getParDer2Wv(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getParDer2Kv(zeta);
   }
 
-  Vec3 Contour::getWrPS(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getKrPS(cp);
+  Vec3 Contour::getWrPS(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getKrPS(zeta);
   }
 
-  Vec3 Contour::getWs(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getKs(cp);
+  Vec3 Contour::getWs(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getKs(zeta);
   }
 
-  Vec3 Contour::getWt(double t, ContourPointData &cp) {
-    return R->getOrientation(t)*getKt(cp);
+  Vec3 Contour::getWt(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t)*getKt(zeta);
   }
 
-  Mat3x2 Contour::getWN(double t, ContourPointData &cp) {
+  Mat3x2 Contour::getWN(double t, const fmatvec::Vec2 &zeta) {
     Mat3x2 WN(NONINIT);
-    WN.set(0,getParDer1Wn(t,cp));
-    WN.set(1,getParDer2Wn(t,cp));
+    WN.set(0,getParDer1Wn(t,zeta));
+    WN.set(1,getParDer2Wn(t,zeta));
     return WN;
   }
 
-  Mat3x2 Contour::getWR(double t, ContourPointData &cp) {
+  Mat3x2 Contour::getWR(double t, const fmatvec::Vec2 &zeta) {
     Mat3x2 WR(NONINIT);
-    WR.set(0,getWs(t,cp));
-    WR.set(1,getWt(t,cp));
+    WR.set(0,getWs(t,zeta));
+    WR.set(1,getWt(t,zeta));
     return WR;
   }
 
-  Mat3x2 Contour::getWU(double t, ContourPointData &cp) {
+  Mat3x2 Contour::getWU(double t, const fmatvec::Vec2 &zeta) {
     Mat3x2 WU(NONINIT);
-    WU.set(0,getParDer1Wu(t,cp));
-    WU.set(1,getParDer2Wu(t,cp));
+    WU.set(0,getParDer1Wu(t,zeta));
+    WU.set(1,getParDer2Wu(t,zeta));
     return WU;
   }
 
-  Mat3x2 Contour::getWV(double t, ContourPointData &cp) {
+  Mat3x2 Contour::getWV(double t, const fmatvec::Vec2 &zeta) {
     Mat3x2 WV(NONINIT);
-    WV.set(0,getParDer1Wv(t,cp));
-    WV.set(1,getParDer2Wv(t,cp));
+    WV.set(0,getParDer1Wv(t,zeta));
+    WV.set(1,getParDer2Wv(t,zeta));
     return WV;
   }
 
@@ -268,6 +272,12 @@ namespace MBSim {
       Contour::init(stage);
   }
   
+  Frame* RigidContour::createContourFrame(const string &name) const {
+    FloatingRelativeFrame *frame = new FloatingRelativeFrame(name);      
+    frame->setFrameOfReference(R);
+    return frame;
+  }
+
    void RigidContour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -52,7 +52,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleFrustum::updateg(double t, double& g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleFrustum::updateg(double t, double& g, std::vector<Frame*> &cFrame, int index) {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */
@@ -136,9 +136,9 @@ namespace MBSim {
               if (fabs(c_CF_nrm2) < epsroot())
                 throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
               else {
-                cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2);
-                cpData[icircle].getFrameOfReference().getOrientation(false).set(0, sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
-                cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, -cpData[icircle].getFrameOfReference().getOrientation(false).col(0));
+                cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2);
+                cFrame[icircle]->getOrientation(false).set(0, sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
+                cFrame[ifrustum]->getOrientation(false).set(0, -cFrame[icircle]->getOrientation(false).col(0));
               }
             }
             /********************************/
@@ -147,18 +147,18 @@ namespace MBSim {
                 if (fabs(c_CF_nrm2) < epsroot())
                   throw MBSimError("(ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!");
                 else {
-                  cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition() + r_C * c_CF / c_CF_nrm2);
-                  cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
-                  cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, -cpData[icircle].getFrameOfReference().getOrientation(false).col(0));
+                  cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * c_CF / c_CF_nrm2);
+                  cFrame[icircle]->getOrientation(false).set(0, -sin(phi_F) * Wa_F + cos(phi_F) * c_CF / c_CF_nrm2);
+                  cFrame[ifrustum]->getOrientation(false).set(0, -cFrame[icircle]->getOrientation(false).col(0));
                 }
               }
             }
             /********************************/
             else { // outer circle, outer frustum
               if (g < eps) {
-                cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2);
-                cpData[icircle].getFrameOfReference().getOrientation(false).set(0, sin(phi_F) * Wa_F - cos(phi_F) * c_CF / c_CF_nrm2);
-                cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, -cpData[icircle].getFrameOfReference().getOrientation(false).col(0));
+                cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - r_C * c_CF / c_CF_nrm2);
+                cFrame[icircle]->getOrientation(false).set(0, sin(phi_F) * Wa_F - cos(phi_F) * c_CF / c_CF_nrm2);
+                cFrame[ifrustum]->getOrientation(false).set(0, -cFrame[icircle]->getOrientation(false).col(0));
               }
             }
           }
@@ -202,8 +202,8 @@ namespace MBSim {
 
           Contact1sSearch searchRho(funcRho, jacRho);
 
-          if (cpData[ifrustum].getLagrangeParameterPosition().size() != 0 && LOCALSEARCH) { // select start value from last search if decided by user
-            searchRho.setInitialValue(cpData[ifrustum].getLagrangeParameterPosition()(0));
+          if (LOCALSEARCH) { // select start value from last search if decided by user
+            searchRho.setInitialValue(zeta(0));
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
@@ -212,15 +212,15 @@ namespace MBSim {
           double drho = 2. * M_PI / SEC * 1.01; // 10% intersection for improved convergence of solver
           double rhoStartSpacing = -2. * M_PI * 0.01 * 0.5;
           searchRho.setEqualSpacing(SEC, rhoStartSpacing, drho);
-          cpData[ifrustum].getLagrangeParameterPosition()(0) = searchRho.slv();
+          zeta(0) = searchRho.slv();
 
-          if ((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps)
+          if ((*funcRho)[zeta(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->getWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec3 dTilde_tmp = funcRho->getWrD(zeta(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
-            cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
-            Vec3 Wd_PF = cpData[icircle].getFrameOfReference().getPosition(false) - frustum->getFrame()->getPosition();
+            cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
+            Vec3 Wd_PF = cFrame[icircle]->getPosition(false) - frustum->getFrame()->getPosition();
             double s_PF = Wa_F.T() * Wd_PF;
 
             if (s_PF < 0. || s_PF > h_F) {
@@ -235,15 +235,15 @@ namespace MBSim {
 
               if (!outCont_F && outCont_C) {
                 g = r_F(0) - d_PF;
-                cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, -Wb_PF);
+                cFrame[ifrustum]->getOrientation(false).set(0, -Wb_PF);
               }
               else {
                 g = d_PF - r_F(0);
-                cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, Wb_PF);
+                cFrame[ifrustum]->getOrientation(false).set(0, Wb_PF);
               }
             }
 
-            cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+            cFrame[icircle]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
           }
           delete funcRho;
           delete jacRho;
@@ -339,21 +339,21 @@ namespace MBSim {
           Contact1sSearch searchRho(funcRho, jacRho);
 
           if(LOCALSEARCH) { // select start value from last search if decided by user
-            searchRho.setInitialValue(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            searchRho.setInitialValue(zeta(0));
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
           }
           searchRho.setEqualSpacing(SEC, rhoStartSpacing, drho);
-          cpData[ifrustum].getLagrangeParameterPosition()(0) = searchRho.slv();
+          zeta(0) = searchRho.slv();
 
-          if ((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps)
+          if ((*funcRho)[zeta(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->getWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec3 dTilde_tmp = funcRho->getWrD(zeta(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
-            cpData[icircle].getFrameOfReference().setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
-            Vec3 Wd_PF = cpData[icircle].getFrameOfReference().getPosition(false) - frustum->getFrame()->getPosition();
+            cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
+            Vec3 Wd_PF = cFrame[icircle]->getPosition(false) - frustum->getFrame()->getPosition();
             double s_PF = Wa_F.T() * Wd_PF;
 
             if (s_PF < 0. || s_PF > h_F) {
@@ -369,20 +369,20 @@ namespace MBSim {
 
               if (!outCont_F && outCont_C) {
                 g = (r_Fh - d_PF) * cos(phi_F);
-                cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, sin(phi_F) * Wa_F - cos(phi_F) * Wb_PF);
+                cFrame[ifrustum]->getOrientation(false).set(0, sin(phi_F) * Wa_F - cos(phi_F) * Wb_PF);
               }
               /********************************/
               else {
                 g = (d_PF - r_Fh) * cos(phi_F);
-                cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, -sin(phi_F) * Wa_F + cos(phi_F) * Wb_PF);
+                cFrame[ifrustum]->getOrientation(false).set(0, -sin(phi_F) * Wa_F + cos(phi_F) * Wb_PF);
               }
-              cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+              cFrame[icircle]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
             }
           }
           if (DEBUG) {
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): cpData[ifrustum].getLagrangeParameterPosition()(0)= " << cpData[ifrustum].getLagrangeParameterPosition()(0) << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): rootfunction= " << (*funcRho)(cpData[ifrustum].getLagrangeParameterPosition()(0)) << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): dist= " << (*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] << endl;
+            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): zeta(0)= " << zeta(0) << endl;
+            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): rootfunction= " << (*funcRho)(zeta(0)) << endl;
+            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): dist= " << (*funcRho)[zeta(0)] << endl;
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Wd_SC= " << Wd_SC << endl;
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): eF1= " << eF1 << endl;
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): eF2= " << eF2 << endl;
@@ -391,9 +391,9 @@ namespace MBSim {
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Non-Complanar Circle-Conesection= " << Wd_SC.T() * crossProduct(c1, c2) << endl;
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Wd_SC= " << c1.T() * Wd_SC << endl;
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Wd_SC= " << c2.T() * Wd_SC << endl;
-            if ((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] < eps) {
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Contact_Circle= " << c1.T() * (cpData[icircle].getFrameOfReference().getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Contact_Circle= " << c2.T() * (cpData[icircle].getFrameOfReference().getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
+            if ((*funcRho)[zeta(0)] < eps) {
+              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Contact_Circle= " << c1.T() * (cFrame[icircle]->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
+              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Contact_Circle= " << c2.T() * (cFrame[icircle]->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
             }
           }
           delete funcRho;
@@ -404,14 +404,14 @@ namespace MBSim {
     }
 
     if (g < eps) {
-      cpData[ifrustum].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition(false) + cpData[icircle].getFrameOfReference().getOrientation(false).col(0) * g);
+      cFrame[ifrustum]->setPosition(cFrame[icircle]->getPosition(false) + cFrame[icircle]->getOrientation(false).col(0) * g);
       if (outCont_F)
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, (Wa_F + sin(phi_F) * cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0)) / cos(phi_F)); // radial direction
+        cFrame[ifrustum]->getOrientation(false).set(1, (Wa_F + sin(phi_F) * cFrame[ifrustum]->getOrientation(false).col(0)) / cos(phi_F)); // radial direction
       else
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, (Wa_F - sin(phi_F) * cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0)) / cos(phi_F));
-      cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, crossProduct(cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0), cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1))); // azimuthal direction
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(2, cpData[ifrustum].getFrameOfReference().getOrientation(false).col(2));
+        cFrame[ifrustum]->getOrientation(false).set(1, (Wa_F - sin(phi_F) * cFrame[ifrustum]->getOrientation(false).col(0)) / cos(phi_F));
+      cFrame[ifrustum]->getOrientation(false).set(2, crossProduct(cFrame[ifrustum]->getOrientation(false).col(0), cFrame[ifrustum]->getOrientation(false).col(1))); // azimuthal direction
+      cFrame[icircle]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
+      cFrame[icircle]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
     }
   }
 /***************************************************************/

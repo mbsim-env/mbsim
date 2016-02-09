@@ -65,19 +65,21 @@ namespace MBSim {
 
       /**
        * \brief compute normal distance, possible contact point positions and orientation (cf. contact.cc)
+       * \param t      time
        * \param g      normal distance
-       * \param cpData contact point parametrisation
+       * \param cFrame contour point Frame
        * \param index  index of the contact point that should be updated
        */
-      virtual void updateg(double t, double &g, ContourPointData *cpData, int index = 0) = 0;
+      virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0) = 0;
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
-       * \param acceleration in terms of contour parameters
-       * \param normal distance
-       * \param contact point parametrisation
+       * \param t      time
+       * \param wb acceleration in terms of contour parameters
+       * \param g normal distance
+       * \param cFrame contact point parametrisation
        */
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, ContourPointData* cpData) = 0;
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) = 0;
       
 //      /*!
 //       * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
@@ -102,12 +104,6 @@ namespace MBSim {
       int getNumberOfPotentialContactPoints() const { return numberOfPotentialContactPoints; }
 
       virtual ContactKinematics* getContactKinematics(int i=0) const { return 0; }
-
-      /**
-       * \return compute the radii in contact points
-       */
-//      virtual void getCurvatures(std::vector<fmatvec::Vec>::iterator ir, std::vector<ContourPointData*>::iterator icpData) { if((*ir).size()) computeRadii(*ir, *icpData); }
-      virtual void getCurvatures(fmatvec::Vec &r, ContourPointData *cpData) {throw MBSimError("(ContactKinematics::getCurvatures): Not implemented.");}
 
     protected:
       /**

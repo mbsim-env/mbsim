@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21RCM::computeM(const Vec& qElement) {
-    if(nrm2(qElement-qElement_Old)>tol_comp) {
+    //if(nrm2(qElement-qElement_Old)>tol_comp) {
       BuildqLocal(qElement,qLocal);
       BuildJacobi(qElement,Jeg);
 
@@ -82,12 +82,12 @@ namespace MBSimFlexibleBody {
       MLocal(7,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
 
       qElement_Old = qElement.copy();
-    }
+    //}
     M << JTMJ(MLocal,Jeg); 
   }
 
   void FiniteElement1s21RCM::computeh(const Vec& qElement, const Vec& qpElement) {
-    if(nrm2(qElement-qElement_Old)>tol_comp || nrm2(qpElement-qpElement_Old)>tol_comp) {
+//    if(nrm2(qElement-qElement_Old)>tol_comp || nrm2(qpElement-qpElement_Old)>tol_comp) {
       Vec hLocal(8,INIT,0.), hdLocal(8,INIT,0.); 
 
       // local coordinates and velocities
@@ -164,7 +164,7 @@ namespace MBSimFlexibleBody {
 
       qElement_Old = qElement.copy();
       qpElement_Old = qpElement.copy();
-    }
+//    }
   }
 
   void FiniteElement1s21RCM::computedhdz(const Vec& qElement, const Vec& qpElement) {

@@ -50,74 +50,74 @@ namespace MBSim {
       void plot(double t, double dt);
       /***************************************************/
 
-      virtual fmatvec::Vec3 getRelativePosition(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getRelativePosition(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getRelativePosition): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getDerivativeOfRelativePosition(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getDerivativeOfRelativePosition(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getDerivativeOfRelativePosition): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getSecondDerivativeOfRelativePosition(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getSecondDerivativeOfRelativePosition(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getSecondDerivativeOfRelativePosition): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getKt(ContourPointData &cp);
+      virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
 
 //      /**
 //       * \return position in world frame
 //       * \param contour position
 //       */
-//     virtual fmatvec::Vec3 getPosition(double t, ContourPointData &cp);
+//     virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
 //
 //      /**
 //       * \return first tangent in world frame
 //       * \param t time
 //       * \param cp contour position
 //       */
-//      virtual fmatvec::Vec3 getFirstTangent(double t, ContourPointData &cp);
+//      virtual fmatvec::Vec3 getFirstTangent(double t, const fmatvec::Vec2 &zeta);
 //
 //      /**
 //       * \return second tangent in world frame
 //       * \param Lagrangian position
 //       */
-//      virtual fmatvec::Vec3 getSecondTangent(double t, ContourPointData &cp);
+//      virtual fmatvec::Vec3 getSecondTangent(double t, const fmatvec::Vec2 &zeta);
 //
 //      /**
 //       * \return normal in world frame
 //       * \param contour position
 //       */
-//      virtual fmatvec::Vec3 getNormal(double t, ContourPointData &cp);
+//      virtual fmatvec::Vec3 getNormal(double t, const fmatvec::Vec2 &zeta);
 //
 //      /**
 //       * \return derivative of first tangent in world frame
 //       * \param t time
 //       * \param cp contour position
 //       */
-//      virtual fmatvec::Vec3 getDerivativeOfFirstTangent(double t, ContourPointData &cp);
+//      virtual fmatvec::Vec3 getDerivativeOfFirstTangent(double t, const fmatvec::Vec2 &zeta);
 //
 //      /**
 //       * \return derivative of first tangent in world frame
 //       * \param t time
 //       * \param cp contour position
 //       */
-//      virtual fmatvec::Vec3 getGlobalRelativePosition(double t, ContourPointData &cp);
+//      virtual fmatvec::Vec3 getGlobalRelativePosition(double t, const fmatvec::Vec2 &zeta);
 //
 //      /**
 //       * \return derivative of first tangent in world frame
 //       * \param t time
 //       * \param cp contour position
 //       */
-//      virtual fmatvec::Vec3 getGlobalDerivativeOfRelativePosition(double t, ContourPointData &cp);
+//      virtual fmatvec::Vec3 getGlobalDerivativeOfRelativePosition(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return radius of contour in contour point
        * \param contour position
        */
-      virtual double getCurvature(ContourPointData &cp) {
+      virtual double getCurvature(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getCurvature): Not implemented.");
         return 0;
       }

@@ -71,12 +71,12 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec3 getKs(ContourPointData &cp);
-      virtual fmatvec::Vec3 getKt(ContourPointData &cp);
-      virtual fmatvec::Vec3 getParDer1Kn(ContourPointData &cp);
-      virtual fmatvec::Vec3 getParDer1Ku(ContourPointData &cp);
-      virtual double getCurvature(ContourPointData &cp) { return curvature; }
-      virtual fmatvec::Vec2 getLagrangeParameter(const fmatvec::Vec3& WrPoint);
+      virtual fmatvec::Vec3 getKs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getParDer1Kn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getParDer1Ku(const fmatvec::Vec2 &zeta);
+      virtual double getCurvature(const fmatvec::Vec2 &zeta) { return curvature; }
+      virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3& WrPoint);
       /***************************************************/
 
       /* GETTER / SETTER */

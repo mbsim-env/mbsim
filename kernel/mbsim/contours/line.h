@@ -28,8 +28,6 @@
 
 namespace MBSim {
 
-  class ContourPointData;
-
   /**
    * \brief unbounded line with constant normal
    * \author Martin Foerg
@@ -48,7 +46,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual double getCurvature(ContourPointData &cp) { return 0; } 
+      virtual double getCurvature(const fmatvec::Vec2 &zeta) { return 0; } 
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

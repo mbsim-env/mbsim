@@ -64,7 +64,7 @@ namespace MBSim {
        *    index 0: x,   height coordinate of frustum
        *    index 1: phi, angle of point
        */
-      virtual fmatvec::Vec2 getLagrangeParameter(const fmatvec::Vec3 &WrPoint);
+      virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPS);
       /*********************************/
 
       /*!
@@ -157,22 +157,22 @@ namespace MBSim {
       /*!
        * \brief returns the point in local coordinates of the frustum at the position (x, phi)
        */
-      fmatvec::Vec3 getKrPS(ContourPointData &cp);
+      fmatvec::Vec3 getKrPS(const fmatvec::Vec2 &zeta);
 
       /*!
        * \brief returns the normal in local coordinates of the frustum at the position (x, phi)
        */
-      fmatvec::Vec3 getKn(ContourPointData &cp);
+      fmatvec::Vec3 getKn(const fmatvec::Vec2 &zeta);
 
       /*!
        * \brief returns the tangent in radial direction in local coordinates of the frustum at the position (x, phi)
        */
-      fmatvec::Vec3 getKu(ContourPointData &cp);
+      fmatvec::Vec3 getKu(const fmatvec::Vec2 &zeta);
 
       /*!
        * \brief returns the tangent in azimuthal direction in local coordinates of the frustum at the point x, phi
        */
-      fmatvec::Vec3 getKv(ContourPointData &cp);
+      fmatvec::Vec3 getKv(const fmatvec::Vec2 &zeta);
 
       /*!
        * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
@@ -183,9 +183,9 @@ namespace MBSim {
        */
       fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
 
-      fmatvec::Vec3 getWn(double t, ContourPointData &cp);
-      fmatvec::Vec3 getWu(double t, ContourPointData &cp);
-      fmatvec::Vec3 getWv(double t, ContourPointData &cp);
+      fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta);
 
     protected:
       /*!

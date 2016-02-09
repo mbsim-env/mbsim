@@ -85,16 +85,16 @@ namespace MBSim {
         */
        fmatvec::VecV computePointWeights(const fmatvec::VecV &s);
 
-       fmatvec::Vec3 getWrOC(const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return getWrOC(cp);};
-       fmatvec::Vec3 computeWvC (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
-       fmatvec::Mat3xV computeWt  (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
-       fmatvec::Vec3 computeWn  (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);};
-
-       fmatvec::Vec3 getWrOC(const ContourPointData &cp);
-       fmatvec::Vec3 computeWvC (const ContourPointData &cp);
-
-       fmatvec::Mat3xV computeWt  (const ContourPointData &cp);
-       virtual fmatvec::Vec3 computeWn  (const ContourPointData &cp) = 0;
+//       fmatvec::Vec3 getWrOC(const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return getWrOC(cp);};
+//       fmatvec::Vec3 computeWvC (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
+//       fmatvec::Mat3xV computeWt  (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
+//       fmatvec::Vec3 computeWn  (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);};
+//
+//       fmatvec::Vec3 getWrOC(const ContourPointData &cp);
+//       fmatvec::Vec3 computeWvC (const ContourPointData &cp);
+//
+//       fmatvec::Mat3xV computeWt  (const ContourPointData &cp);
+//       virtual fmatvec::Vec3 computeWn  (const ContourPointData &cp) = 0;
 
     protected:
        /**

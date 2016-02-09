@@ -33,10 +33,10 @@ namespace MBSim {
     Contour::init(stage);
   }
 
-  bool ContourQuad::testInsideBounds(const ContourPointData &cp) {
-    if( 0 <= cp.getLagrangeParameterPosition()(0) && cp.getLagrangeParameterPosition()(0) <= 1 && 0 <= cp.getLagrangeParameterPosition()(1) && cp.getLagrangeParameterPosition()(1) <= 1) return true;
-    else return false;
-  }
+//  bool ContourQuad::testInsideBounds(const ContourPointData &cp) {
+//    if( 0 <= cp.getLagrangeParameterPosition()(0) && cp.getLagrangeParameterPosition()(0) <= 1 && 0 <= cp.getLagrangeParameterPosition()(1) && cp.getLagrangeParameterPosition()(1) <= 1) return true;
+//    else return false;
+//  }
 
   double ContourQuad::computePointWeight(const Vec &s, int i) {
     double xi  = s(0);
@@ -73,9 +73,9 @@ namespace MBSim {
       }
   }
 
-  Vec3 ContourQuad::computeWn(const ContourPointData &cp) {
-    const VecV &s = cp.getLagrangeParameterPosition();
-    Mat3xV tTemp = computeWt(s);
-    return crossProduct(tTemp.col(1),tTemp.col(0)); // Achtung: Interpoation mit einem Konturparameter-> t.col(1) = Cb;
-  }
+//  Vec3 ContourQuad::computeWn(const ContourPointData &cp) {
+//    const VecV &s = cp.getLagrangeParameterPosition();
+//    Mat3xV tTemp = computeWt(s);
+//    return crossProduct(tTemp.col(1),tTemp.col(0)); // Achtung: Interpoation mit einem Konturparameter-> t.col(1) = Cb;
+//  }
 }

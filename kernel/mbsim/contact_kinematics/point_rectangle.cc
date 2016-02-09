@@ -43,19 +43,19 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointRectangle::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointRectangle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     Vec3 Ar = rectangle->getFrame()->getOrientation(t).T() * (point->getFrame()->getPosition(t) - rectangle->getFrame()->getPosition(t));
     if(fabs(Ar(1)) <= rectangle->getYLength()/2 and fabs(Ar(2)) <= rectangle->getZLength()/2){
       g = Ar(0);
       if(g < -rectangle->getThickness())
         g = 1;
       else {
-        cpData[ipoint].getFrameOfReference().getPosition(false) = point->getFrame()->getPosition();
-        cpData[irectangle].getFrameOfReference().getPosition(false) = point->getFrame()->getPosition() - g * rectangle->getFrame()->getOrientation().col(0);
-        cpData[irectangle].getFrameOfReference().getOrientation(false) = rectangle->getFrame()->getOrientation();
-        cpData[ipoint].getFrameOfReference().getOrientation(false).set(0,-rectangle->getFrame()->getOrientation().col(0));
-        cpData[ipoint].getFrameOfReference().getOrientation(false).set(1,-rectangle->getFrame()->getOrientation().col(1));
-        cpData[ipoint].getFrameOfReference().getOrientation(false).set(2,rectangle->getFrame()->getOrientation().col(2));
+        cFrame[ipoint]->getPosition(false) = point->getFrame()->getPosition();
+        cFrame[irectangle]->getPosition(false) = point->getFrame()->getPosition() - g * rectangle->getFrame()->getOrientation().col(0);
+        cFrame[irectangle]->getOrientation(false) = rectangle->getFrame()->getOrientation();
+        cFrame[ipoint]->getOrientation(false).set(0,-rectangle->getFrame()->getOrientation().col(0));
+        cFrame[ipoint]->getOrientation(false).set(1,-rectangle->getFrame()->getOrientation().col(1));
+        cFrame[ipoint]->getOrientation(false).set(2,rectangle->getFrame()->getOrientation().col(2));
       }
     }
     else

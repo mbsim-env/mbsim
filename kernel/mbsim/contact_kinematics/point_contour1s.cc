@@ -49,7 +49,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointContour1s::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     
     FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, contour1s); // root function for searching contact parameters
     func->setTime(t);
@@ -57,28 +57,28 @@ namespace MBSim {
     search.setNodes(contour1s->getNodes()); // defining search areas for contacts
 
     if (useLocal) { // select start value from last search
-      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
+      search.setInitialValue(zeta(0));
     }
     else { // define start search with regula falsi
       search.setSearchAll(true);
       useLocal = true;
     }
 
-    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
+    zeta(0) = search.slv(); // get contact parameter of neutral fibre
 
-    if (cpData[icontour].getLagrangeParameterPosition()(0) < contour1s->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > contour1s->getAlphaEnd())
+    if (zeta(0) < contour1s->getAlphaStart() || zeta(0) > contour1s->getAlphaEnd())
       g = 1.0;
     else { // calculate the normal distance
-      cpData[icontour].getFrameOfReference().setPosition(contour1s->getPosition(t,cpData[icontour]));
-      cpData[icontour].getFrameOfReference().getOrientation(false).set(0, contour1s->getWn(t,cpData[icontour]));
-      cpData[icontour].getFrameOfReference().getOrientation(false).set(1, contour1s->getWu(t,cpData[icontour]));
-      cpData[icontour].getFrameOfReference().getOrientation(false).set(2, contour1s->getWv(t,cpData[icontour]));
+      cFrame[icontour]->setPosition(contour1s->getPosition(t,zeta));
+      cFrame[icontour]->getOrientation(false).set(0, contour1s->getWn(t,zeta));
+      cFrame[icontour]->getOrientation(false).set(1, contour1s->getWu(t,zeta));
+      cFrame[icontour]->getOrientation(false).set(2, contour1s->getWv(t,zeta));
 
-      cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition(t)); // position of point
-      cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -cpData[icontour].getFrameOfReference().getOrientation(false).col(0));
-      cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -cpData[icontour].getFrameOfReference().getOrientation(false).col(1));
-      cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, cpData[icontour].getFrameOfReference().getOrientation(false).col(2));
-      g = cpData[icontour].getFrameOfReference().getOrientation(false).col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition(false) - cpData[icontour].getFrameOfReference().getPosition(false));
+      cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of point
+      cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icontour]->getOrientation(false).col(0));
+      cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icontour]->getOrientation(false).col(1));
+      cFrame[ipoint]->getOrientation(false).set(2, cFrame[icontour]->getOrientation(false).col(2));
+      g = cFrame[icontour]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[icontour]->getPosition(false));
     }
     delete func;
   }

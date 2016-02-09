@@ -44,11 +44,11 @@ namespace MBSim {
        */
       Contour2s(const std::string &name) : ContourContinuum<fmatvec::Vec>(name) {}
 
-      /**
-       * \return tangents in world frame
-       * \param Lagrangian position
-       */
-      virtual fmatvec::Mat3x2 computeTangentialPlane(double t, fmatvec::Vec alpha) { ContourPointData cp(alpha); return cp.getFrameOfReference().getOrientation(t)(fmatvec::Range<fmatvec::Fixed<0>,fmatvec::Fixed<2> >(),fmatvec::Range<fmatvec::Fixed<1>,fmatvec::Fixed<2> >()); }
+//      /**
+//       * \return tangents in world frame
+//       * \param Lagrangian position
+//       */
+//      virtual fmatvec::Mat3x2 computeTangentialPlane(double t, fmatvec::Vec alpha) { ContourPointData cp(alpha); return cp.getFrameOfReference().getOrientation(t)(fmatvec::Range<fmatvec::Fixed<0>,fmatvec::Fixed<2> >(),fmatvec::Range<fmatvec::Fixed<1>,fmatvec::Fixed<2> >()); }
 
       /**
        * \return nodes lagrange parameters for contact2sSearch in U direction

@@ -42,7 +42,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidLineSegment::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidLineSegment::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
     const Vec3 WC=circlesolid->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
@@ -51,29 +51,29 @@ namespace MBSim {
     const double s=WLdir.T() * (-WL0+WC);
 
     if ((s>=0) && (s<=linesegment->getLength())) {
-      cpData[iline].getFrameOfReference().setOrientation(linesegment->getFrame()->getOrientation());
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -linesegment->getFrame()->getOrientation(false).col(0));
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -linesegment->getFrame()->getOrientation(false).col(1));
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(2, linesegment->getFrame()->getOrientation(false).col(2));
-      g = cpData[iline].getFrameOfReference().getOrientation(false).col(0).T()*(WC - WL) - circlesolid->getRadius();
-      cpData[icircle].getFrameOfReference().setPosition(WC - cpData[iline].getFrameOfReference().getOrientation(false).col(0)*circlesolid->getRadius());
-      cpData[iline].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition(false) - cpData[iline].getFrameOfReference().getOrientation(false).col(0)*g);
+      cFrame[iline]->setOrientation(linesegment->getFrame()->getOrientation());
+      cFrame[icircle]->getOrientation(false).set(0, -linesegment->getFrame()->getOrientation(false).col(0));
+      cFrame[icircle]->getOrientation(false).set(1, -linesegment->getFrame()->getOrientation(false).col(1));
+      cFrame[icircle]->getOrientation(false).set(2, linesegment->getFrame()->getOrientation(false).col(2));
+      g = cFrame[iline]->getOrientation(false).col(0).T()*(WC - WL) - circlesolid->getRadius();
+      cFrame[icircle]->setPosition(WC - cFrame[iline]->getOrientation(false).col(0)*circlesolid->getRadius());
+      cFrame[iline]->setPosition(cFrame[icircle]->getPosition(false) - cFrame[iline]->getOrientation(false).col(0)*g);
     }
     else {
-      cpData[iline].getFrameOfReference().setPosition((s<0)?WL0:WL+linesegment->getLength()/2*WLdir);
-      const Vec3 WrD = -WC + cpData[iline].getFrameOfReference().getPosition(false);
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(0, WrD/nrm2(WrD));
-      cpData[iline].getFrameOfReference().getOrientation(false).set(0, -cpData[icircle].getFrameOfReference().getOrientation(false).col(0));
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(2, circlesolid->getFrame()->getOrientation(false).col(2));
-      cpData[iline].getFrameOfReference().getOrientation(false).set(2, linesegment->getFrame()->getOrientation(false).col(2));
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(1, crossProduct(cpData[icircle].getFrameOfReference().getOrientation(false).col(2), cpData[icircle].getFrameOfReference().getOrientation(false).col(0)));
-      cpData[iline].getFrameOfReference().getOrientation(false).set(1, -cpData[icircle].getFrameOfReference().getOrientation(false).col(1));
-      cpData[icircle].getFrameOfReference().setPosition(WC + cpData[icircle].getFrameOfReference().getOrientation(false).col(0)*circlesolid->getRadius());
-      g = cpData[icircle].getFrameOfReference().getOrientation(false).col(0).T()*WrD - circlesolid->getRadius();
+      cFrame[iline]->setPosition((s<0)?WL0:WL+linesegment->getLength()/2*WLdir);
+      const Vec3 WrD = -WC + cFrame[iline]->getPosition(false);
+      cFrame[icircle]->getOrientation(false).set(0, WrD/nrm2(WrD));
+      cFrame[iline]->getOrientation(false).set(0, -cFrame[icircle]->getOrientation(false).col(0));
+      cFrame[icircle]->getOrientation(false).set(2, circlesolid->getFrame()->getOrientation(false).col(2));
+      cFrame[iline]->getOrientation(false).set(2, linesegment->getFrame()->getOrientation(false).col(2));
+      cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2), cFrame[icircle]->getOrientation(false).col(0)));
+      cFrame[iline]->getOrientation(false).set(1, -cFrame[icircle]->getOrientation(false).col(1));
+      cFrame[icircle]->setPosition(WC + cFrame[icircle]->getOrientation(false).col(0)*circlesolid->getRadius());
+      g = cFrame[icircle]->getOrientation(false).col(0).T()*WrD - circlesolid->getRadius();
     }
   }
 
-  void ContactKinematicsCircleSolidLineSegment::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidLineSegment::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     const Vec3 WC=circlesolid->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);
@@ -81,14 +81,14 @@ namespace MBSim {
     const double s=WLdir.T() * (-WL0+WC);
 
     if ((s>=0) && (s<=linesegment->getLength())) {
-      Vec3 v2 = cpData[icircle].getFrameOfReference().getOrientation(t).col(2);
-      Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation(t).col(0);
-      Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
-      Vec3 u2 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
-      Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity(t);
-      Vec3 vC2 = cpData[icircle].getFrameOfReference().getVelocity(t);
-      Vec3 Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
-      Vec3 Om2 = cpData[icircle].getFrameOfReference().getAngularVelocity();
+      Vec3 v2 = cFrame[icircle]->getOrientation(t).col(2);
+      Vec3 n1 = cFrame[iline]->getOrientation(t).col(0);
+      Vec3 u1 = cFrame[iline]->getOrientation().col(1);
+      Vec3 u2 = cFrame[icircle]->getOrientation().col(1);
+      Vec3 vC1 = cFrame[iline]->getVelocity(t);
+      Vec3 vC2 = cFrame[icircle]->getVelocity(t);
+      Vec3 Om1 = cFrame[iline]->getAngularVelocity();
+      Vec3 Om2 = cFrame[icircle]->getAngularVelocity();
       double r = circlesolid->getRadius();
 
       double ad2 = -v2.T()*(Om2-Om1);
@@ -104,10 +104,5 @@ namespace MBSim {
       throw runtime_error("ContactKinematicsCircleSolidLineSegment::updatewb not implemented for contact on edge.");
   }
       
-  void ContactKinematicsCircleSolidLineSegment::getCurvatures(Vec &r, ContourPointData* cpData) {
-    r(icircle)=circlesolid->getCurvature(cpData[icircle]);
-    r(iline)=linesegment->getCurvature(cpData[iline]);
-  }
-
 }
 

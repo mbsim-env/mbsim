@@ -71,9 +71,9 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec2 PolynomialFrustum::getLagrangeParameter(const Vec3 & WrPoint) {
+  Vec2 PolynomialFrustum::getContourParameters(double t, const Vec3 & WrPoint) {
     Vec2 returnVal(NONINIT);
-    Vec3 inFramePoint = -R->getPosition() + R->getOrientation().T() * WrPoint;
+    Vec3 inFramePoint = -R->getPosition(t) + R->getOrientation(t).T() * WrPoint;
 
     returnVal(0) = inFramePoint(0); //height coordinate
     returnVal(1) = ArcTan(inFramePoint(1), inFramePoint(2));
@@ -193,20 +193,20 @@ namespace MBSim {
     return parameters;
   }
 
-  Vec3 PolynomialFrustum::getKrPS(ContourPointData &cp) {
+  Vec3 PolynomialFrustum::getKrPS(const Vec2 &zeta) {
     Vec3 point(NONINIT);
-    double x = cp.getLagrangeParameterPosition()(0);
-    double phi = cp.getLagrangeParameterPosition()(1);
+    double x = zeta(0);
+    double phi = zeta(1);
     point(0) = x;
     point(1) = getValue(x) * cos(phi);
     point(2) = getValue(x) * sin(phi);
     return point;
   }
 
-  Vec3 PolynomialFrustum::getKn(ContourPointData &cp) {
+  Vec3 PolynomialFrustum::getKn(const Vec2 &zeta) {
     Vec3 normal(NONINIT);
-    double x = cp.getLagrangeParameterPosition()(0);
-    double phi = cp.getLagrangeParameterPosition()(1);
+    double x = zeta(0);
+    double phi = zeta(1);
     const double f = getValue(x);
     normal(0) =  f * getValueD1(x);
     normal(1) = - f * cos(phi);
@@ -214,10 +214,10 @@ namespace MBSim {
     return -normal/nrm2(normal);
   }
 
-  Vec3 PolynomialFrustum::getKu(ContourPointData &cp) {
+  Vec3 PolynomialFrustum::getKu(const Vec2 &zeta) {
     Vec3 tangent(NONINIT);
-    double x = cp.getLagrangeParameterPosition()(0);
-    double phi = cp.getLagrangeParameterPosition()(1);
+    double x = zeta(0);
+    double phi = zeta(1);
     const double fd = getValueD1(x);
     tangent(0) = 1;
     tangent(1) = fd * cos(phi);
@@ -225,10 +225,10 @@ namespace MBSim {
     return tangent/nrm2(tangent);
   }
 
-  Vec3 PolynomialFrustum::getKv(ContourPointData &cp) {
+  Vec3 PolynomialFrustum::getKv(const Vec2 &zeta) {
     Vec3 tangent(NONINIT);
-    double x = cp.getLagrangeParameterPosition()(0);
-    double phi = cp.getLagrangeParameterPosition()(1);
+    double x = zeta(0);
+    double phi = zeta(1);
     const double f = getValue(x);
     tangent(0) = 0;
     tangent(1) = f * sin(phi);
@@ -253,16 +253,16 @@ namespace MBSim {
     sphereRadius = (temp1 > temp) ? temp1 : temp;
   }
 
-  Vec3 PolynomialFrustum::getWn(double t, ContourPointData &cp) {
-    return R->getOrientation() * getKn(cp);
+  Vec3 PolynomialFrustum::getWn(double t, const Vec2 &zeta) {
+    return R->getOrientation() * getKn(zeta);
   }
 
-  Vec3 PolynomialFrustum::getWu(double t, ContourPointData &cp) {
-    return R->getOrientation() * getKu(cp);
+  Vec3 PolynomialFrustum::getWu(double t, const Vec2 &zeta) {
+    return R->getOrientation() * getKu(zeta);
   }
 
-  Vec3 PolynomialFrustum::getWv(double t, ContourPointData &cp) {
-    return R->getOrientation() * getKv(cp);
+  Vec3 PolynomialFrustum::getWv(double t, const Vec2 &zeta) {
+    return R->getOrientation() * getKv(zeta);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

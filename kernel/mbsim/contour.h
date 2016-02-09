@@ -82,6 +82,7 @@ namespace MBSim {
       /* GETTER / SETTER */
       Frame* getFrame() { return R; }
       Frame* getFrameOfReference() { return R; }
+      virtual Frame* createContourFrame(const std::string &name="P") const;
 
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int gethInd(int i=0) const { return hInd[i]; }
@@ -91,36 +92,36 @@ namespace MBSim {
       void setFrameOfReference(Frame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
-      virtual fmatvec::Vec3 getKrPS(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getKrPS(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getKrPS): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getKs(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getKs(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getKs): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getKt(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getKt): Not implemented.");
         return 0;
       }
-      virtual fmatvec::Vec3 getParDer1Ks(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getParDer1Ks(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getParDer1Ks): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getParDer2Ks(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getParDer2Ks(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getParDer2Ks): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getParDer1Kt(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getParDer1Kt(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getParDer1Kt): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getParDer2Kt(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getParDer2Kt(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getParDer2Kt): Not implemented.");
         return 0;
       }
@@ -129,34 +130,34 @@ namespace MBSim {
        * \return position in world frame
        * \param contour position
        */
-     virtual fmatvec::Vec3 getPosition(double t, ContourPointData &cp);
+     virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWu(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param Lagrangian position
        */
-      virtual fmatvec::Vec3 getWv(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return normal in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 getWn(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
 
 
-      virtual fmatvec::Vec3 getParDer1Kn(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getParDer1Kn(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getParDer1Kn): Not implemented.");
         return 0;
       }
 
-      virtual fmatvec::Vec3 getParDer2Kn(ContourPointData &cp) {
+      virtual fmatvec::Vec3 getParDer2Kn(const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(Contour::getParDer2Kn): Not implemented.");
         return 0;
       }
@@ -166,7 +167,7 @@ namespace MBSim {
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Ku(ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer1Ku(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent
@@ -174,91 +175,91 @@ namespace MBSim {
        * \param cp contour position
        */
 
-      virtual fmatvec::Vec3 getParDer2Ku(ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer2Ku(const fmatvec::Vec2 &zeta);
       /**
        * \return derivative of second tangent
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Kv(ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer1Kv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative second first tangent
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Kv(ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer2Kv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of normal in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Wn(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer1Wn(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of normal in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Wn(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer2Wn(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Wu(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer1Wu(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Wu(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer2Wu(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of second tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Wv(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer1Wv(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of second tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Wv(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getParDer2Wv(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWrPS(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getWrPS(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWs(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWt(double t, ContourPointData &cp);
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWN(double t, ContourPointData &cp);
+      virtual fmatvec::Mat3x2 getWN(double t, const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWR(double t, ContourPointData &cp);
+      virtual fmatvec::Mat3x2 getWR(double t, const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWU(double t, ContourPointData &cp);
+      virtual fmatvec::Mat3x2 getWU(double t, const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWV(double t, ContourPointData &cp);
+      virtual fmatvec::Mat3x2 getWV(double t, const fmatvec::Vec2 &zeta);
 
       virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPS) {
         THROW_MBSIMERROR("(Contour::getContourParameters): Not implemented.");
@@ -297,6 +298,8 @@ namespace MBSim {
       RigidContour(const std::string &name, Frame *R=0) : Contour(name,R) {}
 
       virtual ~RigidContour();
+
+      Frame* createContourFrame(const std::string &name="P") const;
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "RigidContour"; }

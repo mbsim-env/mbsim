@@ -57,11 +57,13 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTOUR */
       void init(InitStage stage);
-      double getCurvature(ContourPointData &cp);
-      fmatvec::Vec3 getKrPS(ContourPointData &cp);
-      fmatvec::Vec3 getKs(ContourPointData &cp);
-      fmatvec::Vec3 getParDer1Ks(ContourPointData &cp);
+      double getCurvature(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getKrPS(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getKs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getParDer1Ks(const fmatvec::Vec2 &zeta);
       /***************************************************/
+
+      virtual Frame* createContourFrame(const std::string &name="P") const;
 
       /* GETTER / SETTER */
       void setContourFunction1s(Function<fmatvec::Vec3(double)> *f) { funcCrPC = f; }

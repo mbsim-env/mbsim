@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsCircleSolidFrustum2D::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidFrustum2D::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     
     Vec3 Wd = circle->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t);
     SqrMat3 Mat0 = frustum->getFrame()->getOrientation();
@@ -87,10 +87,10 @@ namespace MBSim {
         }
         
         // System of frustum
-        cpData[ifrustum].getFrameOfReference().setPosition(frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse);
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, out*xAchse);
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, out*yAchse);
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, crossProduct(xAchse,yAchse));
+        cFrame[ifrustum]->setPosition(frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse);
+        cFrame[ifrustum]->getOrientation(false).set(0, out*xAchse);
+        cFrame[ifrustum]->getOrientation(false).set(1, out*yAchse);
+        cFrame[ifrustum]->getOrientation(false).set(2, crossProduct(xAchse,yAchse));
       }
 
 
@@ -118,17 +118,17 @@ namespace MBSim {
         double v12 = out*(v1+v2);
      
         // System of frustum
-        cpData[ifrustum].getFrameOfReference().setPosition(frustum->getFrame()->getPosition() + (r(0)*xAchse));
-        cpData[ifrustum].getFrameOfReference().setOrientation(AW1 * A);
-        cpData[ifrustum].getFrameOfReference().setPosition(cpData[ifrustum].getFrameOfReference().getPosition(false) + v12*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
+        cFrame[ifrustum]->setPosition(frustum->getFrame()->getPosition() + (r(0)*xAchse));
+        cFrame[ifrustum]->setOrientation(AW1 * A);
+        cFrame[ifrustum]->setPosition(cFrame[ifrustum]->getPosition(false) + v12*cFrame[ifrustum]->getOrientation(false).col(1));
       }
 
       // System of circle (position)
-      cpData[icircle].getFrameOfReference().setPosition(cpData[ifrustum].getFrameOfReference().getPosition(false) + g*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+      cFrame[icircle]->setPosition(cFrame[ifrustum]->getPosition(false) + g*cFrame[ifrustum]->getOrientation(false).col(0));
       // System of circle (orientation)
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
-      cpData[icircle].getFrameOfReference().getOrientation(false).set(2, cpData[ifrustum].getFrameOfReference().getOrientation(false).col(2));
+      cFrame[icircle]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
+      cFrame[icircle]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
+      cFrame[icircle]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
     }
   }
 }

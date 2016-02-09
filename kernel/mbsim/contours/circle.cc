@@ -48,16 +48,16 @@ namespace MBSim {
 
   Circle::~Circle() {}
 
-  Vec3 Circle::getKs(ContourPointData &cp) {
+  Vec3 Circle::getKs(const fmatvec::Vec2 &zeta) {
     Vec3 Ks(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
+    double a = zeta(0);
     Ks(0)=-r*sin(a);
     Ks(1)=r*cos(a);
     Ks(2)=0;
     return Ks;
   }
 
-  Vec3 Circle::getKt(ContourPointData &cp) {
+  Vec3 Circle::getKt(const fmatvec::Vec2 &zeta) {
     Vec3 Kt(NONINIT);
     Kt(0)=0;
     Kt(1)=0;
@@ -65,35 +65,35 @@ namespace MBSim {
     return Kt;
   }
 
-  Vec3 Circle::getParDer1Kn(ContourPointData &cp) {
+  Vec3 Circle::getParDer1Kn(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Kn(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
+    double a = zeta(0);
     parDer1Kn(0)=-sin(a);
     parDer1Kn(1)=cos(a);
     parDer1Kn(2)=0;
     return parDer1Kn;
   }
 
-  Vec3 Circle::getParDer1Ku(ContourPointData &cp) {
+  Vec3 Circle::getParDer1Ku(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Ku(NONINIT);
-    double a = cp.getLagrangeParameterPosition()(0);
+    double a = zeta(0);
     parDer1Ku(0)=-cos(a);
     parDer1Ku(1)=-sin(a);
     parDer1Ku(2)=0;
     return parDer1Ku;
   }
 
-  Vec2 Circle::getLagrangeParameter(const Vec3& WrPoint) {
-    Vec2 LagrangeParameter;
+  Vec2 Circle::getContourParameters(double t, const Vec3& WrPoint) {
+    Vec2 zeta;
 
     Vec3 CrPoint = WrPoint;
 
-    CrPoint -= R->getPosition();
+    CrPoint -= R->getPosition(t);
     CrPoint = R->getOrientation().T() * CrPoint; // position in moving frame of reference
 
-    LagrangeParameter(0) = ArcTan(CrPoint(0), CrPoint(1));
+    zeta(0) = ArcTan(CrPoint(0), CrPoint(1));
 
-    return LagrangeParameter;
+    return zeta;
   }
 
   void Circle::init(InitStage stage) {

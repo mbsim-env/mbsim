@@ -25,124 +25,124 @@
 
 namespace MBSim {
 
-  class Point;
-
-  /**
-   * \brief struct for data-management for single point on a contour to describe contact kinematics
-   * \author Roland Zander
-   * \date 2009-03-19 some comments (Thorsten Schindler)
-   * \date 2009-04-02 Wn / Wt / WrOC deleted (Thorsten Schindler)
-   * \date 2009-04-05 added specific constructors for arguments double and Vec (Schindler / Zander)
-   * \date 2012-03-14 added ContourParameterType for staggered grid and modified constructor for argument int (Cebulla)
-   */
-  class ContourPointData {
-    public:
-
-      enum ContourParameterType { node, staggeredNode, continuum, extInterpol, ffrorigin, fixedrelativeframe };
-
-      /**
-       * \brief constructor
-       */
-      ContourPointData() :
-          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
-      }
-      ContourPointData(const double &alpha_) :
-          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
-        alpha(0) = alpha_;
-      }
-      ContourPointData(const fmatvec::Vec2 &alpha_) :
-          type(continuum), ID(0), alpha(alpha_), alphap(fmatvec::Vec2()) {
-      }
-      ContourPointData(const int &id_, const ContourParameterType type_ = node) :
-          type(type_), ID(id_), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
-      }
-
-      /**
-       * \brief destructor
-       */
-      virtual ~ContourPointData() {
-      }
-
-      /* GETTER / SETTER */
-      ContourParameterType& getContourParameterType() {
-        return type;
-      }
-      const ContourParameterType& getContourParameterType() const {
-        return type;
-      }
-      int& getNodeNumber() {
-        return ID;
-      }
-      const int& getNodeNumber() const {
-        return ID;
-      }
-      void setLagrangeParameterPosition(const fmatvec::Vec2 &alpha_) {
-        alpha = alpha_;
-      }
-      fmatvec::Vec2& getLagrangeParameterPosition() {
-        return alpha;
-      }
-      const fmatvec::Vec2& getLagrangeParameterPosition() const {
-        return alpha;
-      }
-      fmatvec::Vec2& getLagrangeParameterVelocity() {
-        return alphap;
-      }
-      const fmatvec::Vec2& getLagrangeParameterVelocity() const {
-        return alphap;
-      }
-      fmatvec::VecV& getInterpolationWeights() {
-        return iWeights;
-      }
-      const fmatvec::VecV& getInterpolationWeights() const {
-        return iWeights;
-      }
-      FloatingRelativeFrame& getFrameOfReference() {
-        return cosy;
-      }
-      const FloatingRelativeFrame& getFrameOfReference() const {
-        return cosy;
-      }
-      /***************************************************/
-
-    private:
-      /** 
-       * \brief type of data representation: node, continuum, interpolation (extinterpol) 
-       */
-      ContourParameterType type;
-
-      /** 
-       * \brief ID of node or other discret interface within body -> FiniteElements
-       */
-      int ID;
-
-      /**
-       * \brief contour parameter(s)
-       */
-      fmatvec::Vec2 alpha;
-
-      /**
-       * \brief contour parameter(s) velocities
-       */
-      fmatvec::Vec2 alphap;
-
-      /** 
-       * \brief interpolation weights
-       */
-      fmatvec::VecV iWeights;
-
-      /**
-       * \brief list of nodes used in interpolation
-       *
-       * the (body specific) ID can be accessed using ->iPoint[NNumber]->getID();
-       */
-      std::vector<Point*> iPoints;
-
-      /**
-       * \brief accompanying frame
-       */
-      FloatingRelativeFrame cosy;
-  };
+//  class Point;
+//
+//  /**
+//   * \brief struct for data-management for single point on a contour to describe contact kinematics
+//   * \author Roland Zander
+//   * \date 2009-03-19 some comments (Thorsten Schindler)
+//   * \date 2009-04-02 Wn / Wt / WrOC deleted (Thorsten Schindler)
+//   * \date 2009-04-05 added specific constructors for arguments double and Vec (Schindler / Zander)
+//   * \date 2012-03-14 added ContourParameterType for staggered grid and modified constructor for argument int (Cebulla)
+//   */
+//  class ContourPointData {
+//    public:
+//
+//      enum ContourParameterType { node, staggeredNode, continuum, extInterpol, ffrorigin, fixedrelativeframe };
+//
+//      /**
+//       * \brief constructor
+//       */
+//      ContourPointData() :
+//          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+//      }
+//      ContourPointData(const double &alpha_) :
+//          type(continuum), ID(0), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+//        alpha(0) = alpha_;
+//      }
+//      ContourPointData(const fmatvec::Vec2 &alpha_) :
+//          type(continuum), ID(0), alpha(alpha_), alphap(fmatvec::Vec2()) {
+//      }
+//      ContourPointData(const int &id_, const ContourParameterType type_ = node) :
+//          type(type_), ID(id_), alpha(fmatvec::Vec2()), alphap(fmatvec::Vec2()) {
+//      }
+//
+//      /**
+//       * \brief destructor
+//       */
+//      virtual ~ContourPointData() {
+//      }
+//
+//      /* GETTER / SETTER */
+//      ContourParameterType& getContourParameterType() {
+//        return type;
+//      }
+//      const ContourParameterType& getContourParameterType() const {
+//        return type;
+//      }
+//      int& getNodeNumber() {
+//        return ID;
+//      }
+//      const int& getNodeNumber() const {
+//        return ID;
+//      }
+//      void setLagrangeParameterPosition(const fmatvec::Vec2 &alpha_) {
+//        alpha = alpha_;
+//      }
+//      fmatvec::Vec2& getLagrangeParameterPosition() {
+//        return alpha;
+//      }
+//      const fmatvec::Vec2& getLagrangeParameterPosition() const {
+//        return alpha;
+//      }
+//      fmatvec::Vec2& getLagrangeParameterVelocity() {
+//        return alphap;
+//      }
+//      const fmatvec::Vec2& getLagrangeParameterVelocity() const {
+//        return alphap;
+//      }
+//      fmatvec::VecV& getInterpolationWeights() {
+//        return iWeights;
+//      }
+//      const fmatvec::VecV& getInterpolationWeights() const {
+//        return iWeights;
+//      }
+//      FloatingRelativeFrame& getFrameOfReference() {
+//        return cosy;
+//      }
+//      const FloatingRelativeFrame& getFrameOfReference() const {
+//        return cosy;
+//      }
+//      /***************************************************/
+//
+//    private:
+//      /** 
+//       * \brief type of data representation: node, continuum, interpolation (extinterpol) 
+//       */
+//      ContourParameterType type;
+//
+//      /** 
+//       * \brief ID of node or other discret interface within body -> FiniteElements
+//       */
+//      int ID;
+//
+//      /**
+//       * \brief contour parameter(s)
+//       */
+//      fmatvec::Vec2 alpha;
+//
+//      /**
+//       * \brief contour parameter(s) velocities
+//       */
+//      fmatvec::Vec2 alphap;
+//
+//      /** 
+//       * \brief interpolation weights
+//       */
+//      fmatvec::VecV iWeights;
+//
+//      /**
+//       * \brief list of nodes used in interpolation
+//       *
+//       * the (body specific) ID can be accessed using ->iPoint[NNumber]->getID();
+//       */
+//      std::vector<Point*> iPoints;
+//
+//      /**
+//       * \brief accompanying frame
+//       */
+//      FloatingRelativeFrame cosy;
+//  };
 
 }
 

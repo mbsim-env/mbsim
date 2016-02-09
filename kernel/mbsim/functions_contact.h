@@ -95,20 +95,20 @@ namespace MBSim {
        * \param point contour or general rigid contour reduced to point of reference
        * \param contour with one contour parameter
        */
-      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp() {}
+      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
-        cp.getLagrangeParameterPosition()(0) = alpha;
+        zeta(0) = alpha;
         fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt = contour->getWu(t,cp);
+        fmatvec::Vec3 Wt = contour->getWu(t,zeta);
         return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 getWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-        cp.getLagrangeParameterPosition()(0) = alpha;
-        return contour->getPosition(t,cp) - point->getFrame()->getPosition(t);
+        zeta(0) = alpha;
+        return contour->getPosition(t,zeta) - point->getFrame()->getPosition(t);
       }
       /*************************************************/
 
@@ -122,7 +122,7 @@ namespace MBSim {
       /**
        * \brief contour point data for saving old values
        */
-      ContourPointData cp;
+      fmatvec::Vec2 zeta;
   };
 
   /*!
@@ -138,15 +138,14 @@ namespace MBSim {
        * \param contour contour2s surface
        */
       FuncPairContour2sPoint(Point* point_, Contour2s *contour_) :
-          contour(contour_), point(point_), cp() {
+          contour(contour_), point(point_) {
       }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha) {  // Vec2: U and V direction
-        cp.getLagrangeParameterPosition() = alpha;
         fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt1 = contour->getWu(t,cp);
-        fmatvec::Vec3 Wt2 = contour->getWv(t,cp);
+        fmatvec::Vec3 Wt1 = contour->getWu(t,alpha);
+        fmatvec::Vec3 Wt2 = contour->getWv(t,alpha);
         fmatvec::Vec2 Wt(fmatvec::NONINIT);  // TODO:: check this?
         Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
         Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
@@ -154,8 +153,7 @@ namespace MBSim {
       }
 
       fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha) {
-        cp.getLagrangeParameterPosition() = alpha;
-        return contour->getPosition(t,cp) - point->getFrame()->getPosition(t);
+        return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
       }
       /*************************************************/
 
@@ -165,10 +163,6 @@ namespace MBSim {
        */
       Contour2s *contour;
       Point *point;
-      /**
-       * \brief contour point data for saving old values
-       */
-      ContourPointData cp;
   };
 
   /*!
@@ -189,15 +183,16 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
+        zeta(0) = alpha;
         fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt = contour->getWu(t,cp);
+        fmatvec::Vec3 Wt = contour->getWu(t,zeta);
         return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 getWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-        cp.getLagrangeParameterPosition()(0) = alpha;
-        return contour->getPosition(t,cp) - (circle->getFrame()->getPosition(t) + circle->getRadius() * contour->getWn(t,cp));
+        zeta(0) = alpha;
+        return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) + circle->getRadius() * contour->getWn(t,zeta));
       }
       /*************************************************/
 
@@ -211,7 +206,7 @@ namespace MBSim {
       /**
        * \brief contour point data for saving old values
        */
-      ContourPointData cp;
+      fmatvec::Vec2 zeta;
   };
 
   /*!
@@ -219,7 +214,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::VecV(fmatvec::VecV)> {
+  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::Vec2(fmatvec::Vec2)> {
     public:
       /**
        * \brief constructor
@@ -229,14 +224,12 @@ namespace MBSim {
       FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      fmatvec::VecV operator()(const fmatvec::VecV &alpha) {
-        cp.getLagrangeParameterPosition() = alpha;
-        return (contour->getWu(t,cp)).T() * (contour->getPosition(t,cp) - point->getFrame()->getPosition(t));
+      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha) {
+        return (contour->getWu(t,alpha)).T() * (contour->getPosition(t,alpha) - point->getFrame()->getPosition(t));
       }
 
-      fmatvec::Vec3 getWrD(const fmatvec::VecV &alpha) {
-        cp.getLagrangeParameterPosition() = alpha;
-        return contour->getPosition(t,cp) - point->getFrame()->getPosition(t);
+      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha) {
+        return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
       }
       /*************************************************/
 
@@ -246,11 +239,6 @@ namespace MBSim {
        */
       ContourInterpolation *contour;
       Point *point;
-
-      /**
-       * \brief contour point data for saving old values
-       */
-      ContourPointData cp;
   };
 
   /*!
@@ -577,15 +565,15 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
-        cp.getLagrangeParameterPosition()(0) = alpha;
+        zeta(0) = alpha;
         fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt = contour->getWu(t,cp);
+        fmatvec::Vec3 Wt = contour->getWu(t,zeta);
         return Wt.T() * Wd;
       }
 
       fmatvec::Vec3 getWrD(const double &alpha) {
-        cp.getLagrangeParameterPosition()(0) = alpha;
-        return contour->getPosition(t,cp) - (circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getWn(t,cp));
+        zeta(0) = alpha;
+        return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getWn(t,zeta));
       }
       /***************************************************/
 
@@ -599,7 +587,7 @@ namespace MBSim {
       /**
        * \brief contour point data for saving old values
        */
-      ContourPointData cp;
+      fmatvec::Vec2 zeta;
   };
 
   /*! 

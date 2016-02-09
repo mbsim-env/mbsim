@@ -63,10 +63,10 @@ namespace MBSim {
 
   void SingleContact::updatewb(double t) {
     if(gdActive[0]) {
-      wb -= getGlobalForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cpData[0].getFrameOfReference().getGyroscopicAccelerationOfTranslation(t);
-      wb += getGlobalForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cpData[1].getFrameOfReference().getGyroscopicAccelerationOfTranslation(t);
+      wb -= getGlobalForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cFrame[0]->getGyroscopicAccelerationOfTranslation(t);
+      wb += getGlobalForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cFrame[1]->getGyroscopicAccelerationOfTranslation(t);
 
-      contactKinematics->updatewb(t, wb, getGeneralizedRelativePosition(t)(0), cpData);
+      contactKinematics->updatewb(t, wb, getGeneralizedRelativePosition(t)(0), cFrame);
     }
   }
 
@@ -121,23 +121,23 @@ namespace MBSim {
   }
 
   void SingleContact::updatePositions(double t) {
-    contactKinematics->updateg(t, rrel(0), cpData);
+    contactKinematics->updateg(t, rrel(0), cFrame);
     updPos = false;
   }
 
   void SingleContact::updateVelocities(double t) {
     if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isClosed(getGeneralizedRelativePosition(t)(0), 0))) { // TODO: nicer implementation
-      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation(t).col(0);
+      Vec3 Wn = cFrame[0]->getOrientation(t).col(0);
 
-      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity(t) - cpData[0].getFrameOfReference().getVelocity(t);
+      Vec3 WvD = cFrame[1]->getVelocity(t) - cFrame[0]->getVelocity(t);
 
       vrel(0) = Wn.T() * WvD;
 
       if (getFrictionDirections()) {
         Mat3xV Wt(getFrictionDirections());
-        Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
+        Wt.set(0, cFrame[0]->getOrientation().col(1));
         if (getFrictionDirections() > 1)
-          Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));
+          Wt.set(1, cFrame[0]->getOrientation().col(2));
 
         vrel.set(Index(1,getFrictionDirections()), Wt.T() * WvD);
       }
@@ -161,16 +161,16 @@ namespace MBSim {
     if(fdf and not fdf->isSetValued())
       F += getGlobalForceDirection(t)(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(1,getFrictionDirections()))*getGeneralizedTangentialForce(t);
 
-    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
-    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * F;
+    h[j][0] -= cFrame[0]->getJacobianOfTranslation(t,j).T() * F;
+    h[j][1] += cFrame[1]->getJacobianOfTranslation(t,j).T() * F;
   }
 
   void SingleContact::updateW(double t, int j) {
     int i = fcl->isSetValued()?0:1;
     Mat3xV RF = getGlobalForceDirection(t)(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(i,i+laSize-1));
 
-    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
-    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF;
+    W[j][0] -= cFrame[0]->getJacobianOfTranslation(t,j).T() * RF;
+    W[j][1] += cFrame[1]->getJacobianOfTranslation(t,j).T() * RF;
   }
 
   void SingleContact::updateV(double t, int j) {
@@ -178,8 +178,8 @@ namespace MBSim {
       if (fdf->isSetValued()) {
         if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
           Mat3xV RF = getGlobalForceDirection(t)(Index(0,2),Index(1, getFrictionDirections()));
-          V[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())));
-          V[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())));
+          V[j][0] -= cFrame[0]->getJacobianOfTranslation(t,j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())));
+          V[j][1] += cFrame[1]->getJacobianOfTranslation(t,j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())));
         }
       }
     }
@@ -654,10 +654,10 @@ namespace MBSim {
           for (unsigned int i = 0; i < 2; i++) {
             vector<double> data;
             data.push_back(t);
-            data.push_back(cpData[i].getFrameOfReference().getPosition(t)(0));
-            data.push_back(cpData[i].getFrameOfReference().getPosition()(1));
-            data.push_back(cpData[i].getFrameOfReference().getPosition()(2));
-            Vec3 cardan = AIK2Cardan(cpData[i].getFrameOfReference().getOrientation(t));
+            data.push_back(cFrame[i]->getPosition(t)(0));
+            data.push_back(cFrame[i]->getPosition()(1));
+            data.push_back(cFrame[i]->getPosition()(2));
+            Vec3 cardan = AIK2Cardan(cFrame[i]->getOrientation(t));
             data.push_back(cardan(0));
             data.push_back(cardan(1));
             data.push_back(cardan(2));
@@ -669,9 +669,9 @@ namespace MBSim {
         vector<double> data;
         if (contactArrow) {
           data.push_back(t);
-          data.push_back(cpData[1].getFrameOfReference().getPosition(t)(0));
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
+          data.push_back(cFrame[1]->getPosition(t)(0));
+          data.push_back(cFrame[1]->getPosition()(1));
+          data.push_back(cFrame[1]->getPosition()(2));
           Vec3 F = getGlobalForceDirection(t).col(0)*getGeneralizedNormalForce(t);
           data.push_back(F(0));
           data.push_back(F(1));
@@ -682,9 +682,9 @@ namespace MBSim {
         if (frictionArrow && getFrictionDirections() > 0) { // friction force
           data.clear();
           data.push_back(t);
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(0));
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(1));
-          data.push_back(cpData[1].getFrameOfReference().getPosition()(2));
+          data.push_back(cFrame[1]->getPosition()(0));
+          data.push_back(cFrame[1]->getPosition()(1));
+          data.push_back(cFrame[1]->getPosition()(2));
           Vec3 F = getGlobalForceDirection(t)(Index(0,2),Index(1, getFrictionDirections()))*getGeneralizedTangentialForce(t);
           data.push_back(F(0));
           data.push_back(F(1));
@@ -1433,9 +1433,9 @@ namespace MBSim {
     }
     else {
       // TODO check if already computed
-      Vec3 Wn = cpData[0].getFrameOfReference().getOrientation(t).col(0);
+      Vec3 Wn = cFrame[0]->getOrientation(t).col(0);
       // TODO check if already computed
-      Vec3 WvD = cpData[1].getFrameOfReference().getVelocity(t) - cpData[0].getFrameOfReference().getVelocity(t);
+      Vec3 WvD = cFrame[1]->getVelocity(t) - cFrame[0]->getVelocity(t);
       gdInActive_(*IndInActive_) = Wn.T() * WvD;
       gInActive_(*IndInActive_) = getGeneralizedRelativePosition(t)(0);
       (*IndInActive_)++;

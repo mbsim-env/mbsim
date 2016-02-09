@@ -43,31 +43,31 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlane::updateg(double t, double &g, ContourPointData* cpData, int index) {
-    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation(t)); // data of possible contact point
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+  void ContactKinematicsPointPlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+    cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t)); // data of possible contact point
+    cFrame[ipoint]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    cFrame[ipoint]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    cFrame[ipoint]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation(false).col(0); // normal is first vector of coordinate orientation
+    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0); // normal is first vector of coordinate orientation
 
     Vec3 Wd =  point->getFrame()->getPosition(t) - plane->getFrame()->getPosition(t);
 
     g = Wn.T()*Wd; // distance
 
-    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // possible contact locations
-    cpData[iplane].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition(false) - Wn*g);
+    cFrame[ipoint]->setPosition(point->getFrame()->getPosition()); // possible contact locations
+    cFrame[iplane]->setPosition(cFrame[ipoint]->getPosition(false) - Wn*g);
   }
 
-  void ContactKinematicsPointPlane::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
+  void ContactKinematicsPointPlane::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     if(wb.size()) { // check whether contact is closed
 
-      Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation(t).col(2); // second tangential vector in contact
-      Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0); // normal in contact
-      Vec3 u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1); // first tangential vector in contact
-      Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity(t); // velocity of possible plane contact
-      Vec3 vC2 = cpData[ipoint].getFrameOfReference().getVelocity(t); // velocity of point
-      Vec3 Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity(t); // angular velocity of possible plane contact
+      Vec3 v1 = cFrame[iplane]->getOrientation(t).col(2); // second tangential vector in contact
+      Vec3 n1 = cFrame[iplane]->getOrientation().col(0); // normal in contact
+      Vec3 u1 = cFrame[iplane]->getOrientation().col(1); // first tangential vector in contact
+      Vec3 vC1 = cFrame[iplane]->getVelocity(t); // velocity of possible plane contact
+      Vec3 vC2 = cFrame[ipoint]->getVelocity(t); // velocity of point
+      Vec3 Om1 = cFrame[iplane]->getAngularVelocity(t); // angular velocity of possible plane contact
 
       Vec3 &s1 = u1;
       Vec3 &t1 = v1;

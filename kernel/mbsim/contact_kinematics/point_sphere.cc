@@ -34,7 +34,7 @@ namespace MBSim {
     sphere = static_cast<Sphere*>(contour[1]);
   }
 
-  void ContactKinematicsPointSphere::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointSphere::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     Vec3 Wd = sphere->getFrame()->getPosition(t) - point->getFrame()->getPosition(t);
     double l = nrm2(Wd);
     Wd = Wd/l;
@@ -51,14 +51,14 @@ namespace MBSim {
       t_(2) = 0.0;
     }
     t_ = t_/nrm2(t_);
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, Wd);
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(0, -cpData[ipoint].getFrameOfReference().getOrientation(false).col(0));
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, t_);
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(1, -cpData[ipoint].getFrameOfReference().getOrientation(false).col(1));
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, crossProduct(Wd,t_));
-    cpData[isphere].getFrameOfReference().getOrientation(false).set(2, cpData[ipoint].getFrameOfReference().getOrientation(false).col(2));
-    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
-    cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - sphere->getRadius() * Wd);
+    cFrame[ipoint]->getOrientation(false).set(0, Wd);
+    cFrame[isphere]->getOrientation(false).set(0, -cFrame[ipoint]->getOrientation(false).col(0));
+    cFrame[ipoint]->getOrientation(false).set(1, t_);
+    cFrame[isphere]->getOrientation(false).set(1, -cFrame[ipoint]->getOrientation(false).col(1));
+    cFrame[ipoint]->getOrientation(false).set(2, crossProduct(Wd,t_));
+    cFrame[isphere]->getOrientation(false).set(2, cFrame[ipoint]->getOrientation(false).col(2));
+    cFrame[ipoint]->setPosition(point->getFrame()->getPosition());
+    cFrame[isphere]->setPosition(sphere->getFrame()->getPosition() - sphere->getRadius() * Wd);
   }
 
 }

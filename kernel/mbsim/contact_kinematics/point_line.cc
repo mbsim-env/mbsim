@@ -40,29 +40,29 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointLine::updateg(double t, double &g, ContourPointData *cpData, int index) {
-    cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation(t));
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
-    cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
+  void ContactKinematicsPointLine::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+    cFrame[iline]->setOrientation(line->getFrame()->getOrientation(t));
+    cFrame[ipoint]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
+    cFrame[ipoint]->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
+    cFrame[ipoint]->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cpData[iline].getFrameOfReference().getOrientation(false).col(0);
+    Vec3 Wn = cFrame[iline]->getOrientation(false).col(0);
 
     Vec3 Wd =  point->getFrame()->getPosition(t) - line->getFrame()->getPosition(t);
 
     g = Wn.T()*Wd;
 
-    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
-    cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition(false) - Wn*g);
+    cFrame[ipoint]->setPosition(point->getFrame()->getPosition());
+    cFrame[iline]->setPosition(cFrame[ipoint]->getPosition(false) - Wn*g);
   }
 
-  void ContactKinematicsPointLine::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
-    Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation(t).col(0);
-    Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
-    Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity(t);
-    Vec3 vC2 = cpData[ipoint].getFrameOfReference().getVelocity(t);
-    Vec3 Om1 = cpData[iline].getFrameOfReference().getAngularVelocity(t);
-    // Vec3 Om2 = cpData[ipoint].getFrameOfReference().getAngularVelocity();
+  void ContactKinematicsPointLine::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+    Vec3 n1 = cFrame[iline]->getOrientation(t).col(0);
+    Vec3 u1 = cFrame[iline]->getOrientation().col(1);
+    Vec3 vC1 = cFrame[iline]->getVelocity(t);
+    Vec3 vC2 = cFrame[ipoint]->getVelocity(t);
+    Vec3 Om1 = cFrame[iline]->getAngularVelocity(t);
+    // Vec3 Om2 = cFrame[ipoint]->getAngularVelocity();
 
     double sd1 = u1.T()*(vC2 - vC1); 
 

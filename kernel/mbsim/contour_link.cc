@@ -34,7 +34,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  ContourLink::ContourLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updR(true) {
+  ContourLink::ContourLink(const std::string &name) : Link(name), cFrame(2), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updR(true) {
     contour[0] = NULL;
     contour[1] = NULL;
   }
@@ -144,11 +144,11 @@ namespace MBSim {
   }
 
   void ContourLink::updateForceDirections(double t) {
-    DF.set(0,cpData[0].getFrameOfReference().getOrientation(t).col(0));
+    DF.set(0,cFrame[0]->getOrientation(t).col(0));
     if (DF.cols()>1) {
-      DF.set(1, cpData[0].getFrameOfReference().getOrientation().col(1));
+      DF.set(1, cFrame[0]->getOrientation().col(1));
       if (DF.cols()>2)
-        DF.set(2, cpData[0].getFrameOfReference().getOrientation().col(2));
+        DF.set(2, cFrame[0]->getOrientation().col(2));
     }
     updFD = false;
   }
@@ -172,21 +172,17 @@ namespace MBSim {
   void ContourLink::init(InitStage stage) {
     if(stage==resize) {
       Link::init(stage);
-      cpData[0].getFrameOfReference().setParent(this);
-      cpData[1].getFrameOfReference().setParent(this);
-      cpData[0].getFrameOfReference().setFrameOfReference(contour[0]->getFrameOfReference());
-      cpData[1].getFrameOfReference().setFrameOfReference(contour[1]->getFrameOfReference());
-
-      cpData[0].getFrameOfReference().setName("0");
-      cpData[1].getFrameOfReference().setName("1");
-
-      cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(0), 0);
-      cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(1), 1);
-      cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(0), 0);
-      cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(1), 1);
-
-      cpData[0].getFrameOfReference().init(stage);
-      cpData[1].getFrameOfReference().init(stage);
+      
+      cFrame[0] = contour[0]->createContourFrame("P0");
+      cFrame[1] = contour[1]->createContourFrame("P1");
+      cFrame[0]->setParent(this);
+      cFrame[1]->setParent(this);
+      cFrame[0]->sethSize(contour[0]->gethSize(0), 0);
+      cFrame[0]->sethSize(contour[0]->gethSize(1), 1);
+      cFrame[1]->sethSize(contour[1]->gethSize(0), 0);
+      cFrame[1]->sethSize(contour[1]->gethSize(1), 1);
+      cFrame[0]->init(stage);
+      cFrame[1]->init(stage);
     }
     else if(stage==unknownStage) {
       Link::init(stage);
@@ -235,8 +231,10 @@ namespace MBSim {
     updF = true;
     updM = true;
     updR = true;
-    cpData[0].getFrameOfReference().resetUpToDate();
-    cpData[1].getFrameOfReference().resetUpToDate();
+    //cpData[0].getFrameOfReference().resetUpToDate();
+    //cpData[1].getFrameOfReference().resetUpToDate();
+    cFrame[0]->resetUpToDate();
+    cFrame[1]->resetUpToDate();
   }
 
 }

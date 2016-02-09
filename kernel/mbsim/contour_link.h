@@ -87,7 +87,7 @@ namespace MBSim {
         contour[1] = contour1;
       }
 
-      const ContourPointData& getcpData(int i) const { return cpData[i]; }
+//      const ContourPointData& getcpData(int i) const { return cpData[i]; }
 //      const ContourPointData* getcpData() const { return cpData; }
       Contour* getContour(int i) { return contour[i]; }
 
@@ -127,7 +127,9 @@ namespace MBSim {
 
       Contour* contour[2];
 
-      ContourPointData cpData[2];
+//      ContourPointData cpData[2];
+
+      std::vector<Frame*> cFrame;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;

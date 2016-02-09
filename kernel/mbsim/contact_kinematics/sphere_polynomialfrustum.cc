@@ -81,7 +81,7 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsSpherePolynomialFrustum::updateg(double t, double & g, ContourPointData * cpData, int index) {
+  void ContactKinematicsSpherePolynomialFrustum::updateg(double t, double & g, std::vector<Frame*> &cFrame, int index) {
     /*Geometry*/
     //sphere center in coordinates of frustum
     Vec3 rF = frustum->getFrame()->getPosition(t);
@@ -111,26 +111,25 @@ namespace MBSim {
         if(x(0) > 0 and x(0) < frustum->getHeight()) {
           double phi = ArcTan(COG_S(1), COG_S(2));
 
-          Vec2 zeta1(NONINIT);
-          zeta1(0) = x(0);
-          zeta1(1) = phi;
-          cpData[ifrustum].setLagrangeParameterPosition(zeta1);
+          Vec2 zeta(NONINIT);
+          zeta(0) = x(0);
+          zeta(1) = phi;
 
           //Orientation
-          cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, frustum->getWn(t,cpData[ifrustum]));
-          cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, frustum->getWu(t,cpData[ifrustum]));
-          cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, frustum->getWv(t,cpData[ifrustum]));
+          cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(t,zeta));
+          cFrame[ifrustum]->getOrientation(false).set(1, frustum->getWu(t,zeta));
+          cFrame[ifrustum]->getOrientation(false).set(2, frustum->getWv(t,zeta));
 
-          cpData[isphere].getFrameOfReference().getOrientation(false).set(0, - cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
-          cpData[isphere].getFrameOfReference().getOrientation(false).set(1, - cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
-          cpData[isphere].getFrameOfReference().getOrientation(false).set(2, cpData[ifrustum].getFrameOfReference().getOrientation(false).col(2));
+          cFrame[isphere]->getOrientation(false).set(0, - cFrame[ifrustum]->getOrientation(false).col(0));
+          cFrame[isphere]->getOrientation(false).set(1, - cFrame[ifrustum]->getOrientation(false).col(1));
+          cFrame[isphere]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
 
           //Position
-          cpData[ifrustum].getFrameOfReference().setPosition(frustum->getPosition(t,cpData[ifrustum]));
-          cpData[isphere].getFrameOfReference().setPosition(rS + cpData[isphere].getFrameOfReference().getOrientation(false).col(0) * sphere->getRadius());
+          cFrame[ifrustum]->setPosition(frustum->getPosition(t,zeta));
+          cFrame[isphere]->setPosition(rS + cFrame[isphere]->getOrientation(false).col(0) * sphere->getRadius());
 
           //Distance
-          g = cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0).T() * (cpData[isphere].getFrameOfReference().getPosition(false) - cpData[ifrustum].getFrameOfReference().getPosition(false));
+          g = cFrame[ifrustum]->getOrientation(false).col(0).T() * (cFrame[isphere]->getPosition(false) - cFrame[ifrustum]->getPosition(false));
 
           return;
         }

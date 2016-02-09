@@ -36,35 +36,35 @@ namespace MBSimFlexibleBody {
 
   MBSim::ContactKinematics* findContactPairingFlexible(const char *contour0, const char *contour1) {
 
-    if(strcmp(contour0, "CircleHollow")==0 && strcmp(contour1, "CylinderFlexible")==0)
-      return new ContactKinematicsCircleHollowCylinderFlexible;
-
-    //else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "CylinderFlexible")==0 )
-      //return new ContactKinematicsPointCylinderFlexible;
-
-    else if(strcmp(contour0, "CircleSolid")==0 && strcmp(contour1, "FlexibleBand")==0)
-      return new ContactKinematicsCircleSolidFlexibleBand;
-    
-    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
-      return new MBSim::ContactKinematicsPointContour1s;
-      //return new ContactKinematicsPointFlexibleBand;
-    
-    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sFlexible")==0)
-      return new MBSim::ContactKinematicsPointContour1s;
-
-    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sNeutralFactory")==0)
-          return new MBSim::ContactKinematicsPointContour1s;
-
-    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour2sNeutralFactory")==0)
-          return new MBSimFlexibleBody::ContactKinematicsPointContour2s;
-
-    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "NurbsDisk2s")==0)
-      return new ContactKinematicsPointNurbsDisk2s;  
-
-    else if(strcmp(contour0, "Circle")==0 && strcmp(contour1, "NurbsDisk2s")==0)
-      return new ContactKinematicsCircleNurbsDisk2s;  
-
-    else 
+//    if(strcmp(contour0, "CircleHollow")==0 && strcmp(contour1, "CylinderFlexible")==0)
+//      return new ContactKinematicsCircleHollowCylinderFlexible;
+//
+//    //else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "CylinderFlexible")==0 )
+//      //return new ContactKinematicsPointCylinderFlexible;
+//
+//    else if(strcmp(contour0, "CircleSolid")==0 && strcmp(contour1, "FlexibleBand")==0)
+//      return new ContactKinematicsCircleSolidFlexibleBand;
+//    
+//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
+//      return new MBSim::ContactKinematicsPointContour1s;
+//      //return new ContactKinematicsPointFlexibleBand;
+//    
+//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sFlexible")==0)
+//      return new MBSim::ContactKinematicsPointContour1s;
+//
+//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sNeutralFactory")==0)
+//          return new MBSim::ContactKinematicsPointContour1s;
+//
+//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour2sNeutralFactory")==0)
+//          return new MBSimFlexibleBody::ContactKinematicsPointContour2s;
+//
+//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "NurbsDisk2s")==0)
+//      return new ContactKinematicsPointNurbsDisk2s;  
+//
+//    else if(strcmp(contour0, "Circle")==0 && strcmp(contour1, "NurbsDisk2s")==0)
+//      return new ContactKinematicsCircleNurbsDisk2s;  
+//
+//    else 
       return 0;
   }
 }

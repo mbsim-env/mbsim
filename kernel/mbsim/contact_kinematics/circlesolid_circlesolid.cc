@@ -35,47 +35,45 @@ namespace MBSim {
     circle1 = static_cast<CircleSolid*>(contour[1]);
   }
 
-  void ContactKinematicsCircleSolidCircleSolid::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleSolidCircleSolid::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     Vec3 WrD = circle0->getFrame()->getPosition(t) - circle1->getFrame()->getPosition(t);
-    cpData[icircle1].getFrameOfReference().getOrientation(false).set(0, WrD/nrm2(WrD));
-    cpData[icircle0].getFrameOfReference().getOrientation(false).set(0, -cpData[icircle1].getFrameOfReference().getOrientation(false).col(0));
-    cpData[icircle0].getFrameOfReference().getOrientation(false).set(2, circle0->getFrame()->getOrientation().col(2));
-    cpData[icircle1].getFrameOfReference().getOrientation(false).set(2, circle1->getFrame()->getOrientation().col(2));
-    cpData[icircle0].getFrameOfReference().getOrientation(false).set(1, crossProduct(cpData[icircle0].getFrameOfReference().getOrientation(false).col(2),cpData[icircle0].getFrameOfReference().getOrientation(false).col(0)));
-    cpData[icircle1].getFrameOfReference().getOrientation(false).set(1, -cpData[icircle0].getFrameOfReference().getOrientation(false).col(1));
-    cpData[icircle0].getFrameOfReference().setPosition(circle0->getFrame()->getPosition() + cpData[icircle0].getFrameOfReference().getOrientation(false).col(0)*circle0->getRadius());
-    cpData[icircle1].getFrameOfReference().setPosition(circle1->getFrame()->getPosition() + cpData[icircle1].getFrameOfReference().getOrientation(false).col(0)*circle1->getRadius());
+    cFrame[icircle1]->getOrientation(false).set(0, WrD/nrm2(WrD));
+    cFrame[icircle0]->getOrientation(false).set(0, -cFrame[icircle1]->getOrientation(false).col(0));
+    cFrame[icircle0]->getOrientation(false).set(2, circle0->getFrame()->getOrientation().col(2));
+    cFrame[icircle1]->getOrientation(false).set(2, circle1->getFrame()->getOrientation().col(2));
+    cFrame[icircle0]->getOrientation(false).set(1, crossProduct(cFrame[icircle0]->getOrientation(false).col(2),cFrame[icircle0]->getOrientation(false).col(0)));
+    cFrame[icircle1]->getOrientation(false).set(1, -cFrame[icircle0]->getOrientation(false).col(1));
+    cFrame[icircle0]->setPosition(circle0->getFrame()->getPosition() + cFrame[icircle0]->getOrientation(false).col(0)*circle0->getRadius());
+    cFrame[icircle1]->setPosition(circle1->getFrame()->getPosition() + cFrame[icircle1]->getOrientation(false).col(0)*circle1->getRadius());
 
-    g = cpData[icircle1].getFrameOfReference().getOrientation(false).col(0).T()*WrD - circle0->getRadius() - circle1->getRadius();
+    g = cFrame[icircle1]->getOrientation(false).col(0).T()*WrD - circle0->getRadius() - circle1->getRadius();
   }
       
-  void ContactKinematicsCircleSolidCircleSolid::updatewb(double t, Vec &wb, double g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidCircleSolid::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
-    const Vec3 KrPC1 = circle0->getFrame()->getOrientation(t).T()*(cpData[icircle0].getFrameOfReference().getPosition(t) - circle0->getFrame()->getPosition(t));
+    const Vec3 KrPC1 = circle0->getFrame()->getOrientation(t).T()*(cFrame[icircle0]->getPosition(t) - circle0->getFrame()->getPosition(t));
     Vec2 zeta1;
     zeta1(0)=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
-    cpData[icircle0].setLagrangeParameterPosition(zeta1);
-    const Vec3 n1 = cpData[icircle0].getFrameOfReference().getOrientation().col(0); //crossProduct(s1, t1);
-    const Vec3 u1 = circle0->getWu(t,cpData[icircle0]);
-    const Vec3 R1 = circle0->getWs(t,cpData[icircle0]);
-    const Vec3 N1 = circle0->getParDer1Wn(t,cpData[icircle0]);
-    const Vec3 U1 = circle0->getParDer1Wu(t,cpData[icircle0]);
+    const Vec3 n1 = cFrame[icircle0]->getOrientation().col(0); //crossProduct(s1, t1);
+    const Vec3 u1 = circle0->getWu(t,zeta1);
+    const Vec3 R1 = circle0->getWs(t,zeta1);
+    const Vec3 N1 = circle0->getParDer1Wn(t,zeta1);
+    const Vec3 U1 = circle0->getParDer1Wu(t,zeta1);
 
-    const Vec3 KrPC2 = circle1->getFrame()->getOrientation(t).T()*(cpData[icircle1].getFrameOfReference().getPosition(t) - circle1->getFrame()->getPosition(t));
+    const Vec3 KrPC2 = circle1->getFrame()->getOrientation(t).T()*(cFrame[icircle1]->getPosition(t) - circle1->getFrame()->getPosition(t));
     Vec2 zeta2;
     zeta2(0)=(KrPC2(1)>0) ? acos(KrPC2(0)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(0)/nrm2(KrPC2));
-    cpData[icircle1].setLagrangeParameterPosition(zeta2);
-    const Vec3 n2 = cpData[icircle1].getFrameOfReference().getOrientation().col(0); //crossProduct(s1, t1);
-    const Vec3 u2 = circle1->getWu(t,cpData[icircle1]);
-    const Vec3 R2 = circle1->getWs(t,cpData[icircle1]);
-    const Vec3 U2 = circle1->getParDer1Wu(t,cpData[icircle1]);
+    const Vec3 n2 = cFrame[icircle1]->getOrientation().col(0); //crossProduct(s1, t1);
+    const Vec3 u2 = circle1->getWu(t,zeta2);
+    const Vec3 R2 = circle1->getWs(t,zeta2);
+    const Vec3 U2 = circle1->getParDer1Wu(t,zeta2);
     const Vec3 v2 = crossProduct(n2, u2);
 
-    const Vec3 vC1 = cpData[icircle0].getFrameOfReference().getVelocity();
-    const Vec3 vC2 = cpData[icircle1].getFrameOfReference().getVelocity();
-    const Vec3 Om1 = cpData[icircle0].getFrameOfReference().getAngularVelocity();
-    const Vec3 Om2 = cpData[icircle1].getFrameOfReference().getAngularVelocity();
+    const Vec3 vC1 = cFrame[icircle0]->getVelocity();
+    const Vec3 vC2 = cFrame[icircle1]->getVelocity();
+    const Vec3 Om1 = cFrame[icircle0]->getAngularVelocity();
+    const Vec3 Om2 = cFrame[icircle1]->getAngularVelocity();
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;

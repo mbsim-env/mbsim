@@ -32,43 +32,43 @@ namespace MBSim {
     iPoints[n] = point_;
   }
 
-  VecV ContourInterpolation::computePointWeights(const VecV &s) {
-    VecV weights(numberOfPoints);
-    for(int i=0;i<numberOfPoints; i++) weights(i) = computePointWeight(s,i);
-    return weights;
-  }
-
-  Vec3 ContourInterpolation::getWrOC(const ContourPointData &cp) {
-//    const Vec2 &s = cp.getLagrangeParameterPosition();
-    Vec3 r;
-    throw;
-//    for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getReferencePosition();
-    return r;
-  }
-
-  Vec3 ContourInterpolation::computeWvC(const ContourPointData &cp) {
-//    const Vec2 &s = cp.getLagrangeParameterPosition();
-    Vec3 v;
-    throw;
-//    for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getReferenceVelocity();
-    return v;
-  }
-
-  Mat3xV ContourInterpolation::computeWt(const ContourPointData &cp) {
-//    const Vec2 &s = cp.getLagrangeParameterPosition();
-    Mat3xV t(contourParameters);
-    throw;
-
-    for(int i=0; i<contourParameters; i++) {
-      Vec3 tTemp = t.col(i);
- //     for(int j=0; j<numberOfPoints;j++) tTemp += computePointWeight(s,j,i) * iPoints[j]->getReferencePosition();
-      tTemp /= nrm2(tTemp);
-    }   
-    return t;
-  }
-
-  Vec3 ContourInterpolation::getWrOC(const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return getWrOC(cp);}
-  Vec3 ContourInterpolation::computeWvC (const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
-  Mat3xV ContourInterpolation::computeWt  (const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return computeWt  (cp);}
-  Vec3 ContourInterpolation::computeWn  (const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return computeWn  (cp);}
+//  VecV ContourInterpolation::computePointWeights(const VecV &s) {
+//    VecV weights(numberOfPoints);
+//    for(int i=0;i<numberOfPoints; i++) weights(i) = computePointWeight(s,i);
+//    return weights;
+//  }
+//
+//  Vec3 ContourInterpolation::getWrOC(const ContourPointData &cp) {
+////    const Vec2 &s = cp.getLagrangeParameterPosition();
+//    Vec3 r;
+//    throw;
+////    for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getReferencePosition();
+//    return r;
+//  }
+//
+//  Vec3 ContourInterpolation::computeWvC(const ContourPointData &cp) {
+////    const Vec2 &s = cp.getLagrangeParameterPosition();
+//    Vec3 v;
+//    throw;
+////    for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getReferenceVelocity();
+//    return v;
+//  }
+//
+//  Mat3xV ContourInterpolation::computeWt(const ContourPointData &cp) {
+////    const Vec2 &s = cp.getLagrangeParameterPosition();
+//    Mat3xV t(contourParameters);
+//    throw;
+//
+//    for(int i=0; i<contourParameters; i++) {
+//      Vec3 tTemp = t.col(i);
+// //     for(int j=0; j<numberOfPoints;j++) tTemp += computePointWeight(s,j,i) * iPoints[j]->getReferencePosition();
+//      tTemp /= nrm2(tTemp);
+//    }   
+//    return t;
+//  }
+//
+//  Vec3 ContourInterpolation::getWrOC(const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return getWrOC(cp);}
+//  Vec3 ContourInterpolation::computeWvC(const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
+//  Mat3xV ContourInterpolation::computeWt(const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return computeWt  (cp);}
+//  Vec3 ContourInterpolation::computeWn(const Vec2& s) {ContourPointData cp; cp.getContourParameterType()=ContourPointData::extInterpol;cp.getLagrangeParameterPosition()=s; return computeWn  (cp);}
 }

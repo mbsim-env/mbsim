@@ -44,14 +44,14 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidPlane::updateg(double t, double &g, ContourPointData *cpData, int index) {
-    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation(t));
-    cpData[icircle].getFrameOfReference().getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    cpData[icircle].getFrameOfReference().getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    cpData[icircle].getFrameOfReference().getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+  void ContactKinematicsCircleSolidPlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+    cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t));
+    cFrame[icircle]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    cFrame[icircle]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
+    cFrame[icircle]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
     Vec3 Wd;
-    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation(false).col(0);
+    Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
     Vec3 Wb = circlesolid->getFrame()->getOrientation(t).col(2);
     double t_EC = Wn.T()*Wb;
     if(t_EC>0) {
@@ -67,8 +67,8 @@ namespace MBSim {
       Wd =  (circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC) - plane->getFrame()->getPosition();
     }
     g = Wn.T()*Wd;
-    cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
-    cpData[iplane].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition(false) - Wn*g);
+    cFrame[icircle]->setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
+    cFrame[iplane]->setPosition(cFrame[icircle]->getPosition(false) - Wn*g);
   }
 
 }

@@ -49,16 +49,16 @@ namespace MBSim {
      funcCrPC=NULL;
   }
 
-  Vec3 Contour1sAnalytical::getKrPS(ContourPointData &cp) {
-    return (*funcCrPC)(cp.getLagrangeParameterPosition()(0));
+  Vec3 Contour1sAnalytical::getKrPS(const fmatvec::Vec2 &zeta) {
+    return (*funcCrPC)(zeta(0));
   }
 
-  Vec3 Contour1sAnalytical::getKs(ContourPointData &cp) {
-    return funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
+  Vec3 Contour1sAnalytical::getKs(const fmatvec::Vec2 &zeta) {
+    return funcCrPC->parDer(zeta(0));
   }
 
-  Vec3 Contour1sAnalytical::getParDer1Ks(ContourPointData &cp) {
-    return funcCrPC->parDerParDer(cp.getLagrangeParameterPosition()(0));
+  Vec3 Contour1sAnalytical::getParDer1Ks(const fmatvec::Vec2 &zeta) {
+    return funcCrPC->parDerParDer(zeta(0));
   }
 
   void Contour1sAnalytical::init(InitStage stage) {
@@ -126,6 +126,12 @@ namespace MBSim {
       Contour1s::init(stage);
   }
 
+  Frame* Contour1sAnalytical::createContourFrame(const string &name) const {
+    FloatingRelativeFrame *frame = new FloatingRelativeFrame(name);      
+    frame->setFrameOfReference(R);
+    return frame;
+  }
+
   void Contour1sAnalytical::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -147,9 +153,9 @@ namespace MBSim {
     }
   }
       
-  double Contour1sAnalytical::getCurvature(ContourPointData &cp) {
-    const fmatvec::Vec3 rs = funcCrPC->parDer(cp.getLagrangeParameterPosition()(0));
-    return nrm2(crossProduct(rs,funcCrPC->parDerParDer(cp.getLagrangeParameterPosition()(0))))/pow(nrm2(rs),3);
+  double Contour1sAnalytical::getCurvature(const fmatvec::Vec2 &zeta) {
+    const fmatvec::Vec3 rs = funcCrPC->parDer(zeta(0));
+    return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
   }
 
   void Contour1sAnalytical::initializeUsingXML(DOMElement * element) {

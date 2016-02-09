@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
       virtual void updateM(double t, int k=0);
       virtual void updatedhdz(double t);
 //      virtual void updateStateDependentVariables(double t);
-//      virtual void updateJacobians(double t, int k=0);
+      virtual void updateJacobians(double t, int k=0);
       virtual fmatvec::Vec3 getPosition(double t, MBSim::ContourPointData &cp) = 0;
       virtual fmatvec::Vec3 getWu(double t, MBSim::ContourPointData &cp) = 0;
 

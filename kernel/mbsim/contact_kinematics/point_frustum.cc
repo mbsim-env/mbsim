@@ -45,7 +45,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointFrustum::updateg(double t, double &g, ContourPointData* cpData, int index) {
+  void ContactKinematicsPointFrustum::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     double eps = 5.e-2; // tolerance for rough contact description
     Vec3 Wd = point->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t); // difference vector of Point and Frustum basis point in inertial FR
     Vec3 Wa = frustum->getFrame()->getOrientation(t).col(1); // (height) axis in inertial FR
@@ -67,35 +67,35 @@ namespace MBSim {
 
         Vec3 b = Wd-s*Wa;
         b /= d;
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0,  cos(phi)*b - sin(phi)*Wa);
-        cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+        cFrame[ifrustum]->getOrientation(false).set(0,  cos(phi)*b - sin(phi)*Wa);
+        cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
         g = (d-r_h)*cos(phi);
       }
       else { // contact on inner surface
         double  phi = atan((r(1) - r(0))/h); // half cone angle
         Vec3 b = Wd-s*Wa;
         b /= d;
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(0, sin(phi)*Wa - cos(phi)*b);
-        cpData[ipoint].getFrameOfReference().getOrientation(false).set(0, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0));
+        cFrame[ifrustum]->getOrientation(false).set(0, sin(phi)*Wa - cos(phi)*b);
+        cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
         g = (r_h-d)*cos(phi);
       }
 
       //Set positions
-      cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
-      cpData[ifrustum].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition(false) + cpData[ipoint].getFrameOfReference().getOrientation(false).col(0)*g);
+      cFrame[ipoint]->setPosition(point->getFrame()->getPosition());
+      cFrame[ifrustum]->setPosition(cFrame[ipoint]->getPosition(false) + cFrame[ipoint]->getOrientation(false).col(0)*g);
 
       /*Set tangential (=friction) directions*/
       // radial direction
       if(outCont)
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, (Wa + sin(phi)*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0))/cos(phi));
+        cFrame[ifrustum]->getOrientation(false).set(1, (Wa + sin(phi)*cFrame[ifrustum]->getOrientation(false).col(0))/cos(phi));
       else
-        cpData[ifrustum].getFrameOfReference().getOrientation(false).set(1, (Wa - sin(phi)*cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0))/cos(phi));
+        cFrame[ifrustum]->getOrientation(false).set(1, (Wa - sin(phi)*cFrame[ifrustum]->getOrientation(false).col(0))/cos(phi));
 
-      cpData[ipoint].getFrameOfReference().getOrientation(false).set(1, -cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1));
+      cFrame[ipoint]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
 
       //azimuthal
-      cpData[ifrustum].getFrameOfReference().getOrientation(false).set(2, crossProduct(cpData[ifrustum].getFrameOfReference().getOrientation(false).col(0),cpData[ifrustum].getFrameOfReference().getOrientation(false).col(1)));
-      cpData[ipoint].getFrameOfReference().getOrientation(false).set(2, cpData[ifrustum].getFrameOfReference().getOrientation(false).col(2));
+      cFrame[ifrustum]->getOrientation(false).set(2, crossProduct(cFrame[ifrustum]->getOrientation(false).col(0),cFrame[ifrustum]->getOrientation(false).col(1)));
+      cFrame[ipoint]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
     }
   }
 
