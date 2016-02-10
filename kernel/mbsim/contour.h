@@ -82,7 +82,7 @@ namespace MBSim {
       /* GETTER / SETTER */
       Frame* getFrame() { return R; }
       Frame* getFrameOfReference() { return R; }
-      virtual Frame* createContourFrame(const std::string &name="P") const;
+      virtual Frame* createContourFrame(const std::string &name="P");
 
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int gethInd(int i=0) const { return hInd[i]; }
@@ -126,11 +126,56 @@ namespace MBSim {
         return 0;
       }
 
-       /**
+      /**
        * \return position in world frame
        * \param contour position
        */
-     virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(Contour::getVelocity): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(Contour::getAngularVelocity): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getAcceleration(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(Contour::getAcceleration): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getAngularAcceleration(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(Contour::getAngularAcceleration): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j=0) {
+        THROW_MBSIMERROR("(Contour::getJacobianOfTranslation): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j=0) {
+        THROW_MBSIMERROR("(Contour::getJacobianOfRotation): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::MatV getJacobianOfDeformation(double t, const fmatvec::Vec2 &zeta, int j=0) {
+        THROW_MBSIMERROR("(Contour::getJacobianOfDeformation): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getGyroscopicAccelerationOfTranslation(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(Contour::getGyroscopicAccelerationOfTranslation): Not implemented.");
+        return 0;
+      }
+
+      virtual fmatvec::Vec3 getGyroscopicAccelerationOfRotation(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(Contour::getGyroscopicAccelerationOfRotation): Not implemented.");
+        return 0;
+      }
 
       /**
        * \return first tangent in world frame
@@ -299,7 +344,7 @@ namespace MBSim {
 
       virtual ~RigidContour();
 
-      Frame* createContourFrame(const std::string &name="P") const;
+      Frame* createContourFrame(const std::string &name="P");
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "RigidContour"; }
@@ -319,14 +364,14 @@ namespace MBSim {
         return openMBVRigidBody;
       }
 
-       void setOpenMBVRigidBody(const boost::shared_ptr<OpenMBV::RigidBody> &ombvBody) {
+      void setOpenMBVRigidBody(const boost::shared_ptr<OpenMBV::RigidBody> &ombvBody) {
         openMBVRigidBody = ombvBody;
       }
 #endif
 
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-       boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
+      boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
 #endif
 
   };

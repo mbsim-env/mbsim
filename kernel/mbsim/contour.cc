@@ -108,7 +108,7 @@ namespace MBSim {
       Element::init(stage);
   }
 
-  Frame* Contour::createContourFrame(const string &name) const {
+  Frame* Contour::createContourFrame(const string &name) {
     return new Frame(name);
   }
 
@@ -272,7 +272,7 @@ namespace MBSim {
       Contour::init(stage);
   }
   
-  Frame* RigidContour::createContourFrame(const string &name) const {
+  Frame* RigidContour::createContourFrame(const string &name) {
     FloatingRelativeFrame *frame = new FloatingRelativeFrame(name);      
     frame->setFrameOfReference(R);
     return frame;

@@ -126,7 +126,7 @@ namespace MBSim {
       Contour1s::init(stage);
   }
 
-  Frame* Contour1sAnalytical::createContourFrame(const string &name) const {
+  Frame* Contour1sAnalytical::createContourFrame(const string &name) {
     FloatingRelativeFrame *frame = new FloatingRelativeFrame(name);      
     frame->setFrameOfReference(R);
     return frame;

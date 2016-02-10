@@ -25,8 +25,6 @@
 
 namespace MBSim {
 
-  class ContourPointData;
-
 /*!
    * \brief discretization interface for flexible systems
    * \author Thorsten Schindler
@@ -122,14 +120,14 @@ namespace MBSim {
        * \param generalised positions
        * \param contour location
        */
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const ContourPointData &data) = 0;
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const fmatvec::Vec2 &zeta) = 0;
 
       /*!
        * \brief compute orientation of contour in physical representation
        * \param generalised coordiantes
        * \param contour location
        */
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const ContourPointData &data) = 0;
+      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const fmatvec::Vec2 &zeta) = 0;
 
       /*!
        * \brief compute translational velocity of contour in physical representation
@@ -137,7 +135,7 @@ namespace MBSim {
        * \param generalised velocities
        * \param contour location
        */
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const ContourPointData &data) = 0;
+      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const fmatvec::Vec2 &zeta) = 0;
 
       /*!
        * \brief compute angular velocity of contour in physical representation
@@ -145,14 +143,14 @@ namespace MBSim {
        * \param generalised velocities
        * \param contour location
        */
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const ContourPointData &data) = 0;
+      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const fmatvec::Vec2 &zeta) = 0;
 
       /*!
        * \brief compute Jacobian of minimal representation regarding physical representation
        * \param generalised positions
        * \param contour location
        */
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& q,const ContourPointData &data) = 0;
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& q, const fmatvec::Vec2 &zeta) = 0;
   };
 
 }
