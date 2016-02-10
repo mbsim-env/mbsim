@@ -90,6 +90,7 @@ namespace MBSim {
 //      const ContourPointData& getcpData(int i) const { return cpData[i]; }
 //      const ContourPointData* getcpData() const { return cpData; }
       Contour* getContour(int i) { return contour[i]; }
+      Frame* getContourFrame(int i) { return cFrame[i]; }
 
       void resetUpToDate();
       virtual void updateForceDirections(double t);

@@ -201,7 +201,7 @@ namespace MBSim {
 
       if (influenceFunctions.count(contourPair)) { //If there is a function, there is a coupling between these contours
         InfluenceFunction *fct = influenceFunctions[contourPair];
-        pair<Contour*, ContourPointData> contInfo(contour, contacts[contactIndex.first][contactIndex.second].getcpData(i));
+        pair<Contour*, Frame*> contInfo(contour, contacts[contactIndex.first][contactIndex.second].getContourFrame(i));
         //        Vec2 lagrangeParameter = contour->getLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
 
         //        if (DEBUGLEVEL >= 3) {
@@ -240,8 +240,8 @@ namespace MBSim {
           InfluenceFunction *fct = influenceFunctions[Pair];
           //          Vec2 firstLagrangeParameter = contour1->getLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
           //          Vec2 secondLagrangeParameter = contour2->getLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
-          pair<Contour*, ContourPointData> cont1Info(contour1, contacts[contactIndex.first][contactIndex.second].getcpData(affectedContourIterator));
-          pair<Contour*, ContourPointData> cont2Info(contour2, contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData(coupledContourIterator));
+          pair<Contour*, Frame*> cont1Info(contour1, contacts[contactIndex.first][contactIndex.second].getContourFrame(affectedContourIterator));
+          pair<Contour*, Frame*> cont2Info(contour2, contacts[coupledContactIndex.first][coupledContactIndex.second].getContourFrame(coupledContourIterator));
 
           //          if (DEBUGLEVEL >= 3) {
           //            cout << "First LagrangeParameter of contour \"" << contour1->getPath() << "\" is:" << firstLagrangeParameter << endl;

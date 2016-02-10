@@ -6,6 +6,7 @@ element.cc\
 body.cc\
 constitutive_laws.cc\
 contact.cc\
+maxwell_contact.cc\
 single_contact.cc\
 contour.cc\
 environment.cc\
@@ -54,6 +55,7 @@ mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
 body.h\
 contact.h\
+maxwell_contact.h\
 single_contact.h\
 contour.h\
 contour_pdata.h\

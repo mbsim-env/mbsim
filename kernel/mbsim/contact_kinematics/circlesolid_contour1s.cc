@@ -129,6 +129,5 @@ namespace MBSim {
       wb(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
     }
   }
-      
-}
 
+}

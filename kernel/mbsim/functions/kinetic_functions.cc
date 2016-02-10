@@ -140,26 +140,26 @@ namespace MBSim {
     setFrictionFunction(f);
   }
 
-//  void InfluenceFunction::initializeUsingXML(DOMElement *element) {
-//    Function<double(std::pair<Contour*, ContourPointData>,std::pair<Contour*, ContourPointData>)>::initializeUsingXML(element);
-//  }
-//
-//  fmatvec::Vec2 InfluenceFunction::getContourParameters(double t, const std::pair<Contour*, ContourPointData>& contourInfo) {
-//    return contourInfo.first->getContourParameters(t, contourInfo.second.getFrameOfReference().getPosition(t));
-//  }
+  void InfluenceFunction::initializeUsingXML(DOMElement *element) {
+    Function<double(std::pair<Contour*, Frame*>,std::pair<Contour*, Frame*>)>::initializeUsingXML(element);
+  }
 
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibilityInfluenceFunction, MBSIM%"FlexibilityInfluenceFunction")
-//
-//  void FlexibilityInfluenceFunction::initializeUsingXML(DOMElement *element) {
-//    InfluenceFunction::initializeUsingXML(element);
-//    flexibility = Element::getDouble(E(element)->getFirstElementChildNamed(MBSIM%"Flexibility"));
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantInfluenceFunction, MBSIM%"ConstantInfluenceFunction")
-//
-//  void ConstantInfluenceFunction::initializeUsingXML(DOMElement *element) {
-//    InfluenceFunction::initializeUsingXML(element);
-//    couplingValue = Element::getDouble(E(element)->getFirstElementChildNamed(MBSIM%"CouplingValue"));
-//  }
+  fmatvec::Vec2 InfluenceFunction::getContourParameters(double t, const std::pair<Contour*, Frame*>& contourInfo) {
+    return contourInfo.first->getContourParameters(t, contourInfo.second->getPosition(t));
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibilityInfluenceFunction, MBSIM%"FlexibilityInfluenceFunction")
+
+  void FlexibilityInfluenceFunction::initializeUsingXML(DOMElement *element) {
+    InfluenceFunction::initializeUsingXML(element);
+    flexibility = Element::getDouble(E(element)->getFirstElementChildNamed(MBSIM%"Flexibility"));
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantInfluenceFunction, MBSIM%"ConstantInfluenceFunction")
+
+  void ConstantInfluenceFunction::initializeUsingXML(DOMElement *element) {
+    InfluenceFunction::initializeUsingXML(element);
+    couplingValue = Element::getDouble(E(element)->getFirstElementChildNamed(MBSIM%"CouplingValue"));
+  }
 
 }
