@@ -48,18 +48,24 @@ namespace MBSimFlexibleBody {
       }
       /***************************************************/
 
+      virtual MBSim::Frame* createContourFrame(const std::string &name="P");
+
       /* INHERITED INTERFACE OF CONTOUR */
 //      virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Frame::Feature ff)
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual fmatvec::Vec3 getPosition(double t, MBSim::ContourPointData &cp);
-      virtual fmatvec::Vec3 getWs(double t, MBSim::ContourPointData &cp) { return getWu(t,cp); }
-      virtual fmatvec::Vec3 getWu(double t, MBSim::ContourPointData &cp);
-//      virtual fmatvec::Vec3 getVelocity(double t, MBSim::ContourPointData &cp);
+//      virtual void updateJacobiansForFrame(const fmatvec::Vec2 &zeta, int j = 0);
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j=0);
+      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j=0);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWu(t,zeta); }
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
+//      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::position); }
-//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
+//      virtual void computeRootFunctionPosition(const fmatvec::Vec2 &zeta) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::position); }
+//      virtual void computeRootFunctionFirstTangent(const fmatvec::Vec2 &zeta) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
       /***************************************************/
 
       /* GETTER / SETTER */

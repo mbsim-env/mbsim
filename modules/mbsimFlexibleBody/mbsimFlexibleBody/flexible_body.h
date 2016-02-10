@@ -33,6 +33,7 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   class NodeFrame;
+  class ContourParameterFrame;
 
   const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
 
@@ -72,8 +73,86 @@ namespace MBSimFlexibleBody {
       virtual void updatedhdz(double t);
 //      virtual void updateStateDependentVariables(double t);
       virtual void updateJacobians(double t, int k=0);
-      virtual fmatvec::Vec3 getPosition(double t, MBSim::ContourPointData &cp) = 0;
-      virtual fmatvec::Vec3 getWu(double t, MBSim::ContourPointData &cp) = 0;
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getPosition(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::getVelocity): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getVelocity(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getVelocity): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::getAngularVelocity): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getAngularVelocity(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getAngularVelocity): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getAcceleration(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::getAcceleration): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getAcceleration(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getAcceleration): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getAngularAcceleration(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::getAngularAcceleration): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getAngularAcceleration(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getAngularAcceleration): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j=0) {
+        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfTranslation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, int node, int j=0) {
+        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfTranslation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j=0) {
+        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfRotation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, int node, int j=0) {
+        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfRotation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getGyroscopicAccelerationOfTranslation(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::GyroscopicAccelerationOfTranslation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getGyroscopicAccelerationOfTranslation(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getGyroscopicAccelerationOfTranslation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getGyroscopicAccelerationOfRotation(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::GyroscopicAccelerationOfRotation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getGyroscopicAccelerationOfRotation(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getGyroscopicAccelerationOfRotation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::Vec3 getWu(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
+        return 0;
+      }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
@@ -153,27 +232,14 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
-       *  \param name of frame
-       *  \param frame location
-       */
-      void addFrame(const std::string &name, const MBSim::ContourPointData &S_);
-
-      /**
-       * \param frame
-       * \param frame location
-       */
-      void addFrame(MBSim::Frame *frame, const MBSim::ContourPointData &S_);
-
-      /**
-       *  \param name of frame
-       *  \param node of frame
-       */
-      void addFrame(const std::string &name, const int &id);
-
-      /**
        * \param node frame
        */
       void addFrame(NodeFrame *frame);
+
+      /**
+       * \param contour parameter frame
+       */
+      void addFrame(ContourParameterFrame *frame);
 
       /**
        * \param fixed relative frame that should be added
@@ -224,7 +290,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief vector of contour parameters each describing a frame
        */
-      std::vector<MBSim::ContourPointData> S_Frame;
+//      std::vector<MBSim::ContourPointData> S_Frame;
 
       // Workaround to free memory of contourFrame in dtor.
       // TODO: provide a consistent solution and remove the following line
@@ -234,16 +300,6 @@ namespace MBSimFlexibleBody {
        * \brief list of all contour frames
        * \todo: actually continous frames should be added to a contour and not to the body?!
        */
-
-      /*!
-       * \brief list of all fixed relative frames
-       */
-      std::vector<MBSim::FixedRelativeFrame*> fixedRelativeFrames;
-
-      /*!
-       * \brief list of all  Node-Frames
-       */
-      std::vector<NodeFrame*> nodeFrames;
   };
 
   /**
@@ -266,26 +322,6 @@ namespace MBSimFlexibleBody {
 
         /* GETTER / SETTER */
         void setContourNodes(const std::vector<AT> nodes) { userContourNodes = nodes; }
-
-        using FlexibleBody::addFrame;
-
-        /**
-         * \param name of frame
-         * \param location of frame
-         */
-        void addFrame(const std::string &name, const AT& alpha) {
-          MBSim::ContourPointData cp(alpha);
-          FlexibleBody::addFrame(name,cp);
-        }
-
-        /**
-         * \param frame
-         * \param location of frame
-         */
-        void addFrame(MBSim::Frame *frame, const AT& alpha) {
-          MBSim::ContourPointData cp(alpha);
-          FlexibleBody::addFrame(frame,cp);
-        }
 
         void setNodeOffset(const AT nodeOffset_){ nodeOffset = nodeOffset_;}  // TODO:: call this function in the init() of flexible body.
         AT getNodeOffset() const { return nodeOffset;}

@@ -17,38 +17,44 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _NODE_FRAME_H__
-#define _NODE_FRAME_H__
+#ifndef _CONTOUR_PARAMETER_FRAME_H__
+#define _CONTOUR_PARAMETER_FRAME_H__
 
 #include "mbsim/frame.h"
 
 namespace MBSimFlexibleBody {
 
   /**
-   * \brief cartesian frame on nodes of flexible bodies
+   * \brief cartesian frame on contour parameters of flexible bodies
    * \author Kilian Grundl
    */
-  class NodeFrame : public MBSim::Frame {
+  class ContourParameterFrame : public MBSim::Frame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", int node_ = 0) : Frame(name), node(node_) { }
+      ContourParameterFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta_ = fmatvec::Vec2()) : Frame(name), zeta(zeta_) { }
 
-      std::string getType() const { return "NodeFrame"; }
+      std::string getType() const { return "ContourParameterFrame"; }
 
       virtual void init(InitStage stage);
 
-      void setNodeNumber(int node_) { node = node_; }
+      void setContourParameters(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
 
-      int getNodeNumber() const { return node; }
+      const fmatvec::Vec2& getContourParameters() const { return zeta; }
+
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateAccelerations(double t);
+      void updateJacobians(double t, int j=0);
+      void updateGyroscopicAccelerations(double t);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
       /*!
-       * \brief node number of the frame
+       * \brief contour parameters of the frame
        */
-      int node;
+      fmatvec::Vec2 zeta;
   };
 
 }

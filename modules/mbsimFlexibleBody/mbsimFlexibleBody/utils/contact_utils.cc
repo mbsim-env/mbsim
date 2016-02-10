@@ -45,10 +45,10 @@ namespace MBSimFlexibleBody {
 //    else if(strcmp(contour0, "CircleSolid")==0 && strcmp(contour1, "FlexibleBand")==0)
 //      return new ContactKinematicsCircleSolidFlexibleBand;
 //    
-//    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
-//      return new MBSim::ContactKinematicsPointContour1s;
-//      //return new ContactKinematicsPointFlexibleBand;
-//    
+    if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
+      return new MBSim::ContactKinematicsPointContour1s;
+      //return new ContactKinematicsPointFlexibleBand;
+
 //    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sFlexible")==0)
 //      return new MBSim::ContactKinematicsPointContour1s;
 //
@@ -64,7 +64,7 @@ namespace MBSimFlexibleBody {
 //    else if(strcmp(contour0, "Circle")==0 && strcmp(contour1, "NurbsDisk2s")==0)
 //      return new ContactKinematicsCircleNurbsDisk2s;  
 //
-//    else 
+    else
       return 0;
   }
 }

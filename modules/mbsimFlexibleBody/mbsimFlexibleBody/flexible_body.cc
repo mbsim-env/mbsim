@@ -21,6 +21,7 @@
 #include <config.h>
 #include <mbsimFlexibleBody/flexible_body.h>
 #include <mbsimFlexibleBody/node_frame.h>
+#include <mbsimFlexibleBody/contour_parameter_frame.h>
 #include <mbsim/dynamic_system.h>
 #include <mbsim/fixed_relative_frame.h>
 #include <mbsim/contour.h>
@@ -59,6 +60,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::updateh(double t, int k) {
+    BuildElements();
     for (int i = 0; i < (int) discretization.size(); i++)
       discretization[i]->computeh(qElement[i], uElement[i]); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
@@ -70,11 +72,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::updateM(double t, int k) {
+    BuildElements();
     for (int i = 0; i < (int) discretization.size(); i++)
       discretization[i]->computeM(qElement[i]); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getM(), M[k]); // assemble
-    cout << M[k] << endl;
   }
 
   void FlexibleBody::updatedhdz(double t) {
@@ -107,15 +109,15 @@ namespace MBSimFlexibleBody {
 //    }
 //  }
 
-//  void FlexibleBody::updateJacobians(double t, int k) {
+  void FlexibleBody::updateJacobians(double t, int k) {
 //    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
 //      updateJacobiansForFrame(S_Frame[i], frame[i]);
 //    }
-//    // TODO contour non native?  DONE!
-////    for (size_t i = 0; i < contour.size(); i++) {
-////      contour[i]->updateJacobians;
-////    }
-//  }
+    // TODO contour non native?  DONE!
+//    for (size_t i = 0; i < contour.size(); i++) {
+//      contour[i]->updateJacobians;
+//    }
+  }
 
   void FlexibleBody::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
@@ -127,10 +129,10 @@ namespace MBSimFlexibleBody {
     if (stage == unknownStage) {
       Body::init(stage);
       T = SqrMat(qSize, fmatvec::EYE);
-      for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-        S_Frame[i].getFrameOfReference().getJacobianOfTranslation(0,false).resize(uSize[0]);
-        S_Frame[i].getFrameOfReference().getJacobianOfRotation(0,false).resize(uSize[0]);
-      }
+//      for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
+//        S_Frame[i].getFrameOfReference().getJacobianOfTranslation(0,false).resize(uSize[0]);
+//        S_Frame[i].getFrameOfReference().getJacobianOfRotation(0,false).resize(uSize[0]);
+//      }
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -166,28 +168,25 @@ namespace MBSimFlexibleBody {
       THROW_MBSIMERROR("(FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!");
   }
 
-  void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
-    Frame *frame = new Frame(name);
-    addFrame(frame, S_);
-  }
+//  void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
+//    Frame *frame = new Frame(name);
+//    addFrame(frame, S_);
+//  }
 
-  void FlexibleBody::addFrame(Frame* frame, const ContourPointData &S_) {
-    Body::addFrame(frame);
-    S_Frame.push_back(S_);
-  }
-
-  void FlexibleBody::addFrame(const std::string &name, const int &id) {
-    NodeFrame * frame = new NodeFrame(name, id);
-    addFrame(frame);
-  }
+//  void FlexibleBody::addFrame(Frame* frame, const ContourPointData &S_) {
+//    Body::addFrame(frame);
+//    S_Frame.push_back(S_);
+//  }
 
   void FlexibleBody::addFrame(NodeFrame *frame) {
-    nodeFrames.push_back(frame);
+    Body::addFrame(frame);
+  }
+
+  void FlexibleBody::addFrame(ContourParameterFrame *frame) {
     Body::addFrame(frame);
   }
 
   void FlexibleBody::addFrame(MBSim::FixedRelativeFrame *frame) {
-    fixedRelativeFrames.push_back(frame);
     Body::addFrame(frame);
   }
 

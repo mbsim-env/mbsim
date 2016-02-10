@@ -73,11 +73,11 @@ namespace MBSimFlexibleBody {
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
       virtual double computePhysicalStrain(const fmatvec::Vec& qElement);
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computePosition): not implemented!"); }
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qElement, const MBSim::ContourPointData& cp) { return JGeneralized(qElement,cp.getLagrangeParameterPosition()(0)); }
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computePosition): not implemented!"); }
+     virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeOrientation): not implemented!"); }
+     virtual fmatvec::Vec computeVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeVelocity): not implemented!"); }
+     virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qElement, const fmatvec::Vec2 &zeta) { return JGeneralized(qElement,zeta(0)); }
       /***************************************************/
       /*!
        * compute additional informations for element

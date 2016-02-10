@@ -17,13 +17,13 @@ namespace MBSimFlexibleBody {
     Frame::initializeUsingXML(element);
 
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"NodeNumber");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumber");
     setNodeNumber(getInt(e));
   }
 
   DOMElement* NodeFrame::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Frame::writeXMLFile(parent);
-    addElementText(ele0, MBSIMFLEX%"NodeNumber", float(getNodeNumber()));
+    addElementText(ele0, MBSIMFLEX%"nodeNumber", getNodeNumber());
     return ele0;
   }
 

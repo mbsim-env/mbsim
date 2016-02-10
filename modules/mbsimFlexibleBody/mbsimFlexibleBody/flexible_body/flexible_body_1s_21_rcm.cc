@@ -107,81 +107,169 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  Vec3 FlexibleBody1s21RCM::getPosition(double t, ContourPointData &cp) {
+  Vec3 FlexibleBody1s21RCM::getPosition(double t, const Vec2 &zeta) {
     Vec3 tmp(NONINIT);
-    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
-      Vec X = computeState(cp.getLagrangeParameterPosition()(0));
-      tmp(0) = X(0);
-      tmp(1) = X(1);
-      tmp(2) = 0.; // temporary vector used for compensating planar description
-    }
-    else if (cp.getContourParameterType() == ContourPointData::node) { // frame on node
-      const int &node = cp.getNodeNumber();
-      tmp(0) = q(5 * node + 0);
-      tmp(1) = q(5 * node + 1);
-      tmp(2) = 0.; // temporary vector used for compensating planar description
-    }
-    else
-      THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+    Vec X = computeState(zeta(0));
+    tmp(0) = X(0);
+    tmp(1) = X(1);
+    tmp(2) = 0.; // temporary vector used for compensating planar description
     return R->getPosition(t) + R->getOrientation(t) * tmp;
   }
 
-  Vec3 FlexibleBody1s21RCM::getWu(double t, ContourPointData &cp) {
+  Vec3 FlexibleBody1s21RCM::getPosition(double t, int node) {
     Vec3 tmp(NONINIT);
-    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
-      Vec X = computeState(cp.getLagrangeParameterPosition()(0));
-      tmp(0) = cos(X(2));
-      tmp(1) = sin(X(2));
-      tmp(2) = 0.;
-    }
-    else if (cp.getContourParameterType() == ContourPointData::node) { // frame on node
-      const int &node = cp.getNodeNumber();
-      tmp(0) = cos(q(5 * node + 2));
-      tmp(1) = sin(q(5 * node + 2));
-      tmp(2) = 0.;
-    }
+    tmp(0) = q(5 * node + 0);
+    tmp(1) = q(5 * node + 1);
+    tmp(2) = 0.; // temporary vector used for compensating planar description
+    return R->getPosition(t) + R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getVelocity(double t, const Vec2 &zeta) {
+    Vec3 tmp(NONINIT);
+    Vec X = computeState(zeta(0));
+    tmp(0) = X(3);
+    tmp(1) = X(4);
+    tmp(2) = 0.;
     return R->getOrientation(t) * tmp;
   }
 
-  void FlexibleBody1s21RCM::getJacobian(double t, ContourPointData &cp) {
+  Vec3 FlexibleBody1s21RCM::getVelocity(double t, int node) {
+    Vec3 tmp(NONINIT);
+    tmp(0) = u(5 * node + 0);
+    tmp(1) = u(5 * node + 1);
+    tmp(2) = 0.;
+    return R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getAngularVelocity(double t, const Vec2 &zeta) {
+    Vec3 tmp(NONINIT);
+    Vec X = computeState(zeta(0));
+    tmp(0) = 0.;
+    tmp(1) = 0.;
+    tmp(2) = X(5);
+    return R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getAngularVelocity(double t, int node) {
+    Vec3 tmp(NONINIT);
+    tmp(0) = 0.;
+    tmp(1) = 0.;
+    tmp(2) = u(5 * node + 2);
+    return R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getWu(double t, const fmatvec::Vec2 &zeta) {
+    Vec3 tmp(NONINIT);
+    Vec X = computeState(zeta(0));
+    tmp(0) = cos(X(2));
+    tmp(1) = sin(X(2));
+    tmp(2) = 0.;
+    return R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getWu(double t, int node) {
+    Vec3 tmp(NONINIT);
+    tmp(0) = cos(q(5 * node + 2));
+    tmp(1) = sin(q(5 * node + 2));
+    tmp(2) = 0.;
+    return R->getOrientation(t) * tmp;
+  }
+
+  Mat3xV FlexibleBody1s21RCM::getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j) {
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
 
-    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
-      double sLocal;
-      int currentElement;
-      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
-      Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement], sLocal);
-      if (currentElement < Elements - 1 || openStructure) {
-        Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
-      }
-      else { // ringstructure
-        Jacobian(Index(5 * currentElement, 5 * currentElement + 4), All) = Jtmp(Index(0, 4), All);
-        Jacobian(Index(0, 2), All) = Jtmp(Index(5, 7), All);
-      }
+    double sLocal;
+    int currentElement;
+    BuildElement(zeta(0), sLocal, currentElement);
+    Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement], sLocal);
+    if (currentElement < Elements - 1 || openStructure) {
+      Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
     }
-    else if (cp.getContourParameterType() == ContourPointData::node) { // frame on node
-      int node = cp.getNodeNumber();
-      Jacobian(Index(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
+    else { // ringstructure
+      Jacobian(Index(5 * currentElement, 5 * currentElement + 4), All) = Jtmp(Index(0, 4), All);
+      Jacobian(Index(0, 2), All) = Jtmp(Index(5, 7), All);
     }
-    else
-      THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T());
-    cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation()(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T());
-
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
-
-    if (frame != 0) { // frame should be linked to contour point data
-      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
-      frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
-      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
-      frame->setGyroscopicAccelerationOfRotation(cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
-    }
+    return R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T();
   }
 
-//  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, Frame::Frame::Feature ff, Frame *frame) {
+  Mat3xV FlexibleBody1s21RCM::getJacobianOfTranslation(double t, int node, int j) {
+    Index All(0, 3 - 1);
+    Mat Jacobian(qSize, 3, INIT, 0.);
+
+    Jacobian(Index(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
+
+    return R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T();
+  }
+
+  Mat3xV FlexibleBody1s21RCM::getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j) {
+    Index All(0, 3 - 1);
+    Mat Jacobian(qSize, 3, INIT, 0.);
+
+    double sLocal;
+    int currentElement;
+    BuildElement(zeta(0), sLocal, currentElement);
+    Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement], sLocal);
+    if (currentElement < Elements - 1 || openStructure) {
+      Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
+    }
+    else { // ringstructure
+      Jacobian(Index(5 * currentElement, 5 * currentElement + 4), All) = Jtmp(Index(0, 4), All);
+      Jacobian(Index(0, 2), All) = Jtmp(Index(5, 7), All);
+    }
+
+    return R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T();
+  }
+
+  Mat3xV FlexibleBody1s21RCM::getJacobianOfRotation(double t, int node, int j) {
+    Index All(0, 3 - 1);
+    Mat Jacobian(qSize, 3, INIT, 0.);
+
+    Jacobian(Index(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
+
+    return R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T();
+  }
+
+//  void FlexibleBody1s21RCM::getJacobian(double t, const fmatvec::Vec2 &zeta) {
+//    Index All(0, 3 - 1);
+//    Mat Jacobian(qSize, 3, INIT, 0.);
+//
+//    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
+//      double sLocal;
+//      int currentElement;
+//      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
+//      Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement], sLocal);
+//      if (currentElement < Elements - 1 || openStructure) {
+//        Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
+//      }
+//      else { // ringstructure
+//        Jacobian(Index(5 * currentElement, 5 * currentElement + 4), All) = Jtmp(Index(0, 4), All);
+//        Jacobian(Index(0, 2), All) = Jtmp(Index(5, 7), All);
+//      }
+//    }
+//    else if (cp.getContourParameterType() == ContourPointData::node) { // frame on node
+//      int node = cp.getNodeNumber();
+//      Jacobian(Index(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
+//    }
+//    else
+//      THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+//
+//    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T());
+//    cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation()(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T());
+//
+//    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
+//    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
+//
+//    if (frame != 0) { // frame should be linked to contour point data
+//      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
+//      frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
+//      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
+//      frame->setGyroscopicAccelerationOfRotation(cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
+//    }
+//  }
+
+//  void FlexibleBody1s21RCM::updateKinematicsForFrame(const fmatvec::Vec2 &zeta, Frame::Frame::Feature ff, Frame *frame) {
 //    if (cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
 //      Vec X = computeState(cp.getLagrangeParameterPosition()(0));
 //
@@ -273,7 +361,7 @@ namespace MBSimFlexibleBody {
 //    }
 //  }
 //
-//  void FlexibleBody1s21RCM::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
+//  void FlexibleBody1s21RCM::updateJacobiansForFrame(const fmatvec::Vec2 &zeta, Frame *frame) {
 //    Index All(0, 3 - 1);
 //    Mat Jacobian(qSize, 3, INIT, 0.);
 //
@@ -487,66 +575,66 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
-    PlNurbsCurved curvePos;
-    PlNurbsCurved curveVel;
-
-    if (!openStructure) {
-      PLib::Vector<PLib::HPoint3Dd> NodelistPos(Elements + deg);
-      PLib::Vector<PLib::HPoint3Dd> NodelistVel(Elements + deg);
-
-      for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
-        ContourPointData cp(i);
-        if (i >= Elements)
-        cp.getNodeNumber() = i - Elements;
-
-//        updateKinematicsForFrame(cp, Frame::position);
-        NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);// Third component is zero as Nurbs library supports only 3D interpolation
-
-        if (not filenameVel.empty()) {
-//          updateKinematicsForFrame(cp, Frame::velocity_cosy);
-
-          SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
-          SqrMat3 AKI(INIT, 0.);
-          AKI.set(0, trans(TMPMat.col(1)));
-          AKI.set(1, trans(TMPMat.col(0)));
-          AKI.set(2, trans(TMPMat.col(2)));
-          Vec3 Vel(INIT, 0.);
-          Vel = AKI * cp.getFrameOfReference().getVelocity();
-
-          NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
-        }
-      }
-
-      /*create own uVec and uvec like in nurbsdisk_2s*/
-      PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
-      PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
-
-      const double stepU = L / Elements;
-
-      uvec[0] = 0;
-      for (int i = 1; i < uvec.size(); i++) {
-        uvec[i] = uvec[i - 1] + stepU;
-      }
-
-      uVec[0] = (-deg) * stepU;
-      for (int i = 1; i < uVec.size(); i++) {
-        uVec[i] = uVec[i - 1] + stepU;
-      }
-
-      curvePos.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
-      curvePos.write(filenamePos.c_str());
-
-      if (writePsFile) {
-        string psfile = filenamePos + ".ps";
-
-        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
-      }
-
-      if (not filenameVel.empty()) {
-        curveVel.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
-        curveVel.write(filenameVel.c_str());
-      }
-    }
+//    PlNurbsCurved curvePos;
+//    PlNurbsCurved curveVel;
+//
+//    if (!openStructure) {
+//      PLib::Vector<PLib::HPoint3Dd> NodelistPos(Elements + deg);
+//      PLib::Vector<PLib::HPoint3Dd> NodelistVel(Elements + deg);
+//
+//      for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
+//        ContourPointData cp(i);
+//        if (i >= Elements)
+//        cp.getNodeNumber() = i - Elements;
+//
+////        updateKinematicsForFrame(cp, Frame::position);
+//        NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);// Third component is zero as Nurbs library supports only 3D interpolation
+//
+//        if (not filenameVel.empty()) {
+////          updateKinematicsForFrame(cp, Frame::velocity_cosy);
+//
+//          SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
+//          SqrMat3 AKI(INIT, 0.);
+//          AKI.set(0, trans(TMPMat.col(1)));
+//          AKI.set(1, trans(TMPMat.col(0)));
+//          AKI.set(2, trans(TMPMat.col(2)));
+//          Vec3 Vel(INIT, 0.);
+//          Vel = AKI * cp.getFrameOfReference().getVelocity();
+//
+//          NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
+//        }
+//      }
+//
+//      /*create own uVec and uvec like in nurbsdisk_2s*/
+//      PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
+//      PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
+//
+//      const double stepU = L / Elements;
+//
+//      uvec[0] = 0;
+//      for (int i = 1; i < uvec.size(); i++) {
+//        uvec[i] = uvec[i - 1] + stepU;
+//      }
+//
+//      uVec[0] = (-deg) * stepU;
+//      for (int i = 1; i < uVec.size(); i++) {
+//        uVec[i] = uVec[i - 1] + stepU;
+//      }
+//
+//      curvePos.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
+//      curvePos.write(filenamePos.c_str());
+//
+//      if (writePsFile) {
+//        string psfile = filenamePos + ".ps";
+//
+//        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+//      }
+//
+//      if (not filenameVel.empty()) {
+//        curveVel.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
+//        curveVel.write(filenameVel.c_str());
+//      }
+//    }
 #else
     THROW_MBSIMERROR("No Nurbs-Library installed ...");
 #endif

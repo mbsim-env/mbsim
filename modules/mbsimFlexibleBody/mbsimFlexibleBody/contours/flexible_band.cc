@@ -20,6 +20,7 @@
 #include<config.h>
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/floating_frame.h"
 #include <vector>
 
 using namespace std;
@@ -32,21 +33,41 @@ namespace MBSimFlexibleBody {
       Contour1sFlexible(name), Cn(2, INIT, 0.), width(0.), nDist(0.) {
   }
 
+  Frame* FlexibleBand::createContourFrame(const string &name) {
+    return new FloatingFrame(name,this);
+  }
+
   void FlexibleBand::setCn(const Vec& Cn_) {
     assert(Cn_.size() == 2);
     Cn = Cn_ / nrm2(Cn_);
   }
 
-  Vec3 FlexibleBand::getPosition(double t, MBSim::ContourPointData &cp) {
-    return static_cast<FlexibleBody*>(parent)->getPosition(t,cp);
+  Vec3 FlexibleBand::getPosition(double t, const fmatvec::Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta);
   }
 
-  Vec3 FlexibleBand::getWu(double t, MBSim::ContourPointData &cp) {
-    return static_cast<FlexibleBody*>(parent)->getWu(t,cp);
+  Vec3 FlexibleBand::getVelocity(double t, const fmatvec::Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getVelocity(t,zeta);
   }
 
-//  Vec3 FlexibleBand::getVelocity(double t, MBSim::ContourPointData &cp) {
-//    return static_cast<FlexibleBody*>(parent)->updateVelocities(t,cp);
+  Vec3 FlexibleBand::getAngularVelocity(double t, const fmatvec::Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getAngularVelocity(t,zeta);
+  }
+
+  Mat3xV FlexibleBand::getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j) {
+    return static_cast<FlexibleBody*>(parent)->getJacobianOfTranslation(t,zeta);
+  }
+
+  Mat3xV FlexibleBand::getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j) {
+    return static_cast<FlexibleBody*>(parent)->getJacobianOfRotation(t,zeta);
+  }
+
+  Vec3 FlexibleBand::getWu(double t, const fmatvec::Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getWu(t,zeta);
+  }
+
+//  Vec3 FlexibleBand::getVelocity(double t, const fmatvec::Vec2 &zeta) {
+//    return static_cast<FlexibleBody*>(parent)->updateVelocities(t,zeta);
 //    return cp.getFrameOfReference()->getVelocity(false);
 //  }
 
