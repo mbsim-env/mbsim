@@ -35,8 +35,6 @@ namespace MBSimFlexibleBody {
 
       std::string getType() const { return "ContourParameterFrame"; }
 
-      virtual void init(InitStage stage);
-
       void setContourParameters(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
 
       const fmatvec::Vec2& getContourParameters() const { return zeta; }

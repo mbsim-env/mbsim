@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,37 +17,33 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLOATING_FRAME_H__
-#define _FLOATING_FRAME_H__
+#ifndef _FRAME_FFR_H__
+#define _FRAME_FFR_H__
 
 #include "mbsim/frame.h"
 
-namespace MBSim {
-  class Contour;
-}
-
 namespace MBSimFlexibleBody {
 
-  /**
-   * \brief cartesian frame on rigid bodies 
-   * \author Martin Foerg
-   */
-  class FloatingFrame : public MBSim::Frame {
-
+  class FrameFFR : public MBSim::Frame {
     public:
-      FloatingFrame(const std::string &name = "dummy", MBSim::Contour* contour_ = NULL) : Frame(name), contour(contour_) { }
+      /**
+       * \brief constructor
+       * \param name of coordinate system
+       */
+      FrameFFR(const std::string &name = "dummy") : MBSim::Frame(name) { }
 
-      std::string getType() const { return "FloatingFrame"; }
+      std::string getType() const { return "FrameFFR"; }
 
-      void updatePositions(double t);
-      void updateVelocities(double t); 
-      void updateAccelerations(double t); 
-      void updateJacobians(double t, int j=0);
-      void updateGyroscopicAccelerations(double t);
+      /* INTERFACE FOR DERIVED CLASSES */
+      /***************************************************/
+
+      fmatvec::MatV& getJacobianOfDeformation(int j=0,  bool check=true) { assert((not check) or (not updateJac[j])); return WJD[j]; }
+      void setJacobianOfDeformation(const fmatvec::MatV &J, int j=0) { WJD[j] = J; }
+      const fmatvec::MatV& getJacobianOfDeformation(double t, int j=0) { if(updateJac[j]) updateJacobians(t,j); return WJD[j]; }
 
     protected:
-      MBSim::Contour *contour;
-      fmatvec::Vec2 zeta;
+
+      fmatvec::MatV WJD[3];
   };
 
 }

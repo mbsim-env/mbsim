@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "flexible_body_ffr.h"
+#include "mbsimFlexibleBody/frame_ffr.h"
 #include "mbsimFlexibleBody/fixed_nodal_frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -61,7 +62,7 @@ namespace MBSimFlexibleBody {
     updKJ[0] = true;
     updKJ[1] = true;
 
-    K=new Frame("K");
+    K=new FrameFFR("K");
     Body::addFrame(K);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=K;

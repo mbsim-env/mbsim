@@ -19,6 +19,7 @@ libmbsimFlexibleBody_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPIN
 mbsimFlexibleBodyincludedir = $(includedir)/mbsimFlexibleBody
 mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
 				   functions_contact.h\
+				   frame_ffr.h\
 				   fixed_nodal_frame.h\
 				   node_frame.h\
 				   contour_parameter_frame.h\

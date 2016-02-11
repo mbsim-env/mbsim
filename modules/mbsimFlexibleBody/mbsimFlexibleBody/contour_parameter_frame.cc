@@ -9,11 +9,9 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  void ContourParameterFrame::init(InitStage stage) {
-    Frame::init(stage);
-  }
-
   void ContourParameterFrame::updatePositions(double t) {
+    WrOP = static_cast<FlexibleBody*>(parent)->getVelocity(t,zeta);
+    AWP = static_cast<FlexibleBody*>(parent)->getAngularVelocity(t,zeta);
     updatePos = false;
   }
 

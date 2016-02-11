@@ -29,19 +29,6 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  void FloatingFrame::init(InitStage stage) {
-    Frame::init(stage);
-  }
-
-  void FloatingFrame::initializeUsingXML(DOMElement *element) {
-    Frame::initializeUsingXML(element);
-  }
-
-  DOMElement* FloatingFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-   return ele0;
-  }
-
   void FloatingFrame::updatePositions(double t) { 
     parent->updatePositions(t);
     updatePos = false;
@@ -54,7 +41,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FloatingFrame::updateAccelerations(double t) { 
-   // throw;
+    WaP = contour->getAcceleration(t,zeta);
+    WpsiP = contour->getAngularAcceleration(t,zeta);
     updateAcc = true;
   }
 
@@ -65,7 +53,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FloatingFrame::updateGyroscopicAccelerations(double t) {
-  //  throw;
+    WjP = contour->getGyroscopicAccelerationOfTranslation(t,zeta);
+    WjR = contour->getGyroscopicAccelerationOfRotation(t,zeta);
     updateGA = false;
   }
 

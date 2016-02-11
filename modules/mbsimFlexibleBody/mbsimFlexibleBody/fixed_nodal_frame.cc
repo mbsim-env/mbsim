@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<FixedNodalFrame>(saved_frameOfReference));
-      Frame::init(stage);
+      FrameFFR::init(stage);
     }
     else if(stage==resize) {
       WJD[0].resize(nq,hSize[0]);
@@ -44,7 +44,7 @@ namespace MBSimFlexibleBody {
       q.resize(nq);
       qd.resize(nq);
       qdd.resize(nq);
-      Frame::init(stage);
+      FrameFFR::init(stage);
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -54,11 +54,11 @@ namespace MBSimFlexibleBody {
           for(int i=0; i<6; i++)
             plotColumns.push_back("sigma("+MBSim::numtostr(i)+")");
         }
-        Frame::init(stage);
+        FrameFFR::init(stage);
       }
     }
     else
-      Frame::init(stage);
+      FrameFFR::init(stage);
   }
       
   const Vec3& FixedNodalFrame::getGlobalRelativePosition(double t) {

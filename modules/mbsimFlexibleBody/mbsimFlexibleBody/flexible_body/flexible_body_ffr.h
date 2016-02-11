@@ -30,13 +30,13 @@
 #endif
 
 namespace MBSim {
-  class Frame;
   class Contour;
   class CompoundContour;
 }
 
 namespace MBSimFlexibleBody {
 
+  class FrameFFR;
   class FixedNodalFrame;
 
   class FlexibleBodyFFR : public MBSim::Body {
@@ -155,7 +155,7 @@ namespace MBSimFlexibleBody {
       MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* getRotation() { return fAPK; }
 
       double getMass() const { return m; }
-      MBSim::Frame* getFrameK() { return K; };
+      FrameFFR* getFrameK() { return K; };
 
       // Interface for basic data
       /**
@@ -310,7 +310,7 @@ namespace MBSimFlexibleBody {
       // Number of mode shapes 
       int ne;
 
-      MBSim::Frame *K;
+      FrameFFR *K;
 
       /**
        * \brief TODO
