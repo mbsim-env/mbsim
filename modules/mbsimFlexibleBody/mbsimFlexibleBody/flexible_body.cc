@@ -43,7 +43,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.) {
+  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.), updEle(true) {
     contourFrame = new Frame("ContourFrame");
     contourFrame->setParent(this);
     //addFrame(contourFrame,0);
@@ -60,7 +60,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::updateh(double t, int k) {
-    BuildElements();
+    if(updEle) BuildElements();
     for (int i = 0; i < (int) discretization.size(); i++)
       discretization[i]->computeh(qElement[i], uElement[i]); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
@@ -72,7 +72,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::updateM(double t, int k) {
-    BuildElements();
+    if(updEle) BuildElements();
     for (int i = 0; i < (int) discretization.size(); i++)
       discretization[i]->computeM(qElement[i]); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
@@ -88,26 +88,6 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
-
-//  void FlexibleBody::updateStateDependentVariables(double t) {
-//    BuildElements();
-//
-//    // TODO: Basically the first loop shouldn't be used as it is for frames with a contour-point data that should be killed anyway...
-//    //        The idea is to use a contour frame that has all necessary position information
-//    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-//      updateKinematicsForFrame(S_Frame[i], Frame::all, frame[i]);
-//    }
-//
-//    for (size_t i  = 0; i < fixedRelativeFrames.size(); i++)
-//      fixedRelativeFrames[i]->updateStateDependentVariables();
-//
-//    for (size_t i  = 0; i < nodeFrames.size(); i++)
-//      updateKinematicsAtNode(nodeFrames[i], MBSim::Frame::all);
-//
-//    for (size_t i = 0; i < contour.size(); i++) {
-//      contour[i]->updateStateDependentVariables(t);
-//    }
-//  }
 
   void FlexibleBody::updateJacobians(double t, int k) {
 //    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
@@ -191,7 +171,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
-    contour_->setFrameOfReference(contourFrame);
+//    contour_->setFrameOfReference(contourFrame);
     Body::addContour(contour_);
   }
 
@@ -201,6 +181,11 @@ namespace MBSimFlexibleBody {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"massProportionalDamping");
     setMassProportionalDamping(getDouble(e));
+  }
+
+  void FlexibleBody::resetUpToDate() {
+    Body::resetUpToDate();
+    updEle = true;
   }
 
 }

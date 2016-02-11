@@ -66,6 +66,7 @@ namespace MBSimFlexibleBody {
         uElement[i](5, 7) << u(0, 2);
       }
     }
+    updEle = false;
   }
 
   void FlexibleBody1s21RCM::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
@@ -124,6 +125,37 @@ namespace MBSimFlexibleBody {
     return R->getPosition(t) + R->getOrientation(t) * tmp;
   }
 
+  SqrMat3 FlexibleBody1s21RCM::getOrientation(double t, const fmatvec::Vec2 &zeta) {
+    SqrMat3 A(NONINIT);
+    Vec3 tmp(NONINIT);
+    Vec X = computeState(zeta(0));
+    tmp(0) = cos(X(2));
+    tmp(1) = sin(X(2));
+    tmp(2) = 0.;
+    A.set(1, R->getOrientation(t) * tmp); // tangent
+    tmp(0) = -sin(X(2));
+    tmp(1) = cos(X(2));
+    tmp(2) = 0.;
+    A.set(0, R->getOrientation() * tmp); // normal
+    A.set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+    return A;
+  }
+
+  SqrMat3 FlexibleBody1s21RCM::getOrientation(double t, int node) {
+    SqrMat3 A(NONINIT);
+    Vec3 tmp(NONINIT);
+    tmp(0) = cos(q(5 * node + 2));
+    tmp(1) = sin(q(5 * node + 2));
+    tmp(2) = 0.;
+    A.set(1, R->getOrientation(t) * tmp); // tangent
+    tmp(0) = -sin(q(5 * node + 2));
+    tmp(1) = cos(q(5 * node + 2));
+    tmp(2) = 0.;
+    A.set(0, R->getOrientation() * tmp); // normal
+    A.set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+    return A;
+  }
+
   Vec3 FlexibleBody1s21RCM::getVelocity(double t, const Vec2 &zeta) {
     Vec3 tmp(NONINIT);
     Vec X = computeState(zeta(0));
@@ -158,24 +190,7 @@ namespace MBSimFlexibleBody {
     return R->getOrientation(t) * tmp;
   }
 
-  Vec3 FlexibleBody1s21RCM::getWu(double t, const fmatvec::Vec2 &zeta) {
-    Vec3 tmp(NONINIT);
-    Vec X = computeState(zeta(0));
-    tmp(0) = cos(X(2));
-    tmp(1) = sin(X(2));
-    tmp(2) = 0.;
-    return R->getOrientation(t) * tmp;
-  }
-
-  Vec3 FlexibleBody1s21RCM::getWu(double t, int node) {
-    Vec3 tmp(NONINIT);
-    tmp(0) = cos(q(5 * node + 2));
-    tmp(1) = sin(q(5 * node + 2));
-    tmp(2) = 0.;
-    return R->getOrientation(t) * tmp;
-  }
-
-  Mat3xV FlexibleBody1s21RCM::getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j) {
+   Mat3xV FlexibleBody1s21RCM::getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j) {
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
 
@@ -231,7 +246,24 @@ namespace MBSimFlexibleBody {
     return R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T();
   }
 
-//  void FlexibleBody1s21RCM::getJacobian(double t, const fmatvec::Vec2 &zeta) {
+  Vec3 FlexibleBody1s21RCM::getWu(double t, const fmatvec::Vec2 &zeta) {
+    Vec3 tmp(NONINIT);
+    Vec X = computeState(zeta(0));
+    tmp(0) = cos(X(2));
+    tmp(1) = sin(X(2));
+    tmp(2) = 0.;
+    return R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getWu(double t, int node) {
+    Vec3 tmp(NONINIT);
+    tmp(0) = cos(q(5 * node + 2));
+    tmp(1) = sin(q(5 * node + 2));
+    tmp(2) = 0.;
+    return R->getOrientation(t) * tmp;
+  }
+
+  //  void FlexibleBody1s21RCM::getJacobian(double t, const fmatvec::Vec2 &zeta) {
 //    Index All(0, 3 - 1);
 //    Mat Jacobian(qSize, 3, INIT, 0.);
 //
@@ -401,7 +433,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::init(InitStage stage) {
     if (stage == unknownStage) {
-      contour1sFlexible->getFrame()->setOrientation(R->getOrientation());
+//      contour1sFlexible->getFrame()->setOrientation(R->getOrientation());
       contour1sFlexible->setAlphaStart(0);
       contour1sFlexible->setAlphaEnd(L);
       if (userContourNodes.size() == 0) {

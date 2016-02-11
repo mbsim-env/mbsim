@@ -81,6 +81,14 @@ namespace MBSimFlexibleBody {
         THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
         return 0;
       }
+      virtual fmatvec::SqrMat3 getOrientation(double t, const fmatvec::Vec2 &zeta) {
+        THROW_MBSIMERROR("(FlexibleBody::getOrientation): Not implemented.");
+        return 0;
+      }
+      virtual fmatvec::SqrMat3 getOrientation(double t, int node) {
+        THROW_MBSIMERROR("(FlexibleBody::getOrientation): Not implemented.");
+        return 0;
+      }
       virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta) {
         THROW_MBSIMERROR("(FlexibleBody::getVelocity): Not implemented.");
         return 0;
@@ -266,6 +274,8 @@ namespace MBSimFlexibleBody {
        */
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string()){throw  MBSim::MBSimError("importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel) is not implemented for " + this->getType()) ;}
 
+      void resetUpToDate();
+
     protected:
       /**
        * \brief stl-vector of discretizations/finite elements
@@ -300,6 +310,8 @@ namespace MBSimFlexibleBody {
        * \brief list of all contour frames
        * \todo: actually continous frames should be added to a contour and not to the body?!
        */
+
+      bool updEle;
   };
 
   /**

@@ -74,6 +74,8 @@ namespace MBSimFlexibleBody {
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ));
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getPosition(double t, int node);
+      virtual fmatvec::SqrMat3 getOrientation(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::SqrMat3 getOrientation(double t, int node);
       virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getVelocity(double t, int node);
       virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta);
