@@ -25,6 +25,8 @@ test -z $RCC && { RCC=$(dirname $(which $MOC))/rcc || RCC=rcc; }
 AC_SUBST([MOC])
 AC_SUBST([UIC])
 AC_SUBST([RCC])
+test -d "$QTLIBDIR" || QTLIBDIR=$(pkg-config --variable libdir QtCore)
+AC_SUBST([QTLIBDIR])
 
 dnl OpenMBV
 PKG_CHECK_MODULES(OPENMBV, [openmbv])
