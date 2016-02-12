@@ -36,26 +36,21 @@ namespace MBSimFlexibleBody {
 
   void FloatingFrame::updateVelocities(double t) { 
     contour->updateVelocities(t,this);
-    //WvP = contour->getVelocity(t,zeta);
-    //WomegaP = contour->getAngularVelocity(t,zeta);
     updateVel = false;
   }
 
   void FloatingFrame::updateAccelerations(double t) { 
-    WaP = contour->getAcceleration(t,zeta);
-    WpsiP = contour->getAngularAcceleration(t,zeta);
+    contour->updateAccelerations(t,this);
     updateAcc = true;
   }
 
   void FloatingFrame::updateJacobians(double t, int j) {
-    WJP[j] = contour->getJacobianOfTranslation(t,zeta,j);
-    WJR[j] = contour->getJacobianOfRotation(t,zeta,j);
+    contour->updateJacobians(t,this,j);
     updateJac[j] = false;
   }
 
   void FloatingFrame::updateGyroscopicAccelerations(double t) {
-    WjP = contour->getGyroscopicAccelerationOfTranslation(t,zeta);
-    WjR = contour->getGyroscopicAccelerationOfRotation(t,zeta);
+    contour->updateGyroscopicAccelerations(t,this);
     updateGA = false;
   }
 

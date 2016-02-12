@@ -85,15 +85,6 @@ namespace MBSim {
        * \param contour position
        */
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getAcceleration(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getAngularAcceleration(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j=0);
-      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j=0);
-      virtual fmatvec::MatV getJacobianOfDeformation(double t, const fmatvec::Vec2 &zeta, int j=0);
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfTranslation(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfRotation(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return first tangent in world frame

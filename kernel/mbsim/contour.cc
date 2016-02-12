@@ -45,51 +45,6 @@ namespace MBSim {
     return 0;
   }
 
-  Vec3 Contour::getVelocity(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::getVelocity): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::getAngularVelocity(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::getAngularVelocity): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::getAcceleration(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::getAcceleration): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::getAngularAcceleration(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::getAngularAcceleration): Not implemented.");
-    return 0;
-  }
-
-  Mat3xV Contour::getJacobianOfTranslation(double t, const Vec2 &zeta, int j) {
-    THROW_MBSIMERROR("(Contour::getJacobianOfTranslation): Not implemented.");
-    return 0;
-  }
-
-  Mat3xV Contour::getJacobianOfRotation(double t, const Vec2 &zeta, int j) {
-    THROW_MBSIMERROR("(Contour::getJacobianOfRotation): Not implemented.");
-    return 0;
-  }
-
-  MatV Contour::getJacobianOfDeformation(double t, const Vec2 &zeta, int j) {
-    THROW_MBSIMERROR("(Contour::getJacobianOfDeformation): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::getGyroscopicAccelerationOfTranslation(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::getGyroscopicAccelerationOfTranslation): Not implemented.");
-    return 0;
-  }
-
-  Vec3 Contour::getGyroscopicAccelerationOfRotation(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::getGyroscopicAccelerationOfRotation): Not implemented.");
-    return 0;
-  }
-
   Vec3 Contour::getKrPS(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getKrPS): Not implemented.");
     return 0;
