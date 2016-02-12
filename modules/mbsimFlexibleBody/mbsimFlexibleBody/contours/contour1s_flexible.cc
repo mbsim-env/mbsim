@@ -20,8 +20,8 @@
 #include <config.h>
 
 #include "contour1s_flexible.h"
-
-#include <mbsim/utils/rotarymatrices.h>
+#include "mbsimFlexibleBody/floating_frame.h"
+#include "mbsimFlexibleBody/flexible_body.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,8 +29,34 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Contour1sFlexible::Contour1sFlexible(const string & name) :
-      Contour1s(name), neutral(0)
-  {
+  Contour1sFlexible::Contour1sFlexible(const string & name) : Contour1s(name), neutral(0) { }
+
+  Frame* Contour1sFlexible::createContourFrame(const string &name) {
+    return new FloatingFrame(name,this);
   }
+
+  void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {
+    static_cast<FlexibleBody*>(parent)->updatePositions(t,frame);
+  }
+
+  void Contour1sFlexible::updateVelocities(double t, ContourFrame *frame) {
+    static_cast<FlexibleBody*>(parent)->updateVelocities(t,frame);
+  }
+
+  void Contour1sFlexible::updateAccelerations(double t, ContourFrame *frame) {
+    static_cast<FlexibleBody*>(parent)->updateAccelerations(t,frame);
+  }
+
+  void Contour1sFlexible::updateJacobians(double t, ContourFrame *frame, int j) {
+    static_cast<FlexibleBody*>(parent)->updateJacobians(t,frame,j);
+  }
+
+  void Contour1sFlexible::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
+    static_cast<FlexibleBody*>(parent)->updateGyroscopicAccelerations(t,frame);
+  }
+
+  Vec3 Contour1sFlexible::getWu(double t, const fmatvec::Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getWu(t,zeta);
+  }
+
 }

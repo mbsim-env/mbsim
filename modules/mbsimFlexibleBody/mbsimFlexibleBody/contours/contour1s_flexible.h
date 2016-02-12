@@ -57,47 +57,15 @@ namespace MBSimFlexibleBody {
       }
       /***************************************************/
 
-//      /* INHERITED INTERFACE OF CONTOUR */
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff) {
-//        if (neutral)
-//          neutral->updateKinematicsForFrame(cp, ff);
-//        else
-//          static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp, ff); //TODO: avoid asking parent body here!
-//      }
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) {
-//        if (neutral)
-//          neutral->updateJacobiansForFrame(cp);
-//        else
-//          static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp);
-//      }
-//      /***************************************************/
-//
-//      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-//      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
-//        if (neutral)
-//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::position);
-//        else
-//          updateKinematicsForFrame(cp, MBSim::Frame::position);
-//      }
-//      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
-//        if (neutral)
-//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
-//        else
-//          updateKinematicsForFrame(cp, MBSim::Frame::firstTangent);
-//      }
-//      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
-//        if (neutral)
-//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::normal);
-//        else
-//          updateKinematicsForFrame(cp, MBSim::Frame::normal);
-//      }
-//      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
-//        if (neutral)
-//          neutral->updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
-//        else
-//          updateKinematicsForFrame(cp, MBSim::Frame::secondTangent);
-//      }
-      /***************************************************/
+      virtual MBSim::Frame* createContourFrame(const std::string &name="P");
+
+      virtual void updatePositions(double t, ContourFrame* frame);
+      virtual void updateVelocities(double t, ContourFrame* frame);
+      virtual void updateAccelerations(double t, ContourFrame* frame);
+      virtual void updateJacobians(double t, ContourFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, ContourFrame* frame);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWu(t,zeta); }
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
 
       MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
         return findContactPairingFlexible(type0.c_str(), type1.c_str());

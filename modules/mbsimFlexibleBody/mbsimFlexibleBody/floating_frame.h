@@ -20,22 +20,20 @@
 #ifndef _FLOATING_FRAME_H__
 #define _FLOATING_FRAME_H__
 
-#include "mbsim/frame.h"
-
-namespace MBSim {
-  class Contour;
-}
+#include "mbsimFlexibleBody/contour_frame.h"
 
 namespace MBSimFlexibleBody {
 
+  class Contour1sFlexible;
+
   /**
-   * \brief cartesian frame on rigid bodies 
+   * \brief tbd
    * \author Martin Foerg
    */
-  class FloatingFrame : public MBSim::Frame {
+  class FloatingFrame : public ContourFrame {
 
     public:
-      FloatingFrame(const std::string &name = "dummy", MBSim::Contour* contour_ = NULL) : Frame(name), contour(contour_) { }
+      FloatingFrame(const std::string &name = "dummy", Contour1sFlexible* contour_ = NULL) : ContourFrame(name), contour(contour_) { }
 
       std::string getType() const { return "FloatingFrame"; }
 
@@ -46,8 +44,7 @@ namespace MBSimFlexibleBody {
       void updateGyroscopicAccelerations(double t);
 
     protected:
-      MBSim::Contour *contour;
-      fmatvec::Vec2 zeta;
+      Contour1sFlexible *contour;
   };
 
 }

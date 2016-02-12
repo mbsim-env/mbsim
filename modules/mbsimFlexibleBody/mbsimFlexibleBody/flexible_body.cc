@@ -89,14 +89,54 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
-  void FlexibleBody::updateJacobians(double t, int k) {
-//    for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-//      updateJacobiansForFrame(S_Frame[i], frame[i]);
-//    }
-    // TODO contour non native?  DONE!
-//    for (size_t i = 0; i < contour.size(); i++) {
-//      contour[i]->updateJacobians;
-//    }
+  void FlexibleBody::updatePositions(double t, ContourFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updatePositions): Not implemented.");
+  }
+
+  void FlexibleBody::updatePositions(double t, NodeFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updatePositions): Not implemented.");
+  }
+
+  void FlexibleBody::updateVelocities(double t, ContourFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updateVelocities): Not implemented.");
+  }
+
+  void FlexibleBody::updateVelocities(double t, NodeFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updateVelocities): Not implemented.");
+  }
+
+  void FlexibleBody::updateAccelerations(double t, ContourFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody::updateAccelerations(double t, NodeFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody::updateJacobians(double t, ContourFrame* frame, int j) {
+    THROW_MBSIMERROR("(FlexibleBody::updateJacobians): Not implemented.");
+  }
+
+  void FlexibleBody::updateJacobians(double t, NodeFrame* frame, int j) {
+    THROW_MBSIMERROR("(FlexibleBody::updateJacobians): Not implemented.");
+  }
+
+  void FlexibleBody::updateGyroscopicAccelerations(double t, ContourFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody::updateGyroscopicAccelerations(double t, NodeFrame* frame) {
+    THROW_MBSIMERROR("(FlexibleBody::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  Vec3 FlexibleBody::getWu(double t, const Vec2 &zeta) {
+    THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
+    return 0;
+  }
+
+  Vec3 FlexibleBody::getWu(double t, int node) {
+    THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
+    return 0;
   }
 
   void FlexibleBody::plot(double t, double dt) {
@@ -108,7 +148,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody::init(InitStage stage) {
     if (stage == unknownStage) {
       Body::init(stage);
-      T = SqrMat(qSize, fmatvec::EYE);
+      T = SqrMat(qSize, EYE);
 //      for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
 //        S_Frame[i].getFrameOfReference().getJacobianOfTranslation(0,false).resize(uSize[0]);
 //        S_Frame[i].getFrameOfReference().getJacobianOfRotation(0,false).resize(uSize[0]);

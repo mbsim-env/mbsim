@@ -17,10 +17,10 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTOUR_PARAMETER_FRAME_H__
-#define _CONTOUR_PARAMETER_FRAME_H__
+#ifndef _CONTOUR_FRAME_H__
+#define _CONTOUR_FRAME_H__
 
-#include "mbsimFlexibleBody/contour_frame.h"
+#include "mbsim/frame.h"
 
 namespace MBSimFlexibleBody {
 
@@ -28,18 +28,25 @@ namespace MBSimFlexibleBody {
    * \brief cartesian frame on contour parameters of flexible bodies
    * \author Kilian Grundl
    */
-  class ContourParameterFrame : public ContourFrame {
+  class ContourFrame : public MBSim::Frame {
 
     public:
-      ContourParameterFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2()) : ContourFrame(name,zeta) { }
+      ContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta_ = fmatvec::Vec2()) : Frame(name), zeta(zeta_) { }
 
-      std::string getType() const { return "ContourParameterFrame"; }
+      std::string getType() const { return "ContourFrame"; }
 
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateAccelerations(double t);
-      void updateJacobians(double t, int j=0);
-      void updateGyroscopicAccelerations(double t);
+      void setContourParameters(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
+
+      const fmatvec::Vec2& getContourParameters() const { return zeta; }
+
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+
+    protected:
+      /*!
+       * \brief contour parameters of the frame
+       */
+      fmatvec::Vec2 zeta;
   };
 
 }

@@ -5,6 +5,7 @@ libmbsimFlexibleBody_la_LDFLAGS = -avoid-version
 libmbsimFlexibleBody_la_SOURCES = flexible_body.cc\
 				  fixed_nodal_frame.cc\
 				  node_frame.cc\
+				  contour_frame.cc\
 				  contour_parameter_frame.cc\
 				  floating_frame.cc
 
@@ -22,6 +23,7 @@ mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
 				   frame_ffr.h\
 				   fixed_nodal_frame.h\
 				   node_frame.h\
+				   contour_frame.h\
 				   contour_parameter_frame.h\
 				   floating_frame.h\
 				   pointer.h

@@ -33,6 +33,7 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   class NodeFrame;
+  class ContourFrame;
   class ContourParameterFrame;
 
   const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
@@ -71,96 +72,18 @@ namespace MBSimFlexibleBody {
       virtual void updateh(double t, int k=0);
       virtual void updateM(double t, int k=0);
       virtual void updatedhdz(double t);
-//      virtual void updateStateDependentVariables(double t);
-      virtual void updateJacobians(double t, int k=0);
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getPosition(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::SqrMat3 getOrientation(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::getOrientation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::SqrMat3 getOrientation(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getOrientation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::getVelocity): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getVelocity(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getVelocity): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::getAngularVelocity): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getAngularVelocity(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getAngularVelocity): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getAcceleration(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::getAcceleration): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getAcceleration(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getAcceleration): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getAngularAcceleration(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::getAngularAcceleration): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getAngularAcceleration(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getAngularAcceleration): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j=0) {
-        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfTranslation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, int node, int j=0) {
-        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfTranslation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j=0) {
-        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfRotation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, int node, int j=0) {
-        THROW_MBSIMERROR("(FlexibleBody::getJacobianOfRotation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfTranslation(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::GyroscopicAccelerationOfTranslation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfTranslation(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getGyroscopicAccelerationOfTranslation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfRotation(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::GyroscopicAccelerationOfRotation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfRotation(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getGyroscopicAccelerationOfRotation): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
-        return 0;
-      }
-      virtual fmatvec::Vec3 getWu(double t, int node) {
-        THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
-        return 0;
-      }
+      virtual void updatePositions(double t, ContourFrame* frame);
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, ContourFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, ContourFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, ContourFrame* frame, int j=0);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, ContourFrame* frame);
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(double t, int node);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);

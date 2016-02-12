@@ -21,8 +21,6 @@
 #define _FLEXIBLE_BAND_H_
 
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
-#include "mbsim/contour.h"
-
 #include "mbsimFlexibleBody/contours/contour_1s_neutral_factory.h"
 
 namespace MBSimFlexibleBody {
@@ -46,26 +44,6 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const {
         return "FlexibleBand";
       }
-      /***************************************************/
-
-      virtual MBSim::Frame* createContourFrame(const std::string &name="P");
-
-      /* INHERITED INTERFACE OF CONTOUR */
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::Frame::Frame::Feature ff)
-//      virtual void updateJacobiansForFrame(const fmatvec::Vec2 &zeta, int j = 0);
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j=0);
-      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j=0);
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWu(t,zeta); }
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
-//      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta);
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-//      virtual void computeRootFunctionPosition(const fmatvec::Vec2 &zeta) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::position); }
-//      virtual void computeRootFunctionFirstTangent(const fmatvec::Vec2 &zeta) { Contour1sFlexible::updateKinematicsForFrame(cp, MBSim::Frame::firstTangent); }
       /***************************************************/
 
       /* GETTER / SETTER */

@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/contour.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsimFlexibleBody/floating_frame.h"
 
 using namespace std;
@@ -35,8 +35,9 @@ namespace MBSimFlexibleBody {
   }
 
   void FloatingFrame::updateVelocities(double t) { 
-    WvP = contour->getVelocity(t,zeta);
-    WomegaP = contour->getAngularVelocity(t,zeta);
+    contour->updateVelocities(t,this);
+    //WvP = contour->getVelocity(t,zeta);
+    //WomegaP = contour->getAngularVelocity(t,zeta);
     updateVel = false;
   }
 

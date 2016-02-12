@@ -72,20 +72,16 @@ namespace MBSimFlexibleBody {
 //      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
       virtual void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false);
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ));
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getPosition(double t, int node);
-      virtual fmatvec::SqrMat3 getOrientation(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::SqrMat3 getOrientation(double t, int node);
-      virtual fmatvec::Vec3 getVelocity(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getVelocity(double t, int node);
-      virtual fmatvec::Vec3 getAngularVelocity(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getAngularVelocity(double t, int node);
-      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, const fmatvec::Vec2 &zeta, int j=0);
-      virtual fmatvec::Mat3xV getJacobianOfTranslation(double t, int node, int j=0);
-      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, const fmatvec::Vec2 &zeta, int j=0);
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfTranslation(double t, const fmatvec::Vec2 &zeta) { return fmatvec::Vec3(); }
-      virtual fmatvec::Vec3 getGyroscopicAccelerationOfRotation(double t, const fmatvec::Vec2 &zeta) { return fmatvec::Vec3(); }
-      virtual fmatvec::Mat3xV getJacobianOfRotation(double t, int node, int j=0);
+      virtual void updatePositions(double t, ContourFrame* frame);
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, ContourFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+//      virtual void updateAccelerations(double t, ContourFrame* frame);
+//      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, ContourFrame* frame, int j=0);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, ContourFrame* frame) { }
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame) { }
       virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWu(double t, int node);
 
