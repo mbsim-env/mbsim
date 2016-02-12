@@ -86,7 +86,7 @@ namespace MBSim {
        * \param point contour or general rigid contour reduced to point of reference
        * \param contour with one contour parameter
        */
-      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_) {}
+      FuncPairContour1sPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) {}
 
       double operator()(const double &alpha);
 
@@ -96,7 +96,7 @@ namespace MBSim {
       /**
        * \brief contours
        */
-      Contour1s *contour;
+      Contour *contour;
       Point *point;
 
       /**

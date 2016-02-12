@@ -68,7 +68,7 @@ namespace MBSim {
 
     zeta(0) = search.slv(); // get contact parameter of neutral fibre
 
-    if (zeta(0) < contour1s->getAlphaStart() || zeta(0) > contour1s->getAlphaEnd())
+    if (zeta(0) < contour1s->getEtaNodes()[0] || zeta(0) > contour1s->getEtaNodes()[contour1s->getEtaNodes().size()-1])
       g = 1.0;
     else { // calculate the normal distance
       cFrame[icontour]->setPosition(contour1s->getPosition(t,zeta));
