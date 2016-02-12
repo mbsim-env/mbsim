@@ -19,8 +19,8 @@
 
 #include <config.h>
 
-#include "contour1s.h"
-
+#include "mbsim/contours/contour1s.h"
+#include "mbsim/frame.h"
 #include <mbsim/utils/rotarymatrices.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -44,7 +44,7 @@ namespace MBSim {
       if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
         openMBVSpineExtrusion->setName(name);
         parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
-        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
+//        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
       }
 #endif
     }

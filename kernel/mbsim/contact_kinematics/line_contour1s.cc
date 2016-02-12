@@ -21,6 +21,7 @@
 #include <config.h>
 #include "mbsim/contact_kinematics/line_contour1s.h"
 #include "mbsim/contours/line.h"
+#include "mbsim/contours/contour1s.h"
 #include "mbsim/functions_contact.h"
 
 using namespace fmatvec;

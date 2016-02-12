@@ -19,6 +19,7 @@
 
 #include <config.h> 
 #include "point_line_segment.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line_segment.h"
 

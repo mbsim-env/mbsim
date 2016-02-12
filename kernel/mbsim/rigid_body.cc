@@ -116,8 +116,8 @@ namespace MBSim {
     if(stage==preInit) {
 
       for(unsigned int k=0; k<contour.size(); k++) {
-        if(!(contour[k]->getFrameOfReference()))
-          contour[k]->setFrameOfReference(C);
+        if (!((RigidContour*) contour[k])->getFrameOfReference())
+          ((RigidContour*) contour[k])->setFrameOfReference(C);
       }
 
       Body::init(stage);
@@ -599,8 +599,12 @@ namespace MBSim {
     if(!constraint) uRel>>u;
   }
 
-  void RigidBody::addFrame(FixedRelativeFrame *frame_) {
-    Body::addFrame(frame_);
+  void RigidBody::addFrame(FixedRelativeFrame *frame) {
+    Body::addFrame(frame);
+  }
+
+  void RigidBody::addContour(RigidContour *contour) {
+    Body::addContour(contour);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -633,7 +637,7 @@ namespace MBSim {
     // contours
     e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
     while(e) {
-      Contour *c=ObjectFactory::createAndInit<Contour>(e);
+      RigidContour *c=ObjectFactory::createAndInit<RigidContour>(e);
       addContour(c);
       e=e->getNextElementSibling();
     }

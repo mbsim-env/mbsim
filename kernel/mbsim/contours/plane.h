@@ -20,9 +20,10 @@
 #ifndef _PLANE_H_
 #define _PLANE_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/rigid_contour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 #endif
 
@@ -56,35 +57,35 @@ namespace MBSim {
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta) { return R->getOrientation(t).col(0); }
+      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
 
      /**
        * \return first tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return R->getOrientation(t).col(1); }
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta) { return R->getOrientation(t).col(2); }
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
 
       virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPoint);
       /***************************************************/

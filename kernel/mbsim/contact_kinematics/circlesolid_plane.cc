@@ -20,9 +20,9 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/circlesolid_plane.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/circle_solid.h"
-
 
 using namespace fmatvec;
 using namespace std;

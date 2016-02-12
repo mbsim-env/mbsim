@@ -19,11 +19,11 @@
 
 #include <config.h>
 #include "mbsim/group.h"
+#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/contours/rigid_contour.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
 #include "mbsim/constraint.h"
-#include "mbsim/fixed_relative_frame.h"
-#include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
@@ -129,7 +129,7 @@ namespace MBSim {
     // contours
     E=e->getFirstElementChild();
     while(E) {
-      Contour *c=ObjectFactory::createAndInit<Contour>(E);
+      RigidContour *c=ObjectFactory::createAndInit<RigidContour>(E);
       addContour(c);
       E=E->getNextElementSibling();
     }

@@ -20,7 +20,7 @@
 #ifndef _COMPOUND_CONTOUR_H_
 #define _COMPOUND_CONTOUR_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/rigid_contour.h"
 
 namespace MBSim {
 

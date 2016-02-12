@@ -21,7 +21,7 @@
 #include "flexible_body_ffr.h"
 #include "mbsimFlexibleBody/frame_ffr.h"
 #include "mbsimFlexibleBody/fixed_nodal_frame.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/rigid_contour.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/joint.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -461,8 +461,9 @@ namespace MBSimFlexibleBody {
       Mat3xV T(uSize[0]);
       Vec3 t;
       for(unsigned int k=0; k<contour.size(); k++) {
-        if(!(contour[k]->getFrameOfReference()))
-          contour[k]->setFrameOfReference(K);
+        RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
+        if(contour_ and not(contour_->getFrameOfReference()))
+          contour_->setFrameOfReference(K);
       }
 
       Body::init(stage);

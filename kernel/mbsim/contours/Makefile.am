@@ -1,7 +1,8 @@
 SUBDIRS = .
 
 noinst_LTLIBRARIES = libcontour.la
-libcontour_la_SOURCES = circle.cc\
+libcontour_la_SOURCES = rigid_contour.cc\
+			circle.cc\
 			rectangle.cc\
 			line.cc\
 			line_segment.cc\
@@ -25,7 +26,8 @@ libcontour_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CF
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 contourincludedir = $(includedir)/mbsim/contours
-contourinclude_HEADERS = circle.h\
+contourinclude_HEADERS = rigid_contour.h\
+			 circle.h\
 			 circle_hollow.h\
 			 circle_solid.h\
 			 rectangle.h\

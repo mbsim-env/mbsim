@@ -23,13 +23,13 @@
 // --- List of contact kinematic implementations - BEGIN ---
 #include <mbsim/contact_kinematics/point_contour1s.h>
 
-#include <mbsimFlexibleBody/contact_kinematics/circlehollow_cylinderflexible.h>
-#include <mbsimFlexibleBody/contact_kinematics/point_cylinderflexible.h>
-#include <mbsimFlexibleBody/contact_kinematics/point_flexibleband.h>
-#include <mbsimFlexibleBody/contact_kinematics/circlesolid_flexibleband.h>
-#include <mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h>
-#include <mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h>
-#include <mbsimFlexibleBody/contact_kinematics/point_contour2s.h>
+//#include <mbsimFlexibleBody/contact_kinematics/circlehollow_cylinderflexible.h>
+//#include <mbsimFlexibleBody/contact_kinematics/point_cylinderflexible.h>
+//#include <mbsimFlexibleBody/contact_kinematics/point_flexibleband.h>
+//#include <mbsimFlexibleBody/contact_kinematics/circlesolid_flexibleband.h>
+//#include <mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h>
+//#include <mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h>
+//#include <mbsimFlexibleBody/contact_kinematics/point_contour2s.h>
 // --- List of contact kinematic implementations - END ---
 
 namespace MBSimFlexibleBody {

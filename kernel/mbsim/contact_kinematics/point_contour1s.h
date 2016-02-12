@@ -64,7 +64,7 @@ namespace MBSim {
        * \brief contour classes
        */
       Point *point;
-      Contour1s *contour1s;
+      Contour *contour1s;
 
       /*!
        * \brief use local law

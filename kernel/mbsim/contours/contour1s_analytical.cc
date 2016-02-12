@@ -20,15 +20,12 @@
 
 #include <config.h>
 #include "mbsim/contours/contour1s_analytical.h"
-#include "mbsim/mbsim_event.h"
-#include "mbsim/objectfactory.h"
+#include "mbsim/floating_relative_frame.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/utils/contact_utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/object.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/group.h>
-#include "openmbvcppinterface/polygonpoint.h"
-#include "openmbvcppinterface/extrusion.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 #endif
@@ -57,73 +54,44 @@ namespace MBSim {
     return funcCrPC->parDer(zeta(0));
   }
 
+  Vec3 Contour1sAnalytical::getKt(const fmatvec::Vec2 &zeta) {
+    static Vec3 Kt("[0;0;1]");
+    return Kt;
+  }
+
   Vec3 Contour1sAnalytical::getParDer1Ks(const fmatvec::Vec2 &zeta) {
     return funcCrPC->parDerParDer(zeta(0));
   }
 
   void Contour1sAnalytical::init(InitStage stage) {
-    if(stage==plotting) {
+    if (stage == preInit) {
+      RigidContour::init(stage);
+      if (etaNodes.size() < 2)
+        THROW_MBSIMERROR("(Contour1sAnalytical::init): Size of etaNodes must be greater than 1.");
+    }
+    else if(stage==plotting) {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           openMBVRigidBody->setName(name);
-          double rMax=0;
-          for (double a=as; a<=ae; a+=1e-3*(ae-as)) {
-            const double r=nrm2((*funcCrPC)(a));
-            if (r>rMax)
-              rMax=r;
-          }
-          vector<double> alpha;
-          alpha.push_back(as);
-          while(alpha.back()<ae) {
-            class PointDistance : public Function<double(double)> {
-              public:
-                PointDistance(Vec3 p1_, Function<Vec3(double)> * f_, double d_) : p1(p1_), f(f_), d(d_) {}
-                double operator()(const double &alpha) {
-                  return nrm2((*f)(alpha)-p1)-d;
-                }
-              private:
-                Vec3 p1;
-                Function<Vec3(double)> * f;
-                double d;
-            };
-            PointDistance g((*funcCrPC)(alpha.back()), funcCrPC, .1*rMax);
-            RegulaFalsi solver(&g);
-            solver.setTolerance(epsroot());
-            double aeTmp;
-            if (alpha.back()<as+.25*(ae-as))
-              aeTmp=as+.25*(ae-as);
-            else if (alpha.back()<as+.5*(ae-as))
-              aeTmp=as+.5*(ae-as);
-            else if (alpha.back()<as+.75*(ae-as))
-              aeTmp=as+.75*(ae-as);
-            else
-              aeTmp=ae;
-            alpha.push_back(solver.solve(alpha.back(), aeTmp));
-          }
-          if (alpha.back()>ae)
-            alpha.back()=ae;
-          else
-            alpha.push_back(ae);
-
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
-          for (unsigned int i=0; i<alpha.size(); i++) {
-            const Vec3 CrPC=(*funcCrPC)(alpha[i]);
+          if(not(ombvNodes.size())) ombvNodes = etaNodes;
+          for (unsigned int i=0; i<ombvNodes.size(); i++) {
+            const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
             vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
           }
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
-//          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
           parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
   #endif
-        Contour1s::init(stage);
+        RigidContour::init(stage);
       }
     }
     else
-      Contour1s::init(stage);
+      RigidContour::init(stage);
   }
 
   Frame* Contour1sAnalytical::createContourFrame(const string &name) {
@@ -149,7 +117,7 @@ namespace MBSim {
         openMBVRigidBody->append(data);
       }
 #endif
-      Contour1s::plot(t,dt);
+      RigidContour::plot(t,dt);
     }
   }
       
@@ -159,18 +127,14 @@ namespace MBSim {
   }
 
   void Contour1sAnalytical::initializeUsingXML(DOMElement * element) {
-    Contour::initializeUsingXML(element);
+    RigidContour::initializeUsingXML(element);
     DOMElement * e;
     //ContourContinuum
-    e=E(element)->getFirstElementChildNamed(MBSIM%"alphaStart");
-    as=getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"alphaEnd");
-    ae=getDouble(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
-    nodes=getVec(e);
+    etaNodes=getVec(e);
     //Contour1s
-    e=E(element)->getFirstElementChildNamed(MBSIM%"diameter");
-    diameter=getDouble(e);
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"diameter");
+//    diameter=getDouble(e);
     //Contour1sAnalytical
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     throw;
@@ -185,7 +149,7 @@ namespace MBSim {
   }
 
   DOMElement* Contour1sAnalytical::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
+    DOMElement *ele0 = RigidContour::writeXMLFile(parent);
 //    addElementText(ele0,MBSIM%"alphaStart",as);
 //    addElementText(ele0,MBSIM%"alphaEnd",ae);
 //    addElementText(ele0,MBSIM%"nodes",nodes);

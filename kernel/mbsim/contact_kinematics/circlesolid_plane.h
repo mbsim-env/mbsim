@@ -21,6 +21,7 @@
 #define _CONTACT_KINIMATICS_CIRCLESOLID_PLANE_H_
 
 #include "contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 

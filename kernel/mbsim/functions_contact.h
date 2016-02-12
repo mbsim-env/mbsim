@@ -21,27 +21,18 @@
 #ifndef FUNCTIONS_CONTACT_H_
 #define FUNCTIONS_CONTACT_H_
 
-#include <mbsim/contour.h>
-#include <mbsim/contours/contour1s.h>
-#include <mbsim/contours/point.h>
-#include "mbsim/contours/line.h"
-#include <mbsim/contours/circle_solid.h>
-#include "mbsim/contours/circle_hollow.h"
-#include "mbsim/contours/circle.h"
-#include "mbsim/contours/frustum2d.h"
-#include "mbsim/contours/edge.h"
-#include "mbsim/contours/frustum.h"
-#include "mbsim/contours/plane.h"
-#include "mbsim/contours/contour2s.h"
-#include "mbsim/contours/planewithfrustum.h"
-#include "mbsim/contours/contour_interpolation.h"
-#include "mbsim/contours/contour_quad.h"
-#include "mbsim/contours/cuboid.h"
-#include "mbsim/contours/compound_contour.h"
-#include "mbsim/mbsim_event.h"
 #include <mbsim/functions/function.h>
 
 namespace MBSim {
+
+  class Contour;
+  class Point;
+  class Line;
+  class Contour1s;
+  class Contour2s;
+  class CircleSolid;
+  class CircleHollow;
+  class ContourInterpolation;
 
   template <typename Sig> class DistanceFunction;
 
@@ -97,20 +88,9 @@ namespace MBSim {
        */
       FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_) {}
 
-      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      double operator()(const double &alpha) {
-        zeta(0) = alpha;
-        fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt = contour->getWu(t,zeta);
-        return Wt.T() * Wd;
-      }
+      double operator()(const double &alpha);
 
-      fmatvec::Vec3 getWrD(const double &alpha) {
-        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-        zeta(0) = alpha;
-        return contour->getPosition(t,zeta) - point->getFrame()->getPosition(t);
-      }
-      /*************************************************/
+      fmatvec::Vec3 getWrD(const double &alpha);
 
     private:
       /**
@@ -141,21 +121,9 @@ namespace MBSim {
           contour(contour_), point(point_) {
       }
 
-      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha) {  // Vec2: U and V direction
-        fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt1 = contour->getWu(t,alpha);
-        fmatvec::Vec3 Wt2 = contour->getWv(t,alpha);
-        fmatvec::Vec2 Wt(fmatvec::NONINIT);  // TODO:: check this?
-        Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
-        Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
-        return Wt;
-      }
+      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha);
 
-      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha) {
-        return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
-      }
-      /*************************************************/
+      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha);
 
     private:
       /**
@@ -181,20 +149,9 @@ namespace MBSim {
        */
       FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
 
-      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      double operator()(const double &alpha) {
-        zeta(0) = alpha;
-        fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt = contour->getWu(t,zeta);
-        return Wt.T() * Wd;
-      }
+      double operator()(const double &alpha);
 
-      fmatvec::Vec3 getWrD(const double &alpha) {
-        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-        zeta(0) = alpha;
-        return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) + circle->getRadius() * contour->getWn(t,zeta));
-      }
-      /*************************************************/
+      fmatvec::Vec3 getWrD(const double &alpha);
 
     private:
       /**
@@ -223,15 +180,9 @@ namespace MBSim {
        */
       FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
 
-      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha) {
-        return (contour->getWu(t,alpha)).T() * (contour->getPosition(t,alpha) - point->getFrame()->getPosition(t));
-      }
+      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha);
 
-      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha) {
-        return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
-      }
-      /*************************************************/
+      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha);
 
     private:
       /**
@@ -559,29 +510,19 @@ namespace MBSim {
        * \param circle solid contour
        * \param contour with one contour parameter
        */
-      FuncPairContour1sCircleSolid(CircleSolid* circle_, Contour1s *contour_) :
-          contour(contour_), circle(circle_) {
+      FuncPairContour1sCircleSolid(CircleSolid* circle_, Contour *contour1s_) :
+          contour1s(contour1s_), circle(circle_) {
       }
 
-      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      double operator()(const double &alpha) {
-        zeta(0) = alpha;
-        fmatvec::Vec3 Wd = getWrD(alpha);
-        fmatvec::Vec3 Wt = contour->getWu(t,zeta);
-        return Wt.T() * Wd;
-      }
+      double operator()(const double &alpha);
 
-      fmatvec::Vec3 getWrD(const double &alpha) {
-        zeta(0) = alpha;
-        return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - circle->getRadius() * contour->getWn(t,zeta));
-      }
-      /***************************************************/
+      fmatvec::Vec3 getWrD(const double &alpha);
 
     private:
       /**
        * \brief contours
        */
-      Contour1s *contour;
+      Contour *contour1s;
       CircleSolid *circle;
 
       /**

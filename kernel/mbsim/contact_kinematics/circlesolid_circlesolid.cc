@@ -20,6 +20,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/circlesolid_circlesolid.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/circle_hollow.h"
 

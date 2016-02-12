@@ -20,6 +20,7 @@
 
 #include <config.h> 
 #include "sphere_frustum.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/eps.h"

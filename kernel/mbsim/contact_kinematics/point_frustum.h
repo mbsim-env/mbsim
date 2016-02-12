@@ -23,6 +23,7 @@
 #define _CONTACT_KINEMATICS_POINT_FRUSTUM_H_
 
 #include "contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 

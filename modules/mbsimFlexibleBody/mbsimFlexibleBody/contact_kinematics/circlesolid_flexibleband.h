@@ -55,9 +55,8 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
-      virtual void updateg(double t, double &g, MBSim::ContourPointData *cpData, int index = 0) { throw MBSim::MBSimError("ContactKinematicsCircleSolidFlexibleBand::updateg not implemented!"); }
-      virtual void updateg(double t, std::vector<MBSim::SingleContact> & contact) { throw MBSim::MBSimError("ContactKinematicsCircleSolidFlexibleBand::updateg not implemented!"); }
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, MBSim::ContourPointData* cpData) { throw MBSim::MBSimError("ContactKinematicsCircleSolidFlexibleBand::updatewb not implemented!"); };
+      virtual void updateg(double t, double &g, std::vector<MBSim::Frame*> &cFrame, int index = 0) { throw MBSim::MBSimError("ContactKinematicsCircleSolidFlexibleBand::updateg not implemented!"); }
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::Frame*> &cFrame) { throw MBSim::MBSimError("ContactKinematicsCircleSolidFlexibleBand::updatewb not implemented!"); };
       /***************************************************/
 
       virtual ContactKinematics* getContactKinematics(int i=0) const { return contactKinematics[i]; }

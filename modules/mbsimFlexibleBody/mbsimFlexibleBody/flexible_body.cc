@@ -44,8 +44,8 @@ using namespace xercesc;
 namespace MBSimFlexibleBody {
 
   FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.), updEle(true) {
-    contourFrame = new Frame("ContourFrame");
-    contourFrame->setParent(this);
+//    contourFrame = new Frame("ContourFrame");
+//    contourFrame->setParent(this);
     //addFrame(contourFrame,0);
   }
 
@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
         discretization[i] = NULL;
       }
     }
-    delete contourFrame;
+//    delete contourFrame;
   }
 
   void FlexibleBody::updateh(double t, int k) {

@@ -22,6 +22,7 @@
 #define _CONTACT_KINEMATICS_LINE_CONTOUR1S_H_
 
 #include "contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 

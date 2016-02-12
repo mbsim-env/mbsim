@@ -21,6 +21,7 @@
 
 #include <config.h> 
 #include "point_frustum.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/utils/eps.h"

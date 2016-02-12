@@ -26,7 +26,6 @@
 namespace MBSim {
 
   class CircleSolid;
-  class Contour1s;
   class FuncPairContour1sCircleSolid;
 
   /**
@@ -65,7 +64,7 @@ namespace MBSim {
        * \brief contour classes
        */
       CircleSolid *circle;
-      Contour1s *contour1s;
+      Contour *contour1s;
 
       /**
        * \brief root function

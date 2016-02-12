@@ -22,6 +22,7 @@
 #define CIRCLE_FRUSTUM_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 

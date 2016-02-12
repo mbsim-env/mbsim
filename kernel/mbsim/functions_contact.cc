@@ -19,17 +19,95 @@
 
 #include <config.h>
 #include <mbsim/functions_contact.h>
+#include <mbsim/contours/contour1s.h>
+#include <mbsim/contours/point.h>
+#include "mbsim/contours/line.h"
+#include <mbsim/contours/circle_solid.h>
+#include "mbsim/contours/circle_hollow.h"
+#include "mbsim/contours/circle.h"
+#include "mbsim/contours/frustum2d.h"
+#include "mbsim/contours/edge.h"
+#include "mbsim/contours/frustum.h"
+#include "mbsim/contours/plane.h"
+#include "mbsim/contours/contour2s.h"
+#include "mbsim/contours/planewithfrustum.h"
+#include "mbsim/contours/contour_interpolation.h"
+#include "mbsim/contours/contour_quad.h"
+#include "mbsim/contours/cuboid.h"
+#include "mbsim/contours/compound_contour.h"
+#include "mbsim/frame.h"
+#include "mbsim/mbsim_event.h"
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 using namespace fmatvec;
 
 namespace MBSim {
 
+  double FuncPairContour1sPoint::operator()(const double &alpha) {
+    zeta(0) = alpha;
+    Vec3 Wd = getWrD(alpha);
+    Vec3 Wt = contour->getWu(t,zeta);
+    return Wt.T() * Wd;
+  }
+
+  Vec3 FuncPairContour1sPoint::getWrD(const double &alpha) {
+    //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
+    zeta(0) = alpha;
+    return contour->getPosition(t,zeta) - point->getFrame()->getPosition(t);
+  }
+
+  Vec2 FuncPairContour2sPoint::operator()(const Vec2 &alpha) {  // Vec2: U and V direction
+    Vec3 Wd = getWrD(alpha);
+    Vec3 Wt1 = contour->getWu(t,alpha);
+    Vec3 Wt2 = contour->getWv(t,alpha);
+    Vec2 Wt(NONINIT);  // TODO:: check this?
+    Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
+    Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
+    return Wt;
+  }
+
+  Vec3 FuncPairContour2sPoint::getWrD(const Vec2 &alpha) {
+    return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
+  }
+
   void Contact1sSearch::setEqualSpacing(const int &n, const double &x0, const double &dx) {
     Vec nodesTilde(n + 1, NONINIT);
     for (int i = 0; i <= n; i++)
       nodesTilde(i) = x0 + i * dx;
     nodes = nodesTilde;
+  }
+
+  double FuncPairContour1sCircleHollow::operator()(const double &alpha) {
+    zeta(0) = alpha;
+    Vec3 Wd = getWrD(alpha);
+    Vec3 Wt = contour->getWu(t,zeta);
+    return Wt.T() * Wd;
+  }
+
+  Vec3 FuncPairContour1sCircleHollow::getWrD(const double &alpha) {
+    //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
+    zeta(0) = alpha;
+    return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) + circle->getRadius() * contour->getWn(t,zeta));
+  }
+
+  Vec2 FuncPairPointContourInterpolation::operator()(const Vec2 &alpha) {
+    return (contour->getWu(t,alpha)).T() * (contour->getPosition(t,alpha) - point->getFrame()->getPosition(t));
+  }
+
+  Vec3 FuncPairPointContourInterpolation::getWrD(const Vec2 &alpha) {
+    return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
+  }
+
+  double FuncPairContour1sCircleSolid::operator()(const double &alpha) {
+    zeta(0) = alpha;
+    Vec3 Wd = getWrD(alpha);
+    Vec3 Wt = contour1s->getWu(t,zeta);
+    return Wt.T() * Wd;
+  }
+
+  Vec3 FuncPairContour1sCircleSolid::getWrD(const double &alpha) {
+    zeta(0) = alpha;
+    return contour1s->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - circle->getRadius() * contour1s->getWn(t,zeta));
   }
 
   double Contact1sSearch::slv() {

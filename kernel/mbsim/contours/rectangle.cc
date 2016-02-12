@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/rectangle.h"
+#include "mbsim/frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/grid.h>

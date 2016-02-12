@@ -32,7 +32,7 @@
 namespace MBSim {
 
   class Frame;
-  class Contour;
+  class RigidContour;
   class FixedRelativeFrame;
   class CompoundContour;
   class Constraint;
@@ -192,8 +192,7 @@ namespace MBSim {
       fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
 
       void addFrame(FixedRelativeFrame *frame); 
-
-      using Body::addContour;
+      void addContour(RigidContour *contour);
 
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities

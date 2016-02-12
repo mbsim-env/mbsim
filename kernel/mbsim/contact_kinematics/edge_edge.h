@@ -22,6 +22,7 @@
 #define _CONTACT_KINEMATICS_EDGE_EDGE_H_
 
 #include "contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 

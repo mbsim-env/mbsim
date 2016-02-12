@@ -18,11 +18,11 @@
 
 #include <config.h>
 #include "mbsim/dynamic_system.h"
+#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/contours/rigid_contour.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/link.h"
-#include "mbsim/contour.h"
 #include "mbsim/object.h"
-#include "mbsim/fixed_relative_frame.h"
 #include "mbsim/constraint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/observer.h"
@@ -424,8 +424,8 @@ namespace MBSim {
           ((FixedRelativeFrame*) frame[k])->setFrameOfReference(I);
       }
       for (unsigned int k = 0; k < contour.size(); k++) {
-        if (!(contour[k]->getFrameOfReference()))
-          contour[k]->setFrameOfReference(I);
+        if (!((RigidContour*) contour[k])->getFrameOfReference())
+          ((RigidContour*) contour[k])->setFrameOfReference(I);
       }
     }
     else if (stage == worldFrameContourLocation) {
@@ -1310,6 +1310,14 @@ namespace MBSim {
       (**i).setrMax(rMax);
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).setrMax(rMax);
+  }
+
+  void DynamicSystem::addFrame(FixedRelativeFrame *frame) {
+    addFrame(static_cast<Frame*>(frame));
+  }
+
+  void DynamicSystem::addContour(RigidContour *contour) {
+    addContour(static_cast<Contour*>(contour));
   }
 
   void DynamicSystem::addFrame(Frame *frame_) {

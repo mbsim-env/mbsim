@@ -20,6 +20,7 @@
 
 #include <config.h> 
 #include "point_plane.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/point.h"
 

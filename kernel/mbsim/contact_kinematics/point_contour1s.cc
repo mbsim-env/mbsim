@@ -20,7 +20,9 @@
 
 #include <config.h> 
 #include "point_contour1s.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/point.h"
+#include "mbsim/contours/contour1s.h"
 #include "mbsim/functions_contact.h"
 
 using namespace fmatvec;
@@ -39,13 +41,13 @@ namespace MBSim {
       ipoint = 0;
       icontour = 1;
       point = static_cast<Point*>(contour[0]);
-      contour1s = static_cast<Contour1s*>(contour[1]);
+      contour1s = static_cast<Contour*>(contour[1]);
     }
     else {
       ipoint = 1;
       icontour = 0;
       point = static_cast<Point*>(contour[1]);
-      contour1s = static_cast<Contour1s*>(contour[0]);
+      contour1s = static_cast<Contour*>(contour[0]);
     }
   }
 
@@ -54,7 +56,7 @@ namespace MBSim {
     FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, contour1s); // root function for searching contact parameters
     func->setTime(t);
     Contact1sSearch search(func);
-    search.setNodes(contour1s->getNodes()); // defining search areas for contacts
+    search.setNodes(contour1s->getEtaNodes()); // defining search areas for contacts
 
     if (useLocal) { // select start value from last search
       search.setInitialValue(zeta(0));

@@ -54,11 +54,11 @@ namespace MBSim {
 //        virtual void computeRootFunctionNormal(ContourPointData &cp) = 0;
 //        virtual void computeRootFunctionSecondTangent(ContourPointData &cp) = 0;
 
-      /**
-       * \return radius of contour in contour point
-       * \param contour position
-       */
-      virtual double getCurvature(ContourPointData &cp) { THROW_MBSIMERROR("(Contour::computeRadius): Not implemented."); return 0; } 
+        /**
+         * \return radius of contour in contour point
+         * \param contour position
+         */
+        virtual double getCurvature(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(Contour::computeRadius): Not implemented."); return 0; }
 
         /* GETTER / SETTER */
         void setAlphaStart(AT as_) { as = as_; }

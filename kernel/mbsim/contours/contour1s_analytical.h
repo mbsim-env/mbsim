@@ -20,16 +20,17 @@
 #ifndef _CONTOUR1S_ANALYTICAL_H_
 #define _CONTOUR1S_ANALYTICAL_H_
 
-#include "mbsim/contours/contour1s.h"
-#include <mbsim/functions/function.h>
+#include "mbsim/contours/rigid_contour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 #endif
 
 namespace MBSim {
 
   class ContactKinematics;
+  template <class Sig> class Function;
 
   /** 
    * \brief analytical description of contours with one contour parameter
@@ -37,13 +38,13 @@ namespace MBSim {
    * \date 2009-04-20 some comments (Thorsten Schindler)
    * \date 2009-06-04 new file (Thorsten Schindler)
    */
-  class Contour1sAnalytical : public Contour1s {
+  class Contour1sAnalytical : public RigidContour {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      Contour1sAnalytical(const std::string &name="") : Contour1s(name) { }
+      Contour1sAnalytical(const std::string &name="", Frame *R=NULL) : RigidContour(name,R) { }
 
       /**
        * \brief destructor
@@ -60,20 +61,22 @@ namespace MBSim {
       double getCurvature(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 getKrPS(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 getKs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 getParDer1Ks(const fmatvec::Vec2 &zeta);
       /***************************************************/
 
       virtual Frame* createContourFrame(const std::string &name="P");
 
       /* GETTER / SETTER */
-      void setContourFunction1s(Function<fmatvec::Vec3(double)> *f) { funcCrPC = f; }
-      Function<fmatvec::Vec3(double)>* getContourFunction1s() { return funcCrPC; }
+      void setContourFunction(Function<fmatvec::Vec3(double)> *f) { funcCrPC = f; }
+      Function<fmatvec::Vec3(double)>* getContourFunction() { return funcCrPC; }
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (openMBVNodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVExtrusion ombv(1,diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
+        ombvNodes = openMBVNodes;
       }
 #endif
       
@@ -87,10 +90,21 @@ namespace MBSim {
        */
       ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
+//      void setAlphaStart(double as_) { as = as_; }
+//      void setAlphaEnd(double ae_) { ae = ae_; }
+//      double getAlphaStart() const { return as; }
+//      double getAlphaEnd() const { return ae; }
+      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
+
     protected:
       Function<fmatvec::Vec3(double)> * funcCrPC;
+
+//      double as, ae;
+//      std::vector<double> nodes;
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
+      std::vector<double> ombvNodes;
 #endif
   };
 

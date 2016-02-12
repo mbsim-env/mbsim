@@ -20,7 +20,7 @@
 
 #include <config.h> 
 #include "circlesolid_circlehollow.h"
-#include "mbsim/contour.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/circle_hollow.h"
 

@@ -20,9 +20,10 @@
 #ifndef _POINT_H_
 #define _POINT_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/rigid_contour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 #endif
 

@@ -20,6 +20,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/point_rectangle.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/rectangle.h"
 #include "mbsim/contours/point.h"
 

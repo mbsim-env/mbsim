@@ -47,36 +47,6 @@ namespace MBSim {
 
   void ContourLink::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(openMBVArrowF) {
-        vector<double> data;
-        data.push_back(t); 
-        Vec3 toPoint=contour[1]->getFrame()->getPosition(t);
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WF = getForce(t);
-        data.push_back(WF(0));
-        data.push_back(WF(1));
-        data.push_back(WF(2));
-        data.push_back(nrm2(WF));
-        openMBVArrowF->append(data);
-      }
-      if(openMBVArrowM) {
-        vector<double> data;
-        data.push_back(t); 
-        Vec3 toPoint=contour[1]->getFrame()->getPosition(t);
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WM = getMoment(t);
-        data.push_back(WM(0));
-        data.push_back(WM(1));
-        data.push_back(WM(2));
-        data.push_back(nrm2(WM));
-        openMBVArrowM->append(data);
-      }
-#endif
       Link::plot(t,dt);
     }
   }
@@ -120,7 +90,7 @@ namespace MBSim {
 
   void ContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getFrame()->gethSize(j)-1);
+      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
       dhdt[i]>>dhdtParent(I);
     }
   }
@@ -128,7 +98,7 @@ namespace MBSim {
   void ContourLink::updaterRef(const Vec &rParent, int j) {
     for(unsigned i=0; i<2; i++) {
       int hInd =  contour[i]->gethInd(j);
-      Index I = Index(hInd,hInd+contour[i]->getFrame()->gethSize(j)-1);
+      Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
       r[j][i]>>rParent(I);
     }
   } 

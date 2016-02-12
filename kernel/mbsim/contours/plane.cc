@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/plane.h"
+#include "mbsim/frame.h"
 #include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -34,6 +35,26 @@ using namespace boost;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Plane, MBSIM%"Plane")
+
+  Vec3 Plane::getWu(double t, const fmatvec::Vec2 &zeta) {
+    return getWs(t,zeta);
+  }
+
+  Vec3 Plane::getWv(double t, const fmatvec::Vec2 &zeta) {
+    return getWt(t,zeta);
+  }
+
+  Vec3 Plane::getWn(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t).col(0);
+  }
+
+  Vec3 Plane::getWs(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t).col(1);
+  }
+
+  Vec3 Plane::getWt(double t, const fmatvec::Vec2 &zeta) {
+    return R->getOrientation(t).col(2);
+  }
 
   Vec2 Plane::getContourParameters(double t, const fmatvec::Vec3 &WrPoint) {
     return (R->getOrientation(t).T() *(WrPoint - R->getPosition(t)) )(Range<Fixed<1>,Fixed<2> >());

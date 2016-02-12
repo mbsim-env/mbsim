@@ -30,6 +30,7 @@ namespace MBSim {
   class Frame;
   class FixedRelativeFrame;
   class Contour;
+  class RigidContour;
   class Object;
   class Link;
   class Constraint;
@@ -678,13 +679,15 @@ namespace MBSim {
        */
       void setrMax(double rMax);
 
-      void addFrame(Frame *frame);
-
       /**
        * \param frame
        * \return index of frame TODO renaming
        */
       int frameIndex(const Frame *frame_) const;
+
+      void addFrame(FixedRelativeFrame *frame);
+
+      void addContour(RigidContour *contour);
 
       /**
        * \param dynamic system to add
@@ -768,6 +771,10 @@ namespace MBSim {
       void resetUpToDate();
 
     protected:
+      void addFrame(Frame *frame);
+
+      void addContour(Contour *contour);
+
       /**
        * \brief parent frame
        */
@@ -950,11 +957,6 @@ namespace MBSim {
       boost::shared_ptr<OpenMBV::Group> openMBVGrp;
 #endif
       boost::shared_ptr<H5::File> hdf5File;
-
-      /**
-       * \param contour to add
-       */
-      void addContour(Contour* contour);
 
       /** A pointer to frame "I" */
       Frame *I;

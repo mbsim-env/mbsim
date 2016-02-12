@@ -64,15 +64,15 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
+      virtual void computeRootFunctionPosition(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
+      virtual void computeRootFunctionFirstTangent(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
+      virtual void computeRootFunctionNormal(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
+      virtual void computeRootFunctionSecondTangent(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+//      virtual void updateKinematicsForFrame(const fmatvec::Vec2 &zeta, MBSim::Frame::Frame::Feature ff);
+//      virtual void updateJacobiansForFrame(const fmatvec::Vec2 &zeta, int j = 0);
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
         return findContactPairingFlexible(type0.c_str(), type1.c_str());
       }

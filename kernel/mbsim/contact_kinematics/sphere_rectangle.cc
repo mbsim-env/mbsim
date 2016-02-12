@@ -19,6 +19,7 @@
 
 #include <config.h> 
 #include "sphere_rectangle.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/rectangle.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/contact_utils.h"

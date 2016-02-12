@@ -18,6 +18,7 @@
  */
 
 #include<config.h>
+#include "mbsim/frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/circle_hollow.h"
 #include "mbsim/contours/circle_solid.h"

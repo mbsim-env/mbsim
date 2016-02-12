@@ -20,9 +20,8 @@
 
 #include <config.h>
 #include "mbsim/contact_kinematics/circlesolid_contour1s.h"
+#include "mbsim/frame.h"
 #include "mbsim/contours/circle_solid.h"
-#include "mbsim/contours/contour1s.h"
-#include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/functions_contact.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
@@ -41,34 +40,34 @@ namespace MBSim {
       icircle = 0;
       icontour1s = 1;
       circle = static_cast<CircleSolid*>(contour[0]);
-      contour1s = static_cast<Contour1s*>(contour[1]);
+      contour1s = static_cast<Contour*>(contour[1]);
     } 
     else {
       icircle = 1; 
       icontour1s = 0;
       circle = static_cast<CircleSolid*>(contour[1]);
-      contour1s = static_cast<Contour1s*>(contour[0]);
+      contour1s = static_cast<Contour*>(contour[0]);
     }
 
     func = new FuncPairContour1sCircleSolid(circle,contour1s);
 
-    if (dynamic_cast<Contour1sAnalytical*>(contour1s)) {
-      double minRadius=1./epsroot();
-      for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
-        zeta(0) = alpha;
-        double radius=1./contour1s->getCurvature(zeta);
-        minRadius=(radius<minRadius)?radius:minRadius;
-      }
-      if (circle->getRadius()>minRadius)
-        throw MBSimError("Just one contact point is allowed in Contactpairing Contour1s-CircleSolid, but either the circle radius is to big or the minimal Radius of Contour1s is to small.\n minimal radius of Contour1sAnalytical="+numtostr(minRadius)+"\n Radius of CircleSolid="+numtostr(circle->getRadius()));
-    }
+//    if (dynamic_cast<Contour*>(contour1s)) {
+//      double minRadius=1./epsroot();
+//      for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
+//        zeta(0) = alpha;
+//        double radius=1./contour1s->getCurvature(zeta);
+//        minRadius=(radius<minRadius)?radius:minRadius;
+//      }
+//      if (circle->getRadius()>minRadius)
+//        throw MBSimError("Just one contact point is allowed in Contactpairing Contour-CircleSolid, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+numtostr(minRadius)+"\n Radius of CircleSolid="+numtostr(circle->getRadius()));
+//    }
 
   }
 
   void ContactKinematicsCircleSolidContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     func->setTime(t);
     Contact1sSearch search(func);
-    search.setNodes(contour1s->getNodes());
+    search.setNodes(contour1s->getEtaNodes());
 
     if(searchAllCP==false)
       search.setInitialValue(zeta(0));

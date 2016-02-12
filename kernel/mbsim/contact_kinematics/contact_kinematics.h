@@ -22,14 +22,12 @@
 
 #include "fmatvec/fmatvec.h"
 #include "fmatvec/atom.h"
-#include "mbsim/mbsim_event.h"
-#include <mbsim/single_contact.h>
 #include <vector>
 
 namespace MBSim {
 
+  class Frame;
   class Contour;
-  class ContourPointData;
 
   /**
    * \return perpendicular vector

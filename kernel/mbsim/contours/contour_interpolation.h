@@ -25,6 +25,8 @@
 
 namespace MBSim {
 
+  class ContourPointData;
+
   /**
    * \brief Basis-Class for Contour interpolation between Point s, standard contact Point-ContourInterpolation is implemented
    special interpolations only need to provide (as derived class) the pure virtuals predefined here

@@ -19,10 +19,8 @@
 
 #include<config.h>
 #include "mbsim/contours/frustum.h"
+#include "mbsim/frame.h"
 #include <mbsim/utils/utils.h>
-
-
-#include <fmatvec/fmatvec.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
