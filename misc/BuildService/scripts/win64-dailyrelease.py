@@ -33,7 +33,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribu
   "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.37.x86_64/include -I"+SCRIPTDIR+"/buildPreparation/windows",
   "--with-mkoctfile=/home/mbsim/3rdparty/octave-local-win64/bin/mkoctfile.exe",
   "--with-hdf5-prefix=/home/mbsim/3rdparty/hdf5-local-win64", "--with-windres=x86_64-w64-mingw32-windres",
-  "--with-lapack-lib-prefix=/home/mbsim/3rdparty/lapack-local-win64/lib",
+  "--with-lapack-lib-prefix=/home/mbsim/3rdparty/lapack-local-win64/lib", "--with-qmake=/usr/x86_64-w64-mingw32/bin/qmake-qt4",
   "--with-qwt-inc-prefix=/home/mbsim/3rdparty/qwt-6.1.1/src", "--with-qwt-lib-prefix=/home/mbsim/3rdparty/qwt-6.1.1/lib",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
   "PYTHON_CFLAGS=-I/home/mbsim/3rdparty/python-win64/include -DMS_WIN64",
