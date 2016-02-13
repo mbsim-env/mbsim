@@ -21,7 +21,7 @@
 #include <config.h>
 #include <mbsimFlexibleBody/flexible_body.h>
 #include <mbsimFlexibleBody/node_frame.h>
-#include <mbsimFlexibleBody/contour_parameter_frame.h>
+#include <mbsimFlexibleBody/fixed_contour_frame.h>
 #include <mbsim/dynamic_system.h>
 #include <mbsim/fixed_relative_frame.h>
 #include <mbsim/contour.h>

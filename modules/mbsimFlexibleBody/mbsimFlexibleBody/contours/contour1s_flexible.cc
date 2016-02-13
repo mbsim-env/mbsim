@@ -20,7 +20,7 @@
 #include <config.h>
 
 #include "contour1s_flexible.h"
-#include "mbsimFlexibleBody/floating_frame.h"
+#include "mbsimFlexibleBody/floating_contour_frame.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 
 using namespace std;
