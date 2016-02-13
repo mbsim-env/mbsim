@@ -57,7 +57,7 @@ namespace MBSimFlexibleBody {
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEXIBLEBODY%"FlexibleBodyFFR")
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updT(true), updMb(true) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true) {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -752,66 +752,6 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBodyFFR::updateqd(double t) {
-    qd(iqT) = uRel(iuT);
-    if(fTR)
-      qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR);
-    else
-      qd(iqR) = uRel(iuR);
-    qd(iqE) = uRel(iuE);
-  }
-
-  void FlexibleBodyFFR::updatedq(double t, double dt) {
-    qd(iqT) = uRel(iuT)*dt;
-    if(fTR)
-      qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR)*dt;
-    else
-      qd(iqR) = uRel(iuR)*dt;
-    qd(iqE) = uRel(iuE)*dt;
-  }
-
-  void FlexibleBodyFFR::updateT(double t) {
-    if(fTR) TRel(iqR,iuR) = (*fTR)(qRel(iuR));
-  }
-
-  void FlexibleBodyFFR::updatePositions(double t) {
-
-    if(fPrPK) PrPK = (*fPrPK)(getqTRel(t),t);
-
-    if(fAPK) APK = (*fAPK)(getqRRel(t),t);
-
-    WrPK = R->getOrientation(t)*PrPK;
-    K->setOrientation(R->getOrientation()*APK);
-    K->setPosition(R->getPosition() + WrPK);
-
-    updPos = false;
-  }
-
-  void FlexibleBodyFFR::updateVelocities(double t) {
-
-    if(fPrPK) WvPKrel = R->getOrientation(t)*(getPJTT(t)*getuTRel(t) + PjhT);
-
-    if(fAPK) WomPK = frameForJacobianOfRotation->getOrientation(t)*(getPJRR(t)*getuRRel(t) + PjhR);
-
-    K->setAngularVelocity(R->getAngularVelocity(t) + WomPK);
-    K->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t)));
-
-    updVel = false;
-  }
-
-  void FlexibleBodyFFR::updateAccelerations(double t) {
-    K->setAcceleration(K->getJacobianOfTranslation(t)*udall[0] + K->getGyroscopicAccelerationOfTranslation(t));
-    K->setAngularAcceleration(K->getJacobianOfRotation(t)*udall[0] + K->getGyroscopicAccelerationOfRotation(t));
-  }
-
-  void FlexibleBodyFFR::updateGeneralizedCoordinates(double t) {
-    qTRel = qRel(iqT);
-    qRRel = qRel(iqR);
-    uTRel = uRel(iuT);
-    uRRel = uRel(iuR);
-    updGC = false;
-  }
-
   void FlexibleBodyFFR::updateMb(double t) {
     Vec3 mc = mCM.getM0() + mCM.getM1()*q(iqE);
     SqrMat3 mtc = tilde(mc);
@@ -907,7 +847,49 @@ namespace MBSimFlexibleBody {
     updMb = false;
   }
 
-  void FlexibleBodyFFR::updatePJ(double t) {
+  void FlexibleBodyFFR::updateqd(double t) {
+    qd(iqT) = uRel(iuT);
+    if(fTR)
+      qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR);
+    else
+      qd(iqR) = uRel(iuR);
+    qd(iqE) = uRel(iuE);
+  }
+
+  void FlexibleBodyFFR::updatedq(double t, double dt) {
+    qd(iqT) = uRel(iuT)*dt;
+    if(fTR)
+      qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR)*dt;
+    else
+      qd(iqR) = uRel(iuR)*dt;
+    qd(iqE) = uRel(iuE)*dt;
+  }
+  void FlexibleBodyFFR::updateT(double t) {
+    if(fTR) TRel(iqR,iuR) = (*fTR)(qRel(iuR));
+  }
+
+  void FlexibleBodyFFR::updateGeneralizedCoordinates(double t) {
+    qTRel = qRel(iqT);
+    qRRel = qRel(iqR);
+    uTRel = uRel(iuT);
+    uRRel = uRel(iuR);
+    updGC = false;
+  }
+
+ void FlexibleBodyFFR::updatePositions(double t) {
+    if(fPrPK) PrPK = (*fPrPK)(getqTRel(t),t);
+    if(fAPK) APK = (*fAPK)(getqRRel(t),t);
+    WrPK = R->getOrientation(t)*PrPK;
+    updPos = false;
+  }
+
+  void FlexibleBodyFFR::updateVelocities(double t) {
+    if(fPrPK) WvPKrel = R->getOrientation(t)*(getPJTT(t)*getuTRel(t) + PjhT);
+    if(fAPK) WomPK = frameForJacobianOfRotation->getOrientation(t)*(getPJRR(t)*getuRRel(t) + PjhR);
+    updVel = false;
+  }
+
+  void FlexibleBodyFFR::updateJacobians(double t) {
     if(fPrPK) {
       if(!constJT) {
         PJTT = fPrPK->parDer1(getqTRel(t),t);
@@ -928,35 +910,7 @@ namespace MBSimFlexibleBody {
      updPJ = false;
   }
 
-  void FlexibleBodyFFR::updateJacobians0(double t) {
-
-    K->getJacobianOfTranslation(0,false).init(0);
-    K->getJacobianOfRotation(0,false).init(0);
-
-    K->getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
-    K->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
-
-    K->getJacobianOfTranslation(0,false).add(i02,Index(gethSize(0)-getuSize(0),gethSize(0)-1), R->getOrientation(t)*getPJT(t));
-    K->getJacobianOfRotation(0,false).add(i02,Index(gethSize(0)-getuSize(0),gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);
-  }
-
-  void FlexibleBodyFFR::updateKJ0(double t) {
-    KJ[0].set(Index(0,2),Index(0,KJ[0].cols()-1),K->getOrientation(t).T()*K->getJacobianOfTranslation(t));
-    KJ[0].set(Index(3,5),Index(0,KJ[0].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation());
-    Ki.set(Index(0,2),K->getOrientation().T()*K->getGyroscopicAccelerationOfTranslation(t));
-    Ki.set(Index(3,5),K->getOrientation().T()*K->getGyroscopicAccelerationOfRotation());
-    updKJ[0] = false;
-  }
-
-  void FlexibleBodyFFR::updateKJ1(double t) {
-    KJ[1].set(Index(0,2),Index(0,KJ[1].cols()-1),K->getOrientation(t).T()*K->getJacobianOfTranslation(t,1));
-    KJ[1].set(Index(3,5),Index(0,KJ[1].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation(1));
-    KJ[1].set(Index(6,KJ[1].rows()-1),Index(0,KJ[1].cols()-1),K->getJacobianOfDeformation(1));
-    updKJ[1] = false;
-  }
-
   void FlexibleBodyFFR::updateGyroscopicAccelerations(double t) {
-
     VecV qdTRel = getuTRel(t);
     VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;
     if(fPrPK) {
@@ -975,28 +929,56 @@ namespace MBSimFlexibleBody {
           PjbR = (fAPK->parDer1DirDer1(qdRRel,qRRel,t)+fAPK->parDer1ParDer2(qRRel,t))*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,t) + fAPK->parDer2ParDer2(qRRel,t);
       }
     }
-
-    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + R->getOrientation(t)*PjbT + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),WrPK)));
-    K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*PjbR + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
+    updPjb = false;
   }
 
-  const Vec3& FlexibleBodyFFR::getGlobalRelativePosition(double t) {
-    if(updPos) updatePositions(t);
-    return WrPK;
+  void FlexibleBodyFFR::updateKJ0(double t) {
+    KJ[0].set(Index(0,2),Index(0,KJ[0].cols()-1),K->getOrientation(t).T()*K->getJacobianOfTranslation(t));
+    KJ[0].set(Index(3,5),Index(0,KJ[0].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation());
+    Ki.set(Index(0,2),K->getOrientation().T()*K->getGyroscopicAccelerationOfTranslation(t));
+    Ki.set(Index(3,5),K->getOrientation().T()*K->getGyroscopicAccelerationOfRotation());
+    updKJ[0] = false;
   }
 
-  const Vec3& FlexibleBodyFFR::getGlobalRelativeVelocity(double t) {
-    if(updVel) updateVelocities(t);
-    return WvPKrel;
+  void FlexibleBodyFFR::updateKJ1(double t) {
+    KJ[1].set(Index(0,2),Index(0,KJ[1].cols()-1),K->getOrientation(t).T()*K->getJacobianOfTranslation(t,1));
+    KJ[1].set(Index(3,5),Index(0,KJ[1].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation(1));
+    KJ[1].set(Index(6,KJ[1].rows()-1),Index(0,KJ[1].cols()-1),K->getJacobianOfDeformation(1));
+    updKJ[1] = false;
   }
 
-  const Vec3& FlexibleBodyFFR::getGlobalRelativeAngularVelocity(double t) {
-    if(updVel) updateVelocities(t);
-    return WomPK;
+  void FlexibleBodyFFR::updatePositions(double t, Frame *frame) {
+    frame->setPosition(R->getPosition() + getGlobalRelativePosition(t));
+    frame->setOrientation(R->getOrientation()*APK); // APK already update to date
+  }
+
+ void FlexibleBodyFFR::updateVelocities(double t, Frame *frame) {
+    frame->setAngularVelocity(R->getAngularVelocity(t) + getGlobalRelativeAngularVelocity(t));
+    frame->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t))); // WvPKrel already update to date
+  }
+
+  void FlexibleBodyFFR::updateAccelerations(double t, Frame *frame) {
+    frame->setAcceleration(K->getJacobianOfTranslation(t)*udall[0] + K->getGyroscopicAccelerationOfTranslation(t));
+    frame->setAngularAcceleration(K->getJacobianOfRotation(t)*udall[0] + K->getGyroscopicAccelerationOfRotation(t));
+  }
+
+  void FlexibleBodyFFR::updateJacobians0(double t, Frame *frame) {
+    frame->getJacobianOfTranslation(0,false).init(0);
+    frame->getJacobianOfRotation(0,false).init(0);
+    frame->getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
+    frame->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
+    frame->getJacobianOfTranslation(0,false).add(i02,Index(gethSize(0)-getuSize(0),gethSize(0)-1), R->getOrientation(t)*getPJT(t));
+    frame->getJacobianOfRotation(0,false).add(i02,Index(gethSize(0)-getuSize(0),gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]);
+  }
+
+  void FlexibleBodyFFR::updateGyroscopicAccelerations(double t, Frame *frame) {
+    frame->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + R->getOrientation(t)*getPjbT(t) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
+    frame->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*PjbR + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t))); // PjbR already up to date
   }
 
   void FlexibleBodyFFR::resetUpToDate() {
     Body::resetUpToDate();
+    updPjb = true;
     updGC = true;
     updT = true;
     updMb = true;

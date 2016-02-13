@@ -30,7 +30,7 @@ using namespace xercesc;
 namespace MBSimFlexibleBody {
 
   void FloatingFrame::updatePositions(double t) { 
-    parent->updatePositions(t);
+    parent->updatePositions(t,this);
     updatePos = false;
   }
 

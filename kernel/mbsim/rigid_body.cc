@@ -514,11 +514,6 @@ namespace MBSim {
     frame->setAngularAcceleration(Z.getJacobianOfRotation(t)*udall[0] + Z.getGyroscopicAccelerationOfRotation(t));
   }
 
-  void RigidBody::updateGyroscopicAccelerations(double t, Frame *frame) {
-    frame->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + R->getOrientation(t)*(getPjbT(t) + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
-    frame->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t))); // PjbR already up to date
-  }
-
   void RigidBody::updateJacobians0(double t, Frame *frame) {
     frame->getJacobianOfTranslation(0,false).init(0);
     frame->getJacobianOfRotation(0,false).init(0);
@@ -526,6 +521,11 @@ namespace MBSim {
     frame->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
     frame->getJacobianOfTranslation(0,false).add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
     frame->getJacobianOfRotation(0,false).add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
+  }
+
+  void RigidBody::updateGyroscopicAccelerations(double t, Frame *frame) {
+    frame->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + R->getOrientation(t)*(getPjbT(t) + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
+    frame->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t))); // PjbR already up to date
   }
 
   void RigidBody::updateJacobians2(double t, Frame *frame_) {

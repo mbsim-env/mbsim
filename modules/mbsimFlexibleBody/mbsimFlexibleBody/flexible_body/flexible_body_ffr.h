@@ -29,11 +29,6 @@
 #include "mbsim/utils/openmbv_utils.h"
 #endif
 
-namespace MBSim {
-  class Contour;
-  class CompoundContour;
-}
-
 namespace MBSimFlexibleBody {
 
   class FrameFFR;
@@ -57,11 +52,15 @@ namespace MBSimFlexibleBody {
       void updatePositions(double t);
       void updateVelocities(double t);
       void updateAccelerations(double t);
-      void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
+      void updateJacobians(double t);
       void updateGyroscopicAccelerations(double t);
-      void updateJacobians0(double t);
-      void updateJacobians1(double t) { }
-      void updatePJ(double t);
+      void updatePositions(double t, MBSim::Frame *frame);
+      void updateVelocities(double t, MBSim::Frame *frame);
+      void updateAccelerations(double t, MBSim::Frame *frame);
+      void updateJacobians(double t, MBSim::Frame *frame, int j=0) { (this->*updateJacobians_[j])(t,frame); }
+      void updateGyroscopicAccelerations(double t, MBSim::Frame *frame);
+      void updateJacobians0(double t, MBSim::Frame *frame);
+      void updateJacobians1(double t, MBSim::Frame *frame) { }
       void updateMb(double t);
       void updatehb(double t);
       void updateKJ(double t, int j=0) { (this->*updateKJ_[j])(t); }
@@ -266,11 +265,13 @@ namespace MBSimFlexibleBody {
       const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel; }
       const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel; }
       const fmatvec::Mat& getTRel(double t) { if(updT) updateT(t); return TRel; }
-      const fmatvec::Vec3& getGlobalRelativePosition(double t);
-      const fmatvec::Vec3& getGlobalRelativeVelocity(double t);
-      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t);
-      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updatePJ(t); return PJTT; }
-      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updatePJ(t); return PJRR; }
+      const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrPK; }
+      const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvPKrel; }
+      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomPK; }
+      const fmatvec::Vec3& getPjbT(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbT; }
+      const fmatvec::Vec3& getPjbR(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbR; }
+      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updateJacobians(t); return PJTT; }
+      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updateJacobians(t); return PJRR; }
       const fmatvec::SymMatV& getMb(double t) { if(updMb) updateMb(t); return M_; }
       const fmatvec::VecV& gethb(double t) { if(updMb) updateMb(t); return h_; }
       const fmatvec::MatV& getKJ(double t, int j=0) { if(updKJ[j]) updateKJ(t,j); return KJ[j]; }
@@ -381,7 +382,7 @@ namespace MBSimFlexibleBody {
        */
       void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
-      void (FlexibleBodyFFR::*updateJacobians_[2])(double t); 
+      void (FlexibleBodyFFR::*updateJacobians_[2])(double t, MBSim::Frame *frame);
 
       fmatvec::Vec aT, aR;
 
@@ -399,7 +400,7 @@ namespace MBSimFlexibleBody {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updGC, updT, updMb, updKJ[2];
+      bool updPjb, updGC, updT, updMb, updKJ[2];
 
       fmatvec::SymMatV M_;
       fmatvec::VecV h_;
