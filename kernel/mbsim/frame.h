@@ -122,11 +122,11 @@ namespace MBSim {
       const fmatvec::Mat3xV& getJacobianOfRotation(double t, int j=0) { if(updateJac[j]) updateJacobians(t,j); return WJR[j]; }
       const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(double t) { if(updateGA) updateGyroscopicAccelerations(t); return WjP; }
       const fmatvec::Vec3& getGyroscopicAccelerationOfRotation(double t) { if(updateGA) updateGyroscopicAccelerations(t); return WjR; }
-      void updatePositions(double t) { parent->updatePositions(t); updatePos = false; }
-      void updateVelocities(double t) { parent->updateVelocities(t); updateVel = false; }
-      void updateAccelerations(double t) { parent->updateAccelerations(t); updateAcc = false; }
-      void updateJacobians(double t, int j=0) { parent->updateJacobians(t,j); updateJac[j] = false; }
-      void updateGyroscopicAccelerations(double t) { parent->updateGyroscopicAccelerations(t); updateGA = false; }
+      virtual void updatePositions(double t) { parent->updatePositions(t,this); updatePos = false; }
+      virtual void updateVelocities(double t) { parent->updateVelocities(t); updateVel = false; }
+      virtual void updateAccelerations(double t) { parent->updateAccelerations(t); updateAcc = false; }
+      virtual void updateJacobians(double t, int j=0) { parent->updateJacobians(t,j); updateJac[j] = false; }
+      virtual void updateGyroscopicAccelerations(double t) { parent->updateGyroscopicAccelerations(t); updateGA = false; }
 
     protected:
       /**

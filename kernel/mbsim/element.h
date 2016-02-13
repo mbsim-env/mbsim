@@ -48,6 +48,7 @@ namespace MBSim {
   const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
 
   class DynamicSystemSolver;
+  class Frame;
 
   /**
    * \brief basic class of MBSim mainly for plotting
@@ -282,7 +283,7 @@ namespace MBSim {
        */
       int computeLevel();
 
-      virtual void updatePositions(double t) { }
+      virtual void updatePositions(double t, Frame *frame) { }
       virtual void updateVelocities(double t) { }
       virtual void updateAccelerations(double t) { }
       virtual void updateJacobians(double t, int j=0) { }

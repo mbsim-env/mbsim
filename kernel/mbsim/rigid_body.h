@@ -73,6 +73,7 @@ namespace MBSim {
       void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
       void updateGeneralizedCoordinates(double t); 
       void updateGeneralizedJacobians(double t, int j=0); 
+      void updatePositions(double t, Frame *frame);
       void updatePositions(double t); 
       void updateVelocities(double t);
       void updateAccelerations(double t);
@@ -82,6 +83,7 @@ namespace MBSim {
       void updateJacobians1(double t) { }
       void updateJacobians2(double t);
       void updatePJ(double t);
+
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
       void sethSize(int hSize_, int i=0);

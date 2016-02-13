@@ -107,6 +107,7 @@ namespace MBSim {
 
       void resetUpToDate();
       void updatePositions(double t);
+      void updatePositions(double t, Frame *frame);
       void updateVelocities(double t);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);

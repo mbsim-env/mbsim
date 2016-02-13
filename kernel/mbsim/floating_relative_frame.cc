@@ -67,7 +67,7 @@ namespace MBSim {
   }
 
   void FloatingRelativeFrame::updatePositions(double t) { 
-    parent->updatePositions(t);
+    parent->updatePositions(t,this);
     WrRP = getPosition(false) - R->getPosition(t);
     updatePos = false;
   }

@@ -149,9 +149,12 @@ namespace MBSim {
 
   void FloatingFrameLink::updatePositions(double t) {
     WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setPosition(frame[1]->getPosition());
-    C.setOrientation(frame[0]->getOrientation());
     updPos = false;
+  }
+
+  void FloatingFrameLink::updatePositions(double t, Frame *frame_) {
+    frame_->setPosition(frame[1]->getPosition(t));
+    frame_->setOrientation(frame[0]->getOrientation(t));
   }
 
   void FloatingFrameLink::updateVelocities(double t) {

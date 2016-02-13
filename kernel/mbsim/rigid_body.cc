@@ -426,16 +426,17 @@ namespace MBSim {
   }
 
   void RigidBody::updatePositions(double t) {
-
     if(fPrPK) PrPK = (*fPrPK)(getqTRel(t),t);
 
     if(fAPK) APK = (*fAPK)(getqRRel(t),t);
 
     WrPK = R->getOrientation(t)*PrPK;
-    Z.setOrientation(R->getOrientation()*APK);
-    Z.setPosition(R->getPosition() + WrPK);
-
     updPos = false;
+  }
+
+  void RigidBody::updatePositions(double t, Frame *frame) {
+    frame->setPosition(R->getPosition(t) + getGlobalRelativePosition(t));
+    frame->setOrientation(R->getOrientation()*APK); // APK already update to date
   }
 
   void RigidBody::updateVelocities(double t) {
@@ -449,6 +450,14 @@ namespace MBSim {
 
     updVel = false;
   }
+
+//  void RigidBody::updateVelocities(double t, Frame *frame) {
+//
+//    Z.setAngularVelocity(R->getAngularVelocity(t) + WomPK);
+//    Z.setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t)));
+//
+//    updVel = false;
+//  }
 
   void RigidBody::updateAccelerations(double t) {
     Z.setAcceleration(Z.getJacobianOfTranslation(t)*udall[0] + Z.getGyroscopicAccelerationOfTranslation(t));
