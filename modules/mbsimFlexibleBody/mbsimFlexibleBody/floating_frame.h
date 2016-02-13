@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLOATING_FRAME_H__
-#define _FLOATING_FRAME_H__
+#ifndef _FLOATING_CONTOUR_FRAME_H__
+#define _FLOATING_CONTOUR_FRAME_H__
 
 #include "mbsimFlexibleBody/contour_frame.h"
 
@@ -30,16 +30,16 @@ namespace MBSimFlexibleBody {
    * \brief tbd
    * \author Martin Foerg
    */
-  class FloatingFrame : public ContourFrame {
+  class FloatingContourFrame : public ContourFrame {
 
     public:
-      FloatingFrame(const std::string &name = "dummy", Contour1sFlexible* contour_ = NULL) : ContourFrame(name), contour(contour_) { }
+      FloatingContourFrame(const std::string &name = "dummy", Contour1sFlexible* contour_ = NULL) : ContourFrame(name), contour(contour_) { }
 
-      std::string getType() const { return "FloatingFrame"; }
+      std::string getType() const { return "FloatingContourFrame"; }
 
       void updatePositions(double t);
-      void updateVelocities(double t); 
-      void updateAccelerations(double t); 
+      void updateVelocities(double t);
+      void updateAccelerations(double t);
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
 

@@ -26,7 +26,6 @@
 
 namespace MBSim {
   class DiscretizationInterface;
-  class ContourPointData;
   class FixedRelativeFrame;
 }
 
@@ -34,7 +33,7 @@ namespace MBSimFlexibleBody {
 
   class NodeFrame;
   class ContourFrame;
-  class ContourParameterFrame;
+  class FixedContourFrame;
 
   const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
 
@@ -170,7 +169,7 @@ namespace MBSimFlexibleBody {
       /**
        * \param contour parameter frame
        */
-      void addFrame(ContourParameterFrame *frame);
+      void addFrame(FixedContourFrame *frame);
 
       /**
        * \param fixed relative frame that should be added

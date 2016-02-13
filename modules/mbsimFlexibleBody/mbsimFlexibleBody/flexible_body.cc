@@ -202,7 +202,7 @@ namespace MBSimFlexibleBody {
     Body::addFrame(frame);
   }
 
-  void FlexibleBody::addFrame(ContourParameterFrame *frame) {
+  void FlexibleBody::addFrame(FixedContourFrame *frame) {
     Body::addFrame(frame);
   }
 

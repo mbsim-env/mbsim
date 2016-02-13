@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
   Contour1sFlexible::Contour1sFlexible(const string & name) : Contour1s(name), neutral(0) { }
 
   Frame* Contour1sFlexible::createContourFrame(const string &name) {
-    return new FloatingFrame(name,this);
+    return new FloatingContourFrame(name,this);
   }
 
   void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {

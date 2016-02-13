@@ -29,27 +29,27 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  void FloatingFrame::updatePositions(double t) { 
+  void FloatingContourFrame::updatePositions(double t) {
     parent->updatePositions(t,this);
     updatePos = false;
   }
 
-  void FloatingFrame::updateVelocities(double t) { 
+  void FloatingContourFrame::updateVelocities(double t) {
     contour->updateVelocities(t,this);
     updateVel = false;
   }
 
-  void FloatingFrame::updateAccelerations(double t) { 
+  void FloatingContourFrame::updateAccelerations(double t) {
     contour->updateAccelerations(t,this);
     updateAcc = true;
   }
 
-  void FloatingFrame::updateJacobians(double t, int j) {
+  void FloatingContourFrame::updateJacobians(double t, int j) {
     contour->updateJacobians(t,this,j);
     updateJac[j] = false;
   }
 
-  void FloatingFrame::updateGyroscopicAccelerations(double t) {
+  void FloatingContourFrame::updateGyroscopicAccelerations(double t) {
     contour->updateGyroscopicAccelerations(t,this);
     updateGA = false;
   }

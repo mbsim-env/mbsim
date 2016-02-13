@@ -9,27 +9,27 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  void ContourParameterFrame::updatePositions(double t) {
+  void FixedContourFrame::updatePositions(double t) {
     static_cast<FlexibleBody*>(parent)->updatePositions(t,this);
     updatePos = false;
   }
 
-  void ContourParameterFrame::updateVelocities(double t) {
+  void FixedContourFrame::updateVelocities(double t) {
     static_cast<FlexibleBody*>(parent)->updateVelocities(t,this);
     updateVel = false;
   }
 
-  void ContourParameterFrame::updateAccelerations(double t) {
+  void FixedContourFrame::updateAccelerations(double t) {
     static_cast<FlexibleBody*>(parent)->updateAccelerations(t,this);
     updateAcc = false;
   }
 
-  void ContourParameterFrame::updateJacobians(double t, int j) {
+  void FixedContourFrame::updateJacobians(double t, int j) {
     static_cast<FlexibleBody*>(parent)->updateJacobians(t,this,j);
     updateJac[j] = false;
   }
 
-  void ContourParameterFrame::updateGyroscopicAccelerations(double t) {
+  void FixedContourFrame::updateGyroscopicAccelerations(double t) {
     static_cast<FlexibleBody*>(parent)->updateGyroscopicAccelerations(t,this);
     updateGA = false;
   }
