@@ -6,8 +6,8 @@ libmbsimFlexibleBody_la_SOURCES = flexible_body.cc\
 				  fixed_nodal_frame.cc\
 				  node_frame.cc\
 				  contour_frame.cc\
-				  contour_parameter_frame.cc\
-				  floating_frame.cc
+				  fixed_contour_frame.cc\
+				  floating_contour_frame.cc
 
 libmbsimFlexibleBody_la_LIBADD = flexible_body/libflexiblebody.la
 libmbsimFlexibleBody_la_LIBADD += contours/libcontour.la
@@ -24,8 +24,8 @@ mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
 				   fixed_nodal_frame.h\
 				   node_frame.h\
 				   contour_frame.h\
-				   contour_parameter_frame.h\
-				   floating_frame.h\
+				   fixed_contour_frame.h\
+				   floating_contour_frame.h\
 				   pointer.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk

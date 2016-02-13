@@ -1,6 +1,5 @@
 #include <config.h>
-#include "contour_parameter_frame.h"
-
+#include "fixed_contour_frame.h"
 #include <mbsimFlexibleBody/flexible_body.h>
 
 using namespace MBSim;

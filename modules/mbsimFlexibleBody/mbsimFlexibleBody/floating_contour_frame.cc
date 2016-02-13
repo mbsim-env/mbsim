@@ -18,8 +18,8 @@
  */
 
 #include <config.h>
+#include "mbsimFlexibleBody/floating_contour_frame.h"
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
-#include "mbsimFlexibleBody/floating_frame.h"
 
 using namespace std;
 using namespace fmatvec;
