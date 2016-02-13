@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/contour_link.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"

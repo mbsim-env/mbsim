@@ -58,7 +58,6 @@ contact.h\
 maxwell_contact.h\
 single_contact.h\
 contour.h\
-contour_pdata.h\
 constitutive_laws.h\
 discretization_interface.h\
 dynamic_system.h\

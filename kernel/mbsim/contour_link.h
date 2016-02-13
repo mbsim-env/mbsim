@@ -21,7 +21,6 @@
 #define _CONTOUR_LINK_H_
 
 #include "link.h"
-#include "contour_pdata.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"

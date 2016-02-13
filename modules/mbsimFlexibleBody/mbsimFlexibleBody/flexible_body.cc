@@ -27,9 +27,7 @@
 #include <mbsim/contour.h>
 #include <fmatvec/function.h>
 #include <mbsim/mbsim_event.h>
-#include <mbsim/contour_pdata.h>
 #include <mbsim/discretization_interface.h>
-
 
 //#ifdef _OPENMP
 //#include <omp.h>

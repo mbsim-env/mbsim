@@ -21,7 +21,6 @@
 #include "contact.h"
 
 #include <mbsim/contour.h>
-#include <mbsim/contour_pdata.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
