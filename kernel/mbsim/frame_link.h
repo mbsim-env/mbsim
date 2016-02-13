@@ -87,8 +87,8 @@ namespace MBSim {
       }
 
       void resetUpToDate();
-      void updatePositions(double t);
-      void updateVelocities(double t);
+      virtual void updatePositions(double t);
+      virtual void updateVelocities(double t);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
       void updateGeneralizedForces(double t);

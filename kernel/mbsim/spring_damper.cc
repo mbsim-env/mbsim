@@ -125,22 +125,10 @@ namespace MBSim {
     delete func;
   }
 
-//  void DirectionalSpringDamper::updateForceDirections(double t) {
-//    DF=refFrame->getOrientation()*forceDir; // force direction in world system
-//    updFD = false;
-//  }
-
-  void DirectionalSpringDamper::updatePositions(double t) {
-    WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
-    C.setPosition(frame[1]->getPosition() - getGlobalForceDirection(t)*(getGlobalForceDirection(t).T()*WrP0P1));;
-    C.setOrientation(frame[0]->getOrientation());
-    updPos = false;
+  void DirectionalSpringDamper::updatePositions(double t, Frame *frame_) {
+    frame_->setPosition(frame[1]->getPosition() - getGlobalForceDirection(t)*(getGlobalForceDirection(t).T()*getGlobalRelativePosition(t)));
+    frame_->setOrientation(frame[0]->getOrientation());
   }
-
-//  void DirectionalSpringDamper::updateVelocities(double t) {
-//    WvP0P1=frame[1]->getVelocity(t) - C.getVelocity(t);
-//    updVel = false;
-//  }
 
   void DirectionalSpringDamper::updateGeneralizedPositions(double t) {
     rrel=getGlobalForceDirection(t).T()*getGlobalRelativePosition(t);
@@ -151,11 +139,6 @@ namespace MBSim {
     vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
     updvrel = false;
   }
-
-//  void DirectionalSpringDamper::updateh(double t, int j) {
-//    h[j][0]-=C.getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
-//    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getSingleValuedForce(t);
-//  }
 
   void DirectionalSpringDamper::updatelaF(double t) {
     lambdaF(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
