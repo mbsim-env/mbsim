@@ -61,13 +61,7 @@ namespace MBSimIntegrator {
         system.updateresRef(system.getresParent()(0, system.getlaSize() - 1));
       system.updaterFactorRef(system.getrFactorParent()(0, system.getrFactorSize() - 1));
     }
-    system.updategd(t);
-    system.updateT(t);
-    system.updateJacobians(t);
-    system.updateM(t);
-    system.updateW(t);
-    system.updateV(t);
-    system.updateh(t);
+    throw;
   }
   
   void ThetaTimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {

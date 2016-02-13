@@ -78,7 +78,6 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void updateW(double t, int i = 0);
-      void updatewb(double t);
       void updateh(double t, int i = 0);
       void updateg(double t);
       void updategd(double t);

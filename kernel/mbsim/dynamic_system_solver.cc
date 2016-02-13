@@ -772,7 +772,6 @@ namespace MBSim {
     updateg(t);
     updategd(t);
     updateT(t);
-    updateJacobians(t);
     updateh(t);
     Vec hOld = h[0].copy();
     for (int i = lb; i < ub; i++) {
@@ -782,7 +781,6 @@ namespace MBSim {
       updateg(t);
       updategd(t);
       updateT(t);
-      updateJacobians(t);
       updateh(t);
       J.col(i) = (h[0] - hOld) / delta;
       q(i) = qtmp;
@@ -793,7 +791,6 @@ namespace MBSim {
     updateg(t);
     updategd(t);
     updateT(t);
-    updateJacobians(t);
     updateh(t);
 
     return J;
@@ -815,7 +812,6 @@ namespace MBSim {
     updateg(t);
     updategd(t);
     updateT(t);
-    updateJacobians(t);
     updateh(t);
     Vec hOld = h[0].copy();
     for (int i = lb; i < ub; i++) {
@@ -826,7 +822,6 @@ namespace MBSim {
       //updateg(t);
       updategd(t);
       //updateT(t); 
-      //updateJacobians(t);
       updateh(t);
       J.col(i) = (h[0] - hOld) / delta;
       u(i) = utmp;
@@ -1044,14 +1039,7 @@ namespace MBSim {
 
     // Perform a projection of generalized positions and velocities at time t=0
     if(initialProjection) { 
-      //updateStateDependentVariables(0); 
-      //updateT(0);
-      //updateJacobians(0);
-      //updateM(0);
-      //updateLLM(0);
       projectGeneralizedPositions(0, 1, true);
-      //updateStateDependentVariables(0);
-      //updateJacobians(0);
       projectGeneralizedVelocities(0, 1);
     }
   }
@@ -1110,38 +1098,6 @@ namespace MBSim {
 
   void DynamicSystemSolver::update(const Vec &zParent, double t, int options) {
     throw;
-//    //msg(Info) << "update at t = " << t << endl;
-//    if (q() != zParent())
-//      updatezRef(zParent);
-//
-//    updateStateDependentVariables(t);
-//    updateg(t);
-//    checkActive(t,1);
-//    if (gActiveChanged() || options == 1) {
-//      calcgdSize(2); // contacts which stay closed
-//      calclaSize(2); // contacts which stay closed
-//      calcrFactorSize(2); // contacts which stay closed
-//
-//      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-//      updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-//      updatelaRef(laParent(0, laSize - 1));
-//      updateLaRef(LaParent(0, laSize - 1));
-//      updategdRef(gdParent(0, gdSize - 1));
-//      if (impactSolver == RootFinding)
-//        updateresRef(resParent(0, laSize - 1));
-//      updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-//
-//    }
-//    updategd(t);
-//
-//    updateT(t);
-//    updateJacobians(t);
-//    updateh(t);
-//    updateM(t);
-//    updateLLM(t);
-//    updateW(t);
-//    updateV(t);
-//    updateG(t);
   }
 
   void DynamicSystemSolver::zdot(const Vec &zParent, Vec &zdParent, double t) {

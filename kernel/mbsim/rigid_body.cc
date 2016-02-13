@@ -49,7 +49,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z") {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z") {
     
     Z.setParent(this);
 
@@ -425,43 +425,9 @@ namespace MBSim {
     updT = false;
   }
 
-  void RigidBody::updatePositions(double t) {
-    if(fPrPK) PrPK = (*fPrPK)(getqTRel(t),t);
-
-    if(fAPK) APK = (*fAPK)(getqRRel(t),t);
-
-    WrPK = R->getOrientation(t)*PrPK;
-    updPos = false;
-  }
-
-  void RigidBody::updatePositions(double t, Frame *frame) {
-    frame->setPosition(R->getPosition(t) + getGlobalRelativePosition(t));
-    frame->setOrientation(R->getOrientation()*APK); // APK already update to date
-  }
-
-  void RigidBody::updateVelocities(double t) {
-
-    if(fPrPK) WvPKrel = R->getOrientation(t)*(getPJTT(t)*getuTRel(t) + PjhT);
-
-    if(fAPK) WomPK = frameForJacobianOfRotation->getOrientation(t)*(getPJRR(t)*getuRRel(t) + PjhR);
-
-    Z.setAngularVelocity(R->getAngularVelocity(t) + WomPK);
-    Z.setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t)));
-
-    updVel = false;
-  }
-
-//  void RigidBody::updateVelocities(double t, Frame *frame) {
-//
-//    Z.setAngularVelocity(R->getAngularVelocity(t) + WomPK);
-//    Z.setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t)));
-//
-//    updVel = false;
-//  }
-
-  void RigidBody::updateAccelerations(double t) {
-    Z.setAcceleration(Z.getJacobianOfTranslation(t)*udall[0] + Z.getGyroscopicAccelerationOfTranslation(t));
-    Z.setAngularAcceleration(Z.getJacobianOfRotation(t)*udall[0] + Z.getGyroscopicAccelerationOfRotation(t));
+  void RigidBody::updateInertiaTensor(double t) {
+    WThetaS = JTMJ(SThetaS,C->getOrientation(t).T());
+    updWTS = false;
   }
 
   void RigidBody::updateGeneralizedCoordinates(double t) {
@@ -478,33 +444,20 @@ namespace MBSim {
     updGJ = false;
   }
 
-  void RigidBody::updateJacobians0(double t) {
-
-    Z.getJacobianOfTranslation(0,false).init(0);
-    Z.getJacobianOfRotation(0,false).init(0);
-
-    Z.getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
-    Z.getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
-
-    Z.getJacobianOfTranslation(0,false).add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
-    Z.getJacobianOfRotation(0,false).add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
+  void RigidBody::updatePositions(double t) {
+    if(fPrPK) PrPK = (*fPrPK)(getqTRel(t),t);
+    if(fAPK) APK = (*fAPK)(getqRRel(t),t);
+    WrPK = R->getOrientation(t)*PrPK;
+    updPos = false;
   }
 
-  void RigidBody::updateJacobians2(double t) {
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
-      (*i)->getJacobianOfTranslation(2,false).resize();
-      (*i)->getJacobianOfRotation(2,false).resize();
-    }
-    if(updateByReference) {
-      Z.getJacobianOfTranslation(2,false).resize() = R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2);
-      Z.getJacobianOfRotation(2,false).resize() = R->getJacobianOfRotation(t,2);
-    } else {
-      Z.getJacobianOfTranslation(2,false).resize() = R->getOrientation(t)*getPJT(t);
-      Z.getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->getOrientation(t)*PJR[0];
-    }
+  void RigidBody::updateVelocities(double t) {
+    if(fPrPK) WvPKrel = R->getOrientation(t)*(getPJTT(t)*getuTRel(t) + PjhT);
+    if(fAPK) WomPK = frameForJacobianOfRotation->getOrientation(t)*(getPJRR(t)*getuRRel(t) + PjhR);
+    updVel = false;
   }
 
-   void RigidBody::updatePJ(double t) {
+  void RigidBody::updateJacobians(double t) {
     if(fPrPK) {
       if(!constJT) {
         PJTT = fPrPK->parDer1(getqTRel(t),t);
@@ -513,7 +466,6 @@ namespace MBSim {
       if(!constjT)
         PjhT = fPrPK->parDer2(getqTRel(t),t);
     }
-
     if(fAPK) {
       if(!constJR) {
         PJRR = fTR?fAPK->parDer1(getqRRel(t),t)*(*fTR)(getqRRel(t)):fAPK->parDer1(getqRRel(t),t);
@@ -522,11 +474,10 @@ namespace MBSim {
       if(!constjR)
         PjhR = fAPK->parDer2(getqRRel(t),t);
     }
-     updPJ = false;
-   }
+    updPJ = false;
+  }
 
- void RigidBody::updateGyroscopicAccelerations(double t) {
-
+  void RigidBody::updateGyroscopicAccelerations(double t) {
     VecV qdTRel = getuTRel(t);
     VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;
     if(fPrPK) {
@@ -545,34 +496,52 @@ namespace MBSim {
           PjbR = (fAPK->parDer1DirDer1(qdRRel,qRRel,t)+fAPK->parDer1ParDer2(qRRel,t))*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,t) + fAPK->parDer2ParDer2(qRRel,t);
       }
     }
-
-    Z.setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + R->getOrientation(t)*(PjbT + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),WrPK)));
-    Z.setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
+    updPjb = false;
   }
 
-  const Vec3& RigidBody::getGlobalRelativePosition(double t) {
-    if(updPos) updatePositions(t);
-    return WrPK;
+  void RigidBody::updatePositions(double t, Frame *frame) {
+    frame->setPosition(R->getPosition(t) + getGlobalRelativePosition(t));
+    frame->setOrientation(R->getOrientation()*APK); // APK already update to date
   }
 
-  const Vec3& RigidBody::getGlobalRelativeVelocity(double t) {
-    if(updVel) updateVelocities(t);
-    return WvPKrel;
+  void RigidBody::updateVelocities(double t, Frame *frame) {
+    frame->setAngularVelocity(R->getAngularVelocity(t) + getGlobalRelativeAngularVelocity(t));
+    frame->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t))); // WvPKrel already update to date
   }
 
-  const Vec3& RigidBody::getGlobalRelativeAngularVelocity(double t) {
-    if(updVel) updateVelocities(t);
-    return WomPK;
+  void RigidBody::updateAccelerations(double t, Frame *frame) {
+    frame->setAcceleration(Z.getJacobianOfTranslation(t)*udall[0] + Z.getGyroscopicAccelerationOfTranslation(t));
+    frame->setAngularAcceleration(Z.getJacobianOfRotation(t)*udall[0] + Z.getGyroscopicAccelerationOfRotation(t));
   }
 
-  const SymMat3& RigidBody::getGlobalInertiaTensor(double t) {
-    if(updWTS) {
-      WThetaS = JTMJ(SThetaS,C->getOrientation(t).T());
-      updWTS = false;
+  void RigidBody::updateGyroscopicAccelerations(double t, Frame *frame) {
+    frame->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + R->getOrientation(t)*(getPjbT(t) + getPJT(t)*getjRel(t)) + crossProduct(R->getAngularVelocity(t), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
+    frame->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + frameForJacobianOfRotation->getOrientation(t)*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(t), getGlobalRelativeAngularVelocity(t))); // PjbR already up to date
+  }
+
+  void RigidBody::updateJacobians0(double t, Frame *frame) {
+    frame->getJacobianOfTranslation(0,false).init(0);
+    frame->getJacobianOfRotation(0,false).init(0);
+    frame->getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfTranslation(t) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t));
+    frame->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->getJacobianOfRotation(t));
+    frame->getJacobianOfTranslation(0,false).add(i02,Index(0,gethSize(0)-1), R->getOrientation(t)*getPJT(t)*getJRel(t));
+    frame->getJacobianOfRotation(0,false).add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation(t)*PJR[0]*JRel[0]);
+  }
+
+  void RigidBody::updateJacobians2(double t, Frame *frame_) {
+    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
+      (*i)->getJacobianOfTranslation(2,false).resize();
+      (*i)->getJacobianOfRotation(2,false).resize();
     }
-    return WThetaS;
+    if(updateByReference) {
+      frame_->getJacobianOfTranslation(2,false).resize() = R->getJacobianOfTranslation(t,2) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,2);
+      frame_->getJacobianOfRotation(2,false).resize() = R->getJacobianOfRotation(t,2);
+    } else {
+      frame_->getJacobianOfTranslation(2,false).resize() = R->getOrientation(t)*getPJT(t);
+      frame_->getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->getOrientation(t)*PJR[0];
+    }
   }
-  
+
   void RigidBody::resetPositionsUpToDate() {
     Body::resetPositionsUpToDate();
     Z.resetPositionsUpToDate();
@@ -592,6 +561,7 @@ namespace MBSim {
   void RigidBody::resetUpToDate() {
     Body::resetUpToDate();
     Z.resetUpToDate();
+    updPjb = true;
     updGC = true;
     updGJ = true;
     updWTS = true;
@@ -737,75 +707,75 @@ namespace MBSim {
   DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Body::writeXMLFile(parent);
 
-//    DOMElement * ele1 = new DOMElement( MBSIM%"frameForKinematics" );
-//    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
-//    ele1->SetAttribute("ref", str);
-//    ele0->LinkEndChild(ele1);
-//
-//    addElementText(ele0,MBSIM%"mass",getMass());
-//    if(frameForInertiaTensor)
-//      THROW_MBSIMERROR("Inertia tensor with respect to frame " + frameForInertiaTensor->getPath() + " not supported in XML. Provide inertia tensor with respect to frame C.");
-//    addElementText(ele0,MBSIM%"inertiaTensor",getInertiaTensor());
-//
-//    ele1 = new DOMElement( MBSIM%"translation" );
-//    if(getTranslation()) 
-//      getTranslation()->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new DOMElement( MBSIM%"rotation" );
-//    if(getRotation()) 
-//      getRotation()->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new DOMElement( MBSIM%"frames" );
-//    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//    ele1 = new DOMElement( MBSIM%"contours" );
-//    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(getOpenMBVBody()) {
-//      ele1 = new DOMElement( MBSIM%"openMBVRigidBody" );
-//      getOpenMBVBody()->writeXMLFile(ele1);
-//
-//      if(getOpenMBVFrameOfReference()) {
-//        DOMElement * ele2 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
-//        ele2->SetAttribute("ref", str);
-//        ele1->LinkEndChild(ele2);
-//      }
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(C->getOpenMBVFrame()) {
-//      ele1 = new DOMElement( MBSIM%"enableOpenMBVFrameC" );
-//      addElementText(ele1,MBSIM%"size",C->getOpenMBVFrame()->getSize());
-//      addElementText(ele1,MBSIM%"offset",C->getOpenMBVFrame()->getOffset());
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(FWeight) {
-//      ele1 = new DOMElement( MBSIM%"openMBVWeightArrow" );
-//      FWeight->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(FArrow) {
-//      ele1 = new DOMElement( MBSIM%"openMBVJointForceArrow" );
-//      FArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(MArrow) {
-//      ele1 = new DOMElement( MBSIM%"openMBVJointMomentArrow" );
-//      MArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//#endif
+    //    DOMElement * ele1 = new DOMElement( MBSIM%"frameForKinematics" );
+    //    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
+    //    ele1->SetAttribute("ref", str);
+    //    ele0->LinkEndChild(ele1);
+    //
+    //    addElementText(ele0,MBSIM%"mass",getMass());
+    //    if(frameForInertiaTensor)
+    //      THROW_MBSIMERROR("Inertia tensor with respect to frame " + frameForInertiaTensor->getPath() + " not supported in XML. Provide inertia tensor with respect to frame C.");
+    //    addElementText(ele0,MBSIM%"inertiaTensor",getInertiaTensor());
+    //
+    //    ele1 = new DOMElement( MBSIM%"translation" );
+    //    if(getTranslation())
+    //      getTranslation()->writeXMLFile(ele1);
+    //    ele0->LinkEndChild(ele1);
+    //
+    //    ele1 = new DOMElement( MBSIM%"rotation" );
+    //    if(getRotation())
+    //      getRotation()->writeXMLFile(ele1);
+    //    ele0->LinkEndChild(ele1);
+    //
+    //    ele1 = new DOMElement( MBSIM%"frames" );
+    //    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i)
+    //      (*i)->writeXMLFile(ele1);
+    //    ele0->LinkEndChild( ele1 );
+    //
+    //    ele1 = new DOMElement( MBSIM%"contours" );
+    //    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+    //      (*i)->writeXMLFile(ele1);
+    //    ele0->LinkEndChild( ele1 );
+    //
+    //#ifdef HAVE_OPENMBVCPPINTERFACE
+    //    if(getOpenMBVBody()) {
+    //      ele1 = new DOMElement( MBSIM%"openMBVRigidBody" );
+    //      getOpenMBVBody()->writeXMLFile(ele1);
+    //
+    //      if(getOpenMBVFrameOfReference()) {
+    //        DOMElement * ele2 = new DOMElement( MBSIM%"frameOfReference" );
+    //        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
+    //        ele2->SetAttribute("ref", str);
+    //        ele1->LinkEndChild(ele2);
+    //      }
+    //      ele0->LinkEndChild(ele1);
+    //    }
+    //
+    //    if(C->getOpenMBVFrame()) {
+    //      ele1 = new DOMElement( MBSIM%"enableOpenMBVFrameC" );
+    //      addElementText(ele1,MBSIM%"size",C->getOpenMBVFrame()->getSize());
+    //      addElementText(ele1,MBSIM%"offset",C->getOpenMBVFrame()->getOffset());
+    //      ele0->LinkEndChild(ele1);
+    //    }
+    //
+    //    if(FWeight) {
+    //      ele1 = new DOMElement( MBSIM%"openMBVWeightArrow" );
+    //      FWeight->writeXMLFile(ele1);
+    //      ele0->LinkEndChild(ele1);
+    //    }
+    //
+    //    if(FArrow) {
+    //      ele1 = new DOMElement( MBSIM%"openMBVJointForceArrow" );
+    //      FArrow->writeXMLFile(ele1);
+    //      ele0->LinkEndChild(ele1);
+    //    }
+    //
+    //    if(MArrow) {
+    //      ele1 = new DOMElement( MBSIM%"openMBVJointMomentArrow" );
+    //      MArrow->writeXMLFile(ele1);
+    //      ele0->LinkEndChild(ele1);
+    //    }
+    //#endif
 
     return ele0;
   }

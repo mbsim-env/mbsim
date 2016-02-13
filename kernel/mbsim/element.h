@@ -284,10 +284,10 @@ namespace MBSim {
       int computeLevel();
 
       virtual void updatePositions(double t, Frame *frame) { }
-      virtual void updateVelocities(double t) { }
-      virtual void updateAccelerations(double t) { }
-      virtual void updateJacobians(double t, int j=0) { }
-      virtual void updateGyroscopicAccelerations(double t) { }
+      virtual void updateVelocities(double t, Frame *frame) { }
+      virtual void updateAccelerations(double t, Frame *frame) { }
+      virtual void updateJacobians(double t, Frame *frame, int j=0) { }
+      virtual void updateGyroscopicAccelerations(double t, Frame *frame) { }
 
       virtual void resetUpToDate() {}
 

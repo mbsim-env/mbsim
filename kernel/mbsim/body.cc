@@ -228,16 +228,6 @@ namespace MBSim {
       THROW_MBSIMERROR("Unknown container '"+container+"'.");
   }
 
-  const Mat3xV& Body::getPJT(double t) {
-    if(updPJ) updatePJ(t);
-    return PJT[0];
-  }
-
-  const Mat3xV& Body::getPJR(double t) {
-    if(updPJ) updatePJ(t);
-    return PJR[0];
-  }
-
   void Body::resetUpToDate() {
     updPos = true;
     updVel = true;

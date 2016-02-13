@@ -257,14 +257,14 @@ namespace MBSimIntegrator {
       if(system.getImpactSolver() == DynamicSystemSolver::RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
       system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
     }
-    system.updategd(t);
-    system.updateT(t); 
-    system.updateJacobians(t);
-    system.updateh(t);
-    system.updateM(t);
-    if (SetValuedForceLawsExplicit) system.updateLLM(t);
-    system.updateW(t); 
-    system.updateV(t);
+    throw;
+    //system.updategd(t);
+    //system.updateT(t);
+    //system.updateh(t);
+    //system.updateM(t);
+    //if (SetValuedForceLawsExplicit) system.updateLLM(t);
+    //system.updateW(t);
+    //system.updateV(t);
 
     system.getLinkStatusReg(LS_Reg_tmp_after,t);
 

@@ -241,12 +241,6 @@ namespace MBSim {
       (**i).updateW(t, j);
   }
 
-  void DynamicSystem::updateJacobiansInverseKinetics(double t, int j) {
-
-    for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
-      (**i).updateJacobians(t, j);
-  }
-
   void DynamicSystem::updateWInverseKinetics(double t, int j) {
     WInverseKinetics[j].init(0);
 
@@ -273,22 +267,10 @@ namespace MBSim {
       linkSetValued[i]->updateg(t);
   }
 
-  void DynamicSystem::updategInverseKinetics(double t) {
-
-    for (int i = 0; i < (int) inverseKineticsLink.size(); i++)
-      inverseKineticsLink[i]->updateg(t);
-  }
-
   void DynamicSystem::updategd(double t) {
 
     for (int i = 0; i < (int) linkSetValued.size(); i++)
       linkSetValued[i]->updategd(t);
-  }
-
-  void DynamicSystem::updategdInverseKinetics(double t) {
-
-    for (int i = 0; i < (int) inverseKineticsLink.size(); i++)
-      inverseKineticsLink[i]->updategd(t);
   }
 
   void DynamicSystem::updatedx(double t, double dt) {

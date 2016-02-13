@@ -78,10 +78,6 @@ namespace MBSim {
 
       q(i) += epsroot(); // update with disturbed positions assuming same active links
       throw;
-      //updateStateDependentVariables(t);
-      updateT(t);
-      updateJacobians(t);
-      updateh(t);
 
       //dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
       q(i) = qi;
@@ -99,9 +95,6 @@ namespace MBSim {
     // dhdt = (hObject-hObjectEnd)/epsroot();
     // t = t0;
     /******************* back to initial state **********************/
-    //updateStateDependentVariables(t);
-    updateT(t);
-    updateJacobians(t);
     h[0] = hEnd;
   }
 

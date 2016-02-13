@@ -71,18 +71,21 @@ namespace MBSim {
       void updateT(double t);
       void updateh(double t, int j=0);
       void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
+      void updateInertiaTensor(double t);
       void updateGeneralizedCoordinates(double t); 
       void updateGeneralizedJacobians(double t, int j=0); 
-      void updatePositions(double t, Frame *frame);
       void updatePositions(double t); 
       void updateVelocities(double t);
-      void updateAccelerations(double t);
-      void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
+      void updateJacobians(double t);
       void updateGyroscopicAccelerations(double t);
-      void updateJacobians0(double t);
-      void updateJacobians1(double t) { }
-      void updateJacobians2(double t);
-      void updatePJ(double t);
+      void updatePositions(double t, Frame *frame);
+      void updateVelocities(double t, Frame *frame);
+      void updateAccelerations(double t, Frame *frame);
+      void updateJacobians(double t, Frame *frame, int j=0) { (this->*updateJacobians_[j])(t,frame); }
+      void updateGyroscopicAccelerations(double t, Frame *frame);
+      void updateJacobians0(double t, Frame *frame);
+      void updateJacobians1(double t, Frame *frame) { }
+      void updateJacobians2(double t, Frame *frame);
 
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
@@ -175,14 +178,15 @@ namespace MBSim {
       double getMass() const { return m; }
       Frame* getFrameForKinematics() { return &Z; };
       FixedRelativeFrame* getFrameC() { return C; };
-      const fmatvec::Vec3& getGlobalRelativePosition(double t);
-      const fmatvec::Vec3& getGlobalRelativeVelocity(double t);
-      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t);
 
-      const fmatvec::SymMat3& getGlobalInertiaTensor(double t);
-
-      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updatePJ(t); return PJTT; }
-      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updatePJ(t); return PJRR; }
+      const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrPK; }
+      const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvPKrel; }
+      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomPK; }
+      const fmatvec::SymMat3& getGlobalInertiaTensor(double t) { if(updWTS) updateInertiaTensor(t); return WThetaS; }
+      const fmatvec::Vec3& getPjbT(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbT; }
+      const fmatvec::Vec3& getPjbR(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbR; }
+      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updateJacobians(t); return PJTT; }
+      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updateJacobians(t); return PJRR; }
 
       /**
        * \param RThetaR  inertia tensor
@@ -344,7 +348,7 @@ namespace MBSim {
        */
       void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
-      void (RigidBody::*updateJacobians_[3])(double t); 
+      void (RigidBody::*updateJacobians_[3])(double t, Frame *frame);
 
       /** a pointer to Frame "C" */
       FixedRelativeFrame *C;
@@ -367,7 +371,7 @@ namespace MBSim {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updGC, updGJ, updWTS, updT, updateByReference;
+      bool updPjb, updGC, updGJ, updWTS, updT, updateByReference;
 
       Frame Z;
 
