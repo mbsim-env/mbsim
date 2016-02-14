@@ -34,7 +34,7 @@
 #include <mbsim/contact_kinematics/edge_edge.h>
 #include <mbsim/contact_kinematics/line_contour1s.h>
 #include <mbsim/contact_kinematics/point_rectangle.h>
-#include <mbsim/contact_kinematics/point_contour1s.h>
+#include <mbsim/contact_kinematics/point_planarcontour.h>
 #include <mbsim/contact_kinematics/point_contourinterpolation.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
@@ -117,7 +117,7 @@ namespace MBSim {
       return new ContactKinematicsPointRectangle;
 
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1s")==0 )
-      return new ContactKinematicsPointContour1s;
+      return new ContactKinematicsPointPlanarContour;
 
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "ContourInterpolation")==0 )
       return new ContactKinematicsPointContourInterpolation;

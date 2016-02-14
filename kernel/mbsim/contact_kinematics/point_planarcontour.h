@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_POINT_CONTOUR1S_H_
-#define _CONTACT_KINEMATICS_POINT_CONTOUR1S_H_
+#ifndef _CONTACT_KINEMATICS_POINT_PLANAR_CONTOUR_H_
+#define _CONTACT_KINEMATICS_POINT_PLANAR_CONTOUR_H_
 
 #include "contact_kinematics.h"
 
@@ -35,22 +35,22 @@ namespace MBSim {
    * \date 2009-04-02 some comments (Thorsten Schindler)
    * \date 2009-06-04 new interface (Thorsten Schindler)
    */
-  class ContactKinematicsPointContour1s: public ContactKinematics {
+  class ContactKinematicsPointPlanarContour: public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsPointContour1s();
+      ContactKinematicsPointPlanarContour();
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointContour1s();
+      virtual ~ContactKinematicsPointPlanarContour();
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsPointContour1s::updatewb): Not implemented!"); }
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsPointPlanarContour::updatewb): Not implemented!"); }
       /***************************************************/
 
     private:

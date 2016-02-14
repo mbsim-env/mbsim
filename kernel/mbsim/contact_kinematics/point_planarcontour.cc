@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include "point_contour1s.h"
+#include "point_planarcontour.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/contour1s.h"
@@ -29,13 +29,13 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsPointContour1s::ContactKinematicsPointContour1s() :
+  ContactKinematicsPointPlanarContour::ContactKinematicsPointPlanarContour() :
       ContactKinematics(), ipoint(0), icontour(0), point(0), contour1s(0), useLocal(false) {
   }
-  ContactKinematicsPointContour1s::~ContactKinematicsPointContour1s() {
+  ContactKinematicsPointPlanarContour::~ContactKinematicsPointPlanarContour() {
   }
 
-  void ContactKinematicsPointContour1s::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsPointPlanarContour::assignContours(const vector<Contour*> &contour) {
     if (dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
       icontour = 1;
@@ -50,7 +50,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointPlanarContour::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     
     FuncPairPlanarContourPoint *func = new FuncPairPlanarContourPoint(point, contour1s); // root function for searching contact parameters
     func->setTime(t);
