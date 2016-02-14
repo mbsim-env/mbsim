@@ -2799,7 +2799,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Contour1sAnalytical" substitutionGroup="Contour1s" type="Contour1sAnalyticalType">
+  <xs:element name="PlanarContour" substitutionGroup="Contour1s" type="PlanarContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Kurvenkontur, bei der die Parametrisierung analytisch durch einen funktionalen Zusammenhang beschrieben werden kann:
@@ -2814,7 +2814,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Contour1sAnalyticalType">
+  <xs:complexType name="PlanarContourType">
     <xs:complexContent>
       <xs:extension base="Contour1sType">
         <xs:sequence>
