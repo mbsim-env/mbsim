@@ -42,7 +42,7 @@
 #include <mbsim/contact_kinematics/point_plane.h>
 #include <mbsim/contact_kinematics/point_sphere.h>
 #include <mbsim/contact_kinematics/point_planewithfrustum.h>
-#include <mbsim/contact_kinematics/point_line_segment.h>
+#include <mbsim/contact_kinematics/point_linesegment.h>
 #include <mbsim/contact_kinematics/sphere_frustum.h>
 #include <mbsim/contact_kinematics/sphere_plane.h>
 #include <mbsim/contact_kinematics/sphere_rectangle.h>
