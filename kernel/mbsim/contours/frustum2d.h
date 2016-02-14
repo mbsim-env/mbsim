@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfeorg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _FRUSTUM2D_H_

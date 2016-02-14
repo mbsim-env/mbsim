@@ -15,7 +15,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: martin.o.foerg@googlemail.com
- *          rzander@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_POINT_CONTOUR1S_H_

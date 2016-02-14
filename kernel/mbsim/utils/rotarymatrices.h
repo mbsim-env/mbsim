@@ -15,10 +15,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: martin.o.foerg@googlemail.com
  */
+
 #ifndef ROTARYMATRICES_H
 #define ROTARYMATRICES_H
 #include "fmatvec/fmatvec.h"
