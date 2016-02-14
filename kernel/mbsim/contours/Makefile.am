@@ -13,7 +13,7 @@ libcontour_la_SOURCES = rigid_contour.cc\
 			plane.cc\
 			sphere.cc\
 			frustum.cc\
-			frustum2d.cc\
+			planar_frustum.cc\
 			room.cc\
 			planewithfrustum.cc\
 			polynomial_frustum.cc\
@@ -38,7 +38,7 @@ contourinclude_HEADERS = rigid_contour.h\
 			 plane.h\
 			 sphere.h\
 			 frustum.h\
-			 frustum2d.h\
+			 planar_frustum.h\
 			 room.h\
 			 planewithfrustum.h\
 			 polynomial_frustum.h\

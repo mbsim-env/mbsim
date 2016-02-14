@@ -18,7 +18,7 @@
  */
 
 #include<config.h>
-#include "mbsim/contours/frustum2d.h"
+#include "mbsim/contours/planar_frustum.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>

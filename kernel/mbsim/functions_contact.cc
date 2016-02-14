@@ -24,7 +24,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/circle.h"
-#include "mbsim/contours/frustum2d.h"
+#include "mbsim/contours/planar_frustum.h"
 #include "mbsim/contours/edge.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/plane.h"
