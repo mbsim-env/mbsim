@@ -4,7 +4,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/solid_circle.h"
-#include "mbsim/contours/contour1s_analytical.h"
+#include "mbsim/contours/planar_contour.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "tools/rigid_contour_functions1s.h"
 #include "mbsim/functions/kinematic_functions.h"
