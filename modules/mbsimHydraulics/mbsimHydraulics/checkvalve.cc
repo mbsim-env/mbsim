@@ -23,7 +23,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/solid_circle.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
