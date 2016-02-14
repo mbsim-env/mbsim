@@ -22,8 +22,8 @@
 #include <mbsim/contours/contour1s.h>
 #include <mbsim/contours/point.h>
 #include "mbsim/contours/line.h"
-#include <mbsim/contours/circle_solid.h>
-#include "mbsim/contours/circle_hollow.h"
+#include <mbsim/contours/solid_circle.h>
+#include "mbsim/contours/hollow_circle.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/contours/edge.h"

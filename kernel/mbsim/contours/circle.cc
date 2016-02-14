@@ -20,8 +20,8 @@
 #include<config.h>
 #include "mbsim/frame.h"
 #include "mbsim/contours/circle.h"
-#include "mbsim/contours/circle_hollow.h"
-#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/hollow_circle.h"
+#include "mbsim/contours/solid_circle.h"
 
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>

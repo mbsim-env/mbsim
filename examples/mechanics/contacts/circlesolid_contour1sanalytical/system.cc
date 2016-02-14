@@ -6,7 +6,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/solid_circle.h"
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "tools/rigid_contour_functions1s.h"

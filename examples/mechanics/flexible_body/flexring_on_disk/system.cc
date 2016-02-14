@@ -4,7 +4,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/solid_circle.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws.h"

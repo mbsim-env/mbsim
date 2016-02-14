@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/solid_circle.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/line.h"

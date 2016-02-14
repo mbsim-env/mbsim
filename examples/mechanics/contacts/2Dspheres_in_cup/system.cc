@@ -3,7 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
-#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/solid_circle.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/environment.h"

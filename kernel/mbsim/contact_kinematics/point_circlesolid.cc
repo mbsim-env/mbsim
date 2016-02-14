@@ -21,7 +21,7 @@
 #include "point_circlesolid.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/solid_circle.h"
 
 using namespace fmatvec;
 using namespace std;
