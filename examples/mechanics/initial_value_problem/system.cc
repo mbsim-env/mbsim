@@ -138,7 +138,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   cam->setInitialGeneralizedVelocity(100.*M_PI/30.);
   this->addObject(cam);
 
-  Contour1sAnalytical * camContour = new Contour1sAnalytical("Contour");
+  PlanarContour * camContour = new PlanarContour("Contour");
   camContour->setContourFunction1s(funcCamContour);
   camContour->setAlphaStart(0.);
   camContour->setAlphaEnd(2.*M_PI);

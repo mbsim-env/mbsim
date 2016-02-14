@@ -38,36 +38,36 @@ using namespace boost;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Contour1sAnalytical, MBSIM%"Contour1sAnalytical")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarContour, MBSIM%"PlanarContour")
 
-  Contour1sAnalytical::~Contour1sAnalytical() {
+  PlanarContour::~PlanarContour() {
      if (funcCrPC) 
        delete funcCrPC;
      funcCrPC=NULL;
   }
 
-  Vec3 Contour1sAnalytical::getKrPS(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::getKrPS(const fmatvec::Vec2 &zeta) {
     return (*funcCrPC)(zeta(0));
   }
 
-  Vec3 Contour1sAnalytical::getKs(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::getKs(const fmatvec::Vec2 &zeta) {
     return funcCrPC->parDer(zeta(0));
   }
 
-  Vec3 Contour1sAnalytical::getKt(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::getKt(const fmatvec::Vec2 &zeta) {
     static Vec3 Kt("[0;0;1]");
     return Kt;
   }
 
-  Vec3 Contour1sAnalytical::getParDer1Ks(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::getParDer1Ks(const fmatvec::Vec2 &zeta) {
     return funcCrPC->parDerParDer(zeta(0));
   }
 
-  void Contour1sAnalytical::init(InitStage stage) {
+  void PlanarContour::init(InitStage stage) {
     if (stage == preInit) {
       RigidContour::init(stage);
       if (etaNodes.size() < 2)
-        THROW_MBSIMERROR("(Contour1sAnalytical::init): Size of etaNodes must be greater than 1.");
+        THROW_MBSIMERROR("(PlanarContour::init): Size of etaNodes must be greater than 1.");
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -94,13 +94,13 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Frame* Contour1sAnalytical::createContourFrame(const string &name) {
+  Frame* PlanarContour::createContourFrame(const string &name) {
     FloatingRelativeFrame *frame = new FloatingRelativeFrame(name);      
     frame->setFrameOfReference(R);
     return frame;
   }
 
-  void Contour1sAnalytical::plot(double t, double dt) {
+  void PlanarContour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
@@ -121,12 +121,12 @@ namespace MBSim {
     }
   }
       
-  double Contour1sAnalytical::getCurvature(const fmatvec::Vec2 &zeta) {
+  double PlanarContour::getCurvature(const fmatvec::Vec2 &zeta) {
     const fmatvec::Vec3 rs = funcCrPC->parDer(zeta(0));
     return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
   }
 
-  void Contour1sAnalytical::initializeUsingXML(DOMElement * element) {
+  void PlanarContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
     //ContourContinuum
@@ -135,7 +135,7 @@ namespace MBSim {
     //Contour1s
 //    e=E(element)->getFirstElementChildNamed(MBSIM%"diameter");
 //    diameter=getDouble(e);
-    //Contour1sAnalytical
+    //PlanarContour
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     throw;
 //    funcCrPC=ObjectFactory::createAndInit<ContourFunction1s> >(e->getFirstElementChild());
@@ -148,7 +148,7 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* Contour1sAnalytical::writeXMLFile(DOMNode *parent) {
+  DOMElement* PlanarContour::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = RigidContour::writeXMLFile(parent);
 //    addElementText(ele0,MBSIM%"alphaStart",as);
 //    addElementText(ele0,MBSIM%"alphaEnd",ae);
@@ -160,7 +160,7 @@ namespace MBSim {
     return ele0;
   }
 
-  ContactKinematics * Contour1sAnalytical::findContactPairingWith(std::string type0, std::string type1) {
+  ContactKinematics * PlanarContour::findContactPairingWith(std::string type0, std::string type1) {
     return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
   }
 

@@ -80,10 +80,10 @@ namespace MBSim {
     else if ( strcmp(contour0, "SolidCircle")==0 && strcmp(contour1, "SolidCircle")==0 )
       return new ContactKinematicsSolidCircleSolidCircle;
 
-    else if ( strcmp(contour0, "SolidCircle")==0 && strcmp(contour1, "Contour1sAnalytical")==0 )
+    else if ( strcmp(contour0, "SolidCircle")==0 && strcmp(contour1, "PlanarContour")==0 )
       return new ContactKinematicsSolidCircleContour1s;
 
-    else if ( strcmp(contour0, "Line")==0 && strcmp(contour1, "Contour1sAnalytical")==0 )
+    else if ( strcmp(contour0, "Line")==0 && strcmp(contour1, "PlanarContour")==0 )
       return new ContactKinematicsLineContour1s;
 
     else if ( strcmp(contour0, "SolidCircle")==0 && strcmp(contour1, "Frustum2D")==0 )

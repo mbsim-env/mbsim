@@ -14,11 +14,11 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thschindler@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTOUR1S_ANALYTICAL_H_
-#define _CONTOUR1S_ANALYTICAL_H_
+#ifndef _PLANAR_CONTOUR_H_
+#define _PLANAR_CONTOUR_H_
 
 #include "mbsim/contours/rigid_contour.h"
 
@@ -38,21 +38,21 @@ namespace MBSim {
    * \date 2009-04-20 some comments (Thorsten Schindler)
    * \date 2009-06-04 new file (Thorsten Schindler)
    */
-  class Contour1sAnalytical : public RigidContour {
+  class PlanarContour : public RigidContour {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      Contour1sAnalytical(const std::string &name="", Frame *R=NULL) : RigidContour(name,R) { }
+      PlanarContour(const std::string &name="", Frame *R=NULL) : RigidContour(name,R) { }
 
       /**
        * \brief destructor
        */
-      virtual ~Contour1sAnalytical();
+      virtual ~PlanarContour();
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Contour1sAnalytical"; }
+      std::string getType() const { return "PlanarContour"; }
       void plot(double t, double dt = 1);
       /***************************************************/
 
@@ -90,17 +90,10 @@ namespace MBSim {
        */
       ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
-//      void setAlphaStart(double as_) { as = as_; }
-//      void setAlphaEnd(double ae_) { ae = ae_; }
-//      double getAlphaStart() const { return as; }
-//      double getAlphaEnd() const { return ae; }
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
     protected:
       Function<fmatvec::Vec3(double)> * funcCrPC;
-
-//      double as, ae;
-//      std::vector<double> nodes;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
@@ -110,5 +103,5 @@ namespace MBSim {
 
 }
 
-#endif /* _CONTOUR1S_ANALYTICAL_H_ */
+#endif
 

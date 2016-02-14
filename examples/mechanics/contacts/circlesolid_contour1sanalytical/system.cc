@@ -50,7 +50,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   //cam->addFrame(new FixedRelativeFrame("Contour", "[.003; .01; 0]", Cardan2AIK(-M_PI/2., 0, -M_PI/2. )));
   cam->addFrame(new FixedRelativeFrame("Contour", "[.003; .01; 0]", SqrMat3(EYE)));
-  Contour1sAnalytical * camContour = new Contour1sAnalytical("Contour");
+  PlanarContour * camContour = new PlanarContour("Contour");
   camContour->setContourFunction(funcCamContour);
   camContour->setFrameOfReference(cam->getFrame("Contour"));
   camContour->setNodes(searchpoints);
