@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include "circlesolid_linesegment.h"
+#include "circle_linesegment.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/line_segment.h"
 #include "mbsim/contours/circle.h"
@@ -28,7 +28,7 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsSolidCircleLineSegment::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsCircleLineSegment::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0; iline = 1;
       circle = static_cast<Circle*>(contour[0]);
@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSolidCircleLineSegment::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsCircleLineSegment::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
     const Vec3 WC=circle->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
@@ -72,7 +72,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSolidCircleLineSegment::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsCircleLineSegment::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     const Vec3 WC=circle->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);
@@ -100,7 +100,7 @@ namespace MBSim {
         wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     }
     else
-      throw runtime_error("ContactKinematicsSolidCircleLineSegment::updatewb not implemented for contact on edge.");
+      throw runtime_error("ContactKinematicsCircleLineSegment::updatewb not implemented for contact on edge.");
   }
       
 }

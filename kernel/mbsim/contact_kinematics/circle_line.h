@@ -17,27 +17,27 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_CIRCLESOLID_LINESEGMENT_H_
-#define _CONTACT_KINEMATICS_CIRCLESOLID_LINESEGMENT_H_
+#ifndef _CONTACT_KINEMATICS_CIRCLE_LINE_H_
+#define _CONTACT_KINEMATICS_CIRCLE_LINE_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
   class Circle;
-  class LineSegment;
+  class Line;
 
   /** 
    * \brief pairing circle outer surface to line
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
    */
-  class ContactKinematicsSolidCircleLineSegment : public ContactKinematics {
+  class ContactKinematicsCircleLine : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame); 
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame);
       /***************************************************/
     
     private:
@@ -50,7 +50,7 @@ namespace MBSim {
        * \brief contour classes
        */
       Circle *circle;
-      LineSegment *linesegment;
+      Line *line;
   };
 
 }

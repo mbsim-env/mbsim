@@ -26,8 +26,8 @@
 #include <mbsim/contact_kinematics/circle_circle.h>
 #include <mbsim/contact_kinematics/circle_planarcontour.h>
 #include <mbsim/contact_kinematics/circle_planarfrustum.h>
-#include <mbsim/contact_kinematics/circlesolid_line.h>
-#include <mbsim/contact_kinematics/circlesolid_linesegment.h>
+#include <mbsim/contact_kinematics/circle_line.h>
+#include <mbsim/contact_kinematics/circle_linesegment.h>
 #include <mbsim/contact_kinematics/circlesolid_plane.h>
 #include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
@@ -85,10 +85,10 @@ namespace MBSim {
       return new ContactKinematicsCirclePlanarFrustum;
 
     else if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "Line")==0 )
-      return new ContactKinematicsSolidCircleLine;
+      return new ContactKinematicsCircleLine;
 
     else if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "LineSegment")==0 )
-      return new ContactKinematicsSolidCircleLineSegment;
+      return new ContactKinematicsCircleLineSegment;
 
     else if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "Plane")==0 )
       return new ContactKinematicsSolidCirclePlane;

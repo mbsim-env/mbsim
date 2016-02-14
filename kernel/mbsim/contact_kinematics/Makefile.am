@@ -11,10 +11,10 @@ libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 				  point_polynomialfrustum.cc\
 				  point_planarcontour.cc\
 				  point_contourinterpolation.cc\
-				  circlesolid_line.cc\
+				  circle_line.cc\
 				  circle_circle.cc\
 				  circlesolid_plane.cc\
-				  circlesolid_linesegment.cc\
+				  circle_linesegment.cc\
 				  circle_planarfrustum.cc\
 				  circle_planarcontour.cc\
 				  circle_frustum.cc\
@@ -46,10 +46,10 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   point_polynomialfrustum.h\
 				   point_planarcontour.h\
 				   point_contourinterpolation.h\
-				   circlesolid_line.h\
+				   circle_line.h\
 				   circle_circle.h\
 				   circlesolid_plane.h\
-				   circlesolid_linesegment.h\
+				   circle_linesegment.h\
 				   circle_planarfrustum.h\
 				   circle_frustum.h\
 				   circle_planarcontour.h\

@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include "circlesolid_line.h"
+#include "circle_line.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/circle.h"
@@ -28,7 +28,7 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsSolidCircleLine::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsCircleLine::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0; iline = 1;
       circle = static_cast<Circle*>(contour[0]);
@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSolidCircleLine::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsCircleLine::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
     cFrame[iline]->setOrientation(line->getFrame()->getOrientation(t));
     cFrame[icircle]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
@@ -58,7 +58,7 @@ namespace MBSim {
     cFrame[iline]->setPosition(cFrame[icircle]->getPosition(false) - Wn*g);
   }
 
-  void ContactKinematicsSolidCircleLine::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsCircleLine::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
 
     Vec3 v2 = cFrame[icircle]->getOrientation(t).col(2);
     Vec3 n1 = cFrame[iline]->getOrientation(t).col(0);
