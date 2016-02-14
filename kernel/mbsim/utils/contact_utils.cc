@@ -24,7 +24,7 @@
 // --- List of contact kinematic implementations - BEGIN ---
 #include <mbsim/contact_kinematics/circle_frustum.h>
 #include <mbsim/contact_kinematics/circle_circle.h>
-#include <mbsim/contact_kinematics/circlesolid_contour1s.h>
+#include <mbsim/contact_kinematics/circle_planarcontour.h>
 #include <mbsim/contact_kinematics/circlesolid_frustum2d.h>
 #include <mbsim/contact_kinematics/circlesolid_line.h>
 #include <mbsim/contact_kinematics/circlesolid_linesegment.h>

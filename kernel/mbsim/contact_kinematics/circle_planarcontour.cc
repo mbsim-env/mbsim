@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/contact_kinematics/circlesolid_contour1s.h"
+#include "mbsim/contact_kinematics/circle_planarcontour.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions_contact.h"
