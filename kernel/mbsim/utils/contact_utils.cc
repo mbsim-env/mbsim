@@ -73,7 +73,7 @@ namespace MBSim {
       return new ContactKinematicsCircleFrustum;
     
     else if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "Circle")==0 )
-      return new ContactKinematicsSolidCircleSolidCircle;
+      return new ContactKinematicsCircleCircle;
 
     else if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "PlanarContour")==0 )
       return new ContactKinematicsSolidCircleContour1s;

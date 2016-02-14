@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_CIRCLESOLID_CIRCLESOLID_H_
-#define _CONTACT_KINEMATICS_CIRCLESOLID_CIRCLESOLID_H_
+#ifndef _CONTACT_KINEMATICS_CIRCLE_CIRCLE_H_
+#define _CONTACT_KINEMATICS_CIRCLE_CIRCLE_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "mbsim/mbsim_event.h"
@@ -34,7 +34,7 @@ namespace MBSim {
    * \date 2009-07-13 updateg implemented (Bastian Esefeld)
    * \todo updatewb implementation
    */
-  class ContactKinematicsSolidCircleSolidCircle : public ContactKinematics {
+  class ContactKinematicsCircleCircle : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
