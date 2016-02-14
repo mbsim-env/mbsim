@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class SolidCircle;
+  class Circle;
   class Plane;
 
   /*! \brief pairing circle outer side to plane
@@ -50,7 +50,7 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      SolidCircle *circlesolid;
+      Circle *circle;
       Plane *plane;
   };
 

@@ -24,8 +24,8 @@
 
 namespace MBSim {
 
-  class SolidCircle;
-  class FuncPairContour1sSolidCircle;
+  class Circle;
+  class FuncPairContour1sCircle;
 
   /**
    * \brief pairing outer circle side to contour1s
@@ -62,13 +62,13 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      SolidCircle *circle;
+      Circle *circle;
       Contour *contour1s;
 
       /**
        * \brief root function
        */
-      FuncPairContour1sSolidCircle *func;
+      FuncPairContour1sCircle *func;
 
       bool searchAllCP;
 

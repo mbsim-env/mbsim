@@ -16,7 +16,6 @@
 #include <mbsim/contours/plane.h>
 #include <mbsim/contours/planewithfrustum.h>
 #include <mbsim/contours/point.h>
-#include <mbsim/contours/solid_circle.h>
 #include <mbsim/contact.h>
 #include <mbsim/maxwell_contact.h>
 #include <mbsim/constitutive_laws.h>

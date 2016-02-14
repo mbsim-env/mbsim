@@ -18,12 +18,11 @@
  */
 
 #include <config.h>
-#include <mbsim/functions_contact.h>
-#include <mbsim/contours/contour1s.h>
-#include <mbsim/contours/point.h>
+#include "mbsim/functions_contact.h"
+#include "mbsim/frame.h"
+#include "mbsim/contours/contour1s.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
-#include <mbsim/contours/solid_circle.h>
-#include "mbsim/contours/hollow_circle.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/contours/edge.h"
@@ -35,10 +34,10 @@
 #include "mbsim/contours/contour_quad.h"
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/compound_contour.h"
-#include "mbsim/frame.h"
 #include "mbsim/mbsim_event.h"
-#include <mbsim/utils/nonlinear_algebra.h>
-#include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
+#include "mbsim/utils/eps.h"
+#include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
 using namespace fmatvec;
 
 namespace MBSim {
@@ -51,9 +50,20 @@ namespace MBSim {
   }
 
   Vec3 FuncPairContour1sPoint::getWrD(const double &alpha) {
-    //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
     zeta(0) = alpha;
     return contour->getPosition(t,zeta) - point->getFrame()->getPosition(t);
+  }
+
+  double FuncPairContour1sCircle::operator()(const double &alpha) {
+    zeta(0) = alpha;
+    Vec3 Wd = getWrD(alpha);
+    Vec3 Wt = contour->getWu(t,zeta);
+    return Wt.T() * Wd;
+  }
+
+  Vec3 FuncPairContour1sCircle::getWrD(const double &alpha) {
+    zeta(0) = alpha;
+    return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - (circle->getSign()*circle->getRadius()) * contour->getWn(t,zeta));
   }
 
   Vec2 FuncPairContour2sPoint::operator()(const Vec2 &alpha) {  // Vec2: U and V direction
@@ -77,37 +87,12 @@ namespace MBSim {
     nodes = nodesTilde;
   }
 
-  double FuncPairContour1sHollowCircle::operator()(const double &alpha) {
-    zeta(0) = alpha;
-    Vec3 Wd = getWrD(alpha);
-    Vec3 Wt = contour->getWu(t,zeta);
-    return Wt.T() * Wd;
-  }
-
-  Vec3 FuncPairContour1sHollowCircle::getWrD(const double &alpha) {
-    //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-    zeta(0) = alpha;
-    return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) + circle->getRadius() * contour->getWn(t,zeta));
-  }
-
   Vec2 FuncPairPointContourInterpolation::operator()(const Vec2 &alpha) {
     return (contour->getWu(t,alpha)).T() * (contour->getPosition(t,alpha) - point->getFrame()->getPosition(t));
   }
 
   Vec3 FuncPairPointContourInterpolation::getWrD(const Vec2 &alpha) {
     return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
-  }
-
-  double FuncPairContour1sSolidCircle::operator()(const double &alpha) {
-    zeta(0) = alpha;
-    Vec3 Wd = getWrD(alpha);
-    Vec3 Wt = contour1s->getWu(t,zeta);
-    return Wt.T() * Wd;
-  }
-
-  Vec3 FuncPairContour1sSolidCircle::getWrD(const double &alpha) {
-    zeta(0) = alpha;
-    return contour1s->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - circle->getRadius() * contour1s->getWn(t,zeta));
   }
 
   double Contact1sSearch::slv() {

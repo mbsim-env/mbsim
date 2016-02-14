@@ -23,6 +23,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/functions_contact.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -62,7 +63,7 @@ namespace MBSim {
     double phi_F = atan((r_F(1) - r_F(0)) / h_F); // opening angle of Frustum
     Vec3 Wb_C = circle->getFrame()->getOrientation(t).col(2); // binormal of Circle in inertial FR
     double r_C = circle->getRadius(); // radius of Circle
-    bool outCont_C = circle->getOutCont(); // contact on outer surface of Circle?
+    bool outCont_C = circle->getSolid(); // contact on outer surface of Circle?
 
     /* Contact Geometry */
     Vec3 Wd_CF = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Circle and Frustum basis point in inertial FR    

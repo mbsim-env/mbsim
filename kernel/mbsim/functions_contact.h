@@ -29,8 +29,7 @@ namespace MBSim {
   class Line;
   class Contour1s;
   class Contour2s;
-  class SolidCircle;
-  class HollowCircle;
+  class Circle;
   class ContourInterpolation;
 
   template <typename Sig> class DistanceFunction;
@@ -103,6 +102,39 @@ namespace MBSim {
        */
       fmatvec::Vec2 zeta;
   };
+  /*!
+   * \brief root function for pairing CylinderFlexible and Circle
+   * \author Roland Zander
+   * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
+   * \todo improve performance statement TODO
+   */
+
+  class FuncPairContour1sCircle : public DistanceFunction<double(double)> {
+    public:
+      /**
+       * \brief constructor
+       * \param circle hollow contour
+       * \param contour with one contour parameter
+       */
+      FuncPairContour1sCircle(Circle* circle_, Contour *contour_) : contour(contour_), circle(circle_) { }
+
+      double operator()(const double &alpha);
+
+      fmatvec::Vec3 getWrD(const double &alpha);
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour *contour;
+      Circle *circle;
+
+      /**
+       * \brief contour point data for saving old values
+       */
+      fmatvec::Vec2 zeta;
+  };
 
   /*!
    * \brief root function for pairing Contour2s and Point
@@ -130,39 +162,6 @@ namespace MBSim {
        */
       Contour2s *contour;
       Point *point;
-  };
-
-  /*!
-   * \brief root function for pairing CylinderFlexible and HollowCircle
-   * \author Roland Zander
-   * \date 2009-04-21 contour point data included (Thorsten Schindler)
-   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
-   * \todo improve performance statement TODO
-   */
-  class FuncPairContour1sHollowCircle : public DistanceFunction<double(double)> {
-    public:
-      /**
-       * \brief constructor
-       * \param circle hollow contour
-       * \param contour with one contour parameter
-       */
-      FuncPairContour1sHollowCircle(HollowCircle* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
-
-      double operator()(const double &alpha);
-
-      fmatvec::Vec3 getWrD(const double &alpha);
-
-    private:
-      /**
-       * \brief contours
-       */
-      Contour1s *contour;
-      HollowCircle *circle;
-
-      /**
-       * \brief contour point data for saving old values
-       */
-      fmatvec::Vec2 zeta;
   };
 
   /*!
@@ -495,39 +494,6 @@ namespace MBSim {
     private:
       Contour1s *contour;
       Line *line;
-  };
-
-  /*!
-   * \brief root function for pairing Contour1s and Circle
-   * \author Roland Zander
-   * \date 2009-04-21 contour point data included (Thorsten Schindler)
-   */
-  class FuncPairContour1sSolidCircle : public DistanceFunction<double(double)> {
-    public:
-      /**
-       * \brief constructor
-       * \param circle solid contour
-       * \param contour with one contour parameter
-       */
-      FuncPairContour1sSolidCircle(SolidCircle* circle_, Contour *contour1s_) :
-          contour1s(contour1s_), circle(circle_) {
-      }
-
-      double operator()(const double &alpha);
-
-      fmatvec::Vec3 getWrD(const double &alpha);
-
-    private:
-      /**
-       * \brief contours
-       */
-      Contour *contour1s;
-      SolidCircle *circle;
-
-      /**
-       * \brief contour point data for saving old values
-       */
-      fmatvec::Vec2 zeta;
   };
 
   /*! 

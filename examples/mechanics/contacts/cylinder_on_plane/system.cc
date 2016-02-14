@@ -1,8 +1,7 @@
 #include "system.h"
 #include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/contours/solid_circle.h"
-#include "mbsim/contours/hollow_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
@@ -54,7 +53,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setMass(m);
   body2->setInertiaTensor(Theta);
 
-
   // Hollow cylinder rolling down a plane
   RigidBody* body3 = new RigidBody("CylinderHollow");
   addObject(body3);
@@ -65,8 +63,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setInertiaTensor(Theta);
   body3->setTranslation(new TranslationAlongAxesXY<VecV>);
   body3->setRotation(new RotationAboutZAxis<VecV>);
-
-
 
   // Initial translation and rotation
   Vec q0(3);
@@ -81,33 +77,32 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 
   // Contour of InnerCylinder
-  SolidCircle *circlecontour=new SolidCircle("Circle",d);
+  Circle *circlecontour=new Circle("Circle",d);
   body->addContour(circlecontour);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour->enableOpenMBV();
 #endif
 
   // Contour of ObstacleCylinder
-  SolidCircle *circlecontour2=new SolidCircle("Circle2",d);
+  Circle *circlecontour2=new Circle("Circle2",d);
   body2->addContour(circlecontour2);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour2->enableOpenMBV();
 #endif
 
   // Contour of HollowCylinder (outward)
-  HollowCircle *circlecontour3=new HollowCircle("Circle3",2.5*d);
+  Circle *circlecontour3=new Circle("Circle3",2.5*d,false);
   body3->addContour(circlecontour3);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour3->enableOpenMBV();
 #endif
 
-  // Contour of HollowCylinder (inward)
-  SolidCircle *circlecontour4=new SolidCircle("Circle4",3*d);
+  // Contour of SolidCylinder (inward)
+  Circle *circlecontour4=new Circle("Circle4",3*d);
   body3->addContour(circlecontour4);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour4->enableOpenMBV();
 #endif
-
 
   // Contour of ground plane
   double phi = M_PI*0.6; 
@@ -119,7 +114,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(2,2) = 1;
   addFrame(new FixedRelativeFrame("Line",Vec(3),A));
   addContour(new Line("Line",getFrame("Line")));
-
 
   // Contact between CylinderHollow and ObstacleCylinder
   Contact *rc2 = new Contact("Contact2");
@@ -169,41 +163,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("C")->enableOpenMBV(1.5*d);
-//  boost::shared_ptr<OpenMBV::Frustum> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
-//  dummy->setBaseRadius(d);
-//  dummy->setTopRadius(d);
-//  dummy->setHeight(d); 
-//  dummy->setScaleFactor(1.);
-//  dummy->setMinimalColorValue(0);
-//  dummy->setMaximalColorValue(1);
-//  dummy->setDiffuseColor(0, 1, 1);
-//  body->setOpenMBVRigidBody(dummy);
   body->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
-//  boost::shared_ptr<OpenMBV::Frustum> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
-//  dummy2->setBaseRadius(d);
-//  dummy2->setTopRadius(d);
-//  dummy2->setHeight(d); 
-//  dummy2->setScaleFactor(1.);
-//  dummy2->setMinimalColorValue(0);
-//  dummy2->setMaximalColorValue(1);
-//  dummy2->setDiffuseColor(1/3.0, 1, 1);
-//  body2->setOpenMBVRigidBody(dummy2);
   body2->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
-//  boost::shared_ptr<OpenMBV::Frustum> dummy3 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
-//  dummy3->setBaseRadius(3*d);
-//  dummy3->setTopRadius(3*d);
-//  dummy3->setInnerBaseRadius(2.5*d);
-//  dummy3->setInnerTopRadius(2.5*d);
-//  dummy3->setHeight(d); 
-//  dummy3->setScaleFactor(1.);
-//  dummy3->setMinimalColorValue(0);
-//  dummy3->setMaximalColorValue(1);
-//  dummy3->setDiffuseColor(0.6, 1, 1);
-//  body3->setOpenMBVRigidBody(dummy3);
   body3->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
 #endif

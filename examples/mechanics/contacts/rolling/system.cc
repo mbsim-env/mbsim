@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/line.h"
@@ -137,11 +137,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 
   // Contour of Cylinder
-  SolidCircle *circlecontour=new SolidCircle("Circle",d);
+  Circle *circlecontour=new Circle("Circle",d);
   body->addContour(circlecontour);
 
-  // Contour of HollowCylinder (outward)
-  SolidCircle *circlecontour2=new SolidCircle("Circle2",d);
+  // Contour of Cylinder
+  Circle *circlecontour2=new Circle("Circle2",d);
   body2->addContour(circlecontour2);
 
   // Contour of Sphere
@@ -164,7 +164,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addContour(new Plane("Plane",getFrame("S")));
 
 
-  // Contact between Cylinder and plane (Contact-Pairing: SolidCircle-Line)
+  // Contact between Cylinder and plane (Contact-Pairing: Circle-Line)
   Contact *rc = new Contact("Contact");
   rc->connect(getContour("Line"),body->getContour("Circle"));
   addLink(rc);
@@ -180,7 +180,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
 
-  // Contact between HollowCylinder and plane (Contact-Pairing: SolidCircle-Line)
+  // Contact between HollowCylinder and plane (Contact-Pairing: Circle-Line)
   Contact *rc2 = new Contact("Contact2");
   rc2->connect(getContour("Line"),body2->getContour("Circle2"));
   addLink(rc2);
@@ -227,7 +227,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc4->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
-  // Contact Stopper and Cylinder (Contact-Pairing: SolidCircle-Line)
+  // Contact Stopper and Cylinder (Contact-Pairing: Circle-Line)
   Contact *rc5 = new Contact("Contact5");
   rc5->connect(body->getContour("Circle"),body4->getContour("LineStopper"));
   addLink(rc5);
@@ -242,7 +242,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc5->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
-  // Contact Stopper and CylinderHollow (Contact-Pairing: SolidCircle-Line)
+  // Contact Stopper and CylinderHollow (Contact-Pairing: Circle-Line)
   Contact *rc6 = new Contact("Contact6");
   rc6->connect(body2->getContour("Circle2"),body4->getContour("LineStopper"));
   addLink(rc6);

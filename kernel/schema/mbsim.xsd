@@ -2366,7 +2366,14 @@
           <xs:element name="radius" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Innenradius des Hohlzylinders.
+                Definiert den Radius des Kreises.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="solid" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob der Kreis ein Vollkreis ist.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2385,36 +2392,6 @@
           </xs:element>
         </xs:sequence>
       </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="HollowCircle" substitutionGroup="Circle" type="HollowCircleType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Ebene Kontur eines HollowCircle (= Hohlzylinders = Kreiskontur mit Kontakt innen).<br/>
-        Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems.
-        <object class="figure" standby="4cm" data="contour_circlehollow" title="Orientierung einer CicleHollow-Kontur"></object>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="HollowCircleType">
-    <xs:complexContent>
-      <xs:extension base="CircleType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="SolidCircle" substitutionGroup="Circle" type="SolidCircleType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Ebene Kontur eines SolidCircle (= (Voll)zylinders = Kreiskontur mit Kontakt aussen).<br/>
-        Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems. 
-        <object class="figure" standby="4cm" data="contour_circlesolid" title="Orientierung einer SolidCircle-Kontur"></object>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="SolidCircleType">
-    <xs:complexContent>
-      <xs:extension base="CircleType"/>
     </xs:complexContent>
   </xs:complexType>
 

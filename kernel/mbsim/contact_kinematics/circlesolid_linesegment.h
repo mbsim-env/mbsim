@@ -24,7 +24,7 @@
 
 namespace MBSim {
 
-  class SolidCircle;
+  class Circle;
   class LineSegment;
 
   /** 
@@ -49,7 +49,7 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      SolidCircle *circlesolid;
+      Circle *circle;
       LineSegment *linesegment;
   };
 

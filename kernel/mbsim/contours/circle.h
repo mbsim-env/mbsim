@@ -21,7 +21,6 @@
 #define CIRCLE_H_
 
 #include "mbsim/contours/rigid_contour.h"
-#include "mbsim/utils/eps.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -38,32 +37,13 @@ namespace MBSim {
    */
   class Circle : public RigidContour {
     public:
-      /*!
-       * \brief constructor
-       * \param name of circle
-       * \default contact from inside
-       */
-      Circle(const std::string& name, Frame *R=0);
 
-      /*! 
-       * \brief constructor
-       * \param name of circle
-       * \param contact from outside?
-       */
-      Circle(const std::string& name, bool outCont_, Frame *R=0);
-
-      /*! 
-       * \brief constructor
-       * \param name of circle
-       * \param radius
-       * \param contact from outside?
-       */
-      Circle(const std::string& name, double r_, bool outCont_, Frame *R=0);
+      Circle(const std::string& name="", double r_=1., bool solid_=true, Frame *R=0) : RigidContour(name,R), r(r_), solid(solid_) { }
 
       /*!
        * \brief destructor
        */
-      virtual ~Circle();
+      virtual ~Circle() { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Circle"; }
@@ -75,15 +55,17 @@ namespace MBSim {
       virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getParDer1Kn(const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getParDer1Ku(const fmatvec::Vec2 &zeta);
-      virtual double getCurvature(const fmatvec::Vec2 &zeta) { return curvature; }
       virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3& WrPoint);
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setRadius(double r_);    	
-      void setOutCont(bool outCont_);
-      double getRadius() const;
-      bool getOutCont() const;
+      void setRadius(double r_) { r = r_; }
+      double getRadius() const { return r; }
+      double getSign() const { return sign; }
+      double getCurvature(const fmatvec::Vec2 &zeta) { return sign/r; }
+
+      void setSolid(bool solid_=true) { solid = solid; }
+      bool getSolid() const { return solid; }
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -102,22 +84,14 @@ namespace MBSim {
        */
       double r;
 
-      /**
-       * \brief curvature of circle
-       */
-      double curvature;
+      double sign;
 
     private:
       /** 
        * \brief contact on outer surface?
        */
-      bool outCont;	
+      bool solid;
   };
-
-  inline void Circle::setRadius(double r_) { r = r_; outCont ? curvature = 1./r_ : curvature = -1./r_; }    	
-  inline void Circle::setOutCont(bool outCont_) { outCont = outCont_; if(fabs(r)>epsroot()) outCont ? curvature = 1./r : curvature = -1./r; }
-  inline double Circle::getRadius() const { return r; }
-  inline bool Circle::getOutCont() const { return outCont; }
 
 }
 

@@ -75,10 +75,10 @@
       <frames>
       </frames>
       <contours>
-        <SolidCircle name="CCircle" xmlns="http://www.mbsim-env.de/MBSim">
+        <Circle name="CCircle" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[C]"/> 
           <radius>2*r</radius>
-        </SolidCircle>
+        </Circle>
       </contours>
       <openMBVRigidBody> 
         <Sphere name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">

@@ -21,7 +21,8 @@
 #include "mbsim/contact_kinematics/circlesolid_frustum2d.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/frustum2d.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
+#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -29,14 +30,14 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsSolidCircleFrustum2D::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<SolidCircle*>(contour[0])) {
+    if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0; ifrustum = 1;
-      circle = static_cast<SolidCircle*>(contour[0]);
+      circle = static_cast<Circle*>(contour[0]);
       frustum = static_cast<Frustum2D*>(contour[1]);
     } 
     else {
       icircle = 1; ifrustum = 0;
-      circle = static_cast<SolidCircle*>(contour[1]);
+      circle = static_cast<Circle*>(contour[1]);
       frustum = static_cast<Frustum2D*>(contour[0]);
     }
   }

@@ -3,7 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/environment.h"
@@ -113,19 +113,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 
   // Contour of Body1
-  SolidCircle *circlecontour1 = new SolidCircle("Circle1",2*d);
+  Circle *circlecontour1 = new Circle("Circle1",2*d);
   body1->addContour(circlecontour1);
 
   // Contour of Body2
-  SolidCircle *circlecontour2 = new SolidCircle("Circle2",d);
+  Circle *circlecontour2 = new Circle("Circle2",d);
   body2->addContour(circlecontour2);
 
   // Contour of Body3
-  SolidCircle *circlecontour3 = new SolidCircle("Circle3",d);
+  Circle *circlecontour3 = new Circle("Circle3",d);
   body3->addContour(circlecontour3);
 
   // Contour of Body4
-  SolidCircle *circlecontour4 = new SolidCircle("Circle4",d);
+  Circle *circlecontour4 = new Circle("Circle4",d);
   body4->addContour(circlecontour4);
 
   // Contour of ground plane

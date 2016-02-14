@@ -21,7 +21,7 @@
 #include "point_circlesolid.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -31,52 +31,52 @@ namespace MBSim {
   void ContactKinematicsPointSolidCircle::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
-      icirclesolid = 1;
+      icircle = 1;
       point = static_cast<Point*>(contour[0]);
-      circlesolid = static_cast<SolidCircle*>(contour[1]);
+      circle = static_cast<Circle*>(contour[1]);
     } 
     else {
       ipoint = 1;
-      icirclesolid = 0;
+      icircle = 0;
       point = static_cast<Point*>(contour[1]);
-      circlesolid = static_cast<SolidCircle*>(contour[0]);
+      circle = static_cast<Circle*>(contour[0]);
     }
   }
 
   void ContactKinematicsPointSolidCircle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
-    const Vec3 WrD = -circlesolid->getFrame()->getPosition(t) + point->getFrame()->getPosition(t);
+    const Vec3 WrD = -circle->getFrame()->getPosition(t) + point->getFrame()->getPosition(t);
     
-    cFrame[icirclesolid]->getOrientation(false).set(0, WrD/nrm2(WrD));
-    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icirclesolid]->getOrientation(false).col(0));
+    cFrame[icircle]->getOrientation(false).set(0, WrD/nrm2(WrD));
+    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icircle]->getOrientation(false).col(0));
     
-    cFrame[icirclesolid]->getOrientation(false).set(2, circlesolid->getFrame()->getOrientation().col(2));
+    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation().col(2));
     cFrame[ipoint]->getOrientation(false).set(2, point->getFrame()->getOrientation().col(2));
     
-    cFrame[icirclesolid]->getOrientation(false).set(1, crossProduct(cFrame[icirclesolid]->getOrientation(false).col(2), cFrame[icirclesolid]->getOrientation(false).col(0)));
-    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icirclesolid]->getOrientation(false).col(1));
+    cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2), cFrame[icircle]->getOrientation(false).col(0)));
+    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icircle]->getOrientation(false).col(1));
     
-    cFrame[icirclesolid]->setPosition(circlesolid->getFrame()->getPosition() + cFrame[icirclesolid]->getOrientation(false).col(0)*circlesolid->getRadius());
+    cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + cFrame[icircle]->getOrientation(false).col(0)*circle->getRadius());
     cFrame[ipoint]->setPosition(point->getFrame()->getPosition());
 
-    g = cFrame[icirclesolid]->getOrientation(false).col(0).T()*WrD - circlesolid->getRadius();
+    g = cFrame[icircle]->getOrientation(false).col(0).T()*WrD - circle->getRadius();
   }
 
   void ContactKinematicsPointSolidCircle::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
-    const Vec KrPC1 = circlesolid->getFrame()->getOrientation(t).T()*(cFrame[icirclesolid]->getPosition(t) - circlesolid->getFrame()->getPosition(t));
+    const Vec KrPC1 = circle->getFrame()->getOrientation(t).T()*(cFrame[icircle]->getPosition(t) - circle->getFrame()->getPosition(t));
     Vec2 zeta;
     zeta(0)=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
 
-    const Vec3 n1 = cFrame[icirclesolid]->getOrientation().col(0); //crossProduct(s1, t1);
-    const Vec3 u1 = circlesolid->getWu(t,zeta);
-    const Vec3 R1 = circlesolid->getWs(t,zeta);
-    const Vec3 N1 = circlesolid->getParDer1Wn(t,zeta);
-    const Vec3 U1 = circlesolid->getParDer1Wu(t,zeta);
+    const Vec3 n1 = cFrame[icircle]->getOrientation().col(0); //crossProduct(s1, t1);
+    const Vec3 u1 = circle->getWu(t,zeta);
+    const Vec3 R1 = circle->getWs(t,zeta);
+    const Vec3 N1 = circle->getParDer1Wn(t,zeta);
+    const Vec3 U1 = circle->getParDer1Wu(t,zeta);
 
-    const Vec vC1 = cFrame[icirclesolid]->getVelocity(t);
+    const Vec vC1 = cFrame[icircle]->getVelocity(t);
     const Vec vC2 = cFrame[ipoint]->getVelocity(t);
-    const Vec Om1 = cFrame[icirclesolid]->getAngularVelocity();
+    const Vec Om1 = cFrame[icircle]->getAngularVelocity();
 
     const double zetad = u1.T()*(vC2-vC1)/(u1.T()*R1);
 

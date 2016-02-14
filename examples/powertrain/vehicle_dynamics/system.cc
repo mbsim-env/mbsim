@@ -3,7 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/environment.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -245,19 +245,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sd->connect(karosserie->getFrame("FHR"),hr->getFrame("C"));
 
   SrSP.init(0);
-  SolidCircle *circle = new SolidCircle("Reifen");
+  Circle *circle = new Circle("Reifen");
   circle->setRadius(r);
   vl->addContour(circle);
 
-  circle = new SolidCircle("Reifen");
+  circle = new Circle("Reifen");
   circle->setRadius(r);
   hl->addContour(circle);
 
-  circle = new SolidCircle("Reifen");
+  circle = new Circle("Reifen");
   circle->setRadius(r);
   vr->addContour(circle);
 
-  circle = new SolidCircle("Reifen");
+  circle = new Circle("Reifen");
   circle->setRadius(r);
   hr->addContour(circle);
 

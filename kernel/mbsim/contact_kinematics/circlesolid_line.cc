@@ -21,7 +21,7 @@
 #include "circlesolid_line.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -29,14 +29,14 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsSolidCircleLine::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<SolidCircle*>(contour[0])) {
+    if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0; iline = 1;
-      circlesolid = static_cast<SolidCircle*>(contour[0]);
+      circle = static_cast<Circle*>(contour[0]);
       line = static_cast<Line*>(contour[1]);
     } 
     else {
       icircle = 1; iline = 0;
-      circlesolid = static_cast<SolidCircle*>(contour[1]);
+      circle = static_cast<Circle*>(contour[1]);
       line = static_cast<Line*>(contour[0]);
     }
   }
@@ -50,11 +50,11 @@ namespace MBSim {
 
     Vec3 Wn = cFrame[iline]->getOrientation(false).col(0);
 
-    Vec3 Wd = circlesolid->getFrame()->getPosition(t) - line->getFrame()->getPosition(t);
+    Vec3 Wd = circle->getFrame()->getPosition(t) - line->getFrame()->getPosition(t);
 
-    g = Wn.T()*Wd - circlesolid->getRadius();
+    g = Wn.T()*Wd - circle->getRadius();
 
-    cFrame[icircle]->setPosition(circlesolid->getFrame()->getPosition() - Wn*circlesolid->getRadius());
+    cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - Wn*circle->getRadius());
     cFrame[iline]->setPosition(cFrame[icircle]->getPosition(false) - Wn*g);
   }
 
@@ -69,7 +69,7 @@ namespace MBSim {
     Vec3 vC2 = cFrame[icircle]->getVelocity(t);
     Vec3 Om1 = cFrame[iline]->getAngularVelocity(t);
     Vec3 Om2 = cFrame[icircle]->getAngularVelocity(t);
-    double r = circlesolid->getRadius();
+    double r = circle->getRadius();
 
     double ad2 = -v2.T()*(Om2-Om1);
     double ad1 = u1.T()*(vC2-vC1) - r*ad2;

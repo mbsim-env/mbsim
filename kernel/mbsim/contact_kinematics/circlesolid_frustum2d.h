@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class SolidCircle;
+  class Circle;
   class Frustum2D;
 
   /** 
@@ -52,7 +52,7 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      SolidCircle *circle;
+      Circle *circle;
       Frustum2D *frustum; 
 
   };

@@ -13,7 +13,6 @@ libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 				  point_contourinterpolation.cc\
 				  circlesolid_line.cc\
 				  circlesolid_circlesolid.cc\
-				  circlesolid_circlehollow.cc\
 				  circlesolid_plane.cc\
 				  circlesolid_linesegment.cc\
 				  circlesolid_frustum2d.cc\
@@ -49,7 +48,6 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   point_contourinterpolation.h\
 				   circlesolid_line.h\
 				   circlesolid_circlesolid.h\
-				   circlesolid_circlehollow.h\
 				   circlesolid_plane.h\
 				   circlesolid_linesegment.h\
 				   circlesolid_frustum2d.h\

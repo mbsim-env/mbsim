@@ -23,7 +23,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
@@ -136,7 +136,7 @@ namespace MBSimHydraulics {
       ball->setFrameForKinematics(ball->getFrame("C"));
       ball->setTranslation(new LinearTranslation<VecV>("[1;0;0]"));
 
-      ball->addContour(new SolidCircle("ContourBall", rBall));
+      ball->addContour(new Circle("ContourBall", rBall));
       ball->addFrame(new FixedRelativeFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE)));
       ball->addFrame(new FixedRelativeFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE)));
 
@@ -171,7 +171,7 @@ namespace MBSimHydraulics {
         // MISSING: spring->init(...) must be called somewere!!!???
       }
       if (openMBVArrows) {
-        ((SolidCircle*)ball->getContour("ContourBall"))->enableOpenMBV(true);
+        ((Circle*)ball->getContour("ContourBall"))->enableOpenMBV(true);
         seatContact->enableOpenMBVContactPoints(rBall/8.);
         maxContact->enableOpenMBVContactPoints(rBall/8.);
       }

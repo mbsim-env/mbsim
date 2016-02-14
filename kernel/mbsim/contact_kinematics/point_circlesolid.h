@@ -25,7 +25,7 @@
 namespace MBSim {
 
   class Point;
-  class SolidCircle;
+  class Circle;
 
   /**
    * \brief pairing point to circesolid
@@ -44,13 +44,13 @@ namespace MBSim {
       /** 
        * \brief contour index
        */
-      int ipoint, icirclesolid;
+      int ipoint, icircle;
       
       /**
        * \brief contour classes
        */
       Point *point;
-      SolidCircle *circlesolid;
+      Circle *circle;
 
   };
 

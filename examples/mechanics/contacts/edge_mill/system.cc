@@ -120,7 +120,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(2,0) = -sin(M_PI*0.5), AWK(2,2) = cos(M_PI*0.5);
   muller->addFrame(new FixedRelativeFrame("Disk",Vec(3,INIT,0.),AWK));
   disk->setFrameOfReference(muller->getFrame("Disk"));
-  disk->setOutCont(true);
   disk->setRadius(r_muller);
   muller->addContour(disk);
 

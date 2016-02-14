@@ -6,7 +6,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsim/contours/planar_contour.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "tools/rigid_contour_functions1s.h"
@@ -71,7 +71,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   roll->setInitialGeneralizedVelocity("[0;1.0]");
   this->addObject(roll);
 
-  SolidCircle * rollContour = new SolidCircle("Contour");
+  Circle * rollContour = new Circle("Contour");
   rollContour->setRadius(.01);
   roll->addContour(rollContour);
 #ifdef HAVE_OPENMBVCPPINTERFACE

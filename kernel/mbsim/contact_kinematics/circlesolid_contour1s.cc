@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/contact_kinematics/circlesolid_contour1s.h"
 #include "mbsim/frame.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsim/functions_contact.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
@@ -35,20 +35,20 @@ namespace MBSim {
   }
 
   void ContactKinematicsSolidCircleContour1s::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<SolidCircle*>(contour[0])) {
+    if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0;
       icontour1s = 1;
-      circle = static_cast<SolidCircle*>(contour[0]);
+      circle = static_cast<Circle*>(contour[0]);
       contour1s = static_cast<Contour*>(contour[1]);
     } 
     else {
       icircle = 1; 
       icontour1s = 0;
-      circle = static_cast<SolidCircle*>(contour[1]);
+      circle = static_cast<Circle*>(contour[1]);
       contour1s = static_cast<Contour*>(contour[0]);
     }
 
-    func = new FuncPairContour1sSolidCircle(circle,contour1s);
+    func = new FuncPairContour1sCircle(circle,contour1s);
 
 //    if (dynamic_cast<Contour*>(contour1s)) {
 //      double minRadius=1./epsroot();

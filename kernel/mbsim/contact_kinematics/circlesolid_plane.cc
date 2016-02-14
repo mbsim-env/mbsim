@@ -21,7 +21,7 @@
 #include "mbsim/contact_kinematics/circlesolid_plane.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/plane.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -29,16 +29,16 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsSolidCirclePlane::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<SolidCircle*>(contour[0])) {
+    if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0;
       iplane = 1;
-      circlesolid = static_cast<SolidCircle*>(contour[0]);
+      circle = static_cast<Circle*>(contour[0]);
       plane = static_cast<Plane*>(contour[1]);
     } 
     else {
       icircle = 1;
       iplane = 0;
-      circlesolid = static_cast<SolidCircle*>(contour[1]);
+      circle = static_cast<Circle*>(contour[1]);
       plane = static_cast<Plane*>(contour[0]);
     }
   }
@@ -51,7 +51,7 @@ namespace MBSim {
 
     Vec3 Wd;
     Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
-    Vec3 Wb = circlesolid->getFrame()->getOrientation(t).col(2);
+    Vec3 Wb = circle->getFrame()->getOrientation(t).col(2);
     double t_EC = Wn.T()*Wb;
     if(t_EC>0) {
       Wb *= -1.;
@@ -60,13 +60,13 @@ namespace MBSim {
     Vec3 z_EC = Wn - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
     if(z_EC_nrm2 <= 1e-8) { // infinite possible contact points
-      Wd = circlesolid->getFrame()->getPosition() - plane->getFrame()->getPosition();
+      Wd = circle->getFrame()->getPosition() - plane->getFrame()->getPosition();
     } 
     else { // exactly one possible contact point
-      Wd =  (circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC) - plane->getFrame()->getPosition();
+      Wd =  (circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC) - plane->getFrame()->getPosition();
     }
     g = Wn.T()*Wd;
-    cFrame[icircle]->setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
+    cFrame[icircle]->setPosition(circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC);
     cFrame[iplane]->setPosition(cFrame[icircle]->getPosition(false) - Wn*g);
   }
 

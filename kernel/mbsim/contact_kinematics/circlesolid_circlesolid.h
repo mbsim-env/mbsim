@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class SolidCircle; 
+  class Circle;
 
   /**
    * \brief pairing outer circle side to outer circle side
@@ -44,15 +44,11 @@ namespace MBSim {
     
     private:
       /**
-       * \brief contour index
-       */
-      int icircle0, icircle1;
-      
-      /**
        * \brief contour classes
        */
-      SolidCircle *circle0;
-      SolidCircle *circle1;
+      Circle *circle0, *circle1;
+
+      double rEff0, rEff1;
 
   };
 
