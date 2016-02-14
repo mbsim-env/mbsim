@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_CIRCLESOLID_FRUSTUM2D_H_
-#define _CONTACT_KINEMATICS_CIRCLESOLID_FRUSTUM2D_H_
+#ifndef _CONTACT_KINEMATICS_CIRCLE_PLANAR_FRUSTUM_H_
+#define _CONTACT_KINEMATICS_CIRCLE_PLANAR_FRUSTUM_H_
 
 #include "contact_kinematics.h"
 #include "mbsim/mbsim_event.h"
@@ -35,12 +35,12 @@ namespace MBSim {
    * \date 2009-05-27 updateg() implementes (Bastian Esefeld)
    * \todo implementation of updatewb() TODO
    */
-  class ContactKinematicsSolidCirclePlanarFrustum : public ContactKinematics {
+  class ContactKinematicsCirclePlanarFrustum : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsSolidCirclePlanarFrustum:updatewb): Not implemented!"); }
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsCirclePlanarFrustum:updatewb): Not implemented!"); }
       /***************************************************/
 
     private:

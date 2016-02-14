@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include "mbsim/contact_kinematics/circlesolid_frustum2d.h"
+#include "mbsim/contact_kinematics/circle_planarfrustum.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/planar_frustum.h"
 #include "mbsim/contours/circle.h"
@@ -29,7 +29,7 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsSolidCirclePlanarFrustum::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsCirclePlanarFrustum::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0; ifrustum = 1;
       circle = static_cast<Circle*>(contour[0]);
@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsSolidCirclePlanarFrustum::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsCirclePlanarFrustum::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     
     Vec3 Wd = circle->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t);
     SqrMat3 Mat0 = frustum->getFrame()->getOrientation();
