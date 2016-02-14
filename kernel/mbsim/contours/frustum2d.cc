@@ -31,7 +31,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  void Frustum2D::init(InitStage stage) {
+  void PlanarFrustum::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();
   

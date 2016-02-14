@@ -142,7 +142,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Contour of Frustum
   Vec radii(2);
   radii(0) = 3*d, radii(1) = 5*d;
-  Frustum2D* frustumcontour = new Frustum2D("Frustum");
+  PlanarFrustum* frustumcontour = new PlanarFrustum("Frustum");
   frustumcontour->setRadii(radii);
   frustumcontour->setHeight(5*d);
 #ifdef HAVE_OPENMBVCPPINTERFACE

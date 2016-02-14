@@ -26,7 +26,7 @@
 namespace MBSim {
 
   class Circle;
-  class Frustum2D;
+  class PlanarFrustum;
 
   /** 
    * \brief pairing circle outer side to planar frustum
@@ -35,12 +35,12 @@ namespace MBSim {
    * \date 2009-05-27 updateg() implementes (Bastian Esefeld)
    * \todo implementation of updatewb() TODO
    */
-  class ContactKinematicsSolidCircleFrustum2D : public ContactKinematics {
+  class ContactKinematicsSolidCirclePlanarFrustum : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsSolidCircleFrustum2D:updatewb): Not implemented!"); }
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsSolidCirclePlanarFrustum:updatewb): Not implemented!"); }
       /***************************************************/
 
     private:
@@ -53,7 +53,7 @@ namespace MBSim {
        * \brief contour classes
        */
       Circle *circle;
-      Frustum2D *frustum; 
+      PlanarFrustum *frustum;
 
   };
 

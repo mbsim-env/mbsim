@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FRUSTUM2D_H_
-#define _FRUSTUM2D_H_
+#ifndef _PLANAR_FRUSTUM_H_
+#define _PLANAR_FRUSTUM_H_
 
 #include "mbsim/contours/rigid_contour.h"
 
@@ -35,16 +35,16 @@ namespace MBSim {
    * \date 2009-04-20 some comments (Thorsten Schindler)
    * \date 2009-07-16 new file (Bastian Esefeld)
    */
-  class Frustum2D : public RigidContour {
+  class PlanarFrustum : public RigidContour {
     public:
       /**
        * \brief constructor
        * \param name of frustum
        */
-      Frustum2D(const std::string &name) : RigidContour(name), h(0) {}
+      PlanarFrustum(const std::string &name) : RigidContour(name), h(0) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Frustum2D"; }
+      std::string getType() const { return "PlanarFrustum"; }
       virtual void init(InitStage stage);
       /***************************************************/
 
@@ -72,7 +72,6 @@ namespace MBSim {
        * \brief height of frustum
        */
       double h;
-
   };
   
 }
