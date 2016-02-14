@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/contact_kinematics/line_contour1s.h"
+#include "mbsim/contact_kinematics/line_planarcontour.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/contour1s.h"
 #include "mbsim/functions_contact.h"
@@ -28,11 +28,11 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsLineContour1s::~ContactKinematicsLineContour1s() {
+  ContactKinematicsLinePlanarContour::~ContactKinematicsLinePlanarContour() {
     delete func;
   }
 
-  void ContactKinematicsLineContour1s::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsLinePlanarContour::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Line*>(contour[0])) {
       iline = 0;
       icontour = 1;
@@ -48,8 +48,8 @@ namespace MBSim {
     func= new FuncPairPlanarContourLine(line,contour1s);
   }
 
-  void ContactKinematicsLineContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
-    throw MBSimError("(ContactKinematicsLineContour1s::updateg): Not implemented!");
+  void ContactKinematicsLinePlanarContour::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+    throw MBSimError("(ContactKinematicsLinePlanarContour::updateg): Not implemented!");
   }
 
 }

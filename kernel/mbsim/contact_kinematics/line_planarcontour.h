@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_LINE_CONTOUR1S_H_
-#define _CONTACT_KINEMATICS_LINE_CONTOUR1S_H_
+#ifndef _CONTACT_KINEMATICS_LINE_PLANAR_CONTOUR_H_
+#define _CONTACT_KINEMATICS_LINE_PLANAR_CONTOUR_H_
 
 #include "contact_kinematics.h"
 #include "mbsim/mbsim_event.h"
@@ -26,30 +26,30 @@
 namespace MBSim {
 
   class Line;
-  class Contour1s;
+  class Contour;
   class FuncPairPlanarContourLine;
 
   /**
-   * \brief pairing Line to Contour1s
+   * \brief pairing Line to PlanarContour
    * \author Martin Foerg
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
-  class ContactKinematicsLineContour1s : public ContactKinematics {
+  class ContactKinematicsLinePlanarContour : public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsLineContour1s() {}
+      ContactKinematicsLinePlanarContour() {}
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsLineContour1s();
+      virtual ~ContactKinematicsLinePlanarContour();
       
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsLineContour1s::updatewb): Not implemented!"); };
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsLinePlanarContour::updatewb): Not implemented!"); };
       /***************************************************/
 
     private:

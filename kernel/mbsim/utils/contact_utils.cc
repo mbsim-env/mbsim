@@ -32,7 +32,7 @@
 #include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
 #include <mbsim/contact_kinematics/edge_edge.h>
-#include <mbsim/contact_kinematics/line_contour1s.h>
+#include <mbsim/contact_kinematics/line_planarcontour.h>
 #include <mbsim/contact_kinematics/point_rectangle.h>
 #include <mbsim/contact_kinematics/point_planarcontour.h>
 #include <mbsim/contact_kinematics/point_contourinterpolation.h>
@@ -79,7 +79,7 @@ namespace MBSim {
       return new ContactKinematicsCirclePlanarContour;
 
     else if ( strcmp(contour0, "Line")==0 && strcmp(contour1, "PlanarContour")==0 )
-      return new ContactKinematicsLineContour1s;
+      return new ContactKinematicsLinePlanarContour;
 
     else if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "PlanarFrustum")==0 )
       return new ContactKinematicsCirclePlanarFrustum;
