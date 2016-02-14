@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_POINT_CIRCLESOLID_H_
-#define _CONTACT_KINEMATICS_POINT_CIRCLESOLID_H_
+#ifndef _CONTACT_KINEMATICS_POINT_CIRCLE_H_
+#define _CONTACT_KINEMATICS_POINT_CIRCLE_H_
 
 #include "contact_kinematics.h"
 
@@ -32,7 +32,7 @@ namespace MBSim {
    * \author Markus Schneider
    * * \date 2010-07-28 initial commit
    */
-  class ContactKinematicsPointSolidCircle : public ContactKinematics {
+  class ContactKinematicsPointCircle : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);

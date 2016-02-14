@@ -5,7 +5,7 @@ libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 				  point_plane.cc\
 				  point_sphere.cc\
 				  point_rectangle.cc\
-				  point_circlesolid.cc\
+				  point_circle.cc\
 				  point_frustum.cc\
 				  point_planewithfrustum.cc\
 				  point_polynomialfrustum.cc\
@@ -40,7 +40,7 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   point_plane.h\
 				   point_sphere.h\
 				   point_rectangle.h\
-				   point_circlesolid.h\
+				   point_circle.h\
 				   point_frustum.h\
 				   point_planewithfrustum.h\
 				   point_polynomialfrustum.h\
