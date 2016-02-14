@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_CIRCLESOLID_PLANE_H_
-#define _CONTACT_KINIMATICS_CIRCLESOLID_PLANE_H_
+#ifndef _CONTACT_KINEMATICS_CIRCLE_PLANE_H_
+#define _CONTACT_KINIMATICS_CIRCLE_PLANE_H_
 
 #include "contact_kinematics.h"
 #include "mbsim/mbsim_event.h"
@@ -33,12 +33,12 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
-  class ContactKinematicsSolidCirclePlane : public ContactKinematics {
+  class ContactKinematicsCirclePlane : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsSolidCirclePlane::updatewb): Not implemented!"); };
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsCirclePlane::updatewb): Not implemented!"); };
       /***************************************************/
 
     protected:

@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include "mbsim/contact_kinematics/circlesolid_plane.h"
+#include "mbsim/contact_kinematics/circle_plane.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/circle.h"
@@ -28,7 +28,7 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsSolidCirclePlane::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsCirclePlane::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0;
       iplane = 1;
@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSolidCirclePlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsCirclePlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t));
     cFrame[icircle]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
     cFrame[icircle]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
