@@ -45,7 +45,7 @@ namespace MBSim {
       line = static_cast<Line*>(contour[1]);
       contour1s = static_cast<Contour1s*>(contour[0]);
     }
-    func= new FuncPairContour1sLine(line,contour1s);
+    func= new FuncPairPlanarContourLine(line,contour1s);
   }
 
   void ContactKinematicsLineContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {

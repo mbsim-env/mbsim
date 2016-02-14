@@ -26,10 +26,9 @@ namespace MBSim {
 
   class Contour;
   class Point;
-  class Line;
-  class Contour1s;
-  class Contour2s;
   class Circle;
+  class Line;
+  class Contour2s;
   class ContourInterpolation;
 
   template <typename Sig> class DistanceFunction;
@@ -71,20 +70,15 @@ namespace MBSim {
   };
 
   /*!
-   * \brief root function for pairing Contour1s and Point
-   * \author Roland Zander
-   * \date 2009-04-21 contour point data included (Thorsten Schindler)
-   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
-   * \todo improve performance statement TODO
+   * \brief root function for pairing PlanarContour and Point
+   * \author Martin Foerg
    */
-  class FuncPairContour1sPoint : public DistanceFunction<double(double)> {
+  class FuncPairPlanarContourPoint : public DistanceFunction<double(double)> {
     public:
       /*!
        * \brief constructor
-       * \param point contour or general rigid contour reduced to point of reference
-       * \param contour with one contour parameter
        */
-      FuncPairContour1sPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) {}
+      FuncPairPlanarContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) {}
 
       double operator()(const double &alpha);
 
@@ -103,21 +97,16 @@ namespace MBSim {
       fmatvec::Vec2 zeta;
   };
   /*!
-   * \brief root function for pairing CylinderFlexible and Circle
-   * \author Roland Zander
-   * \date 2009-04-21 contour point data included (Thorsten Schindler)
-   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
-   * \todo improve performance statement TODO
+   * \brief root function for pairing PlanarContour and Circle
+   * \author Martin Foerg
    */
 
-  class FuncPairContour1sCircle : public DistanceFunction<double(double)> {
+  class FuncPairPlanarContourCircle : public DistanceFunction<double(double)> {
     public:
       /**
        * \brief constructor
-       * \param circle hollow contour
-       * \param contour with one contour parameter
        */
-      FuncPairContour1sCircle(Circle* circle_, Contour *contour_) : contour(contour_), circle(circle_) { }
+      FuncPairPlanarContourCircle(Circle* circle_, Contour *contour_) : contour(contour_), circle(circle_) { }
 
       double operator()(const double &alpha);
 
@@ -134,6 +123,40 @@ namespace MBSim {
        * \brief contour point data for saving old values
        */
       fmatvec::Vec2 zeta;
+  };
+
+  /*!
+   * \brief root function for pairing PlanarContour and Line
+   * \author Martin Foerg
+   */
+  class FuncPairPlanarContourLine : public DistanceFunction<double(double)> {
+    public:
+      /**
+       * \brief constructor
+       */
+      FuncPairPlanarContourLine(Line* line_, Contour *contour_) : contour(contour_), line(line_) { }
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      virtual double operator()(const double &s) {
+        THROW_MBSIMERROR("(FuncPairPlanarContourLine::operator): Not implemented!");
+        //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
+        //fmatvec::Vec WnL = line->computeWn();
+        //return trans(WtC)*WnL;
+      }
+
+      virtual fmatvec::Vec3 getWrD(const double &s) {
+        THROW_MBSIMERROR("(FuncPairPlanarContourLine::getWrD): Not implemented!");
+        //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
+        //fmatvec::Vec Wn = contour->computeWn(s);
+        //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());
+        //return Wn*g;
+      }
+
+      virtual double operator[](const double &s) { return nrm2(getWrD(s)); }
+
+    private:
+      Contour *contour;
+      Line *line;
   };
 
   /*!
@@ -452,49 +475,6 @@ namespace MBSim {
   inline double JacobianPairHyperbolaCircle::operator()(const double &phi) {
     return -2 * (b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * sinh(phi) + a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * cosh(phi) + ((a * a) + (b * b)) * cosh(2 * phi));
   }
-
-  /*!
-   * \brief root function for pairing Contour1s and Line
-   * \author Roland Zander
-   * \date 2009-07-10 some comments (Thorsten Schindler)
-   * \todo change to new kernel_dev
-   */
-  class FuncPairContour1sLine : public DistanceFunction<double(double)> {
-    public:
-      /**
-       * \brief constructor
-       * \param line
-       * \param contour1s
-       */
-      FuncPairContour1sLine(Line* line_, Contour1s *contour_) :
-          contour(contour_), line(line_) {
-      }
-
-      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      virtual double operator()(const double &s) {
-        THROW_MBSIMERROR("(FuncPairContour1sLine::operator): Not implemented!");
-        //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
-        //fmatvec::Vec WnL = line->computeWn();
-        //return trans(WtC)*WnL;
-      }
-
-      virtual fmatvec::Vec3 getWrD(const double &s) {
-        THROW_MBSIMERROR("(FuncPairContour1sLine::getWrD): Not implemented!");
-        //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
-        //fmatvec::Vec Wn = contour->computeWn(s);
-        //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());
-        //return Wn*g;
-      }
-
-      virtual double operator[](const double &s) {
-        return nrm2(getWrD(s));
-      }
-      /*************************************************/
-
-    private:
-      Contour1s *contour;
-      Line *line;
-  };
 
   /*! 
    * \brief general class for contact search with respect to one contour-parameter

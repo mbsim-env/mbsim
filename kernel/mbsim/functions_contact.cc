@@ -42,26 +42,26 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  double FuncPairContour1sPoint::operator()(const double &alpha) {
+  double FuncPairPlanarContourPoint::operator()(const double &alpha) {
     zeta(0) = alpha;
     Vec3 Wd = getWrD(alpha);
     Vec3 Wt = contour->getWu(t,zeta);
     return Wt.T() * Wd;
   }
 
-  Vec3 FuncPairContour1sPoint::getWrD(const double &alpha) {
+  Vec3 FuncPairPlanarContourPoint::getWrD(const double &alpha) {
     zeta(0) = alpha;
     return contour->getPosition(t,zeta) - point->getFrame()->getPosition(t);
   }
 
-  double FuncPairContour1sCircle::operator()(const double &alpha) {
+  double FuncPairPlanarContourCircle::operator()(const double &alpha) {
     zeta(0) = alpha;
     Vec3 Wd = getWrD(alpha);
     Vec3 Wt = contour->getWu(t,zeta);
     return Wt.T() * Wd;
   }
 
-  Vec3 FuncPairContour1sCircle::getWrD(const double &alpha) {
+  Vec3 FuncPairPlanarContourCircle::getWrD(const double &alpha) {
     zeta(0) = alpha;
     return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - (circle->getSign()*circle->getRadius()) * contour->getWn(t,zeta));
   }

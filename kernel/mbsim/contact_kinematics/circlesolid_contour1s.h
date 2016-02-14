@@ -17,33 +17,32 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_CIRCLESOLIDCONTOUR1S_H_
-#define _CONTACT_KINEMATICS_CIRCLESOLIDCONTOUR1S_H_
+#ifndef _CONTACT_KINEMATICS_CIRCLEPLANARCONTOUR_H_
+#define _CONTACT_KINEMATICS_CIRCLEPLANARCONTOUR_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
   class Circle;
-  class FuncPairContour1sCircle;
+  class FuncPairPlanarContourCircle;
 
   /**
    * \brief pairing outer circle side to contour1s
    * \author Martin Foerg
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
-   * \todo change stage to new interface TODO
    */
-  class ContactKinematicsSolidCircleContour1s : public ContactKinematics {
+  class ContactKinematicsCirclePlanarContour : public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsSolidCircleContour1s() : icircle(0), icontour1s(0), circle(NULL), contour1s(NULL), func(NULL), searchAllCP(false) {}
+      ContactKinematicsCirclePlanarContour() : icircle(0), icontour1s(0), circle(NULL), contour1s(NULL), func(NULL), searchAllCP(false) {}
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsSolidCircleContour1s();
+      virtual ~ContactKinematicsCirclePlanarContour();
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
@@ -68,7 +67,7 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      FuncPairContour1sCircle *func;
+      FuncPairPlanarContourCircle *func;
 
       bool searchAllCP;
 

@@ -52,7 +52,7 @@ namespace MBSim {
 
   void ContactKinematicsPointContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     
-    FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, contour1s); // root function for searching contact parameters
+    FuncPairPlanarContourPoint *func = new FuncPairPlanarContourPoint(point, contour1s); // root function for searching contact parameters
     func->setTime(t);
     Contact1sSearch search(func);
     search.setNodes(contour1s->getEtaNodes()); // defining search areas for contacts

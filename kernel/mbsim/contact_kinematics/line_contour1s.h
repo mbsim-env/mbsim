@@ -27,13 +27,12 @@ namespace MBSim {
 
   class Line;
   class Contour1s;
-  class FuncPairContour1sLine;
+  class FuncPairPlanarContourLine;
 
   /**
    * \brief pairing Line to Contour1s
-   * \author Felix Kahr
+   * \author Martin Foerg
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
-   * \todo change stage to new interface TODO
    */
   class ContactKinematicsLineContour1s : public ContactKinematics {
     public:
@@ -63,12 +62,12 @@ namespace MBSim {
        * \brief contour classes
        */
       Line *line;
-      Contour1s *contour1s;
+      Contour *contour1s;
 
       /**
        * \brief root function
        */
-      FuncPairContour1sLine *func;
+      FuncPairPlanarContourLine *func;
   };
 
 }
