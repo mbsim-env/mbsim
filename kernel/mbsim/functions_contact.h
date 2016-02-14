@@ -30,8 +30,8 @@ namespace MBSim {
   class Line;
   class Contour1s;
   class Contour2s;
-  class CircleSolid;
-  class CircleHollow;
+  class SolidCircle;
+  class HollowCircle;
   class ContourInterpolation;
 
   template <typename Sig> class DistanceFunction;
@@ -134,20 +134,20 @@ namespace MBSim {
   };
 
   /*!
-   * \brief root function for pairing CylinderFlexible and CircleHollow
+   * \brief root function for pairing CylinderFlexible and HollowCircle
    * \author Roland Zander
    * \date 2009-04-21 contour point data included (Thorsten Schindler)
    * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
    * \todo improve performance statement TODO
    */
-  class FuncPairContour1sCircleHollow : public DistanceFunction<double(double)> {
+  class FuncPairContour1sHollowCircle : public DistanceFunction<double(double)> {
     public:
       /**
        * \brief constructor
        * \param circle hollow contour
        * \param contour with one contour parameter
        */
-      FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
+      FuncPairContour1sHollowCircle(HollowCircle* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
 
       double operator()(const double &alpha);
 
@@ -158,7 +158,7 @@ namespace MBSim {
        * \brief contours
        */
       Contour1s *contour;
-      CircleHollow *circle;
+      HollowCircle *circle;
 
       /**
        * \brief contour point data for saving old values
@@ -503,14 +503,14 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-04-21 contour point data included (Thorsten Schindler)
    */
-  class FuncPairContour1sCircleSolid : public DistanceFunction<double(double)> {
+  class FuncPairContour1sSolidCircle : public DistanceFunction<double(double)> {
     public:
       /**
        * \brief constructor
        * \param circle solid contour
        * \param contour with one contour parameter
        */
-      FuncPairContour1sCircleSolid(CircleSolid* circle_, Contour *contour1s_) :
+      FuncPairContour1sSolidCircle(SolidCircle* circle_, Contour *contour1s_) :
           contour1s(contour1s_), circle(circle_) {
       }
 
@@ -523,7 +523,7 @@ namespace MBSim {
        * \brief contours
        */
       Contour *contour1s;
-      CircleSolid *circle;
+      SolidCircle *circle;
 
       /**
        * \brief contour point data for saving old values

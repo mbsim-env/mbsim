@@ -137,11 +137,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 
   // Contour of Cylinder
-  CircleSolid *circlecontour=new CircleSolid("Circle",d);
+  SolidCircle *circlecontour=new SolidCircle("Circle",d);
   body->addContour(circlecontour);
 
   // Contour of HollowCylinder (outward)
-  CircleSolid *circlecontour2=new CircleSolid("Circle2",d);
+  SolidCircle *circlecontour2=new SolidCircle("Circle2",d);
   body2->addContour(circlecontour2);
 
   // Contour of Sphere
@@ -164,7 +164,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addContour(new Plane("Plane",getFrame("S")));
 
 
-  // Contact between Cylinder and plane (Contact-Pairing: CircleSolid-Line)
+  // Contact between Cylinder and plane (Contact-Pairing: SolidCircle-Line)
   Contact *rc = new Contact("Contact");
   rc->connect(getContour("Line"),body->getContour("Circle"));
   addLink(rc);
@@ -180,7 +180,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
 
-  // Contact between HollowCylinder and plane (Contact-Pairing: CircleSolid-Line)
+  // Contact between HollowCylinder and plane (Contact-Pairing: SolidCircle-Line)
   Contact *rc2 = new Contact("Contact2");
   rc2->connect(getContour("Line"),body2->getContour("Circle2"));
   addLink(rc2);
@@ -227,7 +227,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc4->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
-  // Contact Stopper and Cylinder (Contact-Pairing: CircleSolid-Line)
+  // Contact Stopper and Cylinder (Contact-Pairing: SolidCircle-Line)
   Contact *rc5 = new Contact("Contact5");
   rc5->connect(body->getContour("Circle"),body4->getContour("LineStopper"));
   addLink(rc5);
@@ -242,7 +242,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc5->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
-  // Contact Stopper and CylinderHollow (Contact-Pairing: CircleSolid-Line)
+  // Contact Stopper and CylinderHollow (Contact-Pairing: SolidCircle-Line)
   Contact *rc6 = new Contact("Contact6");
   rc6->connect(body2->getContour("Circle2"),body4->getContour("LineStopper"));
   addLink(rc6);

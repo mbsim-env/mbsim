@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CIRCLE_SOLID_H_
-#define _CIRCLE_SOLID_H_
+#ifndef _SOLID_CIRCLE_H_
+#define _SOLID_CIRCLE_H_
 
 #include "mbsim/contours/circle.h"
 
@@ -31,23 +31,23 @@ namespace MBSim {
    * \date 2009-07-16 new file (Bastian Esefeld)
    * \date 2009-12-21 special circle (Thorsten Schindler)
    */ 
-  class CircleSolid : public MBSim::Circle {	
+  class SolidCircle : public MBSim::Circle {	
     public:
       /**
        * \brief constructor
        * \param name of circle
        */
-      CircleSolid(const std::string& name="", Frame *R=0) : Circle(name,true,R) {}
+      SolidCircle(const std::string& name="", Frame *R=0) : Circle(name,true,R) {}
 
       /**
        * \brief constructor
        * \param name of circle
        * \param radius of circle
        */
-      CircleSolid(const std::string &name, double r_, Frame *R=0) : Circle(name,r_,true,R) {}
+      SolidCircle(const std::string &name, double r_, Frame *R=0) : Circle(name,r_,true,R) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "CircleSolid"; }
+      std::string getType() const { return "SolidCircle"; }
       /***************************************************/
   };      
 }

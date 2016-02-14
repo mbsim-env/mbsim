@@ -142,7 +142,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //    disk->setTranslation(new LinearTranslation(JacTrans));
     disk->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1.0]")));
 
-    CircleSolid *cDisk = new CircleSolid("cDisk");
+    SolidCircle *cDisk = new SolidCircle("cDisk");
     cDisk->setRadius(radiiDisks(i));
     disk->addContour(cDisk);
     disk->setInitialGeneralizedVelocity(-Vec("[1.0]")*v0*double(sideInOut(i))/radiiDisks(i));
@@ -155,7 +155,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     disk->setOpenMBVRigidBody(cylinder);
 #endif
 
-    //  ContactKinematicsCircleSolidFlexibleBand *ck = new ContactKinematicsCircleSolidFlexibleBand();
+    //  ContactKinematicsSolidCircleFlexibleBand *ck = new ContactKinematicsSolidCircleFlexibleBand();
     name.clear();
     name << "Contact" << i;
     Contact *contact = new Contact(name.str());

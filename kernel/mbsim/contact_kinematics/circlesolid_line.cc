@@ -29,20 +29,20 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidLine::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<CircleSolid*>(contour[0])) {
+  void ContactKinematicsSolidCircleLine::assignContours(const vector<Contour*> &contour) {
+    if(dynamic_cast<SolidCircle*>(contour[0])) {
       icircle = 0; iline = 1;
-      circlesolid = static_cast<CircleSolid*>(contour[0]);
+      circlesolid = static_cast<SolidCircle*>(contour[0]);
       line = static_cast<Line*>(contour[1]);
     } 
     else {
       icircle = 1; iline = 0;
-      circlesolid = static_cast<CircleSolid*>(contour[1]);
+      circlesolid = static_cast<SolidCircle*>(contour[1]);
       line = static_cast<Line*>(contour[0]);
     }
   }
 
-  void ContactKinematicsCircleSolidLine::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSolidCircleLine::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
     cFrame[iline]->setOrientation(line->getFrame()->getOrientation(t));
     cFrame[icircle]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
@@ -59,7 +59,7 @@ namespace MBSim {
     cFrame[iline]->setPosition(cFrame[icircle]->getPosition(false) - Wn*g);
   }
 
-  void ContactKinematicsCircleSolidLine::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsSolidCircleLine::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
 
     Vec3 v2 = cFrame[icircle]->getOrientation(t).col(2);
     Vec3 n1 = cFrame[iline]->getOrientation(t).col(0);

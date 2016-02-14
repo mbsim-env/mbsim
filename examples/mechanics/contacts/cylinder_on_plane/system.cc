@@ -81,28 +81,28 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 
   // Contour of InnerCylinder
-  CircleSolid *circlecontour=new CircleSolid("Circle",d);
+  SolidCircle *circlecontour=new SolidCircle("Circle",d);
   body->addContour(circlecontour);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour->enableOpenMBV();
 #endif
 
   // Contour of ObstacleCylinder
-  CircleSolid *circlecontour2=new CircleSolid("Circle2",d);
+  SolidCircle *circlecontour2=new SolidCircle("Circle2",d);
   body2->addContour(circlecontour2);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour2->enableOpenMBV();
 #endif
 
   // Contour of HollowCylinder (outward)
-  CircleHollow *circlecontour3=new CircleHollow("Circle3",2.5*d);
+  HollowCircle *circlecontour3=new HollowCircle("Circle3",2.5*d);
   body3->addContour(circlecontour3);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour3->enableOpenMBV();
 #endif
 
   // Contour of HollowCylinder (inward)
-  CircleSolid *circlecontour4=new CircleSolid("Circle4",3*d);
+  SolidCircle *circlecontour4=new SolidCircle("Circle4",3*d);
   body3->addContour(circlecontour4);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour4->enableOpenMBV();

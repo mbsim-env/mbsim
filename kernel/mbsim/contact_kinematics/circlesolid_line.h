@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class CircleSolid;
+  class SolidCircle;
   class Line;
 
   /** 
@@ -33,7 +33,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
    */
-  class ContactKinematicsCircleSolidLine : public ContactKinematics {
+  class ContactKinematicsSolidCircleLine : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
@@ -50,7 +50,7 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      CircleSolid *circlesolid;
+      SolidCircle *circlesolid;
       Line *line;
   };
 

@@ -29,20 +29,20 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidLineSegment::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<CircleSolid*>(contour[0])) {
+  void ContactKinematicsSolidCircleLineSegment::assignContours(const vector<Contour*> &contour) {
+    if(dynamic_cast<SolidCircle*>(contour[0])) {
       icircle = 0; iline = 1;
-      circlesolid = static_cast<CircleSolid*>(contour[0]);
+      circlesolid = static_cast<SolidCircle*>(contour[0]);
       linesegment = static_cast<LineSegment*>(contour[1]);
     } 
     else {
       icircle = 1; iline = 0;
-      circlesolid = static_cast<CircleSolid*>(contour[1]);
+      circlesolid = static_cast<SolidCircle*>(contour[1]);
       linesegment = static_cast<LineSegment*>(contour[0]);
     }
   }
 
-  void ContactKinematicsCircleSolidLineSegment::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSolidCircleLineSegment::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
     const Vec3 WC=circlesolid->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
@@ -73,7 +73,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidLineSegment::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsSolidCircleLineSegment::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     const Vec3 WC=circlesolid->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);
@@ -101,7 +101,7 @@ namespace MBSim {
         wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     }
     else
-      throw runtime_error("ContactKinematicsCircleSolidLineSegment::updatewb not implemented for contact on edge.");
+      throw runtime_error("ContactKinematicsSolidCircleLineSegment::updatewb not implemented for contact on edge.");
   }
       
 }

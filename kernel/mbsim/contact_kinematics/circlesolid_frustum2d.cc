@@ -29,21 +29,21 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidFrustum2D::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<CircleSolid*>(contour[0])) {
+  void ContactKinematicsSolidCircleFrustum2D::assignContours(const vector<Contour*> &contour) {
+    if(dynamic_cast<SolidCircle*>(contour[0])) {
       icircle = 0; ifrustum = 1;
-      circle = static_cast<CircleSolid*>(contour[0]);
+      circle = static_cast<SolidCircle*>(contour[0]);
       frustum = static_cast<Frustum2D*>(contour[1]);
     } 
     else {
       icircle = 1; ifrustum = 0;
-      circle = static_cast<CircleSolid*>(contour[1]);
+      circle = static_cast<SolidCircle*>(contour[1]);
       frustum = static_cast<Frustum2D*>(contour[0]);
     }
   }
 
 
-  void ContactKinematicsCircleSolidFrustum2D::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSolidCircleFrustum2D::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     
     Vec3 Wd = circle->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t);
     SqrMat3 Mat0 = frustum->getFrame()->getOrientation();

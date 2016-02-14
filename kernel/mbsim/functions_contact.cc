@@ -77,14 +77,14 @@ namespace MBSim {
     nodes = nodesTilde;
   }
 
-  double FuncPairContour1sCircleHollow::operator()(const double &alpha) {
+  double FuncPairContour1sHollowCircle::operator()(const double &alpha) {
     zeta(0) = alpha;
     Vec3 Wd = getWrD(alpha);
     Vec3 Wt = contour->getWu(t,zeta);
     return Wt.T() * Wd;
   }
 
-  Vec3 FuncPairContour1sCircleHollow::getWrD(const double &alpha) {
+  Vec3 FuncPairContour1sHollowCircle::getWrD(const double &alpha) {
     //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
     zeta(0) = alpha;
     return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) + circle->getRadius() * contour->getWn(t,zeta));
@@ -98,14 +98,14 @@ namespace MBSim {
     return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
   }
 
-  double FuncPairContour1sCircleSolid::operator()(const double &alpha) {
+  double FuncPairContour1sSolidCircle::operator()(const double &alpha) {
     zeta(0) = alpha;
     Vec3 Wd = getWrD(alpha);
     Vec3 Wt = contour1s->getWu(t,zeta);
     return Wt.T() * Wd;
   }
 
-  Vec3 FuncPairContour1sCircleSolid::getWrD(const double &alpha) {
+  Vec3 FuncPairContour1sSolidCircle::getWrD(const double &alpha) {
     zeta(0) = alpha;
     return contour1s->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - circle->getRadius() * contour1s->getWn(t,zeta));
   }

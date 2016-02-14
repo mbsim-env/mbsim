@@ -1,6 +1,8 @@
 #include "woodpecker.h"
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
+#include "mbsim/fixed_relative_frame.h"
+#include "mbsimFlexibleBody/fixed_contour_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contour.h"
@@ -64,9 +66,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   addObject(balken);
 
   // inertiale Einspannung -----------------------------
-  ContourPointData cpdata;
-  cpdata.getContourParameterType() = ContourPointData::continuum;
-  balken->addFrame("RJ",cpdata);
+  balken->addFrame(new FixedContourFrame("RJ"));
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"),balken->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));

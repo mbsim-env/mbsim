@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CIRCLE_HOLLOW_H_
-#define _CIRCLE_HOLLOW_H_
+#ifndef _HOLLOW_CIRCLE_H_
+#define _HOLLOW_CIRCLE_H_
 
 #include "mbsim/contours/circle.h"
 
@@ -32,23 +32,23 @@ namespace MBSim {
    * \date 2009-07-16 new file (Bastian Esefeld)
    * \date 2009-12-21 special circle (Thorsten Schindler)
    */
-  class CircleHollow : public Circle {
+  class HollowCircle : public Circle {
     public:
       /**
        * \brief constructor
        * \param name of circle
        */
-      CircleHollow(const std::string& name="") : Circle(name) {}
+      HollowCircle(const std::string& name="") : Circle(name) {}
 
       /**
        * \brief constructor
        * \param name of circle
        * \param radius of circle
        */
-      CircleHollow(const std::string &name, double r_) : Circle(name,r_,false) {}
+      HollowCircle(const std::string &name, double r_) : Circle(name,r_,false) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "CircleHollow"; }
+      std::string getType() const { return "HollowCircle"; }
       /***************************************************/
   };      
 }

@@ -245,19 +245,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sd->connect(karosserie->getFrame("FHR"),hr->getFrame("C"));
 
   SrSP.init(0);
-  CircleSolid *circle = new CircleSolid("Reifen");
+  SolidCircle *circle = new SolidCircle("Reifen");
   circle->setRadius(r);
   vl->addContour(circle);
 
-  circle = new CircleSolid("Reifen");
+  circle = new SolidCircle("Reifen");
   circle->setRadius(r);
   hl->addContour(circle);
 
-  circle = new CircleSolid("Reifen");
+  circle = new SolidCircle("Reifen");
   circle->setRadius(r);
   vr->addContour(circle);
 
-  circle = new CircleSolid("Reifen");
+  circle = new SolidCircle("Reifen");
   circle->setRadius(r);
   hr->addContour(circle);
 

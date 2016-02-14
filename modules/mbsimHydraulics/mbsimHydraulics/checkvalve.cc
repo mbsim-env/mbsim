@@ -136,7 +136,7 @@ namespace MBSimHydraulics {
       ball->setFrameForKinematics(ball->getFrame("C"));
       ball->setTranslation(new LinearTranslation<VecV>("[1;0;0]"));
 
-      ball->addContour(new CircleSolid("ContourBall", rBall));
+      ball->addContour(new SolidCircle("ContourBall", rBall));
       ball->addFrame(new FixedRelativeFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE)));
       ball->addFrame(new FixedRelativeFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE)));
 
@@ -171,7 +171,7 @@ namespace MBSimHydraulics {
         // MISSING: spring->init(...) must be called somewere!!!???
       }
       if (openMBVArrows) {
-        ((CircleSolid*)ball->getContour("ContourBall"))->enableOpenMBV(true);
+        ((SolidCircle*)ball->getContour("ContourBall"))->enableOpenMBV(true);
         seatContact->enableOpenMBVContactPoints(rBall/8.);
         maxContact->enableOpenMBVContactPoints(rBall/8.);
       }

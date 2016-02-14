@@ -29,22 +29,22 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidCircleHollow::assignContours(const vector<Contour*> &contour) {
-    if (dynamic_cast<CircleSolid*>(contour[0])) {
+  void ContactKinematicsSolidCircleHollowCircle::assignContours(const vector<Contour*> &contour) {
+    if (dynamic_cast<SolidCircle*>(contour[0])) {
       icircle0 = 0;
       icircle1 = 1;
-      circle0 = static_cast<CircleSolid*>(contour[0]);
-      circle1 = static_cast<CircleHollow*>(contour[1]);
+      circle0 = static_cast<SolidCircle*>(contour[0]);
+      circle1 = static_cast<HollowCircle*>(contour[1]);
     }
     else {
       icircle0 = 1;
       icircle1 = 0;
-      circle0 = static_cast<CircleSolid*>(contour[1]);
-      circle1 = static_cast<CircleHollow*>(contour[0]);
+      circle0 = static_cast<SolidCircle*>(contour[1]);
+      circle1 = static_cast<HollowCircle*>(contour[0]);
     }
   }
 
-  void ContactKinematicsCircleSolidCircleHollow::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSolidCircleHollowCircle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     Vec3 WrD = circle0->getFrame()->getPosition(t) - circle1->getFrame()->getPosition(t);
     if (nrm2(WrD) < macheps()) {
       // In case (e.g. from initialization) the distance is zero)
@@ -68,7 +68,7 @@ namespace MBSim {
     g = circle1->getRadius() - cFrame[icircle0]->getOrientation(false).col(0).T() * WrD - circle0->getRadius();
   }
       
-  void ContactKinematicsCircleSolidCircleHollow::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsSolidCircleHollowCircle::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     const Vec3 KrPC1 = circle0->getFrame()->getOrientation(t).T() * (cFrame[icircle0]->getPosition() - circle0->getFrame()->getPosition(t));
     const double zeta1 = (KrPC1(1) > 0) ? acos(KrPC1(0) / nrm2(KrPC1)) : 2. * M_PI - acos(KrPC1(0) / nrm2(KrPC1));
     const double sa1 = sin(zeta1);

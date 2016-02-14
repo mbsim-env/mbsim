@@ -25,8 +25,8 @@
 
 namespace MBSim {
 
-  class CircleSolid;
-  class FuncPairContour1sCircleSolid;
+  class SolidCircle;
+  class FuncPairContour1sSolidCircle;
 
   /**
    * \brief pairing outer circle side to contour1s
@@ -34,17 +34,17 @@ namespace MBSim {
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    * \todo change stage to new interface TODO
    */
-  class ContactKinematicsCircleSolidContour1s : public ContactKinematics {
+  class ContactKinematicsSolidCircleContour1s : public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsCircleSolidContour1s() : icircle(0), icontour1s(0), circle(NULL), contour1s(NULL), func(NULL), searchAllCP(false) {}
+      ContactKinematicsSolidCircleContour1s() : icircle(0), icontour1s(0), circle(NULL), contour1s(NULL), func(NULL), searchAllCP(false) {}
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsCircleSolidContour1s();
+      virtual ~ContactKinematicsSolidCircleContour1s();
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
@@ -63,13 +63,13 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      CircleSolid *circle;
+      SolidCircle *circle;
       Contour *contour1s;
 
       /**
        * \brief root function
        */
-      FuncPairContour1sCircleSolid *func;
+      FuncPairContour1sSolidCircle *func;
 
       bool searchAllCP;
 

@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class CircleSolid;
+  class SolidCircle;
   class Plane;
 
   /*! \brief pairing circle outer side to plane
@@ -33,12 +33,12 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
-  class ContactKinematicsCircleSolidPlane : public ContactKinematics {
+  class ContactKinematicsSolidCirclePlane : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsCircleSolidPlane::updatewb): Not implemented!"); };
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsSolidCirclePlane::updatewb): Not implemented!"); };
       /***************************************************/
 
     protected:
@@ -50,7 +50,7 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      CircleSolid *circlesolid;
+      SolidCircle *circlesolid;
       Plane *plane;
   };
 

@@ -29,22 +29,22 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidPlane::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<CircleSolid*>(contour[0])) {
+  void ContactKinematicsSolidCirclePlane::assignContours(const vector<Contour*> &contour) {
+    if(dynamic_cast<SolidCircle*>(contour[0])) {
       icircle = 0;
       iplane = 1;
-      circlesolid = static_cast<CircleSolid*>(contour[0]);
+      circlesolid = static_cast<SolidCircle*>(contour[0]);
       plane = static_cast<Plane*>(contour[1]);
     } 
     else {
       icircle = 1;
       iplane = 0;
-      circlesolid = static_cast<CircleSolid*>(contour[1]);
+      circlesolid = static_cast<SolidCircle*>(contour[1]);
       plane = static_cast<Plane*>(contour[0]);
     }
   }
 
-  void ContactKinematicsCircleSolidPlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSolidCirclePlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t));
     cFrame[icircle]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
     cFrame[icircle]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));

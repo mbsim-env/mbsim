@@ -34,7 +34,7 @@ namespace MBSim {
    * \brief circular contour with contact possibility from outside and inside and binormal in direction of the third column of the contour reference frame
    * \author Thorsten Schindler
    * \date 2009-07-13 initial commit (Thorsten Schindler)
-   * \date 2009-12-21 adaptations concerning CircleHollow and CircleSolid
+   * \date 2009-12-21 adaptations concerning HollowCircle and SolidCircle
    */
   class Circle : public RigidContour {
     public:

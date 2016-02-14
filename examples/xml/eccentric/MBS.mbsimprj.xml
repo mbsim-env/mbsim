@@ -185,12 +185,12 @@
             </FixedRelativeFrame>
           </frames>
           <contours>
-            <CircleSolid name="CircleSolid3">
+            <SolidCircle name="SolidCircle3">
               <radius unit="m">r</radius>
               <enableOpenMBV>
                 <?OPENMBV_ID 12?>
               </enableOpenMBV>
-            </CircleSolid>
+            </SolidCircle>
           </contours>
           <openMBVRigidBody>
             <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
@@ -326,7 +326,7 @@
           <normalImpactLaw>
             <BilateralImpact/>
           </normalImpactLaw>
-          <connect ref1="../Object[RigidBody]/Contour[Line3]" ref2="../Object[Eccentric]/Contour[CircleSolid3]"/>
+          <connect ref1="../Object[RigidBody]/Contour[Line3]" ref2="../Object[Eccentric]/Contour[SolidCircle3]"/>
         </Contact>
       </links>
       <enableOpenMBVFrameI>

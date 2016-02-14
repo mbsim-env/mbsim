@@ -402,7 +402,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        disk->setInitialGeneralizedVelocity(vInit);
     }
 
-    CircleSolid *cDisk = new CircleSolid("cDisk");
+    SolidCircle *cDisk = new SolidCircle("cDisk");
     cDisk->setRadius(radiiDisks(i));
     Vec BR(3,INIT,0.);// BR(1)=-r;
     disk->addFrame(new FixedRelativeFrame("cDisk",BR,SqrMat(3,EYE),disk->getFrame("C")));
@@ -417,7 +417,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     disk->setOpenMBVRigidBody(cylinder);
 #endif
 
-    //  ContactKinematicsCircleSolidFlexibleBand *ck = new ContactKinematicsCircleSolidFlexibleBand();
+    //  ContactKinematicsSolidCircleFlexibleBand *ck = new ContactKinematicsSolidCircleFlexibleBand();
     name.clear();
     name << "Contact" << i;
     Contact *contact = new Contact(name.str());

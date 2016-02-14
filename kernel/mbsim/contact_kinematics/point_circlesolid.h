@@ -25,14 +25,14 @@
 namespace MBSim {
 
   class Point;
-  class CircleSolid;
+  class SolidCircle;
 
   /**
    * \brief pairing point to circesolid
    * \author Markus Schneider
    * * \date 2010-07-28 initial commit
    */
-  class ContactKinematicsPointCircleSolid : public ContactKinematics {
+  class ContactKinematicsPointSolidCircle : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
@@ -50,7 +50,7 @@ namespace MBSim {
        * \brief contour classes
        */
       Point *point;
-      CircleSolid *circlesolid;
+      SolidCircle *circlesolid;
 
   };
 

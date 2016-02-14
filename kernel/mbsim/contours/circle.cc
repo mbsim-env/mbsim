@@ -38,8 +38,8 @@ using namespace boost;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CircleHollow, MBSIM%"CircleHollow")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CircleSolid, MBSIM%"CircleSolid")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(HollowCircle, MBSIM%"HollowCircle")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SolidCircle, MBSIM%"SolidCircle")
 
   Circle::Circle(const string& name, Frame *R) : RigidContour(name,R),r(0.),curvature(0),outCont(false) {}
  

@@ -26,8 +26,8 @@
 
 namespace MBSim {
 
-  class CircleSolid;
-  class CircleHollow;
+  class SolidCircle;
+  class HollowCircle;
 
   /**
    * \brief pairing circle outer side to circle inner side
@@ -36,7 +36,7 @@ namespace MBSim {
    * \date 2009-05-13 updateg implemented (Bastian Esefeld)
    * \todo updatewb TODO
    */
-  class ContactKinematicsCircleSolidCircleHollow : public ContactKinematics {
+  class ContactKinematicsSolidCircleHollowCircle : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
@@ -53,8 +53,8 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      CircleSolid *circle0;
-      CircleHollow *circle1;
+      SolidCircle *circle0;
+      HollowCircle *circle1;
 
   };
 

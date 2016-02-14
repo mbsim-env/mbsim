@@ -2388,31 +2388,31 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CircleHollow" substitutionGroup="Circle" type="CircleHollowType">
+  <xs:element name="HollowCircle" substitutionGroup="Circle" type="HollowCircleType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Ebene Kontur eines CircleHollow (= Hohlzylinders = Kreiskontur mit Kontakt innen).<br/>
+        Ebene Kontur eines HollowCircle (= Hohlzylinders = Kreiskontur mit Kontakt innen).<br/>
         Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems.
         <object class="figure" standby="4cm" data="contour_circlehollow" title="Orientierung einer CicleHollow-Kontur"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="CircleHollowType">
+  <xs:complexType name="HollowCircleType">
     <xs:complexContent>
       <xs:extension base="CircleType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CircleSolid" substitutionGroup="Circle" type="CircleSolidType">
+  <xs:element name="SolidCircle" substitutionGroup="Circle" type="SolidCircleType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Ebene Kontur eines CircleSolid (= (Voll)zylinders = Kreiskontur mit Kontakt aussen).<br/>
+        Ebene Kontur eines SolidCircle (= (Voll)zylinders = Kreiskontur mit Kontakt aussen).<br/>
         Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems. 
-        <object class="figure" standby="4cm" data="contour_circlesolid" title="Orientierung einer CircleSolid-Kontur"></object>
+        <object class="figure" standby="4cm" data="contour_circlesolid" title="Orientierung einer SolidCircle-Kontur"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="CircleSolidType">
+  <xs:complexType name="SolidCircleType">
     <xs:complexContent>
       <xs:extension base="CircleType"/>
     </xs:complexContent>

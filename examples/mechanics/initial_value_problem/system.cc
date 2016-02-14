@@ -40,7 +40,7 @@ class initLink : public Link {
               rocker->setInitialGeneralizedPosition(Vec(1, INIT, phi));
               rocker->initz();
               rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
-              ((ContactKinematicsCircleSolidContour1s*)(contactCamRocker->getContactKinematics()))->setSearchAllCP(true);
+              ((ContactKinematicsSolidCircleContour1s*)(contactCamRocker->getContactKinematics()))->setSearchAllCP(true);
               contactCamRocker->updateStateDependentVariables(0);
               return contactCamRocker->getg()(0);
             }
@@ -158,7 +158,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rocker->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
   this->addObject(rocker);
 
-  CircleSolid * rockerContour = new CircleSolid("Contour");
+  SolidCircle * rockerContour = new SolidCircle("Contour");
   rockerContour->setRadius(.022);
   rocker->addContour(rockerContour);
 

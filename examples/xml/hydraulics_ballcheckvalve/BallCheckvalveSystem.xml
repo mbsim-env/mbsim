@@ -111,11 +111,11 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <CircleSolid name="Contour">
+        <SolidCircle name="Contour">
           <frameOfReference ref="../Frame[Contour]"/>
           <radius>pistonContourRadius</radius>
           <enableOpenMBV/>
-        </CircleSolid>
+        </SolidCircle>
       </contours>
       <openMBVRigidBody>
         <Frustum name="Frustum" xmlns="http://www.mbsim-env.de/OpenMBV">

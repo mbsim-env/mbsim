@@ -29,14 +29,14 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidCircleSolid::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsSolidCircleSolidCircle::assignContours(const vector<Contour*> &contour) {
     icircle0 = 0; 
     icircle1 = 1;
-    circle0 = static_cast<CircleSolid*>(contour[0]);
-    circle1 = static_cast<CircleSolid*>(contour[1]);
+    circle0 = static_cast<SolidCircle*>(contour[0]);
+    circle1 = static_cast<SolidCircle*>(contour[1]);
   }
 
-  void ContactKinematicsCircleSolidCircleSolid::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSolidCircleSolidCircle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     Vec3 WrD = circle0->getFrame()->getPosition(t) - circle1->getFrame()->getPosition(t);
     cFrame[icircle1]->getOrientation(false).set(0, WrD/nrm2(WrD));
     cFrame[icircle0]->getOrientation(false).set(0, -cFrame[icircle1]->getOrientation(false).col(0));
@@ -50,7 +50,7 @@ namespace MBSim {
     g = cFrame[icircle1]->getOrientation(false).col(0).T()*WrD - circle0->getRadius() - circle1->getRadius();
   }
       
-  void ContactKinematicsCircleSolidCircleSolid::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsSolidCircleSolidCircle::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
     const Vec3 KrPC1 = circle0->getFrame()->getOrientation(t).T()*(cFrame[icircle0]->getPosition(t) - circle0->getFrame()->getPosition(t));

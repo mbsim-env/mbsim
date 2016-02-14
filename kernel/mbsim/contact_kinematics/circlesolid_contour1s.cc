@@ -31,25 +31,25 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsCircleSolidContour1s::~ContactKinematicsCircleSolidContour1s() { 
+  ContactKinematicsSolidCircleContour1s::~ContactKinematicsSolidCircleContour1s() { 
     delete func; 
   }
 
-  void ContactKinematicsCircleSolidContour1s::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<CircleSolid*>(contour[0])) {
+  void ContactKinematicsSolidCircleContour1s::assignContours(const vector<Contour*> &contour) {
+    if(dynamic_cast<SolidCircle*>(contour[0])) {
       icircle = 0;
       icontour1s = 1;
-      circle = static_cast<CircleSolid*>(contour[0]);
+      circle = static_cast<SolidCircle*>(contour[0]);
       contour1s = static_cast<Contour*>(contour[1]);
     } 
     else {
       icircle = 1; 
       icontour1s = 0;
-      circle = static_cast<CircleSolid*>(contour[1]);
+      circle = static_cast<SolidCircle*>(contour[1]);
       contour1s = static_cast<Contour*>(contour[0]);
     }
 
-    func = new FuncPairContour1sCircleSolid(circle,contour1s);
+    func = new FuncPairContour1sSolidCircle(circle,contour1s);
 
 //    if (dynamic_cast<Contour*>(contour1s)) {
 //      double minRadius=1./epsroot();
@@ -59,12 +59,12 @@ namespace MBSim {
 //        minRadius=(radius<minRadius)?radius:minRadius;
 //      }
 //      if (circle->getRadius()>minRadius)
-//        throw MBSimError("Just one contact point is allowed in Contactpairing Contour-CircleSolid, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+numtostr(minRadius)+"\n Radius of CircleSolid="+numtostr(circle->getRadius()));
+//        throw MBSimError("Just one contact point is allowed in Contactpairing Contour-SolidCircle, but either the circle radius is to big or the minimal Radius of Contour is to small.\n minimal radius of Contour="+numtostr(minRadius)+"\n Radius of SolidCircle="+numtostr(circle->getRadius()));
 //    }
 
   }
 
-  void ContactKinematicsCircleSolidContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSolidCircleContour1s::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     func->setTime(t);
     Contact1sSearch search(func);
     search.setNodes(contour1s->getEtaNodes());
@@ -92,7 +92,7 @@ namespace MBSim {
     g = -cFrame[icontour1s]->getOrientation(false).col(0).T()*WrD;
   }
 
-  void ContactKinematicsCircleSolidContour1s::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsSolidCircleContour1s::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
     
     const Vec3 n1 = cFrame[icircle]->getOrientation(t).col(0);
     const Vec3 u1 = cFrame[icircle]->getOrientation().col(1);

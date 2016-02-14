@@ -47,11 +47,11 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <CircleSolid name="crankBolt" xmlns="http://www.mbsim-env.de/MBSim">
+        <SolidCircle name="crankBolt" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[B3]"/> <!-- optional -->
             <radius>rBolt</radius>
             <!--<enableOpenMBV/> [> optional <]-->
-        </CircleSolid>
+        </SolidCircle>
       </contours>
       <openMBVRigidBody> <!-- optional -->
         <CompoundRigidBody name="XXX" xmlns="http://www.mbsim-env.de/OpenMBV">
@@ -155,11 +155,11 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <CircleHollow name="couplerBushing" xmlns="http://www.mbsim-env.de/MBSim">
+        <HollowCircle name="couplerBushing" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Frame[B4]"/> <!-- optional -->
           <radius>rBushing</radius>
           <!--<enableOpenMBV/> [> optional <]-->
-        </CircleHollow>
+        </HollowCircle>
       </contours>
       <openMBVRigidBody> <!-- optional -->
         <CompoundRigidBody name="XXX" xmlns="http://www.mbsim-env.de/OpenMBV">

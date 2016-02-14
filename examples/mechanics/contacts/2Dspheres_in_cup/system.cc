@@ -113,19 +113,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 
   // Contour of Body1
-  CircleSolid *circlecontour1 = new CircleSolid("Circle1",2*d);
+  SolidCircle *circlecontour1 = new SolidCircle("Circle1",2*d);
   body1->addContour(circlecontour1);
 
   // Contour of Body2
-  CircleSolid *circlecontour2 = new CircleSolid("Circle2",d);
+  SolidCircle *circlecontour2 = new SolidCircle("Circle2",d);
   body2->addContour(circlecontour2);
 
   // Contour of Body3
-  CircleSolid *circlecontour3 = new CircleSolid("Circle3",d);
+  SolidCircle *circlecontour3 = new SolidCircle("Circle3",d);
   body3->addContour(circlecontour3);
 
   // Contour of Body4
-  CircleSolid *circlecontour4 = new CircleSolid("Circle4",d);
+  SolidCircle *circlecontour4 = new SolidCircle("Circle4",d);
   body4->addContour(circlecontour4);
 
   // Contour of ground plane

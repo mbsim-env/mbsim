@@ -61,16 +61,16 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <CircleHollow xmlns="http://www.mbsim-env.de/MBSim" name="cA">
+        <HollowCircle xmlns="http://www.mbsim-env.de/MBSim" name="cA">
           <frameOfReference ref="../Frame[C]"/>
           <radius>.3</radius>
           <!--<enableOpenMBV/>-->
-        </CircleHollow>
-        <CircleSolid xmlns="http://www.mbsim-env.de/MBSim" name="cB">
+        </HollowCircle>
+        <SolidCircle xmlns="http://www.mbsim-env.de/MBSim" name="cB">
           <frameOfReference ref="../Frame[fA]"/>
           <radius>.05</radius>
           <enableOpenMBV/>
-        </CircleSolid>
+        </SolidCircle>
       </contours>
       <openMBVRigidBody>
         <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
@@ -118,11 +118,11 @@
         </FixedRelativeFrame>
       </frames>
       <contours>
-        <CircleSolid xmlns="http://www.mbsim-env.de/MBSim" name="cA">
+        <SolidCircle xmlns="http://www.mbsim-env.de/MBSim" name="cA">
           <frameOfReference ref="../Frame[C]"/>
           <radius>.1</radius>
           <enableOpenMBV/>
-        </CircleSolid>
+        </SolidCircle>
       </contours>
       <openMBVRigidBody>
         <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">

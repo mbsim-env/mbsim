@@ -71,7 +71,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   roll->setInitialGeneralizedVelocity("[0;1.0]");
   this->addObject(roll);
 
-  CircleSolid * rollContour = new CircleSolid("Contour");
+  SolidCircle * rollContour = new SolidCircle("Contour");
   rollContour->setRadius(.01);
   roll->addContour(rollContour);
 #ifdef HAVE_OPENMBVCPPINTERFACE
