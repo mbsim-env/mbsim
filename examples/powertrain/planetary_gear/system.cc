@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/environment.h"
-#include "mbsim/kinetic_excitation.h"
+#include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsimPowertrain/planetary_gear.h"

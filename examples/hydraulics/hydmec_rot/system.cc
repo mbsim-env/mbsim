@@ -7,7 +7,7 @@
 
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/spring_damper.h"
+#include "mbsim/links/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/functions/kinematic_functions.h"

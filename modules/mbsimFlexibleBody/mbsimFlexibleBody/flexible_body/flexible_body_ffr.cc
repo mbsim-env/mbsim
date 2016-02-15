@@ -22,7 +22,7 @@
 #include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/joint.h"
+#include "mbsim/links/joint.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/environment.h"

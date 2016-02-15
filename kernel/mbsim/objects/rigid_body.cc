@@ -22,7 +22,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contour.h"
-#include "mbsim/joint.h"
+#include "mbsim/links/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/constraint.h"
 #include "mbsim/utils/rotarymatrices.h"

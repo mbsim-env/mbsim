@@ -20,7 +20,7 @@
 #define _GEAR_CONSTRAINT_H
 
 #include "mbsim/constraint.h"
-#include "mbsim/gear.h"
+#include "mbsim/links/gear.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"

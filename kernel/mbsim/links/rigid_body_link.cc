@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/rigid_body_link.h"
+#include "mbsim/links/rigid_body_link.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include <openmbvcppinterface/group.h>

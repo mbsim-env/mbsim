@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/kinetic_excitation.h"
+#include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
 #include <fmatvec/function.h>
 #include <mbsim/dynamic_system_solver.h>

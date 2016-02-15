@@ -19,9 +19,9 @@
 #ifndef _SPRINGDAMPER_H_
 #define _SPRINGDAMPER_H_
 
-#include "mbsim/frame_link.h"
-#include "mbsim/floating_frame_link.h"
-#include "mbsim/rigid_body_link.h"
+#include "mbsim/links/frame_link.h"
+#include "mbsim/links/floating_frame_link.h"
+#include "mbsim/links/rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

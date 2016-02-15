@@ -20,7 +20,7 @@
 #ifndef _GEAR_H_
 #define _GEAR_H_
 
-#include "mbsim/rigid_body_link.h"
+#include "mbsim/links/rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 namespace MBSim {

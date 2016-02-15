@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include <mbsim/contact.h>
+#include <mbsim/links/contact.h>
 #include <mbsim/frame.h>
 #include <mbsim/contour.h>
 #include <mbsim/dynamic_system_solver.h>

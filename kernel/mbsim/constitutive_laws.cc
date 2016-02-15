@@ -19,11 +19,8 @@
 
 #include <config.h>
 #include "mbsim/constitutive_laws.h"
-#include "mbsim/contact.h"
-#include "mbsim/element.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
-#include "mbsim/utils/utils.h"
 #include "mbsim/functions/kinetic_functions.h"
 
 #include <map>

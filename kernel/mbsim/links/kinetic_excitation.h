@@ -20,7 +20,7 @@
 #ifndef _KINETICEXCITATION_H_
 #define _KINETICEXCITATION_H_
 
-#include <mbsim/floating_frame_link.h>
+#include <mbsim/links/floating_frame_link.h>
 #include <mbsim/functions/function.h>
 
 namespace MBSim {

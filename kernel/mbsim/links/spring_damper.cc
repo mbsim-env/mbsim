@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/spring_damper.h"
+#include "mbsim/links/spring_damper.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/frames/fixed_relative_frame.h"

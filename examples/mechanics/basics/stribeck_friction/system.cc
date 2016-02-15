@@ -2,7 +2,7 @@
 #include "stribeck_friction.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/contact.h"
+#include "mbsim/links/contact.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/plane.h"

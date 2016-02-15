@@ -4,8 +4,8 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/contact.h"
-#include "mbsim/joint.h"
+#include "mbsim/links/contact.h"
+#include "mbsim/links/joint.h"
 #include <string>
 
 #include <mbsim/numerics/csparse.h>

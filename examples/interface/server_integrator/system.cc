@@ -1,9 +1,9 @@
 #include "system.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/spring_damper.h"
+#include "mbsim/links/spring_damper.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/sphere.h"
-#include "mbsim/contact.h"
+#include "mbsim/links/contact.h"
 #include "mbsim/constitutive_laws.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

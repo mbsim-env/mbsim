@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/floating_frame_link.h"
+#include "mbsim/links/floating_frame_link.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"

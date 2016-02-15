@@ -3,7 +3,7 @@
 #include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h"
 // Beginning Contact
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/contact.h"
+#include "mbsim/links/contact.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"

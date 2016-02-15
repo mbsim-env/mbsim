@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/joint.h"
+#include "mbsim/links/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"

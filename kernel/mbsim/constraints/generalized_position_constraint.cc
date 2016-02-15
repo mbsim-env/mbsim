@@ -19,7 +19,7 @@
 #include <config.h>
 #include "mbsim/constraints/generalized_position_constraint.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/kinematic_excitation.h"
+#include "mbsim/links/kinematic_excitation.h"
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;

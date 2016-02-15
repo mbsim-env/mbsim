@@ -20,7 +20,7 @@
 #ifndef _MAXWELL_CONTACT_H_
 #define _MAXWELL_CONTACT_H_
 
-#include <mbsim/contact.h>
+#include <mbsim/links/contact.h>
 #include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <map>
 

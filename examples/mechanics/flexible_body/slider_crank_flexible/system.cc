@@ -1,6 +1,6 @@
 #include "system.h"
-#include "mbsim/joint.h"
-#include "mbsim/contact.h"
+#include "mbsim/links/joint.h"
+#include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"
@@ -17,7 +17,7 @@
 // End Contact
 #include "mbsim/environment.h"
 
-#include "mbsim/kinetic_excitation.h"
+#include "mbsim/links/kinetic_excitation.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>

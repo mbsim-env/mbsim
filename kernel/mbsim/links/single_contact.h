@@ -20,7 +20,7 @@
 #ifndef _SINGLE_CONTACT_H_
 #define _SINGLE_CONTACT_H_
 
-#include <mbsim/contour_link.h>
+#include <mbsim/links/contour_link.h>
 
 namespace MBSim {
 

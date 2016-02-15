@@ -5,9 +5,9 @@
 #include "mbsim/constraint.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
-#include "mbsim/joint.h"
+#include "mbsim/links/joint.h"
 #include "mbsim/constitutive_laws.h"
-#include "mbsim/kinetic_excitation.h"
+#include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
 

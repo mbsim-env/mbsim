@@ -20,7 +20,7 @@
 #ifndef _CONTACT_H_
 #define _CONTACT_H_
 
-#include <mbsim/single_contact.h>
+#include <mbsim/links/single_contact.h>
 #include <map>
 
 namespace MBSim {

@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/kinetic_excitation.h"
+#include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/tabular_functions.h"

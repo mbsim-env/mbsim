@@ -20,7 +20,7 @@
 #ifndef _JOINT_H_
 #define _JOINT_H_
 
-#include "mbsim/floating_frame_link.h"
+#include "mbsim/links/floating_frame_link.h"
 
 namespace MBSim {
 

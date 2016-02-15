@@ -18,22 +18,6 @@
 
 #include <config.h>
 #include "mbsim/constraint.h"
-#include "mbsim/objects/rigid_body.h"
-#include "mbsim/frame.h"
-#include "mbsim/utils/nonlinear_algebra.h"
-#include "mbsim/utils/utils.h"
-#include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/joint.h"
-#include "mbsim/gear.h"
-#include "mbsim/kinematic_excitation.h"
-#include "mbsim/dynamic_system_solver.h"
-#include "mbsim/constitutive_laws.h"
-#include "mbsim/objectfactory.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/frame.h>
-#endif
-
 #include <hdf5serie/simpledataset.h>
 
 using namespace std;

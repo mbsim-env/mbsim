@@ -22,7 +22,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/joint.h"
+#include "mbsim/links/joint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/objectfactory.h"

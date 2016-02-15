@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/extern_generalized_io.h"
+#include "mbsim/links/extern_generalized_io.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/object.h"
 

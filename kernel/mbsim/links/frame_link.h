@@ -20,7 +20,7 @@
 #ifndef _FRAME_LINK_H_
 #define _FRAME_LINK_H_
 
-#include "link.h"
+#include "mbsim/link.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
