@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsimFlexibleBody/fixed_nodal_frame.h"
+#include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
 #include "mbsim/constraint.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"

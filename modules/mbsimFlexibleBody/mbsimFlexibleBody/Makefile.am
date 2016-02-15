@@ -1,15 +1,11 @@
-SUBDIRS = flexible_body contours contact_kinematics utils .
+SUBDIRS = flexible_body frames contours contact_kinematics utils .
   
 lib_LTLIBRARIES = libmbsimFlexibleBody.la
 libmbsimFlexibleBody_la_LDFLAGS = -avoid-version
-libmbsimFlexibleBody_la_SOURCES = flexible_body.cc\
-				  fixed_nodal_frame.cc\
-				  node_frame.cc\
-				  contour_frame.cc\
-				  fixed_contour_frame.cc\
-				  floating_contour_frame.cc
+libmbsimFlexibleBody_la_SOURCES = flexible_body.cc
 
 libmbsimFlexibleBody_la_LIBADD = flexible_body/libflexiblebody.la
+libmbsimFlexibleBody_la_LIBADD += frames/libframe.la
 libmbsimFlexibleBody_la_LIBADD += contours/libcontour.la
 libmbsimFlexibleBody_la_LIBADD += contact_kinematics/libcontactkinematics.la
 libmbsimFlexibleBody_la_LIBADD += utils/libutils.la
@@ -20,12 +16,6 @@ libmbsimFlexibleBody_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPIN
 mbsimFlexibleBodyincludedir = $(includedir)/mbsimFlexibleBody
 mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
 				   functions_contact.h\
-				   frame_ffr.h\
-				   fixed_nodal_frame.h\
-				   node_frame.h\
-				   contour_frame.h\
-				   fixed_contour_frame.h\
-				   floating_contour_frame.h\
 				   pointer.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk

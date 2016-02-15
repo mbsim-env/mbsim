@@ -21,8 +21,8 @@
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_rcm.h"
-#include "mbsimFlexibleBody/contour_frame.h"
-#include "mbsimFlexibleBody/node_frame.h"
+#include "mbsimFlexibleBody/frames/contour_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"

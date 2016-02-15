@@ -20,8 +20,8 @@
 
 #include <config.h>
 #include <mbsimFlexibleBody/flexible_body.h>
-#include <mbsimFlexibleBody/node_frame.h>
-#include <mbsimFlexibleBody/fixed_contour_frame.h>
+#include <mbsimFlexibleBody/frames/node_frame.h>
+#include <mbsimFlexibleBody/frames/fixed_contour_frame.h>
 #include <mbsim/dynamic_system.h>
 #include <mbsim/frames/fixed_relative_frame.h>
 #include <mbsim/contour.h>

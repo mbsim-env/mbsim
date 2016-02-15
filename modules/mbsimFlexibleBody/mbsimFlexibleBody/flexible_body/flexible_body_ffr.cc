@@ -19,8 +19,7 @@
 
 #include <config.h>
 #include "flexible_body_ffr.h"
-#include "mbsimFlexibleBody/frame_ffr.h"
-#include "mbsimFlexibleBody/fixed_nodal_frame.h"
+#include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/joint.h"

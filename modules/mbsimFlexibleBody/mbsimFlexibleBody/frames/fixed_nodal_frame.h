@@ -20,7 +20,7 @@
 #ifndef _FIXED_NODAL_FRAME_H__
 #define _FIXED_NODAL_FRAME_H__
 
-#include "mbsimFlexibleBody/frame_ffr.h"
+#include "mbsimFlexibleBody/frames/frame_ffr.h"
 #include "mbsimFlexibleBody/utils/taylor.h"
 
 namespace MBSimFlexibleBody {
