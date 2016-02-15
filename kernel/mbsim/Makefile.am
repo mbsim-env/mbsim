@@ -6,7 +6,6 @@ libmbsim_la_SOURCES = element.cc\
 		      contour.cc\
 		      environment.cc\
 		      frame.cc\
-		      functions_contact.cc\
 		      dynamic_system.cc\
 		      group.cc\
 		      dynamic_system_solver.cc\
@@ -45,7 +44,6 @@ mbsiminclude_HEADERS = element.h\
 		       dynamic_system_solver.h\
 		       environment.h\
 		       frame.h\
-		       functions_contact.h\
 		       group.h\
 		       link.h\
 		       mbsim_event.h\

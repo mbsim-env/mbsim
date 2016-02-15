@@ -21,8 +21,7 @@
 #include "point_planarcontour.h"
 #include "mbsim/frame.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/contour1s.h"
-#include "mbsim/functions_contact.h"
+#include "mbsim/functions/contact_functions.h"
 
 using namespace fmatvec;
 using namespace std;

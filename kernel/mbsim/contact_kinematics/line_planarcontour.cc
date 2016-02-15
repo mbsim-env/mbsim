@@ -20,8 +20,7 @@
 #include <config.h>
 #include "mbsim/contact_kinematics/line_planarcontour.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/contours/contour1s.h"
-#include "mbsim/functions_contact.h"
+#include "mbsim/functions/contact_functions.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -37,13 +36,13 @@ namespace MBSim {
       iline = 0;
       icontour = 1;
       line = static_cast<Line*>(contour[0]);
-      contour1s = static_cast<Contour1s*>(contour[1]);
+      contour1s = static_cast<Contour*>(contour[1]);
     } 
     else {
       iline = 1;
       icontour = 0;
       line = static_cast<Line*>(contour[1]);
-      contour1s = static_cast<Contour1s*>(contour[0]);
+      contour1s = static_cast<Contour*>(contour[0]);
     }
     func= new FuncPairPlanarContourLine(line,contour1s);
   }

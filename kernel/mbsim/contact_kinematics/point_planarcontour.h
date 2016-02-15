@@ -21,16 +21,14 @@
 #define _CONTACT_KINEMATICS_POINT_PLANAR_CONTOUR_H_
 
 #include "contact_kinematics.h"
-
-#include "mbsim/functions_contact.h"
+#include "mbsim/functions/contact_functions.h"
 
 namespace MBSim {
 
   class Point;
-  class Contour1s;
 
   /**
-   * \brief pairing point to Contour1s
+   * \brief pairing point to planar contour
    * \author Roland Zander
    * \date 2009-04-02 some comments (Thorsten Schindler)
    * \date 2009-06-04 new interface (Thorsten Schindler)

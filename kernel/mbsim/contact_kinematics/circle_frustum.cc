@@ -22,7 +22,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum.h"
-#include "mbsim/functions_contact.h"
+#include "mbsim/functions/contact_functions.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;

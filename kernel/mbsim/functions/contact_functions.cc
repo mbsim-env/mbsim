@@ -18,9 +18,8 @@
  */
 
 #include <config.h>
-#include "mbsim/functions_contact.h"
+#include "mbsim/functions/contact_functions.h"
 #include "mbsim/frame.h"
-#include "mbsim/contours/contour1s.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/circle.h"
@@ -38,6 +37,7 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
+
 using namespace fmatvec;
 
 namespace MBSim {
