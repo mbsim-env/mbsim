@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/rigid_contour.h"
-#include "mbsim/floating_relative_frame.h"
+#include "mbsim/frames/floating_relative_frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/contact_utils.h"
 

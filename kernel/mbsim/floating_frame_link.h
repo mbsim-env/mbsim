@@ -21,7 +21,7 @@
 #define _FLOATING_FRAME_LINK_H_
 
 #include "mbsim/link.h"
-#include "mbsim/floating_relative_frame.h"
+#include "mbsim/frames/floating_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"

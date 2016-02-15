@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/floating_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void FloatingRelativeFrame::init(InitStage stage) {
+  void FixedRelativeFrame::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
@@ -37,7 +37,7 @@ namespace MBSim {
       Frame::init(stage);
   }
 
-  void FloatingRelativeFrame::initializeUsingXML(DOMElement *element) {
+  void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
     DOMElement *ec=element->getFirstElementChild();
     ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
@@ -48,7 +48,7 @@ namespace MBSim {
     if(ec) setRelativeOrientation(getSqrMat3(ec));
   }
 
-  DOMElement* FloatingRelativeFrame::writeXMLFile(DOMNode *parent) {
+  DOMElement* FixedRelativeFrame::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Frame::writeXMLFile(parent);
 //     if(getFrameOfReference()) {
 //        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
@@ -61,36 +61,37 @@ namespace MBSim {
    return ele0;
   }
 
-  const Vec3& FloatingRelativeFrame::getGlobalRelativePosition(double t) {
+  const Vec3& FixedRelativeFrame::getGlobalRelativePosition(double t) {
     if(updatePos) updatePositions(t);
     return WrRP; 
   }
 
-  void FloatingRelativeFrame::updatePositions(double t) { 
-    parent->updatePositions(t,this);
-    WrRP = getPosition(false) - R->getPosition(t);
+  void FixedRelativeFrame::updatePositions(double t) { 
+    setOrientation(R->getOrientation(t)*ARP);
+    WrRP = R->getOrientation()*RrRP;
+    setPosition(R->getPosition() + WrRP);
     updatePos = false;
   }
 
-  void FloatingRelativeFrame::updateVelocities(double t) { 
+  void FixedRelativeFrame::updateVelocities(double t) { 
     setAngularVelocity(R->getAngularVelocity(t));
-    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))); 
+    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)));
     updateVel = false;
   }
 
-  void FloatingRelativeFrame::updateAccelerations(double t) { 
+  void FixedRelativeFrame::updateAccelerations(double t) { 
     setAngularAcceleration(R->getAngularAcceleration(t));
-    setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
-    updateAcc = true;
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))));
+    updateAcc = false;
   }
 
-  void FloatingRelativeFrame::updateJacobians(double t, int j) {
+  void FixedRelativeFrame::updateJacobians(double t, int j) {
     setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
     setJacobianOfRotation(R->getJacobianOfRotation(j),j);
     updateJac[j] = false;
   }
 
-  void FloatingRelativeFrame::updateGyroscopicAccelerations(double t) {
+  void FixedRelativeFrame::updateGyroscopicAccelerations(double t) {
     setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
     setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
     updateGA = false;

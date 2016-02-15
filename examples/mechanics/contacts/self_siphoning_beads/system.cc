@@ -3,7 +3,7 @@
 #include <fmatvec/fmatvec.h>
 
 #include <mbsim/environment.h>
-#include <mbsim/fixed_relative_frame.h>
+#include <mbsim/frames/fixed_relative_frame.h>
 #include <mbsim/rigid_body.h>
 #include <mbsim/contours/frustum.h>
 #include <mbsim/contours/sphere.h>

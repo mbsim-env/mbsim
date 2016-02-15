@@ -5,7 +5,7 @@
 #include "mbsim/constraint.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/compoundrigidbody.h"

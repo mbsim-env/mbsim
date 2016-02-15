@@ -18,7 +18,7 @@
 
 #include <config.h>
 #include "mbsim/dynamic_system.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/link.h"

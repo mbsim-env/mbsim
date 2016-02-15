@@ -1,7 +1,7 @@
 #include "woodpecker.h"
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsimFlexibleBody/fixed_contour_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"

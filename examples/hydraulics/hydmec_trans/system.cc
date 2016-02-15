@@ -5,7 +5,7 @@
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
 
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/functions/kinematic_functions.h"

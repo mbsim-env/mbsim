@@ -1,6 +1,6 @@
 #include "system.h"
 
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"

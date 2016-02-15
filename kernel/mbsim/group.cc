@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/group.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"

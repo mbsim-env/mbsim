@@ -4,7 +4,7 @@
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/coilspring.h>
 #endif

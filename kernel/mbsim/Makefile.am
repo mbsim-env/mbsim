@@ -1,4 +1,4 @@
-SUBDIRS =  numerics utils integrators analysers contact_kinematics contours functions observers .
+SUBDIRS =  numerics utils integrators analysers contact_kinematics frames contours functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_SOURCES = \
@@ -11,8 +11,6 @@ single_contact.cc\
 contour.cc\
 environment.cc\
 frame.cc\
-fixed_relative_frame.cc\
-floating_relative_frame.cc\
 functions_contact.cc\
 dynamic_system.cc\
 group.cc\
@@ -42,7 +40,8 @@ libmbsim_la_LIBADD = integrators/libintegrators.la
 libmbsim_la_LIBADD += analysers/libanalysers.la 
 libmbsim_la_LIBADD += utils/libutils.la 
 libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
-libmbsim_la_LIBADD += contours/libcontour.la 
+libmbsim_la_LIBADD += frames/libframe.la
+libmbsim_la_LIBADD += contours/libcontour.la
 libmbsim_la_LIBADD += numerics/libnumerics.la 
 libmbsim_la_LIBADD += functions/libfunction.la 
 libmbsim_la_LIBADD += observers/libobserver.la 
@@ -65,8 +64,6 @@ dynamic_system_solver.h\
 element.h\
 environment.h\
 frame.h\
-fixed_relative_frame.h\
-floating_relative_frame.h\
 functions_contact.h\
 group.h\
 joint.h\

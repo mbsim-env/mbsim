@@ -20,7 +20,7 @@
 #include <config.h>
 #include "rigid_body.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"

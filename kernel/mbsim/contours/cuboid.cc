@@ -22,7 +22,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/edge.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

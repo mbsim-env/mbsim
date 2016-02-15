@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/gear.h"
-#include "mbsim/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
