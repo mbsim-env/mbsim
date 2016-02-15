@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
    * model based on
    * DOMBROWSKI, S.: Analysis of Large Flexible Body Deformation in Multibody Systems Using Absolute Coordinates. Multibody System Dynamics (2002)
    */
-  class FiniteElement1s33ANCF : public MBSim::DiscretizationInterface
+  class FiniteElement1s33ANCF : public DiscretizationInterface
   {
     public:
       /*!

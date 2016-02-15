@@ -27,7 +27,7 @@
 
 namespace MBSimFlexibleBody {
 
-  class FiniteElementLinearExternalLumpedNode : public MBSim::DiscretizationInterface {
+  class FiniteElementLinearExternalLumpedNode : public DiscretizationInterface {
 
     public:
       /*!

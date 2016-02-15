@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
    *    I. Romero: The interpolation of rotations and its application to finite element models of
    *    geometrically exact beams
    */
-  class FiniteElement1s21CosseratRotation : public MBSim::DiscretizationInterface {
+  class FiniteElement1s21CosseratRotation : public DiscretizationInterface {
     public:
 
       /**

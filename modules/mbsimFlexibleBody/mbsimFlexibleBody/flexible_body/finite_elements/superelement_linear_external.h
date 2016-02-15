@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
    * \date 2009-07-16 fixed proportional damping (Thorsten Schindler)
    * \date 2009-07-23 implicit integration (Thorsten Schindler)
    */
-  class SuperElementLinearExternal : public MBSim::DiscretizationInterface {
+  class SuperElementLinearExternal : public DiscretizationInterface {
     public:
       SuperElementLinearExternal();
 	  void init(MBSim::Element::InitStage stage);

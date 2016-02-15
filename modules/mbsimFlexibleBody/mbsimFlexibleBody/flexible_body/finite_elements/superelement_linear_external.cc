@@ -27,7 +27,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  SuperElementLinearExternal::SuperElementLinearExternal() : MBSim::DiscretizationInterface(), M(0), K(0), alpha(0.), beta(0.) {}
+  SuperElementLinearExternal::SuperElementLinearExternal() : DiscretizationInterface(), M(0), K(0), alpha(0.), beta(0.) {}
 
   void SuperElementLinearExternal::init(Element::InitStage stage) {
     if(stage==Element::unknownStage) {

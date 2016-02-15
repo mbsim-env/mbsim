@@ -22,7 +22,7 @@
 
 #include <fmatvec/fmatvec.h>
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
 /*!
    * \brief discretization interface for flexible systems

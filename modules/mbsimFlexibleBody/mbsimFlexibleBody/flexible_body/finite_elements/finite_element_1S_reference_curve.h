@@ -34,7 +34,7 @@ namespace MBSimFlexibleBody {
   /*!
    * \brief Finite-Element class for the body FlexibleBody1SReferenceCurve
    */
-  class FlexibleBody1SReferenceCurveFE : public MBSim::DiscretizationInterface {
+  class FlexibleBody1SReferenceCurveFE : public DiscretizationInterface {
       friend class funcPTP;
       friend class funcPTdPdxi;
       friend class funcPTdPdt;

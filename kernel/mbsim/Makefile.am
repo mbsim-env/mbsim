@@ -39,7 +39,6 @@ mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = element.h\
 		       constitutive_laws.h\
 		       contour.h\
-		       discretization_interface.h\
 		       dynamic_system.h\
 		       dynamic_system_solver.h\
 		       environment.h\

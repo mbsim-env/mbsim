@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
    * \date 2009-07-24 implicit integration (Thorsten Schindler)
    * \date 2010-05-25 fixed minus sign in azimuthal stiffness directions (Thorsten Schindler)
    */
-  class FiniteElement2s13Disk : public MBSim::DiscretizationInterface {
+  class FiniteElement2s13Disk : public DiscretizationInterface {
     public:
       /** 
        * \brief constructor

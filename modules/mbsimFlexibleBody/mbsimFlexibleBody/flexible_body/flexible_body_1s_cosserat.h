@@ -168,7 +168,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief stl-vector of finite elements for rotation grid
        */
-      std::vector<MBSim::DiscretizationInterface*> rotationDiscretization;
+      std::vector<DiscretizationInterface*> rotationDiscretization;
 
       /**
        * \brief stl-vector of finite element positions for rotation grid

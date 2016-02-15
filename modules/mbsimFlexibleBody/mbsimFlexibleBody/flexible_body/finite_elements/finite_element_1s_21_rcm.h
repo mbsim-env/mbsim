@@ -20,7 +20,7 @@
 #ifndef _FINITE_ELEMENT_1S_21_RCM_H_
 #define _FINITE_ELEMENT_1S_21_RCM_H_
 
-#include "mbsim/discretization_interface.h"
+#include "mbsimFlexibleBody/discretization_interface.h"
 #include "mbsim/mbsim_event.h"
 #include "fmatvec/fmatvec.h"
 
@@ -41,7 +41,7 @@ namespace MBSimFlexibleBody {
    * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lisbon, Portugal, 2006
    */
-  class FiniteElement1s21RCM : public MBSim::DiscretizationInterface {
+  class FiniteElement1s21RCM : public DiscretizationInterface {
     public:
       /*!
        * \brief constructor 

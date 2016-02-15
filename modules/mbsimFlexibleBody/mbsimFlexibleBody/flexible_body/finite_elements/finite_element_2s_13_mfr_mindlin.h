@@ -20,7 +20,7 @@
 #ifndef _FINITE_ELEMENT_2S_13_MFR_MINDLIN_H_
 #define _FINITE_ELEMENT_2S_13_MFR_MINDLIN_H_
 
-#include "mbsim/discretization_interface.h"
+#include "mbsimFlexibleBody/discretization_interface.h"
 #include "mbsim/mbsim_event.h"
 
 #include<cmath>
@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
    * \date 2010-04-23 check (Schindler)
    * \date 2010-08-18 check (Schindler)
    */
-  class FiniteElement2s13MFRMindlin : public MBSim::DiscretizationInterface {
+  class FiniteElement2s13MFRMindlin : public DiscretizationInterface {
     public:
       /** 
        * \brief constructor

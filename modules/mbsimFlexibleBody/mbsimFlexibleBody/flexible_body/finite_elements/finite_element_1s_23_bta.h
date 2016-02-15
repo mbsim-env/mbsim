@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
    * \todo implicit integration analytically TODO
    * \todo tangent, awk necessary? TODO
    */
-  class FiniteElement1s23BTA : public MBSim::DiscretizationInterface {
+  class FiniteElement1s23BTA : public DiscretizationInterface {
     public:
       /**
        * \brief constructor

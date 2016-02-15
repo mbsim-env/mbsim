@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
    * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
    * SHABANE, A. A.: Dynamics of Multibody Systems. Cambridge University Press (2005)
    */
-  class FiniteElement1s21ANCF : public MBSim::DiscretizationInterface
+  class FiniteElement1s21ANCF : public DiscretizationInterface
   {
     public:
       /*!

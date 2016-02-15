@@ -38,7 +38,7 @@ namespace MBSimFlexibleBody {
    * \todo JacobianOfMotion 
    * \todo computeM 
    */
-  class FiniteElement1s33RCM : public MBSim::DiscretizationInterface {
+  class FiniteElement1s33RCM : public DiscretizationInterface {
     public:
       /**
        * \brief constructor

@@ -25,12 +25,12 @@
 #include "mbsim/frame.h"
 
 namespace MBSim {
-  class DiscretizationInterface;
   class FixedRelativeFrame;
 }
 
 namespace MBSimFlexibleBody {
 
+  class DiscretizationInterface;
   class NodeFrame;
   class ContourFrame;
   class FixedContourFrame;
@@ -202,7 +202,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief stl-vector of discretizations/finite elements
        */
-      std::vector<MBSim::DiscretizationInterface*> discretization;
+      std::vector<DiscretizationInterface*> discretization;
 
       /**
        * \brief stl-vector of finite element wise positions
