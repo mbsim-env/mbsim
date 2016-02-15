@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contour.h"

@@ -20,7 +20,7 @@
 #ifndef _FLEXIBLE_BODY_FFR_H_
 #define _FLEXIBLE_BODY_FFR_H_
 
-#include "mbsim/body.h"
+#include "mbsim/objects/body.h"
 #include "mbsim/functions/auxiliary_functions.h"
 #include "mbsimFlexibleBody/utils/taylor.h"
 

@@ -18,7 +18,7 @@
 
 #include <config.h>
 #include "mbsim/constraint.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/utils.h"

@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/utils/utils.h"
 #include "fmatvec/function.h"
 #include "mbsim/spring_damper.h"

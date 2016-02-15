@@ -1,6 +1,6 @@
 #include "system.h"
 
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/solid_circle.h"

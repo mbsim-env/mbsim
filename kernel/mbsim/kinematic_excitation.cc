@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/kinematic_excitation.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 
 using namespace std;
 using namespace fmatvec;

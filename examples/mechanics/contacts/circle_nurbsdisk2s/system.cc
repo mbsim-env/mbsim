@@ -2,7 +2,7 @@
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
 #include "mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/circle.h"

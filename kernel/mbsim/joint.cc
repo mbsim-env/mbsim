@@ -24,7 +24,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include <mbsim/utils/utils.h>
-#include <mbsim/rigid_body.h>
+#include <mbsim/objects/rigid_body.h>
 
 using namespace std;
 using namespace fmatvec;

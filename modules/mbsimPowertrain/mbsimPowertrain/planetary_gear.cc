@@ -1,6 +1,6 @@
 #include <config.h>
 #include "planetary_gear.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/constraint.h"
 #include "mbsim/gear.h"
 //#include "mbsim/gearing.h"

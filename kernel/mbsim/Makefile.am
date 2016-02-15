@@ -1,9 +1,8 @@
-SUBDIRS =  numerics utils integrators analysers contact_kinematics frames contours functions observers .
+SUBDIRS =  numerics utils integrators analysers contact_kinematics frames contours objects functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_SOURCES = \
 element.cc\
-body.cc\
 constitutive_laws.cc\
 contact.cc\
 maxwell_contact.cc\
@@ -30,7 +29,6 @@ kinematic_excitation.cc\
 mbsim_event.cc\
 object.cc\
 objectfactory.cc\
-rigid_body.cc\
 graph.cc\
 constraint.cc\
 observer.cc\
@@ -42,6 +40,7 @@ libmbsim_la_LIBADD += utils/libutils.la
 libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
 libmbsim_la_LIBADD += frames/libframe.la
 libmbsim_la_LIBADD += contours/libcontour.la
+libmbsim_la_LIBADD += objects/libobject.la
 libmbsim_la_LIBADD += numerics/libnumerics.la 
 libmbsim_la_LIBADD += functions/libfunction.la 
 libmbsim_la_LIBADD += observers/libobserver.la 
@@ -52,7 +51,6 @@ libmbsim_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLA
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
-body.h\
 contact.h\
 maxwell_contact.h\
 single_contact.h\
@@ -82,7 +80,6 @@ mbsim_event.h\
 modelling_interface.h\
 object.h\
 objectfactory.h\
-rigid_body.h\
 graph.h\
 constraint.h\
 observer.h\

@@ -15,13 +15,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
+ *          martin.o.foerg@googlemail.com
  */
 
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
-#include "mbsim/body.h"
+#include "mbsim/objects/body.h"
 #include "mbsim/frame.h"
 
 namespace MBSim {

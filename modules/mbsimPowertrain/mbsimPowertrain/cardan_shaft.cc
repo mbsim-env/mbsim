@@ -3,7 +3,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"

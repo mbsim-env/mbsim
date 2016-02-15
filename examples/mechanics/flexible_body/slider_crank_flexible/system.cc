@@ -11,7 +11,7 @@
 #include <mbsim/functions/kinematic_functions.h>
 #include <mbsim/functions/kinetic_functions.h>
 // Beginning Contact
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 // End Contact

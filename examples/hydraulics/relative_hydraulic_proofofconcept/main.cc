@@ -1,5 +1,5 @@
 #include <mbsim/dynamic_system_solver.h>
-#include <mbsim/rigid_body.h>
+#include <mbsim/objects/rigid_body.h>
 #include <mbsim/integrators/integrators.h>
 #include "line.h"
 #include "press_bound.h"

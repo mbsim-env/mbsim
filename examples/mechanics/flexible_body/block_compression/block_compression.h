@@ -5,7 +5,7 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include <string>
 

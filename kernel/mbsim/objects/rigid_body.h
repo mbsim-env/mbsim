@@ -20,7 +20,7 @@
 #ifndef _RIGID_BODY_H_
 #define _RIGID_BODY_H_
 
-#include "mbsim/body.h"
+#include "mbsim/objects/body.h"
 #include "mbsim/frame.h"
 #include "mbsim/functions/auxiliary_functions.h"
 

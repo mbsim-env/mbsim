@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/frustum.h"

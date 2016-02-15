@@ -2,7 +2,7 @@
 #define _TEST_GROUP_H_
 
 #include "mbsim/group.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 
 class TestGroup : public MBSim::Group {
   public:

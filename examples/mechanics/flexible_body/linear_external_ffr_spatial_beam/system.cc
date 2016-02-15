@@ -12,7 +12,7 @@
 #include "mbsimFlexibleBody/contours/neutral_contour/contour_2s_neutral_linear_external_FFR.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 // Beginning Contact
-//#include "mbsim/rigid_body.h"
+//#include "mbsim/objects/rigid_body.h"
 //#include "mbsim/contour.h"
 //#include "mbsim/constitutive_laws.h"
 // End Contact

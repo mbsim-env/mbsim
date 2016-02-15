@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/body.h"
+#include "mbsim/objects/body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system.h"

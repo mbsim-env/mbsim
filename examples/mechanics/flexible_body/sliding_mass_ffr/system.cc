@@ -3,7 +3,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include <mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h>
 #include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_linear_external_FFR.h>
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/point.h"

@@ -5,7 +5,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

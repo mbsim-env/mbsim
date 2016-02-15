@@ -1,7 +1,7 @@
 #include "system.h"
 #include <mbsim/utils/rotarymatrices.h>
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/contact.h"

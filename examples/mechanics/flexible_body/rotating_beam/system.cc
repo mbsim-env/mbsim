@@ -2,7 +2,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
 #include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
 #include "mbsim/constraint.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"

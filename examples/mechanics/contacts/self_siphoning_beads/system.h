@@ -4,7 +4,7 @@
 #include <mbsim/dynamic_system_solver.h>
 
 
-#include <mbsim/rigid_body.h>
+#include <mbsim/objects/rigid_body.h>
 
 #include <fmatvec/fmatvec.h>
 
