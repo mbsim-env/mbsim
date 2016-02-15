@@ -1,8 +1,7 @@
-SUBDIRS =  numerics utils integrators analysers contact_kinematics frames contours objects links constraints functions observers .
+SUBDIRS =  numerics utils integrators analysers contact_kinematics constitutive_laws frames contours objects links constraints functions observers .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_SOURCES = element.cc\
-		      constitutive_laws.cc\
 		      contour.cc\
 		      environment.cc\
 		      frame.cc\
@@ -21,6 +20,7 @@ libmbsim_la_SOURCES = element.cc\
 libmbsim_la_LIBADD = integrators/libintegrators.la
 libmbsim_la_LIBADD += analysers/libanalysers.la 
 libmbsim_la_LIBADD += utils/libutils.la 
+libmbsim_la_LIBADD += constitutive_laws/libconstitutivelaws.la
 libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
 libmbsim_la_LIBADD += frames/libframe.la
 libmbsim_la_LIBADD += contours/libcontour.la

@@ -19,9 +19,13 @@
 
 #include <config.h>
 #include "mbsim/links/joint.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/bilateral_impact.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
+#include <mbsim/constitutive_laws/generalized_force_law.h>
+#include <mbsim/constitutive_laws/friction_force_law.h>
+#include <mbsim/constitutive_laws/generalized_impact_law.h>
+#include <mbsim/constitutive_laws/friction_impact_law.h>
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include <mbsim/utils/utils.h>
 #include <mbsim/objects/rigid_body.h>

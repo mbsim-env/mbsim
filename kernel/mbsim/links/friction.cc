@@ -22,7 +22,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/constitutive_laws.h"
+#include <mbsim/constitutive_laws/friction_force_law.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/arrow.h>

@@ -24,7 +24,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/bilateral_constraint.h"
 #include "mbsim/objectfactory.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>

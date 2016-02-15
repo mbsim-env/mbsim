@@ -23,7 +23,7 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/links/joint.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/bilateral_constraint.h"
 #include "mbsim/constraint.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"

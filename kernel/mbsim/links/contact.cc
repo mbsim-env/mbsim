@@ -19,10 +19,12 @@
 
 #include <config.h> 
 #include "contact.h"
-
 #include <mbsim/contour.h>
 #include <mbsim/dynamic_system_solver.h>
-#include <mbsim/constitutive_laws.h>
+#include <mbsim/constitutive_laws/generalized_force_law.h>
+#include <mbsim/constitutive_laws/friction_force_law.h>
+#include <mbsim/constitutive_laws/generalized_impact_law.h>
+#include <mbsim/constitutive_laws/friction_impact_law.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
 #include <fmatvec/function.h>
@@ -33,7 +35,6 @@
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
 #endif
-
 #include <algorithm>
 
 using namespace std;
