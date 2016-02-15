@@ -18,7 +18,7 @@
  */
 
 #include<config.h>
-#include "mbsim/contours/rectangle.h"
+#include "mbsim/contours/plate.h"
 #include "mbsim/frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -31,16 +31,16 @@ using namespace boost;
 
 namespace MBSim {
 
-  Rectangle::Rectangle(const string &name, Frame *R) : Plane(name,R), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Plate::Plate(const string &name, Frame *R) : Plane(name,R), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
-  Rectangle::Rectangle(const string &name, double yL, double zL, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Plate::Plate(const string &name, double yL, double zL, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
-  Rectangle::Rectangle(const string &name, double yL, double zL, double t, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(t), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Plate::Plate(const string &name, double yL, double zL, double t, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(t), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
-  void Rectangle::init(InitStage stage) {
+  void Plate::init(InitStage stage) {
     if (stage == preInit) {
       setVertices();
       Plane::init(stage);
@@ -61,9 +61,9 @@ namespace MBSim {
       Plane::init(stage);
   }
 
-  void Rectangle::setVertices() {
+  void Plate::setVertices() {
     {
-      //coordinates of the vertices under reference frame of the rectangle
+      //coordinates of the vertices under reference frame of the plate
       RrA(0) = 0.;
       RrA(1) = yLength / 2;
       RrA(2) = zLength / 2;
@@ -83,18 +83,18 @@ namespace MBSim {
 
   }
 
-  bool Rectangle::PointInRectangle(const fmatvec::Vec3& Point) {
-    //point vector in coordinates of reference frame of the rectangle
+  bool Plate::PointInPlate(const fmatvec::Vec3& Point) {
+    //point vector in coordinates of reference frame of the plate
     Vec3 P_inA = this->getFrame()->getOrientation().T() * (Point - this->getFrame()->getPosition());
 
-    // Here we suppose that the rectangle in our codes has axis x parallel to its normal
+    // Here we suppose that the plate in our codes has axis x parallel to its normal
     if ((P_inA(1) <= yLength / 2) && (P_inA(1) >= (-yLength / 2)) && (P_inA(2) <= zLength / 2) && (P_inA(2) >= (-zLength / 2))) {
       return true;
     }
     return false;
   }
 
-  bool Rectangle::PointInCircle(const fmatvec::Vec3& Point, const fmatvec::Vec3& CenCir, const double & radius) {
+  bool Plate::PointInCircle(const fmatvec::Vec3& Point, const fmatvec::Vec3& CenCir, const double & radius) {
     double dis = nrm2(Point - CenCir);
     if (dis > radius) {
       return false;
@@ -103,7 +103,7 @@ namespace MBSim {
   }
 
   // this algorithm comes from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
-  Vec3 Rectangle::Point_closest_toCircle_onLineseg(const Vec3 & EndP1, const Vec3 & EndP2, const Vec3& CenCir) {
+  Vec3 Plate::Point_closest_toCircle_onLineseg(const Vec3 & EndP1, const Vec3 & EndP2, const Vec3& CenCir) {
     //vector of the line segment
     Vec3 SegV = EndP2 - EndP1;
     //vector from end point 1 to center of the circle
@@ -121,13 +121,13 @@ namespace MBSim {
     return EndP1 + proj * SegV_unit;
   }
 
-  bool Rectangle::Intersect_Circle(const double & radi, const Vec3& CenCir) {
+  bool Plate::Intersect_Circle(const double & radi, const Vec3& CenCir) {
     //if CenCir lies in the square, intersect
-    if (PointInRectangle(CenCir)) {
+    if (PointInPlate(CenCir)) {
       return true;
     }
 
-    //center of rectangle
+    //center of plate
     Vec3 C_A = this->getFrame()->getPosition();
     //orientation matrix
     SqrMat3 OriMat = this->getFrame()->getOrientation();
@@ -155,7 +155,7 @@ namespace MBSim {
 //      return true;
 //    }
 
-//check if any of the 4 edges of the rectangle(AB,BC,CD,DA) intersect with the square
+//check if any of the 4 edges of the plate(AB,BC,CD,DA) intersect with the square
 //firstly select the nearest point to the circle on the line segment
     Closest = Point_closest_toCircle_onLineseg(IrA, IrB, CenCir);
     if (PointInCircle(Closest, CenCir, radi)) {

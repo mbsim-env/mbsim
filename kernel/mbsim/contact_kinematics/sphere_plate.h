@@ -25,16 +25,16 @@
 namespace MBSim {
 
   class Sphere; 
-  class Rectangle;
+  class Plate;
 
   /**
-   * \brief pairing sphere to rectangle
+   * \brief pairing sphere to plate
    * \author Kilian Grundl
    *
    * \todo: edge problems not handled yet
-   * \todo: what about contact "below" rectangle
+   * \todo: what about contact "below" plate
    */
-  class ContactKinematicsSphereRectangle : public ContactKinematics {
+  class ContactKinematicsSpherePlate : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
@@ -46,13 +46,13 @@ namespace MBSim {
       /**
        * \brief contour index
        */
-      int isphere, irectangle;
+      int isphere, iplate;
       
       /**
        * \brief contour classes
        */
       Sphere *sphere;
-      Rectangle *rectangle;
+      Plate *plate;
 
   };
 

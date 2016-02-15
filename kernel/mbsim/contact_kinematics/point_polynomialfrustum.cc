@@ -160,7 +160,7 @@ namespace MBSim {
         cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(t,zeta));
         cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(t,zeta));
 
-        //Rectangle
+        //Point
         cFrame[ipoint]->setPosition(rF + AWF  * rPoint);
         cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
         cFrame[ipoint]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));

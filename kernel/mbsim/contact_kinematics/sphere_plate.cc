@@ -18,9 +18,9 @@
  */
 
 #include <config.h> 
-#include "sphere_rectangle.h"
+#include "sphere_plate.h"
 #include "mbsim/frame.h"
-#include "mbsim/contours/rectangle.h"
+#include "mbsim/contours/plate.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/contact_utils.h"
 
@@ -29,38 +29,38 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsSphereRectangle::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsSpherePlate::assignContours(const vector<Contour*> &contour) {
     if (dynamic_cast<Sphere*>(contour[0])) {
       isphere = 0;
-      irectangle = 1;
+      iplate = 1;
       sphere = static_cast<Sphere*>(contour[0]);
-      rectangle = static_cast<Rectangle*>(contour[1]);
+      plate = static_cast<Plate*>(contour[1]);
     }
     else {
       isphere = 1;
-      irectangle = 0;
+      iplate = 0;
       sphere = static_cast<Sphere*>(contour[1]);
-      rectangle = static_cast<Rectangle*>(contour[0]);
+      plate = static_cast<Plate*>(contour[0]);
     }
   }
 
-  void ContactKinematicsSphereRectangle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSpherePlate::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
 
-    Vec3 sphereInRect = rectangle->getFrame()->getOrientation(t).T() * (sphere->getFrame()->getPosition(t) - rectangle->getFrame()->getPosition(t));
+    Vec3 sphereInRect = plate->getFrame()->getOrientation(t).T() * (sphere->getFrame()->getPosition(t) - plate->getFrame()->getPosition(t));
 
-    if ((rectangle->getYLength() / 2. + sphere->getRadius() < fabs(sphereInRect(1))) or (rectangle->getZLength() / 2. + sphere->getRadius() < fabs(sphereInRect(2)))) {
+    if ((plate->getYLength() / 2. + sphere->getRadius() < fabs(sphereInRect(1))) or (plate->getZLength() / 2. + sphere->getRadius() < fabs(sphereInRect(2)))) {
       g = 1.;
       return;
     }
 
-    cFrame[irectangle]->setOrientation(rectangle->getFrame()->getOrientation());
-    cFrame[isphere]->getOrientation(false).set(0, -rectangle->getFrame()->getOrientation().col(0));
-    cFrame[isphere]->getOrientation(false).set(1, -rectangle->getFrame()->getOrientation().col(1));
-    cFrame[isphere]->getOrientation(false).set(2, rectangle->getFrame()->getOrientation().col(2));
+    cFrame[iplate]->setOrientation(plate->getFrame()->getOrientation());
+    cFrame[isphere]->getOrientation(false).set(0, -plate->getFrame()->getOrientation().col(0));
+    cFrame[isphere]->getOrientation(false).set(1, -plate->getFrame()->getOrientation().col(1));
+    cFrame[isphere]->getOrientation(false).set(2, plate->getFrame()->getOrientation().col(2));
 
-    Vec3 Wn = cFrame[irectangle]->getOrientation(false).col(0);
+    Vec3 Wn = cFrame[iplate]->getOrientation(false).col(0);
 
-    Vec3 Wd = sphere->getFrame()->getPosition() - rectangle->getFrame()->getPosition();
+    Vec3 Wd = sphere->getFrame()->getPosition() - plate->getFrame()->getPosition();
 
     g = Wn.T() * Wd - sphere->getRadius();
 
@@ -71,11 +71,11 @@ namespace MBSim {
     }
 
     cFrame[isphere]->setPosition(sphere->getFrame()->getPosition() - Wn * sphere->getRadius());
-    cFrame[irectangle]->setPosition(cFrame[isphere]->getPosition(false) - Wn * g);
+    cFrame[iplate]->setPosition(cFrame[isphere]->getPosition(false) - Wn * g);
   }
 
-  void ContactKinematicsSphereRectangle::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
-    throw new MBSimError("ContactKinematicsSphereRectangle::updatewb(): not implemented yet");
+  void ContactKinematicsSpherePlate::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+    throw new MBSimError("ContactKinematicsSpherePlate::updatewb(): not implemented yet");
   }
 }
 

@@ -20,7 +20,7 @@
 #include<config.h>
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/rectangle.h"
+#include "mbsim/contours/plate.h"
 #include "mbsim/contours/edge.h"
 #include "mbsim/fixed_relative_frame.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -127,72 +127,72 @@ namespace MBSim {
       r(2) = 0;
       frame = new FixedRelativeFrame("F1",r,BasicRotAIKz(M_PI),R);
       addFrame(frame);
-      Rectangle *rectangle = new Rectangle("Face1");
-      rectangle->setYLength(ly);
-      rectangle->setZLength(lz);
-      rectangle->setThickness(lx*thicknessFactor);
-      rectangle->setFrameOfReference(frame);
-      addContour(rectangle);
+      Plate *plate = new Plate("Face1");
+      plate->setYLength(ly);
+      plate->setZLength(lz);
+      plate->setThickness(lx*thicknessFactor);
+      plate->setFrameOfReference(frame);
+      addContour(plate);
 
       r(0) = lx/2.0;
       r(1) = 0;
       r(2) = 0;
       frame = new FixedRelativeFrame("F2",r,BasicRotAIKz(0),R);
       addFrame(frame);
-      rectangle = new Rectangle("Face2");
-      rectangle->setYLength(ly);
-      rectangle->setZLength(lz);
-      rectangle->setThickness(lx*thicknessFactor);
-      rectangle->setFrameOfReference(frame);
-      addContour(rectangle);
+      plate = new Plate("Face2");
+      plate->setYLength(ly);
+      plate->setZLength(lz);
+      plate->setThickness(lx*thicknessFactor);
+      plate->setFrameOfReference(frame);
+      addContour(plate);
 
       r(0) = 0;
       r(1) = 0;
       r(2) = -lz/2.0;
       frame = new FixedRelativeFrame("F3",r,BasicRotAIKy(M_PI/2),R);
       addFrame(frame);
-      rectangle = new Rectangle("Face3");
-      rectangle->setYLength(ly);
-      rectangle->setZLength(lx);
-      rectangle->setThickness(lz*thicknessFactor);
-      rectangle->setFrameOfReference(frame);
-      addContour(rectangle);
+      plate = new Plate("Face3");
+      plate->setYLength(ly);
+      plate->setZLength(lx);
+      plate->setThickness(lz*thicknessFactor);
+      plate->setFrameOfReference(frame);
+      addContour(plate);
 
       r(0) = 0;
       r(1) = 0;
       r(2) = lz/2.0;
       frame = new FixedRelativeFrame("F4",r,BasicRotAIKy(-M_PI/2),R);
       addFrame(frame);
-      rectangle = new Rectangle("Face4");
-      rectangle->setYLength(ly);
-      rectangle->setZLength(lx);
-      rectangle->setThickness(lz*thicknessFactor);
-      rectangle->setFrameOfReference(frame);
-      addContour(rectangle);
+      plate = new Plate("Face4");
+      plate->setYLength(ly);
+      plate->setZLength(lx);
+      plate->setThickness(lz*thicknessFactor);
+      plate->setFrameOfReference(frame);
+      addContour(plate);
 
       r(0) = 0;
       r(1) = -ly/2.0;
       r(2) = 0;
       frame = new FixedRelativeFrame("F5",r,BasicRotAIKz(-M_PI/2),R);
       addFrame(frame);
-      rectangle = new Rectangle("Face5");
-      rectangle->setYLength(lx);
-      rectangle->setZLength(lz);
-      rectangle->setThickness(ly*thicknessFactor);
-      rectangle->setFrameOfReference(frame);
-      addContour(rectangle);
+      plate = new Plate("Face5");
+      plate->setYLength(lx);
+      plate->setZLength(lz);
+      plate->setThickness(ly*thicknessFactor);
+      plate->setFrameOfReference(frame);
+      addContour(plate);
 
       r(0) = 0;
       r(1) = ly/2.0;
       r(2) = 0;
       frame = new FixedRelativeFrame("F6",r,BasicRotAIKz(M_PI/2),R);
       addFrame(frame);
-      rectangle = new Rectangle("Face6");
-      rectangle->setYLength(lx);
-      rectangle->setZLength(lz);
-      rectangle->setThickness(ly*thicknessFactor);
-      rectangle->setFrameOfReference(frame);
-      addContour(rectangle);
+      plate = new Plate("Face6");
+      plate->setYLength(lx);
+      plate->setZLength(lz);
+      plate->setThickness(ly*thicknessFactor);
+      plate->setFrameOfReference(frame);
+      addContour(plate);
 
       r(0) = 0;
       r(1) = +ly/2.0;

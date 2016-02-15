@@ -4,7 +4,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/rectangle.h"
+#include "mbsim/contours/plate.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematic_functions.h"
@@ -25,11 +25,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   /* disk */
-  Rectangle* rectangle = new Rectangle("Rectangle");
-  addContour(rectangle);
-  rectangle->setYLength(3);
-  rectangle->setZLength(2);
-  rectangle->enableOpenMBV();
+  Plate* plate = new Plate("Plate");
+  addContour(plate);
+  plate->setYLength(3);
+  plate->setZLength(2);
+  plate->enableOpenMBV();
 
 
   /* ball */ 
@@ -102,7 +102,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setNormalImpactLaw(new UnilateralNewtonImpact(.5));
 //    contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
 //    contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
-    contact[k]->connect(points[k], rectangle);
+    contact[k]->connect(points[k], plate);
     contact[k]->enableOpenMBVContactPoints();
     this->addLink(contact[k]);
   }

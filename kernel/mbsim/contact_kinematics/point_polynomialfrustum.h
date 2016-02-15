@@ -90,7 +90,7 @@ namespace MBSim {
 
 
   /*!
-   * \brief class for contact kinematics between convex frustum and an rectangle
+   * \brief class for contact kinematics between convex frustum and an plate
    * \author Kilian Grundl, Tingting Sun
    * \date  06.06.2013
    */
@@ -104,12 +104,12 @@ namespace MBSim {
       void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double& g, std::vector<Frame*> &cFrame, int index = 0);
       virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<Frame*> &cFrame) {
-        throw MBSimError("(ContactKinematicsRectanglePolynomialFrustum::updatewb): not implemented!");
+        throw MBSimError("(ContactKinematicsPointPolynomialFrustum::updatewb): not implemented!");
       }
 
     protected:
       /**
-       * \brief contour index of rectangle (in cpData)
+       * \brief contour index of plate (in cpData)
        */
       int ipoint;
 
@@ -119,7 +119,7 @@ namespace MBSim {
       int ifrustum;
 
       /**
-       * \brief pointer to the contour class for the rectangle
+       * \brief pointer to the contour class for the plate
        */
       Point *point;
 

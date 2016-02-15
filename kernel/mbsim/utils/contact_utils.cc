@@ -33,7 +33,7 @@
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
 #include <mbsim/contact_kinematics/edge_edge.h>
 #include <mbsim/contact_kinematics/line_planarcontour.h>
-#include <mbsim/contact_kinematics/point_rectangle.h>
+#include <mbsim/contact_kinematics/point_plate.h>
 #include <mbsim/contact_kinematics/point_planarcontour.h>
 #include <mbsim/contact_kinematics/point_contourinterpolation.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
@@ -45,10 +45,10 @@
 #include <mbsim/contact_kinematics/point_linesegment.h>
 #include <mbsim/contact_kinematics/sphere_frustum.h>
 #include <mbsim/contact_kinematics/sphere_plane.h>
-#include <mbsim/contact_kinematics/sphere_rectangle.h>
+#include <mbsim/contact_kinematics/sphere_plate.h>
 #include <mbsim/contact_kinematics/sphere_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/sphere_sphere.h>
-#include <mbsim/contact_kinematics/rectangle_polynomialfrustum.h>
+#include <mbsim/contact_kinematics/plate_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 // --- List of contact kinematic implementations - END ---
 
@@ -113,8 +113,8 @@ namespace MBSim {
     else if ( strcmp(contour0, "Edge")==0 && strcmp(contour1, "Edge")==0 )
       return new ContactKinematicsEdgeEdge;
 
-    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Rectangle")==0 )
-      return new ContactKinematicsPointRectangle;
+    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Plate")==0 )
+      return new ContactKinematicsPointPlate;
 
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1s")==0 )
       return new ContactKinematicsPointPlanarContour;
@@ -152,8 +152,8 @@ namespace MBSim {
     else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Plane")==0 )
       return new ContactKinematicsSpherePlane;
 
-    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Rectangle")==0 )
-      return new ContactKinematicsSphereRectangle;
+    else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Plate")==0 )
+      return new ContactKinematicsSpherePlate;
 
     else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
       return new ContactKinematicsSpherePolynomialFrustum;
@@ -161,8 +161,8 @@ namespace MBSim {
     else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Sphere")==0 )
       return new ContactKinematicsSphereSphere;
 
-    else if ( strcmp(contour0, "Rectangle")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
-      return new ContactKinematicsRectanglePolynomialFrustum;
+    else if ( strcmp(contour0, "Plate")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
+      return new ContactKinematicsPlatePolynomialFrustum;
 
     else
       return 0;

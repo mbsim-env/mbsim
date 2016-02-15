@@ -23,7 +23,7 @@
 #include "contact_kinematics.h"
 
 #include <mbsim/contours/polynomial_frustum.h>
-#include <mbsim/contours/rectangle.h>
+#include <mbsim/contours/plate.h>
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 
@@ -143,21 +143,21 @@ namespace MBSim {
   };
 
   /*!
-   * \brief class for contact kinematics between convex frustum and an rectangle
+   * \brief class for contact kinematics between convex frustum and an plate
    * \author Kilian Grundl, Tingting Sun
    * \date  09.10.2012
    */
 
-  class ContactKinematicsRectanglePolynomialFrustum : public MBSim::ContactKinematics {
+  class ContactKinematicsPlatePolynomialFrustum : public MBSim::ContactKinematics {
     public:
-      ContactKinematicsRectanglePolynomialFrustum();
-      virtual ~ContactKinematicsRectanglePolynomialFrustum();
+      ContactKinematicsPlatePolynomialFrustum();
+      virtual ~ContactKinematicsPlatePolynomialFrustum();
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double & g, std::vector<Frame*> &cFrame, int index = 0);
       virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<Frame*> &cFrame) {
-        throw MBSimError("(ContactKinematicsRectanglePolynomialFrustum::updatewb): not implemented!");
+        throw MBSimError("(ContactKinematicsPlatePolynomialFrustum::updatewb): not implemented!");
       }
 
       void setGridSizeY(int gridSizeY_);
@@ -171,12 +171,12 @@ namespace MBSim {
 
       /***************************************************/
       /*!
-       * \brief check if there is a contact point within the rectangle between the frustum and the rectangle
-       * \return true (if) or false (if there is no contact within the rectangle)
+       * \brief check if there is a contact point within the plate between the frustum and the plate
+       * \return true (if) or false (if there is no contact within the plate)
        *
        * If there is contact the position and the cpData information is setted right away
        */
-      bool cpLocationInRectangle(double t, double & g, std::vector<Frame*> &cFrame);
+      bool cpLocationInPlate(double t, double & g, std::vector<Frame*> &cFrame);
 
       /*!
        * \brief if the unique contact point cannot be found a grid is walked through and a weighted sum results in the contact point
@@ -191,7 +191,7 @@ namespace MBSim {
       bool cornerContact(double t, double & g, std::vector<Frame*> &cFrame);
 
       /*!
-       * \brief checks if there is a contact on one edge of the rectangle
+       * \brief checks if there is a contact on one edge of the plate
        * \return true (if) or false (if there is no contact at one of the corner points)
        *
        * \todo: unefficient and only finding (one) intersection point --> There should always be two intersection points and then using the middle or something
@@ -217,15 +217,15 @@ namespace MBSim {
       /*!
        * \brief check if frustum point identified by coordinate x is possible contact point
        * \param x height-coordinate of possible contact point
-       * \param n normal vector of the rectangle
+       * \param n normal vector of the plate
        */
       int checkPossibleContactPoint(double t, const double & x, const fmatvec::Vec3 & n);
 
       /*!
-       * \brief compute distance between given point and rectangle
+       * \brief compute distance between given point and plate
        * \param point Given point in world coordinates
        */
-      double distance2Rectangle(double t, const fmatvec::Vec3 & point);
+      double distance2Plate(double t, const fmatvec::Vec3 & point);
 
       /*!
        * \brief updates the grid for the discrete contact point approximation
@@ -233,9 +233,9 @@ namespace MBSim {
       void updateGrid();
 
       /**
-       * \brief contour index of rectangle (in cpData)
+       * \brief contour index of plate (in cpData)
        */
-      int irectangle;
+      int iplate;
 
       /**
        * \brief contour index of frustum (in cpData)
@@ -243,9 +243,9 @@ namespace MBSim {
       int ifrustum;
 
       /**
-       * \brief pointer to the contour class for the rectangle
+       * \brief pointer to the contour class for the plate
        */
-      Rectangle *rectangle;
+      Plate *plate;
 
       /*!
        * \brief pointer to the contour class for the polynomial frustum
@@ -278,7 +278,7 @@ namespace MBSim {
       double x2;
 
       /*!
-       * \brief array of the four corner points of the rectangle in the frame of the frustum
+       * \brief array of the four corner points of the plate in the frame of the frustum
        */
       fmatvec::Vec3 cornerPoints[4];
 

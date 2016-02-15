@@ -3,10 +3,11 @@
 #include <fmatvec/fmatvec.h>
 
 #include <mbsim/environment.h>
+#include <mbsim/fixed_relative_frame.h>
 #include <mbsim/rigid_body.h>
 #include <mbsim/contours/frustum.h>
 #include <mbsim/contours/sphere.h>
-#include <mbsim/contours/rectangle.h>
+#include <mbsim/contours/plate.h>
 #include <mbsim/joint.h>
 #include <mbsim/isotropic_rotational_spring_damper.h>
 #include <mbsim/contact.h>
@@ -48,7 +49,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     rArea(0) = 0;
     FixedRelativeFrame * refBoden = new FixedRelativeFrame("Oben", rArea, BasicRotAIKz(M_PI_2));
     addFrame(refBoden);
-    Rectangle * upperTable = new Rectangle("Oben");
+    Plate * upperTable = new Plate("Oben");
     upperTable->setYLength(3e-2);
     upperTable->setZLength(1e-1);
     upperTable->setFrameOfReference(refBoden);

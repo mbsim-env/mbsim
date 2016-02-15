@@ -115,8 +115,8 @@ namespace MBSim {
 
       if (fabs(z_CF_nrm2) < epsroot()) { // circle - circle
         if (u_CF < 0. || u_CF > h_F)
-          g = 1.; // not in relevant rectangle
-        else { // relevant rectangle
+          g = 1.; // not in relevant plate
+        else { // relevant plate
           double r_Fh = r_F(0) + tan(phi_F) * u_CF;
 
           if (outCont_F && !outCont_C) { // inner circle, outer frustum

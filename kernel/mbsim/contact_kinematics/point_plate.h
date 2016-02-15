@@ -26,33 +26,33 @@
 namespace MBSim {
 
   class Point;
-  class Rectangle;
+  class Plate;
 
   /** 
-   * \brief pairing point to rectangle (bounded plane)
+   * \brief pairing point to plate (bounded plane)
    * \author Martin Foerg
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    * \todo change stage to new interface TODO
    */
-  class ContactKinematicsPointRectangle : public ContactKinematics {
+  class ContactKinematicsPointPlate : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsPointRectangle::updatewb): Not implemented!"); };
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsPointPlate::updatewb): Not implemented!"); };
       /***************************************************/
     
     private:
       /**
        * \brief contour index
        */
-      int ipoint, irectangle;
+      int ipoint, iplate;
       
       /**
        * \brief contour classes
        */
       Point *point;
-      Rectangle *rectangle;
+      Plate *plate;
 
   };
 

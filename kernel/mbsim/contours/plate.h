@@ -32,25 +32,25 @@
 namespace MBSim {
 
   /**
-   *  \brief RigidContour Rectangle
+   *  \brief RigidContour Plate
    *  \date 2009-07-14 some comments (Bastian Esefeld)
    *  \date 2009-07-16 new file (Bastian Esefeld)
    */
-  class Rectangle : public Plane {
+  class Plate : public Plane {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      Rectangle(const std::string &name="", Frame *R=0);
+      Plate(const std::string &name="", Frame *R=0);
 
-      Rectangle(const std::string &name, double yL, double zL, Frame *R=0);
+      Plate(const std::string &name, double yL, double zL, Frame *R=0);
 
-      Rectangle(const std::string &name, double yL, double zL, double t, Frame *R=0);
+      Plate(const std::string &name, double yL, double zL, double t, Frame *R=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const {
-        return "Rectangle";
+        return "Plate";
       }
       virtual void init(InitStage stage);
       /**********************************/
@@ -70,7 +70,7 @@ namespace MBSim {
       double getZLength() const {
         return zLength;
       }
-      //get vertex of the rectangle, under reference frame of the rectangle
+      //get vertex of the plate, under reference frame of the plate
       const fmatvec::Vec3 & getA() const {
         return RrA;
       }
@@ -87,12 +87,12 @@ namespace MBSim {
 
       /***************************************************//*new added part by ting 05.10.2012*/
       /*!
-       * \brief if the point and rectangle are on the same plane by default, this function checks if a point lies in the rectangle;
-       *        else this function checks if the projection of the point lies in the rectangle;
+       * \brief if the point and plate are on the same plane by default, this function checks if a point lies in the plate;
+       *        else this function checks if the projection of the point lies in the plate;
        * \param Point: position of the point
-       * \return true: point in the rectangle
+       * \return true: point in the plate
        */
-      bool PointInRectangle(const fmatvec::Vec3& Point); //need to be check again.......................................................
+      bool PointInPlate(const fmatvec::Vec3& Point); //need to be check again.......................................................
 
       /*!
        * \brief check if a point lies in the circle (point and circle are on the same plane)
@@ -110,10 +110,10 @@ namespace MBSim {
       fmatvec::Vec3 Point_closest_toCircle_onLineseg(const fmatvec::Vec3& EndP1, const fmatvec::Vec3& EndP2, const fmatvec::Vec3& CenCir);
 
       /*!
-       * \brief check if this rectangle intersect with a circle,
+       * \brief check if this plate intersect with a circle,
        * \param radius radius of the circle
        * \param CenCir center of the circle in world coordinates
-       * \return true: this rectangle intersects the circle
+       * \return true: this plate intersects the circle
        * \attention: the circle is the intersection circle between the sphere and the plane, thus the center of the
        * circle is different from the center of the sphere.
        */

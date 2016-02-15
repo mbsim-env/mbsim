@@ -19,7 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/room.h"
-#include <mbsim/contours/rectangle.h>
+#include <mbsim/contours/plate.h>
 #include <mbsim/fixed_relative_frame.h>
 #include <mbsim/utils/rotarymatrices.h>
 
@@ -102,11 +102,11 @@ namespace MBSim {
         frame->setFrameOfReference(R);
         addFrame(frame);
 
-        Rectangle * rectangle = new Rectangle(s.str());
-        rectangle->setYLength(limit[i](0));
-        rectangle->setZLength(limit[i](1));
-        rectangle->setFrameOfReference(frame);
-        addContour(rectangle);
+        Plate * plate = new Plate(s.str());
+        plate->setYLength(limit[i](0));
+        plate->setZLength(limit[i](1));
+        plate->setFrameOfReference(frame);
+        addContour(plate);
       }
     }
     else if (stage == plotting) {

@@ -2,7 +2,7 @@
 #include <mbsim/utils/rotarymatrices.h>
 #include "mbsim/fixed_relative_frame.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/contours/rectangle.h"
+#include "mbsim/contours/plate.h"
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
@@ -60,37 +60,37 @@ System::System(const string &projectName) :
   polyfrustumcontour->setFrameOfReference(polyFrustumFrame);
   polyfrustum->addContour(polyfrustumcontour);
 
-  /*Rectangle initialisation*/
+  /*Plate initialisation*/
 
   //CONTOUR
-  { // Rectangle1
-    Rectangle* rectangle = new Rectangle("AREA1");
-    rectangle->setYLength(1);
-    rectangle->setZLength(1);
-    rectangle->enableOpenMBV();
+  { // Plate1
+    Plate* plate = new Plate("AREA1");
+    plate->setYLength(1);
+    plate->setZLength(1);
+    plate->enableOpenMBV();
 
     //BODY
-    RigidBody* rectangleBody = new RigidBody("RectangleBody1");
-    rectangleBody->setMass(1);
-    rectangleBody->setFrameOfReference(this->getFrameI());
-    rectangleBody->setInertiaTensor(SymMat3(EYE));
+    RigidBody* plateBody = new RigidBody("Plate");
+    plateBody->setMass(1);
+    plateBody->setFrameOfReference(this->getFrameI());
+    plateBody->setInertiaTensor(SymMat3(EYE));
 
-    rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
-    rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
+    plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+    plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
-    rectangleBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
-    rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    plateBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
+    plateBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-    this->addObject(rectangleBody);
+    this->addObject(plateBody);
 
-    FixedRelativeFrame * rectangleFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIx(M_2_PI));
-    rectangleBody->addFrame(rectangleFrame);
-    rectangle->setFrameOfReference(rectangleFrame);
-    rectangleBody->addContour(rectangle);
+    FixedRelativeFrame * plateFrame = new FixedRelativeFrame("PlateFrame", Vec3(), BasicRotAKIx(M_2_PI));
+    plateBody->addFrame(plateFrame);
+    plate->setFrameOfReference(plateFrame);
+    plateBody->addContour(plate);
 
-    //Add contact between frustum and rectangle
-    Contact* contact = new Contact("FrustumRectangle1");
-    contact->connect(polyfrustumcontour, rectangle);
+    //Add contact between frustum and plate
+    Contact* contact = new Contact("FrustumPlate1");
+    contact->connect(polyfrustumcontour, plate);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
@@ -106,34 +106,34 @@ System::System(const string &projectName) :
     this->addLink(contact);
   }
 
-  { // Rectangle2
-    Rectangle* rectangle = new Rectangle("AREA2");
-    rectangle->setYLength(2);
-    rectangle->setZLength(2);
-    rectangle->enableOpenMBV();
+  { // Plate2
+    Plate* plate = new Plate("AREA2");
+    plate->setYLength(2);
+    plate->setZLength(2);
+    plate->enableOpenMBV();
 
     //BODY
-    RigidBody* rectangleBody = new RigidBody("RectangleBody2");
-    rectangleBody->setMass(1);
-    rectangleBody->setFrameOfReference(this->getFrameI());
-    rectangleBody->setInertiaTensor(SymMat3(EYE));
+    RigidBody* plateBody = new RigidBody("PlateBody2");
+    plateBody->setMass(1);
+    plateBody->setFrameOfReference(this->getFrameI());
+    plateBody->setInertiaTensor(SymMat3(EYE));
 
-    rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
-    rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
+    plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+    plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
-    rectangleBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
-    rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    plateBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
+    plateBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-    this->addObject(rectangleBody);
+    this->addObject(plateBody);
 
-    FixedRelativeFrame * rectangleFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI));
-    rectangleBody->addFrame(rectangleFrame);
-    rectangle->setFrameOfReference(rectangleFrame);
-    rectangleBody->addContour(rectangle);
+    FixedRelativeFrame * plateFrame = new FixedRelativeFrame("PlateFrame", Vec3(), BasicRotAKIz(M_PI));
+    plateBody->addFrame(plateFrame);
+    plate->setFrameOfReference(plateFrame);
+    plateBody->addContour(plate);
 
-    //Add contact between frustum and rectangle
-    Contact* contact = new Contact("FrustumRectangle2");
-    contact->connect(polyfrustumcontour, rectangle);
+    //Add contact between frustum and plate
+    Contact* contact = new Contact("FrustumPlate2");
+    contact->connect(polyfrustumcontour, plate);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
@@ -150,34 +150,34 @@ System::System(const string &projectName) :
     this->addLink(contact);
   }
 
-  { // Rectangle3
-    Rectangle* rectangle = new Rectangle("AREA3");
-    rectangle->setYLength(0.5);
-    rectangle->setZLength(1);
-    rectangle->enableOpenMBV();
+  { // Plate3
+    Plate* plate = new Plate("AREA3");
+    plate->setYLength(0.5);
+    plate->setZLength(1);
+    plate->enableOpenMBV();
 
     //BODY
-    RigidBody* rectangleBody = new RigidBody("RectangleBody3");
-    rectangleBody->setMass(1);
-    rectangleBody->setFrameOfReference(this->getFrameI());
-    rectangleBody->setInertiaTensor(SymMat3(EYE));
+    RigidBody* plateBody = new RigidBody("PlateBody3");
+    plateBody->setMass(1);
+    plateBody->setFrameOfReference(this->getFrameI());
+    plateBody->setInertiaTensor(SymMat3(EYE));
 
-    rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
-    rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
+    plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
+    plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
-    rectangleBody->setInitialGeneralizedPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
-    rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    plateBody->setInitialGeneralizedPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
+    plateBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-    this->addObject(rectangleBody);
+    this->addObject(plateBody);
 
-    FixedRelativeFrame * rectangleFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI) * BasicRotAIKy(M_PI_2));
-    rectangleBody->addFrame(rectangleFrame);
-    rectangle->setFrameOfReference(rectangleFrame);
-    rectangleBody->addContour(rectangle);
+    FixedRelativeFrame * plateFrame = new FixedRelativeFrame("PlateFrame", Vec3(), BasicRotAKIz(M_PI) * BasicRotAIKy(M_PI_2));
+    plateBody->addFrame(plateFrame);
+    plate->setFrameOfReference(plateFrame);
+    plateBody->addContour(plate);
 
-    //Add contact between frustum and rectangle
-    Contact* contact = new Contact("FrustumRectangle3");
-    contact->connect(polyfrustumcontour, rectangle);
+    //Add contact between frustum and plate
+    Contact* contact = new Contact("FrustumPlate3");
+    contact->connect(polyfrustumcontour, plate);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
