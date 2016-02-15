@@ -7,6 +7,8 @@ liblink_la_SOURCES = contact.cc\
 		     joint.cc\
 		     gear.cc\
 		     spring_damper.cc\
+		     directional_spring_damper.cc\
+		     generalized_spring_damper.cc\
 		     friction.cc\
 		     extern_generalized_io.cc\
 		     frame_link.cc\
@@ -26,6 +28,8 @@ linkinclude_HEADERS = contact.h\
 		      joint.h\
 		      gear.h\
 		      spring_damper.h\
+		      directional_spring_damper.h\
+		      generalized_spring_damper.h\
 		      friction.h\
 		      extern_generalized_io.h\
 		      frame_link.h\

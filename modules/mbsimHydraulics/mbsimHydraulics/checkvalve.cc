@@ -24,7 +24,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/circle.h"
-#include "mbsim/links/spring_damper.h"
+#include "mbsim/links/directional_spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsimHydraulics/rigid_line.h"

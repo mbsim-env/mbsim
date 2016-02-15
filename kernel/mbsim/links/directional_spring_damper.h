@@ -16,10 +16,10 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _SPRING_DAMPER_H_
-#define _SPRING_DAMPER_H_
+#ifndef _DIRECTIONAL_SPRING_DAMPER_H_
+#define _DIRECTIONAL_SPRING_DAMPER_H_
 
-#include "mbsim/links/frame_link.h"
+#include "mbsim/links/floating_frame_link.h"
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -33,23 +33,28 @@ namespace MBSim {
    * This class connects two frames and applies a force in it, which depends in the
    * distance and relative velocity between the two frames.
    */
-  class SpringDamper : public FrameLink {
+  class DirectionalSpringDamper : public FloatingFrameLink {
     protected:
+      double dist;
       Function<double(double,double)> *func;
       double l0;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
-      SpringDamper(const std::string &name="");
-      ~SpringDamper();
+      DirectionalSpringDamper(const std::string &name="");
+      ~DirectionalSpringDamper();
+
+      void updatePositions(double t, Frame *frame);
+      void updateGeneralizedPositions(double t);
+      void updateGeneralizedVelocities(double t);
       void updatelaF(double t);
 
       /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       bool isSingleValued() const { return true; }
-      std::string getType() const { return "SpringDamper"; }
+      std::string getType() const { return "DirectionalSpringDamper"; }
       void init(InitStage stage);
       /*****************************/
 
@@ -67,11 +72,15 @@ namespace MBSim {
       /** \brief Set unloaded length. */
       void setUnloadedLength(double l0_) { l0 = l0_; }
 
+      /**
+       * \param local force direction represented in first frame
+       */
+      void setForceDirection(const fmatvec::Vec3 &dir) { forceDir=dir/nrm2(dir); }
+
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency);
         coilspringOpenMBV=ombv.createOpenMBV();

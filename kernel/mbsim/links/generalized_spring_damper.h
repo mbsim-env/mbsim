@@ -16,10 +16,10 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _SPRING_DAMPER_H_
-#define _SPRING_DAMPER_H_
+#ifndef _GENERALIZED_SPRING_DAMPER_H_
+#define _GENERALIZED_SPRING_DAMPER_H_
 
-#include "mbsim/links/frame_link.h"
+#include "mbsim/links/rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -29,54 +29,50 @@
 
 namespace MBSim {
 
-  /** \brief A spring damper force law.
-   * This class connects two frames and applies a force in it, which depends in the
-   * distance and relative velocity between the two frames.
-   */
-  class SpringDamper : public FrameLink {
+  class GeneralizedSpringDamper : public RigidBodyLink {
     protected:
       Function<double(double,double)> *func;
       double l0;
+      RigidBody *body[2];
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
-      SpringDamper(const std::string &name="");
-      ~SpringDamper();
-      void updatelaF(double t);
+      GeneralizedSpringDamper(const std::string &name="");
+      ~GeneralizedSpringDamper();
 
-      /*INHERITED INTERFACE OF LINK*/
+      void updateGeneralizedForces(double t);
+
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
-      bool isSingleValued() const { return true; }
-      std::string getType() const { return "SpringDamper"; }
+      virtual bool isSingleValued() const { return true; }
+      std::string getType() const { return "GeneralizedSpringDamper"; }
       void init(InitStage stage);
-      /*****************************/
 
-      /** \brief Set function for the force calculation.
-       * The first input parameter to that function is the distance relative to the unloaded length.
-       * The second input parameter to that function is the relative velocity.       
-       * The return value of that function is used as the force of the SpringDamper.
-       */
-      void setForceFunction(Function<double(double,double)> *func_) {
+      /** \brief Set the function for the generalized force. */
+      void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
         func=func_;
         func->setParent(this);
-        func->setName("Force");
+        func->setName("GeneralizedFoce");
       }
 
-      /** \brief Set unloaded length. */
-      void setUnloadedLength(double l0_) { l0 = l0_; }
+      /** \brief Set unloaded generalized length. */
+      void setUnloadedGeneralizedLength(double l0_) { l0 = l0_; }
+
+      void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
+      void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency);
         coilspringOpenMBV=ombv.createOpenMBV();
       }
 #endif
+    private:
+      std::string saved_body1, saved_body2;
   };
 
 }

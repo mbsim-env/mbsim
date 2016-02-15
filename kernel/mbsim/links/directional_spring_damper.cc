@@ -17,13 +17,14 @@
  */
 
 #include <config.h>
-#include "mbsim/links/spring_damper.h"
-#include "mbsim/frame.h"
-#include "mbsim/utils/eps.h"
+#include "mbsim/links/directional_spring_damper.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsim/objects/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include "openmbvcppinterface/group.h"
+#include "openmbvcppinterface/objectfactory.h"
 #endif
 
 using namespace std;
@@ -34,23 +35,36 @@ using namespace boost;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
 
-  SpringDamper::SpringDamper(const string &name) : FrameLink(name), func(NULL), l0(0)
-  {}
+  DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : FloatingFrameLink(name), func(NULL), l0(0) {
+  }
 
-  SpringDamper::~SpringDamper() {
+  DirectionalSpringDamper::~DirectionalSpringDamper() {
     delete func;
   }
 
-  void SpringDamper::updatelaF(double t) {
+  void DirectionalSpringDamper::updatePositions(double t, Frame *frame_) {
+    frame_->setPosition(frame[1]->getPosition() - getGlobalForceDirection(t)*(getGlobalForceDirection(t).T()*getGlobalRelativePosition(t)));
+    frame_->setOrientation(frame[0]->getOrientation());
+  }
+
+  void DirectionalSpringDamper::updateGeneralizedPositions(double t) {
+    rrel=getGlobalForceDirection(t).T()*getGlobalRelativePosition(t);
+    updrrel = false;
+  }
+
+  void DirectionalSpringDamper::updateGeneralizedVelocities(double t) {
+    vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
+    updvrel = false;
+  }
+
+  void DirectionalSpringDamper::updatelaF(double t) {
     lambdaF(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
-    if(rrel(0)<=epsroot() && abs(lambda(0))>epsroot())
-      msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
     updlaF = false;
   }
 
-  void SpringDamper::init(InitStage stage) {
+  void DirectionalSpringDamper::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -62,15 +76,15 @@ namespace MBSim {
           }
         }
 #endif
-        FrameLink::init(stage);
+        FloatingFrameLink::init(stage);
       }
     }
     else
-      FrameLink::init(stage);
+      FloatingFrameLink::init(stage);
     func->init(stage);
   }
 
-  void SpringDamper::plot(double t,double dt) {
+  void DirectionalSpringDamper::plot(double t,double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -78,7 +92,7 @@ namespace MBSim {
           Vec3 WrOToPoint;
           Vec3 WrOFromPoint;
 
-          WrOFromPoint = frame[0]->getPosition(t);
+          WrOFromPoint = C.getPosition(t);
           WrOToPoint   = frame[1]->getPosition(t);
           vector<double> data;
           data.push_back(t); 
@@ -93,16 +107,18 @@ namespace MBSim {
         }
       }
 #endif
-      FrameLink::plot(t,dt);
+      FloatingFrameLink::plot(t,dt);
     }
   }
 
-  void SpringDamper::initializeUsingXML(DOMElement *element) {
-    FrameLink::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
+  void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {
+    FloatingFrameLink::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
+    setForceDirection(getVec(e,3));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
     if(e) l0 = Element::getDouble(e);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
