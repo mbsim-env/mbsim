@@ -22,7 +22,6 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/constraint.h"
 #include <openmbvcppinterface/group.h>
 
 using namespace std;

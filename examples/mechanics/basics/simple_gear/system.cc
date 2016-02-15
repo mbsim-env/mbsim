@@ -6,7 +6,7 @@
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/constraint.h"
+#include "mbsim/constraints/gear_constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frame.h"
@@ -18,7 +18,7 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 
-Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double r1 = 0.02;
 #ifdef HAVE_OPENMBVCPPINTERFACE
   double r2 = 0.02;

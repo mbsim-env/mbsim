@@ -4,7 +4,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/constraint.h"
+#include "mbsim/constraints/gear_constraint.h"
 #include "mbsimPowertrain/differential_gear.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/basic_functions.h"

@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/constraint.h"
+#include "mbsim/constraints/joint_constraint.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/joint.h"

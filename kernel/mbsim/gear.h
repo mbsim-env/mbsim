@@ -25,7 +25,11 @@
 
 namespace MBSim {
 
-  class Transmission;
+  struct Transmission {
+    Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
+    RigidBody *body;
+    double ratio;
+  };
 
   class Gear : public RigidBodyLink {
     protected:

@@ -7,7 +7,7 @@ using namespace MBSimIntegrator;
 
 int main (int argc, char* argv[]) {
 
-  DynamicSystemSolver *sys = new Gear("MBS");
+  DynamicSystemSolver *sys = new System("MBS");
   sys->initialize();
   //
   DOPRI5Integrator integrator;
