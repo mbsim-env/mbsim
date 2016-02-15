@@ -9,7 +9,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <mbsimControl/extern_signal_source.h>
 #include <mbsimControl/extern_signal_sink.h>
-#include <mbsim/extern_generalized_io.h>
+#include <mbsim/links/extern_generalized_io.h>
 
 namespace MBSim {
   class DynamicSystem;
