@@ -12,8 +12,8 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include "mbsim/functions/tabular_functions.h"
-#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/tabular_function.h"
+#include "mbsim/functions/constant_function.h"
 #include "mbsimControl/object_sensors.h"
 
 #include "mbsim/utils/rotarymatrices.h"

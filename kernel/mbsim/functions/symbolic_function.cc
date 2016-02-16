@@ -19,8 +19,7 @@
 
 #include <config.h>
 #ifdef HAVE_CASADI
-#include <mbsim/functions/symbolic_functions.h>
-#include <mbsim/element.h>
+#include <mbsim/functions/symbolic_function.h>
 using namespace fmatvec;
 #endif
 

@@ -17,81 +17,13 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#ifndef _TABULAR_FUNCTIONS_H_
-#define _TABULAR_FUNCTIONS_H_
+#ifndef _TWO_DIMENSIONAL_TABULAR_FUNCTIONS_H_
+#define _TWO_DIMENSIONAL_TABULAR_FUNCTIONS_H_
 
-#include <iostream>
 #include "mbsim/functions/function.h"
-#include "mbsim/objectfactory.h"
-#include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 
 namespace MBSim {
-
-  template<typename Sig> class TabularFunction; 
-
-  template<typename Ret, typename Arg>
-  class TabularFunction<Ret(Arg)> : public Function<Ret(Arg)> {
-
-    public:
-      TabularFunction() : xIndexOld(0) { }
-      TabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : x(x_), y(y_), xIndexOld(0) { }
-      Ret operator()(const Arg& xVal_) {
-        double xVal = ToDouble<Arg>::cast(xVal_);
-        int i = xIndexOld;
-        if (xVal <= x(0)) {
-          xIndexOld = 0;
-          return FromVecV<Ret>::cast(trans(y.row(0)));
-        }
-        else if (xVal >= x(x.size() - 1)) {
-          xIndexOld = x.size() - 1;
-          return FromVecV<Ret>::cast(trans(y.row(x.size() - 1)));
-        }
-        else if (xVal <= x(i)) {
-          while (xVal < x(i))
-            i--;
-        }
-        else {
-          do
-            i++;
-          while (xVal > x(i));
-          i--;
-        }
-        xIndexOld = i;
-        return FromVecV<Ret>::cast(trans(y.row(i) + (xVal - x(i)) * (y.row(i + 1) - y.row(i)) / (x(i + 1) - x(i))));
-      }
-      void initializeUsingXML(xercesc::DOMElement * element) {
-        xercesc::DOMElement *e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
-        if (e) {
-          x = Element::getVec(e);
-          e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-          y = Element::getMat(e, x.size(), 0);
-        }
-        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
-        if (e) {
-          fmatvec::MatV xy = Element::getMat(e);
-          if(xy.cols() <= 1)
-            THROW_MBSIMERROR("Dimension missmatch in size of xy");
-          x = xy.col(0);
-          y = xy(fmatvec::Range<fmatvec::Var, fmatvec::Var>(0, xy.rows() - 1), fmatvec::Range<fmatvec::Var, fmatvec::Var>(1, xy.cols() - 1));
-        }
-      }
-      void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
-        if(stage==Element::preInit) {
-          for(int i=1; i<x.size(); i++)
-            if(x(i) <= x(i-1))
-              THROW_MBSIMERROR("Values of x must be strictly monotonic increasing!");
-          if(y.rows() != x.size())
-            THROW_MBSIMERROR("Dimension missmatch in size of x");
-        }
-      }
-    protected:
-      fmatvec::VecV x;
-      fmatvec::MatV y;
-    private:
-      int xIndexOld;
-  };
 
   template<typename Sig> class TwoDimensionalTabularFunction; 
 
@@ -208,7 +140,6 @@ namespace MBSim {
           xIndexMinus = xIndexPlus - 1;
         }
       }
-
   };
 }
 

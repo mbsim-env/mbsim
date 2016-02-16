@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/tabular_functions.h"
+#include "mbsim/functions/tabular_function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -30,8 +30,4 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TabularFunction<VecV(double)>, MBSIM%"TabularFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TabularFunction<VecV(VecV)>, MBSIM%"TabularFunction")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<double(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<VecV(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<VecV(VecV,VecV)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<Vec(Vec,Vec)>, MBSIM%"TwoDimensionalTabularFunction")
 }

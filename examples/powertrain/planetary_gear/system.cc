@@ -4,7 +4,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsimPowertrain/planetary_gear.h"
-#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/constant_function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"

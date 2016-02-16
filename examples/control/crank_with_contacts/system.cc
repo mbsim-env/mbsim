@@ -13,8 +13,8 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include "mbsim/functions/basic_functions.h"
-#include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/constant_function.h"
+#include "mbsim/functions/symbolic_function.h"
 
 #include "mbsimControl/signal_function.h"
 #include "mbsimControl/linear_transfer_system.h"

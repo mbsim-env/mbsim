@@ -5,8 +5,8 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/functions/tabular_functions.h"
-#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/tabular_function.h"
+#include "mbsim/functions/constant_function.h"
 
 using namespace std;
 using namespace fmatvec;

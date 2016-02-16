@@ -17,14 +17,10 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#include <string>
-
-
-#include "mbsim/utils/eps.h"
-#include "mbsim/functions/basic_functions.h"
-#include "mbsim/functions/tabular_functions.h"
-#include "mbsim/utils/nonlinear_algebra.h"
 #include "rigid_contour_functions1s.h"
+#include "mbsim/utils/eps.h"
+#include "mbsim/utils/nonlinear_algebra.h"
+#include <string>
 
 using namespace std;
 using namespace fmatvec;

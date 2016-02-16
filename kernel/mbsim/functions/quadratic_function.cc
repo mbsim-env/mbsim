@@ -17,9 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-
 #include <config.h>
-#include "mbsim/functions/vector_valued_functions.h"
+#include "mbsim/functions/quadratic_function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -27,7 +26,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<VecV(double)>, MBSIM%"VectorValuedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<Vec3(double)>, MBSIM%"VectorValuedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<VecV(VecV)>, MBSIM%"VectorValuedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(QuadraticFunction<double(double)>, MBSIM%"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(QuadraticFunction<VecV(double)>, MBSIM%"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(QuadraticFunction<Vec3(double)>, MBSIM%"QuadraticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(QuadraticFunction<VecV(VecV)>, MBSIM%"QuadraticFunction")
+
 }

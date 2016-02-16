@@ -12,7 +12,7 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/constant_function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/polygonpoint.h"

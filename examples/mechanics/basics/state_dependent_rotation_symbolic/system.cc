@@ -1,10 +1,9 @@
 #include "system.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
-#include "mbsim/functions/symbolic_functions.h"
-#include "mbsim/functions/basic_functions.h"
+#include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/functions/nested_functions.h"
+#include "mbsim/functions/nested_function.h"
 #include "mbsim/observers/kinematics_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

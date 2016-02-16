@@ -1,6 +1,6 @@
 #include <mbsim/utils/stopwatch.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/functions/tabular_functions.h>
+#include <mbsim/functions/tabular_function.h>
 
 #include <fstream>
 

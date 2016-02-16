@@ -23,7 +23,7 @@
 #include "mbsimHydraulics/leakage_line.h"
 #include "mbsimHydraulics/dimensionless_line.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsim/functions/tabular_functions.h"
+#include "mbsim/functions/tabular_function.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"

@@ -20,10 +20,7 @@
 #ifndef _FOURIER_FUNCTION_H_
 #define _FOURIER_FUNCTION_H_
 
-#include <iostream>
 #include "mbsim/functions/function.h"
-#include "mbsim/objectfactory.h"
-#include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 
 namespace MBSim {

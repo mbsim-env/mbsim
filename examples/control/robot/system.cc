@@ -4,8 +4,8 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematic_functions.h"
-#include "mbsim/functions/tabular_functions.h"
-#include "mbsim/functions/symbolic_functions.h"
+#include "mbsim/functions/tabular_function.h"
+#include "mbsim/functions/symbolic_function.h"
 
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/object_sensors.h"
