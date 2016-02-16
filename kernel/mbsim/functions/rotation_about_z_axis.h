@@ -1,0 +1,52 @@
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: martin.o.foerg@gmail.com
+ */
+
+#ifndef _ROTATION_ABOUT_Z_AXIS_H_
+#define _ROTATION_ABOUT_Z_AXIS_H_
+
+#include "mbsim/functions/function.h"
+
+namespace MBSim {
+
+  template<class Arg> 
+  class RotationAboutZAxis : public Function<fmatvec::RotMat3(Arg)> {
+    private:
+      fmatvec::RotMat3 A;
+      fmatvec::Vec3 a;
+    public:
+      RotationAboutZAxis() { a.e(2) = 1; A.e(2,2) = 1; }
+      typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
+      fmatvec::RotMat3 operator()(const Arg &q) {
+        double alpha = ToDouble<Arg>::cast(q);
+        const double cosq=cos(alpha);
+        const double sinq=sin(alpha);
+        A.e(0,0) = cosq;
+        A.e(1,0) = sinq;
+        A.e(0,1) = -sinq;
+        A.e(1,1) = cosq;
+        return A;
+      }
+      typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) { return a; }
+      typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) { return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1); }
+      bool constParDer() const { return true; }
+  };
+
+}
+
+#endif
