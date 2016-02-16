@@ -4,7 +4,6 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/links/maxwell_contact.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
-#include "mbsim/contour.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contact_kinematics/circle_frustum.h"

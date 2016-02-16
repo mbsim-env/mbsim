@@ -1,6 +1,5 @@
 #include "system.h"
 #include "group2.h"
-#include "mbsim/frame.h"
 #include "mbsim/environment.h"
 
 using namespace MBSim;

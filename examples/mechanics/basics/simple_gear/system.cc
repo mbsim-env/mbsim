@@ -9,7 +9,6 @@
 #include "mbsim/constraints/gear_constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
 #endif

@@ -1,7 +1,7 @@
 #ifndef PRESS_BOUND_H
 #define PRESS_BOUND_H
 
-#include <mbsim/link.h>
+#include <mbsim/links/link.h>
 #include <vector>
 #include "line.h"
 

@@ -13,7 +13,6 @@
 #include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/coilspring.h"
 #endif

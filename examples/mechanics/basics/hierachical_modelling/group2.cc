@@ -3,7 +3,6 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/functions/kinematic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/frame.h"
 #include <openmbvcppinterface/cuboid.h>
 #endif
 

@@ -15,15 +15,12 @@
 #include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/frame.h"
 #include "openmbvcppinterface/polygonpoint.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
 #include "openmbvcppinterface/extrusion.h"
 #include "openmbvcppinterface/coilspring.h"
 #endif
-
-#include <iostream>
 
 using namespace std;
 using namespace fmatvec;

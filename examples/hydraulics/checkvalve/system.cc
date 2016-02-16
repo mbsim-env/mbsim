@@ -19,7 +19,6 @@
 #include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/frame.h"
 #include <openmbvcppinterface/arrow.h>
 #endif
 

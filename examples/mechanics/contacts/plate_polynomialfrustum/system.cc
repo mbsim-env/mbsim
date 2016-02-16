@@ -11,7 +11,6 @@
 #include "mbsim/functions/kinetic_functions.h"
 #include <mbsim/utils/colors.h>
 #include <fmatvec/fmatvec.h>
-#include <mbsim/frame.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>

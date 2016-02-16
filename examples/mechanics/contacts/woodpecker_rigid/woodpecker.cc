@@ -2,7 +2,6 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
-#include "mbsim/contour.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"

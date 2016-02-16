@@ -1,7 +1,7 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include <mbsim/object.h>
+#include <mbsim/objects/object.h>
 
 namespace MBSim {
 
