@@ -26,7 +26,14 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/environment.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/rotation_about_axes_xyz.h"
+#include "mbsim/functions/rotation_about_axes_zxz.h"
+#include "mbsim/functions/rotation_about_axes_zyx.h"
+#include "mbsim/functions/rotation_about_axes_xyz_mapping.h"
+#include "mbsim/functions/rotation_about_axes_zxz_mapping.h"
+#include "mbsim/functions/rotation_about_axes_zyx_mapping.h"
+#include "mbsim/functions/rotation_about_axes_xyz_transformed.h"
+#include "mbsim/functions/rotation_about_axes_xyz_transformed_mapping.h"
 #include "mbsim/utils/octave_utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
@@ -583,10 +590,10 @@ namespace MBSimFlexibleBody {
         PJRR = SqrMat3(EYE);
         PJR[0].set(i02,iuR,PJRR);
       }
-      else if(Atmp and dynamic_cast<RotationAboutAxesXYZ2<VecV>*>(Atmp->getFunction())) {
+      else if(Atmp and dynamic_cast<RotationAboutAxesXYZTransformed<VecV>*>(Atmp->getFunction())) {
         cb = true;
         if(coordinateTransformation) {
-          fTR = new RotationAboutAxesXYZMapping2<VecV>;
+          fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
           fTR->setParent(this);
           constJR = true;
           constjR = true;

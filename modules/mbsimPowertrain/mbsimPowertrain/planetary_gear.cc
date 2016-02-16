@@ -5,7 +5,7 @@
 #include "mbsim/links/gear.h"
 //#include "mbsim/links/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/rotation_about_fixed_axis.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
