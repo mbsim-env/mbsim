@@ -16,7 +16,6 @@ libfunction_la_SOURCES = constant_function.cc\
 			 tabular_function.cc\
 			 two_dimensional_tabular_function.cc\
 			 symbolic_function.cc\
-			 kinetic_functions.cc\
 			 piecewise_polynom_function.cc\
 			 fourier_function.cc\
 			 translation_along_x_axis.cc\
@@ -38,6 +37,15 @@ libfunction_la_SOURCES = constant_function.cc\
 			 rotation_about_axes_xyz.cc\
 			 rotation_about_axes_zxz.cc\
 			 rotation_about_axes_zyx.cc\
+			 linear_spring_damper_force.cc\
+			 nonlinear_spring_damper_force.cc\
+			 linear_regularized_unilateral_constraint.cc\
+			 linear_regularized_bilateral_constraint.cc\
+			 linear_regularized_coulomb_friction.cc\
+			 linear_regularized_stribeck_friction.cc\
+			 influence_function.cc\
+			 flexibility_influence_function.cc\
+			 constant_influence_function.cc\
 			 contact_functions.cc
 
 functionincludedir = $(includedir)/mbsim/functions
@@ -94,4 +102,13 @@ functioninclude_HEADERS = function.h\
 			  rotation_about_axes_xyz_transformed.h\
 			  rotation_about_axes_xyz_transformed_mapping.h\
 			  rotation_about_axes_zxz_transformed_mapping.h\
+			  linear_spring_damper_force.h\
+			  nonlinear_spring_damper_force.h\
+			  linear_regularized_unilateral_constraint.h\
+			  linear_regularized_bilateral_constraint.h\
+			  linear_regularized_coulomb_friction.h\
+			  linear_regularized_stribeck_friction.h\
+			  influence_function.h\
+			  flexibility_influence_function.h\
+			  constant_influence_function.h\
 			  contact_functions.h

@@ -17,17 +17,25 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#ifndef _KINETIC_FUNCTIONS_H_
-#define _KINETIC_FUNCTIONS_H_
-
-#include "mbsim/functions/linear_spring_damper_force.h"
+#include <config.h>
 #include "mbsim/functions/nonlinear_spring_damper_force.h"
-#include "mbsim/functions/linear_regularized_unilateral_constraint.h"
-#include "mbsim/functions/linear_regularized_bilateral_constraint.h"
-#include "mbsim/functions/linear_regularized_coulomb_friction.h"
-#include "mbsim/functions/linear_regularized_stribeck_friction.h"
-#include "mbsim/functions/influence_function.h"
-#include "mbsim/functions/flexibility_influence_function.h"
-#include "mbsim/functions/constant_influence_function.h"
 
-#endif
+using namespace std;
+using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
+
+namespace MBSim {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NonlinearSpringDamperForce, MBSIM%"NonlinearSpringDamperForce")
+
+  void NonlinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
+    Function<double(double,double)>::initializeUsingXML(element);
+    DOMElement *e;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"distanceForce");
+    setDistanceFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"velocityForce");
+    setVelocityFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+  }
+
+}

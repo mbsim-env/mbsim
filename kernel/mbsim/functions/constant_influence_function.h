@@ -17,17 +17,35 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#ifndef _KINETIC_FUNCTIONS_H_
-#define _KINETIC_FUNCTIONS_H_
+#ifndef _CONSTANT_INFLUENCE_FUNCTION_H_
+#define _CONSTANT_INFLUENCE_FUNCTION_H_
 
-#include "mbsim/functions/linear_spring_damper_force.h"
-#include "mbsim/functions/nonlinear_spring_damper_force.h"
-#include "mbsim/functions/linear_regularized_unilateral_constraint.h"
-#include "mbsim/functions/linear_regularized_bilateral_constraint.h"
-#include "mbsim/functions/linear_regularized_coulomb_friction.h"
-#include "mbsim/functions/linear_regularized_stribeck_friction.h"
 #include "mbsim/functions/influence_function.h"
-#include "mbsim/functions/flexibility_influence_function.h"
-#include "mbsim/functions/constant_influence_function.h"
+
+namespace MBSim {
+
+  /*
+   * \brief a class for Influence-Functions with constant coupling
+   */
+  class ConstantInfluenceFunction : public InfluenceFunction {
+    public:
+      ConstantInfluenceFunction() : couplingValue(0) {
+    }
+      ConstantInfluenceFunction(const double & couplingValue_) :
+          couplingValue(couplingValue_) {
+      }
+      virtual ~ConstantInfluenceFunction() {}
+      /* INHERITED INTERFACE OF FUNCTION2 */
+      virtual double operator()(const std::pair<Contour*, Frame*>& firstContourInfo, const std::pair<Contour*, Frame*>& secondContourInfo) {
+        return couplingValue;
+      }
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      /***************************************************/
+
+    protected:
+      double couplingValue;
+  };
+
+}
 
 #endif

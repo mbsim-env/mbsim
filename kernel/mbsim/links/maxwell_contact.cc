@@ -22,11 +22,11 @@
 
 #include <mbsim/contours/contour.h>
 #include <mbsim/constitutive_laws/maxwell_unilateral_constraint.h>
+#include <mbsim/functions/influence_function.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
-#include <mbsim/functions/kinetic_functions.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <mbsim/utils/eps.h>
