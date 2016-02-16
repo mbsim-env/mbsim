@@ -21,7 +21,7 @@
 #include <config.h> 
 #include <mbsimFlexibleBody/contact_kinematics/point_cylinderflexible.h>
 #include <mbsimFlexibleBody/contours/cylinder_flexible.h>
-#include <mbsim/contour.h>
+#include <mbsim/contours/contour.h>
 #include <mbsim/functions_contact.h>
 #include "mbsim/contours/point.h"
 

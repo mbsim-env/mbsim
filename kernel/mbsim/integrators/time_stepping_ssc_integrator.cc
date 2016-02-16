@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/element.h"
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 #include "time_stepping_ssc_integrator.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/stopwatch.h"

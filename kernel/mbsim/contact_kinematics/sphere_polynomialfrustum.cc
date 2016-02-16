@@ -20,7 +20,7 @@
 #include <config.h>
 
 #include "fmatvec/fmatvec.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "sphere_polynomialfrustum.h"
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/utils/nonlinear_algebra.h"

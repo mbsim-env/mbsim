@@ -19,7 +19,7 @@
 
 #ifndef _KINEMATICS_OBSERVER_H__
 #define _KINEMATICS_OBSERVER_H__
-#include "mbsim/observer.h"
+#include "mbsim/observers/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>

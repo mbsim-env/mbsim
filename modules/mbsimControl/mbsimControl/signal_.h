@@ -20,7 +20,7 @@
 #ifndef _SIGNALMBSIM_H_
 #define _SIGNALMBSIM_H_
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 
 namespace MBSim {
   class DynamicSystem;

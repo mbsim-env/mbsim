@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/objects/body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/dynamic_system_solver.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE

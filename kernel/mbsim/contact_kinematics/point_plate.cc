@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/point_plate.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/point.h"
 

@@ -20,7 +20,7 @@
 #include <config.h>
 
 #include "polynomial_frustum.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;

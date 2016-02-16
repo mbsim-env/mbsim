@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/point_planewithfrustum.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/utils/utils.h"

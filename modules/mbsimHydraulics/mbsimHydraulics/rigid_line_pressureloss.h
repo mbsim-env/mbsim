@@ -20,7 +20,7 @@
 #ifndef  _RIGID_LINE_PRESSURELOSS_H_
 #define  _RIGID_LINE_PRESSURELOSS_H_
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 
 namespace MBSim {
   class GeneralizedForceLaw;

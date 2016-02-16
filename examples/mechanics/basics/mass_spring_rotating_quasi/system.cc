@@ -6,7 +6,7 @@
 #include "mbsim/contours/sphere.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 
 #include "mbsim/functions/basic_functions.h"
 #include "mbsim/functions/symbolic_functions.h"

@@ -20,7 +20,7 @@
 #ifndef _BODY_H_
 #define _BODY_H_
 
-#include <mbsim/object.h>
+#include <mbsim/objects/object.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Body;

@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/circle_plane.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/circle.h"
 

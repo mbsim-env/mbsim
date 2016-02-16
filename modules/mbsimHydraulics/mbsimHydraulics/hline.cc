@@ -23,7 +23,7 @@
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimControl/signal_.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/objectfactory.h"
 
 using namespace std;

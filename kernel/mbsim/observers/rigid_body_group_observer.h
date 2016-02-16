@@ -19,7 +19,7 @@
 
 #ifndef _RIGID_BODY_GROUP_OBSERVER_H__
 #define _RIGID_BODY_GROUP_OBSERVER_H__
-#include "mbsim/observer.h"
+#include "mbsim/observers/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>

@@ -20,7 +20,7 @@
 #ifndef _FLOATING_RELATIVE_FRAME_H__
 #define _FLOATING_RELATIVE_FRAME_H__
 
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 namespace MBSim {
 

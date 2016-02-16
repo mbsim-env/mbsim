@@ -22,7 +22,7 @@
 
 #include "mbsim/mechanical_link.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 namespace MBSim {
 

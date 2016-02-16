@@ -3,7 +3,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematic_functions.h"

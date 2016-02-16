@@ -18,8 +18,8 @@
 
 #include <config.h>
 #include "mbsim/graph.h"
-#include "mbsim/object.h"
-#include "mbsim/frame.h"
+#include "mbsim/objects/object.h"
+#include "mbsim/frames/frame.h"
 
 using namespace fmatvec; 
 using namespace std;

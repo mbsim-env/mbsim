@@ -17,9 +17,9 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsim/contours/plane.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

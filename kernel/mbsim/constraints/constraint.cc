@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/constraint.h"
+#include "mbsim/constraints/constraint.h"
 #include <hdf5serie/simpledataset.h>
 
 using namespace std;

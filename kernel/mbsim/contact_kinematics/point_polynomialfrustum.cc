@@ -21,7 +21,7 @@
 
 #include "fmatvec/fmatvec.h"
 #include "point_polynomialfrustum.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "fmatvec/linear_algebra_double.h"
 #include "fmatvec/linear_algebra.h"

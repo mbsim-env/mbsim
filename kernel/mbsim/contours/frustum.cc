@@ -19,7 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/frustum.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include <mbsim/utils/utils.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

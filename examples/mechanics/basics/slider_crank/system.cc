@@ -4,7 +4,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/links/contact.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

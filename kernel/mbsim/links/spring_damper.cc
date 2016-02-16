@@ -18,7 +18,7 @@
 
 #include <config.h>
 #include "mbsim/links/spring_damper.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE

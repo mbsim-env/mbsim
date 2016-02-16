@@ -7,7 +7,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/circle.h"
 #include "mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h" 
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/functions/kinematic_functions.h"

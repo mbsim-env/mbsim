@@ -5,7 +5,7 @@
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/links/contact.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematic_functions.h"
 #include <mbsim/utils/colors.h>

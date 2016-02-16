@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "contact.h"
-#include <mbsim/contour.h>
+#include <mbsim/contours/contour.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/friction_force_law.h>

@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/circle_planarfrustum.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/planar_frustum.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/utils/eps.h"

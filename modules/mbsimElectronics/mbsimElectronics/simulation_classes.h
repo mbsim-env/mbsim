@@ -2,8 +2,8 @@
 #define _SIMULATION_CLASSES_H
 
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/object.h"
-#include "mbsim/link.h"
+#include "mbsim/objects/object.h"
+#include "mbsim/links/link.h"
 #include "mbsim/functions/function.h"
 #include "mbsim/mbsim_event.h"
 #include "modelling_classes.h"

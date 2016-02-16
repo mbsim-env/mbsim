@@ -22,7 +22,7 @@
 #define _FLEXIBLE_BODY_H_
 
 #include "mbsim/objects/body.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 namespace MBSim {
   class FixedRelativeFrame;

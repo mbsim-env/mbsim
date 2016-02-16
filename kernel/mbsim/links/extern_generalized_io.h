@@ -19,7 +19,7 @@
 #ifndef _EXTERNGENERALIZEDIO_H_
 #define _EXTERNGENERALIZEDIO_H_
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 
 namespace MBSim {
 

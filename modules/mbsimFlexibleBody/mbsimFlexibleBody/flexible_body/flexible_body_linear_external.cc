@@ -21,8 +21,8 @@
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/superelement_linear_external.h"
-#include "mbsim/frame.h"
-#include "mbsim/contour.h"
+#include "mbsim/frames/frame.h"
+#include "mbsim/contours/contour.h"
 #include "mbsim/dynamic_system_solver.h"
 
 #include <iostream>

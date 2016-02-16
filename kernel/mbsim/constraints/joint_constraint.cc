@@ -19,7 +19,7 @@
 #include <config.h>
 #include "mbsim/constraints/joint_constraint.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/links/joint.h"

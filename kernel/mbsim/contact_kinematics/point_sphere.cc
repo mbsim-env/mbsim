@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "point_sphere.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/eps.h"

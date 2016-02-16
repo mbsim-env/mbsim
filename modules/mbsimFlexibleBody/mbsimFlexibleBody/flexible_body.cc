@@ -24,7 +24,7 @@
 #include <mbsimFlexibleBody/frames/fixed_contour_frame.h>
 #include <mbsim/dynamic_system.h>
 #include <mbsim/frames/fixed_relative_frame.h>
-#include <mbsim/contour.h>
+#include <mbsim/contours/contour.h>
 #include <fmatvec/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsimFlexibleBody/discretization_interface.h>

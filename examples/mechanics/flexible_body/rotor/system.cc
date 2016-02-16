@@ -5,7 +5,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/kinetic_excitation.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/kinematic_functions.h"

@@ -21,7 +21,7 @@
 #define _RIGID_BODY_H_
 
 #include "mbsim/objects/body.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/functions/auxiliary_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

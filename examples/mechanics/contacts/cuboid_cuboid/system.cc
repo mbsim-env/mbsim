@@ -7,7 +7,7 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/cuboid.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematic_functions.h"
 

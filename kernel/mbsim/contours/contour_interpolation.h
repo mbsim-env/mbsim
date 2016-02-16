@@ -20,12 +20,11 @@
 #ifndef _CONTOUR_INTERPOLATION_H_
 #define _CONTOUR_INTERPOLATION_H_
 
-#include "mbsim/contour.h"
-#include "mbsim/contours/point.h"
+#include "mbsim/contours/contour.h"
 
 namespace MBSim {
 
-  class ContourPointData;
+  class Point;
 
   /**
    * \brief Basis-Class for Contour interpolation between Point s, standard contact Point-ContourInterpolation is implemented
@@ -66,14 +65,14 @@ namespace MBSim {
         \param cp Contour-point
         \return true, if cp is inside boundaries, else false
         */
-       virtual bool testInsideBounds(const ContourPointData &cp) = 0;
+       virtual bool testInsideBounds(const fmatvec::Vec2 &zeta) = 0;
        /**
         * \brief prototype of method giving weights of all Point s 
         \param s Contour-parameter(s)
         \param i Point number
         \return weight of Point i at s
         */
-       virtual double computePointWeight(const fmatvec::VecV &s, int i) = 0;
+       virtual double computePointWeight(const fmatvec::Vec2 &zeta, int i) = 0;
        /**
         * prototype of method giving first derivatives with respect to the diff-th Contour-parameters of all Point s 
         \param s Contour-parameter(s)
@@ -81,11 +80,11 @@ namespace MBSim {
         \param diff -th derivative
         \return weight/derivative of Point i at s
         */
-       virtual double computePointWeight(const fmatvec::VecV &s, int i, int diff) = 0;
+       virtual double computePointWeight(const fmatvec::Vec2 &zeta, int i, int diff) = 0;
        /**
         * \brief compute all weights for nodes
         */
-       fmatvec::VecV computePointWeights(const fmatvec::VecV &s);
+       fmatvec::VecV computePointWeights(const fmatvec::Vec2 &zeta);
 
 //       fmatvec::Vec3 getWrOC(const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return getWrOC(cp);};
 //       fmatvec::Vec3 computeWvC (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};

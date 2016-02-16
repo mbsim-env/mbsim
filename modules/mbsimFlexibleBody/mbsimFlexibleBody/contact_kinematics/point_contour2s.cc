@@ -21,7 +21,7 @@
 #include <config.h> 
 #include <mbsimFlexibleBody/contact_kinematics/point_contour2s.h>
 #include <mbsimFlexibleBody/contours/contour_2s_neutral_factory.h>
-//#include <mbsim/contour.h>
+//#include <mbsim/contours/contour.h>
 #include <mbsim/functions_contact.h>
 #include "mbsim/contours/point.h"
 

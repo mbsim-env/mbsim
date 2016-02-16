@@ -20,7 +20,7 @@
 #ifndef _CONTOURCONTINUUM_H_
 #define _CONTOURCONTINUUM_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 
 namespace MBSim {
 

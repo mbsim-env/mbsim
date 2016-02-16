@@ -20,7 +20,7 @@
 #ifndef _RIGID_BODY_LINK_H_
 #define _RIGID_BODY_LINK_H_
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 #include "mbsim/frames/floating_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

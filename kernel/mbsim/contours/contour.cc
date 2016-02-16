@@ -18,8 +18,8 @@
  */
 
 #include <config.h>
-#include "mbsim/contour.h"
-#include "mbsim/frame.h"
+#include "mbsim/contours/contour.h"
+#include "mbsim/frames/frame.h"
 
 using namespace std;
 using namespace fmatvec;

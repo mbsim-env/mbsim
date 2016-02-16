@@ -19,7 +19,7 @@
 
 #include<config.h>
 #include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/functions_contact.h"

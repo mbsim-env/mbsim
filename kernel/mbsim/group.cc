@@ -21,13 +21,13 @@
 #include "mbsim/group.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/rigid_contour.h"
-#include "mbsim/object.h"
-#include "mbsim/link.h"
-#include "mbsim/constraint.h"
+#include "mbsim/objects/object.h"
+#include "mbsim/links/link.h"
+#include "mbsim/constraints/constraint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/observer.h"
+#include "mbsim/observers/observer.h"
 #include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -2,7 +2,7 @@
 
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/contact.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/contours/solid_circle.h"
 #include "mbsim/contours/planar_contour.h"
 #include "mbsim/utils/rotarymatrices.h"

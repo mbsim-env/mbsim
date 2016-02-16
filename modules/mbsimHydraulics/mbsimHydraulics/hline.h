@@ -20,7 +20,7 @@
 #ifndef  _HLINE_H_
 #define  _HLINE_H_
 
-#include "mbsim/object.h"
+#include "mbsim/objects/object.h"
 #include <mbsim/functions/function.h>
 
 namespace MBSim {

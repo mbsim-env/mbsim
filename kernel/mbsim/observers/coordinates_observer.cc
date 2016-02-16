@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/observers/coordinates_observer.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE

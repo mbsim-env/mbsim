@@ -20,7 +20,7 @@
 #ifndef _RIGID_CONTOUR_H_
 #define _RIGID_CONTOUR_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

@@ -20,7 +20,7 @@
 #define _ROTATIONALSPRINGDAMPER_H_
 
 #include "mbsim/mechanical_link.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include <mbsim/functions/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

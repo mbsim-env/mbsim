@@ -17,9 +17,9 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsim/contours/plate.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/grid.h>

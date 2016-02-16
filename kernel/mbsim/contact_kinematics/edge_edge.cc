@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/edge_edge.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/edge.h"
 
 using namespace fmatvec;

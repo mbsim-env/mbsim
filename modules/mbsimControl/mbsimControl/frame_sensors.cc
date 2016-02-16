@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsimControl/frame_sensors.h"
 
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 using namespace std;
 using namespace fmatvec;

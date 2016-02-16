@@ -20,13 +20,13 @@
 #include<config.h>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/modelling_interface.h"
-#include "mbsim/frame.h"
-#include "mbsim/contour.h"
-#include "mbsim/link.h"
+#include "mbsim/frames/frame.h"
+#include "mbsim/contours/contour.h"
+#include "mbsim/links/link.h"
 #include "mbsim/graph.h"
-#include "mbsim/object.h"
-#include "mbsim/observer.h"
-#include "mbsim/constraint.h"
+#include "mbsim/objects/object.h"
+#include "mbsim/observers/observer.h"
+#include "mbsim/constraints/constraint.h"
 #include "mbsim/utils/eps.h"
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>

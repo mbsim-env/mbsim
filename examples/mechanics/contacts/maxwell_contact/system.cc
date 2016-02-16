@@ -18,7 +18,7 @@
 #include <mbsim/contours/point.h>
 #include <mbsim/links/contact.h>
 #include <mbsim/links/maxwell_contact.h>
-#include <mbsim/constitutive_laws.h>
+#include <mbsim/constitutive_laws/constitutive_laws.h>
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>

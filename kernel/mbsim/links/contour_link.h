@@ -20,7 +20,7 @@
 #ifndef _CONTOUR_LINK_H_
 #define _CONTOUR_LINK_H_
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"

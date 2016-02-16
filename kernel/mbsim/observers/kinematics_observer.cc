@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/observers/kinematics_observer.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include <openmbvcppinterface/group.h>
 
 using namespace std;

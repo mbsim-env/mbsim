@@ -20,7 +20,7 @@
 #ifndef _CONTOUR_QUAD_H_
 #define _CONTOUR_QUAD_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 #include "mbsim/contours/contour_interpolation.h"
 
 namespace MBSim {

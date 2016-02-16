@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/observer.h"
+#include "mbsim/observers/observer.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #endif

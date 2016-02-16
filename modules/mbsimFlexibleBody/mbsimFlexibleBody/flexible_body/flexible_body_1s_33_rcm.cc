@@ -24,7 +24,7 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include <mbsim/environment.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>

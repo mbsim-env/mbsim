@@ -4,7 +4,7 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsim/links/contact.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsimHydraulics/checkvalve.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"

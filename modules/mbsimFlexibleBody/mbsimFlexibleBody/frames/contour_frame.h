@@ -20,7 +20,7 @@
 #ifndef _CONTOUR_FRAME_H__
 #define _CONTOUR_FRAME_H__
 
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 namespace MBSimFlexibleBody {
 

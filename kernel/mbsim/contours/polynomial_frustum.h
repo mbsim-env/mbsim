@@ -20,7 +20,7 @@
 #ifndef POLYNOMIAL_FRUSTUM_H_
 #define POLYNOMIAL_FRUSTUM_H_
 #include <iostream>
-#include <mbsim/contour.h>
+#include <mbsim/contours/contour.h>
 #include <mbsim/contours/plate.h>
 #include <mbsim/utils/colors.h>
 #include <fmatvec/fmatvec.h>

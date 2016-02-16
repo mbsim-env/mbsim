@@ -20,8 +20,8 @@
 #include <config.h>
 #include "mbsim/links/contour_link.h"
 #include "mbsim/dynamic_system.h"
-#include "mbsim/frame.h"
-#include "mbsim/contour.h"
+#include "mbsim/frames/frame.h"
+#include "mbsim/contours/contour.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE

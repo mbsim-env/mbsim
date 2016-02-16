@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/object.h"
+#include "mbsim/objects/object.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"

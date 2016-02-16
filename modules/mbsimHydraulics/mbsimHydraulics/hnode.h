@@ -20,7 +20,7 @@
 #ifndef  _HNODE_H_
 #define  _HNODE_H_
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 #include <mbsim/functions/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

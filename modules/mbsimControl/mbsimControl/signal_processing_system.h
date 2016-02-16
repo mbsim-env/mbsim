@@ -24,7 +24,7 @@
 #ifndef _SIGNAL_PROCESSING_SYSTEM_H_
 #define _SIGNAL_PROCESSING_SYSTEM_H_
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 
 namespace MBSimControl {
 

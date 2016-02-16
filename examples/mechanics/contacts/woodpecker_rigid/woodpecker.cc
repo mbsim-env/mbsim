@@ -7,7 +7,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contact_kinematics/point_line.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/links/generalized_spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"

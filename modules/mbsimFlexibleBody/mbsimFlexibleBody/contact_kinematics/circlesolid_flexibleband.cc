@@ -22,7 +22,7 @@
 #include<config.h>
 #include "mbsimFlexibleBody/contact_kinematics/circlesolid_flexibleband.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/functions_contact.h"

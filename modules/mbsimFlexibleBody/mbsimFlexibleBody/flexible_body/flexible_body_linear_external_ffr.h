@@ -28,7 +28,7 @@
 
 #include "mbsim/mbsim_event.h"
 
-#include <mbsim/frame.h>
+#include <mbsim/frames/frame.h>
 
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_linear_external_lumped_node.h"

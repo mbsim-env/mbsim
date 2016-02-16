@@ -21,12 +21,15 @@
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/bilateral_constraint.h"
+#include "mbsim/constitutive_laws/unilateral_constraint.h"
+#include "mbsim/constitutive_laws/bilateral_impact.h"
+#include "mbsim/constitutive_laws/unilateral_newton_impact.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"

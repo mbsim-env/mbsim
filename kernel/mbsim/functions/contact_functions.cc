@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/functions/contact_functions.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/circle.h"

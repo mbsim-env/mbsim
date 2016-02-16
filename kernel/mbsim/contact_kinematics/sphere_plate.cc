@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "sphere_plate.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/contact_utils.h"

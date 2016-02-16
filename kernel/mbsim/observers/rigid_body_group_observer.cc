@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/observers/rigid_body_group_observer.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE

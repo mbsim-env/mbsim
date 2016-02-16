@@ -23,7 +23,10 @@
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/bilateral_constraint.h"
+#include "mbsim/constitutive_laws/unilateral_constraint.h"
+#include "mbsim/constitutive_laws/bilateral_impact.h"
+#include "mbsim/constitutive_laws/unilateral_newton_impact.h"
 #include "mbsim/utils/eps.h"
 #include "mbsimControl/signal_.h"
 

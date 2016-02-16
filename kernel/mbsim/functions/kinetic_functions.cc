@@ -19,8 +19,8 @@
 
 #include <config.h>
 #include "mbsim/functions/kinetic_functions.h"
-#include <mbsim/frame.h>
-#include <mbsim/contour.h>
+#include <mbsim/frames/frame.h>
+#include <mbsim/contours/contour.h>
 
 using namespace std;
 using namespace fmatvec;

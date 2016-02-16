@@ -47,4 +47,5 @@ constitutivelawsinclude_HEADERS = bilateral_constraint.h\
 				  spatial_stribeck_friction.h\
 				  spatial_stribeck_impact.h\
 				  unilateral_constraint.h\
-				  unilateral_newton_impact.h
+				  unilateral_newton_impact.h\
+				  constitutive_laws.h

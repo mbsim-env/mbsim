@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "circle_line.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/circle.h"
 

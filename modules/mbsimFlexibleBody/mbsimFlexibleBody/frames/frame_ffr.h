@@ -20,7 +20,7 @@
 #ifndef _FRAME_FFR_H__
 #define _FRAME_FFR_H__
 
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 namespace MBSimFlexibleBody {
 

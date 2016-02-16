@@ -4,7 +4,7 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/links/joint.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/functions/kinematic_functions.h"
 

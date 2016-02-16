@@ -22,7 +22,7 @@
 #include "environment.h"
 #include "mbsim/utils/ansatz_functions.h"
 #include "mbsim/utils/utils.h"
-#include "mbsim/frame.h"
+#include "mbsim/frames/frame.h"
 
 #include "mbsim/dynamic_system_solver.h"
 

@@ -20,7 +20,7 @@
 #define _TORSIONAL_STIFFNESS_H_
 
 #include "mbsim/link_mechanics.h"
-#include <mbsim/frame.h>
+#include <mbsim/frames/frame.h>
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

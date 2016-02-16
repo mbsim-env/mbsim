@@ -6,7 +6,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include <mbsim/functions/kinematic_functions.h>
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 // End Contact

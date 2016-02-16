@@ -19,13 +19,13 @@
 
 #include <config.h>
 #include <mbsim/element.h>
-#include <mbsim/frame.h>
-#include <mbsim/contour.h>
+#include <mbsim/frames/frame.h>
+#include <mbsim/contours/contour.h>
 #include <mbsim/dynamic_system_solver.h>
-#include <mbsim/object.h>
-#include <mbsim/link.h>
-#include <mbsim/constraint.h>
-#include <mbsim/observer.h>
+#include <mbsim/objects/object.h>
+#include <mbsim/links/link.h>
+#include <mbsim/constraints/constraint.h>
+#include <mbsim/observers/observer.h>
 #include <mbsim/functions/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>

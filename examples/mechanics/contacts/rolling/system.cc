@@ -6,7 +6,7 @@
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/plane.h"
-#include "mbsim/constitutive_laws.h"
+#include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/links/spring_damper.h"
 #include "mbsim/environment.h"

@@ -1,7 +1,8 @@
 SUBDIRS = .
 
 noinst_LTLIBRARIES = liblink.la
-liblink_la_SOURCES = contact.cc\
+liblink_la_SOURCES = link.cc\
+		     contact.cc\
 		     maxwell_contact.cc\
 		     single_contact.cc\
 		     joint.cc\
@@ -22,7 +23,8 @@ liblink_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAG
 liblink_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 linkincludedir = $(includedir)/mbsim/links
-linkinclude_HEADERS = contact.h\
+linkinclude_HEADERS = link.h\
+		      contact.h\
 		      maxwell_contact.h\
 		      single_contact.h\
 		      joint.h\

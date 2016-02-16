@@ -19,7 +19,7 @@
 #ifndef _JOINT_CONSTRAINT_H
 #define _JOINT_CONSTRAINT_H
 
-#include "mbsim/constraint.h"
+#include "mbsim/constraints/constraint.h"
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

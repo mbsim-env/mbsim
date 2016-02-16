@@ -19,7 +19,7 @@
 #ifndef _KINEMATIC_CONSTRAINT_H
 #define _KINEMATIC_CONSTRAINT_H
 
-#include "mbsim/constraint.h"
+#include "mbsim/constraints/constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"

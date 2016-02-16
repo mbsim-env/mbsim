@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsimControl/link_sensors.h"
 
-#include "mbsim/link.h"
+#include "mbsim/links/link.h"
 
 using namespace std;
 using namespace fmatvec;
