@@ -25,7 +25,8 @@ functioninclude_HEADERS = function.h \
 			  symbolic_functions.h \
 			  kinematic_functions.h \
 			  kinetic_functions.h \
-			  auxiliary_functions.h \
 			  piecewise_polynom_function.h \
 			  fourier_function.h\
+			  time_dependent_function.h\
+			  state_dependent_function.h\
 			  contact_functions.h

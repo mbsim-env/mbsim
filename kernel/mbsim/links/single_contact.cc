@@ -28,7 +28,6 @@
 #include <mbsim/constitutive_laws/friction_impact_law.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <fmatvec/function.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE

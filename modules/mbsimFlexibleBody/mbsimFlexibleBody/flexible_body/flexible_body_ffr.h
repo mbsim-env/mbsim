@@ -21,7 +21,8 @@
 #define _FLEXIBLE_BODY_FFR_H_
 
 #include "mbsim/objects/body.h"
-#include "mbsim/functions/auxiliary_functions.h"
+#include "mbsim/functions/time_dependent_function.h"
+#include "mbsim/functions/state_dependent_function.h"
 #include "mbsimFlexibleBody/utils/taylor.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

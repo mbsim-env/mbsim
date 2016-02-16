@@ -20,8 +20,7 @@
 #include <config.h>
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
-#include <fmatvec/function.h>
-#include <mbsim/dynamic_system_solver.h>
+#include <mbsim/dynamic_system.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -46,7 +45,7 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       FloatingFrameLink::init(stage);
       if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
-      if(frame[0]==NULL) frame[0]=ds->getFrame("I");
+      if(frame[0]==NULL) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
     }
     else if(stage==resize) {
       FloatingFrameLink::init(stage);

@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/dynamic_system.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/links/joint.h"

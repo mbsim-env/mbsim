@@ -27,7 +27,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(ConstantFunction<double(double)>, MBSIM%"ConstantFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(ConstantFunction<VecV(double)>, MBSIM%"ConstantFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(ConstantFunction<Vec3(double)>, MBSIM%"ConstantFunction")

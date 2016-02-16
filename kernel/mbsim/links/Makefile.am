@@ -17,7 +17,10 @@ liblink_la_SOURCES = link.cc\
 		     contour_link.cc\
 		     rigid_body_link.cc\
 		     kinetic_excitation.cc\
-		     kinematic_excitation.cc
+		     kinematic_excitation.cc\
+		     generalized_position_excitation.cc\
+		     generalized_velocity_excitation.cc\
+		     generalized_acceleration_excitation.cc
 
 liblink_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 liblink_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -39,4 +42,7 @@ linkinclude_HEADERS = link.h\
 		      contour_link.h\
 		      rigid_body_link.h\
 		      kinetic_excitation.h\
-		      kinematic_excitation.h
+		      kinematic_excitation.h\
+		      generalized_position_excitation.h\
+		      generalized_velocity_excitation.h\
+		      generalized_acceleration_excitation.h

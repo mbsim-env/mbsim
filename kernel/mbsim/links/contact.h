@@ -58,8 +58,6 @@ namespace MBSim {
        */
       virtual ~Contact();
 
-      /*INHERITED INTERFACE OF ELEMENT*/
-      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 #endif

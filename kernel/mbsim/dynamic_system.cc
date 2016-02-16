@@ -24,8 +24,8 @@
 #include "mbsim/links/link.h"
 #include "mbsim/objects/object.h"
 #include "mbsim/constraints/constraint.h"
-#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/observers/observer.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpleattribute.h"
 
@@ -37,8 +37,6 @@
 //#ifdef _OPENMP
 //#include <omp.h>
 //#endif
-
-#include<algorithm>
 
 using namespace std;
 using namespace fmatvec;

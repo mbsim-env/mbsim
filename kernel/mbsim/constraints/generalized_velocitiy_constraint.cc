@@ -19,8 +19,8 @@
 #include <config.h>
 #include "mbsim/constraints/generalized_velocitiy_constraint.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/links/kinematic_excitation.h"
-#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/links/generalized_velocity_excitation.h"
+#include "mbsim/dynamic_system.h"
 
 using namespace std;
 using namespace fmatvec;

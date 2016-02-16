@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsim/links/kinematic_excitation.h"
-#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 
 using namespace std;
@@ -61,84 +60,4 @@ namespace MBSim {
     if(func) func->init(stage);
   }
 
-  void GeneralizedPositionExcitation::calcxSize() {
-    if(!f) xSize = body[0]->getqRelSize();
-  }
-
-  void GeneralizedPositionExcitation::init(InitStage stage) {
-    KinematicExcitation::init(stage);
-    f->init(stage);
-  }
-
-  void GeneralizedPositionExcitation::updateGeneralizedPositions(double t) {
-    rrel=body[0]->getqRel(t)-(*f)(t);
-    updrrel = false;
-  } 
-
-  void GeneralizedPositionExcitation::updateGeneralizedVelocities(double t) {
-    vrel=body[0]->getuRel(t)-f->parDer(t);
-    updvrel = false;
-  }
-
-  void GeneralizedPositionExcitation::updatewb(double t) {
-    wb += body[0]->getjRel(t)-f->parDerParDer(t);
-  }
-
-  void GeneralizedVelocityExcitation::calcxSize() {
-    xSize = body[0]->getqRelSize();
-  }
-
-  void GeneralizedVelocityExcitation::init(InitStage stage) {
-    KinematicExcitation::init(stage);
-    f->init(stage);
-  }
-
-  void GeneralizedVelocityExcitation::updatexd(double t) {
-    if(f) xd = (*f)(x,t);
-  }
-
-  void GeneralizedVelocityExcitation::updateGeneralizedPositions(double t) {
-    rrel=body[0]->getqRel(t)-x;
-    updrrel = false;
-  } 
-
-  void GeneralizedVelocityExcitation::updateGeneralizedVelocities(double t) {
-    vrel=body[0]->getuRel(t)-(*f)(x,t);
-    updvrel = false;
-  }
-
-  void GeneralizedVelocityExcitation::updatewb(double t) {
-    wb += body[0]->getjRel(t)-(f->parDer1(x,t)*xd + f->parDer2(x,t));
-  }
-
-  void GeneralizedAccelerationExcitation::calcxSize() {
-    xSize = body[0]->getqRelSize()+body[0]->getuRelSize();
-  }
-
-  void GeneralizedAccelerationExcitation::init(InitStage stage) {
-    KinematicExcitation::init(stage);
-    f->init(stage);
-  }
-
-  void GeneralizedAccelerationExcitation::updatexd(double t) {
-    xd(0,body[0]->getqRelSize()-1) = x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
-    xd(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1) = (*f)(x,t);
-  }
-
-  void GeneralizedAccelerationExcitation::updateGeneralizedPositions(double t) {
-    rrel=body[0]->getqRel(t)-x(0,body[0]->getqRelSize()-1);
-    updrrel = false;
-  }
-
-  void GeneralizedAccelerationExcitation::updateGeneralizedVelocities(double t) {
-    vrel=body[0]->getuRel(t)-x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
-    updvrel = false;
-  }
-
-  void GeneralizedAccelerationExcitation::updatewb(double t) {
-    wb += (*f)(x,t);
-  }
-
 }
-
-

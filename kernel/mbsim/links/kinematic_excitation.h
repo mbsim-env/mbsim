@@ -21,7 +21,7 @@
 #define _KINEMATIC_EXCITATION_H_
 
 #include "mbsim/links/rigid_body_link.h"
-#include "mbsim/functions/auxiliary_functions.h"
+#include "mbsim/functions/function.h"
 
 namespace MBSim {
 
@@ -48,87 +48,6 @@ namespace MBSim {
         func=func_;
         func->setParent(this);
         func->setName("Force");
-      }
-  };
-
-  class GeneralizedPositionExcitation : public KinematicExcitation {
-    protected:
-      Function<fmatvec::VecV(double)> *f;
-    public:
-      GeneralizedPositionExcitation(const std::string &name) : KinematicExcitation(name) {}
-
-      void calcxSize();
-      void init(InitStage stage);
-
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
-      void updatexd(double t) { }
-      void updatewb(double t);
-
-      std::string getType() const { return "GeneralizedPositionExcitation"; }
-
-      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) {
-        f = f_;
-        f->setParent(this);
-        f->setName("Excitation");
-      }
-  };
-
-  class GeneralizedVelocityExcitation : public KinematicExcitation {
-    protected:
-      Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
-    public:
-      GeneralizedVelocityExcitation(const std::string &name) : KinematicExcitation(name) {}
-
-      void calcxSize();
-      void init(InitStage stage);
-
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
-      void updatexd(double t);
-      void updatewb(double t);
-
-      std::string getType() const { return "GeneralizedVelocityExcitation"; }
-
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { 
-        f = f_;
-        f->setParent(this);
-        f->setName("Excitation");
-      }
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) {
-        setExcitationFunction(new StateDependentFunction<fmatvec::VecV>(f_));
-      }
-      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) { 
-        setExcitationFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
-      }
-  };
-
-  class GeneralizedAccelerationExcitation : public KinematicExcitation {
-    protected:
-      Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
-    public:
-      GeneralizedAccelerationExcitation(const std::string &name) : KinematicExcitation(name) {}
-
-      void calcxSize();
-      void init(InitStage stage);
-
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
-      void updatexd(double t);
-      void updatewb(double t);
-
-      std::string getType() const { return "GeneralizedAccelerationExcitation"; }
-
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { 
-        f = f_;
-        f->setParent(this);
-        f->setName("Excitation");
-      }
-      void setExcitationFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) { 
-        setExcitationFunction(new StateDependentFunction<fmatvec::VecV>(f_));
-      }
-      void setExcitationFunction(Function<fmatvec::VecV(double)>* f_) { 
-        setExcitationFunction(new TimeDependentFunction<fmatvec::VecV>(f_));
       }
   };
 

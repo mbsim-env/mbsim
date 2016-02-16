@@ -19,7 +19,7 @@
 #include <config.h>
 #include "mbsim/constraints/gear_constraint.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/dynamic_system.h"
 #include "mbsim/objectfactory.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>

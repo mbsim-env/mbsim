@@ -20,12 +20,10 @@
 #define _GENERALIZED_VELOCITY_CONSTRAINT_H
 
 #include "mbsim/constraints/kinematic_constraint.h"
-#include "mbsim/functions/auxiliary_functions.h"
+#include "mbsim/functions/time_dependent_function.h"
+#include "mbsim/functions/state_dependent_function.h"
 
 namespace MBSim {
-
-  class RigidBody;
-  class Frame;
 
   class GeneralizedVelocityConstraint : public KinematicConstraint {
 

@@ -24,9 +24,6 @@
 
 namespace MBSim {
 
-  class RigidBody;
-  class Frame;
-
   class GeneralizedPositionConstraint : public KinematicConstraint {
 
     public:

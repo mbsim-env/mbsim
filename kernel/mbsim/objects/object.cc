@@ -18,7 +18,6 @@
 
 #include <config.h>
 #include "mbsim/objects/object.h"
-#include "mbsim/dynamic_system.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
@@ -32,8 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Object::Object(const string &name) :
-      Element(name), qSize(0), qInd(0) {
+  Object::Object(const string &name) : Element(name), qSize(0), qInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -102,18 +100,6 @@ namespace MBSim {
     hSize[j] = hSize_;
   }
 
-  //int Object::gethInd(DynamicSystem* sys, int i) {
-  //  return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
-  //}
-
-  //int Object::getqInd(DynamicSystem* sys) {
-  //  return (parent == sys) ? qInd : qInd + parent->getqInd(sys);
-  //}
-
-  //int Object::getuInd(DynamicSystem* sys, int i) {
-  //  return (parent == sys) ? uInd[i] : uInd[i] + parent->getuInd(sys,i);
-  //}
-
   void Object::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
       if (getPlotFeature(state) == enabled) {
@@ -151,10 +137,6 @@ namespace MBSim {
       Element::closePlot();
     }
   }
-
-  //void Object::setDynamicSystemSolver(DynamicSystemSolver* sys) {
-  //  Element::setDynamicSystemSolver(sys);
-  //}
 
   void Object::updateqRef(const Vec &qParent) {
     q >> qParent(qInd, qInd + qSize - 1);
@@ -350,4 +332,3 @@ namespace MBSim {
   }
 
 }
-

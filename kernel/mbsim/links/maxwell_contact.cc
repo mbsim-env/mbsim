@@ -21,15 +21,9 @@
 #include "maxwell_contact.h"
 
 #include <mbsim/contours/contour.h>
-#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/maxwell_unilateral_constraint.h>
-//#include <mbsim/constitutive_laws/generalized_force_law.h>
-//#include <mbsim/constitutive_laws/friction_force_law.h>
-//#include <mbsim/constitutive_laws/generalized_impact_law.h>
-//#include <mbsim/constitutive_laws/friction_impact_law.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <fmatvec/function.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/functions/kinetic_functions.h>

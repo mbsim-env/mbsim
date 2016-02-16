@@ -22,7 +22,8 @@
 
 #include "mbsim/objects/body.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/functions/auxiliary_functions.h"
+#include "mbsim/functions/time_dependent_function.h"
+#include "mbsim/functions/state_dependent_function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -34,7 +35,6 @@ namespace MBSim {
   class Frame;
   class RigidContour;
   class FixedRelativeFrame;
-  class CompoundContour;
   class Constraint;
 
   /**

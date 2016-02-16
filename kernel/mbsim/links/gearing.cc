@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/gearing.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
