@@ -22,7 +22,11 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum.h"
-#include "mbsim/functions/contact_functions.h"
+#include "mbsim/functions/funcpair_ellipse_circle.h"
+#include "mbsim/functions/funcpair_hyperbola_circle.h"
+#include "mbsim/functions/jacpair_ellipse_circle.h"
+#include "mbsim/functions/jacpair_hyperbola_circle.h"
+#include "mbsim/functions/planar_contact_search.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -200,7 +204,7 @@ namespace MBSim {
           jacRho->setDiffVec(Wd_EC);
           jacRho->setSectionCOS(cE1, cE2);
 
-          Contact1sSearch searchRho(funcRho, jacRho);
+          PlanarContactSearch searchRho(funcRho, jacRho);
 
           if (LOCALSEARCH) { // select start value from last search if decided by user
             searchRho.setInitialValue(zeta(0));
@@ -336,7 +340,7 @@ namespace MBSim {
           jacRho->setDiffVec(Wd_SC);
           jacRho->setSectionCOS(c1, c2);
 
-          Contact1sSearch searchRho(funcRho, jacRho);
+          PlanarContactSearch searchRho(funcRho, jacRho);
 
           if(LOCALSEARCH) { // select start value from last search if decided by user
             searchRho.setInitialValue(zeta(0));

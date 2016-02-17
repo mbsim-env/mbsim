@@ -46,7 +46,19 @@ libfunction_la_SOURCES = constant_function.cc\
 			 influence_function.cc\
 			 flexibility_influence_function.cc\
 			 constant_influence_function.cc\
-			 contact_functions.cc
+			 funcpair_planarcontour_point.cc\
+			 funcpair_planarcontour_circle.cc\
+			 funcpair_planarcontour_line.cc\
+			 funcpair_spatialcontour_point.cc\
+			 funcpair_point_contourinterpolation.cc\
+			 funcpair_conesection_circle.cc\
+			 funcpair_ellipse_circle.cc\
+			 funcpair_hyperbola_circle.cc\
+			 jacpair_conesection_circle.cc\
+			 jacpair_ellipse_circle.cc\
+			 jacpair_hyperbola_circle.cc\
+			 planar_contact_search.cc\
+			 spatial_contact_search.cc
 
 functionincludedir = $(includedir)/mbsim/functions
 
@@ -111,4 +123,17 @@ functioninclude_HEADERS = function.h\
 			  influence_function.h\
 			  flexibility_influence_function.h\
 			  constant_influence_function.h\
-			  contact_functions.h
+			  distance_function.h\
+			  funcpair_planarcontour_point.h\
+			  funcpair_planarcontour_circle.h\
+			  funcpair_planarcontour_line.h\
+			  funcpair_spatialcontour_point.h\
+			  funcpair_point_contourinterpolation.h\
+			  funcpair_conesection_circle.h\
+			  funcpair_ellipse_circle.h\
+			  funcpair_hyperbola_circle.h\
+			  jacpair_conesection_circle.h\
+			  jacpair_ellipse_circle.h\
+			  jacpair_hyperbola_circle.h\
+			  planar_contact_search.h\
+			  spatial_contact_search.h

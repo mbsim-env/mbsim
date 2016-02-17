@@ -21,7 +21,8 @@
 #include "mbsim/contact_kinematics/circle_planarcontour.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/circle.h"
-#include "mbsim/functions/contact_functions.h"
+#include "mbsim/functions/funcpair_planarcontour_circle.h"
+#include "mbsim/functions/planar_contact_search.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 
@@ -65,7 +66,7 @@ namespace MBSim {
 
   void ContactKinematicsCirclePlanarContour::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
     func->setTime(t);
-    Contact1sSearch search(func);
+    PlanarContactSearch search(func);
     search.setNodes(contour1s->getEtaNodes());
 
     if(searchAllCP==false)

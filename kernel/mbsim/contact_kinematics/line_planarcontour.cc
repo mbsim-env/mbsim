@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/contact_kinematics/line_planarcontour.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/functions/contact_functions.h"
+#include "mbsim/functions/funcpair_planarcontour_line.h"
 
 using namespace fmatvec;
 using namespace std;

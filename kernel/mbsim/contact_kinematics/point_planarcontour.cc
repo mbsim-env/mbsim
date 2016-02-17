@@ -21,7 +21,8 @@
 #include "point_planarcontour.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/functions/contact_functions.h"
+#include "mbsim/functions/funcpair_planarcontour_point.h"
+#include "mbsim/functions/planar_contact_search.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -53,7 +54,7 @@ namespace MBSim {
     
     FuncPairPlanarContourPoint *func = new FuncPairPlanarContourPoint(point, contour1s); // root function for searching contact parameters
     func->setTime(t);
-    Contact1sSearch search(func);
+    PlanarContactSearch search(func);
     search.setNodes(contour1s->getEtaNodes()); // defining search areas for contacts
 
     if (useLocal) { // select start value from last search
@@ -83,5 +84,8 @@ namespace MBSim {
     delete func;
   }
 
-}
+  void ContactKinematicsPointPlanarContour::updatewb(double t, Vec &wb, double g, vector<Frame*> &cFrame) {
+    throw MBSimError("(ContactKinematicsPointPlanarContour::updatewb): Not implemented!");
+  }
 
+}

@@ -21,7 +21,7 @@
 #include "mbsim/contact_kinematics/point_contourinterpolation.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/contour_interpolation.h"
-#include "mbsim/functions/contact_functions.h"
+#include "mbsim/functions/funcpair_point_contourinterpolation.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace fmatvec;

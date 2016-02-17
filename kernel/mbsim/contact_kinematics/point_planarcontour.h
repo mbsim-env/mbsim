@@ -21,7 +21,6 @@
 #define _CONTACT_KINEMATICS_POINT_PLANAR_CONTOUR_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/functions/contact_functions.h"
 
 namespace MBSim {
 
@@ -48,7 +47,7 @@ namespace MBSim {
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsPointPlanarContour::updatewb): Not implemented!"); }
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame);
       /***************************************************/
 
     private:
@@ -73,5 +72,4 @@ namespace MBSim {
 
 }
 
-#endif /* _CONTACT_KINEMATICS_POINT_CONTOUR1S_H_ */
-
+#endif
