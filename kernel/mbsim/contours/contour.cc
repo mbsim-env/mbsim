@@ -40,7 +40,7 @@ namespace MBSim {
   }
 
   Vec3 Contour::getPosition(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour::getParDer2Ku): Not implemented.");
+    THROW_MBSIMERROR("(Contour::getPosition): Not implemented.");
     return 0;
   }
 
