@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/nonlinear_spring_damper_force.h"
+#include "mbsim/functions/kinetics/nonlinear_spring_damper_force.h"
 
 using namespace std;
 using namespace fmatvec;

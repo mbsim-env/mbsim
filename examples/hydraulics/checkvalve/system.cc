@@ -11,7 +11,7 @@
 #include "mbsim/links/spring_damper.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/tabular_function.h"
 #include "mbsim/functions/constant_function.h"
 #include "mbsimControl/object_sensors.h"

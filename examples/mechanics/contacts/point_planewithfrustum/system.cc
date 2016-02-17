@@ -9,7 +9,7 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinetics/kinetics.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"

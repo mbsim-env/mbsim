@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/linear_regularized_unilateral_constraint.h"
+#include "mbsim/functions/kinetics/linear_regularized_bilateral_constraint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,15 +27,22 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedUnilateralConstraint, MBSIM%"LinearRegularizedUnilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedBilateralConstraint, MBSIM%"LinearRegularizedBilateralConstraint")
 
-  void LinearRegularizedUnilateralConstraint::initializeUsingXML(DOMElement *element) {
+  void LinearRegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"stiffnessCoefficient");
     c = Element::getDouble(e);
     e = E(element)->getFirstElementChildNamed(MBSIM%"dampingCoefficient");
     d = Element::getDouble(e);
+  }
+
+  DOMElement* LinearRegularizedBilateralConstraint::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function<double(double,double)>::writeXMLFile(parent);
+//    addElementText(ele0, MBSIM%"stiffnessCoefficient", c);
+//    addElementText(ele0, MBSIM%"dampingCoefficient", d);
+    return ele0;
   }
 
 }

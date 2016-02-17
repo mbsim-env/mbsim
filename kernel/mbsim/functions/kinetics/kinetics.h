@@ -17,24 +17,17 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#include <config.h>
-#include "mbsim/functions/influence_function.h"
-#include "mbsim/frames/frame.h"
-#include "mbsim/contours/contour.h"
+#ifndef _KINETIC_FUNCTIONS_H_
+#define _KINETIC_FUNCTIONS_H_
 
-using namespace std;
-using namespace fmatvec;
-using namespace MBXMLUtils;
-using namespace xercesc;
+#include "mbsim/functions/kinetics/linear_spring_damper_force.h"
+#include "mbsim/functions/kinetics/nonlinear_spring_damper_force.h"
+#include "mbsim/functions/kinetics/linear_regularized_unilateral_constraint.h"
+#include "mbsim/functions/kinetics/linear_regularized_bilateral_constraint.h"
+#include "mbsim/functions/kinetics/linear_regularized_coulomb_friction.h"
+#include "mbsim/functions/kinetics/linear_regularized_stribeck_friction.h"
+#include "mbsim/functions/kinetics/influence_function.h"
+#include "mbsim/functions/kinetics/flexibility_influence_function.h"
+#include "mbsim/functions/kinetics/constant_influence_function.h"
 
-namespace MBSim {
-
-  void InfluenceFunction::initializeUsingXML(DOMElement *element) {
-    Function<double(std::pair<Contour*, Frame*>,std::pair<Contour*, Frame*>)>::initializeUsingXML(element);
-  }
-
-  fmatvec::Vec2 InfluenceFunction::getContourParameters(double t, const std::pair<Contour*, Frame*>& contourInfo) {
-    return contourInfo.first->getContourParameters(t, contourInfo.second->getPosition(t));
-  }
-
-}
+#endif

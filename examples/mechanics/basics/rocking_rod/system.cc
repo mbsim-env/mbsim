@@ -7,7 +7,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinetics/kinetics.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 //#include "openmbvcppinterface/ivbody.h"

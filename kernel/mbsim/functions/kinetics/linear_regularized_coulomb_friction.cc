@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/linear_regularized_stribeck_friction.h"
+#include "mbsim/functions/kinetics/linear_regularized_coulomb_friction.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,32 +27,27 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedStribeckFriction, MBSIM%"LinearRegularizedStribeckFriction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedCoulombFriction, MBSIM%"LinearRegularizedCoulombFriction")
 
-  Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN) {
+  Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN) {
     int nFric = gd.size();
     Vec la(nFric, NONINIT);
     double normgd = nrm2(gd(0, nFric - 1));
-    if (normgd < gdLim) {
-      double mu0 = (*fmu)(0);
-      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu0 / gdLim);
-    }
-    else {
-      double mu = (*fmu)(nrm2(gd(0, nFric - 1)) - gdLim);
+    if (normgd < gdLim)
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / gdLim);
+    else
       la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / normgd);
-    }
     return la;
   }
 
-  void LinearRegularizedStribeckFriction::initializeUsingXML(DOMElement *element) {
+  void LinearRegularizedCoulombFriction::initializeUsingXML(DOMElement *element) {
     Function<Vec(Vec,double)>::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"marginalVelocity");
     if (e)
       gdLim = Element::getDouble(e);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionFunction");
-    Function<double(double)> *f = ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
-    setFrictionFunction(f);
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
+    mu = Element::getDouble(e);
   }
 
 }

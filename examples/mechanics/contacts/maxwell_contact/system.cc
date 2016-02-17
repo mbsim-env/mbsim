@@ -22,7 +22,7 @@
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
-#include <mbsim/functions/kinetic_functions.h>
+#include <mbsim/functions/kinetics/kinetics.h>
 #include "mbsim/functions/kinematics/kinematics.h"
 
 using namespace std;

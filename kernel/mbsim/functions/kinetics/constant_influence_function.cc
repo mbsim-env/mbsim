@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/constant_influence_function.h"
+#include "mbsim/functions/kinetics/constant_influence_function.h"
 
 using namespace std;
 using namespace fmatvec;

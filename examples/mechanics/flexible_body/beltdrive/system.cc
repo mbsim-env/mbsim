@@ -13,7 +13,7 @@
 #include "mbsim/links/spring_damper.h"
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/nested_function.h"
 
 #include "beltDriveFunctions.h"

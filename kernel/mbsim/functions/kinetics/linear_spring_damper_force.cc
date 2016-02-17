@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/linear_regularized_bilateral_constraint.h"
+#include "mbsim/functions/kinetics/linear_spring_damper_force.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,22 +27,24 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedBilateralConstraint, MBSIM%"LinearRegularizedBilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearSpringDamperForce, MBSIM%"LinearSpringDamperForce")
 
-  void LinearRegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
+  LinearSpringDamperForce::LinearSpringDamperForce(double c_, double d_, double l0_) : c(c_), d(d_), l0(l0_) { 
+    Deprecated::registerMessage("The parameter unloadedLength in class LinearSpringDamperForce is deprecated. Use the paramter unloadedLength of class SpringDamper instead."); 
+  }
+
+  void LinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"stiffnessCoefficient");
     c = Element::getDouble(e);
     e = E(element)->getFirstElementChildNamed(MBSIM%"dampingCoefficient");
     d = Element::getDouble(e);
-  }
-
-  DOMElement* LinearRegularizedBilateralConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Function<double(double,double)>::writeXMLFile(parent);
-//    addElementText(ele0, MBSIM%"stiffnessCoefficient", c);
-//    addElementText(ele0, MBSIM%"dampingCoefficient", d);
-    return ele0;
+    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
+    if(e) {
+      l0 = Element::getDouble(e);
+      Deprecated::registerMessage("The parameter unloadedLength in class LinearSpringDamperForce is deprecated. Use the paramter unloadedLength of class SpringDamper instead.");
+    }
   }
 
 }

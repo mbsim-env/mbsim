@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/linear_spring_damper_force.h"
+#include "mbsim/functions/kinetics/linear_regularized_unilateral_constraint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,24 +27,15 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearSpringDamperForce, MBSIM%"LinearSpringDamperForce")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedUnilateralConstraint, MBSIM%"LinearRegularizedUnilateralConstraint")
 
-  LinearSpringDamperForce::LinearSpringDamperForce(double c_, double d_, double l0_) : c(c_), d(d_), l0(l0_) { 
-    Deprecated::registerMessage("The parameter unloadedLength in class LinearSpringDamperForce is deprecated. Use the paramter unloadedLength of class SpringDamper instead."); 
-  }
-
-  void LinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
+  void LinearRegularizedUnilateralConstraint::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"stiffnessCoefficient");
     c = Element::getDouble(e);
     e = E(element)->getFirstElementChildNamed(MBSIM%"dampingCoefficient");
     d = Element::getDouble(e);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
-    if(e) {
-      l0 = Element::getDouble(e);
-      Deprecated::registerMessage("The parameter unloadedLength in class LinearSpringDamperForce is deprecated. Use the paramter unloadedLength of class SpringDamper instead.");
-    }
   }
 
 }

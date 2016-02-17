@@ -1,4 +1,4 @@
-SUBDIRS = contact kinematics .
+SUBDIRS = kinematics kinetics contact .
 
 noinst_LTLIBRARIES = libfunction.la
 libfunction_la_SOURCES = constant_function.cc\
@@ -19,20 +19,12 @@ libfunction_la_SOURCES = constant_function.cc\
 			 two_dimensional_tabular_function.cc\
 			 symbolic_function.cc\
 			 piecewise_polynom_function.cc\
-			 fourier_function.cc\
-			 linear_spring_damper_force.cc\
-			 nonlinear_spring_damper_force.cc\
-			 linear_regularized_unilateral_constraint.cc\
-			 linear_regularized_bilateral_constraint.cc\
-			 linear_regularized_coulomb_friction.cc\
-			 linear_regularized_stribeck_friction.cc\
-			 influence_function.cc\
-			 flexibility_influence_function.cc\
-			 constant_influence_function.cc
+			 fourier_function.cc
 
 functionincludedir = $(includedir)/mbsim/functions
 
 libfunction_la_LIBADD = kinematics/libkinematics.la
+libfunction_la_LIBADD += kinetics/libkinetics.la
 libfunction_la_LIBADD += contact/libcontact.la
 libfunction_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
 libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(CASADI_CFLAGS)
@@ -55,17 +47,7 @@ functioninclude_HEADERS = function.h\
 			  tabular_function.h\
 			  two_dimensional_tabular_function.h\
 			  symbolic_function.h\
-			  kinetic_functions.h\
 			  piecewise_polynom_function.h\
 			  fourier_function.h\
 			  time_dependent_function.h\
-			  state_dependent_function.h\
-			  linear_spring_damper_force.h\
-			  nonlinear_spring_damper_force.h\
-			  linear_regularized_unilateral_constraint.h\
-			  linear_regularized_bilateral_constraint.h\
-			  linear_regularized_coulomb_friction.h\
-			  linear_regularized_stribeck_friction.h\
-			  influence_function.h\
-			  flexibility_influence_function.h\
-			  constant_influence_function.h
+			  state_dependent_function.h

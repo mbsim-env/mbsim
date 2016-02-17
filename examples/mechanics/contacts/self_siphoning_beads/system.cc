@@ -16,7 +16,7 @@
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 #include "mbsim/functions/symbolic_function.h"
-#include "mbsim/functions/kinetic_functions.h"
+#include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -9,7 +9,7 @@
 #include "mbsimFlexibleBody/contours/neutral_contour/contour_2s_neutral_linear_external_FFR.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include <mbsim/functions/kinematics/kinematics.h>
-#include <mbsim/functions/kinetic_functions.h>
+#include <mbsim/functions/kinetics/kinetics.h>
 // Beginning Contact
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/contour.h"

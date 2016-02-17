@@ -17,33 +17,37 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#ifndef _CONSTANT_INFLUENCE_FUNCTION_H_
-#define _CONSTANT_INFLUENCE_FUNCTION_H_
+#ifndef _FLEXIBILITY_INFLUENCE_FUNCTION_H_
+#define _FLEXIBILITY_INFLUENCE_FUNCTION_H_
 
-#include "mbsim/functions/influence_function.h"
+#include "mbsim/functions/kinetics/influence_function.h"
+#include "mbsim/utils/eps.h"
 
 namespace MBSim {
 
   /*
-   * \brief a class for Influence-Functions with constant coupling
+   * \brief Influence function for flexibility of contour with no influence to other contours (or contour points)
    */
-  class ConstantInfluenceFunction : public InfluenceFunction {
+  class FlexibilityInfluenceFunction : public InfluenceFunction {
     public:
-      ConstantInfluenceFunction() : couplingValue(0) {
-    }
-      ConstantInfluenceFunction(const double & couplingValue_) :
-          couplingValue(couplingValue_) {
+      FlexibilityInfluenceFunction() : flexibility(0) {
       }
-      virtual ~ConstantInfluenceFunction() {}
+      FlexibilityInfluenceFunction(const std::string& ContourName_, const double & flexibility_) :
+          flexibility(flexibility_) {
+      }
+      virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const std::pair<Contour*, Frame*>& firstContourInfo, const std::pair<Contour*, Frame*>& secondContourInfo) {
-        return couplingValue;
+        if(nrm2(getContourParameters(t,firstContourInfo)- getContourParameters(t,secondContourInfo)) < macheps())
+          return flexibility;
+        else
+          return 0;
       }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
     protected:
-      double couplingValue;
+      double flexibility;
   };
 
 }
