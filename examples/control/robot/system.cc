@@ -3,7 +3,7 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/environment.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/tabular_function.h"
 #include "mbsim/functions/symbolic_function.h"
 

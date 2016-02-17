@@ -17,7 +17,7 @@
 #include <mbsim/utils/nonlinear_algebra.h>
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinetic_functions.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>

@@ -1,7 +1,7 @@
 #include "group1.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/spring_damper.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetic_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frames/fixed_relative_frame.h"

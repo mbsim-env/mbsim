@@ -7,7 +7,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/environment.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>

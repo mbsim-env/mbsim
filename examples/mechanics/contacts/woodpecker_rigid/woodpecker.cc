@@ -10,7 +10,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/links/generalized_spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

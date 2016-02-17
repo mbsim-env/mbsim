@@ -1,8 +1,8 @@
 #include <config.h>
 #include "cardan_shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/functions/translation_along_z_axis.h"
-#include "mbsim/functions/rotation_about_axes_xy.h"
+#include "mbsim/functions/kinematics/translation_along_z_axis.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_xy.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE

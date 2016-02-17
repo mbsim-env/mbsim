@@ -11,7 +11,7 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "fmatvec/function.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/functions/constant_function.h"
 #include "mbsim/functions/symbolic_function.h"

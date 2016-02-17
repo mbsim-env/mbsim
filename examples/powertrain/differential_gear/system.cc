@@ -6,7 +6,7 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/constraints/gear_constraint.h"
 #include "mbsimPowertrain/differential_gear.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/constant_function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

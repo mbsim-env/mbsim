@@ -3,7 +3,7 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/spring_damper.h"
 #include "mbsim/environment.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

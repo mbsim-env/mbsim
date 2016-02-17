@@ -4,7 +4,7 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/constant_function.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/constraints/gear_constraint.h"
 

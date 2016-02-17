@@ -7,7 +7,7 @@
 #include "mbsim/contours/planar_contour.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "tools/rigid_contour_functions1s.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 
 #include "mbsim/contact_kinematics/circlesolid_contour1s.h"
 #include "mbsim/utils/nonlinear_algebra.h"

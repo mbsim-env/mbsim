@@ -3,7 +3,7 @@
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/constant_function.h"
 
 using namespace std;

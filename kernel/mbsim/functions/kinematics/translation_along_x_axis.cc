@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/translation_along_z_axis.h"
+#include "mbsim/functions/kinematics/translation_along_x_axis.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -26,7 +26,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TranslationAlongZAxis<VecV>, MBSIM%"TranslationAlongZAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TranslationAlongZAxis<double>, MBSIM%"TranslationAlongZAxis")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TranslationAlongXAxis<VecV>, MBSIM%"TranslationAlongXAxis")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TranslationAlongXAxis<double>, MBSIM%"TranslationAlongXAxis")
 
 }

@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/plane.h"

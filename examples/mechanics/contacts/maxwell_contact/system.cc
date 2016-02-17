@@ -23,7 +23,7 @@
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/functions/kinetic_functions.h>
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 
 using namespace std;
 using namespace MBSim;

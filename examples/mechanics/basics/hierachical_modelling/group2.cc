@@ -1,7 +1,7 @@
 #include "group2.h"
 #include "group1.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
 #endif

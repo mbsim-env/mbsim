@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/translation_along_y_axis.h"
+#include "mbsim/functions/kinematics/rotation_about_fixed_axis.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -26,7 +26,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TranslationAlongYAxis<VecV>, MBSIM%"TranslationAlongYAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TranslationAlongYAxis<double>, MBSIM%"TranslationAlongYAxis")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(RotationAboutFixedAxis<VecV>, MBSIM%"RotationAboutFixedAxis")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(RotationAboutFixedAxis<double>, MBSIM%"RotationAboutFixedAxis")
 
 }

@@ -3,7 +3,7 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/controlvalve43.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/tabular_function.h"
 #include "mbsim/functions/constant_function.h"
 #include "mbsimControl/function_sensor.h"

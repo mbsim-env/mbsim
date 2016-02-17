@@ -10,7 +10,7 @@
 #include "mbsim/links/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/utils.h"
-#include "mbsim/functions/kinematic_functions.h"
+#include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetic_functions.h"
 #include "mbsim/functions/constant_function.h"
 

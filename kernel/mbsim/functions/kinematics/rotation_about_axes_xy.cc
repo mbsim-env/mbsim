@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/rotation_about_fixed_axis.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_xy.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -26,7 +26,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(RotationAboutFixedAxis<VecV>, MBSIM%"RotationAboutFixedAxis")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(RotationAboutFixedAxis<double>, MBSIM%"RotationAboutFixedAxis")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(RotationAboutAxesXY<VecV>, MBSIM%"RotationAboutAxesXY")
 
 }

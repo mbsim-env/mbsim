@@ -1,7 +1,7 @@
 #include <config.h>
 #include "differential_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/functions/rotation_about_fixed_axis.h"
+#include "mbsim/functions/kinematics/rotation_about_fixed_axis.h"
 #include "mbsim/constraints/gear_constraint.h"
 #include "mbsim/objects/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
