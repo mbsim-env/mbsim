@@ -22,7 +22,7 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/functions/funcpair_planarcontour_point.h"
-#include "mbsim/functions/planar_contact_search.h"
+#include "mbsim/utils/planar_contact_search.h"
 
 using namespace fmatvec;
 using namespace std;

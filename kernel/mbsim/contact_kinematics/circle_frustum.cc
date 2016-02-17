@@ -26,7 +26,7 @@
 #include "mbsim/functions/funcpair_hyperbola_circle.h"
 #include "mbsim/functions/jacpair_ellipse_circle.h"
 #include "mbsim/functions/jacpair_hyperbola_circle.h"
-#include "mbsim/functions/planar_contact_search.h"
+#include "mbsim/utils/planar_contact_search.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;

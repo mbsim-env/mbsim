@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/spatial_contact_search.h"
+#include "mbsim/utils/spatial_contact_search.h"
 #include "mbsim/functions/distance_function.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"

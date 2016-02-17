@@ -22,7 +22,7 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/funcpair_planarcontour_circle.h"
-#include "mbsim/functions/planar_contact_search.h"
+#include "mbsim/utils/planar_contact_search.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 

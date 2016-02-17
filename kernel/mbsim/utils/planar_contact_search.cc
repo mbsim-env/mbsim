@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/planar_contact_search.h"
+#include "mbsim/utils/planar_contact_search.h"
 #include "mbsim/functions/distance_function.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/nonlinear_algebra.h"

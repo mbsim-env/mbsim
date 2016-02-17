@@ -56,9 +56,7 @@ libfunction_la_SOURCES = constant_function.cc\
 			 funcpair_hyperbola_circle.cc\
 			 jacpair_conesection_circle.cc\
 			 jacpair_ellipse_circle.cc\
-			 jacpair_hyperbola_circle.cc\
-			 planar_contact_search.cc\
-			 spatial_contact_search.cc
+			 jacpair_hyperbola_circle.cc
 
 functionincludedir = $(includedir)/mbsim/functions
 
@@ -134,6 +132,4 @@ functioninclude_HEADERS = function.h\
 			  funcpair_hyperbola_circle.h\
 			  jacpair_conesection_circle.h\
 			  jacpair_ellipse_circle.h\
-			  jacpair_hyperbola_circle.h\
-			  planar_contact_search.h\
-			  spatial_contact_search.h
+			  jacpair_hyperbola_circle.h
