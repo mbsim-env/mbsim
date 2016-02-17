@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/funcpair_planarcontour_point.h"
+#include "mbsim/functions/contact/funcpair_spatialcontour_point.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/contours/point.h"
@@ -27,16 +27,18 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  double FuncPairPlanarContourPoint::operator()(const double &alpha) {
-    zeta(0) = alpha;
+  Vec2 FuncPairSpatialContourPoint::operator()(const Vec2 &alpha) {  // Vec2: U and V direction
     Vec3 Wd = getWrD(alpha);
-    Vec3 Wt = contour->getWu(t,zeta);
-    return Wt.T() * Wd;
+    Vec3 Wt1 = contour->getWu(t,alpha);
+    Vec3 Wt2 = contour->getWv(t,alpha);
+    Vec2 Wt(NONINIT);  // TODO:: check this?
+    Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
+    Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
+    return Wt;
   }
 
-  Vec3 FuncPairPlanarContourPoint::getWrD(const double &alpha) {
-    zeta(0) = alpha;
-    return contour->getPosition(t,zeta) - point->getFrame()->getPosition(t);
+  Vec3 FuncPairSpatialContourPoint::getWrD(const Vec2 &alpha) {
+    return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
   }
 
-}  
+}

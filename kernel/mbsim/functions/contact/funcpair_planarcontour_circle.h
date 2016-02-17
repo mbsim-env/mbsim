@@ -17,26 +17,26 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FUNCPAIR_PLANARCONTOUR_POINT_H_
-#define _FUNCPAIR_PLANARCONTOUR_POINT_H_
+#ifndef _FUNCPAIR_PLANARCONTOUR_CIRCLE_H_
+#define _FUNCPAIR_PLANARCONTOUR_CIRCLE_H_
 
-#include <mbsim/functions/distance_function.h>
+#include <mbsim/functions/contact/distance_function.h>
 
 namespace MBSim {
 
   class Contour;
-  class Point;
+  class Circle;
 
   /*!
-   * \brief root function for pairing PlanarContour and Point
+   * \brief root function for pairing PlanarContour and Circle
    * \author Martin Foerg
    */
-  class FuncPairPlanarContourPoint : public DistanceFunction<double(double)> {
+  class FuncPairPlanarContourCircle : public DistanceFunction<double(double)> {
     public:
-      /*!
+      /**
        * \brief constructor
        */
-      FuncPairPlanarContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) {}
+      FuncPairPlanarContourCircle(Circle* circle_, Contour *contour_) : contour(contour_), circle(circle_) { }
 
       double operator()(const double &alpha);
 
@@ -47,7 +47,7 @@ namespace MBSim {
        * \brief contours
        */
       Contour *contour;
-      Point *point;
+      Circle *circle;
 
       /**
        * \brief contour point data for saving old values
@@ -57,5 +57,4 @@ namespace MBSim {
 
 }
 
-#endif /* FUNCTIONS_CONTACT_H_ */
-
+#endif

@@ -17,44 +17,11 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FUNCPAIR_PLANARCONTOUR_CIRCLE_H_
-#define _FUNCPAIR_PLANARCONTOUR_CIRCLE_H_
+#include <config.h>
+#include "mbsim/functions/contact/jacpair_conesection_circle.h"
 
-#include <mbsim/functions/distance_function.h>
+using namespace fmatvec;
 
 namespace MBSim {
 
-  class Contour;
-  class Circle;
-
-  /*!
-   * \brief root function for pairing PlanarContour and Circle
-   * \author Martin Foerg
-   */
-  class FuncPairPlanarContourCircle : public DistanceFunction<double(double)> {
-    public:
-      /**
-       * \brief constructor
-       */
-      FuncPairPlanarContourCircle(Circle* circle_, Contour *contour_) : contour(contour_), circle(circle_) { }
-
-      double operator()(const double &alpha);
-
-      fmatvec::Vec3 getWrD(const double &alpha);
-
-    private:
-      /**
-       * \brief contours
-       */
-      Contour *contour;
-      Circle *circle;
-
-      /**
-       * \brief contour point data for saving old values
-       */
-      fmatvec::Vec2 zeta;
-  };
-
 }
-
-#endif

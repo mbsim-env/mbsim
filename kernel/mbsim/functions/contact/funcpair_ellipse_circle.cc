@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/jacpair_ellipse_circle.h"
+#include "mbsim/functions/contact/funcpair_ellipse_circle.h"
 
 using namespace fmatvec;
 

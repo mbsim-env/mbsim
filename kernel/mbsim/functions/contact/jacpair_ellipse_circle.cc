@@ -18,11 +18,10 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/funcpair_hyperbola_circle.h"
+#include "mbsim/functions/contact/jacpair_ellipse_circle.h"
 
 using namespace fmatvec;
 
 namespace MBSim {
-
 
 }

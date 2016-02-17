@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/funcpair_ellipse_circle.h"
+#include "mbsim/functions/contact/funcpair_planarcontour_line.h"
 
 using namespace fmatvec;
 

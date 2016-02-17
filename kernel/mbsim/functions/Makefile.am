@@ -1,3 +1,5 @@
+SUBDIRS = contact .
+
 noinst_LTLIBRARIES = libfunction.la
 libfunction_la_SOURCES = constant_function.cc\
 			 linear_function.cc\
@@ -45,22 +47,12 @@ libfunction_la_SOURCES = constant_function.cc\
 			 linear_regularized_stribeck_friction.cc\
 			 influence_function.cc\
 			 flexibility_influence_function.cc\
-			 constant_influence_function.cc\
-			 funcpair_planarcontour_point.cc\
-			 funcpair_planarcontour_circle.cc\
-			 funcpair_planarcontour_line.cc\
-			 funcpair_spatialcontour_point.cc\
-			 funcpair_point_contourinterpolation.cc\
-			 funcpair_conesection_circle.cc\
-			 funcpair_ellipse_circle.cc\
-			 funcpair_hyperbola_circle.cc\
-			 jacpair_conesection_circle.cc\
-			 jacpair_ellipse_circle.cc\
-			 jacpair_hyperbola_circle.cc
+			 constant_influence_function.cc
 
 functionincludedir = $(includedir)/mbsim/functions
 
-libfunction_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
+libfunction_la_LIBADD = contact/libcontact.la
+libfunction_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
 libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(CASADI_CFLAGS)
 
 functioninclude_HEADERS = function.h\
@@ -120,16 +112,4 @@ functioninclude_HEADERS = function.h\
 			  linear_regularized_stribeck_friction.h\
 			  influence_function.h\
 			  flexibility_influence_function.h\
-			  constant_influence_function.h\
-			  distance_function.h\
-			  funcpair_planarcontour_point.h\
-			  funcpair_planarcontour_circle.h\
-			  funcpair_planarcontour_line.h\
-			  funcpair_spatialcontour_point.h\
-			  funcpair_point_contourinterpolation.h\
-			  funcpair_conesection_circle.h\
-			  funcpair_ellipse_circle.h\
-			  funcpair_hyperbola_circle.h\
-			  jacpair_conesection_circle.h\
-			  jacpair_ellipse_circle.h\
-			  jacpair_hyperbola_circle.h
+			  constant_influence_function.h

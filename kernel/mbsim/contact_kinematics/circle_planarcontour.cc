@@ -21,7 +21,7 @@
 #include "mbsim/contact_kinematics/circle_planarcontour.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/circle.h"
-#include "mbsim/functions/funcpair_planarcontour_circle.h"
+#include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
 #include "mbsim/utils/planar_contact_search.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"

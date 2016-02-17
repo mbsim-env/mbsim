@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_HYPERBOLA_CIRCLE_H_
 #define _FUNCPAIR_HYPERBOLA_CIRCLE_H_
 
-#include <mbsim/functions/funcpair_conesection_circle.h>
+#include <mbsim/functions/contact/funcpair_conesection_circle.h>
 
 namespace MBSim {
 

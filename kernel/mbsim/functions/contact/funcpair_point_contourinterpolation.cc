@@ -17,42 +17,22 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FUNCPAIR_SPATIALCONTOUR_POINT_H_
-#define _FUNCPAIR_SPATIALCONTOUR_POINT_H_
+#include <config.h>
+#include "mbsim/functions/contact/funcpair_point_contourinterpolation.h"
+#include "mbsim/frames/frame.h"
+#include "mbsim/contours/point.h"
+#include "mbsim/contours/contour_interpolation.h"
 
-#include <mbsim/functions/distance_function.h>
+using namespace fmatvec;
 
 namespace MBSim {
 
-  class Contour;
-  class Point;
+  Vec2 FuncPairPointContourInterpolation::operator()(const Vec2 &alpha) {
+    return (contour->getWu(t,alpha)).T() * (contour->getPosition(t,alpha) - point->getFrame()->getPosition(t));
+  }
 
-  /*!
-   * \brief root function for pairing SpatialContour and Point
-   * \author Zhan Wang
-   * \date 2013-12-05
-   */
-  class FuncPairSpatialContourPoint : public DistanceFunction<fmatvec::Vec2(fmatvec::Vec2)> {
-    public:
-      /**
-       * \brief constructor
-       * \param point contour
-       * \param contour contour2s surface
-       */
-      FuncPairSpatialContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) { }
-
-      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha);
-
-      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha);
-
-    private:
-      /**
-       * \brief contours
-       */
-      Contour *contour;
-      Point *point;
-  };
+  Vec3 FuncPairPointContourInterpolation::getWrD(const Vec2 &alpha) {
+    return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
+  }
 
 }
-
-#endif

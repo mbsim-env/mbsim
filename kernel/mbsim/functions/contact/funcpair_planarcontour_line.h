@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_PLANARCONTOUR_LINE_H_
 #define _FUNCPAIR_PLANARCONTOUR_LINE_H_
 
-#include <mbsim/functions/distance_function.h>
+#include <mbsim/functions/contact/distance_function.h>
 
 namespace MBSim {
 

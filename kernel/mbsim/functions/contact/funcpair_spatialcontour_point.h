@@ -17,11 +17,42 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include <config.h>
-#include "mbsim/functions/funcpair_planarcontour_line.h"
+#ifndef _FUNCPAIR_SPATIALCONTOUR_POINT_H_
+#define _FUNCPAIR_SPATIALCONTOUR_POINT_H_
 
-using namespace fmatvec;
+#include <mbsim/functions/contact/distance_function.h>
 
 namespace MBSim {
 
+  class Contour;
+  class Point;
+
+  /*!
+   * \brief root function for pairing SpatialContour and Point
+   * \author Zhan Wang
+   * \date 2013-12-05
+   */
+  class FuncPairSpatialContourPoint : public DistanceFunction<fmatvec::Vec2(fmatvec::Vec2)> {
+    public:
+      /**
+       * \brief constructor
+       * \param point contour
+       * \param contour contour2s surface
+       */
+      FuncPairSpatialContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) { }
+
+      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha);
+
+      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha);
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour *contour;
+      Point *point;
+  };
+
 }
+
+#endif

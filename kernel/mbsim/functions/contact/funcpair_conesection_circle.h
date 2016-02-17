@@ -17,20 +17,19 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FUNCPAIR_ELLIPSE_CIRCLE_H_
-#define _FUNCPAIR_ELLIPSE_CIRCLE_H_
+#ifndef _FUNCPAIR_CONESECTION_CIRCLE_H_
+#define _FUNCPAIR_CONESECTION_CIRCLE_H_
 
-#include <mbsim/functions/funcpair_conesection_circle.h>
+#include <mbsim/functions/contact/distance_function.h>
 
 namespace MBSim {
 
   /*!
-   * \brief root function for planar pairing Ellipse and Circle
-   * \author Roland Zander
+   * \brief base root function for planar pairing ConeSection and Circle
    * \author Thorsten Schindler
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairEllipseCircle : public FuncPairConeSectionCircle {
+  class FuncPairConeSectionCircle : public DistanceFunction<double(double)> {
     public:
       /*!
        * \brief constructor
@@ -39,9 +38,7 @@ namespace MBSim {
        * \param length of second semi-axis
        * \default conesection in circle
        */
-      FuncPairEllipseCircle(double R_, double a_, double b_) :
-          FuncPairConeSectionCircle(R_, a_, b_) {
-      }
+      FuncPairConeSectionCircle(double R_,double a_,double b_) : R(R_), a(a_), b(b_), sec_IN_ci(true) {}
 
       /*!
        * \brief constructor
@@ -50,28 +47,56 @@ namespace MBSim {
        * \param length of second semi-axis
        * \param conesection in circle
        */
-      FuncPairEllipseCircle(double R_, double a_, double b_, bool el_IN_ci_) :
-          FuncPairConeSectionCircle(R_, a_, b_, el_IN_ci_) {
+      FuncPairConeSectionCircle(double R_, double a_, double b_, bool sec_IN_ci_) :
+          R(R_), a(a_), b(b_), sec_IN_ci(sec_IN_ci_) {
       }
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      double operator()(const double &phi);
-      fmatvec::Vec3 getWrD(const double &phi);
+      virtual double operator()(const double &phi) = 0;
+      double operator[](const double &phi);
+      virtual fmatvec::Vec3 getWrD(const double &phi) = 0;
       /*************************************************/
 
       /* GETTER / SETTER */
-      void setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_);
+      void setDiffVec(fmatvec::Vec3 d_);
+
+      void setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_);
       /*************************************************/
+
+    protected:
+      /**
+       * \brief radius of circle as well as length in b1- and b2-direction
+       */
+      double R, a, b;
+
+      /**
+       * \brief cone-section in circle
+       */
+      bool sec_IN_ci;
+
+      /**
+       * \brief normed base-vectors of cone-section
+       */
+      fmatvec::Vec3 b1, b2;
+
+      /**
+       * \brief distance-vector of cone-section- and circle-midpoint
+       */
+      fmatvec::Vec3 d;
   };
 
-  inline void FuncPairEllipseCircle::setEllipseCOS(fmatvec::Vec3 b1e_, fmatvec::Vec3 b2e_) {
-    setSectionCOS(b1e_, b2e_);
+  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) {
+    d = d_;
   }
-  inline double FuncPairEllipseCircle::operator()(const double &phi) {
-    return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cos(phi) + 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sin(phi) + ((a * a) - (b * b)) * sin(2 * phi);
+  inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_, fmatvec::Vec3 b2_) {
+    b1 = b1_;
+    b2 = b2_;
   }
-  inline fmatvec::Vec3 FuncPairEllipseCircle::getWrD(const double &phi) {
-    return d + b1 * a * cos(phi) + b2 * b * sin(phi);
+  inline double FuncPairConeSectionCircle::operator[](const double &phi) {
+    if (sec_IN_ci)
+      return R - nrm2(getWrD(phi));
+    else
+      return nrm2(getWrD(phi)) - R;
   }
 
 }

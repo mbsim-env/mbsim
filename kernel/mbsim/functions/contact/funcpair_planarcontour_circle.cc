@@ -18,10 +18,25 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/jacpair_hyperbola_circle.h"
+#include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
+#include "mbsim/frames/frame.h"
+#include "mbsim/contours/contour.h"
+#include "mbsim/contours/circle.h"
 
 using namespace fmatvec;
 
 namespace MBSim {
+
+  double FuncPairPlanarContourCircle::operator()(const double &alpha) {
+    zeta(0) = alpha;
+    Vec3 Wd = getWrD(alpha);
+    Vec3 Wt = contour->getWu(t,zeta);
+    return Wt.T() * Wd;
+  }
+
+  Vec3 FuncPairPlanarContourCircle::getWrD(const double &alpha) {
+    zeta(0) = alpha;
+    return contour->getPosition(t,zeta) - (circle->getFrame()->getPosition(t) - (circle->getSign()*circle->getRadius()) * contour->getWn(t,zeta));
+  }
 
 }

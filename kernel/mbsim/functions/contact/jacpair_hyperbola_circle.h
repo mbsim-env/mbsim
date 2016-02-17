@@ -20,7 +20,7 @@
 #ifndef _JACPAIR_HYPERBOLA_CIRCLE_H_
 #define _JACPAIR_HYPERBOLA_CIRCLE_H_
 
-#include <mbsim/functions/jacpair_conesection_circle.h>
+#include <mbsim/functions/contact/jacpair_conesection_circle.h>
 
 namespace MBSim {
 

@@ -17,22 +17,45 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include <config.h>
-#include "mbsim/functions/funcpair_point_contourinterpolation.h"
-#include "mbsim/frames/frame.h"
-#include "mbsim/contours/point.h"
-#include "mbsim/contours/contour_interpolation.h"
+#ifndef _FUNCPAIR_PLANARCONTOUR_POINT_H_
+#define _FUNCPAIR_PLANARCONTOUR_POINT_H_
 
-using namespace fmatvec;
+#include <mbsim/functions/contact/distance_function.h>
 
 namespace MBSim {
 
-  Vec2 FuncPairPointContourInterpolation::operator()(const Vec2 &alpha) {
-    return (contour->getWu(t,alpha)).T() * (contour->getPosition(t,alpha) - point->getFrame()->getPosition(t));
-  }
+  class Contour;
+  class Point;
 
-  Vec3 FuncPairPointContourInterpolation::getWrD(const Vec2 &alpha) {
-    return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
-  }
+  /*!
+   * \brief root function for pairing PlanarContour and Point
+   * \author Martin Foerg
+   */
+  class FuncPairPlanarContourPoint : public DistanceFunction<double(double)> {
+    public:
+      /*!
+       * \brief constructor
+       */
+      FuncPairPlanarContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) {}
+
+      double operator()(const double &alpha);
+
+      fmatvec::Vec3 getWrD(const double &alpha);
+
+    private:
+      /**
+       * \brief contours
+       */
+      Contour *contour;
+      Point *point;
+
+      /**
+       * \brief contour point data for saving old values
+       */
+      fmatvec::Vec2 zeta;
+  };
 
 }
+
+#endif /* FUNCTIONS_CONTACT_H_ */
+
