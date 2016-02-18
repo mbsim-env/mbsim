@@ -38,10 +38,10 @@ namespace MBSim {
     Vec3 WrD = circle0->getFrame()->getPosition(t) - circle1->getFrame()->getPosition(t);
     cFrame[1]->getOrientation(false).set(0, circle1->getSign()*WrD/nrm2(WrD));
     cFrame[0]->getOrientation(false).set(0, -cFrame[1]->getOrientation(false).col(0));
-    cFrame[0]->getOrientation(false).set(2, circle0->getFrame()->getOrientation().col(2));
-    cFrame[1]->getOrientation(false).set(2, circle1->getFrame()->getOrientation().col(2));
+    cFrame[0]->getOrientation(false).set(2, circle0->getSign()*cFrame[0]->getOrientation(false).col(2));
+    cFrame[1]->getOrientation(false).set(2, circle1->getSign()*cFrame[1]->getOrientation(false).col(2));
     cFrame[0]->getOrientation(false).set(1, crossProduct(cFrame[0]->getOrientation(false).col(2),cFrame[0]->getOrientation(false).col(0)));
-    cFrame[1]->getOrientation(false).set(1, -cFrame[0]->getOrientation(false).col(1));
+    cFrame[1]->getOrientation(false).set(1, crossProduct(cFrame[1]->getOrientation(false).col(2),cFrame[1]->getOrientation(false).col(0)));
     cFrame[0]->setPosition(circle0->getFrame()->getPosition() + cFrame[0]->getOrientation(false).col(0)*rEff0);
     cFrame[1]->setPosition(circle1->getFrame()->getPosition() + cFrame[1]->getOrientation(false).col(0)*rEff1);
 

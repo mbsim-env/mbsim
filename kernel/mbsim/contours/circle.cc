@@ -38,15 +38,10 @@ namespace MBSim {
   Vec3 Circle::getKs(const fmatvec::Vec2 &zeta) {
     Vec3 Ks(NONINIT);
     double a = zeta(0);
-    Ks(0)=-sign*r*sin(a);
-    Ks(1)=sign*r*cos(a);
+    Ks(0)=-r*sin(a);
+    Ks(1)=r*cos(a);
     Ks(2)=0;
     return Ks;
-  }
-
-  Vec3 Circle::getKt(const fmatvec::Vec2 &zeta) {
-    static Vec3 Kt("[0;0;1]");
-    return Kt;
   }
 
   Vec3 Circle::getParDer1Kn(const fmatvec::Vec2 &zeta) {
@@ -60,8 +55,8 @@ namespace MBSim {
   Vec3 Circle::getParDer1Ku(const fmatvec::Vec2 &zeta) {
     static Vec3 parDer1Ku;
     double a = zeta(0);
-    parDer1Ku(0)=-sign*cos(a);
-    parDer1Ku(1)=-sign*sin(a);
+    parDer1Ku(0)=-cos(a);
+    parDer1Ku(1)=-sin(a);
     return parDer1Ku;
   }
 
@@ -81,6 +76,7 @@ namespace MBSim {
   void Circle::init(InitStage stage) {
     if(stage==preInit) {
       sign = solid?1:-1;
+      Kt(2) = sign;
       RigidContour::init(stage);
     }
     else if(stage==plotting) {
