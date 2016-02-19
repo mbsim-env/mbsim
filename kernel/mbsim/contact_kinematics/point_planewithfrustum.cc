@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/point_planewithfrustum.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/utils/utils.h"
@@ -89,7 +89,7 @@ namespace MBSim {
     msg(Debug) << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
-  void ContactKinematicsPointPlaneWithFrustum::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointPlaneWithFrustum::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     Vec3 WrOPoint = point->getFrame()->getPosition(t);
     Vec3 WrOPlane = plane->getFrame()->getPosition(t);

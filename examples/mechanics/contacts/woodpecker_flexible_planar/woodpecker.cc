@@ -2,18 +2,20 @@
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsimFlexibleBody/fixed_contour_frame.h"
+#include "mbsimFlexibleBody/frames/fixed_contour_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
-#include "mbsim/links/spring_damper.h"
+#include "mbsim/links/generalized_spring_damper.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
+#include "mbsim/links/kinetic_excitation.h"
+#include "mbsim/functions/constant_function.h"
 
 #include <iostream>
 
@@ -75,22 +77,33 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
 
+  balken->addFrame(new FixedContourFrame("P","[1;0]"));
+  //KineticExcitation *ke = new KineticExcitation("Force");
+  //addLink(ke);
+  //ke->setForceDirection("[1;0;0]");
+  //ke->setForceFunction(new ConstantFunction<VecV(double)>(1));
+  //ke->connect(balken->getFrame("P"));
+
+  balken->getFrame("RJ")->enableOpenMBV(0.1);
+  balken->getFrame("P")->enableOpenMBV(0.1);
+  //ke->enableOpenMBVForce();
+
   Vec nodes(Elements+1);
   for(int i=0;i<=Elements;i++) nodes(i) = i*L/Elements;
   FlexibleBand *top = new FlexibleBand("Top");
   top->setNodes(nodes);
   top->setWidth(r);
-  top->setCn(Vec("[-1.;0.]"));
-  top->setAlphaStart(0.);
-  top->setAlphaEnd(L);  
+  top->setCn(Vec("[1.;0.]"));
+//  top->setAlphaStart(0.);
+//  top->setAlphaEnd(L);
   top->setNormalDistance(r);
   balken->addContour(top);
   FlexibleBand *bot = new FlexibleBand("Bot");
   bot->setNodes(nodes);
   bot->setWidth(r);
-  bot->setCn(Vec("[1.;0.]"));
-  bot->setAlphaStart(0.);
-  bot->setAlphaEnd(L);  
+  bot->setCn(Vec("[-1.;0.]"));
+//  bot->setAlphaStart(0.);
+//  bot->setAlphaEnd(L);
   bot->setNormalDistance(r);
   balken->addContour(bot);
 
@@ -123,15 +136,15 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
   UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
   double mu = 0.2;
-  SpatialCoulombFriction *coulFriction = new SpatialCoulombFriction(mu);
-  SpatialCoulombImpact   *coulImptact  = new SpatialCoulombImpact(mu);
+  PlanarCoulombFriction *coulFriction = new PlanarCoulombFriction(mu);
+  PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
 
   for(int i=0;i<4;i++) {
 
     UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
     UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
-    SpatialCoulombFriction *coulFriction = new SpatialCoulombFriction(mu);
-    SpatialCoulombImpact   *coulImptact  = new SpatialCoulombImpact(mu);
+    PlanarCoulombFriction *coulFriction = new PlanarCoulombFriction(mu);
+    PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
 
     stringstream name;
     name << "PM" << i;

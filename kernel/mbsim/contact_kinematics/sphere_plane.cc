@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "sphere_plane.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/contact_utils.h"
@@ -42,7 +42,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSpherePlane::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t));
     cFrame[isphere]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
     cFrame[isphere]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
@@ -58,7 +58,7 @@ namespace MBSim {
     cFrame[iplane]->setPosition(cFrame[isphere]->getPosition(false) - Wn*g);
   }
 
-  void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     Vec3 n1 = cFrame[iplane]->getOrientation(t).col(0);
     Vec3 n2 = cFrame[isphere]->getOrientation(t).col(0);
     Vec3 vC1 = cFrame[iplane]->getVelocity(t);

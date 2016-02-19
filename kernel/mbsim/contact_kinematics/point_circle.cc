@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "point_circle.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/circle.h"
 
@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointCircle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointCircle::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     const Vec3 WrD = -circle->getFrame()->getPosition(t) + point->getFrame()->getPosition(t);
     
     cFrame[icircle]->getOrientation(false).set(0, WrD/nrm2(WrD));
@@ -61,7 +61,7 @@ namespace MBSim {
     g = cFrame[icircle]->getOrientation(false).col(0).T()*WrD - circle->getRadius();
   }
 
-  void ContactKinematicsPointCircle::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsPointCircle::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
     const Vec KrPC1 = circle->getFrame()->getOrientation(t).T()*(cFrame[icircle]->getPosition(t) - circle->getFrame()->getPosition(t));

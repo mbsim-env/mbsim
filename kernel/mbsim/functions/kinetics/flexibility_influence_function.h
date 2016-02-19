@@ -37,8 +37,8 @@ namespace MBSim {
       }
       virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const std::pair<Contour*, Frame*>& firstContourInfo, const std::pair<Contour*, Frame*>& secondContourInfo) {
-        if(nrm2(getContourParameters(t,firstContourInfo)- getContourParameters(t,secondContourInfo)) < macheps())
+      virtual double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo) {
+        if(nrm2(getZeta(t,firstContourInfo)- getZeta(t,secondContourInfo)) < macheps())
           return flexibility;
         else
           return 0;

@@ -56,7 +56,7 @@ namespace MBSim {
     return R->getOrientation(t).col(2);
   }
 
-  Vec2 Plane::getContourParameters(double t, const fmatvec::Vec3 &WrPoint) {
+  Vec2 Plane::getZeta(double t, const fmatvec::Vec3 &WrPoint) {
     return (R->getOrientation(t).T() *(WrPoint - R->getPosition(t)) )(Range<Fixed<1>,Fixed<2> >());
   }
 

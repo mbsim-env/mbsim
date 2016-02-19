@@ -28,7 +28,7 @@ namespace MBSim {
   class FuncPairPlanarContourCircle;
 
   /**
-   * \brief pairing outer circle side to contour1s
+   * \brief pairing outer circle side to planar contour
    * \author Martin Foerg
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
@@ -37,7 +37,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsCirclePlanarContour() : icircle(0), icontour1s(0), circle(NULL), contour1s(NULL), func(NULL), searchAllCP(false) {}
+      ContactKinematicsCirclePlanarContour() : icircle(0), icontour1s(0), circle(NULL), contour1s(NULL), func(NULL), searchAllCP(false) { }
 
       /**
        * \brief destructor
@@ -46,11 +46,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame);
+      virtual void updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame);
       /***************************************************/
 
-      void setSearchAllCP(bool searchAllCP_=true) {searchAllCP=searchAllCP_; }
+      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
 
     private:
       /**
@@ -70,11 +70,9 @@ namespace MBSim {
       FuncPairPlanarContourCircle *func;
 
       bool searchAllCP;
-
-      fmatvec::Vec2 zeta;
   };
 
 }
 
-#endif /* _CONTACT_KINEMATICS_CIRCLESOLIDCONTOUR1S_H_ */
+#endif
 

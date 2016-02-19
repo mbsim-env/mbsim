@@ -64,7 +64,7 @@ namespace MBSim {
        *    index 0: x,   height coordinate of frustum
        *    index 1: phi, angle of point
        */
-      virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPS);
+      virtual fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3 &WrPS);
       /*********************************/
 
       /*!

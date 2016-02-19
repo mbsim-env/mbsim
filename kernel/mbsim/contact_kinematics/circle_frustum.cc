@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/circle_frustum.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/functions/contact/funcpair_ellipse_circle.h"
@@ -56,7 +56,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleFrustum::updateg(double t, double& g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsCircleFrustum::updateg(double t, double& g, std::vector<ContourFrame*> &cFrame, int index) {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */

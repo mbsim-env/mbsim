@@ -47,7 +47,7 @@ namespace MBSim {
     func = new FuncPairPointContourInterpolation(point,cinterpol);
   }
 
-  void ContactKinematicsPointContourInterpolation::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointContourInterpolation::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     throw MBSimError("(ContactKinematicsPointContourInterpolation::updateg): Not implemented!");
   }
 

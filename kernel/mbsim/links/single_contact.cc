@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include <mbsim/links/contact.h>
-#include <mbsim/frames/frame.h>
+#include <mbsim/frames/contour_frame.h>
 #include <mbsim/contours/contour.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/constitutive_laws/generalized_force_law.h>

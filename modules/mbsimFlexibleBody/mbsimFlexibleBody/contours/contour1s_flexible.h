@@ -57,15 +57,19 @@ namespace MBSimFlexibleBody {
       }
       /***************************************************/
 
-      virtual MBSim::Frame* createContourFrame(const std::string &name="P");
+      virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
-      virtual void updatePositions(double t, ContourFrame* frame);
-      virtual void updateVelocities(double t, ContourFrame* frame);
-      virtual void updateAccelerations(double t, ContourFrame* frame);
-      virtual void updateJacobians(double t, ContourFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, ContourFrame* frame);
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWu(t,zeta); }
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta);
+
+      virtual void updatePositions(double t, MBSim::ContourFrame* frame);
+      virtual void updateVelocities(double t, MBSim::ContourFrame* frame);
+      virtual void updateAccelerations(double t, MBSim::ContourFrame* frame);
+      virtual void updateJacobians(double t, MBSim::ContourFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, MBSim::ContourFrame* frame);
 
       MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
         return findContactPairingFlexible(type0.c_str(), type1.c_str());
@@ -74,6 +78,8 @@ namespace MBSimFlexibleBody {
       void setNeutral(Contour1sNeutralFactory* neutral_) {
         neutral = neutral_;
       }
+
+      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
     protected:
       /*!

@@ -54,8 +54,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double t, double& g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<Frame*> &cFrame) { throw MBSimError("(ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
+      virtual void updateg(double t, double& g, std::vector<ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) { throw MBSimError("(ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
       /***************************************************/
 
       /* GETTER / SETTER */

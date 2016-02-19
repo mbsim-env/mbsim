@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsim/contours/contour.h"
-#include "mbsim/frames/frame.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -28,15 +27,11 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Contour::Contour(const string &name) : Element(name) {
+  Contour::Contour(const string &name) : Element(name), thickness(0.01) {
     hSize[0] = 0;
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-  }
-
-  Frame* Contour::createContourFrame(const string &name) {
-    return new Frame(name);
   }
 
   Vec3 Contour::getPosition(double t, const Vec2 &zeta) {
@@ -197,8 +192,8 @@ namespace MBSim {
     return WV;
   }
 
-  Vec2 Contour::getContourParameters(double t, const Vec3 &WrPS) {
-    THROW_MBSIMERROR("(Contour::getContourParameters): Not implemented.");
+  Vec2 Contour::getZeta(double t, const Vec3 &WrPS) {
+    THROW_MBSIMERROR("(Contour::getZeta): Not implemented.");
     return 0;
   }
 

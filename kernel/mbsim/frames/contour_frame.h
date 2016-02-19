@@ -22,22 +22,22 @@
 
 #include "mbsim/frames/frame.h"
 
-namespace MBSimFlexibleBody {
+namespace MBSim {
 
-  /**
-   * \brief cartesian frame on contour parameters of flexible bodies
-   * \author Kilian Grundl
-   */
-  class ContourFrame : public MBSim::Frame {
+  class ContourFrame : public Frame {
 
     public:
       ContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta_ = fmatvec::Vec2()) : Frame(name), zeta(zeta_) { }
 
       std::string getType() const { return "ContourFrame"; }
 
-      void setContourParameters(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
+      const fmatvec::Vec2& getZeta() const { return zeta; }
+      void setZeta(const fmatvec::Vec2 &zeta_) { zeta = zeta_; }
 
-      const fmatvec::Vec2& getContourParameters() const { return zeta; }
+      double getEta() const { return zeta(0); }
+      double getXi() const { return zeta(1); }
+      void setEta(double eta) { zeta(0) = eta; }
+      void setXi(double xi) { zeta(1) = xi; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -51,5 +51,4 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif /* _FRAME_H_ */
-
+#endif

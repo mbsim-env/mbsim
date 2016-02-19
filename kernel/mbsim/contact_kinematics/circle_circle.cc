@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/circle_circle.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/circle.h"
 
 using namespace fmatvec;
@@ -34,7 +34,7 @@ namespace MBSim {
     rEff1 = circle1->getSign()*circle1->getRadius();
   }
 
-  void ContactKinematicsCircleCircle::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsCircleCircle::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec3 WrD = circle0->getFrame()->getPosition(t) - circle1->getFrame()->getPosition(t);
     cFrame[1]->getOrientation(false).set(0, circle1->getSign()*WrD/nrm2(WrD));
     cFrame[0]->getOrientation(false).set(0, -cFrame[1]->getOrientation(false).col(0));
@@ -48,7 +48,7 @@ namespace MBSim {
     g = cFrame[1]->getOrientation(false).col(0).T()*WrD - rEff0 - rEff1;
   }
       
-  void ContactKinematicsCircleCircle::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsCircleCircle::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
     const Vec3 KrPC1 = circle0->getFrame()->getOrientation(t).T()*(cFrame[0]->getPosition(t) - circle0->getFrame()->getPosition(t));

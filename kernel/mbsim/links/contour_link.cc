@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/links/contour_link.h"
 #include "mbsim/dynamic_system.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
@@ -39,8 +39,6 @@ namespace MBSim {
     contour[0] = NULL;
     contour[1] = NULL;
   }
-
-  ContourLink::~ContourLink() {}
 
   void ContourLink::updatedhdz(double t) {
     THROW_MBSIMERROR("Internal error");
@@ -202,11 +200,8 @@ namespace MBSim {
     updF = true;
     updM = true;
     updR = true;
-    //cpData[0].getFrameOfReference().resetUpToDate();
-    //cpData[1].getFrameOfReference().resetUpToDate();
     cFrame[0]->resetUpToDate();
     cFrame[1]->resetUpToDate();
   }
 
 }
-

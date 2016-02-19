@@ -50,11 +50,6 @@ namespace MBSim {
        */
       FloatingFrameLink(const std::string &name);
 
-      /**
-       * \brief destructor
-       */
-      virtual ~FloatingFrameLink();
-
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatedhdz(double t);
       /***************************************************/

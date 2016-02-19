@@ -20,15 +20,11 @@
 #ifndef _FIXED_CONTOUR_FRAME_H__
 #define _FIXED_CONTOUR_FRAME_H__
 
-#include "mbsimFlexibleBody/frames/contour_frame.h"
+#include "mbsim/frames/contour_frame.h"
 
 namespace MBSimFlexibleBody {
 
-  /**
-   * \brief cartesian frame on contour parameters of flexible bodies
-   * \author Kilian Grundl
-   */
-  class FixedContourFrame : public ContourFrame {
+  class FixedContourFrame : public MBSim::ContourFrame {
 
     public:
       FixedContourFrame(const std::string &name = "dummy", const fmatvec::Vec2 &zeta = fmatvec::Vec2()) : ContourFrame(name,zeta) { }
@@ -44,5 +40,4 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif /* _FRAME_H_ */
-
+#endif

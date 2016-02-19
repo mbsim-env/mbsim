@@ -62,7 +62,6 @@ namespace MBSim {
       void setZLength(double l) {
         zLength = l;
       }
-      void setThickness(double thickness_) {thickness = thickness_;}
 
       double getYLength() const {
         return yLength;
@@ -83,7 +82,6 @@ namespace MBSim {
       const fmatvec::Vec3 & getD() const {
         return RrD;
       }
-      double getThickness() const {return thickness;}
 
       /***************************************************//*new added part by ting 05.10.2012*/
       /*!
@@ -128,7 +126,7 @@ namespace MBSim {
 #endif
 
     protected:
-      double yLength, zLength, thickness;
+      double yLength, zLength;
       //vertices under reference frame
       /*!
        * \brief vertex for y = limy/2, z = limz/2

@@ -41,7 +41,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Edge(const std::string &name="", Frame *R=0) : RigidContour(name,R), length(1), thickness(0.01) {};
+      Edge(const std::string &name="", Frame *R=0) : RigidContour(name,R), length(1) { }
 
       std::string getType() const {return "Edge";}
       virtual void init(InitStage stage);
@@ -49,8 +49,6 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_;}
       double getLength() const { return length; }
-      void setThickness(double thickness_) { thickness = thickness_; }
-      double getThickness() const {return thickness;}
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -61,7 +59,7 @@ namespace MBSim {
 #endif
 
     private:
-      double length, thickness;
+      double length;
   };
 }
 

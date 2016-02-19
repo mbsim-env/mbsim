@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "circle_linesegment.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/line_segment.h"
 #include "mbsim/contours/circle.h"
 
@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleLineSegment::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsCircleLineSegment::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     const Vec3 WC=circle->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
@@ -72,7 +72,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleLineSegment::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsCircleLineSegment::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     const Vec3 WC=circle->getFrame()->getPosition(t);
     const Vec3 WL=linesegment->getFrame()->getPosition(t);
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);

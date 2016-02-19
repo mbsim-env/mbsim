@@ -37,8 +37,8 @@ namespace MBSim {
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
 
-      void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0) { }
-      void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame) { }
+      void updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index = 0) { }
+      void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) { }
 
       ContactKinematics* getContactKinematics(int i=0) const { return contactKinematics[i]; }
       /***************************************************/

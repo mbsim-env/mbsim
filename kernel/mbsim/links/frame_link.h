@@ -49,11 +49,6 @@ namespace MBSim {
        */
       FrameLink(const std::string &name);
 
-      /**
-       * \brief destructor
-       */
-      virtual ~FrameLink();
-
       virtual void init(InitStage stage);
 
       /* INHERITED INTERFACE OF ELEMENT */

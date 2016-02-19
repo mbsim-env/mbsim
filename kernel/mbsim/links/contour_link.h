@@ -37,6 +37,7 @@ namespace OpenMBV {
 namespace MBSim {
 
   class Contour;
+  class ContourFrame;
 
   /** 
    * \brief contour link
@@ -49,11 +50,6 @@ namespace MBSim {
        * \param name of link machanics
        */
       ContourLink(const std::string &name);
-
-      /**
-       * \brief destructor
-       */
-      virtual ~ContourLink();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateh(double t, int i=0);
@@ -87,7 +83,7 @@ namespace MBSim {
       }
 
       Contour* getContour(int i) { return contour[i]; }
-      Frame* getContourFrame(int i) { return cFrame[i]; }
+      ContourFrame* getContourFrame(int i) { return cFrame[i]; }
 
       void resetUpToDate();
       virtual void updatePositions(double t) { }
@@ -127,9 +123,7 @@ namespace MBSim {
 
       Contour* contour[2];
 
-//      ContourPointData cpData[2];
-
-      std::vector<Frame*> cFrame;
+      std::vector<ContourFrame*> cFrame;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;
@@ -142,4 +136,3 @@ namespace MBSim {
 }
 
 #endif
-

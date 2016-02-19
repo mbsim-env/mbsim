@@ -25,6 +25,7 @@
 namespace MBSim {
 
   class Point;
+  class FuncPairPlanarContourPoint;
 
   /**
    * \brief pairing point to planar contour
@@ -37,7 +38,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointPlanarContour();
+      ContactKinematicsPointPlanarContour() : ContactKinematics(), ipoint(0), icontour(0), point(0), contour1s(0), searchAllCP(false) { }
 
       /**
        * \brief destructor
@@ -46,11 +47,13 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double t, double &g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<Frame*> &cFrame);
+      virtual void updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame);
       /***************************************************/
 
-    private:
+      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
+
+   private:
       /**
        * \brief contour index
        */
@@ -62,12 +65,12 @@ namespace MBSim {
       Point *point;
       Contour *contour1s;
 
-      /*!
-       * \brief use local law
+      /**
+       * \brief root function
        */
-      bool useLocal;
+      FuncPairPlanarContourPoint *func;
 
-      fmatvec::Vec2 zeta;
+      bool searchAllCP;
   };
 
 }

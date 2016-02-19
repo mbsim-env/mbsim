@@ -20,7 +20,7 @@
 #include <config.h>
 
 #include "fmatvec/fmatvec.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "sphere_polynomialfrustum.h"
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/utils/nonlinear_algebra.h"
@@ -82,7 +82,7 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsSpherePolynomialFrustum::updateg(double t, double & g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSpherePolynomialFrustum::updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index) {
     /*Geometry*/
     //sphere center in coordinates of frustum
     Vec3 rF = frustum->getFrame()->getPosition(t);

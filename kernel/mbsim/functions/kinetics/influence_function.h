@@ -24,23 +24,24 @@
 
 namespace MBSim {
 
+  class ContourFrame;
   class Contour;
 
   /**
    * \brief function describing the influence between the deformations on a body
    */
-  class InfluenceFunction : public Function<double(std::pair<Contour*, Frame*>, std::pair<Contour*, Frame*>)> {
+  class InfluenceFunction : public Function<double(std::pair<Contour*, ContourFrame*>, std::pair<Contour*, ContourFrame*>)> {
     public:
       InfluenceFunction(){}
       virtual ~InfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
       void setTime(double t_) { t = t_; }
-      virtual double operator()(const std::pair<Contour*, Frame*>& firstContourInfo, const std::pair<Contour*, Frame*>& secondContourInfo)=0;
+      virtual double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo)=0;
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
     protected:
       double t;
-      fmatvec::Vec2 getContourParameters(double t, const std::pair<Contour*, Frame*>& contourInfo);
+      fmatvec::Vec2 getZeta(double t, const std::pair<Contour*, ContourFrame*>& contourInfo);
   };
 
 }

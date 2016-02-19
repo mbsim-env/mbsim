@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "point_plane.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/point.h"
 
@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlane::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointPlane::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t)); // data of possible contact point
     cFrame[ipoint]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
     cFrame[ipoint]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
@@ -59,7 +59,7 @@ namespace MBSim {
     cFrame[iplane]->setPosition(cFrame[ipoint]->getPosition(false) - Wn*g);
   }
 
-  void ContactKinematicsPointPlane::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsPointPlane::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     if(wb.size()) { // check whether contact is closed
 
       Vec3 v1 = cFrame[iplane]->getOrientation(t).col(2); // second tangential vector in contact

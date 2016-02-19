@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "sphere_frustum.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/eps.h"
@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsSphereFrustum::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSphereFrustum::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche

@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "sphere_plate.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/contact_utils.h"
@@ -44,7 +44,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlate::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsSpherePlate::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     Vec3 sphereInRect = plate->getFrame()->getOrientation(t).T() * (sphere->getFrame()->getPosition(t) - plate->getFrame()->getPosition(t));
 
@@ -74,7 +74,7 @@ namespace MBSim {
     cFrame[iplate]->setPosition(cFrame[isphere]->getPosition(false) - Wn * g);
   }
 
-  void ContactKinematicsSpherePlate::updatewb(double t, Vec &wb, double g, std::vector<Frame*> &cFrame) {
+  void ContactKinematicsSpherePlate::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     throw new MBSimError("ContactKinematicsSpherePlate::updatewb(): not implemented yet");
   }
 }

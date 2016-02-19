@@ -26,13 +26,13 @@
 
 namespace MBSim {
   class FixedRelativeFrame;
+  class ContourFrame;
 }
 
 namespace MBSimFlexibleBody {
 
   class DiscretizationInterface;
   class NodeFrame;
-  class ContourFrame;
   class FixedContourFrame;
 
   const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
@@ -71,18 +71,25 @@ namespace MBSimFlexibleBody {
       virtual void updateh(double t, int k=0);
       virtual void updateM(double t, int k=0);
       virtual void updatedhdz(double t);
-      virtual void updatePositions(double t, ContourFrame* frame);
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, int node);
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(double t, int node);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
+      virtual fmatvec::Vec3 getWu(double t, int node) { return getWs(t,node); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
+      virtual fmatvec::Vec3 getWv(double t, int node) { return getWt(t,node); }
+      virtual void updatePositions(double t, MBSim::ContourFrame* frame);
       virtual void updatePositions(double t, NodeFrame* frame);
-      virtual void updateVelocities(double t, ContourFrame* frame);
+      virtual void updateVelocities(double t, MBSim::ContourFrame* frame);
       virtual void updateVelocities(double t, NodeFrame* frame);
-      virtual void updateAccelerations(double t, ContourFrame* frame);
+      virtual void updateAccelerations(double t, MBSim::ContourFrame* frame);
       virtual void updateAccelerations(double t, NodeFrame* frame);
-      virtual void updateJacobians(double t, ContourFrame* frame, int j=0);
+      virtual void updateJacobians(double t, MBSim::ContourFrame* frame, int j=0);
       virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, ContourFrame* frame);
+      virtual void updateGyroscopicAccelerations(double t, MBSim::ContourFrame* frame);
       virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWu(double t, int node);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
@@ -226,7 +233,7 @@ namespace MBSimFlexibleBody {
 
       // Workaround to free memory of contourFrame in dtor.
       // TODO: provide a consistent solution and remove the following line
-      MBSim::Frame *contourFrame;
+//      MBSim::Frame *contourFrame;
 
       /*!
        * \brief list of all contour frames

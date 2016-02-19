@@ -20,7 +20,7 @@
 #ifndef _FLOATING_CONTOUR_FRAME_H__
 #define _FLOATING_CONTOUR_FRAME_H__
 
-#include "mbsimFlexibleBody/frames/contour_frame.h"
+#include "mbsim/frames/contour_frame.h"
 
 namespace MBSimFlexibleBody {
 
@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
    * \brief tbd
    * \author Martin Foerg
    */
-  class FloatingContourFrame : public ContourFrame {
+  class FloatingContourFrame : public MBSim::ContourFrame {
 
     public:
       FloatingContourFrame(const std::string &name = "dummy", Contour1sFlexible* contour_ = NULL) : ContourFrame(name), contour(contour_) { }

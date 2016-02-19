@@ -65,8 +65,6 @@ namespace MBSim {
       fmatvec::Vec3 getParDer1Ks(const fmatvec::Vec2 &zeta);
       /***************************************************/
 
-      virtual Frame* createContourFrame(const std::string &name="P");
-
       /* GETTER / SETTER */
       void setContourFunction(Function<fmatvec::Vec3(double)> *f) { funcCrPC = f; }
       Function<fmatvec::Vec3(double)>* getContourFunction() { return funcCrPC; }

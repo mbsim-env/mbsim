@@ -23,6 +23,8 @@
 
 namespace MBSim {
 
+  class Object;
+
   class ExternGeneralizedIO : public Link {
     protected:
       Object *connectedObject;

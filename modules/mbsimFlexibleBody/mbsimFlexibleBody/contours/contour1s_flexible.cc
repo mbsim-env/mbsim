@@ -31,8 +31,28 @@ namespace MBSimFlexibleBody {
 
   Contour1sFlexible::Contour1sFlexible(const string & name) : Contour1s(name), neutral(0) { }
 
-  Frame* Contour1sFlexible::createContourFrame(const string &name) {
+  ContourFrame* Contour1sFlexible::createContourFrame(const string &name) {
     return new FloatingContourFrame(name,this);
+  }
+
+  Vec3 Contour1sFlexible::getPosition(double t, const Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta);
+  }
+
+  Vec3 Contour1sFlexible::getWs(double t, const Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getWs(t,zeta);
+  }
+
+  Vec3 Contour1sFlexible::getWu(double t, const fmatvec::Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getWu(t,zeta);
+  }
+
+  Vec3 Contour1sFlexible::getWt(double t, const Vec2 &zeta) {
+    THROW_MBSIMERROR("(Contour1sFlexible::getWt): Not implemented.");
+  }
+
+  Vec3 Contour1sFlexible::getWv(double t, const fmatvec::Vec2 &zeta) {
+    THROW_MBSIMERROR("(Contour1sFlexible::getWv): Not implemented.");
   }
 
   void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {
@@ -53,10 +73,6 @@ namespace MBSimFlexibleBody {
 
   void Contour1sFlexible::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
     static_cast<FlexibleBody*>(parent)->updateGyroscopicAccelerations(t,frame);
-  }
-
-  Vec3 Contour1sFlexible::getWu(double t, const fmatvec::Vec2 &zeta) {
-    return static_cast<FlexibleBody*>(parent)->getWu(t,zeta);
   }
 
 }

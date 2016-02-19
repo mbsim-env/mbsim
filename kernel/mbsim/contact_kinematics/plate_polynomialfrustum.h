@@ -155,8 +155,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(double t, double & g, std::vector<Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<Frame*> &cFrame) {
+      virtual void updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<ContourFrame*> &cFrame) {
         throw MBSimError("(ContactKinematicsPlatePolynomialFrustum::updatewb): not implemented!");
       }
 
@@ -167,7 +167,7 @@ namespace MBSim {
       /*!
        * \brief set the values for the contact kinematics for the frustum due to the given x and phi
        */
-      void setFrustumOrienationKinematics(double t, const double & x, const double & phi, std::vector<Frame*> &cFrame);
+      void setFrustumOrienationKinematics(double t, const double & x, const double & phi, std::vector<ContourFrame*> &cFrame);
 
       /***************************************************/
       /*!
@@ -176,19 +176,19 @@ namespace MBSim {
        *
        * If there is contact the position and the cpData information is setted right away
        */
-      bool cpLocationInPlate(double t, double & g, std::vector<Frame*> &cFrame);
+      bool cpLocationInPlate(double t, double & g, std::vector<ContourFrame*> &cFrame);
 
       /*!
        * \brief if the unique contact point cannot be found a grid is walked through and a weighted sum results in the contact point
        * \return true (if) or false (if there is no contact at one of the corner points)
        */
-      bool gridContact(double t, double & g, std::vector<Frame*> &cFrame);
+      bool gridContact(double t, double & g, std::vector<ContourFrame*> &cFrame);
 
       /*!
        * \brief checks if there is a contact point at one of the corner points
        * \return true (if) or false (if there is no contact at one of the corner points)
        */
-      bool cornerContact(double t, double & g, std::vector<Frame*> &cFrame);
+      bool cornerContact(double t, double & g, std::vector<ContourFrame*> &cFrame);
 
       /*!
        * \brief checks if there is a contact on one edge of the plate
@@ -196,7 +196,7 @@ namespace MBSim {
        *
        * \todo: unefficient and only finding (one) intersection point --> There should always be two intersection points and then using the middle or something
        */
-      bool edgeContact(double t, double & g, std::vector<Frame*> &cFrame);
+      bool edgeContact(double t, double & g, std::vector<ContourFrame*> &cFrame);
 
       /*!
        * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal in world coordinates

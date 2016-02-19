@@ -46,7 +46,7 @@ namespace MBSim {
 
       virtual ~RigidContour() { }
 
-      Frame* createContourFrame(const std::string &name="P");
+      ContourFrame* createContourFrame(const std::string &name="P");
 
       Frame* getFrame() { return R; }
       Frame* getFrameOfReference() { return R; }

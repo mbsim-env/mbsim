@@ -59,7 +59,7 @@ namespace MBSim {
       /**
        * \brief get number of Contour-parameters of Contour
        */
-      int getNContourParameters() const {return contourParameters;}
+      int getNZeta() const {return contourParameters;}
       /**
        * \brief prototype for test if Contour-point given is inside or outside defined contour area
         \param cp Contour-point

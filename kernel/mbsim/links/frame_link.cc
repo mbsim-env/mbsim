@@ -42,8 +42,6 @@ namespace MBSim {
     frame[1] = NULL;
   }
 
-  FrameLink::~FrameLink() {}
-
   void FrameLink::resetUpToDate() { 
     Link::resetUpToDate();
     updPos = true;

@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "point_frustum.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/utils/eps.h"
@@ -44,7 +44,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointFrustum::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointFrustum::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     double eps = 5.e-2; // tolerance for rough contact description
     Vec3 Wd = point->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t); // difference vector of Point and Frustum basis point in inertial FR
     Vec3 Wa = frustum->getFrame()->getOrientation(t).col(1); // (height) axis in inertial FR

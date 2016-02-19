@@ -68,7 +68,7 @@ namespace MBSim {
       virtual fmatvec::Vec3 getParDer2Kv(const fmatvec::Vec2 &zeta);
 
       /* INHERITED INTERFACE OF CONTOUR */
-      fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPoint);
+      fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3 &WrPoint);
       /**********************************/
 
       /* GETTER / SETTER */

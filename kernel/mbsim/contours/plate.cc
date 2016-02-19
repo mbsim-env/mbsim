@@ -31,13 +31,14 @@ using namespace boost;
 
 namespace MBSim {
 
-  Plate::Plate(const string &name, Frame *R) : Plane(name,R), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Plate::Plate(const string &name, Frame *R) : Plane(name,R), yLength(1), zLength(1), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
-  Plate::Plate(const string &name, double yL, double zL, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Plate::Plate(const string &name, double yL, double zL, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
-  Plate::Plate(const string &name, double yL, double zL, double t, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), thickness(t), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Plate::Plate(const string &name, double yL, double zL, double t, Frame *R) : Plane(name,R), yLength(yL), zLength(zL), RrA(0), RrB(0), RrC(0), RrD(0) {
+    thickness = t;
   }
 
   void Plate::init(InitStage stage) {

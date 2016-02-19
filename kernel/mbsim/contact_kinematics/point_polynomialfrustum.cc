@@ -21,7 +21,7 @@
 
 #include "fmatvec/fmatvec.h"
 #include "point_polynomialfrustum.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "fmatvec/linear_algebra_double.h"
 #include "fmatvec/linear_algebra.h"
@@ -125,7 +125,7 @@ namespace MBSim {
     newtonProjectAlongNormal.setDampingFunction(&dampingProjectAlongNormal);
   }
 
-  void ContactKinematicsPointPolynomialFrustum::updateg(double t, double & g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointPolynomialFrustum::updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index) {
     /*Geometry*/
     //point in frustum-coordinates
     Vec3 rPoint = frustum->getFrame()->getOrientation(t).T() * (point->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t));

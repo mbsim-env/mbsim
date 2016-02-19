@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/edge_edge.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/edge.h"
 
 using namespace fmatvec;
@@ -33,7 +33,7 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  void ContactKinematicsEdgeEdge::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsEdgeEdge::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec Wd = edge1->getFrame()->getPosition(t) - edge0->getFrame()->getPosition(t);
     Vec Wd0 = edge0->getFrame()->getOrientation(t).col(1);
     Vec Wd1 = edge1->getFrame()->getOrientation(t).col(1);

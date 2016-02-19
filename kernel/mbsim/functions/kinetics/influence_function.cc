@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/functions/kinetics/influence_function.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/contour.h"
 
 using namespace std;
@@ -30,11 +30,11 @@ using namespace xercesc;
 namespace MBSim {
 
   void InfluenceFunction::initializeUsingXML(DOMElement *element) {
-    Function<double(std::pair<Contour*, Frame*>,std::pair<Contour*, Frame*>)>::initializeUsingXML(element);
+    Function<double(std::pair<Contour*, ContourFrame*>,std::pair<Contour*, ContourFrame*>)>::initializeUsingXML(element);
   }
 
-  fmatvec::Vec2 InfluenceFunction::getContourParameters(double t, const std::pair<Contour*, Frame*>& contourInfo) {
-    return contourInfo.first->getContourParameters(t, contourInfo.second->getPosition(t));
+  fmatvec::Vec2 InfluenceFunction::getZeta(double t, const std::pair<Contour*, ContourFrame*>& contourInfo) {
+    return contourInfo.first->getZeta(t, contourInfo.second->getPosition(t));
   }
 
 }

@@ -31,13 +31,14 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LineSegment, MBSIM%"LineSegment")
 
-  LineSegment::LineSegment(const std::string& name, double l, double t, Frame *R) : RigidContour(name,R), length(l), thickness(t) {
+  LineSegment::LineSegment(const std::string& name, double l, double t, Frame *R) : RigidContour(name,R), length(l) {
+    thickness = t;
   }
 
-  LineSegment::LineSegment(const std::string& name, double l, Frame *R) : RigidContour(name,R), length(l), thickness(0.01) {
+  LineSegment::LineSegment(const std::string& name, double l, Frame *R) : RigidContour(name,R), length(l) {
   }
 
-  LineSegment::LineSegment(const std::string& name, Frame *R) : RigidContour(name,R), length(1), thickness(0.01) {
+  LineSegment::LineSegment(const std::string& name, Frame *R) : RigidContour(name,R), length(1) {
   }
 
   void LineSegment::init(InitStage stage) {

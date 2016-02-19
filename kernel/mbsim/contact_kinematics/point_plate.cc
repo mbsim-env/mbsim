@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/point_plate.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plate.h"
 #include "mbsim/contours/point.h"
 
@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlate::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointPlate::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec3 Ar = plate->getFrame()->getOrientation(t).T() * (point->getFrame()->getPosition(t) - plate->getFrame()->getPosition(t));
     if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){
       g = Ar(0);

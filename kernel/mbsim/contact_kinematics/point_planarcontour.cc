@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "point_planarcontour.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_point.h"
 #include "mbsim/utils/planar_contact_search.h"
@@ -29,10 +29,8 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsPointPlanarContour::ContactKinematicsPointPlanarContour() :
-      ContactKinematics(), ipoint(0), icontour(0), point(0), contour1s(0), useLocal(false) {
-  }
   ContactKinematicsPointPlanarContour::~ContactKinematicsPointPlanarContour() {
+    delete func;
   }
 
   void ContactKinematicsPointPlanarContour::assignContours(const vector<Contour*> &contour) {
@@ -48,43 +46,43 @@ namespace MBSim {
       point = static_cast<Point*>(contour[1]);
       contour1s = static_cast<Contour*>(contour[0]);
     }
+    func = new FuncPairPlanarContourPoint(point, contour1s); // root function for searching contact parameters
   }
 
-  void ContactKinematicsPointPlanarContour::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointPlanarContour::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     
-    FuncPairPlanarContourPoint *func = new FuncPairPlanarContourPoint(point, contour1s); // root function for searching contact parameters
     func->setTime(t);
     PlanarContactSearch search(func);
     search.setNodes(contour1s->getEtaNodes()); // defining search areas for contacts
 
-    if (useLocal) { // select start value from last search
-      search.setInitialValue(zeta(0));
+    if (searchAllCP==false) { // select start value from last search
+      search.setInitialValue(cFrame[icontour]->getEta());
     }
     else { // define start search with regula falsi
       search.setSearchAll(true);
-      useLocal = true;
+      searchAllCP = false;
     }
 
-    zeta(0) = search.slv(); // get contact parameter of neutral fibre
+    cFrame[icontour]->setEta(search.slv());
 
-    if (zeta(0) < contour1s->getEtaNodes()[0] || zeta(0) > contour1s->getEtaNodes()[contour1s->getEtaNodes().size()-1])
+    if (cFrame[icontour]->getEta() < contour1s->getEtaNodes()[0] || cFrame[icontour]->getEta() > contour1s->getEtaNodes()[contour1s->getEtaNodes().size()-1]) {
       g = 1.0;
-    else { // calculate the normal distance
-      cFrame[icontour]->setPosition(contour1s->getPosition(t,zeta));
-      cFrame[icontour]->getOrientation(false).set(0, contour1s->getWn(t,zeta));
-      cFrame[icontour]->getOrientation(false).set(1, contour1s->getWu(t,zeta));
-      cFrame[icontour]->getOrientation(false).set(2, contour1s->getWv(t,zeta));
-
-      cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of point
-      cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icontour]->getOrientation(false).col(0));
-      cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icontour]->getOrientation(false).col(1));
-      cFrame[ipoint]->getOrientation(false).set(2, cFrame[icontour]->getOrientation(false).col(2));
-      g = cFrame[icontour]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[icontour]->getPosition(false));
+      return;
     }
-    delete func;
+    cFrame[icontour]->setPosition(contour1s->getPosition(t,cFrame[icontour]->getZeta()));
+    cFrame[icontour]->getOrientation(false).set(0, contour1s->getWn(t,cFrame[icontour]->getZeta()));
+    cFrame[icontour]->getOrientation(false).set(1, contour1s->getWu(t,cFrame[icontour]->getZeta()));
+    cFrame[icontour]->getOrientation(false).set(2, contour1s->getWv(t,cFrame[icontour]->getZeta()));
+
+    cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of point
+    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icontour]->getOrientation(false).col(0));
+    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icontour]->getOrientation(false).col(1));
+    cFrame[ipoint]->getOrientation(false).set(2, cFrame[icontour]->getOrientation(false).col(2));
+    g = cFrame[icontour]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[icontour]->getPosition(false));
+    if(g < -contour1s->getThickness()) g = 1;
   }
 
-  void ContactKinematicsPointPlanarContour::updatewb(double t, Vec &wb, double g, vector<Frame*> &cFrame) {
+  void ContactKinematicsPointPlanarContour::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
     throw MBSimError("(ContactKinematicsPointPlanarContour::updatewb): Not implemented!");
   }
 

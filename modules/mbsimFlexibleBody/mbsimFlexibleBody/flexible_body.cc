@@ -41,11 +41,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.), updEle(true) {
-//    contourFrame = new Frame("ContourFrame");
-//    contourFrame->setParent(this);
-    //addFrame(contourFrame,0);
-  }
+  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.), updEle(true) { }
 
   FlexibleBody::~FlexibleBody() {
     for (unsigned int i = 0; i < discretization.size(); i++) {
@@ -54,7 +50,6 @@ namespace MBSimFlexibleBody {
         discretization[i] = NULL;
       }
     }
-//    delete contourFrame;
   }
 
   void FlexibleBody::updateh(double t, int k) {
@@ -85,6 +80,30 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdq(), dhdq); // assemble
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
+  }
+
+  Vec3 FlexibleBody::getPosition(double t, const Vec2 &zeta) {
+    THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
+  }
+
+  Vec3 FlexibleBody::getWs(double t, const Vec2 &zeta) {
+    THROW_MBSIMERROR("(FlexibleBody::getWs): Not implemented.");
+    return 0;
+  }
+
+  Vec3 FlexibleBody::getWs(double t, int node) {
+    THROW_MBSIMERROR("(FlexibleBody::getWs): Not implemented.");
+    return 0;
+  }
+
+  Vec3 FlexibleBody::getWt(double t, const Vec2 &zeta) {
+    THROW_MBSIMERROR("(FlexibleBody::getWt): Not implemented.");
+    return 0;
+  }
+
+  Vec3 FlexibleBody::getWt(double t, int node) {
+    THROW_MBSIMERROR("(FlexibleBody::getWt): Not implemented.");
+    return 0;
   }
 
   void FlexibleBody::updatePositions(double t, ContourFrame* frame) {
@@ -127,16 +146,6 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  Vec3 FlexibleBody::getWu(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
-    return 0;
-  }
-
-  Vec3 FlexibleBody::getWu(double t, int node) {
-    THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
-    return 0;
-  }
-
   void FlexibleBody::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
       Body::plot(t, dt);
@@ -147,10 +156,6 @@ namespace MBSimFlexibleBody {
     if (stage == unknownStage) {
       Body::init(stage);
       T = SqrMat(qSize, EYE);
-//      for (unsigned int i = 0; i < S_Frame.size(); i++) { // frames
-//        S_Frame[i].getFrameOfReference().getJacobianOfTranslation(0,false).resize(uSize[0]);
-//        S_Frame[i].getFrameOfReference().getJacobianOfRotation(0,false).resize(uSize[0]);
-//      }
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -186,16 +191,6 @@ namespace MBSimFlexibleBody {
       THROW_MBSIMERROR("(FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!");
   }
 
-//  void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
-//    Frame *frame = new Frame(name);
-//    addFrame(frame, S_);
-//  }
-
-//  void FlexibleBody::addFrame(Frame* frame, const ContourPointData &S_) {
-//    Body::addFrame(frame);
-//    S_Frame.push_back(S_);
-//  }
-
   void FlexibleBody::addFrame(NodeFrame *frame) {
     Body::addFrame(frame);
   }
@@ -204,12 +199,11 @@ namespace MBSimFlexibleBody {
     Body::addFrame(frame);
   }
 
-  void FlexibleBody::addFrame(MBSim::FixedRelativeFrame *frame) {
+  void FlexibleBody::addFrame(FixedRelativeFrame *frame) {
     Body::addFrame(frame);
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
-//    contour_->setFrameOfReference(contourFrame);
     Body::addContour(contour_);
   }
 
@@ -227,4 +221,3 @@ namespace MBSimFlexibleBody {
   }
 
 }
-

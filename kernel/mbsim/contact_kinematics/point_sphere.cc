@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "point_sphere.h"
-#include "mbsim/frames/frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/eps.h"
@@ -35,7 +35,7 @@ namespace MBSim {
     sphere = static_cast<Sphere*>(contour[1]);
   }
 
-  void ContactKinematicsPointSphere::updateg(double t, double &g, std::vector<Frame*> &cFrame, int index) {
+  void ContactKinematicsPointSphere::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec3 Wd = sphere->getFrame()->getPosition(t) - point->getFrame()->getPosition(t);
     double l = nrm2(Wd);
     Wd = Wd/l;

@@ -21,7 +21,7 @@
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_rcm.h"
-#include "mbsimFlexibleBody/frames/contour_frame.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/utils/utils.h"
@@ -109,9 +109,35 @@ namespace MBSimFlexibleBody {
     }
   }
 
+  Vec3 FlexibleBody1s21RCM::getPosition(double t, const Vec2 &zeta) {
+    Vec3 tmp(NONINIT);
+    Vec X = computeState(zeta(0));
+    tmp(0) = X(0);
+    tmp(1) = X(1);
+    tmp(2) = 0.; // temporary vector used for compensating planar description
+    return R->getPosition(t) + R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getWs(double t, const fmatvec::Vec2 &zeta) {
+    Vec3 tmp(NONINIT);
+    Vec X = computeState(zeta(0));
+    tmp(0) = cos(X(2));
+    tmp(1) = sin(X(2));
+    tmp(2) = 0.;
+    return R->getOrientation(t) * tmp;
+  }
+
+  Vec3 FlexibleBody1s21RCM::getWs(double t, int node) {
+    Vec3 tmp(NONINIT);
+    tmp(0) = cos(q(5 * node + 2));
+    tmp(1) = sin(q(5 * node + 2));
+    tmp(2) = 0.;
+    return R->getOrientation(t) * tmp;
+  }
+
   void FlexibleBody1s21RCM::updatePositions(double t, ContourFrame *frame) {
     Vec3 tmp(NONINIT);
-    Vec X = computeState(frame->getContourParameters()(0));
+    Vec X = computeState(frame->getEta());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -143,7 +169,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updateVelocities(double t, ContourFrame *frame) {
     Vec3 tmp(NONINIT);
-    Vec X = computeState(frame->getContourParameters()(0));
+    Vec X = computeState(frame->getEta());
     tmp(0) = X(3);
     tmp(1) = X(4);
     tmp(2) = 0.;
@@ -168,12 +194,13 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::updateJacobians(double t, ContourFrame *frame, int j) {
+    if(updEle) BuildElements();
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
 
     double sLocal;
     int currentElement;
-    BuildElement(frame->getContourParameters()(0), sLocal, currentElement);
+    BuildElement(frame->getEta(), sLocal, currentElement);
     Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement], sLocal);
     if (currentElement < Elements - 1 || openStructure) {
       Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
@@ -197,23 +224,6 @@ namespace MBSimFlexibleBody {
 
     frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
-  }
-
-  Vec3 FlexibleBody1s21RCM::getWu(double t, const fmatvec::Vec2 &zeta) {
-    Vec3 tmp(NONINIT);
-    Vec X = computeState(zeta(0));
-    tmp(0) = cos(X(2));
-    tmp(1) = sin(X(2));
-    tmp(2) = 0.;
-    return R->getOrientation(t) * tmp;
-  }
-
-  Vec3 FlexibleBody1s21RCM::getWu(double t, int node) {
-    Vec3 tmp(NONINIT);
-    tmp(0) = cos(q(5 * node + 2));
-    tmp(1) = sin(q(5 * node + 2));
-    tmp(2) = 0.;
-    return R->getOrientation(t) * tmp;
   }
 
   void FlexibleBody1s21RCM::init(InitStage stage) {
@@ -289,6 +299,7 @@ namespace MBSimFlexibleBody {
       }
 #endif
     }
+    if(updEle) BuildElements();
     for (int i = 0; i < plotElements.size(); i++) {
       Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(qElement[plotElements(i)], uElement[plotElements(i)]);
       for (int j = 0; j < elementData.size(); j++)
@@ -331,6 +342,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FlexibleBody1s21RCM::computeState(double sGlobal) {
+    if(updEle) BuildElements();
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
@@ -338,6 +350,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FlexibleBody1s21RCM::computePhysicalStrain(double sGlobal) {
+    if(updEle) BuildElements();
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
@@ -558,4 +571,3 @@ namespace MBSimFlexibleBody {
     }
   }
 }
-

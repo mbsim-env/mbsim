@@ -24,7 +24,7 @@
 
 namespace MBSim {
 
-  class Frame;
+  class ContourFrame;
   class ContactKinematics;
 
   /**
@@ -61,7 +61,7 @@ namespace MBSim {
        */
       virtual ContactKinematics * findContactPairingWith(std::string type0, std::string type1) = 0;
 
-      virtual Frame* createContourFrame(const std::string &name="P");
+      virtual ContourFrame* createContourFrame(const std::string &name="P") { return NULL; }
 
       const std::vector<double>& getEtaNodes() const { return etaNodes; }
       const std::vector<std::vector<double> >& getXiNodes() const { return xiNodes; }
@@ -207,7 +207,10 @@ namespace MBSim {
 
       virtual fmatvec::Mat3x2 getWV(double t, const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3 &WrPS);
+      virtual fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3 &WrPS);
+
+      void setThickness(double thickness_) { thickness = thickness_; }
+      double getThickness() const { return thickness; }
 
     protected:
       /**
@@ -217,9 +220,13 @@ namespace MBSim {
 
       std::vector<double> etaNodes;
       std::vector<std::vector<double> > xiNodes;
+
+      /**
+       * \brief thickness of contour
+       */
+      double thickness;
   };
 
 }
 
 #endif /* _CONTOUR_H_ */
-

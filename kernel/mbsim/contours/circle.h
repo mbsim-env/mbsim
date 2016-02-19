@@ -55,7 +55,7 @@ namespace MBSim {
       virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta) { return Kt; }
       virtual fmatvec::Vec3 getParDer1Kn(const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getParDer1Ku(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec2 getContourParameters(double t, const fmatvec::Vec3& WrPoint);
+      virtual fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3& WrPoint);
       /***************************************************/
 
       /* GETTER / SETTER */

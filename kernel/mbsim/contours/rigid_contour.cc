@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/rigid_contour.h"
-#include "mbsim/frames/floating_relative_frame.h"
+#include "mbsim/frames/floating_relative_contour_frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/contact_utils.h"
 
@@ -58,8 +58,8 @@ namespace MBSim {
       Contour::init(stage);
   }
   
-  Frame* RigidContour::createContourFrame(const string &name) {
-    FloatingRelativeFrame *frame = new FloatingRelativeFrame(name);      
+  ContourFrame* RigidContour::createContourFrame(const string &name) {
+    FloatingRelativeContourFrame *frame = new FloatingRelativeContourFrame(name);
     frame->setFrameOfReference(R);
     return frame;
   }

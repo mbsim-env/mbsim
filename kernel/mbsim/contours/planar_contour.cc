@@ -93,12 +93,6 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Frame* PlanarContour::createContourFrame(const string &name) {
-    FloatingRelativeFrame *frame = new FloatingRelativeFrame(name);      
-    frame->setFrameOfReference(R);
-    return frame;
-  }
-
   void PlanarContour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

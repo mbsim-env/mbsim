@@ -12,9 +12,7 @@ int main (int argc, char* argv[]) {
   sys.initialize();
 
   TimeSteppingSSCIntegrator integrator;
-  //integrator.setStepSize(1.e-5);
-  //integrator.setDriftCompensation(true);
-  integrator.setEndTime(5e-2);
+  integrator.setEndTime(4e-2);
   integrator.setPlotStepSize(5.e-3);
   
   integrator.integrate(sys);

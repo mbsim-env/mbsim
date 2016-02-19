@@ -29,11 +29,6 @@ namespace H5 {
 
 namespace MBSim {
 
-  class Frame;
-  class Object;
-  class Contour;
-  class DynamicSystem;
-
   /** 
    * \brief general link to one or more objects
    * \author Martin Foerg
@@ -59,25 +54,25 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Link() {}
+      virtual ~Link() { }
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateg(double t) {}
-      virtual void updategd(double t) {}
-      virtual void updatewb(double t) {}
-      virtual void updateW(double t, int i=0) {}
-      virtual void updateV(double t, int i=0) {}
-      virtual void updateh(double t, int i=0) {}
-      virtual void updateStopVector(double t) {}
-      virtual void updateLinkStatus(double t) {}
-      virtual void updateLinkStatusReg(double t) {}
-      virtual void updateJacobians(double t, int j=0) {}
-      virtual void updateb(double t) {};
+      virtual void updateg(double t) { }
+      virtual void updategd(double t) { }
+      virtual void updatewb(double t) { }
+      virtual void updateW(double t, int i=0) { }
+      virtual void updateV(double t, int i=0) { }
+      virtual void updateh(double t, int i=0) { }
+      virtual void updateStopVector(double t) { }
+      virtual void updateLinkStatus(double t) { }
+      virtual void updateLinkStatusReg(double t) { }
+      virtual void updateJacobians(double t, int j=0) { }
+      virtual void updateb(double t) { }
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      virtual void updatedx(double t, double dt) {}
-      virtual void updatexd(double t) {}
+      virtual void updatedx(double t, double dt) { }
+      virtual void updatexd(double t) { }
       virtual void calcxSize() { xSize = 0; }
       virtual const fmatvec::Vec& getx() const { return x; }
       virtual fmatvec::Vec& getx() { return x; }
@@ -324,7 +319,7 @@ namespace MBSim {
        *
        * see SingleContact for the implementation and DynamicSystem for explanation
        */
-      virtual void checkActive(double t, int j) {}
+      virtual void checkActive(double t, int j) { }
 
       /**
        * \brief compute potential energy
@@ -361,7 +356,7 @@ namespace MBSim {
       virtual void updatecorrRef(const fmatvec::Vec &ref);
       virtual void calccorrSize(int j) { corrSize = 0; }
       virtual void setcorrInd(int corrInd_) { corrInd = corrInd_; }
-      virtual void checkRoot(double t) {}
+      virtual void checkRoot(double t) { }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -624,4 +619,3 @@ namespace MBSim {
 }
 
 #endif /* _LINK_H_ */
-

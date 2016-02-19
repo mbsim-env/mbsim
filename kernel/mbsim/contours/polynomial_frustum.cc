@@ -72,7 +72,7 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec2 PolynomialFrustum::getContourParameters(double t, const Vec3 & WrPoint) {
+  Vec2 PolynomialFrustum::getZeta(double t, const Vec3 & WrPoint) {
     Vec2 returnVal(NONINIT);
     Vec3 inFramePoint = -R->getPosition(t) + R->getOrientation(t).T() * WrPoint;
 

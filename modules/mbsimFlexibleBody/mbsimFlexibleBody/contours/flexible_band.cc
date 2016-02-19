@@ -17,9 +17,9 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsimFlexibleBody/contours/flexible_band.h"
-#include <vector>
+#include "mbsim/frames/contour_frame.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,11 +27,41 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBand::FlexibleBand(const string& name) : Contour1sFlexible(name), Cn(2, INIT, 0.), width(0.), nDist(0.) { }
-
-  void FlexibleBand::setCn(const Vec& Cn_) {
-    assert(Cn_.size() == 2);
-    Cn = Cn_ / nrm2(Cn_);
+  Vec3 FlexibleBand::getPosition(double t, const Vec2 &zeta) {
+    return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta) + nDist*getWn(t,zeta);
   }
+
+  Vec3 FlexibleBand::getWt(double t, const Vec2 &zeta) {
+    Vec3 WnLocal = static_cast<FlexibleBody*>(parent)->getFrameOfReference()->getOrientation(t).col(0);
+    Vec3 WbLocal = static_cast<FlexibleBody*>(parent)->getFrameOfReference()->getOrientation().col(2);
+    return -WnLocal * Cn(1) + WbLocal * Cn(0);
+  }
+
+  void FlexibleBand::updatePositions(double t, ContourFrame *frame) {
+    Contour1sFlexible::updatePositions(t,frame);
+    frame->getPosition(false) += nDist*frame->getOrientation(false).col(0);
+  }
+
+  void FlexibleBand::updateVelocities(double t, ContourFrame *frame) {
+    static_cast<FlexibleBody*>(parent)->updateVelocities(t,frame);
+    Contour1sFlexible::updateVelocities(t,frame);
+    frame->getVelocity(false) += crossProduct(frame->getAngularVelocity(false), frame->getOrientation(false).col(0)*nDist);
+  }
+
+  void FlexibleBand::updateAccelerations(double t, ContourFrame *frame) {
+    throw;
+    Contour1sFlexible::updateAccelerations(t,frame);
+  }
+
+  void FlexibleBand::updateJacobians(double t, ContourFrame *frame, int j) {
+    Contour1sFlexible::updateJacobians(t,frame,j);
+    frame->getJacobianOfTranslation(j,false) -= tilde(frame->getOrientation(false).col(0)*nDist)*frame->getJacobianOfRotation(j,false);
+  }
+
+  void FlexibleBand::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
+    throw;
+    Contour1sFlexible::updateGyroscopicAccelerations(t,frame);
+  }
+
 
 }
