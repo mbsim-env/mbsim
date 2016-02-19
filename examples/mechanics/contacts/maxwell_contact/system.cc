@@ -41,9 +41,9 @@ class CountourCouplingCantileverBeam : public InfluenceFunction {
     virtual ~CountourCouplingCantileverBeam() {
     }
 
-    virtual double operator()(const std::pair<Contour*, Frame*>& firstContourInfo, const std::pair<Contour*, Frame*>& secondContourInfo) {
-      Vec2 Arg1 = getContourParameters(t,firstContourInfo);
-      Vec2 Arg2 = getContourParameters(t,secondContourInfo);
+    virtual double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo) {
+      Vec2 Arg1 = getZeta(t,firstContourInfo);
+      Vec2 Arg2 = getZeta(t,secondContourInfo);
       double i=Arg1(0);  // it is: i < j
       double j=Arg2(0);
       if(i > j)
