@@ -259,26 +259,26 @@ namespace MBSimFlexibleBody {
     Damp(3,3) += - 2.0 * D * weps * ( Arho*l0h3/12. );
   }
 
-  Vec FiniteElement1s21RCM::LocateBeam(const Vec& qElement, const double& s) {
-    Vec qLocal      (8,fmatvec::INIT,0.0);
-    Vec qpLocalDummy(8,fmatvec::INIT,0.0);
+  Vec3 FiniteElement1s21RCM::getPositions(const Vec& qElement, const double& s) {
+    Vec qLocal(8,fmatvec::INIT,0.0);
+    SqrMat Jeg(8,fmatvec::INIT,0.0);
 
     BuildqLocal(qElement,qLocal);
 
-    return (LocateLocalBeam(qLocal,qpLocalDummy,s,false))(0,2);
+    return getLocalPositions(qLocal,s);
   }
 
-  Vec FiniteElement1s21RCM::StateBeam(const Vec& qElement, const Vec& qpElement, const double& s) {
+  Vec3 FiniteElement1s21RCM::getVelocities(const Vec& qElement, const Vec& qpElement, const double& s) {
     Vec qLocal(8,fmatvec::INIT,0.0);
     Vec qpLocal(8,fmatvec::INIT,0.0);
-    SqrMat  Jeg(8,fmatvec::INIT,0.0);
+    SqrMat Jeg(8,fmatvec::INIT,0.0);
     SqrMat Jegp(8,fmatvec::INIT,0.0);
 
     BuildqLocal(qElement,qLocal);
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
     qpLocal = Jeg*qpElement;
 
-    return LocateLocalBeam(qLocal,qpLocal,s,true);
+    return getLocalVelocities(qLocal,qpLocal,s);
   }
 
   Mat FiniteElement1s21RCM::JGeneralizedInternal(const Vec& qElement, const double& s) {
@@ -639,10 +639,30 @@ namespace MBSimFlexibleBody {
     Jegp(7,7) = (11*(one_p_cos_dphi*((-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (phi1p*(x1 - x2) - y1p + y2p)*sin(phi1)) - (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
   }
 
-  Vec FiniteElement1s21RCM::LocateLocalBeam(const Vec& qLocal, const Vec& qpLocal, const double& s, bool calcAll) {
-    Vec X(6); // x,y and phi | and | xp,yp and phip
+  Vec3 FiniteElement1s21RCM::getLocalPositions(const Vec& qLocal, const double& s) {
+    Vec3 X(NONINIT); // x,y and phi
 
     const double &xS     = qLocal(0);      const double &yS    = qLocal(1);
+    const double &phiS   = qLocal(2);      const double &eps   = qLocal(3);
+    const double &aL     = qLocal(4);      const double &bL    = qLocal(5);
+    const double &aR     = qLocal(6);      const double &bR    = qLocal(7);
+
+    if (s < 0) { // left beam side
+      X(0) = xS + (1 + eps)*s*cos(bL - phiS) + (s*(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*l0h4);
+      X(1) = yS + (s*(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS))/(2.*l0h4) - (1 + eps)*s*sin(bL - phiS);
+      X(2) = phiS + (s*(l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 6*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s + 8*(16*aL - 8*aR - 5*bL*l0 + 3*bR*l0)*Power(s,2)))/l0h4;
+    }
+    else { // right beam side
+      X(0) = xS + (1 + eps)*s*cos(bR + phiS) + (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*l0h4);
+      X(1) = yS - (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS))/(2.*l0h4) + (1 + eps)*s*sin(bR + phiS);
+      X(2) = phiS + (s*(l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 6*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s - 8*(8*aL - 16*aR - 3*bL*l0 + 5*bR*l0)*Power(s,2)))/l0h4;
+    }
+    return X;
+  }
+
+  Vec3 FiniteElement1s21RCM::getLocalVelocities(const Vec& qLocal, const Vec& qpLocal, const double& s) {
+    Vec3 X(NONINIT); // xp,yp and phip
+
     const double &phiS   = qLocal(2);      const double &eps   = qLocal(3);
     const double &aL     = qLocal(4);      const double &bL    = qLocal(5);
     const double &aR     = qLocal(6);      const double &bR    = qLocal(7);
@@ -653,26 +673,14 @@ namespace MBSimFlexibleBody {
     const double &aRp    = qpLocal(6);     const double &bRp   = qpLocal(7);
 
     if (s < 0) { // left beam side
-      X(0) = xS + (1 + eps)*s*cos(bL - phiS) + (s*(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*l0h4);
-      X(1) = yS + (s*(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS))/(2.*l0h4) - (1 + eps)*s*sin(bL - phiS);
-      X(2) = phiS + (s*(l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 6*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s + 8*(16*aL - 8*aR - 5*bL*l0 + 3*bR*l0)*Power(s,2)))/l0h4;
-
-      if(calcAll) {
-        X(3) = xSp + (s*((2*epsp*l0h4 + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS) + (2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*sin(bL - phiS)))/(2.*l0h4);
-        X(4) = ySp + (s*(2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*cos(bL - phiS) + s*(-2*epsp*l0h4 - bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*l0h4);
-        X(5) = phiSp + (3*(bLp + bRp)*l0h3*s + 64*(2*aLp - aRp)*Power(s,3) - 2*l0h2*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp - 5*bLp*s + 3*bRp*s))/l0h4;
-      }
+      X(0) = xSp + (s*((2*epsp*l0h4 + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS) + (2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*sin(bL - phiS)))/(2.*l0h4);
+      X(1) = ySp + (s*(2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*cos(bL - phiS) + s*(-2*epsp*l0h4 - bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*l0h4);
+      X(2) = phiSp + (3*(bLp + bRp)*l0h3*s + 64*(2*aLp - aRp)*Power(s,3) - 2*l0h2*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp - 5*bLp*s + 3*bRp*s))/l0h4;
     }
     else { // right beam side
-      X(0) = xS + (1 + eps)*s*cos(bR + phiS) + (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*l0h4);
-      X(1) = yS - (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS))/(2.*l0h4) + (1 + eps)*s*sin(bR + phiS);
-      X(2) = phiS + (s*(l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 6*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s - 8*(8*aL - 16*aR - 3*bL*l0 + 5*bR*l0)*Power(s,2)))/l0h4;
-
-      if(calcAll) {
-        X(3) = xSp + (s*((2*epsp*l0h4 + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS) - (2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*sin(bR + phiS)))/(2.*l0h4);
-        X(4) = ySp + (s*(2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*cos(bR + phiS) + s*(2*epsp*l0h4 + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*l0h4);
-        X(5) = phiSp + (3*(bLp + bRp)*l0h3*s - 64*(aLp - 2*aRp)*Power(s,3) - 2*l0h2*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp + 3*bLp*s - 5*bRp*s))/l0h4;
-      }
+      X(0) = xSp + (s*((2*epsp*l0h4 + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS) - (2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*sin(bR + phiS)))/(2.*l0h4);
+      X(1) = ySp + (s*(2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*cos(bR + phiS) + s*(2*epsp*l0h4 + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*l0h4);
+      X(2) = phiSp + (3*(bLp + bRp)*l0h3*s - 64*(aLp - 2*aRp)*Power(s,3) - 2*l0h2*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp + 3*bLp*s - 5*bRp*s))/l0h4;
     }
     return X;
   }

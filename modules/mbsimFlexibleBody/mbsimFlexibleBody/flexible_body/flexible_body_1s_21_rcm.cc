@@ -110,7 +110,7 @@ namespace MBSimFlexibleBody {
 
   Vec3 FlexibleBody1s21RCM::getPosition(double t, const Vec2 &zeta) {
     Vec3 tmp(NONINIT);
-    Vec X = computeState(zeta(0));
+    Vec3 X = getPosition(zeta(0));
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -119,7 +119,7 @@ namespace MBSimFlexibleBody {
 
   Vec3 FlexibleBody1s21RCM::getWs(double t, const fmatvec::Vec2 &zeta) {
     Vec3 tmp(NONINIT);
-    Vec X = computeState(zeta(0));
+    Vec3 X = getPosition(zeta(0));
     tmp(0) = cos(X(2));
     tmp(1) = sin(X(2));
     tmp(2) = 0.;
@@ -136,7 +136,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updatePositions(double t, ContourFrame *frame) {
     Vec3 tmp(NONINIT);
-    Vec X = computeState(frame->getEta());
+    Vec3 X = getPosition(frame->getEta());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -168,14 +168,14 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updateVelocities(double t, ContourFrame *frame) {
     Vec3 tmp(NONINIT);
-    Vec X = computeState(frame->getEta());
-    tmp(0) = X(3);
-    tmp(1) = X(4);
+    Vec3 X = getVelocity(frame->getEta());
+    tmp(0) = X(0);
+    tmp(1) = X(1);
     tmp(2) = 0.;
     frame->setVelocity(R->getOrientation(t) * tmp);
     tmp(0) = 0.;
     tmp(1) = 0.;
-    tmp(2) = X(5);
+    tmp(2) = X(2);
     frame->setAngularVelocity(R->getOrientation(t) * tmp);
   }
 
@@ -282,8 +282,8 @@ namespace MBSimFlexibleBody {
         data.push_back(t);
         double ds = openStructure ? L / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 1) : L / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 2);
         for (int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints(); i++) {
-          Vec X = computeState(ds * i);
-          Vec tmp(3, NONINIT);
+          Vec3 X = getPosition(ds * i);
+          Vec3 tmp(NONINIT);
           tmp(0) = X(0);
           tmp(1) = X(1);
           tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -338,11 +338,18 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
   }
 
-  Vec FlexibleBody1s21RCM::computeState(double sGlobal) {
+  Vec3 FlexibleBody1s21RCM::getPosition(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->StateBeam(getqElement(currentElement), getuElement(currentElement), sLocal);
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+  }
+
+  Vec3 FlexibleBody1s21RCM::getVelocity(double sGlobal) {
+    double sLocal;
+    int currentElement;
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
   }
 
   double FlexibleBody1s21RCM::computePhysicalStrain(double sGlobal) {

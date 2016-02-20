@@ -90,21 +90,15 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
-       * \brief return the planar position and angle at a contour point
-       * \param generalised coordinates
-       * \param contour point
-       * \return planar position and angle
-       */
-      fmatvec::Vec LocateBeam(const fmatvec::Vec&q, const double &s);
-
-      /**
        * \brief return the planar state at a contour point
        * \param generalised positions
        * \param generalised velocities
        * \param contour point
        * \return planar state
        */
-      fmatvec::Vec StateBeam(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double &s);
+      fmatvec::Vec3 getPositions(const fmatvec::Vec& qElement, const double &s);
+
+      fmatvec::Vec3 getVelocities(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double &s);
 
       /**
        * \brief return the JACOBIAN of translation and rotation with respect to generalised internal coordinates
@@ -231,14 +225,21 @@ namespace MBSimFlexibleBody {
       void BuildJacobi(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpIntern, fmatvec::SqrMat& Jeg, fmatvec::SqrMat& Jegp);
 
       /** 
-       * \brief calculates Cartesian position and velocity
+       * \brief calculates Cartesian position
+       * \param local positions
+       * \param contour point
+       * \return Cartesian position
+       */
+      fmatvec::Vec3 getLocalPositions(const fmatvec::Vec& qLocal, const double& s);
+
+      /**
+       * \brief calculates Cartesian velocity
        * \param local positions
        * \param local velocities
        * \param contour point
-       * \param flag to calculate velocities
-       * \return Cartesian position and velocity
+       * \return Cartesian velocity
        */
-      fmatvec::Vec LocateLocalBeam(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const double& s, const bool calcAll=true);
+      fmatvec::Vec3 getLocalVelocities(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const double& s);
 
       /**
        * \brief calculates JACOBIAN of implicit integration
