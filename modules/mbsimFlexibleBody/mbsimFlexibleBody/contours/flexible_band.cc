@@ -27,14 +27,21 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
+  void FlexibleBand::init(InitStage stage) {
+    if(stage==preInit) {
+      sign = tFlipped?-1:1;
+      Contour1sFlexible::init(stage);
+    }
+    else
+      Contour1sFlexible::init(stage);
+  }
+
   Vec3 FlexibleBand::getPosition(double t, const Vec2 &zeta) {
     return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta) + nDist*getWn(t,zeta);
   }
 
   Vec3 FlexibleBand::getWt(double t, const Vec2 &zeta) {
-    Vec3 WnLocal = static_cast<FlexibleBody*>(parent)->getFrameOfReference()->getOrientation(t).col(0);
-    Vec3 WbLocal = static_cast<FlexibleBody*>(parent)->getFrameOfReference()->getOrientation().col(2);
-    return -WnLocal * Cn(1) + WbLocal * Cn(0);
+    return sign*static_cast<FlexibleBody*>(parent)->getFrameOfReference()->getOrientation().col(2);
   }
 
   void FlexibleBand::updatePositions(double t, ContourFrame *frame) {
@@ -62,6 +69,5 @@ namespace MBSimFlexibleBody {
     throw;
     Contour1sFlexible::updateGyroscopicAccelerations(t,frame);
   }
-
 
 }

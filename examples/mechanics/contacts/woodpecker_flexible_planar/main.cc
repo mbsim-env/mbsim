@@ -10,9 +10,14 @@ int main (int argc, char* argv[]) {
   Woodpecker sys("MBS");
 //  sys.setImpactSolver(RootFinding);
   sys.initialize();
+  sys.setLaTol(1e-5);
+  sys.setgdTol(1e-5);
 
-  TimeSteppingSSCIntegrator integrator;
-  integrator.setEndTime(4e-2);
+
+//  TimeSteppingSSCIntegrator integrator;
+  TimeSteppingIntegrator integrator;
+  integrator.setEndTime(1);
+  integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(5.e-3);
   
   integrator.integrate(sys);

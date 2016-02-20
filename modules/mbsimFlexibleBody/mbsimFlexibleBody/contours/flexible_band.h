@@ -38,19 +38,20 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      FlexibleBand(const std::string& name) : Contour1sFlexible(name), Cn(2, fmatvec::INIT, 0.), width(0.), nDist(0.) { }
+      FlexibleBand(const std::string& name) : Contour1sFlexible(name), tFlipped(false), nDist(0.) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
-      /***************************************************/
+      virtual void init(InitStage stage);
+     /***************************************************/
 
       /* GETTER / SETTER */
-      void setCn(const fmatvec::Vec2& Cn_) { Cn = Cn_ / nrm2(Cn_); }
-      void setWidth(double width_) { width = width_; }
+      void setSecondTangentialFlipped(bool tFlipped_) { tFlipped = tFlipped_; }
+//      void setWidth(double width_) { width = width_; }
 
       /*!
        * \brief set normal distance of band surface to fibre of reference of one dimensional continuum
-       * \param normal distance
+       * \param nDist_ normal distance
        */
       void setNormalDistance(double nDist_) { nDist = nDist_; }
 
@@ -59,7 +60,7 @@ namespace MBSimFlexibleBody {
        * \return normal distance
        */
       double getNormalDistance() { return nDist; }
-      double getWidth() const { return width; }
+//      double getWidth() const { return width; }
       /***************************************************/
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
@@ -73,24 +74,22 @@ namespace MBSimFlexibleBody {
       virtual void updateGyroscopicAccelerations(double t, MBSim::ContourFrame* frame);
 
     protected:
-      /**
-       * \brief normal of flexible band with respect to referencing neutral fibre (outward normal = (n b)*Cn)
-       */
-      fmatvec::Vec2 Cn;
 
-      /** 
-       * \brief width of flexible band
-       */
-      double width;
+      bool tFlipped;
+
+//      /**
+//       * \brief width of flexible band
+//       */
+//      double width;
 
       /**
        * \brief distance from the referencing neutral fibre in direction of given normal
        */
       double nDist;
 
+      double sign;
   };
 
 }
 
 #endif /* _FLEXIBLE_BAND_H_ */
-

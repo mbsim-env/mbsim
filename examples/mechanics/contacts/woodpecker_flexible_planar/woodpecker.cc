@@ -14,10 +14,6 @@
 #include "mbsim/links/generalized_spring_damper.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
-#include "mbsim/links/kinetic_excitation.h"
-#include "mbsim/functions/constant_function.h"
-
-#include <iostream>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
@@ -77,33 +73,15 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
 
-  balken->addFrame(new FixedContourFrame("P","[1;0]"));
-  //KineticExcitation *ke = new KineticExcitation("Force");
-  //addLink(ke);
-  //ke->setForceDirection("[1;0;0]");
-  //ke->setForceFunction(new ConstantFunction<VecV(double)>(1));
-  //ke->connect(balken->getFrame("P"));
-
-  balken->getFrame("RJ")->enableOpenMBV(0.1);
-  balken->getFrame("P")->enableOpenMBV(0.1);
-  //ke->enableOpenMBVForce();
-
   Vec nodes(Elements+1);
   for(int i=0;i<=Elements;i++) nodes(i) = i*L/Elements;
   FlexibleBand *top = new FlexibleBand("Top");
   top->setNodes(nodes);
-  top->setWidth(r);
-  top->setCn(Vec("[1.;0.]"));
-//  top->setAlphaStart(0.);
-//  top->setAlphaEnd(L);
   top->setNormalDistance(r);
   balken->addContour(top);
   FlexibleBand *bot = new FlexibleBand("Bot");
   bot->setNodes(nodes);
-  bot->setWidth(r);
-  bot->setCn(Vec("[-1.;0.]"));
-//  bot->setAlphaStart(0.);
-//  bot->setAlphaEnd(L);
+  bot->setSecondTangentialFlipped(true);
   bot->setNormalDistance(r);
   balken->addContour(bot);
 
@@ -229,6 +207,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+  balken->getFrame("RJ")->enableOpenMBV(0.1);
+
   boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   int spineDiscretisation = 4;
   cuboid->setNumberOfSpinePoints(Elements*spineDiscretisation+1); // resolution of visualisation
