@@ -356,7 +356,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::jacobianImpacts(double t) {
+  void Joint::jacobianImpacts(double t, double dt) {
 
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG(t);
