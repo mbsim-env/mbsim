@@ -110,7 +110,7 @@ namespace MBSimFlexibleBody {
 
   Vec3 FlexibleBody1s21RCM::getPosition(double t, const Vec2 &zeta) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPosition(zeta(0));
+    Vec3 X = getPositions(zeta(0));
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -119,7 +119,7 @@ namespace MBSimFlexibleBody {
 
   Vec3 FlexibleBody1s21RCM::getWs(double t, const fmatvec::Vec2 &zeta) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPosition(zeta(0));
+    Vec3 X = getPositions(zeta(0));
     tmp(0) = cos(X(2));
     tmp(1) = sin(X(2));
     tmp(2) = 0.;
@@ -136,7 +136,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updatePositions(double t, ContourFrame *frame) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPosition(frame->getEta());
+    Vec3 X = getPositions(frame->getEta());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -168,7 +168,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updateVelocities(double t, ContourFrame *frame) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getVelocity(frame->getEta());
+    Vec3 X = getVelocities(frame->getEta());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.;
@@ -282,7 +282,7 @@ namespace MBSimFlexibleBody {
         data.push_back(t);
         double ds = openStructure ? L / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 1) : L / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 2);
         for (int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints(); i++) {
-          Vec3 X = getPosition(ds * i);
+          Vec3 X = getPositions(ds * i);
           Vec3 tmp(NONINIT);
           tmp(0) = X(0);
           tmp(1) = X(1);
@@ -338,14 +338,14 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
   }
 
-  Vec3 FlexibleBody1s21RCM::getPosition(double sGlobal) {
+  Vec3 FlexibleBody1s21RCM::getPositions(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
     return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
   }
 
-  Vec3 FlexibleBody1s21RCM::getVelocity(double sGlobal) {
+  Vec3 FlexibleBody1s21RCM::getVelocities(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE

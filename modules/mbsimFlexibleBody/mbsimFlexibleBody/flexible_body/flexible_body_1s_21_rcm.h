@@ -123,13 +123,13 @@ namespace MBSimFlexibleBody {
        * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec3 getPosition(double x);
+      fmatvec::Vec3 getPositions(double x);
 
       /**
        * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec3 getVelocity(double x);
+      fmatvec::Vec3 getVelocities(double x);
 
       /*!
        * \brief computes the phyiscal strain (compare Zander p.71) of the element, defined by the global position
