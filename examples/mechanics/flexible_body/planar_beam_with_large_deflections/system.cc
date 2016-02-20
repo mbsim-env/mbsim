@@ -3,6 +3,8 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsimFlexibleBody/frames/fixed_contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
@@ -77,10 +79,7 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   for (int i = 0; i <= elements; i++)
     nodes(i) = i * l0 / elements;
   top->setNodes(nodes);
-  top->setWidth(b0);
-  top->setCn(Vec("[1.;0.]"));
-  top->setAlphaStart(0.);
-  top->setAlphaEnd(l0);
+  top->setSecondTangentFlipped(true);
   top->setNormalDistance(0.5 * b0);
   rod->addContour(top);
 
@@ -125,9 +124,7 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   contact->enableOpenMBVTangentialForce(1e-2);
   this->addLink(contact);
 
-  ContourPointData cpdata;
-  cpdata.getContourParameterType() = ContourPointData::continuum;
-  rod->addFrame("RJ", cpdata);
+  rod->addFrame(new FixedContourFrame("RJ"));
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"), rod->getFrame("RJ"));
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
