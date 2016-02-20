@@ -81,7 +81,7 @@ namespace MBSimFlexibleBody {
       /*!
        * compute additional informations for element
        */
-      fmatvec::Vec computeAdditionalElementData(fmatvec::Vec &qElement, fmatvec::Vec &qpElement);
+      fmatvec::Vec computeAdditionalElementData(const fmatvec::Vec &qElement, const fmatvec::Vec &qpElement);
 
       /* GETTER / SETTER */
       void setCurlRadius(double R);

@@ -440,7 +440,7 @@ namespace MBSimFlexibleBody {
     return Jeg.T()*Jp + Jegp.T()*JGeneralizedInternal(qElement,s);
   }
 
-  Vec FiniteElement1s21RCM::computeAdditionalElementData(Vec &qElement, Vec &qpElement) {
+  Vec FiniteElement1s21RCM::computeAdditionalElementData(const Vec &qElement, const Vec &qpElement) {
     Vec Data(8,fmatvec::NONINIT);
 
     Vec qLocal(8,fmatvec::NONINIT), qpLocal(8,fmatvec::NONINIT);

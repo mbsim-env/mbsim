@@ -297,9 +297,8 @@ namespace MBSimFlexibleBody {
       }
 #endif
     }
-    if(updEle) BuildElements();
     for (int i = 0; i < plotElements.size(); i++) {
-      Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(qElement[plotElements(i)], uElement[plotElements(i)]);
+      Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(getqElement(plotElements(i)), getuElement(plotElements(i)));
       for (int j = 0; j < elementData.size(); j++)
         plotVector.push_back(elementData(j));
     }
@@ -340,19 +339,17 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FlexibleBody1s21RCM::computeState(double sGlobal) {
-    if(updEle) BuildElements();
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->StateBeam(qElement[currentElement], uElement[currentElement], sLocal);
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->StateBeam(getqElement(currentElement), getuElement(currentElement), sLocal);
   }
 
   double FlexibleBody1s21RCM::computePhysicalStrain(double sGlobal) {
-    if(updEle) BuildElements();
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->computePhysicalStrain(qElement[currentElement]);
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(currentElement));
   }
 
   void FlexibleBody1s21RCM::initRelaxed(double alpha) {
@@ -397,7 +394,6 @@ namespace MBSimFlexibleBody {
       qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
       uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
     }
-    BuildElements();
   }
 
   void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
