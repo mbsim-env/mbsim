@@ -112,6 +112,10 @@ namespace MBSimFlexibleBody {
        */
       virtual void BuildElements() = 0;
 
+      const fmatvec::Vec& getqElement(int i) { if(updEle) BuildElements(); return qElement[i]; }
+
+      const fmatvec::Vec& getuElement(int i) { if(updEle) BuildElements(); return uElement[i]; }
+
       /**
        * \brief insert 'local' information in global vectors
        * \param number of finite element

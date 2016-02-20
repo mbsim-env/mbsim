@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
      /***************************************************/
 
       /* GETTER / SETTER */
-      void setSecondTangentialFlipped(bool tFlipped_) { tFlipped = tFlipped_; }
+      void setSecondTangentFlipped(bool tFlipped_) { tFlipped = tFlipped_; }
 //      void setWidth(double width_) { width = width_; }
 
       /*!

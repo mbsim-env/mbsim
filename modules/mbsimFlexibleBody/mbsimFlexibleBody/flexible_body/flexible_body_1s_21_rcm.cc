@@ -15,7 +15,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
  */
 
 #include <config.h>
@@ -194,14 +193,13 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::updateJacobians(double t, ContourFrame *frame, int j) {
-    if(updEle) BuildElements();
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
 
     double sLocal;
     int currentElement;
     BuildElement(frame->getEta(), sLocal, currentElement);
-    Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement], sLocal);
+    Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(getqElement(currentElement), sLocal);
     if (currentElement < Elements - 1 || openStructure) {
       Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
     }
