@@ -79,8 +79,12 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   for (int i = 0; i <= elements; i++)
     nodes(i) = i * l0 / elements;
   top->setNodes(nodes);
-  top->setSecondTangentFlipped(true);
-  top->setNormalDistance(0.5 * b0);
+//  top->setSecondTangentFlipped(true);
+//  top->setNormalDistance(0.5 * b0);
+  Vec2 RrRP;
+  RrRP(0) = 0.5*b0;
+  top->setRelativePosition(RrRP);
+  top->setRelativeOrientation(M_PI);
   rod->addContour(top);
 
   RigidBody *ball = new RigidBody("Ball");
