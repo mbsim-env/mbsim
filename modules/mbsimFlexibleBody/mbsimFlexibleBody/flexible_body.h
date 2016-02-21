@@ -72,6 +72,7 @@ namespace MBSimFlexibleBody {
       virtual void updateM(double t, int k=0);
       virtual void updatedhdz(double t);
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::SqrMat3 getOrientation(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWs(double t, int node);
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);

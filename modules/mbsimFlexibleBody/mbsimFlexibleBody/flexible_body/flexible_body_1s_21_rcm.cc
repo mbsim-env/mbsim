@@ -117,6 +117,12 @@ namespace MBSimFlexibleBody {
     return R->getPosition(t) + R->getOrientation(t) * tmp;
   }
 
+  SqrMat3 FlexibleBody1s21RCM::getOrientation(double t, const Vec2 &zeta) {
+    Vec3 X = getPositions(zeta(0));
+    SqrMat3 A = BasicRotAIKz(X(2));
+    return R->getOrientation()*A;
+  }
+
   Vec3 FlexibleBody1s21RCM::getWs(double t, const fmatvec::Vec2 &zeta) {
     Vec3 tmp(NONINIT);
     Vec3 X = getPositions(zeta(0));
@@ -143,11 +149,11 @@ namespace MBSimFlexibleBody {
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
     tmp(0) = cos(X(2));
     tmp(1) = sin(X(2));
-    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // tangent
+    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // tangent
     tmp(0) = -sin(X(2));
     tmp(1) = cos(X(2));
-    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // normal
-    frame->getOrientation(false).set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // normal
+    frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
   }
 
   void FlexibleBody1s21RCM::updatePositions(double t, NodeFrame *frame) {
@@ -159,11 +165,11 @@ namespace MBSimFlexibleBody {
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
     tmp(0) = cos(q(5 * node + 2));
     tmp(1) = sin(q(5 * node + 2));
-    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // tangent
+    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // tangent
     tmp(0) = -sin(q(5 * node + 2));
     tmp(1) = cos(q(5 * node + 2));
-    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // normal
-    frame->getOrientation(false).set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
+    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // normal
+    frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
   }
 
   void FlexibleBody1s21RCM::updateVelocities(double t, ContourFrame *frame) {

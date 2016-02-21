@@ -84,6 +84,10 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
   }
 
+  SqrMat3 FlexibleBody::getOrientation(double t, const Vec2 &zeta) {
+    THROW_MBSIMERROR("(FlexibleBody::getOrientation): Not implemented.");
+  }
+
   Vec3 FlexibleBody::getWs(double t, const Vec2 &zeta) {
     THROW_MBSIMERROR("(FlexibleBody::getWs): Not implemented.");
     return 0;

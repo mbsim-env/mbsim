@@ -38,28 +38,32 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      FlexibleBand(const std::string& name) : Contour1sFlexible(name), tFlipped(false), nDist(0.) { }
+      FlexibleBand(const std::string& name) : Contour1sFlexible(name) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
-      virtual void init(InitStage stage);
      /***************************************************/
 
       /* GETTER / SETTER */
-      void setSecondTangentFlipped(bool tFlipped_) { tFlipped = tFlipped_; }
+      void setRelativePosition(const fmatvec::Vec2 &r);
+      void setRelativeOrientation(double al);
+
+      const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
+      const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
+//      void setSecondTangentFlipped(bool tFlipped_) { tFlipped = tFlipped_; }
 //      void setWidth(double width_) { width = width_; }
 
-      /*!
-       * \brief set normal distance of band surface to fibre of reference of one dimensional continuum
-       * \param nDist_ normal distance
-       */
-      void setNormalDistance(double nDist_) { nDist = nDist_; }
+//      /*!
+//       * \brief set normal distance of band surface to fibre of reference of one dimensional continuum
+//       * \param nDist_ normal distance
+//       */
+//      void setNormalDistance(double nDist_) { nDist = nDist_; }
 
-      /*!
-       * \brief get normal distance of band surface to fibre of reference of one dimensional continuum
-       * \return normal distance
-       */
-      double getNormalDistance() { return nDist; }
+//      /*!
+//       * \brief get normal distance of band surface to fibre of reference of one dimensional continuum
+//       * \return normal distance
+//       */
+//      double getNormalDistance() { return nDist; }
 //      double getWidth() const { return width; }
       /***************************************************/
 
@@ -75,19 +79,23 @@ namespace MBSimFlexibleBody {
 
     protected:
 
-      bool tFlipped;
+//      bool tFlipped;
 
 //      /**
 //       * \brief width of flexible band
 //       */
 //      double width;
 
-      /**
-       * \brief distance from the referencing neutral fibre in direction of given normal
-       */
-      double nDist;
+//      /**
+//       * \brief distance from the referencing neutral fibre in direction of given normal
+//       */
+//      double nDist;
 
-      double sign;
+//      double sign;
+
+      fmatvec::Vec3 RrRP;
+
+      fmatvec::SqrMat3 ARP;
   };
 
 }

@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/frames/contour_frame.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -27,32 +28,33 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  void FlexibleBand::init(InitStage stage) {
-    if(stage==preInit) {
-      sign = tFlipped?-1:1;
-      Contour1sFlexible::init(stage);
-    }
-    else
-      Contour1sFlexible::init(stage);
+  void FlexibleBand::setRelativePosition(const fmatvec::Vec2 &r) {
+    RrRP(1) = r(0);
+    RrRP(2) = r(1);
+  }
+
+  void FlexibleBand::setRelativeOrientation(double al) {
+    ARP = BasicRotAIKx(al);
   }
 
   Vec3 FlexibleBand::getPosition(double t, const Vec2 &zeta) {
-    return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta) + nDist*getWn(t,zeta);
+    return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta) + static_cast<FlexibleBody*>(parent)->getOrientation(t,zeta)*RrRP;
   }
 
   Vec3 FlexibleBand::getWt(double t, const Vec2 &zeta) {
-    return sign*static_cast<FlexibleBody*>(parent)->getFrameOfReference()->getOrientation().col(2);
+    static Vec3 Pt("[0;0;1]");
+    return static_cast<FlexibleBody*>(parent)->getOrientation(t,zeta)*(ARP*Pt);
   }
 
   void FlexibleBand::updatePositions(double t, ContourFrame *frame) {
     Contour1sFlexible::updatePositions(t,frame);
-    frame->getPosition(false) += nDist*frame->getOrientation(false).col(0);
+    frame->getPosition(false) += frame->getOrientation(false)*RrRP;
   }
 
   void FlexibleBand::updateVelocities(double t, ContourFrame *frame) {
     static_cast<FlexibleBody*>(parent)->updateVelocities(t,frame);
     Contour1sFlexible::updateVelocities(t,frame);
-    frame->getVelocity(false) += crossProduct(frame->getAngularVelocity(false), frame->getOrientation(false).col(0)*nDist);
+    frame->getVelocity(false) += crossProduct(frame->getAngularVelocity(false), frame->getOrientation(false)*RrRP);
   }
 
   void FlexibleBand::updateAccelerations(double t, ContourFrame *frame) {
@@ -62,7 +64,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBand::updateJacobians(double t, ContourFrame *frame, int j) {
     Contour1sFlexible::updateJacobians(t,frame,j);
-    frame->getJacobianOfTranslation(j,false) -= tilde(frame->getOrientation(false).col(0)*nDist)*frame->getJacobianOfRotation(j,false);
+    frame->getJacobianOfTranslation(j,false) -= tilde(frame->getOrientation(false)*RrRP)*frame->getJacobianOfRotation(j,false);
   }
 
   void FlexibleBand::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
