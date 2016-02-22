@@ -31,11 +31,13 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   ContourFrame* FlexibleBand::createContourFrame(const string &name) {
-   FloatingContourFrame *frame = new FloatingContourFrame(name);
-//    FloatingRelativeContourFrame *frame = new FloatingRelativeContourFrame(name);
-    Frame1s *bodyFrame = new Frame1s(name);
-    bodyFrame->setParent(parent);
-    frame->setFrameOfReference(bodyFrame);
+    FloatingContourFrame *frame = new FloatingContourFrame(name);
+    static int n=1;
+    stringstream s;
+    s << "P" << n++;
+    Frame1s *bodyFrame = new Frame1s(s.str());
+    static_cast<FlexibleBody1s21RCM*>(parent)->addFrame(bodyFrame);
+   frame->setFrameOfReference(bodyFrame);
     return frame;
   }
 
