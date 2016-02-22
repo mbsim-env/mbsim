@@ -43,8 +43,6 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBody1s(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false), sOld(-1e12) {
-    contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
-    addContour(contour1sFlexible);
   }
 
   void FlexibleBody1s21RCM::BuildElements() {
@@ -236,18 +234,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::init(InitStage stage) {
     if (stage == unknownStage) {
-      //      contour1sFlexible->getFrame()->setOrientation(R->getOrientation());
-      contour1sFlexible->setAlphaStart(0);
-      contour1sFlexible->setAlphaEnd(L);
-      if (userContourNodes.size() == 0) {
-        Vec contourNodes(Elements + 1);
-        for (int i = 0; i <= Elements; i++)
-          contourNodes(i) = L / Elements * i; // search area for each finite element contact search
-        contour1sFlexible->setNodes(contourNodes);
-      }
-      else
-        contour1sFlexible->setNodes(userContourNodes);
-
       FlexibleBodyContinuum<double>::init(stage);
 
       initialized = true;

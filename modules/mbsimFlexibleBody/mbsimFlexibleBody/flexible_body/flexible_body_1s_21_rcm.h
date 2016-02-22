@@ -21,7 +21,6 @@
 #define _FLEXIBLE_BODY_1S_21_RCM_H_
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
-#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
@@ -59,18 +58,11 @@ namespace MBSimFlexibleBody {
        */
       FlexibleBody1s21RCM(const std::string &name, bool openStructure);
 
-      /*!
-       * \brief destructor
-       */
-      virtual ~FlexibleBody1s21RCM() {}
-
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements();
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0);
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
       virtual void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false);
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ));
       virtual fmatvec::Vec3 getPosition(double t, double s);
@@ -88,7 +80,6 @@ namespace MBSimFlexibleBody {
       virtual void updateAccelerations(double t, NodeFrame* frame);
       virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
       virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
-
       /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -225,11 +216,6 @@ namespace MBSimFlexibleBody {
        * \brief flag for testing if beam is initialised
        */
       bool initialized;
-
-      /**
-       * \brief contour of body
-       */
-      Contour1sFlexible *contour1sFlexible;
 
       fmatvec::Vec3 X;
       double sOld;
