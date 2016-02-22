@@ -43,17 +43,14 @@ namespace MBSimFlexibleBody {
 
   Vec3 Contour1sFlexible::getPosition(double t, const Vec2 &zeta) {
     throw;
-    return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta);
   }
 
   Vec3 Contour1sFlexible::getWs(double t, const Vec2 &zeta) {
     throw;
-    return static_cast<FlexibleBody*>(parent)->getWs(t,zeta);
   }
 
   Vec3 Contour1sFlexible::getWu(double t, const fmatvec::Vec2 &zeta) {
     throw;
-    return static_cast<FlexibleBody*>(parent)->getWu(t,zeta);
   }
 
   Vec3 Contour1sFlexible::getWt(double t, const Vec2 &zeta) {
@@ -66,27 +63,22 @@ namespace MBSimFlexibleBody {
 
   void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {
     throw;
-    static_cast<FlexibleBody*>(parent)->updatePositions(t,frame);
   }
 
   void Contour1sFlexible::updateVelocities(double t, ContourFrame *frame) {
     throw;
-    static_cast<FlexibleBody*>(parent)->updateVelocities(t,frame);
   }
 
   void Contour1sFlexible::updateAccelerations(double t, ContourFrame *frame) {
     throw;
-    static_cast<FlexibleBody*>(parent)->updateAccelerations(t,frame);
   }
 
   void Contour1sFlexible::updateJacobians(double t, ContourFrame *frame, int j) {
     throw;
-    static_cast<FlexibleBody*>(parent)->updateJacobians(t,frame,j);
   }
 
   void Contour1sFlexible::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
     throw;
-    static_cast<FlexibleBody*>(parent)->updateGyroscopicAccelerations(t,frame);
   }
 
 }

@@ -20,7 +20,7 @@
 #ifndef _FLEXIBLE_BODY_1S_21_RCM_H_
 #define _FLEXIBLE_BODY_1S_21_RCM_H_
 
-#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
    * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006 \n
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lissbon, Portugal, 2006
    */
-  class FlexibleBody1s21RCM : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s21RCM : public FlexibleBody1s {
     public:
       /*!
        * \brief constructor:
@@ -121,11 +121,6 @@ namespace MBSimFlexibleBody {
 #endif
       double getLength() const { return L; }
       /***************************************************/
-
-      /**
-       * \param contour parameter frame
-       */
-      void addFrame(Frame1s *frame);
 
       /**
        * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
@@ -238,4 +233,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* _FLEXIBLE_BODY_1S_21_RCM_H_ */
-

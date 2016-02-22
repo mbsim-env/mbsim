@@ -4,7 +4,6 @@ noinst_LTLIBRARIES = libframe.la
 libframe_la_SOURCES = fixed_nodal_frame.cc\
 		      node_frame.cc\
 		      frame_1s.cc\
-		      fixed_contour_frame.cc\
 		      floating_contour_frame.cc
 
 libframe_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
@@ -15,5 +14,4 @@ frameinclude_HEADERS = frame_ffr.h\
 		       fixed_nodal_frame.h\
 		       node_frame.h\
 		       frame_1s.h\
-		       fixed_contour_frame.h\
 		       floating_contour_frame.h

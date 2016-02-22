@@ -21,7 +21,6 @@
 #include <config.h>
 #include <mbsimFlexibleBody/flexible_body.h>
 #include <mbsimFlexibleBody/frames/node_frame.h>
-#include <mbsimFlexibleBody/frames/fixed_contour_frame.h>
 #include <mbsim/dynamic_system.h>
 #include <mbsim/frames/fixed_relative_frame.h>
 #include <mbsim/contours/contour.h>
@@ -80,68 +79,20 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
-  Vec3 FlexibleBody::getPosition(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(FlexibleBody::getPosition): Not implemented.");
-  }
-
-  SqrMat3 FlexibleBody::getOrientation(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(FlexibleBody::getOrientation): Not implemented.");
-  }
-
-  Vec3 FlexibleBody::getWs(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(FlexibleBody::getWs): Not implemented.");
-    return 0;
-  }
-
-  Vec3 FlexibleBody::getWs(double t, int node) {
-    THROW_MBSIMERROR("(FlexibleBody::getWs): Not implemented.");
-    return 0;
-  }
-
-  Vec3 FlexibleBody::getWt(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(FlexibleBody::getWt): Not implemented.");
-    return 0;
-  }
-
-  Vec3 FlexibleBody::getWt(double t, int node) {
-    THROW_MBSIMERROR("(FlexibleBody::getWt): Not implemented.");
-    return 0;
-  }
-
-  void FlexibleBody::updatePositions(double t, ContourFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updatePositions): Not implemented.");
-  }
-
   void FlexibleBody::updatePositions(double t, NodeFrame* frame) {
     THROW_MBSIMERROR("(FlexibleBody::updatePositions): Not implemented.");
-  }
-
-  void FlexibleBody::updateVelocities(double t, ContourFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updateVelocities): Not implemented.");
   }
 
   void FlexibleBody::updateVelocities(double t, NodeFrame* frame) {
     THROW_MBSIMERROR("(FlexibleBody::updateVelocities): Not implemented.");
   }
 
-  void FlexibleBody::updateAccelerations(double t, ContourFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updateAccelerations): Not implemented.");
-  }
-
   void FlexibleBody::updateAccelerations(double t, NodeFrame* frame) {
     THROW_MBSIMERROR("(FlexibleBody::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody::updateJacobians(double t, ContourFrame* frame, int j) {
-    THROW_MBSIMERROR("(FlexibleBody::updateJacobians): Not implemented.");
-  }
-
   void FlexibleBody::updateJacobians(double t, NodeFrame* frame, int j) {
     THROW_MBSIMERROR("(FlexibleBody::updateJacobians): Not implemented.");
-  }
-
-  void FlexibleBody::updateGyroscopicAccelerations(double t, ContourFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody::updateGyroscopicAccelerations(double t, NodeFrame* frame) {
@@ -194,10 +145,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addFrame(NodeFrame *frame) {
-    Body::addFrame(frame);
-  }
-
-  void FlexibleBody::addFrame(FixedContourFrame *frame) {
     Body::addFrame(frame);
   }
 

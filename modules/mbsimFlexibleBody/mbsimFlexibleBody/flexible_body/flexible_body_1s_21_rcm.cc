@@ -43,7 +43,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) :
-    FlexibleBodyContinuum<double>(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
+    FlexibleBody1s(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
       contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
       addContour(contour1sFlexible);
     }
@@ -109,10 +109,6 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21RCM::addFrame(Frame1s *frame) { 
-    Body::addFrame(frame); 
-  }
-
   Vec3 FlexibleBody1s21RCM::getPosition(double t, double s) {
     Vec3 tmp(NONINIT);
     Vec3 X = getPositions(s);
@@ -146,11 +142,11 @@ namespace MBSimFlexibleBody {
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
     tmp(0) = cos(X(2));
     tmp(1) = sin(X(2));
-    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // tangent
+    frame->getOrientation(false).set(0, R->getOrientation() * tmp);
     tmp(0) = -sin(X(2));
     tmp(1) = cos(X(2));
-    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // normal
-    frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
+    frame->getOrientation(false).set(1, R->getOrientation() * tmp);
+    frame->getOrientation(false).set(2, R->getOrientation().col(2));
   }
 
   void FlexibleBody1s21RCM::updateVelocities(double t, Frame1s *frame) {
@@ -203,11 +199,11 @@ namespace MBSimFlexibleBody {
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
     tmp(0) = cos(q(5 * node + 2));
     tmp(1) = sin(q(5 * node + 2));
-    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // tangent
+    frame->getOrientation(false).set(0, R->getOrientation() * tmp);
     tmp(0) = -sin(q(5 * node + 2));
     tmp(1) = cos(q(5 * node + 2));
-    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // normal
-    frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
+    frame->getOrientation(false).set(1, R->getOrientation() * tmp);
+    frame->getOrientation(false).set(2, R->getOrientation().col(2));
   }
 
   void FlexibleBody1s21RCM::updateVelocities(double t, NodeFrame *frame) {
