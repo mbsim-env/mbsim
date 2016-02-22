@@ -20,10 +20,7 @@
 #ifndef _FLEXIBLE_BODY_1S_21_ANCF_H_
 #define _FLEXIBLE_BODY_1S_21_ANCF_H_
 
-#include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_ancf.h"
-#include "mbsim/mbsim_event.h"
-
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
@@ -55,19 +52,27 @@ namespace MBSimFlexibleBody {
        */
       FlexibleBody1s21ANCF(const std::string &name, bool openStructure);
 
-      /*!
-       * \brief destructor
-       */
-      virtual ~FlexibleBody1s21ANCF() {}
-
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void updateM(double t, int k) {}
+      virtual void updateM(double t, int k) { }
       virtual void BuildElements();
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+      virtual fmatvec::Vec3 getPosition(double t, double s);
+      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
+      virtual fmatvec::Vec3 getWs(double t, double s);
+
+      virtual void updatePositions(double t, Frame1s* frame);
+      virtual void updateVelocities(double t, Frame1s* frame);
+      virtual void updateAccelerations(double t, Frame1s* frame);
+      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
       /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -98,10 +103,16 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
-       * \brief compute planar state at Lagrangian coordinate
+       * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec computeState(double x);
+      fmatvec::Vec3 getPositions(double x);
+
+      /**
+       * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
+       * \param Lagrangian coordinate
+       */
+      fmatvec::Vec3 getVelocities(double x);
 
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
@@ -197,32 +208,11 @@ namespace MBSimFlexibleBody {
        * \param finite element number
        */
       void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
+
+      fmatvec::Vec3 X;
+      double sOld;
   };
 
-  inline void FlexibleBody1s21ANCF::setCurlRadius(double rc_) {
-    rc = rc_;
-    if(initialised)
-      for(int i = 0; i < Elements; i++)
-        static_cast<FiniteElement1s21ANCF*>(discretization[i])->setCurlRadius(rc);
-  }
-
-  inline void FlexibleBody1s21ANCF::setMaterialDamping(double deps_, double dkappa_) {
-    deps = deps_;
-    dkappa = dkappa_;
-    if(initialised)
-      for(int i = 0; i < Elements; i++) 
-        static_cast<FiniteElement1s21ANCF*>(discretization[i])->setMaterialDamping(deps,dkappa);
-  }
-
-  inline void FlexibleBody1s21ANCF::setEulerPerspective(bool Euler_, double v0_) { 
-    if(openStructure) {
-      throw(new MBSim::MBSimError("(FlexibleBody1s21ANCF::setEulerPerspective): implemented only for closed structures!"));
-    }
-    else {
-      Euler = Euler_; 
-      v0 = v0_;
-    }
-  }
 }
-#endif /* _FLEXIBLE_BODY_1S_21_ANCF_H_ */
 
+#endif /* _FLEXIBLE_BODY_1S_21_ANCF_H_ */
