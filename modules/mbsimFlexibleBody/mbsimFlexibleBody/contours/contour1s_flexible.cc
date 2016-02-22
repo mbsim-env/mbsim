@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
@@ -22,7 +22,7 @@
 #include "contour1s_flexible.h"
 #include "mbsimFlexibleBody/frames/floating_contour_frame.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
-#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,55 +30,24 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Contour1sFlexible::Contour1sFlexible(const string & name) : Contour1s(name), neutral(0) { }
-
   ContourFrame* Contour1sFlexible::createContourFrame(const string &name) {
-   FloatingContourFrame *frame = new FloatingContourFrame(name);
-//    FloatingRelativeContourFrame *frame = new FloatingRelativeContourFrame(name);
+    FloatingContourFrame *frame = new FloatingContourFrame(name);
     Frame1s *bodyFrame = new Frame1s(name);
-    bodyFrame->setParent(parent);
+    static_cast<FlexibleBody1s*>(parent)->addFrame(bodyFrame);
     frame->setFrameOfReference(bodyFrame);
     return frame;
   }
 
   Vec3 Contour1sFlexible::getPosition(double t, const Vec2 &zeta) {
-    throw;
+    THROW_MBSIMERROR("(Contour1sFlexible::getPosition): Not implemented.");
   }
 
   Vec3 Contour1sFlexible::getWs(double t, const Vec2 &zeta) {
-    throw;
-  }
-
-  Vec3 Contour1sFlexible::getWu(double t, const fmatvec::Vec2 &zeta) {
-    throw;
+    return static_cast<FlexibleBody1s*>(parent)->getWs(t,zeta(0));
   }
 
   Vec3 Contour1sFlexible::getWt(double t, const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour1sFlexible::getWt): Not implemented.");
-  }
-
-  Vec3 Contour1sFlexible::getWv(double t, const fmatvec::Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour1sFlexible::getWv): Not implemented.");
-  }
-
-  void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {
-    throw;
-  }
-
-  void Contour1sFlexible::updateVelocities(double t, ContourFrame *frame) {
-    throw;
-  }
-
-  void Contour1sFlexible::updateAccelerations(double t, ContourFrame *frame) {
-    throw;
-  }
-
-  void Contour1sFlexible::updateJacobians(double t, ContourFrame *frame, int j) {
-    throw;
-  }
-
-  void Contour1sFlexible::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
-    throw;
   }
 
 }

@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _FLEXIBLE_BAND_H_
@@ -43,8 +43,6 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const { return "FlexibleBand"; }
      /***************************************************/
 
-      virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
-
       /* GETTER / SETTER */
       void setRelativePosition(const fmatvec::Vec2 &r);
       void setRelativeOrientation(double al);
@@ -53,10 +51,7 @@ namespace MBSimFlexibleBody {
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
 
     protected:
       fmatvec::Vec3 RrRP;

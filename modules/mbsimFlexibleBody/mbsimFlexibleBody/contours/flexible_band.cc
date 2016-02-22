@@ -14,14 +14,12 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
 #include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsimFlexibleBody/frames/floating_contour_frame.h"
-#include "mbsimFlexibleBody/frames/frame_1s.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 #include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
@@ -29,14 +27,6 @@ using namespace fmatvec;
 using namespace MBSim;
 
 namespace MBSimFlexibleBody {
-
-  ContourFrame* FlexibleBand::createContourFrame(const string &name) {
-    FloatingContourFrame *frame = new FloatingContourFrame(name);
-    Frame1s *bodyFrame = new Frame1s(name);
-    static_cast<FlexibleBody1s21RCM*>(parent)->addFrame(bodyFrame);
-    frame->setFrameOfReference(bodyFrame);
-    return frame;
-  }
 
   void FlexibleBand::setRelativePosition(const fmatvec::Vec2 &r) {
     RrRP(1) = r(0);
@@ -48,16 +38,12 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBand::getPosition(double t, const Vec2 &zeta) {
-    return static_cast<FlexibleBody1s21RCM*>(parent)->getPosition(t,zeta(0)) + static_cast<FlexibleBody1s21RCM*>(parent)->getOrientation(t,zeta(0))*RrRP;
-  }
-
-  Vec3 FlexibleBand::getWs(double t, const Vec2 &zeta) {
-    return static_cast<FlexibleBody1s21RCM*>(parent)->getWs(t,zeta(0));
+    return static_cast<FlexibleBody1s*>(parent)->getPosition(t,zeta(0)) + static_cast<FlexibleBody1s*>(parent)->getOrientation(t,zeta(0))*RrRP;
   }
 
   Vec3 FlexibleBand::getWt(double t, const Vec2 &zeta) {
     static Vec3 Pt("[0;0;1]");
-    return static_cast<FlexibleBody1s21RCM*>(parent)->getOrientation(t,zeta(0))*(ARP*Pt);
+    return static_cast<FlexibleBody1s*>(parent)->getOrientation(t,zeta(0))*(ARP*Pt);
   }
 
 }

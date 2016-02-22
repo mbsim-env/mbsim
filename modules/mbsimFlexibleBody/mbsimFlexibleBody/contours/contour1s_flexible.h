@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _CONTOUR1S_FLEXIBLE_H_
@@ -49,35 +49,23 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sFlexible(const std::string &name);
+      Contour1sFlexible(const std::string & name) : Contour1s(name), neutral(0) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const {
-        return "Contour1sFlexible";
-      }
+      virtual std::string getType() const { return "Contour1sFlexible"; }
       /***************************************************/
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
 
-      virtual void updatePositions(double t, MBSim::ContourFrame* frame);
-      virtual void updateVelocities(double t, MBSim::ContourFrame* frame);
-      virtual void updateAccelerations(double t, MBSim::ContourFrame* frame);
-      virtual void updateJacobians(double t, MBSim::ContourFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, MBSim::ContourFrame* frame);
+      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
 
-      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
-        return findContactPairingFlexible(type0.c_str(), type1.c_str());
-      }
-
-      void setNeutral(Contour1sNeutralFactory* neutral_) {
-        neutral = neutral_;
-      }
+      void setNeutral(Contour1sNeutralFactory* neutral_) { neutral = neutral_; }
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
@@ -94,4 +82,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* _CONTOUR1S_FLEXIBLE_H_ */
-
