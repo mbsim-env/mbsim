@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      FlexibleBand(const std::string& name) : Contour1sFlexible(name) { }
+      FlexibleBand(const std::string& name) : Contour1sFlexible(name), ARP(fmatvec::EYE) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
