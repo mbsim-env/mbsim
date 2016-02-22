@@ -42,11 +42,10 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) :
-    FlexibleBody1s(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
-      contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
-      addContour(contour1sFlexible);
-    }
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBody1s(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false), sOld(-1e12) {
+    contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
+    addContour(contour1sFlexible);
+  }
 
   void FlexibleBody1s21RCM::BuildElements() {
     for (int i = 0; i < Elements; i++) {
@@ -111,23 +110,20 @@ namespace MBSimFlexibleBody {
 
   Vec3 FlexibleBody1s21RCM::getPosition(double t, double s) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPositions(s);
-    tmp(0) = X(0);
+    tmp(0) = getPositions(s)(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
     return R->getPosition(t) + R->getOrientation(t) * tmp;
   }
 
   SqrMat3 FlexibleBody1s21RCM::getOrientation(double t, double s) {
-    Vec3 X = getPositions(s);
-    SqrMat3 A = BasicRotAIKz(X(2));
+    SqrMat3 A = BasicRotAIKz(getPositions(s)(2));
     return R->getOrientation(t)*A;
   }
 
   Vec3 FlexibleBody1s21RCM::getWs(double t, double s) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPositions(s);
-    tmp(0) = cos(X(2));
+    tmp(0) = cos(getPositions(s)(2));
     tmp(1) = sin(X(2));
     tmp(2) = 0.;
     return R->getOrientation(t) * tmp;
@@ -135,8 +131,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updatePositions(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPositions(frame->getParameter());
-    tmp(0) = X(0);
+    tmp(0) = getPositions(frame->getParameter())(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
@@ -354,10 +349,14 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBody1s21RCM::getPositions(double sGlobal) {
-    double sLocal;
-    int currentElement;
-    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+    if(fabs(sGlobal-sOld)>1e-8*sGlobal) {
+      double sLocal;
+      int currentElement;
+      BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+      X = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+      sOld = sGlobal;
+    }
+    return X;
   }
 
   Vec3 FlexibleBody1s21RCM::getVelocities(double sGlobal) {

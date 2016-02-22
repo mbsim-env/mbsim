@@ -150,6 +150,8 @@ namespace MBSimFlexibleBody {
        */
       void initInfo();
 
+      void resetUpToDate() { FlexibleBody1s::resetUpToDate(); sOld = -1e-12; }
+
     protected:
       /**
        * \brief detect current finite element
@@ -228,6 +230,9 @@ namespace MBSimFlexibleBody {
        * \brief contour of body
        */
       Contour1sFlexible *contour1sFlexible;
+
+      fmatvec::Vec3 X;
+      double sOld;
   };
 
 }
