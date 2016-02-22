@@ -3,11 +3,12 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 //#include "mbsim/contact_kinematics/circlesolid_flexibleband.h"
-#include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
+//#include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/links/spring_damper.h"
@@ -341,10 +342,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     for(int i=0;i<nNodes;i++)
       nodes(i) = i*beltLength/(nNodes-1);
     bd->setNodes(nodes);
-    bd->setWidth(1.0);
-    Vec normal(2,INIT,0.);
-    normal(0) = -1.*sideInOut( iBand ); 
-    bd->setCn(normal);
+    //bd->setWidth(1.0);
+    bd->setSecondTangentFlipped(sideInOut(iBand)==1?false:true);
     bd->setAlphaStart(0.);
     bd->setAlphaEnd(beltLength);  
     bd->setNormalDistance(0.5*b0_contact);
@@ -401,7 +400,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        disk->setInitialGeneralizedVelocity(vInit);
     }
 
-    SolidCircle *cDisk = new SolidCircle("cDisk");
+    Circle *cDisk = new Circle("cDisk");
     cDisk->setRadius(radiiDisks(i));
     Vec BR(3,INIT,0.);// BR(1)=-r;
     disk->addFrame(new FixedRelativeFrame("cDisk",BR,SqrMat(3,EYE),disk->getFrame("C")));

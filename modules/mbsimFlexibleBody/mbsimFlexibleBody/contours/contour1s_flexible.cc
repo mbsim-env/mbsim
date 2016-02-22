@@ -21,6 +21,7 @@
 
 #include "contour1s_flexible.h"
 #include "mbsimFlexibleBody/frames/floating_contour_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 
 using namespace std;
@@ -32,18 +33,26 @@ namespace MBSimFlexibleBody {
   Contour1sFlexible::Contour1sFlexible(const string & name) : Contour1s(name), neutral(0) { }
 
   ContourFrame* Contour1sFlexible::createContourFrame(const string &name) {
-    return new FloatingContourFrame(name,this);
+   FloatingContourFrame *frame = new FloatingContourFrame(name);
+//    FloatingRelativeContourFrame *frame = new FloatingRelativeContourFrame(name);
+    Frame1s *bodyFrame = new Frame1s(name);
+    bodyFrame->setParent(parent);
+    frame->setFrameOfReference(bodyFrame);
+    return frame;
   }
 
   Vec3 Contour1sFlexible::getPosition(double t, const Vec2 &zeta) {
+    throw;
     return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta);
   }
 
   Vec3 Contour1sFlexible::getWs(double t, const Vec2 &zeta) {
+    throw;
     return static_cast<FlexibleBody*>(parent)->getWs(t,zeta);
   }
 
   Vec3 Contour1sFlexible::getWu(double t, const fmatvec::Vec2 &zeta) {
+    throw;
     return static_cast<FlexibleBody*>(parent)->getWu(t,zeta);
   }
 
@@ -56,22 +65,27 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {
+    throw;
     static_cast<FlexibleBody*>(parent)->updatePositions(t,frame);
   }
 
   void Contour1sFlexible::updateVelocities(double t, ContourFrame *frame) {
+    throw;
     static_cast<FlexibleBody*>(parent)->updateVelocities(t,frame);
   }
 
   void Contour1sFlexible::updateAccelerations(double t, ContourFrame *frame) {
+    throw;
     static_cast<FlexibleBody*>(parent)->updateAccelerations(t,frame);
   }
 
   void Contour1sFlexible::updateJacobians(double t, ContourFrame *frame, int j) {
+    throw;
     static_cast<FlexibleBody*>(parent)->updateJacobians(t,frame,j);
   }
 
   void Contour1sFlexible::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
+    throw;
     static_cast<FlexibleBody*>(parent)->updateGyroscopicAccelerations(t,frame);
   }
 

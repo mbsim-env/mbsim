@@ -24,7 +24,8 @@
 
 namespace MBSimFlexibleBody {
 
-  class Contour1sFlexible;
+  //class Contour1sFlexible;
+  class Frame1s;
 
   /**
    * \brief tbd
@@ -33,9 +34,16 @@ namespace MBSimFlexibleBody {
   class FloatingContourFrame : public MBSim::ContourFrame {
 
     public:
-      FloatingContourFrame(const std::string &name = "dummy", Contour1sFlexible* contour_ = NULL) : ContourFrame(name), contour(contour_) { }
+      FloatingContourFrame(const std::string &name = "dummy", Frame1s* R_ = NULL) : ContourFrame(name), R(R_) { }
 
       std::string getType() const { return "FloatingContourFrame"; }
+
+      void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
+      void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
+
+      void setFrameOfReference(Frame1s *R_) { R = R_; }
+
+      const fmatvec::Vec3& getGlobalRelativePosition(double t);
 
       void updatePositions(double t);
       void updateVelocities(double t);
@@ -44,7 +52,9 @@ namespace MBSimFlexibleBody {
       void updateGyroscopicAccelerations(double t);
 
     protected:
-      Contour1sFlexible *contour;
+      Frame1s *R;
+      fmatvec::Vec3 RrRP, WrRP;
+      fmatvec::SqrMat3 ARP;
   };
 
 }

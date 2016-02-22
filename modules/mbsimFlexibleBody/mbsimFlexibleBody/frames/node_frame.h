@@ -35,8 +35,6 @@ namespace MBSimFlexibleBody {
 
       std::string getType() const { return "NodeFrame"; }
 
-      virtual void init(InitStage stage);
-
       void setNodeNumber(int node_) { node = node_; }
 
       int getNodeNumber() const { return node; }

@@ -77,12 +77,15 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   for(int i=0;i<=Elements;i++) nodes(i) = i*L/Elements;
   FlexibleBand *top = new FlexibleBand("Top");
   top->setNodes(nodes);
-  top->setNormalDistance(r);
+  Vec2 RrRP;
+  RrRP(0) = r;
+  top->setRelativePosition(RrRP);
+  top->setRelativeOrientation(M_PI);
   balken->addContour(top);
   FlexibleBand *bot = new FlexibleBand("Bot");
   bot->setNodes(nodes);
-  bot->setSecondTangentialFlipped(true);
-  bot->setNormalDistance(r);
+  RrRP(0) = -r;
+  bot->setRelativePosition(RrRP);
   balken->addContour(bot);
 
   SymMat Theta(3,INIT,0.0);

@@ -19,7 +19,9 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsim/frames/contour_frame.h"
+#include "mbsimFlexibleBody/frames/floating_contour_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
@@ -27,6 +29,15 @@ using namespace fmatvec;
 using namespace MBSim;
 
 namespace MBSimFlexibleBody {
+
+  ContourFrame* FlexibleBand::createContourFrame(const string &name) {
+   FloatingContourFrame *frame = new FloatingContourFrame(name);
+//    FloatingRelativeContourFrame *frame = new FloatingRelativeContourFrame(name);
+    Frame1s *bodyFrame = new Frame1s(name);
+    bodyFrame->setParent(parent);
+    frame->setFrameOfReference(bodyFrame);
+    return frame;
+  }
 
   void FlexibleBand::setRelativePosition(const fmatvec::Vec2 &r) {
     RrRP(1) = r(0);
@@ -38,38 +49,40 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBand::getPosition(double t, const Vec2 &zeta) {
-    return static_cast<FlexibleBody*>(parent)->getPosition(t,zeta) + static_cast<FlexibleBody*>(parent)->getOrientation(t,zeta)*RrRP;
+    return static_cast<FlexibleBody1s21RCM*>(parent)->getPosition(t,zeta(0)) + static_cast<FlexibleBody1s21RCM*>(parent)->getOrientation(t,zeta(0))*RrRP;
+  }
+
+  Vec3 FlexibleBand::getWs(double t, const Vec2 &zeta) {
+    return static_cast<FlexibleBody1s21RCM*>(parent)->getWs(t,zeta(0));
+  }
+
+  Vec3 FlexibleBand::getWu(double t, const fmatvec::Vec2 &zeta) {
+    return static_cast<FlexibleBody1s21RCM*>(parent)->getWu(t,zeta(0));
   }
 
   Vec3 FlexibleBand::getWt(double t, const Vec2 &zeta) {
     static Vec3 Pt("[0;0;1]");
-    return static_cast<FlexibleBody*>(parent)->getOrientation(t,zeta)*(ARP*Pt);
+    return static_cast<FlexibleBody1s21RCM*>(parent)->getOrientation(t,zeta(0))*(ARP*Pt);
   }
 
   void FlexibleBand::updatePositions(double t, ContourFrame *frame) {
-    Contour1sFlexible::updatePositions(t,frame);
-    frame->getPosition(false) += frame->getOrientation(false)*RrRP;
+    throw;
   }
 
   void FlexibleBand::updateVelocities(double t, ContourFrame *frame) {
-    static_cast<FlexibleBody*>(parent)->updateVelocities(t,frame);
-    Contour1sFlexible::updateVelocities(t,frame);
-    frame->getVelocity(false) += crossProduct(frame->getAngularVelocity(false), frame->getOrientation(false)*RrRP);
+    throw;
   }
 
   void FlexibleBand::updateAccelerations(double t, ContourFrame *frame) {
     throw;
-    Contour1sFlexible::updateAccelerations(t,frame);
   }
 
   void FlexibleBand::updateJacobians(double t, ContourFrame *frame, int j) {
-    Contour1sFlexible::updateJacobians(t,frame,j);
-    frame->getJacobianOfTranslation(j,false) -= tilde(frame->getOrientation(false)*RrRP)*frame->getJacobianOfRotation(j,false);
+    throw;
   }
 
   void FlexibleBand::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
     throw;
-    Contour1sFlexible::updateGyroscopicAccelerations(t,frame);
   }
 
 }

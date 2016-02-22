@@ -44,6 +44,8 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const { return "FlexibleBand"; }
      /***************************************************/
 
+      virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
+
       /* GETTER / SETTER */
       void setRelativePosition(const fmatvec::Vec2 &r);
       void setRelativeOrientation(double al);
@@ -68,6 +70,8 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
 

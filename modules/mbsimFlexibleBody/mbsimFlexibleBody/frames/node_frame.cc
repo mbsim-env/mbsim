@@ -1,17 +1,12 @@
 #include <config.h>
 #include "node_frame.h"
-
-#include <mbsimFlexibleBody/flexible_body.h>
+#include "mbsimFlexibleBody/flexible_body.h"
 
 using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimFlexibleBody {
-
-  void NodeFrame::init(InitStage stage) {
-    Frame::init(stage);
-  }
 
   void NodeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);

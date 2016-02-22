@@ -49,6 +49,7 @@ int main (int argc, char* argv[]) {
   }
 
   integrator->setEndTime(1.6e-1);
+  integrator->setEndTime(4.e-4);
   integrator->setPlotStepSize(max(1e-4,dt_const));
   integrator->integrate(*sys);
 

@@ -21,6 +21,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_rcm.h"
 #include "mbsim/frames/contour_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/utils/utils.h"
@@ -108,41 +109,37 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  Vec3 FlexibleBody1s21RCM::getPosition(double t, const Vec2 &zeta) {
+  void FlexibleBody1s21RCM::addFrame(Frame1s *frame) { 
+    Body::addFrame(frame); 
+  }
+
+  Vec3 FlexibleBody1s21RCM::getPosition(double t, double s) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPositions(zeta(0));
+    Vec3 X = getPositions(s);
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
     return R->getPosition(t) + R->getOrientation(t) * tmp;
   }
 
-  SqrMat3 FlexibleBody1s21RCM::getOrientation(double t, const Vec2 &zeta) {
-    Vec3 X = getPositions(zeta(0));
+  SqrMat3 FlexibleBody1s21RCM::getOrientation(double t, double s) {
+    Vec3 X = getPositions(s);
     SqrMat3 A = BasicRotAIKz(X(2));
-    return R->getOrientation()*A;
+    return R->getOrientation(t)*A;
   }
 
-  Vec3 FlexibleBody1s21RCM::getWs(double t, const fmatvec::Vec2 &zeta) {
+  Vec3 FlexibleBody1s21RCM::getWs(double t, double s) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPositions(zeta(0));
+    Vec3 X = getPositions(s);
     tmp(0) = cos(X(2));
     tmp(1) = sin(X(2));
     tmp(2) = 0.;
     return R->getOrientation(t) * tmp;
   }
 
-  Vec3 FlexibleBody1s21RCM::getWs(double t, int node) {
+  void FlexibleBody1s21RCM::updatePositions(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
-    tmp(0) = cos(q(5 * node + 2));
-    tmp(1) = sin(q(5 * node + 2));
-    tmp(2) = 0.;
-    return R->getOrientation(t) * tmp;
-  }
-
-  void FlexibleBody1s21RCM::updatePositions(double t, ContourFrame *frame) {
-    Vec3 tmp(NONINIT);
-    Vec3 X = getPositions(frame->getEta());
+    Vec3 X = getPositions(frame->getParameter());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -172,9 +169,9 @@ namespace MBSimFlexibleBody {
     frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
   }
 
-  void FlexibleBody1s21RCM::updateVelocities(double t, ContourFrame *frame) {
+  void FlexibleBody1s21RCM::updateVelocities(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getVelocities(frame->getEta());
+    Vec3 X = getVelocities(frame->getParameter());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.;
@@ -198,13 +195,21 @@ namespace MBSimFlexibleBody {
     frame->setAngularVelocity(R->getOrientation(t) * tmp);
   }
 
-  void FlexibleBody1s21RCM::updateJacobians(double t, ContourFrame *frame, int j) {
+  void FlexibleBody1s21RCM::updateAccelerations(double t, Frame1s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s21RCM::updateAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s21RCM::updateJacobians(double t, Frame1s *frame, int j) {
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
 
     double sLocal;
     int currentElement;
-    BuildElement(frame->getEta(), sLocal, currentElement);
+    BuildElement(frame->getParameter(), sLocal, currentElement);
     Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(getqElement(currentElement), sLocal);
     if (currentElement < Elements - 1 || openStructure) {
       Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;

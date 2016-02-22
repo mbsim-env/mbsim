@@ -28,6 +28,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class Frame1s;
+
   /*!
    * \brief model for planar beams with large deflection using Redundant Coordinate Method (RCM)
    * \author Roland Zander
@@ -71,20 +73,21 @@ namespace MBSimFlexibleBody {
 //      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
       virtual void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false);
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ));
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::SqrMat3 getOrientation(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWs(double t, int node);
+      virtual fmatvec::Vec3 getPosition(double t, double s);
+      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
+      virtual fmatvec::Vec3 getWs(double t, double s);
+      virtual fmatvec::Vec3 getWu(double t, double s) { return getWs(t,s); }
+      virtual fmatvec::Vec3 getWv(double t, double s) { return getWt(t,s); }
 
-      virtual void updatePositions(double t, MBSim::ContourFrame* frame);
+      virtual void updatePositions(double t, Frame1s* frame);
       virtual void updatePositions(double t, NodeFrame* frame);
-      virtual void updateVelocities(double t, MBSim::ContourFrame* frame);
+      virtual void updateVelocities(double t, Frame1s* frame);
       virtual void updateVelocities(double t, NodeFrame* frame);
-//      virtual void updateAccelerations(double t, MBSim::ContourFrame* frame);
-//      virtual void updateAccelerations(double t, NodeFrame* frame);
-      virtual void updateJacobians(double t, MBSim::ContourFrame* frame, int j=0);
+      virtual void updateAccelerations(double t, Frame1s* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
       virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, MBSim::ContourFrame* frame) { }
+      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame) { }
       virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame) { }
 
       /****************************************/
@@ -119,6 +122,11 @@ namespace MBSimFlexibleBody {
 #endif
       double getLength() const { return L; }
       /***************************************************/
+
+      /**
+       * \param contour parameter frame
+       */
+      void addFrame(Frame1s *frame);
 
       /**
        * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates

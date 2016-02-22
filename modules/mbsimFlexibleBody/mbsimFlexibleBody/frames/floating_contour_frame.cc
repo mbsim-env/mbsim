@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/frames/floating_contour_frame.h"
-#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,29 +29,44 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
+  const Vec3& FloatingContourFrame::getGlobalRelativePosition(double t) {
+    if(updatePos) updatePositions(t);
+    return WrRP; 
+  }
+
   void FloatingContourFrame::updatePositions(double t) {
     parent->updatePositions(t,this);
+    R->setParameter(getEta());
+    WrRP = getPosition(false) - R->getPosition(t);
     updatePos = false;
   }
 
   void FloatingContourFrame::updateVelocities(double t) {
-    contour->updateVelocities(t,this);
+    R->setParameter(getEta());
+    setAngularVelocity(R->getAngularVelocity(t));
+    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))); 
     updateVel = false;
   }
 
   void FloatingContourFrame::updateAccelerations(double t) {
-    contour->updateAccelerations(t,this);
+    R->setParameter(getEta());
+    setAngularAcceleration(R->getAngularAcceleration(t));
+    setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
     updateAcc = true;
   }
 
   void FloatingContourFrame::updateJacobians(double t, int j) {
-    contour->updateJacobians(t,this,j);
-    updateJac[j] = false;
+    R->setParameter(getEta());
+     setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j),j);
+   updateJac[j] = false;
   }
 
   void FloatingContourFrame::updateGyroscopicAccelerations(double t) {
-    contour->updateGyroscopicAccelerations(t,this);
-    updateGA = false;
+    R->setParameter(getEta());
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
+    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
+   updateGA = false;
   }
 
 }
