@@ -120,3 +120,6 @@ dist_mbsimguiicon_DATA = icons/exit.svg \
 			 icons/resize.svg \
 			 icons/workdir.svg
 
+# plugins
+pluginsiconenginesdir = @bindir@/iconengines
+pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*

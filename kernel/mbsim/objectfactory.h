@@ -129,9 +129,9 @@ class ObjectFactory {
         ContainerType *ret=dynamic_cast<ContainerType*>(ele);
         if(!ret) {
           // cast not possible -> deallocate again and try next
-          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()),
+          allErrors.add(boost::core::demangle(typeid(*ele).name()),
                         boost::make_shared<DOMEvalExceptionWrongType>(
-                        MBXMLUtils::demangleSymbolName(typeid(ContainerType).name()), element));
+                        boost::core::demangle(typeid(ContainerType).name()), element));
           allocDeallocIt->second(ele); 
           continue;
         }
@@ -140,17 +140,17 @@ class ObjectFactory {
           return ret;
         }
         catch(DOMEvalExceptionStack &ex) {
-          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()), boost::make_shared<DOMEvalExceptionStack>(ex));
+          allErrors.add(boost::core::demangle(typeid(*ele).name()), boost::make_shared<DOMEvalExceptionStack>(ex));
         }
         catch(MBXMLUtils::DOMEvalException &ex) {
-          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()), boost::make_shared<MBXMLUtils::DOMEvalException>(ex));
+          allErrors.add(boost::core::demangle(typeid(*ele).name()), boost::make_shared<MBXMLUtils::DOMEvalException>(ex));
         }
         catch(std::exception &ex) { // handles also MBSimError
-          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()),
+          allErrors.add(boost::core::demangle(typeid(*ele).name()),
                         boost::make_shared<MBXMLUtils::DOMEvalException>(ex.what(), element));
         }
         catch(...) {
-          allErrors.add(MBXMLUtils::demangleSymbolName(typeid(*ele).name()),
+          allErrors.add(boost::core::demangle(typeid(*ele).name()),
                         boost::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
         }
         allocDeallocIt->second(ele);

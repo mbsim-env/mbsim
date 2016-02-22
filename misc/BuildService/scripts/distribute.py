@@ -179,18 +179,6 @@ def addStrToDist(text, arcname, exeBit=False):
 
 
 
-def addQtPlugins():
-  print("Add Qt plugins: qsvg and qsvgicon")
-
-  if platform=="linux":
-    addFileToDist("/usr/lib64/qt4/plugins/imageformats/libqsvg.so", "mbsim-env/bin/imageformats/libqsvg.so")
-    addFileToDist("/usr/lib64/qt4/plugins/iconengines/libqsvgicon.so", "mbsim-env/bin/iconengines/libqsvgicon.so")
-  if platform=="win":
-    addFileToDist("/usr/x86_64-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll", "mbsim-env/bin/imageformats/qsvg4.dll")
-    addFileToDist("/usr/x86_64-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll", "mbsim-env/bin/iconengines/qsvgicon4.dll")
-
-
-
 def addRepoState():
   print("Add repository state")
 
@@ -396,16 +384,6 @@ cd "%PWD%"'''
 
 
 
-def addQtConf():
-  print("Add qt.conf file")
-
-  text='''[Paths]
-Plugins = '.'
-'''
-  addStrToDist(text, 'mbsim-env/bin/qt.conf')
-
-
-
 def addOctave():
   print("Add octave share dir")
 
@@ -470,16 +448,12 @@ def main():
   addRepoState()
   addReadme()
   addMBSimEnvTest()
-  addQtConf()
 
   # add prefix
   print("Add prefix dir of mbsim-env")
   addFileToDist(args.prefix, "mbsim-env")
   # add octave
   addOctave()
-
-  # add qt plugins
-  addQtPlugins()
 
   # add some examples
   addExamples()
