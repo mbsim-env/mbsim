@@ -73,6 +73,7 @@ AC_TYPE_SIZE_T
 
 dnl Check for optional boost type_trains and static_assert
 AC_CHECK_HEADERS([boost/type_traits.hpp])
+AC_CHECK_HEADERS([boost/core/demangle.hpp])
 
 dnl Include boost system lib
 AC_ARG_WITH([boost-system-lib],
