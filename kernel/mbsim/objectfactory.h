@@ -31,6 +31,17 @@
 #include <mbsim/mbsim_event.h>
 #include <mbxmlutilshelper/utils.h>
 #include "fmatvec/atom.h"
+#ifdef HAVE_BOOST_CORE_DEMANGLE_HPP // not available for older boost versions
+# include <boost/core/demangle.hpp>
+#else
+namespace boost {
+  namespace core {
+    inline std::string demangle(const std::string &name) {
+      return name;
+    }
+  }
+}
+#endif
 
 #define COMMA ,
 
