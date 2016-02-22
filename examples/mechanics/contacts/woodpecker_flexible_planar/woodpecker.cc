@@ -2,7 +2,7 @@
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsimFlexibleBody/frames/fixed_contour_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/contours/contour.h"
@@ -64,7 +64,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   addObject(balken);
 
   // inertiale Einspannung -----------------------------
-  balken->addFrame(new FixedContourFrame("RJ"));
+  balken->addFrame(new Frame1s("RJ"));
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"),balken->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
@@ -78,14 +78,14 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   FlexibleBand *top = new FlexibleBand("Top");
   top->setNodes(nodes);
   Vec2 RrRP;
-  RrRP(0) = r;
+  RrRP(0) = -r;
   top->setRelativePosition(RrRP);
-  top->setRelativeOrientation(M_PI);
   balken->addContour(top);
   FlexibleBand *bot = new FlexibleBand("Bot");
   bot->setNodes(nodes);
-  RrRP(0) = -r;
+  RrRP(0) = r;
   bot->setRelativePosition(RrRP);
+  bot->setRelativeOrientation(M_PI);
   balken->addContour(bot);
 
   SymMat Theta(3,INIT,0.0);
