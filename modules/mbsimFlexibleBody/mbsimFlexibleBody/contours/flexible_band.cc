@@ -55,33 +55,9 @@ namespace MBSimFlexibleBody {
     return static_cast<FlexibleBody1s21RCM*>(parent)->getWs(t,zeta(0));
   }
 
-  Vec3 FlexibleBand::getWu(double t, const fmatvec::Vec2 &zeta) {
-    return static_cast<FlexibleBody1s21RCM*>(parent)->getWu(t,zeta(0));
-  }
-
   Vec3 FlexibleBand::getWt(double t, const Vec2 &zeta) {
     static Vec3 Pt("[0;0;1]");
     return static_cast<FlexibleBody1s21RCM*>(parent)->getOrientation(t,zeta(0))*(ARP*Pt);
-  }
-
-  void FlexibleBand::updatePositions(double t, ContourFrame *frame) {
-    throw;
-  }
-
-  void FlexibleBand::updateVelocities(double t, ContourFrame *frame) {
-    throw;
-  }
-
-  void FlexibleBand::updateAccelerations(double t, ContourFrame *frame) {
-    throw;
-  }
-
-  void FlexibleBand::updateJacobians(double t, ContourFrame *frame, int j) {
-    throw;
-  }
-
-  void FlexibleBand::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
-    throw;
   }
 
 }

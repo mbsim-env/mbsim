@@ -76,19 +76,18 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec3 getPosition(double t, double s);
       virtual fmatvec::SqrMat3 getOrientation(double t, double s);
       virtual fmatvec::Vec3 getWs(double t, double s);
-      virtual fmatvec::Vec3 getWu(double t, double s) { return getWs(t,s); }
-      virtual fmatvec::Vec3 getWv(double t, double s) { return getWt(t,s); }
 
       virtual void updatePositions(double t, Frame1s* frame);
-      virtual void updatePositions(double t, NodeFrame* frame);
       virtual void updateVelocities(double t, Frame1s* frame);
-      virtual void updateVelocities(double t, NodeFrame* frame);
       virtual void updateAccelerations(double t, Frame1s* frame);
-      virtual void updateAccelerations(double t, NodeFrame* frame);
       virtual void updateJacobians(double t, Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
       virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame) { }
-      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame) { }
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
 
       /****************************************/
 

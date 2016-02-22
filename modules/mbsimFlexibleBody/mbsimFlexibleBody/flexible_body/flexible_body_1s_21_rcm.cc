@@ -153,22 +153,6 @@ namespace MBSimFlexibleBody {
     frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
   }
 
-  void FlexibleBody1s21RCM::updatePositions(double t, NodeFrame *frame) {
-    Vec3 tmp(NONINIT);
-    int node = frame->getNodeNumber();
-    tmp(0) = q(5 * node + 0);
-    tmp(1) = q(5 * node + 1);
-    tmp(2) = 0.; // temporary vector used for compensating planar description
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
-    tmp(0) = cos(q(5 * node + 2));
-    tmp(1) = sin(q(5 * node + 2));
-    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // tangent
-    tmp(0) = -sin(q(5 * node + 2));
-    tmp(1) = cos(q(5 * node + 2));
-    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // normal
-    frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
-  }
-
   void FlexibleBody1s21RCM::updateVelocities(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
     Vec3 X = getVelocities(frame->getParameter());
@@ -182,24 +166,7 @@ namespace MBSimFlexibleBody {
     frame->setAngularVelocity(R->getOrientation(t) * tmp);
   }
 
-  void FlexibleBody1s21RCM::updateVelocities(double t, NodeFrame *frame) {
-    Vec3 tmp(NONINIT);
-    int node = frame->getNodeNumber();
-    tmp(0) = u(5 * node + 0);
-    tmp(1) = u(5 * node + 1);
-    tmp(2) = 0.;
-    frame->setVelocity(R->getOrientation(t) * tmp);
-    tmp(0) = 0.;
-    tmp(1) = 0.;
-    tmp(2) = u(5 * node + 2);
-    frame->setAngularVelocity(R->getOrientation(t) * tmp);
-  }
-
   void FlexibleBody1s21RCM::updateAccelerations(double t, Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
-  }
-
-  void FlexibleBody1s21RCM::updateAccelerations(double t, NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
   }
 
@@ -223,6 +190,43 @@ namespace MBSimFlexibleBody {
     frame->setJacobianOfRotation(R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
   }
 
+  void FlexibleBody1s21RCM::updateGyroscopicAccelerations(double t, Frame1s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s21RCM::updatePositions(double t, NodeFrame *frame) {
+    Vec3 tmp(NONINIT);
+    int node = frame->getNodeNumber();
+    tmp(0) = q(5 * node + 0);
+    tmp(1) = q(5 * node + 1);
+    tmp(2) = 0.; // temporary vector used for compensating planar description
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
+    tmp(0) = cos(q(5 * node + 2));
+    tmp(1) = sin(q(5 * node + 2));
+    frame->getOrientation(false).set(0, R->getOrientation() * tmp); // tangent
+    tmp(0) = -sin(q(5 * node + 2));
+    tmp(1) = cos(q(5 * node + 2));
+    frame->getOrientation(false).set(1, R->getOrientation() * tmp); // normal
+    frame->getOrientation(false).set(2, R->getOrientation().col(2)); // binormal (cartesian system)
+  }
+
+  void FlexibleBody1s21RCM::updateVelocities(double t, NodeFrame *frame) {
+    Vec3 tmp(NONINIT);
+    int node = frame->getNodeNumber();
+    tmp(0) = u(5 * node + 0);
+    tmp(1) = u(5 * node + 1);
+    tmp(2) = 0.;
+    frame->setVelocity(R->getOrientation(t) * tmp);
+    tmp(0) = 0.;
+    tmp(1) = 0.;
+    tmp(2) = u(5 * node + 2);
+    frame->setAngularVelocity(R->getOrientation(t) * tmp);
+  }
+
+  void FlexibleBody1s21RCM::updateAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateAccelerations): Not implemented.");
+  }
+
   void FlexibleBody1s21RCM::updateJacobians(double t, NodeFrame *frame, int j) {
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
@@ -233,6 +237,10 @@ namespace MBSimFlexibleBody {
 
     frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
+  }
+
+  void FlexibleBody1s21RCM::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s21RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s21RCM::init(InitStage stage) {
