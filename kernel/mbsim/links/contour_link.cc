@@ -139,20 +139,22 @@ namespace MBSim {
 //  }
 
   void ContourLink::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==preInit) {
       Link::init(stage);
-      
+
       cFrame[0] = contour[0]->createContourFrame("P0");
       cFrame[1] = contour[1]->createContourFrame("P1");
       cFrame[0]->setParent(this);
       cFrame[1]->setParent(this);
+    }
+    else if(stage==resize) {
+      Link::init(stage);
+
       cFrame[0]->sethSize(contour[0]->gethSize(0), 0);
       cFrame[0]->sethSize(contour[0]->gethSize(1), 1);
       cFrame[1]->sethSize(contour[1]->gethSize(0), 0);
       cFrame[1]->sethSize(contour[1]->gethSize(1), 1);
-      cFrame[0]->init(stage);
-      cFrame[1]->init(stage);
-    }
+     }
     else if(stage==unknownStage) {
       Link::init(stage);
 
