@@ -20,44 +20,28 @@
 #ifndef _FLOATING_CONTOUR_FRAME_H__
 #define _FLOATING_CONTOUR_FRAME_H__
 
-#include "mbsim/frames/contour_frame.h"
+#include "mbsim/frames/floating_relative_contour_frame.h"
 
 namespace MBSimFlexibleBody {
-
-  //class Contour1sFlexible;
-  class Frame1s;
 
   /**
    * \brief tbd
    * \author Martin Foerg
    */
-  class FloatingContourFrame : public MBSim::ContourFrame {
+  class FloatingContourFrame : public MBSim::FloatingRelativeContourFrame {
 
     public:
-      FloatingContourFrame(const std::string &name = "dummy", Frame1s* R_ = NULL) : ContourFrame(name), R(R_) { }
+      FloatingContourFrame(const std::string &name = "dummy") : FloatingRelativeContourFrame(name) { }
 
       std::string getType() const { return "FloatingContourFrame"; }
-
-      void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
-      void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
-
-      void setFrameOfReference(Frame1s *R_) { R = R_; }
-
-      const fmatvec::Vec3& getGlobalRelativePosition(double t);
 
       void updatePositions(double t);
       void updateVelocities(double t);
       void updateAccelerations(double t);
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
-
-    protected:
-      Frame1s *R;
-      fmatvec::Vec3 RrRP, WrRP;
-      fmatvec::SqrMat3 ARP;
   };
 
 }
 
 #endif
-

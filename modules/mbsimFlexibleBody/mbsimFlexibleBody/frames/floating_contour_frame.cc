@@ -29,44 +29,31 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  const Vec3& FloatingContourFrame::getGlobalRelativePosition(double t) {
-    if(updatePos) updatePositions(t);
-    return WrRP; 
-  }
-
   void FloatingContourFrame::updatePositions(double t) {
     parent->updatePositions(t,this);
-    R->setParameter(getEta());
+    static_cast<Frame1s*>(R)->setParameter(getEta());
     WrRP = getPosition(false) - R->getPosition(t);
     updatePos = false;
   }
 
   void FloatingContourFrame::updateVelocities(double t) {
-    R->setParameter(getEta());
-    setAngularVelocity(R->getAngularVelocity(t));
-    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))); 
-    updateVel = false;
+    static_cast<Frame1s*>(R)->setParameter(getEta());
+    FloatingRelativeContourFrame::updateVelocities(t);
   }
 
   void FloatingContourFrame::updateAccelerations(double t) {
-    R->setParameter(getEta());
-    setAngularAcceleration(R->getAngularAcceleration(t));
-    setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
-    updateAcc = true;
+    static_cast<Frame1s*>(R)->setParameter(getEta());
+    FloatingRelativeContourFrame::updateAccelerations(t);
   }
 
   void FloatingContourFrame::updateJacobians(double t, int j) {
-    R->setParameter(getEta());
-     setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
-    setJacobianOfRotation(R->getJacobianOfRotation(j),j);
-   updateJac[j] = false;
+    static_cast<Frame1s*>(R)->setParameter(getEta());
+    FloatingRelativeContourFrame::updateJacobians(t,j);
   }
 
   void FloatingContourFrame::updateGyroscopicAccelerations(double t) {
-    R->setParameter(getEta());
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
-    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
-   updateGA = false;
+    static_cast<Frame1s*>(R)->setParameter(getEta());
+    FloatingRelativeContourFrame::updateGyroscopicAccelerations(t);
   }
 
 }
