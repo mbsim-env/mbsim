@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include<config.h>
-#include<mbsim/dynamic_system_solver.h>
+#include <config.h>
+#include <mbsim/dynamic_system_solver.h>
 #include "time_stepping_integrator.h"
 
 #include <time.h>
