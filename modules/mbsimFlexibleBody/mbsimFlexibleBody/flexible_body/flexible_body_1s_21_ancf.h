@@ -25,7 +25,6 @@
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
 
-
 namespace MBSimFlexibleBody {
 
   /**
@@ -55,10 +54,13 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void updateM(double t, int k) { }
       virtual void updateLLM(double t, int i=0) { }
+
       virtual void BuildElements();
+
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+
       virtual fmatvec::Vec3 getPosition(double t, double s);
       virtual fmatvec::SqrMat3 getOrientation(double t, double s);
       virtual fmatvec::Vec3 getWs(double t, double s);
@@ -101,18 +103,6 @@ namespace MBSimFlexibleBody {
       int getNumberElements(){ return Elements; }
       double getLength(){ return L; }
       /***************************************************/
-
-      /**
-       * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
-       * \param Lagrangian coordinate
-       */
-      fmatvec::Vec3 getPositions(double x);
-
-      /**
-       * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
-       * \param Lagrangian coordinate
-       */
-      fmatvec::Vec3 getVelocities(double x);
 
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)

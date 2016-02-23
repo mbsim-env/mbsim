@@ -18,16 +18,16 @@
  */
 
 #include <config.h>
-#include <boost/swap.hpp>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_ancf.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_ancf.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
-#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/mbsim_event.h"
+#include <boost/swap.hpp>
 
 using namespace fmatvec;
 using namespace std;
@@ -125,7 +125,7 @@ namespace MBSimFlexibleBody {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(),sLocal,currentElement);
-    Mat Jtmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
+    Mat Jtmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
     if(currentElement<Elements-1 || openStructure) {
       Jacobian(Index(4*currentElement,4*currentElement+7),All) = Jtmp;
     }
@@ -134,8 +134,8 @@ namespace MBSimFlexibleBody {
       Jacobian(Index(               0,                 3),All) = Jtmp(Index(4,7),All);
     }
 
-    frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
-    frame->setJacobianOfRotation(R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
+    frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation(t)(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T(),j);
   }
 
   void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(double t, Frame1s *frame) {
@@ -266,7 +266,7 @@ namespace MBSimFlexibleBody {
           double sLocal;
           int currentElement;
           BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-          X = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->StateBalken(qElement[currentElement], uElement[currentElement], sLocal);
+          X = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->StateBalken(getqElement(currentElement), getuElement(currentElement), sLocal);
 
           Vec tmp(3,NONINIT); tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
           Vec pos = R->getPosition() + R->getOrientation() * tmp;
@@ -307,24 +307,6 @@ namespace MBSimFlexibleBody {
     q0.resize(qSize);
     u0.resize(uSize[0]);
   }
-
-//  Vec3 FlexibleBody1s21ANCF::getPositions(double sGlobal) {
-//    if(fabs(sGlobal-sOld)>1e-8*sGlobal) {
-//      double sLocal;
-//      int currentElement;
-//      BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-//      X = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
-//      sOld = sGlobal;
-//    }
-//    return X;
-//  }
-//
-//  Vec3 FlexibleBody1s21ANCF::getVelocities(double sGlobal) {
-//    double sLocal;
-//    int currentElement;
-//    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-//    return static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
-//  }
 
   void FlexibleBody1s21ANCF::BuildElements() {
     for(int i=0;i<Elements;i++) {
