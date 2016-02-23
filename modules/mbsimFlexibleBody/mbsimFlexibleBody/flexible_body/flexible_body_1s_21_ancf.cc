@@ -21,6 +21,8 @@
 #include <boost/swap.hpp>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_ancf.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_ancf.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
@@ -34,7 +36,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
 
-  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), deps(0.), dkappa(0.), openStructure(openStructure_), initialised(false), v0(0.), Euler(false), sOld(-1e12) {}
+  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBody1s(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), deps(0.), dkappa(0.), openStructure(openStructure_), initialised(false), v0(0.), Euler(false), sOld(-1e12) {}
 
   void FlexibleBody1s21ANCF::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
     int j = 4 * n;
@@ -76,52 +78,40 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBody1s21ANCF::getPosition(double t, double s) {
-    Vec3 tmp(NONINIT);
-    tmp(0) = getPositions(s)(0);
-    tmp(1) = X(1);
-    tmp(2) = 0.; // temporary vector used for compensating planar description
-    return R->getPosition(t) + R->getOrientation(t) * tmp;
+    double sLocal;
+    int currentElement;
+    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
+    return R->getPosition(t) + R->getOrientation(t) * static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPosition(getqElement(currentElement),sLocal);
   }
 
   SqrMat3 FlexibleBody1s21ANCF::getOrientation(double t, double s) {
-    SqrMat3 A = BasicRotAIKz(getPositions(s)(2));
-    return R->getOrientation(t)*A;
+    double sLocal;
+    int currentElement;
+    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
+    return R->getOrientation(t) * static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal);
   }
 
   Vec3 FlexibleBody1s21ANCF::getWs(double t, double s) {
-    Vec3 tmp(NONINIT);
-    tmp(0) = cos(getPositions(s)(2));
-    tmp(1) = sin(X(2));
-    tmp(2) = 0.;
-    return R->getOrientation(t) * tmp;
+    double sLocal;
+    int currentElement;
+    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
+    return R->getOrientation(t) * static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getTangent(getqElement(currentElement),sLocal);
   }
 
   void FlexibleBody1s21ANCF::updatePositions(double t, Frame1s *frame) {
-    Vec3 tmp(NONINIT);
-    tmp(0) = getPositions(frame->getParameter())(0);
-    tmp(1) = X(1);
-    tmp(2) = 0.; // temporary vector used for compensating planar description
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
-    tmp(0) = cos(X(2));
-    tmp(1) = sin(X(2));
-    frame->getOrientation(false).set(0, R->getOrientation() * tmp);
-    tmp(0) = -sin(X(2));
-    tmp(1) = cos(X(2));
-    frame->getOrientation(false).set(1, R->getOrientation() * tmp);
-    frame->getOrientation(false).set(2, R->getOrientation().col(2));
+    double sLocal;
+    int currentElement;
+    BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPosition(getqElement(currentElement),sLocal));
+    frame->setOrientation(R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal));
   }
 
   void FlexibleBody1s21ANCF::updateVelocities(double t, Frame1s *frame) {
-    Vec3 tmp(NONINIT);
-    Vec3 X = getVelocities(frame->getParameter());
-    tmp(0) = X(0);
-    tmp(1) = X(1);
-    tmp(2) = 0.;
-    frame->setVelocity(R->getOrientation(t) * tmp);
-    tmp(0) = 0.;
-    tmp(1) = 0.;
-    tmp(2) = X(2);
-    frame->setAngularVelocity(R->getOrientation(t) * tmp);
+    double sLocal;
+    int currentElement;
+    BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
+    frame->setVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
+    frame->setAngularVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getAngularVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
   }
 
   void FlexibleBody1s21ANCF::updateAccelerations(double t, Frame1s *frame) {
@@ -155,15 +145,20 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21ANCF::updatePositions(double t, NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
-    tmp(0) = q(5 * node + 0);
-    tmp(1) = q(5 * node + 1);
-    tmp(2) = 0.; // temporary vector used for compensating planar description
+    tmp(0) = q(4*node+0);
+    tmp(1) = q(4*node+1);
+    tmp(2) = 0.;
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
-    tmp(0) = cos(q(5 * node + 2));
-    tmp(1) = sin(q(5 * node + 2));
+    tmp(0) = q(4*node+2);
+    tmp(1) = q(4*node+3);
+    tmp(2) = 0.;
+    tmp /= nrm2(tmp);
     frame->getOrientation(false).set(0, R->getOrientation() * tmp);
-    tmp(0) = -sin(q(5 * node + 2));
-    tmp(1) = cos(q(5 * node + 2));
+    tmp(0) = q(4*node+2);
+    tmp(1) = -q(4*node+3);
+    tmp(2) = 0.;
+    tmp /= nrm2(tmp);
+    boost::swap(tmp(0),tmp(1));
     frame->getOrientation(false).set(1, R->getOrientation() * tmp);
     frame->getOrientation(false).set(2, R->getOrientation().col(2));
   }
@@ -171,13 +166,31 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21ANCF::updateVelocities(double t, NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
-    tmp(0) = u(5 * node + 0);
-    tmp(1) = u(5 * node + 1);
+    tmp(0) = u(4*node+0);
+    tmp(1) = u(4*node+1);
     tmp(2) = 0.;
+    if(Euler) {
+      tmp(0) += v0*q(4*node+2);
+      tmp(1) += v0*q(4*node+3);
+    }
     frame->setVelocity(R->getOrientation(t) * tmp);
-    tmp(0) = 0.;
-    tmp(1) = 0.;
-    tmp(2) = u(5 * node + 2);
+    if(Euler) {
+      double der2_1; // curvature first component
+      double der2_2; // curvature second component
+      if(4*(node+1)+1 < qSize) {
+        der2_1 = 6./(l0*l0)*(q(4*(node+1))-q(4*(node)))-2./l0*(q(4*(node+1)+2)+2.*q(4*(node)+2));
+        der2_2 = 6./(l0*l0)*(q(4*(node+1)+1)-q(4*(node)+1))-2./l0*(q(4*(node+1)+3)+2.*q(4*(node)+3));
+      }
+      else {
+        der2_1 = 6./(l0*l0)*(q(4*(node-1))-q(4*(node)))+2./l0*(q(4*(node-1)+2)+2.*q(4*(node)+2));
+        der2_2 = 6./(l0*l0)*(q(4*(node-1)+1)-q(4*(node)+1))+2./l0*(q(4*(node-1)+3)+2.*q(4*(node)+3));
+      }
+      tmp(0) = 0.; tmp(1) = 0.; tmp(2) = (-q(4*node+3)*(u(4*node+2) + v0*der2_1)+q(4*node+2)*(u(4*node+3) + v0*der2_2))/sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+    } else {
+      tmp(0) = 0.;
+      tmp(1) = 0.;
+      tmp(2) = (-q(4*node+3)*u(4*node+2)+q(4*node+2)*u(4*node+3))/sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+    }
     frame->setAngularVelocity(R->getOrientation(t) * tmp);
   }
 
@@ -249,12 +262,11 @@ namespace MBSimFlexibleBody {
         for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
           Vec  X(6,NONINIT);
 
-          if(Euler) {
-            X = computeState(ds*i+v0*t); // expects Euler coordinate
-          }
-          else {  
-            X = computeState(ds*i); // expects Lagrange coordinate
-          }
+          double sGlobal = Euler?ds*i+v0*t:ds*i;
+          double sLocal;
+          int currentElement;
+          BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+          X = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->StateBalken(qElement[currentElement], uElement[currentElement], sLocal);
 
           Vec tmp(3,NONINIT); tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
           Vec pos = R->getPosition() + R->getOrientation() * tmp;
@@ -296,23 +308,23 @@ namespace MBSimFlexibleBody {
     u0.resize(uSize[0]);
   }
 
-  Vec3 FlexibleBody1s21ANCF::getPositions(double sGlobal) {
-    if(fabs(sGlobal-sOld)>1e-8*sGlobal) {
-      double sLocal;
-      int currentElement;
-      BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-      X = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
-      sOld = sGlobal;
-    }
-    return X;
-  }
-
-  Vec3 FlexibleBody1s21ANCF::getVelocities(double sGlobal) {
-    double sLocal;
-    int currentElement;
-    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
-  }
+//  Vec3 FlexibleBody1s21ANCF::getPositions(double sGlobal) {
+//    if(fabs(sGlobal-sOld)>1e-8*sGlobal) {
+//      double sLocal;
+//      int currentElement;
+//      BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+//      X = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+//      sOld = sGlobal;
+//    }
+//    return X;
+//  }
+//
+//  Vec3 FlexibleBody1s21ANCF::getVelocities(double sGlobal) {
+//    double sLocal;
+//    int currentElement;
+//    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+//    return static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
+//  }
 
   void FlexibleBody1s21ANCF::BuildElements() {
     for(int i=0;i<Elements;i++) {

@@ -4,7 +4,6 @@
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsimFlexibleBody/frames/fixed_contour_frame.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsim/contours/point.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
@@ -80,8 +79,6 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   for (int i = 0; i <= elements; i++)
     nodes(i) = i * l0 / elements;
   top->setNodes(nodes);
-//  top->setSecondTangentFlipped(true);
-//  top->setNormalDistance(0.5 * b0);
   Vec2 RrRP;
   RrRP(0) = 0.5*b0;
   top->setRelativePosition(RrRP);

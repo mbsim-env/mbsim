@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
    * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
    * SHABANE, A. A.: Dynamics of Multibody Systems. Cambridge University Press (2005)
    */
-  class FlexibleBody1s21ANCF : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s21ANCF : public FlexibleBody1s {
 
     public:
       /*!
@@ -54,6 +54,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void updateM(double t, int k) { }
+      virtual void updateLLM(double t, int i=0) { }
       virtual void BuildElements();
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
@@ -77,7 +78,6 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual void facLLM(int i = 0) {}
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

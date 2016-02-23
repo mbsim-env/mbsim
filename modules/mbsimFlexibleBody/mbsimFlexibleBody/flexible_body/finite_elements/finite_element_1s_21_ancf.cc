@@ -19,7 +19,8 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_ancf.h"
-#include <mbsim/utils/eps.h>
+#include "mbsim/mbsim_event.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,7 +30,7 @@ namespace MBSimFlexibleBody {
 
   SqrMat differentiate_normalized_vector_respective_vector(const Vec &vector) {
     double norm = nrm2(vector);
-    return static_cast<SqrMat>((SqrMat(vector.size(),EYE) - vector*vector.T()/pow(norm,2.))/norm).copy();
+    return static_cast<SqrMat>((SqrMat(vector.size(),EYE) - vector*vector.T()/pow(norm,2.))/norm);
   }
 
   FiniteElement1s21ANCF::FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, Vec sg, bool sEuler, double sv0) :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), Euler(sEuler), v0(sv0), wss0(0.), depsilon(0.), dkappa(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Dhq(8,INIT,0.), Dhqp(8,INIT,0.) {}
@@ -72,10 +73,10 @@ namespace MBSimFlexibleBody {
 
   void FiniteElement1s21ANCF::computeh(const Vec& qElement, const Vec& qpElement) {
     // Coordinates
-    const double & x1 = qElement(0);    const double & y1 = qElement(1);    const double & x1p = qpElement(0);    const double & y1p = qpElement(1);
-    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);    const double &dx1p = qpElement(2);    const double &dy1p = qpElement(3);
-    const double & x2 = qElement(4);    const double & y2 = qElement(5);    const double & x2p = qpElement(4);    const double & y2p = qpElement(5);
-    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);    const double &dx2p = qpElement(6);    const double &dy2p = qpElement(7);
+    double  x1 = qElement(0);    double  y1 = qElement(1);    double  x1p = qpElement(0);    double  y1p = qpElement(1);
+    double dx1 = qElement(2);    double dy1 = qElement(3);    double dx1p = qpElement(2);    double dy1p = qpElement(3);
+    double  x2 = qElement(4);    double  y2 = qElement(5);    double  x2p = qpElement(4);    double  y2p = qpElement(5);
+    double dx2 = qElement(6);    double dy2 = qElement(7);    double dx2p = qpElement(6);    double dy2p = qpElement(7);
 
     // Gravitation
     double gx = g(0);
@@ -97,7 +98,7 @@ namespace MBSimFlexibleBody {
     e1(0) = x2-x1; e1(1) = y2-y1;
     Vec e1_notNormalized = e1.copy();
     e1 /= nrm2(e1);
-    const double &e1x = e1(0); const double &e1y = e1(1);
+    double e1x = e1(0); double e1y = e1(1);
 
     Mat dvec1dq(2,8,INIT,0.);
     dvec1dq(0,0) = -1.; dvec1dq(0,4) = 1.;
@@ -109,13 +110,13 @@ namespace MBSimFlexibleBody {
     vec1p(0) = x2p-x1p; vec1p(1) = y2p-y1p;
 
     Vec e1p = differentiate_normalized_vector_respective_vector(e1_notNormalized)*vec1p;
-    const double &e1xp = e1p(0); const double &e1yp = e1p(1);
+    double e1xp = e1p(0); double e1yp = e1p(1);
 
     Vec e2(2,NONINIT);
     e2(0) = -e1(1); e2(1) = e1(0);
     Vec e2_notNormalized(2,NONINIT);
     e2_notNormalized(0) = -e1_notNormalized(1); e2_notNormalized(1) = e1_notNormalized(0);
-    const double &e2x = e2(0); const double &e2y = e2(1);
+    double e2x = e2(0); double e2y = e2(1);
 
     Mat dvec2dq(2,8,INIT,0.);
     dvec2dq(0,1) = 1.; dvec2dq(0,5) = -1.;
@@ -127,7 +128,7 @@ namespace MBSimFlexibleBody {
     vec2p(0) = y1p-y2p; vec2p(1) = x2p-x1p;
 
     Vec e2p = differentiate_normalized_vector_respective_vector(e2_notNormalized)*vec2p;
-    const double &e2xp = e2p(0); const double &e2yp = e2p(1);
+    double e2xp = e2p(0); double e2yp = e2p(1);
 
     // Strain
     Vec hst_q(8,NONINIT);
@@ -207,10 +208,8 @@ namespace MBSimFlexibleBody {
     //     }
   }
 
-  Vec FiniteElement1s21ANCF::computePosition(const Vec& qElement, const ContourPointData& cp) {
-    Vec pos(3,NONINIT);
-
-    const double &s = cp.getLagrangeParameterPosition()(0);
+  Vec3 FiniteElement1s21ANCF::getPosition(const Vec& qElement, double s) {
+    Vec3 pos(NONINIT);
 
     Mat S = GlobalShapeFunctions(s).T();
 
@@ -220,21 +219,19 @@ namespace MBSimFlexibleBody {
     pos(1) = tmp(1);
     pos(2) = 0.;
 
-    return pos.copy();
+    return pos;
   }
 
-  SqrMat FiniteElement1s21ANCF::computeOrientation(const Vec& qElement, const ContourPointData& cp) {
-    SqrMat rotation(3,INIT,0.);
+  SqrMat3 FiniteElement1s21ANCF::getOrientation(const Vec& qElement, double s) {
+    SqrMat3 rotation(INIT,0.);
 
-    const double & x1 = qElement(0);    const double & y1 = qElement(1);
-    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
-    const double & x2 = qElement(4);    const double & y2 = qElement(5);
-    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
-
-    const double &s = cp.getLagrangeParameterPosition()(0);
+    double  x1 = qElement(0);    double  y1 = qElement(1);
+    double dx1 = qElement(2);    double dy1 = qElement(3);
+    double  x2 = qElement(4);    double  y2 = qElement(5);
+    double dx2 = qElement(6);    double dy2 = qElement(7);
 
     // tangent
-    Vec t = tangent(qElement, s);
+    Vec t = getTangent(qElement, s);
     rotation(0,0) = t(0);
     rotation(1,0) = t(1);
 
@@ -245,20 +242,18 @@ namespace MBSimFlexibleBody {
     // binormal
     rotation(2,2) = 1.;
 
-    return rotation.copy();
+    return rotation;
   }
 
-  Vec FiniteElement1s21ANCF::computeVelocity(const Vec& qElement, const Vec& qpElement, const ContourPointData& cp) {
-    Vec vel(3,NONINIT);
-
-    const double &s = cp.getLagrangeParameterPosition()(0);
+  Vec3 FiniteElement1s21ANCF::getVelocity(const Vec& qElement, const Vec& qpElement, double s) {
+    Vec3 vel(NONINIT);
 
     Mat S = GlobalShapeFunctions(s).T();
-    Mat Sds = GlobalShapeFunctions_1stDerivative(s).T();
 
     Vec tmp = S*qpElement;
 
     if(Euler) {      
+      Mat Sds = GlobalShapeFunctions_1stDerivative(s).T();
       tmp += v0*Sds*qElement;
     }
 
@@ -266,23 +261,21 @@ namespace MBSimFlexibleBody {
     vel(1) = tmp(1);
     vel(2) = 0.;
 
-    return vel.copy();
+    return vel;
   }
 
-  Vec FiniteElement1s21ANCF::computeAngularVelocity(const Vec& qElement, const Vec& qpElement, const ContourPointData& cp) {
-    Vec ang(3,INIT,0.);
+  Vec3 FiniteElement1s21ANCF::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
+    Vec3 ang(INIT,0.);
 
-    const double & x1 = qElement(0);    const double & y1 = qElement(1);
-    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
-    const double & x2 = qElement(4);    const double & y2 = qElement(5);
-    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
+    double  x1 = qElement(0);    double  y1 = qElement(1);
+    double dx1 = qElement(2);    double dy1 = qElement(3);
+    double  x2 = qElement(4);    double  y2 = qElement(5);
+    double dx2 = qElement(6);    double dy2 = qElement(7);
 
-    const double & x1p = qpElement(0);    const double & y1p = qpElement(1);
-    const double &dx1p = qpElement(2);    const double &dy1p = qpElement(3);
-    const double & x2p = qpElement(4);    const double & y2p = qpElement(5);
-    const double &dx2p = qpElement(6);    const double &dy2p = qpElement(7);
-
-    const double &s = cp.getLagrangeParameterPosition()(0);
+    double  x1p = qpElement(0);    double  y1p = qpElement(1);
+    double dx1p = qpElement(2);    double dy1p = qpElement(3);
+    double  x2p = qpElement(4);    double  y2p = qpElement(5);
+    double dx2p = qpElement(6);    double dy2p = qpElement(7);
 
     if(Euler) {
       ang(2) = (1.0/sqrt(pow(fabs(x1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dx2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)),2.0)+pow(fabs(y1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dy2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)),2.0))*(y1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dy2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0))*(-x1p*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+x2p*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-dx1p*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)+dx2p*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)+dx1*v0*(1.0/(l0*l0)*s*6.0-1.0/l0)+dx2*v0*(1.0/(l0*l0)*s*6.0+1.0/l0)+1.0/(l0*l0*l0)*v0*x1*s*1.2E1-1.0/(l0*l0*l0)*v0*x2*s*1.2E1)-1.0/sqrt(pow(fabs(x1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dx2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)),2.0)+pow(fabs(y1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dy2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)),2.0))*(x1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dx2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0))*(-y1p*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+y2p*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-dy1p*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)+dy2p*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)+dy1*v0*(1.0/(l0*l0)*s*6.0-1.0/l0)+dy2*v0*(1.0/(l0*l0)*s*6.0+1.0/l0)+1.0/(l0*l0*l0)*v0*s*y1*1.2E1-1.0/(l0*l0*l0)*v0*s*y2*1.2E1))/max(fabs(x1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dx2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)),fabs(y1*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*((3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy1*(s/l0-1.0/(l0*l0)*(s*s)*3.0+1.0/4.0)-dy2*(s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0)));
@@ -291,26 +284,26 @@ namespace MBSimFlexibleBody {
       ang(2) = (1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0))*(y1p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2p*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1p*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0))-1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(x1p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2p*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2p*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1p*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0))*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)))/max(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)));
     }
 
-    return ang.copy();
+    return ang;
   }
 
-  Vec FiniteElement1s21ANCF::LocateBalken(const Vec& qElement, const double& s) {
-    Vec coordinates = computePosition(qElement, ContourPointData(s));
+  Vec FiniteElement1s21ANCF::LocateBalken(const Vec& qElement, double s) {
+    Vec coordinates = getPosition(qElement,s);
 
-    Vec t = tangent(qElement,s);
+    Vec3 t = getTangent(qElement,s);
 
     coordinates(2) = atan2(t(1),t(0));
 
-    return coordinates.copy();
+    return coordinates;
   }
 
-  Vec FiniteElement1s21ANCF::StateBalken(const Vec& qElement, const Vec& qpElement, const double& s) {
+  Vec FiniteElement1s21ANCF::StateBalken(const Vec& qElement, const Vec& qpElement, double s) {
     Mat J = JGeneralized(qElement,s).T();
     Vec X(6);
-    X(Index(0,2)) = J* qElement;
+    X(Index(0,2)) = J*qElement;
     X(Index(3,5)) = J*qpElement;
 
-    Vec t = tangent(qElement,s);
+    Vec3 t = getTangent(qElement,s);
 
     X(2) = atan2(t(1),t(0));
     
@@ -318,27 +311,27 @@ namespace MBSimFlexibleBody {
       Mat Sds = GlobalShapeFunctions_1stDerivative(s).T();
       X(Index(3,4)) += v0*Sds*qElement;
 
-      Vec ang = computeAngularVelocity(qElement,qpElement,ContourPointData(s));
+      Vec3 ang = getAngularVelocity(qElement,qpElement,s);
       X(5) = ang(2);
     }
 
-    return X.copy();
+    return X;
   }
 
-  Mat FiniteElement1s21ANCF::JGeneralized(const Vec& qElement, const double& s) {
+  Mat FiniteElement1s21ANCF::JGeneralized(const Vec& qElement, double s) {
     Mat J(8,3,INIT,0.);
 
-    const double & x1 = qElement(0);    const double & y1 = qElement(1);
-    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
-    const double & x2 = qElement(4);    const double & y2 = qElement(5);
-    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
+    double  x1 = qElement(0);    double  y1 = qElement(1);
+    double dx1 = qElement(2);    double dy1 = qElement(3);
+    double  x2 = qElement(4);    double  y2 = qElement(5);
+    double dx2 = qElement(6);    double dy2 = qElement(7);
 
     // calculate matrix of global shape functions
     Mat S = GlobalShapeFunctions(s);
 
     // Jacobian
     // first two colums, i.e. Jacobian of translation, correlate with matrix of global shape functions S
-    J(Index(0,7),Index(0,1)) = S(Index(0,7),Index(0,1)).copy();
+    J(Index(0,7),Index(0,1)) = S(Index(0,7),Index(0,1));
 
     // third column is the Jacobian of rotation
     J(0,2) = -(1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)))/max(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)));
@@ -350,10 +343,10 @@ namespace MBSimFlexibleBody {
     J(6,2) = -(l0*1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)))/max(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)));
     J(7,2) = (l0*1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)*(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)))/max(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)));
 
-    return J.copy();
+    return J;
   }
 
-  Mat FiniteElement1s21ANCF::GlobalShapeFunctions(const double& s) {
+  Mat FiniteElement1s21ANCF::GlobalShapeFunctions(double s) {
     Mat S(8,2,INIT,0.);
 
     S(0,0) = 1.0/(l0*l0)*(s*s)*-3.0+1.0/(l0*l0*l0)*(s*s*s)*2.0+1.0;
@@ -365,10 +358,10 @@ namespace MBSimFlexibleBody {
     S(5,1) = 1.0/(l0*l0)*(s*s)*3.0-1.0/(l0*l0*l0)*(s*s*s)*2.0;
     S(7,1) = -l0*(1.0/(l0*l0)*(s*s)-1.0/(l0*l0*l0)*(s*s*s));
 
-    return S.copy();
+    return S;
   }
 
-  Mat FiniteElement1s21ANCF::GlobalShapeFunctions_1stDerivative(const double& s) {
+  Mat FiniteElement1s21ANCF::GlobalShapeFunctions_1stDerivative(double s) {
     Mat Sds(8,2,INIT,0.);
 
     Sds(0,0) = (-3.0/2.0)/l0+1.0/(l0*l0*l0)*(s*s)*6.0;
@@ -380,21 +373,42 @@ namespace MBSimFlexibleBody {
     Sds(5,1) = (3.0/2.0)/l0-1.0/(l0*l0*l0)*(s*s)*6.0;
     Sds(7,1) = s/l0+1.0/(l0*l0)*(s*s)*3.0-1.0/4.0;
 
-    return Sds.copy();
+    return Sds;
   }
 
-  Vec FiniteElement1s21ANCF::tangent(const Vec& qElement, const double& s) {
-    Vec t(3,INIT,0.);
+  Vec3 FiniteElement1s21ANCF::getTangent(const Vec& qElement, double s) {
+    Vec3 t(NONINIT);
 
-    const double & x1 = qElement(0);    const double & y1 = qElement(1);
-    const double &dx1 = qElement(2);    const double &dy1 = qElement(3);
-    const double & x2 = qElement(4);    const double & y2 = qElement(5);
-    const double &dx2 = qElement(6);    const double &dy2 = qElement(7);
+    double  x1 = qElement(0);    double  y1 = qElement(1);
+    double dx1 = qElement(2);    double dy1 = qElement(3);
+    double  x2 = qElement(4);    double  y2 = qElement(5);
+    double dx2 = qElement(6);    double dy2 = qElement(7);
 
     t(0) = -1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0));
     t(1) = -1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0));
+    t(2) = 0;
 
-    return t.copy();
+    return t;
   }
-}
 
+  void FiniteElement1s21ANCF::computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) {
+    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computedhdz): not implemented!");
+  }
+
+  double FiniteElement1s21ANCF::computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) {
+    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeKineticEnergy): not implemented!");
+  }
+
+  double FiniteElement1s21ANCF::computeGravitationalEnergy(const fmatvec::Vec& qElement) {
+    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!");
+  }
+
+  double FiniteElement1s21ANCF::computeElasticEnergy(const fmatvec::Vec& qElement) {
+    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeElasticEnergy): not implemented!");
+  }
+
+  void FiniteElement1s21ANCF::computeM(const fmatvec::Vec& qG) {
+    throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeM): Not implemented");
+  }
+
+}

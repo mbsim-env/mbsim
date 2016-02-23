@@ -21,7 +21,6 @@
 #define _FINITE_ELEMENT_1S_21_RCM_H_
 
 #include "mbsimFlexibleBody/discretization_interface.h"
-#include "mbsim/mbsim_event.h"
 #include "fmatvec/fmatvec.h"
 
 namespace MBSimFlexibleBody {
@@ -72,11 +71,11 @@ namespace MBSimFlexibleBody {
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
       virtual double computePhysicalStrain(const fmatvec::Vec& qElement);
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& qElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computePosition): not implemented!"); }
-     virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& qElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-     virtual fmatvec::Vec computeVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-     virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qElement, const fmatvec::Vec2 &zeta) { return JGeneralized(qElement,zeta(0)); }
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
+      virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);
+      virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
+      virtual fmatvec::Vec3 getAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
+      virtual fmatvec::Mat getJacobianOfMotion(const fmatvec::Vec& qElement, double s) { return JGeneralized(qElement,s); }
       /***************************************************/
       /*!
        * compute additional informations for element
@@ -96,9 +95,9 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return planar state
        */
-      fmatvec::Vec3 getPositions(const fmatvec::Vec& qElement, const double &s);
+      fmatvec::Vec3 getPositions(const fmatvec::Vec& qElement, double s);
 
-      fmatvec::Vec3 getVelocities(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double &s);
+      fmatvec::Vec3 getVelocities(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
 
       /**
        * \brief return the JACOBIAN of translation and rotation with respect to generalised internal coordinates
@@ -106,7 +105,7 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return JACOBIAN of translation and rotation with respect to generalised internal coordinates
        */
-      fmatvec::Mat JGeneralizedInternal(const fmatvec::Vec& qElement, const double& s);
+      fmatvec::Mat JGeneralizedInternal(const fmatvec::Vec& qElement, double s);
 
       /**
        * \brief return the JACOBIAN of translation and rotation with respect to generalised global coordinates
@@ -114,7 +113,7 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return JACOBIAN of translation and rotation with respect to generalised global coordinates
        */
-      fmatvec::Mat JGeneralized (const fmatvec::Vec& qElement, const double& s);
+      fmatvec::Mat JGeneralized (const fmatvec::Vec& qElement, double s);
 
       /**
        * \brief return the derivative of the JACOBIAN of translation and rotation with respect to generalised global coordinates
@@ -124,7 +123,7 @@ namespace MBSimFlexibleBody {
        * \param contour point derivative
        * \return derivative of JACOBIAN of translation and rotation with respect to generalised global coordinates
        */
-      fmatvec::Mat JpGeneralized(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double& s,const double& sp);
+      fmatvec::Mat JpGeneralized(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s, double sp);
 
       /**
        * \brief return some additional element data
@@ -230,7 +229,7 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return Cartesian position
        */
-      fmatvec::Vec3 getLocalPositions(const fmatvec::Vec& qLocal, const double& s);
+      fmatvec::Vec3 getLocalPositions(const fmatvec::Vec& qLocal, double s);
 
       /**
        * \brief calculates Cartesian velocity
@@ -239,7 +238,7 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return Cartesian velocity
        */
-      fmatvec::Vec3 getLocalVelocities(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const double& s);
+      fmatvec::Vec3 getLocalVelocities(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, double s);
 
       /**
        * \brief calculates JACOBIAN of implicit integration
@@ -266,7 +265,7 @@ namespace MBSimFlexibleBody {
       FiniteElement1s21RCM() {};
   };
 
-  inline double Sec(const double& alpha) { return 1.0/cos(alpha); }
+  inline double Sec(double alpha) { return 1.0/cos(alpha); }
   inline double Power(double base, int exponent) { return pow(base,exponent); }
 }
 

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_rcm.h"
+#include "mbsim/mbsim_event.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -81,7 +82,7 @@ namespace MBSimFlexibleBody {
       MLocal(6,7) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
       MLocal(7,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
 
-      qElement_Old = qElement.copy();
+      qElement_Old = qElement;
     //}
     M << JTMJ(MLocal,Jeg); 
   }
@@ -162,8 +163,8 @@ namespace MBSimFlexibleBody {
       hIntermediate << hLocal + hdLocal - MLocal * Jegp * qpElement;
       h << Jeg.T() * hIntermediate;
 
-      qElement_Old = qElement.copy();
-      qpElement_Old = qpElement.copy();
+      qElement_Old = qElement;
+      qpElement_Old = qpElement;
 //    }
   }
 
@@ -259,16 +260,15 @@ namespace MBSimFlexibleBody {
     Damp(3,3) += - 2.0 * D * weps * ( Arho*l0h3/12. );
   }
 
-  Vec3 FiniteElement1s21RCM::getPositions(const Vec& qElement, const double& s) {
+  Vec3 FiniteElement1s21RCM::getPositions(const Vec& qElement, double s) {
     Vec qLocal(8,fmatvec::INIT,0.0);
-    SqrMat Jeg(8,fmatvec::INIT,0.0);
 
     BuildqLocal(qElement,qLocal);
 
     return getLocalPositions(qLocal,s);
   }
 
-  Vec3 FiniteElement1s21RCM::getVelocities(const Vec& qElement, const Vec& qpElement, const double& s) {
+  Vec3 FiniteElement1s21RCM::getVelocities(const Vec& qElement, const Vec& qpElement, double s) {
     Vec qLocal(8,fmatvec::INIT,0.0);
     Vec qpLocal(8,fmatvec::INIT,0.0);
     SqrMat Jeg(8,fmatvec::INIT,0.0);
@@ -281,7 +281,7 @@ namespace MBSimFlexibleBody {
     return getLocalVelocities(qLocal,qpLocal,s);
   }
 
-  Mat FiniteElement1s21RCM::JGeneralizedInternal(const Vec& qElement, const double& s) {
+  Mat FiniteElement1s21RCM::JGeneralizedInternal(const Vec& qElement, double s) {
     Mat J(8,3);
 
     Vec qLocal(8);
@@ -353,18 +353,18 @@ namespace MBSimFlexibleBody {
     return J;
   }
 
-  Mat FiniteElement1s21RCM::JGeneralized(const Vec& qElement, const double& s) {
+  Mat FiniteElement1s21RCM::JGeneralized(const Vec& qElement, double s) {
     SqrMat Jeg(8); 
     BuildJacobi(qElement,Jeg);
     return Jeg.T()*JGeneralizedInternal(qElement,s);
   }
 
-  Mat FiniteElement1s21RCM::JpGeneralized(const Vec& qElement, const Vec& qpElement, const double& s, const double& sp) {
+  Mat FiniteElement1s21RCM::JpGeneralized(const Vec& qElement, const Vec& qpElement, double s, double sp) {
     Mat Jp(8,3,NONINIT);
 
     Vec qLocal(8,fmatvec::NONINIT);
     Vec qpLocal(8,fmatvec::NONINIT);
-    SqrMat  Jeg(8,fmatvec::INIT,0.0);
+    SqrMat Jeg(8,fmatvec::INIT,0.0);
     SqrMat Jegp(8,fmatvec::INIT,0.0);
 
     BuildqLocal(qElement,qLocal);
@@ -473,11 +473,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21RCM::BuildqLocal(const Vec& qElement, Vec& qLocal) {
-    const double &x1   = qElement(0);    const double &y1  = qElement(1);    
-    const double &phi1 = qElement(2);    
-    const double &a1   = qElement(3);    const double &a2  = qElement(4);
-    const double &x2   = qElement(5);    const double &y2  = qElement(6);
-    const double &phi2 = qElement(7);
+    double x1   = qElement(0);    double y1  = qElement(1);
+    double phi1 = qElement(2);
+    double a1   = qElement(3);    double a2  = qElement(4);
+    double x2   = qElement(5);    double y2  = qElement(6);
+    double phi2 = qElement(7);
 
     double dphih, sphih;
     dphih = (phi1 - phi2)/2.0;
@@ -494,11 +494,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21RCM::BuildJacobi(const Vec& qElement, SqrMat& Jeg) {
-    const double &x1   = qElement(0);     const double &y1  = qElement(1);    
-    const double &phi1 = qElement(2);    
-    const double &a1   = qElement(3);     const double &a2  = qElement(4);
-    const double &x2   = qElement(5);     const double &y2  = qElement(6);
-    const double &phi2 = qElement(7);
+    double x1   = qElement(0);     double y1  = qElement(1);
+    double phi1 = qElement(2);
+    double a1   = qElement(3);     double a2  = qElement(4);
+    double x2   = qElement(5);     double y2  = qElement(6);
+    double phi2 = qElement(7);
 
     double one_p_cos_dphi;
     one_p_cos_dphi = (1 + cos(phi1 - phi2));
@@ -570,17 +570,17 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s21RCM::BuildJacobi(const Vec& qElement, const Vec& qpElement, SqrMat& Jeg, SqrMat& Jegp) {
-    const double &x1   = qElement(0);     const double &y1  = qElement(1);    
-    const double &phi1 = qElement(2);    
-    const double &a1   = qElement(3);     const double &a2  = qElement(4);
-    const double &x2   = qElement(5);     const double &y2  = qElement(6);
-    const double &phi2 = qElement(7);
+    double x1   = qElement(0);     double y1  = qElement(1);
+    double phi1 = qElement(2);
+    double a1   = qElement(3);     double a2  = qElement(4);
+    double x2   = qElement(5);     double y2  = qElement(6);
+    double phi2 = qElement(7);
 
-    const double &x1p   = qpElement(0);     const double &y1p  = qpElement(1);    
-    const double &phi1p = qpElement(2);    
-    const double &a1p   = qpElement(3);     const double &a2p  = qpElement(4);
-    const double &x2p   = qpElement(5);     const double &y2p  = qpElement(6);
-    const double &phi2p = qpElement(7);
+    double x1p   = qpElement(0);     double y1p  = qpElement(1);
+    double phi1p = qpElement(2);
+    double a1p   = qpElement(3);     double a2p  = qpElement(4);
+    double x2p   = qpElement(5);     double y2p  = qpElement(6);
+    double phi2p = qpElement(7);
 
     double one_p_cos_dphi;
     one_p_cos_dphi = (1 + cos(phi1 - phi2));
@@ -639,13 +639,13 @@ namespace MBSimFlexibleBody {
     Jegp(7,7) = (11*(one_p_cos_dphi*((-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (phi1p*(x1 - x2) - y1p + y2p)*sin(phi1)) - (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
   }
 
-  Vec3 FiniteElement1s21RCM::getLocalPositions(const Vec& qLocal, const double& s) {
+  Vec3 FiniteElement1s21RCM::getLocalPositions(const Vec& qLocal, double s) {
     Vec3 X(NONINIT); // x,y and phi
 
-    const double &xS     = qLocal(0);      const double &yS    = qLocal(1);
-    const double &phiS   = qLocal(2);      const double &eps   = qLocal(3);
-    const double &aL     = qLocal(4);      const double &bL    = qLocal(5);
-    const double &aR     = qLocal(6);      const double &bR    = qLocal(7);
+    double xS     = qLocal(0);      double yS    = qLocal(1);
+    double phiS   = qLocal(2);      double eps   = qLocal(3);
+    double aL     = qLocal(4);      double bL    = qLocal(5);
+    double aR     = qLocal(6);      double bR    = qLocal(7);
 
     if (s < 0) { // left beam side
       X(0) = xS + (1 + eps)*s*cos(bL - phiS) + (s*(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*l0h4);
@@ -660,17 +660,17 @@ namespace MBSimFlexibleBody {
     return X;
   }
 
-  Vec3 FiniteElement1s21RCM::getLocalVelocities(const Vec& qLocal, const Vec& qpLocal, const double& s) {
+  Vec3 FiniteElement1s21RCM::getLocalVelocities(const Vec& qLocal, const Vec& qpLocal, double s) {
     Vec3 X(NONINIT); // xp,yp and phip
 
-    const double &phiS   = qLocal(2);      const double &eps   = qLocal(3);
-    const double &aL     = qLocal(4);      const double &bL    = qLocal(5);
-    const double &aR     = qLocal(6);      const double &bR    = qLocal(7);
+    double phiS   = qLocal(2);      double eps   = qLocal(3);
+    double aL     = qLocal(4);      double bL    = qLocal(5);
+    double aR     = qLocal(6);      double bR    = qLocal(7);
 
-    const double &xSp    = qpLocal(0);     const double &ySp   = qpLocal(1);
-    const double &phiSp  = qpLocal(2);     const double &epsp  = qpLocal(3);
-    const double &aLp    = qpLocal(4);     const double &bLp   = qpLocal(5);
-    const double &aRp    = qpLocal(6);     const double &bRp   = qpLocal(7);
+    double xSp    = qpLocal(0);     double ySp   = qpLocal(1);
+    double phiSp  = qpLocal(2);     double epsp  = qpLocal(3);
+    double aLp    = qpLocal(4);     double bLp   = qpLocal(5);
+    double aRp    = qpLocal(6);     double bRp   = qpLocal(7);
 
     if (s < 0) { // left beam side
       X(0) = xSp + (s*((2*epsp*l0h4 + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS) + (2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*sin(bL - phiS)))/(2.*l0h4);
@@ -688,37 +688,37 @@ namespace MBSimFlexibleBody {
   Mat FiniteElement1s21RCM::hFullJacobi(const Vec& qElement, const Vec& qpElement, const Vec& qLocal, const Vec& qpLocal, const SqrMat& Jeg, const SqrMat& Jegp, const SymMat& MLocal, const Vec& hIntermediate) {
     Mat Dhz(16,8,fmatvec::INIT,0.0);
 
-    const double &x1   = qElement(0);     const double &y1  = qElement(1);    
-    const double &phi1 = qElement(2);    
-    const double &a1   = qElement(3);     const double &a2  = qElement(4);
-    const double &x2   = qElement(5);     const double &y2  = qElement(6);
-    const double &phi2 = qElement(7);
+    double x1   = qElement(0);     double y1  = qElement(1);
+    double phi1 = qElement(2);
+    double a1   = qElement(3);     double a2  = qElement(4);
+    double x2   = qElement(5);     double y2  = qElement(6);
+    double phi2 = qElement(7);
 
-    const double &x1p   = qpElement(0);     const double &y1p  = qpElement(1);    
-    const double &phi1p = qpElement(2);    
-    const double &a1p   = qpElement(3);     const double &a2p  = qpElement(4);
-    const double &x2p   = qpElement(5);     const double &y2p  = qpElement(6);
-    const double &phi2p = qpElement(7);
+    double x1p   = qpElement(0);     double y1p  = qpElement(1);
+    double phi1p = qpElement(2);
+    double a1p   = qpElement(3);     double a2p  = qpElement(4);
+    double x2p   = qpElement(5);     double y2p  = qpElement(6);
+    double phi2p = qpElement(7);
 
-    const double &phiS   = qLocal(2);      const double &eps   = qLocal(3);
-    const double &aL     = qLocal(4);      const double &bL    = qLocal(5);
-    const double &aR     = qLocal(6);      const double &bR    = qLocal(7);
+    double phiS   = qLocal(2);      double eps   = qLocal(3);
+    double aL     = qLocal(4);      double bL    = qLocal(5);
+    double aR     = qLocal(6);      double bR    = qLocal(7);
 
-    const double &phiSp  = qpLocal(2);     const double &epsp  = qpLocal(3);
-    const double &aLp    = qpLocal(4);     const double &bLp   = qpLocal(5);
-    const double &aRp    = qpLocal(6);     const double &bRp   = qpLocal(7);
+    double phiSp  = qpLocal(2);     double epsp  = qpLocal(3);
+    double aLp    = qpLocal(4);     double bLp   = qpLocal(5);
+    double aRp    = qpLocal(6);     double bRp   = qpLocal(7);
 
-    const double &hZ1    = hIntermediate(0);   const double &hZ2   = hIntermediate(1);
-    const double &hZ3    = hIntermediate(2);   const double &hZ4   = hIntermediate(3);
-    const double &hZ5    = hIntermediate(4);   const double &hZ6   = hIntermediate(5);
-    const double &hZ7    = hIntermediate(6);   const double &hZ8   = hIntermediate(7);
+    double hZ1    = hIntermediate(0);   double hZ2   = hIntermediate(1);
+    double hZ3    = hIntermediate(2);   double hZ4   = hIntermediate(3);
+    double hZ5    = hIntermediate(4);   double hZ6   = hIntermediate(5);
+    double hZ7    = hIntermediate(6);   double hZ8   = hIntermediate(7);
 
     Vec JpqpG(8,fmatvec::INIT,0.0);
     JpqpG = Jegp*qpElement;
-    const double &JpqpG1     = JpqpG(0);        const double &JpqpG2     = JpqpG(1);    
-    const double &JpqpG3     = JpqpG(2);        const double &JpqpG4     = JpqpG(3);    
-    const double &JpqpG5     = JpqpG(4);        const double &JpqpG6     = JpqpG(5);    
-    const double &JpqpG7     = JpqpG(6);        const double &JpqpG8     = JpqpG(7);    
+    double JpqpG1     = JpqpG(0);        double JpqpG2     = JpqpG(1);
+    double JpqpG3     = JpqpG(2);        double JpqpG4     = JpqpG(3);
+    double JpqpG5     = JpqpG(4);        double JpqpG6     = JpqpG(5);
+    double JpqpG7     = JpqpG(6);        double JpqpG8     = JpqpG(7);
 
     double one_p_cos_dphi;
     one_p_cos_dphi = (1 + cos(phi1 - phi2));
@@ -1003,6 +1003,22 @@ namespace MBSimFlexibleBody {
     Dhz(8,0,15,7) <<        Jeg.T()*( dhLqp*Jeg             - MLocal*dhLqpJp );
 
     return Dhz;
+  }
+
+  Vec3 FiniteElement1s21RCM::getPosition(const fmatvec::Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21RCM::getPosition): not implemented!");
+  }
+
+  SqrMat3 FiniteElement1s21RCM::getOrientation(const fmatvec::Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21RCM::getOrientation): not implemented!");
+  }
+
+  Vec3 FiniteElement1s21RCM::getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21RCM::getVelocity): not implemented!");
+  }
+
+  Vec3 FiniteElement1s21RCM::getAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21RCM::getAngularVelocity): not implemented!");
   }
 
 }
