@@ -56,6 +56,8 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
 
+      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < -0.5*width or zeta(1) > 0.5*width; }
+
     protected:
       /**
        * \brief width of flexible band

@@ -38,7 +38,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointPlanarContour() : ContactKinematics(), ipoint(0), icontour(0), point(0), contour1s(0), searchAllCP(false) { }
+      ContactKinematicsPointPlanarContour() : ContactKinematics(), ipoint(0), iplanarcontour(0), point(0), planarcontour(0), searchAllCP(false) { }
 
       /**
        * \brief destructor
@@ -57,13 +57,13 @@ namespace MBSim {
       /**
        * \brief contour index
        */
-      int ipoint, icontour;
+      int ipoint, iplanarcontour;
       
       /**
        * \brief contour classes
        */
       Point *point;
-      Contour *contour1s;
+      Contour *planarcontour;
 
       /**
        * \brief root function

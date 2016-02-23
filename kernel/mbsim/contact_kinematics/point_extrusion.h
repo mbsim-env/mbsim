@@ -17,39 +17,31 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef POINT_FLEXIBLEBAND_H_
-#define POINT_FLEXIBLEBAND_H_
+#ifndef POINT_EXTRUSION_H_
+#define POINT_EXTRUSION_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
-#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
+
   class Point;
   class FuncPairPlanarContourPoint;
-}
-
-namespace MBSimFlexibleBody {
-
-  class FlexibleBand;
 
   /**
-   * \brief pairing point to flexible band
-   * \author Thorsten Schindler
-   * \author Roland Zander
-   * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
-   * \date 2010-04-15 bug fixed: different sign in Wd (Thomas Cebulla)
+   * \brief pairing point to extrusion
+   * \author Martin Foerg
    */
-  class ContactKinematicsPointFlexibleBand : public MBSim::ContactKinematics {
+  class ContactKinematicsPointExtrusion : public MBSim::ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsPointFlexibleBand() : ContactKinematics(), ipoint(0), icontour(0), point(0), band(0), searchAllCP(false) { }
+      ContactKinematicsPointExtrusion() : ContactKinematics(), ipoint(0), iextrusion(0), point(0), extrusion(0), searchAllCP(false) { }
       
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointFlexibleBand();
+      virtual ~ContactKinematicsPointExtrusion();
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
@@ -61,13 +53,13 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief contour index 
        */
-      int ipoint, icontour;
+      int ipoint, iextrusion;
 
       /** 
        * \brief contour classes 
        */
       MBSim::Point *point;
-      FlexibleBand *band;
+      Contour *extrusion;
 
       MBSim::FuncPairPlanarContourPoint *func;
 
@@ -76,4 +68,4 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif /* POINT_FLEXIBLEBAND_H_ */
+#endif

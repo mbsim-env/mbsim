@@ -36,50 +36,49 @@ namespace MBSim {
   void ContactKinematicsPointPlanarContour::assignContours(const vector<Contour*> &contour) {
     if (dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
-      icontour = 1;
+      iplanarcontour = 1;
       point = static_cast<Point*>(contour[0]);
-      contour1s = static_cast<Contour*>(contour[1]);
+      planarcontour = static_cast<Contour*>(contour[1]);
     }
     else {
       ipoint = 1;
-      icontour = 0;
+      iplanarcontour = 0;
       point = static_cast<Point*>(contour[1]);
-      contour1s = static_cast<Contour*>(contour[0]);
+      planarcontour = static_cast<Contour*>(contour[0]);
     }
-    func = new FuncPairPlanarContourPoint(point, contour1s); // root function for searching contact parameters
+    func = new FuncPairPlanarContourPoint(point, planarcontour); // root function for searching contact parameters
   }
 
   void ContactKinematicsPointPlanarContour::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     
     func->setTime(t);
     PlanarContactSearch search(func);
-    search.setNodes(contour1s->getEtaNodes()); // defining search areas for contacts
+    search.setNodes(planarcontour->getEtaNodes()); // defining search areas for contacts
 
     if (searchAllCP==false) { // select start value from last search
-      search.setInitialValue(cFrame[icontour]->getEta());
+      search.setInitialValue(cFrame[iplanarcontour]->getEta());
     }
     else { // define start search with regula falsi
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    cFrame[icontour]->setEta(search.slv());
+    cFrame[iplanarcontour]->setEta(search.slv());
 
-    if (cFrame[icontour]->getEta() < contour1s->getEtaNodes()[0] || cFrame[icontour]->getEta() > contour1s->getEtaNodes()[contour1s->getEtaNodes().size()-1]) {
-      g = 1.0;
-      return;
-    }
-    cFrame[icontour]->setPosition(contour1s->getPosition(t,cFrame[icontour]->getZeta()));
-    cFrame[icontour]->getOrientation(false).set(0, contour1s->getWn(t,cFrame[icontour]->getZeta()));
-    cFrame[icontour]->getOrientation(false).set(1, contour1s->getWu(t,cFrame[icontour]->getZeta()));
-    cFrame[icontour]->getOrientation(false).set(2, contour1s->getWv(t,cFrame[icontour]->getZeta()));
+    cFrame[iplanarcontour]->setPosition(planarcontour->getPosition(t,cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->getWn(t,cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(t,cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(t,cFrame[iplanarcontour]->getZeta()));
 
     cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of point
-    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icontour]->getOrientation(false).col(0));
-    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icontour]->getOrientation(false).col(1));
-    cFrame[ipoint]->getOrientation(false).set(2, cFrame[icontour]->getOrientation(false).col(2));
-    g = cFrame[icontour]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[icontour]->getPosition(false));
-    if(g < -contour1s->getThickness()) g = 1;
+    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
+    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[iplanarcontour]->getOrientation(false).col(1));
+    cFrame[ipoint]->getOrientation(false).set(2, cFrame[iplanarcontour]->getOrientation(false).col(2));
+    if(planarcontour->isZetaOutside(cFrame[iplanarcontour]->getZeta()))
+      g = 1;
+    else
+      g = cFrame[iplanarcontour]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[iplanarcontour]->getPosition(false));
+    if(g < -planarcontour->getThickness()) g = 1;
   }
 
   void ContactKinematicsPointPlanarContour::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {

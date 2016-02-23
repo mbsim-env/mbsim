@@ -38,23 +38,23 @@ namespace MBSim {
   void ContactKinematicsCirclePlanarContour::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0;
-      icontour1s = 1;
+      iplanarcontour = 1;
       circle = static_cast<Circle*>(contour[0]);
-      contour1s = static_cast<Contour*>(contour[1]);
+      planarcontour = static_cast<Contour*>(contour[1]);
     } 
     else {
       icircle = 1; 
-      icontour1s = 0;
+      iplanarcontour = 0;
       circle = static_cast<Circle*>(contour[1]);
-      contour1s = static_cast<Contour*>(contour[0]);
+      planarcontour = static_cast<Contour*>(contour[0]);
     }
-    func = new FuncPairPlanarContourCircle(circle,contour1s);
+    func = new FuncPairPlanarContourCircle(circle,planarcontour);
 
-//    if (dynamic_cast<Contour*>(contour1s)) {
+//    if (dynamic_cast<Contour*>(planarcontour)) {
 //      double minRadius=1./epsroot();
-//      for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
+//      for (double alpha=planarcontour->getAlphaStart(); alpha<=planarcontour->getAlphaEnd(); alpha+=(planarcontour->getAlphaEnd()-planarcontour->getAlphaStart())*1e-4) {
 //        zeta(0) = alpha;
-//        double radius=1./contour1s->getCurvature(zeta);
+//        double radius=1./planarcontour->getCurvature(zeta);
 //        minRadius=(radius<minRadius)?radius:minRadius;
 //      }
 //      if (circle->getRadius()>minRadius)
@@ -66,32 +66,31 @@ namespace MBSim {
   void ContactKinematicsCirclePlanarContour::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     func->setTime(t);
     PlanarContactSearch search(func);
-    search.setNodes(contour1s->getEtaNodes());
+    search.setNodes(planarcontour->getEtaNodes());
 
     if(searchAllCP==false)
-      search.setInitialValue(cFrame[icontour1s]->getEta());
+      search.setInitialValue(cFrame[iplanarcontour]->getEta());
     else { 
       search.setSearchAll(true);
       searchAllCP=false;
     }
 
-    cFrame[icontour1s]->setEta(search.slv());
+    cFrame[iplanarcontour]->setEta(search.slv());
 
-    if (cFrame[icontour1s]->getEta() < contour1s->getEtaNodes()[0] || cFrame[icontour1s]->getEta() > contour1s->getEtaNodes()[contour1s->getEtaNodes().size()-1]) {
-      g = 1.0;
-      return;
-    }
-    cFrame[icontour1s]->getOrientation(false).set(0, contour1s->getWn(t,cFrame[icontour1s]->getZeta()));
-    cFrame[icontour1s]->getOrientation(false).set(1, contour1s->getWu(t,cFrame[icontour1s]->getZeta()));
-    cFrame[icontour1s]->getOrientation(false).set(2, contour1s->getWv(t,cFrame[icontour1s]->getZeta()));
-    cFrame[icircle]->getOrientation(false).set(0, -cFrame[icontour1s]->getOrientation(false).col(0));
+    cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->getWn(t,cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(t,cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(t,cFrame[iplanarcontour]->getZeta()));
+    cFrame[icircle]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
     cFrame[icircle]->getOrientation(false).set(2, cFrame[icircle]->getOrientation(false).col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
-    cFrame[icontour1s]->setPosition(contour1s->getPosition(t,cFrame[icontour1s]->getZeta()));
+    cFrame[iplanarcontour]->setPosition(planarcontour->getPosition(t,cFrame[iplanarcontour]->getZeta()));
     cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
-    g = cFrame[icontour1s]->getOrientation(false).col(0).T() * (cFrame[icircle]->getPosition(false) - cFrame[icontour1s]->getPosition(false));
-    if(g < -contour1s->getThickness()) g = 1;
+    if(planarcontour->isZetaOutside(cFrame[iplanarcontour]->getZeta()))
+      g = 1;
+    else
+      g = cFrame[iplanarcontour]->getOrientation(false).col(0).T() * (cFrame[icircle]->getPosition(false) - cFrame[iplanarcontour]->getPosition(false));
+    if(g < -planarcontour->getThickness()) g = 1;
   }
 
   void ContactKinematicsCirclePlanarContour::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
@@ -101,15 +100,15 @@ namespace MBSim {
     const Vec3 R1 = circle->getRadius()*u1;
     const Vec3 N1 = u1;
 
-    const Vec3 u2 = cFrame[icontour1s]->getOrientation(t).col(1);
-    const Vec3 v2 = cFrame[icontour1s]->getOrientation().col(2);
-    const Vec3 R2 = contour1s->getWs(t,cFrame[icontour1s]->getZeta());
-    const Vec3 U2 = contour1s->getParDer1Wu(t,cFrame[icontour1s]->getZeta());
+    const Vec3 u2 = cFrame[iplanarcontour]->getOrientation(t).col(1);
+    const Vec3 v2 = cFrame[iplanarcontour]->getOrientation().col(2);
+    const Vec3 R2 = planarcontour->getWs(t,cFrame[iplanarcontour]->getZeta());
+    const Vec3 U2 = planarcontour->getParDer1Wu(t,cFrame[iplanarcontour]->getZeta());
 
     const Vec3 vC1 = cFrame[icircle]->getVelocity(t);
-    const Vec3 vC2 = cFrame[icontour1s]->getVelocity(t);
+    const Vec3 vC2 = cFrame[iplanarcontour]->getVelocity(t);
     const Vec3 Om1 = cFrame[icircle]->getAngularVelocity(t);
-    const Vec3 Om2 = cFrame[icontour1s]->getAngularVelocity(t);
+    const Vec3 Om2 = cFrame[iplanarcontour]->getAngularVelocity(t);
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;

@@ -90,6 +90,8 @@ namespace MBSim {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
+      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
+
     protected:
       Function<fmatvec::Vec3(double)> * funcCrPC;
 
