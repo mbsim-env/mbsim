@@ -4,6 +4,8 @@
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
@@ -87,11 +89,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec nodes(elements+1);
   for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
   top->setNodes(nodes);
-  top->setWidth(b0);
-  top->setCn(Vec("[1.;0.]"));
-  top->setAlphaStart(0.);
-  top->setAlphaEnd(l0);  
-  top->setNormalDistance(0.5*b0);
+  Vec2 RrRP;
+  RrRP(0) = 0.5*b0;
+  top->setRelativePosition(RrRP);
+  top->setRelativeOrientation(M_PI);
   rod->addContour(top);
 
   // point mass with point contour at a specific surface point
@@ -132,9 +133,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addLink(contact);
 
   // joint 
-  ContourPointData cpdata;
-  cpdata.getContourParameterType() = ContourPointData::continuum;
-  rod->addFrame("RJ",cpdata);
+  rod->addFrame(new Frame1s("RJ"));
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"),rod->getFrame("RJ")); 
   joint->setForceDirection(Mat("[1,0,0;0,1,0;0,0,1]"));

@@ -119,9 +119,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateJacobians(double t, Frame1s *frame, int j) {
-    Index All(0, 3 - 1);
-    Mat Jacobian(qSize, 3, INIT, 0.);
-
+    Index All(0,6-1);
+    Mat Jacobian(qSize,6,INIT,0.);
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(),sLocal,currentElement);
@@ -133,7 +132,6 @@ namespace MBSimFlexibleBody {
       Jacobian(Index(6*currentElement,6*currentElement+5),All) = Jtmp(Index(0,5),All);
       Jacobian(Index(               0,                 5),All) = Jtmp(Index(6,11),All);
     }
-
     frame->setJacobianOfTranslation(R->getOrientation(t)*Jacobian(Index(0,qSize-1),Index(0,2)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation(t)*Jacobian(Index(0,qSize-1),Index(3,5)).T(),j);
   }
@@ -182,16 +180,14 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateJacobians(double t, NodeFrame *frame, int j) {
-    Index All(0, 3 - 1);
-    Mat Jacobian(qSize, 3, INIT, 0.);
+    Index All(0,6-1);
+    Mat Jacobian(qSize,6,INIT,0.);
     int node = frame->getNodeNumber();
-
     Jacobian(6*node,0) = 1.;
     Jacobian(6*node+1,1) = 1.;
     Jacobian(6*node+2,2) = -q(4*node+3);
     Jacobian(6*node+3,2) = q(4*node+2);
     Jacobian(Index(6*node+2,6*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
-
     frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
   }
