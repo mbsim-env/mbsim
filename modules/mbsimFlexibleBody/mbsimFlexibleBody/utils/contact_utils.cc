@@ -22,7 +22,7 @@
 
 // --- List of contact kinematic implementations - BEGIN ---
 #include <mbsim/contact_kinematics/point_extrusion.h>
-#include <mbsim/contact_kinematics/circle_planarcontour.h>
+#include <mbsim/contact_kinematics/circle_extrusion.h>
 
 //#include <mbsimFlexibleBody/contact_kinematics/circlehollow_cylinderflexible.h>
 //#include <mbsimFlexibleBody/contact_kinematics/point_cylinderflexible.h>
@@ -45,12 +45,10 @@ namespace MBSimFlexibleBody {
 //
 
     if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
-      //return new MBSim::ContactKinematicsPointPlanarContour;
       return new MBSim::ContactKinematicsPointExtrusion;
 
     else if(strcmp(contour0, "Circle")==0 && strcmp(contour1, "FlexibleBand")==0)
-      return new MBSim::ContactKinematicsCirclePlanarContour;
-      //return new ContactKinematicsCircleSolidFlexibleBand;
+      return new MBSim::ContactKinematicsCircleExtrusion;
 
 //    else if(strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sFlexible")==0)
 //      return new MBSim::ContactKinematicsPointContour1s;

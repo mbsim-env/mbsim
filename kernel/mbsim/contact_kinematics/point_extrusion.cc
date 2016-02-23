@@ -75,9 +75,11 @@ namespace MBSim {
     cFrame[ipoint]->getOrientation(false).set(0, -cFrame[iextrusion]->getOrientation(false).col(0));
     cFrame[ipoint]->getOrientation(false).set(1, -cFrame[iextrusion]->getOrientation(false).col(1));
     cFrame[ipoint]->getOrientation(false).set(2, cFrame[iextrusion]->getOrientation(false).col(2));
+
     Vec3 Wd = cFrame[ipoint]->getPosition(false) - cFrame[iextrusion]->getPosition(false);
     cFrame[iextrusion]->setXi(cFrame[iextrusion]->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
     cFrame[iextrusion]->getPosition(false) += cFrame[iextrusion]->getXi() * cFrame[iextrusion]->getOrientation(false).col(2);
+
     if(extrusion->isZetaOutside(cFrame[iextrusion]->getZeta()))
       g = 1;
     else
