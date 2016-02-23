@@ -14,15 +14,16 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
-#include "mbsim/contours/contour.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/functions_contact.h"
+#include "mbsim/frames/contour_frame.h"
+#include "mbsim/functions/contact/funcpair_planarcontour_point.h"
+#include "mbsim/utils/planar_contact_search.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,10 +31,8 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  ContactKinematicsPointFlexibleBand::ContactKinematicsPointFlexibleBand() :
-      ContactKinematics(), ipoint(0), icontour(0), point(0), band(0), useLocal(false) {
-  }
   ContactKinematicsPointFlexibleBand::~ContactKinematicsPointFlexibleBand() {
+    delete func;
   }
 
   void ContactKinematicsPointFlexibleBand::assignContours(const vector<Contour*>& contour) {
@@ -49,48 +48,51 @@ namespace MBSimFlexibleBody {
       point = static_cast<Point*>(contour[1]);
       band = static_cast<FlexibleBand*>(contour[0]);
     }
+    func = new FuncPairPlanarContourPoint(point, band); // root function for searching contact parameters
   }
 
-  void ContactKinematicsPointFlexibleBand::updateg(double t, double  &g, ContourPointData *cpData, int index) {
-    throw;
-//    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition(t)); // position of point
-//
-//    FuncPairContour1sPoint *func = new FuncPairContour1sPoint(point, band); // root function for searching contact parameters
-//    func->setTime(t);
-//    Contact1sSearch search(func);
-//    search.setNodes(band->getNodes()); // defining search areas for contacts
-//
-//    if (useLocal) { // select start value from last search
-//      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
-//    }
-//    else { // define start search with regula falsi
-//      search.setSearchAll(true);
-//      useLocal = true;
-//    }
-//
-//    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
-//    cpData[icontour].getLagrangeParameterPosition()(1) = 0.;
-//
-//    if (cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-//      g = 1.;
-//    else {
-//      band->updateKinematicsForFrame(cpData[icontour], Frame::position_cosy);
-//      Vec Wd = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-//      Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-//      cpData[icontour].getLagrangeParameterPosition()(1) = Wb.T() * Wd; // get contact parameter of second tangential direction
-//
-//      double width = band->getWidth();
-//      if (cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width || -cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width)
-//        g = 1.;
-//      else { // calculate the normal distance
-//        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1) * Wb;
-//        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
-//        cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
-//        cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));
-//        g = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
-//      }
-//    }
-//    delete func;
+  void ContactKinematicsPointFlexibleBand::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+
+    func->setTime(t);
+    PlanarContactSearch search(func);
+    search.setNodes(band->getEtaNodes()); // defining search areas for contacts
+
+    if (searchAllCP==false) { // select start value from last search
+      search.setInitialValue(cFrame[icontour]->getEta());
+    }
+    else { // define start search with regula falsi
+      search.setSearchAll(true);
+      searchAllCP = false;
+    }
+
+    cFrame[icontour]->setEta(search.slv());
+
+    cFrame[icontour]->setPosition(band->getPosition(t,cFrame[icontour]->getZeta()));
+    cFrame[icontour]->getOrientation(false).set(0, band->getWn(t,cFrame[icontour]->getZeta()));
+    cFrame[icontour]->getOrientation(false).set(1, band->getWu(t,cFrame[icontour]->getZeta()));
+    cFrame[icontour]->getOrientation(false).set(2, band->getWv(t,cFrame[icontour]->getZeta()));
+
+    cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of point
+    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icontour]->getOrientation(false).col(0));
+    cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icontour]->getOrientation(false).col(1));
+    cFrame[ipoint]->getOrientation(false).set(2, cFrame[icontour]->getOrientation(false).col(2));
+    Vec3 Wd = cFrame[ipoint]->getPosition(false) - cFrame[icontour]->getPosition(false);
+    cFrame[icontour]->setXi(cFrame[icontour]->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
+    if (cFrame[icontour]->getEta() < band->getEtaNodes()[0] || cFrame[icontour]->getEta() > band->getEtaNodes()[band->getEtaNodes().size()-1]) {
+      g = 1.0;
+      return;
+    }
+    if (cFrame[icontour]->getXi() > 0.5 * band->getWidth() || cFrame[icontour]->getXi() < -0.5 * band->getWidth()) {
+      g = 1.0;
+      return;
+    }
+    cFrame[icontour]->getPosition(false) += cFrame[icontour]->getXi() * cFrame[icontour]->getOrientation(false).col(2);
+    g = cFrame[icontour]->getOrientation(false).col(0).T() * Wd;
+    if(g < -band->getThickness()) g = 1;
+  }
+
+  void ContactKinematicsPointFlexibleBand::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+    throw MBSimError("(ContactKinematicsPointFlexibleBand::updatewb): Not implemented!");
   }
 
 }

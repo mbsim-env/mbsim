@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef POINT_FLEXIBLEBAND_H_
@@ -25,6 +25,7 @@
 
 namespace MBSim {
   class Point;
+  class FuncPairPlanarContourPoint;
 }
 
 namespace MBSimFlexibleBody {
@@ -43,7 +44,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointFlexibleBand();
+      ContactKinematicsPointFlexibleBand() : ContactKinematics(), ipoint(0), icontour(0), point(0), band(0), searchAllCP(false) { }
       
       /**
        * \brief destructor
@@ -52,8 +53,8 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
-      virtual void updateg(double t, double &g, std::vector<MBSim::Frame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec& wb, double g, std::vector<MBSim::Frame*> &cFrame) { throw MBSim::MBSimError("(ContactKinematicsPointFlexibleBand::updatewb): not implemented!"); }
+      virtual void updateg(double t, double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
       /***************************************************/
 
     protected:
@@ -68,13 +69,11 @@ namespace MBSimFlexibleBody {
       MBSim::Point *point;
       FlexibleBand *band;
 
-      /*!
-       * \brief flag to check if local search can be used
-       */
-      bool useLocal;
+      MBSim::FuncPairPlanarContourPoint *func;
+
+      bool searchAllCP;
   };
 
 }
 
 #endif /* POINT_FLEXIBLEBAND_H_ */
-

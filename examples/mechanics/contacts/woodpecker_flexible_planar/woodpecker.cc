@@ -77,12 +77,14 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   for(int i=0;i<=Elements;i++) nodes(i) = i*L/Elements;
   FlexibleBand *top = new FlexibleBand("Top");
   top->setNodes(nodes);
+  top->setWidth(r);
   Vec2 RrRP;
   RrRP(0) = -r;
   top->setRelativePosition(RrRP);
   balken->addContour(top);
   FlexibleBand *bot = new FlexibleBand("Bot");
   bot->setNodes(nodes);
+  bot->setWidth(r);
   RrRP(0) = r;
   bot->setRelativePosition(RrRP);
   bot->setRelativeOrientation(M_PI);

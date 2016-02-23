@@ -89,6 +89,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec nodes(elements+1);
   for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
   top->setNodes(nodes);
+  top->setWidth(b0);
   Vec2 RrRP;
   RrRP(0) = 0.5*b0;
   top->setRelativePosition(RrRP);

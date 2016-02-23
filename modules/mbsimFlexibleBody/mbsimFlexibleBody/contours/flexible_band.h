@@ -37,13 +37,16 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      FlexibleBand(const std::string& name) : Contour1sFlexible(name), ARP(fmatvec::EYE) { }
+      FlexibleBand(const std::string& name) : Contour1sFlexible(name), width(0), ARP(fmatvec::EYE) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
      /***************************************************/
 
       /* GETTER / SETTER */
+      void setWidth(double width_) { width = width_; }
+      double getWidth() const { return width; }
+
       void setRelativePosition(const fmatvec::Vec2 &r);
       void setRelativeOrientation(double al);
 
@@ -54,6 +57,11 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
 
     protected:
+      /**
+       * \brief width of flexible band
+       */
+      double width;
+
       fmatvec::Vec3 RrRP;
       fmatvec::SqrMat3 ARP;
   };

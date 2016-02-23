@@ -26,7 +26,7 @@
 
 //#include <mbsimFlexibleBody/contact_kinematics/circlehollow_cylinderflexible.h>
 //#include <mbsimFlexibleBody/contact_kinematics/point_cylinderflexible.h>
-//#include <mbsimFlexibleBody/contact_kinematics/point_flexibleband.h>
+#include <mbsimFlexibleBody/contact_kinematics/point_flexibleband.h>
 //#include <mbsimFlexibleBody/contact_kinematics/circlesolid_flexibleband.h>
 //#include <mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h>
 //#include <mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h>
@@ -45,8 +45,8 @@ namespace MBSimFlexibleBody {
 //
 
     if(strcmp(contour0, "Point")==0 && strcmp(contour1, "FlexibleBand")==0)
-      return new MBSim::ContactKinematicsPointPlanarContour;
-      //return new ContactKinematicsPointFlexibleBand;
+      //return new MBSim::ContactKinematicsPointPlanarContour;
+      return new ContactKinematicsPointFlexibleBand;
 
     else if(strcmp(contour0, "Circle")==0 && strcmp(contour1, "FlexibleBand")==0)
       return new MBSim::ContactKinematicsCirclePlanarContour;
