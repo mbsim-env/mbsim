@@ -36,7 +36,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
 
-  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure_) : FlexibleBody1s(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), deps(0.), dkappa(0.), openStructure(openStructure_), initialised(false), v0(0.), Euler(false), sOld(-1e12) {}
+  FlexibleBody1s21ANCF::FlexibleBody1s21ANCF(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), Elements(0), l0(0), E(0), A(0), I(0), rho(0), rc(0.), deps(0.), dkappa(0.), initialised(false), v0(0.), Euler(false), sOld(-1e12) {}
 
   void FlexibleBody1s21ANCF::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
     int j = 4 * n;
@@ -217,10 +217,9 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
-
   void FlexibleBody1s21ANCF::init(InitStage stage) {
     if(stage==unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
 
       initialised = true;
 
@@ -238,61 +237,27 @@ namespace MBSimFlexibleBody {
       initM();
     }
     else if(stage==plotting) {
-		  for(int i=0;i<q.size()/4;i++) {
-		    plotColumns.push_back("vel_abs node ("+numtostr(i)+")");
-		  }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
-#endif
-      FlexibleBodyContinuum<double>::init(stage);
+      for(int i=0;i<q.size()/4;i++) {
+        plotColumns.push_back("vel_abs node ("+numtostr(i)+")");
+      }
+      FlexibleBody1s::init(stage);
     }
     else
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
   }
 
   void FlexibleBody1s21ANCF::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
-        vector<double> data;
-        data.push_back(t);
-        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
-
-        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
-          Vec  X(6,NONINIT);
-
-          double sGlobal = Euler?ds*i+v0*t:ds*i;
-          double sLocal;
-          int currentElement;
-          BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-          X = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->StateBalken(getqElement(currentElement), getuElement(currentElement), sLocal);
-
-          Vec tmp(3,NONINIT); tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
-          Vec pos = R->getPosition() + R->getOrientation() * tmp;
-          data.push_back(pos(0)); // global x-position
-          data.push_back(pos(1)); // global y-position
-          data.push_back(pos(2)); // global z-position
-          data.push_back(0.); // local twist
-        }
-
-        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
-      }
-#endif
-    }
-
     if(Euler) {
-		  for(int i=0;i<q.size()/4;i++) {
-		  	plotVector.push_back(sqrt(pow(u(4*i+0) + v0*q(4*i+2),2.)+pow(u(4*i+1) + v0*q(4*i+3),2.)));
-		  }
+      for(int i=0;i<q.size()/4;i++) {
+        plotVector.push_back(sqrt(pow(u(4*i+0) + v0*q(4*i+2),2.)+pow(u(4*i+1) + v0*q(4*i+3),2.)));
+      }
     }
     else {
-		  for(int i=0;i<q.size()/4;i++) {
-		  	plotVector.push_back(sqrt(pow(u(4*i+0),2.)+pow(u(4*i+1),2.)));
-		  }      
+      for(int i=0;i<q.size()/4;i++) {
+        plotVector.push_back(sqrt(pow(u(4*i+0),2.)+pow(u(4*i+1),2.)));
+      }
     }
-
-    FlexibleBodyContinuum<double>::plot(t,dt);
+    FlexibleBody1s::plot(t,dt);
   }
 
   void FlexibleBody1s21ANCF::setNumberElements(int n){
@@ -323,6 +288,7 @@ namespace MBSimFlexibleBody {
         uElement[i](4,7) << u(0,3);
       }
     }
+    updEle = false;
   }
 
   void FlexibleBody1s21ANCF::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
@@ -355,7 +321,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21ANCF::initInfo() {
-    FlexibleBodyContinuum<double>::init(unknownStage);
+    FlexibleBody1s::init(unknownStage);
     l0 = L/Elements;
     Vec g = Vec("[0.;0.;0.]");
     for(int i=0;i<Elements;i++) {

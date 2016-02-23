@@ -200,7 +200,7 @@ namespace MBSimFlexibleBody {
     //     // Impliziten Integratoren
     //     if(implicit)
     //     {
-    // 	static Mat Dhz(2*8,8,fmatvec::INIT,0.0);
+    // 	static Mat Dhz(2*8,8,INIT,0.0);
     // 	Dhz   = hFullJacobi(qElement,qpElement,qLokal,qpLokal,Jeg,Jegp,MLokal,hZwischen);
     // 	Dhq   = static_cast<SqrMat>(Dhz(0,0, 8-1,8-1));
     // 	Dhqp  = static_cast<SqrMat>(Dhz(8,0,2*8-1,8-1));
@@ -211,9 +211,7 @@ namespace MBSimFlexibleBody {
   Vec3 FiniteElement1s21ANCF::getPosition(const Vec& qElement, double s) {
     Vec3 pos(NONINIT);
 
-    Mat S = GlobalShapeFunctions(s).T();
-
-    Vec tmp = S*qElement;
+    Vec tmp = GlobalShapeFunctions(s).T()*qElement;
 
     pos(0) = tmp(0);
     pos(1) = tmp(1);
@@ -248,14 +246,10 @@ namespace MBSimFlexibleBody {
   Vec3 FiniteElement1s21ANCF::getVelocity(const Vec& qElement, const Vec& qpElement, double s) {
     Vec3 vel(NONINIT);
 
-    Mat S = GlobalShapeFunctions(s).T();
+    Vec tmp = GlobalShapeFunctions(s).T()*qpElement;
 
-    Vec tmp = S*qpElement;
-
-    if(Euler) {      
-      Mat Sds = GlobalShapeFunctions_1stDerivative(s).T();
-      tmp += v0*Sds*qElement;
-    }
+    if(Euler)
+      tmp += v0*GlobalShapeFunctions_1stDerivative(s).T()*qElement;
 
     vel(0) = tmp(0);
     vel(1) = tmp(1);
@@ -308,8 +302,7 @@ namespace MBSimFlexibleBody {
     X(2) = atan2(t(1),t(0));
     
     if(Euler) {      
-      Mat Sds = GlobalShapeFunctions_1stDerivative(s).T();
-      X(Index(3,4)) += v0*Sds*qElement;
+      X(Index(3,4)) += v0*GlobalShapeFunctions_1stDerivative(s).T()*qElement;
 
       Vec3 ang = getAngularVelocity(qElement,qpElement,s);
       X(5) = ang(2);
@@ -326,12 +319,9 @@ namespace MBSimFlexibleBody {
     double  x2 = qElement(4);    double  y2 = qElement(5);
     double dx2 = qElement(6);    double dy2 = qElement(7);
 
-    // calculate matrix of global shape functions
-    Mat S = GlobalShapeFunctions(s);
-
     // Jacobian
     // first two colums, i.e. Jacobian of translation, correlate with matrix of global shape functions S
-    J(Index(0,7),Index(0,1)) = S(Index(0,7),Index(0,1));
+    J(Index(0,7),Index(0,1)) = GlobalShapeFunctions(s)(Index(0,7),Index(0,1));
 
     // third column is the Jacobian of rotation
     J(0,2) = -(1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)))/max(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)));
@@ -391,23 +381,23 @@ namespace MBSimFlexibleBody {
     return t;
   }
 
-  void FiniteElement1s21ANCF::computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) {
+  void FiniteElement1s21ANCF::computedhdz(const Vec& qElement, const Vec& qpElement) {
     throw MBSim::MBSimError("(FiniteElement1s21ANCF::computedhdz): not implemented!");
   }
 
-  double FiniteElement1s21ANCF::computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) {
+  double FiniteElement1s21ANCF::computeKineticEnergy(const Vec& qElement, const Vec& qpElement) {
     throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeKineticEnergy): not implemented!");
   }
 
-  double FiniteElement1s21ANCF::computeGravitationalEnergy(const fmatvec::Vec& qElement) {
+  double FiniteElement1s21ANCF::computeGravitationalEnergy(const Vec& qElement) {
     throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeGravitationalEnergy): not implemented!");
   }
 
-  double FiniteElement1s21ANCF::computeElasticEnergy(const fmatvec::Vec& qElement) {
+  double FiniteElement1s21ANCF::computeElasticEnergy(const Vec& qElement) {
     throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeElasticEnergy): not implemented!");
   }
 
-  void FiniteElement1s21ANCF::computeM(const fmatvec::Vec& qG) {
+  void FiniteElement1s21ANCF::computeM(const Vec& qG) {
     throw MBSim::MBSimError("(FiniteElement1s21ANCF::computeM): Not implemented");
   }
 

@@ -21,6 +21,9 @@
 #define _FLEXIBLE_BODY_1S_H_
 
 #include "mbsimFlexibleBody/flexible_body.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#endif
 
 namespace MBSimFlexibleBody {
 
@@ -36,7 +39,13 @@ namespace MBSimFlexibleBody {
        * \brief constructor:
        * \param name of body
        */
-      FlexibleBody1s(const std::string &name) : FlexibleBodyContinuum<double>(name) { }
+      FlexibleBody1s(const std::string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), openStructure(openStructure_) { }
+
+      virtual void init(InitStage stage);
+      virtual void plot(double t, double dt=1);
+
+      void setLength(double L_) { L = L_; }
+      double getLength(){ return L; }
 
       void addFrame(Frame1s *frame);
 
@@ -49,6 +58,21 @@ namespace MBSimFlexibleBody {
       virtual void updateAccelerations(double t, Frame1s* frame);
       virtual void updateJacobians(double t, Frame1s* frame, int j=0);
       virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
+#endif
+
+    protected:
+      /**
+       * \brief length of beam
+       */
+      double L;
+
+      /**
+       * \brief flag for open (cantilever beam) or closed (rings) structures
+       */
+      bool openStructure;
   };
 
 }

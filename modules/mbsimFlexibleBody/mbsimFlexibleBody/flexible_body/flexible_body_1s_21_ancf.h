@@ -21,9 +21,6 @@
 #define _FLEXIBLE_BODY_1S_21_ANCF_H_
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/spineextrusion.h>
-#endif
 
 namespace MBSimFlexibleBody {
 
@@ -89,7 +86,6 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setNumberElements(int n);
-      void setLength(double L_) { L = L_; }
       void setEModul(double E_) { E = E_; }
       void setCrossSectionalArea(double A_) { A = A_; }
       void setMomentInertia(double I_) { I = I_; }
@@ -97,11 +93,7 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double rc_);
       void setMaterialDamping(double deps_, double dkappa_);
       void setEulerPerspective(bool Euler_, double v0_);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
-#endif
       int getNumberElements(){ return Elements; }
-      double getLength(){ return L; }
       /***************************************************/
 
       /**
@@ -120,11 +112,6 @@ namespace MBSimFlexibleBody {
        * \brief number of finite elements used for discretisation
        */
       int Elements;
-
-      /**
-       * \brief length of beam
-       */
-      double L;
 
       /**
        * \brief length of one finite element
@@ -165,11 +152,6 @@ namespace MBSimFlexibleBody {
        * \brief coefficient of material longitudinal damping
        */
       double dkappa;
-
-      /**
-       * \brief flag for open (cantilever beam) or closed (rings) structures
-       */
-      bool openStructure;
 
       /**
        * \brief flag for testing if beam is initialised

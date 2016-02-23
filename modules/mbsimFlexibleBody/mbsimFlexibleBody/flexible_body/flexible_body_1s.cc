@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
+#include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/mbsim_event.h"
 
 using namespace fmatvec;
@@ -27,6 +28,38 @@ using namespace std;
 using namespace MBSim;
 
 namespace MBSimFlexibleBody {
+
+ void FlexibleBody1s::init(InitStage stage) {
+    if(stage==plotting) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
+#endif
+      FlexibleBodyContinuum<double>::init(stage);
+    }
+    else
+      FlexibleBodyContinuum<double>::init(stage);
+  }
+
+  void FlexibleBody1s::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+        vector<double> data;
+        data.push_back(t);
+        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
+        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
+          Vec3 pos = getPosition(t,ds*i);
+          data.push_back(pos(0)); // global x-position
+          data.push_back(pos(1)); // global y-position
+          data.push_back(pos(2)); // global z-position
+          data.push_back(0.); // local twist
+        }
+        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
+      }
+#endif
+    }
+    FlexibleBodyContinuum<double>::plot(t,dt);
+  }
 
   void FlexibleBody1s::addFrame(Frame1s *frame) { 
     Body::addFrame(frame); 

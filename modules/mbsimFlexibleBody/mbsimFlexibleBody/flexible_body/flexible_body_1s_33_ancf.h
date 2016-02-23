@@ -20,13 +20,7 @@
 #ifndef _FLEXIBLE_BODY_1S_33_ANCF_H_
 #define _FLEXIBLE_BODY_1S_33_ANCF_H_
 
-#include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_ancf.h"
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/spineextrusion.h>
-#endif
-
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 
 namespace MBSimFlexibleBody {
 
@@ -44,7 +38,7 @@ namespace MBSimFlexibleBody {
    * model based on
    * DOMBROWSKI, S.: Analysis of Large Flexible Body Deformation in Multibody Systems Using Absolute Coordinates. Multibody System Dynamics (2002)
    */
-  class FlexibleBody1s33ANCF : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s33ANCF : public FlexibleBody1s {
 
     public:
       /*!
@@ -54,24 +48,35 @@ namespace MBSimFlexibleBody {
        */
       FlexibleBody1s33ANCF(const std::string &name, bool openStructure);
 
-      /*!
-       * \brief destructor
-       */
-      virtual ~FlexibleBody1s33ANCF() {}
-
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void updateM(double t, int k) {}
+      virtual void updateM(double t, int k) { }
+      virtual void updateLLM(double t, int i=0) { }
+
       virtual void BuildElements();
+
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+
+      virtual fmatvec::Vec3 getPosition(double t, double s);
+      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
+      virtual fmatvec::Vec3 getWs(double t, double s);
+
+      virtual void updatePositions(double t, Frame1s* frame);
+      virtual void updateVelocities(double t, Frame1s* frame);
+      virtual void updateAccelerations(double t, Frame1s* frame);
+      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
       /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual void facLLM(int i = 0) {}
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -81,25 +86,14 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setNumberElements(int n);
-      void setLength(double L_) { L = L_; }
       void setEModul(double E_) { E = E_; }
       void setShearModul(double G_) { G = G_; }
       void setCrossSectionalArea(double A_) { A = A_; }
       void setMomentInertia(double I0_,double I1_,double I2_) { I0 = I0_; I1 = I1_; I2 = I2_; }
       void setDensity(double rho_) { rho = rho_; }
       void setCurlRadius(double rc1_,double rc2_);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
-#endif
       int getNumberElements(){ return Elements; }
-      double getLength(){ return L; }
       /***************************************************/
-
-      /**
-       * \brief compute planar state at Lagrangian coordinate
-       * \param Lagrangian coordinate
-       */
-      fmatvec::Vec computeState(double x);
 
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
@@ -117,11 +111,6 @@ namespace MBSimFlexibleBody {
        * \brief number of finite elements used for discretisation
        */
       int Elements;
-
-      /**
-       * \brief length of beam
-       */
-      double L;
 
       /**
        * \brief length of one finite element
@@ -173,12 +162,7 @@ namespace MBSimFlexibleBody {
        */
       double rc2;
 
-      /**
-       * \brief flag for open (cantilever beam) or closed (rings) structures
-       */
-      bool openStructure;
-
-      /**
+       /**
        * \brief flag for testing if beam is initialised
        */
       bool initialised;
@@ -207,14 +191,5 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s33ANCF& operator=(const FlexibleBody1s33ANCF&);
   };
 
-  inline void FlexibleBody1s33ANCF::setCurlRadius(double rc1_, double rc2_) {
-    rc1 = rc1_;
-    rc2 = rc2_;
-    if(initialised)
-      for(int i = 0; i < Elements; i++)
-        static_cast<FiniteElement1s33ANCF*>(discretization[i])->setCurlRadius(rc1,rc2);
-  }
-
 }
 #endif /* _FLEXIBLE_BODY_1S_33_ANCF_H_ */
-

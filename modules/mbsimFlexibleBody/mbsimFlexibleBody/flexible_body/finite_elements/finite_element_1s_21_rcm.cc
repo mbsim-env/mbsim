@@ -177,7 +177,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s21RCM::computeKineticEnergy(const Vec& qElement, const Vec& qpElement) {
-    Vec qLocal(8,fmatvec::NONINIT), qpLocal(8,fmatvec::NONINIT);
+    Vec qLocal(8,NONINIT), qpLocal(8,NONINIT);
 
     double &phiS   = qLocal(2);      double &eps   = qLocal(3);
     double &aL     = qLocal(4);      double &bL    = qLocal(5);
@@ -192,7 +192,7 @@ namespace MBSimFlexibleBody {
     BuildqLocal(qElement,qLocal);
 
     // Jacobian 
-    SqrMat Jeg(8,fmatvec::INIT,0.0), Jegp   (8,fmatvec::INIT,0.0);
+    SqrMat Jeg(8,INIT,0.0), Jegp   (8,INIT,0.0);
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
 
     // local velocities
@@ -202,7 +202,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s21RCM::computeGravitationalEnergy(const Vec& qElement) {
-    Vec qLocal(8,fmatvec::NONINIT);
+    Vec qLocal(8,NONINIT);
 
     double &xS     = qLocal(0);
     double &yS     = qLocal(1);
@@ -219,7 +219,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s21RCM::computeElasticEnergy(const Vec& qElement) {
-    Vec qLocal(8,fmatvec::NONINIT);
+    Vec qLocal(8,NONINIT);
 
     double &eps    = qLocal(3);
     double &aL     = qLocal(4);      double &bL    = qLocal(5);
@@ -231,7 +231,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s21RCM::computePhysicalStrain(const Vec& qElement) {
-    Vec qLocal(8, fmatvec::NONINIT);
+    Vec qLocal(8, NONINIT);
 
     double &eps = qLocal(3);
     double &aL = qLocal(4);
@@ -261,7 +261,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FiniteElement1s21RCM::getPositions(const Vec& qElement, double s) {
-    Vec qLocal(8,fmatvec::INIT,0.0);
+    Vec qLocal(8,INIT,0.0);
 
     BuildqLocal(qElement,qLocal);
 
@@ -269,10 +269,10 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FiniteElement1s21RCM::getVelocities(const Vec& qElement, const Vec& qpElement, double s) {
-    Vec qLocal(8,fmatvec::INIT,0.0);
-    Vec qpLocal(8,fmatvec::INIT,0.0);
-    SqrMat Jeg(8,fmatvec::INIT,0.0);
-    SqrMat Jegp(8,fmatvec::INIT,0.0);
+    Vec qLocal(8,INIT,0.0);
+    Vec qpLocal(8,INIT,0.0);
+    SqrMat Jeg(8,INIT,0.0);
+    SqrMat Jegp(8,INIT,0.0);
 
     BuildqLocal(qElement,qLocal);
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
@@ -362,10 +362,10 @@ namespace MBSimFlexibleBody {
   Mat FiniteElement1s21RCM::JpGeneralized(const Vec& qElement, const Vec& qpElement, double s, double sp) {
     Mat Jp(8,3,NONINIT);
 
-    Vec qLocal(8,fmatvec::NONINIT);
-    Vec qpLocal(8,fmatvec::NONINIT);
-    SqrMat Jeg(8,fmatvec::INIT,0.0);
-    SqrMat Jegp(8,fmatvec::INIT,0.0);
+    Vec qLocal(8,NONINIT);
+    Vec qpLocal(8,NONINIT);
+    SqrMat Jeg(8,INIT,0.0);
+    SqrMat Jegp(8,INIT,0.0);
 
     BuildqLocal(qElement,qLocal);
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
@@ -441,10 +441,10 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FiniteElement1s21RCM::computeAdditionalElementData(const Vec &qElement, const Vec &qpElement) {
-    Vec Data(8,fmatvec::NONINIT);
+    Vec Data(8,NONINIT);
 
-    Vec qLocal(8,fmatvec::NONINIT), qpLocal(8,fmatvec::NONINIT);
-    SqrMat Jeg(8,fmatvec::NONINIT), Jegp(8,fmatvec::NONINIT);
+    Vec qLocal(8,NONINIT), qpLocal(8,NONINIT);
+    SqrMat Jeg(8,NONINIT), Jegp(8,NONINIT);
 
     double &xS     = qLocal(0);      double &yS     = qLocal(1);
     double &eps    = qLocal(3);
@@ -686,7 +686,7 @@ namespace MBSimFlexibleBody {
   }
 
   Mat FiniteElement1s21RCM::hFullJacobi(const Vec& qElement, const Vec& qpElement, const Vec& qLocal, const Vec& qpLocal, const SqrMat& Jeg, const SqrMat& Jegp, const SymMat& MLocal, const Vec& hIntermediate) {
-    Mat Dhz(16,8,fmatvec::INIT,0.0);
+    Mat Dhz(16,8,INIT,0.0);
 
     double x1   = qElement(0);     double y1  = qElement(1);
     double phi1 = qElement(2);
@@ -713,7 +713,7 @@ namespace MBSimFlexibleBody {
     double hZ5    = hIntermediate(4);   double hZ6   = hIntermediate(5);
     double hZ7    = hIntermediate(6);   double hZ8   = hIntermediate(7);
 
-    Vec JpqpG(8,fmatvec::INIT,0.0);
+    Vec JpqpG(8,INIT,0.0);
     JpqpG = Jegp*qpElement;
     double JpqpG1     = JpqpG(0);        double JpqpG2     = JpqpG(1);
     double JpqpG3     = JpqpG(2);        double JpqpG4     = JpqpG(3);
@@ -727,7 +727,7 @@ namespace MBSimFlexibleBody {
     double gx = g(0);
 
     // q-derivative
-    SqrMat dhqJ(8,fmatvec::INIT,0.0), dhLq(8,fmatvec::INIT,0.0), dhLqM(8,fmatvec::INIT,0.0), dhLqJp(8,fmatvec::INIT,0.0);
+    SqrMat dhqJ(8,INIT,0.0), dhLq(8,INIT,0.0), dhLqM(8,INIT,0.0), dhLqJp(8,INIT,0.0);
     dhqJ(0,2) = (-4*hZ2*l0 + (22*(hZ3 + hZ6 - hZ8) + 4*(hZ5 - hZ7)*l0)*cos(phi2) + 8*hZ4*sin(phi2))/(8.*l0*one_p_cos_dphi);
     dhqJ(0,7) = (4*hZ2*l0 + (22*(hZ3 + hZ6 - hZ8) + 4*(hZ5 - hZ7)*l0)*cos(phi1) + 8*hZ4*sin(phi1))/(8.*l0*one_p_cos_dphi);
     dhqJ(1,2) = (4*hZ1*l0 - 8*hZ4*cos(phi2) + (22*(hZ3 + hZ6 - hZ8) + 4*(hZ5 - hZ7)*l0)*sin(phi2))/(8.*l0*one_p_cos_dphi);
@@ -851,7 +851,7 @@ namespace MBSimFlexibleBody {
     dhLqM(7,6) = (Arho*l0*(64*(17*aL + 392*aR)*(JpqpG3 + JpqpG8) - 8*(-798*JpqpG4 + (51*bL - 205*bR)*(JpqpG3 + JpqpG8))*l0 + 17472*(JpqpG1*cos(bR + phiS) + JpqpG2*sin(bR + phiS))))/80640.;
     dhLqM(7,7) = (Arho*l0*(l0*(112*aL*(JpqpG3 + JpqpG8) + 820*aR*(JpqpG3 + JpqpG8) + (273*JpqpG4 - 42*bL*(JpqpG3 + JpqpG8) + 211*bR*(JpqpG3 + JpqpG8))*l0) + 84*(8*(aL + 13*aR)*JpqpG2 - 3*(10*(1 + 2*eps)*JpqpG1 + (bL - 5*bR)*JpqpG2)*l0)*cos(bR + phiS) - 84*(8*aL*JpqpG1 + 104*aR*JpqpG1 + 3*(-(bL*JpqpG1) + 5*bR*JpqpG1 + 10*JpqpG2 + 20*eps*JpqpG2)*l0)*sin(bR + phiS)))/40320.;
 
-    SqrMat dhLqp(8,fmatvec::INIT,0.0), dhLqpJp(8,fmatvec::INIT,0.0); 
+    SqrMat dhLqp(8,INIT,0.0), dhLqpJp(8,INIT,0.0);
     dhLqJp(0,1) = (Power(phi1p - phi2p,2)*Power(Sec((phi1 - phi2)/2.),2)*tan((phi1 - phi2)/2.))/4.;
     dhLqJp(0,2) = (Power(Sec((phi1 - phi2)/2.),4)*(144*Power(phi1p - phi2p,2)*(y1 - y2) + (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*Power(phi1p - 2*phi2p,2)*cos(phi1) + Power(phi1p,2)*(64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*cos(phi1 - 2*phi2) - 72*Power(phi1p,2)*y1*cos(phi1 - phi2) + 144*phi1p*phi2p*y1*cos(phi1 - phi2) - 72*Power(phi2p,2)*y1*cos(phi1 - phi2) + 72*Power(phi1p,2)*y2*cos(phi1 - phi2) - 144*phi1p*phi2p*y2*cos(phi1 - phi2) + 72*Power(phi2p,2)*y2*cos(phi1 - phi2) - 256*a1*Power(phi1p,2)*cos(phi2) - 256*a2*Power(phi1p,2)*cos(phi2) + 20*l0*phi1*Power(phi1p,2)*cos(phi2) - 20*l0*Power(phi1p,2)*phi2*cos(phi2) + 512*a1*phi1p*phi2p*cos(phi2) + 512*a2*phi1p*phi2p*cos(phi2) - 40*l0*phi1*phi1p*phi2p*cos(phi2) + 40*l0*phi1p*phi2*phi2p*cos(phi2) - 128*a1*Power(phi2p,2)*cos(phi2) - 128*a2*Power(phi2p,2)*cos(phi2) + 10*l0*phi1*Power(phi2p,2)*cos(phi2) - 10*l0*phi2*Power(phi2p,2)*cos(phi2) - 128*a1p*phi1p*sin(phi1) - 128*a2p*phi1p*sin(phi1) + 15*l0*Power(phi1p,2)*sin(phi1) + 256*a1p*phi2p*sin(phi1) + 256*a2p*phi2p*sin(phi1) - 50*l0*phi1p*phi2p*sin(phi1) + 20*l0*Power(phi2p,2)*sin(phi1) - 128*a1p*phi1p*sin(phi1 - 2*phi2) - 128*a2p*phi1p*sin(phi1 - 2*phi2) + 15*l0*Power(phi1p,2)*sin(phi1 - 2*phi2) - 10*l0*phi1p*phi2p*sin(phi1 - 2*phi2) + 144*phi1p*y1p*sin(phi1 - phi2) - 144*phi2p*y1p*sin(phi1 - phi2) - 144*phi1p*y2p*sin(phi1 - phi2) + 144*phi2p*y2p*sin(phi1 - phi2) - 5*l0*Power(phi2p,2)*sin(2*phi1 - phi2) + phi2p*(256*a1p + 256*a2p - 40*l0*phi1p + 25*l0*phi2p)*sin(phi2)))/576.;
     dhLqJp(0,3) = (-2*Power(Sec((phi1 - phi2)/2.),3)*(Power(phi1p,2)*sin((phi1 - 3*phi2)/2.) - Power(phi2p,2)*sin((3*phi1 - phi2)/2.) + (Power(phi1p,2) - 4*phi1p*phi2p + Power(phi2p,2))*sin((phi1 + phi2)/2.)))/9.;
@@ -1005,19 +1005,19 @@ namespace MBSimFlexibleBody {
     return Dhz;
   }
 
-  Vec3 FiniteElement1s21RCM::getPosition(const fmatvec::Vec& qElement, double s) {
+  Vec3 FiniteElement1s21RCM::getPosition(const Vec& qElement, double s) {
     throw MBSim::MBSimError("(FiniteElement1s21RCM::getPosition): not implemented!");
   }
 
-  SqrMat3 FiniteElement1s21RCM::getOrientation(const fmatvec::Vec& qElement, double s) {
+  SqrMat3 FiniteElement1s21RCM::getOrientation(const Vec& qElement, double s) {
     throw MBSim::MBSimError("(FiniteElement1s21RCM::getOrientation): not implemented!");
   }
 
-  Vec3 FiniteElement1s21RCM::getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s) {
+  Vec3 FiniteElement1s21RCM::getVelocity (const Vec& qElement, const Vec& qpElement, double s) {
     throw MBSim::MBSimError("(FiniteElement1s21RCM::getVelocity): not implemented!");
   }
 
-  Vec3 FiniteElement1s21RCM::getAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s) {
+  Vec3 FiniteElement1s21RCM::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
     throw MBSim::MBSimError("(FiniteElement1s21RCM::getAngularVelocity): not implemented!");
   }
 

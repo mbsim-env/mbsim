@@ -21,9 +21,6 @@
 #define _FLEXIBLE_BODY_1S_21_RCM_H_
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/spineextrusion.h>
-#endif
 
 namespace MBSimFlexibleBody {
 
@@ -60,11 +57,14 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements();
+
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+
       virtual void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false);
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ));
+
       virtual fmatvec::Vec3 getPosition(double t, double s);
       virtual fmatvec::SqrMat3 getOrientation(double t, double s);
       virtual fmatvec::Vec3 getWs(double t, double s);
@@ -97,7 +97,6 @@ namespace MBSimFlexibleBody {
        */
       void setNumberElements(int n);
       int getNumberElements(){return Elements;}
-      void setLength(double L_) { L = L_; }
       double getLength(){return L;}
       void setEModul(double E_) { E = E_; }
       void setCrossSectionalArea(double A_) { A = A_; }
@@ -107,10 +106,6 @@ namespace MBSimFlexibleBody {
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
       void setElementPlotList(fmatvec::VecInt plotElements_) {plotElements = plotElements_;}
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
-#endif
-      double getLength() const { return L; }
       /***************************************************/
 
       /**
@@ -158,11 +153,6 @@ namespace MBSimFlexibleBody {
       int Elements;
 
       /**
-       * \brief length of beam
-       */
-      double L;
-
-      /**
        * \brief length of one finite element
        */
       double l0;
@@ -206,11 +196,6 @@ namespace MBSimFlexibleBody {
        * \brief variables to plot in addition to state
        */
       fmatvec::VecInt plotElements;
-
-      /**
-       * \brief flag for open (cantilever beam) or closed (rings) structures
-       */
-      bool openStructure;
 
       /**
        * \brief flag for testing if beam is initialised

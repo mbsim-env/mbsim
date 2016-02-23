@@ -42,7 +42,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBody1s(name), Elements(0), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false), sOld(-1e12) {
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure) : FlexibleBody1s(name, openStructure), Elements(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), initialized(false), sOld(-1e12) {
   }
 
   void FlexibleBody1s21RCM::BuildElements() {
@@ -234,7 +234,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::init(InitStage stage) {
     if (stage == unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
 
       initialized = true;
 
@@ -261,44 +261,19 @@ namespace MBSimFlexibleBody {
         plotColumns.push_back("Dal (" + numtostr(plotElements(i)) + ")"); // 6
         plotColumns.push_back("Dalp(" + numtostr(plotElements(i)) + ")"); // 7
       }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*) openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
-#endif
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
     }
     else
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
   }
 
   void FlexibleBody1s21RCM::plot(double t, double dt) {
-    if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if (getPlotFeature(openMBV) == enabled && openMBVBody) {
-        vector<double> data;
-        data.push_back(t);
-        double ds = openStructure ? L / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 1) : L / (((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints() - 2);
-        for (int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody.get())->getNumberOfSpinePoints(); i++) {
-          Vec3 X = getPositions(ds * i);
-          Vec3 tmp(NONINIT);
-          tmp(0) = X(0);
-          tmp(1) = X(1);
-          tmp(2) = 0.; // temporary vector used for compensating planar description
-          Vec pos = R->getPosition() + R->getOrientation() * tmp;
-          data.push_back(pos(0)); // global x-position
-          data.push_back(pos(1)); // global y-position
-          data.push_back(pos(2)); // global z-position
-          data.push_back(0.); // local twist
-        }
-        ((OpenMBV::SpineExtrusion*) openMBVBody.get())->append(data);
-      }
-#endif
-    }
     for (int i = 0; i < plotElements.size(); i++) {
       Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(getqElement(plotElements(i)), getuElement(plotElements(i)));
       for (int j = 0; j < elementData.size(); j++)
         plotVector.push_back(elementData(j));
     }
-    FlexibleBodyContinuum<double>::plot(t, dt);
+    FlexibleBody1s::plot(t, dt);
   }
 
   void FlexibleBody1s21RCM::setNumberElements(int n) {
@@ -393,7 +368,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::initInfo() {
-    FlexibleBodyContinuum<double>::init(unknownStage);
+    FlexibleBody1s::init(unknownStage);
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");
     for (int i = 0; i < Elements; i++) {

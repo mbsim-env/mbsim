@@ -18,14 +18,16 @@
  */
 
 #include <config.h>
-#include <boost/swap.hpp>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_ancf.h"
-#include "mbsim/mbsim_event.h"
-#include "mbsim/dynamic_system_solver.h"
+#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_ancf.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/mbsim_event.h"
+#include <boost/swap.hpp>
 
 using namespace fmatvec;
 using namespace std;
@@ -34,7 +36,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
 
-  FlexibleBody1s33ANCF::FlexibleBody1s33ANCF(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), Elements(0), L(0.), l0(0.), E(0.), G(0.), A(0.), I0(0.), I1(0.), I2(0.), rho(0), rc1(0.), rc2(0.), openStructure(openStructure_), initialised(false) {}
+  FlexibleBody1s33ANCF::FlexibleBody1s33ANCF(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), Elements(0), l0(0.), E(0.), G(0.), A(0.), I0(0.), I1(0.), I2(0.), rho(0), rc1(0.), rc2(0.), initialised(false) { }
 
   void FlexibleBody1s33ANCF::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
     int j = 6 * n;
@@ -75,145 +77,132 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33ANCF::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
-    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
-      double sLocal;
-      int currentElement;
-      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // Lagrange parameter of affected FE
-
-      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
-        Vec tmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->computePosition(qElement[currentElement],ContourPointData(sLocal));
-        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp); // position
-      }
-
-      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-        Vec tmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->tangent(qElement[currentElement],sLocal);
-        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
-      }
-
-      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-        Vec tmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->normal(qElement[currentElement],sLocal);
-        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
-      }
-
-      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-        Vec tmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->binormal(qElement[currentElement],sLocal);
-        cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation() * tmp); // binormal 
-      }
-      
-      if(ff==Frame::velocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
-        Vec tmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->computeVelocity(qElement[currentElement],uElement[currentElement],ContourPointData(sLocal));
-        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp); //velocity
-      }
-
-      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
-        Vec tmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->computeAngularVelocity(qElement[currentElement],uElement[currentElement],ContourPointData(sLocal));
-        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp); // angular velocity
-      }
-    }
-
-    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
-      const int &node = cp.getNodeNumber();
-
-      Vec tmp(3,NONINIT);
-
-      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
-        tmp(0) = q(6*node+0); tmp(1) = q(6*node+1); tmp(2) = q(6*node+2); 
-        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp); // position
-      }
-
-      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-        tmp(0) =  q(6*node+3); tmp(1) = q(6*node+4); tmp(2) = q(6*node+5);
-        tmp /= nrm2(tmp);
-        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
-      }
-
-      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-        tmp(0) =  q(6*node+3); tmp(1) = -q(6*node+4); tmp(2) = 0.;
-        tmp /= nrm2(tmp);
-        boost::swap(tmp(0),tmp(1));
-        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
-      }
-
-      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-        tmp(0) =  q(6*node+3); tmp(1) = q(6*node+4); tmp(2) = q(6*node+5);
-        tmp /= nrm2(tmp);
-
-        Vec normale(3,NONINIT);
-        normale(0) =  q(6*node+3); normale(1) = -q(6*node+4); normale(2) = 0.;
-        normale /= nrm2(normale);
-        boost::swap(normale(0),normale(1));
-
-        Vec binormale = crossProduct(normale,tmp);
-        cp.getFrameOfReference().getOrientation().set(2, R->getOrientation() * binormale); // binormal
-      }
-
-      if(ff==Frame::velocity || ff==Frame::velocities || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-        tmp(0) = u(6*node+0); tmp(1) = u(6*node+1); tmp(2) = u(6*node+2);
-        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp); // velocity
-      }
-
-      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
-        THROW_MBSIMERROR("(FlexibleBody1sANCF::updateKinematicsForFrame): angularVelocity not implemented for ContourPointData::node");
-        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = 0.;
-        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp); // angular velocity
-      }
-    }
-    else THROW_MBSIMERROR("(FlexibleBody1sANCF::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
-
-    if(frame!=0) { // frame should be linked to contour point data
-      frame->setPosition       (cp.getFrameOfReference().getPosition());
-      frame->setOrientation    (cp.getFrameOfReference().getOrientation());
-      frame->setVelocity       (cp.getFrameOfReference().getVelocity());
-      frame->setAngularVelocity(cp.getFrameOfReference().getAngularVelocity());
-    }
+  Vec3 FlexibleBody1s33ANCF::getPosition(double t, double s) {
+    double sLocal;
+    int currentElement;
+    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
+    return R->getPosition(t) + R->getOrientation(t) * static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getPosition(getqElement(currentElement),sLocal);
   }
 
-  void FlexibleBody1s33ANCF::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    Index All(0,6-1);
-    Mat Jacobian(qSize,6,INIT,0.);
+  SqrMat3 FlexibleBody1s33ANCF::getOrientation(double t, double s) {
+    double sLocal;
+    int currentElement;
+    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
+    return R->getOrientation(t) * static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal);
+  }
 
-    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
-      double sLocal;
-      int currentElement;
-      BuildElement(cp.getLagrangeParameterPosition()(0),sLocal,currentElement);
-      Mat Jtmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
-      if(currentElement<Elements-1 || openStructure) {
-        Jacobian(Index(6*currentElement,6*currentElement+11),All) = Jtmp;
-      }
-      else { // ringstructure
-        Jacobian(Index(6*currentElement,6*currentElement+5),All) = Jtmp(Index(0,5),All);
-        Jacobian(Index(               0,                 5),All) = Jtmp(Index(6,11),All);
-      }
+  Vec3 FlexibleBody1s33ANCF::getWs(double t, double s) {
+    double sLocal;
+    int currentElement;
+    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
+    return R->getOrientation(t) * static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getTangent(getqElement(currentElement),sLocal);
+  }
+
+  void FlexibleBody1s33ANCF::updatePositions(double t, Frame1s *frame) {
+    double sLocal;
+    int currentElement;
+    BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getPosition(getqElement(currentElement),sLocal));
+    frame->setOrientation(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal));
+  }
+
+  void FlexibleBody1s33ANCF::updateVelocities(double t, Frame1s *frame) {
+    double sLocal;
+    int currentElement;
+    BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
+    frame->setVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
+    frame->setAngularVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getAngularVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
+  }
+
+  void FlexibleBody1s33ANCF::updateAccelerations(double t, Frame1s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s33ANCF::updateJacobians(double t, Frame1s *frame, int j) {
+    Index All(0, 3 - 1);
+    Mat Jacobian(qSize, 3, INIT, 0.);
+
+    double sLocal;
+    int currentElement;
+    BuildElement(frame->getParameter(),sLocal,currentElement);
+    Mat Jtmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
+    if(currentElement<Elements-1 || openStructure) {
+      Jacobian(Index(6*currentElement,6*currentElement+11),All) = Jtmp;
     }
-    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
-      THROW_MBSIMERROR("(FlexibleBody1sANCF::updateJacobiansForFrame): not implemented for ContourPointData::node");
-      int node = cp.getNodeNumber();
-      Jacobian(6*node,0) = 1.;
-      Jacobian(6*node+1,1) = 1.;
-      Jacobian(6*node+2,2) = -q(4*node+3);
-      Jacobian(6*node+3,2) = q(4*node+2);
-      Jacobian(Index(6*node+2,6*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+    else { // ringstructure
+      Jacobian(Index(6*currentElement,6*currentElement+5),All) = Jtmp(Index(0,5),All);
+      Jacobian(Index(               0,                 5),All) = Jtmp(Index(6,11),All);
     }
-    else THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()*Jacobian(Index(0,qSize-1),Index(0,2)).T());
-    cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()*Jacobian(Index(0,qSize-1),Index(3,5)).T());
+    frame->setJacobianOfTranslation(R->getOrientation(t)*Jacobian(Index(0,qSize-1),Index(0,2)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation(t)*Jacobian(Index(0,qSize-1),Index(3,5)).T(),j);
+  }
 
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
+  void FlexibleBody1s33ANCF::updateGyroscopicAccelerations(double t, Frame1s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
+  }
 
-    if(frame!=0) { // frame should be linked to contour point data
-      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
-      frame->setJacobianOfRotation   (cp.getFrameOfReference().getJacobianOfRotation());
-      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
-      frame->setGyroscopicAccelerationOfRotation   (cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
-    }
+  void FlexibleBody1s33ANCF::updatePositions(double t, NodeFrame *frame) {
+    Vec3 tmp(NONINIT), s(NONINIT), n(NONINIT);
+    int node = frame->getNodeNumber();
+    tmp(0) = q(6*node+0);
+    tmp(1) = q(6*node+1);
+    tmp(2) = q(6*node+2);
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
+    s(0) = q(6*node+3);
+    s(1) = q(6*node+4);
+    s(2) = q(6*node+5);
+    s /= nrm2(s);
+    frame->getOrientation(false).set(0, R->getOrientation() * s);
+    n(0) = q(6*node+3);
+    n(1) = -q(6*node+4);
+    n(2) = 0.;
+    n /= nrm2(n);
+    boost::swap(n(0),n(1));
+    frame->getOrientation(false).set(1, R->getOrientation() * n);
+    frame->getOrientation(false).set(2, R->getOrientation() * crossProduct(n,s));
+  }
+
+  void FlexibleBody1s33ANCF::updateVelocities(double t, NodeFrame *frame) {
+    Vec3 tmp(NONINIT);
+    int node = frame->getNodeNumber();
+    tmp(0) = u(6*node+0);
+    tmp(1) = u(6*node+1);
+    tmp(2) = u(6*node+2);
+    frame->setVelocity(R->getOrientation(t) * tmp);
+    tmp(0) = 0.;
+    tmp(1) = 0.;
+    tmp(2) = 0.;
+//    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateKinematicsForFrame): angularVelocity not implemented.");
+    frame->setAngularVelocity(R->getOrientation(t) * tmp);
+  }
+
+  void FlexibleBody1s33ANCF::updateAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s33ANCF::updateJacobians(double t, NodeFrame *frame, int j) {
+    Index All(0, 3 - 1);
+    Mat Jacobian(qSize, 3, INIT, 0.);
+    int node = frame->getNodeNumber();
+
+    Jacobian(6*node,0) = 1.;
+    Jacobian(6*node+1,1) = 1.;
+    Jacobian(6*node+2,2) = -q(4*node+3);
+    Jacobian(6*node+3,2) = q(4*node+2);
+    Jacobian(Index(6*node+2,6*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+
+    frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
+  }
+
+  void FlexibleBody1s33ANCF::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33ANCF::init(InitStage stage) {
     if(stage==unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
 
       initialised = true;
 
@@ -229,37 +218,12 @@ namespace MBSimFlexibleBody {
       }
       initM();
     }
-    else if(stage==plotting) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
-#endif
-      FlexibleBodyContinuum<double>::init(stage);
-    }
     else
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
   }
 
   void FlexibleBody1s33ANCF::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
-        vector<double> data;
-        data.push_back(t);
-        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
-        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
-          Vec X = computeState(ds*i);
-
-          Vec pos = R->getPosition() + R->getOrientation() * X(0,2);
-          data.push_back(pos(0)); // global x-position
-          data.push_back(pos(1)); // global y-position
-          data.push_back(pos(2)); // global z-position
-          data.push_back(0.); // local twist
-        }
-        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
-      }
-#endif
-    }
-    FlexibleBodyContinuum<double>::plot(t,dt);
+    FlexibleBody1s::plot(t,dt);
   }
 
   void FlexibleBody1s33ANCF::setNumberElements(int n){
@@ -273,13 +237,6 @@ namespace MBSimFlexibleBody {
     uSize[1] = qSize;
     q0.resize(qSize);
     u0.resize(uSize[0]);
-  }
-
-  Vec FlexibleBody1s33ANCF::computeState(double sGlobal) {
-    double sLocal;
-    int currentElement;
-    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->StateBalken(qElement[currentElement],uElement[currentElement],sLocal);
   }
 
   void FlexibleBody1s33ANCF::BuildElements() {
@@ -297,6 +254,7 @@ namespace MBSimFlexibleBody {
         uElement[i](6,11) << u(0,5);
       }
     }
+    updEle = false;
   }
 
   void FlexibleBody1s33ANCF::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
@@ -329,7 +287,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::initInfo() {
-    FlexibleBodyContinuum<double>::init(unknownStage);
+    FlexibleBody1s::init(unknownStage);
     l0 = L/Elements;
     Vec g = Vec("[0.;0.;0.]");
     for(int i=0;i<Elements;i++) {
@@ -372,5 +330,12 @@ namespace MBSimFlexibleBody {
     }
   }
 
-}
+  void FlexibleBody1s33ANCF::setCurlRadius(double rc1_, double rc2_) {
+    rc1 = rc1_;
+    rc2 = rc2_;
+    if(initialised)
+      for(int i = 0; i < Elements; i++)
+        static_cast<FiniteElement1s33ANCF*>(discretization[i])->setCurlRadius(rc1,rc2);
+  }
 
+}
