@@ -53,5 +53,4 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif /* _FRAME_H_ */
-
+#endif

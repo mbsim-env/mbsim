@@ -36,8 +36,13 @@ namespace MBSimFlexibleBody {
       std::string getType() const { return "NodeFrame"; }
 
       void setNodeNumber(int node_) { node = node_; }
-
       int getNodeNumber() const { return node; }
+
+      void updatePositions(double t);
+      void updateVelocities(double t);
+      void updateAccelerations(double t);
+      void updateJacobians(double t, int j=0);
+      void updateGyroscopicAccelerations(double t);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -51,5 +56,4 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif /* _FRAME_H_ */
-
+#endif
