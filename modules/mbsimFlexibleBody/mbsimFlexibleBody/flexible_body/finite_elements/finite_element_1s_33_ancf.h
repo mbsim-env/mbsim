@@ -54,11 +54,6 @@ namespace MBSimFlexibleBody {
        */
       explicit FiniteElement1s33ANCF(double sl0, double srho, double sE, double sG, double sA, double sI0, double sI1, double sI2, fmatvec::Vec sg);
 
-      /**
-       * \destructor
-       */
-      virtual ~FiniteElement1s33ANCF();
-
       /* INHERITED INTERFACE */
       virtual const fmatvec::SymMat& getM() const { return M; }
       virtual const fmatvec::Vec& geth() const { return h; }

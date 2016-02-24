@@ -88,13 +88,6 @@ namespace MBSimFlexibleBody {
       void setLehrDamping(double D);
       /***************************************************/
 
-      /**
-       * \brief return the planar state at a contour point
-       * \param generalised positions
-       * \param generalised velocities
-       * \param contour point
-       * \return planar state
-       */
       fmatvec::Vec3 getPositions(const fmatvec::Vec& qElement, double s);
 
       fmatvec::Vec3 getVelocities(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
