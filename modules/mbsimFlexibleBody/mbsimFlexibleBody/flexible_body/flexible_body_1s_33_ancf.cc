@@ -158,7 +158,7 @@ namespace MBSimFlexibleBody {
     n /= nrm2(n);
     boost::swap(n(0),n(1));
     frame->getOrientation(false).set(1, R->getOrientation() * n);
-    frame->getOrientation(false).set(2, R->getOrientation() * crossProduct(n,s));
+    frame->getOrientation(false).set(2, R->getOrientation() * crossProduct(s,n));
   }
 
   void FlexibleBody1s33ANCF::updateVelocities(double t, NodeFrame *frame) {
