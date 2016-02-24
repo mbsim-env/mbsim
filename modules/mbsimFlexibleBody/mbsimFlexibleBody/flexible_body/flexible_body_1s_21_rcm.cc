@@ -42,7 +42,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure) : FlexibleBody1s(name, openStructure), Elements(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), initialized(false), sOld(-1e12) {
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), Elements(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), initialized(false), sOld(-1e12) {
   }
 
   void FlexibleBody1s21RCM::BuildElements() {
