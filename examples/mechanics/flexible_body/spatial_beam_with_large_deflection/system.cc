@@ -3,8 +3,10 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
-#include "mbsim/contour.h"
 #include "mbsim/contours/point.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinetics/kinetics.h"
@@ -14,7 +16,6 @@
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
 #include <openmbvcppinterface/polygonpoint.h>
-#include <openmbvcppinterface/arrow.h>
 #endif
 
 using namespace MBSimFlexibleBody;
@@ -53,7 +54,7 @@ System::System(const string &projectName) :
   rod->setDensity(rho);
   rod->setFrameOfReference(getFrameI());
   rod->setNumberElements(elements);
-  rod->setCuboid(b0, b0);
+//  rod->setCuboid(b0, b0);
 
   Vec q0 = Vec(10 * elements + 6, INIT, 0.);
   for (int i = 1; i <= elements; i++)
@@ -79,6 +80,17 @@ System::System(const string &projectName) :
   cuboid->setContour(rectangle);
   rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
+
+  FlexibleBand *top = new FlexibleBand("Top");
+  Vec nodes(elements+1);
+  for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
+  top->setNodes(nodes);
+  top->setWidth(b0);
+  Vec2 RrRP;
+  RrRP(0) = 0.5*b0;
+  top->setRelativePosition(RrRP);
+  top->setRelativeOrientation(M_PI);
+  rod->addContour(top);
 
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3, INIT, 0.);
@@ -111,13 +123,11 @@ System::System(const string &projectName) :
   contact->connect(ball->getContour("Point"), rod->getContour("Top"));
   contact->enableOpenMBVNormalForce();
   contact->enableOpenMBVTangentialForce();
-  contact->enableOpenMBVContactPoints();
+  contact->enableOpenMBVContactPoints(0.1);
 
   this->addLink(contact);
 
-  ContourPointData cpdata;
-  cpdata.getContourParameterType() = ContourPointData::continuum;
-  rod->addFrame("RJ", cpdata);
+  rod->addFrame(new Frame1s("RJ"));
   Joint *joint = new Joint("Clamping");
   joint->connect(this->getFrame("I"), rod->getFrame("RJ"));
   joint->setForceDirection(Mat(3, 3, EYE));
@@ -126,4 +136,3 @@ System::System(const string &projectName) :
   joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
 }
-

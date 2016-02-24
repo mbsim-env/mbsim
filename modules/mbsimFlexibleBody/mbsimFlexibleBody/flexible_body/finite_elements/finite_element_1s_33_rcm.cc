@@ -17,7 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm.h"
 #include "mbsimFlexibleBody/utils/revcardan.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/trafo33RCM.h"
@@ -29,27 +29,27 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33RCM::FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const Vec& g_,RevCardanPtr ag_) : l0(l0_),rho(rho_),A(A_),E(E_),G(G_),I1(I1_),I2(I2_),I0(I0_),g(g_),k10(0.),k20(0.),epstD(0.),k0D(0.),M(16,INIT,0.),h(16,INIT,0.),dhdq(16,INIT,0.),dhdu(16,INIT,0.),Damp(16,INIT,0.),l0h2(l0*l0),l0h3(l0h2*l0),x_Old(-l0),X(12,INIT,0.),qG_Old(16,INIT,0.),qGt_Old(16,INIT,0.),tol_comp(1e-8),drS(3,16,INIT,0.),depstil(16,INIT,0.),dk0(16,INIT,0.),ag(ag_),tf(new Trafo33RCM(ag,l0)),wt(new Weight33RCM(l0,l0h2,l0h3,tf)) {
+  FiniteElement1s33RCM::FiniteElement1s33RCM(double l0_, double rho_, double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_, const RevCardanPtr &ag_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), k10(0.), k20(0.), epstD(0.), k0D(0.), M(16, INIT,0.), h(16,INIT,0.), dhdq(16,INIT,0.), dhdu(16,INIT,0.), Damp(16,INIT,0.), l0h2(l0*l0), l0h3(l0h2*l0), x_Old(-l0), qG_Old(16,INIT,0.), qGt_Old(16,INIT,0.), tol_comp(1e-8), drS(3,16,INIT,0.), depstil(16,INIT,0.), dk0(16,INIT,0.), ag(ag_), tf(new Trafo33RCM(ag,l0)), wt(new Weight33RCM(l0,l0h2,l0h3,tf)) {
     computedrS();
     computedepstil();
     computedk0();			 
   }
 
-  void FiniteElement1s33RCM::setCurlRadius(double R1,double R2) {
+  void FiniteElement1s33RCM::setCurlRadius(double R1, double R2) {
     if (fabs(R1)>epsroot()) k10 = 1./R1;
     if (fabs(R2)>epsroot()) k20 = 1./R2;
 
     wt->setCurvature(k10,k20);
   }
 
-  void FiniteElement1s33RCM::setMaterialDamping(double epstD_,double k0D_) {
+  void FiniteElement1s33RCM::setMaterialDamping(double epstD_, double k0D_) {
     epstD = epstD_;
     k0D = k0D_;
     Damp(6,6) += -epstD;
     Damp(15,15) += -k0D;
   }
 
-  void FiniteElement1s33RCM::setLehrDamping(double epstL,double k0L) {
+  void FiniteElement1s33RCM::setLehrDamping(double epstL, double k0L) {
     /* elongation */
     double omgepst = sqrt(12.*E/(rho*l0h2)); // eigenfrequency
     epstD += rho*A*l0h3*epstL*omgepst/6.;
@@ -90,8 +90,8 @@ namespace MBSimFlexibleBody {
     M = JTMJ(MI,tf->getJIG());	
   }
 
-  void FiniteElement1s33RCM::computeh(const Vec& qG,const Vec& qGt) { 
-    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) {
+  void FiniteElement1s33RCM::computeh(const Vec& qG, const Vec& qGt) {
+//    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) {
       wt->computeintD(qG,qGt);
 
       /* preliminaries for EoM */
@@ -196,9 +196,9 @@ namespace MBSimFlexibleBody {
       /* global description */
       h = tf->getJIG().T()*hIZ;
 
-      qG_Old = qG.copy();
-      qGt_Old = qGt.copy();
-    }
+      qG_Old = qG;
+      qGt_Old = qGt;
+    //}
   }
 
   void FiniteElement1s33RCM::computedhdz(const Vec& qG, const Vec& qGt) {
@@ -233,8 +233,9 @@ namespace MBSimFlexibleBody {
     computeh(qG,qGt);
   }
 
-  double FiniteElement1s33RCM::computeKineticEnergy(const Vec& qG,const Vec& qGt) {
-    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) 	wt->computeint(qG,qGt);		
+  double FiniteElement1s33RCM::computeKineticEnergy(const Vec& qG, const Vec& qGt) {
+//    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp)
+    wt->computeint(qG,qGt);
     Vec S = tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt();
 
     return 0.5*rho
@@ -250,7 +251,8 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s33RCM::computeGravitationalEnergy(const Vec& qG) {
-    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
+//    if(nrm2(qG-qG_Old)>tol_comp)
+    wt->computewhcoefPos(qG);
 
     double Iwh1 = wt->intv(wt->getwh1coef());
     double Iwh2 = wt->intv(wt->getwh2coef());
@@ -259,7 +261,8 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s33RCM::computeElasticEnergy(const Vec& qG) {
-    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
+//    if(nrm2(qG-qG_Old)>tol_comp)
+      wt->computewhcoefPos(qG);
 
     double Iwh1xwh1x = wt->intvw(wt->getwh1coef(),wt->getwh1coef());
     double Iwh2xwh2x = wt->intvw(wt->getwh2coef(),wt->getwh2coef());
@@ -270,10 +273,11 @@ namespace MBSimFlexibleBody {
     return 0.5*(E*A*eps*eps*l0+E*I1*Iwh1xxwh1xx+E*I2*Iwh2xxwh2xx+G*I0*l0*tf->getk0()*tf->getk0());
   }
 
-  Mat FiniteElement1s33RCM::computeJXqG(const Vec& qG,double x) {
+  Mat FiniteElement1s33RCM::computeJXqG(const Vec& qG, double x) {
     Mat JXqG(16,6);
 
-    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPosD(qG);
+//    if(nrm2(qG-qG_Old)>tol_comp)
+      wt->computewhcoefPosD(qG);
 
     RowVec wwt(4);
     wwt(3) = x*x;
@@ -329,13 +333,36 @@ namespace MBSimFlexibleBody {
 
     JXqG = tf->getJIG().T()*JXqG; /* transformation global coordinates */
 
-    return JXqG.copy();
+    return JXqG;
   }
 
-  const Vec& FiniteElement1s33RCM::computeState(const Vec& qG,const Vec& qGt,double x) {	
-    if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && fabs(x-x_Old)<epsroot()) return X;
-    else {
-      if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) wt->computewhcoefVel(qG,qGt);
+  Vector<Fixed<6>, double> FiniteElement1s33RCM::getPositions(const Vec& qG, double x) {
+//    if(nrm2(qG-qG_Old)<tol_comp && fabs(x-x_Old)<epsroot()) return X;
+//    else {
+//      if(nrm2(qG-qG_Old)>tol_comp)
+        wt->computewhcoefPos(qG);
+
+      Vec wh1 = wt->computew(wt->getwh1coef(),x); // position and velocity
+      Vec wh2 = wt->computew(wt->getwh2coef(),x); // position and velocity
+
+      Vec w1 = wt->computew(wt->getw1coef(),x); // only position
+      Vec w2 = wt->computew(wt->getw2coef(),x); // position and velocity
+
+      Vector<Fixed<6>, double> X(NONINIT);
+      X.set(Index(0,2),tf->getrS()+(1.+tf->getepstil())*x*tf->gettS()+wh1(0)*tf->getnS()+wh2(0)*tf->getbS()); /* pos */
+      X.set(Index(3,5),tf->getpS());
+      X(3) += sin((tf->getpS())(1))*w2(1)+tf->getk0()*x;	
+      X(4) += w1(1);
+      X(5) += w2(1);/* angles */
+      return X;
+//    }
+  }
+
+  Vector<Fixed<6>, double> FiniteElement1s33RCM::getVelocities(const Vec& qG, const Vec& qGt, double x) {
+  //  if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && fabs(x-x_Old)<epsroot()) return X;
+  //  else {
+//      if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp)
+      wt->computewhcoefVel(qG,qGt);
 
       Vec wh1 = wt->computew(wt->getwh1coef(),x); // position and velocity
       Vec wh2 = wt->computew(wt->getwh2coef(),x); // position and velocity
@@ -347,23 +374,18 @@ namespace MBSimFlexibleBody {
       Vec w1t = wt->computew(wt->getw1tcoef(),x); // only velocity
       Vec w2t = wt->computew(wt->getw2tcoef(),x); // only velocity
 
-      X(0,2) = tf->getrS()+(1.+tf->getepstil())*x*tf->gettS()+wh1(0)*tf->getnS()+wh2(0)*tf->getbS(); /* pos */
-      X(3,5) = tf->getpS();	
-      X(3) += sin((tf->getpS())(1))*w2(1)+tf->getk0()*x;	
-      X(4) += w1(1);
-      X(5) += w2(1);/* angles */
-      X(6,8) = tf->getrSt()+(tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt())*x+wh1t(0)*tf->getnS()+wh1(0)*tf->getnSt()+wh2t(0)*tf->getbS()+wh2(0)*tf->getbSt(); /* vel */
-      X(9,11) = tf->getpSt(); 
-      X(9) += cos((tf->getpS())(1))*(tf->getpSt())(1)*w2(1)+sin((tf->getpS())(1))*w2t(1)+tf->getk0t()*x;
-      X(10) += w1t(1);
-      X(11) += w2t(1); /* time differentiated angles */
-
+      Vector<Fixed<6>, double> X(NONINIT);
+      X.set(Index(0,2),tf->getrSt()+(tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt())*x+wh1t(0)*tf->getnS()+wh1(0)*tf->getnSt()+wh2t(0)*tf->getbS()+wh2(0)*tf->getbSt()); /* vel */
+      X.set(Index(3,5),tf->getpSt());
+      X(3) += cos((tf->getpS())(1))*(tf->getpSt())(1)*w2(1)+sin((tf->getpS())(1))*w2t(1)+tf->getk0t()*x;
+      X(4) += w1t(1);
+      X(5) += w2t(1); /* time differentiated angles */
       return X;
-    }
   }
 
-  Vec FiniteElement1s33RCM::computeData(const Vec& qG,const Vec& qGt) {
-    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) tf->computezI(qG,qGt);	
+  Vec FiniteElement1s33RCM::computeData(const Vec& qG, const Vec& qGt) {
+    //if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp)
+    tf->computezI(qG,qGt);
 
     Vec Data(16);
     Data(0,2) = tf->getrS(); /* rS */
@@ -375,12 +397,12 @@ namespace MBSimFlexibleBody {
     Data(14) = tf->getk0t(); /* k0t */
     Data(15) = tf->getepstilt(); /* epstilt */
 
-    return Data.copy();
+    return Data;
   }
 
-  double FiniteElement1s33RCM::computePhysicalStrain(const Vec& qG,const Vec& qGt) {
-    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp)
-      wt->computeintD(qG,qGt);
+  double FiniteElement1s33RCM::computePhysicalStrain(const Vec& qG, const Vec& qGt) {
+    //if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp)
+    wt->computeintD(qG,qGt);
 
     return tf->getepstil() + (wt->getIwh1xwh1x() + wt->getIwh2xwh2x()) / (2. * l0);
   }
@@ -400,5 +422,20 @@ namespace MBSimFlexibleBody {
     dk0(15) = 1.;
   }
 
-}
+  Vec3 FiniteElement1s33RCM::getPosition(const Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33RCM::getPosition): not implemented!");
+  }
 
+  SqrMat3 FiniteElement1s33RCM::getOrientation(const Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33RCM::getOrientation): not implemented!");
+  }
+
+  Vec3 FiniteElement1s33RCM::getVelocity (const Vec& qElement, const Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33RCM::getVelocity): not implemented!");
+  }
+
+  Vec3 FiniteElement1s33RCM::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33RCM::getAngularVelocity): not implemented!");
+  }
+
+}
