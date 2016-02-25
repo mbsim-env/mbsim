@@ -44,16 +44,15 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointCircle::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    const Vec3 WrD = -circle->getFrame()->getPosition(t) + point->getFrame()->getPosition(t);
+    const Vec3 WrD = point->getFrame()->getPosition(t) - circle->getFrame()->getPosition(t);
     
     cFrame[icircle]->getOrientation(false).set(0, WrD/nrm2(WrD));
-    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icircle]->getOrientation(false).col(0));
-    
-    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation().col(2));
-    cFrame[ipoint]->getOrientation(false).set(2, point->getFrame()->getOrientation().col(2));
-    
+    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(false).col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2), cFrame[icircle]->getOrientation(false).col(0)));
+
+    cFrame[ipoint]->getOrientation(false).set(0, -cFrame[icircle]->getOrientation(false).col(0));
     cFrame[ipoint]->getOrientation(false).set(1, -cFrame[icircle]->getOrientation(false).col(1));
+    cFrame[ipoint]->getOrientation(false).set(2, cFrame[icircle]->getOrientation().col(2));
     
     cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + cFrame[icircle]->getOrientation(false).col(0)*circle->getRadius());
     cFrame[ipoint]->setPosition(point->getFrame()->getPosition());

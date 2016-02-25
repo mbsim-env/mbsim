@@ -81,7 +81,7 @@ namespace MBSim {
     cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(t,cFrame[iplanarcontour]->getZeta()));
     cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(t,cFrame[iplanarcontour]->getZeta()));
     cFrame[icircle]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
-    cFrame[icircle]->getOrientation(false).set(2, cFrame[icircle]->getOrientation(false).col(2));
+    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(t).col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
     cFrame[iplanarcontour]->setPosition(planarcontour->getPosition(t,cFrame[iplanarcontour]->getZeta()));
     cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
