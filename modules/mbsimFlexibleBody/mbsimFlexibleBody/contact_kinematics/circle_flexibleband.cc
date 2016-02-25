@@ -34,12 +34,12 @@ namespace MBSimFlexibleBody {
 
   class ContactKinematicsCircleNode : public MBSim::ContactKinematics {
     public:
-      ContactKinematicsCircleNode(double rCircle_, double wBand_, double node_) : rCircle(rCircle_), wBand(wBand_), node(node_), circle(0), band(0) { }
+      ContactKinematicsCircleNode(double node_) : node(node_), circle(0), band(0) { }
       virtual void assignContours(const vector<Contour*> &contour);
       virtual void updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index = 0);
       virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSim::MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
     private:
-      double rCircle, wBand, node;
+      double node;
       int icircle, inode;
       MBSim::Circle *circle;
       FlexibleBand *band;
@@ -90,12 +90,11 @@ namespace MBSimFlexibleBody {
 
   class ContactKinematicsCircleNodeInterpolation : public MBSim::ContactKinematics {
     public:
-      ContactKinematicsCircleNodeInterpolation(double rCircle_, double wBand_, Vec nodes_) : rCircle(rCircle_), wBand(wBand_), nodes(nodes_), circle(0), band(0) { }
+      ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(0), band(0) { }
       virtual void assignContours(const vector<Contour*> &contour);
       virtual void updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index = 0);
       virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSim::MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
     private:
-      double rCircle, wBand;
       Vec nodes;
       int icircle, inode;
       MBSim::Circle *circle;
@@ -166,9 +165,6 @@ namespace MBSimFlexibleBody {
       circle = static_cast<Circle*>(contour[1]);
       band = static_cast<FlexibleBand*>(contour[0]);
     }
-    wBand = band->getWidth();
-    hBand = 0;
-    rCircle = circle->getRadius();
 
     staticNodes = band->getEtaNodes();
     numberOfPotentialContactPoints = 2 * possibleContactsPerNode * band->getEtaNodes().size() - 1;  // dies braeuchte einen eigenen init-Call
@@ -179,12 +175,12 @@ namespace MBSimFlexibleBody {
     cout << possibleContactsPerNode << endl;
     cout << staticNodes.size() << endl;
     for (int i = 0; i < staticNodes.size(); i++) {
-      ContactKinematicsCircleNode *ck = new ContactKinematicsCircleNode(rCircle, wBand, staticNodes(i));
+      ContactKinematicsCircleNode *ck = new ContactKinematicsCircleNode(staticNodes(i));
       ck->assignContours(contour);
       contactKinematics.push_back(ck);
     }
     for (int i = 0; i < numberOfPotentialContactPoints - staticNodes.size(); i++) {
-      ContactKinematicsCircleNodeInterpolation *ck = new ContactKinematicsCircleNodeInterpolation(rCircle, wBand, staticNodes(i, i + 1));
+      ContactKinematicsCircleNodeInterpolation *ck = new ContactKinematicsCircleNodeInterpolation(staticNodes(i, i + 1));
       ck->assignContours(contour);
       contactKinematics.push_back(ck);
     }

@@ -65,31 +65,13 @@ namespace MBSimFlexibleBody {
        */
       int possibleContactsPerNode;
 
-      /**
-       * \brief radius of circle
-       */
-      double rCircle;
-
-      /**
-       * \brief half thickness of band
-       */
-      double hBand;
-
-      /**
-       * \brief width of band
-       */
-      double wBand;
-
       /** 
        * \brief contour classes 
        */
       MBSim::Circle *circle;
       FlexibleBand *band;
 
-      fmatvec::Vec lastContactPositions;
       fmatvec::Vec staticNodes;
-//      double epsTol;
-//      double l0;
 
       std::vector<ContactKinematics*> contactKinematics;
   };
