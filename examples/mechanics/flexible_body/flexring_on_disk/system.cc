@@ -1,12 +1,12 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/objects/rigid_body.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/solid_circle.h"
+#include "mbsim/contours/circle.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
@@ -112,11 +112,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec nodes(nNodes);
   for(int i=0;i<nNodes;i++) nodes(i) = i*beltLength/(nNodes-1);
   top->setNodes(nodes);
-  top->setWidth(b0_contact);
-  top->setCn(Vec("[+1.;0.]"));
-  top->setAlphaStart(0.);
-  top->setAlphaEnd(beltLength);  
-  top->setNormalDistance(0.5*b0_contact);
+  cout << nodes << endl;
+  top->setWidth(0.1);
+  Vec2 r;
+  r(0) = -0.5*b0_contact;
+  top->setRelativePosition(r);
+  top->setRelativeOrientation(M_PI);
   belt->addContour(top);
 
   for(int i=0;i<nDisks;i++) {
@@ -142,18 +143,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //    disk->setTranslation(new LinearTranslation(JacTrans));
     disk->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1.0]")));
 
-    SolidCircle *cDisk = new SolidCircle("cDisk");
+    Circle *cDisk = new Circle("cDisk");
     cDisk->setRadius(radiiDisks(i));
     disk->addContour(cDisk);
     disk->setInitialGeneralizedVelocity(-Vec("[1.0]")*v0*double(sideInOut(i))/radiiDisks(i));
+    cDisk->enableOpenMBV();
     this->addObject(disk);
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
-    cylinder->setRadius(radiiDisks(i));
-    cylinder->setDiffuseColor(0.6666,1,1); 
-    disk->setOpenMBVRigidBody(cylinder);
-#endif
 
     //  ContactKinematicsSolidCircleFlexibleBand *ck = new ContactKinematicsSolidCircleFlexibleBand();
     name.clear();
@@ -171,7 +166,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     contact->enableOpenMBVNormalForce(_scaleLength=0.01);
     contact->enableOpenMBVTangentialForce(_scaleLength=0.01);
-    contact->enableOpenMBVContactPoints(0.02,true);
+    contact->enableOpenMBVContactPoints(0.001,true);
 #endif
     this->addLink(contact);
   }

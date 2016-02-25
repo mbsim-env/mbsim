@@ -10,11 +10,11 @@ int main (int argc, char* argv[]) {
   System *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
-  sys->dropContactMatrices();
   sys->setConstraintSolver(DynamicSystemSolver::FixedPointSingle);
   sys->setImpactSolver(DynamicSystemSolver::FixedPointSingle);
   sys->setStrategy(DynamicSystemSolver::local);
   sys->initialize();
+//  sys->dropContactMatrices(0);
 
   Integrator *integrator;
 
