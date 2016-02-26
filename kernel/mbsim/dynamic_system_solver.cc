@@ -753,6 +753,7 @@ namespace MBSim {
     h[j].init(0);
     Group::updateh(t, j);
     updh[j] = false;
+    checkExitRequest(); // updateh is called by all solvers
   }
 
   Mat DynamicSystemSolver::dhdq(double t, int lb, int ub) {
@@ -1363,6 +1364,21 @@ namespace MBSim {
     raise(SIGSEGV);
   }
 
+  void DynamicSystemSolver::checkExitRequest() {
+    if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
+      msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
+      exit(1);
+    }
+
+    if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
+      msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
+      H5::File::flushAllFiles(); // flush files
+      integratorExitRequest = true;
+    }
+
+    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
+  }
+
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
     if (formatH5) {
       H5::File file(fileName, H5::File::write);
@@ -1845,4 +1861,3 @@ namespace MBSim {
   }
 
 }
-

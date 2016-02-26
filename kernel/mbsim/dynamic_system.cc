@@ -397,8 +397,6 @@ namespace MBSim {
         if (sys)
           R = sys->getFrameI();
       }
-    }
-    else if (stage == relativeFrameContourLocation) {
       for (unsigned int k = 1; k < frame.size(); k++) {
         if (!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
           ((FixedRelativeFrame*) frame[k])->setFrameOfReference(I);

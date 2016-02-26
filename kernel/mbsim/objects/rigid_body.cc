@@ -121,9 +121,14 @@ namespace MBSim {
   void RigidBody::init(InitStage stage) {
     if(stage==preInit) {
 
+      for(unsigned int k=1; k<frame.size(); k++) {
+        if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
+          static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(C);
+      }
+
       for(unsigned int k=0; k<contour.size(); k++) {
-        if (!((RigidContour*) contour[k])->getFrameOfReference())
-          ((RigidContour*) contour[k])->setFrameOfReference(C);
+        if(not(static_cast<RigidContour*>(contour[k]))->getFrameOfReference())
+          static_cast<RigidContour*>(contour[k])->setFrameOfReference(C);
       }
 
       Body::init(stage);
@@ -163,12 +168,6 @@ namespace MBSim {
         addDependency(constraint);
     }
     else if(stage==relativeFrameContourLocation) {
-
-      for(unsigned int k=1; k<frame.size(); k++) {
-        FixedRelativeFrame *P = static_cast<FixedRelativeFrame*>(frame[k]);
-        if(not(P->getFrameOfReference()))
-          P->setFrameOfReference(C);
-      }
       if(K!=C) {
         const FixedRelativeFrame *R = K;
         do {

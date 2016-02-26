@@ -452,6 +452,8 @@ namespace MBSim {
 
       static void sigSegfaultHandler(int);
 
+      void checkExitRequest();
+
       // TODO just for testing
       void setPartialEventDrivenSolver(bool peds_) { peds = peds_; }
 
@@ -900,4 +902,3 @@ namespace MBSim {
 }
 
 #endif /* _DYNAMIC_SYSTEM_SOLVER_H_ */
-
