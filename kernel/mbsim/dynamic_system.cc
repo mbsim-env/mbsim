@@ -398,12 +398,12 @@ namespace MBSim {
           R = sys->getFrameI();
       }
       for (unsigned int k = 1; k < frame.size(); k++) {
-        if (!((FixedRelativeFrame*) frame[k])->getFrameOfReference())
-          ((FixedRelativeFrame*) frame[k])->setFrameOfReference(I);
+        if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
+          static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(I);
       }
       for (unsigned int k = 0; k < contour.size(); k++) {
-        if (!((RigidContour*) contour[k])->getFrameOfReference())
-          ((RigidContour*) contour[k])->setFrameOfReference(I);
+        if(not(static_cast<RigidContour*>(contour[k]))->getFrameOfReference())
+          static_cast<RigidContour*>(contour[k])->setFrameOfReference(I);
       }
     }
     else if (stage == worldFrameContourLocation) {
