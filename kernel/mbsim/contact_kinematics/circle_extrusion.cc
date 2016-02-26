@@ -81,7 +81,7 @@ namespace MBSim {
     cFrame[iextrusion]->getOrientation(false).set(1, extrusion->getWu(t,cFrame[iextrusion]->getZeta()));
     cFrame[iextrusion]->getOrientation(false).set(2, extrusion->getWv(t,cFrame[iextrusion]->getZeta()));
     cFrame[icircle]->getOrientation(false).set(0, -cFrame[iextrusion]->getOrientation(false).col(0));
-    cFrame[icircle]->getOrientation(false).set(2, cFrame[icircle]->getOrientation(false).col(2));
+    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(t).col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
     cFrame[iextrusion]->setPosition(extrusion->getPosition(t,cFrame[iextrusion]->getZeta()));
     cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
