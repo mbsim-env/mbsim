@@ -255,6 +255,12 @@ try:
             break
         if add:
           curcibranch.append(newcibranch)
+        # update tobuild
+        tobuild=config['tobuild']
+        toadd=newcibranch.copy()
+        toadd['timestamp']=int(time.time())
+        tobuild.append(toadd)
+        # response
         response_data['message']='New CI branch combination saved.'
 
   # return current checked examples
