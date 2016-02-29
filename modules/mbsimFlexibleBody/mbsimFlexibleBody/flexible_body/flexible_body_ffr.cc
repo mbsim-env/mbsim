@@ -460,12 +460,15 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::init(InitStage stage) {
     if(stage==preInit) {
-     ne = C1.cols()?C1.cols():Me.getM0().size();
-     for(unsigned int i=1; i<frame.size(); i++)
-       static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
+      for(unsigned int k=1; k<frame.size(); k++) {
+        if(not(static_cast<FixedNodalFrame*>(frame[k])->getFrameOfReference()))
+          static_cast<FixedNodalFrame*>(frame[k])->setFrameOfReference(K);
+      }
 
-      Mat3xV T(uSize[0]);
-      Vec3 t;
+      ne = C1.cols()?C1.cols():Me.getM0().size();
+      for(unsigned int i=1; i<frame.size(); i++)
+        static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
+
       for(unsigned int k=0; k<contour.size(); k++) {
         RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
         if(contour_ and not(contour_->getFrameOfReference()))
@@ -508,26 +511,6 @@ namespace MBSimFlexibleBody {
       }
 
       nu[1] = 6 + ne;
-    }
-    else if(stage==relativeFrameContourLocation) {
-
-      //RBF.push_back(C);
-      for(unsigned int k=1; k<frame.size(); k++) {
-        if(!((FixedNodalFrame*) frame[k])->getFrameOfReference())
-          ((FixedNodalFrame*) frame[k])->setFrameOfReference(K);
-      }
-//      for(unsigned int k=1; k<frame.size(); k++) {
-//        FixedNodalFrame *P = (FixedNodalFrame*)frame[k];
-//        const FixedNodalFrame *R = P;
-//        do {
-//          R = dynamic_cast<const FixedNodalFrame*>(R->getFrameOfReference());
-//          if(R) {
-//            P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
-//            P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
-//          }
-//        } while(R!=K);
-//        P->setFrameOfReference(K);
-//      }
     }
     else if(stage==resize) {
       Body::init(stage);

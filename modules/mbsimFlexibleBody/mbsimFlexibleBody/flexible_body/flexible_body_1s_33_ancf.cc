@@ -137,7 +137,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateGyroscopicAccelerations(double t, Frame1s *frame) {
-    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
+//    THROW_MBSIMERROR("(FlexibleBody1s33ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody1s33ANCF::updatePositions(double t, NodeFrame *frame) {

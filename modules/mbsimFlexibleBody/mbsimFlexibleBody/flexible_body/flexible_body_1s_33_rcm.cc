@@ -152,12 +152,6 @@ namespace MBSimFlexibleBody {
 
   Vec3 FlexibleBody1s33RCM::getWs(double t, double s) {
     fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
-//    cout << endl << t << endl;
-//    cout << s << endl;
-//    cout << X << endl;
-//    cout << X(Range<Fixed<3>,Fixed<5> >()) << endl;
-//    cout << angle->computet(X(Range<Fixed<3>,Fixed<5> >())) << endl;
-//    cout << R->getOrientation()*angle->computet(X(Range<Fixed<3>,Fixed<5> >())) << endl;
     return R->getOrientation() * angle->computet(X(Range<Fixed<3>,Fixed<5> >()));
   }
 
@@ -167,10 +161,6 @@ namespace MBSimFlexibleBody {
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(X(Range<Fixed<3>,Fixed<5> >())));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(X(Range<Fixed<3>,Fixed<5> >())));
     frame->getOrientation(false).set(2, crossProduct(frame->getOrientation(false).col(0), frame->getOrientation(false).col(1)));
-//    cout << endl << t << endl;
-//    cout << frame->getName() << endl;
-//    cout << X << endl;
-//    cout << angle->computen(X(Range<Fixed<3>,Fixed<5> >())) << endl;
   }
 
   void FlexibleBody1s33RCM::updateVelocities(double t, Frame1s *frame) {
