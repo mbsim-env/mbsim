@@ -1,9 +1,11 @@
 #include "system.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
@@ -72,13 +74,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
   
-  Contour1sFlexible *contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
-  //contour1sFlexible->getFrame()->setOrientation(rod->getFrameOfReference()->getOrientation());
+  FlexibleBand *contour1sFlexible = new FlexibleBand("Contour1sFlexible");
   Vec nodes(elements+1);
   for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
-    contour1sFlexible->setNodes(nodes);
-  contour1sFlexible->setAlphaStart(0.);
-  contour1sFlexible->setAlphaEnd(l0);  
+  contour1sFlexible->setNodes(nodes);
+  contour1sFlexible->setWidth(0.1);
+  contour1sFlexible->setRelativeOrientation(M_PI);
   rod->addContour(contour1sFlexible);
 
   // balls
@@ -140,20 +141,23 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rodInfo->setFrameOfReference(rod->getFrameOfReference());
 
   rodInfo->initInfo();
-  rodInfo->updateStateDependentVariables(0.);
+  //rodInfo->updateStateDependentVariables(0.);
 
   for(unsigned int i=0;i<balls.size();i++) {
     Vec q0(3,INIT,0.);
     double xL = fmod(i*rodInfo->getLength()/balls.size() + rodInfo->getLength()*0.25,rodInfo->getLength());
-    ContourPointData cp;
-    cp.getContourParameterType() = ContourPointData::continuum;
-    cp.getLagrangeParameterPosition()(0) = xL;
+  //  ContourPointData cp;
+  //  cp.getContourParameterType() = ContourPointData::continuum;
+  //  cp.getLagrangeParameterPosition()(0) = xL;
 
-    rodInfo->updateKinematicsForFrame(cp,Frame::position_cosy);
-    q0(0) = cp.getFrameOfReference().getPosition()(0);
-    q0(1) = cp.getFrameOfReference().getPosition()(1);
+  //  rodInfo->updateKinematicsForFrame(cp,Frame::position_cosy);
+    Vec3 r = rodInfo->getPosition(0,xL);
+    q0(0) = r(0);
+    q0(1) = r(1);
 
-    q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
+    SqrMat3 A = rodInfo->getOrientation(0,xL);
+    cout << AIK2Cardan(A)(2)+M_PI << " " << fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI) << endl;
+    q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
     balls[i]->setInitialGeneralizedPosition(q0);
   }
 
@@ -174,6 +178,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
     contact->enableOpenMBVContactPoints(0.01);
+    contact->setSearchAllContactPoints(true);
     this->addLink(contact);
   }
 
@@ -200,4 +205,3 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addLink(ctrb);
   }
 }
-
