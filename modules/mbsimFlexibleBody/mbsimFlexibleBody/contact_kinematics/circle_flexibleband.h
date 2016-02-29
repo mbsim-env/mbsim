@@ -24,14 +24,13 @@
 
 namespace MBSim {
   class Circle;
+  class Contour;
 }
 
 namespace MBSimFlexibleBody {
 
-  class FlexibleBand;
-
   /**
-   * \brief pairing solid cirlce to flexible band, planar only
+   Contour \brief pairing solid cirlce to flexible band, planar only
    * \author Roland Zander
    * \date 2009-03-07 initial commit (Roland Zander)
    */
@@ -69,7 +68,7 @@ namespace MBSimFlexibleBody {
        * \brief contour classes 
        */
       MBSim::Circle *circle;
-      FlexibleBand *band;
+      MBSim::Contour *extrusion;
 
       fmatvec::Vec staticNodes;
 

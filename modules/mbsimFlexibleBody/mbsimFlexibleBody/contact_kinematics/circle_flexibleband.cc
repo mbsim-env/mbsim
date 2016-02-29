@@ -21,7 +21,6 @@
 #include<config.h>
 #include "mbsimFlexibleBody/contact_kinematics/circle_flexibleband.h"
 #include "mbsim/frames/contour_frame.h"
-#include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
 #include "mbsim/utils/planar_contact_search.h"
@@ -32,17 +31,17 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  class ContactKinematicsCircleNode : public MBSim::ContactKinematics {
+  class ContactKinematicsCircleNode : public ContactKinematics {
     public:
-      ContactKinematicsCircleNode(double node_) : node(node_), circle(0), band(0) { }
+      ContactKinematicsCircleNode(double node_) : node(node_), circle(0), extrusion(0) { }
       virtual void assignContours(const vector<Contour*> &contour);
       virtual void updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSim::MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
+      virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
     private:
       double node;
       int icircle, inode;
-      MBSim::Circle *circle;
-      FlexibleBand *band;
+      Circle *circle;
+      Contour *extrusion;
   };
 
   void ContactKinematicsCircleNode::assignContours(const vector<Contour*>& contour) {
@@ -50,13 +49,13 @@ namespace MBSimFlexibleBody {
       icircle = 0;
       inode = 1;
       circle = static_cast<Circle*>(contour[0]);
-      band = static_cast<FlexibleBand*>(contour[1]);
+      extrusion = static_cast<Contour*>(contour[1]);
     }
     else {
       icircle = 1;
       inode = 0;
       circle = static_cast<Circle*>(contour[1]);
-      band = static_cast<FlexibleBand*>(contour[0]);
+      extrusion = static_cast<Contour*>(contour[0]);
     }
   }
 
@@ -64,7 +63,7 @@ namespace MBSimFlexibleBody {
 
     cFrame[inode]->setEta(node);
 
-    cFrame[inode]->setPosition(band->getPosition(t,cFrame[inode]->getZeta()));
+    cFrame[inode]->setPosition(extrusion->getPosition(t,cFrame[inode]->getZeta()));
 
     const Vec3 WrD = cFrame[inode]->getPosition(false) - circle->getFrame()->getPosition(t);
     
@@ -81,24 +80,24 @@ namespace MBSimFlexibleBody {
     cFrame[inode]->setXi(cFrame[inode]->getOrientation(false).col(2).T() * WrD); // get contact parameter of second tangential direction
     cFrame[inode]->getPosition(false) += cFrame[inode]->getXi() * cFrame[inode]->getOrientation(false).col(2);
 
-    if(band->isZetaOutside(cFrame[inode]->getZeta()))
+    if(extrusion->isZetaOutside(cFrame[inode]->getZeta()))
       g = 1;
     else
       g = cFrame[inode]->getOrientation(false).col(0).T() * (cFrame[icircle]->getPosition(false) - cFrame[inode]->getPosition(false));
-    if(g < -band->getThickness()) g = 1;
+    if(g < -extrusion->getThickness()) g = 1;
   }
 
-  class ContactKinematicsCircleNodeInterpolation : public MBSim::ContactKinematics {
+  class ContactKinematicsCircleNodeInterpolation : public ContactKinematics {
     public:
-      ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(0), band(0) { }
+      ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(0), extrusion(0) { }
       virtual void assignContours(const vector<Contour*> &contour);
       virtual void updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSim::MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
+      virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
     private:
       Vec nodes;
       int icircle, inode;
-      MBSim::Circle *circle;
-      FlexibleBand *band;
+      Circle *circle;
+      Contour *extrusion;
   };
 
   void ContactKinematicsCircleNodeInterpolation::assignContours(const vector<Contour*>& contour) {
@@ -106,18 +105,18 @@ namespace MBSimFlexibleBody {
       icircle = 0;
       inode = 1;
       circle = static_cast<Circle*>(contour[0]);
-      band = static_cast<FlexibleBand*>(contour[1]);
+      extrusion = static_cast<Contour*>(contour[1]);
     }
     else {
       icircle = 1;
       inode = 0;
       circle = static_cast<Circle*>(contour[1]);
-      band = static_cast<FlexibleBand*>(contour[0]);
+      extrusion = static_cast<Contour*>(contour[0]);
     }
   }
 
   void ContactKinematicsCircleNodeInterpolation::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
-    FuncPairPlanarContourCircle *func = new FuncPairPlanarContourCircle(circle, band); // root function for searching contact parameters
+    FuncPairPlanarContourCircle *func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
     PlanarContactSearch search(func);
 
     search.setNodes(nodes); // defining search areas for contacts
@@ -128,47 +127,47 @@ namespace MBSimFlexibleBody {
 
       cFrame[inode]->setEta(result(0,0));
 
-      cFrame[inode]->getOrientation(false).set(0, band->getWn(t,cFrame[inode]->getZeta()));
-      cFrame[inode]->getOrientation(false).set(1, band->getWu(t,cFrame[inode]->getZeta()));
-      cFrame[inode]->getOrientation(false).set(2, band->getWv(t,cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(0, extrusion->getWn(t,cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(1, extrusion->getWu(t,cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(2, extrusion->getWv(t,cFrame[inode]->getZeta()));
       cFrame[icircle]->getOrientation(false).set(0, -cFrame[inode]->getOrientation(false).col(0));
       cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(t).col(2));
       cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
 
-      cFrame[inode]->setPosition(band->getPosition(t,cFrame[inode]->getZeta()));
+      cFrame[inode]->setPosition(extrusion->getPosition(t,cFrame[inode]->getZeta()));
       cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
       Vec Wd = circle->getFrame()->getPosition(t) - cFrame[inode]->getPosition(false);
       cFrame[inode]->setXi(cFrame[inode]->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
       cFrame[inode]->getPosition(false) += cFrame[inode]->getXi() * cFrame[inode]->getOrientation(false).col(2);
 
-      if(band->isZetaOutside(cFrame[inode]->getZeta()))
+      if(extrusion->isZetaOutside(cFrame[inode]->getZeta()))
         g = 1;
       else
         g = cFrame[inode]->getOrientation(false).col(0).T() * (cFrame[icircle]->getPosition(false) - cFrame[inode]->getPosition(false));
-      if(g < -band->getThickness()) g = 1;
+      if(g < -extrusion->getThickness()) g = 1;
     }
   }
 
-  ContactKinematicsCircleFlexibleBand::ContactKinematicsCircleFlexibleBand() : ContactKinematics(), icircle(0), icontour(0), possibleContactsPerNode(1), circle(0), band(0) { }
+  ContactKinematicsCircleFlexibleBand::ContactKinematicsCircleFlexibleBand() : ContactKinematics(), icircle(0), icontour(0), possibleContactsPerNode(1), circle(0), extrusion(0) { }
 
   void ContactKinematicsCircleFlexibleBand::assignContours(const vector<Contour*>& contour) {
     if (dynamic_cast<Circle*>(contour[0])) {
       icircle = 0;
       icontour = 1;
       circle = static_cast<Circle*>(contour[0]);
-      band = static_cast<FlexibleBand*>(contour[1]);
+      extrusion = static_cast<Contour*>(contour[1]);
     }
     else {
       icircle = 1;
       icontour = 0;
       circle = static_cast<Circle*>(contour[1]);
-      band = static_cast<FlexibleBand*>(contour[0]);
+      extrusion = static_cast<Contour*>(contour[0]);
     }
 
-    staticNodes = band->getEtaNodes();
-    numberOfPotentialContactPoints = 2 * possibleContactsPerNode * band->getEtaNodes().size() - 1;  // dies braeuchte einen eigenen init-Call
-//    l0 = 1.0 * fabs(band->getAlphaEnd() - band->getAlphaStart()) / staticNodes.size(); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
+    staticNodes = extrusion->getEtaNodes();
+    numberOfPotentialContactPoints = 2 * possibleContactsPerNode * extrusion->getEtaNodes().size() - 1;  // dies braeuchte einen eigenen init-Call
+//    l0 = 1.0 * fabs(extrusion->getAlphaEnd() - extrusion->getAlphaStart()) / staticNodes.size(); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
 //    epsTol = 5.e-2 * l0; /* distance, when two contact points should be treated as one */
 
     cout << numberOfPotentialContactPoints << endl;
@@ -187,10 +186,10 @@ namespace MBSimFlexibleBody {
   }
 
   void ContactKinematicsCircleFlexibleBand::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
-    throw MBSim::MBSimError("ContactKinematicsCircleFlexibleBand::updateg not implemented!");
+    throw MBSimError("ContactKinematicsCircleFlexibleBand::updateg not implemented!");
   }
 
   void ContactKinematicsCircleFlexibleBand::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw MBSim::MBSimError("ContactKinematicsCircleFlexibleBand::updatewb not implemented!");
+    throw MBSimError("ContactKinematicsCircleFlexibleBand::updatewb not implemented!");
   }
 }
