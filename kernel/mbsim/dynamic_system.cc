@@ -405,8 +405,6 @@ namespace MBSim {
         if(not(static_cast<RigidContour*>(contour[k]))->getFrameOfReference())
           static_cast<RigidContour*>(contour[k])->setFrameOfReference(I);
       }
-    }
-    else if (stage == worldFrameContourLocation) {
       if (R) {
         I->setPosition(R->getPosition(0.) + R->getOrientation(0.) * PrPF);
         I->setOrientation(R->getOrientation(0.) * APF);
@@ -465,6 +463,8 @@ namespace MBSim {
         if(file)
           file->flush();
       }
+    }
+    else if (stage==unknownStage) {
     }
 
     for (unsigned i = 0; i < frame.size(); i++)

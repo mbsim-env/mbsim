@@ -49,6 +49,8 @@ namespace MBSim {
       virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
       /***************************************************/
 
+      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
+
     protected:
       /** 
        * \brief contour index 

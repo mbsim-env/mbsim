@@ -93,8 +93,6 @@ namespace MBSim {
       "ResolveXML-Path",
       "PreInit",
       "Resize",
-      "relativeFrameContourLocation",
-      "worldFrameContourLocation",
       "plot",
       "reorganizeHierarchy",
       "unknownStage",
@@ -464,9 +462,6 @@ namespace MBSim {
     }
     else if (stage == calculateLocalInitialValues) {
       Group::initz();
-//      resetUpToDate();
-//      updateStateDependentVariables(0);
-//      updateg(0);
       Group::init(stage);
     }
     else

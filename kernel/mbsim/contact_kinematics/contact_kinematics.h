@@ -103,6 +103,8 @@ namespace MBSim {
 
       virtual ContactKinematics* getContactKinematics(int i=0) const { return 0; }
 
+      virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
+
     protected:
       /**
        * \brief number of potential contact points

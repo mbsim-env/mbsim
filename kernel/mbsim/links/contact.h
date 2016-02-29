@@ -241,6 +241,8 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
+      void setSearchAllContactPoints(bool searchAllCP_) { searchAllCP = searchAllCP_; }
+
     protected:
       /**
        * \brief list of the single sub-contact(-points)
@@ -287,6 +289,8 @@ namespace MBSim {
        * \brief force law defining relation between tangential velocities and forces impulses
        */
       FrictionImpactLaw *ftil;
+
+      bool searchAllCP;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /*!

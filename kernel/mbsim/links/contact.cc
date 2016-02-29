@@ -47,7 +47,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Contact, MBSIM%"Contact")
 
-  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), saved_ref(0) {
+  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), saved_ref(0) {
   }
 
   Contact::~Contact() {
@@ -339,10 +339,9 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
+        contactKinematics[cK]->setSearchAllContactPoints(searchAllCP);
         contactKinematics[cK]->assignContours(contour[0][cK], contour[1][cK]);
-
         contacts.push_back(vector<SingleContact>());
-
         for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
           stringstream contactName;
           contactName << ckNames[cK];
@@ -721,8 +720,6 @@ namespace MBSim {
   }
 
   void Contact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/, const string & name_ /* ="" */) {
-//    Link::connect(contour0);
-//    Link::connect(contour1);
     contour[0].push_back(contour0);
     contour[1].push_back(contour1);
     contactKinematics.push_back(contactKinematics_);
