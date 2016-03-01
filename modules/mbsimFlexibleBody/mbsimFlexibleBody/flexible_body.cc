@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::updateh(double t, int k) {
     for (int i = 0; i < (int) discretization.size(); i++)
-      discretization[i]->computeh(getqElement(i), uElement[i]); // compute attributes of finite element
+      discretization[i]->computeh(getqElement(i), getuElement(i)); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalVectorContribution(i, discretization[i]->geth(), h[k]); // assemble
 
