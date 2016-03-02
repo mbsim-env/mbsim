@@ -4,7 +4,6 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
-#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -156,7 +155,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     q0(1) = r(1);
 
     SqrMat3 A = rodInfo->getOrientation(0,xL);
-    cout << AIK2Cardan(A)(2)+M_PI << " " << fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI) << endl;
     q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
     balls[i]->setInitialGeneralizedPosition(q0);
   }
