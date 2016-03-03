@@ -92,12 +92,12 @@ namespace MBSim {
         frame[1] = frame1;
       }
 
+      Frame* getFrame(int i) { return frame[i]; }
+
       /** \brief The frame of reference ID for the force/moment direction vectors.
        * If ID=0 (default) the first frame, if ID=1 the second frame is used.
        */
-      void setFrameOfReferenceID(int ID) {
-        refFrameID = ID;
-      }
+      void setFrameOfReferenceID(int ID) { refFrameID = ID; }
 
       void resetUpToDate();
       void updatePositions(double t, Frame *frame);
@@ -166,7 +166,7 @@ namespace MBSim {
       /**
        * \brief array in which all frames are listed, connecting bodies via a link
        */
-      Frame* frame[2];
+      std::vector<Frame*> frame;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;

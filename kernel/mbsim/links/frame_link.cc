@@ -37,9 +37,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  FrameLink::FrameLink(const std::string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updRMV(true), updlaF(true), updlaM(true) {
-    frame[0] = NULL;
-    frame[1] = NULL;
+  FrameLink::FrameLink(const std::string &name) : Link(name), frame(2), updPos(true), updVel(true), updFD(true), updF(true), updRMV(true), updlaF(true), updlaM(true) {
   }
 
   void FrameLink::resetUpToDate() { 

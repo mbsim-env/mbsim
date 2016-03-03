@@ -35,9 +35,7 @@ using namespace boost;
 
 namespace MBSim {
 
-  ContourLink::ContourLink(const std::string &name) : Link(name), cFrame(2), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updR(true) {
-    contour[0] = NULL;
-    contour[1] = NULL;
+  ContourLink::ContourLink(const std::string &name) : Link(name), contour(2), cFrame(2), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updR(true) {
   }
 
   void ContourLink::updatedhdz(double t) {

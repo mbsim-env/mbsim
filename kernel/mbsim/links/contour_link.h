@@ -121,7 +121,7 @@ namespace MBSim {
        */
       fmatvec::Index iF, iM;
 
-      Contour* contour[2];
+      std::vector<Contour*> contour;
 
       std::vector<ContourFrame*> cFrame;
 

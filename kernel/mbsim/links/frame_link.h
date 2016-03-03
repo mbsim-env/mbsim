@@ -81,6 +81,8 @@ namespace MBSim {
         frame[1] = frame1;
       }
 
+      Frame* getFrame(int i) { return frame[i]; }
+
       void resetUpToDate();
       virtual void updatePositions(double t);
       virtual void updateVelocities(double t);
@@ -132,7 +134,7 @@ namespace MBSim {
       /**
        * \brief array in which all frames are listed, connecting bodies via a link
        */
-      Frame *frame[2];
+      std::vector<Frame*> frame;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;

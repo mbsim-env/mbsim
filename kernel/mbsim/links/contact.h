@@ -238,6 +238,8 @@ namespace MBSim {
        */
       void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0, const std::string & name = "");
 
+      Contour* getContour(int i, int j=0) { return contour[i][j]; }
+
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
@@ -254,7 +256,7 @@ namespace MBSim {
        */
       std::vector<ContactKinematics*> contactKinematics;
 
-      std::vector<Contour*> contour[2];
+      std::vector<std::vector<Contour*> > contour;
 
       /*!
        * \brief names for the contact kinematics

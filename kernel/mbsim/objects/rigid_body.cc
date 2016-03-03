@@ -121,8 +121,6 @@ namespace MBSim {
   void RigidBody::init(InitStage stage) {
     if(stage==preInit) {
 
-      Body::init(stage);
-
       for(unsigned int k=1; k<frame.size(); k++) {
         if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
           static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(C);
@@ -132,6 +130,8 @@ namespace MBSim {
         if(not(static_cast<RigidContour*>(contour[k]))->getFrameOfReference())
           static_cast<RigidContour*>(contour[k])->setFrameOfReference(C);
       }
+
+      Body::init(stage);
 
       if(K!=C) {
         const FixedRelativeFrame *R = K;
