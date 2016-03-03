@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
 
     vector<boost::shared_ptr<Variable> > xmlParam;
 
+    string evalName="octave"; // default evaluator
     boost::shared_ptr<Eval> eval;
 
     // Create dss from XML file
@@ -123,7 +124,6 @@ int main(int argc, char *argv[]) {
       DOMElement *modelEle=modelDoc->getDocumentElement();
 
       // create a clean evaluator (get the evaluator name first form the dom)
-      string evalName="octave"; // default evaluator
       DOMElement *evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
       if(evaluator)
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
@@ -390,6 +390,8 @@ int main(int argc, char *argv[]) {
 
         map<path, pair<path, bool> > &files=eval->requiredFiles();
         cout<<"Copy files required by the evaluator and dependencies to FMU."<<endl;
+        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbxmlutils-eval-"+evalName+SHEXT),
+                       path("resources")/"local"/LIBDIR, getInstallPath()/LIBDIR/("libmbxmlutils-eval-"+evalName+SHEXT));
         for(map<path, pair<path, bool> >::iterator it=files.begin(); it!=files.end(); ++it) {
           cout<<"."<<flush;
           if(!it->second.second)
