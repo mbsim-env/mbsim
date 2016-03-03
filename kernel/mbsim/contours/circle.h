@@ -64,7 +64,7 @@ namespace MBSim {
       double getSign() const { return sign; }
       double getCurvature(const fmatvec::Vec2 &zeta) { return sign/r; }
 
-      void setSolid(bool solid_=true) { solid = solid; }
+      void setSolid(bool solid_=true) { solid = solid_; }
       bool getSolid() const { return solid; }
       /***************************************************/
 
