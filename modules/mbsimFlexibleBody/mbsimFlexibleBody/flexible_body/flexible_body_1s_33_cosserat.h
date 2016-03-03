@@ -21,16 +21,9 @@
 #define _FLEXIBLE_BODY_1S_33_COSSERAT_H_
 
 #include "flexible_body_1s_cosserat.h"
-#include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
-//#include "mbsimFlexibleBody/contours/flexible_band.h"
-//#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/spineextrusion.h>
-
-#endif
 
 namespace MBSimFlexibleBody {
 
@@ -79,29 +72,39 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-//      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
-//      virtual void updateJacobiansAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0);
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
       /***************************************************/
 
+      virtual fmatvec::Vec3 getPosition(double t, double s);
+      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
+      virtual fmatvec::Vec3 getWs(double t, double s);
+
+      virtual void updatePositions(double t, Frame1s* frame);
+      virtual void updateVelocities(double t, Frame1s* frame);
+      virtual void updateAccelerations(double t, Frame1s* frame);
+      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+
+      virtual double getLocalTwist(double t, double s);
+
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
       virtual double computePotentialEnergy();
-      virtual void facLLM(int i = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t, int i = 0);
-      virtual void updateStateDependentVariables(double t);
+      virtual void updateLLM(double t, int i = 0);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt = 1);
-      virtual std::string getType() const {
-        return "FlexibleBody1s33Cosserat";
-      }
+      virtual std::string getType() const { return "FlexibleBody1s33Cosserat"; }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -112,29 +115,23 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double R1_, double R2_);
       void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_);
 
-      virtual int getNumberOfElementDOF() const {
-        return 6;
-      }
+      virtual int getNumberOfElementDOF() const { return 6; }
 
-      int getNumberElements() const {
-        return Elements;
-      }
-      int getNumberDOFs() const {
-        return qSize;
-      }
-      double getLength() const {
-        return L;
-      }
-      bool isOpenStructure() const {
-        return openStructure;
-      }
+      int getNumberElements() const { return Elements; }
+      int getNumberDOFs() const { return qSize; }
       /***************************************************/
 
       /**
-       * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
+       * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec computeState(double s);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(double x);
+
+      /**
+       * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
+       * \param Lagrangian coordinate
+       */
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(double x);
 
       /**
        * \brief compute angles at Lagrangian coordinate in local FE coordinates
@@ -241,4 +238,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* _FLEXIBLE_BODY_1S_33_COSSERAT_H_ */
-

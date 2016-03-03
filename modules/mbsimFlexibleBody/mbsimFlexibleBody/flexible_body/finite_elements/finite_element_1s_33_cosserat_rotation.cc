@@ -21,6 +21,7 @@
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/mbsim_event.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -98,5 +99,46 @@ namespace MBSimFlexibleBody {
 
     return 0.5*l0*(G*I0*pow(binormal.T()*dnormaldphi*dphids,2.)+E*I1*pow(tangent.T()*dbinormaldphi*dphids-k10,2.)+E*I2*pow(normal.T()*dtangentdphi*dphids-k20,2.));
   }
+
+  const SymMat& FiniteElement1s33CosseratRotation::getM() const {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::getM): Not implemented");
+  }
+
+  void  FiniteElement1s33CosseratRotation::computeM(const Vec& qG) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeM): Not implemented");
+  }
+
+  void  FiniteElement1s33CosseratRotation::computedhdz(const Vec& qG, const Vec& qGt) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computedhdz): Not implemented");
+  }
+
+  double FiniteElement1s33CosseratRotation::computeKineticEnergy(const Vec& qG, const Vec& qGt) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeKineticEnergy): Not implemented");
+  }
+
+  double FiniteElement1s33CosseratRotation::computeGravitationalEnergy(const Vec& qG) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeGravitationalEnergy): Not implemented");
+  }
+
+  Vec3 FiniteElement1s33CosseratRotation::getPosition(const Vec& q, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::getPosition): Not implemented!");
+  }
+
+  SqrMat3 FiniteElement1s33CosseratRotation::getOrientation(const Vec& q, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::getOrientation): Not implemented!");
+  }
+
+  Vec3 FiniteElement1s33CosseratRotation::getVelocity(const Vec& q, const Vec& u, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::getVelocity): Not implemented!");
+  }
+
+  Vec3 FiniteElement1s33CosseratRotation::getAngularVelocity(const Vec& q, const Vec& u, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::getAngularVelocity): Not implemented!");
+  }
+
+  Mat FiniteElement1s33CosseratRotation::computeJXqG(const Vec& qG, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeJXqG): Not implemented!");
+  }
+
 }
 

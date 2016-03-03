@@ -15,17 +15,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
  */
 
 #ifndef _FLEXIBLE_BODY_1S_23_BTA_H_
 #define _FLEXIBLE_BODY_1S_23_BTA_H_
 
-#include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/spineextrusion.h>
-#endif
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 
 namespace MBSimFlexibleBody {
 
@@ -36,7 +31,7 @@ namespace MBSimFlexibleBody {
    * \date 2009-11-22 initial commit kernel_dev
    * \todo gravity, handling for contour-node information, tangents and AWK TODO
    */
-  class FlexibleBody1s23BTA : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s23BTA : public FlexibleBody1s {
     public:
       /**
        * \brief constructor
@@ -54,8 +49,24 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+
+      virtual fmatvec::Vec3 getPosition(double t, double s);
+      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
+      virtual fmatvec::Vec3 getWs(double t, double s);
+
+      virtual void updatePositions(double t, Frame1s* frame);
+      virtual void updateVelocities(double t, Frame1s* frame);
+      virtual void updateAccelerations(double t, Frame1s* frame);
+      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+
+      virtual double getLocalTwist(double t, double s);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -63,7 +74,6 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody1s23BTA"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
@@ -73,17 +83,27 @@ namespace MBSimFlexibleBody {
        * \brief sets size of positions and velocities
        */
       void setNumberElements(int n); 
-      void setLength(double L_) { L = L_; }
       void setElastModuls(double E_, double G_) { E = E_;G = G_; }
       void setDensity(double rho_) { rho = rho_; }
       void setCrossSectionalArea(double A_) { A = A_; }
       void setMomentsInertia(double Iyy_,double Izz_,double It_) { Iyy = Iyy_; Izz = Izz_; It = It_; }
-      void setContourRadius(double r) { cylinderFlexible->setRadius(r); }
+//      void setContourRadius(double r) { cylinderFlexible->setRadius(r); }
       void setTorsionalDamping(double d) { dTorsional = d; }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
-#endif
       /***************************************************/
+
+      /**
+       * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
+       * \param Lagrangian coordinate
+       */
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(double x);
+
+      /**
+       * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
+       * \param Lagrangian coordinate
+       */
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(double x);
+
+      fmatvec::SqrMat3 getOrientation(double x);
 
     protected:
       /**
@@ -102,7 +122,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief length of entire beam and finite elements
        */
-      double L, l0;
+      double l0;
 
       /**
        * \brief elastic modules 
@@ -134,13 +154,12 @@ namespace MBSimFlexibleBody {
        */
       double dTorsional;
 
-      /** 
-       * \brief contour of body
-       */
-      CylinderFlexible *cylinderFlexible;
+//      /** 
+//       * \brief contour of body
+//       */
+//      CylinderFlexible *cylinderFlexible;
   };
 
 }
 
 #endif /* _FLEXIBLE_BODY_1S_23_BTA_H_ */
-

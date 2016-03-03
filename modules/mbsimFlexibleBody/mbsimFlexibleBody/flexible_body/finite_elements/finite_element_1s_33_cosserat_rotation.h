@@ -20,9 +20,7 @@
 #ifndef _FINITE_ELEMENT_1S_33_COSSERAT_ROTATION_H_
 #define _FINITE_ELEMENT_1S_33_COSSERAT_ROTATION_H_
 
-#include "mbsim/discretization_interface.h"
-#include "mbsim/mbsim_event.h"
-#include "mbsim/contour_pdata.h"
+#include "mbsimFlexibleBody/discretization_interface.h"
 #include "mbsimFlexibleBody/pointer.h"
 #include "fmatvec/fmatvec.h"
 
@@ -67,11 +65,11 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */ 
       virtual const fmatvec::SymMat& getM() const;		
-      virtual const fmatvec::Vec& geth() const;
-      virtual const fmatvec::SqrMat& getdhdq() const;
-      virtual const fmatvec::SqrMat& getdhdu() const;
-      virtual int getqSize() const;
-      virtual int getuSize() const;
+      virtual const fmatvec::Vec& geth() const { return h; }
+      virtual const fmatvec::SqrMat& getdhdq() const { return dhdq; }
+      virtual const fmatvec::SqrMat& getdhdu() const { return dhdu; }
+      virtual int getqSize() const { return 9; }
+      virtual int getuSize() const { return 9; }
 
       virtual void computeM(const fmatvec::Vec& qG);
       virtual void computeh(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
@@ -80,15 +78,15 @@ namespace MBSimFlexibleBody {
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qG);
       virtual double computeElasticEnergy(const fmatvec::Vec& qG);
 
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
+      virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);
+      virtual fmatvec::Vec3 getVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
+      virtual fmatvec::Vec3 getAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, double s) { return computeJXqG(qG,s); }
 
       /* GETTER / SETTER */
       void setCurlRadius(double R1,double R2);		
-      double getl0() const;
+      double getl0() const { return l0; }
 
       /**
        * \brief compute JACOBIAN of contact description in global coordinates
@@ -149,24 +147,6 @@ namespace MBSimFlexibleBody {
       FiniteElement1s33CosseratRotation(const FiniteElement1s33CosseratRotation&); // copy constructor
       FiniteElement1s33CosseratRotation& operator=(const FiniteElement1s33CosseratRotation&); // assignment operator
   };
-
-  inline const fmatvec::SymMat& FiniteElement1s33CosseratRotation::getM() const { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::getM): Not implemented");  }
-  inline const fmatvec::Vec& FiniteElement1s33CosseratRotation::geth() const { return h; }
-  inline const fmatvec::SqrMat& FiniteElement1s33CosseratRotation::getdhdq() const { return dhdq; }
-  inline const fmatvec::SqrMat& FiniteElement1s33CosseratRotation::getdhdu() const { return dhdu; }
-  inline int FiniteElement1s33CosseratRotation::getqSize() const { return 9; }
-  inline int FiniteElement1s33CosseratRotation::getuSize() const { return 9; }
-  inline void  FiniteElement1s33CosseratRotation::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeM): Not implemented"); }
-  inline void  FiniteElement1s33CosseratRotation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computedhdz): Not implemented"); }
-  inline double FiniteElement1s33CosseratRotation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeKineticEnergy): Not implemented"); }
-  inline double FiniteElement1s33CosseratRotation::computeGravitationalEnergy(const fmatvec::Vec& qG) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeGravitationalEnergy): Not implemented"); }
-  inline fmatvec::Vec FiniteElement1s33CosseratRotation::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computePosition): Not implemented!"); }
-  inline fmatvec::SqrMat FiniteElement1s33CosseratRotation::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeOrientation): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s33CosseratRotation::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeVelocity): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s33CosseratRotation::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeAngularVelocity): Not implemented!"); }
-  inline fmatvec::Mat FiniteElement1s33CosseratRotation::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { return computeJXqG(qG,data.getLagrangeParameterPosition()(0)); }
-  inline double FiniteElement1s33CosseratRotation::getl0() const { return l0; }
-  inline fmatvec::Mat FiniteElement1s33CosseratRotation::computeJXqG(const fmatvec::Vec& qG,double x) { throw MBSim::MBSimError("(FiniteElement1s33CosseratRotation::computeJXqG): Not implemented!"); }
 
 }
 

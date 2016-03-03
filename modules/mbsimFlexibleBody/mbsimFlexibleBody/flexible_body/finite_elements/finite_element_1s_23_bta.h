@@ -15,15 +15,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
  */
 
 #ifndef _FINITE_ELEMENT_1S_23_BTA_H_
 #define _FINITE_ELEMENT_1S_23_BTA_H_
 
-#include "mbsim/discretization_interface.h"
-#include "mbsim/contour_pdata.h"
-#include "mbsim/mbsim_event.h"
+#include "mbsimFlexibleBody/discretization_interface.h"
 #include "fmatvec/fmatvec.h"
 
 namespace MBSimFlexibleBody {
@@ -56,12 +53,12 @@ namespace MBSimFlexibleBody {
       virtual ~FiniteElement1s23BTA() {}
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual const fmatvec::SymMat& getM() const;    
-      virtual const fmatvec::Vec& geth() const;
-      virtual const fmatvec::SqrMat& getdhdq() const;    
-      virtual const fmatvec::SqrMat& getdhdu() const;
-      virtual int getqSize() const;
-      virtual int getuSize() const;
+      virtual const fmatvec::SymMat& getM() const { return M; }
+      virtual const fmatvec::Vec& geth() const { return h; }
+      virtual const fmatvec::SqrMat& getdhdq() const { return Dhq; }
+      virtual const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
+      virtual int getqSize() const { return 10; }
+      virtual int getuSize() const { return 10; }
 
       virtual void computeM(const fmatvec::Vec& qG);
       virtual void computeh(const fmatvec::Vec& qG,const fmatvec::Vec& qGt);
@@ -70,16 +67,16 @@ namespace MBSimFlexibleBody {
       virtual double computeGravitationalEnergy(const fmatvec::Vec& q);    
       virtual double computeElasticEnergy(const fmatvec::Vec& q);
 
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData& data);
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& q,const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
+      virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);
+      virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
+      virtual fmatvec::Vec3 getAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
+      virtual fmatvec::Mat getJacobianOfMotion(const fmatvec::Vec& qElement, double s) { return JGeneralized(qElement,s); }
       /*****************************************************/ 
 
       /* GETTER / SETTER */
-      void setMaterialDamping(double) { throw MBSim::MBSimError("(FiniteElement1s23BTA:setMaterialDamping): Not implemented!"); }
-      void setLehrDamping(double) { throw MBSim::MBSimError("(FiniteElement1s23BTA:setLehrDamping): Not implemented!"); }
+      void setMaterialDamping(double);
+      void setLehrDamping(double);
       void setTorsionalDamping(double dTorsional_) { dTorsional=dTorsional_; }
       /*****************************************************/ 
 
@@ -88,23 +85,27 @@ namespace MBSimFlexibleBody {
        * \param global coordinates
        * \param LAGRANGIAN parameter
        */
-      fmatvec::Vec Tangent(const fmatvec::Vec& q, const double& s);
+      fmatvec::Vec3 getTangent(const fmatvec::Vec& q, double s);
 
-      /*! 
-       * \brief compute accompanying trihedral
-       * \param global coordinates
-       * \param LAGRANGIAN parameter
-       */
-      fmatvec::SqrMat AWK(const fmatvec::Vec& q, const double& s);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(const fmatvec::Vec& qElement, double s);
 
-      /*!
-       * \brief compute global state 
-       * \param global coordinates
-       * \param global velocities
-       * \param LAGRANGIAN parameter
-       * \return x,y,z,alpha,2x bending angle and velocities
-       */
-      fmatvec::Vec StateAxis(const fmatvec::Vec& q, const fmatvec::Vec& v, const double& s); 
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
+
+//      /*! 
+//       * \brief compute accompanying trihedral
+//       * \param global coordinates
+//       * \param LAGRANGIAN parameter
+//       */
+//      fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& q, double s);
+
+//      /*!
+//       * \brief compute global state 
+//       * \param global coordinates
+//       * \param global velocities
+//       * \param LAGRANGIAN parameter
+//       * \return x,y,z,alpha,2x bending angle and velocities
+//       */
+//      fmatvec::Vec StateAxis(const fmatvec::Vec& q, const fmatvec::Vec& v, double s); 
 
       /**
        * \brief compute JACOBIAN of contact description
@@ -112,7 +113,7 @@ namespace MBSimFlexibleBody {
        * \param LAGRANGIAN parameter
        * \return JACOBIAN without x-direction
        */
-      fmatvec::Mat JGeneralized(const fmatvec::Vec& q, const double& s);
+      fmatvec::Mat JGeneralized(const fmatvec::Vec& q, double s);
 
     private:
       /**
@@ -172,24 +173,8 @@ namespace MBSimFlexibleBody {
       double l0h2, l0h3;
   };
 
-  inline const fmatvec::SymMat& FiniteElement1s23BTA::getM() const { return M; }    
-  inline const fmatvec::Vec& FiniteElement1s23BTA::geth() const { return h; }
-  inline const fmatvec::SqrMat& FiniteElement1s23BTA::getdhdq() const { return Dhq; }    
-  inline const fmatvec::SqrMat& FiniteElement1s23BTA::getdhdu() const { return Dhqp; }
-  inline int FiniteElement1s23BTA::getqSize() const { return 10; }
-  inline int FiniteElement1s23BTA::getuSize() const { return 10; }
-  inline double FiniteElement1s23BTA::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("(FiniteElement1s23BTA:computeKineticEnergy): Not implemented!"); }
-  inline double FiniteElement1s23BTA::computeGravitationalEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement1s23BTA:computeGravitationalEnergy): Not implemented!"); }     
-  inline double FiniteElement1s23BTA::computeElasticEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement1s23BTA:computeElasticEnergy): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s23BTA::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) {throw MBSim::MBSimError("(FiniteElement1s23BTA::computePosition): Not implemented!"); }
-  inline fmatvec::SqrMat FiniteElement1s23BTA::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement1s23BTA::computeOrientation): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s23BTA::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement1s23BTA::computeVelocity): Not implemented!");}
-  inline fmatvec::Vec FiniteElement1s23BTA::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement1s23BTA::computeAngularVelocity): Not implemented!"); }
-  inline fmatvec::Mat FiniteElement1s23BTA::computeJacobianOfMotion(const fmatvec::Vec& q,const MBSim::ContourPointData &data) { return JGeneralized(q,data.getLagrangeParameterPosition()(0)); }
-
-  inline double Sec(const double& alpha) { return 1.0/cos(alpha); }
+  inline double Sec(double alpha) { return 1.0/cos(alpha); }
   inline double Power(double base, int exponent) { return pow(base,exponent); }
 }
 
 #endif /* _FINITE_ELEMENT_1S_23_BTA_H_ */
-

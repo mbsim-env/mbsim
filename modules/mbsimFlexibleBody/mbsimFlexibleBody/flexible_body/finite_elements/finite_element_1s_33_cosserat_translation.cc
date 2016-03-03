@@ -21,6 +21,7 @@
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/mbsim_event.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -164,7 +165,7 @@ namespace MBSimFlexibleBody {
     h(3,5) += dTRdphi-dTRdphitphi*Phit;
   }
 
-  double FiniteElement1s33CosseratTranslation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
+  double FiniteElement1s33CosseratTranslation::computeKineticEnergy(const Vec& qG, const Vec& qGt) {
     /* translational kinetic energy */
     double TT = 0.25*rho*A*l0*(pow(nrm2(qGt(0,2)),2.)+pow(nrm2(qGt(6,8)),2.)); 
 
@@ -188,11 +189,11 @@ namespace MBSimFlexibleBody {
     return TT + TR;
   }
 
-  double FiniteElement1s33CosseratTranslation::computeGravitationalEnergy(const fmatvec::Vec& qG) {
+  double FiniteElement1s33CosseratTranslation::computeGravitationalEnergy(const Vec& qG) {
     return -0.5*rho*A*l0*g.T()*(qG(0,2)+qG(6,8)); 
   }
 
-  double FiniteElement1s33CosseratTranslation::computeElasticEnergy(const fmatvec::Vec& qG) {
+  double FiniteElement1s33CosseratTranslation::computeElasticEnergy(const Vec& qG) {
     /* Cardan angles */
     const Vec &Phi = qG(3,5);
 
@@ -227,5 +228,28 @@ namespace MBSimFlexibleBody {
     M(8,8) = 0.5*rho*A*l0;
   }
 
-}
+  void FiniteElement1s33CosseratTranslation::computedhdz(const Vec& qG, const Vec& qGt) { 
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computedhdz): Not implemented");
+  }
 
+  Vec3 FiniteElement1s33CosseratTranslation::getPosition(const Vec& q, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computePosition): Not implemented!");
+  }
+
+  SqrMat3 FiniteElement1s33CosseratTranslation::getOrientation(const Vec& q, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeOrientation): Not implemented!");
+  }
+
+  Vec3 FiniteElement1s33CosseratTranslation::getVelocity(const Vec& q, const Vec& u, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeVelocity): Not implemented!");
+  }
+
+  Vec3 FiniteElement1s33CosseratTranslation::getAngularVelocity(const Vec& q, const Vec& u, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeAngularVelocity): Not implemented!");
+  }
+
+  Mat FiniteElement1s33CosseratTranslation::computeJXqG(const Vec& qG, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s33CosseratTranslation::computeJXqG): Not implemented!");
+  }
+
+}

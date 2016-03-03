@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
       /**
        * \destructor
        */
-      virtual ~FiniteElement1s21RCM() {}
+      virtual ~FiniteElement1s21RCM() { }
 
       /* INHERITED INTERFACE */
       virtual const fmatvec::SymMat& getM() const { return M; }

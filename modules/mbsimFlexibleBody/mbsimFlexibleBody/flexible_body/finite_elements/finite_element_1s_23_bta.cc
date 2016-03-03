@@ -15,12 +15,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
  */
 
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_23_bta.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/mbsim_event.h"
 
 using namespace fmatvec;
 using namespace MBSim;
@@ -34,10 +34,10 @@ namespace MBSimFlexibleBody {
 
   void FiniteElement1s23BTA::computeM(const Vec& q) {
     // local coordinates 
-    const double &w1 = q(1); const double &b1 = q(2);
-    const double &u1 = q(3); const double &g1 = q(4);
-    const double &w2 = q(6); const double &b2 = q(7);
-    const double &u2 = q(8); const double &g2 = q(9);
+    double w1 = q(1); double b1 = q(2);
+    double u1 = q(3); double g1 = q(4);
+    double w2 = q(6); double b2 = q(7);
+    double u2 = q(8); double g2 = q(9);
 
     // symmetric mass matrix
     M(0,0) = (l0*(420*Itrho + Arho*(5*Power(b1,2)*l0h2 + 2*Power(b2,2)*l0h2 + 5*Power(g1,2)*l0h2 - 5*g1*g2*l0h2 + 2*Power(g2,2)*l0h2 + 65*g1*l0*u1 - 25*g2*l0*u1 + 290*Power(u1,2) + 19*g1*l0*u2 - 17*g2*l0*u2 + 92*u1*u2 + 38*Power(u2,2) - 25*b2*l0*w1 + 290*Power(w1,2) - 17*b2*l0*w2 + 92*w1*w2 + 38*Power(w2,2) + b1*l0*(-5*b2*l0 + 65*w1 + 19*w2))))/1260.;
@@ -85,19 +85,19 @@ namespace MBSimFlexibleBody {
 
   void FiniteElement1s23BTA::computeh(const Vec& q, const Vec& v) {
     // local coordinates and velocities
-    const double &a1 = q(0);
-    const double &w1 = q(1); const double &b1 = q(2);
-    const double &u1 = q(3); const double &g1 = q(4);
-    const double &a2 = q(5);
-    const double &w2 = q(6); const double &b2 = q(7);
-    const double &u2 = q(8); const double &g2 = q(9);
+    double a1 = q(0);
+    double w1 = q(1); double b1 = q(2);
+    double u1 = q(3); double g1 = q(4);
+    double a2 = q(5);
+    double w2 = q(6); double b2 = q(7);
+    double u2 = q(8); double g2 = q(9);
 
-    const double &a1p = v(0);
-    const double &w1p = v(1); const double &b1p = v(2);
-    const double &u1p = v(3); const double &g1p = v(4);
-    const double &a2p = v(5);
-    const double &w2p = v(6); const double &b2p = v(7);
-    const double &u2p = v(8); const double &g2p = v(9);
+    double a1p = v(0);
+    double w1p = v(1); double b1p = v(2);
+    double u1p = v(3); double g1p = v(4);
+    double a2p = v(5);
+    double w2p = v(6); double b2p = v(7);
+    double u2p = v(8); double g2p = v(9);
 
     // right hand side
     h(0) = (((-a1 + a2)*GIt)/l0 - (Arho*l0*(a2p*(5*b2*b2p*l0h2 + 5*g1*g1p*l0h2 - 4*g1p*g2*l0h2 - 4*g1*g2p*l0h2 + 5*g2*g2p*l0h2 + 25*g1p*l0*u1 - 17*g2p*l0*u1 + 25*g1*l0*u1p - 17*g2*l0*u1p + 140*u1*u1p + 17*g1p*l0*u2 - 25*g2p*l0*u2 + 70*u1p*u2 + 17*g1*l0*u2p - 25*g2*l0*u2p + 70*u1*u2p + 140*u2*u2p - 17*b2p*l0*w1 - 17*b2*l0*w1p + 140*w1*w1p - 25*b2p*l0*w2 + 70*w1p*w2 + b1p*l0*(-4*b2*l0 + 25*w1 + 17*w2) - 25*b2*l0*w2p + 70*w1*w2p + 140*w2*w2p + b1*l0*(5*b1p*l0 - 4*b2p*l0 + 25*w1p + 17*w2p)) + a1p*(4*b2*b2p*l0h2 + 10*g1*g1p*l0h2 - 5*g1p*g2*l0h2 - 5*g1*g2p*l0h2 + 4*g2*g2p*l0h2 + 65*g1p*l0*u1 - 25*g2p*l0*u1 + 65*g1*l0*u1p - 25*g2*l0*u1p + 580*u1*u1p + 19*g1p*l0*u2 - 17*g2p*l0*u2 + 92*u1p*u2 + 19*g1*l0*u2p - 17*g2*l0*u2p + 92*u1*u2p + 76*u2*u2p - 25*b2p*l0*w1 - 25*b2*l0*w1p + 580*w1*w1p - 17*b2p*l0*w2 + 92*w1p*w2 + b1p*l0*(-5*b2*l0 + 65*w1 + 19*w2) - 17*b2*l0*w2p + 92*w1*w2p + 76*w2*w2p + b1*l0*(10*b1p*l0 - 5*b2p*l0 + 65*w1p + 19*w2p))))/1260. );
@@ -148,15 +148,15 @@ namespace MBSimFlexibleBody {
     computeh(q,v);
   }
 
-  Vec FiniteElement1s23BTA::Tangent(const Vec& q, const double& s) {
-    Vec tangent(3,NONINIT);
+  Vec3 FiniteElement1s23BTA::getTangent(const Vec& q, double s) {
+    Vec3 tangent(NONINIT);
 
-    const double &a1 = q(0);
-    const double &w1 = q(1);  const double &b1 = q(2);
-    const double &u1 = q(3);  const double &g1 = q(4);
-    const double &a2 = q(5);
-    const double &w2 = q(6);  const double &b2 = q(7);
-    const double &u2 = q(8);  const double &g2 = q(9);
+    double a1 = q(0);
+    double w1 = q(1);  double b1 = q(2);
+    double u1 = q(3);  double g1 = q(4);
+    double a2 = q(5);
+    double w2 = q(6);  double b2 = q(7);
+    double u2 = q(8);  double g2 = q(9);
 
     tangent(0) = 1.0;
     tangent(1) = -((-(a1/l0) + a2/l0)*(g1*s + u1 - (Power(s,2)*(2*g1*l0 + g2*l0 + 3*u1 - 3*u2))/l0h2 + (Power(s,3)*(g1*l0 + g2*l0 + 2*u1 - 2*u2))/l0h3)*cos((a1*(l0 - s))/l0 + (a2*s)/l0)) + (b1 - (2*s*(2*b1*l0 + b2*l0 + 3*w1 - 3*w2))/l0h2 + (3*Power(s,2)*(b1*l0 + b2*l0 + 2*w1 - 2*w2))/l0h3)*cos((a1*(l0 - s))/l0 + (a2*s)/l0) - (g1 - (2*s*(2*g1*l0 + g2*l0 + 3*u1 - 3*u2))/l0h2 + (3*Power(s,2)*(g1*l0 + g2*l0 + 2*u1 - 2*u2))/l0h3)*sin((a1*(l0 - s))/l0 + (a2*s)/l0) - (-(a1/l0) + a2/l0)*(b1*s + w1 - (Power(s,2)*(2*b1*l0 + b2*l0 + 3*w1 - 3*w2))/l0h2 + (Power(s,3)*(b1*l0 + b2*l0 + 2*w1 - 2*w2))/l0h3)*sin((a1*(l0 - s))/l0 + (a2*s)/l0);
@@ -167,39 +167,32 @@ namespace MBSimFlexibleBody {
     return tangent;
   }
 
-  SqrMat FiniteElement1s23BTA::AWK(const Vec& q, const double& s) {
-    SqrMat AWK(3,NONINIT);
-    Vec bzT(3,INIT,0.);
+  SqrMat3 FiniteElement1s23BTA::getOrientation(const Vec& q, double s) {
+    SqrMat3 AWK(NONINIT);
+    Vec3 bzT(INIT,0.);
 
     double alpha = q(0) * (1-s/l0) + q(5) * (s/l0);
 
     bzT(1) = -sin(alpha);
     bzT(2) =  cos(alpha);
 
-    AWK.col(0)  = Tangent(q,s);
-    AWK.col(1)  = crossProduct(bzT,AWK.col(0));
-    AWK.col(1) /= nrm2(AWK.col(1));
-    AWK.col(2)  = crossProduct(AWK.col(0),AWK.col(1));
+    AWK.set(0,getTangent(q,s));
+    Vec3 tmp = crossProduct(bzT,AWK.col(0));
+    AWK.set(1,tmp/nrm2(tmp));
+    AWK.set(2,crossProduct(AWK.col(0),AWK.col(1)));
 
     return AWK;
   }
 
-  Vec FiniteElement1s23BTA::StateAxis(const Vec& q, const Vec& v,const double& s) {
-    Vec X(12); 
+  Vector<Fixed<6>, double> FiniteElement1s23BTA::getPositions(const Vec& q, double s) {
+    Vector<Fixed<6>, double> X(NONINIT); 
 
-    const double &a1 = q(0);
-    const double &w1 = q(1); const double &b1 = q(2);
-    const double &u1 = q(3); const double &g1 = q(4);
-    const double &a2 = q(5);
-    const double &w2 = q(6); const double &b2 = q(7);
-    const double &u2 = q(8); const double &g2 = q(9);
-
-    const double &a1p = v(0);
-    const double &w1p = v(1); const double &b1p = v(2);
-    const double &u1p = v(3); const double &g1p = v(4);
-    const double &a2p = v(5);
-    const double &w2p = v(6); const double &b2p = v(7);
-    const double &u2p = v(8); const double &g2p = v(9);
+    double a1 = q(0);
+    double w1 = q(1); double b1 = q(2);
+    double u1 = q(3); double g1 = q(4);
+    double a2 = q(5);
+    double w2 = q(6); double b2 = q(7);
+    double u2 = q(8); double g2 = q(9);
 
     X(0) = s;
     X(1) = (b1*s + w1 - (Power(s,2)*(2*b1*l0 + b2*l0 + 3*w1 - 3*w2))/Power(l0,2) + (Power(s,3)*(b1*l0 + b2*l0 + 2*w1 - 2*w2))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) - (g1*s + u1 - (Power(s,2)*(2*g1*l0 + g2*l0 + 3*u1 - 3*u2))/Power(l0,2) + (Power(s,3)*(g1*l0 + g2*l0 + 2*u1 - 2*u2))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0);
@@ -207,25 +200,46 @@ namespace MBSimFlexibleBody {
     X(3) = (a1*(l0 - s))/l0 + (a2*s)/l0;
     X(4) = (g1 - (2*s*(2*g1*l0 + g2*l0 + 3*u1 - 3*u2))/Power(l0,2) + (3*Power(s,2)*(g1*l0 + g2*l0 + 2*u1 - 2*u2))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) - (-b1 + (2*s*(2*b1*l0 + b2*l0 + 3*w1 - 3*w2))/Power(l0,2) - (3*Power(s,2)*(b1*l0 + b2*l0 + 2*w1 - 2*w2))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0);
     X(5) = (-b1 + (2*s*(2*b1*l0 + b2*l0 + 3*w1 - 3*w2))/Power(l0,2) - (3*Power(s,2)*(b1*l0 + b2*l0 + 2*w1 - 2*w2))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) + (g1 - (2*s*(2*g1*l0 + g2*l0 + 3*u1 - 3*u2))/Power(l0,2) + (3*Power(s,2)*(g1*l0 + g2*l0 + 2*u1 - 2*u2))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0);
-    X(6) = 0;
-    X(7) = -(((a1p*(l0 - s) + a2p*s)*(g1*l0*Power(l0 - s,2)*s + g2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*u1 - 3*l0*Power(s,2)*u1 + 2*Power(s,3)*u1 + 3*l0*Power(s,2)*u2 - 2*Power(s,3)*u2)*cos((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4)) + (b1p*s + w1p - (Power(s,2)*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) + (Power(s,3)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*cos((a1*l0 - a1*s + a2*s)/l0) - (g1p*s + u1p - (Power(s,2)*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (Power(s,3)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*sin((a1*l0 - a1*s + a2*s)/l0) - ((a1p*(l0 - s) + a2p*s)*(b1*l0*Power(l0 - s,2)*s + b2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*w1 - 3*l0*Power(s,2)*w1 + 2*Power(s,3)*w1 + 3*l0*Power(s,2)*w2 - 2*Power(s,3)*w2)*sin((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4);
-    X(8) = (g1p*s + u1p - (Power(s,2)*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (Power(s,3)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*cos((a1*l0 - a1*s + a2*s)/l0) + ((a1p*(l0 - s) + a2p*s)*(b1*l0*Power(l0 - s,2)*s + b2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*w1 - 3*l0*Power(s,2)*w1 + 2*Power(s,3)*w1 + 3*l0*Power(s,2)*w2 - 2*Power(s,3)*w2)*cos((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4) - ((a1p*(l0 - s) + a2p*s)*(g1*l0*Power(l0 - s,2)*s + g2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*u1 - 3*l0*Power(s,2)*u1 + 2*Power(s,3)*u1 + 3*l0*Power(s,2)*u2 - 2*Power(s,3)*u2)*sin((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4) + (b1p*s + w1p - (Power(s,2)*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) + (Power(s,3)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*sin((a1*l0 - a1*s + a2*s)/l0);
-    X(9) = (a1p*l0 - a1p*s + a2p*s)/l0;
-    X(10) =  -((g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) - (-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0));
-    X(11) =  -((-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) + (g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0));
 
     return X;
   }
 
-  Mat FiniteElement1s23BTA::JGeneralized(const Vec& q,const double& s) {
+  Vector<Fixed<6>, double> FiniteElement1s23BTA::getVelocities(const Vec& q, const Vec& v, double s) {
+    Vector<Fixed<6>, double> X(NONINIT); 
+
+    double a1 = q(0);
+    double w1 = q(1); double b1 = q(2);
+    double u1 = q(3); double g1 = q(4);
+    double a2 = q(5);
+    double w2 = q(6); double b2 = q(7);
+    double u2 = q(8); double g2 = q(9);
+
+    double a1p = v(0);
+    double w1p = v(1); double b1p = v(2);
+    double u1p = v(3); double g1p = v(4);
+    double a2p = v(5);
+    double w2p = v(6); double b2p = v(7);
+    double u2p = v(8); double g2p = v(9);
+
+    X(0) = 0;
+    X(1) = -(((a1p*(l0 - s) + a2p*s)*(g1*l0*Power(l0 - s,2)*s + g2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*u1 - 3*l0*Power(s,2)*u1 + 2*Power(s,3)*u1 + 3*l0*Power(s,2)*u2 - 2*Power(s,3)*u2)*cos((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4)) + (b1p*s + w1p - (Power(s,2)*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) + (Power(s,3)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*cos((a1*l0 - a1*s + a2*s)/l0) - (g1p*s + u1p - (Power(s,2)*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (Power(s,3)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*sin((a1*l0 - a1*s + a2*s)/l0) - ((a1p*(l0 - s) + a2p*s)*(b1*l0*Power(l0 - s,2)*s + b2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*w1 - 3*l0*Power(s,2)*w1 + 2*Power(s,3)*w1 + 3*l0*Power(s,2)*w2 - 2*Power(s,3)*w2)*sin((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4);
+    X(2) = (g1p*s + u1p - (Power(s,2)*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (Power(s,3)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*cos((a1*l0 - a1*s + a2*s)/l0) + ((a1p*(l0 - s) + a2p*s)*(b1*l0*Power(l0 - s,2)*s + b2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*w1 - 3*l0*Power(s,2)*w1 + 2*Power(s,3)*w1 + 3*l0*Power(s,2)*w2 - 2*Power(s,3)*w2)*cos((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4) - ((a1p*(l0 - s) + a2p*s)*(g1*l0*Power(l0 - s,2)*s + g2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*u1 - 3*l0*Power(s,2)*u1 + 2*Power(s,3)*u1 + 3*l0*Power(s,2)*u2 - 2*Power(s,3)*u2)*sin((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4) + (b1p*s + w1p - (Power(s,2)*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) + (Power(s,3)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*sin((a1*l0 - a1*s + a2*s)/l0);
+    X(3) = (a1p*l0 - a1p*s + a2p*s)/l0;
+    X(4) =  -((g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) - (-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0));
+    X(5) =  -((-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) + (g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0));
+
+    return X;
+  }
+
+  Mat FiniteElement1s23BTA::JGeneralized(const Vec& q, double s) {
     Mat J(getuSize(),6-1);
 
-    const double &a1 = q(0);
-    const double &w1 = q(1); const double &b1 = q(2);
-    const double &u1 = q(3); const double &g1 = q(4);
-    const double &a2 = q(5);
-    const double &w2 = q(6); const double &b2 = q(7);
-    const double &u2 = q(8); const double &g2 = q(9);
+    double a1 = q(0);
+    double w1 = q(1); double b1 = q(2);
+    double u1 = q(3); double g1 = q(4);
+    double a2 = q(5);
+    double w2 = q(6); double b2 = q(7);
+    double u2 = q(8); double g2 = q(9);
 
     J(0,0) = -(((l0 - s)*(((-l0 + s)*(l0*s*(-(g1*l0) + (g1 + g2)*s) + (-l0 + s)*(l0 + 2*s)*u1) + (3*l0 - 2*s)*Power(s,2)*u2)*cos(a1 + ((-a1 + a2)*s)/l0) + ((-l0 + s)*(l0*s*(-(b1*l0) + (b1 + b2)*s) + (-l0 + s)*(l0 + 2*s)*w1) + (3*l0 - 2*s)*Power(s,2)*w2)*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4));
     J(0,1) = ((l0 - s)*(((-l0 + s)*(l0*s*(-(b1*l0) + (b1 + b2)*s) + (-l0 + s)*(l0 + 2*s)*w1) + (3*l0 - 2*s)*Power(s,2)*w2)*cos(a1 + ((-a1 + a2)*s)/l0) - ((-l0 + s)*(l0*s*(-(g1*l0) + (g1 + g2)*s) + (-l0 + s)*(l0 + 2*s)*u1) + (3*l0 - 2*s)*Power(s,2)*u2)*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
@@ -281,5 +295,36 @@ namespace MBSimFlexibleBody {
     return J;
   }
 
-}
+  void FiniteElement1s23BTA::setMaterialDamping(double) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA:setMaterialDamping): Not implemented!");
+  }
 
+  void FiniteElement1s23BTA::setLehrDamping(double) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA:setLehrDamping): Not implemented!");
+  }
+
+  Vec3 FiniteElement1s23BTA::getPosition(const Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA::getPosition): not implemented!");
+  }
+
+  Vec3 FiniteElement1s23BTA::getVelocity (const Vec& qElement, const Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA::getVelocity): not implemented!");
+  }
+
+  Vec3 FiniteElement1s23BTA::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA::getAngularVelocity): not implemented!");
+  }
+
+  double FiniteElement1s23BTA::computeKineticEnergy(const Vec& q,const Vec& u) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA:computeKineticEnergy): Not implemented!");
+  }
+
+  double FiniteElement1s23BTA::computeGravitationalEnergy(const Vec& q) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA:computeGravitationalEnergy): Not implemented!");
+  }
+
+  double FiniteElement1s23BTA::computeElasticEnergy(const Vec& q) {
+    throw MBSim::MBSimError("(FiniteElement1s23BTA:computeElasticEnergy): Not implemented!");
+  }
+
+}

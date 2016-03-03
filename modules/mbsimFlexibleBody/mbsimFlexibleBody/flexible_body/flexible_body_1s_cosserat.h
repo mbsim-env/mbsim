@@ -1,26 +1,38 @@
-/*
- * flexible_body_1s_cosserat.h
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
- *  Created on: 16.01.2013
- *      Author: rvonzitzewitz
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: thorsten.schindler@mytum.de
  */
 
 #ifndef FLEXIBLE_BODY_1S_COSSERAT_H_
 #define FLEXIBLE_BODY_1S_COSSERAT_H_
 
-#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 #include "mbsimFlexibleBody/pointer.h"
-#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_translation.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_rotation.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/spineextrusion.h>
-
-#endif
-
-#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
+//#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
+//#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
+//#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
+//#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_translation.h"
+//#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_rotation.h"
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//#include <openmbvcppinterface/spineextrusion.h>
+//
+//#endif
+//
+//#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 
 namespace MBSimFlexibleBody {
 
@@ -40,7 +52,7 @@ namespace MBSimFlexibleBody {
    */
   class Contour1sNeutralCosserat;
 
-  class FlexibleBody1sCosserat : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1sCosserat : public FlexibleBody1s {
     public:
 
       /**
@@ -50,18 +62,13 @@ namespace MBSimFlexibleBody {
        */
       FlexibleBody1sCosserat(const std::string &name, bool openStructure);
 
-      /**
-       * \brief destructor
-       */
-      virtual ~FlexibleBody1sCosserat();
-
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements()=0;
+      const fmatvec::Vec& getqRotationElement(int i) { if(updEle) BuildElements(); return qRotationElement[i]; }
+      const fmatvec::Vec& getuRotationElement(int i) { if(updEle) BuildElements(); return uRotationElement[i]; }
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat)=0;
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0)=0;
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0)=0;
       virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false)=0;
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string())=0;
       /***************************************************/
@@ -69,39 +76,28 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage)=0;
       virtual double computePotentialEnergy()=0;
-      virtual void facLLM(int i = 0)=0;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t, int i = 0);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt = 1)=0;
-      virtual std::string getType() const {
-        return "FlexibleBody1sCosserat";
-      }
+      virtual std::string getType() const { return "FlexibleBody1sCosserat"; }
       /***************************************************/
 
       /* GETTER / SETTER */
       virtual void setNumberElements(int n)=0;
-      void setLength(double L_);
-      void setEGModuls(double E_, double G_);
-      void setDensity(double rho_);
-      void setCrossSectionalArea(double A_);
+      void setEGModuls(double E_, double G_) { E = E_; G = G_; }
+      void setDensity(double rho_) { rho = rho_; }
+      void setCrossSectionalArea(double A_) { A = A_; }
 
-      virtual void setMomentsInertia(double I1_, double I2_, double I0_) {
-      }
-      virtual void setMomentsInertia(double I1_) {
-      }
+      virtual void setMomentsInertia(double I1_, double I2_, double I0_) { }
+      virtual void setMomentsInertia(double I1_) { }
 
-      virtual void setCurlRadius(double R1_, double R2_) {
-      }
-      virtual void setCurlRadius(double R1_) {
-      }
-      virtual void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) {
-      }
-      virtual void setMaterialDamping(double cEps0D_, double cEps1D_) {
-      }
+      virtual void setCurlRadius(double R1_, double R2_) { }
+      virtual void setCurlRadius(double R1_) { }
+      virtual void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) { }
+      virtual void setMaterialDamping(double cEps0D_, double cEps1D_) { }
 
       /*!
        * \brief automatically creates its neutral contour
@@ -115,40 +111,25 @@ namespace MBSimFlexibleBody {
        *
        * \todo: make real concept for reduced bodies in MBSim
        */
-      virtual fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) {
-        return J;
-      }
+      virtual fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) { return J; }
 
-      virtual int getNumberOfElementDOF() const {
-        THROW_MBSIMERROR("(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!");
-      }
-      virtual int getNumberElements() const {
-        return Elements;
-      }
-      virtual double getLength() const {
-        return L;
-      }
-      virtual int getqSizeFull() const {
-        return getqSize();
-      }
-      virtual bool isOpenStructure() const {
-        return openStructure;
-      }
-
+      virtual int getNumberOfElementDOF() const { THROW_MBSIMERROR("(FlexibleBody1sCosserat::getNumberOfElementDOF): Not implemented!"); }
+      virtual int getNumberElements() const { return Elements; }
+      virtual int getqSizeFull() const { return getqSize(); }
 
       /***************************************************/
 
-      /**
-       * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
-       * \param Lagrangian coordinate
-       */
-      virtual fmatvec::Vec computeState(double s)=0;
-
-      /**
-       * \brief compute angles at Lagrangian coordinate in local FE coordinates
-       * \param Lagrangian coordinate
-       */
-      virtual fmatvec::Vec3 computeAngles(double sGlobal, const fmatvec::Vec & vec)=0;
+//      /**
+//       * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
+//       * \param Lagrangian coordinate
+//       */
+//      virtual fmatvec::Vec computeState(double s)=0;
+//
+//      /**
+//       * \brief compute angles at Lagrangian coordinate in local FE coordinates
+//       * \param Lagrangian coordinate
+//       */
+//      virtual fmatvec::Vec3 computeAngles(double sGlobal, const fmatvec::Vec & vec)=0;
 
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
@@ -198,7 +179,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief length of entire beam and finite elements
        */
-      double L, l0;
+      double l0;
 
       /**
        * \brief elastic modules
@@ -234,11 +215,6 @@ namespace MBSimFlexibleBody {
        * \brief strain damping
        */
       double cEps0D, cEps1D;
-
-      /**
-       * \brief open or closed beam structure
-       */
-      bool openStructure;
 
       /**
        * \brief initialised FLAG
@@ -284,19 +260,6 @@ namespace MBSimFlexibleBody {
        */
       virtual void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec)=0;
   };
-  inline void FlexibleBody1sCosserat::setLength(double L_) {
-    L = L_;
-  }
-  inline void FlexibleBody1sCosserat::setEGModuls(double E_, double G_) {
-    E = E_;
-    G = G_;
-  }
-  inline void FlexibleBody1sCosserat::setDensity(double rho_) {
-    rho = rho_;
-  }
-  inline void FlexibleBody1sCosserat::setCrossSectionalArea(double A_) {
-    A = A_;
-  }
 }
 
 #endif /* FLEXIBLE_BODY_1S_COSSERAT_H_ */
