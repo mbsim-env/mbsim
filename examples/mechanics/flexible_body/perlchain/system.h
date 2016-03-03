@@ -20,8 +20,8 @@ class Perlchain : public MBSim::DynamicSystemSolver {
      * \brief compress the W matrix into csparse compressed-column form
      * \param time
      */
-    cs * compressWToCsparse(int j = 0);
-    cs * compressWToCsparse_direct(int j = 0);
+    cs * compressWToCsparse(double t, int j = 0);
+    cs * compressWToCsparse_direct(double t, int j = 0);
 
     /**
      * \brief compress the W matrix into csparse compressed-column form

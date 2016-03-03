@@ -1,8 +1,10 @@
 #include "system.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
@@ -32,12 +34,11 @@ void Perlchain::initialize() {
   setValuedContacts.clear();
   setValuedJoints.clear();
   for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
-    MechanicalLink * i_temp = dynamic_cast<MechanicalLink*>(*i);
     if ((**i).getType() == "Joint") {  // for joint
-      setValuedJoints.push_back(static_cast<Joint*>(i_temp));
+      setValuedJoints.push_back(static_cast<Joint*>(*i));
     }
     else if ((**i).getType() == "Contact") {  // for contour
-      setValuedContacts.push_back(static_cast<Contact*>(i_temp));
+      setValuedContacts.push_back(static_cast<Contact*>(*i));
     }
     else {
       throw MBSimError("Not implemented!");
@@ -46,8 +47,8 @@ void Perlchain::initialize() {
 }
 
 void Perlchain::updateG(double t, int j) {
-  const int nDofs = LLM[j].cols();
-  const int nLa = W[j].cols();
+  const int nDofs = getLLM(t,j).cols();
+  const int nLa = getW(t,j).cols();
   if (0) {
     DynamicSystemSolver::updateG(t, j);
   }
@@ -59,7 +60,7 @@ void Perlchain::updateG(double t, int j) {
 //      cs_L_LLM = compressLLM_LToCsparse_direct(t, j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
 //      cs_Wj = compressWToCsparse_direct(j); // compress the W into compressed column by constructing the three arrays directly
     cs_L_LLM = compressLLM_LToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
-    cs_Wj = compressWToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
+    cs_Wj = compressWToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
 
     int * xi = (int *) cs_malloc(2 * nDofs, sizeof(int));
     double * yy = (double*) calloc(nLa * nDofs, sizeof(double));
@@ -99,7 +100,7 @@ void Perlchain::updateG(double t, int j) {
       Gs.resize(Gsym.size(), int(Gsym.size() * Gsym.size() * facSizeGs));
     }
     Gs << Gsym;
-
+    updG = false;
   }
   else {
     StopWatch sw;
@@ -204,7 +205,7 @@ void Perlchain::updateG(double t, int j) {
     if (compare) {
       double t_cs = sw.stop(true);
       sw.start();
-      SqrMat Greference(W[j].T() * slvLLFac(LLM[j], V[j]));
+      SqrMat Greference(W[j].T() * slvLLFac(LLM[j], getV(t,j)));
       double t_ref = sw.stop(true);
       cout << "t_cs = " << t_cs << " s   | t_ref =" << t_ref << "s   | dt = " << (t_ref - t_cs) / t_ref * 100 << " %" << endl;
 
@@ -266,11 +267,11 @@ void Perlchain::updateG(double t, int j) {
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
     Gs << G;
+    updG = false;
   }
-
 }
 
-cs * Perlchain::compressWToCsparse(int j) {
+cs * Perlchain::compressWToCsparse(double t, int j) {
 
   int m, n, nzMax; // row, column, nz;//, I1;
   cs *C;
@@ -288,10 +289,9 @@ cs * Perlchain::compressWToCsparse(int j) {
   for (std::vector<Joint*>::iterator it = setValuedJoints.begin(); it != setValuedJoints.end(); ++it) {
     Joint* i_temp = *it;
     for (int col = i_temp->getlaInd(); col < i_temp->getlaInd() + i_temp->getlaSize(); col++) {
-      const size_t Noframes = (*i_temp).getFrame().size();
-      for (size_t partner = 0; partner < Noframes; partner++) {
-        int lowerRow = (*i_temp).getFrame()[partner]->gethInd(j);
-        int upperRow = (*i_temp).getFrame()[partner]->gethInd(j) + (*i_temp).getFrame()[partner]->gethSize(j);
+      for (size_t partner = 0; partner < 2; partner++) {
+        int lowerRow = (*i_temp).getFrame(partner)->gethInd(j);
+        int upperRow = (*i_temp).getFrame(partner)->gethInd(j) + (*i_temp).getFrame(partner)->gethSize(j);
 
         for (int row = lowerRow; row < upperRow; row++) {
           double entry = W[j](row, col);
@@ -307,10 +307,9 @@ cs * Perlchain::compressWToCsparse(int j) {
     for (std::vector<Contact*>::iterator it = setValuedContacts.begin(); it != setValuedContacts.end(); ++it) {
       Contact* i_temp = *it;
       for (int col = i_temp->getlaInd(); col < i_temp->getlaInd() + i_temp->getlaSize(); col++) {
-        const size_t NoContacts = (*i_temp).getContour().size();
-        for (size_t partner = 0; partner < NoContacts; partner++) {
-          int lowerRow = (*i_temp).getContour()[partner]->gethInd(j);
-          int upperRow = (*i_temp).getContour()[partner]->gethInd(j) + (*i_temp).getContour()[partner]->gethSize(j);
+        for (size_t partner = 0; partner < 2; partner++) {
+          int lowerRow = (*i_temp).getContour(partner)->gethInd(j);
+          int upperRow = (*i_temp).getContour(partner)->gethInd(j) + (*i_temp).getContour(partner)->gethSize(j);
 
           for (int row = lowerRow; row < upperRow; row++) {
             double entry = W[j](row, col);
@@ -325,10 +324,9 @@ cs * Perlchain::compressWToCsparse(int j) {
     for (std::vector<Contact*>::iterator it = setValuedContacts.begin(); it != setValuedContacts.end(); ++it) {
       Contact * cnt = *it;
       for (int col = cnt->getlaInd(); col < cnt->getlaInd() + cnt->getlaSize(); col++) {
-        const size_t NoContacts = cnt->getContour().size();
-        for (size_t partner = 0; partner < NoContacts; partner++) {
-          int lowerRow = cnt->getContour()[partner]->gethInd(j);
-          int upperRow = cnt->getContour()[partner]->gethInd(j) + cnt->getContour()[partner]->gethSize(j);
+        for (size_t partner = 0; partner < 2; partner++) {
+          int lowerRow = cnt->getContour(partner)->gethInd(j);
+          int upperRow = cnt->getContour(partner)->gethInd(j) + cnt->getContour(partner)->gethSize(j);
 
           for (int row = lowerRow; row < upperRow; row++) {
             double entry = W[j](row, col);
@@ -438,7 +436,7 @@ cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
 
 }
 
-cs * Perlchain::compressWToCsparse_direct(int j) {
+cs * Perlchain::compressWToCsparse_direct(double t, int j) {
 
   int m, n, nz, *Cp, *Ci, counter;
   ;
@@ -461,14 +459,13 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
 
   counter = 0;
   for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
-    MechanicalLink * i_temp = dynamic_cast<MechanicalLink*>(*i);
     for (int col = (**i).getlaInd(); col < (**i).getlaInd() + (**i).getlaSize(); col++) {
       Cp[col] = counter;
       if ((**i).getType() == "Joint") {  // for joint
-        const size_t Noframes = (*i_temp).getFrame().size();
-        for (size_t partner = 0; partner < Noframes; partner++) {
-          int lowerRow = (*i_temp).getFrame()[partner]->gethInd(j);
-          int upperRow = (*i_temp).getFrame()[partner]->gethInd(j) + (*i_temp).getFrame()[partner]->gethSize(j);
+        Joint * i_temp = dynamic_cast<Joint*>(*i);
+        for (size_t partner = 0; partner < 2; partner++) {
+          int lowerRow = (*i_temp).getFrame(partner)->gethInd(j);
+          int upperRow = (*i_temp).getFrame(partner)->gethInd(j) + (*i_temp).getFrame(partner)->gethSize(j);
 
           for (int row = lowerRow; row < upperRow; row++) {
             double entry = W[j](row, col);
@@ -480,11 +477,11 @@ cs * Perlchain::compressWToCsparse_direct(int j) {
           }
         }
       }
-      else if ((**i).getType() == "Contact") {  // for contour
-        const size_t NoContacts = (*i_temp).getContour().size();
-        for (size_t partner = 0; partner < NoContacts; partner++) {
-          int lowerRow = (*i_temp).getContour()[partner]->gethInd(j);
-          int upperRow = (*i_temp).getContour()[partner]->gethInd(j) + (*i_temp).getContour()[partner]->gethSize(j);
+      else if ((**i).getType() == "Contact") {  // for contact
+        Contact * i_temp = dynamic_cast<Contact*>(*i);
+        for (size_t partner = 0; partner < 2; partner++) {
+          int lowerRow = (*i_temp).getContour(partner)->gethInd(j);
+          int upperRow = (*i_temp).getContour(partner)->gethInd(j) + (*i_temp).getContour(partner)->gethSize(j);
 
           for (int row = lowerRow; row < upperRow; row++) {
             double entry = W[j](row, col);
@@ -659,6 +656,14 @@ Perlchain::Perlchain(const string &projectName) :
   rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
+  FlexibleBand *contour1sFlexible = new FlexibleBand("Contour1sFlexible");
+  Vec nodes(elements+1);
+  for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
+  contour1sFlexible->setNodes(nodes);
+  contour1sFlexible->setWidth(0.1);
+  contour1sFlexible->setRelativeOrientation(M_PI);
+  rod->addContour(contour1sFlexible);
+
 // balls
   assert(nBalls > 1);
   double d = 7. * l0 / (8. * nBalls); // thickness
@@ -721,19 +726,18 @@ Perlchain::Perlchain(const string &projectName) :
   rodInfo->setFrameOfReference(rod->getFrameOfReference());
 
   rodInfo->initInfo();
-  rodInfo->updateStateDependentVariables(0.);
 
   for (unsigned int i = 0; i < balls.size(); i++) {
     Vec q0(3, INIT, 0.);
     double xL = fmod(i * rodInfo->getLength() / balls.size() + rodInfo->getLength() * 0.25, rodInfo->getLength());
-    ContourPointData cp;
-    cp.getContourParameterType() = ContourPointData::continuum;
-    cp.getLagrangeParameterPosition()(0) = xL;
 
-    rodInfo->updateKinematicsForFrame(cp, Frame::position_cosy);
-    q0(0) = cp.getFrameOfReference().getPosition()(0);
-    q0(1) = cp.getFrameOfReference().getPosition()(1);
-    q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI * 0.5;
+    Vec3 r = rodInfo->getPosition(0,xL);
+    q0(0) = r(0);
+    q0(1) = r(1);
+
+    SqrMat3 A = rodInfo->getOrientation(0,xL);
+     cout <<  fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI) << endl;
+    q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
     balls[i]->setInitialGeneralizedPosition(q0);
   }
 
@@ -747,37 +751,70 @@ Perlchain::Perlchain(const string &projectName) :
   joint->connect(this->getFrame("BearingFrame"), balls[0]->getFrame("C"));
   this->addLink(joint);
 
-// constraints balls on flexible band
-  Contact *contact = new Contact("Band_Balls"); // + balls[i]->getName());
-  contact->setNormalForceLaw(new BilateralConstraint);
-  contact->setNormalImpactLaw(new BilateralImpact);
-  contact->enableOpenMBVContactPoints(0.01);
-  this->addLink(contact);
-  for (int i = 0; i < nBalls; i++) {
-    contact->connect(balls[i]->getContour("COG"), rod->getContour("Contour1sFlexible"));
+  for(int i=0;i<nBalls;i++) {
+    Contact *contact = new Contact("Band_"+balls[i]->getName());
+    contact->setNormalForceLaw(new BilateralConstraint);
+    contact->setNormalImpactLaw(new BilateralImpact);
+    contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
+    contact->enableOpenMBVContactPoints(0.01);
+    contact->setSearchAllContactPoints(true);
+    this->addLink(contact);
   }
 
-// inner-ball contacts
-  stringstream namet, nameb;
-  namet << "ContactTop";
-  nameb << "ContactBot";
-  Contact *ctrt = new Contact(namet.str());
-  Contact *ctrb = new Contact(nameb.str());
-  ctrt->setNormalForceLaw(new UnilateralConstraint);
-  ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
-  ctrb->setNormalForceLaw(new UnilateralConstraint);
-  ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
-  this->addLink(ctrt);
-  this->addLink(ctrb);
-  for (int i = 0; i < nBalls; i++) {
-    if (i == nBalls - 1) {
-      ctrt->connect(balls[0]->getContour("topPoint"), balls[i]->getContour("Plane"));
-      ctrb->connect(balls[0]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
+  // inner-ball contacts
+  for(int i=0;i<nBalls;i++) {
+    stringstream namet,nameb;
+    namet << "ContactTop_" << i;
+    nameb << "ContactBot_" << i;
+    Contact *ctrt = new Contact(namet.str());
+    Contact *ctrb = new Contact(nameb.str());
+    ctrt->setNormalForceLaw(new UnilateralConstraint);
+    ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    ctrb->setNormalForceLaw(new UnilateralConstraint);
+    ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+    if(i==nBalls-1) {
+      ctrt->connect(balls[0]->getContour("topPoint"),balls[i]->getContour("Plane"));
+      ctrb->connect(balls[0]->getContour("bottomPoint"),balls[i]->getContour("Plane"));
     }
     else {
-      ctrt->connect(balls[i + 1]->getContour("topPoint"), balls[i]->getContour("Plane"));
-      ctrb->connect(balls[i + 1]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
+      ctrt->connect(balls[i+1]->getContour("topPoint"),balls[i]->getContour("Plane"));
+      ctrb->connect(balls[i+1]->getContour("bottomPoint"),balls[i]->getContour("Plane"));
     }
+    this->addLink(ctrt);
+    this->addLink(ctrb);
   }
+// constraints balls on flexible band
+//  Contact *contact = new Contact("Band_Balls"); // + balls[i]->getName());
+//  contact->setNormalForceLaw(new BilateralConstraint);
+//  contact->setNormalImpactLaw(new BilateralImpact);
+//  contact->enableOpenMBVContactPoints(0.01);
+//  contact->setSearchAllContactPoints(true);
+//  this->addLink(contact);
+//  for (int i = 0; i < nBalls; i++) {
+//    contact->connect(balls[i]->getContour("COG"), rod->getContour("Contour1sFlexible"));
+//  }
+//
+//// inner-ball contacts
+//  stringstream namet, nameb;
+//  namet << "ContactTop";
+//  nameb << "ContactBot";
+//  Contact *ctrt = new Contact(namet.str());
+//  Contact *ctrb = new Contact(nameb.str());
+//  ctrt->setNormalForceLaw(new UnilateralConstraint);
+//  ctrt->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+//  ctrb->setNormalForceLaw(new UnilateralConstraint);
+//  ctrb->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
+//  this->addLink(ctrt);
+//  this->addLink(ctrb);
+//  for (int i = 0; i < nBalls; i++) {
+//    if (i == nBalls - 1) {
+//      ctrt->connect(balls[0]->getContour("topPoint"), balls[i]->getContour("Plane"));
+//      ctrb->connect(balls[0]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
+//    }
+//    else {
+//      ctrt->connect(balls[i + 1]->getContour("topPoint"), balls[i]->getContour("Plane"));
+//      ctrb->connect(balls[i + 1]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
+//    }
+//  }
 }
 
