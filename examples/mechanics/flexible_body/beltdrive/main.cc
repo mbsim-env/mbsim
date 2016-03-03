@@ -16,11 +16,11 @@ int main (int argc, char* argv[]) {
   sys->setStrategy(DynamicSystemSolver::local);
   sys->initialize();
 
-  sys->setgdTol (1.0e-12);
-  sys->setgddTol(1.0e-11);
-  sys->setlaTol (1.0e-9);
-  sys->setLaTol (1.0e-9);
-  sys->setMaxIter(pow(150*sys->getlaSize(),0.85));
+  sys->setgdTol (1.0e-6);
+  sys->setgddTol(1.0e-8);
+  sys->setlaTol (1.0e-8);
+  sys->setLaTol (1.0e-6);
+  sys->setMaxIter(1000+0*pow(150*sys->getlaSize(),0.85));
 
   Integrator *integrator;
 
@@ -49,7 +49,7 @@ int main (int argc, char* argv[]) {
   }
 
   integrator->setEndTime(1.6e-1);
-  integrator->setEndTime(4.e-4);
+  integrator->setEndTime(0.8e-3);
   integrator->setPlotStepSize(max(1e-4,dt_const));
   integrator->integrate(*sys);
 

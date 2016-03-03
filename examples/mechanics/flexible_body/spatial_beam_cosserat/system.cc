@@ -1,10 +1,10 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
-#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h"
+//#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h"
 // Beginning Contact
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/contact.h"
-#include "mbsim/contour.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include <mbsim/functions/kinematics/kinematics.h>
@@ -79,7 +79,7 @@ System::System(const string &projectName) :
   rod->setu0(Vec(q0.size(), INIT, 0.));
   this->addObject(rod);
 
-  Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
+//  Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
@@ -96,16 +96,16 @@ System::System(const string &projectName) :
   shared_ptr<OpenMBV::PolygonPoint>  corner4 = OpenMBV::PolygonPoint::create(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
   cuboid->setContour(rectangle);
-  rodCont->setOpenMBVSpineExtrusion(cuboid);
+  rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
-  FlexibleBand * top = new FlexibleBand("Top");
-  top->setWidth(b0);
-  top->setNormalDistance(0.5 * b0);
-  top->setCn(Vec("[1.;0.]"));
-  top->setNeutral(rodCont);
+//  FlexibleBand * top = new FlexibleBand("Top");
+//  top->setWidth(b0);
+//  top->setNormalDistance(0.5 * b0);
+//  top->setCn(Vec("[1.;0.]"));
+//  top->setNeutral(rodCont);
 
-  rod->addContour(top);
+//  rod->addContour(top);
 
 // Beginning Contact ---------------------------------------------------
 
@@ -144,15 +144,15 @@ System::System(const string &projectName) :
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
-  Contact *contact = new Contact("Contact");
-  contact->setNormalForceLaw(new UnilateralConstraint);
-  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
-  contact->connect(ball->getContour("Point"), top);
-  contact->enableOpenMBVNormalForce();
-  contact->enableOpenMBVTangentialForce();
-  contact->enableOpenMBVContactPoints();
-
-  this->addLink(contact);
+//  Contact *contact = new Contact("Contact");
+//  contact->setNormalForceLaw(new UnilateralConstraint);
+//  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
+//  contact->connect(ball->getContour("Point"), top);
+//  contact->enableOpenMBVNormalForce();
+//  contact->enableOpenMBVTangentialForce();
+//  contact->enableOpenMBVContactPoints();
+//
+//  this->addLink(contact);
 
 // End Contact ---------------------------------------------------
 }

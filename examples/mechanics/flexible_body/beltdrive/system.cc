@@ -126,7 +126,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   const double E = EA / A;
   const int elements = 60; // number of finite elements
 
-  const double     mu = 1.0; // poly V belts lead to "rise" in friction coefficient
+  const double     mu = 0.20; // poly V belts lead to "rise" in friction coefficient
 //  const double omega0 = - 800  *2*M_PI/60; // first value in RPM
   const double omega0 = - 100; // first value in RPM
   const double     F0 = 0.5e3;
@@ -153,10 +153,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
         double     v0 = omega0 * radiiDisks(0);
 
-  const double nodesPerElement = 1.65;
+  const double nodesPerElement = 0.25;
   const double nominalContactRadius = radiiDisks(1);
 
-  bool enableContactPoints = false;
+  bool enableContactPoints = true;
 
 // initial condition for belt
   Mat start(2,nDisks), end(2,nDisks);
@@ -341,12 +341,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Vec nodes(nNodes);
     for(int i=0;i<nNodes;i++)
       nodes(i) = i*beltLength/(nNodes-1);
+    cout << nodes << endl;
     bd->setNodes(nodes);
-    //bd->setWidth(1.0);
-    bd->setSecondTangentFlipped(sideInOut(iBand)==1?false:true);
-    bd->setAlphaStart(0.);
-    bd->setAlphaEnd(beltLength);  
-    bd->setNormalDistance(0.5*b0_contact);
+    bd->setWidth(1.0);
+    Vec2 r;
+    r(0) = -0.5*b0_contact*sideInOut(iBand);
+    bd->setRelativePosition(r);
+    bd->setRelativeOrientation(sideInOut(iBand)==1?0:M_PI);
     belt->addContour(bd);
     band.push_back(bd);
   }
@@ -401,18 +402,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     }
 
     Circle *cDisk = new Circle("cDisk");
-    cDisk->setRadius(radiiDisks(i));
+    cDisk->setRadius(0.98*radiiDisks(i));
     Vec BR(3,INIT,0.);// BR(1)=-r;
     disk->addFrame(new FixedRelativeFrame("cDisk",BR,SqrMat(3,EYE),disk->getFrame("C")));
     cDisk->setFrameOfReference(disk->getFrame("cDisk"));
     disk->addContour(cDisk);
+    cDisk->enableOpenMBV();
     this->addObject(disk);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
-    cylinder->setRadius(radiiDisks(i));
-    cylinder->setDiffuseColor(1/3.0, 1, 1);
-    disk->setOpenMBVRigidBody(cylinder);
+//    boost::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+//    cylinder->setRadius(radiiDisks(i));
+//    cylinder->setDiffuseColor(1/3.0, 1, 1);
+//    disk->setOpenMBVRigidBody(cylinder);
 #endif
 
     //  ContactKinematicsSolidCircleFlexibleBand *ck = new ContactKinematicsSolidCircleFlexibleBand();

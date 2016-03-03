@@ -1,6 +1,8 @@
 #include "system.h"
 #include "mbsim/environment.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/links/joint.h"
@@ -85,12 +87,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   welle->setCrossSectionalArea(A);
   welle->setMomentsInertia(IB,IB,2*IB);
   welle->setDensity(rho);
-  welle->setContourRadius(R_GLS/2.);
+//  welle->setContourRadius(R_GLS/2.);
   welle->setFrameOfReference(this->getFrame("I"));
   welle->setq0(Vec(5*Elements+5,INIT,0.));	
-  welle->addFrame("Anfang",0.);
-  welle->addFrame("Ende",L);
-  welle->addFrame("PosScheibeS",PosScheibeS);
+  welle->addFrame(new Frame1s("Anfang",0.));
+  welle->addFrame(new Frame1s("Ende",L));
+  welle->addFrame(new Frame1s("PosScheibeS",PosScheibeS));
+  welle->getFrame("Anfang")->enableOpenMBV(0.01);
+  welle->getFrame("Ende")->enableOpenMBV(0.01);
+  welle->getFrame("PosScheibeS")->enableOpenMBV(0.01);
   welle->setMassProportionalDamping(60);
   welle->setTorsionalDamping(0.01);
   this->addObject(welle);
@@ -168,7 +173,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Circle* rightCircle = new Circle("rightCircle");
   rightCircle->setRadius(R_GL);
-  rightCircle->setOutCont(false);
+  rightCircle->setSolid(false);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   rightCircle->enableOpenMBV();
 #endif
@@ -202,14 +207,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* Antrieb am Lager B */
   KineticExcitation *bantrieb = new KineticExcitation("Lager_B_Antrieb");
   bantrieb->setMomentFunction(new StepFunction<VecV(double)>(0.05,0.,AntriebsmomentLagerB));
-  bantrieb->setMomentDirection("[0;1;0]");
+  bantrieb->setMomentDirection("[1;0;0]");
   bantrieb->connect(welle->getFrame("Ende"));
+  bantrieb->enableOpenMBVMoment(0.001);
   this->addLink(bantrieb);
 
   KineticExcitation *bSchlag = new KineticExcitation("Lager_B_Schlag");
   bSchlag->setMomentFunction(new ConstantFunction<VecV(double)>(SchlagLagerB));
-  bSchlag->setMomentDirection("[0;0;1]");
+  bSchlag->setMomentDirection("[0;0;-1]");
   bSchlag->connect(welle->getFrame("Ende"));
+  bSchlag->enableOpenMBVMoment(0.001);
   this->addLink(bSchlag);
 
   /* Verbindung Schwungrad - Welle */
@@ -237,6 +244,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cGL_Right->setNormalImpactLaw(new UnilateralNewtonImpact);
   cGL_Right->setTangentialForceLaw(new SpatialCoulombFriction(mu));
   cGL_Right->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+  cGL_Right->enableOpenMBVContactPoints(0.01);
   this->addLink(cGL_Right);  
 }
 
