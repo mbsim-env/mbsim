@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
 
   void ContactKinematicsPointNurbsDisk2s::updateg(Vec &g, ContourPointData* cpData, int index) {
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of the point in worldcoordinates
-    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[ipoint].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
+    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[ipoint].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition()))(0,1); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
 
     /*TESTING*/
     //cout << "Platten-Posi:" << nurbsdisk->getFrame()->getPosition() << endl;
@@ -69,9 +69,9 @@ namespace MBSimFlexibleBody {
       cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1));   
       cpData[ipoint].getFrameOfReference().getOrientation().set(2,  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
-      cout << "Normale: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0) << endl;
-      cout << "1.Tangente: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1) << endl;
-      cout << "2.Tangente: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2) << endl;
+//      cout << "Normale: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0) << endl;
+//      cout << "1.Tangente: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1) << endl;
+//      cout << "2.Tangente: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2) << endl;
 
       g(0) = cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
       // cout << "Abstand: " << g(0) << endl;
