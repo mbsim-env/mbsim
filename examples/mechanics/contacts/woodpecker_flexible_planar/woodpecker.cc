@@ -123,15 +123,15 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
   UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
   double mu = 0.2;
-  SpatialCoulombFriction *coulFriction = new SpatialCoulombFriction(mu);
-  SpatialCoulombImpact   *coulImptact  = new SpatialCoulombImpact(mu);
+  PlanarCoulombFriction *coulFriction = new PlanarCoulombFriction(mu);
+  PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
 
   for(int i=0;i<4;i++) {
 
     UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
     UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
-    SpatialCoulombFriction *coulFriction = new SpatialCoulombFriction(mu);
-    SpatialCoulombImpact   *coulImptact  = new SpatialCoulombImpact(mu);
+    PlanarCoulombFriction *coulFriction = new PlanarCoulombFriction(mu);
+    PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
 
     stringstream name;
     name << "PM" << i;
