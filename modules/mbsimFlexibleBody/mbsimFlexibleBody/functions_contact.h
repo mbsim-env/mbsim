@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
 //
 //        //compute radial and azimuthal nurbsdisk-coordinates out of alpha (saved in the LagrangeParameterPosition)
 //        MBSim::ContourPointData cp_nurbsdisk;
-//        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( AWK_disk.T() * (WP_circle - nurbsdisk->getFrame()->getPosition()) ); // position of the point in the cylinder-coordinates of the disk
+//        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( AWK_disk.T() * (WP_circle - nurbsdisk->getFrame()->getPosition()) )(0,1); // position of the point in the cylinder-coordinates of the disk
 //
 //        //get the position and the derivatives on the disk
 //        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,MBSim::Frame::firstTangent);
@@ -92,7 +92,7 @@ namespace MBSimFlexibleBody {
 //
 //        //get the position on the nurbsdisk
 //        MBSim::ContourPointData cp_nurbsdisk;
-//        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(WP_circle - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk
+//        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(WP_circle - nurbsdisk->getFrame()->getPosition()))(0,1); // position of the point in the cylinder-coordinates of the disk
 //        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,MBSim::Frame::position);
 //        fmatvec::Vec WP_nurbsdisk = cp_nurbsdisk.getFrameOfReference().getPosition();
 //
@@ -111,4 +111,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* MBSIMFLEXIBLEBODY_FUNCTIONS_CONTACT_H_ */
-

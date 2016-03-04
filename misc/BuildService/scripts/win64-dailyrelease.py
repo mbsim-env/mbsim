@@ -30,7 +30,7 @@ os.environ["CXX"]="x86_64-w64-mingw32-g++" # required for source code examples
 if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
   SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease",
   "--enableCleanPrefix", "--passToConfigure", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
-  "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.37.x86_64/include -I"+SCRIPTDIR+"/buildPreparation/windows",
+  "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.38.x86_64/include -I"+SCRIPTDIR+"/buildPreparation/windows",
   "--with-mkoctfile=/home/mbsim/3rdparty/octave-local-win64/bin/mkoctfile.exe",
   "--with-hdf5-prefix=/home/mbsim/3rdparty/hdf5-local-win64", "--with-windres=x86_64-w64-mingw32-windres",
   "--with-lapack-lib-prefix=/home/mbsim/3rdparty/lapack-local-win64/lib", "--with-qmake=/usr/x86_64-w64-mingw32/bin/qmake-qt4",

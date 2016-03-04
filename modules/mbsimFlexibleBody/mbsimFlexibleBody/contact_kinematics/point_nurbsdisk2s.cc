@@ -52,7 +52,7 @@ namespace MBSimFlexibleBody {
   void ContactKinematicsPointNurbsDisk2s::updateg(double t, double &g, ContourPointData* cpData, int index) {
     throw;
 //    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of the point in worldcoordinates
-//    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[ipoint].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
+//    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[ipoint].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition()))(0,1); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
 //
 //    /*TESTING*/
 //    //cout << "Platten-Posi:" << nurbsdisk->getFrame()->getPosition() << endl;
@@ -80,4 +80,3 @@ namespace MBSimFlexibleBody {
   }
 
 }
-

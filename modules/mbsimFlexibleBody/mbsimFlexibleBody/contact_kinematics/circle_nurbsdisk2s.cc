@@ -17,7 +17,7 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h> 
+#include <config.h> 
 #include "mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h"
 #include "mbsimFlexibleBody/functions_contact.h"
 
@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
 //    P_circle = circle->getFrame()->getPosition() + circle->getRadius() * circle->getFrame()->getOrientation() * P_circle;
 //    cpData[icircle].getFrameOfReference().setPosition(P_circle); // position of the point in world coordinates
 //
-//    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[icircle].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition()));
+//    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[icircle].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition()))(0,1);
 //
 //    if(cpData[inurbsdisk].getLagrangeParameterPosition()(0) < (nurbsdisk->getAlphaStart())(0) || cpData[inurbsdisk].getLagrangeParameterPosition()(0) > (nurbsdisk->getAlphaEnd())(0)) g = 1.;
 //    else {
@@ -92,4 +92,3 @@ namespace MBSimFlexibleBody {
   }
 
 }
-
