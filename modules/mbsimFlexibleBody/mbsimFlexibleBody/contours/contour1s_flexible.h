@@ -25,6 +25,7 @@
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "contour_1s_neutral_factory.h"
+#include "mbsim/utils/eps.h"
 
 namespace MBSim {
   class ContactKinematics;
@@ -72,10 +73,10 @@ namespace MBSimFlexibleBody {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      void resetUpToDate() { sOld = -1e-12; }
+      void resetUpToDate() { sOld = -1e12; }
       virtual void updatePositions(double t, double s);
 
-      fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>1e-8*s) updatePositions(t,s); return Ws; }
+      fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Ws; }
 
     protected:
       /*!
