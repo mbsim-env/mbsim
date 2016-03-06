@@ -42,7 +42,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), Elements(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), initialized(false), sOld(-1e12) {
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), Elements(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), initialized(false) {
   }
 
   void FlexibleBody1s21RCM::BuildElements() {
@@ -108,7 +108,8 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updatePositions(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
-    tmp(0) = getPositions(frame->getParameter())(0);
+    Vec3 X = getPositions(frame->getParameter());
+    tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
@@ -289,14 +290,10 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBody1s21RCM::getPositions(double sGlobal) {
-    if(fabs(sGlobal-sOld)>1e-8*sGlobal) {
-      double sLocal;
-      int currentElement;
-      BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-      X = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
-      sOld = sGlobal;
-    }
-    return X;
+    double sLocal;
+    int currentElement;
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
   }
 
   Vec3 FlexibleBody1s21RCM::getVelocities(double sGlobal) {
