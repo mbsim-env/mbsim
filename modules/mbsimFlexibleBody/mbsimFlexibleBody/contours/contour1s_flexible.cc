@@ -30,6 +30,15 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
+  void Contour1sFlexible::init(InitStage stage) {
+    if(stage==unknownStage) {
+      Contour1s::init(stage);
+      P.setParent(parent);
+    }
+    else
+      Contour1s::init(stage);
+  }
+
   ContourFrame* Contour1sFlexible::createContourFrame(const string &name) {
     static int count = 1;
     stringstream s;
@@ -50,9 +59,9 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1sFlexible::updatePositions(double t, double s) {
+    P.resetUpToDate();
     P.setParameter(s);
-    static_cast<FlexibleBody1s*>(parent)->updatePositions(t,&P);
-    Ws = P.getOrientation(false).col(0);
+    Ws = P.getOrientation(t).col(0);
     sOld = s;
   }
 

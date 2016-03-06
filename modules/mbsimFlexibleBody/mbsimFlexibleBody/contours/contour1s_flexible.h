@@ -56,6 +56,8 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const { return "Contour1sFlexible"; }
       /***************************************************/
 
+      virtual void init(InitStage stage);
+
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
