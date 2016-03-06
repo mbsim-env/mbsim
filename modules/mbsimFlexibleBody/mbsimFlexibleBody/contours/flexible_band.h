@@ -21,6 +21,7 @@
 #define _FLEXIBLE_BAND_H_
 
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
+#include "mbsim/utils/eps.h"
 
 namespace MBSimFlexibleBody {
 
@@ -60,8 +61,8 @@ namespace MBSimFlexibleBody {
 
       void updatePositions(double t, double s);
 
-      fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>1e-8*s) updatePositions(t,s); return WrOP; }
-      fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>1e-8*s) updatePositions(t,s); return Wt; }
+      fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return WrOP; }
+      fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Wt; }
 
     protected:
       /**
