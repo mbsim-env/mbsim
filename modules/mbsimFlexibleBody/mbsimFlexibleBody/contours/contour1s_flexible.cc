@@ -45,12 +45,15 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(Contour1sFlexible::getPosition): Not implemented.");
   }
 
-  Vec3 Contour1sFlexible::getWs(double t, const Vec2 &zeta) {
-    return static_cast<FlexibleBody1s*>(parent)->getWs(t,zeta(0));
-  }
-
   Vec3 Contour1sFlexible::getWt(double t, const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour1sFlexible::getWt): Not implemented.");
+  }
+
+  void Contour1sFlexible::updatePositions(double t, double s) {
+    P.setParameter(s);
+    static_cast<FlexibleBody1s*>(parent)->updatePositions(t,&P);
+    Ws = P.getOrientation(false).col(0);
+    sOld = s;
   }
 
 }

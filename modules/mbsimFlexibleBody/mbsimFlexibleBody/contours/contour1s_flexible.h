@@ -23,6 +23,7 @@
 #include "mbsim/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "contour_1s_neutral_factory.h"
 
 namespace MBSim {
@@ -49,7 +50,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sFlexible(const std::string & name) : Contour1s(name), neutral(0) { }
+      Contour1sFlexible(const std::string & name) : Contour1s(name), neutral(0), sOld(-1e12) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contour1sFlexible"; }
@@ -58,7 +59,7 @@ namespace MBSimFlexibleBody {
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta(0)); }
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
       virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
@@ -69,6 +70,11 @@ namespace MBSimFlexibleBody {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
+      void resetUpToDate() { sOld = -1e-12; }
+      virtual void updatePositions(double t, double s);
+
+      fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>1e-8*s) updatePositions(t,s); return Ws; }
+
     protected:
       /*!
        * \brief object for 1s-flexible curves that is the interface
@@ -77,6 +83,11 @@ namespace MBSimFlexibleBody {
        */
       Contour1sNeutralFactory* neutral;
 
+      fmatvec::Vec3 Ws;
+
+      Frame1s P;
+
+      double sOld;
   };
 
 }

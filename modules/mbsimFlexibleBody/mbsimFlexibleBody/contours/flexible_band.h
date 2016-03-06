@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      FlexibleBand(const std::string& name) : Contour1sFlexible(name), width(0), ARP(fmatvec::EYE) { }
+      FlexibleBand(const std::string& name) : Contour1sFlexible(name), width(0), ARK(fmatvec::EYE) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
@@ -51,12 +51,17 @@ namespace MBSimFlexibleBody {
       void setRelativeOrientation(double al);
 
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
-      const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
+      const fmatvec::SqrMat3& getRelativeOrientation() const { return ARK; }
 
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta) { return getPosition(t,zeta(0)); }
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta(0)); }
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < -0.5*width or zeta(1) > 0.5*width; }
+
+      void updatePositions(double t, double s);
+
+      fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>1e-8*s) updatePositions(t,s); return WrOP; }
+      fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>1e-8*s) updatePositions(t,s); return Wt; }
 
     protected:
       /**
@@ -64,8 +69,8 @@ namespace MBSimFlexibleBody {
        */
       double width;
 
-      fmatvec::Vec3 RrRP;
-      fmatvec::SqrMat3 ARP;
+      fmatvec::Vec3 RrRP, WrOP, Wt;
+      fmatvec::SqrMat3 ARK;
   };
 
 }

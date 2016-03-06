@@ -34,16 +34,14 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBand::setRelativeOrientation(double al) {
-    ARP = BasicRotAIKx(al);
+    ARK = BasicRotAIKx(al);
   }
 
-  Vec3 FlexibleBand::getPosition(double t, const Vec2 &zeta) {
-    return static_cast<FlexibleBody1s*>(parent)->getPosition(t,zeta(0)) + static_cast<FlexibleBody1s*>(parent)->getOrientation(t,zeta(0))*RrRP;
-  }
-
-  Vec3 FlexibleBand::getWt(double t, const Vec2 &zeta) {
-    static Vec3 Pt("[0;0;1]");
-    return static_cast<FlexibleBody1s*>(parent)->getOrientation(t,zeta(0))*(ARP*Pt);
+  void FlexibleBand::updatePositions(double t, double s) {
+    Contour1sFlexible::updatePositions(t,s);
+    static Vec3 Kt("[0;0;1]");
+    WrOP = P.getPosition(false) + P.getOrientation(false)*RrRP;
+    Wt = P.getOrientation(false)*(ARK*Kt);
   }
 
 }
