@@ -21,13 +21,12 @@
 #define _FLEXIBLE_BODY_1S_H_
 
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
 
 namespace MBSimFlexibleBody {
-
-  class Frame1s;
 
   /*!
    * \brief tbd
@@ -50,16 +49,13 @@ namespace MBSimFlexibleBody {
       void addFrame(Frame1s *frame);
       using FlexibleBodyContinuum<double>::addFrame;
 
-      virtual fmatvec::Vec3 getPosition(double t, double s);
-      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
-      virtual fmatvec::Vec3 getWs(double t, double s);
-
       virtual void updatePositions(double t, Frame1s* frame);
       virtual void updateVelocities(double t, Frame1s* frame);
       virtual void updateAccelerations(double t, Frame1s* frame);
       virtual void updateJacobians(double t, Frame1s* frame, int j=0);
       virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
 
+      virtual fmatvec::Vec3 getPosition(double t, double s);
       virtual double getLocalTwist(double t, double s) { return 0; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -76,6 +72,8 @@ namespace MBSimFlexibleBody {
        * \brief flag for open (cantilever beam) or closed (rings) structures
        */
       bool openStructure;
+
+      Frame1s P;
   };
 
 }

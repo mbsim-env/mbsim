@@ -77,27 +77,6 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  Vec3 FlexibleBody1s21ANCF::getPosition(double t, double s) {
-    double sLocal;
-    int currentElement;
-    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
-    return R->getPosition(t) + R->getOrientation(t) * static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPosition(getqElement(currentElement),sLocal);
-  }
-
-  SqrMat3 FlexibleBody1s21ANCF::getOrientation(double t, double s) {
-    double sLocal;
-    int currentElement;
-    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
-    return R->getOrientation(t) * static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal);
-  }
-
-  Vec3 FlexibleBody1s21ANCF::getWs(double t, double s) {
-    double sLocal;
-    int currentElement;
-    BuildElement(s, sLocal, currentElement); // Lagrange parameter of affected FE
-    return R->getOrientation(t) * static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getTangent(getqElement(currentElement),sLocal);
-  }
-
   void FlexibleBody1s21ANCF::updatePositions(double t, Frame1s *frame) {
     double sLocal;
     int currentElement;

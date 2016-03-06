@@ -136,25 +136,6 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  Vec3 FlexibleBody1s33RCM::getPosition(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
-    return R->getPosition(t) + R->getOrientation(t) * X(Range<Fixed<0>,Fixed<2> >());
-  }
-
-  SqrMat3 FlexibleBody1s33RCM::getOrientation(double t, double s) {
-    SqrMat3 A(NONINIT);
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
-    A.set(0, R->getOrientation(t) * angle->computet(X(Range<Fixed<3>,Fixed<5> >())));
-    A.set(1, R->getOrientation() * angle->computen(X(Range<Fixed<3>,Fixed<5> >())));
-    A.set(2, crossProduct(A.col(0), A.col(1)));
-    return A;
-  }
-
-  Vec3 FlexibleBody1s33RCM::getWs(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
-    return R->getOrientation(t) * angle->computet(X(Range<Fixed<3>,Fixed<5> >()));
-  }
-
   void FlexibleBody1s33RCM::updatePositions(double t, Frame1s *frame) {
     fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * X(Range<Fixed<0>,Fixed<2> >()));
@@ -241,7 +222,7 @@ namespace MBSimFlexibleBody {
     Jacobian(Index(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(0, 0, 0, 2).T() + n(2) * np(0, 0, 0, 2).T() + b(2) * bp(0, 0, 0, 2).T();
     Jacobian(Index(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();
 
-    frame->setJacobianOfTranslation(R->getOrientation() * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
+    frame->setJacobianOfTranslation(R->getOrientation(time) * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(Index(0, qSize - 1), Index(3, 5)).T(),j);
   }
 

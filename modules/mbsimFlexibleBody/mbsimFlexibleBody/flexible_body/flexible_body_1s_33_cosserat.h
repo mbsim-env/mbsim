@@ -76,10 +76,6 @@ namespace MBSimFlexibleBody {
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
       /***************************************************/
 
-      virtual fmatvec::Vec3 getPosition(double t, double s);
-      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
-      virtual fmatvec::Vec3 getWs(double t, double s);
-
       virtual void updatePositions(double t, Frame1s* frame);
       virtual void updateVelocities(double t, Frame1s* frame);
       virtual void updateAccelerations(double t, Frame1s* frame);

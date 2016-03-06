@@ -146,18 +146,6 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  Vec3 FlexibleBody1s33Cosserat::getPosition(double t, double s) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::getPosition): Not implemented.");
-  }
-
-  SqrMat3 FlexibleBody1s33Cosserat::getOrientation(double t, double s) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::getOrientation): Not implemented.");
-  }
-
-  Vec3 FlexibleBody1s33Cosserat::getWs(double t, double s) {
-    THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::getWs): Not implemented.");
-  }
-
   void FlexibleBody1s33Cosserat::updatePositions(double t, Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updatePositions): Not implemented.");
   }

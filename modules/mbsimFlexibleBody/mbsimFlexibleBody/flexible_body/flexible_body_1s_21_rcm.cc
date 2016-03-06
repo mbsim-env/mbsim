@@ -106,27 +106,6 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  Vec3 FlexibleBody1s21RCM::getPosition(double t, double s) {
-    Vec3 tmp(NONINIT);
-    tmp(0) = getPositions(s)(0);
-    tmp(1) = X(1);
-    tmp(2) = 0.; // temporary vector used for compensating planar description
-    return R->getPosition(t) + R->getOrientation(t) * tmp;
-  }
-
-  SqrMat3 FlexibleBody1s21RCM::getOrientation(double t, double s) {
-    SqrMat3 A = BasicRotAIKz(getPositions(s)(2));
-    return R->getOrientation(t)*A;
-  }
-
-  Vec3 FlexibleBody1s21RCM::getWs(double t, double s) {
-    Vec3 tmp(NONINIT);
-    tmp(0) = cos(getPositions(s)(2));
-    tmp(1) = sin(X(2));
-    tmp(2) = 0.;
-    return R->getOrientation(t) * tmp;
-  }
-
   void FlexibleBody1s21RCM::updatePositions(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
     tmp(0) = getPositions(frame->getParameter())(0);

@@ -36,6 +36,10 @@ namespace MBSimFlexibleBody {
 #endif
       FlexibleBodyContinuum<double>::init(stage);
     }
+    else if(stage==unknownStage) {
+      FlexibleBodyContinuum<double>::init(stage);
+      P.setParent(this);
+    }
     else
       FlexibleBodyContinuum<double>::init(stage);
   }
@@ -65,18 +69,6 @@ namespace MBSimFlexibleBody {
     Body::addFrame(frame); 
   }
 
-  Vec3 FlexibleBody1s::getPosition(double t, double s) {
-    THROW_MBSIMERROR("(FlexibleBody1s::getPosition): Not implemented.");
-  }
-
-  SqrMat3 FlexibleBody1s::getOrientation(double t, double s) {
-    THROW_MBSIMERROR("(FlexibleBody1s::getOrientation): Not implemented.");
-  }
-
-  Vec3 FlexibleBody1s::getWs(double t, double s) {
-    THROW_MBSIMERROR("(FlexibleBody1s::getWs): Not implemented.");
-  }
-
   void FlexibleBody1s::updatePositions(double t, Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s::updatePositions): Not implemented.");
   }
@@ -95,6 +87,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s::updateGyroscopicAccelerations(double t, Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  Vec3 FlexibleBody1s::getPosition(double t, double s) {
+    P.resetUpToDate();
+    P.setParameter(s);
+    return P.getPosition(t);
   }
 
 }
