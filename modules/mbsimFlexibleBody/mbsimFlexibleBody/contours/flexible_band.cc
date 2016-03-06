@@ -40,8 +40,8 @@ namespace MBSimFlexibleBody {
   void FlexibleBand::updatePositions(double t, double s) {
     Contour1sFlexible::updatePositions(t,s);
     static Vec3 Kt("[0;0;1]");
-    WrOP = P.getPosition(false) + P.getOrientation(false)*RrRP;
-    Wt = P.getOrientation(false)*(ARK*Kt);
+    WrOP = P.getPosition() + P.getOrientation()*RrRP;
+    Wt = P.getOrientation()*(ARK*Kt);
   }
 
 }
