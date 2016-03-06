@@ -63,20 +63,6 @@ namespace MBSimFlexibleBody {
     gloMat(activeElement) += locMat;
   }
 
-  Vec3 FlexibleBody1s23BTA::getPosition(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
-    X(0) = s;
-    return R->getPosition(t) + R->getOrientation(t) * X(Range<Fixed<0>,Fixed<2> >());
-  }
-
-  SqrMat3 FlexibleBody1s23BTA::getOrientation(double t, double s) {
-    return R->getOrientation(t)*getOrientation(s);
-  }
-
-  Vec3 FlexibleBody1s23BTA::getWs(double t, double s) {
-    return R->getOrientation(t) * getOrientation(s).col(0);
-  }
-
   void FlexibleBody1s23BTA::updatePositions(double t, Frame1s *frame) {
     fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
     X(0) = frame->getParameter();
@@ -133,89 +119,9 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
   }
 
-//  void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
-//    if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
-//      cp.getContourParameterType() = ContourPointData::continuum;
-//      cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
-//    }
-//
-//    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
-//      double sLocal;
-//      int currentElement;
-//      BuildElement(cp.getLagrangeParameterPosition()(0),sLocal,currentElement);
-//      Vec X;
-//      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::velocity || ff==Frame::angularVelocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
-//        X = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->StateAxis(qElement[currentElement],uElement[currentElement],sLocal); 
-//        X(0) = cp.getLagrangeParameterPosition()(0);
-//      }
-//      SqrMat3 AWK;
-//      if(ff==Frame::firstTangent || ff==Frame::normal || ff==Frame::cosy || ff==Frame::secondTangent || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-//        AWK = R->getOrientation()*static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->AWK(qElement[currentElement],sLocal);
-//      }
-//
-//      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
-//        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * X(0,2));
-//      }
-//      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-//        cp.getFrameOfReference().getOrientation().set(1, AWK.col(0)); // tangent
-//      }
-//      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) {
-//        cp.getFrameOfReference().getOrientation().set(0, AWK.col(1)); // normal
-//      }
-//      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) cp.getFrameOfReference().getOrientation().set(2, -AWK.col(2)); // binormal (cartesian system)
-//      if(ff==Frame::velocity || ff==Frame::velocity_cosy || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
-//        cp.getFrameOfReference().setVelocity(R->getOrientation() * X(6,8));
-//      }
-//      if(ff==Frame::angularVelocity || ff==Frame::velocities || ff==Frame::velocities_cosy || ff==Frame::all) {
-//        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * X(9,11));
-//      }
-//    }
-//    else THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
-//
-//    if(frame!=0) { // frame should be linked to contour point data
-//      frame->setPosition       (cp.getFrameOfReference().getPosition());
-//      frame->setOrientation    (cp.getFrameOfReference().getOrientation());
-//      frame->setVelocity       (cp.getFrameOfReference().getVelocity());
-//      frame->setAngularVelocity(cp.getFrameOfReference().getAngularVelocity());
-//    }
-//  }
-//
-//  void FlexibleBody1s23BTA::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-//    Index All(0,5-1);
-//    Mat Jacobian(qSize, 5, INIT, 0); // boeser Kaefer, Initialisierung notwendig!!! M. Schneider
-//
-//    if(cp.getContourParameterType() == ContourPointData::node) { // force on node
-//      cp.getContourParameterType() = ContourPointData::continuum;
-//      cp.getLagrangeParameterPosition()(0) = cp.getNodeNumber()*L/Elements;
-//    }
-//
-//    if(cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
-//      double sLocal;
-//      int currentElement;
-//      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
-//
-//      Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
-//      Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
-//    }
-//    else THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
-//
-//    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
-//    cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
-//
-//    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
-//    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
-//
-//    if(frame!=0) { // frame should be linked to contour point data
-//      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
-//      frame->setJacobianOfRotation   (cp.getFrameOfReference().getJacobianOfRotation());
-//      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
-//      frame->setGyroscopicAccelerationOfRotation   (cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
-//    }   
-//  }
-
   void FlexibleBody1s23BTA::init(InitStage stage) {
     if(stage==unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1s::init(stage);
 
       assert(0<Elements);
 
@@ -238,7 +144,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      FlexibleBodyContinuum<double>::init(stage);    
+      FlexibleBody1s::init(stage);
   }
 
   void FlexibleBody1s23BTA::setNumberElements(int n) {
@@ -345,5 +251,3 @@ namespace MBSimFlexibleBody {
   }
 
 }
-
-
