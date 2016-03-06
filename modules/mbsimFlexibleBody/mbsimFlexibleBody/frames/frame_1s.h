@@ -24,10 +24,6 @@
 
 namespace MBSimFlexibleBody {
 
-  /**
-   * \brief cartesian frame on nodes of flexible bodies
-   * \author Kilian Grundl
-   */
   class Frame1s : public MBSim::Frame {
 
     public:
