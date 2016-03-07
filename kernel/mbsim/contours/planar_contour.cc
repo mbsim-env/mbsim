@@ -74,7 +74,6 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-          openMBVRigidBody->setName(name);
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
           if(not(ombvNodes.size())) ombvNodes = etaNodes;
           for (unsigned int i=0; i<ombvNodes.size(); i++) {
@@ -83,7 +82,6 @@ namespace MBSim {
           }
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
-          parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
   #endif
         RigidContour::init(stage);
@@ -93,27 +91,6 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  void PlanarContour::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        vector<double> data;
-        data.push_back(t);
-        data.push_back(R->getPosition(t)(0));
-        data.push_back(R->getPosition()(1));
-        data.push_back(R->getPosition()(2));
-        Vec3 cardan=AIK2Cardan(R->getOrientation());
-        data.push_back(cardan(0));
-        data.push_back(cardan(1));
-        data.push_back(cardan(2));
-        data.push_back(0);
-        openMBVRigidBody->append(data);
-      }
-#endif
-      RigidContour::plot(t,dt);
-    }
-  }
-      
   double PlanarContour::getCurvature(const fmatvec::Vec2 &zeta) {
     const fmatvec::Vec3 rs = funcCrPC->parDer(zeta(0));
     return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
@@ -158,4 +135,3 @@ namespace MBSim {
   }
 
 }
-

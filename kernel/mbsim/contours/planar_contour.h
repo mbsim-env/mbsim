@@ -53,7 +53,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "PlanarContour"; }
-      void plot(double t, double dt = 1);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
@@ -96,7 +95,6 @@ namespace MBSim {
       Function<fmatvec::Vec3(double)> * funcCrPC;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
       std::vector<double> ombvNodes;
 #endif
   };
