@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css">
   <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
-<body style="margin:1em;cursor:progress;">
+<body style="margin:0.5em;cursor:progress;">
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
 <script type="text/javascript" src="mbsimBuildServiceClient.js"></script>
 <script type="text/javascript">
@@ -63,12 +63,16 @@
           sel.empty();
           response.curcibranch.forEach(function(branch) {
             sel.append('<tr><td>#'+nr.toString()+'</td>'+
-                           '<td><button disabled="disabled" class="DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
-                              '" disabled="disabled" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
-                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.fmatvec+'</span></td>'+
-                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.hdf5serie+'</span></td>'+
-                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.openmbv+'</span></td>'+
-                           '<td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.mbsim+'</span></td></tr>');
+              '<td><button disabled="disabled" class="DELCIBRANCH btn btn-default btn-xs" value="'+JSON.stringify(branch).replace(/"/g, "'")+
+                 '" disabled="disabled" type="button"><span class="glyphicon glyphicon-minus-sign"></span></button></td>'+
+              '<td><a href="https://github.com/mbsim-env/fmatvec/tree/'+branch.fmatvec+'">'+
+                '<span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.fmatvec+'</span></a></td>'+
+              '<td><a href="https://github.com/mbsim-env/hdf5serie/tree/'+branch.hdf5serie+'">'+
+                '<span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.hdf5serie+'</span></a></td>'+
+              '<td><a href="https://github.com/mbsim-env/openmbv/tree/'+branch.openmbv+'">'+
+                '<span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.openmbv+'</span></a></td>'+
+              '<td><a href="https://github.com/mbsim-env/mbsim/tree/'+branch.mbsim+'">'+
+                '<span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch.mbsim+'</span></td></a></tr>');
             nr++;
           });
           // add CI branch
@@ -103,10 +107,10 @@
 
 <h1>MBSim Build Service - Continuous Integration</h1>
 <p>The MBSim Build Service provides continuous integration (CI) for all combinations of git branches of the
-repositories <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span>,
-             <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span>,
-             <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span> and
-             <span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span>.
+repositories <a href="https://github.com/mbsim-env/fmatvec"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></a>,
+             <a href="https://github.com/mbsim-env/hdf5serie"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></a>,
+             <a href="https://github.com/mbsim-env/openmbv"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></a> and
+             <a href="https://github.com/mbsim-env/mbsim"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></a>.
 However, each branch combination (except <span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;master</span> for all repos,
 where CI is always active) must be activated manually for CI. This can be done on this site.</p>
 
@@ -135,10 +139,10 @@ where CI is always active) must be activated manually for CI. This can be done o
         <tr>
           <th>Nr.</th>
           <th>Remove</th>
-          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></th>
-          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></th>
-          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></th>
-          <th><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></th>
+          <th><a href="https://github.com/mbsim-env/fmatvec"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></a></th>
+          <th><a href="https://github.com/mbsim-env/hdf5serie"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></a></th>
+          <th><a href="https://github.com/mbsim-env/openmbv"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></a></th>
+          <th><a href="https://github.com/mbsim-env/mbsim"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></a></th>
         </tr>
       </thead>
       <tbody id="CURCIBRANCH">
@@ -151,13 +155,13 @@ where CI is always active) must be activated manually for CI. This can be done o
   <div class="panel-heading"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Add new branch combination for CI</div>
   <div class="panel-body">
     <dl class="dl-horizontal">
-      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></dt>
+      <dt><a href="https://github.com/mbsim-env/fmatvec"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;fmatvec</span></a></dt>
         <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="FMATVEC_BRANCH"> </select></dd>
-      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></dt>
+      <dt><a href="https://github.com/mbsim-env/hdf5serie"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;hdf5serie</span></a></dt>
         <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="HDF5SERIE_BRANCH"> </select></dd>
-      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></dt>
+      <dt><a href="https://github.com/mbsim-env/openmbv"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;openmbv</span></a></dt>
         <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="OPENMBV_BRANCH"> </select></dd>
-      <dt><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></dt>
+      <dt><a href="https://github.com/mbsim-env/mbsim"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;mbsim</span></a></dt>
         <dd><span class="octicon octicon-git-branch"></span>&nbsp;<select class="input-sm" id="MBSIM_BRANCH"> </select></dd>
     </dl>
     <button id="APPLYADDCIBRANCH" disabled="disabled" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Add</button>

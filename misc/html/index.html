@@ -6,22 +6,23 @@
   <title>Official Build System of the MBSim-Environment</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
   <link rel="alternate" type="application/atom+xml" title="MBSim-Env Build-System News" href="../buildsystemstate/failures.atom.xml"/>
   <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
-<body style="margin:1em">
+<body style="margin:0.5em">
 
 <h1>Official Build System of the <i>MBSim-Environment</i></h1>
 
 
 
-<h2>Release Downloads</h2>
+<h2><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Release Downloads</h2>
 <div class="panel panel-default">
   <div class="panel-body">
 <a href="../releases/">Tested releases are available here</a></div>
 </div>
 
-<h2>Documentation</h2>
+<h2><span class="glyphicon glyphicon-question-sign"></span>&nbsp;Documentation</h2>
 <div class="panel panel-default">
   <div class="panel-body">
 <a href="../papers/">Papers</a><br/>
@@ -30,7 +31,7 @@
 </div>
 </div>
 
-<h2>Dashboard <small>Current Daily Build Status</small></h2>
+<h2><span class="glyphicon glyphicon-dashboard"></span>&nbsp;Dashboard <small>Current Daily Build Status</small></h2>
 <table style="width:auto" class="table table-striped table-hover table-bordered table-condensed">
   <thead>
     <tr>
@@ -41,57 +42,49 @@
   </thead>
   <tbody>
     <tr>
-      <td>linux64-dailydebug</td>
-      <td>build</td>
-      <td><a href="../linux64-dailydebug/report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-build.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/linux64-dailydebug-build.nrAll.svg"/></td>
+      <td><i class="fa fa-linux"></i>&nbsp;<span class="octicon octicon-bug"></span>&nbsp;linux64-dailydebug</td>
+      <td><span class="glyphicon glyphicon-cog"></span>&nbsp;build</td>
+      <td class="text-nowrap"><a href="../linux64-dailydebug/report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-build.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/linux64-dailydebug-build.nrAll.svg"/></td>
     </tr>
     <tr>
-      <td>linux64-dailydebug</td>
-      <td>examples</td>
-      <td><a href="../linux64-dailydebug/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-examples.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/linux64-dailydebug-examples.nrAll.svg"/></td>
+      <td><i class="fa fa-linux"></i>&nbsp;<span class="octicon octicon-bug"></span>&nbsp;linux64-dailydebug</td>
+      <td><span class="glyphicon glyphicon-education"></span>&nbsp;examples</td>
+      <td class="text-nowrap"><a href="../linux64-dailydebug/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-examples.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/linux64-dailydebug-examples.nrAll.svg"/></td>
     </tr>
     <tr>
-      <td>linux64-dailydebug</td>
-      <td>valgrind-examples</td>
-      <td><a href="../linux64-dailydebug/report/runexamples_valgrind_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-valgrind-examples.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/linux64-dailydebug-valgrind-examples.nrAll.svg"/></td>
+      <td><i class="fa fa-linux"></i>&nbsp;<span class="octicon octicon-bug"></span>&nbsp;linux64-dailydebug</td>
+      <td><span class="octicon octicon-bug"></span>&nbsp;valgrind-examples</td>
+      <td class="text-nowrap"><a href="../linux64-dailydebug/report/runexamples_valgrind_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailydebug-valgrind-examples.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/linux64-dailydebug-valgrind-examples.nrAll.svg"/></td>
     </tr>
     <tr>
-      <td>linux64-dailyrelease</td>
-      <td>build</td>
-      <td><a href="../linux64-dailyrelease/report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailyrelease-build.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/linux64-dailyrelease-build.nrAll.svg"/></td>
+      <td><i class="fa fa-linux"></i>&nbsp;<i class="fa fa-hospital-o"></i>&nbsp;linux64-dailyrelease</td>
+      <td><span class="glyphicon glyphicon-cog"></span>&nbsp;build</td>
+      <td class="text-nowrap"><a href="../linux64-dailyrelease/report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailyrelease-build.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/linux64-dailyrelease-build.nrAll.svg"/></td>
     </tr>
     <tr>
-      <td>linux64-dailyrelease</td>
-      <td>examples</td>
-      <td><a href="../linux64-dailyrelease/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailyrelease-examples.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/linux64-dailyrelease-examples.nrAll.svg"/></td>
+      <td><i class="fa fa-linux"></i>&nbsp;<i class="fa fa-hospital-o"></i>&nbsp;linux64-dailyrelease</td>
+      <td><span class="glyphicon glyphicon-education"></span>&nbsp;examples</td>
+      <td><a href="../linux64-dailyrelease/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/linux64-dailyrelease-examples.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/linux64-dailyrelease-examples.nrAll.svg"/></td>
     </tr>
     <tr>
-      <td>win64-dailyrelease</td>
-      <td>build</td>
-      <td><a href="../win64-dailyrelease/report/result_current/"><img  alt="image" src="../buildsystemstate/win64-dailyrelease-build.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/win64-dailyrelease-build.nrAll.svg"/></td>
+      <td><i class="fa fa-windows"></i>&nbsp;<i class="fa fa-hospital-o"></i>&nbsp;win64-dailyrelease</td>
+      <td><span class="glyphicon glyphicon-cog"></span>&nbsp;build</td>
+      <td class="text-nowrap"><a href="../win64-dailyrelease/report/result_current/"><img  alt="image" src="../buildsystemstate/win64-dailyrelease-build.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/win64-dailyrelease-build.nrAll.svg"/></td>
     </tr>
     <tr>
-      <td>win64-dailyrelease</td>
-      <td>examples</td>
-      <td><a href="../win64-dailyrelease/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/win64-dailyrelease-examples.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/win64-dailyrelease-examples.nrAll.svg"/></td>
+      <td><i class="fa fa-windows"></i>&nbsp;<i class="fa fa-hospital-o"></i>&nbsp;win64-dailyrelease</td>
+      <td><span class="glyphicon glyphicon-education"></span>&nbsp;examples</td>
+      <td class="text-nowrap"><a href="../win64-dailyrelease/report/result_current/runexamples_report/result_current/"><img alt="image" src="../buildsystemstate/win64-dailyrelease-examples.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/win64-dailyrelease-examples.nrAll.svg"/></td>
     </tr>
     <tr>
-      <td>-</td>
-      <td>manuals</td>
-      <td><a href="../doc_manualsbuild.log"><img alt="image" src="../buildsystemstate/build-manuals.nrFailed.svg"/></a> /
-      <img alt="image" src="../buildsystemstate/build-manuals.nrAll.svg"/></td>
+      <td><i class="fa fa-linux"></i>&nbsp;<i class="fa fa-windows"></i>&nbsp;</td>
+      <td><span class="glyphicon glyphicon-question-sign"></span>&nbsp;manuals</td>
+      <td class="text-nowrap"><a href="../doc_manualsbuild.log"><img alt="image" src="../buildsystemstate/build-manuals.nrFailed.svg"/></a>/<img alt="image" src="../buildsystemstate/build-manuals.nrAll.svg"/></td>
     </tr>
   </tbody>
 </table>
 
-<h2>Daily Linux64 Debug Build</h2>
+<h2><i class="fa fa-linux"></i>&nbsp;<span class="mega-octicon octicon-bug"></span>&nbsp;Daily Linux64 Debug Build</h2>
 
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux64; Build-Type: debug, not optimized</div>
@@ -104,7 +97,7 @@
 
 
 
-<h2>Daily Linux64 Release Build</h2>
+<h2><i class="fa fa-linux"></i>&nbsp;<i class="fa fa-hospital-o"></i>&nbsp;Daily Linux64 Release Build</h2>
 
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux64; Build-Type: release, optimized</div>
@@ -115,7 +108,7 @@
 </div>
 
 <div class="panel panel-warning">
-  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Binary Distribution</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Binary Distribution</div>
   <div class="panel-body">
   <b><a href="../linux64-dailyrelease/report/result_current/distribute/mbsim-env-linux64-shared-build-xxx.tar.bz2">Download</a></b> -
   <a href="../linux64-dailyrelease/report/result_current/distribute/mbsim-env-linux64-shared-build-xxx-debug.tar.bz2">Debug-Info</a> -
@@ -125,7 +118,7 @@
 
 
 
-<h2>Daily Win64 Release Build</h2>
+<h2><i class="fa fa-windows"></i>&nbsp;<i class="fa fa-hospital-o"></i>&nbsp;Daily Win64 Release Build</h2>
 
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Win64; Build-Type: release, optimized</div>
@@ -136,7 +129,7 @@
 </div>
 
 <div class="panel panel-warning">
-  <div class="panel-heading"><span class="glyphicon glyphicon-download"></span>&nbsp;Binary Distribution</div>
+  <div class="panel-heading"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Binary Distribution</div>
   <div class="panel-body">
   <b><a href="../win64-dailyrelease/report/result_current/distribute/mbsim-env-win64-shared-build-xxx.zip">Download</a></b> -
   <a href="../win64-dailyrelease/report/result_current/distribute/mbsim-env-win64-shared-build-xxx-debug.zip">Debug-Info</a> -
@@ -146,7 +139,7 @@
 
 
 
-<h2>Continuous Integration (CI) <small>Linux64 Debug Build</small></h2>
+<h2><i class="fa fa-linux"></i>&nbsp;<span class="mega-octicon octicon-bug"></span>&nbsp;Continuous Integration (CI) <small>Linux64 Debug Build</small></h2>
 
 <div class="panel panel-success">
   <div class="panel-heading"><span class="glyphicon glyphicon-repeat"></span>&nbsp;OS: Linux64; Build-Type: debug, nt optimized</div>
@@ -160,7 +153,7 @@
 
 
 
-<h2>Atom Feeds</h2>
+<h2><span class="mega-octicon octicon-rss"></span>&nbsp;Atom Feeds</h2>
 <div class="panel panel-default">
   <div class="panel-body">
     A Atom news feed of all failures of the build system is available via auto discovery
@@ -170,7 +163,7 @@
 
 
 
-<h2>Source Code</h2>
+<h2><span class="mega-octicon octicon-file-text"></span>&nbsp;Source Code</h2>
 <div class="panel panel-default">
   <div class="panel-body">
 <a href="https://github.com/mbsim-env/">Git repos of all MBSim-Env projects are hosted on <span class="octicon octicon-logo-github"></span></a></div>

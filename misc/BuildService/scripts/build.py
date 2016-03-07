@@ -199,7 +199,7 @@ def mainDocPage():
   print('  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>', file=docFD)
   print('  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>', file=docFD)
   print('</head>', file=docFD)
-  print('<body style="margin:1em">', file=docFD)
+  print('<body style="margin:0.5em">', file=docFD)
   print('<h1>Documentation of the MBSim-Environment</h1>', file=docFD)
   print('<div class="panel panel-success">', file=docFD)
   print('  <div class="panel-heading"><span class="glyphicon glyphicon-question-sign"></span>&nbsp;XML Documentation</div>', file=docFD)
@@ -360,7 +360,7 @@ def main():
   <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
   <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
-<body style="margin:1em">
+<body style="margin:0.5em">
 <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
 <script type="text/javascript" src="../../../html/mbsimBuildServiceClient.js"></script>
 <script type="text/javascript">
@@ -615,15 +615,15 @@ def repoUpdate(mainFD):
     commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%h', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitidfull=subprocess.check_output(['git', 'log', '-n', '1', '--format=%H', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitsub=subprocess.check_output(['git', 'log', '-n', '1', '--format=%s', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
-    commitshort="<code>"+commitid+"</code>: "+htmlEscape(commitsub)
+    commitshort='<a href="https://github.com/mbsim-env/'+repo+'/commit/'+commitidfull+'"><code>'+commitid+'</code></a>: '+htmlEscape(commitsub)
     commitlong=subprocess.check_output(['git', 'log', '-n', '1', '--format=Commit: %H%nAuthor: %an%nDate:   %ad%n%s%n%b', 'HEAD'], stderr=repoUpdFD).decode('utf-8')
     commitlong=htmlEscape(commitlong)
     repoUpdFD.close()
     ret+=retlocal
     # output
     print('<tr>', file=mainFD)
-    print('  <td><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;'+repo+'</span></td>', file=mainFD)
-    print('  <td><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch+'</span></td>', file=mainFD)
+    print('  <td><a href="https://github.com/mbsim-env/'+repo+'"><span class="label label-success"><span class="octicon octicon-repo"></span>&nbsp;'+repo+'</span></a></td>', file=mainFD)
+    print('  <td><a href="https://github.com/mbsim-env/'+repo+'/tree/'+branch+'"><span class="label label-primary"><span class="octicon octicon-git-branch"></span>&nbsp;'+branch+'</span></a></td>', file=mainFD)
     if not args.disableUpdate:
       print('<td class="%s"><span class="glyphicon glyphicon-%s"></span>&nbsp;<a href="repo-update-%s.txt">%s</a></td>'%(
         "success" if retlocal==0 else "danger",
