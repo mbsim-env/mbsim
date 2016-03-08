@@ -44,7 +44,9 @@ namespace MBSimFlexibleBody {
       virtual void plot(double t, double dt=1);
 
       void setLength(double L_) { L = L_; }
-      double getLength(){ return L; }
+      double getLength() const { return L; }
+
+      bool getOpenStructure() const { return openStructure; }
 
       void addFrame(Frame1s *frame);
       using FlexibleBodyContinuum<double>::addFrame;

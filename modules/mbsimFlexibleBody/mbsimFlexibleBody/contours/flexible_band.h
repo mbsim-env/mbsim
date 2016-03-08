@@ -23,6 +23,18 @@
 #include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsim/utils/eps.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#include "mbsim/utils/boost_parameters.h"
+#include <mbsim/utils/openmbv_utils.h>
+#endif
+
+namespace MBSim {
+
+  BOOST_PARAMETER_NAME(numberOfSpinePoints)
+
+}
+
 namespace MBSimFlexibleBody {
 
   /**
@@ -42,6 +54,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
+      void init(InitStage stage);
      /***************************************************/
 
       /* GETTER / SETTER */
@@ -64,6 +77,15 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return WrOP; }
       fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Wt; }
 
+      virtual void plot(double t, double dt=1);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (numberOfSpinePoints,(int),10)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        openMBVSpineExtrusion = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+        openMBVSpineExtrusion->setNumberOfSpinePoints(numberOfSpinePoints);
+      }
+#endif
+
     protected:
       /**
        * \brief width of flexible band
@@ -72,6 +94,10 @@ namespace MBSimFlexibleBody {
 
       fmatvec::Vec3 RrRP, WrOP, Wt;
       fmatvec::SqrMat3 ARK;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      boost::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
+#endif
   };
 
 }
