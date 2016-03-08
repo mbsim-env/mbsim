@@ -107,6 +107,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::init(InitStage stage) {
     if (stage == resize) {
+      Body::init(stage);
       for(vector<Frame*>::iterator i=nonUserFrame.begin(); i!=nonUserFrame.end(); i++) {
         (*i)->sethSize(hSize[0],0);
         (*i)->sethInd(hInd[0],0);
