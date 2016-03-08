@@ -22,7 +22,7 @@
 #include "contour1s_flexible.h"
 #include "mbsimFlexibleBody/frames/floating_contour_frame.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
+#include "mbsimFlexibleBody/flexible_body.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -40,12 +40,9 @@ namespace MBSimFlexibleBody {
   }
 
   ContourFrame* Contour1sFlexible::createContourFrame(const string &name) {
-    static int count = 1;
-    stringstream s;
-    s << "P" << count++;
     FloatingContourFrame *frame = new FloatingContourFrame(name);
-    Frame1s *bodyFrame = new Frame1s(s.str());
-    static_cast<FlexibleBody1s*>(parent)->addFrame(bodyFrame);
+    Frame1s *bodyFrame = new Frame1s;
+    static_cast<FlexibleBody*>(parent)->addNonUserFrame(bodyFrame);
     frame->setFrameOfReference(bodyFrame);
     return frame;
   }
