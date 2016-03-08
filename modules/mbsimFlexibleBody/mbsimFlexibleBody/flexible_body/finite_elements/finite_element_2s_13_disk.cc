@@ -17,9 +17,10 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h>
-#include<fstream>
+#include <config.h>
+#include <fstream>
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_disk.h"
+#include "mbsim/mbsim_event.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -31,15 +32,15 @@ namespace MBSimFlexibleBody {
     return pow(base,exponent);
   }
 
-  FiniteElement2s13Disk::FiniteElement2s13Disk(double E_,double nu_,double rho_) : DiscretizationInterface(),E(E_),nu(nu_),G(E/(2.*(1.+nu))),rho(rho_),alphaS(5./6.),RefDofs(2),NodeDofs(3),Nodes(4),M(14,INIT,0.),K(14,INIT,0.) {}
+  FiniteElement2s13Disk::FiniteElement2s13Disk(double E_, double nu_, double rho_) : DiscretizationInterface(), E(E_),nu(nu_), G(E/(2.*(1.+nu))), rho(rho_), alphaS(5./6.), RefDofs(2), NodeDofs(3), Nodes(4), M(14,INIT,0.), K(14,INIT,0.) { }
 
-  void FiniteElement2s13Disk::computeConstantSystemMatrices(const Vec &NodeCoordinates,double d1,double d2) {
+  void FiniteElement2s13Disk::computeConstantSystemMatrices(const Vec &NodeCoordinates, double d1, double d2) {
 
     // node coordinates
-    const double &r1 = NodeCoordinates(0);
-    const double &j1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &j2 = NodeCoordinates(3);
+    double r1 = NodeCoordinates(0);
+    double j1 = NodeCoordinates(1);
+    double r2 = NodeCoordinates(2);
+    double j2 = NodeCoordinates(3);
 
     double dr = r2 - r1;
     double dj = j2 - j1;
@@ -270,32 +271,32 @@ namespace MBSimFlexibleBody {
     KEl(9,10) *= -1.;
   }
 
-  Vec FiniteElement2s13Disk::computeState(const Vec &NodeCoordinates,const Vec &qElement,const Vec &qpElement,const Vec &s,double d1,double d2) {
-    Vec X(12,NONINIT);
+  Vector<Fixed<6>, double> FiniteElement2s13Disk::getPositions(const Vec &NodeCoordinates, const Vec &qElement, const Vec2 &s, double d1, double d2) {
+    Vector<Fixed<6>, double> X(NONINIT);
 
-    const double &r1 = NodeCoordinates(0);
-    const double &j1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &j2 = NodeCoordinates(3);
+    double r1 = NodeCoordinates(0);
+    double j1 = NodeCoordinates(1);
+    double r2 = NodeCoordinates(2);
+    double j2 = NodeCoordinates(3);
 
-    const double &r = s(0);
-    const double &j = s(1);
+    double r = s(0);
+    double j = s(1);
 
-    const double &zS = qElement(0);       const double &zSp = qpElement(0);
-    const double &alpha = qElement(1);    const double &alphap = qpElement(1);
+    double zS = qElement(0);
+    double alpha = qElement(1);
 
-    const double &w1 = qElement(2);  const double &w1p = qpElement(2);
-    const double &a1 = qElement(3);  const double &a1p = qpElement(3);
-    const double &b1 = qElement(4);  const double &b1p = qpElement(4);
-    const double &w2 = qElement(5);  const double &w2p = qpElement(5);
-    const double &a2 = qElement(6);  const double &a2p = qpElement(6);
-    const double &b2 = qElement(7);  const double &b2p = qpElement(7);
-    const double &w3 = qElement(8);  const double &w3p = qpElement(8);
-    const double &a3 = qElement(9);  const double &a3p = qpElement(9);
-    const double &b3 = qElement(10); const double &b3p = qpElement(10);
-    const double &w4 = qElement(10); const double &w4p = qpElement(11);
-    const double &a4 = qElement(12); const double &a4p = qpElement(12);
-    const double &b4 = qElement(13); const double &b4p = qpElement(13);
+    double w1 = qElement(2);
+    double a1 = qElement(3);
+    double b1 = qElement(4);
+    double w2 = qElement(5);
+    double a2 = qElement(6);
+    double b2 = qElement(7);
+    double w3 = qElement(8);
+    double a3 = qElement(9);
+    double b3 = qElement(10);
+    double w4 = qElement(10);
+    double a4 = qElement(12);
+    double b4 = qElement(13);
 
     // WrOP position
     X(0) = cos(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((b4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*cos(j)) - sin(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((a4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*sin(j));
@@ -307,30 +308,60 @@ namespace MBSimFlexibleBody {
     X(4) = 0;
     X(5) = 0;
 
+    return X;
+  }
+
+  Vector<Fixed<6>, double> FiniteElement2s13Disk::getVelocities(const Vec &NodeCoordinates, const Vec &qElement, const Vec &qpElement, const Vec2 &s, double d1, double d2) {
+    Vector<Fixed<6>, double> X(NONINIT);
+
+    double r1 = NodeCoordinates(0);
+    double j1 = NodeCoordinates(1);
+    double r2 = NodeCoordinates(2);
+    double j2 = NodeCoordinates(3);
+
+    double r = s(0);
+    double j = s(1);
+
+    double zSp = qpElement(0);
+    double alpha = qElement(1);    double alphap = qpElement(1);
+
+    double w1p = qpElement(2);
+    double a1 = qElement(3);  double a1p = qpElement(3);
+    double b1 = qElement(4);  double b1p = qpElement(4);
+    double w2p = qpElement(5);
+    double a2 = qElement(6);  double a2p = qpElement(6);
+    double b2 = qElement(7);  double b2p = qpElement(7);
+    double w3p = qpElement(8);
+    double a3 = qElement(9);  double a3p = qpElement(9);
+    double b3 = qElement(10); double b3p = qpElement(10);
+    double w4p = qpElement(11);
+    double a4 = qElement(12); double a4p = qpElement(12);
+    double b4 = qElement(13); double b4p = qpElement(13);
+
     // WvP translational velocities
-    X(6) = ((d2*(r - r1) + d1*(-r + r2))*((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(alpha))/(2.*(-r1 + r2)) - ((d2*(r - r1) + d1*(-r + r2))*((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(alpha))/(2.*(-r1 + r2)) - alphap*(((d2*(r - r1) + d1*(-r + r2))*((b4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*cos(j))*sin(alpha) - alphap*cos(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((a4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*sin(j));
-    X(7) = ((d2*(r - r1) + d1*(-r + r2))*((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(alpha))/(2.*(-r1 + r2)) + alphap*cos(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((b4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*cos(j)) + ((d2*(r - r1) + d1*(-r + r2))*((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(alpha))/(2.*(-r1 + r2)) - alphap*sin(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((a4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*sin(j));
-    X(8) = ((-j + j2)*(-r + r2)*w1p)/((-j1 + j2)*(-r1 + r2)) + ((-j + j1)*(r - r2)*w2p)/((-j1 + j2)*(-r1 + r2)) + ((j - j2)*(-r + r1)*w3p)/((-j1 + j2)*(-r1 + r2)) + ((j - j1)*(r - r1)*w4p)/((-j1 + j2)*(-r1 + r2)) + zSp;
+    X(0) = ((d2*(r - r1) + d1*(-r + r2))*((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(alpha))/(2.*(-r1 + r2)) - ((d2*(r - r1) + d1*(-r + r2))*((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(alpha))/(2.*(-r1 + r2)) - alphap*(((d2*(r - r1) + d1*(-r + r2))*((b4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*cos(j))*sin(alpha) - alphap*cos(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((a4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*sin(j));
+    X(1) = ((d2*(r - r1) + d1*(-r + r2))*((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(alpha))/(2.*(-r1 + r2)) + alphap*cos(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((b4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*cos(j)) + ((d2*(r - r1) + d1*(-r + r2))*((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(alpha))/(2.*(-r1 + r2)) - alphap*sin(alpha)*(((d2*(r - r1) + d1*(-r + r2))*((a4*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2))))/(2.*(-r1 + r2)) + r*sin(j));
+    X(2) = ((-j + j2)*(-r + r2)*w1p)/((-j1 + j2)*(-r1 + r2)) + ((-j + j1)*(r - r2)*w2p)/((-j1 + j2)*(-r1 + r2)) + ((j - j2)*(-r + r1)*w3p)/((-j1 + j2)*(-r1 + r2)) + ((j - j1)*(r - r1)*w4p)/((-j1 + j2)*(-r1 + r2)) + zSp;
 
     // WomegaP angular velocities
-    X(9) = cos(alpha)*(((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) - ((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j)) - sin(alpha)*(((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) + ((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j));
-    X(10) = sin(alpha)*(((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) - ((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j)) + cos(alpha)*(((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) + ((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j));
-    X(11) = alphap;
+    X(3) = cos(alpha)*(((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) - ((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j)) - sin(alpha)*(((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) + ((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j));
+    X(4) = sin(alpha)*(((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) - ((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j)) + cos(alpha)*(((a4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (a3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (a2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (a1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*cos(j) + ((b4p*(j - j1)*(r - r1))/((-j1 + j2)*(-r1 + r2)) + (b3p*(j - j2)*(-r + r1))/((-j1 + j2)*(-r1 + r2)) + (b2p*(-j + j1)*(r - r2))/((-j1 + j2)*(-r1 + r2)) + (b1p*(-j + j2)*(-r + r2))/((-j1 + j2)*(-r1 + r2)))*sin(j));
+    X(5) = alphap;
 
     return X;
   }
 
-  Mat FiniteElement2s13Disk::JGeneralized(const Vec &NodeCoordinates,const Vec &s) {
+  Mat FiniteElement2s13Disk::JGeneralized(const Vec &NodeCoordinates,const Vec2 &s) {
 
     // node coordinates
-    const double &r1 = NodeCoordinates(0);
-    const double &j1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &j2 = NodeCoordinates(3); 
+    double r1 = NodeCoordinates(0);
+    double j1 = NodeCoordinates(1);
+    double r2 = NodeCoordinates(2);
+    double j2 = NodeCoordinates(3);
 
     // coordinates of force application point
-    const double &r = s(0);
-    const double &j = s(1);
+    double r = s(0);
+    double j = s(1);
 
     Mat J(RefDofs+4*NodeDofs,4);
 
@@ -398,5 +429,60 @@ namespace MBSimFlexibleBody {
     return J;
   }
 
-}
+  const Vec& FiniteElement2s13Disk::geth() const {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::geth): Not implemented!");
+  }
 
+  const SqrMat& FiniteElement2s13Disk::getdhdq() const {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::getdhdq): Not implemented!");
+  }
+
+  const SqrMat& FiniteElement2s13Disk::getdhdu() const {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::getdhdu): Not implemented!");
+  }
+
+  void FiniteElement2s13Disk::computeM(const Vec& q) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeM): Not implemented!");
+  }
+
+  void FiniteElement2s13Disk::computeh(const Vec& q, const Vec& u) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeh): Not implemented!");
+  }
+
+  void FiniteElement2s13Disk::computedhdz(const Vec& q, const Vec& u) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::computedhdz): Not implemented!");
+  }
+
+  double FiniteElement2s13Disk::computeKineticEnergy(const Vec& q, const Vec& u) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeKineticEnergy): Not implemented!");
+  }
+
+  double FiniteElement2s13Disk::computeGravitationalEnergy(const Vec& q) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeGravitationalEnergy): Not implemented!");
+  }
+
+  double FiniteElement2s13Disk::computeElasticEnergy(const Vec& q) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeElasticEnergy): Not implemented!");
+  }
+
+  Vec3 FiniteElement2s13Disk::getPosition(const Vec& q, const Vec2 &s) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::getPosition): Not implemented!");
+  }
+
+  SqrMat3 FiniteElement2s13Disk::getOrientation(const Vec& q, const Vec2 &s) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::getOrientation): Not implemented!");
+  }
+
+  Vec3 FiniteElement2s13Disk::getVelocity(const Vec& q, const Vec& u, const Vec2 &s) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::getVelocity): Not implemented!");
+  }
+
+  Vec3 FiniteElement2s13Disk::getAngularVelocity(const Vec& q, const Vec& u, const Vec2 &s) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::getAngularVelocity): Not implemented!");
+  }
+
+  Mat FiniteElement2s13Disk::getJacobianOfMotion(const Vec& qG, const Vec2 &s) {
+    throw MBSim::MBSimError("(FiniteElement2s13Disk::computeJacobianOfMotion): Not implemented!");
+  }
+
+}

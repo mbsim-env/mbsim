@@ -21,11 +21,14 @@
 #define _CONTACT_KINEMATICS_POINT_NURBSDISK2S_H_
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
-#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
-#include "mbsim/contours/point.h"
-#include "mbsim/mbsim_event.h"
+
+namespace MBSim {
+  class Point;
+}
 
 namespace MBSimFlexibleBody {
+
+  class NurbsDisk2s;
 
   /** 
    * \brief pairing point to nurbs disk
@@ -49,8 +52,8 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
-      virtual void updateg(double t, double &g, MBSim::ContourPointData* cpData, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("(ContactKinematicsSphereSphere:updatewb): Not implemented!"); }
+      virtual void updateg(double t, double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
       /***************************************************/
 
     private:
@@ -69,4 +72,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* _CONTACT_KINEMATICS_POINT_NURBSDISK2S_H_ */
-

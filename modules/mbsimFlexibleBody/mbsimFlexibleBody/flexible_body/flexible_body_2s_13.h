@@ -20,7 +20,7 @@
 #ifndef FLEXIBLEBODY2S13_H_
 #define FLEXIBLEBODY2S13_H_
 
-#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_2s.h"
 
 namespace MBSimFlexibleBody {
 
@@ -72,7 +72,7 @@ namespace MBSimFlexibleBody {
    * The plate lies in the xy-plane of its reference frame. The z-vector is its "normal".
    * Thus the radial and the azimuthal component give the x- and y- coordinates where the z-coordinate is defined by the thickness parameterization. (neglecting the flexible dofs)
    */
-  class FlexibleBody2s13 : public FlexibleBodyContinuum<fmatvec::Vec> {
+  class FlexibleBody2s13 : public FlexibleBody2s {
 
     public:
       /**
@@ -89,16 +89,17 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody2s13() {}
+      virtual ~FlexibleBody2s13() { }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t, int j=0);
       virtual void updatedhdz(double t);
-      virtual void updateStateDependentVariables(double t);
+//      virtual void updateStateDependentVariables(double t);
       /******************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void facLLM() {};
+      virtual void updateM(double t, int i=0) { }
+      virtual void updateLLM(double t, int i=0) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
@@ -331,4 +332,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* FLEXIBLEBODY2S13_H_ */
-

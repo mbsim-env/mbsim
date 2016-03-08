@@ -20,9 +20,8 @@
 #ifndef _FINITE_ELEMENT_2S_13_DISK_H_
 #define _FINITE_ELEMENT_2S_13_DISK_H_
 
-#include<cmath>
-#include "mbsim/discretization_interface.h"
-#include "mbsim/mbsim_event.h"
+#include <cmath>
+#include "mbsimFlexibleBody/discretization_interface.h"
 
 namespace MBSimFlexibleBody {
 
@@ -44,39 +43,39 @@ namespace MBSimFlexibleBody {
        * \param Poiison ratio
        * \param density
        */
-      FiniteElement2s13Disk(double E_,double nu_,double rho_);
+      FiniteElement2s13Disk(double E_, double nu_, double rho_);
 
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement2s13Disk() {}    
+      virtual ~FiniteElement2s13Disk() { }
 
       /* INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual const fmatvec::SymMat& getM() const;    
+      virtual const fmatvec::SymMat& getM() const { return M; }
       virtual const fmatvec::Vec& geth() const;
       virtual const fmatvec::SqrMat& getdhdq() const;
       virtual const fmatvec::SqrMat& getdhdu() const;
-      virtual int getqSize() const;
-      virtual int getuSize() const;
+      virtual int getqSize() const { return RefDofs + 4*NodeDofs; }
+      virtual int getuSize() const { return RefDofs + 4*NodeDofs; }
       virtual void computeM(const fmatvec::Vec& q);
       virtual void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeGravitationalEnergy(const fmatvec::Vec& q);
       virtual double computeElasticEnergy(const fmatvec::Vec& q);
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& q,const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::Vec3 getAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::Mat getJacobianOfMotion(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::SymMat& getK() const;
-      void setEModul(double E_);
-      void setPoissonRatio(double nu_);
-      void setDensity(double rho_);
-      void setShearCorrectionFactor(double alp_);
+      const fmatvec::SymMat& getK() const { return K; }
+      void setEModul(double E_) { E = E_; }
+      void setPoissonRatio(double nu_) { nu = nu_; }
+      void setDensity(double rho_) { rho = rho_; }
+      void setShearCorrectionFactor(double alphaS_) { alphaS = alphaS_; }
       /***************************************************/
 
       /*!
@@ -85,7 +84,7 @@ namespace MBSimFlexibleBody {
        * \param inner thickness of whole disk
        * \oaram outer thickness of whole disk
        */
-      void computeConstantSystemMatrices(const fmatvec::Vec &NodeCoordinates,double d1,double d2);
+      void computeConstantSystemMatrices(const fmatvec::Vec &NodeCoordinates, double d1, double d2);
 
       /*!
        * \param radial and azimuthal coordinates of corner nodes
@@ -96,14 +95,16 @@ namespace MBSimFlexibleBody {
        * \oaram outer thickness of whole disk
        * \return state at contour point 
        */
-      fmatvec::Vec computeState(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &qElement,const fmatvec::Vec &qpElement,const fmatvec::Vec &s,double d1,double d2);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(const fmatvec::Vec &NodeCoordinates, const fmatvec::Vec &qElement, const fmatvec::Vec2 &s, double d1, double d2);
+
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(const fmatvec::Vec &NodeCoordinates, const fmatvec::Vec &qElement, const fmatvec::Vec &qpElement, const fmatvec::Vec2 &s, double d1, double d2);
 
       /*! 
        * \brief compute Jacobian of contact description at contour point
        * \param radial and azimuthal coordinates of corner nodes
        * \param Lagrangian position of contour point
        */
-      fmatvec::Mat JGeneralized(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &s);
+      fmatvec::Mat JGeneralized(const fmatvec::Vec &NodeCoordinates, const fmatvec::Vec2 &s);
 
     private:
       /**
@@ -152,30 +153,6 @@ namespace MBSimFlexibleBody {
       fmatvec::SymMat M, K;
   };
 
-  inline const fmatvec::SymMat& FiniteElement2s13Disk::getM() const { return M; }
-  inline const fmatvec::Vec& FiniteElement2s13Disk::geth() const { throw MBSim::MBSimError("(FiniteElement2s13Disk::geth): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13Disk::getdhdq() const { throw MBSim::MBSimError("(FiniteElement2s13Disk::getdhdq): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13Disk::getdhdu() const { throw MBSim::MBSimError("(FiniteElement2s13Disk::getdhdu): Not implemented!"); } 
-  inline int FiniteElement2s13Disk::getqSize() const { return RefDofs + 4*NodeDofs; }
-  inline int FiniteElement2s13Disk::getuSize() const { return RefDofs + 4*NodeDofs; }
-  inline void FiniteElement2s13Disk::computeM(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeM): Not implemented!"); } 
-  inline void FiniteElement2s13Disk::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeh): Not implemented!"); } 
-  inline void FiniteElement2s13Disk::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computedhdz): Not implemented!"); } 
-  inline double FiniteElement2s13Disk::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeKineticEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13Disk::computeGravitationalEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeGravitationalEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13Disk::computeElasticEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeElasticEnergy): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13Disk::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computePosition): Not implemented!"); } 
-  inline fmatvec::SqrMat FiniteElement2s13Disk::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeOrientation): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13Disk::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeVelocity): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13Disk::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeAngularVelocity): Not implemented!"); } 
-  inline fmatvec::Mat FiniteElement2s13Disk::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw MBSim::MBSimError("(FiniteElement2s13Disk::computeJacobianOfMotion): Not implemented!"); } 
-
-  inline const fmatvec::SymMat& FiniteElement2s13Disk::getK() const { return K; }
-  inline void FiniteElement2s13Disk::setEModul(double E_) { E = E_; }
-  inline void FiniteElement2s13Disk::setPoissonRatio(double nu_) { nu = nu_; }
-  inline void FiniteElement2s13Disk::setDensity(double rho_) { rho = rho_; }
-  inline void FiniteElement2s13Disk::setShearCorrectionFactor(double alphaS_) { alphaS = alphaS_; }
 }
 
 #endif /* _FINITE_ELEMENT_2S_13_RCM_H_ */
-

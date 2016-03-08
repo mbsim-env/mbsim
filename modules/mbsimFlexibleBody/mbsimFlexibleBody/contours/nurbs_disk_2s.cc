@@ -17,13 +17,16 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h>
+#include <config.h>
 
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
+#include "mbsimFlexibleBody/frames/frame_2s.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/rotarymatrices.h"
 
-#include <iostream>
+#include <openmbvcppinterface/group.h>
 
 #ifdef HAVE_NURBS
 using namespace PLib;
@@ -35,7 +38,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  NurbsDisk2s::NurbsDisk2s(const string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
+  NurbsDisk2s::NurbsDisk2s(const string &name) : Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
 #ifndef HAVE_NURBS
     THROW_MBSIMERROR("(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
 #else
@@ -57,6 +60,270 @@ namespace MBSimFlexibleBody {
     if(vvec) {delete vvec; vvec=0;}
     if(vVec) {delete vVec; vVec=0;}
 #endif
+  }
+
+  void NurbsDisk2s::init(InitStage stage) {
+    if(stage==resize) {
+      degU = (static_cast<FlexibleBody2s13*>(parent))->getAzimuthalDegree();
+      degV = (static_cast<FlexibleBody2s13*>(parent))->getRadialDegree();
+      RefDofs = (static_cast<FlexibleBody2s13*>(parent))->getReferenceDegreesOfFreedom();
+      nr = (static_cast<FlexibleBody2s13*>(parent))->getRadialNumberOfElements();
+      nj = (static_cast<FlexibleBody2s13*>(parent))->getAzimuthalNumberOfElements();
+      Ri = (static_cast<FlexibleBody2s13*>(parent))->getInnerRadius();
+      Ra = (static_cast<FlexibleBody2s13*>(parent))->getOuterRadius();
+
+      computeUVector(nj+degU);
+      computeVVector(nr+1);
+
+//      for(int i=0; i<nr+1; i++)
+//        for(int j=0; j<nj; j++) {
+//          jacobians.push_back(NodeFrame("P",i*nj+j));
+//          jacobians[i*nj+j].setParent(parent);
+//        }
+//      for(int i=0; i<(nr+1)*nj; i++) {
+//        jacobians[i].getFrameOfReference().getJacobianOfTranslation().resize();
+//        jacobians[i].getFrameOfReference().getJacobianOfRotation().resize();
+//      }
+
+      for(int k=0; k<nr*nj*3+RefDofs; k++) {
+        SurfaceJacobiansOfTranslation.push_back(PlNurbsSurfaced());
+        SurfaceJacobiansOfRotation.push_back(PlNurbsSurfaced());
+      }
+
+      computeSurface(0);
+
+      Contour2s::init(stage);
+    }
+    else if(stage==plotting) {
+      updatePlotFeatures();
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVNurbsDisk) {
+          openMBVNurbsDisk->setName(name);
+          drawDegree = 30 / nj;
+          openMBVNurbsDisk->setDiffuseColor(0.46667, 1, 1);
+          openMBVNurbsDisk->setMinimalColorValue(0.);
+          openMBVNurbsDisk->setMaximalColorValue(1.);
+          openMBVNurbsDisk->setDrawDegree(drawDegree);
+          openMBVNurbsDisk->setRadii(Ri, Ra);
+
+          openMBVNurbsDisk->setKnotVecAzimuthal(getUVector());
+          openMBVNurbsDisk->setKnotVecRadial(getVVector());
+
+          openMBVNurbsDisk->setElementNumberRadial(nr);
+          openMBVNurbsDisk->setElementNumberAzimuthal(nj);
+
+          openMBVNurbsDisk->setInterpolationDegreeRadial(degV);
+          openMBVNurbsDisk->setInterpolationDegreeAzimuthal(degU);
+          parent->getOpenMBVGrp()->addObject(openMBVNurbsDisk);
+        }
+  #endif
+        Contour2s::init(stage);
+      }
+    }
+    else
+      Contour2s::init(stage);
+  }
+
+  Vec3 NurbsDisk2s::getPosition(double t, const Vec2 &zeta) {
+    Vec3 r(NONINIT);
+    computeSurface(t);
+    Point3Dd Tmppt = Surface->pointAt(zeta(1),zeta(0));  // U-direction is azimuthal, V-direction is radial!
+    r(0) = Tmppt.x();
+    r(1) = Tmppt.y();
+    r(2) = Tmppt.z();
+    return r;
+  }
+
+  Vec3 NurbsDisk2s::getWs(double t, const Vec2 &zeta) {
+    computeSurface(t);
+    return computeDirectionalDerivatives(zeta(1),zeta(0),1).col(0);
+  }
+
+  Vec3 NurbsDisk2s::getWt(double t, const Vec2 &zeta) {
+    computeSurface(t);
+    return computeDirectionalDerivatives(zeta(1),zeta(0),1).col(1);
+  }
+
+  Vec3 NurbsDisk2s::getWn(double t, const Vec2 &zeta) {
+    computeSurface(t);
+    Point3Dd normal(Surface->normal(zeta(1),zeta(0)));
+    double normalLength = sqrt(normal.x()*normal.x() + normal.y()*normal.y() + normal.z()*normal.z());  // to normalize the vector
+    //
+    normal *= -1;//normal should point out of the contour (as the normal is the crossproduct between the tangent in u und the tangent in v direction, the normal of nurbs++ points into the material)
+    //
+    Vec3 n;
+    n(0) = normal.x() /normalLength;
+    n(1) = normal.y() /normalLength;
+    n(2) = normal.z() /normalLength;
+    return n;
+  }
+
+  void NurbsDisk2s::updatePositions(double t, Frame2s *frame) {
+    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+      frame->setOrientation(static_cast<FlexibleBody2s13*>(parent)->getA());
+      switch(RefDofs) {
+        case 2:
+        frame->setPosition(Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getq()(0));
+        break;
+        case 6:
+        frame->setPosition(static_cast<FlexibleBody2s13*>(parent)->getq()(0,2));
+        break;
+        default:
+        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
+      }
+    }
+    else {
+      computeSurface(t);
+      Point3Dd Tmppt = Surface->pointAt(frame->getParameters()(1),frame->getParameters()(0));  // U-direction is azimuthal, V-direction is radial!
+      frame->getPosition(false)(0) = Tmppt.x();
+      frame->getPosition(false)(1) = Tmppt.y();
+      frame->getPosition(false)(2) = Tmppt.z();
+      Mat A = computeDirectionalDerivatives(frame->getParameters()(1),frame->getParameters()(0),1);
+      //    cout << endl << "time = " << t << endl;
+      //    cout << name << endl;
+      //    cout << "A = " << endl;
+      //    cout << A << endl;
+      frame->getOrientation(false).set(0, A.col(0));
+      frame->getOrientation(false).set(1, A.col(1));
+      //    frame->getOrientation(false).set(2, crossProduct(A.col(0),A.col(1)));
+      //    cout << "AIK = " << endl;
+      //    cout << frame->getOrientation(false) << endl;
+      Point3Dd normal(Surface->normal(frame->getParameters()(1),frame->getParameters()(0)));
+      double normalLength = sqrt(normal.x()*normal.x() + normal.y()*normal.y() + normal.z()*normal.z());  // to normalize the vector
+      //
+      normal *= -1;//normal should point out of the contour (as the normal is the crossproduct between the tangent in u und the tangent in v direction, the normal of nurbs++ points into the material)
+      //
+      Vec3 n;
+      n(0) = normal.x() /normalLength;
+      n(1) = normal.y() /normalLength;
+      n(2) = normal.z() /normalLength;
+      frame->getOrientation(false).set(2, n);
+      //  cout << "n = " << endl;
+      //  cout << n << endl;
+    }
+  }
+
+  void NurbsDisk2s::updateVelocities(double t, Frame2s *frame) {
+    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+      switch(RefDofs) {
+        case 2:
+        frame->setVelocity(Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(0));
+        frame->setAngularVelocity(Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(1));
+        break;
+        case 6:
+        frame->setPosition(static_cast<FlexibleBody2s13*>(parent)->getq()(0,2));
+        frame->setVelocity(static_cast<FlexibleBody2s13*>(parent)->getu()(0,2));
+        frame->setAngularVelocity(static_cast<FlexibleBody2s13*>(parent)->getA() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
+        break;
+        default:
+        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
+      }
+    }
+    else {
+      computeSurfaceVelocities(t);
+      Point3Dd Tmpv = SurfaceVelocities->pointAt(frame->getParameters()(1),frame->getParameters()(0));
+      frame->getVelocity(false)(0) = Tmpv.x();
+      frame->getVelocity(false)(1) = Tmpv.y();
+      frame->getVelocity(false)(2) = Tmpv.z();
+      THROW_MBSIMERROR("(FlexibleBody2s13::updateKinematicsForFrame::angularVelocity): Not implemented!");
+    }
+  }
+
+  void NurbsDisk2s::updateAccelerations(double t, Frame2s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13::updateKinematicsForFrame::updateAccelerations): Not implemented!");
+  }
+
+  void NurbsDisk2s::updateJacobians(double t, Frame2s *frame, int j) {
+    computeSurfaceJacobians(t);
+
+    frame->getJacobianOfTranslation(j,false).resize(nj*nr*3+RefDofs);
+    frame->getJacobianOfRotation(j,false).resize(nj*nr*3+RefDofs);
+
+    for(int k=0; k<nj*nr*3+RefDofs; k++) {
+      Point3Dd TmpPtTrans = SurfaceJacobiansOfTranslation[k].pointAt(frame->getParameters()(1),frame->getParameters()(0));
+      Point3Dd TmpPtRot = SurfaceJacobiansOfRotation[k].pointAt(frame->getParameters()(1),frame->getParameters()(0));
+
+      frame->getJacobianOfTranslation(j,false)(0,k) = TmpPtTrans.x();
+      frame->getJacobianOfTranslation(j,false)(1,k) = TmpPtTrans.y();
+      frame->getJacobianOfTranslation(j,false)(2,k) = TmpPtTrans.z();
+
+      frame->getJacobianOfRotation(j,false)(0,k) = TmpPtRot.x();
+      frame->getJacobianOfRotation(j,false)(1,k) = TmpPtRot.y();
+      frame->getJacobianOfRotation(j,false)(2,k) = TmpPtRot.z();
+    }
+  }
+
+  void NurbsDisk2s::updateGyroscopicAccelerations(double t, Frame2s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13::updateKinematicsForFrame::updateGyroscopicAccelerations): Not implemented!");
+  }
+
+  void NurbsDisk2s::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive) == enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#ifdef HAVE_NURBS
+      if(getPlotFeature(openMBV) == enabled && openMBVNurbsDisk) {
+        vector<double> data;
+        data.push_back(t); //time
+
+        Vec2 zeta;
+        Vec3 r = getPosition(t,zeta);
+        SqrMat3 A; // TODO = getOrientation(t,zeta);
+
+        //Translation of COG
+        data.push_back(r(0)); //global x-coordinate
+        data.push_back(r(1)); //global y-coordinate
+        data.push_back(r(2)); //global z-coordinate
+
+        //Rotation of COG
+        Vec AlphaBetaGamma = AIK2Cardan(A);
+        data.push_back(AlphaBetaGamma(0));
+        data.push_back(AlphaBetaGamma(1));
+        data.push_back(AlphaBetaGamma(2));
+
+        //Control-Point coordinates
+        for(int i = 0; i < nr + 1; i++) {
+          for(int j = 0; j < nj + degU; j++) {
+            data.push_back(getControlPoints(j, i)(0)); //global x-coordinate
+            data.push_back(getControlPoints(j, i)(1)); //global y-coordinate
+            data.push_back(getControlPoints(j, i)(2)); //global z-coordinate
+          }
+        }
+
+        //inner ring
+        for(int i = 0; i < nj; i++) {
+          for(int j = 0; j < drawDegree; j++) {
+            zeta(0) = Ri;
+            zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
+            Vec3 pos = getPosition(t,zeta);
+
+            data.push_back(pos(0)); //global x-coordinate
+            data.push_back(pos(1)); //global y-coordinate
+            data.push_back(pos(2)); //global z-coordinate
+
+          }
+        }
+
+        //outer Ring
+        for(int i = 0; i < nj; i++) {
+          for(int j = 0; j < drawDegree; j++) {
+            zeta(0) = Ra;
+            zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
+            Vec3 pos = getPosition(t,zeta);
+
+            data.push_back(pos(0)); //global x-coordinate
+            data.push_back(pos(1)); //global y-coordinate
+            data.push_back(pos(2)); //global z-coordinate
+          }
+        }
+
+        openMBVNurbsDisk->append(data);
+      }
+#endif
+#endif
+    }
+    Contour2s::plot(t, dt);
   }
 
 //  void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
@@ -145,42 +412,16 @@ namespace MBSimFlexibleBody {
 //#endif
 //  }
 
-#ifdef HAVE_NURBS
-  void NurbsDisk2s::initContourFromBody(InitStage stage) {
-    if(stage==resize) {
-      degU = (static_cast<FlexibleBody2s13*>(parent))->getAzimuthalDegree();
-      degV = (static_cast<FlexibleBody2s13*>(parent))->getRadialDegree();
-      RefDofs = (static_cast<FlexibleBody2s13*>(parent))->getReferenceDegreesOfFreedom();
-      nr = (static_cast<FlexibleBody2s13*>(parent))->getRadialNumberOfElements();
-      nj = (static_cast<FlexibleBody2s13*>(parent))->getAzimuthalNumberOfElements();
-      Ri = (static_cast<FlexibleBody2s13*>(parent))->getInnerRadius();
-      Ra = (static_cast<FlexibleBody2s13*>(parent))->getOuterRadius();
-
-      computeUVector(nj+degU);
-      computeVVector(nr+1);
-
-      for(int i=0; i<nr+1; i++) 
-        for(int j=0; j<nj; j++) 
-          jacobians.push_back(ContourPointData(i*nj+j));
-      for(int i=0; i<(nr+1)*nj; i++) {
-        jacobians[i].getFrameOfReference().getJacobianOfTranslation().resize();
-        jacobians[i].getFrameOfReference().getJacobianOfRotation().resize();
-      }
-
-      for(int k=0; k<nr*nj*3+RefDofs; k++) {
-        SurfaceJacobiansOfTranslation.push_back(PlNurbsSurfaced());
-        SurfaceJacobiansOfRotation.push_back(PlNurbsSurfaced());
-      }
-
-      computeSurface(0);
-    }
-    else if(stage==worldFrameContourLocation)
-    {
-      R->getOrientation() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getOrientation();
-      R->getPosition() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getPosition();
-    }
-  }
-#endif
+//#ifdef HAVE_NURBS
+//  void NurbsDisk2s::initContourFromBody(InitStage stage) {
+//
+////    else if(stage==worldFrameContourLocation)
+////    {
+////      R->getOrientation() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getOrientation();
+////      R->getPosition() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getPosition();
+////    }
+//  }
+//#endif
 
   Vec NurbsDisk2s::transformCW(const Vec& WrPoint) {
     return (static_cast<FlexibleBody2s13*>(parent))->transformCW(WrPoint);
@@ -272,8 +513,9 @@ namespace MBSimFlexibleBody {
     // gets Points from body for interpolation
     for(int i=0; i<nr+1; i++) {
       for(int j=0; j<nj; j++) {
-        ContourPointData cp(i*nj+j);
-        Nodelist(j,i) = HPoint3Dd(cp.getFrameOfReference().getPosition(t)(0),cp.getFrameOfReference().getPosition(t)(1),cp.getFrameOfReference().getPosition(t)(2),1);
+        NodeFrame P("P",i*nj+j);
+        P.setParent(parent);
+        Nodelist(j,i) = HPoint3Dd(P.getPosition(t)(0),P.getPosition(t)(1),P.getPosition(t)(2),1);
       }
       for(int j=0;j<degU;j++) { //expands the surface addicted to the degree in azimuthal direction
         Nodelist(nj+j,i) = Nodelist(j,i);
@@ -357,8 +599,9 @@ namespace MBSimFlexibleBody {
     // gets velocities from body for the interpolation
     for(int i=0; i<nr+1; i++) {
       for(int j=0; j<nj; j++) {
-        ContourPointData cp(i*nj+j);
-        Nodelist(j,i) = HPoint3Dd(cp.getFrameOfReference().getVelocity(t)(0),cp.getFrameOfReference().getVelocity(t)(1),cp.getFrameOfReference().getVelocity(t)(2), 1);
+        NodeFrame P("P",i*nj+j);
+        P.setParent(parent);
+        Nodelist(j,i) = HPoint3Dd(P.getVelocity(t)(0),P.getVelocity(t)(1),P.getVelocity(t)(2), 1);
       }
       for(int j=0;j<degU;j++) { // expands the surface addicted to the degree in azimuthal direction
         Nodelist(nj+j,i) = Nodelist(j,i);
@@ -375,22 +618,24 @@ namespace MBSimFlexibleBody {
     PLib::Matrix<HPoint3Dd> NodelistRot(nj+degU,nr+1);// list of node-data for the nurbs interpolation
 
     // gets Jacobians on the nodes from body for interpolation
-//    for(int i=0; i<nr+1; i++) {
-//      for(int j=0; j<nj; j++) {
-//        static_cast<FlexibleBody2s13*>(parent)->updateJacobiansForFrame(jacobians[i*nj+j]);
-//      }
-//    }
+    //for(int i=0; i<nr+1; i++) {
+    //  for(int j=0; j<nj; j++) {
+    //    static_cast<FlexibleBody2s13*>(parent)->updateJacobiansForFrame(jacobians[i*nj+j]);
+    //  }
+    //}
     for(int k=0; k<nr*nj*3+RefDofs; k++) {
       for(int i=0; i<nr+1; i++) {
         for(int j=0; j<nj; j++) {
-          NodelistTrans(j,i) = HPoint3Dd(jacobians[i*nj+j].getFrameOfReference().getJacobianOfTranslation(t)(0,k),
-              jacobians[i*nj+j].getFrameOfReference().getJacobianOfTranslation(t)(1,k),
-              jacobians[i*nj+j].getFrameOfReference().getJacobianOfTranslation(t)(2,k),
+          NodeFrame P("P",i*nj+j);
+          P.setParent(parent);
+          NodelistTrans(j,i) = HPoint3Dd(P.getJacobianOfTranslation(t)(0,k),
+              P.getJacobianOfTranslation(t)(1,k),
+              P.getJacobianOfTranslation(t)(2,k),
               1);
 
-          NodelistRot(j,i) = HPoint3Dd(jacobians[i*nj+j].getFrameOfReference().getJacobianOfRotation(t)(0,k),
-              jacobians[i*nj+j].getFrameOfReference().getJacobianOfRotation(t)(1,k),
-              jacobians[i*nj+j].getFrameOfReference().getJacobianOfRotation(t)(2,k),
+          NodelistRot(j,i) = HPoint3Dd(P.getJacobianOfRotation(t)(0,k),
+              P.getJacobianOfRotation(t)(1,k),
+              P.getJacobianOfRotation(t)(2,k),
               1);
         }
         for(int j=0;j<degU;j++) { // expands the surface addicted to the degree in azimuthal direction
@@ -453,4 +698,3 @@ namespace MBSimFlexibleBody {
     return nrm2(Vec1 - Vec2);
   }
 }
-

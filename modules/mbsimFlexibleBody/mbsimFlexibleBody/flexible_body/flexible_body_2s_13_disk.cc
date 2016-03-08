@@ -19,13 +19,15 @@
 
 #include<config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
-#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+#include "mbsimFlexibleBody/frames/frame_2s.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
+//#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/nurbsdisk.h"
+//#include "openmbvcppinterface/nurbsdisk.h"
 #endif
 
 using namespace std;
@@ -34,13 +36,8 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody2s13Disk::FlexibleBody2s13Disk(const string &name) :
-      FlexibleBody2s13(name) {
+  FlexibleBody2s13Disk::FlexibleBody2s13Disk(const string &name) : FlexibleBody2s13(name) {
     RefDofs = 2;
-  }
-
-  void FlexibleBody2s13Disk::updateM(double t, int j) {
-    M[j] = MConst.copy();
   }
 
   void FlexibleBody2s13Disk::BuildElements() {
@@ -77,162 +74,168 @@ namespace MBSimFlexibleBody {
       uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
       uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
     }
+    updEle = false;
   }
 
-  void FlexibleBody2s13Disk::updateKinematicsForFrame(ContourPointData &cp, Frame::Frame::Feature ff, Frame *frame) {
-    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
+  void FlexibleBody2s13Disk::updatePositions(double t, Frame2s *frame) {
 #ifdef HAVE_NURBS
-      contour->updateKinematicsForFrame(cp, ff);
+    throw;
+//      contour->updateKinematicsForFrame(cp, ff);
 #endif
-    }
-    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
-      const int &node = cp.getNodeNumber();
-
-      Vec tmp(3, NONINIT);
-      if(ff==Frame::position || ff==Frame::position_cosy || ff==Frame::all) {
-
-        tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-        tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
-
-        Vec tmp_add(2, NONINIT);
-        tmp_add(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
-        tmp_add(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
-
-        tmp(0) = cos(qext(1)) * tmp_add(0) - sin(qext(1)) * tmp_add(1); // in sheave frame of reference
-        tmp(1) = sin(qext(1)) * tmp_add(0) + cos(qext(1)) * tmp_add(1);
-
-        tmp(2) = qext(0) + qext(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
-        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
-      }
-
-      if(ff==Frame::firstTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if(ff==Frame::normal || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      if(ff==Frame::secondTangent || ff==Frame::cosy || ff==Frame::position_cosy || ff==Frame::velocity_cosy || ff==Frame::velocities_cosy || ff==Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-
-      if (ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
-        tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-        tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
-
-        Vec tmp_add_1(2, NONINIT);
-        tmp_add_1(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
-        tmp_add_1(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
-
-        tmp(0) = -sin(qext(1)) * tmp_add_1(0) - cos(qext(1)) * tmp_add_1(1); // in sheave frame of reference
-        tmp(1) = cos(qext(1)) * tmp_add_1(0) - sin(qext(1)) * tmp_add_1(1);
-
-        tmp(0) *= uext(1);
-        tmp(1) *= uext(1);
-
-        Vec tmp_add_2(2, NONINIT);
-        tmp_add_2(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-        tmp_add_2(1) = -uext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
-
-        Vec tmp_add_3(2, NONINIT);
-        tmp_add_3(0) = cos(NodeCoordinates(node, 1)) * tmp_add_2(0) - sin(NodeCoordinates(node, 1)) * tmp_add_2(1); // in sheave local frame
-        tmp_add_3(1) = sin(NodeCoordinates(node, 1)) * tmp_add_2(0) + cos(NodeCoordinates(node, 1)) * tmp_add_2(1);
-
-        tmp_add_2(0) = cos(qext(1)) * tmp_add_3(0) - sin(qext(1)) * tmp_add_3(1); // in sheave frame of reference
-        tmp_add_2(1) = sin(qext(1)) * tmp_add_3(0) + cos(qext(1)) * tmp_add_3(1);
-
-        tmp(0) += tmp_add_2(0);
-        tmp(1) += tmp_add_2(1);
-
-        tmp(2) = uext(0) + uext(RefDofs + node * NodeDofs);
-        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
-      }
-
-      if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-        tmp(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
-        tmp(1) = uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 2) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
-        tmp(2) = uext(1);
-        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
-      }
-    }
-    else
-      THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
-
-    if (frame != 0) { // frame should be linked to contour point data
-      frame->setPosition(cp.getFrameOfReference().getPosition());
-      frame->setOrientation(cp.getFrameOfReference().getOrientation());
-      frame->setVelocity(cp.getFrameOfReference().getVelocity());
-      frame->setAngularVelocity(cp.getFrameOfReference().getAngularVelocity());
-    }
   }
 
-  void FlexibleBody2s13Disk::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
+  void FlexibleBody2s13Disk::updateVelocities(double t, Frame2s *frame) {
+  }
+
+  void FlexibleBody2s13Disk::updateAccelerations(double t, Frame2s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody2s13Disk::updateJacobians(double t, Frame2s *frame, int j) {
     Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
 
-    if (cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
-      Vec2 alpha = cp.getLagrangeParameterPosition();
+    Vec2 alpha = frame->getParameters();
 
-      if (nrm2(alpha) < epsroot()) { // center of gravity
-        Wext(0, 0) = 1.;
-        Wext(1, 1) = 1.;
-      }
-      else { // on the disk
-        BuildElement(alpha);
-
-        /* Jacobian of element */
-        Mat Wtmp = static_cast<FiniteElement2s13Disk*>(discretization[currentElement])->JGeneralized(ElementalNodes[currentElement], alpha);
-
-        /* Jacobian of disk */
-        Wext(Index(0, RefDofs - 1), Wwidth) = Wtmp(Index(0, RefDofs - 1), Wwidth);
-        Wext(Index(RefDofs + ElementNodeList(currentElement, 0) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 0) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
-        Wext(Index(RefDofs + ElementNodeList(currentElement, 1) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 1) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), Wwidth);
-        Wext(Index(RefDofs + ElementNodeList(currentElement, 2) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 2) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), Wwidth);
-        Wext(Index(RefDofs + ElementNodeList(currentElement, 3) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 3) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), Wwidth);
-      }
+    if (nrm2(alpha) < epsroot()) { // center of gravity
+      Wext(0, 0) = 1.;
+      Wext(1, 1) = 1.;
     }
-
-    else if (cp.getContourParameterType() == ContourPointData::node) { // force on node
-      int node = cp.getNodeNumber();
+    else { // on the disk
+      BuildElement(alpha);
 
       /* Jacobian of element */
-      Mat Wtmp(5, 4, INIT, 0.); // initialising Ref + 1 Node
-
-      // translation
-      Wtmp(0, 0) = 1; // ref
-      Wtmp(2, 0) = 1; // node
-
-      // rotation
-      Wtmp(1, 3) = 1; // ref
-      Wtmp(3, 1) = -sin(qext(1) + NodeCoordinates(node, 1)); // node
-      Wtmp(3, 2) = cos(qext(1) + NodeCoordinates(node, 1));
-      Wtmp(4, 1) = cos(qext(1) + NodeCoordinates(node, 1));
-      Wtmp(4, 2) = sin(qext(1) + NodeCoordinates(node, 1));
+      Mat Wtmp = static_cast<FiniteElement2s13Disk*>(discretization[currentElement])->JGeneralized(ElementalNodes[currentElement], alpha);
 
       /* Jacobian of disk */
-      // reference 
       Wext(Index(0, RefDofs - 1), Wwidth) = Wtmp(Index(0, RefDofs - 1), Wwidth);
-
-      // nodes
-      Wext(Index(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
+      Wext(Index(RefDofs + ElementNodeList(currentElement, 0) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 0) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
+      Wext(Index(RefDofs + ElementNodeList(currentElement, 1) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 1) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), Wwidth);
+      Wext(Index(RefDofs + ElementNodeList(currentElement, 2) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 2) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), Wwidth);
+      Wext(Index(RefDofs + ElementNodeList(currentElement, 3) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 3) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), Wwidth);
     }
-    else
-      THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
+
+    Mat Jacobian = condenseMatrixRows(Wext, ILocked);
+
+    // transformation
+    frame->setJacobianOfTranslation(R->getOrientation(t).col(2) * Jacobian(0, 0, qSize - 1, 0).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T(),j);
+  }
+
+  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(double t, Frame2s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody2s13Disk::updatePositions(double t, NodeFrame *frame) {
+    Vec3 tmp(NONINIT);
+    int node = frame->getNodeNumber();
+
+    tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+
+    Vec2 tmp_add(NONINIT);
+    tmp_add(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
+    tmp_add(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
+
+    tmp(0) = cos(qext(1)) * tmp_add(0) - sin(qext(1)) * tmp_add(1); // in sheave frame of reference
+    tmp(1) = sin(qext(1)) * tmp_add(0) + cos(qext(1)) * tmp_add(1);
+
+    tmp(2) = qext(0) + qext(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
+
+//    cout << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
+    //frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
+    //frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(Phi));
+    //frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));
+  }
+
+  void FlexibleBody2s13Disk::updateVelocities(double t, NodeFrame *frame) {
+    Vec3 tmp(NONINIT);
+    int node = frame->getNodeNumber();
+
+    tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+
+    Vec tmp_add_1(2, NONINIT);
+    tmp_add_1(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
+    tmp_add_1(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
+
+    tmp(0) = -sin(qext(1)) * tmp_add_1(0) - cos(qext(1)) * tmp_add_1(1); // in sheave frame of reference
+    tmp(1) = cos(qext(1)) * tmp_add_1(0) - sin(qext(1)) * tmp_add_1(1);
+
+    tmp(0) *= uext(1);
+    tmp(1) *= uext(1);
+
+    Vec tmp_add_2(2, NONINIT);
+    tmp_add_2(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp_add_2(1) = -uext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+
+    Vec tmp_add_3(2, NONINIT);
+    tmp_add_3(0) = cos(NodeCoordinates(node, 1)) * tmp_add_2(0) - sin(NodeCoordinates(node, 1)) * tmp_add_2(1); // in sheave local frame
+    tmp_add_3(1) = sin(NodeCoordinates(node, 1)) * tmp_add_2(0) + cos(NodeCoordinates(node, 1)) * tmp_add_2(1);
+
+    tmp_add_2(0) = cos(qext(1)) * tmp_add_3(0) - sin(qext(1)) * tmp_add_3(1); // in sheave frame of reference
+    tmp_add_2(1) = sin(qext(1)) * tmp_add_3(0) + cos(qext(1)) * tmp_add_3(1);
+
+    tmp(0) += tmp_add_2(0);
+    tmp(1) += tmp_add_2(1);
+
+    tmp(2) = uext(0) + uext(RefDofs + node * NodeDofs);
+
+    frame->setVelocity(R->getOrientation(t) * tmp);
+
+    tmp(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
+    tmp(1) = uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 2) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
+    tmp(2) = uext(1);
+
+    frame->setAngularVelocity(R->getOrientation() * tmp);
+  }
+
+  void FlexibleBody2s13Disk::updateAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody2s13Disk::updateJacobians(double time, NodeFrame *frame, int j) {
+    Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
+    Mat Wext(Dofs, 4);
+
+    int node = frame->getNodeNumber();
+
+    /* Jacobian of element */
+    Mat Wtmp(5, 4, INIT, 0.); // initialising Ref + 1 Node
+
+    // translation
+    Wtmp(0, 0) = 1; // ref
+    Wtmp(2, 0) = 1; // node
+
+    // rotation
+    Wtmp(1, 3) = 1; // ref
+    Wtmp(3, 1) = -sin(qext(1) + NodeCoordinates(node, 1)); // node
+    Wtmp(3, 2) = cos(qext(1) + NodeCoordinates(node, 1));
+    Wtmp(4, 1) = cos(qext(1) + NodeCoordinates(node, 1));
+    Wtmp(4, 2) = sin(qext(1) + NodeCoordinates(node, 1));
+
+    /* Jacobian of disk */
+    // reference
+    Wext(Index(0, RefDofs - 1), Wwidth) = Wtmp(Index(0, RefDofs - 1), Wwidth);
+
+    // nodes
+    Wext(Index(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
 
     // condensation
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
 
     // transformation
-    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation().col(2) * Jacobian(0, 0, qSize - 1, 0).T());
-    cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T());
+    frame->setJacobianOfTranslation(R->getOrientation(time).col(2) * Jacobian(0, 0, qSize - 1, 0).T());
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T());
+  }
 
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
-
-    if (frame != 0) { // frame should be linked to contour point data
-      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
-      frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
-      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
-      frame->setGyroscopicAccelerationOfRotation(cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
-    }
+  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
   void FlexibleBody2s13Disk::init(InitStage stage) {
-    if (stage == resize) {
-      FlexibleBodyContinuum<Vec>::init(stage);
+    if (stage == preInit) {
       assert(nr > 0); // at least on radial row
       assert(nj > 1); // at least two azimuthal elements
 
@@ -287,68 +290,72 @@ namespace MBSimFlexibleBody {
         uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
         ElementalNodes.push_back(Vec(4, INIT, 0.));
       }
+      FlexibleBody2s13::init(stage);
+    }
+    else if (stage == unknownStage) {
 
       BuildElements();
 
-#ifdef HAVE_NURBS
-      // borders of contour parametrisation 
-      // beginning 
-      Vec alphaS(2);
-      alphaS(0) = Ri; // radius
-      alphaS(1) = 0.; // angle
-
-      // end 
-      Vec alphaE(2);
-      alphaE(0) = Ra; // radius
-      alphaE(1) = 2 * M_PI; // angle
-
-      contour->setAlphaStart(alphaS);
-      contour->setAlphaEnd(alphaE);
-#endif
+//#ifdef HAVE_NURBS
+//      // borders of contour parametrisation
+//      // beginning
+//      Vec alphaS(2);
+//      alphaS(0) = Ri; // radius
+//      alphaS(1) = 0.; // angle
+//
+//      // end
+//      Vec alphaE(2);
+//      alphaE(0) = Ra; // radius
+//      alphaE(1) = 2 * M_PI; // angle
+//
+//      contour->setAlphaStart(alphaS);
+//      contour->setAlphaEnd(alphaE);
+//#endif
 
       qext = Jext * q0;
       uext = Jext * u0;
 
       initMatrices(); // calculate constant mass- and stiffness matrix
 
+      FlexibleBody2s13::init(stage);
     }
-    if (stage == plotting) {
+    else if (stage == plotting) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#ifdef HAVE_NURBS
-        if (getPlotFeature(openMBV) == enabled) {
-          boost::shared_ptr<OpenMBV::NurbsDisk> Diskbody = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
-
-          drawDegree = 30 / nj;
-          Diskbody->setDiffuseColor(0.46667, 1, 1);
-          Diskbody->setMinimalColorValue(0.);
-          Diskbody->setMaximalColorValue(1.);
-          Diskbody->setDrawDegree(drawDegree);
-          Diskbody->setRadii(Ri, Ra);
-
-          Diskbody->setKnotVecAzimuthal(contour->getUVector());
-          Diskbody->setKnotVecRadial(contour->getVVector());
-
-          Diskbody->setElementNumberRadial(nr);
-          Diskbody->setElementNumberAzimuthal(nj);
-
-          Diskbody->setInterpolationDegreeRadial(degV);
-          Diskbody->setInterpolationDegreeAzimuthal(degU);
-          openMBVBody=Diskbody;
-        }
-#endif
-#endif
-        FlexibleBodyContinuum<Vec>::init(stage);
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//#ifdef HAVE_NURBS
+//        if (getPlotFeature(openMBV) == enabled) {
+//          boost::shared_ptr<OpenMBV::NurbsDisk> Diskbody = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
+//
+//          drawDegree = 30 / nj;
+//          Diskbody->setDiffuseColor(0.46667, 1, 1);
+//          Diskbody->setMinimalColorValue(0.);
+//          Diskbody->setMaximalColorValue(1.);
+//          Diskbody->setDrawDegree(drawDegree);
+//          Diskbody->setRadii(Ri, Ra);
+//
+//          Diskbody->setKnotVecAzimuthal(contour->getUVector());
+//          Diskbody->setKnotVecRadial(contour->getVVector());
+//
+//          Diskbody->setElementNumberRadial(nr);
+//          Diskbody->setElementNumberAzimuthal(nj);
+//
+//          Diskbody->setInterpolationDegreeRadial(degV);
+//          Diskbody->setInterpolationDegreeAzimuthal(degU);
+//          openMBVBody=Diskbody;
+//        }
+//#endif
+//#endif
+        FlexibleBody2s13::init(stage);
       }
     }
     else
-      FlexibleBodyContinuum<Vec>::init(stage);
+      FlexibleBody2s13::init(stage);
 
-#ifdef HAVE_NURBS
-    contour->initContourFromBody(stage); // initialize contour
-#endif
+//#ifdef HAVE_NURBS
+//    contour->initContourFromBody(stage); // initialize contour
+//#endif
   }
 
   Vec FlexibleBody2s13Disk::transformCW(const Vec& WrPoint) {
@@ -471,6 +478,7 @@ namespace MBSimFlexibleBody {
     /*END-Eigenfrequencies*/
 
     // LU-decomposition of M
+    M[0] = MConst;
     LLM[0] = facLL(MConst);
   }
 
@@ -482,5 +490,16 @@ namespace MBSimFlexibleBody {
     //A(1,1) = cos(q(1));
   }
 
-}
+  void FlexibleBody2s13Disk::GlobalVectorContribution(int CurrentElement, const Vec& locVec, Vec& gloVec) {
+    THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!");
+  }
 
+  void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const Mat& locMat, Mat& gloMat) {
+    THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!");
+  }
+
+  void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const SymMat& locMat, SymMat& gloMat) {
+    THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!");
+  }
+
+}

@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h"
+#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+#include "mbsim/contours/point.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -49,7 +51,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsPointNurbsDisk2s::updateg(double t, double &g, ContourPointData* cpData, int index) {
+  void ContactKinematicsPointNurbsDisk2s::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
     throw;
 //    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of the point in worldcoordinates
 //    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[ipoint].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition()))(0,1); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
@@ -77,6 +79,10 @@ namespace MBSimFlexibleBody {
 //      g = cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
 //      // cout << "Abstand: " << g << endl;
 //    }
+  }
+
+  void ContactKinematicsPointNurbsDisk2s::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+    throw MBSim::MBSimError("(ContactKinematicsPointNurbsDisk2s:updatewb): Not implemented!");
   }
 
 }

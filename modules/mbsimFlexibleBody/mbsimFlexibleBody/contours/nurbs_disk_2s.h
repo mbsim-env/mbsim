@@ -22,8 +22,15 @@
 
 #include "fmatvec/fmatvec.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/contours/contour2s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/nurbsdisk.h"
+#include "mbsim/utils/boost_parameters.h"
+#include <mbsim/utils/openmbv_utils.h>
+#endif
 
 #ifdef HAVE_NURBS
 #include "nurbs++/nurbs.h"
@@ -32,6 +39,8 @@
 #endif
 
 namespace MBSimFlexibleBody {
+
+  class Frame2s;
 
   /*!  
    * \brief 2s flexible
@@ -63,28 +72,38 @@ namespace MBSimFlexibleBody {
       virtual std::string getType() const { return "NurbsDisk2s"; }
       /***************************************************/
 
-      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
-      virtual void computeRootFunctionFirstTangent(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
-      virtual void computeRootFunctionNormal(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
-      virtual void computeRootFunctionSecondTangent(const fmatvec::Vec2 &zeta) { THROW_MBSIMERROR("(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
-      /***************************************************/
+      void init(InitStage stage);
 
-      /* INHERITED INTERFACE OF CONTOUR */
-//      virtual void updateKinematicsForFrame(const fmatvec::Vec2 &zeta, MBSim::Frame::Frame::Feature ff);
-//      virtual void updateJacobiansForFrame(const fmatvec::Vec2 &zeta, int j = 0);
-      virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
-        return findContactPairingFlexible(type0.c_str(), type1.c_str());
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
+      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
+
+      void updatePositions(double t, Frame2s *frame);
+      void updateVelocities(double t, Frame2s *frame);
+      void updateAccelerations(double t, Frame2s *frame);
+      void updateJacobians(double t, Frame2s *frame, int j=0);
+      void updateGyroscopicAccelerations(double t, Frame2s *frame);
+
+      virtual void plot(double t, double dt=1);
+
+      virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        openMBVNurbsDisk = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
       }
-      /***************************************************/
-
-#ifdef HAVE_NURBS
-      /**
-       * \brief initialize NURBS disk
-       * \param stage of initialisation
-       */
-      void initContourFromBody(InitStage stage);
 #endif
+
+//#ifdef HAVE_NURBS
+//      /**
+//       * \brief initialize NURBS disk
+//       * \param stage of initialisation
+//       */
+//      void initContourFromBody(InitStage stage);
+//#endif
 
       /*! 
        * \brief transformation cartesian to cylinder system
@@ -206,11 +225,16 @@ namespace MBSimFlexibleBody {
        */
       double Ri, Ra;
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      boost::shared_ptr<OpenMBV::NurbsDisk> openMBVNurbsDisk;
+      double drawDegree;
+#endif
+
 #ifdef HAVE_NURBS
       /**
        * \brief Jacobians of finite element nodes
        */
-      std::vector<MBSim::ContourPointData> jacobians; // size = number of interpolation points
+      std::vector<NodeFrame> jacobians; // size = number of interpolation points
 
       /** 
        * \brief interpolated surface of the contour
@@ -245,4 +269,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* NURBSDISK2S_H_ */
-

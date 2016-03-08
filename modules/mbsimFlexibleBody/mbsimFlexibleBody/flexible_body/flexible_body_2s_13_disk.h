@@ -48,20 +48,25 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody2s13Disk() {}
-
-      /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateM(double t, int j=0);
-      /***************************************************/
+      virtual ~FlexibleBody2s13Disk() { }
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements();
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
-      /***************************************************/
+
+      virtual void updatePositions(double t, Frame2s* frame);
+      virtual void updateVelocities(double t, Frame2s* frame);
+      virtual void updateAccelerations(double t, Frame2s* frame);
+      virtual void updateJacobians(double t, Frame2s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, Frame2s* frame);
+
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
@@ -83,11 +88,6 @@ namespace MBSimFlexibleBody {
 
   };
 
-  inline void FlexibleBody2s13Disk::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!"); }
-  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
-  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { THROW_MBSIMERROR("(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
-
 }
 
 #endif /* _FLEXIBLE_BODY_2S_13_DISK_H_ */
-

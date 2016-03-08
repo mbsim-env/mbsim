@@ -19,14 +19,14 @@
 
 #include<config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13.h"
-#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+//#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
 #include <mbsim/utils/rotarymatrices.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/nurbsdisk.h"
-#endif
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//#include "openmbvcppinterface/nurbsdisk.h"
+//#endif
 
 #include <iostream>
 
@@ -115,18 +115,18 @@ namespace MBSimFlexibleBody {
     dat.close();
   }
 
-  FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) : FlexibleBodyContinuum<Vec>(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3, INIT, 0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3, INIT, 0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3, EYE), G(3, EYE), DEBUGLEVEL(DEBUGLEVEL_) {
+  FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) : FlexibleBody2s(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3, INIT, 0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3, INIT, 0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3, EYE), G(3, EYE), DEBUGLEVEL(DEBUGLEVEL_) {
 #ifdef HAVE_NURBS
-    contour = new NurbsDisk2s("SurfaceContour");
-    addContour(contour);
+//    contour = new NurbsDisk2s("SurfaceContour");
+//    addContour(contour);
 #else
-    contour=0;
+//    contour=0;
     cerr << "WARNING (FlexibleBody2s13::FlexibleBody2s13): No NURBS library installed!" << endl;
 #endif
 
     // frame in axis
-    Vec s(2, fmatvec::INIT, 0.);
-    addFrame("COG", s);
+  //  Vec s(2, fmatvec::INIT, 0.);
+  //  addFrame("COG", s);
   }
 
   void FlexibleBody2s13::updateh(double t, int j) {
@@ -144,88 +144,88 @@ namespace MBSimFlexibleBody {
         dhdq(i, j) = -K(i, j);
   }
 
-  void FlexibleBody2s13::updateStateDependentVariables(double t) {
-    FlexibleBodyContinuum<Vec>::updateStateDependentVariables(t);
-
-    updateAG();
-
-#ifdef HAVE_NURBS
-    contour->computeSurface();
-    contour->computeSurfaceVelocities();
-    contour->computeSurfaceJacobians();
-#endif
-  }
+//  void FlexibleBody2s13::updateStateDependentVariables(double t) {
+//    FlexibleBody2s::updateStateDependentVariables(t);
+//
+//    updateAG();
+//
+//#ifdef HAVE_NURBS
+//    contour->computeSurface();
+//    contour->computeSurfaceVelocities();
+//    contour->computeSurfaceJacobians();
+//#endif
+//  }
 
   void FlexibleBody2s13::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #ifdef HAVE_NURBS
-      if(getPlotFeature(openMBV) == enabled && openMBVBody) {
-        vector<double> data;
-        data.push_back(t); //time
-
-        ContourPointData cp;
-
-        //center of gravity
-        cp.getLagrangeParameterPosition()(0) = 0.;
-        cp.getLagrangeParameterPosition()(1) = 0.;
-        contour->updateKinematicsForFrame(cp, Frame::position_cosy); // kinematics of the center of gravity of the disk (TODO frame feature)
-
-        //Translation of COG
-        data.push_back(cp.getFrameOfReference().getPosition()(0)); //global x-coordinate
-        data.push_back(cp.getFrameOfReference().getPosition()(1)); //global y-coordinate
-        data.push_back(cp.getFrameOfReference().getPosition()(2)); //global z-coordinate
-
-        //Rotation of COG
-        Vec AlphaBetaGamma = AIK2Cardan(cp.getFrameOfReference().getOrientation());
-        data.push_back(AlphaBetaGamma(0));
-        data.push_back(AlphaBetaGamma(1));
-        data.push_back(AlphaBetaGamma(2));
-
-        //Control-Point coordinates
-        for(int i = 0; i < nr + 1; i++) {
-          for(int j = 0; j < nj + degU; j++) {
-            data.push_back(contour->getControlPoints(j, i)(0)); //global x-coordinate
-            data.push_back(contour->getControlPoints(j, i)(1)); //global y-coordinate
-            data.push_back(contour->getControlPoints(j, i)(2)); //global z-coordinate
-          }
-        }
-
-        //inner ring
-        for(int i = 0; i < nj; i++) {
-          for(int j = 0; j < drawDegree; j++) {
-            cp.getLagrangeParameterPosition()(0) = Ri;
-            cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            contour->updateKinematicsForFrame(cp, Frame::position);
-            Vec pos = cp.getFrameOfReference().getPosition();
-
-            data.push_back(pos(0)); //global x-coordinate
-            data.push_back(pos(1)); //global y-coordinate
-            data.push_back(pos(2)); //global z-coordinate
-
-          }
-        }
-
-        //outer Ring
-        for(int i = 0; i < nj; i++) {
-          for(int j = 0; j < drawDegree; j++) {
-            cp.getLagrangeParameterPosition()(0) = Ra;
-            cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            contour->updateKinematicsForFrame(cp, Frame::position);
-            Vec pos = cp.getFrameOfReference().getPosition();
-
-            data.push_back(pos(0)); //global x-coordinate
-            data.push_back(pos(1)); //global y-coordinate
-            data.push_back(pos(2)); //global z-coordinate
-          }
-        }
-
-        ((OpenMBV::NurbsDisk*) openMBVBody.get())->append(data);
-      }
+//      if(getPlotFeature(openMBV) == enabled && openMBVBody) {
+//        vector<double> data;
+//        data.push_back(t); //time
+//
+//        ContourPointData cp;
+//
+//        //center of gravity
+//        cp.getLagrangeParameterPosition()(0) = 0.;
+//        cp.getLagrangeParameterPosition()(1) = 0.;
+//        contour->updateKinematicsForFrame(cp, Frame::position_cosy); // kinematics of the center of gravity of the disk (TODO frame feature)
+//
+//        //Translation of COG
+//        data.push_back(cp.getFrameOfReference().getPosition()(0)); //global x-coordinate
+//        data.push_back(cp.getFrameOfReference().getPosition()(1)); //global y-coordinate
+//        data.push_back(cp.getFrameOfReference().getPosition()(2)); //global z-coordinate
+//
+//        //Rotation of COG
+//        Vec AlphaBetaGamma = AIK2Cardan(cp.getFrameOfReference().getOrientation());
+//        data.push_back(AlphaBetaGamma(0));
+//        data.push_back(AlphaBetaGamma(1));
+//        data.push_back(AlphaBetaGamma(2));
+//
+//        //Control-Point coordinates
+//        for(int i = 0; i < nr + 1; i++) {
+//          for(int j = 0; j < nj + degU; j++) {
+//            data.push_back(contour->getControlPoints(j, i)(0)); //global x-coordinate
+//            data.push_back(contour->getControlPoints(j, i)(1)); //global y-coordinate
+//            data.push_back(contour->getControlPoints(j, i)(2)); //global z-coordinate
+//          }
+//        }
+//
+//        //inner ring
+//        for(int i = 0; i < nj; i++) {
+//          for(int j = 0; j < drawDegree; j++) {
+//            cp.getLagrangeParameterPosition()(0) = Ri;
+//            cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
+//            contour->updateKinematicsForFrame(cp, Frame::position);
+//            Vec pos = cp.getFrameOfReference().getPosition();
+//
+//            data.push_back(pos(0)); //global x-coordinate
+//            data.push_back(pos(1)); //global y-coordinate
+//            data.push_back(pos(2)); //global z-coordinate
+//
+//          }
+//        }
+//
+//        //outer Ring
+//        for(int i = 0; i < nj; i++) {
+//          for(int j = 0; j < drawDegree; j++) {
+//            cp.getLagrangeParameterPosition()(0) = Ra;
+//            cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
+//            contour->updateKinematicsForFrame(cp, Frame::position);
+//            Vec pos = cp.getFrameOfReference().getPosition();
+//
+//            data.push_back(pos(0)); //global x-coordinate
+//            data.push_back(pos(1)); //global y-coordinate
+//            data.push_back(pos(2)); //global z-coordinate
+//          }
+//        }
+//
+//        ((OpenMBV::NurbsDisk*) openMBVBody.get())->append(data);
+//      }
 #endif
 #endif
     }
-    FlexibleBodyContinuum<Vec>::plot(t, dt);
+    FlexibleBody2s::plot(t, dt);
   }
 
   void FlexibleBody2s13::setNumberElements(int nr_, int nj_) {
@@ -261,4 +261,3 @@ namespace MBSimFlexibleBody {
   }
 
 }
-
