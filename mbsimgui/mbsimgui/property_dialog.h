@@ -48,6 +48,7 @@ namespace MBSimGUI {
       QTabWidget *tabWidget;
       QDialogButtonBox *buttonBox;
       QPushButton *buttonResize;
+      virtual void showXMLHelp() {}
       public slots:
         void clicked(QAbstractButton *button);
       virtual void toWidget() {}
