@@ -99,7 +99,7 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Object::init(stage);
     }
-    if(stage==preInit) {
+    else if(stage==preInit) {
       Object::init(stage);
       if(!R)
         R = static_cast<DynamicSystem*>(parent)->getFrameI();

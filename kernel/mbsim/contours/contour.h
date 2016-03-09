@@ -66,6 +66,9 @@ namespace MBSim {
       const std::vector<double>& getEtaNodes() const { return etaNodes; }
       const std::vector<std::vector<double> >& getXiNodes() const { return xiNodes; }
 
+      void setEtaNodes(const std::vector<double> &etaNodes_) { etaNodes = etaNodes_; }
+      void setXiNodes(const std::vector<std::vector<double> > &xiNodes_) { xiNodes = xiNodes_; }
+
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int gethInd(int i=0) const { return hInd[i]; }
       virtual void sethSize(int size, int i=0) { hSize[i] = size; }
