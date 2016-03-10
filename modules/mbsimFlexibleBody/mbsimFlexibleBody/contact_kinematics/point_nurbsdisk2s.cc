@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
 
 using namespace fmatvec;
@@ -52,33 +53,36 @@ namespace MBSimFlexibleBody {
   }
 
   void ContactKinematicsPointNurbsDisk2s::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
-    throw;
-//    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of the point in worldcoordinates
-//    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[ipoint].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition()))(0,1); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
-//
-//    /*TESTING*/
-//    //cout << "Platten-Posi:" << nurbsdisk->getFrame()->getPosition() << endl;
-//    //cout << "Punkt-Posi:" << cpData[ipoint].getFrameOfReference().getPosition() << endl;
-//    //cout << "NurbsDisk-Orientation:" << nurbsdisk->getFrame()->getOrientation() << endl;
-//    //cout << "nach TransformCW: " << cpData[inurbsdisk].getLagrangeParameterPosition() << endl;
-//    /*END-TESTING*/
-//
-//    if(cpData[inurbsdisk].getLagrangeParameterPosition()(0) < (nurbsdisk->getAlphaStart())(0) || cpData[inurbsdisk].getLagrangeParameterPosition()(0) > (nurbsdisk->getAlphaEnd())(0)) g = 1.;
-//    else {
-//      nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],Frame::position_cosy); // writes the position, as well as the normal and the tangents into the FrameOfReference
-//      // cout << "Position auf Scheibe: " << cpData[inurbsdisk].getFrameOfReference().getPosition() << endl;
-//
-//      cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0));
-//      cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1));
-//      cpData[ipoint].getFrameOfReference().getOrientation().set(2,  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
-//
-//      cout << "Normale: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0) << endl;
-//      cout << "1.Tangente: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1) << endl;
-//      cout << "2.Tangente: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2) << endl;
-//
-//      g = cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
-//      // cout << "Abstand: " << g << endl;
-//    }
+    cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of the point in worldcoordinates
+    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(nurbsdisk->getOrientation(t).T()*(cFrame[ipoint]->getPosition(false) - nurbsdisk->getPosition(t)))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
+
+    /*TESTING*/
+    //cout << "Platten-Posi:" << nurbsdisk->getFrame()->getPosition() << endl;
+    //cout << "Punkt-Posi:" << cpData[ipoint].getFrameOfReference().getPosition() << endl;
+    //cout << "NurbsDisk-Orientation:" << nurbsdisk->getFrame()->getOrientation() << endl;
+    //cout << "nach TransformCW: " << cpData[inurbsdisk].getLagrangeParameterPosition() << endl;
+    /*END-TESTING*/
+
+    if(cFrame[inurbsdisk]->getEta() < nurbsdisk->getEtaNodes()[0] || cFrame[inurbsdisk]->getEta() > nurbsdisk->getEtaNodes()[nurbsdisk->getEtaNodes().size()-1]) g = 1.;
+    else {
+      // cout << "Position auf Scheibe: " << cpData[inurbsdisk].getFrameOfReference().getPosition() << endl;
+
+      cFrame[inurbsdisk]->setPosition(nurbsdisk->getPosition(t,cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->getWn(t,cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->getWu(t,cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->getWv(t,cFrame[inurbsdisk]->getZeta()));
+
+      cFrame[ipoint]->getOrientation(false).set(0, -cFrame[inurbsdisk]->getOrientation(false).col(0));
+      cFrame[ipoint]->getOrientation(false).set(1, -cFrame[inurbsdisk]->getOrientation(false).col(1));
+      cFrame[ipoint]->getOrientation(false).set(2,  cFrame[inurbsdisk]->getOrientation(false).col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
+
+//      cout << "Normale: " <<  cFrame[inurbsdisk]->getOrientation(false).col(0) << endl;
+//      cout << "1.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(1) << endl;
+//      cout << "2.Tangente: " <<  cFrame[inurbsdisk]->getOrientation(false).col(2) << endl;
+
+      g = cFrame[inurbsdisk]->getOrientation(false).col(0).T() * (cFrame[ipoint]->getPosition(false) - cFrame[inurbsdisk]->getPosition(false));
+      // cout << "Abstand: " << g << endl;
+    }
   }
 
   void ContactKinematicsPointNurbsDisk2s::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {

@@ -38,9 +38,11 @@
 #include "nurbs++/vector.h"
 #endif
 
-namespace MBSimFlexibleBody {
+namespace MBSim {
+  class ContourFrame;
+}
 
-  class Frame2s;
+namespace MBSimFlexibleBody {
 
   /*!  
    * \brief 2s flexible
@@ -74,6 +76,8 @@ namespace MBSimFlexibleBody {
 
       void init(InitStage stage);
 
+      virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
+
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
@@ -81,11 +85,14 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
       virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
 
-      void updatePositions(double t, Frame2s *frame);
-      void updateVelocities(double t, Frame2s *frame);
-      void updateAccelerations(double t, Frame2s *frame);
-      void updateJacobians(double t, Frame2s *frame, int j=0);
-      void updateGyroscopicAccelerations(double t, Frame2s *frame);
+      void updatePositions(double t, MBSim::ContourFrame *frame);
+      void updateVelocities(double t, MBSim::ContourFrame *frame);
+      void updateAccelerations(double t, MBSim::ContourFrame *frame);
+      void updateJacobians(double t, MBSim::ContourFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(double t, MBSim::ContourFrame *frame);
+
+      fmatvec::Vec3 getPosition(double t);
+      fmatvec::SqrMat3 getOrientation(double t);
 
       virtual void plot(double t, double dt=1);
 
@@ -95,6 +102,7 @@ namespace MBSimFlexibleBody {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         openMBVNurbsDisk = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
       }
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
 #endif
 
 //#ifdef HAVE_NURBS
@@ -204,6 +212,12 @@ namespace MBSimFlexibleBody {
        */
       double computeError(const fmatvec::Vec &Vec1, const fmatvec::Vec &Vec2);
 
+      MBSim::Frame* getFrame(const std::string &name, bool check=true) const;
+
+      void addFrame(MBSim::Frame *frame);
+
+      void resetUpToDate();
+
     protected:
       /** 
        * \brief number of reference dofs of the flexible body
@@ -225,8 +239,11 @@ namespace MBSimFlexibleBody {
        */
       double Ri, Ra;
 
+      std::vector<MBSim::Frame*> frame;
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::NurbsDisk> openMBVNurbsDisk;
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
       double drawDegree;
 #endif
 

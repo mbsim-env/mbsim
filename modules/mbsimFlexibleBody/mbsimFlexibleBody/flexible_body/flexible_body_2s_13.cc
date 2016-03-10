@@ -115,7 +115,7 @@ namespace MBSimFlexibleBody {
     dat.close();
   }
 
-  FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) : FlexibleBody2s(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3, INIT, 0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3, INIT, 0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3, EYE), G(3, EYE), DEBUGLEVEL(DEBUGLEVEL_) {
+  FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) : FlexibleBody2s(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3, INIT, 0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3, INIT, 0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3, EYE), G(3, EYE), DEBUGLEVEL(DEBUGLEVEL_), updExt(true) {
 #ifdef HAVE_NURBS
 //    contour = new NurbsDisk2s("SurfaceContour");
 //    addContour(contour);
@@ -129,11 +129,11 @@ namespace MBSimFlexibleBody {
   //  addFrame("COG", s);
   }
 
-  void FlexibleBody2s13::updateh(double t, int j) {
-    // update positions and velocities
-    qext = Jext * q;
-    uext = Jext * u;
+  void FlexibleBody2s13::updateM(double t, int j) {
+    M[j] = MConst;
+  }
 
+  void FlexibleBody2s13::updateh(double t, int j) {
     h[j] = -K * q;
   }
 
@@ -258,6 +258,12 @@ namespace MBSimFlexibleBody {
 
   double FlexibleBody2s13::computeThickness(const double &r_) {
     return d(0) + d(1) * r_ + d(2) * r_ * r_; // quadratic parameterization
+  }
+
+  void FlexibleBody2s13::updateExt() {
+    qext = Jext * q;
+    uext = Jext * u;
+    updExt = false;
   }
 
 }

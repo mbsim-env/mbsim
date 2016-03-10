@@ -98,7 +98,7 @@ namespace MBSimFlexibleBody {
       /******************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void updateM(double t, int i=0) { }
+      virtual void updateM(double t, int i=0);
       virtual void updateLLM(double t, int i=0) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -144,6 +144,13 @@ namespace MBSimFlexibleBody {
        * \return cylindrical coordinates
        */
       virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint) = 0;
+
+      void resetUpToDate() { FlexibleBody2s::resetUpToDate(); updExt = true; }
+
+      void updateExt();
+
+      const fmatvec::Vec& getqExt() { if(updExt) updateExt(); return qext; }
+      const fmatvec::Vec& getuExt() { if(updExt) updateExt(); return uext; }
 
     protected:
       /**
@@ -327,6 +334,8 @@ namespace MBSimFlexibleBody {
        * \param radial coordinate
        */
       double computeThickness(const double &r_);
+
+      bool updExt;
   };
 
 }

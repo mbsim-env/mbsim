@@ -60,31 +60,59 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      qElement[i](0, RefDofs - 1) << qext(0, RefDofs - 1);
-      qElement[i](RefDofs, RefDofs + NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      qElement[i](0, RefDofs - 1) << getqExt()(0, RefDofs - 1);
+      qElement[i](RefDofs, RefDofs + NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
 
       // mapping node dof velocity from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      uElement[i](0, RefDofs - 1) << uext(0, RefDofs - 1);
-      uElement[i](RefDofs, RefDofs + NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      uElement[i](0, RefDofs - 1) << getuExt()(0, RefDofs - 1);
+      uElement[i](RefDofs, RefDofs + NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
     }
     updEle = false;
   }
 
   void FlexibleBody2s13Disk::updatePositions(double t, Frame2s *frame) {
-#ifdef HAVE_NURBS
-    throw;
-//      contour->updateKinematicsForFrame(cp, ff);
-#endif
+    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+      frame->setOrientation(getA());
+      switch(RefDofs) {
+        case 2:
+        frame->setPosition(Vec3("[0;0;1]") * getq()(0));
+        break;
+        case 6:
+        frame->setPosition(getq()(0,2));
+        break;
+        default:
+        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
+      }
+    }
+    else
+        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Parameters must be zero!");
   }
 
   void FlexibleBody2s13Disk::updateVelocities(double t, Frame2s *frame) {
+    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+      switch(RefDofs) {
+        case 2:
+        frame->setVelocity(Vec3("[0;0;1]") * getu()(0));
+        frame->setAngularVelocity(Vec3("[0;0;1]") * getu()(1));
+        break;
+        case 6:
+        frame->setPosition(getq()(0,2));
+        frame->setVelocity(getu()(0,2));
+        frame->setAngularVelocity(getA() * getG() * getu()(3,5));
+        break;
+        default:
+        THROW_MBSIMERROR("(NurbsDisk2s::updateVelocities): Unknown number of reference dofs!");
+      }
+    }
+    else
+      THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Parameters must be zero!");
   }
 
   void FlexibleBody2s13Disk::updateAccelerations(double t, Frame2s *frame) {
@@ -130,17 +158,17 @@ namespace MBSimFlexibleBody {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
 
-    tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-    tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp(0) = NodeCoordinates(node, 0) + getqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(1) = -getqExt()(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec2 tmp_add(NONINIT);
     tmp_add(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
     tmp_add(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
 
-    tmp(0) = cos(qext(1)) * tmp_add(0) - sin(qext(1)) * tmp_add(1); // in sheave frame of reference
-    tmp(1) = sin(qext(1)) * tmp_add(0) + cos(qext(1)) * tmp_add(1);
+    tmp(0) = cos(getqExt()(1)) * tmp_add(0) - sin(getqExt()(1)) * tmp_add(1); // in sheave frame of reference
+    tmp(1) = sin(getqExt()(1)) * tmp_add(0) + cos(getqExt()(1)) * tmp_add(1);
 
-    tmp(2) = qext(0) + qext(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp(2) = getqExt()(0) + getqExt()(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
 
 //    cout << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
@@ -153,40 +181,40 @@ namespace MBSimFlexibleBody {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
 
-    tmp(0) = NodeCoordinates(node, 0) + qext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-    tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp(0) = NodeCoordinates(node, 0) + getqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(1) = -getqExt()(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec tmp_add_1(2, NONINIT);
     tmp_add_1(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
     tmp_add_1(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
 
-    tmp(0) = -sin(qext(1)) * tmp_add_1(0) - cos(qext(1)) * tmp_add_1(1); // in sheave frame of reference
-    tmp(1) = cos(qext(1)) * tmp_add_1(0) - sin(qext(1)) * tmp_add_1(1);
+    tmp(0) = -sin(getqExt()(1)) * tmp_add_1(0) - cos(getqExt()(1)) * tmp_add_1(1); // in sheave frame of reference
+    tmp(1) = cos(getqExt()(1)) * tmp_add_1(0) - sin(getqExt()(1)) * tmp_add_1(1);
 
-    tmp(0) *= uext(1);
-    tmp(1) *= uext(1);
+    tmp(0) *= getuExt()(1);
+    tmp(1) *= getuExt()(1);
 
     Vec tmp_add_2(2, NONINIT);
-    tmp_add_2(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-    tmp_add_2(1) = -uext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp_add_2(0) = getuExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp_add_2(1) = -getuExt()(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec tmp_add_3(2, NONINIT);
     tmp_add_3(0) = cos(NodeCoordinates(node, 1)) * tmp_add_2(0) - sin(NodeCoordinates(node, 1)) * tmp_add_2(1); // in sheave local frame
     tmp_add_3(1) = sin(NodeCoordinates(node, 1)) * tmp_add_2(0) + cos(NodeCoordinates(node, 1)) * tmp_add_2(1);
 
-    tmp_add_2(0) = cos(qext(1)) * tmp_add_3(0) - sin(qext(1)) * tmp_add_3(1); // in sheave frame of reference
-    tmp_add_2(1) = sin(qext(1)) * tmp_add_3(0) + cos(qext(1)) * tmp_add_3(1);
+    tmp_add_2(0) = cos(getqExt()(1)) * tmp_add_3(0) - sin(getqExt()(1)) * tmp_add_3(1); // in sheave frame of reference
+    tmp_add_2(1) = sin(getqExt()(1)) * tmp_add_3(0) + cos(getqExt()(1)) * tmp_add_3(1);
 
     tmp(0) += tmp_add_2(0);
     tmp(1) += tmp_add_2(1);
 
-    tmp(2) = uext(0) + uext(RefDofs + node * NodeDofs);
+    tmp(2) = getuExt()(0) + getuExt()(RefDofs + node * NodeDofs);
 
     frame->setVelocity(R->getOrientation(t) * tmp);
 
-    tmp(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
-    tmp(1) = uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 2) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
-    tmp(2) = uext(1);
+    tmp(0) = getuExt()(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(getqExt()(1)) - cos(getqExt()(1)) * sin(NodeCoordinates(node, 1))) + getuExt()(RefDofs + (node + 1) * NodeDofs - 1) * (cos(getqExt()(1)) * cos(NodeCoordinates(node, 1)) - sin(getqExt()(1)) * sin(NodeCoordinates(node, 1)));
+    tmp(1) = getuExt()(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(getqExt()(1)) + cos(getqExt()(1)) * sin(NodeCoordinates(node, 1))) + getuExt()(RefDofs + (node + 1) * NodeDofs - 2) * (cos(getqExt()(1)) * cos(NodeCoordinates(node, 1)) - sin(getqExt()(1)) * sin(NodeCoordinates(node, 1)));
+    tmp(2) = getuExt()(1);
 
     frame->setAngularVelocity(R->getOrientation() * tmp);
   }
@@ -210,10 +238,10 @@ namespace MBSimFlexibleBody {
 
     // rotation
     Wtmp(1, 3) = 1; // ref
-    Wtmp(3, 1) = -sin(qext(1) + NodeCoordinates(node, 1)); // node
-    Wtmp(3, 2) = cos(qext(1) + NodeCoordinates(node, 1));
-    Wtmp(4, 1) = cos(qext(1) + NodeCoordinates(node, 1));
-    Wtmp(4, 2) = sin(qext(1) + NodeCoordinates(node, 1));
+    Wtmp(3, 1) = -sin(getqExt()(1) + NodeCoordinates(node, 1)); // node
+    Wtmp(3, 2) = cos(getqExt()(1) + NodeCoordinates(node, 1));
+    Wtmp(4, 1) = cos(getqExt()(1) + NodeCoordinates(node, 1));
+    Wtmp(4, 2) = sin(getqExt()(1) + NodeCoordinates(node, 1));
 
     /* Jacobian of disk */
     // reference
