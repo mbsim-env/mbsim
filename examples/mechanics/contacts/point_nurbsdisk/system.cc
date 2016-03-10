@@ -3,12 +3,19 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
 #include "mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h"
 #include "mbsim/objects/rigid_body.h"
+#include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+#include "mbsimFlexibleBody/frames/frame_2s.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
+#include "mbsimFlexibleBody/frames/nurbs_frame_2s.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"
@@ -59,12 +66,37 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   disk->setu0(u0);
   this->addObject(disk);
 
+  //disk->addFrame(new Frame2s("COG"));
+  disk->addFrame(new NodeFrame("P"));
+//  disk->getFrame("P")->enableOpenMBV(0.01);
+
+  NurbsDisk2s *contour = new NurbsDisk2s("SurfaceContour");
+  contour->enableOpenMBV();
+  disk->addContour(contour);
+  Vec nodes(2);
+  nodes(0) = rI;
+  nodes(1) = rO;
+  contour->setEtaNodes(nodes);
+
+  disk->addFrame(new Frame2s("COG",Vec2()));
+//  contour->addFrame(new NurbsFrame2s("COG",Vec2()));
+//  contour->addFrame(new NurbsFrame2s("Q","[0.1;0]"));
+//  contour->getFrame("COG")->enableOpenMBV(0.01);
+//  contour->getFrame("Q")->enableOpenMBV(0.01);
+
   // bearing
   Joint *joint = new Joint("Clamping");
-  joint->setForceDirection(Mat("[0;0;1]"));
-  joint->connect(disk->getFrame("COG"),this->getFrame("I"));
+  joint->setForceDirection("[0;0;1]");
   joint->setForceLaw(new BilateralConstraint());
+  joint->connect(this->getFrame("I"),disk->getFrame("COG"));
   this->addLink(joint);
+
+//  KineticExcitation *ke = new KineticExcitation("Force");
+//  ke->setForceDirection("[0;0;1]");
+//  ke->setForceFunction(new ConstantFunction<VecV(double)>(1));
+//  ke->connect(contour->getFrame("Q"));
+//  ke->enableOpenMBVForce();
+//  this->addLink(ke);
 
   /* ball */ 
   vector<RigidBody*> balls;
@@ -126,6 +158,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
     contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
     contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"), new ContactKinematicsPointNurbsDisk2s());
+    contact[k]->enableOpenMBVContactPoints(0.01);
     this->addLink(contact[k]);
   }
 
@@ -197,4 +230,3 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //  }
 
 } 
-
