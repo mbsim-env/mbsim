@@ -52,7 +52,7 @@ namespace MBSimFlexibleBody {
       virtual void updateM(double t, int k) { }
       virtual void updateLLM(double t, int i=0) { }
 
-      virtual void BuildElements();
+      virtual void BuildElements(double t);
 
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);

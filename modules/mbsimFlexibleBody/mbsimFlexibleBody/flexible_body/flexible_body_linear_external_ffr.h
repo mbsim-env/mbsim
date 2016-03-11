@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
+      virtual void BuildElements(double t);
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
@@ -284,7 +284,7 @@ namespace MBSimFlexibleBody {
       bool fistIterFlag;
   };
   
-  inline void FlexibleBodyLinearExternalFFR::BuildElements() {
+  inline void FlexibleBodyLinearExternalFFR::BuildElements(double t) {
 //    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::BuildElements(): Not implemented");
   }
   

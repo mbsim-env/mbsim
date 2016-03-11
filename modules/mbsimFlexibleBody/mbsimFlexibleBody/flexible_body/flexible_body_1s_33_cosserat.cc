@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33Cosserat::BuildElements() {
+  void FlexibleBody1s33Cosserat::BuildElements(double t) {
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
       int j = 6 * i; // start index in entire beam coordinates
@@ -257,13 +257,13 @@ namespace MBSimFlexibleBody {
 //curve->initContourFromBody(stage);
   }
 
-  double FlexibleBody1s33Cosserat::computePotentialEnergy() {
+  double FlexibleBody1s33Cosserat::computePotentialEnergy(double t) {
     /* translational elements */
-    double V = FlexibleBodyContinuum<double>::computePotentialEnergy();
+    double V = FlexibleBodyContinuum<double>::computePotentialEnergy(t);
 
     /* rotational elements */
     for (unsigned int i = 0; i < rotationDiscretization.size(); i++) {
-      V += rotationDiscretization[i]->computeElasticEnergy(getqRotationElement(i));
+      V += rotationDiscretization[i]->computeElasticEnergy(getqRotationElement(t,i));
     }
 
     return V;
@@ -284,7 +284,7 @@ namespace MBSimFlexibleBody {
 
     /* rotational elements */
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
-      rotationDiscretization[i]->computeh(getqRotationElement(i), getuRotationElement(i)); // compute attributes of finite element
+      rotationDiscretization[i]->computeh(getqRotationElement(t,i), getuRotationElement(t,i)); // compute attributes of finite element
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
       GlobalVectorContributionRotation(i, rotationDiscretization[i]->geth(), h[0]); // assemble
   }
@@ -407,7 +407,6 @@ namespace MBSimFlexibleBody {
       qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(), INIT, 0.));
       uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(), INIT, 0.));
     }
-    BuildElements();
 
 //curve->initContourFromBody(resize);
   }

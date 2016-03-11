@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
   FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), angle(new RevCardan()), Elements(0), l0(0.), E(0.), G(0.), A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), epstD(0.), k0D(0.), epstL(0.), k0L(0.), initialised(false), nGauss(3) {
   }
 
-  void FlexibleBody1s33RCM::BuildElements() {
+  void FlexibleBody1s33RCM::BuildElements(double t) {
     for (int i = 0; i < Elements; i++) {
       int j = 10 * i; // start index in entire beam coordinates
 
@@ -137,7 +137,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updatePositions(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,frame->getParameter());
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * X(Range<Fixed<0>,Fixed<2> >()));
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(X(Range<Fixed<3>,Fixed<5> >())));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(X(Range<Fixed<3>,Fixed<5> >())));
@@ -145,8 +145,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateVelocities(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
-    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(frame->getParameter());
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,frame->getParameter());
+    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(t,frame->getParameter());
     frame->setVelocity(R->getOrientation(t) * Xt(Range<Fixed<0>,Fixed<2> >()));
     frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(X(Range<Fixed<3>,Fixed<5> >()), Xt(Range<Fixed<3>,Fixed<5> >())));
   }
@@ -162,7 +162,7 @@ namespace MBSimFlexibleBody {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement);
-    Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(getqElement(currentElement), sLocal); // this local ansatz yields continuous and finite wave propagation
+    Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(getqElement(t,currentElement), sLocal); // this local ansatz yields continuous and finite wave propagation
 
     if (currentElement < Elements - 1 || openStructure) {
       Jacobian(Index(10 * currentElement, 10 * currentElement + 15), All) = Jtmp;
@@ -231,7 +231,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FlexibleBody1s33RCM::getLocalTwist(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,s);
     return X(3);
   }
 
@@ -292,25 +292,25 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getPositions(double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getPositions(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getPositions(getqElement(t,currentElement), sLocal);
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getVelocities(double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getVelocities(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getVelocities(getqElement(t,currentElement), getuElement(t,currentElement), sLocal);
   }
 
-  double FlexibleBody1s33RCM::computePhysicalStrain(const double sGlobal) {
+  double FlexibleBody1s33RCM::computePhysicalStrain(double t, const double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(currentElement), getuElement(currentElement));
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(t,currentElement), getuElement(t,currentElement));
   }
 
   void FlexibleBody1s33RCM::initInfo() {

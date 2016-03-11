@@ -81,16 +81,16 @@ namespace MBSimFlexibleBody {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getPosition(getqElement(currentElement),sLocal));
-    frame->setOrientation(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal));
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getPosition(getqElement(t,currentElement),sLocal));
+    frame->setOrientation(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getOrientation(getqElement(t,currentElement),sLocal));
   }
 
   void FlexibleBody1s33ANCF::updateVelocities(double t, Frame1s *frame) {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
-    frame->setVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
-    frame->setAngularVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getAngularVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
+    frame->setVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getVelocity(getqElement(t,currentElement),getuElement(t,currentElement),sLocal));
+    frame->setAngularVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->getAngularVelocity(getqElement(t,currentElement),getuElement(t,currentElement),sLocal));
   }
 
   void FlexibleBody1s33ANCF::updateAccelerations(double t, Frame1s *frame) {
@@ -103,7 +103,7 @@ namespace MBSimFlexibleBody {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(),sLocal,currentElement);
-    Mat Jtmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
+    Mat Jtmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->JGeneralized(getqElement(t,currentElement),sLocal);
     if(currentElement<Elements-1 || openStructure) {
       Jacobian(Index(6*currentElement,6*currentElement+11),All) = Jtmp;
     }
@@ -214,7 +214,7 @@ namespace MBSimFlexibleBody {
     u0.resize(uSize[0]);
   }
 
-  void FlexibleBody1s33ANCF::BuildElements() {
+  void FlexibleBody1s33ANCF::BuildElements(double t) {
     for(int i=0;i<Elements;i++) {
       int n = 6 * i ;
 
@@ -270,7 +270,6 @@ namespace MBSimFlexibleBody {
       qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
       uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
     }
-    BuildElements();
   }
 
   void FlexibleBody1s33ANCF::initRelaxed(double alpha) {

@@ -147,10 +147,10 @@ namespace MBSimFlexibleBody {
 
       void resetUpToDate() { FlexibleBody2s::resetUpToDate(); updExt = true; }
 
-      void updateExt();
+      void updateExt(double t);
 
-      const fmatvec::Vec& getqExt() { if(updExt) updateExt(); return qext; }
-      const fmatvec::Vec& getuExt() { if(updExt) updateExt(); return uext; }
+      const fmatvec::Vec& getqExt(double t) { if(updExt) updateExt(t); return qext; }
+      const fmatvec::Vec& getuExt(double t) { if(updExt) updateExt(t); return uext; }
 
     protected:
       /**

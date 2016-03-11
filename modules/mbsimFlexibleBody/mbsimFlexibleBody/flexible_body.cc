@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::updateh(double t, int k) {
     for (int i = 0; i < (int) discretization.size(); i++)
-      discretization[i]->computeh(getqElement(i), getuElement(i)); // compute attributes of finite element
+      discretization[i]->computeh(getqElement(t,i), getuElement(t,i)); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalVectorContribution(i, discretization[i]->geth(), h[k]); // assemble
 
@@ -64,7 +64,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::updateM(double t, int k) {
     for (int i = 0; i < (int) discretization.size(); i++)
-      discretization[i]->computeM(getqElement(i)); // compute attributes of finite element
+      discretization[i]->computeM(getqElement(t,i)); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getM(), M[k]); // assemble
   }
@@ -133,18 +133,18 @@ namespace MBSimFlexibleBody {
       (*i)->init(stage);
   }
 
-  double FlexibleBody::computeKineticEnergy() {
+  double FlexibleBody::computeKineticEnergy(double t) {
     double T = 0.;
     for (unsigned int i = 0; i < discretization.size(); i++) {
-      T += discretization[i]->computeKineticEnergy(qElement[i], uElement[i]);
+      T += discretization[i]->computeKineticEnergy(getqElement(t,i), getuElement(t,i));
     }
     return T;
   }
 
-  double FlexibleBody::computePotentialEnergy() {
+  double FlexibleBody::computePotentialEnergy(double t) {
     double V = 0.;
     for (unsigned int i = 0; i < discretization.size(); i++) {
-      V += discretization[i]->computeElasticEnergy(qElement[i]) + discretization[i]->computeGravitationalEnergy(qElement[i]);
+      V += discretization[i]->computeElasticEnergy(getqElement(t,i)) + discretization[i]->computeGravitationalEnergy(getqElement(t,i));
     }
     return V;
   }

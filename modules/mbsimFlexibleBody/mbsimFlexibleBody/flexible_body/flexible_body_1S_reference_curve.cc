@@ -349,7 +349,7 @@ namespace MBSimFlexibleBody {
       setu0(u0);
 
     // update the elements
-    BuildElements();
+    BuildElements(0);
   }
 
   void FlexibleBody1SReferenceCurve::updatedq(double t, double dt) {
@@ -426,7 +426,7 @@ namespace MBSimFlexibleBody {
     FlexibleBodyContinuum<double>::plot(t, dt);
   }
 
-  void FlexibleBody1SReferenceCurve::BuildElements() {
+  void FlexibleBody1SReferenceCurve::BuildElements(double t) {
     for (int eleNo = 0; eleNo < elements; eleNo++) {
       FlexibleBody1SReferenceCurveFE * ele = static_cast<FlexibleBody1SReferenceCurveFE*>(discretization[eleNo]);
       vector<int> freeDofs = ele->getFreeDofs();

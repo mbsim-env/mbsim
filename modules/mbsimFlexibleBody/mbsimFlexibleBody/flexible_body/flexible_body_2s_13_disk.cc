@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
     RefDofs = 2;
   }
 
-  void FlexibleBody2s13Disk::BuildElements() {
+  void FlexibleBody2s13Disk::BuildElements(double t) {
     for (int i = 0; i < Elements; i++) {
       //  ^ phi
       //  |
@@ -60,19 +60,19 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      qElement[i](0, RefDofs - 1) << getqExt()(0, RefDofs - 1);
-      qElement[i](RefDofs, RefDofs + NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << getqExt()(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      qElement[i](0, RefDofs - 1) << getqExt(t)(0, RefDofs - 1);
+      qElement[i](RefDofs, RefDofs + NodeDofs - 1) << getqExt(t)(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << getqExt(t)(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << getqExt(t)(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << getqExt(t)(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
 
       // mapping node dof velocity from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      uElement[i](0, RefDofs - 1) << getuExt()(0, RefDofs - 1);
-      uElement[i](RefDofs, RefDofs + NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << getuExt()(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      uElement[i](0, RefDofs - 1) << getuExt(t)(0, RefDofs - 1);
+      uElement[i](RefDofs, RefDofs + NodeDofs - 1) << getuExt(t)(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << getuExt(t)(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << getuExt(t)(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << getuExt(t)(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
     }
     updEle = false;
   }
@@ -158,17 +158,17 @@ namespace MBSimFlexibleBody {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
 
-    tmp(0) = NodeCoordinates(node, 0) + getqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-    tmp(1) = -getqExt()(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp(0) = NodeCoordinates(node, 0) + getqExt(t)(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(1) = -getqExt(t)(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec2 tmp_add(NONINIT);
     tmp_add(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
     tmp_add(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
 
-    tmp(0) = cos(getqExt()(1)) * tmp_add(0) - sin(getqExt()(1)) * tmp_add(1); // in sheave frame of reference
-    tmp(1) = sin(getqExt()(1)) * tmp_add(0) + cos(getqExt()(1)) * tmp_add(1);
+    tmp(0) = cos(getqExt(t)(1)) * tmp_add(0) - sin(getqExt(t)(1)) * tmp_add(1); // in sheave frame of reference
+    tmp(1) = sin(getqExt(t)(1)) * tmp_add(0) + cos(getqExt(t)(1)) * tmp_add(1);
 
-    tmp(2) = getqExt()(0) + getqExt()(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp(2) = getqExt(t)(0) + getqExt(t)(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
 
 //    cout << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
@@ -181,40 +181,40 @@ namespace MBSimFlexibleBody {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
 
-    tmp(0) = NodeCoordinates(node, 0) + getqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-    tmp(1) = -getqExt()(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp(0) = NodeCoordinates(node, 0) + getqExt(t)(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(1) = -getqExt(t)(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec tmp_add_1(2, NONINIT);
     tmp_add_1(0) = cos(NodeCoordinates(node, 1)) * tmp(0) - sin(NodeCoordinates(node, 1)) * tmp(1); // in sheave local frame
     tmp_add_1(1) = sin(NodeCoordinates(node, 1)) * tmp(0) + cos(NodeCoordinates(node, 1)) * tmp(1);
 
-    tmp(0) = -sin(getqExt()(1)) * tmp_add_1(0) - cos(getqExt()(1)) * tmp_add_1(1); // in sheave frame of reference
-    tmp(1) = cos(getqExt()(1)) * tmp_add_1(0) - sin(getqExt()(1)) * tmp_add_1(1);
+    tmp(0) = -sin(getqExt(t)(1)) * tmp_add_1(0) - cos(getqExt(t)(1)) * tmp_add_1(1); // in sheave frame of reference
+    tmp(1) = cos(getqExt(t)(1)) * tmp_add_1(0) - sin(getqExt(t)(1)) * tmp_add_1(1);
 
-    tmp(0) *= getuExt()(1);
-    tmp(1) *= getuExt()(1);
+    tmp(0) *= getuExt(t)(1);
+    tmp(1) *= getuExt(t)(1);
 
     Vec tmp_add_2(2, NONINIT);
-    tmp_add_2(0) = getuExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
-    tmp_add_2(1) = -getuExt()(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
+    tmp_add_2(0) = getuExt(t)(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp_add_2(1) = -getuExt(t)(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec tmp_add_3(2, NONINIT);
     tmp_add_3(0) = cos(NodeCoordinates(node, 1)) * tmp_add_2(0) - sin(NodeCoordinates(node, 1)) * tmp_add_2(1); // in sheave local frame
     tmp_add_3(1) = sin(NodeCoordinates(node, 1)) * tmp_add_2(0) + cos(NodeCoordinates(node, 1)) * tmp_add_2(1);
 
-    tmp_add_2(0) = cos(getqExt()(1)) * tmp_add_3(0) - sin(getqExt()(1)) * tmp_add_3(1); // in sheave frame of reference
-    tmp_add_2(1) = sin(getqExt()(1)) * tmp_add_3(0) + cos(getqExt()(1)) * tmp_add_3(1);
+    tmp_add_2(0) = cos(getqExt(t)(1)) * tmp_add_3(0) - sin(getqExt(t)(1)) * tmp_add_3(1); // in sheave frame of reference
+    tmp_add_2(1) = sin(getqExt(t)(1)) * tmp_add_3(0) + cos(getqExt(t)(1)) * tmp_add_3(1);
 
     tmp(0) += tmp_add_2(0);
     tmp(1) += tmp_add_2(1);
 
-    tmp(2) = getuExt()(0) + getuExt()(RefDofs + node * NodeDofs);
+    tmp(2) = getuExt(t)(0) + getuExt(t)(RefDofs + node * NodeDofs);
 
     frame->setVelocity(R->getOrientation(t) * tmp);
 
-    tmp(0) = getuExt()(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(getqExt()(1)) - cos(getqExt()(1)) * sin(NodeCoordinates(node, 1))) + getuExt()(RefDofs + (node + 1) * NodeDofs - 1) * (cos(getqExt()(1)) * cos(NodeCoordinates(node, 1)) - sin(getqExt()(1)) * sin(NodeCoordinates(node, 1)));
-    tmp(1) = getuExt()(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(getqExt()(1)) + cos(getqExt()(1)) * sin(NodeCoordinates(node, 1))) + getuExt()(RefDofs + (node + 1) * NodeDofs - 2) * (cos(getqExt()(1)) * cos(NodeCoordinates(node, 1)) - sin(getqExt()(1)) * sin(NodeCoordinates(node, 1)));
-    tmp(2) = getuExt()(1);
+    tmp(0) = getuExt(t)(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(getqExt(t)(1)) - cos(getqExt(t)(1)) * sin(NodeCoordinates(node, 1))) + getuExt(t)(RefDofs + (node + 1) * NodeDofs - 1) * (cos(getqExt(t)(1)) * cos(NodeCoordinates(node, 1)) - sin(getqExt(t)(1)) * sin(NodeCoordinates(node, 1)));
+    tmp(1) = getuExt(t)(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(getqExt(t)(1)) + cos(getqExt(t)(1)) * sin(NodeCoordinates(node, 1))) + getuExt(t)(RefDofs + (node + 1) * NodeDofs - 2) * (cos(getqExt(t)(1)) * cos(NodeCoordinates(node, 1)) - sin(getqExt(t)(1)) * sin(NodeCoordinates(node, 1)));
+    tmp(2) = getuExt(t)(1);
 
     frame->setAngularVelocity(R->getOrientation() * tmp);
   }
@@ -223,7 +223,7 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13Disk::updateJacobians(double time, NodeFrame *frame, int j) {
+  void FlexibleBody2s13Disk::updateJacobians(double t, NodeFrame *frame, int j) {
     Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
 
@@ -238,10 +238,10 @@ namespace MBSimFlexibleBody {
 
     // rotation
     Wtmp(1, 3) = 1; // ref
-    Wtmp(3, 1) = -sin(getqExt()(1) + NodeCoordinates(node, 1)); // node
-    Wtmp(3, 2) = cos(getqExt()(1) + NodeCoordinates(node, 1));
-    Wtmp(4, 1) = cos(getqExt()(1) + NodeCoordinates(node, 1));
-    Wtmp(4, 2) = sin(getqExt()(1) + NodeCoordinates(node, 1));
+    Wtmp(3, 1) = -sin(getqExt(t)(1) + NodeCoordinates(node, 1)); // node
+    Wtmp(3, 2) = cos(getqExt(t)(1) + NodeCoordinates(node, 1));
+    Wtmp(4, 1) = cos(getqExt(t)(1) + NodeCoordinates(node, 1));
+    Wtmp(4, 2) = sin(getqExt(t)(1) + NodeCoordinates(node, 1));
 
     /* Jacobian of disk */
     // reference
@@ -254,7 +254,7 @@ namespace MBSimFlexibleBody {
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
 
     // transformation
-    frame->setJacobianOfTranslation(R->getOrientation(time).col(2) * Jacobian(0, 0, qSize - 1, 0).T());
+    frame->setJacobianOfTranslation(R->getOrientation(t).col(2) * Jacobian(0, 0, qSize - 1, 0).T());
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T());
   }
 
@@ -321,28 +321,6 @@ namespace MBSimFlexibleBody {
       FlexibleBody2s13::init(stage);
     }
     else if (stage == unknownStage) {
-
-      BuildElements();
-
-//#ifdef HAVE_NURBS
-//      // borders of contour parametrisation
-//      // beginning
-//      Vec alphaS(2);
-//      alphaS(0) = Ri; // radius
-//      alphaS(1) = 0.; // angle
-//
-//      // end
-//      Vec alphaE(2);
-//      alphaE(0) = Ra; // radius
-//      alphaE(1) = 2 * M_PI; // angle
-//
-//      contour->setAlphaStart(alphaS);
-//      contour->setAlphaEnd(alphaE);
-//#endif
-
-      qext = Jext * q0;
-      uext = Jext * u0;
-
       initMatrices(); // calculate constant mass- and stiffness matrix
 
       FlexibleBody2s13::init(stage);
@@ -402,6 +380,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::initMatrices() {
+    BuildElements(0);
+
     // initialising of mass and stiffness matrix
     SymMat Mext(Dofs, INIT, 0.);
     SymMat Kext(Dofs, INIT, 0.);

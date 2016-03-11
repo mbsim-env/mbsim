@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
   FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), Elements(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), initialized(false) {
   }
 
-  void FlexibleBody1s21RCM::BuildElements() {
+  void FlexibleBody1s21RCM::BuildElements(double t) {
     for (int i = 0; i < Elements; i++) {
       int n = 5 * i;
 
@@ -108,7 +108,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updatePositions(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getPositions(frame->getParameter());
+    Vec3 X = getPositions(t,frame->getParameter());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -124,7 +124,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::updateVelocities(double t, Frame1s *frame) {
     Vec3 tmp(NONINIT);
-    Vec3 X = getVelocities(frame->getParameter());
+    Vec3 X = getVelocities(t,frame->getParameter());
     tmp(0) = X(0);
     tmp(1) = X(1);
     tmp(2) = 0.;
@@ -146,7 +146,7 @@ namespace MBSimFlexibleBody {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement);
-    Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(getqElement(currentElement), sLocal);
+    Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(getqElement(t,currentElement), sLocal);
     if (currentElement < Elements - 1 || openStructure) {
       Jacobian(Index(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
     }
@@ -249,7 +249,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::plot(double t, double dt) {
     for (int i = 0; i < plotElements.size(); i++) {
-      Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(getqElement(plotElements(i)), getuElement(plotElements(i)));
+      Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(getqElement(t,plotElements(i)), getuElement(t,plotElements(i)));
       for (int j = 0; j < elementData.size(); j++)
         plotVector.push_back(elementData(j));
     }
@@ -289,25 +289,25 @@ namespace MBSimFlexibleBody {
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
   }
 
-  Vec3 FlexibleBody1s21RCM::getPositions(double sGlobal) {
+  Vec3 FlexibleBody1s21RCM::getPositions(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getPositions(getqElement(t,currentElement), sLocal);
   }
 
-  Vec3 FlexibleBody1s21RCM::getVelocities(double sGlobal) {
+  Vec3 FlexibleBody1s21RCM::getVelocities(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->getVelocities(getqElement(t,currentElement), getuElement(t,currentElement), sLocal);
   }
 
-  double FlexibleBody1s21RCM::computePhysicalStrain(double sGlobal) {
+  double FlexibleBody1s21RCM::computePhysicalStrain(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(currentElement));
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(t,currentElement));
   }
 
   void FlexibleBody1s21RCM::initRelaxed(double alpha) {

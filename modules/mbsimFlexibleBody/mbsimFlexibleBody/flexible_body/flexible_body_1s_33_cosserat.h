@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody1s33Cosserat();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
+      virtual void BuildElements(double t);
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
@@ -92,7 +92,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual double computePotentialEnergy();
+      virtual double computePotentialEnergy(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */

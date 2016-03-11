@@ -167,7 +167,7 @@ namespace MBSimFlexibleBody {
     LLM[k] = facLL(M[k]);
   }
 
-  void FlexibleBody2s13MFRMindlin::BuildElements() {
+  void FlexibleBody2s13MFRMindlin::BuildElements(double t) {
     for (int i = 0; i < Elements; i++) {
       //  ^ phi
       //  |

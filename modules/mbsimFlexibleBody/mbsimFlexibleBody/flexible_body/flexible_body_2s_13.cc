@@ -260,7 +260,7 @@ namespace MBSimFlexibleBody {
     return d(0) + d(1) * r_ + d(2) * r_ * r_; // quadratic parameterization
   }
 
-  void FlexibleBody2s13::updateExt() {
+  void FlexibleBody2s13::updateExt(double t) {
     qext = Jext * q;
     uext = Jext * u;
     updExt = false;

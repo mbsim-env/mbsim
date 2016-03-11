@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody1s23BTA() {}
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
+      virtual void BuildElements(double t);
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
@@ -91,15 +91,15 @@ namespace MBSimFlexibleBody {
        * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(double x);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(double t, double x);
 
       /**
        * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(double x);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(double t, double x);
 
-      fmatvec::SqrMat3 getOrientation(double x);
+      fmatvec::SqrMat3 getOrientation(double t, double x);
 
     protected:
       /**

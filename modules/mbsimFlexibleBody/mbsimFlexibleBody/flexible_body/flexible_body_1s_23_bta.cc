@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
 //    addContour(cylinderFlexible);
   }
 
-  void FlexibleBody1s23BTA::BuildElements() {
+  void FlexibleBody1s23BTA::BuildElements(double t) {
     for(int i=0;i<Elements;i++) {
       Index activeElement( discretization[i]->getuSize()/2*i , discretization[i]->getuSize()/2*(i+2) -1 );
       qElement[i] = q(activeElement);
@@ -64,14 +64,14 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s23BTA::updatePositions(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,frame->getParameter());
     X(0) = frame->getParameter();
     frame->setPosition(R->getPosition(t) + R->getOrientation(t) * X(Range<Fixed<0>,Fixed<2> >()));
-    frame->setOrientation(R->getOrientation() * getOrientation(frame->getParameter()));
+    frame->setOrientation(R->getOrientation() * getOrientation(t,frame->getParameter()));
   }
 
   void FlexibleBody1s23BTA::updateVelocities(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(frame->getParameter());
+    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(t,frame->getParameter());
     frame->setVelocity(R->getOrientation(t) * Xt(Range<Fixed<0>,Fixed<2> >()));
     frame->setAngularVelocity(R->getOrientation() * Xt(Range<Fixed<3>,Fixed<5> >()));
   }
@@ -89,7 +89,7 @@ namespace MBSimFlexibleBody {
     BuildElement(frame->getParameter(), sLocal, currentElement);
 
     Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
-    Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
+    Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(getqElement(t,currentElement),sLocal);
 
     frame->setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
     frame->setJacobianOfRotation(R->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
@@ -156,25 +156,25 @@ namespace MBSimFlexibleBody {
     u0.resize(uSize[0]);
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getPositions(double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getPositions(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getPositions(getqElement(t,currentElement), sLocal);
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getVelocities(double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getVelocities(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
+    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getVelocities(getqElement(t,currentElement), getuElement(t,currentElement), sLocal);
   }
 
-  SqrMat3 FlexibleBody1s23BTA::getOrientation(double sGlobal) {
+  SqrMat3 FlexibleBody1s23BTA::getOrientation(double t, double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal);
+    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getOrientation(getqElement(t,currentElement),sLocal);
   }
 
   void FlexibleBody1s23BTA::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
@@ -188,7 +188,7 @@ namespace MBSimFlexibleBody {
   }
 
   double FlexibleBody1s23BTA::getLocalTwist(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,s);
     return X(3);
   }
 

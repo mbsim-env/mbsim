@@ -28,7 +28,7 @@ namespace MBSimFlexibleBody {
 
     /* rotational elements */
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
-      rotationDiscretization[i]->computeh(getqRotationElement(i), getuRotationElement(i)); // compute attributes of finite element
+      rotationDiscretization[i]->computeh(getqRotationElement(t,i), getuRotationElement(t,i)); // compute attributes of finite element
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
       GlobalVectorContributionRotation(i, rotationDiscretization[i]->geth(), h[0]); // assemble
   }

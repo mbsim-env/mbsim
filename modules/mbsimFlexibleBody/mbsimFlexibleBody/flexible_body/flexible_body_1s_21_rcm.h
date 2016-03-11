@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s21RCM(const std::string &name, bool openStructure);
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
+      virtual void BuildElements(double t);
 
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
@@ -108,18 +108,18 @@ namespace MBSimFlexibleBody {
        * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec3 getPositions(double x);
+      fmatvec::Vec3 getPositions(double t, double x);
 
       /**
        * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec3 getVelocities(double x);
+      fmatvec::Vec3 getVelocities(double t, double x);
 
       /*!
        * \brief computes the phyiscal strain (compare Zander p.71) of the element, defined by the global position
        */
-      double computePhysicalStrain(double sGlobal);
+      double computePhysicalStrain(double t, double sGlobal);
 
       /**
        * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring

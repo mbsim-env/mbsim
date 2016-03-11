@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21Cosserat::BuildElements() {
+  void FlexibleBody1s21Cosserat::BuildElements(double t) {
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
       int j = 3 * i; // start index in entire beam coordinates

@@ -84,8 +84,8 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual double computeKineticEnergy();
-      virtual double computePotentialEnergy();
+      virtual double computeKineticEnergy(double t);
+      virtual double computePotentialEnergy(double t);
       virtual void setFrameOfReference(MBSim::Frame *frame);
       virtual void setq0(fmatvec::Vec q0_) { if(q0_.size()) MBSim::Body::setInitialGeneralizedPosition(q0_); q<<q0; }
       virtual void setu0(fmatvec::Vec u0_) { if(u0_.size()) MBSim::Body::setInitialGeneralizedVelocity(u0_); u<<u0; }
@@ -95,11 +95,11 @@ namespace MBSimFlexibleBody {
       /**
        * \brief references finite element coordinates to assembled coordinates
        */
-      virtual void BuildElements() = 0;
+      virtual void BuildElements(double t) = 0;
 
-      const fmatvec::Vec& getqElement(int i) { if(updEle) BuildElements(); return qElement[i]; }
+      const fmatvec::Vec& getqElement(double t, int i) { if(updEle) BuildElements(t); return qElement[i]; }
 
-      const fmatvec::Vec& getuElement(int i) { if(updEle) BuildElements(); return uElement[i]; }
+      const fmatvec::Vec& getuElement(double t, int i) { if(updEle) BuildElements(t); return uElement[i]; }
 
       /**
        * \brief insert 'local' information in global vectors
