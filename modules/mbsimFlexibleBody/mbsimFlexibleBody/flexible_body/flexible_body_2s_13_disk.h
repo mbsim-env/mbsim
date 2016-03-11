@@ -56,6 +56,9 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
 
+      fmatvec::Vec3 getPosition(double t);
+      fmatvec::SqrMat3 getOrientation(double t);
+
       virtual void updatePositions(double t, Frame2s* frame);
       virtual void updateVelocities(double t, Frame2s* frame);
       virtual void updateAccelerations(double t, Frame2s* frame);

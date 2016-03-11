@@ -85,6 +85,8 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
       virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
 
+      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
+
       void updatePositions(double t, MBSim::ContourFrame *frame);
       void updateVelocities(double t, MBSim::ContourFrame *frame);
       void updateAccelerations(double t, MBSim::ContourFrame *frame);

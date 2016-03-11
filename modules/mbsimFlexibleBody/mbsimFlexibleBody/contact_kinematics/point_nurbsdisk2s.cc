@@ -63,7 +63,8 @@ namespace MBSimFlexibleBody {
     //cout << "nach TransformCW: " << cpData[inurbsdisk].getLagrangeParameterPosition() << endl;
     /*END-TESTING*/
 
-    if(cFrame[inurbsdisk]->getEta() < nurbsdisk->getEtaNodes()[0] || cFrame[inurbsdisk]->getEta() > nurbsdisk->getEtaNodes()[nurbsdisk->getEtaNodes().size()-1]) g = 1.;
+    if(nurbsdisk->isZetaOutside(cFrame[inurbsdisk]->getZeta()))
+      g = 1.;
     else {
       // cout << "Position auf Scheibe: " << cpData[inurbsdisk].getFrameOfReference().getPosition() << endl;
 

@@ -47,13 +47,13 @@ namespace MBSimFlexibleBody {
       virtual ~ContactKinematicsCircleNurbsDisk2s();
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      void assignContours(const std::vector<MBSim::Contour*> &contour);
-      virtual void updateg(double t, double &g, MBSim::ContourPointData *cpData, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec& wb, double g, MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("(PointNurbsDisk2s::updatewb): not implemented!"); }
+      virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
+      virtual void updateg(double t, double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setLocalSearch(bool LOCALSEARCH_);
+      void setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
       /***************************************************/
 
     private:
@@ -74,9 +74,6 @@ namespace MBSimFlexibleBody {
       bool LOCALSEARCH;
   };
 
-  inline void ContactKinematicsCircleNurbsDisk2s::setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
-
 }
 
 #endif /* _CONTACT_KINEMATICS_CIRLCE_NURBSDISK2S_H_ */
-

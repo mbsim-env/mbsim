@@ -152,6 +152,9 @@ namespace MBSimFlexibleBody {
       const fmatvec::Vec& getqExt(double t) { if(updExt) updateExt(t); return qext; }
       const fmatvec::Vec& getuExt(double t) { if(updExt) updateExt(t); return uext; }
 
+      virtual fmatvec::Vec3 getPosition(double t) { return fmatvec::Vec3(); }
+      virtual fmatvec::SqrMat3 getOrientation(double t) { return fmatvec::SqrMat3(fmatvec::EYE); }
+
     protected:
       /**
        * \brief total number of elements

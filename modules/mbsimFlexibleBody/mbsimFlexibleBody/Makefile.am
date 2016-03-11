@@ -2,7 +2,8 @@ SUBDIRS = flexible_body frames contours contact_kinematics utils .
   
 lib_LTLIBRARIES = libmbsimFlexibleBody.la
 libmbsimFlexibleBody_la_LDFLAGS = -avoid-version
-libmbsimFlexibleBody_la_SOURCES = flexible_body.cc
+libmbsimFlexibleBody_la_SOURCES = flexible_body.cc\
+				  functions_contact.cc
 
 libmbsimFlexibleBody_la_LIBADD = flexible_body/libflexiblebody.la
 libmbsimFlexibleBody_la_LIBADD += frames/libframe.la

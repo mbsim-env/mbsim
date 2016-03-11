@@ -77,42 +77,48 @@ namespace MBSimFlexibleBody {
     updEle = false;
   }
 
+  Vec3 FlexibleBody2s13Disk::getPosition(double t) {
+    switch(RefDofs) {
+      case 2:
+        return R->getPosition(t) + R->getOrientation(t) * Vec3("[0;0;1]") * getq()(0);
+      case 6:
+        return R->getPosition(t) + R->getOrientation(t) * getq()(0,2);
+      default:
+        THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Unknown number of reference dofs!");
+    }
+  }
+
+  SqrMat3 FlexibleBody2s13Disk::getOrientation(double t) {
+    return R->getOrientation(t) * getA();
+  }
+
   void FlexibleBody2s13Disk::updatePositions(double t, Frame2s *frame) {
     if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
-      frame->setOrientation(getA());
-      switch(RefDofs) {
-        case 2:
-        frame->setPosition(Vec3("[0;0;1]") * getq()(0));
-        break;
-        case 6:
-        frame->setPosition(getq()(0,2));
-        break;
-        default:
-        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
-      }
+      frame->setOrientation(getOrientation(t));
+      frame->setPosition(getPosition(t));
     }
     else
-        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Parameters must be zero!");
+        THROW_MBSIMERROR("(FlexibleBody2s13Disk::updatePositions): Parameters must be zero!");
   }
 
   void FlexibleBody2s13Disk::updateVelocities(double t, Frame2s *frame) {
     if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
       switch(RefDofs) {
         case 2:
-        frame->setVelocity(Vec3("[0;0;1]") * getu()(0));
-        frame->setAngularVelocity(Vec3("[0;0;1]") * getu()(1));
+        frame->setVelocity(R->getOrientation(t) * Vec3("[0;0;1]") * getu()(0));
+        frame->setAngularVelocity(R->getOrientation() * Vec3("[0;0;1]") * getu()(1));
         break;
         case 6:
-        frame->setPosition(getq()(0,2));
-        frame->setVelocity(getu()(0,2));
-        frame->setAngularVelocity(getA() * getG() * getu()(3,5));
+        frame->setPosition(R->getOrientation(t) * getq()(0,2));
+        frame->setVelocity(R->getOrientation() * getu()(0,2));
+        frame->setAngularVelocity(R->getOrientation() * getA() * getG() * getu()(3,5));
         break;
         default:
-        THROW_MBSIMERROR("(NurbsDisk2s::updateVelocities): Unknown number of reference dofs!");
+        THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateVelocities): Unknown number of reference dofs!");
       }
     }
     else
-      THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Parameters must be zero!");
+      THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateVelocities): Parameters must be zero!");
   }
 
   void FlexibleBody2s13Disk::updateAccelerations(double t, Frame2s *frame) {
@@ -325,43 +331,8 @@ namespace MBSimFlexibleBody {
 
       FlexibleBody2s13::init(stage);
     }
-    else if (stage == plotting) {
-      updatePlotFeatures();
-
-      if (getPlotFeature(plotRecursive) == enabled) {
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//#ifdef HAVE_NURBS
-//        if (getPlotFeature(openMBV) == enabled) {
-//          boost::shared_ptr<OpenMBV::NurbsDisk> Diskbody = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
-//
-//          drawDegree = 30 / nj;
-//          Diskbody->setDiffuseColor(0.46667, 1, 1);
-//          Diskbody->setMinimalColorValue(0.);
-//          Diskbody->setMaximalColorValue(1.);
-//          Diskbody->setDrawDegree(drawDegree);
-//          Diskbody->setRadii(Ri, Ra);
-//
-//          Diskbody->setKnotVecAzimuthal(contour->getUVector());
-//          Diskbody->setKnotVecRadial(contour->getVVector());
-//
-//          Diskbody->setElementNumberRadial(nr);
-//          Diskbody->setElementNumberAzimuthal(nj);
-//
-//          Diskbody->setInterpolationDegreeRadial(degV);
-//          Diskbody->setInterpolationDegreeAzimuthal(degU);
-//          openMBVBody=Diskbody;
-//        }
-//#endif
-//#endif
-        FlexibleBody2s13::init(stage);
-      }
-    }
     else
       FlexibleBody2s13::init(stage);
-
-//#ifdef HAVE_NURBS
-//    contour->initContourFromBody(stage); // initialize contour
-//#endif
   }
 
   Vec FlexibleBody2s13Disk::transformCW(const Vec& WrPoint) {

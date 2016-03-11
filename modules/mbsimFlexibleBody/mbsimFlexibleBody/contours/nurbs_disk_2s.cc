@@ -152,27 +152,13 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 NurbsDisk2s::getPosition(double t, const Vec2 &zeta) {
-    if(nrm2(zeta) < epsroot()) { // center of gravity
-      switch(RefDofs) {
-        case 2:
-        return Vec3("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getq()(0);
-        break;
-        case 6:
-        return static_cast<FlexibleBody2s13*>(parent)->getq()(0,2);
-        break;
-        default:
-        THROW_MBSIMERROR("(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
-      }
-    }
-    else {
-      Vec3 r(NONINIT);
-      computeSurface(t);
-      Point3Dd Tmppt = Surface->pointAt(zeta(1),zeta(0));  // U-direction is azimuthal, V-direction is radial!
-      r(0) = Tmppt.x();
-      r(1) = Tmppt.y();
-      r(2) = Tmppt.z();
-      return r;
-    }
+    Vec3 r(NONINIT);
+    computeSurface(t);
+    Point3Dd Tmppt = Surface->pointAt(zeta(1),zeta(0));  // U-direction is azimuthal, V-direction is radial!
+    r(0) = Tmppt.x();
+    r(1) = Tmppt.y();
+    r(2) = Tmppt.z();
+    return r;
   }
 
   Vec3 NurbsDisk2s::getWs(double t, const Vec2 &zeta) {
@@ -226,11 +212,11 @@ namespace MBSimFlexibleBody {
     frame->getVelocity(false)(0) = Tmpv.x();
     frame->getVelocity(false)(1) = Tmpv.y();
     frame->getVelocity(false)(2) = Tmpv.z();
-    //      THROW_MBSIMERROR("(FlexibleBody2s13::updateVelocities): Not implemented!");
+    //      THROW_MBSIMERROR("(NurbsDisk2s::updateVelocities): Not implemented!");
   }
 
   void NurbsDisk2s::updateAccelerations(double t, ContourFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13::updateAccelerations): Not implemented!");
+    THROW_MBSIMERROR("(NurbsDisk2s::updateAccelerations): Not implemented!");
   }
 
   void NurbsDisk2s::updateJacobians(double t, ContourFrame *frame, int j) {
@@ -254,15 +240,15 @@ namespace MBSimFlexibleBody {
   }
 
   void NurbsDisk2s::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
-    THROW_MBSIMERROR("(FlexibleBody2s13::updateGyroscopicAccelerations): Not implemented!");
+    THROW_MBSIMERROR("(NurbsDisk2s::updateGyroscopicAccelerations): Not implemented!");
   }
 
   Vec3 NurbsDisk2s::getPosition(double t) {
-    return Vec3("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getq()(0);
+    return static_cast<FlexibleBody2s13*>(parent)->getPosition(t);
   }
 
   SqrMat3 NurbsDisk2s::getOrientation(double t) {
-    return static_cast<FlexibleBody2s13*>(parent)->getA();
+    return static_cast<FlexibleBody2s13*>(parent)->getOrientation(t);
   }
 
   void NurbsDisk2s::plot(double t, double dt) {
@@ -273,9 +259,8 @@ namespace MBSimFlexibleBody {
         vector<double> data;
         data.push_back(t); //time
 
-        Vec2 zeta;
-        Vec3 r = getPosition(t,zeta);
-        SqrMat3 A; // TODO = getOrientation(t,zeta);
+        Vec3 r = getPosition(t);
+        SqrMat3 A = getOrientation(t);
 
         //Translation of COG
         data.push_back(r(0)); //global x-coordinate
@@ -296,6 +281,8 @@ namespace MBSimFlexibleBody {
             data.push_back(getControlPoints(j, i)(2)); //global z-coordinate
           }
         }
+
+        Vec2 zeta(NONINIT);
 
         //inner ring
         for(int i = 0; i < nj; i++) {
