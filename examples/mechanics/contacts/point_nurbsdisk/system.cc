@@ -9,13 +9,10 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsimFlexibleBody/frames/frame_2s.h"
-#include "mbsimFlexibleBody/frames/node_frame.h"
-#include "mbsimFlexibleBody/frames/nurbs_frame_2s.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#include "mbsim/functions/basic_functions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"

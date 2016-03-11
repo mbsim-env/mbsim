@@ -5,11 +5,13 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsimFlexibleBody/frames/frame_2s.h"
 #include "mbsim/contours/circle.h"
+#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h" 
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
-#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -116,7 +118,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   muller->addFrame(new FixedRelativeFrame("Disk",Vec(3,INIT,0.),AWK,muller->getFrame("C")));
   Circle* disk = new Circle("Disk");
   disk->setFrameOfReference(muller->getFrame("Disk"));
-  disk->setOutCont(true);
+//  disk->setOutCont(true);
   disk->setRadius(r_muller);
   disk->enableOpenMBV();
   muller->addContour(disk);
@@ -162,6 +164,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   nurbsdisk->setu0(u0);
   this->addObject(nurbsdisk);
 
+  NurbsDisk2s *contour = new NurbsDisk2s("SurfaceContour");
+  contour->enableOpenMBV();
+  nurbsdisk->addContour(contour);
+  Vec nodes(2);
+  nodes(0) = rI;
+  nodes(1) = rO;
+  contour->setEtaNodes(nodes);
+
+  nurbsdisk->addFrame(new Frame2s("COG",Vec2()));
+
   // bearing
   Joint *joint = new Joint("Clamping");
   joint->setForceDirection(Mat("[0;0;1]"));
@@ -171,7 +183,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* contact */
   Contact *contact = new Contact("Contact");
-  contact->connect(nurbsdisk->getContour("SurfaceContour"),muller->getContour("Disk"));
+  contact->connect(nurbsdisk->getContour("SurfaceContour"),muller->getContour("Disk"), new ContactKinematicsCircleNurbsDisk2s());
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact);
   contact->setTangentialForceLaw(new SpatialCoulombFriction(0.2));
