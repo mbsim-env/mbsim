@@ -66,10 +66,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   disk->setu0(u0);
   this->addObject(disk);
 
-  //disk->addFrame(new Frame2s("COG"));
-  disk->addFrame(new NodeFrame("P"));
-//  disk->getFrame("P")->enableOpenMBV(0.01);
-
   NurbsDisk2s *contour = new NurbsDisk2s("SurfaceContour");
   contour->enableOpenMBV();
   disk->addContour(contour);
@@ -79,10 +75,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contour->setEtaNodes(nodes);
 
   disk->addFrame(new Frame2s("COG",Vec2()));
-//  contour->addFrame(new NurbsFrame2s("COG",Vec2()));
-//  contour->addFrame(new NurbsFrame2s("Q","[0.1;0]"));
-//  contour->getFrame("COG")->enableOpenMBV(0.01);
-//  contour->getFrame("Q")->enableOpenMBV(0.01);
 
   // bearing
   Joint *joint = new Joint("Clamping");
@@ -90,13 +82,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->setForceLaw(new BilateralConstraint());
   joint->connect(this->getFrame("I"),disk->getFrame("COG"));
   this->addLink(joint);
-
-//  KineticExcitation *ke = new KineticExcitation("Force");
-//  ke->setForceDirection("[0;0;1]");
-//  ke->setForceFunction(new ConstantFunction<VecV(double)>(1));
-//  ke->connect(contour->getFrame("Q"));
-//  ke->enableOpenMBVForce();
-//  this->addLink(ke);
 
   /* ball */ 
   vector<RigidBody*> balls;
