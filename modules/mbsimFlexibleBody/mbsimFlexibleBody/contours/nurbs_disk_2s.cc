@@ -558,32 +558,19 @@ namespace MBSimFlexibleBody {
     PLib::Matrix<HPoint3Dd> NodelistRot(nj+degU,nr+1);// list of node-data for the nurbs interpolation
 
     // gets Jacobians on the nodes from body for interpolation
-    vector<NodeFrame> P;
-//    NodeFrame P("P",i*nj+j);
- //   P.setParent(parent);
-      for(int i=0; i<nr+1; i++)
-        for(int j=0; j<nj; j++) {
-          P.push_back(NodeFrame("P",i*nj+j));
-          P[P.size()-1].setParent(parent);
-        }
-    for(int i=0; i<nr+1; i++) {
+    vector<NodeFrame> P((nr+1)*nj);
+    for(int i=0; i<nr+1; i++)
       for(int j=0; j<nj; j++) {
-          P[i*nj+j].getJacobianOfTranslation(0,false).resize();
-          P[i*nj+j].getJacobianOfRotation(0,false).resize();
-          P[i*nj+j].getJacobianOfTranslation(1,false).resize();
-          P[i*nj+j].getJacobianOfRotation(1,false).resize();
+        P[i*nj+j] = NodeFrame("P",i*nj+j);
+        P[i*nj+j].setParent(parent);
+        P[i*nj+j].getJacobianOfTranslation(0,false).resize();
+        P[i*nj+j].getJacobianOfRotation(0,false).resize();
+        P[i*nj+j].getJacobianOfTranslation(1,false).resize();
+        P[i*nj+j].getJacobianOfRotation(1,false).resize();
       }
-    }
-//    for(int i=0; i<nr+1; i++) {
-//      for(int j=0; j<nj; j++) {
-//        static_cast<FlexibleBody2s13*>(parent)->updateJacobiansForFrame(jacobians[i*nj+j]);
-//      }
-//    }
     for(int k=0; k<nr*nj*3+RefDofs; k++) {
       for(int i=0; i<nr+1; i++) {
         for(int j=0; j<nj; j++) {
-//          NodeFrame P("P",i*nj+j);
-//          P.setParent(parent);
           NodelistTrans(j,i) = HPoint3Dd(P[i*nj+j].getJacobianOfTranslation(t)(0,k),
               P[i*nj+j].getJacobianOfTranslation(t)(1,k),
               P[i*nj+j].getJacobianOfTranslation(t)(2,k),
