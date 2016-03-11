@@ -27,6 +27,7 @@
 
 class QAction;
 class QModelIndex;
+class QWebView;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -88,6 +89,8 @@ namespace MBSimGUI {
       bool autoSave, autoExport, saveFinalStateVector;
       int autoSaveInterval;
       QString autoExportDir;
+      static QDialog *helpDialog;
+      static QWebView *helpViewer;
 
     public:
       MainWindow(QStringList &arg);
@@ -141,6 +144,7 @@ namespace MBSimGUI {
       void openmbv();
       void h5plotserie();
       void help();
+      void xmlHelp(const std::string &url="");
       void about();
       void updateParameters(Element *element);
       void removeElement();

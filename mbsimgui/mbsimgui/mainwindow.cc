@@ -68,6 +68,8 @@ namespace MBSimGUI {
 
   vector<boost::filesystem::path> dependencies;
 
+  QDialog *MainWindow::helpDialog = NULL;
+  QWebView *MainWindow::helpViewer = NULL;
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
     // use html output of MBXMLUtils
@@ -158,6 +160,7 @@ namespace MBSimGUI {
     menuBar()->addSeparator();
     QMenu *helpMenu=new QMenu("Help", menuBar());
     helpMenu->addAction("GUI Help...", this, SLOT(help()));
+    helpMenu->addAction("XML Help...", this, SLOT(xmlHelp()));
     helpMenu->addAction("About MBSim GUI", this, SLOT(about()));
     menuBar()->addMenu(helpMenu);
 
@@ -916,6 +919,35 @@ namespace MBSimGUI {
         "<h1>GUI Help</h1>"
         "tbd"
         );
+  }
+
+  void MainWindow::xmlHelp(const string &url) {
+    if(!helpDialog) {
+      helpDialog=new QDialog();
+      QGridLayout *layout=new QGridLayout(helpDialog);
+      helpDialog->setLayout(layout);
+      QPushButton *home=new QPushButton("Home",helpDialog);
+      connect(home, SIGNAL(clicked()), this, SLOT(xmlHelp()));
+      layout->addWidget(home,0,0);
+      QPushButton *helpBackward=new QPushButton("Backward",helpDialog);
+      layout->addWidget(helpBackward,0,1);
+      QPushButton *helpForward=new QPushButton("Forward",helpDialog);
+      layout->addWidget(helpForward,0,2);
+      helpViewer=new QWebView(helpDialog);
+      layout->addWidget(helpViewer,1,0,1,3);
+      connect(helpForward, SIGNAL(clicked()), helpViewer, SLOT(forward()));
+      connect(helpBackward, SIGNAL(clicked()), helpViewer, SLOT(back()));
+      helpDialog->setWindowTitle("MBSimXML - Main MBSim XML Documentation");
+      helpDialog->resize(700,500);
+    }
+    if(url.empty())
+      helpViewer->load(QUrl((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc"/
+        "http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string().c_str()));
+    else
+      helpViewer->load(QUrl(url.c_str()));
+    helpDialog->show();
+    helpDialog->raise();
+    helpDialog->activateWindow();
   }
 
   void MainWindow::about() {

@@ -53,7 +53,7 @@
         ]]>
       </script>
     </head>
-    <body style="margin:1em">
+    <body style="margin:0.5em">
     <div class="page-header">
       <h1>MBSimXML - Main MBSim XML Documentation</h1>
     </div>

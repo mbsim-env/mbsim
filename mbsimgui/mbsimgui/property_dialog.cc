@@ -36,7 +36,7 @@ namespace MBSimGUI {
     setLayout(layout);
     tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget,0,0,1,2);
-    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel | QDialogButtonBox::Help);
     connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
     layout->addWidget(buttonBox,1,1);
     //buttonResize = new QPushButton(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/resize.svg"), "Resize");
@@ -59,6 +59,9 @@ namespace MBSimGUI {
     }
     else if(button == buttonBox->button(QDialogButtonBox::Cancel))
       reject();
+    else if(button == buttonBox->button(QDialogButtonBox::Help)) {
+      showXMLHelp();
+    }
   }
 
   void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {

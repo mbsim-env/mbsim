@@ -47,10 +47,14 @@
 #include "friction.h"
 #include "gear.h"
 #include <QPushButton>
+#include <mbxmlutilshelper/getinstallpath.h>
+#include "mainwindow.h"
 
 using namespace std;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   class GearConstraintWidgetFactory : public WidgetFactory {
     public:
@@ -106,6 +110,18 @@ namespace MBSimGUI {
   void ElementPropertyDialog::fromWidget(Element *element) {
     element->name.fromWidget(name);
     element->plotFeature.fromWidget(plotFeature);
+  }
+
+  void ElementPropertyDialog::showXMLHelp() {
+    // generate url for current element
+    string url=(MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string();
+    string ns=element->getNameSpace().getNamespaceURI();
+    replace(ns.begin(), ns.end(), ':', '_');
+    replace(ns.begin(), ns.end(), '.', '_');
+    replace(ns.begin(), ns.end(), '/', '_');
+    url+="/"+ns+"/index.html#"+element->getType();
+    // open in XML help dialog
+    mw->xmlHelp(url);
   }
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {

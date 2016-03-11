@@ -50,7 +50,7 @@
           });
         </script>
       </head>
-      <body style="margin:1em">
+      <body style="margin:0.5em">
         <h1>Valgrind Report: <xsl:value-of select="tool/text()"/></h1>
         <h2>Call Information</h2>
         <dl class="dl-horizontal">

@@ -147,7 +147,7 @@ try:
     <title>Set cookie and notify opener windows</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
   </head>
-  <body style="margin:1em">
+  <body style="margin:0.5em">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
     <script type="text/javascript">
       $(document).ready(function() {

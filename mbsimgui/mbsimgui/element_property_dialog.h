@@ -97,6 +97,7 @@ namespace MBSimGUI {
       void fromWidget() {fromWidget(element);}
       Element* getElement() {return element;}
     protected:
+      void showXMLHelp();
       Element *element;
       ExtWidget *name, *plotFeature;
   };
