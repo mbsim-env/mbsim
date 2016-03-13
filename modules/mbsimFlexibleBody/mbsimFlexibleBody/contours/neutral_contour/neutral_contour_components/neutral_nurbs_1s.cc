@@ -16,7 +16,7 @@ namespace MBSimFlexibleBody {
 
 
   NeutralNurbs1s::NeutralNurbs1s(Element* parent_, const VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_):
-      curve(), parent(parent_), nodes(nodes), nodeOffset(nodeOffset_), Nodelist(nodes.size(), NONINIT), uMin(uMin_), uMax(uMax_), degU(degU_), openStructure(openStructure_){
+      curve(), parent(parent_), nodes(nodes), nodeOffset(nodeOffset_), Nodelist(nodes.size(), NONINIT), uMin(uMin_), uMax(uMax_), degU(degU_), openStructure(openStructure_), updCurve(true) {
 
   }
 
@@ -24,7 +24,11 @@ namespace MBSimFlexibleBody {
 
   }
 
-  void NeutralNurbs1s::computeCurve(double t, bool update){
+  void NeutralNurbs1s::resetUpToDate() {
+    updCurve = true;
+  }
+
+  void NeutralNurbs1s::computeCurve(double t, bool update) {
     buildNodelist(t);
 
     if (update)
@@ -37,6 +41,7 @@ namespace MBSimFlexibleBody {
         curve.globalInterpClosed(Nodelist, uMin, uMax, degU, true);
       }
     }
+    updCurve = false;
 
 //    cout << "Neutral nurbs ?? 1s curve: " << endl;
 //    stringstream x;

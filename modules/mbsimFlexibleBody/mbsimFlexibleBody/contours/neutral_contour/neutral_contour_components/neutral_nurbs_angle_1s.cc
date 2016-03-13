@@ -6,8 +6,9 @@
  */
 #include <config.h>
 #include "neutral_nurbs_angle_1s.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/node_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 
 using namespace MBSim;
@@ -38,7 +39,7 @@ namespace MBSimFlexibleBody {
     return curve.pointAt(uStaggered);
   }
 
-  void NeutralNurbsAngle1s::update(ContourPointData &cp){
+  void NeutralNurbsAngle1s::update(double t, ContourFrame *frame){
     throw;
 //    Vec3 Tmpv = calculateStaggeredAngle(cp.getLagrangeParameterPosition()(0));
 ////    if (Tmpv(2) < - 2 * M_PI)
@@ -46,43 +47,40 @@ namespace MBSimFlexibleBody {
 //    cp.getFrameOfReference().setAnglesOfOrientation(Tmpv);
   }
 
-  void NeutralNurbsAngle1s::updateAngleNormal(ContourPointData &cp){
-    Vec3 Tmpv = calculateStaggeredAngle(cp.getLagrangeParameterPosition()(0));
-    cp.getFrameOfReference().getOrientation().set(0, ANGLE->computen(Tmpv));
+  void NeutralNurbsAngle1s::updateAngleNormal(double t, ContourFrame *frame){
+    frame->getOrientation(false).set(0, ANGLE->computen(calculateStaggeredAngle(frame->getEta())));
   }
 
-  void NeutralNurbsAngle1s::updateAngleFirstTangent(ContourPointData &cp){
-    Vec3 Tmpv = calculateStaggeredAngle(cp.getLagrangeParameterPosition()(0));
-    cp.getFrameOfReference().getOrientation().set(1, ANGLE->computet(Tmpv));
+  void NeutralNurbsAngle1s::updateAngleFirstTangent(double t, ContourFrame *frame){
+    frame->getOrientation(false).set(1, ANGLE->computet(calculateStaggeredAngle(frame->getEta())));
   }
 
-  void NeutralNurbsAngle1s::updateAngleSecondTangent(ContourPointData &cp){
-    Vec3 Tmpv = calculateStaggeredAngle(cp.getLagrangeParameterPosition()(0));
-    cp.getFrameOfReference().getOrientation().set(2, -ANGLE->computeb(Tmpv)); // binormal (cartesian system)
+  void NeutralNurbsAngle1s::updateAngleSecondTangent(double t, ContourFrame *frame){
+    frame->getOrientation(false).set(2, -ANGLE->computeb(calculateStaggeredAngle(frame->getEta()))); // binormal (cartesian system)
   }
 
   void NeutralNurbsAngle1s::buildNodelist(double t){
-    throw;
-//    NodeFrame frame;
-//    for (int i = 0; i < nodes.size(); i++) {
-//      frame.setNodeNumber(nodes(i));
-//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::angle);
-//      Nodelist.set(i, trans(frame.getAnglesOfOrientation()));
-//    }
-////    for (int i = 0; i < degU; i++){
-////      RowVec temp(3,INIT,0);
-////      temp(2) = 2 * M_PI;
-////      temp = trans(contourPoints.at(i).getFrameOfReference().getAnglesOfOrientation()) -temp;
-////
-////      Nodelist.set(numOfNodes + i, temp);
-////    }
-//    // TODO: only for closed structure
-//    RowVec temp(3,INIT,0);
-//    temp(2) = 2 * M_PI;
-//    temp = trans(frame.getAnglesOfOrientation()) -temp;
-//    Nodelist.set(nodes.size(), temp);
+    Vec3 angles;
+    for (int i = 0; i < nodes.size(); i++) {
+      NodeFrame P("P",nodes(i));
+      P.setParent(parent);
+      angles = P.getAngles(t);
+      Nodelist.set(i, trans(angles));
+    }
+//    for (int i = 0; i < degU; i++){
+//      RowVec temp(3,INIT,0);
+//      temp(2) = 2 * M_PI;
+//      temp = trans(contourPoints.at(i).getFrameOfReference().getAnglesOfOrientation()) -temp;
 //
-////    cout << "neutralAngle"<< Nodelist << endl << endl;
+//      Nodelist.set(numOfNodes + i, temp);
+//    }
+    // TODO: only for closed structure
+    RowVec temp(3,INIT,0);
+    temp(2) = 2 * M_PI;
+    temp = trans(angles) -temp;
+    Nodelist.set(nodes.size(), temp);
+
+//    cout << "neutralAngle"<< Nodelist << endl << endl;
   }
 
   void NeutralNurbsAngle1s::computeCurve(double t, bool update){  // overwrite the computeCurve as it need open interpolation for both open and closed structure

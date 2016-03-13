@@ -16,10 +16,11 @@ namespace MBSimFlexibleBody {
     public:
       NeutralNurbsPosition1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbsPosition1s();
-      virtual void update(MBSim::ContourPointData &cp);
-      virtual void updatePositionNormal(MBSim::ContourPointData &cp);
-      virtual void updatePositionFirstTangent(MBSim::ContourPointData &cp);
-      virtual void updatePositionSecondTangent(MBSim::ContourPointData &cp);
+      fmatvec::Vec3 getPosition(double t, double s);
+      virtual void update(double t, MBSim::ContourFrame *frame);
+      virtual void updatePositionNormal(double t, MBSim::ContourFrame *frame);
+      virtual void updatePositionFirstTangent(double t, MBSim::ContourFrame *frame);
+      virtual void updatePositionSecondTangent(double t, MBSim::ContourFrame *frame);
       virtual void setBinormalDir(const fmatvec::Vec3 & b) {
         binormalDir = b / fmatvec::nrm2(b);
       }
@@ -34,7 +35,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief compute the tangent
        */
-      virtual fmatvec::Vec3 tangent(const MBSim::ContourPointData & cp);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
   };
 
 } /* namespace MBSimFlexibleBody */

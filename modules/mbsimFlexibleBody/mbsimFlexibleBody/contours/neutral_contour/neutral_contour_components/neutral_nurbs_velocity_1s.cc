@@ -6,8 +6,9 @@
  */
 #include <config.h>
 #include "neutral_nurbs_velocity_1s.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/node_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 
 using namespace MBSim;
 
@@ -25,17 +26,15 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  void NeutralNurbsVelocity1s::update(ContourPointData &cp){
-    Vec3 Tmpv = curve.pointAt(cp.getLagrangeParameterPosition()(0));
-    cp.getFrameOfReference().setVelocity(Tmpv);
+  void NeutralNurbsVelocity1s::update(double t, ContourFrame *frame) {
+    frame->setVelocity(curve.pointAt(frame->getEta()));
   }
 
   void NeutralNurbsVelocity1s::buildNodelist(double t){
-    NodeFrame frame;
     for (int i = 0; i < nodes.size(); i++) {
-      frame.setNodeNumber(nodes(i));
-//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::velocity);
-      Nodelist.set(i, trans(frame.getVelocity(t)));
+      NodeFrame P("P",nodes(i));
+      P.setParent(parent);
+      Nodelist.set(i, trans(P.getVelocity(t)));
     }
 //    cout << "neutralVelocity"<< Nodelist << endl << endl;
   }

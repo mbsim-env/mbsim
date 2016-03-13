@@ -8,8 +8,11 @@
 #ifndef NEUTRAL_NURBS_1S_H_
 #define NEUTRAL_NURBS_1S_H_
 
-#include "mbsim/contour_pdata.h"
 #include <mbsim/numerics/nurbs/nurbs_curve.h>
+
+namespace MBSim {
+  class ContourFrame;
+}
 
 namespace MBSimFlexibleBody {
   
@@ -18,10 +21,11 @@ namespace MBSimFlexibleBody {
       NeutralNurbs1s(MBSim::Element* parent_, const fmatvec::VecInt &nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbs1s();
       virtual void computeCurve(double t, bool update = false);
-      virtual void update(MBSim::ContourPointData &cp) = 0;
+      virtual void update(double t, MBSim::ContourFrame *frame) = 0;
       virtual const fmatvec::Vec getuVec() {
         return curve.getuVec();
       }
+      void resetUpToDate();
     protected:
       virtual void buildNodelist(double t) = 0;
       MBSim::NurbsCurve curve;
@@ -37,6 +41,7 @@ namespace MBSimFlexibleBody {
       double uMax;
       int degU;
       bool openStructure;
+      bool updCurve;
   };
 
 } /* namespace MBSimFlexibleBody */

@@ -7,7 +7,7 @@
 #include <config.h>
 #include "neutral_nurbs_dotangle_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/node_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 
 using namespace MBSim;
 
@@ -24,7 +24,7 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  void NeutralNurbsDotangle1s::update(ContourPointData &cp) {
+  void NeutralNurbsDotangle1s::update(double t, ContourFrame *frame) {
     throw;
 //    double uStaggered;
 //    double oringnalPosition = cp.getLagrangeParameterPosition()(0);
@@ -39,13 +39,12 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsDotangle1s::buildNodelist(double t) {
-//    NodeFrame frame;
-//    for (int i = 0; i < nodes.size(); i++) {
-//      frame.setNodeNumber(nodes(i));
-//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::dotAngle);
-//      Nodelist.set(i, trans(frame.getDotAnglesOfOrientation()));
-//    }
-////    cout << "neutralDotAngle" << Nodelist << endl << endl;
+    for (int i = 0; i < nodes.size(); i++) {
+      NodeFrame P("P",nodes(i));
+      P.setParent(parent);
+      Nodelist.set(i, trans(P.getDerivativeOfAngles(t)));
+    }
+//    cout << "neutralDotAngle" << Nodelist << endl << endl;
   }
 
   void NeutralNurbsDotangle1s::computeCurve(double t, bool update) {

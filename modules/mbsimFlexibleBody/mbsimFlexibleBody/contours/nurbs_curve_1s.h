@@ -57,16 +57,16 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
+      virtual void computeRootFunctionPosition(double t, MBSim::ContourFrame *frame) {
         THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
       }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
+      virtual void computeRootFunctionFirstTangent(double t, MBSim::ContourFrame *frame) {
         THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
       }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
+      virtual void computeRootFunctionNormal(double t, MBSim::ContourFrame *frame) {
         THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
       }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
+      virtual void computeRootFunctionSecondTangent(double t, MBSim::ContourFrame *frame) {
         THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
       }
       /***************************************************/
@@ -159,15 +159,15 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec3 normalRotationGrid;
 
-      /**
-       * \brief Jacobians of Translation of finite element nodes
-       */
-      std::vector<MBSim::ContourPointData> jacobiansTrans; // size = number of interpolation points
-
-      /**
-       * \brief Jacobians of Rotation of finite element nodes
-       */
-      std::vector<MBSim::ContourPointData> jacobiansRot; // size = number of interpolation points
+//      /**
+//       * \brief Jacobians of Translation of finite element nodes
+//       */
+//      std::vector<MBSim::ContourPointData> jacobiansTrans; // size = number of interpolation points
+//
+//      /**
+//       * \brief Jacobians of Rotation of finite element nodes
+//       */
+//      std::vector<MBSim::ContourPointData> jacobiansRot; // size = number of interpolation points
 
       /**
        * \brief interpolated Jacobians of Translation of the contour

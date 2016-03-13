@@ -66,10 +66,10 @@ namespace MBSimFlexibleBody {
 //        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
 
     }
-    else if (stage == worldFrameContourLocation) {
-      R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
-      R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
-    }
+//    else if (stage == worldFrameContourLocation) {
+//      R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
+//      R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
+//    }
     else if(stage == unknownStage) {
       NP->computeCurve(0,false); // the first time call the computeCurveVelocity, the flag should be false
       NV->computeCurve(0,false);
@@ -83,6 +83,10 @@ namespace MBSimFlexibleBody {
     }
 
     Contour1sNeutralFactory::init(stage);
+  }
+
+  Vec3 Contour1sNeutralCosserat::getPosition(double t, const Vec2 &zeta) {
+    return NP->getPosition(t,zeta(0));
   }
 
 //  void Contour1sNeutralCosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {
@@ -268,6 +272,10 @@ namespace MBSimFlexibleBody {
   }
   void Contour1sNeutralCosserat::setNodeOffest(const double nodeOffset_) {
     nodeOffset = nodeOffset_;
+  }
+  void Contour1sNeutralCosserat::resetUpToDate() {
+    Contour1sNeutralFactory::resetUpToDate();
+    NP->resetUpToDate();
   }
 
 }
