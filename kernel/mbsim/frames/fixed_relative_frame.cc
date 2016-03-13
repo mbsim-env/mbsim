@@ -86,14 +86,14 @@ namespace MBSim {
   }
 
   void FixedRelativeFrame::updateJacobians(double t, int j) {
-    setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
-    setJacobianOfRotation(R->getJacobianOfRotation(j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(t,j),j);
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(j),j);
     updateJac[j] = false;
   }
 
   void FixedRelativeFrame::updateGyroscopicAccelerations(double t) {
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
-    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
+    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t));
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
     updateGA = false;
   }
 
