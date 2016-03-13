@@ -5,9 +5,7 @@ libframe_la_SOURCES = fixed_nodal_frame.cc\
 		      node_frame.cc\
 		      frame_1s.cc\
 		      floating_contour_frame.cc\
-		      frame_2s.cc\
-		      nurbs_frame_2s.cc\
-		      nurbs_contour_frame.cc
+		      frame_2s.cc
 
 libframe_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
 libframe_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
@@ -18,6 +16,4 @@ frameinclude_HEADERS = frame_ffr.h\
 		       node_frame.h\
 		       frame_1s.h\
 		       floating_contour_frame.h\
-		       frame_2s.h\
-		       nurbs_frame_2s.h\
-		       nurbs_contour_frame.h
+		       frame_2s.h

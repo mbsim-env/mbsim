@@ -31,7 +31,7 @@ namespace MBSimFlexibleBody {
   class NodeFrame : public MBSim::Frame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", int node_ = 0) : Frame(name), node(node_) { }
+      NodeFrame(const std::string &name = "dummy", int node_ = 0) : Frame(name), node(node_), updAngles(true), updDerAngles(true) { }
 
       std::string getType() const { return "NodeFrame"; }
 
@@ -43,6 +43,18 @@ namespace MBSimFlexibleBody {
       void updateAccelerations(double t);
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
+      void updateAngles(double t);
+      void updateDerAngles(double t);
+
+      const fmatvec::Vec3& getAngles(bool check=true) const { assert((not check) or (not updAngles)); return angles; }
+      const fmatvec::Vec3& getDerivativeOfAngles(bool check=true) const { assert((not check) or (not updDerAngles)); return derAngles; }
+      void setAngles(const fmatvec::Vec3 &angles_) { angles = angles_; }
+      void setDerivativeOfAngles(const fmatvec::Vec3 &derAngles_ ) { derAngles = derAngles_; }
+
+      void resetUpToDate();
+
+      const fmatvec::Vec3& getAngles(double t) { if(updAngles) updateAngles(t); return angles; }
+      const fmatvec::Vec3& getDerivativeOfAngles(double t) { if(updDerAngles) updateDerAngles(t); return derAngles; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -52,6 +64,10 @@ namespace MBSimFlexibleBody {
        * \brief node number of the frame
        */
       int node;
+
+      fmatvec::Vec3 angles, derAngles;
+
+      bool updAngles, updDerAngles;
   };
 
 }

@@ -52,6 +52,22 @@ namespace MBSimFlexibleBody {
     updateGA = false;
   }
 
+  void NodeFrame::updateAngles(double t) {
+    static_cast<FlexibleBody*>(parent)->updateAngles(t,this);
+    updAngles = false;
+  }
+
+  void NodeFrame::updateDerAngles(double t) {
+    static_cast<FlexibleBody*>(parent)->updateDerAngles(t,this);
+    updDerAngles = false;
+  }
+
+  void NodeFrame::resetUpToDate() {
+    Frame::resetUpToDate();
+    updAngles = true;
+    updDerAngles = true;
+  }
+
   void NodeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
 
