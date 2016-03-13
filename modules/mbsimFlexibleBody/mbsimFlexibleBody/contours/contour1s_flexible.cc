@@ -55,6 +55,11 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(Contour1sFlexible::getWt): Not implemented.");
   }
 
+  void Contour1sFlexible::resetUpToDate() {
+    Contour1s::resetUpToDate();
+    sOld = -1e12;
+  }
+
   void Contour1sFlexible::updatePositions(double t, double s) {
     P.resetUpToDate();
     P.setParameter(s);

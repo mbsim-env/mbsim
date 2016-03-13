@@ -55,9 +55,8 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contour1sFlexible"; }
-      /***************************************************/
-
       virtual void init(InitStage stage);
+      /***************************************************/
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
@@ -73,7 +72,7 @@ namespace MBSimFlexibleBody {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      void resetUpToDate() { sOld = -1e12; }
+      void resetUpToDate();
       virtual void updatePositions(double t, double s);
 
       fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Ws; }
