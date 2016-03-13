@@ -87,6 +87,8 @@ namespace MBSimFlexibleBody {
       virtual void updateAccelerations(double t, NodeFrame* frame);
       virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
       virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+      virtual void updateAngles(double t, NodeFrame* frame);
+      virtual void updateDerAngles(double t, NodeFrame* frame);
 
       virtual double getLocalTwist(double t, double s);
 

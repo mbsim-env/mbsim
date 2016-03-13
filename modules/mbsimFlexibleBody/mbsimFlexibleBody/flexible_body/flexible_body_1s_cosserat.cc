@@ -1,6 +1,7 @@
-#include<config.h>
+#include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h"
-//#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
+#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
+#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <mbsim/environment.h>
@@ -43,18 +44,18 @@ namespace MBSimFlexibleBody {
     double uMin = 0;  // uMin has to be 0, otherwise Nurbscurve:globalInterpClosed():inv() fails;
     double uMax = 1;
     double nodeOffset = 0.5 * (uMax - uMin) / Elements;
-//    ncc = new Contour1sNeutralCosserat(contourName);
-//    ncc->setTransNodes(transNodes);
-//    ncc->setRotNodes(rotNodes);
-//    ncc->setNodeOffest(nodeOffset);
-//    ncc->setOpenStructure(openStructure);
-//    ncc->setFrameOfReference(getFrameOfReference());
-//    ncc->setAlphaStart(uMin);
-//    ncc->setAlphaEnd(uMax);
+    ncc = new Contour1sNeutralCosserat(contourName);
+    ncc->setTransNodes(transNodes);
+    ncc->setRotNodes(rotNodes);
+    ncc->setNodeOffest(nodeOffset);
+    ncc->setOpenStructure(openStructure);
+    ncc->setFrameOfReference(getFrameOfReference());
+    ncc->setAlphaStart(uMin);
+    ncc->setAlphaEnd(uMax);
 
-//    addContour(ncc);
+    addContour(ncc);
 
-//    return ncc;
+    return ncc;
 return NULL;
   }
 }

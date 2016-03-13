@@ -73,11 +73,6 @@ namespace MBSimFlexibleBody {
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string())=0;
       /***************************************************/
 
-      /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage)=0;
-      virtual double computePotentialEnergy(double t)=0;
-      /***************************************************/
-
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t, int i = 0);
 

@@ -215,6 +215,18 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
+  void FlexibleBody1s33Cosserat::updateAngles(double t, NodeFrame* frame) {
+    int node = frame->getNodeNumber();
+    Vec3 angles = q(6 * node + 3, 6 * node + 5);
+    frame->setAngles(R->getOrientation(t) * angles);
+  }
+
+  void FlexibleBody1s33Cosserat::updateDerAngles(double t, NodeFrame* frame) {
+    int node = frame->getNodeNumber();
+    Vec3 dotAngles = u(6 * node + 3, 6 * node + 5); //TODO
+    frame->setDerivativeOfAngles(R->getOrientation(t) * dotAngles);
+  }
+
   double FlexibleBody1s33Cosserat::getLocalTwist(double t, double s) {
     fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
     return X(3);
@@ -222,11 +234,11 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::init(InitStage stage) {
     if (stage == preInit) {
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1sCosserat::init(stage);
       l0 = L / Elements;
     }
     else if (stage == unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1sCosserat::init(stage);
 
       initialised = true;
 
@@ -252,14 +264,14 @@ namespace MBSimFlexibleBody {
       initM();
     }
     else
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBody1sCosserat::init(stage);
 
 //curve->initContourFromBody(stage);
   }
 
   double FlexibleBody1s33Cosserat::computePotentialEnergy(double t) {
     /* translational elements */
-    double V = FlexibleBodyContinuum<double>::computePotentialEnergy(t);
+    double V = FlexibleBody1sCosserat::computePotentialEnergy(t);
 
     /* rotational elements */
     for (unsigned int i = 0; i < rotationDiscretization.size(); i++) {
@@ -270,7 +282,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateLLM(double t, int k) {
-//    FlexibleBodyContinuum<double>::updateLLM(t);
+//    FlexibleBody1sCosserat::updateLLM(t);
     getM(t,k); // be sure that M is update to date
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
@@ -280,7 +292,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::updateh(double t, int k) {
     /* translational elements */
-    FlexibleBodyContinuum<double>::updateh(t);
+    FlexibleBody1sCosserat::updateh(t);
 
     /* rotational elements */
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
@@ -389,8 +401,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::initInfo() {
-    FlexibleBodyContinuum<double>::init(preInit);
-    FlexibleBodyContinuum<double>::init(unknownStage);
+    FlexibleBody1sCosserat::init(preInit);
+    FlexibleBody1sCosserat::init(unknownStage);
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");
 
