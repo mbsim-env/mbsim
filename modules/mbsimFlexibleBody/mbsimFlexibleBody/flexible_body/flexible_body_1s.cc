@@ -29,16 +29,16 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
+  FlexibleBody1s::FlexibleBody1s(const std::string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), openStructure(openStructure_) {
+    P.setParent(this);
+  }
+
  void FlexibleBody1s::init(InitStage stage) {
     if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation(0.)));
+      if(openMBVBody) ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation(0.)));
 #endif
       FlexibleBodyContinuum<double>::init(stage);
-    }
-    else if(stage==unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
-      P.setParent(this);
     }
     else
       FlexibleBodyContinuum<double>::init(stage);

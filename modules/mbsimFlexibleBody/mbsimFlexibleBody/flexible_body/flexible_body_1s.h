@@ -38,7 +38,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor:
        * \param name of body
        */
-      FlexibleBody1s(const std::string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), openStructure(openStructure_) { }
+      FlexibleBody1s(const std::string &name, bool openStructure);
 
       virtual void init(InitStage stage);
       virtual void plot(double t, double dt=1);
