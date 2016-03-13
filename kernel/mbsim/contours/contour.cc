@@ -19,6 +19,11 @@
 
 #include <config.h>
 #include "mbsim/contours/contour.h"
+#include "mbsim/frames/contour_frame.h"
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/group.h>
+#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -32,6 +37,23 @@ namespace MBSim {
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
+  }
+
+  void Contour::init(InitStage stage) {
+    if(stage==resize) {
+      for(vector<ContourFrame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
+        (*i)->sethSize(hSize[0],0);
+        (*i)->sethInd(hInd[0],0);
+        (*i)->sethSize(hSize[1],1);
+        (*i)->sethInd(hInd[1],1);
+      }
+      Element::init(stage);
+    }
+    else
+      Element::init(stage);
+
+    for(vector<ContourFrame*>::iterator i=frame.begin(); i!=frame.end(); i++)
+      (*i)->init(stage);
   }
 
   Vec3 Contour::getPosition(double t, const Vec2 &zeta) {
@@ -195,6 +217,44 @@ namespace MBSim {
   Vec2 Contour::getZeta(double t, const Vec3 &WrPS) {
     THROW_MBSIMERROR("(Contour::getZeta): Not implemented.");
     return 0;
+  }
+
+  ContourFrame* Contour::getFrame(const string &name_, bool check) const {
+    unsigned int i;
+    for(i=0; i<frame.size(); i++) {
+      if(frame[i]->getName() == name_)
+        return frame[i];
+    }
+    if(check) {
+      if(!(i<frame.size()))
+        THROW_MBSIMERROR("(Contour::getFrame): The body comprises no frame \""+name_+"\"!");
+      assert(i<frame.size());
+    }
+    return NULL;
+  }
+
+  void Contour::addFrame(ContourFrame* frame_) {
+    if(getFrame(frame_->getName(),false)) { //Contourname exists already
+      THROW_MBSIMERROR("(Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
+      assert(getFrame(frame_->getName(),false)==NULL);
+    }
+    frame.push_back(frame_);
+    frame_->setParent(this);
+  }
+
+  void Contour::resetUpToDate() {
+    for(unsigned int i=0; i<frame.size(); i++)
+      frame[i]->resetUpToDate();
+  }
+
+  void Contour::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive) == enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      for(unsigned int j=0; j<frame.size(); j++)
+        frame[j]->plot(t,dt);
+#endif
+    }
+    Element::plot(t, dt);
   }
 
 }

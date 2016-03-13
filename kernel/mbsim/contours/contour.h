@@ -52,6 +52,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contour"; }
+      virtual void init(InitStage stage);
+      virtual void plot(double t, double dt=1);
       /***************************************************/
 
       /**
@@ -212,10 +214,26 @@ namespace MBSim {
 
       virtual fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3 &WrPS);
 
+      virtual void updatePositions(double t, ContourFrame *frame) { }
+      virtual void updateVelocities(double t, ContourFrame *frame) { }
+      virtual void updateAccelerations(double t, ContourFrame *frame) { }
+      virtual void updateJacobians(double t, ContourFrame *frame, int j=0) { }
+      virtual void updateGyroscopicAccelerations(double t, ContourFrame *frame) { }
+
       void setThickness(double thickness_) { thickness = thickness_; }
       double getThickness() const { return thickness; }
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return false; }
+
+      void addFrame(ContourFrame *frame);
+
+      ContourFrame* getFrame(const std::string &name, bool check=true) const;
+
+      void resetUpToDate();
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
+#endif
 
     protected:
       /**
@@ -230,6 +248,12 @@ namespace MBSim {
        * \brief thickness of contour
        */
       double thickness;
+
+      std::vector<MBSim::ContourFrame*> frame;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
+#endif
   };
 
 }
