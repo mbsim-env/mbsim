@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
-//#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h"
+#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h"
 // Beginning Contact
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/contact.h"
@@ -79,7 +79,7 @@ System::System(const string &projectName) :
   rod->setu0(Vec(q0.size(), INIT, 0.));
   this->addObject(rod);
 
-//  Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
+  Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
@@ -96,7 +96,7 @@ System::System(const string &projectName) :
   shared_ptr<OpenMBV::PolygonPoint>  corner4 = OpenMBV::PolygonPoint::create(-b0 * 0.5, b0 * 0.5, 1);
   rectangle->push_back(corner4);
   cuboid->setContour(rectangle);
-  rod->setOpenMBVSpineExtrusion(cuboid);
+  rodCont->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
 //  FlexibleBand * top = new FlexibleBand("Top");
