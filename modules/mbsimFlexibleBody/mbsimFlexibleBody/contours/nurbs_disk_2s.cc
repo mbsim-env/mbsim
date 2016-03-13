@@ -22,12 +22,13 @@
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
-#include "mbsimFlexibleBody/frames/nurbs_contour_frame.h"
-#include "mbsim/frames/contour_frame.h"
+#include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/rotarymatrices.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
+#endif
 
 #ifdef HAVE_NURBS
 using namespace PLib;
@@ -76,29 +77,12 @@ namespace MBSimFlexibleBody {
       computeUVector(nj+degU);
       computeVVector(nr+1);
 
-//      for(int i=0; i<nr+1; i++)
-//        for(int j=0; j<nj; j++) {
-//          jacobians.push_back(NodeFrame("P",i*nj+j));
-//          jacobians[i*nj+j].setParent(parent);
-//        }
-//      for(int i=0; i<(nr+1)*nj; i++) {
-//        jacobians[i].getFrameOfReference().getJacobianOfTranslation().resize();
-//        jacobians[i].getFrameOfReference().getJacobianOfRotation().resize();
-//      }
-
       for(int k=0; k<nr*nj*3+RefDofs; k++) {
         SurfaceJacobiansOfTranslation.push_back(PlNurbsSurfaced());
         SurfaceJacobiansOfRotation.push_back(PlNurbsSurfaced());
       }
 
       computeSurface(0);
-
-      for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) {
-        (*i)->sethSize(hSize[0],0);
-        (*i)->sethInd(hInd[0],0);
-        (*i)->sethSize(hSize[1],1);
-        (*i)->sethInd(hInd[1],1);
-      }
 
       Contour2s::init(stage);
     }
@@ -140,13 +124,10 @@ namespace MBSimFlexibleBody {
     }
     else
       Contour2s::init(stage);
-
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++)
-      (*i)->init(stage);
   }
 
   ContourFrame* NurbsDisk2s::createContourFrame(const string &name) {
-    NurbsContourFrame *frame = new NurbsContourFrame(name);
+    FloatingContourFrame *frame = new FloatingContourFrame(name);
     frame->setContourOfReference(this);
     return frame;
   }
@@ -313,41 +294,10 @@ namespace MBSimFlexibleBody {
 
         openMBVNurbsDisk->append(data);
       }
-
-      for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->plot(t,dt);
 #endif
 #endif
     }
     Contour2s::plot(t, dt);
-  }
-
-  Frame* NurbsDisk2s::getFrame(const string &name_, bool check) const {
-    unsigned int i;
-    for(i=0; i<frame.size(); i++) {
-      if(frame[i]->getName() == name_)
-        return frame[i];
-    }
-    if(check) {
-      if(!(i<frame.size()))
-        THROW_MBSIMERROR("(NurbsDisk2s::getFrame): The body comprises no frame \""+name_+"\"!");
-      assert(i<frame.size());
-    }
-    return NULL;
-  }
-
-  void NurbsDisk2s::addFrame(Frame* frame_) {
-    if(getFrame(frame_->getName(),false)) { //Contourname exists already
-      THROW_MBSIMERROR("(Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
-      assert(getFrame(frame_->getName(),false)==NULL);
-    }
-    frame.push_back(frame_);
-    frame_->setParent(this);
-  }
-
-  void NurbsDisk2s::resetUpToDate() {
-    for(unsigned int i=0; i<frame.size(); i++)
-      frame[i]->resetUpToDate();
   }
 
   Vec NurbsDisk2s::transformCW(const Vec& WrPoint) {

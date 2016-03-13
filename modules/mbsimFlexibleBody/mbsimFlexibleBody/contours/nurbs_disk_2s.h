@@ -104,7 +104,6 @@ namespace MBSimFlexibleBody {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         openMBVNurbsDisk = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
       }
-      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
 #endif
 
 //#ifdef HAVE_NURBS
@@ -214,12 +213,6 @@ namespace MBSimFlexibleBody {
        */
       double computeError(const fmatvec::Vec &Vec1, const fmatvec::Vec &Vec2);
 
-      MBSim::Frame* getFrame(const std::string &name, bool check=true) const;
-
-      void addFrame(MBSim::Frame *frame);
-
-      void resetUpToDate();
-
     protected:
       /** 
        * \brief number of reference dofs of the flexible body
@@ -241,20 +234,12 @@ namespace MBSimFlexibleBody {
        */
       double Ri, Ra;
 
-      std::vector<MBSim::Frame*> frame;
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::NurbsDisk> openMBVNurbsDisk;
-      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
       double drawDegree;
 #endif
 
 #ifdef HAVE_NURBS
-      /**
-       * \brief Jacobians of finite element nodes
-       */
-      std::vector<NodeFrame> jacobians; // size = number of interpolation points
-
       /** 
        * \brief interpolated surface of the contour
        */
