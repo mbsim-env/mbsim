@@ -8,6 +8,7 @@
 #include "mbsim/contours/contour.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
@@ -73,6 +74,9 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
 
+  Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
+  balken->addContour(neutral);
+
   Vec nodes(Elements+1);
   for(int i=0;i<=Elements;i++) nodes(i) = i*L/Elements;
   FlexibleBand *top = new FlexibleBand("Top");
@@ -81,13 +85,16 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   Vec2 RrRP;
   RrRP(0) = -r;
   top->setRelativePosition(RrRP);
+  top->setRelativeOrientation(M_PI);
+  top->setContourOfReference(neutral);
   balken->addContour(top);
   FlexibleBand *bot = new FlexibleBand("Bot");
   bot->setNodes(nodes);
   bot->setWidth(r);
   RrRP(0) = r;
   bot->setRelativePosition(RrRP);
-  bot->setRelativeOrientation(M_PI);
+  bot->setContourOfReference(neutral);
+//  bot->setRelativeOrientation(M_PI);
   balken->addContour(bot);
 
   SymMat Theta(3,INIT,0.0);

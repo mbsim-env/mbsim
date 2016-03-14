@@ -6,6 +6,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/circle.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
@@ -107,6 +108,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   belt->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
+  Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
+  belt->addContour(neutral);
+
   FlexibleBand *top = new FlexibleBand("Top");
   int nNodes = (int)(nodesPerElement*elements + 1);
   Vec nodes(nNodes);
@@ -117,7 +121,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec2 r;
   r(0) = -0.5*b0_contact;
   top->setRelativePosition(r);
-  top->setRelativeOrientation(M_PI);
+  top->setContourOfReference(neutral);
   belt->addContour(top);
 
   for(int i=0;i<nDisks;i++) {

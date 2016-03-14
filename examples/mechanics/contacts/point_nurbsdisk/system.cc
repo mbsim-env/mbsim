@@ -9,6 +9,7 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsimFlexibleBody/frames/frame_2s.h"
+#include "mbsim/frames/fixed_contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
@@ -72,6 +73,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contour->setEtaNodes(nodes);
 
   disk->addFrame(new Frame2s("COG",Vec2()));
+//  disk->addFrame(new FixedContourFrame("P","[0.1;0]",contour));
+//  disk->getFrame("P")->enableOpenMBV(0.01);
 
   // bearing
   Joint *joint = new Joint("Clamping");

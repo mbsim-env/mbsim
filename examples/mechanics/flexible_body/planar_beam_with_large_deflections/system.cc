@@ -6,6 +6,7 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsim/contours/point.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
@@ -74,6 +75,9 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
+  Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
+  rod->addContour(neutral);
+
   FlexibleBand *top = new FlexibleBand("Top");
   Vec nodes(elements + 1);
   for (int i = 0; i <= elements; i++)
@@ -83,7 +87,7 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   Vec2 RrRP;
   RrRP(0) = 0.5*b0;
   top->setRelativePosition(RrRP);
-  top->setRelativeOrientation(M_PI);
+  top->setContourOfReference(neutral);
   rod->addContour(top);
 
   RigidBody *ball = new RigidBody("Ball");

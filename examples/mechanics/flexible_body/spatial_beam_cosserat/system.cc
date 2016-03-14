@@ -8,7 +8,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include <mbsim/functions/kinematics/kinematics.h>
-#include "mbsimFlexibleBody/contours/flexible_band.h"
+#include "mbsimFlexibleBody/contours/flexible_band2.h"
 // End Contact
 #include "mbsim/environment.h"
 
@@ -99,13 +99,23 @@ System::System(const string &projectName) :
   rodCont->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
-//  FlexibleBand * top = new FlexibleBand("Top");
-//  top->setWidth(b0);
+  FlexibleBand2 * top = new FlexibleBand2("Top");
+  Vec nodes(elements + 1);
+  for (int i = 0; i <= elements; i++)
+    nodes(i) = i * 1. / elements;
+  top->setNodes(nodes);
+  top->setWidth(b0);
+  Vec2 RrRP;
+  RrRP(0) = 0.5*b0;
+  top->setRelativePosition(RrRP);
+//  top->setRelativeOrientation(M_PI);
 //  top->setNormalDistance(0.5 * b0);
-//  top->setCn(Vec("[1.;0.]"));
-//  top->setNeutral(rodCont);
+  //top->setCn(Vec("[1.;0.]"));
+  //top->setNeutral(rodCont);
+  top->setContourOfReference(rodCont);
+  top->enableOpenMBV(4*elements+1);
 
-//  rod->addContour(top);
+  rod->addContour(top);
 
 // Beginning Contact ---------------------------------------------------
 

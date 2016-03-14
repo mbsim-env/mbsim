@@ -4,6 +4,7 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -94,12 +95,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
+  Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
+  rod->addContour(neutral);
+
   FlexibleBand *contour1sFlexible = new FlexibleBand("Contour1sFlexible");
   Vec nodes(elements+1);
   for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
   contour1sFlexible->setNodes(nodes);
   contour1sFlexible->setWidth(0.1);
-  contour1sFlexible->setRelativeOrientation(M_PI);
+  contour1sFlexible->setContourOfReference(neutral);
   rod->addContour(contour1sFlexible);
 
   // balls
