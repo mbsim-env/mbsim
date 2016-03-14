@@ -106,16 +106,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::init(InitStage stage) {
-    if (stage == resize) {
-      Body::init(stage);
-      for(vector<Frame*>::iterator i=nonUserFrame.begin(); i!=nonUserFrame.end(); i++) {
-        (*i)->sethSize(hSize[0],0);
-        (*i)->sethInd(hInd[0],0);
-        (*i)->sethSize(hSize[1],1);
-        (*i)->sethInd(hInd[1],1);
-      }
-    }
-    else if (stage == unknownStage) {
+    if (stage == unknownStage) {
       Body::init(stage);
       T = SqrMat(qSize, EYE);
     }
@@ -128,9 +119,6 @@ namespace MBSimFlexibleBody {
     }
     else
       Body::init(stage);
-
-    for(vector<Frame*>::iterator i=nonUserFrame.begin(); i!=nonUserFrame.end(); i++)
-      (*i)->init(stage);
   }
 
   double FlexibleBody::computeKineticEnergy(double t) {
@@ -168,11 +156,6 @@ namespace MBSimFlexibleBody {
     Body::addContour(contour_);
   }
 
-  void FlexibleBody::addNonUserFrame(Frame* frame) {
-    nonUserFrame.push_back(frame);
-    frame->setParent(this);
-  }
-
   void FlexibleBody::initializeUsingXML(DOMElement *element) {
     Body::initializeUsingXML(element);
     
@@ -183,8 +166,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::resetUpToDate() {
     Body::resetUpToDate();
-    for(unsigned int i=0; i<nonUserFrame.size(); i++)
-      nonUserFrame[i]->resetUpToDate();
     updEle = true;
   }
 

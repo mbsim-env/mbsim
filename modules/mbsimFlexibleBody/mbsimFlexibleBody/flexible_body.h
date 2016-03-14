@@ -22,7 +22,6 @@
 #define _FLEXIBLE_BODY_H_
 
 #include "mbsim/objects/body.h"
-#include "mbsim/frames/frame.h"
 
 namespace MBSim {
   class FixedRelativeFrame;
@@ -171,8 +170,6 @@ namespace MBSimFlexibleBody {
 
       void addContour(MBSim::Contour *contour);
 
-      void addNonUserFrame(MBSim::Frame *frame);
-
       /**
        * \brief interpolates the position and optional the velocity coordinates of the flexible body with Nurbs-package and exports the nurbs curve in the specified file
        * \param filenamePos    Name of the exported position curve file
@@ -229,8 +226,6 @@ namespace MBSimFlexibleBody {
        */
 
       bool updEle;
-
-      std::vector<MBSim::Frame*> nonUserFrame;
   };
 
   /**
