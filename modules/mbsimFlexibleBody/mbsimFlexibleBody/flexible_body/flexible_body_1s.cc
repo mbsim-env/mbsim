@@ -95,4 +95,10 @@ namespace MBSimFlexibleBody {
     return P.getPosition(t);
   }
 
+  SqrMat3 FlexibleBody1s::getOrientation(double t, double s) {
+    P.resetUpToDate();
+    P.setParameter(s);
+    return P.getOrientation(t);
+  }
+
 }

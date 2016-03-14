@@ -58,6 +58,7 @@ namespace MBSimFlexibleBody {
       virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
 
       virtual fmatvec::Vec3 getPosition(double t, double s);
+      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
       virtual double getLocalTwist(double t, double s) { return 0; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
