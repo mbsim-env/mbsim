@@ -22,9 +22,6 @@
 
 #include "mbsim/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
-#include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/frames/frame_1s.h"
-#include "contour_1s_neutral_factory.h"
 #include "mbsim/utils/eps.h"
 
 namespace MBSim {
@@ -51,43 +48,41 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sFlexible(const std::string & name) : Contour1s(name), neutral(0), sOld(-1e12) { }
+      Contour1sFlexible(const std::string & name) : Contour1s(name), sOld(-1e12) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contour1sFlexible"; }
-      virtual void init(InitStage stage);
       /***************************************************/
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta) { return getPosition(t,zeta(0)); }
       virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta(0)); }
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta(0)); }
       virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
       virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
 
-      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
+      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
 
-      void setNeutral(Contour1sNeutralFactory* neutral_) { neutral = neutral_; }
+      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
       void resetUpToDate();
       virtual void updatePositions(double t, double s);
 
+      fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return WrOP; }
       fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Ws; }
+      fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Wt; }
+
+      void updatePositions(double t, MBSim::ContourFrame *frame);
+      void updateVelocities(double t, MBSim::ContourFrame *frame);
+      void updateAccelerations(double t, MBSim::ContourFrame *frame);
+      void updateJacobians(double t, MBSim::ContourFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(double t, MBSim::ContourFrame *frame);
 
     protected:
-      /*!
-       * \brief object for 1s-flexible curves that is the interface
-       *
-       * \todo: maybe this actually should be used for all 1s contours (as the same interface?)
-       */
-      Contour1sNeutralFactory* neutral;
-
-      fmatvec::Vec3 Ws;
-
-      Frame1s P;
+      fmatvec::Vec3 WrOP, Ws, Wt;
 
       double sOld;
   };

@@ -20,7 +20,7 @@
 #include <config.h>
 
 #include "contour1s_flexible.h"
-#include "mbsimFlexibleBody/frames/floating_contour_frame.h"
+#include "mbsim/frames/floating_contour_frame.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 
@@ -30,29 +30,10 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  void Contour1sFlexible::init(InitStage stage) {
-    if(stage==unknownStage) {
-      Contour1s::init(stage);
-      P.setParent(parent);
-    }
-    else
-      Contour1s::init(stage);
-  }
-
   ContourFrame* Contour1sFlexible::createContourFrame(const string &name) {
     FloatingContourFrame *frame = new FloatingContourFrame(name);
-    Frame1s *bodyFrame = new Frame1s;
-    static_cast<FlexibleBody*>(parent)->addNonUserFrame(bodyFrame);
-    frame->setFrameOfReference(bodyFrame);
+    frame->setContourOfReference(this);
     return frame;
-  }
-
-  Vec3 Contour1sFlexible::getPosition(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour1sFlexible::getPosition): Not implemented.");
-  }
-
-  Vec3 Contour1sFlexible::getWt(double t, const Vec2 &zeta) {
-    THROW_MBSIMERROR("(Contour1sFlexible::getWt): Not implemented.");
   }
 
   void Contour1sFlexible::resetUpToDate() {
@@ -61,10 +42,44 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1sFlexible::updatePositions(double t, double s) {
-    P.resetUpToDate();
-    P.setParameter(s);
+    static Vec3 Kt("[0;0;1]");
+    Frame1s P("P",s);
+    P.setParent(parent);
     Ws = P.getOrientation(t).col(0);
+    Wt = P.getOrientation()*Kt;
+    WrOP = P.getPosition();
     sOld = s;
+  }
+
+  void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {
+    Frame1s P("P",frame->getEta());
+    P.setParent(parent);
+    frame->getOrientation(false).set(0,P.getOrientation(t).col(1));
+    frame->getOrientation(false).set(1,P.getOrientation().col(0));
+    frame->getOrientation(false).set(2,-P.getOrientation().col(2));
+    frame->setPosition(P.getPosition());
+  }
+
+  void Contour1sFlexible::updateVelocities(double t, ContourFrame *frame) {
+    Frame1s P("P",frame->getEta());
+    P.setParent(parent);
+    frame->setAngularVelocity(P.getAngularVelocity(t));
+    frame->setVelocity(P.getVelocity());
+ }
+
+  void Contour1sFlexible::updateAccelerations(double t, ContourFrame *frame) {
+    THROW_MBSIMERROR("(Contour1sFlexible::updateAccelerations): Not implemented!");
+  }
+
+  void Contour1sFlexible::updateJacobians(double t, ContourFrame *frame, int j) {
+    Frame1s P("P",frame->getEta());
+    P.setParent(parent);
+    frame->setJacobianOfRotation(P.getJacobianOfRotation(t,j),j);
+    frame->setJacobianOfTranslation(P.getJacobianOfTranslation(j),j);
+  }
+
+  void Contour1sFlexible::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
+    THROW_MBSIMERROR("(Contour1sFlexible::updateGyroscopicAccelerations): Not implemented!");
   }
 
 }

@@ -32,6 +32,7 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsPosition1s::update(double t, ContourFrame *frame) {
+    if(updCurve) computeCurve(t,true);
     frame->setPosition(curve.pointAt(frame->getEta()));
   }
 

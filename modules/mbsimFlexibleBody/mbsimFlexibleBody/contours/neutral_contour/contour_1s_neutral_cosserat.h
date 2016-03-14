@@ -33,6 +33,8 @@ namespace MBSimFlexibleBody {
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
 
+      void updatePositions(double t, MBSim::ContourFrame *frame);
+
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
       void setTransNodes(const fmatvec::VecInt & transNodes_);

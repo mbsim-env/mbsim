@@ -89,6 +89,13 @@ namespace MBSimFlexibleBody {
     return NP->getPosition(t,zeta(0));
   }
 
+  void Contour1sNeutralCosserat::updatePositions(double t, ContourFrame *frame) {
+    NP->update(t,frame);
+    NA->updateAngleNormal(t,frame);
+    NA->updateAngleFirstTangent(t,frame);
+    NA->updateAngleSecondTangent(t,frame);
+  }
+
 //  void Contour1sNeutralCosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {
 //    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
 //      NP->update(cp);

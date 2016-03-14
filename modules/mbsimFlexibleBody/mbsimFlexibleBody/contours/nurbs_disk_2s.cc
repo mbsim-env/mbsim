@@ -111,12 +111,6 @@ namespace MBSimFlexibleBody {
             openMBVNurbsDisk->setInterpolationDegreeAzimuthal(degU);
             parent->getOpenMBVGrp()->addObject(openMBVNurbsDisk);
           }
-
-          openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
-
         }
   #endif
         Contour2s::init(stage);

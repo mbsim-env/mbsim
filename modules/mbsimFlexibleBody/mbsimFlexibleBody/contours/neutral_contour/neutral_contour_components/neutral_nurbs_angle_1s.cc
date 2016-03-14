@@ -41,21 +41,25 @@ namespace MBSimFlexibleBody {
 
   void NeutralNurbsAngle1s::update(double t, ContourFrame *frame){
     throw;
-//    Vec3 Tmpv = calculateStaggeredAngle(cp.getLagrangeParameterPosition()(0));
+//    if(updCurve) computeCurve(t,true);
+//    Vec3 Tmpv = calculateStaggeredAngle(frame->getEta());
 ////    if (Tmpv(2) < - 2 * M_PI)
 ////      Tmpv(2) = Tmpv(2) + 2 *M_PI;
-//    cp.getFrameOfReference().setAnglesOfOrientation(Tmpv);
+//    frame->setAngles(Tmpv);
   }
 
   void NeutralNurbsAngle1s::updateAngleNormal(double t, ContourFrame *frame){
+    if(updCurve) computeCurve(t,true);
     frame->getOrientation(false).set(0, ANGLE->computen(calculateStaggeredAngle(frame->getEta())));
   }
 
   void NeutralNurbsAngle1s::updateAngleFirstTangent(double t, ContourFrame *frame){
+    if(updCurve) computeCurve(t,true);
     frame->getOrientation(false).set(1, ANGLE->computet(calculateStaggeredAngle(frame->getEta())));
   }
 
   void NeutralNurbsAngle1s::updateAngleSecondTangent(double t, ContourFrame *frame){
+    if(updCurve) computeCurve(t,true);
     frame->getOrientation(false).set(2, -ANGLE->computeb(calculateStaggeredAngle(frame->getEta()))); // binormal (cartesian system)
   }
 

@@ -20,7 +20,8 @@
 #ifndef _FLEXIBLE_BAND_H_
 #define _FLEXIBLE_BAND_H_
 
-#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
+#include "mbsim/contours/contour1s.h"
+#include "mbsimFlexibleBody/utils/contact_utils.h"
 #include "mbsim/utils/eps.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -29,33 +30,33 @@
 #include <mbsim/utils/openmbv_utils.h>
 #endif
 
+#include <list>
+
 namespace MBSim {
 
+  class FixedContourFrame;
   BOOST_PARAMETER_NAME(numberOfSpinePoints)
 
 }
 
 namespace MBSimFlexibleBody {
 
-  /**
-   * \brief flexible band contour for spatial curves
-   * \author Thorsten Schindler
-   * \author Roland Zander
-   * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
-   * \date 2009-07-10 calculation of Jacobian of Translation for Contours (Thorsten Schindler)
-   */
-  class FlexibleBand : public Contour1sFlexible {
+  class FlexibleBand : public MBSim::Contour1s {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      FlexibleBand(const std::string& name) : Contour1sFlexible(name), width(0), ARK(fmatvec::EYE) { }
+      FlexibleBand(const std::string& name) : MBSim::Contour1s(name), width(0), ARK(fmatvec::EYE), sOld(-1e12) { }
+
+      ~FlexibleBand();
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
       void init(InitStage stage);
      /***************************************************/
+
+      virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
       /* GETTER / SETTER */
       void setWidth(double width_) { width = width_; }
@@ -68,16 +69,26 @@ namespace MBSimFlexibleBody {
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARK; }
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta) { return getPosition(t,zeta(0)); }
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta(0)); }
       virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta(0)); }
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < -0.5*width or zeta(1) > 0.5*width; }
 
       void updatePositions(double t, double s);
 
       fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return WrOP; }
+      fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Ws; }
       fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Wt; }
 
       virtual void plot(double t, double dt=1);
+
+      void setContourOfReference(Contour1s *contour_) { contour = contour_; }
+
+      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
+
+      void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (numberOfSpinePoints,(int),10)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
@@ -86,14 +97,21 @@ namespace MBSimFlexibleBody {
       }
 #endif
 
+      void resetUpToDate();
+
     protected:
       /**
        * \brief width of flexible band
        */
       double width;
 
-      fmatvec::Vec3 RrRP, WrOP, Wt;
+      fmatvec::Vec3 RrRP, WrOP, Ws, Wt;
       fmatvec::SqrMat3 ARK;
+
+      Contour1s* contour;
+      std::list<MBSim::FixedContourFrame*> C;
+
+      double sOld;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
