@@ -21,7 +21,7 @@
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/frames/fixed_contour_frame.h"
-#include "mbsimFlexibleBody/frames/floating_relative_contour_frame_1s.h"
+#include "mbsimFlexibleBody/frames/floating_relative_flexible_contour_frame.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
 #include "mbsim/utils/rotarymatrices.h"
 
@@ -34,11 +34,6 @@ using namespace MBSim;
 using namespace boost;
 
 namespace MBSimFlexibleBody {
-
-  FlexibleBand::~FlexibleBand() {
-    for(list<FixedContourFrame*>::iterator it = C.begin(); it != C.end(); ++it)
-      delete (*it);
-  }
 
   void FlexibleBand::init(InitStage stage) {
     if(stage==plotting) {
@@ -68,12 +63,7 @@ namespace MBSimFlexibleBody {
   }
 
   ContourFrame* FlexibleBand::createContourFrame(const string &name) {
-    FloatingRelativeContourFrame1s *frame = new FloatingRelativeContourFrame1s(name);
-    FixedContourFrame *refFrame = new FixedContourFrame(name);
-    refFrame->setContourOfReference(contour);
-    C.push_back(refFrame);
-    frame->setFrameOfReference(refFrame);
-
+    FloatingRelativeFlexibleContourFrame *frame = new FloatingRelativeFlexibleContourFrame(name,contour);
     return frame;
   }
 
@@ -100,8 +90,6 @@ namespace MBSimFlexibleBody {
   void FlexibleBand::resetUpToDate() {
     Contour1s::resetUpToDate();
     sOld = -1e12;
-    for(list<FixedContourFrame*>::iterator it = C.begin(); it != C.end(); ++it)
-      (*it)->resetUpToDate();
   }
 
   void FlexibleBand::plot(double t, double dt) {

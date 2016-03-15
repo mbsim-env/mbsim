@@ -179,6 +179,9 @@ namespace MBSimFlexibleBody {
     n(1) = normal.y() /normalLength;
     n(2) = normal.z() /normalLength;
     frame->getOrientation(false).set(2, n);
+    // TODO This orientation is not correct as the x-axis equals the first
+    // tangent (should be the normal). However, changing this orientation makes
+    // the coorindate system dithering
   }
 
   void NurbsDisk2s::updateVelocities(double t, ContourFrame *frame) {

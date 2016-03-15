@@ -34,7 +34,6 @@
 
 namespace MBSim {
 
-  class FixedContourFrame;
   BOOST_PARAMETER_NAME(numberOfSpinePoints)
 
 }
@@ -48,8 +47,6 @@ namespace MBSimFlexibleBody {
        * \param name of contour
        */
       FlexibleBand(const std::string& name) : MBSim::Contour1s(name), width(0), ARK(fmatvec::EYE), sOld(-1e12) { }
-
-      ~FlexibleBand();
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }
@@ -109,7 +106,6 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat3 ARK;
 
       Contour1s* contour;
-      std::list<MBSim::FixedContourFrame*> C;
 
       double sOld;
 

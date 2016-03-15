@@ -18,8 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsimFlexibleBody/frames/floating_contour_frame.h"
-#include "mbsimFlexibleBody/frames/frame_1s.h"
+#include "mbsimFlexibleBody/frames/floating_relative_flexible_contour_frame.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,30 +28,40 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  void FloatingContourFrame::updatePositions(double t) {
+  FloatingRelativeFlexibleContourFrame::FloatingRelativeFlexibleContourFrame(const std::string &name, Contour *contour) : FloatingRelativeContourFrame(name) {
+    P.setContourOfReference(contour);
+    setFrameOfReference(&P);
+  }
+
+  void FloatingRelativeFlexibleContourFrame::resetUpToDate() {
+    FloatingRelativeContourFrame::resetUpToDate();
+    P.resetUpToDate();
+  }
+
+  void FloatingRelativeFlexibleContourFrame::updatePositions(double t) {
     parent->updatePositions(t,this);
-    static_cast<Frame1s*>(R)->setParameter(getEta());
+    static_cast<ContourFrame*>(R)->setZeta(getZeta());
     WrRP = getPosition(false) - R->getPosition(t);
     updatePos = false;
   }
 
-  void FloatingContourFrame::updateVelocities(double t) {
-    static_cast<Frame1s*>(R)->setParameter(getEta());
+  void FloatingRelativeFlexibleContourFrame::updateVelocities(double t) {
+    static_cast<ContourFrame*>(R)->setZeta(getZeta());
     FloatingRelativeContourFrame::updateVelocities(t);
   }
 
-  void FloatingContourFrame::updateAccelerations(double t) {
-    static_cast<Frame1s*>(R)->setParameter(getEta());
+  void FloatingRelativeFlexibleContourFrame::updateAccelerations(double t) {
+    static_cast<ContourFrame*>(R)->setZeta(getZeta());
     FloatingRelativeContourFrame::updateAccelerations(t);
   }
 
-  void FloatingContourFrame::updateJacobians(double t, int j) {
-    static_cast<Frame1s*>(R)->setParameter(getEta());
+  void FloatingRelativeFlexibleContourFrame::updateJacobians(double t, int j) {
+    static_cast<ContourFrame*>(R)->setZeta(getZeta());
     FloatingRelativeContourFrame::updateJacobians(t,j);
   }
 
-  void FloatingContourFrame::updateGyroscopicAccelerations(double t) {
-    static_cast<Frame1s*>(R)->setParameter(getEta());
+  void FloatingRelativeFlexibleContourFrame::updateGyroscopicAccelerations(double t) {
+    static_cast<ContourFrame*>(R)->setZeta(getZeta());
     FloatingRelativeContourFrame::updateGyroscopicAccelerations(t);
   }
 

@@ -17,10 +17,15 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLOATING_RELATIVE_CONTOUR_FRAME_1S_H__
-#define _FLOATING_RELATIVE_CONTOUR_FRAME_1S_H__
+#ifndef _FLOATING_RELATIVE_FLEXIBLE_CONTOUR_FRAME_H__
+#define _FLOATING_RELATIVE_FLEXIBLE_CONTOUR_FRAME_H__
 
 #include "mbsim/frames/floating_relative_contour_frame.h"
+#include "mbsim/frames/fixed_contour_frame.h"
+
+namespace MBSim {
+  class Contour;
+}
 
 namespace MBSimFlexibleBody {
 
@@ -28,18 +33,24 @@ namespace MBSimFlexibleBody {
    * \brief tbd
    * \author Martin Foerg
    */
-  class FloatingRelativeContourFrame1s : public MBSim::FloatingRelativeContourFrame {
+  class FloatingRelativeFlexibleContourFrame : public MBSim::FloatingRelativeContourFrame {
 
     public:
-      FloatingRelativeContourFrame1s(const std::string &name = "dummy") : FloatingRelativeContourFrame(name) { }
+      FloatingRelativeFlexibleContourFrame(const std::string &name = "dummy", MBSim::Contour *contour = NULL);
 
-      std::string getType() const { return "FloatingRelativeContourFrame1s"; }
+      std::string getType() const { return "FloatingRelativeFlexibleContourFrame"; }
 
       void updatePositions(double t);
       void updateVelocities(double t);
       void updateAccelerations(double t);
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
+
+      void resetUpToDate();
+
+    protected:
+      MBSim::FixedContourFrame P;
+
   };
 
 }
