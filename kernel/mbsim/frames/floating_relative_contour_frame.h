@@ -32,12 +32,9 @@ namespace MBSim {
 
       std::string getType() const { return "FloatingRelativeContourFrame"; }
 
-      virtual void init(InitStage stage);
-
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
       void setFrameOfReference(Frame *frame) { R = frame; }
-      void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
@@ -50,17 +47,12 @@ namespace MBSim {
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-
     protected:
       Frame *R;
       fmatvec::Vec3 RrRP, WrRP;
       fmatvec::SqrMat3 ARP;
-      std::string saved_frameOfReference;
   };
 
 }
 
 #endif
-

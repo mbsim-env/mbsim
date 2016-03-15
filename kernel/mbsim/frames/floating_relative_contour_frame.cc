@@ -27,40 +27,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void FloatingRelativeContourFrame::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Frame::init(stage);
-    }
-    else
-      Frame::init(stage);
-  }
-
-  void FloatingRelativeContourFrame::initializeUsingXML(DOMElement *element) {
-    Frame::initializeUsingXML(element);
-    DOMElement *ec=element->getFirstElementChild();
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
-    if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");
-    if(ec) setRelativePosition(getVec3(ec));
-    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativeOrientation");
-    if(ec) setRelativeOrientation(getSqrMat3(ec));
-  }
-
-  DOMElement* FloatingRelativeContourFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-//     if(getFrameOfReference()) {
-//        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-//        ele1->SetAttribute("ref", str);
-//        ele0->LinkEndChild(ele1);
-//      }
-//     addElementText(ele0,MBSIM%"relativePosition",getGeneralizedRelativePosition());
-//     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
-   return ele0;
-  }
-
   const Vec3& FloatingRelativeContourFrame::getGlobalRelativePosition(double t) {
     if(updatePos) updatePositions(t);
     return WrRP; 
