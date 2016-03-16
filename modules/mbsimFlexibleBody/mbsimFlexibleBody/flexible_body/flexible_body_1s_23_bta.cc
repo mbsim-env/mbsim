@@ -187,9 +187,8 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  double FlexibleBody1s23BTA::getLocalTwist(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,s);
-    return X(3);
+  Vec3 FlexibleBody1s23BTA::getAngles(double t, double s) {
+    return getPositions(t,s)(Range<Fixed<3>,Fixed<5> >());
   }
 
   void FlexibleBody1s23BTA::initializeUsingXML(DOMElement *element) {

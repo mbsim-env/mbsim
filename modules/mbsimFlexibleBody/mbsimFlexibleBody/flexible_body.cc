@@ -21,9 +21,10 @@
 #include <config.h>
 #include <mbsimFlexibleBody/flexible_body.h>
 #include <mbsimFlexibleBody/frames/node_frame.h>
-#include <mbsim/dynamic_system.h>
+#include <mbsim/frames/contour_frame.h>
 #include <mbsim/frames/fixed_relative_frame.h>
 #include <mbsim/contours/contour.h>
+#include <mbsim/dynamic_system.h>
 #include <fmatvec/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsimFlexibleBody/discretization_interface.h>
@@ -145,6 +146,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addFrame(NodeFrame *frame) {
+    Body::addFrame(frame);
+  }
+
+  void FlexibleBody::addFrame(ContourFrame *frame) {
     Body::addFrame(frame);
   }
 

@@ -230,9 +230,8 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  double FlexibleBody1s33RCM::getLocalTwist(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,s);
-    return X(3);
+  Vec3 FlexibleBody1s33RCM::getAngles(double t, double s) {
+    return getPositions(t,s)(Range<Fixed<3>,Fixed<5> >());
   }
 
   void FlexibleBody1s33RCM::init(InitStage stage) {

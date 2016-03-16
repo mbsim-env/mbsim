@@ -20,7 +20,7 @@
 #include<config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
-//#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
+#include "mbsim/frames/fixed_contour_frame.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <mbsim/environment.h>
@@ -169,13 +169,15 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33Cosserat::updatePositions(double t, NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
-    frame->setPosition(R->getPosition() + R->getOrientation() * q(6 * node + 0, 6 * node + 2));
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * q(6 * node + 0, 6 * node + 2));
 
     Vec3 angles = q(6 * node + 3, 6 * node + 5);
 
+
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(angles));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(angles));
-    frame->getOrientation(false).set(2, R->getOrientation() * angle->computen(angles));
+    frame->getOrientation(false).set(2, R->getOrientation() * angle->computeb(angles));
+//    frame->setAngles(R->getOrientation(t) * angles);
   }
 
   void FlexibleBody1s33Cosserat::updateVelocities(double t, NodeFrame *frame) {
@@ -183,15 +185,16 @@ namespace MBSimFlexibleBody {
     int node = frame->getNodeNumber();
     Vec3 angles = q(6 * node + 3, 6 * node + 5);
     Vec3 dotAngles = u(6 * node + 3, 6 * node + 5); //TODO
-    frame->setVelocity(R->getOrientation() * u(6 * node + 0, 6 * node + 2));
+    frame->setVelocity(R->getOrientation(t) * u(6 * node + 0, 6 * node + 2));
     frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(angles, dotAngles));
+//    frame->setDerivativeOfAngles(R->getOrientation(t) * dotAngles);
  }
 
   void FlexibleBody1s33Cosserat::updateAccelerations(double t, NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updateJacobians(double time, NodeFrame *frame, int j) {
+  void FlexibleBody1s33Cosserat::updateJacobians(double t, NodeFrame *frame, int j) {
 
     //Translational Node
     int node = frame->getNodeNumber();
@@ -199,7 +202,7 @@ namespace MBSimFlexibleBody {
 
     Jacobian_trans.set(Index(0, 2), Index(6 * node, 6 * node + 2), SqrMat(3, EYE)); // translation
 
-    frame->setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
+    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans);
 
     // Rotational Node
     // TODO: Is it necessary to separate in two functions?
@@ -215,21 +218,12 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updateAngles(double t, NodeFrame* frame) {
-    int node = frame->getNodeNumber();
-    Vec3 angles = q(6 * node + 3, 6 * node + 5);
-    frame->setAngles(R->getOrientation(t) * angles);
+  Vec3 FlexibleBody1s33Cosserat::getAngles(double t, int i) {
+    return R->getOrientation(t) * q(6 * i + 3, 6 * i + 5);
   }
 
-  void FlexibleBody1s33Cosserat::updateDerAngles(double t, NodeFrame* frame) {
-    int node = frame->getNodeNumber();
-    Vec3 dotAngles = u(6 * node + 3, 6 * node + 5); //TODO
-    frame->setDerivativeOfAngles(R->getOrientation(t) * dotAngles);
-  }
-
-  double FlexibleBody1s33Cosserat::getLocalTwist(double t, double s) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(s);
-    return X(3);
+  Vec3 FlexibleBody1s33Cosserat::getDerivativeOfAngles(double t, int i) {
+    return R->getOrientation(t) * u(6 * i + 3, 6 * i + 5);
   }
 
   void FlexibleBody1s33Cosserat::init(InitStage stage) {

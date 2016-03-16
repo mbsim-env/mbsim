@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
       virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
       virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
 
-      virtual double getLocalTwist(double t, double s);
+      virtual fmatvec::Vec3 getAngles(double t, double s);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */

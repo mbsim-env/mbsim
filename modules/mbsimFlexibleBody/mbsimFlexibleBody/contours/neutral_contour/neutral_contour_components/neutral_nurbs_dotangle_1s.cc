@@ -40,9 +40,7 @@ namespace MBSimFlexibleBody {
 
   void NeutralNurbsDotangle1s::buildNodelist(double t) {
     for (int i = 0; i < nodes.size(); i++) {
-      NodeFrame P("P",nodes(i));
-      P.setParent(parent);
-      Nodelist.set(i, trans(P.getDerivativeOfAngles(t)));
+      Nodelist.set(i, trans(static_cast<FlexibleBody*>(parent)->getDerivativeOfAngles(t,nodes(i))));
     }
 //    cout << "neutralDotAngle" << Nodelist << endl << endl;
   }

@@ -32,8 +32,14 @@ namespace MBSimFlexibleBody {
       virtual NeutralNurbsDotangle1s* createNeutralDotangle();
 
       virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
 
       void updatePositions(double t, MBSim::ContourFrame *frame);
+      void updateVelocities(double t, MBSim::ContourFrame *frame);
+      void updateJacobians(double t, MBSim::ContourFrame *frame, int j=0);
 
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 

@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s.h"
 #include "mbsimFlexibleBody/frames/frame_2s.h"
-#include "mbsim/frames/contour_frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/mbsim_event.h"
 
@@ -63,10 +62,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s::addFrame(Frame2s *frame) { 
-    Body::addFrame(frame); 
-  }
-
-  void FlexibleBody2s::addFrame(ContourFrame *frame) { 
     Body::addFrame(frame); 
   }
 

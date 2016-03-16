@@ -74,8 +74,6 @@ namespace MBSimFlexibleBody {
       virtual void updateAccelerations(double t, NodeFrame* frame);
       virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
       virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
-      virtual void updateAngles(double t, NodeFrame* frame) { }
-      virtual void updateDerAngles(double t, NodeFrame* frame) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
@@ -101,6 +99,9 @@ namespace MBSimFlexibleBody {
       const fmatvec::Vec& getqElement(double t, int i) { if(updEle) BuildElements(t); return qElement[i]; }
 
       const fmatvec::Vec& getuElement(double t, int i) { if(updEle) BuildElements(t); return uElement[i]; }
+
+      virtual fmatvec::Vec3 getAngles(double t, int i) { return fmatvec::Vec3(); }
+      virtual fmatvec::Vec3 getDerivativeOfAngles(double t, int i) { return fmatvec::Vec3(); }
 
       /**
        * \brief insert 'local' information in global vectors
@@ -162,6 +163,8 @@ namespace MBSimFlexibleBody {
        * \param node frame
        */
       void addFrame(NodeFrame *frame);
+
+      void addFrame(MBSim::ContourFrame *frame);
 
       /**
        * \param fixed relative frame that should be added

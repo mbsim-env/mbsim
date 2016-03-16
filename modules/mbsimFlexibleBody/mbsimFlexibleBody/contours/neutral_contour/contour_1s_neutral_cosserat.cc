@@ -6,6 +6,7 @@
  */
 #include <config.h>
 #include "contour_1s_neutral_cosserat.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
@@ -52,7 +53,7 @@ namespace MBSimFlexibleBody {
 
     if (stage == preInit) {
       NP = createNeutralPosition();
-      NP->setBinormalDir(R->getOrientation().col(2));
+      NP->setBinormalDir(-R->getOrientation().col(2));
       NV = createNeutralVelocity();
       NA = createNeutralAngle();
       NDA = createNeutralDotangle();
@@ -89,11 +90,112 @@ namespace MBSimFlexibleBody {
     return NP->getPosition(t,zeta(0));
   }
 
+  Vec3 Contour1sNeutralCosserat::getWs(double t, const Vec2 &zeta) {
+    return NP->getWs(t,zeta(0));
+  }
+
+  Vec3 Contour1sNeutralCosserat::getWt(double t, const Vec2 &zeta) {
+    return NP->getWt(t,zeta(0));
+  }
+
   void Contour1sNeutralCosserat::updatePositions(double t, ContourFrame *frame) {
     NP->update(t,frame);
-    NA->updateAngleNormal(t,frame);
-    NA->updateAngleFirstTangent(t,frame);
-    NA->updateAngleSecondTangent(t,frame);
+    NP->updatePositionNormal(t,frame);
+    NP->updatePositionFirstTangent(t,frame);
+    NP->updatePositionSecondTangent(t,frame);
+  }
+
+  void Contour1sNeutralCosserat::updateVelocities(double t, ContourFrame *frame) {
+    NV->update(t,frame);
+  }
+
+  void Contour1sNeutralCosserat::updateJacobians(double t, ContourFrame *frame, int j) {
+    int qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getqSizeFull();
+
+    /******************************************************************  Jacobian of Translation  *******************************************************************************/
+    double sGlobal = frame->getEta(); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
+    double sLocalTrans_bodySpace;
+    int currentElementTrans;
+    // transform form the contour space(uMin - uMax) to the FlexibleBody1sCosserat space (0 - L)
+    double L = static_cast<FlexibleBody1sCosserat*>(parent)->getLength();
+    double l0 = L / static_cast<FlexibleBody1sCosserat*>(parent)->getNumberElements();
+
+    double sGlobal_bodySpace = (sGlobal - uMin) / (uMax - uMin) * L;
+    static_cast<FlexibleBody1sCosserat*>(parent)->BuildElementTranslation(sGlobal_bodySpace, sLocalTrans_bodySpace, currentElementTrans); // Lagrange parameter and number of translational element
+    double weightLeft = 1 - sLocalTrans_bodySpace / l0;
+    double weightRight = 1 - weightLeft;
+
+    Mat3xV Jacobian_trans(qSize, INIT, 0.);
+
+    if (parent->getType() == "FlexibleBody1s33Cosserat") {
+      // distribute the E to the nearby nodes
+      SqrMat Jacobian_trans_total(3, EYE);
+      // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
+      if (currentElementTrans == transNodes.size() - 1) { // the last translation element
+        Jacobian_trans.set(Index(0, 2), Index(6 * currentElementTrans, 6 * currentElementTrans + 2), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(Index(0, 2), Index(0, 2), weightRight * Jacobian_trans_total);
+      }
+      else {
+        Jacobian_trans.set(Index(0, 2), Index(6 * currentElementTrans, 6 * currentElementTrans + 2), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(Index(0, 2), Index(6 * currentElementTrans + 6, 6 * currentElementTrans + 8), weightRight * Jacobian_trans_total);
+      }
+    }
+    else if (parent->getType() == "FlexibleBody1s21Cosserat") {
+      // distribute the E to the nearby nodes
+      SqrMat Jacobian_trans_total(2, EYE);
+      // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
+      if (currentElementTrans == transNodes.size() - 1) { // the last translation element
+        Jacobian_trans.set(Index(0, 1), Index(3 * currentElementTrans, 3 * currentElementTrans + 1), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(Index(0, 1), Index(0, 1), weightRight * Jacobian_trans_total);
+      }
+      else {
+        Jacobian_trans.set(Index(0, 1), Index(3 * currentElementTrans, 3 * currentElementTrans + 1), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(Index(0, 1), Index(3 * currentElementTrans + 3, 3 * currentElementTrans + 4), weightRight * Jacobian_trans_total);
+      }
+    }
+
+    frame->setJacobianOfTranslation(static_cast<FlexibleBody1sCosserat*>(parent)->transformJacobian(Jacobian_trans),j);
+
+    /******************************************************************  Jacobian of Rotation  *******************************************************************************/
+    // calculate the local position
+    double sLocalRot_bodySpace;
+    int currentElementRot;
+    // linearly distribute the interpolated total Jacobian to the nearby nodes
+    // here transformation from sGlobal to rotational element starting point is done by sGlobal+nodeOffset in oder to use the BuildElementTranslation()
+    static_cast<FlexibleBody1s33Cosserat*>(parent)->BuildElementTranslation(sGlobal_bodySpace + l0 * 0.5, sLocalRot_bodySpace, currentElementRot);    // Lagrange parameter and number of translational element
+    weightLeft = 1 - sLocalRot_bodySpace / l0;
+    weightRight = 1 - weightLeft;
+
+    // TODO: index are different for open structure
+    Mat3xV Jacobian_rot(qSize, INIT, 0.);
+    if (parent->getType() == "FlexibleBody1s33Cosserat") {
+      Vec3 angles = NA->calculateStaggeredAngle(t,sGlobal);
+      SqrMat3 Jacobian_rot_total = ANGLE->computeT(angles);
+
+//      cout << "angles: " << angles << endl;
+//      cout << "Jacobian_rot_total:  " << Jacobian_rot_total << endl << endl;
+      if (currentElementRot == 0) { // the first rotational element
+        Jacobian_rot.set(Index(0, 2), Index(qSize - 3, qSize - 1), weightLeft * Jacobian_rot_total); //TODO:  all of these are different for 1D and 3D case, maybe we need diffenent stucutre for 1D and 3D;
+        Jacobian_rot.set(Index(0, 2), Index(6 * currentElementRot + 3, 6 * currentElementRot + 5), weightRight * Jacobian_rot_total);
+      }
+      else {
+        Jacobian_rot.set(Index(0, 2), Index(6 * currentElementRot - 3, 6 * currentElementRot - 1), weightLeft * Jacobian_rot_total);  //TODO:  all of these are different for 1D and 3D case, maybe we need diffenent stucutre for 1D and 3D;
+        Jacobian_rot.set(Index(0, 2), Index(6 * currentElementRot + 3, 6 * currentElementRot + 5), weightRight * Jacobian_rot_total);
+      }
+    }
+    else if (parent->getType() == "FlexibleBody1s21Cosserat") {
+      // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
+      if (currentElementRot == 0) { // the first rotational element
+        Jacobian_rot(2, qSize - 1) = weightLeft;
+        Jacobian_rot(2, 3 * currentElementRot + 2) = weightRight;
+      }
+      else {
+        Jacobian_rot(2, 3 * currentElementRot - 1) = weightLeft;
+        Jacobian_rot(2, 3 * currentElementRot + 2) = weightRight;
+      }
+    }
+
+    frame->setJacobianOfRotation(static_cast<FlexibleBody1sCosserat*>(parent)->transformJacobian(Jacobian_rot),j);
   }
 
 //  void Contour1sNeutralCosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {

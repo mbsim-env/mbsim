@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
 
       virtual fmatvec::Vec3 getPosition(double t, double s);
       virtual fmatvec::SqrMat3 getOrientation(double t, double s);
-      virtual double getLocalTwist(double t, double s) { return 0; }
+      virtual fmatvec::Vec3 getAngles(double t, double s) { return fmatvec::Vec3(); }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }

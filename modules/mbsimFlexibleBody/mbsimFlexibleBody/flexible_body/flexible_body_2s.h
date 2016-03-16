@@ -52,7 +52,6 @@ namespace MBSimFlexibleBody {
 //      double getLength(){ return L; }
 
       void addFrame(Frame2s *frame);
-      void addFrame(MBSim::ContourFrame *frame);
       using FlexibleBodyContinuum<fmatvec::Vec2>::addFrame;
 
       virtual void updatePositions(double t, Frame2s* frame);
