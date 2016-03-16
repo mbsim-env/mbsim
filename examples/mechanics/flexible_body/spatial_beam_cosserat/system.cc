@@ -5,10 +5,12 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_contour_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include <mbsim/functions/kinematics/kinematics.h>
-#include "mbsimFlexibleBody/contours/flexible_band2.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
 // End Contact
 #include "mbsim/environment.h"
 
@@ -99,7 +101,7 @@ System::System(const string &projectName) :
   rodCont->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
-  FlexibleBand2 * top = new FlexibleBand2("Top");
+  FlexibleBand * top = new FlexibleBand("Top");
   Vec nodes(elements + 1);
   for (int i = 0; i <= elements; i++)
     nodes(i) = i * 1. / elements;
@@ -154,15 +156,15 @@ System::System(const string &projectName) :
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
-//  Contact *contact = new Contact("Contact");
-//  contact->setNormalForceLaw(new UnilateralConstraint);
-//  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
-//  contact->connect(ball->getContour("Point"), top);
-//  contact->enableOpenMBVNormalForce();
-//  contact->enableOpenMBVTangentialForce();
-//  contact->enableOpenMBVContactPoints();
-//
-//  this->addLink(contact);
+  Contact *contact = new Contact("Contact");
+  contact->setNormalForceLaw(new UnilateralConstraint);
+  contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
+  contact->connect(ball->getContour("Point"), top);
+  contact->enableOpenMBVNormalForce();
+  contact->enableOpenMBVTangentialForce();
+  contact->enableOpenMBVContactPoints(0.01);
+
+  this->addLink(contact);
 
 // End Contact ---------------------------------------------------
 }
