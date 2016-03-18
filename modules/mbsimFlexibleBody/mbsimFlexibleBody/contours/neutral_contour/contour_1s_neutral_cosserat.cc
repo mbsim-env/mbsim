@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
 
     if (stage == preInit) {
       NP = createNeutralPosition();
-      NP->setBinormalDir(-R->getOrientation().col(2));
+      NP->setBinormalDir(-R->getOrientation(0.).col(2));
       NV = createNeutralVelocity();
       NA = createNeutralAngle();
       NDA = createNeutralDotangle();
@@ -79,8 +79,8 @@ namespace MBSimFlexibleBody {
 
       Vec u(NV->getuVec());
       for (int i = 0; i < u.size() - degU; i++)
-        nodes.push_back(u(i));
-      nodes.push_back(uMax);
+        etaNodes.push_back(u(i));
+      etaNodes.push_back(uMax);
     }
 
     Contour1sNeutralFactory::init(stage);

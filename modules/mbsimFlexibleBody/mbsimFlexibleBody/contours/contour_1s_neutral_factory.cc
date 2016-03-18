@@ -9,7 +9,11 @@
 
 #include "contour_1s_neutral_factory.h"
 
-#include <mbsim/utils/rotarymatrices.h>
+#include "mbsim/frames/floating_contour_frame.h"
+#include "mbsim/utils/rotarymatrices.h"
+
+using namespace std;
+using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
@@ -21,7 +25,10 @@ namespace MBSimFlexibleBody {
   Contour1sNeutralFactory::~Contour1sNeutralFactory() {
   }
 
-
-
+  ContourFrame* Contour1sNeutralFactory::createContourFrame(const string &name) {
+    FloatingContourFrame *frame = new FloatingContourFrame(name);
+    frame->setContourOfReference(this);
+    return frame;
+  }
 
 } /* namespace MBSimFlexibleBody */
