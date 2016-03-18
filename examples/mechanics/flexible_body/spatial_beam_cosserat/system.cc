@@ -160,8 +160,8 @@ System::System(const string &projectName) :
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"), top);
-  contact->enableOpenMBVNormalForce();
-  contact->enableOpenMBVTangentialForce();
+  contact->enableOpenMBVNormalForce(0.00001);
+  contact->enableOpenMBVTangentialForce(0.00001);
   contact->enableOpenMBVContactPoints(0.01);
 
   this->addLink(contact);
