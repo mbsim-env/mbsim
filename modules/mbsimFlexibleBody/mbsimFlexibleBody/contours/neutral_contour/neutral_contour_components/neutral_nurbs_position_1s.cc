@@ -37,8 +37,10 @@ namespace MBSimFlexibleBody {
     return t / nrm2(t);
   }
 
-  Vec3 NeutralNurbsPosition1s::getWt(double t, double s) {
-    return binormalDir;
+  Vec3 NeutralNurbsPosition1s::getWt(double time, double s) {
+    Vec3 t = getWs(time,s);
+    Vec3 n = crossProduct(t,binormalDir);
+    return crossProduct(n,t);
   }
 
   void NeutralNurbsPosition1s::update(double t, ContourFrame *frame) {
@@ -55,8 +57,8 @@ namespace MBSimFlexibleBody {
     frame->getOrientation(false).set(1, getWs(t,frame->getEta()));
   }
 
-  void NeutralNurbsPosition1s::updatePositionSecondTangent(double time, ContourFrame *frame) {
-    frame->getOrientation(false).set(2, binormalDir);
+  void NeutralNurbsPosition1s::updatePositionSecondTangent(double t, ContourFrame *frame) {
+    frame->getOrientation(false).set(2, getWt(t,frame->getEta()));
   }
 
   void NeutralNurbsPosition1s::buildNodelist(double t) {
