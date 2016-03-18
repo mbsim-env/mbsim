@@ -105,6 +105,7 @@ namespace MBSimFlexibleBody {
         }
       }
     }
+    updEle = false;
   }
 
   void FlexibleBody1s33Cosserat::GlobalVectorContribution(int n, const Vec& locVec, Vec& gloVec) {
@@ -202,7 +203,7 @@ namespace MBSimFlexibleBody {
 
     Jacobian_trans.set(Index(0, 2), Index(6 * node, 6 * node + 2), SqrMat(3, EYE)); // translation
 
-    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans);
+    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans, j);
 
     // Rotational Node
     // TODO: Is it necessary to separate in two functions?
@@ -211,7 +212,7 @@ namespace MBSimFlexibleBody {
 
     Jacobian_rot.set(Index(0, 2), Index(6 * node + 3, 6 * node + 5), angle->computeT(p)); // rotation
 
-    frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot, j);
   }
 
   void FlexibleBody1s33Cosserat::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
@@ -282,17 +283,6 @@ namespace MBSimFlexibleBody {
       int j = 6 * i;
       LLM[k](Index(j + 3, j + 5)) = facLL(discretization[i]->getM()(Index(3, 5)));
     }
-  }
-
-  void FlexibleBody1s33Cosserat::updateh(double t, int k) {
-    /* translational elements */
-    FlexibleBody1sCosserat::updateh(t);
-
-    /* rotational elements */
-    for (int i = 0; i < (int) rotationDiscretization.size(); i++)
-      rotationDiscretization[i]->computeh(getqRotationElement(t,i), getuRotationElement(t,i)); // compute attributes of finite element
-    for (int i = 0; i < (int) rotationDiscretization.size(); i++)
-      GlobalVectorContributionRotation(i, rotationDiscretization[i]->geth(), h[0]); // assemble
   }
 
   void FlexibleBody1s33Cosserat::setNumberElements(int n) {
@@ -630,4 +620,3 @@ namespace MBSimFlexibleBody {
 
   }
 }
-

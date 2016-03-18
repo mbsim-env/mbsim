@@ -25,7 +25,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1sCosserat::updateh(double t, int k) {
     /* translational elements */
-    FlexibleBodyContinuum<double>::updateh(t,k);
+    FlexibleBody1s::updateh(t,k);
 
     /* rotational elements */
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)

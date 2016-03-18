@@ -385,6 +385,9 @@ namespace MBSimFlexibleBody {
   void Contour1sNeutralCosserat::resetUpToDate() {
     Contour1sNeutralFactory::resetUpToDate();
     NP->resetUpToDate();
+    NV->resetUpToDate();
+    NA->resetUpToDate();
+    NDA->resetUpToDate();
   }
 
 }
