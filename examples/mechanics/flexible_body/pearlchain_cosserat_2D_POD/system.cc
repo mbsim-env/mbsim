@@ -1,6 +1,8 @@
 #include "system.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
@@ -8,6 +10,10 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+
+#include "mbsim/contact_kinematics/point_planarcontour.h"
+
+#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -162,20 +168,21 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 	Contour1sNeutralFactory * cont = rodInfo->createNeutralPhase();
 
 	rodInfo->initInfo();
-	rodInfo->updateStateDependentVariables(0.);
 
 	for(unsigned int i=0;i<balls.size();i++) {
-		Vec q0(3,INIT,0.);
-		double xL = i*cont->getAlphaEnd()/balls.size();
-		ContourPointData cp;
-		cp.getContourParameterType() = ContourPointData::continuum;
-		cp.getLagrangeParameterPosition()(0) = xL;
+          Vec q0(3,INIT,0.);
+          double xL = i*1.0/balls.size(); // TODO
+          Vec2 zeta;
+          zeta(0) = xL;
+          FixedContourFrame P("P",zeta,cont);
+          P.setParent(rodInfo);
+          Vec3 r = P.getPosition(0.);
+          q0(0) = r(0);
+          q0(1) = r(1);
 
-		cont->updateKinematicsForFrame(cp,Frame::position_cosy);
-		q0(0) = cp.getFrameOfReference().getPosition()(0);
-		q0(1) = cp.getFrameOfReference().getPosition()(1);
-		q0(2) = - AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + 0.5 * M_PI;
-		balls[i]->setInitialGeneralizedPosition(q0);
+          SqrMat3 A = P.getOrientation(0.);
+          q0(2) = -AIK2Cardan(A)(2) + 0.5 * M_PI;
+          balls[i]->setInitialGeneralizedPosition(q0);
 	}
 
 	delete rodInfo;
@@ -193,8 +200,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		Contact *contact = new Contact("Band_"+balls[i]->getName());
 		contact->setNormalForceLaw(new BilateralConstraint);
 		contact->setNormalImpactLaw(new BilateralImpact);
-		contact->connect(balls[i]->getContour("COG"),rodCont);
+		contact->connect(balls[i]->getContour("COG"),rodCont,new ContactKinematicsPointPlanarContour);
 		contact->enableOpenMBVContactPoints(0.01);
+                contact->setSearchAllContactPoints(true);
 		this->addLink(contact);
 	}
 
