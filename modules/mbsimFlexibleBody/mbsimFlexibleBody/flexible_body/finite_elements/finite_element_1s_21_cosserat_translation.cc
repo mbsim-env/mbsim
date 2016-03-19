@@ -161,6 +161,26 @@ namespace MBSimFlexibleBody {
     return X;
   }
 
+  Vec3 FiniteElement1s21CosseratTranslation::getPosition(const Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21CosseratTranslation::getPosition): not implemented!");
+  }
+
+  SqrMat3 FiniteElement1s21CosseratTranslation::getOrientation(const Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21CosseratTranslation::getOrientation): not implemented!");
+  }
+
+  Vec3 FiniteElement1s21CosseratTranslation::getVelocity (const Vec& qElement, const Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21CosseratTranslation::getVelocity): not implemented!");
+  }
+
+  Vec3 FiniteElement1s21CosseratTranslation::getAngularVelocity(const Vec& qElement, const Vec& qpElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21CosseratTranslation::getAngularVelocity): not implemented!");
+  }
+
+  Mat FiniteElement1s21CosseratTranslation::computeJXqG(const Vec& qElement, double s) {
+    throw MBSim::MBSimError("(FiniteElement1s21CosseratTranslation::computeJXqG): not implemented!");
+  }
+
   void FiniteElement1s21CosseratTranslation::initM() {
     /* constant element mass matrix */
     M(0,0) = 0.5*rho*A*l0;
