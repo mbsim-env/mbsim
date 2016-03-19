@@ -20,7 +20,7 @@
 #ifndef _FINITE_ELEMENT_1S_21_COSSERAT_TRANSLATION_H_
 #define _FINITE_ELEMENT_1S_21_COSSERAT_TRANSLATION_H_
 
-#include "mbsim/discretization_interface.h"
+#include "mbsimFlexibleBody/discretization_interface.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
 #include "mbsimFlexibleBody/pointer.h"

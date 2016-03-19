@@ -8,6 +8,7 @@ libflexiblebody_la_SOURCES = flexible_body_ffr.cc\
 			     flexible_body_1s_33_rcm.cc\
 			     flexible_body_1s_33_ancf.cc\
 			     flexible_body_1s_cosserat.cc\
+			     flexible_body_1s_21_cosserat.cc\
 			     flexible_body_1s_33_cosserat.cc\
 			     flexible_body_1s_23_bta.cc\
 			     flexible_body_2s.cc\
@@ -27,6 +28,7 @@ flexiblebodyinclude_HEADERS = flexible_body_ffr.h\
 			      flexible_body_1s_33_rcm.h\
 			      flexible_body_1s_33_ancf.h\
 			      flexible_body_1s_cosserat.h\
+			      flexible_body_1s_21_cosserat.h\
 			      flexible_body_1s_33_cosserat.h\
 			      flexible_body_1s_23_bta.h\
 			      flexible_body_2s.h\

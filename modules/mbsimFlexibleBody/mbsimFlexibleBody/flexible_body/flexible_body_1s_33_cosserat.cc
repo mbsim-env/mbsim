@@ -320,7 +320,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getPositions(double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getPositions(double t, double sGlobal) {
 //    double sLocal;
 //    int currentElement;
 //    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
@@ -335,7 +335,7 @@ namespace MBSimFlexibleBody {
     return temp;
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getVelocities(double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getVelocities(double t, double sGlobal) {
 //    double sLocal;
 //    int currentElement;
 //    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
