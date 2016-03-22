@@ -18,7 +18,8 @@ int main (int argc, char* argv[]) {
   string nameFullSystem = "MBS_Full";
   string nameReducedSystem = "MBS_reduced";
   System *sys;
-  ThetaTimeSteppingIntegrator *integrator;
+  //ThetaTimeSteppingIntegrator *integrator;
+  TimeSteppingIntegrator *integrator;
 
   double tEnd = 3e-2;
   double dtFull = 1e-4;
@@ -31,7 +32,8 @@ int main (int argc, char* argv[]) {
     sys->setStopIfNoConvergence(true,true);
     sys->initialize();
 
-    integrator = new ThetaTimeSteppingIntegrator;
+//    integrator = new ThetaTimeSteppingIntegrator;
+    integrator = new TimeSteppingIntegrator;
     integrator->setEndTime(tEnd);
     integrator->setStepSize(dtFull);
     integrator->setPlotStepSize(dtPlot);
@@ -57,7 +59,8 @@ int main (int argc, char* argv[]) {
     sys->setStopIfNoConvergence(true,true);
     sys->initialize();
 
-    integrator = new ThetaTimeSteppingIntegrator;
+//    integrator = new ThetaTimeSteppingIntegrator;
+    integrator = new TimeSteppingIntegrator;
     integrator->setEndTime(tEnd);
     integrator->setStepSize(dtRed);
     integrator->setPlotStepSize(dtPlot);

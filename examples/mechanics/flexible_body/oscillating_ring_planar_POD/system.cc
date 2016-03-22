@@ -7,6 +7,8 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
 
+#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
