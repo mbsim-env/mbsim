@@ -5,6 +5,10 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_contour_frame.h"
+#include "mbsimFlexibleBody/frames/frame_2s.h"
+#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
@@ -60,13 +64,27 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   disk->setu0(u0);
   this->addObject(disk);
 
+  NurbsDisk2s *contour = new NurbsDisk2s("SurfaceContour");
+  contour->enableOpenMBV();
+  disk->addContour(contour);
+  Vec nodes(2);
+  nodes(0) = rI;
+  nodes(1) = rO;
+  contour->setEtaNodes(nodes);
+
+  disk->addFrame(new Frame2s("COG",Vec2()));
+//  disk->addFrame(new FixedContourFrame("P","[0.1;0]",contour));
+//  disk->getFrame("P")->enableOpenMBV(0.01);
+
   // bearing
   Joint *joint = new Joint("Clamping");
   joint->setForceDirection(Mat("[1,0,0;0,1,0;0,0,1]"));
   joint->setMomentDirection(Mat("[1,0;0,1;0,0]"));
-  joint->connect(disk->getFrame("COG"),this->getFrame("I"));
+  joint->connect(this->getFrame("I"),disk->getFrame("COG"));
   joint->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1.e6,0.)));
   joint->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1.e6,0.)));
+//  joint->setForceLaw(new BilateralConstraint);
+//  joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
 
   /* ball */ 
@@ -131,6 +149,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
     contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
     contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"), new ContactKinematicsPointNurbsDisk2s());
+    contact[k]->enableOpenMBVContactPoints(0.01);
     this->addLink(contact[k]);
   }
 
