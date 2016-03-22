@@ -21,8 +21,6 @@
 #define _FINITE_ELEMENT_2S_13_MFR_MINDLIN_H_
 
 #include "mbsimFlexibleBody/discretization_interface.h"
-#include "mbsim/mbsim_event.h"
-
 #include<cmath>
 
 namespace MBSimFlexibleBody {
@@ -56,44 +54,44 @@ namespace MBSimFlexibleBody {
       virtual const fmatvec::Vec& geth() const;
       virtual const fmatvec::SqrMat& getdhdq() const;
       virtual const fmatvec::SqrMat& getdhdu() const;
-      virtual int getqSize() const;
-      virtual int getuSize() const;
+      inline int getqSize() const { return RefDofs + 4*NodeDofs; }
+      inline int getuSize() const { return RefDofs + 4*NodeDofs; }
       virtual void computeM(const fmatvec::Vec& q);
       virtual void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeGravitationalEnergy(const fmatvec::Vec& q);
       virtual double computeElasticEnergy(const fmatvec::Vec& q);
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& q,const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::Vec3 getAngularVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec2 &s);
+      virtual fmatvec::Mat getJacobianOfMotion(const fmatvec::Vec& qElement, const fmatvec::Vec2 &s);
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::SymMat& getK() const;
       const fmatvec::SymMat& getM() const; 
-      const fmatvec::SymMat& getM_RR() const;
-      const fmatvec::Mat& getN_compl() const;
-      const fmatvec::SqrMat& getN_ij(int i, int j) const; 
-      const fmatvec::RowVec& getNR_ij(int i, int j) const;
-      const fmatvec::Vec& getR_compl() const;
-      const fmatvec::SymMat& getR_ij() const; 
-      void setEModul(double E_);
-      void setPoissonRatio(double nu_);
-      void setDensity(double rho_);
-      void setShearCorrectionFactor(double alphaS_);
+      const fmatvec::SymMat& getK() const { return *K; }
+      const fmatvec::SymMat& getM_RR() const { return *M_RR; }
+      const fmatvec::Mat& getN_compl() const { return *N_compl; }
+      const fmatvec::SqrMat& getN_ij(int i, int j) const { return *(N_ij[i][j]); }
+      const fmatvec::RowVec& getNR_ij(int i, int j) const { return *(NR_ij[i][j]); }
+      const fmatvec::Vec& getR_compl() const { return *R_compl; }
+      const fmatvec::SymMat& getR_ij() const { return *R_ij; }
+      void setEModul(double E_) { E = E_; }
+      void setPoissonRatio(double nu_) { nu = nu_; }
+      void setDensity(double rho_) { rho = rho_; }
+      void setShearCorrectionFactor(double alphaS_) { alphaS = alphaS_; }
       /***************************************************/
 
       /* Freeer */
-      void freeK();
-      void freeM_RR();
-      void freeN_compl();
-      void freeN_ij(int i, int j);
-      void freeNR_ij(int i, int j);
-      void freeR_compl();
-      void freeR_ij();
+      void freeK() { delete K; K=0; }
+      void freeM_RR() { delete M_RR; M_RR=0; }
+      void freeN_ij(int i, int j) { delete N_ij[i][j]; N_ij[i][j]=0; }
+      void freeN_compl() { delete N_compl; N_compl=0; }
+      void freeNR_ij(int i, int j) { delete NR_ij[i][j]; NR_ij[i][j]=0; }
+      void freeR_compl() { delete R_compl; R_compl=0; }
+      void freeR_ij() { delete R_ij; R_ij=0; }
       /***************************************************/
 
       /*!
@@ -160,14 +158,16 @@ namespace MBSimFlexibleBody {
        * \param outer thickness of whole disk
        * \return state at contour point 
        */
-      fmatvec::Vec computeState(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &qElement,const fmatvec::Vec &qpElement,const fmatvec::Vec &s,double d1,double d2);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(const fmatvec::Vec &NodeCoordinates, const fmatvec::Vec &qElement, const fmatvec::Vec2 &s, double d1, double d2);
+
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(const fmatvec::Vec &NodeCoordinates, const fmatvec::Vec &qElement, const fmatvec::Vec &qpElement, const fmatvec::Vec2 &s, double d1, double d2);
 
       /*! 
        * \brief compute Jacobian of contact description at contour point
        * \param radial and azimuthal coordinates of corner nodes
        * \param Lagrangian position of contour point
        */
-      fmatvec::Mat JGeneralized(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &s);
+      fmatvec::Mat JGeneralized(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec2 &s);
 
     private:
       /**
@@ -256,43 +256,6 @@ namespace MBSimFlexibleBody {
       fmatvec::SymMat *R_ij;
   };
 
-  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::geth() const { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::geth): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!"); } 
-  inline int FiniteElement2s13MFRMindlin::getqSize() const { return RefDofs + 4*NodeDofs; }
-  inline int FiniteElement2s13MFRMindlin::getuSize() const { return RefDofs + 4*NodeDofs; }
-  inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); } 
-  inline void FiniteElement2s13MFRMindlin::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeh): Not implemented!"); } 
-  inline void FiniteElement2s13MFRMindlin::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeGravitationalEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeGravitationalEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeElasticEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeElasticEnergy): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computePosition(const fmatvec::Vec& q, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computePosition): Not implemented!"); }
-  inline fmatvec::SqrMat FiniteElement2s13MFRMindlin::computeOrientation(const fmatvec::Vec& q, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeOrientation): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeVelocity): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeAngularVelocity): Not implemented!"); }
-  inline fmatvec::Mat FiniteElement2s13MFRMindlin::computeJacobianOfMotion(const fmatvec::Vec& qG,const fmatvec::Vec2 &zeta) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!"); }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getK() const { return *K; }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM_RR() const { return *M_RR; }
-  inline const fmatvec::Mat& FiniteElement2s13MFRMindlin::getN_compl() const { return *N_compl; }
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getN_ij(int i, int j) const { return *(N_ij[i][j]); }
-  inline const fmatvec::RowVec& FiniteElement2s13MFRMindlin::getNR_ij(int i, int j) const { return *(NR_ij[i][j]); }
-  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::getR_compl() const { return *R_compl; }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getR_ij() const { return *R_ij; }
-  inline void FiniteElement2s13MFRMindlin::setEModul(double E_) { E = E_; }
-  inline void FiniteElement2s13MFRMindlin::setPoissonRatio(double nu_) { nu = nu_; }
-  inline void FiniteElement2s13MFRMindlin::setDensity(double rho_) { rho = rho_; }
-  inline void FiniteElement2s13MFRMindlin::setShearCorrectionFactor(double alphaS_) { alphaS = alphaS_; }
-  inline void FiniteElement2s13MFRMindlin::freeK() { delete K; K=0; }
-  inline void FiniteElement2s13MFRMindlin::freeM_RR() { delete M_RR; M_RR=0; }
-  inline void FiniteElement2s13MFRMindlin::freeN_ij(int i, int j) { delete N_ij[i][j]; N_ij[i][j]=0; }
-  inline void FiniteElement2s13MFRMindlin::freeN_compl() { delete N_compl; N_compl=0; }
-  inline void FiniteElement2s13MFRMindlin::freeNR_ij(int i, int j) { delete NR_ij[i][j]; NR_ij[i][j]=0; }
-  inline void FiniteElement2s13MFRMindlin::freeR_compl() { delete R_compl; R_compl=0; }
-  inline void FiniteElement2s13MFRMindlin::freeR_ij() { delete R_ij; R_ij=0; }
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeState(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &qElement,const fmatvec::Vec &qpElement,const fmatvec::Vec &s,double d1,double d2) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::computeState): Not implemented!"); }
-  inline fmatvec::Mat FiniteElement2s13MFRMindlin::JGeneralized(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &s) { throw MBSim::MBSimError("(FiniteElement2s13MFRMindlin::JGeneralized): Not implemented!"); }
 }
 
 #endif /* _FINITE_ELEMENT_2S_13_MFR_MINDLIN_H_ */

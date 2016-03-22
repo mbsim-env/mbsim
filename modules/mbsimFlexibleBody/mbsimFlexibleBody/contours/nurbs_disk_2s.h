@@ -119,7 +119,7 @@ namespace MBSimFlexibleBody {
        * \param cartesian vector in world system
        * \return cylindrical coordinates
        */
-      fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
+      fmatvec::Vec transformCW(double t, const fmatvec::Vec& WrPoint);
 
 #ifdef HAVE_NURBS
       /*! 

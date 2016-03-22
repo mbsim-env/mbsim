@@ -120,9 +120,9 @@ namespace MBSimFlexibleBody {
       double getOuterRadius() const { return Ra; }
       double getAzimuthalDegree() const { return degU; }
       double getRadialDegree() const { return degV; }
-      fmatvec::SqrMat getA() const { return A; }
-      fmatvec::SqrMat getG() const { return G; }
-      void setReferenceInertia(double m0_, fmatvec::SymMat J0_) { m0 = m0_; J0 = J0_; }
+      fmatvec::SqrMat3& getA(double t) { if(updAG) updateAG(t); return A; }
+      fmatvec::SqrMat3& getG(double t) { if(updAG) updateAG(t); return G; }
+      void setReferenceInertia(double m0_, fmatvec::SymMat3 J0_) { m0 = m0_; J0 = J0_; }
       void setLockType(LockType LT_) { LType = LT_; }
       /***************************************************/
 
@@ -143,9 +143,9 @@ namespace MBSimFlexibleBody {
        * \param Cartesian vector in world system of plate
        * \return cylindrical coordinates
        */
-      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint) = 0;
+      virtual fmatvec::Vec transformCW(double t, const fmatvec::Vec& WrPoint) = 0;
 
-      void resetUpToDate() { FlexibleBody2s::resetUpToDate(); updExt = true; }
+      void resetUpToDate();
 
       void updateExt(double t);
 
@@ -211,7 +211,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief inertia of the attached shaft in local coordinates
        */
-      fmatvec::SymMat J0;
+      fmatvec::SymMat3 J0;
 
       /**
        * \brief degree of surface interpolation in radial and azimuthal direction
@@ -290,12 +290,12 @@ namespace MBSimFlexibleBody {
       /**
        * \brief transformation matrix of coordinates of the moving frame of reference into the reference frame
        */
-      fmatvec::SqrMat A;
+      fmatvec::SqrMat3 A;
 
       /**
        * \brief transformation matrix of the time derivates of the angles into tho angular velocity in reference coordinates
        */
-      fmatvec::SqrMat G;
+      fmatvec::SqrMat3 G;
 
       /*
        * \brief Jacobian for condensation with size Dofs x qSize
@@ -330,7 +330,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief update the transformation matrices A and G
        */
-      virtual void updateAG() = 0;
+      virtual void updateAG(double t) = 0;
 
       /*!
        * \return thickness of disk at radial coordinate
@@ -338,7 +338,7 @@ namespace MBSimFlexibleBody {
        */
       double computeThickness(const double &r_);
 
-      bool updExt;
+      bool updExt, updAG;
   };
 
 }

@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
     
             //compute radial and azimuthal nurbsdisk-coordinates out of alpha (saved in the LagrangeParameterPosition)
 //            MBSim::ContourPointData cp_nurbsdisk;
-            Vec2 zeta = nurbsdisk->transformCW( AWK_disk.T() * (WP_circle - r_disk) )(0,1); // position of the point in the cylinder-coordinates of the disk
+            Vec2 zeta = nurbsdisk->transformCW(t, AWK_disk.T() * (WP_circle - r_disk) )(0,1); // position of the point in the cylinder-coordinates of the disk
     
             //compute the derivates of the radial and the azimuthal coordinates with respect to alpha
             SqrMat A_inv(3,EYE);
@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
     WP_circle = circle->getFrame()->getPosition(t) + circle->getRadius() * circle->getFrame()->getOrientation(t) * WP_circle;
 
     //get the position on the nurbsdisk
-    Vec2 zeta = nurbsdisk->transformCW(nurbsdisk->getOrientation(t).T()*(WP_circle - nurbsdisk->getPosition(t)))(0,1); // position of the point in the cylinder-coordinates of the disk
+    Vec2 zeta = nurbsdisk->transformCW(t, nurbsdisk->getOrientation(t).T()*(WP_circle - nurbsdisk->getPosition(t)))(0,1); // position of the point in the cylinder-coordinates of the disk
     Vec WP_nurbsdisk = nurbsdisk->getPosition(t,zeta);
 
     return WP_circle - WP_nurbsdisk;

@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
 
   void ContactKinematicsPointNurbsDisk2s::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
     cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of the point in worldcoordinates
-    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(nurbsdisk->getOrientation(t).T()*(cFrame[ipoint]->getPosition(false) - nurbsdisk->getPosition(t)))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
+    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(t,nurbsdisk->getOrientation(t).T()*(cFrame[ipoint]->getPosition(false) - nurbsdisk->getPosition(t)))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
 
     /*TESTING*/
     //cout << "Platten-Posi:" << nurbsdisk->getFrame()->getPosition() << endl;

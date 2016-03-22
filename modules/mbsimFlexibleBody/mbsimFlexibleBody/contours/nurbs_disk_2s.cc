@@ -297,8 +297,8 @@ namespace MBSimFlexibleBody {
     Contour2s::plot(t, dt);
   }
 
-  Vec NurbsDisk2s::transformCW(const Vec& WrPoint) {
-    return (static_cast<FlexibleBody2s13*>(parent))->transformCW(WrPoint);
+  Vec NurbsDisk2s::transformCW(double t, const Vec& WrPoint) {
+    return (static_cast<FlexibleBody2s13*>(parent))->transformCW(t,WrPoint);
   }
 
 #ifdef HAVE_NURBS

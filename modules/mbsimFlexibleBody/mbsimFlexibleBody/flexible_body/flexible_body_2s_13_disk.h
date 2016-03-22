@@ -80,13 +80,13 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
-      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
+      virtual fmatvec::Vec transformCW(double t, const fmatvec::Vec& WrPoint);
       /***************************************************/
 
     protected:
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
       virtual void initMatrices();
-      virtual void updateAG();
+      virtual void updateAG(double t);
       /***************************************************/
 
   };

@@ -20,8 +20,8 @@
 #ifndef _FINITE_ELEMENT_2S_13_DISK_H_
 #define _FINITE_ELEMENT_2S_13_DISK_H_
 
-#include <cmath>
 #include "mbsimFlexibleBody/discretization_interface.h"
+#include <cmath>
 
 namespace MBSimFlexibleBody {
 

@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13MFRMindlin();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY CONTINUUM */
-      using FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
+//      using FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -60,9 +60,21 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
-      /***************************************************/
+
+      fmatvec::Vec3 getPosition(double t);
+      fmatvec::SqrMat3 getOrientation(double t);
+
+      virtual void updatePositions(double t, Frame2s* frame);
+      virtual void updateVelocities(double t, Frame2s* frame);
+      virtual void updateAccelerations(double t, Frame2s* frame);
+      virtual void updateJacobians(double t, Frame2s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, Frame2s* frame);
+
+      virtual void updatePositions(double t, NodeFrame* frame);
+      virtual void updateVelocities(double t, NodeFrame* frame);
+      virtual void updateAccelerations(double t, NodeFrame* frame);
+      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
@@ -73,13 +85,13 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
-      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
+      virtual fmatvec::Vec transformCW(double t, const fmatvec::Vec& WrPoint);
       /***************************************************/
 
     protected:
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
       virtual void initMatrices();
-      virtual void updateAG();
+      virtual void updateAG(double t);
       /***************************************************/
 
       /*!
@@ -118,11 +130,6 @@ namespace MBSimFlexibleBody {
       fmatvec::SymMat* R_ij;
   };
 
-  inline void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!"); }
-  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
-  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
-
 }
 
 #endif /* _FLEXIBLE_BODY_2S_13_MFR_MINDLIN_H_ */
-

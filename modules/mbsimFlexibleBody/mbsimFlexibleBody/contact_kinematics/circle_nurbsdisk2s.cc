@@ -77,7 +77,7 @@ namespace MBSimFlexibleBody {
     P_circle = circle->getFrame()->getPosition(t) + circle->getRadius() * circle->getFrame()->getOrientation(t) * P_circle;
     cFrame[icircle]->setPosition(P_circle); // position of the point in world coordinates
 
-    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(nurbsdisk->getOrientation(t).T()*(cFrame[icircle]->getPosition(false) - nurbsdisk->getPosition(t)))(0,1));
+    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(t,nurbsdisk->getOrientation(t).T()*(cFrame[icircle]->getPosition(false) - nurbsdisk->getPosition(t)))(0,1));
 
     if(nurbsdisk->isZetaOutside(cFrame[inurbsdisk]->getZeta()))
       g = 1.;

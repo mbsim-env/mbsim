@@ -13,7 +13,8 @@ libflexiblebody_la_SOURCES = flexible_body_ffr.cc\
 			     flexible_body_1s_23_bta.cc\
 			     flexible_body_2s.cc\
 			     flexible_body_2s_13.cc\
-			     flexible_body_2s_13_disk.cc
+			     flexible_body_2s_13_disk.cc\
+			     flexible_body_2s_13_mfr_mindlin.cc
 
 libflexiblebody_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
 libflexiblebody_la_LIBADD = finite_elements/libfe.la
@@ -33,4 +34,5 @@ flexiblebodyinclude_HEADERS = flexible_body_ffr.h\
 			      flexible_body_1s_23_bta.h\
 			      flexible_body_2s.h\
 			      flexible_body_2s_13.h\
-			      flexible_body_2s_13_disk.h
+			      flexible_body_2s_13_disk.h\
+			      flexible_body_2s_13_mfr_mindlin.h

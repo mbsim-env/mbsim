@@ -17,17 +17,14 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_mfr_mindlin.h"
-#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+#include "mbsimFlexibleBody/frames/frame_2s.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/rotarymatrices.h>
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/nurbsdisk.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -58,18 +55,18 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13MFRMindlin::updateM(double t, int k) {
     SymMat Mext = MConst.copy(); // copy constant mass matrix parts
-    Vec qf = qext(RefDofs, Dofs - 1).copy();
+    Vec qf = getqExt(t)(RefDofs, Dofs - 1).copy();
 
     /* M_RR is constant */
     /* M_RTheta */
     Vec u_bar = (*R_compl) + (*N_compl) * qf;
-    SqrMat M_RTheta = (-A) * tilde(u_bar) * G;
+    SqrMat3 M_RTheta = (-getA(t)) * tilde(u_bar) * getG(t);
 
     /* M_RF */
-    Mat M_RF = Mat(3, Dofs - RefDofs, INIT, 0.); //= A*(*N_compl);
+    Mat3xV M_RF = Mat3xV(Dofs - RefDofs, INIT, 0.); //= A*(*N_compl);
 
     /* M_ThetaTheta */
-    SymMat I(3, INIT, 0.);
+    SymMat3 I(INIT, 0.);
 
     I(0, 0) = (*R_ij)(1, 1) + (*R_ij)(2, 2) + 2. * ((*NR_ij[1][1]) + (*NR_ij[2][2])) * qf + qf.T() * ((*N_ij[1][1]) + (*N_ij[2][2])) * qf;
     I(0, 1) = -((*R_ij)(1, 0) + ((*NR_ij[1][0]) + (*NR_ij[0][1])) * qf + qf.T() * (*N_ij[1][0]) * qf);
@@ -78,16 +75,16 @@ namespace MBSimFlexibleBody {
     I(1, 2) = -((*R_ij)(2, 1) + ((*NR_ij[2][1]) + (*NR_ij[1][2])) * qf + qf.T() * (*N_ij[2][1]) * qf);
     I(2, 2) = (*R_ij)(1, 1) + (*R_ij)(0, 0) + 2. * ((*NR_ij[1][1]) + (*NR_ij[0][0])) * qf + qf.T() * ((*N_ij[1][1]) + (*N_ij[0][0])) * qf;
 
-    Mat M_ThetaTheta = G.T() * (I + J0) * G;
+    Mat3x3 M_ThetaTheta = G.T() * (I + J0) * G;
 
     /* M_ThetaF */
-    Mat qN(3, Dofs - RefDofs);
+    Mat3xV qN(Dofs - RefDofs);
 
-    qN(0, 0, 0, Dofs - RefDofs - 1) = qf.T() * ((*N_ij[1][2]) - (*N_ij[2][1])); //+ (*NR_ij[1][2])-(*NR_ij[2][1]);
-    qN(1, 0, 1, Dofs - RefDofs - 1) = qf.T() * ((*N_ij[2][0]) - (*N_ij[0][2])); //+ (*NR_ij[2][0])-(*NR_ij[0][2]);
-    qN(2, 0, 2, Dofs - RefDofs - 1) = qf.T() * ((*N_ij[0][1]) - (*N_ij[1][0])); //+ (*NR_ij[0][1])-(*NR_ij[1][0]);
+    qN.set(Index(0, 0), Index(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[1][2]) - (*N_ij[2][1]))); //+ (*NR_ij[1][2])-(*NR_ij[2][1]);
+    qN.set(Index(1, 1), Index(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[2][0]) - (*N_ij[0][2]))); //+ (*NR_ij[2][0])-(*NR_ij[0][2]);
+    qN.set(Index(2, 2), Index(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[0][1]) - (*N_ij[1][0]))); //+ (*NR_ij[0][1])-(*NR_ij[1][0]);
 
-    Mat M_ThetaF = G.T() * qN;
+    Mat3xV M_ThetaF = G.T() * qN;
 
     /* M_FF is constant */
 
@@ -185,209 +182,244 @@ namespace MBSimFlexibleBody {
         ElementalNodes[i](3) += 2 * M_PI;
       }
     }
+    updEle = false;
   }
 
-  void FlexibleBody2s13MFRMindlin::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
-    if(cp.getContourParameterType() == ContourPointData::continuum) { // frame on continuum
-#ifdef HAVE_NURBS
-      contour->updateKinematicsForFrame(cp, ff);
-#endif
+  void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
+    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!");
+  }
+
+  void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
+    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
+  }
+
+  void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
+    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
+  }
+
+  Vec3 FlexibleBody2s13MFRMindlin::getPosition(double t) {
+    return R->getPosition(t);
+  }
+
+  SqrMat3 FlexibleBody2s13MFRMindlin::getOrientation(double t) {
+    return R->getOrientation(t);
+  }
+
+  void FlexibleBody2s13MFRMindlin::updatePositions(double t, Frame2s *frame) {
+    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+      frame->setOrientation(R->getOrientation(t)*getA(t));
+      switch(RefDofs) {
+      case 2:
+        frame->setPosition(R->getPosition(t) + R->getOrientation(t) * Vec3("[0;0;1]") * getq()(0));
+        break;
+      case 6:
+        frame->setPosition(R->getPosition(t) + R->getOrientation(t) * getq()(0,2));
+        break;
+      default:
+        THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Unknown number of reference dofs!");
     }
-    else if(cp.getContourParameterType() == ContourPointData::node) { // frame on node
-      const int &node = cp.getNodeNumber();
+    }
+    else
+      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updatePositions): Parameters must be zero!");
+  }
 
-      if(ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
-        Vec r_ref(3, NONINIT);
-        //first compute vector
-        r_ref(0) = qext(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0); // radial component
-        r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2.; // azimuthal component
-        r_ref(2) = qext(RefDofs + node * NodeDofs) + computeThickness(NodeCoordinates(node, 0)) / 2.; //z-component
-
-        r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref; //transformation into local frame  ---->?  transformation from intermediate frame(which are initially parallel to the local frame) to the FFR
-        r_ref = A * r_ref; //transformation from the moving frame of reference  ---->  ??? transformation from the moving frame of reference FFR to the Reference frame
-        r_ref += qext(0, 2); //translation of moving frame of reference relative to frame of reference ---> add the translation displacement of the origin of FFR expressed in the Reference Frame
-        // TODO:  is qext in Reference frame R or in the world frame ?
-        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * r_ref); //at last step: transformation into world frame
-      }
-
-      if(ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if(ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if(ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-
-      if(ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
-        Vec u_ref_1(3, NONINIT);
-        u_ref_1(0) = computeThickness(NodeCoordinates(node, 0)) / 2. * uext(RefDofs + node * NodeDofs + 1);
-        u_ref_1(1) = -computeThickness(NodeCoordinates(node, 0)) / 2. * uext(RefDofs + node * NodeDofs + 2);
-        u_ref_1(2) = uext(RefDofs + node * NodeDofs);
-
-        Vec r_ref(3, NONINIT);
-        r_ref(0) = qext(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0);
-        r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2.;
-        r_ref(2) = qext(RefDofs + node * NodeDofs) + computeThickness(NodeCoordinates(node, 0)) / 2.;
-
-        r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref;
-
-        Vec u_ref_2 = A * (-tilde(r_ref) * G * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * u_ref_1);
-        u_ref_2 += uext(0, 2);
-
-        cp.getFrameOfReference().setVelocity(R->getOrientation() * u_ref_2);
-      }
-
-      if(ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-        Vec w_ref_1(3, INIT, 0.);
-        w_ref_1(0) = -uext(RefDofs + node * NodeDofs + 2);
-        w_ref_1(1) = uext(RefDofs + node * NodeDofs + 1);
-
-        Vec w_ref_2 = A * (G * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * w_ref_1);
-
-        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * w_ref_2);
+  void FlexibleBody2s13MFRMindlin::updateVelocities(double t, Frame2s *frame) {
+   if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
+      switch(RefDofs) {
+        case 2:
+        frame->setVelocity(R->getOrientation(t) * Vec3("[0;0;1]") * getu()(0));
+        frame->setAngularVelocity(R->getOrientation() * Vec3("[0;0;1]") * getu()(1));
+        break;
+        case 6:
+        frame->setPosition(R->getOrientation(t) * getq()(0,2));
+        frame->setVelocity(R->getOrientation() * getu()(0,2));
+        frame->setAngularVelocity(R->getOrientation() * getA(t) * getG(t) * getu()(3,5));
+        break;
+        default:
+        THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Unknown number of reference dofs!");
       }
     }
     else
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
-
-    if (frame != 0) { // frame should be linked to contour point data
-      frame->setPosition(cp.getFrameOfReference().getPosition());
-      frame->setOrientation(cp.getFrameOfReference().getOrientation());
-      frame->setVelocity(cp.getFrameOfReference().getVelocity());
-      frame->setAngularVelocity(cp.getFrameOfReference().getAngularVelocity());
-    }
+      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Parameters must be zero!");
   }
 
-  void FlexibleBody2s13MFRMindlin::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    if(cp.getContourParameterType() == ContourPointData::continuum) { // force on continuum
-      Vec2 alpha = cp.getLagrangeParameterPosition();
+  void FlexibleBody2s13MFRMindlin::updateAccelerations(double t, Frame2s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
+  }
 
-      if (nrm2(alpha) < epsroot()) { // center of gravity
-        Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
+  void FlexibleBody2s13MFRMindlin::updateJacobians(double t, Frame2s *frame, int j) {
+    Vec2 alpha = frame->getParameters();
 
-        Jacext_trans(0, 0, 2, 2) = SqrMat(3, EYE);
-        Jacext_rot(0, 3, 2, 5) = A * G;
-
-        // condensation
-        Mat Jacobian_trans = condenseMatrixCols(Jacext_trans, ILocked);
-        Mat Jacobian_rot = condenseMatrixCols(Jacext_rot, ILocked);
-
-        // transformation
-        cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
-        cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
-      }
-      else { // on the disk
-        contour->updateJacobiansForFrame(cp);
-      }
-    }
-
-    else if(cp.getContourParameterType() == ContourPointData::node) { // force on node
-      int Node = cp.getNodeNumber();
-
-      // Jacobian of element
-      Mat Jactmp_trans(3, RefDofs + NodeDofs, INIT, 0.), Jactmp_rot(3, RefDofs + NodeDofs, INIT, 0.); // initializing Ref + 1 Node
-
-      // translational DOFs (d/dR)
-      Jactmp_trans(0, 0, 2, 2) = SqrMat(3, EYE); // ref
-
-      // rotational DOFs (d/dTheta)
-      SqrMat dAdalpha(3, NONINIT), dAdbeta(3, NONINIT), dAdgamma(3, NONINIT);
-
-      double const &alpha = qext(3);
-      double const &beta = qext(4);
-      double const &gamma = qext(5);
-
-      dAdalpha(0, 0) = 0.;
-      dAdalpha(0, 1) = 0.;
-      dAdalpha(0, 2) = 0.;
-      dAdalpha(1, 0) = -sin(alpha) * sin(gamma) + cos(alpha) * sin(beta) * cos(gamma);
-      dAdalpha(1, 1) = -sin(alpha) * cos(gamma) - cos(alpha) * sin(beta) * sin(gamma);
-      dAdalpha(1, 2) = -cos(alpha) * cos(beta);
-      dAdalpha(2, 0) = cos(alpha) * sin(gamma) + sin(alpha) * sin(beta) * cos(gamma);
-      dAdalpha(2, 1) = cos(alpha) * cos(gamma) - sin(alpha) * sin(beta) * sin(gamma);
-      dAdalpha(2, 2) = -sin(alpha) * cos(beta);
-
-      dAdbeta(0, 0) = -sin(beta) * cos(gamma);
-      dAdbeta(0, 1) = sin(beta) * sin(gamma);
-      dAdbeta(0, 2) = cos(beta);
-      dAdbeta(1, 0) = sin(alpha) * cos(beta) * cos(gamma);
-      dAdbeta(1, 1) = -sin(alpha) * cos(beta) * sin(gamma);
-      dAdbeta(1, 2) = sin(alpha) * sin(beta);
-      dAdbeta(2, 0) = -cos(alpha) * cos(beta) * cos(gamma);
-      dAdbeta(2, 1) = cos(alpha) * cos(beta) * sin(gamma);
-      dAdbeta(2, 2) = -cos(alpha) * sin(beta);
-
-      dAdgamma(0, 0) = -cos(beta) * sin(gamma);
-      dAdgamma(0, 1) = -cos(beta) * cos(gamma);
-      dAdgamma(0, 2) = 0.;
-      dAdgamma(1, 0) = cos(alpha) * cos(gamma) - sin(alpha) * sin(beta) * sin(gamma);
-      dAdgamma(1, 1) = -cos(alpha) * sin(gamma) - sin(alpha) * sin(beta) * cos(gamma);
-      dAdgamma(1, 2) = 0.;
-      dAdgamma(2, 0) = sin(alpha) * cos(gamma) + cos(alpha) * sin(beta) * sin(gamma);
-      dAdgamma(2, 1) = -sin(alpha) * sin(gamma) + cos(alpha) * sin(beta) * cos(gamma);
-      dAdgamma(2, 2) = 0.;
-
-      Vec r_tmp(3, NONINIT);
-      r_tmp(0) = NodeCoordinates(Node, 0) + computeThickness(NodeCoordinates(Node, 0)) / 2. * qext(RefDofs + Node * NodeDofs + 1);
-      r_tmp(1) = -computeThickness(NodeCoordinates(Node, 0)) / 2. * qext(RefDofs + Node * NodeDofs + 2);
-      r_tmp(2) = qext(RefDofs + Node * NodeDofs);
-
-      r_tmp = BasicRotAIKz(NodeCoordinates(Node, 1)) * r_tmp;
-
-      Jactmp_trans(0, 3, 2, 3) = dAdalpha * r_tmp;
-      Jactmp_trans(0, 4, 2, 4) = dAdbeta * r_tmp;
-      Jactmp_trans(0, 5, 2, 5) = dAdgamma * r_tmp;
-
-      Jactmp_rot(0, 3, 2, 5) = A * G;
-
-      // elastic DOFs
-      // translation
-      SqrMat u_tmp(3, INIT, 0.);
-      u_tmp(0, 1) = computeThickness(NodeCoordinates(Node, 0)) / 2.;
-      u_tmp(1, 2) = -computeThickness(NodeCoordinates(Node, 0)) / 2.;
-      u_tmp(2, 0) = 1.;
-
-      Jactmp_trans(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(Node, 1)) * u_tmp;
-
-      // rotation
-      SqrMat Z_tmp(3, INIT, 0.);
-      Z_tmp(0, 2) = -1;
-      Z_tmp(1, 1) = 1;
-      Jactmp_rot(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(Node, 1)) * Z_tmp;
-
-      // sort in the Jacobian of the disc disk
-      // reference dofs
+    if (nrm2(alpha) < epsroot()) { // center of gravity
       Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
 
-      Jacext_trans(0, 0, 2, RefDofs - 1) = Jactmp_trans(0, 0, 2, RefDofs - 1);
-      Jacext_rot(0, 0, 2, RefDofs - 1) = Jactmp_rot(0, 0, 2, RefDofs - 1);
-
-      // elastic dofs
-      Jacext_trans(0, RefDofs + Node * NodeDofs, 2, RefDofs + Node * NodeDofs + 2) = Jactmp_trans(0, RefDofs, 2, RefDofs + 2);
-      Jacext_rot(0, RefDofs + Node * NodeDofs, 2, RefDofs + Node * NodeDofs + 2) = Jactmp_rot(0, RefDofs, 2, RefDofs + 2);
+      Jacext_trans(0, 0, 2, 2) = SqrMat(3, EYE);
+      Jacext_rot(0, 3, 2, 5) = getA(t) * getG(t);
 
       // condensation
       Mat Jacobian_trans = condenseMatrixCols(Jacext_trans, ILocked);
       Mat Jacobian_rot = condenseMatrixCols(Jacext_rot, ILocked);
 
       // transformation
-      cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
-      cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
-
+      frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans,j);
+      frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot,j);
     }
-    else
-      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'ContourPointData::node' or 'ContourPointData::continuum'");
-
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
-    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
-
-    if (frame != 0) { // frame should be linked to contour point data
-      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
-      frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
-      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
-      frame->setGyroscopicAccelerationOfRotation(cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
+    else { // on the disk
+      THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateJacobians): Parameters must be zero!");
     }
   }
 
+  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(double t, Frame2s *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody2s13MFRMindlin::updatePositions(double t, NodeFrame *frame) {
+    Vec3 r_ref(NONINIT);
+    int node = frame->getNodeNumber();
+    //first compute vector
+    r_ref(0) = getqExt(t)(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0); // radial component
+    r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2.; // azimuthal component
+    r_ref(2) = qext(RefDofs + node * NodeDofs) + computeThickness(NodeCoordinates(node, 0)) / 2.; //z-component
+
+    r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref; //transformation into local frame  ---->?  transformation from intermediate frame(which are initially parallel to the local frame) to the FFR
+    r_ref = getA(t) * r_ref; //transformation from the moving frame of reference  ---->  ??? transformation from the moving frame of reference FFR to the Reference frame
+    r_ref += qext(0, 2); //translation of moving frame of reference relative to frame of reference ---> add the translation displacement of the origin of FFR expressed in the Reference Frame
+    // TODO:  is qext in Reference frame R or in the world frame ?
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * r_ref); //at last step: transformation into world frame
+  }
+
+  void FlexibleBody2s13MFRMindlin::updateVelocities(double t, NodeFrame *frame) {
+    Vec3 u_ref_1(NONINIT);
+    int node = frame->getNodeNumber();
+    u_ref_1(0) = computeThickness(NodeCoordinates(node, 0)) / 2. * getuExt(t)(RefDofs + node * NodeDofs + 1);
+    u_ref_1(1) = -computeThickness(NodeCoordinates(node, 0)) / 2. * uext(RefDofs + node * NodeDofs + 2);
+    u_ref_1(2) = uext(RefDofs + node * NodeDofs);
+
+    Vec3 r_ref(NONINIT);
+    r_ref(0) = getqExt(t)(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0);
+    r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2.;
+    r_ref(2) = qext(RefDofs + node * NodeDofs) + computeThickness(NodeCoordinates(node, 0)) / 2.;
+
+    r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref;
+
+    Vec3 u_ref_2 = getA(t) * (-tilde(r_ref) * getG(t) * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * u_ref_1);
+    u_ref_2 += uext(0, 2);
+
+    frame->setVelocity(R->getOrientation(t) * u_ref_2);
+
+    Vec3 w_ref_1(INIT, 0.);
+    w_ref_1(0) = -uext(RefDofs + node * NodeDofs + 2);
+    w_ref_1(1) = uext(RefDofs + node * NodeDofs + 1);
+
+    Vec w_ref_2 = A * (G * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * w_ref_1);
+
+    frame->setAngularVelocity(R->getOrientation() * w_ref_2);
+  }
+
+  void FlexibleBody2s13MFRMindlin::updateAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody2s13MFRMindlin::updateJacobians(double t, NodeFrame *frame, int j) {
+    int Node = frame->getNodeNumber();
+
+    // Jacobian of element
+    Mat Jactmp_trans(3, RefDofs + NodeDofs, INIT, 0.), Jactmp_rot(3, RefDofs + NodeDofs, INIT, 0.); // initializing Ref + 1 Node
+
+    // translational DOFs (d/dR)
+    Jactmp_trans(0, 0, 2, 2) = SqrMat(3, EYE); // ref
+
+    // rotational DOFs (d/dTheta)
+    SqrMat dAdalpha(3, NONINIT), dAdbeta(3, NONINIT), dAdgamma(3, NONINIT);
+
+    double const &alpha = getqExt(t)(3);
+    double const &beta = qext(4);
+    double const &gamma = qext(5);
+
+    dAdalpha(0, 0) = 0.;
+    dAdalpha(0, 1) = 0.;
+    dAdalpha(0, 2) = 0.;
+    dAdalpha(1, 0) = -sin(alpha) * sin(gamma) + cos(alpha) * sin(beta) * cos(gamma);
+    dAdalpha(1, 1) = -sin(alpha) * cos(gamma) - cos(alpha) * sin(beta) * sin(gamma);
+    dAdalpha(1, 2) = -cos(alpha) * cos(beta);
+    dAdalpha(2, 0) = cos(alpha) * sin(gamma) + sin(alpha) * sin(beta) * cos(gamma);
+    dAdalpha(2, 1) = cos(alpha) * cos(gamma) - sin(alpha) * sin(beta) * sin(gamma);
+    dAdalpha(2, 2) = -sin(alpha) * cos(beta);
+
+    dAdbeta(0, 0) = -sin(beta) * cos(gamma);
+    dAdbeta(0, 1) = sin(beta) * sin(gamma);
+    dAdbeta(0, 2) = cos(beta);
+    dAdbeta(1, 0) = sin(alpha) * cos(beta) * cos(gamma);
+    dAdbeta(1, 1) = -sin(alpha) * cos(beta) * sin(gamma);
+    dAdbeta(1, 2) = sin(alpha) * sin(beta);
+    dAdbeta(2, 0) = -cos(alpha) * cos(beta) * cos(gamma);
+    dAdbeta(2, 1) = cos(alpha) * cos(beta) * sin(gamma);
+    dAdbeta(2, 2) = -cos(alpha) * sin(beta);
+
+    dAdgamma(0, 0) = -cos(beta) * sin(gamma);
+    dAdgamma(0, 1) = -cos(beta) * cos(gamma);
+    dAdgamma(0, 2) = 0.;
+    dAdgamma(1, 0) = cos(alpha) * cos(gamma) - sin(alpha) * sin(beta) * sin(gamma);
+    dAdgamma(1, 1) = -cos(alpha) * sin(gamma) - sin(alpha) * sin(beta) * cos(gamma);
+    dAdgamma(1, 2) = 0.;
+    dAdgamma(2, 0) = sin(alpha) * cos(gamma) + cos(alpha) * sin(beta) * sin(gamma);
+    dAdgamma(2, 1) = -sin(alpha) * sin(gamma) + cos(alpha) * sin(beta) * cos(gamma);
+    dAdgamma(2, 2) = 0.;
+
+    Vec r_tmp(3, NONINIT);
+    r_tmp(0) = NodeCoordinates(Node, 0) + computeThickness(NodeCoordinates(Node, 0)) / 2. * qext(RefDofs + Node * NodeDofs + 1);
+    r_tmp(1) = -computeThickness(NodeCoordinates(Node, 0)) / 2. * qext(RefDofs + Node * NodeDofs + 2);
+    r_tmp(2) = qext(RefDofs + Node * NodeDofs);
+
+    r_tmp = BasicRotAIKz(NodeCoordinates(Node, 1)) * r_tmp;
+
+    Jactmp_trans(0, 3, 2, 3) = dAdalpha * r_tmp;
+    Jactmp_trans(0, 4, 2, 4) = dAdbeta * r_tmp;
+    Jactmp_trans(0, 5, 2, 5) = dAdgamma * r_tmp;
+
+    Jactmp_rot(0, 3, 2, 5) = getA(t) * getG(t);
+
+    // elastic DOFs
+    // translation
+    SqrMat u_tmp(3, INIT, 0.);
+    u_tmp(0, 1) = computeThickness(NodeCoordinates(Node, 0)) / 2.;
+    u_tmp(1, 2) = -computeThickness(NodeCoordinates(Node, 0)) / 2.;
+    u_tmp(2, 0) = 1.;
+
+    Jactmp_trans(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(Node, 1)) * u_tmp;
+
+    // rotation
+    SqrMat Z_tmp(3, INIT, 0.);
+    Z_tmp(0, 2) = -1;
+    Z_tmp(1, 1) = 1;
+    Jactmp_rot(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(Node, 1)) * Z_tmp;
+
+    // sort in the Jacobian of the disc disk
+    // reference dofs
+    Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
+
+    Jacext_trans(0, 0, 2, RefDofs - 1) = Jactmp_trans(0, 0, 2, RefDofs - 1);
+    Jacext_rot(0, 0, 2, RefDofs - 1) = Jactmp_rot(0, 0, 2, RefDofs - 1);
+
+    // elastic dofs
+    Jacext_trans(0, RefDofs + Node * NodeDofs, 2, RefDofs + Node * NodeDofs + 2) = Jactmp_trans(0, RefDofs, 2, RefDofs + 2);
+    Jacext_rot(0, RefDofs + Node * NodeDofs, 2, RefDofs + Node * NodeDofs + 2) = Jactmp_rot(0, RefDofs, 2, RefDofs + 2);
+
+    // condensation
+    Mat Jacobian_trans = condenseMatrixCols(Jacext_trans, ILocked);
+    Mat Jacobian_rot = condenseMatrixCols(Jacext_rot, ILocked);
+
+    // transformation
+    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans,j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot,j);
+  }
+
+  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
+  }
+
   void FlexibleBody2s13MFRMindlin::init(InitStage stage) {
-    if (stage == resize) {
-      FlexibleBodyContinuum<Vec>::init(stage);
+    if (stage == preInit) {
       assert(nr > 0); // at least on radial row
       assert(nj > 1); // at least two azimuthal elements
 
@@ -440,78 +472,45 @@ namespace MBSimFlexibleBody {
         ElementalNodes.push_back(Vec(4, INIT, 0.));
       }
 
-      BuildElements();
+      BuildElements(0);
 
       for (int i = 0; i < Elements; i++) {
         discretization.push_back(new FiniteElement2s13MFRMindlin(E, nu, rho, d(0), d(1), d(2), ElementalNodes[i]));
       }
 
-#ifdef HAVE_NURBS
-      // borders of contour parametrisation
-      // beginning
-      Vec alphaS(2);
-      alphaS(0) = Ri; // radius
-      alphaS(1) = 0.; // angle
+//#ifdef HAVE_NURBS
+//      // borders of contour parametrisation
+//      // beginning
+//      Vec alphaS(2);
+//      alphaS(0) = Ri; // radius
+//      alphaS(1) = 0.; // angle
+//
+//      // end
+//      Vec alphaE(2);
+//      alphaE(0) = Ra; // radius
+//      alphaE(1) = 2 * M_PI; // angle
+//
+//      contour->setAlphaStart(alphaS);
+//      contour->setAlphaEnd(alphaE);
+//#endif
 
-      // end
-      Vec alphaE(2);
-      alphaE(0) = Ra; // radius
-      alphaE(1) = 2 * M_PI; // angle
 
-      contour->setAlphaStart(alphaS);
-      contour->setAlphaEnd(alphaE);
-#endif
-
-      qext = Jext * q0;
-      uext = Jext * u0;
-
+      FlexibleBody2s13::init(stage);
+    }
+    else if (stage == unknownStage) {
       initMatrices(); // calculate constant stiffness matrix and the constant parts of the mass-matrix
 
-    }
-    if(stage==plotting) {
-      updatePlotFeatures();
-
-      if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#ifdef HAVE_NURBS
-        if (getPlotFeature(openMBV) == enabled) {
-          boost::shared_ptr<OpenMBV::NurbsDisk> Diskbody = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
-
-          drawDegree = 30 / nj;
-          Diskbody->setDiffuseColor(0.46667, 1, 1);
-          Diskbody->setMinimalColorValue(0.);
-          Diskbody->setMaximalColorValue(1.);
-          Diskbody->setDrawDegree(drawDegree);
-          Diskbody->setRadii(Ri, Ra);
-
-          Diskbody->setKnotVecAzimuthal(contour->getUVector());
-          Diskbody->setKnotVecRadial(contour->getVVector());
-
-          Diskbody->setElementNumberRadial(nr);
-          Diskbody->setElementNumberAzimuthal(nj);
-
-          Diskbody->setInterpolationDegreeRadial(degV);
-          Diskbody->setInterpolationDegreeAzimuthal(degU);
-          openMBVBody=Diskbody;
-        }
-#endif
-#endif
-        FlexibleBodyContinuum<Vec>::init(stage);
-      }
+      FlexibleBody2s13::init(stage);
     }
     else
-      FlexibleBodyContinuum<Vec>::init(stage);
-
-#ifdef HAVE_NURBS
-    contour->initContourFromBody(stage); // initialize contour
-#endif
+      FlexibleBody2s13::init(stage);
   }
 
-  Vec FlexibleBody2s13MFRMindlin::transformCW(const Vec& WrPoint) {
+  Vec FlexibleBody2s13MFRMindlin::transformCW(double t, const Vec& WrPoint) {
     Vec CrPoint = WrPoint.copy();
 
     CrPoint -= q(0, 2);
-    CrPoint = A.T() * CrPoint; // position in moving frame of reference
+    CrPoint = getA(t).T() * CrPoint; // position in moving frame of reference
 
     const double xt = CrPoint(0);
     const double yt = CrPoint(1);
@@ -523,14 +522,12 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::initMatrices() {
-    updateAG();
-
     computeStiffnessMatrix();
     computeConstantMassMatrixParts();
     updateM(0);
   }
 
-  void FlexibleBody2s13MFRMindlin::updateAG() {
+  void FlexibleBody2s13MFRMindlin::updateAG(double t) {
     double sinalpha = sin(q(3));
     double cosalpha = cos(q(3));
     double sinbeta = sin(q(4));
@@ -561,6 +558,8 @@ namespace MBSimFlexibleBody {
     G(2, 0) = sinbeta;
     G(2, 1) = 0.;
     G(2, 2) = 1.;
+
+    updAG = false;
   }
 
   void FlexibleBody2s13MFRMindlin::computeStiffnessMatrix() {
