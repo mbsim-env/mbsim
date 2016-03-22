@@ -40,27 +40,26 @@ namespace MBSim {
 
   void FloatingRelativeContourFrame::updateVelocities(double t) { 
     setAngularVelocity(R->getAngularVelocity(t));
-    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))); 
+    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)));
     updateVel = false;
   }
 
   void FloatingRelativeContourFrame::updateAccelerations(double t) { 
     setAngularAcceleration(R->getAngularAcceleration(t));
-    setAcceleration(R->getAcceleration(t) + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t)))); 
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t))));
     updateAcc = true;
   }
 
   void FloatingRelativeContourFrame::updateJacobians(double t, int j) {
-    setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j),j);
-    setJacobianOfRotation(R->getJacobianOfRotation(j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(t,j),j);
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(j),j);
     updateJac[j] = false;
   }
 
   void FloatingRelativeContourFrame::updateGyroscopicAccelerations(double t) {
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
-    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
+    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t));
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
     updateGA = false;
   }
 
 }
-

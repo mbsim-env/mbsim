@@ -81,7 +81,7 @@ namespace MBSim {
 
   void FixedRelativeFrame::updateAccelerations(double t) { 
     setAngularAcceleration(R->getAngularAcceleration(t));
-    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))));
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t))));
     updateAcc = false;
   }
 
@@ -98,4 +98,3 @@ namespace MBSim {
   }
 
 }
-

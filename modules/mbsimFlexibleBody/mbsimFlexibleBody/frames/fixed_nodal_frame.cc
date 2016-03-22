@@ -102,26 +102,26 @@ namespace MBSimFlexibleBody {
 
   void FixedNodalFrame::updateVelocities(double t) {
     setAngularVelocity(R->getAngularVelocity(t) + getGlobalPsi(t)*qd);
-    setVelocity(R->getVelocity(t) + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)) + getGlobalPhi(t)*qd);
+    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition()) + getGlobalPhi()*qd);
     updateVel = false;
   }
 
   void FixedNodalFrame::updateAccelerations(double t) {
     setAngularAcceleration(R->getAngularAcceleration(t) +  crossProduct(R->getAngularVelocity(t),getGlobalPsi(t)*qd) + getGlobalPsi(t)*qdd);
-    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t))) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd) + getGlobalPhi()*qdd);
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd) + getGlobalPhi()*qdd);
     updateAcc = false;
   }
 
   void FixedNodalFrame::updateJacobians(double t, int j) {
-    setJacobianOfTranslation(R->getJacobianOfTranslation(t,j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(t,j) + getGlobalPhi(t)*R->getJacobianOfDeformation(t,j),j);
-    setJacobianOfRotation(R->getJacobianOfRotation(j) + getGlobalPsi()*R->getJacobianOfDeformation(j),j);
-    setJacobianOfDeformation(R->getJacobianOfDeformation(j),j);
+    setJacobianOfDeformation(R->getJacobianOfDeformation(t,j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j) + getGlobalPsi(t)*R->getJacobianOfDeformation(j),j);
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j) + getGlobalPhi()*R->getJacobianOfDeformation(j),j);
     updateJac[j] = false;
   }
 
   void FixedNodalFrame::updateGyroscopicAccelerations(double t) {
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(t) + crossProduct(R->getGyroscopicAccelerationOfRotation(t),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))) + 2.*crossProduct(R->getAngularVelocity(t),getGlobalPhi(t)*qd));
-    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + crossProduct(R->getAngularVelocity(),getGlobalPsi()*qd));
+    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + crossProduct(R->getAngularVelocity(t),getGlobalPsi(t)*qd));
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),getGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd));
     updateGA = false;
   }
 

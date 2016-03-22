@@ -67,8 +67,9 @@ namespace MBSimFlexibleBody {
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
       const FrameFFR* getFrameOfReference() const { return R; }
 
-      const fmatvec::Mat3xV& getGlobalPhi() { return WPhi; }
-      const fmatvec::Mat3xV& getGlobalPsi() { return WPsi; }
+      const fmatvec::Vec3& getGlobalRelativePosition(bool check=true) const { assert((not check) or (not updatePos)); return WrRP; }
+      const fmatvec::Mat3xV& getGlobalPhi(bool check=true) const { assert((not check) or (not updatePos)); return WPhi; }
+      const fmatvec::Mat3xV& getGlobalPsi(bool check=true) const { assert((not check) or (not updatePos)); return WPsi; }
 
       const fmatvec::Vec3& getGlobalRelativePosition(double t);
       const fmatvec::Mat3xV& getGlobalPhi(double t);
