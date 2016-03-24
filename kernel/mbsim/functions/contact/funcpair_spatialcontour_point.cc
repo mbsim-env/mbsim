@@ -27,7 +27,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Vec2 FuncPairSpatialContourPoint::operator()(const Vec2 &alpha) {  // Vec2: U and V direction
+  Vec FuncPairSpatialContourPoint::operator()(const Vec &alpha) {  // Vec2: U and V direction
     Vec3 Wd = getWrD(alpha);
     Vec3 Wt1 = contour->getWu(t,alpha);
     Vec3 Wt2 = contour->getWv(t,alpha);
@@ -37,7 +37,7 @@ namespace MBSim {
     return Wt;
   }
 
-  Vec3 FuncPairSpatialContourPoint::getWrD(const Vec2 &alpha) {
+  Vec3 FuncPairSpatialContourPoint::getWrD(const Vec &alpha) {
     return contour->getPosition(t,alpha) - point->getFrame()->getPosition(t);
   }
 

@@ -32,7 +32,7 @@ namespace MBSim {
    * \author Zhan Wang
    * \date 2013-12-05
    */
-  class FuncPairSpatialContourPoint : public DistanceFunction<fmatvec::Vec2(fmatvec::Vec2)> {
+  class FuncPairSpatialContourPoint : public DistanceFunction<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /**
        * \brief constructor
@@ -41,9 +41,9 @@ namespace MBSim {
        */
       FuncPairSpatialContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) { }
 
-      fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha);
+      fmatvec::Vec operator()(const fmatvec::Vec &alpha);
 
-      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha);
+      fmatvec::Vec3 getWrD(const fmatvec::Vec &alpha);
 
     private:
       /**

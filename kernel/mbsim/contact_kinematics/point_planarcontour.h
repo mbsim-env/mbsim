@@ -33,7 +33,7 @@ namespace MBSim {
    * \date 2009-04-02 some comments (Thorsten Schindler)
    * \date 2009-06-04 new interface (Thorsten Schindler)
    */
-  class ContactKinematicsPointPlanarContour: public ContactKinematics {
+  class ContactKinematicsPointPlanarContour : public ContactKinematics {
     public:
       /**
        * \brief constructor
