@@ -11,7 +11,8 @@ libfe_la_SOURCES = finite_element_1s_21_rcm.cc\
 		   finite_element_1s_33_cosserat_rotation.cc\
 		   finite_element_1s_23_bta.cc\
 		   finite_element_2s_13_disk.cc\
-		   finite_element_2s_13_mfr_mindlin.cc
+		   finite_element_2s_13_mfr_mindlin.cc\
+		   finite_element_linear_external_lumped_node.cc
 
 libfe_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
 libfe_la_LIBADD = finite_element_1s_33_rcm/libfe1s33rcm.la 
@@ -30,4 +31,5 @@ feinclude_HEADERS = finite_element_1s_21_rcm.h\
 		    finite_element_1s_33_cosserat_rotation.h\
 		    finite_element_1s_23_bta.h\
 		    finite_element_2s_13_disk.h\
-		    finite_element_2s_13_mfr_mindlin.h
+		    finite_element_2s_13_mfr_mindlin.h\
+		    finite_element_linear_external_lumped_node.h

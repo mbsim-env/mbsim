@@ -26,7 +26,7 @@
 
 namespace MBSim {
   class Point;
-  class FuncPairContour2sPoint;
+  class FuncPairSpatialContourPoint;
   class Contour2s;
 }
 
@@ -44,7 +44,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointContour2s() {}
+      ContactKinematicsPointContour2s() : ContactKinematics(), searchAllCP(false) { }
 
       /**
        * \brief destructor
@@ -53,8 +53,8 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
-      virtual void updateg(double t, double &g, MBSim::ContourPointData *cpData, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, MBSim::ContourPointData* cpData) { throw MBSim::MBSimError("(ContactKinematicsPointContour2s::updatewb): Not implemented!"); };
+      virtual void updateg(double t, double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
       /***************************************************/
 
     private:
@@ -72,7 +72,9 @@ namespace MBSimFlexibleBody {
       /**
        * \brief root function
        */
-      MBSim::FuncPairContour2sPoint *func;
+      MBSim::FuncPairSpatialContourPoint *func;
+
+      bool searchAllCP;
   };
 
 }

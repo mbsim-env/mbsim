@@ -7,7 +7,8 @@
 #include <config.h>
 #include "neutral_nurbs_velocity_2s.h"
 #include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/node_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
+#include "mbsim/frames/contour_frame.h"
 
 using namespace MBSim;
 
@@ -21,18 +22,17 @@ namespace MBSimFlexibleBody {
   NeutralNurbsVelocity2s::~NeutralNurbsVelocity2s() {
   }
 
-  void NeutralNurbsVelocity2s::update(ContourPointData &cp) {
-    Vec3 Tmpv = surface.pointAt(cp.getLagrangeParameterPosition()(0), cp.getLagrangeParameterPosition()(1));
-    cp.getFrameOfReference().setVelocity(Tmpv);
+  void NeutralNurbsVelocity2s::update(double t, ContourFrame *frame) {
+    if(updSurface) computeCurve(t,true);
+    frame->setVelocity(surface.pointAt(frame->getEta(),frame->getXi()));
   }
 
   void NeutralNurbsVelocity2s::buildNodelist(double t) {
-    NodeFrame frame;
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
-        frame.setNodeNumber(nodes(i, j));
-//        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::velocity);
-        Nodelist(i, j) = frame.getVelocity(t);
+        NodeFrame P("P",nodes(i,j));
+        P.setParent(parent);
+        Nodelist(i,j) = P.getVelocity(t);
 //        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        cout << "neutralVelocity2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
       }

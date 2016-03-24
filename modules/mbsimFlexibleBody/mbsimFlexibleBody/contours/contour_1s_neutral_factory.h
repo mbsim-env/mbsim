@@ -23,27 +23,17 @@ namespace MBSimFlexibleBody {
 
       virtual ~Contour1sNeutralFactory();
 
-      virtual std::string getType() const {
-        return "Contour1sNeutralFactory";
-      }
+      virtual std::string getType() const { return "Contour1sNeutralFactory"; }
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
-      virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
-        return findContactPairingFlexible(type0.c_str(), type1.c_str());
-      }
+      virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
 
-      virtual void setOpenStructure(const bool & openStructure_) {
-        openStructure = openStructure_;
-      }
+      virtual void setOpenStructure(const bool & openStructure_) { openStructure = openStructure_; }
 
-      virtual void setuMin(const double & uMin_) {
-        uMin = uMin_;
-      }
+      virtual void setuMin(const double & uMin_) { uMin = uMin_; }
 
-      virtual void setuMax(const double & uMax_) {
-        uMax = uMax_;
-      }
+      virtual void setuMax(const double & uMax_) { uMax = uMax_; }
 
     protected:
 

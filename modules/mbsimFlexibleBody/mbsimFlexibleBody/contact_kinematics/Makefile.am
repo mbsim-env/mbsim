@@ -1,7 +1,8 @@
 noinst_LTLIBRARIES = libcontactkinematics.la
 libcontactkinematics_la_SOURCES = circle_flexibleband.cc\
 				  point_nurbsdisk2s.cc\
-				  circle_nurbsdisk2s.cc
+				  circle_nurbsdisk2s.cc\
+				  point_contour2s.cc
 
 contactkinematicsincludedir = $(includedir)/mbsimFlexibleBody/contact_kinematics
 
@@ -10,4 +11,5 @@ libcontactkinematics_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURB
 
 contactkinematicsinclude_HEADERS = circle_flexibleband.h\
 				   point_nurbsdisk2s.h\
-				   circle_nurbsdisk2s.h
+				   circle_nurbsdisk2s.h\
+				   point_contour2s.h

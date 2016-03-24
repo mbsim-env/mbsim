@@ -6,6 +6,7 @@
  */
 #include <config.h>
 #include "contour_1s_neutral_linear_external_FFR.h"
+#include "mbsim/frames/contour_frame.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -81,16 +82,12 @@ namespace MBSimFlexibleBody {
 
     if (stage == resize) {
       // construct contourPoint for translation nodes
-      nodes.reserve(transNodes.size());
+      etaNodes.reserve(transNodes.size());
 //      transContourPoints.reserve(transNodes.size());
 //      rotContourPoints.reserve(numOfRotNodes);
 
 //        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
 
-    }
-    else if (stage == worldFrameContourLocation) {
-      R->getOrientation() = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
-      R->getPosition() = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getPosition();
     }
     else if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
 
@@ -111,27 +108,67 @@ namespace MBSimFlexibleBody {
       // TODO: check this!!!
       Vec u(NV->getuVec());
       for (int i = 0; i < u.size() - degU; i++)
-        nodes.push_back(u(i));
+        etaNodes.push_back(u(i));
     }
 
     Contour1sNeutralFactory::init(stage);
   }
 
-//  void Contour1sNeutralLinearExternalFFR::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff) {
-//    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all)
-//      NP->update(cp);
-//    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all)
-//      NV->update(cp);
-//    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-//      cp.getFrameOfReference().setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity());
-//    }
-//    if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
-//      NP->updatePositionNormal(cp);
-//    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
-//      NP->updatePositionFirstTangent(cp);
-//    if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
-//      NP->updatePositionSecondTangent(cp);
-//
+  Vec3 Contour1sNeutralLinearExternalFFR::getPosition(double t, const Vec2 &zeta) {
+    return NP->getPosition(t,zeta(0));
+  }
+
+  Vec3 Contour1sNeutralLinearExternalFFR::getWs(double t, const Vec2 &zeta) {
+    return NP->getWs(t,zeta(0));
+  }
+
+  Vec3 Contour1sNeutralLinearExternalFFR::getWt(double t, const Vec2 &zeta) {
+    return NP->getWt(t,zeta(0));
+  }
+
+  void Contour1sNeutralLinearExternalFFR::updatePositions(double t, ContourFrame *frame) {
+    NP->update(t,frame);
+    NP->updatePositionNormal(t,frame);
+    NP->updatePositionFirstTangent(t,frame);
+    NP->updatePositionSecondTangent(t,frame);
+  }
+
+  void Contour1sNeutralLinearExternalFFR::updateVelocities(double t, ContourFrame *frame) {
+    NV->update(t,frame);
+    frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity());
+  }
+
+  void Contour1sNeutralLinearExternalFFR::updateJacobians(double t, ContourFrame *frame, int j) {
+    /******************************************************************  Jacobian of Translation  *******************************************************************************/
+    Mat3xV Jacobian_trans(qSize, INIT, 0.);
+    // translational DOF
+    Jacobian_trans.set(Index(0, 2), Index(0, 2), SqrMat(3, EYE));
+
+    // rotational DOF
+    SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getA(t);
+    SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getG_bar(t);
+    Vec3 u_bar = NLP->getLocalPosition(t,frame->getEta());
+    Jacobian_trans.set(Index(0, 2), Index(3, 5), -A * tilde(u_bar) * G_bar);
+
+    // elastic DOF
+    Mat3xV modeShapeMatrix(qSize - 6, NONINIT);
+    double position = frame->getEta();
+    for (int k = 0; k < qSize - 6; k++) {
+      Vec3 temp = curveModeShape.at(k).pointAt(position);
+      modeShapeMatrix.set(k, temp);
+    }
+
+    Jacobian_trans.set(Index(0, 2), Index(6, qSize - 1), A * modeShapeMatrix);
+
+    SqrMat3 wRA = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
+    frame->setJacobianOfTranslation(wRA * Jacobian_trans,j);
+
+    /******************************************************************  Jacobian of Rotation  *******************************************************************************/
+    Mat3xV Jacobian_rot(qSize, INIT, 0.);
+    Jacobian_rot.set(Index(0, 2), Index(3, 5), A * G_bar);
+    frame->setJacobianOfRotation(wRA * Jacobian_rot,j);
+  }
+
 //    if (ff == Frame::angle) { // only for opmbvBody visualization
 //      SqrMat3 ALocal(INIT, 0);
 //      NP->updatePositionNormal(cp);
@@ -141,86 +178,16 @@ namespace MBSimFlexibleBody {
 //      cp.getFrameOfReference().setAnglesOfOrientation(AIK2Cardan(ALocal));
 //    }
 //  }
-//
-//  void Contour1sNeutralLinearExternalFFR::updateJacobiansForFrame(MBSim::ContourPointData &cp, int j) {
-//
-//    /******************************************************************  Jacobian of Translation  *******************************************************************************/
-//    Mat3xV Jacobian_trans(qSize, INIT, 0.);
-//    // translational DOF
-//    Jacobian_trans.set(Index(0, 2), Index(0, 2), SqrMat(3, EYE));
-//
-//    // rotational DOF
-//    SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getOrientationOfFFR();
-//    SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getGBarOfFFR();
-//    NLP->update(cp);
-//    Vec3 u_bar = cp.getFrameOfReference().getLocalPosition();
-//    Jacobian_trans.set(Index(0, 2), Index(3, 5), -A * tilde(u_bar) * G_bar);
-//
-//    // elastic DOF
-//    Mat3xV modeShapeMatrix(qSize - 6, NONINIT);
-//    double position = cp.getLagrangeParameterPosition()(0);
-//    for (int k = 0; k < qSize - 6; k++) {
-//      Vec3 temp = curveModeShape.at(k).pointAt(position);
-//      modeShapeMatrix.set(k, temp);
-//    }
-//
-//    Jacobian_trans.set(Index(0, 2), Index(6, qSize - 1), A * modeShapeMatrix);
-//
-//    SqrMat3 wRA = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
-//    cp.getFrameOfReference().setJacobianOfTranslation(wRA * Jacobian_trans);
-//
-//    /******************************************************************  Jacobian of Rotation  *******************************************************************************/
-//    Mat3xV Jacobian_rot(qSize, INIT, 0.);
-//    Jacobian_rot.set(Index(0, 2), Index(3, 5), A * G_bar);
-//    cp.getFrameOfReference().setJacobianOfRotation(wRA * Jacobian_rot);
-//
-//  }
-//
-//  void Contour1sNeutralLinearExternalFFR::updateStateDependentVariables(double t) {
-//    // TODO: is this function called by the integrator at timestep???
-//    NP->computeCurve(true);   // the first time call the computeCurveVelocity, the flag should be false
-//    NLP->computeCurve(true);
-//    NV->computeCurve(true);
-//
-//    Contour::updateStateDependentVariables(t);
-//
-//    // debug
-//
-////    cout << "****************Velocity****************" << endl;
-////    double num = 26;
-////    Mat TestVelocity(num, 3, INIT);
-////    Mat TestPosition(num, 3, INIT);
-////    Mat TestLocalPosition(num, 3, INIT);
-////    //Mat TestDotAngle(num, 3, INIT);
-////
-////    for (int i = 0; i < num; i++ ) {
-////      VecV alpha(3, INIT, 0);
-////      alpha(0) = i * (uMax - uMin)/(num -1);
-////      ContourPointData cpTest(alpha);
-//////      cout << "alpha: " << alpha << endl;
-////      //cout << "position:" << cpTest.getLagrangeParameterPosition() << endl;
-////      NP->update(cpTest);
-////      NLP->update(cpTest);
-////      NV->update(cpTest);
-////
-////      Vec p = cpTest.getFrameOfReference().getPosition();
-////      Vec lp = cpTest.getFrameOfReference().getLocalPosition();
-////      Vec v = cpTest.getFrameOfReference().getVelocity();
-////
-////      //cout << i << " : " << a << endl << endl;
-////      TestPosition(Index(i,i), Index(0,2)) = p.T();
-////      TestLocalPosition(Index(i,i), Index(0,2)) = lp.T();
-////      TestVelocity(Index(i,i), Index(0,2)) = v.T();
-////
-////    }
-////
-////    cout << "positionCurve" << TestPosition << endl << endl;
-////    cout << "localPositionCurve" << TestPosition << endl << endl;
-////    cout << "velocityCurve" << TestVelocity << endl << endl;
-//
-//  }
 
   VecInt Contour1sNeutralLinearExternalFFR::getTransNodes() {
     return transNodes;
   }
+
+  void Contour1sNeutralLinearExternalFFR::resetUpToDate() {
+    Contour1sNeutralFactory::resetUpToDate();
+    NP->resetUpToDate();
+    NLP->resetUpToDate();
+    NV->resetUpToDate();
+  }
+
 } /* namespace MBSimFlexibleBody */

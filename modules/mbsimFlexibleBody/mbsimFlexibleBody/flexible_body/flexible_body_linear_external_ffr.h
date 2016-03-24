@@ -26,14 +26,12 @@
 #include <string>
 #include <stdlib.h>
 
-#include "mbsim/mbsim_event.h"
-
-#include <mbsim/frames/frame.h>
+#include "mbsim/frames/frame.h"
 
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_linear_external_lumped_node.h"
 
-#include <mbsimFlexibleBody/node_frame.h>
+#include "mbsimFlexibleBody/frames/node_frame.h"
 
 //namespace unitTest{
 //  class linearExternalFFRTest;
@@ -61,9 +59,9 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBodyLinearExternalFFR();
 
       /* INHERITED INTERFACE OF FLEIBLE BODY CONTOUR */
-      virtual int getNumberElements() const;
+      virtual int getNumberElements() const { return nNodes; }
       virtual double getLength() const;
-      virtual bool isOpenStructure() const;
+      virtual bool isOpenStructure() const { return openStructure; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY CONTINUUM */
@@ -79,13 +77,7 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff, MBSim::Frame *frame = 0);
-//      virtual void updateKinematicsAtNode(NodeFrame *frame, MBSim::Frame::Feature ff);
-      virtual void updateJacobiansAtNode(NodeFrame * frame);
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       virtual void updateh(double t, int k = 0);
-//      virtual void updateStateDependentVariables(double t);
-      virtual void updateJacobians(double t, int k);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -113,14 +105,6 @@ namespace MBSimFlexibleBody {
         return FFR;
       }
 
-      const fmatvec::SqrMat3& getOrientationOfFFR() const {
-        return A;
-      }
-
-      const fmatvec::SqrMat3& getGBarOfFFR() const {
-        return G_bar;
-      }
-
       const fmatvec::Vec3 getModeShapeVector(int node, int column) const;
 
       /*!
@@ -131,6 +115,26 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void enableFramePlot(double size = 1e-3, fmatvec::VecInt numbers = fmatvec::VecInt(0));
 #endif
+
+      void resetUpToDate();
+      const fmatvec::SqrMat3& getA(double t) { if(updAG) updateAGbarGbardot(t); return A; }
+      const fmatvec::SqrMat3& getG_bar(double t) { if(updAG) updateAGbarGbardot(t); return G_bar; }
+      const fmatvec::SqrMat3& getG_bar_Dot(double t) { if(updAG) updateAGbarGbardot(t); return G_bar_Dot; }
+      const fmatvec::Vec& getQv(double t) { if(updQv) updateQv(t); return Qv; }
+
+      void updatePositions(double t, MBSim::Frame *frame);
+      void updateVelocities(double t, MBSim::Frame *frame);
+      void updateAccelerations(double t, MBSim::Frame *frame);
+      void updateJacobians(double t, MBSim::Frame *frame, int j=0);
+      void updateGyroscopicAccelerations(double t, MBSim::Frame *frame);
+
+      void updatePositions(double t, NodeFrame *frame);
+      void updateVelocities(double t, NodeFrame *frame);
+      void updateAccelerations(double t, NodeFrame *frame);
+      void updateJacobians(double t, NodeFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(double t, NodeFrame *frame);
+
+      fmatvec::Vec3 getLocalPosition(double t, int i);
 
     protected:
       /*!
@@ -146,7 +150,7 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief update the quadratic velocity vector
        */
-      void updateQv();
+      void updateQv(double t);
 
       /*!
        * \brief compute the constant shape integrals of the whole body
@@ -156,12 +160,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief  update A, G_bar, and G_bar_Dot
        */
-      void updateAGbarGbardot();
-
-      /*!
-       * \brief update FFR Frame
-       */
-      void updateFFRFrame();
+      void updateAGbarGbardot(double t);
 
       /**
        * \brief total number of nodes
@@ -278,39 +277,9 @@ namespace MBSimFlexibleBody {
        */
       bool DEBUG;
 
-      /**
-       * \brief first iteration flag
-       */
-      bool fistIterFlag;
+      bool updAG, updQv;
   };
   
-  inline void FlexibleBodyLinearExternalFFR::BuildElements(double t) {
-//    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::BuildElements(): Not implemented");
-  }
-  
-  inline void FlexibleBodyLinearExternalFFR::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalVectorContribution(): Not implemented!");
-  }
-
-  inline void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
-  }
-
-  inline void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
-  }
-  
-  inline int FlexibleBodyLinearExternalFFR::getNumberElements() const {
-    return nNodes;
-  }
-  inline double FlexibleBodyLinearExternalFFR::getLength() const {
-    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");
-  }
-  inline bool FlexibleBodyLinearExternalFFR::isOpenStructure() const {
-    return openStructure;
-  }
-
 }
 
 #endif /* _FLEXIBLE_BODY_LINEAR_EXTERNAL_FFR_H_ */
-

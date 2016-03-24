@@ -15,7 +15,7 @@ namespace MBSimFlexibleBody {
 
 
   NeutralNurbs2s::NeutralNurbs2s(Element* parent_,  const MatVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_):
-      surface(), parent(parent_), nodes(nodes), nodeOffset(nodeOffset_), numOfNodesU(nodes.rows()), numOfNodesV(nodes.cols()), Nodelist(nodes.rows(), nodes.cols()), degU(degU_), degV(degV_), openStructure(openStructure_){
+      surface(), parent(parent_), nodes(nodes), nodeOffset(nodeOffset_), numOfNodesU(nodes.rows()), numOfNodesV(nodes.cols()), Nodelist(nodes.rows(), nodes.cols()), degU(degU_), degV(degV_), openStructure(openStructure_), updSurface(true) {
 
   }
 
@@ -23,7 +23,11 @@ namespace MBSimFlexibleBody {
 
   }
 
-  void NeutralNurbs2s::computeCurve(double t, const Vec& uk, const Vec& vl, bool update){
+  void NeutralNurbs2s::resetUpToDate() {
+    updSurface = true;
+  }
+
+  void NeutralNurbs2s::computeCurve(double t, bool update){
     buildNodelist(t);
 
 //    if (update)
@@ -41,5 +45,6 @@ namespace MBSimFlexibleBody {
     }else{
       surface.globalInterpClosedU(Nodelist, uk, vl, degU, degV);
     }
+    updSurface = false;
   }
 }

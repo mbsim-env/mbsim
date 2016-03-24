@@ -6,8 +6,9 @@
  */
 #include <config.h>
 #include "neutral_nurbs_local_position_1s.h"
-#include "mbsimFlexibleBody/flexible_body.h"
-#include "mbsimFlexibleBody/node_frame.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h"
+#include "mbsim/frames//contour_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 
 using namespace MBSim;
 
@@ -24,20 +25,23 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  void NeutralNurbsLocalPosition1s::update(ContourPointData &cp){
-//    Vec3 Tmpv = curve.pointAt(cp.getLagrangeParameterPosition()(0));
-//    cp.getFrameOfReference().setLocalPosition(Tmpv);
+  Vec3 NeutralNurbsLocalPosition1s::getLocalPosition(double t, double s){
+//    if(updCurve) computeCurve(t,true);
+    return curve.pointAt(s);
+  }
+
+  void NeutralNurbsLocalPosition1s::update(double t, ContourFrame *frame) {
     throw;
+//    if(updCurve) computeCurve(t,true);
+//    frame->setLocalPosition(curve.pointAt(frame->getEta()));
   }
 
   void NeutralNurbsLocalPosition1s::buildNodelist(double t){
-    throw;
-//    NodeFrame frame;
-//    for (int i = 0; i < nodes.size(); i++) {
-//      frame.setNodeNumber(nodes(i));
-//      static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame,  Frame::localPosition);
-//      Nodelist.set(i, trans(frame.getLocalPosition()));
-//    }
-//    cout << "neutralLocalPosition"<< Nodelist << endl << endl;
+    Vec3 r;
+    for (int i = 0; i < nodes.size(); i++) {
+      r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getLocalPosition(t,nodes(i));
+      Nodelist.set(i, trans(r));
+    }
+    cout << "neutralLocalPosition"<< Nodelist << endl << endl;
   }
 } /* namespace MBSimFlexibleBody */

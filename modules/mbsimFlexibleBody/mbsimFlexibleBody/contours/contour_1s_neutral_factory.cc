@@ -6,11 +6,8 @@
  */
 
 #include <config.h>
-
 #include "contour_1s_neutral_factory.h"
-
 #include "mbsim/frames/floating_contour_frame.h"
-#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace MBSim;

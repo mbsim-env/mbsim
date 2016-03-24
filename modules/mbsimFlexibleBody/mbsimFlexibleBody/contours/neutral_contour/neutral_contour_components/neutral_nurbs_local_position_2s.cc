@@ -6,7 +6,7 @@
  */
 #include <config.h>
 #include "neutral_nurbs_local_position_2s.h"
-#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h"
 
 using namespace MBSim;
 
@@ -21,25 +21,28 @@ namespace MBSimFlexibleBody {
   NeutralNurbsLocalPosition2s::~NeutralNurbsLocalPosition2s() {
   }
 
-  void NeutralNurbsLocalPosition2s::update(ContourPointData &cp){
+  Vec3 NeutralNurbsLocalPosition2s::getLocalPosition(double t, const Vec2 &zeta){
+//    if(updSurface) computeCurve(t,true);
+    return surface.pointAt(zeta(0),zeta(1));
+  }
+
+  void NeutralNurbsLocalPosition2s::update(double t, ContourFrame *frame) {
     throw;
 //    Vec3 Tmpv = surface.pointAt(cp.getLagrangeParameterPosition()(0), cp.getLagrangeParameterPosition()(1));
 //    cp.getFrameOfReference().setLocalPosition(Tmpv);
   }
 
   void NeutralNurbsLocalPosition2s::buildNodelist(double t){
-    throw;
-//    NodeFrame frame;
-//    for (int i = 0; i < numOfNodesU; i++) {
-//      for (int j = 0; j < numOfNodesV; j++) {
-//        frame.setNodeNumber(nodes(i, j));
-//        static_cast<FlexibleBodyContinuum<double>*>(parent)->updateKinematicsAtNode(&frame, Frame::localPosition);
-//        Nodelist(i,j) = frame.getLocalPosition();
-////        cout << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
-////        cout << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
-//      }
-////    cout << "neutralLocalPosition2s"<< Nodelist << endl << endl;
-//    }
+    Vec3 r;
+    for (int i = 0; i < numOfNodesU; i++) {
+      for (int j = 0; j < numOfNodesV; j++) {
+        r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getLocalPosition(t,nodes(i,j));
+        Nodelist(i,j) = r;
+//        cout << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
+//        cout << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
+      }
+//    cout << "neutralLocalPosition2s"<< Nodelist << endl << endl;
+    }
   }
 
   void NeutralNurbsLocalPosition2s::surfMeshParamsClosedU(double t, Vec& uk, Vec& vl) {

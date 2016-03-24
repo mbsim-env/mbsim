@@ -16,7 +16,8 @@ namespace MBSimFlexibleBody {
     public:
       NeutralNurbsLocalPosition1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbsLocalPosition1s();
-      virtual void update(MBSim::ContourPointData &cp) ;
+      fmatvec::Vec3 getLocalPosition(double t, double s);
+      virtual void update(double t, MBSim::ContourFrame *frame);
     protected:
       virtual void buildNodelist(double t);
   };

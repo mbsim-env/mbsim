@@ -36,10 +36,6 @@ namespace MBSimFlexibleBody {
 
       /*INHERITED INTERFACE */
       virtual void init(InitStage stage);
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-//      virtual void updateStateDependentVariables(double t);
-      /**/
 
       /* GETTER / SETTER*/
       int getNumberOfTransNodesU();
@@ -59,6 +55,17 @@ namespace MBSimFlexibleBody {
        * The node numbering starts with 1.
        */
       void readTransNodes(std::string file);
+
+      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
+      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
+      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
+
+      void updatePositions(double t, MBSim::ContourFrame *frame);
+      void updateVelocities(double t, MBSim::ContourFrame *frame);
+      void updateJacobians(double t, MBSim::ContourFrame *frame, int j=0);
 
       /*!
        * \brief returns the nodes for interpolation
@@ -85,6 +92,8 @@ namespace MBSimFlexibleBody {
        * \brief get open or closed structure
        */
       bool getOpenStructure();
+
+      void resetUpToDate();
 
     protected:
       virtual NeutralNurbsVelocity2s* createNeutralVelocity();

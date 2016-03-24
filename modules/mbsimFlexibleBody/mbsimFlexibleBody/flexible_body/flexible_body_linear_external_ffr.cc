@@ -25,7 +25,8 @@
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/contours/sphere.h>
-#include <mbsim/fixed_relative_frame.h>
+#include <mbsim/frames/fixed_relative_frame.h>
+#include "mbsim/mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
@@ -38,16 +39,17 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
   
   FlexibleBodyLinearExternalFFR::FlexibleBodyLinearExternalFFR(const string &name, const bool &DEBUG_) :
-      FlexibleBodyContinuum<Vec>(name), nNodes(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_), fistIterFlag(0) {
+      FlexibleBodyContinuum<Vec>(name), nNodes(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), DEBUG(DEBUG_), updAG(true), updQv(true) {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++)
         S_kl_bar[i][j] = SqrMat();
     }
-    FFR->setParent(this);
+    Body::addFrame(FFR);
+//    FFR->setParent(this);
   }
   
   FlexibleBodyLinearExternalFFR::~FlexibleBodyLinearExternalFFR() {
-	  delete FFR;
+//	  delete FFR;
   }
   
   void FlexibleBodyLinearExternalFFR::init(InitStage stage) {
@@ -74,9 +76,6 @@ namespace MBSimFlexibleBody {
       for (int i = 6; i < 6 + nf; i++)
         for (int j = i; j < 6 + nf; j++)
           K(i, j) = Kff(i - 6, j - 6);
-
-      fistIterFlag = true;
-
     }
     else if (stage == plotting) {
       updatePlotFeatures();
@@ -97,8 +96,7 @@ namespace MBSimFlexibleBody {
       // compute the inertia shape integrals
       computeShapeIntegrals();
 
-      updateAGbarGbardot();
-      updateFFRFrame();
+      updateAGbarGbardot(0.);
 
       // set mode shape vector for each element.
 //      BuildElements();  //
@@ -304,7 +302,7 @@ namespace MBSimFlexibleBody {
       for (int j = i; j < nf + 6; j++)
         M[k](i, j) = M_FF(i - 6, j - 6);
     
-    if (DEBUG && fistIterFlag) {
+    if (DEBUG) {
       cout << "M init " << M[k] << endl;
     }
   }
@@ -316,7 +314,7 @@ namespace MBSimFlexibleBody {
     
     // M_RTheta: 3*3
     fmatvec::Vec S_bar_t = I_1 + S_bar * qf;
-    fmatvec::SqrMat M_RTheta((-A) * tilde(S_bar_t) * G_bar);
+    fmatvec::SqrMat M_RTheta((-getA(t)) * tilde(S_bar_t) * getG_bar(t));
     
     // M_ThetaTheta: 3*3
     
@@ -388,15 +386,15 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyLinearExternalFFR::initQv() {
     // initQv has to be called after initM
     Qv.resize(nf + 6, NONINIT);
-    updateQv();
+    updateQv(0.);
   }
   
-  void FlexibleBodyLinearExternalFFR::updateQv() {
+  void FlexibleBodyLinearExternalFFR::updateQv(double t) {
     
     fmatvec::Vec3 uTheta = u(3, 5);
     fmatvec::Vec uf = u(6, 5 + nf);
     fmatvec::Vec qf = q(6, 5 + nf);
-    fmatvec::SqrMat omega_bar_skew(tilde(G_bar * uTheta));
+    fmatvec::SqrMat omega_bar_skew(tilde(getG_bar(t) * uTheta));
     
     Qv.init(0.); // Qv has to be init every time step as for calculating Qv(6, nf + 5), the operator "+=" is used.
 
@@ -416,11 +414,11 @@ namespace MBSimFlexibleBody {
       cout << "omtild" << omega_bar_skew << endl;
       cout << "G_bar" << G_bar << endl;
     }
+    updQv = false;
   }
   
   void FlexibleBodyLinearExternalFFR::updateh(double t, int k) {
-    updateQv();
-    h[k] = Qv - K * q;
+    h[k] = getQv(t) - K * q;
 
     if (DEBUG) {
       ofstream f;
@@ -485,7 +483,7 @@ namespace MBSimFlexibleBody {
       }
     }
     
-    if (DEBUG && fistIterFlag) {
+    if (DEBUG) {
       cout << "I_1" << I_1 << endl << endl;
       cout << "I_kl" << I_kl << endl << endl;
       cout << "S_bar" << S_bar << endl << endl;
@@ -500,7 +498,7 @@ namespace MBSimFlexibleBody {
 
   }
   
-  void FlexibleBodyLinearExternalFFR::updateAGbarGbardot() {
+  void FlexibleBodyLinearExternalFFR::updateAGbarGbardot(double t) {
     // use CardanPtr angle->computA() to compute A  and G, Gbar....
 
     double sinalpha = sin(q(3));
@@ -555,22 +553,33 @@ namespace MBSimFlexibleBody {
       cout << "G_bar_Dot" << G_bar_Dot << endl << endl;
 
     }
-
+    updAG = false;
   }
 
-  void FlexibleBodyLinearExternalFFR::updateFFRFrame() {
-    if (nrm2(R->getVelocity()) > epsroot()) {
+  void FlexibleBodyLinearExternalFFR::updatePositions(double t, Frame *frame) {
+    if (nrm2(R->getVelocity(t)) > epsroot()) {
       THROW_MBSIMERROR("Only absolute description of FFR-bodies possible (right now)!");
     }
+    frame->setOrientation(R->getOrientation(t) * getA(t));
+    frame->setPosition(R->getPosition() + R->getOrientation() * q(0, 2)); // transformation from Reference Frame R into world frame
+  }
 
+  void FlexibleBodyLinearExternalFFR::updateVelocities(double t, Frame *frame) {
+    if (nrm2(R->getVelocity(t)) > epsroot()) {
+      THROW_MBSIMERROR("Only absolute description of FFR-bodies possible (right now)!");
+    }
     // Update kinematics part
-    FFR->setPosition(R->getPosition() + R->getOrientation() * q(0, 2)); // transformation from Reference Frame R into world frame
+    frame->setVelocity(R->getOrientation(t) * u(0, 2));
 
-    FFR->setOrientation(R->getOrientation() * A);
-    FFR->setVelocity(R->getOrientation() * u(0, 2));
+    Vec3 omega_ref = getA(t) * getG_bar(t) * u(3, 5);
+    frame->setAngularVelocity(R->getOrientation() * omega_ref);
+  }
 
-    Vec3 omega_ref = A * G_bar * u(3, 5);
-    FFR->setAngularVelocity(R->getOrientation() * omega_ref);
+  void FlexibleBodyLinearExternalFFR::updateAccelerations(double t, Frame *frame) {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateAccelerations(): Not implemented!");
+  }
+
+  void FlexibleBodyLinearExternalFFR::updateJacobians(double t, Frame *frame, int j) {
 
     // update Jacobians at Frame
     Mat3xV Jactmp_trans(6 + nf, INIT, 0.);
@@ -578,81 +587,65 @@ namespace MBSimFlexibleBody {
 
     Jactmp_trans.set(Index(0, 2), Index(0, 2), Mat3x3(EYE));
 
-    Jactmp_rot.set(Index(0, 2), Index(3, 5), A * G_bar);
+    Jactmp_rot.set(Index(0, 2), Index(3, 5), getA(t) * getG_bar(t));
 
-    FFR->setJacobianOfTranslation(R->getOrientation() * Jactmp_trans);
-    FFR->setJacobianOfRotation(R->getOrientation() * Jactmp_rot);
+    frame->setJacobianOfTranslation(R->getOrientation(t) * Jactmp_trans);
+    frame->setJacobianOfRotation(R->getOrientation() * Jactmp_rot);
   }
 
-//  //TODO: should we add updateAGbarGbardot() before updateKinematics and updateJacobian.
-//  void FlexibleBodyLinearExternalFFR::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff, Frame *frame) {
-//
-//    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateKinematicsForFrame): has to be avoided");
-//
-//    if (frame != 0) { // frame should be linked to contour point data     // TODO:  is ff is not full feature, how to update these four values?
-//      frame->setPosition(cp.getFrameOfReference().getPosition());
-//      frame->setOrientation(cp.getFrameOfReference().getOrientation());
-//      frame->setVelocity(cp.getFrameOfReference().getVelocity());
-//      frame->setAngularVelocity(cp.getFrameOfReference().getAngularVelocity());
-//    }
-//  }
-//
-//  void FlexibleBodyLinearExternalFFR::updateKinematicsAtNode(NodeFrame * frame, Frame::Feature ff) {
-//
-//    // The node numbers start at 1...
-//    // The indexing starts at 0 ...
-//    size_t nodeIndex = frame->getNodeNumber() - 1;
-//
-//    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
-//
-//    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
-//
-//      Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
-////        u_bar = A * u_bar; // A*u_bar: transform local position vector expressed in FFR into Reference Frame R
-////        u_bar += q(0, 2); // r_p = R + A*U_bar: add the translational displacement of FFR (based on the reference frame R) to the local position vector expressed in Reference Frame R
-//
-//      frame->setPosition(R->getPosition() + R->getOrientation() * (q(0, 2) + A * u_bar)); // transformation from Reference Frame R into world frame
-//      // TODO:  why in cosserat is there not  plus R->getPosition() ?
-//    }
-//
-//    if (ff == Frame::localPosition || ff == Frame::all) {
-//
-//      Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
-//
-//      frame->setLocalPosition(u_bar);  // don't need to transform to the system coordinates,  needed to be done in neutral contour when calculating the Jacobian matrix
-//    }
-//
-//    // TODO: interpolate the position of lumped node to get a smooth surface, and then get A from that curve.
-//    SqrMat3 wA(R->getOrientation() * A);
-//    if (ff == Frame::normal || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
-//      frame->getOrientation().set(0, wA.col(0));
-//    if (ff == Frame::firstTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
-//      frame->getOrientation().set(1, wA.col(1));
-//    if (ff == Frame::secondTangent || ff == Frame::cosy || ff == Frame::position_cosy || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all)
-//      frame->getOrientation().set(2, wA.col(2));
-//
-//    if (ff == Frame::velocity || ff == Frame::velocities || ff == Frame::velocity_cosy || ff == Frame::velocities_cosy || ff == Frame::all) {
-//      Vec3 A_S_qfDot = A * node->getModeShape() * u(6, 5 + nf);
-//
-//      Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
-//
-//      Vec3 u_ref_1 = -A * tilde(u_bar) * G_bar * u(3, 5);
-//
-//      frame->setVelocity(R->getOrientation() * (u(0, 2) + u_ref_1 + A_S_qfDot));  // Schabana 5.15
-//    }
-//
-//    if (ff == Frame::angularVelocity || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-//      // In reality, each point on the flexible body should has a different angular rotation velocity omega as the effect of deformation. But as we assume the deformation is small and thus linearizable, in calculating
-//      // deformation u_f, we neglect the effect of the change of orientation, simply set the deformation to be equal a weighted summation of different modes vectors.
-//      // For kinematics, it means that we assume that every point in the flexible body have the same angular velocity omega of the FFR, neglecting the effect of deformation on angular velocity.
-//
-//      Vec omega_ref = A * G_bar * u(3, 5);
-//
-//      frame->setAngularVelocity(R->getOrientation() * omega_ref);
-//    }
-//  }
+  void FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(double t, Frame *frame) {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(): Not implemented!");
+  }
 
-  void FlexibleBodyLinearExternalFFR::updateJacobiansAtNode(NodeFrame * frame) {
+  void FlexibleBodyLinearExternalFFR::updatePositions(double t, NodeFrame *frame) {
+
+    // The node numbers start at 1...
+    // The indexing starts at 0 ...
+    int nodeIndex = frame->getNodeNumber() - 1;
+
+    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
+
+    Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
+    //        u_bar = A * u_bar; // A*u_bar: transform local position vector expressed in FFR into Reference Frame R
+    //        u_bar += q(0, 2); // r_p = R + A*U_bar: add the translational displacement of FFR (based on the reference frame R) to the local position vector expressed in Reference Frame R
+
+    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * (q(0, 2) + getA(t) * u_bar)); // transformation from Reference Frame R into world frame
+    // TODO:  why in cosserat is there not  plus R->getPosition() ?
+
+    // TODO: interpolate the position of lumped node to get a smooth surface, and then get A from that curve.
+    SqrMat3 wA(R->getOrientation() * A);
+    frame->getOrientation(false).set(0, wA.col(0));
+    frame->getOrientation(false).set(1, wA.col(1));
+    frame->getOrientation(false).set(2, wA.col(2));
+  }
+
+  void FlexibleBodyLinearExternalFFR::updateVelocities(double t, NodeFrame *frame) {
+    int nodeIndex = frame->getNodeNumber() - 1;
+
+    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
+
+    Vec3 A_S_qfDot = getA(t) * node->getModeShape() * u(6, 5 + nf);
+
+    Vec3 u_bar = node->getU0() + node->getModeShape() * q(6, 5 + nf);
+
+    Vec3 u_ref_1 = -A * tilde(u_bar) * G_bar * u(3, 5);
+
+    frame->setVelocity(R->getOrientation(t) * (u(0, 2) + u_ref_1 + A_S_qfDot));  // Schabana 5.15
+
+    // In reality, each point on the flexible body should has a different angular rotation velocity omega as the effect of deformation. But as we assume the deformation is small and thus linearizable, in calculating
+    // deformation u_f, we neglect the effect of the change of orientation, simply set the deformation to be equal a weighted summation of different modes vectors.
+    // For kinematics, it means that we assume that every point in the flexible body have the same angular velocity omega of the FFR, neglecting the effect of deformation on angular velocity.
+
+    Vec omega_ref = A * G_bar * u(3, 5);
+
+    frame->setAngularVelocity(R->getOrientation() * omega_ref);
+  }
+
+  void FlexibleBodyLinearExternalFFR::updateAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBodyLinearExternalFFR::updateJacobians(double t, NodeFrame *frame, int j) {
     int node = frame->getNodeNumber() - 1;
 
     // Jacobian of element
@@ -661,7 +654,7 @@ namespace MBSimFlexibleBody {
     // translational DOFs (d/dR)
     Jactmp_trans(Index(0, 2), Index(0, 2)) = SqrMat(3, EYE); // ref
     Vec3 u_bar = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape() * q(6, 5 + nf);
-    Jactmp_trans(Index(0, 2), Index(3, 5)) = -A * tilde(u_bar) * G_bar;
+    Jactmp_trans(Index(0, 2), Index(3, 5)) = -getA(t) * tilde(u_bar) * getG_bar(t);
     Jactmp_rot(Index(0, 2), Index(3, 5)) = A * G_bar;
 
     // elastic DOFs
@@ -671,47 +664,49 @@ namespace MBSimFlexibleBody {
     // rotation part for elastic DOFs is zero.
 
     // transformation
-    frame->setJacobianOfTranslation(R->getOrientation() * Jactmp_trans);
-    frame->setJacobianOfRotation(R->getOrientation() * Jactmp_rot);
+    frame->setJacobianOfTranslation(R->getOrientation(t) * Jactmp_trans,j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jactmp_rot,j);
   }
 
-//  void FlexibleBodyLinearExternalFFR::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-//
-//  }
+  void FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations): Not implemented.");
+  }
 
-//  void FlexibleBodyLinearExternalFFR::updateStateDependentVariables(double t) {
-//    updateAGbarGbardot();
-//
-//    updateFFRFrame();
-//
-//    for (size_t i = 0; i < fixedRelativeFrames.size(); i++)
-//      fixedRelativeFrames[i]->updateStateDependentVariables();
-//
-//    for (size_t i = 0; i < nodeFrames.size(); i++)
-//      updateKinematicsAtNode(nodeFrames[i], Frame::all);
-//
-//    for (size_t i = 0; i < contour.size(); i++) {
-//      contour[i]->updateStateDependentVariables(t);
-//    }
-//
-//    fistIterFlag = false;
-//  }
+  Vec3 FlexibleBodyLinearExternalFFR::getLocalPosition(double t, int i) {
+    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[i-1]);
 
-  void FlexibleBodyLinearExternalFFR::updateJacobians(double t, int k) {
-    for (size_t i = 0; i < fixedRelativeFrames.size(); i++)
-      fixedRelativeFrames[i]->updateJacobians(k);
-
-    for (size_t i = 0; i < nodeFrames.size(); i++)
-      updateJacobiansAtNode(nodeFrames[i]);
-
-    for (size_t i = 0; i < contour.size(); i++) {
-      contour[i]->updateJacobians(t, k);
-    }
+    return node->getU0() + node->getModeShape() * q(6, 5 + nf); // don't need to transform to the system coordinates,  needed to be done in neutral contour when calculating the Jacobian matrix
   }
 
   const Vec3 FlexibleBodyLinearExternalFFR::getModeShapeVector(int node, int column) const {
     const int nodeIndex = node - 1;
     return static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getModeShape().col(column);
+  }
+
+  void FlexibleBodyLinearExternalFFR::BuildElements(double t) {
+//    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::BuildElements(): Not implemented");
+  }
+
+  void FlexibleBodyLinearExternalFFR::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalVectorContribution(): Not implemented!");
+  }
+
+  void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
+  }
+
+  void FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::GlobalMatrixContribution(): Not implemented!");
+  }
+
+  double FlexibleBodyLinearExternalFFR::getLength() const {
+    THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::getLength(): Not implemented!");
+  }
+
+  void FlexibleBodyLinearExternalFFR::resetUpToDate() {
+    FlexibleBodyContinuum<Vec>::resetUpToDate();
+    updAG = true;
+    updQv = true;
   }
 
 }
