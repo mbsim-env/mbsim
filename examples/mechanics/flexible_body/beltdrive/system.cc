@@ -6,6 +6,7 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/circle.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 //#include "mbsim/contact_kinematics/circlesolid_flexibleband.h"
 //#include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
@@ -332,6 +333,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   belt->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
+  Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
+  belt->addContour(neutral);
+
   vector<FlexibleBand*> band;
   for(int iBand = 0; iBand < radiiDisks.size();iBand++) {
     stringstream name;
@@ -348,6 +352,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     r(0) = -0.5*b0_contact*sideInOut(iBand);
     bd->setRelativePosition(r);
     bd->setRelativeOrientation(sideInOut(iBand)==1?0:M_PI);
+    bd->setContourOfReference(neutral);
     belt->addContour(bd);
     band.push_back(bd);
   }
