@@ -19,6 +19,7 @@
 //#include "mbsim/constitutive_laws/constitutive_laws.h"
 // End Contact
 #include "mbsim/environment.h"
+#include "mbsim/contact_kinematics/point_spatialcontour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -71,15 +72,12 @@ System::System(const string &projectName) :
   Contour2sNeutralLinearExternalFFR* ncc = new Contour2sNeutralLinearExternalFFR("neutralFibre");
   beam->addContour(ncc);
   ncc->readTransNodes("spatial_beam_model/Example_Contour.txt");
-//  ncc->setFrameOfReference(beam->getFrameOfReference());
 
-  ncc->setAlphaStart(Vec(2, INIT, 0));
-  ncc->setAlphaEnd(Vec(2, INIT, 1));
-
-//  Vec nodes(2);
-//  nodes(0) = 0;
-//  nodes(1) = 1;
-//  ncc->setNodes(nodes);
+  Vec nodes(11, NONINIT);
+  for (int i = 0; i <= 10; i++)
+    nodes(i) = double(i)/10.;
+  ncc->setEtaNodes(nodes);
+  ncc->setXiNodes(nodes);
 
   // set the grid for contact2Ssearch, if these nodes vector is not given, the Contact2sSearch::setEqualSpacing() will be called
   // in pointContour2s to create a default grid for the initial searching.
@@ -179,7 +177,7 @@ System::System(const string &projectName) :
     contact->setNormalImpactLaw(new UnilateralNewtonImpact(0.0));
   }
 
-  contact->connect(ball->getContour("Point"), ncc);
+  contact->connect(ball->getContour("Point"), ncc, new ContactKinematicsPointSpatialContour);
   contact->enableOpenMBVNormalForce();
   contact->enableOpenMBVTangentialForce();
   contact->enableOpenMBVContactPoints();
@@ -187,4 +185,3 @@ System::System(const string &projectName) :
   this->addLink(contact);
 
 }
-

@@ -98,13 +98,12 @@ SlidingMass::SlidingMass(const string &projectName) :
     Contour1sNeutralLinearExternalFFR* ncc = new Contour1sNeutralLinearExternalFFR("neutralFibre");
     beam->addContour(ncc);
     ncc->readTransNodes("FFRBeam/NeutralPhase.txt");
-//    ncc->setFrameOfReference(beam->getFrameOfReference());
+    ncc->setFrameOfReference(beam->getFrameOfReference());
 
-    Vec nodes(2);
-    nodes(0) = 0;
-    nodes(1) = 1;
-    ncc->setNodes(nodes);
-
+    Vec nodes(11, NONINIT);
+    for (int i = 0; i <= 10; i++)
+      nodes(i) = double(i)/10.;
+    ncc->setEtaNodes(nodes);
     ncc->setAlphaStart(0);
     ncc->setAlphaEnd(1);
 

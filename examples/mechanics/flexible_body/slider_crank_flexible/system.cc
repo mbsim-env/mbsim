@@ -1,6 +1,7 @@
 #include "system.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
@@ -16,6 +17,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 // End Contact
 #include "mbsim/environment.h"
+#include "mbsim/contact_kinematics/point_spatialcontour.h"
 
 #include "mbsim/links/kinetic_excitation.h"
 
@@ -143,9 +145,6 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   rod->addContour(ncc);
   ncc->readTransNodes("rod/InnerRing.txt");
   ncc->setOpenStructure(false);
-  ncc->setFrameOfReference(rod->getFrameOfReference());
-  ncc->setAlphaStart(Vec(2, INIT, 0));
-  ncc->setAlphaEnd(Vec(2, INIT, 1));
 
   if (1) {
     // enable plotting of all nodal frames
@@ -259,7 +258,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     pnt->setFrameOfReference(pointRef);
     crank->addContour(pnt);
 
-    contactCrankRod->connect(pnt, ncc);
+    contactCrankRod->connect(pnt, ncc, new ContactKinematicsPointSpatialContour);
   }
 
   Joint *joint_rod_piston = new Joint("Joint_Rod_Piston");
