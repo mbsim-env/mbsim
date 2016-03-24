@@ -1,6 +1,8 @@
 #include "system.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
@@ -69,10 +71,16 @@ System::System(const string &projectName) :
   Contour2sNeutralLinearExternalFFR* ncc = new Contour2sNeutralLinearExternalFFR("neutralFibre");
   beam->addContour(ncc);
   ncc->readTransNodes("spatial_beam_model/Example_Contour.txt");
-  ncc->setFrameOfReference(beam->getFrameOfReference());
+//  ncc->setFrameOfReference(beam->getFrameOfReference());
 
   ncc->setAlphaStart(Vec(2, INIT, 0));
   ncc->setAlphaEnd(Vec(2, INIT, 1));
+
+//  Vec nodes(2);
+//  nodes(0) = 0;
+//  nodes(1) = 1;
+//  ncc->setNodes(nodes);
+
   // set the grid for contact2Ssearch, if these nodes vector is not given, the Contact2sSearch::setEqualSpacing() will be called
   // in pointContour2s to create a default grid for the initial searching.
 //  Vec nodesU(ncc->getNumberOfTransNodesU(), NONINIT);
