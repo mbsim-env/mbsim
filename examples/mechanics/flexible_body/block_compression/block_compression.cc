@@ -19,6 +19,8 @@
 
 #include <mbsim/utils/stopwatch.h>
 
+#include <mbsimFlexibleBody/frames/frame_1s.h>
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 #include <mbsimFlexibleBody/contours/flexible_band.h>
 
 using namespace MBSimFlexibleBody;
@@ -33,8 +35,8 @@ class Rod : public FlexibleBody1s21RCM {
         FlexibleBody1s21RCM(name, true) {
     }
 
-    virtual void facLLM(int i = 0) {
-      FlexibleBody1s21RCM::facLLM(i);
+    virtual void updateLLM(double t, int i = 0) {
+      FlexibleBody1s21RCM::updateLLM(t,i);
     }
 };
 
@@ -125,12 +127,12 @@ BlockCompression::BlockCompression(const string &projectName) :
     rod->setMassProportionalDamping(mpL);
 
     //Frames
-    ringStartFrame = new Frame("Ring Start");
-    rod->addFrame(ringStartFrame, 0);
+    ringStartFrame = new Frame1s("Ring Start",0.);
+    rod->addFrame(ringStartFrame);
     ringStartFrame->enableOpenMBV(0.001);
 
-    ringEndFrame = new Frame("Ring End");
-    rod->addFrame(ringEndFrame, l0);
+    ringEndFrame = new Frame1s("Ring End",l0);
+    rod->addFrame(ringEndFrame);
     ringEndFrame->enableOpenMBV(0.001);
     //Contours
     FlexibleBand * top = new FlexibleBand("Top");
@@ -139,15 +141,26 @@ BlockCompression::BlockCompression(const string &projectName) :
     FlexibleBand * bottom = new FlexibleBand("Bottom");
     rod->addContour(bottom);
 
-    /* cuboid */
-    top->setCn(Vec("[1.;0.]"));
-    bottom->setCn(Vec("[-1.;0.]"));
+    Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
+    rod->addContour(neutral);
 
-    top->setAlphaStart(0.);
-    top->setAlphaEnd(l0);
+    Vec nodes(2);
+    nodes(0) = 0.;
+    nodes(1) = l0;
 
-    bottom->setAlphaStart(0.);
-    bottom->setAlphaEnd(l0);
+    Vec2 RrRP;
+    RrRP(0) = 0.5*b0;
+
+    top->setRelativePosition(RrRP);
+    bottom->setRelativePosition(-RrRP);
+
+    bottom->setRelativeOrientation(M_PI);
+
+    top->setContourOfReference(neutral);
+    bottom->setContourOfReference(neutral);
+
+    top->setNodes(nodes);
+    bottom->setNodes(nodes);
 
     Vec contourNodes(elements + 1);
     for (int i = 0; i <= elements; i++)
@@ -157,8 +170,6 @@ BlockCompression::BlockCompression(const string &projectName) :
 
     top->setWidth(w0);  // adapted for double width
     bottom->setWidth(w0);
-    top->setNormalDistance(0.5 * b0);
-    bottom->setNormalDistance(0.5 * b0);
 
     Vec q0M2D(5 * elements + 3, INIT, 0);
 

@@ -1,6 +1,7 @@
 #ifndef _BLOCKCOMPRESSION_H
 #define _BLOCKCOMPRESSION_H
 
+#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -27,7 +28,7 @@ class Block : public MBSim::RigidBody {
     }
 
     virtual void init(InitStage stage) {
-      if (stage == relativeFrameContourLocation) {
+      if (stage == preInit) {
         /*Back Plane*/
         fmatvec::Vec3 backRefTrans;
         backRefTrans(0) = -thickness / 2.;
@@ -63,7 +64,7 @@ class Block : public MBSim::RigidBody {
         bottom->setFrameOfReference(bottomRef);
       }
 
-      if (stage == plotting) {
+      else if (stage == plotting) {
         fmatvec::Vec2 lengths;
         lengths(0) = height;
         lengths(1) = width;
@@ -110,9 +111,9 @@ class BlockCompression : public MBSim::DynamicSystemSolver {
     MBSim::RigidBody * leftJointBody;
     MBSim::RigidBody * rightJointBody;
 
-    MBSim::Frame * ringStartFrame;
-    MBSim::Frame * ringEndFrame;
-    MBSim::Frame * endFrame;
+    MBSimFlexibleBody::Frame1s * ringStartFrame;
+    MBSimFlexibleBody::Frame1s * ringEndFrame;
+    MBSimFlexibleBody::Frame1s * endFrame;
 
     /*geometry*/
     double hingePointDistance;
