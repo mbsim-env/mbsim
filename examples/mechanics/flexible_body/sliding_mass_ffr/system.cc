@@ -6,11 +6,15 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"
+#include "mbsim/frames/fixed_relative_frame.h"
+#include "mbsim/frames/fixed_contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include <mbsim/functions/kinematics/kinematics.h>
+
+#include "mbsim/contact_kinematics/point_planarcontour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -94,7 +98,12 @@ SlidingMass::SlidingMass(const string &projectName) :
     Contour1sNeutralLinearExternalFFR* ncc = new Contour1sNeutralLinearExternalFFR("neutralFibre");
     beam->addContour(ncc);
     ncc->readTransNodes("FFRBeam/NeutralPhase.txt");
-    ncc->setFrameOfReference(beam->getFrameOfReference());
+//    ncc->setFrameOfReference(beam->getFrameOfReference());
+
+    Vec nodes(2);
+    nodes(0) = 0;
+    nodes(1) = 1;
+    ncc->setNodes(nodes);
 
     ncc->setAlphaStart(0);
     ncc->setAlphaEnd(1);
@@ -153,7 +162,8 @@ SlidingMass::SlidingMass(const string &projectName) :
     Contact *contact1 = new Contact("FFR_Contact");
     contact1->setNormalForceLaw(new BilateralConstraint);
     contact1->setNormalImpactLaw(new BilateralImpact);
-    contact1->connect(ballContour1, ncc);
+    contact1->connect(ballContour1, ncc, new ContactKinematicsPointPlanarContour);
+//    contact1->setSearchAllContactPoints(true);
     this->addLink(contact1);
 
   }
@@ -236,9 +246,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     contact->connect(ballContour, rod->getContour("NeutralFibre"));
     this->addLink(contact);
 
-    ContourPointData cpdata;
-    cpdata.getContourParameterType() = ContourPointData::continuum;
-    rod->addFrame("RJ", cpdata);
+    rod->addFrame(new Frame1s("RJ",0));
 
     FixedRelativeFrame * fixFrameRCM = new FixedRelativeFrame("refFrameRCMFix");
     Vec3 relRCMFixPos;

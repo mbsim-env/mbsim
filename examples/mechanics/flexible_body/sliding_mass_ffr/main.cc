@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
   sw.start();
   SlidingMass *sys = new SlidingMass("MBS");
 
-  sys->setStopIfNoConvergence(true, true);
+//  sys->setStopIfNoConvergence(true, true);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
