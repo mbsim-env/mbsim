@@ -14,60 +14,52 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
- *          rzander@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_POINT_NURBS_2S_H_
-#define _CONTACT_KINEMATICS_POINT_NURBS_2S_H_
+#ifndef _CONTACT_KINEMATICS_POINT_SPATIAL_CONTOUR_H_
+#define _CONTACT_KINEMATICS_POINT_SPATIAL_CONTOUR_H_
 
-#include "mbsim/contact_kinematics/contact_kinematics.h"
-//#include "mbsim/contours/contour2s.h"
+#include "contact_kinematics.h"
 
 namespace MBSim {
+
   class Point;
   class FuncPairSpatialContourPoint;
-  class Contour2s;
-}
-
-namespace MBSimFlexibleBody {
-
-//  class FlexibleBodyLinearExternalFFR;
 
   /**
-   * \brief pairing point to contour2s surface
-   * \author: Zhan Wang
-   * \date 2013-12-05
+   * \brief pairing point to spatial contour
+   * \author: Martin Foerg
    */
-  class ContactKinematicsPointContour2s : public MBSim::ContactKinematics {
+  class ContactKinematicsPointSpatialContour : public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsPointContour2s() : ContactKinematics(), searchAllCP(false) { }
+      ContactKinematicsPointSpatialContour() : ContactKinematics(), ipoint(0), ispatialcontour(0), point(0), spatialcontour(0), searchAllCP(false) { }
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointContour2s();
+      virtual ~ContactKinematicsPointSpatialContour();
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
-      virtual void updateg(double t, double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame);
       /***************************************************/
 
     private:
       /**
-       * \brief index for point and contour2s surface
+       * \brief contour index
        */
-      int ipoint, icontour2s;
+      int ipoint, ispatialcontour;
 
       /** 
-       * \brief pointer to point and contour2s surface
+       * \brief contour classes
        */
-      MBSim::Point *point;
-      MBSim::Contour2s *contour2s;
+      Point *point;
+      Contour *spatialcontour;
 
       /**
        * \brief root function
@@ -80,4 +72,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif
-

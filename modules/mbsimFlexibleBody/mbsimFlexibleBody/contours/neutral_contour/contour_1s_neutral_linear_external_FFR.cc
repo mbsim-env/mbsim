@@ -97,6 +97,7 @@ namespace MBSimFlexibleBody {
 //        transContourPoints.push_back(ContourPointData(transNodes(i)));
 
       NP = createNeutralPosition();
+      NP->setBinormalDir(-R->getOrientation(0.).col(2));
       NLP = createNeutralLocalPosition();
       NV = createNeutralVelocity();
       createNeutralModeShape();

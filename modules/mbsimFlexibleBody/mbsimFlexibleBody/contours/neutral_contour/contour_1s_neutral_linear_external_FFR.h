@@ -47,6 +47,8 @@ namespace MBSimFlexibleBody {
       /* GETTER / SETTER*/
       fmatvec::VecInt getTransNodes();
 
+      void setFrameOfReference(MBSim::Frame *frame) { R = frame; }
+
       void resetUpToDate();
 
     protected:
@@ -68,6 +70,8 @@ namespace MBSimFlexibleBody {
       int qSize;
 
       std::vector<MBSim::NurbsCurve> curveModeShape; // size = number of elastic coordinates
+
+      MBSim::Frame *R;
 
   };
 

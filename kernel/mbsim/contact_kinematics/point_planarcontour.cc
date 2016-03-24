@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -70,10 +70,11 @@ namespace MBSim {
     cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(t,cFrame[iplanarcontour]->getZeta()));
     cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(t,cFrame[iplanarcontour]->getZeta()));
 
-    cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t)); // position of point
+    cFrame[ipoint]->setPosition(point->getFrame()->getPosition(t));
     cFrame[ipoint]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
     cFrame[ipoint]->getOrientation(false).set(1, -cFrame[iplanarcontour]->getOrientation(false).col(1));
     cFrame[ipoint]->getOrientation(false).set(2, cFrame[iplanarcontour]->getOrientation(false).col(2));
+
     if(planarcontour->isZetaOutside(cFrame[iplanarcontour]->getZeta()))
       g = 1;
     else

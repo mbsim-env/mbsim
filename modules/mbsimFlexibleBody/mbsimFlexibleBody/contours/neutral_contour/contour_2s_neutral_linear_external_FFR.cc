@@ -128,7 +128,7 @@ namespace MBSimFlexibleBody {
 
   void Contour2sNeutralLinearExternalFFR::updateVelocities(double t, ContourFrame *frame) {
     NV->update(t,frame);
-    frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity());
+    frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity(t));
   }
 
   void Contour2sNeutralLinearExternalFFR::updateJacobians(double t, ContourFrame *frame, int j) {

@@ -64,10 +64,10 @@ namespace MBSim {
       virtual ContourFrame* createContourFrame(const std::string &name="P") { return NULL; }
 
       const std::vector<double>& getEtaNodes() const { return etaNodes; }
-      const std::vector<std::vector<double> >& getXiNodes() const { return xiNodes; }
+      const std::vector<double>& getXiNodes() const { return xiNodes; }
 
       void setEtaNodes(const std::vector<double> &etaNodes_) { etaNodes = etaNodes_; }
-      void setXiNodes(const std::vector<std::vector<double> > &xiNodes_) { xiNodes = xiNodes_; }
+      void setXiNodes(const std::vector<double> &xiNodes_) { xiNodes = xiNodes_; }
 
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int gethInd(int i=0) const { return hInd[i]; }
@@ -230,7 +230,7 @@ namespace MBSim {
       int hSize[2], hInd[2];
 
       std::vector<double> etaNodes;
-      std::vector<std::vector<double> > xiNodes;
+      std::vector<double> xiNodes;
 
       /**
        * \brief thickness of contour

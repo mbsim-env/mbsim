@@ -29,9 +29,7 @@ namespace MBSim {
 
   /**
    * \brief pairing point to planar contour
-   * \author Roland Zander
-   * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \date 2009-06-04 new interface (Thorsten Schindler)
+   * \author Martin Foerg
    */
   class ContactKinematicsPointPlanarContour : public ContactKinematics {
     public:
