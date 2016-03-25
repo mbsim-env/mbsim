@@ -20,7 +20,7 @@
 #ifndef _CONTOUR2S_H_
 #define _CONTOUR2S_H_
 
-#include "mbsimFlexibleBody/contours/contour_continuum.h"
+#include "mbsim/contours/contour.h"
 
 namespace MBSimFlexibleBody {
 
@@ -30,48 +30,17 @@ namespace MBSimFlexibleBody {
    * \date 2009-04-20 frame concept (Thorsten Schindler)
    * \date 2009-06-04 new file (Thorsten Schindler)
    */
-  class Contour2s : public ContourContinuum<fmatvec::Vec> {
+  class Contour2s : public MBSim::Contour {
     protected:
-     /**
-       * \brief the lagrange parameters in U and V direction for the contact2ssearch
-       */
-      fmatvec::Vec nodesU, nodesV;
 
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      Contour2s(const std::string &name) : ContourContinuum<fmatvec::Vec>(name) {}
-
-//      /**
-//       * \return tangents in world frame
-//       * \param Lagrangian position
-//       */
-//      virtual fmatvec::Mat3x2 computeTangentialPlane(double t, fmatvec::Vec alpha) { ContourPointData cp(alpha); return cp.getFrameOfReference().getOrientation(t)(fmatvec::Range<fmatvec::Fixed<0>,fmatvec::Fixed<2> >(),fmatvec::Range<fmatvec::Fixed<1>,fmatvec::Fixed<2> >()); }
-
-      /**
-       * \return nodes lagrange parameters for contact2sSearch in U direction
-       */
-      const fmatvec::Vec getNodesU() const { return nodesU; }
-
-      /**
-       * \return nodes lagrange parameters for contact2sSearch in V direction
-       */
-      const fmatvec::Vec getNodesV() const { return nodesU; }
-
-      /**
-       * \set nodes lagrange parameters for contact2sSearch in U direction
-       */
-      void setNodesU(const fmatvec::Vec& nodesU_) { nodesU = nodesU_; }
-
-      /**
-       * \set nodes lagrange parameters for contact2sSearch in V direction
-       */
-      void setNodesV(const fmatvec::Vec& nodesV_) { nodesV = nodesV_; }
+      Contour2s(const std::string &name) : Contour(name) { }
   };
 
 }
 
 #endif /* _CONTOUR2S_H_ */
-

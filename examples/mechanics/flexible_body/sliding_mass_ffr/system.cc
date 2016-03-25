@@ -104,8 +104,6 @@ SlidingMass::SlidingMass(const string &projectName) :
     for (int i = 0; i <= 10; i++)
       nodes(i) = double(i)/10.;
     ncc->setEtaNodes(nodes);
-    ncc->setAlphaStart(0);
-    ncc->setAlphaEnd(1);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     {

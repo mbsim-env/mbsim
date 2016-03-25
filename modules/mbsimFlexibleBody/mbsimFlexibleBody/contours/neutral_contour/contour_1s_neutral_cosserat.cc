@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
     }
     else if (stage == resize) {
       // construct contourPoint for translation nodes
-      nodes.reserve(transNodes.size() + 1);
+      etaNodes.reserve(transNodes.size() + 1);
 
 //        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
 

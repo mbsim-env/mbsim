@@ -20,7 +20,7 @@
 #ifndef _CONTOUR1S_H_
 #define _CONTOUR1S_H_
 
-#include "mbsimFlexibleBody/contours/contour_continuum.h"
+#include "mbsim/contours/contour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -34,121 +34,28 @@ namespace MBSimFlexibleBody {
    * \date 2009-04-20 frame-concept (Thorsten Schindler)
    * \date 2009-06-04 new file (Thorsten Schindler)
    */
-  class Contour1s : public ContourContinuum<double> {
+  class Contour1s : public MBSim::Contour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      Contour1s(const std::string &name);
+      Contour1s(const std::string &name) : Contour(name) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const {
-        return "Contour1s";
-      }
+      std::string getType() const { return "Contour1s"; }
       void init(InitStage stage_);
       void plot(double t, double dt);
       /***************************************************/
 
-      virtual fmatvec::Vec3 getRelativePosition(const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(Contour::getRelativePosition): Not implemented.");
-        return 0;
-      }
-
-      virtual fmatvec::Vec3 getDerivativeOfRelativePosition(const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(Contour::getDerivativeOfRelativePosition): Not implemented.");
-        return 0;
-      }
-
-      virtual fmatvec::Vec3 getSecondDerivativeOfRelativePosition(const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(Contour::getSecondDerivativeOfRelativePosition): Not implemented.");
-        return 0;
-      }
-
       virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
 
-//      /**
-//       * \return position in world frame
-//       * \param contour position
-//       */
-//     virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-//
-//      /**
-//       * \return first tangent in world frame
-//       * \param t time
-//       * \param cp contour position
-//       */
-//      virtual fmatvec::Vec3 getFirstTangent(double t, const fmatvec::Vec2 &zeta);
-//
-//      /**
-//       * \return second tangent in world frame
-//       * \param Lagrangian position
-//       */
-//      virtual fmatvec::Vec3 getSecondTangent(double t, const fmatvec::Vec2 &zeta);
-//
-//      /**
-//       * \return normal in world frame
-//       * \param contour position
-//       */
-//      virtual fmatvec::Vec3 getNormal(double t, const fmatvec::Vec2 &zeta);
-//
-//      /**
-//       * \return derivative of first tangent in world frame
-//       * \param t time
-//       * \param cp contour position
-//       */
-//      virtual fmatvec::Vec3 getDerivativeOfFirstTangent(double t, const fmatvec::Vec2 &zeta);
-//
-//      /**
-//       * \return derivative of first tangent in world frame
-//       * \param t time
-//       * \param cp contour position
-//       */
-//      virtual fmatvec::Vec3 getGlobalRelativePosition(double t, const fmatvec::Vec2 &zeta);
-//
-//      /**
-//       * \return derivative of first tangent in world frame
-//       * \param t time
-//       * \param cp contour position
-//       */
-//      virtual fmatvec::Vec3 getGlobalDerivativeOfRelativePosition(double t, const fmatvec::Vec2 &zeta);
-
-      /**
-       * \return radius of contour in contour point
-       * \param contour position
-       */
-      virtual double getCurvature(const fmatvec::Vec2 &zeta) {
-        THROW_MBSIMERROR("(Contour::getCurvature): Not implemented.");
-        return 0;
-      }
-
-      /* GETTER / SETTER */
-      void setDiameter(double diameter_) {
-        diameter = diameter_;
-      }
-      double getDiameter() {
-        return diameter;
-      }
-      /***************************************************/
-
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) {
-        openMBVSpineExtrusion = spineExtrusion;
-      }
-      boost::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() {
-        return openMBVSpineExtrusion;
-      }
+      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) { openMBVSpineExtrusion = spineExtrusion; }
+      boost::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() { return openMBVSpineExtrusion; }
 #endif
 
     protected:
-      /**
-       * \brief diameter of neutral fibre
-       *
-       * \todo: this is not really general --> diameter only valid for round neutral contours!
-       */
-      double diameter;
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief body for the spine extrusion for visualisation of the 1s-body

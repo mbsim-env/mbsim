@@ -50,8 +50,7 @@ namespace MBSimFlexibleBody {
     ncc->setNodeOffest(nodeOffset);
     ncc->setOpenStructure(openStructure);
     ncc->setFrameOfReference(getFrameOfReference());
-    ncc->setAlphaStart(uMin);
-    ncc->setAlphaEnd(uMax);
+    ncc->setEtaNodes(Vec2("[0;1]"));
 
     addContour(ncc);
 
