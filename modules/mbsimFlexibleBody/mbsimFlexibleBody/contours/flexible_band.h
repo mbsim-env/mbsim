@@ -20,7 +20,7 @@
 #ifndef _FLEXIBLE_BAND_H_
 #define _FLEXIBLE_BAND_H_
 
-#include "mbsim/contours/contour1s.h"
+#include "mbsimFlexibleBody/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 #include "mbsim/utils/eps.h"
 
@@ -40,13 +40,13 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
-  class FlexibleBand : public MBSim::Contour1s {
+  class FlexibleBand : public Contour1s {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      FlexibleBand(const std::string& name) : MBSim::Contour1s(name), width(0), ARK(fmatvec::EYE), sOld(-1e12) { }
+      FlexibleBand(const std::string& name) : Contour1s(name), width(0), ARK(fmatvec::EYE), sOld(-1e12) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBand"; }

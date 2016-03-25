@@ -18,7 +18,6 @@ libcontour_la_SOURCES = contour.cc\
 			room.cc\
 			planewithfrustum.cc\
 			polynomial_frustum.cc\
-			contour1s.cc\
 			planar_contour.cc\
 			contour_interpolation.cc\
 			contour_quad.cc
@@ -44,9 +43,6 @@ contourinclude_HEADERS = contour.h\
 			 room.h\
 			 planewithfrustum.h\
 			 polynomial_frustum.h\
-			 contour_continuum.h\
-			 contour1s.h\
 			 planar_contour.h\
-			 contour2s.h\
 			 contour_interpolation.h\
 			 contour_quad.h

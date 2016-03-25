@@ -20,9 +20,9 @@
 #ifndef _CONTOUR2S_H_
 #define _CONTOUR2S_H_
 
-#include "mbsim/contours/contour_continuum.h"
+#include "mbsimFlexibleBody/contours/contour_continuum.h"
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   /**
    * \brief basic contour described by two contour parameters \f$\vs\f$

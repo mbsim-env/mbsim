@@ -116,9 +116,6 @@ namespace MBSim {
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Plate")==0 )
       return new ContactKinematicsPointPlate;
 
-    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1s")==0 )
-      return new ContactKinematicsPointPlanarContour;
-
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "ContourInterpolation")==0 )
       return new ContactKinematicsPointContourInterpolation;
 

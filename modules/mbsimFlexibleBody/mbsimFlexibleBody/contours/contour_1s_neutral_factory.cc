@@ -14,14 +14,6 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Contour1sNeutralFactory::Contour1sNeutralFactory(const std::string &name) :
-      MBSim::Contour1s(name), uMin(0.), uMax(1.), degU(3), openStructure(false)
-  {
-  }
-
-  Contour1sNeutralFactory::~Contour1sNeutralFactory() {
-  }
-
   ContourFrame* Contour1sNeutralFactory::createContourFrame(const string &name) {
     FloatingContourFrame *frame = new FloatingContourFrame(name);
     frame->setContourOfReference(this);

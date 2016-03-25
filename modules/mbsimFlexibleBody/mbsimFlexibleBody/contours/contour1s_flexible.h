@@ -20,7 +20,7 @@
 #ifndef _CONTOUR1S_FLEXIBLE_H_
 #define _CONTOUR1S_FLEXIBLE_H_
 
-#include "mbsim/contours/contour1s.h"
+#include "mbsimFlexibleBody/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 #include "mbsim/utils/eps.h"
 
@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
    *        For it all "natural" contours of the bodies would have to implement a neutral_contour
    *        Then it would not be the case, that the neutral_contour1s as a contour1s as well as this contour1s_flexible
    */
-  class Contour1sFlexible : public MBSim::Contour1s {
+  class Contour1sFlexible : public Contour1s {
     public:
       /**
        * \brief constructor

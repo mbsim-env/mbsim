@@ -8,7 +8,7 @@
 #ifndef CONTOUR_1S_NEUTRAL_FACTORY_H_
 #define CONTOUR_1S_NEUTRAL_FACTORY_H_
 
-#include "mbsim/contours/contour1s.h"
+#include "mbsimFlexibleBody/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 namespace MBSim {
@@ -17,11 +17,9 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
   
-  class Contour1sNeutralFactory : public MBSim::Contour1s {
+  class Contour1sNeutralFactory : public Contour1s {
     public:
-      Contour1sNeutralFactory(const std::string &name);
-
-      virtual ~Contour1sNeutralFactory();
+      Contour1sNeutralFactory(const std::string &name) : Contour1s(name), uMin(0.), uMax(1.), degU(3), openStructure(false) { }
 
       virtual std::string getType() const { return "Contour1sNeutralFactory"; }
 

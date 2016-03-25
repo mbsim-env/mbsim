@@ -22,7 +22,7 @@
 
 #include "mbsim/contours/contour.h"
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   /** 
    * \brief basic class for contours described by a parametrisation
@@ -32,7 +32,7 @@ namespace MBSim {
    * \date 2009-08-16 fix in template usage (Thorsten Schindler)
    */
   template <class AT>
-    class ContourContinuum : public Contour {
+    class ContourContinuum : public MBSim::Contour {
       public:
         /**
          * \brief constructor 
@@ -77,4 +77,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTOURCONTINUUM_H_ */
-

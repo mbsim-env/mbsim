@@ -20,13 +20,13 @@
 #ifndef _CONTOUR1S_H_
 #define _CONTOUR1S_H_
 
-#include "mbsim/contours/contour_continuum.h"
+#include "mbsimFlexibleBody/contours/contour_continuum.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   /** 
    * \brief basic class for contours described by one contour parameter \f$s\f$
@@ -162,4 +162,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTOUR1S_H_ */
-

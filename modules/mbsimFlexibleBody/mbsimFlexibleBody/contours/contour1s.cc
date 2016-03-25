@@ -19,9 +19,9 @@
 
 #include <config.h>
 
-#include "mbsim/contours/contour1s.h"
+#include "mbsimFlexibleBody/contours/contour1s.h"
 #include "mbsim/frames/frame.h"
-#include <mbsim/utils/rotarymatrices.h>
+#include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
@@ -30,7 +30,7 @@
 using namespace std;
 using namespace fmatvec;
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   Contour1s::Contour1s(const std::string &name) : ContourContinuum<double>(name), diameter(0.) {
   }
@@ -143,4 +143,3 @@ namespace MBSim {
   }
 
 }
-

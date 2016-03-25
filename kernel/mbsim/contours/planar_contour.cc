@@ -99,13 +99,8 @@ namespace MBSim {
   void PlanarContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
-    //ContourContinuum
     e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
     etaNodes=getVec(e);
-    //Contour1s
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"diameter");
-//    diameter=getDouble(e);
-    //PlanarContour
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     throw;
 //    funcCrPC=ObjectFactory::createAndInit<ContourFunction1s> >(e->getFirstElementChild());

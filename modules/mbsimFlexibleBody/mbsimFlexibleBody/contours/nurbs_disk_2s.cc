@@ -25,6 +25,7 @@
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>

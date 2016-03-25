@@ -20,10 +20,8 @@
 #ifndef NURBSDISK2S_H_
 #define NURBSDISK2S_H_
 
-#include "fmatvec/fmatvec.h"
-#include "mbsim/mbsim_event.h"
+#include "mbsimFlexibleBody/contours/contour2s.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
-#include "mbsim/contours/contour2s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -57,7 +55,7 @@ namespace MBSimFlexibleBody {
    * \todo angularVelocity TODO
    * \todo flexible body should only parametrise midplane -> other surfaces in contour TODO
    */
-  class NurbsDisk2s : public MBSim::Contour2s {
+  class NurbsDisk2s : public Contour2s {
     public:
       /**
        * \brief constructor 

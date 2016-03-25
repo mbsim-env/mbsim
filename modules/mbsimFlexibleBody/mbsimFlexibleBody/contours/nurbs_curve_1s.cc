@@ -18,66 +18,15 @@
  */
 
 #include<config.h>
-
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h"
+#include "mbsim/mbsim_event.h"
 
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 
 namespace MBSimFlexibleBody {
-
-  NurbsCurve1s::NurbsCurve1s(const std::string &name) :
-      MBSim::Contour1s(name), Elements(0), openStructure(false), L(0.), degU(0), curveTranslations(), curveVelocities(), curveAngularVelocities(), normalRotationGrid() {
-  }
-
-  NurbsCurve1s::~NurbsCurve1s() {
-  }
-
-//  void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, Frame::Feature ff) {
-//    if (ff == Frame::position || ff == Frame::position_cosy || ff == Frame::all) {
-//      Vec3 Tmppt = curveTranslations.pointAt(cp.getLagrangeParameterPosition()(0));
-//      cp.getFrameOfReference().setPosition(Tmppt);
-//    }
-//
-//    if (ff == Frame::velocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-//      Vec3 Tmpv = curveVelocities.pointAt(cp.getLagrangeParameterPosition()(0));
-//      cp.getFrameOfReference().setVelocity(Tmpv);
-//    }
-//
-//    if (ff == Frame::angularVelocity || ff == Frame::velocity_cosy || ff == Frame::velocities || ff == Frame::velocities_cosy || ff == Frame::all) {
-//      double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0/2
-//      double l0 = L / Elements;
-//      if (uStaggered < l0 / 2.)
-//        uStaggered = L - l0 / 2. + uStaggered;
-//      else
-//        uStaggered -= l0 / 2.;
-//      Vec3 Tmpav = curveAngularVelocities.pointAt(uStaggered);
-//      cp.getFrameOfReference().setAngularAcceleration(Tmpav);
-//    }
-//  }
-//
-//  void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
-//    cp.getFrameOfReference().getJacobianOfTranslation().resize(qSize);
-//    cp.getFrameOfReference().getJacobianOfRotation().resize(qSize); // TODO open structure
-//
-//    double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
-//    double l0 = L / Elements;
-//    if (uStaggered < l0 / 2.)
-//      uStaggered = L - l0 / 2. + uStaggered;
-//    else
-//      uStaggered -= l0 / 2.;
-//
-//    for (int k = 0; k < qSize; k++) {
-//      Vec3 TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
-//      Vec3 TmpPtRot = CurveJacobiansOfRotation[k].pointAt(uStaggered);
-//
-//      cp.getFrameOfReference().getJacobianOfTranslation().set(k, TmpPtTrans);
-//
-//      cp.getFrameOfReference().getJacobianOfRotation().set(k, TmpPtRot);
-//    }
-//  }
 
   void NurbsCurve1s::initContourFromBody(InitStage stage) {
     if (stage == resize) {
@@ -190,13 +139,6 @@ namespace MBSimFlexibleBody {
     MatVx3 NodelistTrans(nodes, NONINIT);
     MatVx3 NodelistRot(nodes, NONINIT);
 
-//    for (int i = 0; i < nodes; i++) {
-//      if (translational)
-//        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
-//      if (rot)
-//        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
-//    }
-
     for (int k = 0; k < qSize; k++) {
       for (int i = 0; i < nodes; i++) {
         if (translational)
@@ -204,7 +146,6 @@ namespace MBSimFlexibleBody {
 
         if (rot)
           NodelistRot.set(i, trans(jacobiansRot[i].getFrameOfReference().getJacobianOfRotation(t,0).col(k)));
-
       }
 
       if (update) {
@@ -226,5 +167,24 @@ namespace MBSimFlexibleBody {
     }
   }
 
-}
+  void NurbsCurve1s::computeRootFunctionPosition(double t, MBSim::ContourFrame *frame) {
+    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
+  }
 
+  void NurbsCurve1s::computeRootFunctionFirstTangent(double t, MBSim::ContourFrame *frame) {
+    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
+  }
+
+  void NurbsCurve1s::computeRootFunctionNormal(double t, MBSim::ContourFrame *frame) {
+    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
+  }
+
+  void NurbsCurve1s::computeRootFunctionSecondTangent(double t, MBSim::ContourFrame *frame) {
+    THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
+  }
+
+  ContactKinematics *NurbsCurve1s::findContactPairingWith(std::string type0, std::string type1) {
+    THROW_MBSIMERROR("(NurbsCurve1s::findContactPairingWith): Not implemented!");
+  }
+
+}

@@ -20,11 +20,8 @@
 #ifndef NurbsCurve1s_H_
 #define NurbsCurve1s_H_
 
-#include "fmatvec/fmatvec.h"
-#include "mbsim/mbsim_event.h"
-#include "mbsim/contours/contour1s.h"
-
-#include <mbsim/numerics/nurbs/nurbs_curve.h>
+#include "mbsimFlexibleBody/contours/contour1s.h"
+#include "mbsim/numerics/nurbs/nurbs_curve.h"
 
 namespace MBSimFlexibleBody {
 
@@ -37,52 +34,36 @@ namespace MBSimFlexibleBody {
    * \date 2013-02-04 contour now for 2D and 3D Cosserat beam (Zitzewitz / Cebulla / Schindler)
    * \date 2013-08-19 using self implemented nurbs-curve
    */
-  class NurbsCurve1s : public MBSim::Contour1s {
+  class NurbsCurve1s : public Contour1s {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      NurbsCurve1s(const std::string &name);
+      NurbsCurve1s(const std::string &name) : Contour1s(name), Elements(0), openStructure(false), L(0.), degU(0), curveTranslations(), curveVelocities(), curveAngularVelocities(), normalRotationGrid() { }
 
       /**
        * \brief destructor
        */
-      virtual ~NurbsCurve1s();
+      virtual ~NurbsCurve1s() { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const {
-        return "NurbsCurve1s";
-      }
+      virtual std::string getType() const { return "NurbsCurve1s"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(double t, MBSim::ContourFrame *frame) {
-        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
-      }
-      virtual void computeRootFunctionFirstTangent(double t, MBSim::ContourFrame *frame) {
-        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
-      }
-      virtual void computeRootFunctionNormal(double t, MBSim::ContourFrame *frame) {
-        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
-      }
-      virtual void computeRootFunctionSecondTangent(double t, MBSim::ContourFrame *frame) {
-        THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
-      }
+      virtual void computeRootFunctionPosition(double t, MBSim::ContourFrame *frame);
+      virtual void computeRootFunctionFirstTangent(double t, MBSim::ContourFrame *frame);
+      virtual void computeRootFunctionNormal(double t, MBSim::ContourFrame *frame);
+      virtual void computeRootFunctionSecondTangent(double t, MBSim::ContourFrame *frame);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-//      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Frame::Feature ff);
-//      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) {
-        THROW_MBSIMERROR("(NurbsCurve1s::findContactPairingWith): Not implemented!");
-      }
+      virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1);
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNormalRotationGrid(fmatvec::Vec normal_) {
-        normalRotationGrid = normal_(0,2);
-      }
+      void setNormalRotationGrid(fmatvec::Vec normal_) { normalRotationGrid = normal_(0,2); }
       /***************************************************/
 
       /**
@@ -159,16 +140,6 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec3 normalRotationGrid;
 
-//      /**
-//       * \brief Jacobians of Translation of finite element nodes
-//       */
-//      std::vector<MBSim::ContourPointData> jacobiansTrans; // size = number of interpolation points
-//
-//      /**
-//       * \brief Jacobians of Rotation of finite element nodes
-//       */
-//      std::vector<MBSim::ContourPointData> jacobiansRot; // size = number of interpolation points
-
       /**
        * \brief interpolated Jacobians of Translation of the contour
        */
@@ -184,4 +155,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* NurbsCurve1s_H_ */
-
