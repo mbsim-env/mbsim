@@ -216,12 +216,12 @@ class ExternSignalSourceInput : public Variable {
         "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) {
-      fmatvec::VecV curv = sig->getSignal();
+      fmatvec::VecV curv = sig->getSignal(0.);
       curv(idx) = v;
       sig->setSignal(curv);
     }
     const double& getValue(const double&) {
-      value=sig->getSignal()(idx);
+      value=sig->getSignal(0.)(idx);
       return value;
     }
   protected:
@@ -238,7 +238,7 @@ class ExternSignalSinkOutput : public Variable {
         "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double&) {
-      value=sig->getSignal()(idx);
+      value=sig->getSignal(0.)(idx);
       return value;
     }
   protected:
