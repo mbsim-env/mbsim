@@ -102,7 +102,6 @@ namespace MBSim {
         plotting, /*!< Build/initialize the plot structure */
         reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structure) */
         unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
-        calculateLocalInitialValues, /*!< calculation of non-linear initial values in complex internal models */
         LASTINITSTAGE
       };
 

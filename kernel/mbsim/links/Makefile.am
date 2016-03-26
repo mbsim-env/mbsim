@@ -11,7 +11,6 @@ liblink_la_SOURCES = link.cc\
 		     directional_spring_damper.cc\
 		     generalized_spring_damper.cc\
 		     friction.cc\
-		     extern_generalized_io.cc\
 		     frame_link.cc\
 		     floating_frame_link.cc\
 		     contour_link.cc\
@@ -36,7 +35,6 @@ linkinclude_HEADERS = link.h\
 		      directional_spring_damper.h\
 		      generalized_spring_damper.h\
 		      friction.h\
-		      extern_generalized_io.h\
 		      frame_link.h\
 		      floating_frame_link.h\
 		      contour_link.h\

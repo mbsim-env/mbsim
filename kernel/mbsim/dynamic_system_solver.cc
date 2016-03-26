@@ -96,7 +96,6 @@ namespace MBSim {
       "plot",
       "reorganizeHierarchy",
       "unknownStage",
-      "calculateLocalInitialValues"
     };
 
 #ifdef HAVE_ANSICSIGNAL
@@ -459,10 +458,6 @@ namespace MBSim {
 #endif
       H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
-    }
-    else if (stage == calculateLocalInitialValues) {
-      Group::initz();
-      Group::init(stage);
     }
     else
       Group::init(stage);
