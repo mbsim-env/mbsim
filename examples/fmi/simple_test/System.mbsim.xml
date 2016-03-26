@@ -55,9 +55,9 @@
     <control:ExternSignalSource name="ExternForce"> <!-- only used in FMI case -->
       <control:sourceSize>1</control:sourceSize>
     </control:ExternSignalSource>
-    <control:LinkDistanceSensor name="SpringDistance"> <!-- only used in FMI case -->
+    <control:GeneralizedRelativePositionSensor name="SpringDistance"> <!-- only used in FMI case -->
       <control:link ref="../Link[EXTERN]"/>
-    </control:LinkDistanceSensor>
+    </control:GeneralizedRelativePositionSensor>
     <control:ExternSignalSink name="SpringDistanceSink"> <!-- only used in FMI case -->
       <control:inputSignal ref="../Link[SpringDistance]"/>
     </control:ExternSignalSink>
