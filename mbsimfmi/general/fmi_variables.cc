@@ -64,13 +64,13 @@ void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
   getAllLinks(dss, l);
   for(std::vector<MBSim::Link*>::const_iterator it=l.begin(); it!=l.end(); ++it) {
     // for ExternGeneralizedIO create three variables: force input, position output and velocity output
-    MBSim::ExternGeneralizedIO *genIO=dynamic_cast<MBSim::ExternGeneralizedIO*>(*it);
-    if(genIO) {
-      var.push_back(boost::make_shared<ExternGeneralizedIOForceInput>(genIO));
-      (*--var.end())->setValue(double(0.0)); // default value
-      var.push_back(boost::make_shared<ExternGeneralizedIOPositionOutput>(genIO));
-      var.push_back(boost::make_shared<ExternGeneralizedIOVelocityOutput>(genIO));
-    }
+//    MBSim::ExternGeneralizedIO *genIO=dynamic_cast<MBSim::ExternGeneralizedIO*>(*it);
+//    if(genIO) {
+//      var.push_back(boost::make_shared<ExternGeneralizedIOForceInput>(genIO));
+//      (*--var.end())->setValue(double(0.0)); // default value
+//      var.push_back(boost::make_shared<ExternGeneralizedIOPositionOutput>(genIO));
+//      var.push_back(boost::make_shared<ExternGeneralizedIOVelocityOutput>(genIO));
+//    }
     // for ExternSignalSource create one input variable for each element of the signal vector
     MBSimControl::ExternSignalSource *sigSource=dynamic_cast<MBSimControl::ExternSignalSource*>(*it);
     if(sigSource)

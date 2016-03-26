@@ -9,7 +9,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <mbsimControl/extern_signal_source.h>
 #include <mbsimControl/extern_signal_sink.h>
-#include <mbsim/links/extern_generalized_io.h>
 
 namespace MBSim {
   class DynamicSystem;
@@ -175,39 +174,39 @@ class PredefinedParameter : public Variable {
     Datatype &value;
 };
 
-//! FMI input variable for the force of MBSim::ExternGeneralizedIO
-class ExternGeneralizedIOForceInput : public Variable {
-  public:
-    ExternGeneralizedIOForceInput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
-      "ExternGeneralizedIO force", Input, 'r'), io(io_) {}
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    void setValue(const double &v) { io->setGeneralizedForce(v); }
-    const double& getValue(const double&) { return io->getla()(0); }
-  protected:
-    MBSim::ExternGeneralizedIO *io;
-};
-
-//! FMI output variable for position of MBSim::ExternGeneralizedIO
-class ExternGeneralizedIOPositionOutput : public Variable {
-  public:
-    ExternGeneralizedIOPositionOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
-      "ExternGeneralizedIO position", Output, 'r'), io(io_) {}
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    const double& getValue(const double&) { return io->getGeneralizedPosition(); }
-  protected:
-    MBSim::ExternGeneralizedIO *io;
-};
+////! FMI input variable for the force of MBSim::ExternGeneralizedIO
+//class ExternGeneralizedIOForceInput : public Variable {
+//  public:
+//    ExternGeneralizedIOForceInput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+//      "ExternGeneralizedIO force", Input, 'r'), io(io_) {}
+//    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+//    void setValue(const double &v) { io->setGeneralizedForce(v); }
+//    const double& getValue(const double&) { return io->getla()(0); }
+//  protected:
+//    MBSim::ExternGeneralizedIO *io;
+//};
+//
+////! FMI output variable for position of MBSim::ExternGeneralizedIO
+//class ExternGeneralizedIOPositionOutput : public Variable {
+//  public:
+//    ExternGeneralizedIOPositionOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+//      "ExternGeneralizedIO position", Output, 'r'), io(io_) {}
+//    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+//    const double& getValue(const double&) { return io->getGeneralizedPosition(); }
+//  protected:
+//    MBSim::ExternGeneralizedIO *io;
+//};
 
 //! FMI output variable for velocity of MBSim::ExternGeneralizedIO
-class ExternGeneralizedIOVelocityOutput : public Variable {
-  public:
-    ExternGeneralizedIOVelocityOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
-      "ExternGeneralizedIO velocity", Output, 'r'), io(io_) {}
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
-  protected:
-    MBSim::ExternGeneralizedIO *io;
-};
+//class ExternGeneralizedIOVelocityOutput : public Variable {
+//  public:
+//    ExternGeneralizedIOVelocityOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
+//      "ExternGeneralizedIO velocity", Output, 'r'), io(io_) {}
+//    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+//    const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
+//  protected:
+//    MBSim::ExternGeneralizedIO *io;
+//};
 
 //! FMI input variable for MBSim::ExternSignalSource
 class ExternSignalSourceInput : public Variable {
