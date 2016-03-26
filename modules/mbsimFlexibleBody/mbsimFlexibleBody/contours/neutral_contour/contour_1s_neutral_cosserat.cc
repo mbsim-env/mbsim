@@ -58,19 +58,8 @@ namespace MBSimFlexibleBody {
       NA = createNeutralAngle();
       NDA = createNeutralDotangle();
 
-
+      Contour1sNeutralFactory::init(stage);
     }
-    else if (stage == resize) {
-      // construct contourPoint for translation nodes
-      etaNodes.reserve(transNodes.size() + 1);
-
-//        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
-
-    }
-//    else if (stage == worldFrameContourLocation) {
-//      R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
-//      R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
-//    }
     else if(stage == unknownStage) {
       NP->computeCurve(0,false); // the first time call the computeCurveVelocity, the flag should be false
       NV->computeCurve(0,false);
@@ -81,6 +70,8 @@ namespace MBSimFlexibleBody {
       for (int i = 0; i < u.size() - degU; i++)
         etaNodes.push_back(u(i));
       etaNodes.push_back(uMax);
+
+      Contour1sNeutralFactory::init(stage);
     }
 
     Contour1sNeutralFactory::init(stage);

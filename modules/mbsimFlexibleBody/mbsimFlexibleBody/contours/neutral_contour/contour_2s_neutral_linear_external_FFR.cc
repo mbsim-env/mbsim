@@ -16,16 +16,6 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_) :
-      Contour2sNeutralFactory(name_), transNodes(), nodeOffset(0.), degU(3), degV(3), openStructure(false), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
-  }
-  
-  Contour2sNeutralLinearExternalFFR::Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_) :
-      Contour2sNeutralFactory(name_), transNodes(transNodes_), nodeOffset(nodeOffset_), degU(degU_), degV(degV_), openStructure(openStructure_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
-
-    parent_->addContour(this);
-  }
-  
   Contour2sNeutralLinearExternalFFR::~Contour2sNeutralLinearExternalFFR() {
     delete NP;
     delete NLP;
@@ -59,18 +49,9 @@ namespace MBSimFlexibleBody {
 
   void Contour2sNeutralLinearExternalFFR::init(InitStage stage) {
 
-    if (stage == resize) {
-      // construct contourPoint for translation nodes
-      etaNodes.reserve(getNumberOfTransNodesU());  // TODO: which type is suitable for nodes in the contour2sSearch
-//      transContourPoints.resize(getNumberOfTransNodesU(), getNumberOfTransNodesV());
-    }
-    else if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
+    if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
 
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
-
-//      for (int i = 0; i < getNumberOfTransNodesU(); i++)
-//        for (int j = 0; j < getNumberOfTransNodesV(); j++)
-//          transContourPoints(i, j) = ContourPointData(transNodes(i, j), NODE);
 
       NP = createNeutralPosition();
       NLP = createNeutralLocalPosition();
@@ -95,14 +76,12 @@ namespace MBSimFlexibleBody {
       NLP->computeCurve(0, false);
       NV->computeCurve(0, false);
 
-      // TODO: check this!!!
-//      Vec u(NV->getuVec());
-//      for (int i = 0; i < u.size() - degU; i++)
-//        etaNodes.push_back(u(i));
+      Contour2sNeutralFactory::init(stage);
     }
 
-    Contour::init(stage);
+    Contour2sNeutralFactory::init(stage);
   }
+
   Vec3 Contour2sNeutralLinearExternalFFR::getPosition(double t, const Vec2 &zeta) {
     return NP->getPosition(t,zeta);
   }

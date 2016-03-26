@@ -22,12 +22,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief standard constructor
        */
-      Contour2sNeutralLinearExternalFFR(const std::string &name_);
-
-      /*!
-       * \brief constructor with all necessary data given
-       */
-      Contour2sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, const MatVI & transNodes_, double nodeOffset_, int degU_, int degV_, bool openStructure_);
+      Contour2sNeutralLinearExternalFFR(const std::string &name_) : Contour2sNeutralFactory(name_), transNodes(), nodeOffset(0.), degU(3), degV(3), openStructure(false), NP(NULL), NLP(NULL), NV(NULL), qSize(0) { }
 
       /*!
        * \brief destructor
@@ -114,10 +109,6 @@ namespace MBSimFlexibleBody {
        */
       double nodeOffset;
 
-      /*!
-       * \brief Matrix for the contour-point datas for the single nodes
-       */
-//      fmatvec::GeneralMatrix<ContourPointData> transContourPoints;
       Vec uk;
       Vec vl;
       int degU;

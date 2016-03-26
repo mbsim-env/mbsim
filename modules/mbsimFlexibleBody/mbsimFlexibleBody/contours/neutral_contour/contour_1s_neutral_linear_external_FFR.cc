@@ -15,17 +15,6 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
   
-  Contour1sNeutralLinearExternalFFR::Contour1sNeutralLinearExternalFFR(const std::string &name_) :
-      Contour1sNeutralFactory(name_), transNodes(0), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
-  }
-  
-//  Contour1sNeutralLinearExternalFFR::Contour1sNeutralLinearExternalFFR(const std::string &name_, FlexibleBodyLinearExternalFFR* parent_, std::vector<int> transNodes_, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_) :
-//      Contour1sNeutralFactory(name_), transNodes(transNodes_), nodeOffset(nodeOffset_), degU(degU_), NP(NULL), NLP(NULL), NV(NULL), qSize(0) {
-//
-//
-//    parent_->addContour(this);
-//  }
-
   Contour1sNeutralLinearExternalFFR::~Contour1sNeutralLinearExternalFFR() {
     delete NP;
     delete NLP;
@@ -79,22 +68,9 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1sNeutralLinearExternalFFR::init(InitStage stage) {
-
-    if (stage == resize) {
-      // construct contourPoint for translation nodes
-      etaNodes.reserve(transNodes.size());
-//      transContourPoints.reserve(transNodes.size());
-//      rotContourPoints.reserve(numOfRotNodes);
-
-//        nodeOffset = (static_cast<FlexibleBodyContinuum<double>*>(parent))->getNodeOffset();  // TODO change to be user set value
-
-    }
-    else if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
+    if (stage == unknownStage) { //TODO: Actually for the calculate Initial values in the contact search it is necessary to call the following functions before (even though they also just compute initial values)
 
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
-
-//      for (int i = 0; i < transNodes.size(); i++)
-//        transContourPoints.push_back(ContourPointData(transNodes(i)));
 
       NP = createNeutralPosition();
       NP->setBinormalDir(-R->getOrientation(0.).col(2));
@@ -106,10 +82,7 @@ namespace MBSimFlexibleBody {
       NLP->computeCurve(false);
       NV->computeCurve(false);
 
-      // TODO: check this!!!
-      Vec u(NV->getuVec());
-      for (int i = 0; i < u.size() - degU; i++)
-        etaNodes.push_back(u(i));
+      Contour1sNeutralFactory::init(stage);
     }
 
     Contour1sNeutralFactory::init(stage);
@@ -169,16 +142,6 @@ namespace MBSimFlexibleBody {
     Jacobian_rot.set(Index(0, 2), Index(3, 5), A * G_bar);
     frame->setJacobianOfRotation(wRA * Jacobian_rot,j);
   }
-
-//    if (ff == Frame::angle) { // only for opmbvBody visualization
-//      SqrMat3 ALocal(INIT, 0);
-//      NP->updatePositionNormal(cp);
-//      NP->updatePositionFirstTangent(cp);
-//      NP->updatePositionSecondTangent(cp);
-//      ALocal = cp.getFrameOfReference().getOrientation();
-//      cp.getFrameOfReference().setAnglesOfOrientation(AIK2Cardan(ALocal));
-//    }
-//  }
 
   VecInt Contour1sNeutralLinearExternalFFR::getTransNodes() {
     return transNodes;
