@@ -43,14 +43,14 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    cFrame[iplane]->setOrientation(plane->getFrame()->getOrientation(t));
+    cFrame[iplane]->setOrientation(plane->getFrame()->AIK());
     cFrame[isphere]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
     cFrame[isphere]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
     cFrame[isphere]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
     Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
 
-    Vec3 Wd = sphere->getFrame()->getPosition(t) - plane->getFrame()->getPosition(t);
+    Vec3 Wd = sphere->getFrame()->IrOP() - plane->getFrame()->IrOP();
 
     g = Wn.T()*Wd - sphere->getRadius();
 
@@ -59,14 +59,14 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    Vec3 n1 = cFrame[iplane]->getOrientation(t).col(0);
-    Vec3 n2 = cFrame[isphere]->getOrientation(t).col(0);
-    Vec3 vC1 = cFrame[iplane]->getVelocity(t);
-    Vec3 vC2 = cFrame[isphere]->getVelocity(t);
-    Vec3 Om1 = cFrame[iplane]->getAngularVelocity(t);
-    Vec3 Om2 = cFrame[isphere]->getAngularVelocity(t);
+    Vec3 n1 = cFrame[iplane]->AIK().col(0);
+    Vec3 n2 = cFrame[isphere]->AIK().col(0);
+    Vec3 vC1 = cFrame[iplane]->IvP();
+    Vec3 vC2 = cFrame[isphere]->IvP();
+    Vec3 Om1 = cFrame[iplane]->IOmK();
+    Vec3 Om2 = cFrame[isphere]->IOmK();
 
-    Vec3 KrPC2 = sphere->getFrame()->getOrientation(t).T()*(cFrame[isphere]->getPosition(t) - sphere->getFrame()->getPosition(t));
+    Vec3 KrPC2 = sphere->getFrame()->AIK().T()*(cFrame[isphere]->IrOP() - sphere->getFrame()->IrOP());
     Vec2 zeta = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
 
     Vec3 u1 = cFrame[iplane]->getOrientation().col(1);

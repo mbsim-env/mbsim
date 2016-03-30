@@ -46,7 +46,7 @@ namespace MBSim {
 
   void ContactKinematicsSpherePlate::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
-    Vec3 sphereInRect = plate->getFrame()->getOrientation(t).T() * (sphere->getFrame()->getPosition(t) - plate->getFrame()->getPosition(t));
+    Vec3 sphereInRect = plate->getFrame()->AIK().T() * (sphere->getFrame()->IrOP() - plate->getFrame()->IrOP());
 
     if ((plate->getYLength() / 2. + sphere->getRadius() < fabs(sphereInRect(1))) or (plate->getZLength() / 2. + sphere->getRadius() < fabs(sphereInRect(2)))) {
       g = 1.;

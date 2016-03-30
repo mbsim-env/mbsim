@@ -81,10 +81,10 @@ namespace MBSim {
     cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(t,cFrame[iplanarcontour]->getZeta()));
     cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(t,cFrame[iplanarcontour]->getZeta()));
     cFrame[icircle]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
-    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(t).col(2));
+    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->AIK().col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
     cFrame[iplanarcontour]->setPosition(planarcontour->getPosition(t,cFrame[iplanarcontour]->getZeta()));
-    cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
+    cFrame[icircle]->setPosition(circle->getFrame()->IrOP()+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
     if(planarcontour->isZetaOutside(cFrame[iplanarcontour]->getZeta()))
       g = 1;
@@ -95,20 +95,20 @@ namespace MBSim {
 
   void ContactKinematicsCirclePlanarContour::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     
-    const Vec3 n1 = cFrame[icircle]->getOrientation(t).col(0);
+    const Vec3 n1 = cFrame[icircle]->AIK().col(0);
     const Vec3 u1 = cFrame[icircle]->getOrientation().col(1);
     const Vec3 R1 = circle->getRadius()*u1;
     const Vec3 N1 = u1;
 
-    const Vec3 u2 = cFrame[iplanarcontour]->getOrientation(t).col(1);
+    const Vec3 u2 = cFrame[iplanarcontour]->AIK().col(1);
     const Vec3 v2 = cFrame[iplanarcontour]->getOrientation().col(2);
     const Vec3 R2 = planarcontour->getWs(t,cFrame[iplanarcontour]->getZeta());
     const Vec3 U2 = planarcontour->getParDer1Wu(t,cFrame[iplanarcontour]->getZeta());
 
-    const Vec3 vC1 = cFrame[icircle]->getVelocity(t);
-    const Vec3 vC2 = cFrame[iplanarcontour]->getVelocity(t);
-    const Vec3 Om1 = cFrame[icircle]->getAngularVelocity(t);
-    const Vec3 Om2 = cFrame[iplanarcontour]->getAngularVelocity(t);
+    const Vec3 vC1 = cFrame[icircle]->IvP();
+    const Vec3 vC2 = cFrame[iplanarcontour]->IvP();
+    const Vec3 Om1 = cFrame[icircle]->IOmK();
+    const Vec3 Om2 = cFrame[iplanarcontour]->IOmK();
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;

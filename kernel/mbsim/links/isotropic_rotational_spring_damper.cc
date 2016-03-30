@@ -40,8 +40,8 @@ namespace MBSim {
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedPositions(double t) {
-    Vec3 r1 = frame[0]->getOrientation(t).col(0); // first column (tangent) of first frame
-    Vec3 r2 = frame[1]->getOrientation(t).col(0); // first column (tangent) of second frame
+    Vec3 r1 = frame[0]->AIK().col(0); // first column (tangent) of first frame
+    Vec3 r2 = frame[1]->AIK().col(0); // first column (tangent) of second frame
 
     double alpha;
 

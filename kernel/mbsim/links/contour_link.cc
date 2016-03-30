@@ -101,17 +101,17 @@ namespace MBSim {
   } 
 
   void ContourLink::updateh(double t, int j) {
-//    h[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
-//    h[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getSingleValuedForce(t);
+//    h[j][0] -= cpData[0].getFrameOfReference().IJP(j).T() * getSingleValuedForce(t);
+//    h[j][1] += cpData[1].getFrameOfReference().IJP(j).T() * getSingleValuedForce(t);
   }
 
   void ContourLink::updateW(double t, int j) {
-//    W[j][0] -= cpData[0].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
-//    W[j][1] += cpData[1].getFrameOfReference().getJacobianOfTranslation(t,j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
+//    W[j][0] -= cpData[0].getFrameOfReference().IJP(j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
+//    W[j][1] += cpData[1].getFrameOfReference().IJP(j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
   }
 
   void ContourLink::updateForceDirections(double t) {
-    DF.set(0,cFrame[0]->getOrientation(t).col(0));
+    DF.set(0,cFrame[0]->AIK().col(0));
     if (DF.cols()>1) {
       DF.set(1, cFrame[0]->getOrientation().col(1));
       if (DF.cols()>2)

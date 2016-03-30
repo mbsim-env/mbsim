@@ -44,7 +44,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointPlate::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    Vec3 Ar = plate->getFrame()->getOrientation(t).T() * (point->getFrame()->getPosition(t) - plate->getFrame()->getPosition(t));
+    Vec3 Ar = plate->getFrame()->AIK().T() * (point->getFrame()->IrOP() - plate->getFrame()->IrOP());
     if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){
       g = Ar(0);
       if(g < -plate->getThickness())

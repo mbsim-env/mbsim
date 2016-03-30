@@ -167,7 +167,7 @@ namespace MBSim {
     int status = 0; // status2 = 0;
 
     //normal of the plate under the frustum reference frame
-    Vec3 v = frustum->getFrame()->getOrientation(t).T() * plate->getFrame()->getOrientation(t).col(0);
+    Vec3 v = frustum->getFrame()->AIK().T() * plate->getFrame()->AIK().col(0);
 
     //right sides of the two equations
     rhs = signh * v(0) * v(0) / (v(1) * v(1) + v(2) * v(2));
@@ -226,7 +226,7 @@ namespace MBSim {
       cFrame[ifrustum]->setPosition(computeContourPoint(t, x1, v));
       setFrustumOrienationKinematics(t, x1, ArcTan(pF(1), pF(2)), cFrame);
 
-      cFrame[iplate]->setPosition(cFrame[ifrustum]->getPosition(false) - plate->getFrame()->getOrientation(t).col(0) * g);
+      cFrame[iplate]->setPosition(cFrame[ifrustum]->getPosition(false) - plate->getFrame()->AIK().col(0) * g);
       cFrame[iplate]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
       cFrame[iplate]->getOrientation(false).set(1, -cFrame[ifrustum]->getOrientation(false).col(1));
       cFrame[iplate]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
@@ -250,7 +250,7 @@ namespace MBSim {
 
     for (int i = 0; i < gridSizeY; i++) {
       for (int j = 0; j < gridSizeZ; j++) {
-        Vec3 currentPoint = frustum->getFrame()->getOrientation(t).T() * (plate->getFrame()->getPosition(t) + plate->getFrame()->getOrientation(t) * gridPoints[i][j] - frustum->getFrame()->getPosition(t));
+        Vec3 currentPoint = frustum->getFrame()->AIK().T() * (plate->getFrame()->IrOP() + plate->getFrame()->AIK() * gridPoints[i][j] - frustum->getFrame()->IrOP());
         const double & x = currentPoint(0);
         //radial position of point
         const double r = sqrt(pow(currentPoint(1), 2) + pow(currentPoint(2), 2));
@@ -287,8 +287,8 @@ namespace MBSim {
 
     if (g < 0.) {
       //Frustum
-      Vec3 rF = frustum->getFrame()->getPosition(t);
-      SqrMat3 AWF = frustum->getFrame()->getOrientation(t);
+      Vec3 rF = frustum->getFrame()->IrOP();
+      SqrMat3 AWF = frustum->getFrame()->AIK();
       cFrame[ifrustum]->setPosition(rF + AWF * contactPointFrustum);
       setFrustumOrienationKinematics(t, x(0), phi, cFrame);
 
@@ -315,7 +315,7 @@ namespace MBSim {
     double h = frustum->getHeight();
 
     for (int i = 0; i < 4; i++) {
-      cornerPoints[i] = frustum->getFrame()->getOrientation(t).T() * (plate->getFrame()->getPosition(t) + plate->getFrame()->getOrientation(t) * cornerPoints[i] - frustum->getFrame()->getPosition(t));
+      cornerPoints[i] = frustum->getFrame()->AIK().T() * (plate->getFrame()->IrOP() + plate->getFrame()->AIK() * cornerPoints[i] - frustum->getFrame()->IrOP());
       const double & x = cornerPoints[i](0);
       //radial position of point
       const double r = sqrt(pow(cornerPoints[i](1), 2) + pow(cornerPoints[i](2), 2));
@@ -381,7 +381,7 @@ namespace MBSim {
     cornerPoints[3] = plate->getD();
 
     for (int i = 0; i < 4; i++) {
-      cornerPoints[i] = frustum->getFrame()->getOrientation(t).T() * (plate->getFrame()->getPosition(t) + plate->getFrame()->getOrientation(t) * cornerPoints[i] - frustum->getFrame()->getPosition(t));
+      cornerPoints[i] = frustum->getFrame()->AIK().T() * (plate->getFrame()->IrOP() + plate->getFrame()->AIK() * cornerPoints[i] - frustum->getFrame()->IrOP());
     }
 
     for (int i = 0; i < 4; i++) {
@@ -451,7 +451,7 @@ namespace MBSim {
   void ContactKinematicsPlatePolynomialFrustum::updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index) {
     /*Geometry*/
     //plate
-    Vec3 R_cen_A = plate->getFrame()->getPosition(t); //center of plate
+    Vec3 R_cen_A = plate->getFrame()->IrOP(); //center of plate
     Vec3 NormAxis_A = plate->getFrame()->getOrientation().col(0); // normal of plate in inertial FR
 
     /*construct the sphere enclosing the frustum*/
@@ -522,7 +522,7 @@ namespace MBSim {
   }
 
   Vec3 ContactKinematicsPlatePolynomialFrustum::computeContourPoint(double t, const double & x, const Vec3 & n) {
-    return frustum->getFrame()->getPosition(t) + frustum->getFrame()->getOrientation(t) * computeContourPointFrustum(x, n);
+    return frustum->getFrame()->IrOP() + frustum->getFrame()->AIK() * computeContourPointFrustum(x, n);
   }
 
   int ContactKinematicsPlatePolynomialFrustum::checkPossibleContactPoint(double t, const double & x, const Vec3 & n) {
@@ -534,7 +534,7 @@ namespace MBSim {
   }
 
   double ContactKinematicsPlatePolynomialFrustum::distance2Plate(double t, const Vec3 & point) {
-    return plate->getFrame()->getOrientation(t).col(0).T() * (point - plate->getFrame()->getPosition(t));
+    return plate->getFrame()->AIK().col(0).T() * (point - plate->getFrame()->IrOP());
   }
 
   void ContactKinematicsPlatePolynomialFrustum::updateGrid() {

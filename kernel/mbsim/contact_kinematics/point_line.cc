@@ -42,14 +42,14 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointLine::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    cFrame[iline]->setOrientation(line->getFrame()->getOrientation(t));
+    cFrame[iline]->setOrientation(line->getFrame()->AIK());
     cFrame[ipoint]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
     cFrame[ipoint]->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
     cFrame[ipoint]->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
 
     Vec3 Wn = cFrame[iline]->getOrientation(false).col(0);
 
-    Vec3 Wd =  point->getFrame()->getPosition(t) - line->getFrame()->getPosition(t);
+    Vec3 Wd =  point->getFrame()->IrOP() - line->getFrame()->IrOP();
 
     g = Wn.T()*Wd;
 
@@ -58,11 +58,11 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointLine::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    Vec3 n1 = cFrame[iline]->getOrientation(t).col(0);
+    Vec3 n1 = cFrame[iline]->AIK().col(0);
     Vec3 u1 = cFrame[iline]->getOrientation().col(1);
-    Vec3 vC1 = cFrame[iline]->getVelocity(t);
-    Vec3 vC2 = cFrame[ipoint]->getVelocity(t);
-    Vec3 Om1 = cFrame[iline]->getAngularVelocity(t);
+    Vec3 vC1 = cFrame[iline]->IvP();
+    Vec3 vC2 = cFrame[ipoint]->IvP();
+    Vec3 Om1 = cFrame[iline]->IOmK();
     // Vec3 Om2 = cFrame[ipoint]->getAngularVelocity();
 
     double sd1 = u1.T()*(vC2 - vC1); 

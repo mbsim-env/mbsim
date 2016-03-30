@@ -148,17 +148,17 @@ namespace MBSim {
   }
 
   void FrameLink::updateh(double t, int j) {
-    h[j][0]-=frame[0]->getJacobianOfTranslation(t,j).T()*getForce(t);
-    h[j][1]+=frame[1]->getJacobianOfTranslation(t,j).T()*getForce(t);
+    h[j][0]-=frame[0]->IJP(j).T()*getForce(t);
+    h[j][1]+=frame[1]->IJP(j).T()*getForce(t);
   }
   
   void FrameLink::updatePositions(double t) {
-    WrP0P1=frame[1]->getPosition(t) - frame[0]->getPosition(t);
+    WrP0P1=frame[1]->IrOP() - frame[0]->IrOP();
     updPos = false;
   }
 
   void FrameLink::updateVelocities(double t) {
-    WvP0P1=frame[1]->getVelocity(t) - frame[0]->getVelocity(t);
+    WvP0P1=frame[1]->IvP() - frame[0]->IvP();
     updVel = false;
   }
 

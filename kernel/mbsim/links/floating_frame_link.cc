@@ -126,28 +126,28 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateW(double t, int j) {
-    W[j][0] -= C.getJacobianOfTranslation(t,j).T() * getRF(t) + C.getJacobianOfRotation(t,j).T() * getRM(t);
-    W[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * getRF(t) + frame[1]->getJacobianOfRotation(t,j).T() * getRM(t);
+    W[j][0] -= C.IJP(j).T() * getRF(t) + C.IJR(j).T() * getRM(t);
+    W[j][1] += frame[1]->IJP(j).T() * getRF(t) + frame[1]->IJR(j).T() * getRM(t);
   }
 
   void FloatingFrameLink::updateh(double t, int j) {
-    h[j][0] -= C.getJacobianOfTranslation(t,j).T() * getForce(t) + C.getJacobianOfRotation(t,j).T() * getMoment(t);
-    h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * getForce(t) + frame[1]->getJacobianOfRotation(t,j).T() * getMoment(t);
+    h[j][0] -= C.IJP(j).T() * getForce(t) + C.IJR(j).T() * getMoment(t);
+    h[j][1] += frame[1]->IJP(j).T() * getForce(t) + frame[1]->IJR(j).T() * getMoment(t);
   }
 
   void FloatingFrameLink::updatePositions(double t) {
-    WrP0P1 = frame[1]->getPosition(t) - frame[0]->getPosition(t);
+    WrP0P1 = frame[1]->IrOP() - frame[0]->IrOP();
     updPos = false;
   }
 
   void FloatingFrameLink::updatePositions(double t, Frame *frame_) {
-    frame_->setPosition(frame[1]->getPosition(t));
-    frame_->setOrientation(frame[0]->getOrientation(t));
+    frame_->setPosition(frame[1]->IrOP());
+    frame_->setOrientation(frame[0]->AIK());
   }
 
   void FloatingFrameLink::updateVelocities(double t) {
-    WvP0P1 = frame[1]->getVelocity(t) - C.getVelocity(t);
-    WomP0P1 = frame[1]->getAngularVelocity(t) - C.getAngularVelocity(t);
+    WvP0P1 = frame[1]->IvP() - C.IvP();
+    WomP0P1 = frame[1]->IOmK() - C.IOmK();
     updVel = false;
   }
 
@@ -180,8 +180,8 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateForceDirections(double t) {
-    DF = refFrame->getOrientation(t) * forceDir;
-    DM = refFrame->getOrientation(t) * momentDir;
+    DF = refFrame->AIK() * forceDir;
+    DM = refFrame->AIK() * momentDir;
     updFD = false;
   }
 

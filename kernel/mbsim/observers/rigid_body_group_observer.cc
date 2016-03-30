@@ -103,16 +103,16 @@ namespace MBSim {
       Vec3 &pd = macc;
       Vec3 L, Ld;
       for(unsigned int i=0; i<body.size(); i++) {
-        mpos += body[i]->getMass()*body[i]->getFrame("C")->getPosition(t);
-        mvel += body[i]->getMass()*body[i]->getFrame("C")->getVelocity(t);
-        macc += body[i]->getMass()*body[i]->getFrame("C")->getAcceleration(t);
+        mpos += body[i]->getMass()*body[i]->getFrame("C")->IrOP();
+        mvel += body[i]->getMass()*body[i]->getFrame("C")->IvP();
+        macc += body[i]->getMass()*body[i]->getFrame("C")->IaP();
       }
       Vec3 rOS = mpos/m;
       Vec3 vS = mvel/m;
       Vec3 aS = macc/m;
-      Vec3 rOR = ref?ref->getPosition(t):rOS;
-      Vec3 vR = ref?ref->getVelocity(t):vS;
-      Vec3 aR = ref?ref->getAcceleration(t):aS;
+      Vec3 rOR = ref?ref->IrOP():rOS;
+      Vec3 vR = ref?ref->IvP():vS;
+      Vec3 aR = ref?ref->IaP():aS;
       for(unsigned int i=0; i<body.size(); i++) {
         SqrMat3 AIK = body[i]->getFrame("C")->getOrientation();
         Vec3 rRSi = body[i]->getFrame("C")->getPosition() - rOR;

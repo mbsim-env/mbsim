@@ -108,7 +108,7 @@ namespace MBSim {
   }
 
   Vec2 Sphere::getZeta(double t, const fmatvec::Vec3 &WrPoint) {
-    Vec3 SrPoint = R->getOrientation(t).T() * (WrPoint - R->getPosition(t));
+    Vec3 SrPoint = R->AIK().T() * (WrPoint - R->IrOP());
     Vec2 zeta;
     double r = nrm2(SrPoint);
     zeta(0) = acos(SrPoint(2) / r); // inclination

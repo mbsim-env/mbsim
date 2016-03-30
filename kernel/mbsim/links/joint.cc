@@ -51,11 +51,11 @@ namespace MBSim {
   }
 
   void Joint::updatewb(double t) {
-    Mat3xV WJT = refFrame->getOrientation(t) * JT;
+    Mat3xV WJT = refFrame->AIK() * JT;
     VecV sdT = WJT.T() * getGlobalRelativeVelocity(t);
 
-    wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfTranslation(t) - C.getGyroscopicAccelerationOfTranslation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeVelocity(t) + WJT * sdT));
-    wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->getGyroscopicAccelerationOfRotation(t) - C.getGyroscopicAccelerationOfRotation(t) - crossProduct(C.getAngularVelocity(t), getGlobalRelativeAngularVelocity(t)));
+    wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->IjP() - C.IjP() - crossProduct(C.IOmK(), getGlobalRelativeVelocity(t) + WJT * sdT));
+    wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->IjR() - C.IjR() - crossProduct(C.IOmK(), getGlobalRelativeAngularVelocity(t)));
   }
 
   void Joint::updatelaFM(double t) {
@@ -90,8 +90,8 @@ namespace MBSim {
     Vec3 F = (ffl and not ffl->isSetValued())?getGlobalForceDirection(t)*getlaF(t):Vec3();
     Vec3 M = (fml and not fml->isSetValued())?getGlobalMomentDirection(t)*getlaM(t):Vec3();
 
-    h[j][0] -= C.getJacobianOfTranslation(t,j).T() * F + C.getJacobianOfRotation(t,j).T() * M;
-    h[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * F + frame[1]->getJacobianOfRotation(t,j).T() * M;
+    h[j][0] -= C.IJP(j).T() * F + C.IJR(j).T() * M;
+    h[j][1] += frame[1]->IJP(j).T() * F + frame[1]->IJR(j).T() * M;
   }
 
   void Joint::updateW(double t, int j) {
@@ -102,8 +102,8 @@ namespace MBSim {
     RF.set(Index(0,2), Index(0,nF-1), getGlobalForceDirection(t)(Index(0,2),Index(0,nF-1)));
     RM.set(Index(0,2), Index(nF,nF+nM-1), getGlobalMomentDirection(t)(Index(0,2),Index(0,nM-1)));
 
-    W[j][0] -= C.getJacobianOfTranslation(t,j).T() * RF + C.getJacobianOfRotation(t,j).T() * RM;
-    W[j][1] += frame[1]->getJacobianOfTranslation(t,j).T() * RF + frame[1]->getJacobianOfRotation(t,j).T() * RM;
+    W[j][0] -= C.IJP(j).T() * RF + C.IJR(j).T() * RM;
+    W[j][1] += frame[1]->IJP(j).T() * RF + frame[1]->IJR(j).T() * RM;
   }
 
   void Joint::calcxSize() {

@@ -63,31 +63,31 @@ namespace MBSim {
 
   void FloatingRelativeFrame::updatePositions(double t) { 
     parent->updatePositions(t,this);
-    WrRP = getPosition(false) - R->getPosition(t);
+    WrRP = getPosition(false) - R->IrOP();
     updPos = false;
   }
 
   void FloatingRelativeFrame::updateVelocities(double t) { 
-    setAngularVelocity(R->getAngularVelocity(t));
+    setAngularVelocity(R->IOmK());
     setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)));
     updVel = false;
   }
 
   void FloatingRelativeFrame::updateAccelerations(double t) { 
     setAngularAcceleration(R->getAngularAcceleration(t));
-    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t))));
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->IOmK(), crossProduct(R->IOmK(), getGlobalRelativePosition(t))));
     updAcc = true;
   }
 
   void FloatingRelativeFrame::updateJacobians(double t, int j) {
-    setJacobianOfRotation(R->getJacobianOfRotation(t,j),j);
+    setJacobianOfRotation(R->IJR(j),j);
     setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(j),j);
     updJac[j] = false;
   }
 
   void FloatingRelativeFrame::updateGyroscopicAccelerations(double t) {
-    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t));
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
+    setGyroscopicAccelerationOfRotation(R->IjR());
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition(t)) + crossProduct(R->IOmK(),crossProduct(R->IOmK(),getGlobalRelativePosition(t))));
     updGA = false;
   }
 

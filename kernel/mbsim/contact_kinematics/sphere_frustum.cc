@@ -48,7 +48,7 @@ namespace MBSim {
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche
     // Rotationsachse Kegel: y-Achse
-    Vec3 Wd = sphere->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
+    Vec3 Wd = sphere->getFrame()->IrOP() - frustum->getFrame()->IrOP(); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
     
     SqrMat3 Mat0 = frustum->getFrame()->getOrientation();
     Vec3 yAchse = Mat0.col(1);

@@ -65,43 +65,43 @@ namespace MBSim {
   }
 
   Vec3 RigidContour::getPosition(double t, const Vec2 &zeta) {
-    return R->getPosition(t) + getWrPS(t,zeta);
+    return R->IrOP() + getWrPS(t,zeta);
   }
 
   Vec3 RigidContour::getParDer1Wn(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getParDer1Kn(zeta);
+    return R->AIK()*getParDer1Kn(zeta);
   }
 
   Vec3 RigidContour::getParDer2Wn(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getParDer2Kn(zeta);
+    return R->AIK()*getParDer2Kn(zeta);
   }
 
   Vec3 RigidContour::getParDer1Wu(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getParDer1Ku(zeta);
+    return R->AIK()*getParDer1Ku(zeta);
   }
 
   Vec3 RigidContour::getParDer2Wu(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getParDer2Ku(zeta);
+    return R->AIK()*getParDer2Ku(zeta);
   }
 
   Vec3 RigidContour::getParDer1Wv(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getParDer1Kv(zeta);
+    return R->AIK()*getParDer1Kv(zeta);
   }
 
   Vec3 RigidContour::getParDer2Wv(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getParDer2Kv(zeta);
+    return R->AIK()*getParDer2Kv(zeta);
   }
 
   Vec3 RigidContour::getWrPS(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getKrPS(zeta);
+    return R->AIK()*getKrPS(zeta);
   }
 
   Vec3 RigidContour::getWs(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getKs(zeta);
+    return R->AIK()*getKs(zeta);
   }
 
   Vec3 RigidContour::getWt(double t, const Vec2 &zeta) {
-    return R->getOrientation(t)*getKt(zeta);
+    return R->AIK()*getKt(zeta);
   }
 
   void RigidContour::plot(double t, double dt) {
@@ -110,10 +110,10 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
         vector<double> data;
         data.push_back(t);
-        data.push_back(R->getPosition(t)(0));
+        data.push_back(R->IrOP()(0));
         data.push_back(R->getPosition()(1));
         data.push_back(R->getPosition()(2));
-        Vec3 cardan=AIK2Cardan(R->getOrientation(t));
+        Vec3 cardan=AIK2Cardan(R->AIK());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));

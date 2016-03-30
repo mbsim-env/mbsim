@@ -45,19 +45,19 @@ namespace MBSim {
   }
 
   Vec3 Plane::getWn(double t, const fmatvec::Vec2 &zeta) {
-    return R->getOrientation(t).col(0);
+    return R->AIK().col(0);
   }
 
   Vec3 Plane::getWs(double t, const fmatvec::Vec2 &zeta) {
-    return R->getOrientation(t).col(1);
+    return R->AIK().col(1);
   }
 
   Vec3 Plane::getWt(double t, const fmatvec::Vec2 &zeta) {
-    return R->getOrientation(t).col(2);
+    return R->AIK().col(2);
   }
 
   Vec2 Plane::getZeta(double t, const fmatvec::Vec3 &WrPoint) {
-    return (R->getOrientation(t).T() *(WrPoint - R->getPosition(t)) )(Range<Fixed<1>,Fixed<2> >());
+    return (R->AIK().T() *(WrPoint - R->IrOP()) )(Range<Fixed<1>,Fixed<2> >());
   }
 
  void Plane::initializeUsingXML(DOMElement *element) {

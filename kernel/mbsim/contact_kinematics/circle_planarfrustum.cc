@@ -45,7 +45,7 @@ namespace MBSim {
 
   void ContactKinematicsCirclePlanarFrustum::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
     
-    Vec3 Wd = circle->getFrame()->getPosition(t) - frustum->getFrame()->getPosition(t);
+    Vec3 Wd = circle->getFrame()->IrOP() - frustum->getFrame()->IrOP();
     SqrMat3 Mat0 = frustum->getFrame()->getOrientation();
     Vec3 yAchse = Mat0.col(1);
     double loc = yAchse.T()*Wd; // Projektion Distanzvektor auf y-Achse

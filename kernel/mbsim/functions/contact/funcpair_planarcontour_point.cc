@@ -36,7 +36,7 @@ namespace MBSim {
 
   Vec3 FuncPairPlanarContourPoint::getWrD(const double &alpha) {
     zeta(0) = alpha;
-    return contour->getPosition(t,zeta) - point->getFrame()->getPosition(t);
+    return contour->getPosition(t,zeta) - point->getFrame()->IrOP();
   }
 
 }  

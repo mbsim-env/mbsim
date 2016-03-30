@@ -67,36 +67,53 @@ namespace MBSim {
 
       const fmatvec::Vec3& getPosition(bool check=true) const { assert((not check) or (not updPos)); return WrOP; }
       fmatvec::Vec3& getPosition(bool check=true) { assert((not check) or (not updPos)); return WrOP; }
-      const fmatvec::Vec3& getPosition(double t) { if(updPos) updatePositions(t); return WrOP; }
+      void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
+      const fmatvec::Vec3& IrOP() { if(updPos) updatePositions(0.); return WrOP; }
 
       const fmatvec::SqrMat3& getOrientation(bool check=true) const { assert((not check) or (not updPos)); return AWP; }
-      const fmatvec::Vec3& getVelocity(bool check=true) const { assert((not check) or (not updVel)); return WvP; }
-      const fmatvec::Vec3& getAngularVelocity(bool check=true) const { assert((not check) or (not updVel)); return WomegaP; }
-      const fmatvec::Vec3& getAcceleration(bool check=true) const { assert((not check) or (not updAcc)); return WaP; }
-      const fmatvec::Vec3& getAngularAcceleration(bool check=true) const { assert((not check) or (not updAcc)); return WpsiP; }
-      const fmatvec::Mat3xV& getJacobianOfTranslation(int j=0, bool check=true) const { assert((not check) or (not updJac[j])); return WJP[j]; }
-      const fmatvec::Mat3xV& getJacobianOfRotation(int j=0, bool check=true) const { assert((not check) or (not updJac[j])); return WJR[j]; }
-      const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(bool check=true) const { assert((not check) or (not updGA)); return WjP; }
-      const fmatvec::Vec3& getGyroscopicAccelerationOfRotation(bool check=true) const { assert((not check) or (not updGA)); return WjR; }
       fmatvec::SqrMat3& getOrientation(bool check=true) { assert((not check) or (not updPos)); return AWP; }
-      fmatvec::Vec3& getVelocity(bool check=true) { assert((not check) or (not updVel)); return WvP; }
-      fmatvec::Vec3& getAngularVelocity(bool check=true) { assert((not check) or (not updVel)); return WomegaP; }
-      fmatvec::Vec3& getAcceleration(bool check=true) { assert((not check) or (not updAcc)); return WaP; }
-      fmatvec::Vec3& getAngularAcceleration(bool check=true) { assert((not check) or (not updAcc)); return WpsiP; }
-      fmatvec::Mat3xV& getJacobianOfTranslation(int j=0, bool check=true) { assert((not check) or (not updJac[j])); return WJP[j]; }
-      fmatvec::Mat3xV& getJacobianOfRotation(int j=0, bool check=true) { assert((not check) or (not updJac[j])); return WJR[j]; }
-      fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(bool check=true) { assert((not check) or (not updGA)); return WjP; }
-      fmatvec::Vec3& getGyroscopicAccelerationOfRotation(bool check=true) { assert((not check) or (not updGA)); return WjR; }
-      void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
       void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
+      const fmatvec::SqrMat3& AIK() { if(updPos) updatePositions(0.); return AWP; }
+
+      const fmatvec::Vec3& getVelocity(bool check=true) const { assert((not check) or (not updVel)); return WvP; }
+      fmatvec::Vec3& getVelocity(bool check=true) { assert((not check) or (not updVel)); return WvP; }
       void setVelocity(const fmatvec::Vec3 &v) { WvP = v; }
+      const fmatvec::Vec3& IvP() { if(updVel) updateVelocities(0.); return WvP; }
+
+      const fmatvec::Vec3& getAngularVelocity(bool check=true) const { assert((not check) or (not updVel)); return WomegaP; }
+      fmatvec::Vec3& getAngularVelocity(bool check=true) { assert((not check) or (not updVel)); return WomegaP; }
       void setAngularVelocity(const fmatvec::Vec3 &omega) { WomegaP = omega; }
+      const fmatvec::Vec3& IOmK() { if(updVel) updateVelocities(0.); return WomegaP; }
+
+      const fmatvec::Vec3& getAcceleration(bool check=true) const { assert((not check) or (not updAcc)); return WaP; }
+      fmatvec::Vec3& getAcceleration(bool check=true) { assert((not check) or (not updAcc)); return WaP; }
       void setAcceleration(const fmatvec::Vec3 &a) { WaP = a; }
+      const fmatvec::Vec3& IaP() { if(updAcc) updateAccelerations(0.); return WaP; }
+
+      const fmatvec::Vec3& getAngularAcceleration(bool check=true) const { assert((not check) or (not updAcc)); return WpsiP; }
+      fmatvec::Vec3& getAngularAcceleration(bool check=true) { assert((not check) or (not updAcc)); return WpsiP; }
       void setAngularAcceleration(const fmatvec::Vec3 &psi) { WpsiP = psi; }
+      const fmatvec::Vec3& IPsiK() { if(updAcc) updateAccelerations(0.); return WpsiP; }
+
+      const fmatvec::Mat3xV& getJacobianOfTranslation(int j=0, bool check=true) const { assert((not check) or (not updJac[j])); return WJP[j]; }
+      fmatvec::Mat3xV& getJacobianOfTranslation(int j=0, bool check=true) { assert((not check) or (not updJac[j])); return WJP[j]; }
       void setJacobianOfTranslation(const fmatvec::Mat3xV &WJP_, int j=0) { WJP[j] = WJP_; }
+      const fmatvec::Mat3xV& IJP(int j=0) { if(updJac[j]) updateJacobians(0.,j); return WJP[j]; }
+
+      const fmatvec::Mat3xV& getJacobianOfRotation(int j=0, bool check=true) const { assert((not check) or (not updJac[j])); return WJR[j]; }
+      fmatvec::Mat3xV& getJacobianOfRotation(int j=0, bool check=true) { assert((not check) or (not updJac[j])); return WJR[j]; }
       void setJacobianOfRotation(const fmatvec::Mat3xV &WJR_, int j=0) { WJR[j] = WJR_; }
+      const fmatvec::Mat3xV& IJR(int j=0) { if(updJac[j]) updateJacobians(0.,j); return WJR[j]; }
+
+      const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(bool check=true) const { assert((not check) or (not updGA)); return WjP; }
+      fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(bool check=true) { assert((not check) or (not updGA)); return WjP; }
       void setGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP_) { WjP = WjP_; }
+      const fmatvec::Vec3& IjP() { if(updGA) updateGyroscopicAccelerations(0.); return WjP; }
+
+      const fmatvec::Vec3& getGyroscopicAccelerationOfRotation(bool check=true) const { assert((not check) or (not updGA)); return WjR; }
+      fmatvec::Vec3& getGyroscopicAccelerationOfRotation(bool check=true) { assert((not check) or (not updGA)); return WjR; }
       void setGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR_) { WjR = WjR_; }
+      const fmatvec::Vec3& IjR() { if(updGA) updateGyroscopicAccelerations(0.); return WjR; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -115,15 +132,6 @@ namespace MBSim {
       virtual void resetVelocitiesUpToDate();
       virtual void resetJacobiansUpToDate();
       virtual void resetGyroscopicAccelerationsUpToDate();
-      const fmatvec::SqrMat3& getOrientation(double t) { if(updPos) updatePositions(t); return AWP; }
-      const fmatvec::Vec3& getVelocity(double t) { if(updVel) updateVelocities(t); return WvP; }
-      const fmatvec::Vec3& getAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomegaP; }
-      const fmatvec::Vec3& getAcceleration(double t) { if(updAcc) updateAccelerations(t); return WaP; }
-      const fmatvec::Vec3& getAngularAcceleration(double t) { if(updAcc) updateAccelerations(t); return WpsiP; }
-      const fmatvec::Mat3xV& getJacobianOfTranslation(double t, int j=0) { if(updJac[j]) updateJacobians(t,j); return WJP[j]; }
-      const fmatvec::Mat3xV& getJacobianOfRotation(double t, int j=0) { if(updJac[j]) updateJacobians(t,j); return WJR[j]; }
-      const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(double t) { if(updGA) updateGyroscopicAccelerations(t); return WjP; }
-      const fmatvec::Vec3& getGyroscopicAccelerationOfRotation(double t) { if(updGA) updateGyroscopicAccelerations(t); return WjR; }
       virtual void updatePositions(double t) { parent->updatePositions(t,this); updPos = false; }
       virtual void updateVelocities(double t) { parent->updateVelocities(t,this); updVel = false; }
       virtual void updateAccelerations(double t) { parent->updateAccelerations(t,this); updAcc = false; }

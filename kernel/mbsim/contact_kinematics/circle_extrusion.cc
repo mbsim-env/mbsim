@@ -81,10 +81,10 @@ namespace MBSim {
     cFrame[iextrusion]->getOrientation(false).set(1, extrusion->getWu(t,cFrame[iextrusion]->getZeta()));
     cFrame[iextrusion]->getOrientation(false).set(2, extrusion->getWv(t,cFrame[iextrusion]->getZeta()));
     cFrame[icircle]->getOrientation(false).set(0, -cFrame[iextrusion]->getOrientation(false).col(0));
-    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(t).col(2));
+    cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->AIK().col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
     cFrame[iextrusion]->setPosition(extrusion->getPosition(t,cFrame[iextrusion]->getZeta()));
-    cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
+    cFrame[icircle]->setPosition(circle->getFrame()->IrOP()+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
     Vec3 Wd = cFrame[icircle]->getPosition(false) - cFrame[iextrusion]->getPosition(false);
     cFrame[iextrusion]->setXi(cFrame[iextrusion]->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
@@ -99,20 +99,20 @@ namespace MBSim {
 
   void ContactKinematicsCircleExtrusion::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     
-    const Vec3 n1 = cFrame[icircle]->getOrientation(t).col(0);
+    const Vec3 n1 = cFrame[icircle]->AIK().col(0);
     const Vec3 u1 = cFrame[icircle]->getOrientation().col(1);
     const Vec3 R1 = circle->getRadius()*u1;
     const Vec3 N1 = u1;
 
-    const Vec3 u2 = cFrame[iextrusion]->getOrientation(t).col(1);
+    const Vec3 u2 = cFrame[iextrusion]->AIK().col(1);
     const Vec3 v2 = cFrame[iextrusion]->getOrientation().col(2);
     const Vec3 R2 = extrusion->getWs(t,cFrame[iextrusion]->getZeta());
     const Vec3 U2 = extrusion->getParDer1Wu(t,cFrame[iextrusion]->getZeta());
 
-    const Vec3 vC1 = cFrame[icircle]->getVelocity(t);
-    const Vec3 vC2 = cFrame[iextrusion]->getVelocity(t);
-    const Vec3 Om1 = cFrame[icircle]->getAngularVelocity(t);
-    const Vec3 Om2 = cFrame[iextrusion]->getAngularVelocity(t);
+    const Vec3 vC1 = cFrame[icircle]->IvP();
+    const Vec3 vC2 = cFrame[iextrusion]->IvP();
+    const Vec3 Om1 = cFrame[icircle]->IOmK();
+    const Vec3 Om2 = cFrame[iextrusion]->IOmK();
 
     SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;

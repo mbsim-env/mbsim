@@ -91,8 +91,8 @@ namespace MBSim {
 
   void ContactKinematicsPointPlaneWithFrustum::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
-    Vec3 WrOPoint = point->getFrame()->getPosition(t);
-    Vec3 WrOPlane = plane->getFrame()->getPosition(t);
+    Vec3 WrOPoint = point->getFrame()->IrOP();
+    Vec3 WrOPlane = plane->getFrame()->IrOP();
     Vec3 WnContour = plane->getFrame()->getOrientation().col(0);
     Vec3 WrPlanePoint = -WrOPlane+WrOPoint;
     double d = nrm2(crossProduct(WnContour, WrPlanePoint));

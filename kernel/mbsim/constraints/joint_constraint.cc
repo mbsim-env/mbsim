@@ -55,11 +55,11 @@ namespace MBSim {
       nq += dq;
     }
 
-    Mat3xV dT = refFrame->getOrientation(t)*forceDir;
-    Mat3xV dR = refFrame->getOrientation(t)*momentDir;
+    Mat3xV dT = refFrame->AIK()*forceDir;
+    Mat3xV dR = refFrame->AIK()*momentDir;
 
     if(dT.cols())
-      res(Range<Var,Var>(0,dT.cols()-1)) = dT.T()*(frame1->getPosition(t)-frame2->getPosition(t));
+      res(Range<Var,Var>(0,dT.cols()-1)) = dT.T()*(frame1->IrOP()-frame2->IrOP());
 
     if(dR.cols())
       res(Range<Var,Var>(dT.cols(),dT.cols()+dR.cols()-1)) = dR.T()*AIK2Cardan(frame1->getOrientation().T()*frame2->getOrientation());
@@ -194,21 +194,21 @@ namespace MBSim {
       bd1[i]->setqRel(q(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)
       bd2[i]->setqRel(q(Iq2[i]));
-    dT = refFrame->getOrientation(t)*forceDir;
-    dR = refFrame->getOrientation(t)*momentDir;
+    dT = refFrame->AIK()*forceDir;
+    dR = refFrame->AIK()*momentDir;
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
-      JT(Index(0,2),Iu1[i]) = frame1->getJacobianOfTranslation(t,2);
-      JR(Index(0,2),Iu1[i]) = frame1->getJacobianOfRotation(t,2);
+      JT(Index(0,2),Iu1[i]) = frame1->IJP(2);
+      JR(Index(0,2),Iu1[i]) = frame1->IJR(2);
       for(size_t j=i+1; j<bd1.size(); j++)
         bd1[j]->resetJacobiansUpToDate();
       bd1[i]->setUpdateByReference(true);
     }
     for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->setUpdateByReference(false);
-      JT(Index(0,2),Iu2[i]) = -frame2->getJacobianOfTranslation(t,2);
-      JR(Index(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(t,2);
+      JT(Index(0,2),Iu2[i]) = -frame2->IJP(2);
+      JR(Index(0,2),Iu2[i]) = -frame2->IJR(2);
       for(size_t j=i+1; j<bd2.size(); j++)
         bd2[j]->resetJacobiansUpToDate();
       bd2[i]->setUpdateByReference(true);
@@ -226,8 +226,8 @@ namespace MBSim {
     A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
     Vec b(nu);
 
-    b(0,dT.cols()-1) = -(dT.T()*(frame1->getVelocity(t)-frame2->getVelocity(t)));
-    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->getAngularVelocity(t)-frame2->getAngularVelocity(t)));
+    b(0,dT.cols()-1) = -(dT.T()*(frame1->IvP()-frame2->IvP()));
+    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->IOmK()-frame2->IOmK()));
     Vec u = slvLU(A,b);
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->resetVelocitiesUpToDate();
@@ -259,18 +259,18 @@ namespace MBSim {
       Mat JT0(3,nh);
       Mat JR0(3,nh);
       if(frame1->getJacobianOfTranslation(0,false).cols()) {
-        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=frame1->getJacobianOfTranslation(t);
-        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=frame1->getJacobianOfRotation(t);
+        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=frame1->IJP();
+        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=frame1->IJR();
       }
       if(frame2->getJacobianOfTranslation(0,false).cols()) {
-        JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->getJacobianOfTranslation(t);
-        JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->getJacobianOfRotation(t);
+        JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->IJP();
+        JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->IJR();
       }
       B(Index(0,dT.cols()-1),Index(0,nh-1)) = -(dT.T()*JT0);
       B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -(dR.T()*JR0);
       Vec b(nu);
-      b(0,dT.cols()-1) = -(dT.T()*(frame1->getGyroscopicAccelerationOfTranslation(t)-frame2->getGyroscopicAccelerationOfTranslation(t)));
-      b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->getGyroscopicAccelerationOfRotation(t)-frame2->getGyroscopicAccelerationOfRotation(t)));
+      b(0,dT.cols()-1) = -(dT.T()*(frame1->IjP()-frame2->IjP()));
+      b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->IjR()-frame2->IjR()));
 
       Mat J = slvLU(A,B);
       Vec j = slvLU(A,b);

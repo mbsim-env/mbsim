@@ -36,7 +36,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointSphere::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    Vec3 Wd = sphere->getFrame()->getPosition(t) - point->getFrame()->getPosition(t);
+    Vec3 Wd = sphere->getFrame()->IrOP() - point->getFrame()->IrOP();
     double l = nrm2(Wd);
     Wd = Wd/l;
     g = l-sphere->getRadius();
