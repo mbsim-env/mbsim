@@ -373,6 +373,10 @@ namespace MBSim {
     }
     return lOld;
   }
+
+  double Element::getTime() {
+    return ds->getTime();
+  }
   
 }
 

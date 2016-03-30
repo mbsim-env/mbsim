@@ -61,39 +61,34 @@ namespace MBSim {
    return ele0;
   }
 
-  const Vec3& FloatingRelativeFrame::getGlobalRelativePosition(double t) {
-    if(updatePos) updatePositions(t);
-    return WrRP; 
-  }
-
   void FloatingRelativeFrame::updatePositions(double t) { 
     parent->updatePositions(t,this);
     WrRP = getPosition(false) - R->getPosition(t);
-    updatePos = false;
+    updPos = false;
   }
 
   void FloatingRelativeFrame::updateVelocities(double t) { 
     setAngularVelocity(R->getAngularVelocity(t));
     setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)));
-    updateVel = false;
+    updVel = false;
   }
 
   void FloatingRelativeFrame::updateAccelerations(double t) { 
     setAngularAcceleration(R->getAngularAcceleration(t));
     setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t), crossProduct(R->getAngularVelocity(t), getGlobalRelativePosition(t))));
-    updateAcc = true;
+    updAcc = true;
   }
 
   void FloatingRelativeFrame::updateJacobians(double t, int j) {
     setJacobianOfRotation(R->getJacobianOfRotation(t,j),j);
     setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(j),j);
-    updateJac[j] = false;
+    updJac[j] = false;
   }
 
   void FloatingRelativeFrame::updateGyroscopicAccelerations(double t) {
     setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t));
     setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition(t)) + crossProduct(R->getAngularVelocity(t),crossProduct(R->getAngularVelocity(t),getGlobalRelativePosition(t))));
-    updateGA = false;
+    updGA = false;
   }
 
 }

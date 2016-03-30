@@ -213,6 +213,9 @@ namespace MBSim {
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
+      double getTime() { return t; }
+      void setTime(double t_) { t = t_; }
+
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
       const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
       const fmatvec::Vec& getb(bool check=true) const { assert((not check) or (not updb)); return b; }
@@ -586,6 +589,11 @@ namespace MBSim {
       void updateVRef(const fmatvec::Mat &ref, int i=0) { Group::updateVRef(ref,i); updV[i] = true; }
 
     protected:
+      /**
+       * \brief time
+       */
+      double t;
+
       /**
        * \brief mass matrix
        */

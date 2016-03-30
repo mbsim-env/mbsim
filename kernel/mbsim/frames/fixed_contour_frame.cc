@@ -25,27 +25,27 @@ namespace MBSim {
 
   void FixedContourFrame::updatePositions(double t) {
     contour->updatePositions(t,this);
-    updatePos = false;
+    updPos = false;
   }
 
   void FixedContourFrame::updateVelocities(double t) {
     contour->updateVelocities(t,this);
-    updateVel = false;
+    updVel = false;
   }
 
   void FixedContourFrame::updateAccelerations(double t) {
     contour->updateAccelerations(t,this);
-    updateAcc = true;
+    updAcc = true;
   }
 
   void FixedContourFrame::updateJacobians(double t, int j) {
     contour->updateJacobians(t,this,j);
-    updateJac[j] = false;
+    updJac[j] = false;
   }
 
   void FixedContourFrame::updateGyroscopicAccelerations(double t) {
     contour->updateGyroscopicAccelerations(t,this);
-    updateGA = false;
+    updGA = false;
   }
 
 }

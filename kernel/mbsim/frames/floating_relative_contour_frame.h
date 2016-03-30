@@ -40,7 +40,8 @@ namespace MBSim {
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
       const Frame* getFrameOfReference() const { return R; }
 
-      const fmatvec::Vec3& getGlobalRelativePosition(double t);
+      const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrRP; }
+
       void updatePositions(double t);
       void updateVelocities(double t); 
       void updateAccelerations(double t); 

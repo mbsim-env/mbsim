@@ -35,21 +35,21 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Frame::Frame(const string &name) : Element(name), AWP(EYE), updateGA(true), updatePos(true), updateVel(true), updateAcc(true) {
+  Frame::Frame(const string &name) : Element(name), AWP(EYE), updGA(true), updPos(true), updVel(true), updAcc(true) {
 
     hSize[0] = 0;
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-    updateJac[0] = true;
-    updateJac[1] = true;
-    updateJac[2] = true;
+    updJac[0] = true;
+    updJac[1] = true;
+    updJac[2] = true;
   }
 
   void Frame::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
-        if(updatePos) updatePositions(t);
+        if(updPos) updatePositions(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
         Vec3 cardan=AIK2Cardan(AWP);
@@ -57,14 +57,14 @@ namespace MBSim {
           plotVector.push_back(cardan(i));
       }
       if(getPlotFeature(globalVelocity)==enabled) {
-        if(updateVel) updateVelocities(t);
+        if(updVel) updateVelocities(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
       if(getPlotFeature(globalAcceleration)==enabled) {
-        if(updateAcc) updateAccelerations(t);
+        if(updAcc) updateAccelerations(t);
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
         for(int i=0; i<3; i++)
@@ -73,7 +73,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
-          if(updatePos) updatePositions(t);
+          if(updPos) updatePositions(t);
           vector<double> data;
           data.push_back(t);
           data.push_back(WrOP(0));
@@ -172,32 +172,31 @@ namespace MBSim {
   }
 
   void Frame::resetUpToDate() { 
-    updateJac[0] = true; 
-    updateJac[1] = true; 
-    updateJac[2] = true; 
-    updateGA = true; 
-    updatePos = true;
-    updateVel = true;
-    updateAcc = true;
+    updJac[0] = true;
+    updJac[1] = true;
+    updJac[2] = true;
+    updGA = true;
+    updPos = true;
+    updVel = true;
+    updAcc = true;
   }
 
   void Frame::resetPositionsUpToDate() {
-    updatePos = true;
+    updPos = true;
   }
 
   void Frame::resetVelocitiesUpToDate() {
-    updateVel = true;
+    updVel = true;
   }
 
   void Frame::resetJacobiansUpToDate() {
-    updateJac[0] = true; 
-    updateJac[1] = true; 
-    updateJac[2] = true; 
+    updJac[0] = true;
+    updJac[1] = true;
+    updJac[2] = true;
   }
 
   void Frame::resetGyroscopicAccelerationsUpToDate() {
-    updateGA = true; 
+    updGA = true;
   }
 
 }
-

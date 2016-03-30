@@ -287,6 +287,8 @@ namespace MBSim {
 
       virtual void resetUpToDate() {}
 
+      double getTime();
+
     protected:
       Element *parent;
 
