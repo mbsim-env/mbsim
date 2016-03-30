@@ -126,28 +126,28 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateW(double t, int j) {
-    W[j][0] -= C.IJP(j).T() * getRF(t) + C.IJR(j).T() * getRM(t);
-    W[j][1] += frame[1]->IJP(j).T() * getRF(t) + frame[1]->IJR(j).T() * getRM(t);
+    W[j][0] -= C.evalJacobianOfTranslation(j).T() * getRF(t) + C.evalJacobianOfRotation(j).T() * getRM(t);
+    W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * getRF(t) + frame[1]->evalJacobianOfRotation(j).T() * getRM(t);
   }
 
   void FloatingFrameLink::updateh(double t, int j) {
-    h[j][0] -= C.IJP(j).T() * getForce(t) + C.IJR(j).T() * getMoment(t);
-    h[j][1] += frame[1]->IJP(j).T() * getForce(t) + frame[1]->IJR(j).T() * getMoment(t);
+    h[j][0] -= C.evalJacobianOfTranslation(j).T() * getForce(t) + C.evalJacobianOfRotation(j).T() * getMoment(t);
+    h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * getForce(t) + frame[1]->evalJacobianOfRotation(j).T() * getMoment(t);
   }
 
   void FloatingFrameLink::updatePositions(double t) {
-    WrP0P1 = frame[1]->IrOP() - frame[0]->IrOP();
+    WrP0P1 = frame[1]->evalPosition() - frame[0]->evalPosition();
     updPos = false;
   }
 
   void FloatingFrameLink::updatePositions(double t, Frame *frame_) {
-    frame_->setPosition(frame[1]->IrOP());
-    frame_->setOrientation(frame[0]->AIK());
+    frame_->setPosition(frame[1]->evalPosition());
+    frame_->setOrientation(frame[0]->evalOrientation());
   }
 
   void FloatingFrameLink::updateVelocities(double t) {
-    WvP0P1 = frame[1]->IvP() - C.IvP();
-    WomP0P1 = frame[1]->IOmK() - C.IOmK();
+    WvP0P1 = frame[1]->evalVelocity() - C.evalVelocity();
+    WomP0P1 = frame[1]->evalAngularVelocity() - C.evalAngularVelocity();
     updVel = false;
   }
 
@@ -180,8 +180,8 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateForceDirections(double t) {
-    DF = refFrame->AIK() * forceDir;
-    DM = refFrame->AIK() * momentDir;
+    DF = refFrame->evalOrientation() * forceDir;
+    DM = refFrame->evalOrientation() * momentDir;
     updFD = false;
   }
 

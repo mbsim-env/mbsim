@@ -35,7 +35,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleCircle::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    Vec3 WrD = circle0->getFrame()->IrOP() - circle1->getFrame()->IrOP();
+    Vec3 WrD = circle0->getFrame()->evalPosition() - circle1->getFrame()->evalPosition();
     cFrame[1]->getOrientation(false).set(0, circle1->getSign()*WrD/nrm2(WrD));
     cFrame[0]->getOrientation(false).set(0, -cFrame[1]->getOrientation(false).col(0));
     cFrame[0]->getOrientation(false).set(2, circle0->getSign()*circle0->getFrame()->getOrientation(false).col(2));
@@ -51,7 +51,7 @@ namespace MBSim {
   void ContactKinematicsCircleCircle::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
-    const Vec3 KrPC1 = circle0->getFrame()->AIK().T()*(cFrame[0]->IrOP() - circle0->getFrame()->IrOP());
+    const Vec3 KrPC1 = circle0->getFrame()->evalOrientation().T()*(cFrame[0]->evalPosition() - circle0->getFrame()->evalPosition());
     Vec2 zeta1;
     zeta1(0)=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
     const Vec3 n1 = cFrame[0]->getOrientation().col(0); //crossProduct(s1, t1);
@@ -60,7 +60,7 @@ namespace MBSim {
     const Vec3 N1 = circle0->getParDer1Wn(t,zeta1);
     const Vec3 U1 = circle0->getParDer1Wu(t,zeta1);
 
-    const Vec3 KrPC2 = circle1->getFrame()->AIK().T()*(cFrame[1]->IrOP() - circle1->getFrame()->IrOP());
+    const Vec3 KrPC2 = circle1->getFrame()->evalOrientation().T()*(cFrame[1]->evalPosition() - circle1->getFrame()->evalPosition());
     Vec2 zeta2;
     zeta2(0)=(KrPC2(1)>0) ? acos(KrPC2(0)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(0)/nrm2(KrPC2));
     const Vec3 n2 = cFrame[1]->getOrientation().col(0); //crossProduct(s1, t1);

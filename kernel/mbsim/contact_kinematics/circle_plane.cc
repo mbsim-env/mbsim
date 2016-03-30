@@ -44,14 +44,14 @@ namespace MBSim {
   }
 
   void ContactKinematicsCirclePlane::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    cFrame[iplane]->setOrientation(plane->getFrame()->AIK());
+    cFrame[iplane]->setOrientation(plane->getFrame()->evalOrientation());
     cFrame[icircle]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
     cFrame[icircle]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
     cFrame[icircle]->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
     Vec3 Wd;
     Vec3 Wn = cFrame[iplane]->getOrientation(false).col(0);
-    Vec3 Wb = circle->getFrame()->AIK().col(2);
+    Vec3 Wb = circle->getFrame()->evalOrientation().col(2);
     double t_EC = Wn.T()*Wb;
     if(t_EC>0) {
       Wb *= -1.;

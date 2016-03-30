@@ -60,12 +60,12 @@ namespace MBSim {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */
-    Vec3 Wa_F = frustum->getFrame()->AIK().col(1); // axis of Frustum in inertial FR
+    Vec3 Wa_F = frustum->getFrame()->evalOrientation().col(1); // axis of Frustum in inertial FR
     Vec2 r_F = frustum->getRadii(); // radii of Frustum
     double h_F = frustum->getHeight(); // height of Frustum   
     bool outCont_F = frustum->getOutCont(); // contact on outer surface of Frustum?
     double phi_F = atan((r_F(1) - r_F(0)) / h_F); // opening angle of Frustum
-    Vec3 Wb_C = circle->getFrame()->AIK().col(2); // binormal of Circle in inertial FR
+    Vec3 Wb_C = circle->getFrame()->evalOrientation().col(2); // binormal of Circle in inertial FR
     double r_C = circle->getRadius(); // radius of Circle
     bool outCont_C = circle->getSolid(); // contact on outer surface of Circle?
 

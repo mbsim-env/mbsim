@@ -65,7 +65,7 @@ namespace MBSim {
 
     Vec3 CrPoint = WrPoint;
 
-    CrPoint -= R->IrOP();
+    CrPoint -= R->evalPosition();
     CrPoint = R->getOrientation().T() * CrPoint; // position in moving frame of reference
 
     zeta(0) = ArcTan(CrPoint(0), CrPoint(1));

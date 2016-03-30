@@ -128,7 +128,7 @@ namespace MBSim {
   void ContactKinematicsPointPolynomialFrustum::updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index) {
     /*Geometry*/
     //point in frustum-coordinates
-    Vec3 rPoint = frustum->getFrame()->AIK().T() * (point->getFrame()->IrOP() - frustum->getFrame()->IrOP());
+    Vec3 rPoint = frustum->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - frustum->getFrame()->evalPosition());
 
 
     const double & h = rPoint(0);

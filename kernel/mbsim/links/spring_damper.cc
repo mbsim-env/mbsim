@@ -78,8 +78,8 @@ namespace MBSim {
           Vec3 WrOToPoint;
           Vec3 WrOFromPoint;
 
-          WrOFromPoint = frame[0]->IrOP();
-          WrOToPoint   = frame[1]->IrOP();
+          WrOFromPoint = frame[0]->evalPosition();
+          WrOToPoint   = frame[1]->evalPosition();
           vector<double> data;
           data.push_back(t); 
           data.push_back(WrOFromPoint(0));

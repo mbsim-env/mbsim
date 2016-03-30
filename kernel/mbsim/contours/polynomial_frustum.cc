@@ -74,7 +74,7 @@ namespace MBSim {
 
   Vec2 PolynomialFrustum::getZeta(double t, const Vec3 & WrPoint) {
     Vec2 returnVal(NONINIT);
-    Vec3 inFramePoint = -R->IrOP() + R->AIK().T() * WrPoint;
+    Vec3 inFramePoint = -R->evalPosition() + R->evalOrientation().T() * WrPoint;
 
     returnVal(0) = inFramePoint(0); //height coordinate
     returnVal(1) = ArcTan(inFramePoint(1), inFramePoint(2));
@@ -187,7 +187,7 @@ namespace MBSim {
   Vec3 PolynomialFrustum::getEnclosingSphereCenter(double t) {
     Vec3 center;
     center(0) = height / 2;
-    return R->IrOP() + R->AIK() * center;
+    return R->evalPosition() + R->evalOrientation() * center;
   }
 
   const fmatvec::Vec & PolynomialFrustum::getPolynomialParameters() {

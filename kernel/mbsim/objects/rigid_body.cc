@@ -91,17 +91,17 @@ namespace MBSim {
   void RigidBody::updateh(double t, int j) {
     if(j==0) {
       Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-      Vec3 WM = crossProduct(getGlobalInertiaTensor(t)*C->IOmK(),C->IOmK()) ;
-      h[j] += C->IJP(j).T()*(WF - m*C->IjP()) + C->IJR(j).T()*(WM - WThetaS*C->IjR());
+      Vec3 WM = crossProduct(getGlobalInertiaTensor(t)*C->evalAngularVelocity(),C->evalAngularVelocity()) ;
+      h[j] += C->evalJacobianOfTranslation(j).T()*(WF - m*C->evalGyroscopicAccelerationOfTranslation()) + C->evalJacobianOfRotation(j).T()*(WM - WThetaS*C->evalGyroscopicAccelerationOfRotation());
     } else {
-      Vec3 aP = Z.IaP();
+      Vec3 aP = Z.evalAcceleration();
       Vec3 Psi = Z.getAngularAcceleration(t);
       Vec3 rPS = C->getGlobalRelativePosition(t);
-      Vec3 Om = Z.IOmK();
+      Vec3 Om = Z.evalAngularVelocity();
       SymMat3 Theta = getGlobalInertiaTensor(t) + m*JTJ(tilde(rPS));
       Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       Vec3 WM = crossProduct(rPS,WF);
-      h[j] += Z.IJP(j).T()*(WF - m*(aP + crossProduct(Psi,rPS) + crossProduct(Om,crossProduct(Om,rPS)))) + Z.IJR(j).T()*(WM - (m*crossProduct(rPS,aP) + Theta*Psi + crossProduct(Om,Theta*Om)));
+      h[j] += Z.evalJacobianOfTranslation(j).T()*(WF - m*(aP + crossProduct(Psi,rPS) + crossProduct(Om,crossProduct(Om,rPS)))) + Z.evalJacobianOfRotation(j).T()*(WM - (m*crossProduct(rPS,aP) + Theta*Psi + crossProduct(Om,Theta*Om)));
     }
   }
 
@@ -373,7 +373,7 @@ namespace MBSim {
         if(FWeight) {
           vector<double> data;
           data.push_back(t);
-          Vec3 WrOS=C->IrOP();
+          Vec3 WrOS=C->evalPosition();
           Vec3 WG = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
           data.push_back(WrOS(0));
           data.push_back(WrOS(1));
@@ -387,8 +387,8 @@ namespace MBSim {
         if(openMBVBody) {
           vector<double> data;
           data.push_back(t);
-          Vec3 WrOS=openMBVFrame->IrOP();
-          Vec3 cardan=AIK2Cardan(openMBVFrame->AIK());
+          Vec3 WrOS=openMBVFrame->evalPosition();
+          Vec3 cardan=AIK2Cardan(openMBVFrame->evalOrientation());
           data.push_back(WrOS(0));
           data.push_back(WrOS(1));
           data.push_back(WrOS(2));
@@ -430,7 +430,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateInertiaTensor(double t) {
-    WThetaS = JTMJ(SThetaS,C->AIK().T());
+    WThetaS = JTMJ(SThetaS,C->evalOrientation().T());
     updWTS = false;
   }
 
@@ -451,13 +451,13 @@ namespace MBSim {
   void RigidBody::updatePositions(double t) {
     if(fPrPK) PrPK = (*fPrPK)(getqTRel(t),t);
     if(fAPK) APK = (*fAPK)(getqRRel(t),t);
-    WrPK = R->AIK()*PrPK;
+    WrPK = R->evalOrientation()*PrPK;
     updPos = false;
   }
 
   void RigidBody::updateVelocities(double t) {
-    if(fPrPK) WvPKrel = R->AIK()*(getPJTT(t)*getuTRel(t) + PjhT);
-    if(fAPK) WomPK = frameForJacobianOfRotation->AIK()*(getPJRR(t)*getuRRel(t) + PjhR);
+    if(fPrPK) WvPKrel = R->evalOrientation()*(getPJTT(t)*getuTRel(t) + PjhT);
+    if(fAPK) WomPK = frameForJacobianOfRotation->evalOrientation()*(getPJRR(t)*getuRRel(t) + PjhR);
     updVel = false;
   }
 
@@ -504,32 +504,32 @@ namespace MBSim {
   }
 
   void RigidBody::updatePositions(double t, Frame *frame) {
-    frame->setPosition(R->IrOP() + getGlobalRelativePosition(t));
+    frame->setPosition(R->evalPosition() + getGlobalRelativePosition(t));
     frame->setOrientation(R->getOrientation()*APK); // APK already update to date
   }
 
   void RigidBody::updateVelocities(double t, Frame *frame) {
-    frame->setAngularVelocity(R->IOmK() + getGlobalRelativeAngularVelocity(t));
+    frame->setAngularVelocity(R->evalAngularVelocity() + getGlobalRelativeAngularVelocity(t));
     frame->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),getGlobalRelativePosition(t))); // WvPKrel already update to date
   }
 
   void RigidBody::updateAccelerations(double t, Frame *frame) {
-    frame->setAcceleration(Z.IJP()*udall[0] + Z.IjP());
-    frame->setAngularAcceleration(Z.IJR()*udall[0] + Z.IjR());
+    frame->setAcceleration(Z.evalJacobianOfTranslation()*udall[0] + Z.evalGyroscopicAccelerationOfTranslation());
+    frame->setAngularAcceleration(Z.evalJacobianOfRotation()*udall[0] + Z.evalGyroscopicAccelerationOfRotation());
   }
 
   void RigidBody::updateJacobians0(double t, Frame *frame) {
     frame->getJacobianOfTranslation(0,false).init(0);
     frame->getJacobianOfRotation(0,false).init(0);
-    frame->getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->IJP() - tilde(getGlobalRelativePosition(t))*R->IJR());
-    frame->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->IJR());
-    frame->getJacobianOfTranslation(0,false).add(i02,Index(0,gethSize(0)-1), R->AIK()*getPJT(t)*getJRel(t));
-    frame->getJacobianOfRotation(0,false).add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->AIK()*PJR[0]*JRel[0]);
+    frame->getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->evalJacobianOfTranslation() - tilde(getGlobalRelativePosition(t))*R->evalJacobianOfRotation());
+    frame->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->evalJacobianOfRotation());
+    frame->getJacobianOfTranslation(0,false).add(i02,Index(0,gethSize(0)-1), R->evalOrientation()*getPJT(t)*getJRel(t));
+    frame->getJacobianOfRotation(0,false).add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->evalOrientation()*PJR[0]*JRel[0]);
   }
 
   void RigidBody::updateGyroscopicAccelerations(double t, Frame *frame) {
-    frame->setGyroscopicAccelerationOfTranslation(R->IjP() + crossProduct(R->IjR(),getGlobalRelativePosition(t)) + R->AIK()*(getPjbT(t) + getPJT(t)*getjRel(t)) + crossProduct(R->IOmK(), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->IOmK(),getGlobalRelativePosition(t))));
-    frame->setGyroscopicAccelerationOfRotation(R->IjR() + frameForJacobianOfRotation->AIK()*(PjbR + PJR[0]*jRel) + crossProduct(R->IOmK(), getGlobalRelativeAngularVelocity(t))); // PjbR already up to date
+    frame->setGyroscopicAccelerationOfTranslation(R->evalGyroscopicAccelerationOfTranslation() + crossProduct(R->evalGyroscopicAccelerationOfRotation(),getGlobalRelativePosition(t)) + R->evalOrientation()*(getPjbT(t) + getPJT(t)*getjRel(t)) + crossProduct(R->evalAngularVelocity(), 2.*getGlobalRelativeVelocity(t)+crossProduct(R->evalAngularVelocity(),getGlobalRelativePosition(t))));
+    frame->setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->evalOrientation()*(PjbR + PJR[0]*jRel) + crossProduct(R->evalAngularVelocity(), getGlobalRelativeAngularVelocity(t))); // PjbR already up to date
   }
 
   void RigidBody::updateJacobians2(double t, Frame *frame_) {
@@ -538,11 +538,11 @@ namespace MBSim {
       (*i)->getJacobianOfRotation(2,false).resize();
     }
     if(updateByReference) {
-      frame_->getJacobianOfTranslation(2,false).resize() = R->IJP(2) - tilde(getGlobalRelativePosition(t))*R->IJR(2);
-      frame_->getJacobianOfRotation(2,false).resize() = R->IJR(2);
+      frame_->getJacobianOfTranslation(2,false).resize() = R->evalJacobianOfTranslation(2) - tilde(getGlobalRelativePosition(t))*R->evalJacobianOfRotation(2);
+      frame_->getJacobianOfRotation(2,false).resize() = R->evalJacobianOfRotation(2);
     } else {
-      frame_->getJacobianOfTranslation(2,false).resize() = R->AIK()*getPJT(t);
-      frame_->getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->AIK()*PJR[0];
+      frame_->getJacobianOfTranslation(2,false).resize() = R->evalOrientation()*getPJT(t);
+      frame_->getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->evalOrientation()*PJR[0];
     }
   }
 
@@ -601,7 +601,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateMNotConst(double t, int i) {
-    M[i] += m*JTJ(C->IJP(i)) + JTMJ(getGlobalInertiaTensor(t),C->IJR(i));
+    M[i] += m*JTJ(C->evalJacobianOfTranslation(i)) + JTMJ(getGlobalInertiaTensor(t),C->evalJacobianOfRotation(i));
   }
 
   void RigidBody::initializeUsingXML(DOMElement *element) {

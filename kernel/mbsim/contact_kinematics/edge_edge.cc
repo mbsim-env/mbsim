@@ -34,9 +34,9 @@ namespace MBSim {
   }
 
   void ContactKinematicsEdgeEdge::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    Vec Wd = edge1->getFrame()->IrOP() - edge0->getFrame()->IrOP();
-    Vec Wd0 = edge0->getFrame()->AIK().col(1);
-    Vec Wd1 = edge1->getFrame()->AIK().col(1);
+    Vec Wd = edge1->getFrame()->evalPosition() - edge0->getFrame()->evalPosition();
+    Vec Wd0 = edge0->getFrame()->evalOrientation().col(1);
+    Vec Wd1 = edge1->getFrame()->evalOrientation().col(1);
     Vec Wn = crossProduct(Wd0,Wd1);
     Wn = Wn/nrm2(Wn);
     double d = Wn.T()*Wd;

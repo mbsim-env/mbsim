@@ -38,7 +38,7 @@ namespace MBSim {
   }
 
   Vec3 FuncPairSpatialContourPoint::getWrD(const Vec &alpha) {
-    return contour->getPosition(t,alpha) - point->getFrame()->IrOP();
+    return contour->getPosition(t,alpha) - point->getFrame()->evalPosition();
   }
 
 }

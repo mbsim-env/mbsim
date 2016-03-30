@@ -34,7 +34,7 @@ namespace MBSim {
   }
 
   fmatvec::Vec2 InfluenceFunction::getZeta(double t, const std::pair<Contour*, ContourFrame*>& contourInfo) {
-    return contourInfo.first->getZeta(t, contourInfo.second->IrOP());
+    return contourInfo.first->getZeta(t, contourInfo.second->evalPosition());
   }
 
 }

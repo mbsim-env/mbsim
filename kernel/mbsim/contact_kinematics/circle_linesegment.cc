@@ -43,8 +43,8 @@ namespace MBSim {
 
   void ContactKinematicsCircleLineSegment::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
-    const Vec3 WC=circle->getFrame()->IrOP();
-    const Vec3 WL=linesegment->getFrame()->IrOP();
+    const Vec3 WC=circle->getFrame()->evalPosition();
+    const Vec3 WL=linesegment->getFrame()->evalPosition();
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);
     const Vec3 WL0=WL-linesegment->getLength()/2*WLdir;
     const double s=WLdir.T() * (-WL0+WC);
@@ -73,19 +73,19 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleLineSegment::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
-    const Vec3 WC=circle->getFrame()->IrOP();
-    const Vec3 WL=linesegment->getFrame()->IrOP();
+    const Vec3 WC=circle->getFrame()->evalPosition();
+    const Vec3 WL=linesegment->getFrame()->evalPosition();
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);
     const Vec3 WL0=WL-linesegment->getLength()/2*WLdir;
     const double s=WLdir.T() * (-WL0+WC);
 
     if ((s>=0) && (s<=linesegment->getLength())) {
-      Vec3 v2 = cFrame[icircle]->AIK().col(2);
-      Vec3 n1 = cFrame[iline]->AIK().col(0);
+      Vec3 v2 = cFrame[icircle]->evalOrientation().col(2);
+      Vec3 n1 = cFrame[iline]->evalOrientation().col(0);
       Vec3 u1 = cFrame[iline]->getOrientation().col(1);
       Vec3 u2 = cFrame[icircle]->getOrientation().col(1);
-      Vec3 vC1 = cFrame[iline]->IvP();
-      Vec3 vC2 = cFrame[icircle]->IvP();
+      Vec3 vC1 = cFrame[iline]->evalVelocity();
+      Vec3 vC2 = cFrame[icircle]->evalVelocity();
       Vec3 Om1 = cFrame[iline]->getAngularVelocity();
       Vec3 Om2 = cFrame[icircle]->getAngularVelocity();
       double r = circle->getRadius();

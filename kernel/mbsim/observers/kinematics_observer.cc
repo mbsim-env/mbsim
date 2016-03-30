@@ -104,7 +104,7 @@ namespace MBSim {
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
-          Vec3 r = frame->IrOP();
+          Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -114,11 +114,11 @@ namespace MBSim {
         if(openMBVVelocity&& !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec3 r = frame->IrOP();
+          Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          Vec3 v = frame->IvP();
+          Vec3 v = frame->evalVelocity();
           data.push_back(v(0));
           data.push_back(v(1));
           data.push_back(v(2));
@@ -128,11 +128,11 @@ namespace MBSim {
         if(openMBVAngularVelocity&& !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec3 r = frame->IrOP();
+          Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          Vec3 om = frame->IOmK();
+          Vec3 om = frame->evalAngularVelocity();
           data.push_back(om(0));
           data.push_back(om(1));
           data.push_back(om(2));
@@ -142,11 +142,11 @@ namespace MBSim {
         if(openMBVAcceleration&& !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec3 r = frame->IrOP();
+          Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          Vec3 a = frame->IaP();
+          Vec3 a = frame->evalAcceleration();
           data.push_back(a(0));
           data.push_back(a(1));
           data.push_back(a(2));
@@ -156,7 +156,7 @@ namespace MBSim {
         if(openMBVAngularAcceleration&& !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec3 r = frame->IrOP();
+          Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -297,18 +297,18 @@ namespace MBSim {
 
   void RelativeKinematicsObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Vec3 vP = frame->IvP();
-      Vec3 vOs = refFrame->IvP();
-      Vec3 rOP = frame->IrOP();
-      Vec3 rOOs = refFrame->IrOP();
+      Vec3 vP = frame->evalVelocity();
+      Vec3 vOs = refFrame->evalVelocity();
+      Vec3 rOP = frame->evalPosition();
+      Vec3 rOOs = refFrame->evalPosition();
       Vec3 rOsP = rOP - rOOs;
-      Vec3 omB = refFrame->IOmK();
+      Vec3 omB = refFrame->evalAngularVelocity();
       Vec3 vOsP = vP - vOs;
       Vec3 vRot = crossProduct(omB,rOsP);
       Vec3 vRel = vOsP - vRot;
       Vec3 vF = vOs + vRot;
-      Vec3 aP = frame->IaP();
-      Vec3 aOs = refFrame->IaP();
+      Vec3 aP = frame->evalAcceleration();
+      Vec3 aOs = refFrame->evalAcceleration();
       Vec3 aOsP = aP - aOs;
       Vec3 psiB = refFrame->getAngularAcceleration(t);
       Vec3 aRot = crossProduct(psiB,rOsP);
@@ -316,7 +316,7 @@ namespace MBSim {
       Vec3 aCor = 2.*crossProduct(omB,vRel);
       Vec3 aRel = aOsP - aRot - aZp - aCor;
       Vec3 aF = aOs + aRot + aZp;
-      Vec3 omK = frame->IOmK();
+      Vec3 omK = frame->evalAngularVelocity();
       Vec3 omBK = omK - omB;
       Vec3 psiK = frame->getAngularAcceleration(t);
       Vec3 psiBK = psiK - psiB;

@@ -62,7 +62,7 @@ namespace MBSim {
   Vec2 Frustum::getZeta(double t, const Vec3 &WrPoint) {
     Vec3 CrPoint = WrPoint;
 
-    CrPoint -= R->IrOP();
+    CrPoint -= R->evalPosition();
     CrPoint = R->getOrientation().T() * CrPoint; // position in moving frame of reference
 
     const double xt = CrPoint(0);

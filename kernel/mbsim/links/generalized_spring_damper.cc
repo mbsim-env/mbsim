@@ -97,8 +97,8 @@ namespace MBSim {
         Vec WrOToPoint;
         Vec WrOFromPoint;
 
-        WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->IrOP():body[1]->getFrameOfReference()->IrOP();
-        WrOToPoint   = body[1]->getFrameForKinematics()->IrOP();
+        WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->evalPosition():body[1]->getFrameOfReference()->evalPosition();
+        WrOToPoint   = body[1]->getFrameForKinematics()->evalPosition();
         vector<double> data;
         data.push_back(t);
         data.push_back(WrOFromPoint(0));
