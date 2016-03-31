@@ -5,7 +5,7 @@ lib_LTLIBRARIES = mbsim.la libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_f
 # should NOT depend on any library except system libraries!
 mbsim_la_SOURCES = fmiModelFunctions.cc
 mbsim_la_CPPFLAGS = $(MBXMLUTILSHELPERDEPS_CFLAGS)
-mbsim_la_LDFLAGS = -module -avoid-version
+mbsim_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN
 mbsim_la_LIBADD = $(LIBDL)
 
 
