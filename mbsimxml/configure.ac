@@ -9,7 +9,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
-PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface mbxmlutilsbase)
+PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
 PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 
 AC_SUBST([PIC])

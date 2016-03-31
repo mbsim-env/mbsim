@@ -28,6 +28,12 @@ CPPFLAGS="$CFLAGS -Wall -Werror -Wno-sign-compare"
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
+dnl shared libraries
+if test "_$host_os" != "_mingw32"; then
+  LIBDL="-ldl"
+fi
+AC_SUBST([LIBDL])
+
 # FMI platform name
 if test "_$host_os" = "_mingw32" ; then
   FMIPLATFORM=win$(getconf LONG_BIT)
@@ -51,7 +57,7 @@ if test "$mkoctfile" == "no"; then
 fi
 test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
 
-PKG_CHECK_MODULES(MBXMLUTILSBASEDEPS, mbxmlutilsbase)
+PKG_CHECK_MODULES(MBXMLUTILSHELPERDEPS, mbxmlutilshelper)
 PKG_CHECK_MODULES(FMUDEPS, mbsim mbsimControl)
 PKG_CHECK_MODULES(FMUXMLDEPS, mbsimflatxml)
 PKG_CHECK_MODULES(FMUPPXMLDEPS, mbxmlutils mbsimxml)

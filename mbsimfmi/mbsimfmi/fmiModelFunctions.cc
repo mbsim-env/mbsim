@@ -29,6 +29,13 @@ namespace {
   string SHEXT(".so");
   string LIBDIR="lib";
 #endif
+
+  // FMI instance struct of mbsim.so: hold the real SharedLibrary and the real instance
+  struct Instance {
+    Instance(const SharedLibrary &lib_, const boost::shared_ptr<FMIInstanceBase> &instance_) : lib(lib_), instance(instance_) {}
+    SharedLibrary lib;
+    boost::shared_ptr<FMIInstanceBase> instance;
+  };
 }
 
 // define all FMI function as C functions
@@ -64,9 +71,8 @@ extern "C" {
         s=fmuDir.find_last_of("/\\", s)-1;
       // load main mbsim FMU library
       SharedLibrary lib(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT);
-      fmiInstanceCreatePtr fmiInstanceCreate=reinterpret_cast<fmiInstanceCreatePtr>(lib.getAddress("fmiInstanceCreate"));
-      return new pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >(lib,
-        fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));
+      fmiInstanceCreatePtr fmiInstanceCreate=lib.getSymbol<fmiInstanceCreatePtr>("fmiInstanceCreate");
+      return new Instance(lib, fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));
     }
     // note: we can not use the instance here since the creation has failed
     catch(const exception &ex) {
@@ -85,14 +91,14 @@ extern "C" {
   // No exception handling needed since the dtor must not throw.
   void fmiFreeModelInstance(fmiComponent c) {
     // must not throw
-    delete static_cast<pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >*>(c);
+    delete static_cast<Instance*>(c);
   }
 
   // All other FMI functions: just calls the corresponding member function in FMIInstanceBase
   // Convert exceptions to call of logError which itself passed these to the FMI logge and return with fmiError.
   #define FMIFUNC(fmiFuncName, instanceMemberName, Sig, sig) \
   fmiStatus fmiFuncName Sig { \
-    boost::shared_ptr<FMIInstanceBase> instance=static_cast<pair<SharedLibrary, boost::shared_ptr<FMIInstanceBase> >*>(c)->second; \
+    boost::shared_ptr<FMIInstanceBase> instance=static_cast<Instance*>(c)->instance; \
     try { \
       instance->instanceMemberName sig; \
       return fmiOK; \
