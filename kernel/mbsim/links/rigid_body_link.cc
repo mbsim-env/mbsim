@@ -103,8 +103,8 @@ namespace MBSim {
 
   void RigidBodyLink::updateForceDirections(double t) {
     for(unsigned i=0; i<body.size(); i++) {
-      DF[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->getPJT(t);
-      DM[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->getPJR(t);
+      DF[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->evalPJT();
+      DM[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->evalPJR();
     }
     updFD = false;
   }
@@ -132,7 +132,7 @@ namespace MBSim {
   void RigidBodyLink::updateh(double t, int j) {
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)
-        h[j][i]+=body[i]->getJRel(t,j).T()*getGeneralizedForce(t)*ratio[i];
+        h[j][i]+=body[i]->evalJRel(j).T()*getGeneralizedForce(t)*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
         h[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getForce(t,i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getMoment(t,i))*ratio[i];
@@ -144,7 +144,7 @@ namespace MBSim {
   void RigidBodyLink::updateW(double t, int j) {
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)  {
-        W[j][i]+=body[i]->getJRel(t,j).T()*ratio[i];
+        W[j][i]+=body[i]->evalJRel(j).T()*ratio[i];
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {

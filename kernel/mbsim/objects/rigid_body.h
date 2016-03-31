@@ -179,14 +179,14 @@ namespace MBSim {
       Frame* getFrameForKinematics() { return &Z; };
       FixedRelativeFrame* getFrameC() { return C; };
 
-      const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrPK; }
-      const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvPKrel; }
-      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomPK; }
-      const fmatvec::SymMat3& getGlobalInertiaTensor(double t) { if(updWTS) updateInertiaTensor(t); return WThetaS; }
-      const fmatvec::Vec3& getPjbT(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbT; }
-      const fmatvec::Vec3& getPjbR(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbR; }
-      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updateJacobians(t); return PJTT; }
-      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updateJacobians(t); return PJRR; }
+      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(0.); return WrPK; }
+      const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(0.); return WvPKrel; }
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomPK; }
+      const fmatvec::SymMat3& evalGlobalInertiaTensor() { if(updWTS) updateInertiaTensor(0.); return WThetaS; }
+      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(0.); return PjbT; }
+      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(0.); return PjbR; }
+      const fmatvec::Mat3xV& evalPJTT() { if(updPJ) updateJacobians(0.); return PJTT; }
+      const fmatvec::Mat3xV& evalPJRR() { if(updPJ) updateJacobians(0.); return PJRR; }
 
       /**
        * \param RThetaR  inertia tensor
@@ -254,15 +254,15 @@ namespace MBSim {
       void resetVelocitiesUpToDate();
       void resetJacobiansUpToDate();
       void resetGyroscopicAccelerationsUpToDate();
-      const fmatvec::Vec& getqRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRel; }
-      const fmatvec::Vec& getuRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRel; }
-      const fmatvec::VecV& getqTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qTRel; }
-      const fmatvec::VecV& getqRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRRel; }
-      const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel; }
-      const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel; }
-      const fmatvec::Mat& getJRel(double t, int j=0) { if(updGJ) updateGeneralizedJacobians(t); return JRel[j]; }
-      const fmatvec::Vec& getjRel(double t) { if(updGJ) updateGeneralizedJacobians(t); return jRel; }
-      const fmatvec::Mat& getTRel(double t) { if(updT) updateT(t); return TRel; }
+      const fmatvec::Vec& evalqRel() { if(updGC) updateGeneralizedCoordinates(0.); return qRel; }
+      const fmatvec::Vec& evaluRel() { if(updGC) updateGeneralizedCoordinates(0.); return uRel; }
+      const fmatvec::VecV& evalqTRel() { if(updGC) updateGeneralizedCoordinates(0.); return qTRel; }
+      const fmatvec::VecV& evalqRRel() { if(updGC) updateGeneralizedCoordinates(0.); return qRRel; }
+      const fmatvec::VecV& evaluTRel() { if(updGC) updateGeneralizedCoordinates(0.); return uTRel; }
+      const fmatvec::VecV& evaluRRel() { if(updGC) updateGeneralizedCoordinates(0.); return uRRel; }
+      const fmatvec::Mat& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(0.); return JRel[j]; }
+      const fmatvec::Vec& evaljRel() { if(updGJ) updateGeneralizedJacobians(0.); return jRel; }
+      const fmatvec::Mat& evalTRel() { if(updT) updateT(0.); return TRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 

@@ -35,25 +35,25 @@ namespace MBSim {
 
   void FloatingRelativeContourFrame::updateVelocities(double t) { 
     setAngularVelocity(R->evalAngularVelocity());
-    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition(t)));
+    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), evalGlobalRelativePosition()));
     updVel = false;
   }
 
   void FloatingRelativeContourFrame::updateAccelerations(double t) { 
     setAngularAcceleration(R->getAngularAcceleration(t));
-    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition(t)) + crossProduct(R->evalAngularVelocity(), crossProduct(R->evalAngularVelocity(), getGlobalRelativePosition(t))));
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), evalGlobalRelativePosition()) + crossProduct(R->evalAngularVelocity(), crossProduct(R->evalAngularVelocity(), evalGlobalRelativePosition())));
     updAcc = true;
   }
 
   void FloatingRelativeContourFrame::updateJacobians(double t, int j) {
     setJacobianOfRotation(R->evalJacobianOfRotation(j),j);
-    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition(t))*R->getJacobianOfRotation(j),j);
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition())*R->getJacobianOfRotation(j),j);
     updJac[j] = false;
   }
 
   void FloatingRelativeContourFrame::updateGyroscopicAccelerations(double t) {
     setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation());
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition(t)) + crossProduct(R->evalAngularVelocity(),crossProduct(R->evalAngularVelocity(),getGlobalRelativePosition(t))));
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition()) + crossProduct(R->evalAngularVelocity(),crossProduct(R->evalAngularVelocity(),evalGlobalRelativePosition())));
     updGA = false;
   }
 

@@ -539,8 +539,8 @@ namespace MBSim {
 
   void InverseKineticsJoint::updateb(double t) {
     if(body) {
-      b(Index(0, bSize - 1), Index(0, 2)) = body->getPJT(t).T();
-      b(Index(0, bSize - 1), Index(3, 5)) = body->getPJR(t).T();
+      b(Index(0, bSize - 1), Index(0, 2)) = body->evalPJT().T();
+      b(Index(0, bSize - 1), Index(3, 5)) = body->evalPJR().T();
     }
   }
 

@@ -144,8 +144,8 @@ namespace MBSim {
       fmatvec::Mat3xV& getPJT(int i=0, bool check=true) { assert((not check) or (not updPJ)); return PJT[i]; }
       fmatvec::Mat3xV& getPJR(int i=0, bool check=true) { assert((not check) or (not updPJ)); return PJR[i]; }
 
-      const fmatvec::Mat3xV& getPJT(double t) { if(updPJ) updateJacobians(t); return PJT[0]; }
-      const fmatvec::Mat3xV& getPJR(double t) { if(updPJ) updateJacobians(t); return PJR[0]; }
+      const fmatvec::Mat3xV& evalPJT() { if(updPJ) updateJacobians(0.); return PJT[0]; }
+      const fmatvec::Mat3xV& evalPJR() { if(updPJ) updateJacobians(0.); return PJR[0]; }
 
       void resetUpToDate();
       virtual void resetPositionsUpToDate();
