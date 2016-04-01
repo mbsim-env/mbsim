@@ -33,7 +33,7 @@ namespace MBSim {
     Function<double(std::pair<Contour*, ContourFrame*>,std::pair<Contour*, ContourFrame*>)>::initializeUsingXML(element);
   }
 
-  fmatvec::Vec2 InfluenceFunction::getZeta(double t, const std::pair<Contour*, ContourFrame*>& contourInfo) {
+  fmatvec::Vec2 InfluenceFunction::getZeta(const std::pair<Contour*, ContourFrame*>& contourInfo) {
     return contourInfo.first->getZeta(contourInfo.second->evalPosition());
   }
 

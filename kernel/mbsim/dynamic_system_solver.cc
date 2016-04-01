@@ -1035,13 +1035,13 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations(double t) {
-    la = slvLS(getG(t), -b);
+    la = slvLS(evalG(), -b);
     //la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
     return 1;
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations(double t, double dt) {
-    La = slvLS(getG(t), -(getgd(t) + getW(t).T() * slvLLFac(getLLM(t), geth(t)) * dt));
+    La = slvLS(evalG(), -(getgd(t) + getW(t).T() * slvLLFac(getLLM(t), geth(t)) * dt));
     return 1;
   }
 
@@ -1326,7 +1326,7 @@ namespace MBSim {
     contactDrop << "generalized force vector h" << endl << geth(t) << endl << endl;
     contactDrop << "generalized force directions W" << endl << getW(t) << endl << endl;
     contactDrop << "generalized force directions V" << endl << getV(t) << endl << endl;
-    contactDrop << "mass action matrix G" << endl << getG(t) << endl << endl;
+    contactDrop << "mass action matrix G" << endl << evalG() << endl << endl;
     contactDrop << "vector wb" << endl << getwb(t) << endl << endl;
     contactDrop << endl;
     contactDrop << "constraint velocities gp" << endl << getgd(t) << endl << endl;
@@ -1445,7 +1445,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(getG(t), -(getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t))); // slvLS because of undeterminded system of equations
+    la = slvLS(evalG(), -(getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t))); // slvLS because of undeterminded system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1837,21 +1837,6 @@ namespace MBSim {
     updG = true;
     updb = true;
     Group::resetUpToDate();
-  }
-
-  const SqrMat& DynamicSystemSolver::getG(double t) {
-    if(updG) updateG(t);
-    return G;
-  }
-
-  const SparseMat& DynamicSystemSolver::getGs(double t) {
-    if(updG) updateG(t);
-    return Gs;
-  }
-
-  const Vec& DynamicSystemSolver::getb(double t) {
-    if(updb) updateb(t);
-    return b;
   }
 
 }

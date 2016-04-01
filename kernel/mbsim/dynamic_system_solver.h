@@ -228,9 +228,9 @@ namespace MBSim {
       fmatvec::Vec& getb(bool check=true) { assert((not check) or (not updb)); return b; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
-      const fmatvec::SqrMat& getG(double t);
-      const fmatvec::SparseMat& getGs(double t);
-      const fmatvec::Vec& getb(double t);
+      const fmatvec::SqrMat& evalG() { if(updG) updateG(getTime()); return G; }
+      const fmatvec::SparseMat& evalGs() { if(updG) updateG(getTime()); return Gs; }
+      const fmatvec::Vec& evalb() { if(updb) updateb(getTime()); return b; }
 
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }

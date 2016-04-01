@@ -737,7 +737,7 @@ namespace MBSim {
 
   void SingleContact::solveImpactsFixpointSingle(double t, double dt) {
     if (gActive) {
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
@@ -769,7 +769,7 @@ namespace MBSim {
   void SingleContact::solveConstraintsFixpointSingle(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -801,7 +801,7 @@ namespace MBSim {
     assert(getFrictionDirections() <= 1);
     if (gActive) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
@@ -836,7 +836,7 @@ namespace MBSim {
 
     if (gdActive[0]) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -869,7 +869,7 @@ namespace MBSim {
   void SingleContact::solveImpactsRootFinding(double t, double dt) {
     if (gActive) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
@@ -902,7 +902,7 @@ namespace MBSim {
   void SingleContact::solveConstraintsRootFinding(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -936,7 +936,7 @@ namespace MBSim {
     if (gdActive[0]) {
 
       const SqrMat Jprox = ds->getJprox();
-      const SqrMat G = ds->getG(t);
+      const SqrMat G = ds->evalG();
 
       //TODO: separate normal and tangential
 
@@ -987,7 +987,7 @@ namespace MBSim {
     if (gActive) {
 
       const SqrMat Jprox = ds->getJprox();
-      const SqrMat G = ds->getG(t);
+      const SqrMat G = ds->evalG();
 
       RowVec jp1 = Jprox.row(laInd);
       RowVec e1(jp1.size());
@@ -1036,7 +1036,7 @@ namespace MBSim {
   void SingleContact::updaterFactors(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
 
       int addIndexnormal = 0;
@@ -1099,7 +1099,7 @@ namespace MBSim {
   void SingleContact::checkConstraintsForTermination(double t) {
     if (gdActive[0]) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
@@ -1138,7 +1138,7 @@ namespace MBSim {
   void SingleContact::checkImpactsForTermination(double t, double dt) {
     if (gActive) {
 
-      const double *a = ds->getGs(t)();
+      const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();

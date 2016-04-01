@@ -41,7 +41,7 @@ namespace MBSim {
       /***************************************************/
     protected:
       double t;
-      fmatvec::Vec2 getZeta(double t, const std::pair<Contour*, ContourFrame*>& contourInfo);
+      fmatvec::Vec2 getZeta(const std::pair<Contour*, ContourFrame*>& contourInfo);
   };
 
 }
