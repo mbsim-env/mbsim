@@ -154,17 +154,17 @@ namespace MBSim {
     }
   }
 
-  void RigidBodyLink::updateg(double t) {
+  void RigidBodyLink::updateg() {
     g = evalGeneralizedRelativePosition();
   }
 
-  void RigidBodyLink::updategd(double t) {
+  void RigidBodyLink::updategd() {
     gd = evalGeneralizedRelativeVelocity();
   }
 
-  void RigidBodyLink::updatewb(double t) {
+  void RigidBodyLink::updatewb() {
     for(unsigned i=0; i<body.size(); i++)
-      wb += body[i]->getjRel(t)*ratio[i];
+      wb += body[i]->getjRel(getTime())*ratio[i];
   }
 
   void RigidBodyLink::init(InitStage stage) {

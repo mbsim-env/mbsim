@@ -45,8 +45,8 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void GeneralizedPositionExcitation::updatewb(double t) {
-    wb += body[0]->getjRel(t)-f->parDerParDer(t);
+  void GeneralizedPositionExcitation::updatewb() {
+    wb += body[0]->getjRel(getTime())-f->parDerParDer(getTime());
   }
 
 }

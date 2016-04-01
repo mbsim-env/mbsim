@@ -68,10 +68,10 @@ namespace MBSim {
 
       void updatedq(double t, double dt);
       void updateqd(double t); 
-      void updateT(double t);
+      void updateT();
       void updateh(double t, int j=0);
       void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
-      void updateInertiaTensor(double t);
+      void updateInertiaTensor();
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
       void updatePositions();
@@ -182,7 +182,7 @@ namespace MBSim {
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrPK; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvPKrel; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomPK; }
-      const fmatvec::SymMat3& evalGlobalInertiaTensor() { if(updWTS) updateInertiaTensor(0.); return WThetaS; }
+      const fmatvec::SymMat3& evalGlobalInertiaTensor() { if(updWTS) updateInertiaTensor(); return WThetaS; }
       const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
       const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
       const fmatvec::Mat3xV& evalPJTT() { if(updPJ) updateJacobians(); return PJTT; }
@@ -262,7 +262,7 @@ namespace MBSim {
       const fmatvec::VecV& evaluRRel() { if(updGC) updateGeneralizedCoordinates(); return uRRel; }
       const fmatvec::Mat& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
       const fmatvec::Vec& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
-      const fmatvec::Mat& evalTRel() { if(updT) updateT(0.); return TRel; }
+      const fmatvec::Mat& evalTRel() { if(updT) updateT(); return TRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 

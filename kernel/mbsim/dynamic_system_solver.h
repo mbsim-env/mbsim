@@ -140,7 +140,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateT(double t);
+      virtual void updateT();
       virtual void updateh(double t, int i=0);
       virtual void updateM(double t, int i=0);
       virtual void updateLLM(double t, int i=0);
@@ -160,12 +160,12 @@ namespace MBSim {
        */
       virtual void updater(double t, int j=0);
       virtual void updaterdt(double t, int j=0);
-      virtual void updatewb(double t);
-      virtual void updateg(double t);
-      virtual void updategd(double t);
+      virtual void updatewb();
+      virtual void updateg();
+      virtual void updategd();
       virtual void updateW(double t, int j=0);
       virtual void updateV(double t, int j=0);
-      virtual void updateb(double t);
+      virtual void updateb();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -230,7 +230,7 @@ namespace MBSim {
 
       const fmatvec::SqrMat& evalG() { if(updG) updateG(getTime()); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(getTime()); return Gs; }
-      const fmatvec::Vec& evalb() { if(updb) updateb(getTime()); return b; }
+      const fmatvec::Vec& evalb() { if(updb) updateb(); return b; }
 
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }

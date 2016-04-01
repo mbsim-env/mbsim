@@ -87,7 +87,7 @@ namespace MBSim {
     // double t0 = t; // save correct position
     // t += epsroot(); // update with disturbed positions assuming same active links
     // updateStateDependentVariables(t); 
-    // updateT(t); 
+    // updateT();
     // updateJacobians(t);
     // updateh(t);
     // dhdt = (hObject-hObjectEnd)/epsroot();
@@ -276,7 +276,7 @@ namespace MBSim {
   }
 
   const Mat& Object::evalT() {
-    if(ds->getUpdateT()) ds->updateT(getTime());
+    if(ds->getUpdateT()) ds->updateT();
     return T;
   }
 

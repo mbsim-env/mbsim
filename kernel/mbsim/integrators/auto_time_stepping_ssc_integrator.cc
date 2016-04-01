@@ -258,8 +258,8 @@ namespace MBSimIntegrator {
       system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
     }
     throw;
-    //system.updategd(t);
-    //system.updateT(t);
+    //system.updategd();
+    //system.updateT();
     //system.updateh(t);
     //system.updateM(t);
     //if (SetValuedForceLawsExplicit) system.updateLLM(t);

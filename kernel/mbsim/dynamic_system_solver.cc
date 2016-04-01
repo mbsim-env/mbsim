@@ -759,18 +759,18 @@ namespace MBSim {
     Mat J(hSize[0], qSize, INIT, 0.0);
     throw;
 //    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t);
+    updateg();
+    updategd();
+    updateT();
     updateh(t);
     Vec hOld = h[0].copy();
     for (int i = lb; i < ub; i++) {
       double qtmp = q(i);
       q(i) += delta;
       //updateStateDependentVariables(t);
-      updateg(t);
-      updategd(t);
-      updateT(t);
+      updateg();
+      updategd();
+      updateT();
       updateh(t);
       J.col(i) = (h[0] - hOld) / delta;
       q(i) = qtmp;
@@ -778,9 +778,9 @@ namespace MBSim {
     h[0] = hOld;
 
     //updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t);
+    updateg();
+    updategd();
+    updateT();
     updateh(t);
 
     return J;
@@ -799,9 +799,9 @@ namespace MBSim {
     Mat J(hSize[0], uSize[0], INIT, 0.0);
     throw;
     //updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t);
+    updateg();
+    updategd();
+    updateT();
     updateh(t);
     Vec hOld = h[0].copy();
     for (int i = lb; i < ub; i++) {
@@ -809,16 +809,16 @@ namespace MBSim {
       double utmp = u(i);
       u(i) += delta;
       //updateStateDependentVariables(t);
-      //updateg(t);
-      updategd(t);
-      //updateT(t); 
+      //updateg();
+      updategd();
+      //updateT();
       updateh(t);
       J.col(i) = (h[0] - hOld) / delta;
       u(i) = utmp;
     }
     h[0] = hOld;
     //updateStateDependentVariables(t);
-    updategd(t);
+    updategd();
     updateh(t);
 
     return J;
@@ -832,8 +832,8 @@ namespace MBSim {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void DynamicSystemSolver::updateT(double t) {
-    Group::updateT(t);
+  void DynamicSystemSolver::updateT() {
+    Group::updateT();
     updT = false;
   }
 
@@ -875,19 +875,19 @@ namespace MBSim {
     updrdt[j] = false;
   }
 
-  void DynamicSystemSolver::updatewb(double t) {
+  void DynamicSystemSolver::updatewb() {
     wb.init(0);
-    Group::updatewb(t);
+    Group::updatewb();
     updwb = false;
   }
 
-  void DynamicSystemSolver::updateg(double t) {
-    Group::updateg(t);
+  void DynamicSystemSolver::updateg() {
+    Group::updateg();
     updg = false;
   }
 
-  void DynamicSystemSolver::updategd(double t) {
-    Group::updategd(t);
+  void DynamicSystemSolver::updategd() {
+    Group::updategd();
     updgd = false;
   }
 
@@ -984,9 +984,9 @@ namespace MBSim {
 
   void DynamicSystemSolver::computeInitialCondition() {
     resetUpToDate();
-    updateg(0);
+    updateg();
     checkActive(0,1);
-    updategd(0);
+    updategd();
     checkActive(0,2);
     calclaSize(3);
     calcrFactorSize(3);
@@ -1061,7 +1061,7 @@ namespace MBSim {
     updG = false;
   }
 
-  void DynamicSystemSolver::updateb(double t) {
+  void DynamicSystemSolver::updateb() {
     updb = false;
   }
 
@@ -1103,7 +1103,7 @@ namespace MBSim {
       LinkStatusExt.resize(LinkStatusSize);
     if (LinkStatus() != LinkStatusExt())
       updateLinkStatusRef(LinkStatusExt);
-    updateLinkStatus(t);
+    updateLinkStatus();
   }
 
   void DynamicSystemSolver::getLinkStatusReg(VecInt &LinkStatusRegExt, double t) {
@@ -1111,7 +1111,7 @@ namespace MBSim {
       LinkStatusRegExt.resize(LinkStatusRegSize);
     if (LinkStatusReg() != LinkStatusRegExt())
       updateLinkStatusRegRef(LinkStatusRegExt);
-    updateLinkStatusReg(t);
+    updateLinkStatusReg();
   }
 
   void DynamicSystemSolver::projectGeneralizedPositions(double t, int mode, bool fullUpdate) {
@@ -1740,7 +1740,7 @@ namespace MBSim {
       b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
       solveConstraints(t);
     }
-    updateStopVector(t);
+    updateStopVector();
     sv(sv.size() - 1) = 1;
   }
 

@@ -237,12 +237,12 @@ namespace MBSim {
     updRMV = false;
   }
 
-  void FloatingFrameLink::updateg(double t) {
+  void FloatingFrameLink::updateg() {
     g(iF) = evalGeneralizedRelativePosition()(iF);
     g(iM) = rrel(iM);;
   }
 
-  void FloatingFrameLink::updategd(double t) {
+  void FloatingFrameLink::updategd() {
     gd(iF) = evalGeneralizedRelativeVelocity()(iF);
     gd(iM) = vrel(iM);
   }

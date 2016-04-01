@@ -50,7 +50,7 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void GeneralizedAccelerationExcitation::updatewb(double t) {
+  void GeneralizedAccelerationExcitation::updatewb() {
     wb += (*f)(x,getTime());
   }
 

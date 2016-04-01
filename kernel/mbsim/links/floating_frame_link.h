@@ -74,8 +74,8 @@ namespace MBSim {
 
       void updateW(double t, int i = 0);
       void updateh(double t, int i = 0);
-      void updateg(double t);
-      void updategd(double t);
+      void updateg();
+      void updategd();
 
       /* INHERITED INTERFACE OF LINK */
       virtual void updateWRef(const fmatvec::Mat& ref, int i=0);

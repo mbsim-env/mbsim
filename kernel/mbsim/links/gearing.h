@@ -40,9 +40,9 @@ namespace MBSim {
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
       void updateJacobians(int j=0);
-      void updateg(double t);
-      void updategd(double t);
-      void updatewb(double t);
+      void updateg();
+      void updategd();
+      void updatewb();
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void connect(double r1, Frame* frame1_, double r2, Frame* frame2_);

@@ -218,17 +218,17 @@ namespace MBSim {
   }
 
   const Vec& Link::evalg() {
-    if(ds->getUpdateg()) ds->updateg(getTime());
+    if(ds->getUpdateg()) ds->updateg();
     return g;
   }
 
   const Vec& Link::evalgd() {
-    if(ds->getUpdategd()) ds->updategd(getTime());
+    if(ds->getUpdategd()) ds->updategd();
     return gd;
   }
 
   const Vec& Link::evalwb() {
-    if(ds->getUpdatewb()) ds->updatewb(getTime());
+    if(ds->getUpdatewb()) ds->updatewb();
     return wb;
   }
 

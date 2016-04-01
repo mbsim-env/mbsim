@@ -52,7 +52,7 @@ namespace MBSim {
       virtual ~Object();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateT(double t) { }
+      virtual void updateT() { }
       virtual void updateh(double t, int j=0) { }
       virtual void updateM(double t, int i=0) { }
       virtual void updatedhdz(double t);

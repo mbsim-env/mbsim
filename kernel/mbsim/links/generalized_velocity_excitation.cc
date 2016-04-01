@@ -49,8 +49,8 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void GeneralizedVelocityExcitation::updatewb(double t) {
-    wb += body[0]->getjRel(t)-(f->parDer1(x,t)*xd + f->parDer2(x,t));
+  void GeneralizedVelocityExcitation::updatewb() {
+    wb += body[0]->getjRel(getTime())-(f->parDer1(x,getTime())*xd + f->parDer2(x,getTime()));
   }
 
 }

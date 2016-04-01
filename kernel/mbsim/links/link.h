@@ -57,17 +57,17 @@ namespace MBSim {
       virtual ~Link() { }
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateg(double t) { }
-      virtual void updategd(double t) { }
-      virtual void updatewb(double t) { }
+      virtual void updateg() { }
+      virtual void updategd() { }
+      virtual void updatewb() { }
       virtual void updateW(double t, int i=0) { }
       virtual void updateV(double t, int i=0) { }
       virtual void updateh(double t, int i=0) { }
-      virtual void updateStopVector(double t) { }
-      virtual void updateLinkStatus(double t) { }
-      virtual void updateLinkStatusReg(double t) { }
+      virtual void updateStopVector() { }
+      virtual void updateLinkStatus() { }
+      virtual void updateLinkStatusReg() { }
       virtual void updateJacobians(int j=0) { }
-      virtual void updateb(double t) { }
+      virtual void updateb() { }
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */

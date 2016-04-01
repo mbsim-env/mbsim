@@ -65,7 +65,7 @@ namespace MBSim {
       void (Joint::*updatelaM_)();
       void updateh(double t, int i=0);
       void updateW(double t, int i=0);
-      void updatewb(double t);
+      void updatewb();
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -148,7 +148,7 @@ namespace MBSim {
   class InverseKineticsJoint : public Joint {
     public:
       InverseKineticsJoint(const std::string &name);
-      virtual void updateb(double t);
+      virtual void updateb();
       void calcbSize();
       void setBody(Body* body_) {
         body = body_;

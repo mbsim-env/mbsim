@@ -63,7 +63,7 @@ namespace MBSim {
       delete[] gddActive;
   }
 
-  void SingleContact::updatewb(double t) {
+  void SingleContact::updatewb() {
     if(gdActive[0]) {
       wb -= evalGlobalForceDirection()(Index(0,2),Index(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
       wb += evalGlobalForceDirection()(Index(0,2),Index(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
@@ -153,11 +153,11 @@ namespace MBSim {
     updVel = false;
   }
 
-  void SingleContact::updateg(double t) {
+  void SingleContact::updateg() {
     g = evalGeneralizedRelativePosition()(Index(0,gSize-1));
   }
 
-  void SingleContact::updategd(double t) {
+  void SingleContact::updategd() {
     int addIndexnormal = fcl->isSetValued()?0:1;
     gd = evalGeneralizedRelativeVelocity()(Index(addIndexnormal,gdSize+addIndexnormal-1));
   }
@@ -191,7 +191,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::updateStopVector(double t) {
+  void SingleContact::updateStopVector() {
     // TODO account for regularized normal force
     if (gActive != gdActive[0])
       THROW_MBSIMERROR("Internal error");
@@ -614,7 +614,7 @@ namespace MBSim {
     return true;
   }
 
-  void SingleContact::updateLinkStatus(double t) {
+  void SingleContact::updateLinkStatus() {
     if (gActive) {
       LinkStatus(0) = 2;
       if (ftil) {
@@ -628,7 +628,7 @@ namespace MBSim {
       LinkStatus(0) = 1;
   }
 
-  void SingleContact::updateLinkStatusReg(double t) {
+  void SingleContact::updateLinkStatusReg() {
     if (gActive) {
       LinkStatusReg(0) = 2;
     }

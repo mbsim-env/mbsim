@@ -69,7 +69,7 @@ namespace MBSim {
       virtual ~DynamicSystem();
 
       /* INTERFACE FOR DERIVED CLASSES */
-      virtual void updateT(double t); 
+      virtual void updateT();
       virtual void updateh(double t, int i=0); 
       virtual void updateM(double t, int i=0);
       virtual void updatedq(double t, double dt); 
@@ -105,14 +105,14 @@ namespace MBSim {
       virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 #endif
 
-      virtual void updatewb(double t); 
+      virtual void updatewb();
       virtual void updateW(double t, int j=0); 
       virtual void updateV(double t, int j=0); 
-      virtual void updateg(double t);
-      virtual void updategd(double t);
-      virtual void updateStopVector(double t); 
-      virtual void updateLinkStatus(double t);
-      virtual void updateLinkStatusReg(double t);
+      virtual void updateg();
+      virtual void updategd();
+      virtual void updateStopVector();
+      virtual void updateLinkStatus();
+      virtual void updateLinkStatusReg();
 
       virtual void updateWInverseKinetics(double t, int j=0); 
       virtual void updatebInverseKinetics(double t); 

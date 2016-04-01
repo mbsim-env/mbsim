@@ -40,7 +40,7 @@ namespace MBSimIntegrator {
     if(system.getq()()!=z()) system.updatezRef(z);
 
     system.updateStateDependentVariables(t);
-    system.updateg(t);
+    system.updateg();
     system.checkActive(1);
     system.setUpActiveLinks();
     if(system.gActiveChanged()) {
@@ -56,9 +56,9 @@ namespace MBSimIntegrator {
       if(system.getImpactSolver() == RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
       system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
     }
-    system.updategd(t);
+    system.updategd();
 
-    system.updateT(t); 
+    system.updateT();
     system.updateJacobians(t);
     system.updateM(t);
     system.updateW(t); 

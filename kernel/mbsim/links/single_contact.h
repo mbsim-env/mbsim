@@ -68,7 +68,7 @@ namespace MBSim {
       double& getGeneralizedNormalForce(bool check=true) {  assert((not check) or (not updlaN)); return lambdaN; }
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t);
+      virtual void updatewb();
       virtual void updateV(double t, int i=0);
       void updateGeneralizedNormalForce() { (this->*updateGeneralizedNormalForce_)(); updlaN = false; }
       void updateGeneralizedTangentialForce() { (this->*updateGeneralizedTangentialForce_)(); updlaT = false; }
@@ -86,11 +86,11 @@ namespace MBSim {
       virtual void updatePositions();
       virtual void updatePositions(Frame *frame);
       virtual void updateVelocities();
-      virtual void updateg(double t);
-      virtual void updategd(double t);
+      virtual void updateg();
+      virtual void updategd();
       virtual void updateh(double t, int i=0);
       virtual void updateW(double t, int i=0);
-      virtual void updateStopVector(double t);
+      virtual void updateStopVector();
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -108,8 +108,8 @@ namespace MBSim {
       virtual void init(InitStage stage);
       virtual bool isSetValued() const;
       virtual bool isSingleValued() const;
-      virtual void updateLinkStatus(double dt);
-      virtual void updateLinkStatusReg(double dt);
+      virtual void updateLinkStatus();
+      virtual void updateLinkStatusReg();
       virtual bool isActive() const;
       virtual bool gActiveChanged();
       virtual bool detectImpact();

@@ -75,10 +75,10 @@ namespace MBSim {
   }
 #endif
 
-  void Contact::updatewb(double t) {
+  void Contact::updatewb() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatewb(t);
+        jter->updatewb();
   }
 
   void Contact::updateW(double t, int j) {
@@ -102,24 +102,24 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateg(double t) {
+  void Contact::updateg() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateg(t);
+        jter->updateg();
     }
   }
 
-  void Contact::updategd(double t) {
+  void Contact::updategd() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updategd(t);
+        jter->updategd();
     }
   }
 
-  void Contact::updateStopVector(double t) {
+  void Contact::updateStopVector() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateStopVector(t);
+        jter->updateStopVector();
     }
   }
 
@@ -462,7 +462,7 @@ namespace MBSim {
   void Contact::updateLinkStatus(double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->updateLinkStatus(dt);
+        jter->updateLinkStatus();
       }
     }
   }
@@ -470,7 +470,7 @@ namespace MBSim {
   void Contact::updateLinkStatusReg(double dt) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->updateLinkStatusReg(dt);
+        jter->updateLinkStatusReg();
       }
     }
   }

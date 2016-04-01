@@ -50,7 +50,7 @@ namespace MBSim {
     delete fiml;
   }
 
-  void Joint::updatewb(double t) {
+  void Joint::updatewb() {
     Mat3xV WJT = refFrame->evalOrientation() * JT;
     VecV sdT = WJT.T() * evalGlobalRelativeVelocity();
 
@@ -537,7 +537,7 @@ namespace MBSim {
     if(body) bSize = body->getPJT(0,false).cols();
   }
 
-  void InverseKineticsJoint::updateb(double t) {
+  void InverseKineticsJoint::updateb() {
     if(body) {
       b(Index(0, bSize - 1), Index(0, 2)) = body->evalPJT().T();
       b(Index(0, bSize - 1), Index(3, 5)) = body->evalPJR().T();

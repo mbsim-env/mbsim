@@ -36,7 +36,7 @@ namespace MBSim {
       void updateGeneralizedPositions();
       void updateGeneralizedVelocities();
       void updatexd(double t) { }
-      void updatewb(double t);
+      void updatewb();
 
       std::string getType() const { return "GeneralizedPositionExcitation"; }
 

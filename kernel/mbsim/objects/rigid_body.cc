@@ -424,12 +424,12 @@ namespace MBSim {
     }
   }
 
-  void RigidBody::updateT(double t) {
+  void RigidBody::updateT() {
     if(fTR) TRel(iqR,iuR) = (*fTR)(evalqRRel());
     updT = false;
   }
 
-  void RigidBody::updateInertiaTensor(double t) {
+  void RigidBody::updateInertiaTensor() {
     WThetaS = JTMJ(SThetaS,C->evalOrientation().T());
     updWTS = false;
   }
