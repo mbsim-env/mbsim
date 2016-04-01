@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsCirclePlanarFrustum::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCirclePlanarFrustum::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     
     Vec3 Wd = circle->getFrame()->evalPosition() - frustum->getFrame()->evalPosition();
     SqrMat3 Mat0 = frustum->getFrame()->getOrientation();

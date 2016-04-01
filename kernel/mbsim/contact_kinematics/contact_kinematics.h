@@ -68,7 +68,7 @@ namespace MBSim {
        * \param cFrame contour point Frame
        * \param index  index of the contact point that should be updated
        */
-      virtual void updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
+      virtual void updateg(double &g, std::vector<ContourFrame*> &cFrame, int index = 0) = 0;
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
@@ -77,7 +77,7 @@ namespace MBSim {
        * \param g normal distance
        * \param cFrame contact point parametrisation
        */
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) = 0;
+      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame) = 0;
       
       /** 
        * \brief treats ordering of contours

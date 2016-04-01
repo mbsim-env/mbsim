@@ -45,8 +45,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
-      virtual void updateg(double t, double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
+      virtual void updateg(double &g, std::vector<MBSim::ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::ContourFrame*> &cFrame);
       /***************************************************/
 
       void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }

@@ -89,7 +89,7 @@ namespace MBSim {
     msg(Debug) << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
-  void ContactKinematicsPointPlaneWithFrustum::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointPlaneWithFrustum::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     Vec3 WrOPoint = point->getFrame()->evalPosition();
     Vec3 WrOPlane = plane->getFrame()->evalPosition();

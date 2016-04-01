@@ -155,13 +155,13 @@ namespace MBSim {
     //TODO: check for convexity of frustum
   }
 
-  void ContactKinematicsPlatePolynomialFrustum::setFrustumOrienationKinematics(double t, const double & x, const double & phi, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsPlatePolynomialFrustum::setFrustumOrienationKinematics(const double & x, const double & phi, std::vector<ContourFrame*> &cFrame) {
     cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(zeta));
     cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(zeta));
     cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(zeta));
   }
 
-  bool ContactKinematicsPlatePolynomialFrustum::cpLocationInPlate(double t, double & g, std::vector<ContourFrame*> &cFrame) {
+  bool ContactKinematicsPlatePolynomialFrustum::cpLocationInPlate(double & g, std::vector<ContourFrame*> &cFrame) {
 
     double rhs = 0.; //, rhs2 = 0.;
     int status = 0; // status2 = 0;
@@ -202,7 +202,7 @@ namespace MBSim {
     //3.Find the corresponding point on the plane, check if it is in the
     //plate
     if ((solver1.getInfo() == 0) && signh * x1 >= 0 && signh * x1 <= signh * frustum->getHeight())
-      status = checkPossibleContactPoint(t, x1, v);
+      status = checkPossibleContactPoint(x1, v);
 
     //same thing with the other solution x2
 //    if ((solver2->getInfo() == 0) && x2 >= 0 && x2 <= frustum->getHeight()) {
@@ -220,11 +220,11 @@ namespace MBSim {
 //    }
 
     if (status) {
-      g = distance2Plate(t, cFrame[ifrustum]->getPosition(false));
+      g = distance2Plate(cFrame[ifrustum]->getPosition(false));
 
       Vec3 pF = computeContourPointFrustum(x1, v);
-      cFrame[ifrustum]->setPosition(computeContourPoint(t, x1, v));
-      setFrustumOrienationKinematics(t, x1, ArcTan(pF(1), pF(2)), cFrame);
+      cFrame[ifrustum]->setPosition(computeContourPoint(x1, v));
+      setFrustumOrienationKinematics(x1, ArcTan(pF(1), pF(2)), cFrame);
 
       cFrame[iplate]->setPosition(cFrame[ifrustum]->getPosition(false) - plate->getFrame()->evalOrientation().col(0) * g);
       cFrame[iplate]->getOrientation(false).set(0, -cFrame[ifrustum]->getOrientation(false).col(0));
@@ -241,7 +241,7 @@ namespace MBSim {
     return false;
   }
 
-  bool ContactKinematicsPlatePolynomialFrustum::gridContact(double t, double & g, std::vector<ContourFrame*> &cFrame) {
+  bool ContactKinematicsPlatePolynomialFrustum::gridContact(double & g, std::vector<ContourFrame*> &cFrame) {
 
     const double h = frustum->getHeight();
     double weightsum = 0;
@@ -290,7 +290,7 @@ namespace MBSim {
       Vec3 rF = frustum->getFrame()->evalPosition();
       SqrMat3 AWF = frustum->getFrame()->evalOrientation();
       cFrame[ifrustum]->setPosition(rF + AWF * contactPointFrustum);
-      setFrustumOrienationKinematics(t, x(0), phi, cFrame);
+      setFrustumOrienationKinematics(x(0), phi, cFrame);
 
       //Plate
       cFrame[iplate]->setPosition(rF + AWF * contactPointPlate);
@@ -304,7 +304,7 @@ namespace MBSim {
     return false;
   }
 
-  bool ContactKinematicsPlatePolynomialFrustum::cornerContact(double t, double & g, std::vector<ContourFrame*> &cFrame) {
+  bool ContactKinematicsPlatePolynomialFrustum::cornerContact(double & g, std::vector<ContourFrame*> &cFrame) {
     cornerPoints[0] = plate->getA();
     cornerPoints[1] = plate->getB();
     cornerPoints[2] = plate->getC();
@@ -360,7 +360,7 @@ namespace MBSim {
       Vec3 rF = frustum->getFrame()->getPosition();
       SqrMat3 AWF = frustum->getFrame()->getOrientation();
       cFrame[ifrustum]->setPosition(rF + AWF * contactPointFrustum);
-      setFrustumOrienationKinematics(t, x(0), phi, cFrame);
+      setFrustumOrienationKinematics(x(0), phi, cFrame);
 
       //Plate
       cFrame[iplate]->setPosition(rF + AWF * contactPointPlate);
@@ -374,7 +374,7 @@ namespace MBSim {
     return false;
   }
 
-  bool ContactKinematicsPlatePolynomialFrustum::edgeContact(double t, double & g, std::vector<ContourFrame*> &cFrame) {
+  bool ContactKinematicsPlatePolynomialFrustum::edgeContact(double & g, std::vector<ContourFrame*> &cFrame) {
     cornerPoints[0] = plate->getA();
     cornerPoints[1] = plate->getB();
     cornerPoints[2] = plate->getC();
@@ -430,7 +430,7 @@ namespace MBSim {
 
           //Frustum
           cFrame[ifrustum]->setPosition(frustum->getFrame()->getPosition() + frustum->getFrame()->getOrientation() * contactPointFrustum);
-          setFrustumOrienationKinematics(t, x, phi, cFrame);
+          setFrustumOrienationKinematics(x, phi, cFrame);
 
           //Plate
           cFrame[iplate]->setPosition(frustum->getFrame()->getPosition() + frustum->getFrame()->getOrientation() * contactPointPlate);
@@ -448,7 +448,7 @@ namespace MBSim {
     return false;
   }
 
-  void ContactKinematicsPlatePolynomialFrustum::updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPlatePolynomialFrustum::updateg(double & g, std::vector<ContourFrame*> &cFrame, int index) {
     /*Geometry*/
     //plate
     Vec3 R_cen_A = plate->getFrame()->evalPosition(); //center of plate
@@ -477,15 +477,15 @@ namespace MBSim {
       //if the plate intersects this circle on plane, then search for the contact point
       if (plate->Intersect_Circle(rad_inscir, R_cen_inscir)) {
         //Check for contact point in the plate
-        if (cpLocationInPlate(t, g, cFrame)) {
+        if (cpLocationInPlate(g, cFrame)) {
           ilast = -1;
           return;
         }
-        else if (gridContact(t, g, cFrame)) {
+        else if (gridContact(g, cFrame)) {
           ilast = -1;
           return;
         }
-        else if (edgeContact(t, g, cFrame)) {
+        else if (edgeContact(g, cFrame)) {
           return;
         }
       }
@@ -521,19 +521,19 @@ namespace MBSim {
     return contourPoint;
   }
 
-  Vec3 ContactKinematicsPlatePolynomialFrustum::computeContourPoint(double t, const double & x, const Vec3 & n) {
+  Vec3 ContactKinematicsPlatePolynomialFrustum::computeContourPoint(const double & x, const Vec3 & n) {
     return frustum->getFrame()->evalPosition() + frustum->getFrame()->evalOrientation() * computeContourPointFrustum(x, n);
   }
 
-  int ContactKinematicsPlatePolynomialFrustum::checkPossibleContactPoint(double t, const double & x, const Vec3 & n) {
-    if (plate->PointInPlate(computeContourPoint(t, x, n))) {
+  int ContactKinematicsPlatePolynomialFrustum::checkPossibleContactPoint(const double & x, const Vec3 & n) {
+    if (plate->PointInPlate(computeContourPoint(x, n))) {
       return 1; //point is possible to be the contact point
     }
 
     return 0;
   }
 
-  double ContactKinematicsPlatePolynomialFrustum::distance2Plate(double t, const Vec3 & point) {
+  double ContactKinematicsPlatePolynomialFrustum::distance2Plate(const Vec3 & point) {
     return plate->getFrame()->evalOrientation().col(0).T() * (point - plate->getFrame()->evalPosition());
   }
 

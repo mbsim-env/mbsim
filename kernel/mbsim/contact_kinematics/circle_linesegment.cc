@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleLineSegment::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleLineSegment::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     const Vec3 WC=circle->getFrame()->evalPosition();
     const Vec3 WL=linesegment->getFrame()->evalPosition();
@@ -72,7 +72,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleLineSegment::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCircleLineSegment::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     const Vec3 WC=circle->getFrame()->evalPosition();
     const Vec3 WL=linesegment->getFrame()->evalPosition();
     const Vec3 WLdir=linesegment->getFrame()->getOrientation().col(1);

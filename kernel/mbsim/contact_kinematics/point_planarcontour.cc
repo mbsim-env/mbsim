@@ -49,9 +49,8 @@ namespace MBSim {
     func = new FuncPairPlanarContourPoint(point, planarcontour); // root function for searching contact parameters
   }
 
-  void ContactKinematicsPointPlanarContour::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointPlanarContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     
-    func->setTime(t);
     PlanarContactSearch search(func);
     search.setNodes(planarcontour->getEtaNodes()); // defining search areas for contacts
 
@@ -82,7 +81,7 @@ namespace MBSim {
     if(g < -planarcontour->getThickness()) g = 1;
   }
 
-  void ContactKinematicsPointPlanarContour::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsPointPlanarContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
     throw MBSimError("(ContactKinematicsPointPlanarContour::updatewb): Not implemented!");
   }
 

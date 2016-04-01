@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointCircle::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointCircle::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     const Vec3 WrD = point->getFrame()->evalPosition() - circle->getFrame()->evalPosition();
     
     cFrame[icircle]->getOrientation(false).set(0, WrD/nrm2(WrD));
@@ -60,7 +60,7 @@ namespace MBSim {
     g = cFrame[icircle]->getOrientation(false).col(0).T()*WrD - circle->getRadius();
   }
 
-  void ContactKinematicsPointCircle::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsPointCircle::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
     const Vec KrPC1 = circle->getFrame()->evalOrientation().T()*(cFrame[icircle]->evalPosition() - circle->getFrame()->evalPosition());

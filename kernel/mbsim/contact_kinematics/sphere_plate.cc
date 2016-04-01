@@ -44,7 +44,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlate::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsSpherePlate::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
     Vec3 sphereInRect = plate->getFrame()->evalOrientation().T() * (sphere->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
 
@@ -74,7 +74,7 @@ namespace MBSim {
     cFrame[iplate]->setPosition(cFrame[isphere]->getPosition(false) - Wn * g);
   }
 
-  void ContactKinematicsSpherePlate::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsSpherePlate::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     throw new MBSimError("ContactKinematicsSpherePlate::updatewb(): not implemented yet");
   }
 }

@@ -34,7 +34,7 @@ namespace MBSim {
     rEff1 = circle1->getSign()*circle1->getRadius();
   }
 
-  void ContactKinematicsCircleCircle::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleCircle::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec3 WrD = circle0->getFrame()->evalPosition() - circle1->getFrame()->evalPosition();
     cFrame[1]->getOrientation(false).set(0, circle1->getSign()*WrD/nrm2(WrD));
     cFrame[0]->getOrientation(false).set(0, -cFrame[1]->getOrientation(false).col(0));
@@ -48,7 +48,7 @@ namespace MBSim {
     g = cFrame[1]->getOrientation(false).col(0).T()*WrD - rEff0 - rEff1;
   }
       
-  void ContactKinematicsCircleCircle::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCircleCircle::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     throw; // TODO: check implementation for the example that throws this exception
 
     const Vec3 KrPC1 = circle0->getFrame()->evalOrientation().T()*(cFrame[0]->evalPosition() - circle0->getFrame()->evalPosition());

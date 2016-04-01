@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlate::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointPlate::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec3 Ar = plate->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - plate->getFrame()->evalPosition());
     if(fabs(Ar(1)) <= plate->getYLength()/2 and fabs(Ar(2)) <= plate->getZLength()/2){
       g = Ar(0);

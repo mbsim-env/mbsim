@@ -33,12 +33,8 @@ namespace MBSim {
    */
   template <typename Ret, typename Arg>
   class DistanceFunction<Ret(Arg)> : public Function<Ret(Arg)> {
-    protected:
-      double t;
     public:
       virtual ~DistanceFunction() { }
-
-      void setTime(double t_) { t = t_; }
 
       /* INTERFACE FOR DERIVED CLASSES */
       /*!

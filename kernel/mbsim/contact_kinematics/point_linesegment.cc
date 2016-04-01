@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointLineSegment::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointLineSegment::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     cFrame[iline]->setOrientation(line->getFrame()->evalOrientation());
     cFrame[ipoint]->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
     cFrame[ipoint]->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
@@ -66,7 +66,7 @@ namespace MBSim {
       g = 1;
   }
 
-  void ContactKinematicsPointLineSegment::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsPointLineSegment::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     Vec3 n1 = cFrame[iline]->evalOrientation().col(0);
     Vec3 u1 = cFrame[iline]->getOrientation().col(1);
     Vec3 vC1 = cFrame[iline]->evalVelocity();

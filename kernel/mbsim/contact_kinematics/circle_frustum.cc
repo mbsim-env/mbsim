@@ -56,7 +56,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleFrustum::updateg(double t, double& g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleFrustum::updateg(double& g, std::vector<ContourFrame*> &cFrame, int index) {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */
@@ -196,7 +196,6 @@ namespace MBSim {
           else {
             funcRho = new FuncPairEllipseCircle(r_C, cE1_star_nrm2, r_F(0), false);
           }
-          funcRho->setTime(t);
           funcRho->setDiffVec(Wd_EC);
           funcRho->setSectionCOS(cE1, cE2);
 
@@ -333,7 +332,6 @@ namespace MBSim {
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2_star_nrm2= " << c2_star_nrm2 << endl;
           }
 
-          funcRho->setTime(t);
           funcRho->setDiffVec(Wd_SC);
           funcRho->setSectionCOS(c1, c2);
 

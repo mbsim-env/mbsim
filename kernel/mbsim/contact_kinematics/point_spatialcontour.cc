@@ -49,9 +49,8 @@ namespace MBSim {
     func= new FuncPairSpatialContourPoint(point,spatialcontour);
   }
 
-  void ContactKinematicsPointSpatialContour::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointSpatialContour::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
 
-    func->setTime(t);
     SpatialContactSearch search(func);
 
     if ((spatialcontour->getEtaNodes().size() != 0) && (spatialcontour->getXiNodes().size() != 0))
@@ -86,7 +85,7 @@ namespace MBSim {
     if(g < -spatialcontour->getThickness()) g = 1;
   }
 
-  void ContactKinematicsPointSpatialContour::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsPointSpatialContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
     throw MBSim::MBSimError("(ContactKinematicsPointSpatialContour:updatewb): Not implemented!");
   }
 

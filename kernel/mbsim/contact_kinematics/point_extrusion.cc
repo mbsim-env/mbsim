@@ -50,9 +50,8 @@ namespace MBSim {
     func = new FuncPairPlanarContourPoint(point, extrusion); // root function for searching contact parameters
   }
 
-  void ContactKinematicsPointExtrusion::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointExtrusion::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
 
-    func->setTime(t);
     PlanarContactSearch search(func);
     search.setNodes(extrusion->getEtaNodes()); // defining search areas for contacts
 
@@ -87,7 +86,7 @@ namespace MBSim {
     if(g < -extrusion->getThickness()) g = 1;
   }
 
-  void ContactKinematicsPointExtrusion::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsPointExtrusion::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
     throw MBSimError("(ContactKinematicsPointExtrusion::updatewb): Not implemented!");
   }
 

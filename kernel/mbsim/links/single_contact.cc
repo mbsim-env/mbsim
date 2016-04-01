@@ -68,7 +68,7 @@ namespace MBSim {
       wb -= evalGlobalForceDirection()(Index(0,2),Index(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
       wb += evalGlobalForceDirection()(Index(0,2),Index(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
 
-      contactKinematics->updatewb(t, wb, evalGeneralizedRelativePosition()(0), cFrame);
+      contactKinematics->updatewb(wb, evalGeneralizedRelativePosition()(0), cFrame);
     }
   }
 
@@ -123,12 +123,12 @@ namespace MBSim {
   }
 
   void SingleContact::updatePositions() {
-    contactKinematics->updateg(getTime(), rrel(0), cFrame);
+    contactKinematics->updateg(rrel(0), cFrame);
     updPos = false;
   }
 
   void SingleContact::updatePositions(Frame *frame) {
-    if(updPos) contactKinematics->updateg(getTime(), rrel(0), cFrame);
+    if(updPos) contactKinematics->updateg(rrel(0), cFrame);
   }
 
   void SingleContact::updateVelocities() {

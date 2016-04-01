@@ -34,7 +34,7 @@ namespace MBSim {
     sphere1 = static_cast<Sphere*>(contour[1]);
   }
 
-  void ContactKinematicsSphereSphere::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsSphereSphere::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     Vec3 Wd = sphere1->getFrame()->evalPosition() - sphere0->getFrame()->evalPosition();
     double l = nrm2(Wd);
     Wd = Wd/l;

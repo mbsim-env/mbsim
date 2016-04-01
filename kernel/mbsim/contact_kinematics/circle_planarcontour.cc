@@ -63,8 +63,7 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsCirclePlanarContour::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
-    func->setTime(t);
+  void ContactKinematicsCirclePlanarContour::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     PlanarContactSearch search(func);
     search.setNodes(planarcontour->getEtaNodes());
 
@@ -93,7 +92,7 @@ namespace MBSim {
     if(g < -planarcontour->getThickness()) g = 1;
   }
 
-  void ContactKinematicsCirclePlanarContour::updatewb(double t, Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCirclePlanarContour::updatewb(Vec &wb, double g, std::vector<ContourFrame*> &cFrame) {
     
     const Vec3 n1 = cFrame[icircle]->evalOrientation().col(0);
     const Vec3 u1 = cFrame[icircle]->getOrientation().col(1);

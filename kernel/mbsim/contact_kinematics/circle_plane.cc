@@ -43,7 +43,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCirclePlane::updateg(double t, double &g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCirclePlane::updateg(double &g, std::vector<ContourFrame*> &cFrame, int index) {
     cFrame[iplane]->setOrientation(plane->getFrame()->evalOrientation());
     cFrame[icircle]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
     cFrame[icircle]->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));

@@ -125,7 +125,7 @@ namespace MBSim {
     newtonProjectAlongNormal.setDampingFunction(&dampingProjectAlongNormal);
   }
 
-  void ContactKinematicsPointPolynomialFrustum::updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsPointPolynomialFrustum::updateg(double & g, std::vector<ContourFrame*> &cFrame, int index) {
     /*Geometry*/
     //point in frustum-coordinates
     Vec3 rPoint = frustum->getFrame()->evalOrientation().T() * (point->getFrame()->evalPosition() - frustum->getFrame()->evalPosition());

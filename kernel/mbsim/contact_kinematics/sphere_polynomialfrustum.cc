@@ -82,7 +82,7 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsSpherePolynomialFrustum::updateg(double t, double & g, std::vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsSpherePolynomialFrustum::updateg(double & g, std::vector<ContourFrame*> &cFrame, int index) {
     /*Geometry*/
     //sphere center in coordinates of frustum
     Vec3 rF = frustum->getFrame()->evalPosition();
