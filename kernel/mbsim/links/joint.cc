@@ -87,8 +87,8 @@ namespace MBSim {
   }
 
   void Joint::updateh(double t, int j) {
-    Vec3 F = (ffl and not ffl->isSetValued())?evalGlobalForceDirection()*getlaF(t):Vec3();
-    Vec3 M = (fml and not fml->isSetValued())?evalGlobalMomentDirection()*getlaM(t):Vec3();
+    Vec3 F = (ffl and not ffl->isSetValued())?evalGlobalForceDirection()*evallaF():Vec3();
+    Vec3 M = (fml and not fml->isSetValued())?evalGlobalMomentDirection()*evallaM():Vec3();
 
     h[j][0] -= C.evalJacobianOfTranslation(j).T() * F + C.evalJacobianOfRotation(j).T() * M;
     h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * F + frame[1]->evalJacobianOfRotation(j).T() * M;

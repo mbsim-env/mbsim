@@ -62,8 +62,8 @@ namespace MBSim {
 
       void resetUpToDate();
 
-      const double& getGeneralizedNormalForce(double t) { if(updlaN) updateGeneralizedNormalForce(t); return lambdaN; }
-      const fmatvec::VecV& getGeneralizedTangentialForce(double t) { if(updlaT) updateGeneralizedTangentialForce(t); return lambdaT; }
+      const double& evalGeneralizedNormalForce() { if(updlaN) updateGeneralizedNormalForce(0.); return lambdaN; }
+      const fmatvec::VecV& evalGeneralizedTangentialForce() { if(updlaT) updateGeneralizedTangentialForce(0.); return lambdaT; }
 
       double& getGeneralizedNormalForce(bool check=true) {  assert((not check) or (not updlaN)); return lambdaN; }
 

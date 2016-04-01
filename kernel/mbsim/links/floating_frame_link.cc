@@ -126,8 +126,8 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateW(double t, int j) {
-    W[j][0] -= C.evalJacobianOfTranslation(j).T() * getRF(t) + C.evalJacobianOfRotation(j).T() * getRM(t);
-    W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * getRF(t) + frame[1]->evalJacobianOfRotation(j).T() * getRM(t);
+    W[j][0] -= C.evalJacobianOfTranslation(j).T() * evalRF() + C.evalJacobianOfRotation(j).T() * evalRM();
+    W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalRF() + frame[1]->evalJacobianOfRotation(j).T() * evalRM();
   }
 
   void FloatingFrameLink::updateh(double t, int j) {
@@ -164,8 +164,8 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateGeneralizedForces(double t) {
-    lambda.set(iF, getlaF(t));
-    lambda.set(iM, getlaM(t));
+    lambda.set(iF, evallaF());
+    lambda.set(iM, evallaM());
     updla = false;
   }
 

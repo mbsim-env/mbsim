@@ -99,9 +99,9 @@ namespace MBSim {
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomP0P1; }
       const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(0.); return DF; }
       const fmatvec::Vec3& evalForce() { if(updF) updateForce(0.); return F; }
-      const fmatvec::Mat3xV& getRF(double t) { if(updRMV) updateR(0.); return RF; }
-      const fmatvec::VecV& getlaF(double t) { if(updlaF) updatelaF(t); return lambdaF; }
-      const fmatvec::VecV& getlaM(double t) { if(updlaM) updatelaM(t); return lambdaM; }
+      const fmatvec::Mat3xV& evalRF() { if(updRMV) updateR(0.); return RF; }
+      const fmatvec::VecV& evallaF() { if(updlaF) updatelaF(0.); return lambdaF; }
+      const fmatvec::VecV& evallaM() { if(updlaM) updatelaM(0.); return lambdaM; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow */

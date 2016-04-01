@@ -97,18 +97,18 @@ namespace MBSim {
     if(gdActive[1])
       lambdaT = laT;
     else if(gdActive[0])
-      lambdaT = fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections()))) * getGeneralizedNormalForce(t);
+      lambdaT = fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections()))) * evalGeneralizedNormalForce();
     else
       lambdaT.init(0);
   }
 
   void SingleContact::updateGeneralizedTangentialForceS(double t) {
-    lambdaT = (*fdf)(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), fabs(getGeneralizedNormalForce(t)));
+    lambdaT = (*fdf)(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), fabs(evalGeneralizedNormalForce()));
   }
 
   void SingleContact::updateGeneralizedForces(double t) {
-    lambda(0) = getGeneralizedNormalForce(t);
-    lambda.set(Index(1,lambda.size()-1),getGeneralizedTangentialForce(t));
+    lambda(0) = evalGeneralizedNormalForce();
+    lambda.set(Index(1,lambda.size()-1),evalGeneralizedTangentialForce());
     updla = false;
   }
 
@@ -163,9 +163,9 @@ namespace MBSim {
   }
 
   void SingleContact::updateh(double t, int j) {
-    Vec3 F = evalGlobalForceDirection().col(0)*getGeneralizedNormalForce(t);
+    Vec3 F = evalGlobalForceDirection().col(0)*evalGeneralizedNormalForce();
     if(fdf and not fdf->isSetValued())
-      F += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(1,getFrictionDirections()))*getGeneralizedTangentialForce(t);
+      F += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(1,getFrictionDirections()))*evalGeneralizedTangentialForce();
 
     h[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * F;
     h[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F;
@@ -678,7 +678,7 @@ namespace MBSim {
           data.push_back(cFrame[1]->evalPosition()(0));
           data.push_back(cFrame[1]->getPosition()(1));
           data.push_back(cFrame[1]->getPosition()(2));
-          Vec3 F = evalGlobalForceDirection().col(0)*getGeneralizedNormalForce(t);
+          Vec3 F = evalGlobalForceDirection().col(0)*evalGeneralizedNormalForce();
           data.push_back(F(0));
           data.push_back(F(1));
           data.push_back(F(2));
@@ -691,7 +691,7 @@ namespace MBSim {
           data.push_back(cFrame[1]->getPosition()(0));
           data.push_back(cFrame[1]->getPosition()(1));
           data.push_back(cFrame[1]->getPosition()(2));
-          Vec3 F = evalGlobalForceDirection()(Index(0,2),Index(1, getFrictionDirections()))*getGeneralizedTangentialForce(t);
+          Vec3 F = evalGlobalForceDirection()(Index(0,2),Index(1, getFrictionDirections()))*evalGeneralizedTangentialForce();
           data.push_back(F(0));
           data.push_back(F(1));
           data.push_back(F(2));

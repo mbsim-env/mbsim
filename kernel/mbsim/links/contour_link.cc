@@ -106,8 +106,8 @@ namespace MBSim {
   }
 
   void ContourLink::updateW(double t, int j) {
-//    W[j][0] -= cpData[0].getFrameOfReference().evalJacobianOfTranslation(j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
-//    W[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * getRF(t)(Index(0,2),Index(0,laSize-1));
+//    W[j][0] -= cpData[0].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(Index(0,2),Index(0,laSize-1));
+//    W[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(Index(0,2),Index(0,laSize-1));
   }
 
   void ContourLink::updateForceDirections(double t) {

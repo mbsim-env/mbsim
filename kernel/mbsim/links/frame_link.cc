@@ -130,7 +130,7 @@ namespace MBSim {
   } 
 
   void FrameLink::updateGeneralizedForces(double t) {
-    lambda = getlaF(t);
+    lambda = evallaF();
     updla = false;
   }
 
