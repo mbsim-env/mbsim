@@ -62,24 +62,24 @@ namespace MBSim {
 
       void resetUpToDate();
 
-      const double& evalGeneralizedNormalForce() { if(updlaN) updateGeneralizedNormalForce(0.); return lambdaN; }
-      const fmatvec::VecV& evalGeneralizedTangentialForce() { if(updlaT) updateGeneralizedTangentialForce(0.); return lambdaT; }
+      const double& evalGeneralizedNormalForce() { if(updlaN) updateGeneralizedNormalForce(); return lambdaN; }
+      const fmatvec::VecV& evalGeneralizedTangentialForce() { if(updlaT) updateGeneralizedTangentialForce(); return lambdaT; }
 
       double& getGeneralizedNormalForce(bool check=true) {  assert((not check) or (not updlaN)); return lambdaN; }
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t);
       virtual void updateV(double t, int i=0);
-      void updateGeneralizedNormalForce(double t) { (this->*updateGeneralizedNormalForce_)(t); updlaN = false; }
-      void updateGeneralizedTangentialForce(double t) { (this->*updateGeneralizedTangentialForce_)(t); updlaT = false; }
-      void updateGeneralizedNormalForceS(double t);
-      void updateGeneralizedNormalForceM(double t);
-      void updateGeneralizedNormalForceP(double t);
-      void updateGeneralizedTangentialForceS(double t);
-      void updateGeneralizedTangentialForceM(double t);
-      void updateGeneralizedTangentialForce0(double t) { }
-      void (SingleContact::*updateGeneralizedNormalForce_)(double t);
-      void (SingleContact::*updateGeneralizedTangentialForce_)(double t);
+      void updateGeneralizedNormalForce() { (this->*updateGeneralizedNormalForce_)(); updlaN = false; }
+      void updateGeneralizedTangentialForce() { (this->*updateGeneralizedTangentialForce_)(); updlaT = false; }
+      void updateGeneralizedNormalForceS();
+      void updateGeneralizedNormalForceM();
+      void updateGeneralizedNormalForceP();
+      void updateGeneralizedTangentialForceS();
+      void updateGeneralizedTangentialForceM();
+      void updateGeneralizedTangentialForce0() { }
+      void (SingleContact::*updateGeneralizedNormalForce_)();
+      void (SingleContact::*updateGeneralizedTangentialForce_)();
       virtual void updateGeneralizedForces();
       virtual void updateGeneralizedPositions();
       virtual void updateGeneralizedVelocities();

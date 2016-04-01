@@ -35,12 +35,10 @@ namespace MBSim {
       InfluenceFunction(){}
       virtual ~InfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      void setTime(double t_) { t = t_; }
       virtual double operator()(const std::pair<Contour*, ContourFrame*>& firstContourInfo, const std::pair<Contour*, ContourFrame*>& secondContourInfo)=0;
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
     protected:
-      double t;
       fmatvec::Vec2 getZeta(const std::pair<Contour*, ContourFrame*>& contourInfo);
   };
 

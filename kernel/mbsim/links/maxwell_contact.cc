@@ -98,11 +98,11 @@ namespace MBSim {
       Contact::init(stage);
   }
 
-  void MaxwellContact::updateGeneralizedNormalForce(double t) {
+  void MaxwellContact::updateGeneralizedNormalForce() {
 
-    Contact::updateGeneralizedNormalForce(t);
+    Contact::updateGeneralizedNormalForce();
 
-    updatePossibleContactPoints(t);
+    updatePossibleContactPoints();
 
     //Apply damping force
     //TODO: use damping function for that (to be more flexible...)
@@ -116,8 +116,8 @@ namespace MBSim {
     }
 
     if (possibleContactPoints.size()) {
-      updateInfluenceMatrix(t);
-      updateRigidBodyGap(t);
+      updateInfluenceMatrix();
+      updateRigidBodyGap();
 
       LCP.setSystem(C, rigidBodyGap);
 
@@ -142,7 +142,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updatePossibleContactPoints(double t) {
+  void MaxwellContact::updatePossibleContactPoints() {
     possibleContactPoints.clear();
     for (size_t i = 0; i < contacts.size(); ++i) {
       for (size_t j = 0; j < contacts[i].size(); ++j) {
@@ -153,20 +153,20 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateInfluenceMatrix(double t) {
+  void MaxwellContact::updateInfluenceMatrix() {
     C.resize(possibleContactPoints.size());
 
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
       //get index of contours of current possible contactPoint
       const std::pair<int, int> & currentContactIndex = possibleContactPoints[i];
 
-      C(i, i) = computeInfluenceCoefficient(t,currentContactIndex);
+      C(i, i) = computeInfluenceCoefficient(currentContactIndex);
 
       for (size_t j = i + 1; j < possibleContactPoints.size(); j++) {
         //get index of coupled contour
         const std::pair<int, int> & coupledContactIndex = possibleContactPoints[j];
 
-        C(i, j) = computeInfluenceCoefficient(t,currentContactIndex, coupledContactIndex);
+        C(i, j) = computeInfluenceCoefficient(currentContactIndex, coupledContactIndex);
       }
     }
 
@@ -176,7 +176,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateRigidBodyGap(double t) {
+  void MaxwellContact::updateRigidBodyGap() {
     /*save rigidBodyGaps in vector*/
     rigidBodyGap.resize(possibleContactPoints.size());
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
@@ -187,7 +187,7 @@ namespace MBSim {
       cout << "rigidBodyGap: " << rigidBodyGap << endl;
   }
 
-  double MaxwellContact::computeInfluenceCoefficient(double t, const std::pair<int, int> & contactIndex) {
+  double MaxwellContact::computeInfluenceCoefficient(const std::pair<int, int> & contactIndex) {
     double FactorC = 0.;
 
     for (int i = 0; i < 2; i++) {
@@ -205,7 +205,6 @@ namespace MBSim {
         //          cout << "LagrangeParameter of contour \"" << contour->getPath() << "\" is:" << lagrangeParameter << endl;
         //        }
 
-        fct->setTime(t);
         FactorC += (*fct)(contInfo, contInfo);
       }
     }
@@ -217,7 +216,7 @@ namespace MBSim {
     return FactorC;
   }
 
-  double MaxwellContact::computeInfluenceCoefficient(double t, const std::pair<int, int> & contactIndex, const std::pair<int, int> & coupledContactIndex) {
+  double MaxwellContact::computeInfluenceCoefficient(const std::pair<int, int> & contactIndex, const std::pair<int, int> & coupledContactIndex) {
     double FactorC = 0;
 
     for (int affectedContourIterator = 0; affectedContourIterator < 2; affectedContourIterator++) {
@@ -245,7 +244,6 @@ namespace MBSim {
           //            cout << "Second LagrangeParameter contour \"" << contour2->getPath() << "\" is:" << secondLagrangeParameter << endl;
           //          }
 
-          fct->setTime(t);
           FactorC += (*fct)(cont1Info, cont2Info);
         }
       }

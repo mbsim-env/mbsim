@@ -78,22 +78,22 @@ namespace MBSim {
     updlaT = true;
   }
 
-  void SingleContact::updateGeneralizedNormalForceM(double t) {
+  void SingleContact::updateGeneralizedNormalForceM() {
     if(gdActive[0])
       lambdaN = laN(0);
     else
       lambdaN = 0;
   }
 
-  void SingleContact::updateGeneralizedNormalForceS(double t) {
+  void SingleContact::updateGeneralizedNormalForceS() {
     lambdaN = (*fcl)(evalGeneralizedRelativePosition()(0), evalGeneralizedRelativeVelocity()(0));
   }
 
-  void SingleContact::updateGeneralizedNormalForceP(double t) {
-    static_cast<Contact*>(parent)->updateGeneralizedNormalForce(t);
+  void SingleContact::updateGeneralizedNormalForceP() {
+    static_cast<Contact*>(parent)->updateGeneralizedNormalForce();
   }
 
-  void SingleContact::updateGeneralizedTangentialForceM(double t) {
+  void SingleContact::updateGeneralizedTangentialForceM() {
     if(gdActive[1])
       lambdaT = laT;
     else if(gdActive[0])
@@ -102,7 +102,7 @@ namespace MBSim {
       lambdaT.init(0);
   }
 
-  void SingleContact::updateGeneralizedTangentialForceS(double t) {
+  void SingleContact::updateGeneralizedTangentialForceS() {
     lambdaT = (*fdf)(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), fabs(evalGeneralizedNormalForce()));
   }
 

@@ -88,19 +88,19 @@ namespace MBSim {
      /**
        * \brief saves all possible contacts in a vector
        */
-      virtual void updatePossibleContactPoints(double t);
+      virtual void updatePossibleContactPoints();
 
       /**
        * \brief updates the influence matrix C
        * \param contours vector of contours that are part of the contact
        * \param cpData   vector of ContourPointDatas
        */
-      virtual void updateInfluenceMatrix(double t);
+      virtual void updateInfluenceMatrix();
 
       /**
        * \brief update the rigid body distances (gaps) for the single contacts
        */
-      void updateRigidBodyGap(double t);
+      void updateRigidBodyGap();
 
       /**
        * \brief computes the coupling factor for the influence matrix on one contact point (two contours)
@@ -108,7 +108,7 @@ namespace MBSim {
        * \param cpData       vector of ContourPointDatas
        * \param contactIndex index pair of contact point
        */
-      virtual double computeInfluenceCoefficient(double t, const std::pair<int, int> & contactIndex);
+      virtual double computeInfluenceCoefficient(const std::pair<int, int> & contactIndex);
 
       /**
        * \brief computes the coupling factor for the influence matrix between two contact points (four contours)
@@ -117,14 +117,14 @@ namespace MBSim {
        * \param contactIndex        index pair of contact point
        * \param coupledContactIndex index pair of coupling contact point
        */
-      virtual double computeInfluenceCoefficient(double t, const std::pair<int, int> & contactIndex, const std::pair<int, int> & couplingContactIndex);
+      virtual double computeInfluenceCoefficient(const std::pair<int, int> & contactIndex, const std::pair<int, int> & couplingContactIndex);
 
       /*
        * \brief computes the "material constant" to have a good guess for the lambda-vector
        */
       virtual void computeMaterialConstant();
 
-      virtual void updateGeneralizedNormalForce(double t);
+      virtual void updateGeneralizedNormalForce();
 
     protected:
       /**
