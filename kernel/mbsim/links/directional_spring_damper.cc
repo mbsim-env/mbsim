@@ -49,12 +49,12 @@ namespace MBSim {
     frame_->setOrientation(frame[0]->getOrientation());
   }
 
-  void DirectionalSpringDamper::updateGeneralizedPositions(double t) {
+  void DirectionalSpringDamper::updateGeneralizedPositions() {
     rrel=evalGlobalForceDirection().T()*evalGlobalRelativePosition();
     updrrel = false;
   }
 
-  void DirectionalSpringDamper::updateGeneralizedVelocities(double t) {
+  void DirectionalSpringDamper::updateGeneralizedVelocities() {
     vrel=evalGlobalForceDirection().T()*evalGlobalRelativeVelocity();
     updvrel = false;
   }

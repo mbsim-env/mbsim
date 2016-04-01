@@ -41,7 +41,7 @@ namespace MBSim {
     connect(transmission.body, transmission.ratio);
   }
 
-  void Gear::updateGeneralizedForces(double t) {
+  void Gear::updateGeneralizedForces() {
     if(func)
       lambda(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
     else

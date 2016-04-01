@@ -40,18 +40,18 @@ namespace MBSim {
     xd(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1) = (*f)(x,t);
   }
 
-  void GeneralizedAccelerationExcitation::updateGeneralizedPositions(double t) {
-    rrel=body[0]->getqRel(t)-x(0,body[0]->getqRelSize()-1);
+  void GeneralizedAccelerationExcitation::updateGeneralizedPositions() {
+    rrel=body[0]->getqRel(getTime())-x(0,body[0]->getqRelSize()-1);
     updrrel = false;
   }
 
-  void GeneralizedAccelerationExcitation::updateGeneralizedVelocities(double t) {
-    vrel=body[0]->getuRel(t)-x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
+  void GeneralizedAccelerationExcitation::updateGeneralizedVelocities() {
+    vrel=body[0]->getuRel(getTime())-x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
     updvrel = false;
   }
 
   void GeneralizedAccelerationExcitation::updatewb(double t) {
-    wb += (*f)(x,t);
+    wb += (*f)(x,getTime());
   }
 
 }

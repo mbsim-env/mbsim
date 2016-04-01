@@ -87,17 +87,17 @@ namespace MBSim {
     updPos = false;
   }
 
-  void RigidBodyLink::updateGeneralizedPositions(double t) {
+  void RigidBodyLink::updateGeneralizedPositions() {
     rrel.init(0);
     for(unsigned i=0; i<body.size(); i++)
-      rrel+=body[i]->getqRel(t)*ratio[i];
+      rrel+=body[i]->getqRel(getTime())*ratio[i];
     updrrel = false;
   }
 
-  void RigidBodyLink::updateGeneralizedVelocities(double t) {
+  void RigidBodyLink::updateGeneralizedVelocities() {
     vrel.init(0);
     for(unsigned i=0; i<body.size(); i++)
-      vrel+=body[i]->getuRel(t)*ratio[i];
+      vrel+=body[i]->getuRel(getTime())*ratio[i];
     updvrel = false;
   }
 
@@ -111,20 +111,20 @@ namespace MBSim {
 
   void RigidBodyLink::updateForce() {
     for(unsigned i=0; i<body.size(); i++)
-      F[i] = getGlobalForceDirection(i)*evalGeneralizedForce()(iF);
+      F[i] = evalGlobalForceDirection(i)*evalGeneralizedForce()(iF);
     updF = false;
   }
 
   void RigidBodyLink::updateMoment() {
     for(unsigned i=0; i<body.size(); i++)
-      M[i] = getGlobalMomentDirection(i)*evalGeneralizedForce()(iM);
+      M[i] = evalGlobalMomentDirection(i)*evalGeneralizedForce()(iM);
     updM = false;
   }
 
   void RigidBodyLink::updateR() {
     for(unsigned i=0; i<body.size(); i++) {
-      RF[i].set(Index(0,2), Index(iF), getGlobalForceDirection(i));
-      RM[i].set(Index(0,2), Index(iM), getGlobalMomentDirection(i));
+      RF[i].set(Index(0,2), Index(iF), evalGlobalForceDirection(i));
+      RM[i].set(Index(0,2), Index(iM), evalGlobalMomentDirection(i));
     }
     updRMV = false;
   }

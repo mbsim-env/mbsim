@@ -106,18 +106,18 @@ namespace MBSim {
     lambdaT = (*fdf)(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), fabs(evalGeneralizedNormalForce()));
   }
 
-  void SingleContact::updateGeneralizedForces(double t) {
+  void SingleContact::updateGeneralizedForces() {
     lambda(0) = evalGeneralizedNormalForce();
     lambda.set(Index(1,lambda.size()-1),evalGeneralizedTangentialForce());
     updla = false;
   }
 
-  void SingleContact::updateGeneralizedPositions(double t) {
+  void SingleContact::updateGeneralizedPositions() {
     updatePositions();
     updrrel = false;
   }
 
-  void SingleContact::updateGeneralizedVelocities(double t) {
+  void SingleContact::updateGeneralizedVelocities() {
     updateVelocities();
     updvrel = false;
   }

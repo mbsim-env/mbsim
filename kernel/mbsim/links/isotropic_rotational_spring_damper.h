@@ -46,8 +46,8 @@ namespace MBSim {
        */
       virtual ~IsotropicRotationalSpringDamper();
 
-      virtual void updateGeneralizedPositions(double t);
-      virtual void updateGeneralizedVelocities(double t);
+      virtual void updateGeneralizedPositions();
+      virtual void updateGeneralizedVelocities();
       /***************************************************/
 
       virtual void init(InitStage stage);

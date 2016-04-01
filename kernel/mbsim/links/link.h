@@ -406,13 +406,13 @@ namespace MBSim {
 
       void resetUpToDate() { updrrel = true; updvrel = true; updla = true; }
 
-      virtual void updateGeneralizedPositions(double t) { }
-      virtual void updateGeneralizedVelocities(double t) { }
-      virtual void updateGeneralizedForces(double t) { }
+      virtual void updateGeneralizedPositions() { }
+      virtual void updateGeneralizedVelocities() { }
+      virtual void updateGeneralizedForces() { }
 
-      const fmatvec::VecV& evalGeneralizedRelativePosition() { if(updrrel) updateGeneralizedPositions(0.); return rrel; }
-      const fmatvec::VecV& evalGeneralizedRelativeVelocity() { if(updvrel) updateGeneralizedVelocities(0.); return vrel; }
-      const fmatvec::VecV& evalGeneralizedForce() { if(updla) updateGeneralizedForces(0.); return lambda; }
+      const fmatvec::VecV& evalGeneralizedRelativePosition() { if(updrrel) updateGeneralizedPositions(); return rrel; }
+      const fmatvec::VecV& evalGeneralizedRelativeVelocity() { if(updvrel) updateGeneralizedVelocities(); return vrel; }
+      const fmatvec::VecV& evalGeneralizedForce() { if(updla) updateGeneralizedForces(); return lambda; }
 
       fmatvec::VecV& getGeneralizedForce(bool check=true) {  assert((not check) or (not updla)); return lambda; }
 

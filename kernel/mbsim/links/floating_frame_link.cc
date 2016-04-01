@@ -151,19 +151,19 @@ namespace MBSim {
     updVel = false;
   }
 
-  void FloatingFrameLink::updateGeneralizedPositions(double t) {
+  void FloatingFrameLink::updateGeneralizedPositions() {
     rrel.set(iF, evalGlobalForceDirection().T() * evalGlobalRelativePosition());
     rrel.set(iM, x);
     updrrel = false;
   }
 
-  void FloatingFrameLink::updateGeneralizedVelocities(double t) {
+  void FloatingFrameLink::updateGeneralizedVelocities() {
     vrel.set(iF, evalGlobalForceDirection().T() * evalGlobalRelativeVelocity());
     vrel.set(iM, evalGlobalMomentDirection().T() * evalGlobalRelativeAngularVelocity());
     updvrel = false;
   }
 
-  void FloatingFrameLink::updateGeneralizedForces(double t) {
+  void FloatingFrameLink::updateGeneralizedForces() {
     lambda.set(iF, evallaF());
     lambda.set(iM, evallaM());
     updla = false;

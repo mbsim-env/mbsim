@@ -44,8 +44,8 @@ namespace MBSim {
        */
       virtual ~KineticExcitation();
 
-      void updateGeneralizedPositions(double t) { }
-      void updateGeneralizedVelocities(double t) { }
+      void updateGeneralizedPositions() { }
+      void updateGeneralizedVelocities() { }
       void updatelaF();
       void updatelaM();
 

@@ -80,9 +80,9 @@ namespace MBSim {
       void updateGeneralizedTangentialForce0(double t) { }
       void (SingleContact::*updateGeneralizedNormalForce_)(double t);
       void (SingleContact::*updateGeneralizedTangentialForce_)(double t);
-      virtual void updateGeneralizedForces(double t);
-      virtual void updateGeneralizedPositions(double t);
-      virtual void updateGeneralizedVelocities(double t);
+      virtual void updateGeneralizedForces();
+      virtual void updateGeneralizedPositions();
+      virtual void updateGeneralizedVelocities();
       virtual void updatePositions();
       virtual void updatePositions(Frame *frame);
       virtual void updateVelocities();

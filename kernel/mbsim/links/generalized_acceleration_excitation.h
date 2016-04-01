@@ -35,8 +35,8 @@ namespace MBSim {
       void calcxSize();
       void init(InitStage stage);
 
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
+      void updateGeneralizedPositions();
+      void updateGeneralizedVelocities();
       void updatexd(double t);
       void updatewb(double t);
 

@@ -43,7 +43,7 @@ namespace MBSim {
     delete func;
   }
 
-  void GeneralizedSpringDamper::updateGeneralizedForces(double t) {
+  void GeneralizedSpringDamper::updateGeneralizedForces() {
     lambda(0) = -(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
     updla = false;
   }

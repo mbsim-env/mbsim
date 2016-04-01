@@ -42,7 +42,7 @@ namespace MBSim {
     gdSize = body[0]->getuRelSize();
   }
 
-  void KinematicExcitation::updateGeneralizedForces(double t) {
+  void KinematicExcitation::updateGeneralizedForces() {
     if(func)
       lambda = (*func)(evalGeneralizedRelativePosition(),evalGeneralizedRelativeVelocity());
     else

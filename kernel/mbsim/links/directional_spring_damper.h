@@ -46,8 +46,8 @@ namespace MBSim {
       ~DirectionalSpringDamper();
 
       void updatePositions(Frame *frame);
-      void updateGeneralizedPositions(double t);
-      void updateGeneralizedVelocities(double t);
+      void updateGeneralizedPositions();
+      void updateGeneralizedVelocities();
       void updatelaF();
 
       /*INHERITED INTERFACE OF LINK*/

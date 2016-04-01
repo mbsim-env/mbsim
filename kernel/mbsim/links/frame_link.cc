@@ -129,7 +129,7 @@ namespace MBSim {
     }
   } 
 
-  void FrameLink::updateGeneralizedForces(double t) {
+  void FrameLink::updateGeneralizedForces() {
     lambda = evallaF();
     updla = false;
   }
@@ -162,12 +162,12 @@ namespace MBSim {
     updVel = false;
   }
 
-  void FrameLink::updateGeneralizedPositions(double t) {
+  void FrameLink::updateGeneralizedPositions() {
     rrel(0)=nrm2(evalGlobalRelativePosition());
     updrrel = false;
   }
 
-  void FrameLink::updateGeneralizedVelocities(double t) {
+  void FrameLink::updateGeneralizedVelocities() {
     vrel=evalGlobalForceDirection().T()*evalGlobalRelativeVelocity();
     updvrel = false;
   }

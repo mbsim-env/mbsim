@@ -50,9 +50,9 @@ namespace MBSim {
     delete laN;
   }
 
-  void GeneralizedFriction::updateGeneralizedForces(double t) {
+  void GeneralizedFriction::updateGeneralizedForces() {
     // TODO Consider set-valued friction
-    lambda = (*func)(evalGeneralizedRelativeVelocity(),(*laN)(t));
+    lambda = (*func)(evalGeneralizedRelativeVelocity(),(*laN)(getTime()));
     updla = false;
   }
 

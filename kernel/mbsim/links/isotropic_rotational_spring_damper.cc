@@ -39,7 +39,7 @@ namespace MBSim {
     la = -evalGeneralizedRelativeVelocity() * d - evalGeneralizedRelativePosition() * c;
   }
 
-  void IsotropicRotationalSpringDamper::updateGeneralizedPositions(double t) {
+  void IsotropicRotationalSpringDamper::updateGeneralizedPositions() {
     Vec3 r1 = frame[0]->evalOrientation().col(0); // first column (tangent) of first frame
     Vec3 r2 = frame[1]->evalOrientation().col(0); // first column (tangent) of second frame
 
@@ -73,7 +73,7 @@ namespace MBSim {
     updrrel = false;
   }
 
-  void IsotropicRotationalSpringDamper::updateGeneralizedVelocities(double t) {
+  void IsotropicRotationalSpringDamper::updateGeneralizedVelocities() {
     vrel = evalGlobalMomentDirection().T() * evalGlobalRelativeVelocity();
     updvrel = false;
   }
