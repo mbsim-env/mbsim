@@ -36,7 +36,7 @@ namespace MBSim {
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedSingleValuedForces(doublet) {
-    la = -getGeneralizedRelativeVelocity(t) * d - getGeneralizedRelativePosition(t) * c;
+    la = -evalGeneralizedRelativeVelocity() * d - evalGeneralizedRelativePosition() * c;
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedPositions(double t) {

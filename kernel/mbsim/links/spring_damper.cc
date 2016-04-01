@@ -44,7 +44,7 @@ namespace MBSim {
   }
 
   void SpringDamper::updatelaF(double t) {
-    lambdaF(0)=-(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
+    lambdaF(0)=-(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
     if(rrel(0)<=epsroot() && abs(lambda(0))>epsroot())
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
     updlaF = false;
@@ -88,7 +88,7 @@ namespace MBSim {
           data.push_back(WrOToPoint(0));
           data.push_back(WrOToPoint(1));
           data.push_back(WrOToPoint(2));
-          data.push_back(fabs(getGeneralizedForce(t)(0)));
+          data.push_back(fabs(evalGeneralizedForce()(0)));
           coilspringOpenMBV->append(data);
         }
       }

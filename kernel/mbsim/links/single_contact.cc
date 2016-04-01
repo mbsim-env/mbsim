@@ -68,7 +68,7 @@ namespace MBSim {
       wb -= getGlobalForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
       wb += getGlobalForceDirection(t)(Index(0,2),Index(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
 
-      contactKinematics->updatewb(t, wb, getGeneralizedRelativePosition(t)(0), cFrame);
+      contactKinematics->updatewb(t, wb, evalGeneralizedRelativePosition()(0), cFrame);
     }
   }
 
@@ -86,7 +86,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedNormalForceS(double t) {
-    lambdaN = (*fcl)(getGeneralizedRelativePosition(t)(0), getGeneralizedRelativeVelocity(t)(0));
+    lambdaN = (*fcl)(evalGeneralizedRelativePosition()(0), evalGeneralizedRelativeVelocity()(0));
   }
 
   void SingleContact::updateGeneralizedNormalForceP(double t) {
@@ -97,13 +97,13 @@ namespace MBSim {
     if(gdActive[1])
       lambdaT = laT;
     else if(gdActive[0])
-      lambdaT = fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections()))) * getGeneralizedNormalForce(t);
+      lambdaT = fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections()))) * getGeneralizedNormalForce(t);
     else
       lambdaT.init(0);
   }
 
   void SingleContact::updateGeneralizedTangentialForceS(double t) {
-    lambdaT = (*fdf)(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), fabs(getGeneralizedNormalForce(t)));
+    lambdaT = (*fdf)(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), fabs(getGeneralizedNormalForce(t)));
   }
 
   void SingleContact::updateGeneralizedForces(double t) {
@@ -132,7 +132,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateVelocities(double t) {
-    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isClosed(getGeneralizedRelativePosition(t)(0), 0))) { // TODO: nicer implementation
+    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
       Vec3 Wn = cFrame[0]->evalOrientation().col(0);
 
       Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
@@ -154,12 +154,12 @@ namespace MBSim {
   }
 
   void SingleContact::updateg(double t) {
-    g = getGeneralizedRelativePosition(t)(Index(0,gSize-1));
+    g = evalGeneralizedRelativePosition()(Index(0,gSize-1));
   }
 
   void SingleContact::updategd(double t) {
     int addIndexnormal = fcl->isSetValued()?0:1;
-    gd = getGeneralizedRelativeVelocity(t)(Index(addIndexnormal,gdSize+addIndexnormal-1));
+    gd = evalGeneralizedRelativeVelocity()(Index(addIndexnormal,gdSize+addIndexnormal-1));
   }
 
   void SingleContact::updateh(double t, int j) {
@@ -184,8 +184,8 @@ namespace MBSim {
       if (fdf->isSetValued()) {
         if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
           Mat3xV RF = getGlobalForceDirection(t)(Index(0,2),Index(1, getFrictionDirections()));
-          V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())));
-          V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())));
+          V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())));
+          V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())));
         }
       }
     }
@@ -208,15 +208,15 @@ namespace MBSim {
       }
       else if(fdf and fdf->isSetValued()) {
         if (getFrictionDirections() == 1)
-          sv(1) = getGeneralizedRelativeVelocity(t)(1);
+          sv(1) = evalGeneralizedRelativeVelocity()(1);
         else {
-          sv(1) = getGeneralizedRelativeVelocity(t)(1) + getGeneralizedRelativeVelocity(t)(2); // TODO: is there a better concept?
+          sv(1) = evalGeneralizedRelativeVelocity()(1) + evalGeneralizedRelativeVelocity()(2); // TODO: is there a better concept?
         }
       }
     }
     else {
       int i=0;
-      if(fcl->isSetValued()) sv(i++) = getGeneralizedRelativePosition(t)(0);
+      if(fcl->isSetValued()) sv(i++) = evalGeneralizedRelativePosition()(0);
       if (fdf and fdf->isSetValued())
         sv(i) = 1;
     }
@@ -695,7 +695,7 @@ namespace MBSim {
           data.push_back(F(0));
           data.push_back(F(1));
           data.push_back(F(2));
-          // TODO fdf->isSticking(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), gdTol)
+          // TODO fdf->isSticking(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), gdTol)
           data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
           frictionArrow->append(data);
         }
@@ -1172,13 +1172,13 @@ namespace MBSim {
 
   void SingleContact::checkActive(double t, int j) {
     if (j == 1) { // formerly checkActiveg()
-      gActive = fcl->isClosed(getGeneralizedRelativePosition(t)(0), gTol) ? 1 : 0;
+      gActive = fcl->isClosed(evalGeneralizedRelativePosition()(0), gTol) ? 1 : 0;
       gdActive[0] = gActive;
       gdActive[1] = gdActive[0];
     }
     else if (j == 2) { // formerly checkActivegd()
-      gdActive[0] = gActive ? (fcl->remainsClosed(getGeneralizedRelativeVelocity(t)(0), gdTol) ? 1 : 0) : 0;
-      gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(getGeneralizedRelativeVelocity(t)(Index(1,getFrictionDirections())), gdTol) ? 1 : 0) : 0;
+      gdActive[0] = gActive ? (fcl->remainsClosed(evalGeneralizedRelativeVelocity()(0), gdTol) ? 1 : 0) : 0;
+      gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), gdTol) ? 1 : 0) : 0;
       gddActive[0] = gdActive[0];
       gddActive[1] = gdActive[1];
     }
@@ -1424,7 +1424,7 @@ namespace MBSim {
         else {
           if (getFrictionDirections() == 1)
             rootID = 2; // contact was sliding -> sticking
-          else if (nrm2(getGeneralizedRelativeVelocity(t)((Index(1,getFrictionDirections())))) <= gdTol)
+          else if (nrm2(evalGeneralizedRelativeVelocity()((Index(1,getFrictionDirections())))) <= gdTol)
             rootID = 2; // contact was sliding -> sticking
         }
       }
@@ -1434,7 +1434,7 @@ namespace MBSim {
 
   void SingleContact::LinearImpactEstimation(double t, Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
     if (gActive) {
-      gAct_(*IndActive_) = getGeneralizedRelativePosition(t)(0);
+      gAct_(*IndActive_) = evalGeneralizedRelativePosition()(0);
       (*IndActive_)++;
     }
     else {
@@ -1443,7 +1443,7 @@ namespace MBSim {
       // TODO check if already computed
       Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
       gdInActive_(*IndInActive_) = Wn.T() * WvD;
-      gInActive_(*IndInActive_) = getGeneralizedRelativePosition(t)(0);
+      gInActive_(*IndInActive_) = evalGeneralizedRelativePosition()(0);
       (*IndInActive_)++;
     }
   }

@@ -170,12 +170,12 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateForce(double t) {
-    F = getGlobalForceDirection(t)*getGeneralizedForce(t)(iF);
+    F = getGlobalForceDirection(t)*evalGeneralizedForce()(iF);
     updF = false;
   }
 
   void FloatingFrameLink::updateMoment(double t) {
-    M = getGlobalMomentDirection(t)*getGeneralizedForce(t)(iM);
+    M = getGlobalMomentDirection(t)*evalGeneralizedForce()(iM);
     updM = false;
   }
 
@@ -238,12 +238,12 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateg(double t) {
-    g(iF) = getGeneralizedRelativePosition(t)(iF);
+    g(iF) = evalGeneralizedRelativePosition()(iF);
     g(iM) = rrel(iM);;
   }
 
   void FloatingFrameLink::updategd(double t) {
-    gd(iF) = getGeneralizedRelativeVelocity(t)(iF);
+    gd(iF) = evalGeneralizedRelativeVelocity()(iF);
     gd(iM) = vrel(iM);
   }
 

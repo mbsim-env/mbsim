@@ -44,7 +44,7 @@ namespace MBSim {
 
   void KinematicExcitation::updateGeneralizedForces(double t) {
     if(func)
-      lambda = (*func)(getGeneralizedRelativePosition(t),getGeneralizedRelativeVelocity(t));
+      lambda = (*func)(evalGeneralizedRelativePosition(),evalGeneralizedRelativeVelocity());
     else
       lambda = la;
     updla = false;

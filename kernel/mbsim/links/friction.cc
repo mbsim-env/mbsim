@@ -52,7 +52,7 @@ namespace MBSim {
 
   void GeneralizedFriction::updateGeneralizedForces(double t) {
     // TODO Consider set-valued friction
-    lambda = (*func)(getGeneralizedRelativeVelocity(t),(*laN)(t));
+    lambda = (*func)(evalGeneralizedRelativeVelocity(),(*laN)(t));
     updla = false;
   }
 

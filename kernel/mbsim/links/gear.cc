@@ -43,7 +43,7 @@ namespace MBSim {
 
   void Gear::updateGeneralizedForces(double t) {
     if(func)
-      lambda(0) = -(*func)(getGeneralizedRelativePosition(t)(0),getGeneralizedRelativeVelocity(t)(0));
+      lambda(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
     else
       lambda = la;
     updla = false;

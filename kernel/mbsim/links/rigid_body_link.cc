@@ -111,13 +111,13 @@ namespace MBSim {
 
   void RigidBodyLink::updateForce(double t) { 
     for(unsigned i=0; i<body.size(); i++)
-      F[i] = getGlobalForceDirection(t,i)*getGeneralizedForce(t)(iF);
+      F[i] = getGlobalForceDirection(t,i)*evalGeneralizedForce()(iF);
     updF = false;
   }
 
   void RigidBodyLink::updateMoment(double t) { 
     for(unsigned i=0; i<body.size(); i++)
-      M[i] = getGlobalMomentDirection(t,i)*getGeneralizedForce(t)(iM);
+      M[i] = getGlobalMomentDirection(t,i)*evalGeneralizedForce()(iM);
     updM = false;
   }
 
@@ -132,7 +132,7 @@ namespace MBSim {
   void RigidBodyLink::updateh(double t, int j) {
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)
-        h[j][i]+=body[i]->evalJRel(j).T()*getGeneralizedForce(t)*ratio[i];
+        h[j][i]+=body[i]->evalJRel(j).T()*evalGeneralizedForce()*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
         h[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getForce(t,i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getMoment(t,i))*ratio[i];
@@ -155,11 +155,11 @@ namespace MBSim {
   }
 
   void RigidBodyLink::updateg(double t) {
-    g = getGeneralizedRelativePosition(t);
+    g = evalGeneralizedRelativePosition();
   }
 
   void RigidBodyLink::updategd(double t) {
-    gd = getGeneralizedRelativeVelocity(t);
+    gd = evalGeneralizedRelativeVelocity();
   }
 
   void RigidBodyLink::updatewb(double t) {
@@ -254,7 +254,7 @@ namespace MBSim {
   void RigidBodyLink::plot(double t,double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       for(unsigned int i=0; i<body.size(); i++) {
-        plotVector.push_back(ratio[i]*getGeneralizedForce(t)(0));
+        plotVector.push_back(ratio[i]*evalGeneralizedForce()(0));
       }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {

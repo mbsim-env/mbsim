@@ -44,7 +44,7 @@ namespace MBSim {
   }
 
   void GeneralizedSpringDamper::updateGeneralizedForces(double t) {
-    lambda(0) = -(*func)(getGeneralizedRelativePosition(t)(0)-l0,getGeneralizedRelativeVelocity(t)(0));
+    lambda(0) = -(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
     updla = false;
   }
 
@@ -107,7 +107,7 @@ namespace MBSim {
         data.push_back(WrOToPoint(0));
         data.push_back(WrOToPoint(1));
         data.push_back(WrOToPoint(2));
-        data.push_back(fabs(getGeneralizedForce(t)(0)));
+        data.push_back(fabs(evalGeneralizedForce()(0)));
         coilspringOpenMBV->append(data);
       }
 #endif

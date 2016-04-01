@@ -65,7 +65,7 @@ namespace MBSim {
 
   void Joint::updatelaFS(double t) {
     for (int i = 0; i < forceDir.cols(); i++)
-      lambdaF(i) = (*ffl)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
+      lambdaF(i) = (*ffl)(evalGeneralizedRelativePosition()(i), evalGeneralizedRelativeVelocity()(i));
   }
 
   void Joint::updatelaMM(double t) {
@@ -75,15 +75,15 @@ namespace MBSim {
 
   void Joint::updatelaMS(double t) {
     for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
-      lambdaM(j) = (*fml)(getGeneralizedRelativePosition(t)(i), getGeneralizedRelativeVelocity(t)(i));
+      lambdaM(j) = (*fml)(evalGeneralizedRelativePosition()(i), evalGeneralizedRelativeVelocity()(i));
   }
 
   void Joint::updatexd(double t) {
-    xd = getGeneralizedRelativeVelocity(t)(iM);
+    xd = evalGeneralizedRelativeVelocity()(iM);
   }
 
   void Joint::updatedx(double t, double dt) {
-    xd = getGeneralizedRelativeVelocity(t)(iM) * dt;
+    xd = evalGeneralizedRelativeVelocity()(iM) * dt;
   }
 
   void Joint::updateh(double t, int j) {

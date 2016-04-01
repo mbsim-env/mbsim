@@ -108,8 +108,8 @@ namespace MBSim {
     //TODO: use damping function for that (to be more flexible...)
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        if ((*jter).getGeneralizedRelativePosition(t)(0) < gLim and (*jter).getGeneralizedRelativeVelocity(t)(0) < 0)
-          (*jter).getGeneralizedNormalForce(false) = -dampingCoefficient * (*jter).getGeneralizedRelativeVelocity(t)(0);
+        if ((*jter).evalGeneralizedRelativePosition()(0) < gLim and (*jter).evalGeneralizedRelativeVelocity()(0) < 0)
+          (*jter).getGeneralizedNormalForce(false) = -dampingCoefficient * (*jter).evalGeneralizedRelativeVelocity()(0);
         else
           (*jter).getGeneralizedNormalForce(false) = 0;
       }
@@ -146,7 +146,7 @@ namespace MBSim {
     possibleContactPoints.clear();
     for (size_t i = 0; i < contacts.size(); ++i) {
       for (size_t j = 0; j < contacts[i].size(); ++j) {
-        if (contacts[i][j].getGeneralizedRelativePosition(t)(0) < 0) { //TODO: use gActive, but only at timestep No 2...
+        if (contacts[i][j].evalGeneralizedRelativePosition()(0) < 0) { //TODO: use gActive, but only at timestep No 2...
           possibleContactPoints.push_back(pair<int,int>(i,j));
         }
       }
@@ -180,7 +180,7 @@ namespace MBSim {
     /*save rigidBodyGaps in vector*/
     rigidBodyGap.resize(possibleContactPoints.size());
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
-      rigidBodyGap(i) = contacts[possibleContactPoints[i].first][possibleContactPoints[i].second].getGeneralizedRelativePosition(t)(0);
+      rigidBodyGap(i) = contacts[possibleContactPoints[i].first][possibleContactPoints[i].second].evalGeneralizedRelativePosition()(0);
     }
 
     if (DEBUGLEVEL >= 5)
