@@ -545,17 +545,17 @@ namespace MBSim {
 
       void resetUpToDate();
 
-      bool updateT() { return updT; }
-      bool updateM(int j) { return updM[j]; }
-      bool updateLLM(int j) { return updLLM[j]; }
-      bool updateh(int j) { return updh[j]; }
-      bool updater(int j) { return updr[j]; }
-      bool updaterdt(int j) { return updrdt[j]; }
-      bool updateW(int j) { return updW[j]; }
-      bool updateV(int j) { return updV[j]; }
-      bool updatewb() { return updwb; }
-      bool updateg() { return updg; }
-      bool updategd() { return updgd; }
+      bool getUpdateT() { return updT; }
+      bool getUpdateM(int j) { return updM[j]; }
+      bool getUpdateLLM(int j) { return updLLM[j]; }
+      bool getUpdateh(int j) { return updh[j]; }
+      bool getUpdater(int j) { return updr[j]; }
+      bool getUpdaterdt(int j) { return updrdt[j]; }
+      bool getUpdateW(int j) { return updW[j]; }
+      bool getUpdateV(int j) { return updV[j]; }
+      bool getUpdatewb() { return updwb; }
+      bool getUpdateg() { return updg; }
+      bool getUpdategd() { return updgd; }
 
       void resize_(double t);
 

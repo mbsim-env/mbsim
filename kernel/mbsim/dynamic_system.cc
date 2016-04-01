@@ -1547,42 +1547,42 @@ namespace MBSim {
   }
 
   const fmatvec::Mat& DynamicSystem::getT(bool check) const {
-    assert((not check) or (not ds->updateT()));
+    assert((not check) or (not ds->getUpdateT()));
     return T;
   }
 
   const fmatvec::Vec& DynamicSystem::geth(int i, bool check) const {
-    assert((not check) or (not ds->updateh(i)));
+    assert((not check) or (not ds->getUpdateh(i)));
     return h[i];
   }
 
   const fmatvec::SymMat& DynamicSystem::getM(int i, bool check) const {
-    assert((not check) or (not ds->updateM(i)));
+    assert((not check) or (not ds->getUpdateM(i)));
     return M[i];
   }
 
   const fmatvec::SymMat& DynamicSystem::getLLM(int i, bool check) const {
-    assert((not check) or (not ds->updateLLM(i)));
+    assert((not check) or (not ds->getUpdateLLM(i)));
     return LLM[i];
   }
 
   const fmatvec::Mat& DynamicSystem::getW(int i, bool check) const {
-    assert((not check) or (not ds->updateW(i)));
+    assert((not check) or (not ds->getUpdateW(i)));
     return W[i];
   }
 
   const fmatvec::Mat& DynamicSystem::getV(int i, bool check) const {
-    assert((not check) or (not ds->updateV(i)));
+    assert((not check) or (not ds->getUpdateV(i)));
     return V[i];
   }
 
   const fmatvec::Vec& DynamicSystem::getg(bool check) const {
-    assert((not check) or (not ds->updateg()));
+    assert((not check) or (not ds->getUpdateg()));
     return g;
   }
 
   const fmatvec::Vec& DynamicSystem::getgd(bool check) const {
-    assert((not check) or (not ds->updategd()));
+    assert((not check) or (not ds->getUpdategd()));
     return gd;
   }
 
@@ -1597,12 +1597,12 @@ namespace MBSim {
 //  }
 
   fmatvec::SymMat& DynamicSystem::getLLM(int i, bool check) {
-    assert((not check) or (not ds->updateLLM(i)));
+    assert((not check) or (not ds->getUpdateLLM(i)));
     return LLM[i];
   }
 
   fmatvec::Mat& DynamicSystem::getW(int i, bool check) {
-    assert((not check) or (not ds->updateW(i)));
+    assert((not check) or (not ds->getUpdateW(i)));
     return W[i];
   }
 //
@@ -1612,57 +1612,57 @@ namespace MBSim {
 //  }
 
   const Mat& DynamicSystem::getT(double t) {
-    if(ds->updateT()) ds->updateT(t);
+    if(ds->getUpdateT()) ds->updateT(t);
     return T;
   }
 
   const Vec& DynamicSystem::geth(double t, int i) {
-    if(ds->updateh(i)) ds->updateh(t,i);
+    if(ds->getUpdateh(i)) ds->updateh(t,i);
     return h[i];
   }
 
   const Vec& DynamicSystem::getr(double t, int i) {
-    if(ds->updater(i)) ds->updater(t,i);
+    if(ds->getUpdater(i)) ds->updater(t,i);
     return r[i];
   }
 
   const Vec& DynamicSystem::getrdt(double t, int i) {
-    if(ds->updaterdt(i)) ds->updaterdt(t,i);
+    if(ds->getUpdaterdt(i)) ds->updaterdt(t,i);
     return rdt[i];
   }
 
   const SymMat& DynamicSystem::getM(double t, int i) {
-    if(ds->updateM(i)) ds->updateM(t,i);
+    if(ds->getUpdateM(i)) ds->updateM(t,i);
     return M[i];
   }
 
   const SymMat& DynamicSystem::getLLM(double t, int i) {
-    if(ds->updateLLM(i)) ds->updateLLM(t,i);
+    if(ds->getUpdateLLM(i)) ds->updateLLM(t,i);
     return LLM[i];
   }
 
   const Mat& DynamicSystem::getW(double t, int i) {
-    if(ds->updateW(i)) ds->updateW(t,i);
+    if(ds->getUpdateW(i)) ds->updateW(t,i);
     return W[i];
   }
 
   const Mat& DynamicSystem::getV(double t, int i) {
-    if(ds->updateV(i)) ds->updateV(t,i);
+    if(ds->getUpdateV(i)) ds->updateV(t,i);
     return V[i];
   }
 
   const Vec& DynamicSystem::getwb(double t) {
-    if(ds->updatewb()) ds->updatewb(t);
+    if(ds->getUpdatewb()) ds->updatewb(t);
     return wb;
   }
 
   const Vec& DynamicSystem::getg(double t) {
-    if(ds->updateg()) ds->updateg(t);
+    if(ds->getUpdateg()) ds->updateg(t);
     return g;
   }
 
   const Vec& DynamicSystem::getgd(double t) {
-    if(ds->updategd()) ds->updategd(t);
+    if(ds->getUpdategd()) ds->updategd(t);
     return gd;
   }
 
@@ -1682,4 +1682,3 @@ namespace MBSim {
 //  }
 
 }
-

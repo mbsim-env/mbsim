@@ -276,32 +276,32 @@ namespace MBSim {
   }
 
   const Mat& Object::getT(double t) {
-    if(ds->updateT()) ds->updateT(t);
+    if(ds->getUpdateT()) ds->updateT(t);
     return T;
   }
 
   const Vec& Object::geth(double t, int i) {
-    if(ds->updateh(i)) ds->updateh(t,i);
+    if(ds->getUpdateh(i)) ds->updateh(t,i);
     return h[i];
   }
 
   const Vec& Object::getr(double t, int i) {
-    if(ds->updater(i)) ds->updater(t,i);
+    if(ds->getUpdater(i)) ds->updater(t,i);
     return r[i];
   }
 
   const Vec& Object::getrdt(double t, int i) {
-    if(ds->updaterdt(i)) ds->updaterdt(t,i);
+    if(ds->getUpdaterdt(i)) ds->updaterdt(t,i);
     return rdt[i];
   }
 
   const SymMat& Object::getM(double t, int i) {
-    if(ds->updateM(i)) ds->updateM(t,i);
+    if(ds->getUpdateM(i)) ds->updateM(t,i);
     return M[i];
   }
 
   const SymMat& Object::getLLM(double t, int i) {
-    if(ds->updateLLM(i)) ds->updateLLM(t,i);
+    if(ds->getUpdateLLM(i)) ds->updateLLM(t,i);
     return LLM[i];
   }
 
@@ -322,12 +322,12 @@ namespace MBSim {
   }
 
   const fmatvec::Vec& Object::geth(int i, bool check) const {
-    assert((not check) or (not ds->updateh(i)));
+    assert((not check) or (not ds->getUpdateh(i)));
     return h[i];
   }
 
   fmatvec::Vec& Object::geth(int i, bool check) {
-    assert((not check) or (not ds->updateh(i)));
+    assert((not check) or (not ds->getUpdateh(i)));
     return h[i];
   }
 
