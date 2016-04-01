@@ -120,7 +120,8 @@ namespace MBSimIntegrator {
 
       // plot
       if(t >= tPlot) {
-        system.plot(t,dtInfo);
+        system.setTime(t);
+        system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 

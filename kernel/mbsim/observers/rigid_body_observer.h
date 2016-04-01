@@ -45,7 +45,7 @@ namespace MBSim {
       void setRigidBody(RigidBody *body_) { body = body_; } 
 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 //      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAxisOfRotation, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(scaleLength,(double),1)(scaleSize,(double),1))) { openMBVAxisOfRotation=enableOpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize); }

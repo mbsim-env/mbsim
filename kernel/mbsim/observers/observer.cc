@@ -52,8 +52,8 @@ namespace MBSim {
       Element::init(stage);
   }
 
-  void Observer::plot(double t, double dt) {
-    Element::plot(t,dt);
+  void Observer::plot() {
+    Element::plot();
   }
 
 }

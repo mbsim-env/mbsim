@@ -100,7 +100,7 @@ namespace MBSim {
     hSize[j] = hSize_;
   }
 
-  void Object::plot(double t, double dt) {
+  void Object::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
       if (getPlotFeature(state) == enabled) {
         for (int i = 0; i < qSize; ++i)
@@ -110,15 +110,15 @@ namespace MBSim {
       }
       if (getPlotFeature(stateDerivative) == enabled) {
         for (int i = 0; i < qSize; ++i)
-          plotVector.push_back(qd(i) / dt);
+          plotVector.push_back(qd(i) / getStepSize());
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(ud[0](i) / dt);
+          plotVector.push_back(ud[0](i) / getStepSize());
       }
       if (getPlotFeature(rightHandSide) == enabled) {
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(geth(t)(i));
+          plotVector.push_back(geth(getTime())(i));
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(getr(t)(i));
+          plotVector.push_back(getr(getTime())(i));
       }
       if (getPlotFeature(energy) == enabled) {
         double Ttemp = computeKineticEnergy();
@@ -128,7 +128,7 @@ namespace MBSim {
         plotVector.push_back(Ttemp + Vtemp);
       }
 
-      Element::plot(t, dt);
+      Element::plot();
     }
   }
 

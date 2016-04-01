@@ -92,7 +92,7 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-  void RigidBodyGroupObserver::plot(double t, double dt) {
+  void RigidBodyGroupObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       double m = 0;
       for(unsigned int i=0; i<body.size(); i++) {
@@ -130,7 +130,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVWeight) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOS(0));
           data.push_back(rOS(1));
           data.push_back(rOS(2));
@@ -142,7 +142,7 @@ namespace MBSim {
         }
         if(openMBVMomentum) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOS(0));
           data.push_back(rOS(1));
           data.push_back(rOS(2));
@@ -154,7 +154,7 @@ namespace MBSim {
         }
         if(openMBVAngularMomentum) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOR(0));
           data.push_back(rOR(1));
           data.push_back(rOR(2));
@@ -166,7 +166,7 @@ namespace MBSim {
         }
         if(openMBVDerivativeOfMomentum) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOS(0));
           data.push_back(rOS(1));
           data.push_back(rOS(2));
@@ -178,7 +178,7 @@ namespace MBSim {
         }
         if(openMBVDerivativeOfAngularMomentum) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOR(0));
           data.push_back(rOR(1));
           data.push_back(rOR(2));
@@ -189,7 +189,7 @@ namespace MBSim {
           openMBVDerivativeOfAngularMomentum->append(data);
         }
       }
-      Observer::plot(t,dt);
+      Observer::plot();
     }
   }
 }

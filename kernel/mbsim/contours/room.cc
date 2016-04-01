@@ -120,8 +120,8 @@ namespace MBSim {
       CompoundContour::init(stage);
   }
 
-  void Room::plot(double t, double dt) {
-    RigidContour::plot(t,dt);
+  void Room::plot() {
+    RigidContour::plot();
   }
 
 }

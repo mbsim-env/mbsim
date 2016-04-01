@@ -62,14 +62,14 @@ namespace MBSim {
       (*i)->sethInd(hInd[j],j);
   }  
 
-  void Body::plot(double t, double dt) {
+  void Body::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Object::plot(t,dt);
+      Object::plot();
 
       for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->plot(t,dt);
+        frame[j]->plot();
       for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->plot(t,dt);
+        contour[j]->plot();
     }
   }
 

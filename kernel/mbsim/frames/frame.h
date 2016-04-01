@@ -52,8 +52,8 @@ namespace MBSim {
       /* INHERITED INTERFACE ELEMENT */
       void init(InitStage stage);
       std::string getType() const { return "Frame"; }
-      virtual void plot(double t, double dt = 1); 
-      virtual void closePlot(); 
+      virtual void plot();
+      virtual void closePlot();
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */

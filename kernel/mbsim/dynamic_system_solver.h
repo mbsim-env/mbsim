@@ -216,6 +216,9 @@ namespace MBSim {
       double getTime() { return t; }
       void setTime(double t_) { t = t_; }
 
+      double getStepSize() { return dt; }
+      void setStepSize(double dt_) { dt = dt_; }
+
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
       const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
       const fmatvec::Vec& getb(bool check=true) const { assert((not check) or (not updb)); return b; }
@@ -593,6 +596,11 @@ namespace MBSim {
        * \brief time
        */
       double t;
+
+      /**
+       * \brief step size
+       */
+      double dt;
 
       /**
        * \brief mass matrix

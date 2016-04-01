@@ -55,12 +55,12 @@ namespace MBSim {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void FrameLink::plot(double t, double dt) {
+  void FrameLink::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVArrowF) {
         vector<double> data;
-        data.push_back(t); 
+        data.push_back(getTime());
         Vec3 toPoint=frame[1]->getPosition();
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
@@ -73,7 +73,7 @@ namespace MBSim {
         openMBVArrowF->append(data);
       }
 #endif
-      Link::plot(t,dt);
+      Link::plot();
     }
   }
 

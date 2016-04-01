@@ -504,10 +504,10 @@ namespace MBSim {
     return impact;
   }
 
-  void Contact::plot(double t, double dt) {
+  void Contact::plot() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->plot(t, dt);
+        jter->plot();
     }
   }
 

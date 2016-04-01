@@ -111,20 +111,20 @@ namespace MBSim {
 
   void RigidBodyLink::updateForce(double t) { 
     for(unsigned i=0; i<body.size(); i++)
-      F[i] = getGlobalForceDirection(t,i)*evalGeneralizedForce()(iF);
+      F[i] = getGlobalForceDirection(i)*evalGeneralizedForce()(iF);
     updF = false;
   }
 
   void RigidBodyLink::updateMoment(double t) { 
     for(unsigned i=0; i<body.size(); i++)
-      M[i] = getGlobalMomentDirection(t,i)*evalGeneralizedForce()(iM);
+      M[i] = getGlobalMomentDirection(i)*evalGeneralizedForce()(iM);
     updM = false;
   }
 
   void RigidBodyLink::updateR(double t) {
     for(unsigned i=0; i<body.size(); i++) {
-      RF[i].set(Index(0,2), Index(iF), getGlobalForceDirection(t,i));
-      RM[i].set(Index(0,2), Index(iM), getGlobalMomentDirection(t,i));
+      RF[i].set(Index(0,2), Index(iF), getGlobalForceDirection(i));
+      RM[i].set(Index(0,2), Index(iM), getGlobalMomentDirection(i));
     }
     updRMV = false;
   }
@@ -135,8 +135,8 @@ namespace MBSim {
         h[j][i]+=body[i]->evalJRel(j).T()*evalGeneralizedForce()*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        h[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getForce(t,i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getMoment(t,i))*ratio[i];
-        h[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*getForce(t,i) + C[i].evalJacobianOfRotation(j).T()*getMoment(t,i))*ratio[i];
+        h[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getForce(i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getMoment(i))*ratio[i];
+        h[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*getForce(i) + C[i].evalJacobianOfRotation(j).T()*getMoment(i))*ratio[i];
       }
     }
   }
@@ -148,8 +148,8 @@ namespace MBSim {
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        W[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getRF(t,i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getRM(t,i))*ratio[i];
-        W[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*getRF(t,i) + C[i].evalJacobianOfRotation(j).T()*getRM(t,i))*ratio[i];
+        W[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getRF(i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getRM(i))*ratio[i];
+        W[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*getRF(i) + C[i].evalJacobianOfRotation(j).T()*getRM(i))*ratio[i];
       }
     }
   }
@@ -251,7 +251,7 @@ namespace MBSim {
       Link::init(stage);
   }
 
-  void RigidBodyLink::plot(double t,double dt) {
+  void RigidBodyLink::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       for(unsigned int i=0; i<body.size(); i++) {
         plotVector.push_back(ratio[i]*evalGeneralizedForce()(0));
@@ -261,8 +261,8 @@ namespace MBSim {
         if(FArrow[0]) {
           for(unsigned i=0; i<body.size(); i++) {
             vector<double> data;
-            data.push_back(t);
-            Vec3 WF = getForce(t,i)*ratio[i];
+            data.push_back(getTime());
+            Vec3 WF = getForce(i)*ratio[i];
             Vec3 WrOS=body[i]->getFrameForKinematics()->evalPosition();
             data.push_back(WrOS(0));
             data.push_back(WrOS(1));
@@ -277,8 +277,8 @@ namespace MBSim {
         if(MArrow[0]) {
           for(unsigned i=0; i<body.size(); i++) {
             vector<double> data;
-            data.push_back(t);
-            Vec3 WM = getMoment(t,i)*ratio[i];
+            data.push_back(getTime());
+            Vec3 WM = getMoment(i)*ratio[i];
             Vec3 WrOS=body[i]->getFrameForKinematics()->evalPosition();
             data.push_back(WrOS(0));
             data.push_back(WrOS(1));
@@ -292,7 +292,7 @@ namespace MBSim {
         }
       }
 #endif
-      Link::plot(t,dt);
+      Link::plot();
     }
   }
 

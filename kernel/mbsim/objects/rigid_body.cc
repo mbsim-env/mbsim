@@ -359,7 +359,7 @@ namespace MBSim {
       joint->setOpenMBVMoment(MArrow);
   }
 
-  void RigidBody::plot(double t, double dt) {
+  void RigidBody::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(notMinimalState)==enabled) {
         for(int i=0; i<nq; i++)
@@ -372,7 +372,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled) {
         if(FWeight) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           Vec3 WrOS=C->evalPosition();
           Vec3 WG = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
           data.push_back(WrOS(0));
@@ -386,7 +386,7 @@ namespace MBSim {
         }
         if(openMBVBody) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           Vec3 WrOS=openMBVFrame->evalPosition();
           Vec3 cardan=AIK2Cardan(openMBVFrame->evalOrientation());
           data.push_back(WrOS(0));
@@ -400,7 +400,7 @@ namespace MBSim {
         }
       }
 #endif
-      Body::plot(t,dt);
+      Body::plot();
     }
   }
 

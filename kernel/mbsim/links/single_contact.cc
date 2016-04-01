@@ -651,7 +651,7 @@ namespace MBSim {
     return gActive0 < gActive ? true : false;
   }
 
-  void SingleContact::plot(double t, double dt) {
+  void SingleContact::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
@@ -659,7 +659,7 @@ namespace MBSim {
         if (openMBVContactFrame[0]) {
           for (unsigned int i = 0; i < 2; i++) {
             vector<double> data;
-            data.push_back(t);
+            data.push_back(getTime());
             data.push_back(cFrame[i]->evalPosition()(0));
             data.push_back(cFrame[i]->getPosition()(1));
             data.push_back(cFrame[i]->getPosition()(2));
@@ -674,7 +674,7 @@ namespace MBSim {
         // arrows
         vector<double> data;
         if (contactArrow) {
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(cFrame[1]->evalPosition()(0));
           data.push_back(cFrame[1]->getPosition()(1));
           data.push_back(cFrame[1]->getPosition()(2));
@@ -687,7 +687,7 @@ namespace MBSim {
         }
         if (frictionArrow && getFrictionDirections() > 0) { // friction force
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(cFrame[1]->getPosition()(0));
           data.push_back(cFrame[1]->getPosition()(1));
           data.push_back(cFrame[1]->getPosition()(2));
@@ -701,7 +701,7 @@ namespace MBSim {
         }
       }
 #endif
-      ContourLink::plot(t, dt);
+      ContourLink::plot();
     }
   }
 

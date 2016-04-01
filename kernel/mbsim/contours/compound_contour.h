@@ -48,7 +48,7 @@ namespace MBSim {
       std::string getType() const {
         return "CompoundContour";
       }
-      virtual void plot(double t, double dt);
+      virtual void plot();
 #ifdef HAVE_OPENMBVCPPINTERFACE
       boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGroup; }
 #endif

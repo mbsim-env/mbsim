@@ -66,7 +66,7 @@ namespace MBSim {
       }
       void setReverse(bool reverse_) { reverse = reverse_; }
 
-      void plot(double t, double dt=1);
+      void plot();
 
     private:
   };

@@ -51,10 +51,10 @@ namespace MBSim {
   Element::~Element() {
   }
 
-  void Element::plot(double t, double dt) {
+  void Element::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(plotColumns.size()>1) {
-        plotVector.insert(plotVector.begin(), t);
+        plotVector.insert(plotVector.begin(), getTime());
         assert(plotColumns.size()==plotVector.size());
         plotVectorSerie->append(plotVector);
         plotVector.clear();
@@ -377,6 +377,9 @@ namespace MBSim {
   double Element::getTime() {
     return ds->getTime();
   }
+
+  double Element::getStepSize() {
+    return ds->getStepSize();
+  }
   
 }
-

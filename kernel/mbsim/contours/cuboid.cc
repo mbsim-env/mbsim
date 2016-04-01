@@ -338,8 +338,8 @@ namespace MBSim {
       CompoundContour::init(stage);
   }
 
-  void Cuboid::plot(double t, double dt) {
-    RigidContour::plot(t,dt);
+  void Cuboid::plot() {
+    RigidContour::plot();
   }
 
   void Cuboid::initializeUsingXML(DOMElement *element) {

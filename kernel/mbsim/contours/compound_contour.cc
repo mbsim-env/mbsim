@@ -48,9 +48,9 @@ namespace MBSim {
     c->setParent(this);
   }
 
-  void CompoundContour::plot(double t, double dt) {
+  void CompoundContour::plot() {
     for (size_t i = 0; i < element.size(); i++) {
-      element[i]->plot(t, dt);
+      element[i]->plot();
     }
   }
 

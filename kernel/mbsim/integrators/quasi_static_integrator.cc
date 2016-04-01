@@ -84,7 +84,7 @@ namespace MBSimIntegrator {
   }
 
   void QuasiStaticIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-//    static_cast<DynamicSystem&>(system).plot(t, dt);
+//    static_cast<DynamicSystem&>(system).plot();
 
     /* FIND EQUILIBRIUM*/
     hgFun fun_hg(&system);
@@ -121,7 +121,7 @@ namespace MBSimIntegrator {
     newton.setLinearAlgebra(1); // as system is possible underdetermined
     newton.setJacobianUpdateFreq(updateJacobianEvery);
 
-    static_cast<DynamicSystem&>(system).plot(t, dt);
+    static_cast<DynamicSystem&>(system).plot();
 
     while (t < tStop) { // time loop
       integrationSteps++;
@@ -161,7 +161,7 @@ namespace MBSimIntegrator {
       if ((step * stepPlot - integrationSteps) < 0) {
         /* WRITE OUTPUT */
         step++;
-        static_cast<DynamicSystem&>(system).plot(t, dt);
+        static_cast<DynamicSystem&>(system).plot();
         double s1 = clock();
         time += (s1 - s0) / CLOCKS_PER_SEC;
         s0 = s1;

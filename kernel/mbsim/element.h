@@ -137,7 +137,7 @@ namespace MBSim {
        * \param simulation time
        * \param simulation time step size for derivative calculation
        */
-      virtual void plot(double t, double dt = 1);
+      virtual void plot();
 
       /**
        * \brief plots time dependent data at special events
@@ -288,6 +288,7 @@ namespace MBSim {
       virtual void resetUpToDate() {}
 
       double getTime();
+      double getStepSize();
 
     protected:
       Element *parent;

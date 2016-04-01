@@ -57,7 +57,7 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-  void RigidBodyObserver::plot(double t, double dt) {
+  void RigidBodyObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Vec3 r = body->getFrame("C")->getPosition();
       Vec3 om = body->getFrame("C")->getAngularVelocity();
@@ -68,7 +68,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVAxisOfRotation) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -79,7 +79,7 @@ namespace MBSim {
           openMBVAxisOfRotation->append(data);
         }
       }
-      Observer::plot(t,dt);
+      Observer::plot();
     }
   }
 }

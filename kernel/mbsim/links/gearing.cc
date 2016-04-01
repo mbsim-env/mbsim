@@ -254,10 +254,10 @@ namespace MBSim {
     func->init(stage);
   }
 
-  void Gearing::plot(double t,double dt) {
+  void Gearing::plot() {
     plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
-      MechanicalLink::plot(t,dt);
+      MechanicalLink::plot();
     }
   }
 

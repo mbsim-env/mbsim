@@ -46,10 +46,10 @@ namespace MBSim {
     updJac[2] = true;
   }
 
-  void Frame::plot(double t, double dt) {
+  void Frame::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
-        if(updPos) updatePositions(t);
+        if(updPos) updatePositions(0.);
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
         Vec3 cardan=AIK2Cardan(AWP);
@@ -57,14 +57,14 @@ namespace MBSim {
           plotVector.push_back(cardan(i));
       }
       if(getPlotFeature(globalVelocity)==enabled) {
-        if(updVel) updateVelocities(t);
+        if(updVel) updateVelocities(0.);
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
       if(getPlotFeature(globalAcceleration)==enabled) {
-        if(updAcc) updateAccelerations(t);
+        if(updAcc) updateAccelerations(0.);
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
         for(int i=0; i<3; i++)
@@ -73,9 +73,9 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
-          if(updPos) updatePositions(t);
+          if(updPos) updatePositions(0.);
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(WrOP(0));
           data.push_back(WrOP(1));
           data.push_back(WrOP(2));
@@ -88,7 +88,7 @@ namespace MBSim {
         }
       }
 #endif
-      Element::plot(t,dt);
+      Element::plot();
     }
   }
 

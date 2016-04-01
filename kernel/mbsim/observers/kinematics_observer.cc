@@ -94,13 +94,13 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-  void KinematicsObserver::plot(double t, double dt) {
+  void KinematicsObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVPosition&& !openMBVPosition->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -113,7 +113,7 @@ namespace MBSim {
         }
         if(openMBVVelocity&& !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
@@ -127,7 +127,7 @@ namespace MBSim {
         }
         if(openMBVAngularVelocity&& !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
@@ -141,7 +141,7 @@ namespace MBSim {
         }
         if(openMBVAcceleration&& !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
@@ -155,12 +155,12 @@ namespace MBSim {
         }
         if(openMBVAngularAcceleration&& !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           Vec3 r = frame->evalPosition();
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          Vec3 psi = frame->getAngularAcceleration(t);
+          Vec3 psi = frame->evalAngularAcceleration();
           data.push_back(psi(0));
           data.push_back(psi(1));
           data.push_back(psi(2));
@@ -170,7 +170,7 @@ namespace MBSim {
       }
 #endif
 
-      Observer::plot(t,dt);
+      Observer::plot();
     }
   }
 
@@ -295,7 +295,7 @@ namespace MBSim {
       KinematicsObserver::init(stage);
   }
 
-  void RelativeKinematicsObserver::plot(double t, double dt) {
+  void RelativeKinematicsObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Vec3 vP = frame->evalVelocity();
       Vec3 vOs = refFrame->evalVelocity();
@@ -310,7 +310,7 @@ namespace MBSim {
       Vec3 aP = frame->evalAcceleration();
       Vec3 aOs = refFrame->evalAcceleration();
       Vec3 aOsP = aP - aOs;
-      Vec3 psiB = refFrame->getAngularAcceleration(t);
+      Vec3 psiB = refFrame->evalAngularAcceleration();
       Vec3 aRot = crossProduct(psiB,rOsP);
       Vec3 aZp = crossProduct(omB,crossProduct(omB,rOsP));
       Vec3 aCor = 2.*crossProduct(omB,vRel);
@@ -318,7 +318,7 @@ namespace MBSim {
       Vec3 aF = aOs + aRot + aZp;
       Vec3 omK = frame->evalAngularVelocity();
       Vec3 omBK = omK - omB;
-      Vec3 psiK = frame->getAngularAcceleration(t);
+      Vec3 psiK = frame->evalAngularAcceleration();
       Vec3 psiBK = psiK - psiB;
       Vec3 psiRot = crossProduct(omB, omBK);
       Vec3 psiRel = psiBK - psiRot;
@@ -327,7 +327,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVPosition&& !openMBVPosition->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -337,7 +337,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVrTrans->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOOs(0));
           data.push_back(rOOs(1));
           data.push_back(rOOs(2));
@@ -349,7 +349,7 @@ namespace MBSim {
         }
         if(openMBVVelocity&& !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOOs(0));
           data.push_back(rOOs(1));
           data.push_back(rOOs(2));
@@ -359,7 +359,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVvTrans->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -369,7 +369,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVvRot->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -379,7 +379,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVvRel->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -391,7 +391,7 @@ namespace MBSim {
         }
         if(openMBVAcceleration&& !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOOs(0));
           data.push_back(rOOs(1));
           data.push_back(rOOs(2));
@@ -401,7 +401,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVaTrans->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -411,7 +411,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVaRot->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -421,7 +421,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVaZp->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -431,7 +431,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVaCor->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -441,7 +441,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVaRel->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOP(0));
           data.push_back(rOP(1));
           data.push_back(rOP(2));
@@ -453,7 +453,7 @@ namespace MBSim {
         }
         if(openMBVAngularVelocity&& !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -463,7 +463,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVomTrans->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOOs(0));
           data.push_back(rOOs(1));
           data.push_back(rOOs(2));
@@ -475,7 +475,7 @@ namespace MBSim {
         }
         if(openMBVAngularAcceleration&& !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -485,7 +485,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVpsiTrans->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOOs(0));
           data.push_back(rOOs(1));
           data.push_back(rOOs(2));
@@ -495,7 +495,7 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVpsiRot->append(data);
           data.clear();
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(rOOs(0));
           data.push_back(rOOs(1));
           data.push_back(rOOs(2));
@@ -508,7 +508,7 @@ namespace MBSim {
       }
 #endif
 
-      KinematicsObserver::plot(t,dt);
+      KinematicsObserver::plot();
     }
   }
 

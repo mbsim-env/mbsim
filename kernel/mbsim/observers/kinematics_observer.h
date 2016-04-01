@@ -42,7 +42,7 @@ namespace MBSim {
       KinematicsObserver(const std::string &name="");
       void setFrame(Frame *frame_) { frame = frame_; } 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -91,7 +91,7 @@ namespace MBSim {
       void setFrameOfReference(Frame *frame_) { refFrame = frame_; }
 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };
 

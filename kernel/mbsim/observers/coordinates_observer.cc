@@ -87,7 +87,7 @@ namespace MBSim {
       Observer::init(stage);
   }
 
-  void CoordinatesObserver::plot(double t, double dt) {
+  void CoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -97,7 +97,7 @@ namespace MBSim {
 
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -110,7 +110,7 @@ namespace MBSim {
 
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -123,7 +123,7 @@ namespace MBSim {
 
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -136,7 +136,7 @@ namespace MBSim {
       }
 #endif
 
-      Observer::plot(t,dt);
+      Observer::plot();
     }
   }
 
@@ -223,7 +223,7 @@ namespace MBSim {
       CoordinatesObserver::init(stage);
   }
 
-  void CartesianCoordinatesObserver::plot(double t, double dt) {
+  void CartesianCoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -234,7 +234,7 @@ namespace MBSim {
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
           Vec3 rx =  (r.T()*ex)*ex;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -245,7 +245,7 @@ namespace MBSim {
           openMBVXPosition->append(data);
           data.clear();
           Vec3 ry =  (r.T()*ey)*ey;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -256,7 +256,7 @@ namespace MBSim {
           openMBVYPosition->append(data);
           data.clear();
           Vec3 rz =  (r.T()*ez)*ez;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -270,7 +270,7 @@ namespace MBSim {
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           Vec3 vx =  (v.T()*ex)*ex;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -281,7 +281,7 @@ namespace MBSim {
           openMBVXVelocity->append(data);
           data.clear();
           Vec3 vy =  (v.T()*ey)*ey;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -292,7 +292,7 @@ namespace MBSim {
           openMBVYVelocity->append(data);
           data.clear();
           Vec3 vz =  (v.T()*ez)*ez;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -306,7 +306,7 @@ namespace MBSim {
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           Vec3 ax =  (a.T()*ex)*ex;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -317,7 +317,7 @@ namespace MBSim {
           openMBVXAcceleration->append(data);
           data.clear();
           Vec3 ay =  (a.T()*ey)*ey;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -328,7 +328,7 @@ namespace MBSim {
           openMBVYAcceleration->append(data);
           data.clear();
           Vec3 az =  (a.T()*ez)*ez;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -345,7 +345,7 @@ namespace MBSim {
           AWP.set(0, ex);
           AWP.set(1, ey);
           AWP.set(2, ez);
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -359,7 +359,7 @@ namespace MBSim {
       }
 #endif
 
-      CoordinatesObserver::plot(t,dt);
+      CoordinatesObserver::plot();
     }
   }
 
@@ -415,7 +415,7 @@ namespace MBSim {
       CoordinatesObserver::init(stage);
   }
 
-  void CylinderCoordinatesObserver::plot(double t, double dt) {
+  void CylinderCoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -443,7 +443,7 @@ namespace MBSim {
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
           Vec3 rr =  (r.T()*er)*er;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -454,7 +454,7 @@ namespace MBSim {
           openMBVRadialPosition->append(data);
           data.clear();
           Vec3 rz =  (r.T()*ez)*ez;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -468,7 +468,7 @@ namespace MBSim {
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           Vec3 vr =  (v.T()*er)*er;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -479,7 +479,7 @@ namespace MBSim {
           openMBVRadialVelocity->append(data);
           data.clear();
           Vec3 vp =  (v.T()*ep)*ep;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -490,7 +490,7 @@ namespace MBSim {
           openMBVCircularVelocity->append(data);
           data.clear();
           Vec3 vz =  (v.T()*ez)*ez;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -504,7 +504,7 @@ namespace MBSim {
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           Vec3 ar =  (a.T()*er)*er;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -515,7 +515,7 @@ namespace MBSim {
           openMBVRadialAcceleration->append(data);
           data.clear();
           Vec3 ap =  (a.T()*ep)*ep;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -526,7 +526,7 @@ namespace MBSim {
           openMBVCircularAcceleration->append(data);
           data.clear();
           Vec3 az =  (a.T()*ez)*ez;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -543,7 +543,7 @@ namespace MBSim {
           AWP.set(0, er);
           AWP.set(1, ep);
           AWP.set(2, ez);
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
@@ -557,7 +557,7 @@ namespace MBSim {
       }
 #endif
 
-      CoordinatesObserver::plot(t,dt);
+      CoordinatesObserver::plot();
     }
   }
 
@@ -590,7 +590,7 @@ namespace MBSim {
       CoordinatesObserver::init(stage);
   }
 
-  void NaturalCoordinatesObserver::plot(double t, double dt) {
+  void NaturalCoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -624,7 +624,7 @@ namespace MBSim {
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           Vec3 at =  (a.T()*et)*et;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -635,7 +635,7 @@ namespace MBSim {
           openMBVTangentialAcceleration->append(data);
           data.clear();
           Vec3 an =  (a.T()*en)*en;
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -652,7 +652,7 @@ namespace MBSim {
           AWP.set(0, et);
           AWP.set(1, en);
           AWP.set(2, eb);
-          data.push_back(t);
+          data.push_back(getTime());
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -666,7 +666,7 @@ namespace MBSim {
       }
 #endif
 
-      CoordinatesObserver::plot(t,dt);
+      CoordinatesObserver::plot();
     }
   }
 

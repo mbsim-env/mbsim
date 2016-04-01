@@ -42,9 +42,9 @@ namespace MBSim {
     THROW_MBSIMERROR("Internal error");
   }
 
-  void ContourLink::plot(double t, double dt) {
+  void ContourLink::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Link::plot(t,dt);
+      Link::plot();
     }
   }
 

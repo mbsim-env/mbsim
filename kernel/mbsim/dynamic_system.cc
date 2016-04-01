@@ -332,26 +332,38 @@ namespace MBSim {
 
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->setDynamicSystemSolver(sys);
+
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->setDynamicSystemSolver(sys);
+
+    for (unsigned i = 0; i < frame.size(); i++)
+      frame[i]->setDynamicSystemSolver(sys);
+
+    for (unsigned i = 0; i < contour.size(); i++)
+      contour[i]->setDynamicSystemSolver(sys);
+
+    for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->setDynamicSystemSolver(sys);
   }
 
-  void DynamicSystem::plot(double t, double dt) {
+  void DynamicSystem::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
       for (unsigned i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->plot(t, dt);
+        dynamicsystem[i]->plot();
       for (unsigned i = 0; i < object.size(); i++)
-        object[i]->plot(t, dt);
+        object[i]->plot();
       for (unsigned i = 0; i < link.size(); i++)
-        link[i]->plot(t, dt);
+        link[i]->plot();
       for (unsigned i = 0; i < constraint.size(); i++)
-        constraint[i]->plot(t, dt);
+        constraint[i]->plot();
       for (unsigned i = 0; i < frame.size(); i++)
-        frame[i]->plot(t, dt);
+        frame[i]->plot();
       for (unsigned i = 0; i < contour.size(); i++)
-        contour[i]->plot(t, dt);
+        contour[i]->plot();
       for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
-        inverseKineticsLink[i]->plot(t, dt);
+        inverseKineticsLink[i]->plot();
       for (unsigned i = 0; i < observer.size(); i++)
-        observer[i]->plot(t, dt);
+        observer[i]->plot();
     }
   }
   

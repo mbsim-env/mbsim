@@ -77,7 +77,7 @@ namespace MBSim {
        */
       void setForceDirection(const fmatvec::Vec3 &dir) { forceDir=dir/nrm2(dir); }
 
-      void plot(double t, double dt=1);
+      void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

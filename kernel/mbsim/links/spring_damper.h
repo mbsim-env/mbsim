@@ -67,7 +67,7 @@ namespace MBSim {
       /** \brief Set unloaded length. */
       void setUnloadedLength(double l0_) { l0 = l0_; }
 
-      void plot(double t, double dt=1);
+      void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

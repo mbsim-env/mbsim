@@ -38,14 +38,14 @@ namespace MBSim {
     setPlotFeature(linkKinematics, enabled);
   }
 
-  void Link::plot(double t, double dt) {
+  void Link::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled)
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(x(i));
       if(getPlotFeature(stateDerivative)==enabled)
         for(int i=0; i<xSize; ++i)
-          plotVector.push_back(xd(i)/dt);
+          plotVector.push_back(xd(i)/getStepSize());
       if(getPlotFeature(linkKinematics)==enabled) {
         for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
           plotVector.push_back(rrel(i));
@@ -63,7 +63,7 @@ namespace MBSim {
         plotVector.push_back(computePotentialEnergy()); 
       }
 
-      Element::plot(t,dt);
+      Element::plot();
     }
   }
 

@@ -104,12 +104,12 @@ namespace MBSim {
     return R->evalOrientation()*getKt(zeta);
   }
 
-  void RigidContour::plot(double t, double dt) {
+  void RigidContour::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
         vector<double> data;
-        data.push_back(t);
+        data.push_back(getTime());
         data.push_back(R->evalPosition()(0));
         data.push_back(R->getPosition()(1));
         data.push_back(R->getPosition()(2));
@@ -121,7 +121,7 @@ namespace MBSim {
         openMBVRigidBody->append(data);
       }
 #endif
-      Contour::plot(t,dt);
+      Contour::plot();
     }
   }
 

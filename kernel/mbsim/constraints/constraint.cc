@@ -70,16 +70,16 @@ namespace MBSim {
     x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
   }
 
-  void Constraint::plot(double t, double dt) {
+  void Constraint::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled)
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(x(i));
       if(getPlotFeature(stateDerivative)==enabled)
         for(int i=0; i<xSize; ++i)
-          plotVector.push_back(xd(i)/dt);
+          plotVector.push_back(xd(i)/getStepSize());
 
-      Element::plot(t,dt);
+      Element::plot();
     }
   }
 

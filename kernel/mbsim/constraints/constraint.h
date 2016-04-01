@@ -48,7 +48,7 @@ namespace MBSim {
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *group);
       std::string getType() const { return "Constraint"; }
-      virtual void plot(double t, double dt = 1);
+      virtual void plot();
       virtual void closePlot();
       virtual void setUpInverseKinetics() {}
 #ifdef HAVE_OPENMBVCPPINTERFACE

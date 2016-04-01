@@ -70,7 +70,7 @@ namespace MBSim {
     func->init(stage);
   }
 
-  void SpringDamper::plot(double t,double dt) {
+  void SpringDamper::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -81,7 +81,7 @@ namespace MBSim {
           WrOFromPoint = frame[0]->evalPosition();
           WrOToPoint   = frame[1]->evalPosition();
           vector<double> data;
-          data.push_back(t); 
+          data.push_back(getTime());
           data.push_back(WrOFromPoint(0));
           data.push_back(WrOFromPoint(1));
           data.push_back(WrOFromPoint(2));
@@ -93,7 +93,7 @@ namespace MBSim {
         }
       }
 #endif
-      FrameLink::plot(t,dt);
+      FrameLink::plot();
     }
   }
 

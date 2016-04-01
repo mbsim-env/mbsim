@@ -48,7 +48,7 @@ namespace MBSim {
       void setFrameOfReference(Frame* frame) { ref = frame; } 
 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {

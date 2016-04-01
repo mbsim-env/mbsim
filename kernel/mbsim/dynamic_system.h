@@ -135,7 +135,7 @@ namespace MBSim {
       /** DEPRECATED */
       virtual std::string getType() const { return "DynamicSystem"; }
       virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
-      virtual void plot(double t, double dt);
+      virtual void plot();
       virtual void plotAtSpecialEvent(double t, double dt=1.);
       virtual void closePlot();
       /*****************************************************/

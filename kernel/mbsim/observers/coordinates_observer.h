@@ -43,7 +43,7 @@ namespace MBSim {
       void setFrame(Frame *frame_) { frame = frame_; } 
 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -81,7 +81,7 @@ namespace MBSim {
       CartesianCoordinatesObserver(const std::string &name="");
 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
   };
 
   class CylinderCoordinatesObserver : public CoordinatesObserver {
@@ -95,7 +95,7 @@ namespace MBSim {
       CylinderCoordinatesObserver(const std::string &name="");
 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
   };
 
   class NaturalCoordinatesObserver : public CoordinatesObserver {
@@ -108,7 +108,7 @@ namespace MBSim {
       NaturalCoordinatesObserver(const std::string &name="");
 
       void init(InitStage stage);
-      virtual void plot(double t, double dt);
+      virtual void plot();
   };  
 
 }

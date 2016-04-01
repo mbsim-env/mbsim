@@ -90,7 +90,7 @@ namespace MBSim {
     func->init(stage);
   }
 
-  void GeneralizedSpringDamper::plot(double t,double dt) {
+  void GeneralizedSpringDamper::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (coilspringOpenMBV) {
@@ -100,7 +100,7 @@ namespace MBSim {
         WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->evalPosition():body[1]->getFrameOfReference()->evalPosition();
         WrOToPoint   = body[1]->getFrameForKinematics()->evalPosition();
         vector<double> data;
-        data.push_back(t);
+        data.push_back(getTime());
         data.push_back(WrOFromPoint(0));
         data.push_back(WrOFromPoint(1));
         data.push_back(WrOFromPoint(2));
@@ -111,7 +111,7 @@ namespace MBSim {
         coilspringOpenMBV->append(data);
       }
 #endif
-      RigidBodyLink::plot(t,dt);
+      RigidBodyLink::plot();
     }
   }
 

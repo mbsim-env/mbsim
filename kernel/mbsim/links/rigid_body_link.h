@@ -61,12 +61,12 @@ namespace MBSim {
       void updateForceDirections(double t);
       void updateR(double t);
       void updatewb(double t);
-      const fmatvec::Mat3xV& getGlobalForceDirection(double t, int i) { if(updFD) updateForceDirections(t); return DF[i]; }
-      const fmatvec::Mat3xV& getGlobalMomentDirection(double t, int i) { if(updFD) updateForceDirections(t); return DM[i]; }
-      const fmatvec::Vec3& getForce(double t, int i) { if(updF) updateForce(t); return F[i]; }
-      const fmatvec::Vec3& getMoment(double t, int i) { if(updM) updateMoment(t); return M[i]; }
-      const fmatvec::Mat3xV& getRF(double t, int i) { if(updRMV) updateR(t); return RF[i]; }
-      const fmatvec::Mat3xV& getRM(double t, int i) { if(updRMV) updateR(t); return RM[i]; }
+      const fmatvec::Mat3xV& getGlobalForceDirection(int i) { if(updFD) updateForceDirections(0.); return DF[i]; }
+      const fmatvec::Mat3xV& getGlobalMomentDirection(int i) { if(updFD) updateForceDirections(0.); return DM[i]; }
+      const fmatvec::Vec3& getForce(int i) { if(updF) updateForce(0.); return F[i]; }
+      const fmatvec::Vec3& getMoment(int i) { if(updM) updateMoment(0.); return M[i]; }
+      const fmatvec::Mat3xV& getRF(int i) { if(updRMV) updateR(0.); return RF[i]; }
+      const fmatvec::Mat3xV& getRM(int i) { if(updRMV) updateR(0.); return RM[i]; }
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
@@ -77,7 +77,7 @@ namespace MBSim {
       std::string getType() const { return "RigidBodyLink"; }
       void init(InitStage stage);
 
-      void plot(double t, double dt=1);
+      void plot();
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
