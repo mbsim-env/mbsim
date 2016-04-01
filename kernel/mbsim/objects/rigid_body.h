@@ -76,16 +76,16 @@ namespace MBSim {
       void updateGeneralizedJacobians(double t, int j=0); 
       void updatePositions();
       void updateVelocities();
-      void updateJacobians(double t);
-      void updateGyroscopicAccelerations(double t);
+      void updateJacobians();
+      void updateGyroscopicAccelerations();
       void updatePositions(Frame *frame);
       void updateVelocities(Frame *frame);
-      void updateAccelerations(double t, Frame *frame);
-      void updateJacobians(double t, Frame *frame, int j=0) { (this->*updateJacobians_[j])(t,frame); }
-      void updateGyroscopicAccelerations(double t, Frame *frame);
-      void updateJacobians0(double t, Frame *frame);
-      void updateJacobians1(double t, Frame *frame) { }
-      void updateJacobians2(double t, Frame *frame);
+      void updateAccelerations(Frame *frame);
+      void updateJacobians(Frame *frame, int j=0) { (this->*updateJacobians_[j])(frame); }
+      void updateGyroscopicAccelerations(Frame *frame);
+      void updateJacobians0(Frame *frame);
+      void updateJacobians1(Frame *frame) { }
+      void updateJacobians2(Frame *frame);
 
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
@@ -183,10 +183,10 @@ namespace MBSim {
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvPKrel; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomPK; }
       const fmatvec::SymMat3& evalGlobalInertiaTensor() { if(updWTS) updateInertiaTensor(0.); return WThetaS; }
-      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(0.); return PjbT; }
-      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(0.); return PjbR; }
-      const fmatvec::Mat3xV& evalPJTT() { if(updPJ) updateJacobians(0.); return PJTT; }
-      const fmatvec::Mat3xV& evalPJRR() { if(updPJ) updateJacobians(0.); return PJRR; }
+      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
+      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
+      const fmatvec::Mat3xV& evalPJTT() { if(updPJ) updateJacobians(); return PJTT; }
+      const fmatvec::Mat3xV& evalPJRR() { if(updPJ) updateJacobians(); return PJRR; }
 
       /**
        * \param RThetaR  inertia tensor
@@ -348,7 +348,7 @@ namespace MBSim {
        */
       void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
 
-      void (RigidBody::*updateJacobians_[3])(double t, Frame *frame);
+      void (RigidBody::*updateJacobians_[3])(Frame *frame);
 
       /** a pointer to Frame "C" */
       FixedRelativeFrame *C;

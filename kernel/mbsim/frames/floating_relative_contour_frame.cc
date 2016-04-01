@@ -39,19 +39,19 @@ namespace MBSim {
     updVel = false;
   }
 
-  void FloatingRelativeContourFrame::updateAccelerations(double t) { 
-    setAngularAcceleration(R->getAngularAcceleration(t));
+  void FloatingRelativeContourFrame::updateAccelerations() {
+    setAngularAcceleration(R->evalAngularAcceleration());
     setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), evalGlobalRelativePosition()) + crossProduct(R->evalAngularVelocity(), crossProduct(R->evalAngularVelocity(), evalGlobalRelativePosition())));
     updAcc = true;
   }
 
-  void FloatingRelativeContourFrame::updateJacobians(double t, int j) {
+  void FloatingRelativeContourFrame::updateJacobians(int j) {
     setJacobianOfRotation(R->evalJacobianOfRotation(j),j);
     setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition())*R->getJacobianOfRotation(j),j);
     updJac[j] = false;
   }
 
-  void FloatingRelativeContourFrame::updateGyroscopicAccelerations(double t) {
+  void FloatingRelativeContourFrame::updateGyroscopicAccelerations() {
     setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation());
     setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition()) + crossProduct(R->evalAngularVelocity(),crossProduct(R->evalAngularVelocity(),evalGlobalRelativePosition())));
     updGA = false;

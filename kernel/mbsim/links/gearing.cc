@@ -52,7 +52,7 @@ namespace MBSim {
     gdSize = 1;
   }
 
-  void Gearing::updateJacobians(double t, int j) {
+  void Gearing::updateJacobians(int j) {
     Mat3x3 tWrP0Z = tilde(WrP0Z);
     Mat3x3 tWrP1Z = tilde(WrP1Z);
 

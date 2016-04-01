@@ -205,15 +205,15 @@ namespace MBSim {
     THROW_MBSIMERROR("(Contour::updateVelocities): Not implemented.");
   }
 
-  void Contour::updateAccelerations(double t, ContourFrame *frame) {
+  void Contour::updateAccelerations(ContourFrame *frame) {
     THROW_MBSIMERROR("(Contour::updateAccelerations): Not implemented.");
   }
 
-  void Contour::updateJacobians(double t, ContourFrame *frame, int j) {
+  void Contour::updateJacobians(ContourFrame *frame, int j) {
     THROW_MBSIMERROR("(Contour::updateJacobians): Not implemented.");
   }
 
-  void Contour::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
+  void Contour::updateGyroscopicAccelerations(ContourFrame *frame) {
     THROW_MBSIMERROR("(Contour::updateGyroscopicAccelerations): Not implemented.");
   }
 

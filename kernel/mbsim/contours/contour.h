@@ -214,9 +214,9 @@ namespace MBSim {
 
       virtual void updatePositions(ContourFrame *frame);
       virtual void updateVelocities(ContourFrame *frame);
-      virtual void updateAccelerations(double t, ContourFrame *frame);
-      virtual void updateJacobians(double t, ContourFrame *frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, ContourFrame *frame);
+      virtual void updateAccelerations(ContourFrame *frame);
+      virtual void updateJacobians(ContourFrame *frame, int j=0);
+      virtual void updateGyroscopicAccelerations(ContourFrame *frame);
 
       void setThickness(double thickness_) { thickness = thickness_; }
       double getThickness() const { return thickness; }

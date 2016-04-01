@@ -281,9 +281,9 @@ namespace MBSim {
 
       virtual void updatePositions(Frame *frame) { }
       virtual void updateVelocities(Frame *frame) { }
-      virtual void updateAccelerations(double t, Frame *frame) { }
-      virtual void updateJacobians(double t, Frame *frame, int j=0) { }
-      virtual void updateGyroscopicAccelerations(double t, Frame *frame) { }
+      virtual void updateAccelerations(Frame *frame) { }
+      virtual void updateJacobians(Frame *frame, int j=0) { }
+      virtual void updateGyroscopicAccelerations(Frame *frame) { }
 
       virtual void resetUpToDate() {}
 

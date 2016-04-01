@@ -71,7 +71,7 @@ namespace MBSim {
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t);
-      virtual void updateJacobians(double t, int j = 0);
+      virtual void updateJacobians(int j = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */

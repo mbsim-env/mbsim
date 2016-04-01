@@ -123,10 +123,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateJacobians(double t, int j) {
+  void Contact::updateJacobians(int j) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateJacobians(t, j);
+        jter->updateJacobians(j);
     }
   }
 

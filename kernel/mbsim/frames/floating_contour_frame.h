@@ -39,9 +39,9 @@ namespace MBSim {
 
       void updatePositions();
       void updateVelocities();
-      void updateAccelerations(double t);
-      void updateJacobians(double t, int j=0);
-      void updateGyroscopicAccelerations(double t);
+      void updateAccelerations();
+      void updateJacobians(int j=0);
+      void updateGyroscopicAccelerations();
 
       void setContourOfReference(Contour *contour_) { contour = contour_; }
 

@@ -33,18 +33,18 @@ namespace MBSim {
     updVel = false;
   }
 
-  void FloatingContourFrame::updateAccelerations(double t) {
-    contour->updateAccelerations(t,this);
+  void FloatingContourFrame::updateAccelerations() {
+    contour->updateAccelerations(this);
     updAcc = true;
   }
 
-  void FloatingContourFrame::updateJacobians(double t, int j) {
-    contour->updateJacobians(t,this,j);
+  void FloatingContourFrame::updateJacobians(int j) {
+    contour->updateJacobians(this,j);
     updJac[j] = false;
   }
 
-  void FloatingContourFrame::updateGyroscopicAccelerations(double t) {
-    contour->updateGyroscopicAccelerations(t,this);
+  void FloatingContourFrame::updateGyroscopicAccelerations() {
+    contour->updateGyroscopicAccelerations(this);
     updGA = false;
   }
 

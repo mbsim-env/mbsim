@@ -88,32 +88,32 @@ namespace MBSim {
       const fmatvec::Vec3& getAcceleration(bool check=true) const { assert((not check) or (not updAcc)); return WaP; }
       fmatvec::Vec3& getAcceleration(bool check=true) { assert((not check) or (not updAcc)); return WaP; }
       void setAcceleration(const fmatvec::Vec3 &a) { WaP = a; }
-      const fmatvec::Vec3& evalAcceleration() { if(updAcc) updateAccelerations(0.); return WaP; }
+      const fmatvec::Vec3& evalAcceleration() { if(updAcc) updateAccelerations(); return WaP; }
 
       const fmatvec::Vec3& getAngularAcceleration(bool check=true) const { assert((not check) or (not updAcc)); return WpsiP; }
       fmatvec::Vec3& getAngularAcceleration(bool check=true) { assert((not check) or (not updAcc)); return WpsiP; }
       void setAngularAcceleration(const fmatvec::Vec3 &psi) { WpsiP = psi; }
-      const fmatvec::Vec3& evalAngularAcceleration() { if(updAcc) updateAccelerations(0.); return WpsiP; }
+      const fmatvec::Vec3& evalAngularAcceleration() { if(updAcc) updateAccelerations(); return WpsiP; }
 
       const fmatvec::Mat3xV& getJacobianOfTranslation(int j=0, bool check=true) const { assert((not check) or (not updJac[j])); return WJP[j]; }
       fmatvec::Mat3xV& getJacobianOfTranslation(int j=0, bool check=true) { assert((not check) or (not updJac[j])); return WJP[j]; }
       void setJacobianOfTranslation(const fmatvec::Mat3xV &WJP_, int j=0) { WJP[j] = WJP_; }
-      const fmatvec::Mat3xV& evalJacobianOfTranslation(int j=0) { if(updJac[j]) updateJacobians(0.,j); return WJP[j]; }
+      const fmatvec::Mat3xV& evalJacobianOfTranslation(int j=0) { if(updJac[j]) updateJacobians(j); return WJP[j]; }
 
       const fmatvec::Mat3xV& getJacobianOfRotation(int j=0, bool check=true) const { assert((not check) or (not updJac[j])); return WJR[j]; }
       fmatvec::Mat3xV& getJacobianOfRotation(int j=0, bool check=true) { assert((not check) or (not updJac[j])); return WJR[j]; }
       void setJacobianOfRotation(const fmatvec::Mat3xV &WJR_, int j=0) { WJR[j] = WJR_; }
-      const fmatvec::Mat3xV& evalJacobianOfRotation(int j=0) { if(updJac[j]) updateJacobians(0.,j); return WJR[j]; }
+      const fmatvec::Mat3xV& evalJacobianOfRotation(int j=0) { if(updJac[j]) updateJacobians(j); return WJR[j]; }
 
       const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(bool check=true) const { assert((not check) or (not updGA)); return WjP; }
       fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(bool check=true) { assert((not check) or (not updGA)); return WjP; }
       void setGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP_) { WjP = WjP_; }
-      const fmatvec::Vec3& evalGyroscopicAccelerationOfTranslation() { if(updGA) updateGyroscopicAccelerations(0.); return WjP; }
+      const fmatvec::Vec3& evalGyroscopicAccelerationOfTranslation() { if(updGA) updateGyroscopicAccelerations(); return WjP; }
 
       const fmatvec::Vec3& getGyroscopicAccelerationOfRotation(bool check=true) const { assert((not check) or (not updGA)); return WjR; }
       fmatvec::Vec3& getGyroscopicAccelerationOfRotation(bool check=true) { assert((not check) or (not updGA)); return WjR; }
       void setGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR_) { WjR = WjR_; }
-      const fmatvec::Vec3& evalGyroscopicAccelerationOfRotation() { if(updGA) updateGyroscopicAccelerations(0.); return WjR; }
+      const fmatvec::Vec3& evalGyroscopicAccelerationOfRotation() { if(updGA) updateGyroscopicAccelerations(); return WjR; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -134,9 +134,9 @@ namespace MBSim {
       virtual void resetGyroscopicAccelerationsUpToDate();
       virtual void updatePositions() { parent->updatePositions(this); updPos = false; }
       virtual void updateVelocities() { parent->updateVelocities(this); updVel = false; }
-      virtual void updateAccelerations(double t) { parent->updateAccelerations(t,this); updAcc = false; }
-      virtual void updateJacobians(double t, int j=0) { parent->updateJacobians(t,this,j); updJac[j] = false; }
-      virtual void updateGyroscopicAccelerations(double t) { parent->updateGyroscopicAccelerations(t,this); updGA = false; }
+      virtual void updateAccelerations() { parent->updateAccelerations(this); updAcc = false; }
+      virtual void updateJacobians(int j=0) { parent->updateJacobians(this,j); updJac[j] = false; }
+      virtual void updateGyroscopicAccelerations() { parent->updateGyroscopicAccelerations(this); updGA = false; }
 
     protected:
       /**

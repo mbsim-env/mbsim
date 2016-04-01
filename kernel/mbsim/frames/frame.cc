@@ -64,7 +64,7 @@ namespace MBSim {
           plotVector.push_back(WomegaP(i));
       }
       if(getPlotFeature(globalAcceleration)==enabled) {
-        if(updAcc) updateAccelerations(0.);
+        if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
         for(int i=0; i<3; i++)
