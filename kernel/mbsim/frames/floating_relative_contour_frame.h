@@ -43,7 +43,7 @@ namespace MBSim {
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrRP; }
 
       void updatePositions();
-      void updateVelocities(double t); 
+      void updateVelocities();
       void updateAccelerations(double t); 
       void updateJacobians(double t, int j=0);
       void updateGyroscopicAccelerations(double t);

@@ -455,7 +455,7 @@ namespace MBSim {
     updPos = false;
   }
 
-  void RigidBody::updateVelocities(double t) {
+  void RigidBody::updateVelocities() {
     if(fPrPK) WvPKrel = R->evalOrientation()*(evalPJTT()*evaluTRel() + PjhT);
     if(fAPK) WomPK = frameForJacobianOfRotation->evalOrientation()*(evalPJRR()*evaluRRel() + PjhR);
     updVel = false;
@@ -508,7 +508,7 @@ namespace MBSim {
     frame->setOrientation(R->getOrientation()*APK); // APK already update to date
   }
 
-  void RigidBody::updateVelocities(double t, Frame *frame) {
+  void RigidBody::updateVelocities(Frame *frame) {
     frame->setAngularVelocity(R->evalAngularVelocity() + evalGlobalRelativeAngularVelocity());
     frame->setVelocity(R->getVelocity() + WvPKrel + crossProduct(R->getAngularVelocity(),evalGlobalRelativePosition())); // WvPKrel already update to date
   }

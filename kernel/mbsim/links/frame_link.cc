@@ -157,7 +157,7 @@ namespace MBSim {
     updPos = false;
   }
 
-  void FrameLink::updateVelocities(double t) {
+  void FrameLink::updateVelocities() {
     WvP0P1=frame[1]->evalVelocity() - frame[0]->evalVelocity();
     updVel = false;
   }

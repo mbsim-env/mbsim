@@ -67,7 +67,7 @@ namespace MBSim {
     updPos = false;
   }
 
-  void FloatingRelativeFrame::updateVelocities(double t) { 
+  void FloatingRelativeFrame::updateVelocities() {
     setAngularVelocity(R->evalAngularVelocity());
     setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), evalGlobalRelativePosition()));
     updVel = false;

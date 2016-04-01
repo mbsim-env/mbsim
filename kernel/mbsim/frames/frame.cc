@@ -57,7 +57,7 @@ namespace MBSim {
           plotVector.push_back(cardan(i));
       }
       if(getPlotFeature(globalVelocity)==enabled) {
-        if(updVel) updateVelocities(0.);
+        if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
         for(int i=0; i<3; i++)

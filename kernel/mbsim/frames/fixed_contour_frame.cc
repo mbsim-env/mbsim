@@ -28,8 +28,8 @@ namespace MBSim {
     updPos = false;
   }
 
-  void FixedContourFrame::updateVelocities(double t) {
-    contour->updateVelocities(t,this);
+  void FixedContourFrame::updateVelocities() {
+    contour->updateVelocities(this);
     updVel = false;
   }
 

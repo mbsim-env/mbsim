@@ -87,13 +87,13 @@ namespace MBSim {
 
       void resetUpToDate();
       virtual void updatePositions() { }
-      virtual void updateVelocities(double t) { }
+      virtual void updateVelocities() { }
       virtual void updateForceDirections(double t);
       void updateForce(double t);
       void updateMoment(double t);
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
-      const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(0.); return WvP0P1; }
-      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomP0P1; }
       const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(0.); return DF; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection() { if(updFD) updateForceDirections(0.); return DM; }
       const fmatvec::Vec3& evalForce() { if(updF) updateForce(0.); return F; }

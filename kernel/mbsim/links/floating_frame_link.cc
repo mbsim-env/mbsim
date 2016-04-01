@@ -145,7 +145,7 @@ namespace MBSim {
     frame_->setOrientation(frame[0]->evalOrientation());
   }
 
-  void FloatingFrameLink::updateVelocities(double t) {
+  void FloatingFrameLink::updateVelocities() {
     WvP0P1 = frame[1]->evalVelocity() - C.evalVelocity();
     WomP0P1 = frame[1]->evalAngularVelocity() - C.evalAngularVelocity();
     updVel = false;

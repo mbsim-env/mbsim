@@ -213,7 +213,7 @@ namespace MBSim {
       virtual fmatvec::Vec2 getZeta(const fmatvec::Vec3 &WrPS);
 
       virtual void updatePositions(ContourFrame *frame);
-      virtual void updateVelocities(double t, ContourFrame *frame);
+      virtual void updateVelocities(ContourFrame *frame);
       virtual void updateAccelerations(double t, ContourFrame *frame);
       virtual void updateJacobians(double t, ContourFrame *frame, int j=0);
       virtual void updateGyroscopicAccelerations(double t, ContourFrame *frame);

@@ -201,7 +201,7 @@ namespace MBSim {
     THROW_MBSIMERROR("(Contour::updatePositions): Not implemented.");
   }
 
-  void Contour::updateVelocities(double t, ContourFrame *frame) {
+  void Contour::updateVelocities(ContourFrame *frame) {
     THROW_MBSIMERROR("(Contour::updateVelocities): Not implemented.");
   }
 

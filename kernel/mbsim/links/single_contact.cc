@@ -118,7 +118,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedVelocities(double t) {
-    updateVelocities(t);
+    updateVelocities();
     updvrel = false;
   }
 
@@ -131,7 +131,7 @@ namespace MBSim {
     if(updPos) contactKinematics->updateg(getTime(), rrel(0), cFrame);
   }
 
-  void SingleContact::updateVelocities(double t) {
+  void SingleContact::updateVelocities() {
     if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
       Vec3 Wn = cFrame[0]->evalOrientation().col(0);
 
