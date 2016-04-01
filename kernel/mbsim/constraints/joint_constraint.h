@@ -61,7 +61,7 @@ namespace MBSim {
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateGeneralizedCoordinates();
-      void updateGeneralizedJacobians(double t, int j=0); 
+      void updateGeneralizedJacobians(int j=0);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 

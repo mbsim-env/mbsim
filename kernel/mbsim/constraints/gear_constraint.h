@@ -44,7 +44,7 @@ namespace MBSim {
       void setDependentBody(RigidBody* body_) {bd=body_; }
 
       void updateGeneralizedCoordinates();
-      void updateGeneralizedJacobians(double t, int j=0); 
+      void updateGeneralizedJacobians(int j=0);
       void setUpInverseKinetics();
 
       void initializeUsingXML(xercesc::DOMElement * element);

@@ -55,12 +55,12 @@ namespace MBSim {
     updGC = false;
   }
 
-  void GeneralizedVelocityConstraint::updateGeneralizedJacobians(double t, int jj) {
-    MatV J = f->parDer1(x,t);
+  void GeneralizedVelocityConstraint::updateGeneralizedJacobians(int jj) {
+    MatV J = f->parDer1(x,getTime());
     if(J.cols())
-      bd->getjRel(false) = J*xd + f->parDer2(x,t);
+      bd->getjRel(false) = J*xd + f->parDer2(x,getTime());
     else
-      bd->getjRel(false) = f->parDer2(x,t);
+      bd->getjRel(false) = f->parDer2(x,getTime());
     updGJ = false;
   }
 

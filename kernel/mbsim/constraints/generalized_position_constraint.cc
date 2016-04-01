@@ -42,8 +42,8 @@ namespace MBSim {
     updGC = false;
   }
 
-  void GeneralizedPositionConstraint::updateGeneralizedJacobians(double t, int jj) {
-    bd->getjRel(false) = f->parDerParDer(t);
+  void GeneralizedPositionConstraint::updateGeneralizedJacobians(int jj) {
+    bd->getjRel(false) = f->parDerParDer(getTime());
     updGJ = false;
   }
 

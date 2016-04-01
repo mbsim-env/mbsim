@@ -56,8 +56,8 @@ namespace MBSim {
     updGC = false;
   }
 
-  void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(double t, int jj) {
-    bd->getjRel(false) = (*f)(x,t);
+  void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(int jj) {
+    bd->getjRel(false) = (*f)(x,getTime());
     updGJ = false;
   }
 

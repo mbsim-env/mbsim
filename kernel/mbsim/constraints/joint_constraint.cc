@@ -240,7 +240,7 @@ namespace MBSim {
     updGC = false;
   }
 
-  void JointConstraint::updateGeneralizedJacobians(double t, int jj) {
+  void JointConstraint::updateGeneralizedJacobians(int jj) {
     if(jj == 0) {
 
       for(unsigned int i=0; i<bd1.size(); i++) {

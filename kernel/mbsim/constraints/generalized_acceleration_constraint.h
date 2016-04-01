@@ -55,7 +55,7 @@ namespace MBSim {
 
       void updatexd(double t);
       void updateGeneralizedCoordinates();
-      void updateGeneralizedJacobians(double t, int j=0);
+      void updateGeneralizedJacobians(int j=0);
 
       void initializeUsingXML(xercesc::DOMElement * element);
 

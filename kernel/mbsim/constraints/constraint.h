@@ -33,7 +33,7 @@ namespace MBSim {
     public:
       Constraint(const std::string &name);
       virtual void updateGeneralizedCoordinates() {}
-      virtual void updateGeneralizedJacobians(double t, int j=0) { }
+      virtual void updateGeneralizedJacobians(int j=0) { }
       virtual void updatedx(double t, double dt) { }
       virtual void updatexd(double t) { }
       virtual void calcxSize() { xSize = 0; }

@@ -444,7 +444,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateGeneralizedJacobians(double t, int j) {
-    if(constraint and constraint->getUpdateGeneralizedJacobians()) constraint->updateGeneralizedJacobians(getTime(),j);
+    if(constraint and constraint->getUpdateGeneralizedJacobians()) constraint->updateGeneralizedJacobians(j);
     updGJ = false;
   }
 
