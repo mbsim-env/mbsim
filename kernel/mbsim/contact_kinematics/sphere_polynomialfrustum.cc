@@ -94,7 +94,7 @@ namespace MBSim {
 
     /*construct the sphere enclosing the frustum*/
     //take center of the frustum as center of the sphere
-    Vec3 COG_FencS = AWF.T() * (frustum->getEnclosingSphereCenter(t) - rF);
+    Vec3 COG_FencS = AWF.T() * (frustum->getEnclosingSphereCenter() - rF);
 
     //search the radius of the circumsphere
     double rad_sph = frustum->getEnclosingSphereRadius();

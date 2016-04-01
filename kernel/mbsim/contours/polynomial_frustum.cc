@@ -184,7 +184,7 @@ namespace MBSim {
     return sphereRadius;
   }
 
-  Vec3 PolynomialFrustum::getEnclosingSphereCenter(double t) {
+  Vec3 PolynomialFrustum::getEnclosingSphereCenter() {
     Vec3 center;
     center(0) = height / 2;
     return R->evalPosition() + R->evalOrientation() * center;

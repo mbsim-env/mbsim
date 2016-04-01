@@ -456,7 +456,7 @@ namespace MBSim {
 
     /*construct the sphere enclosing the frustum*/
     //take center of the frustum as center of the sphere
-    Vec3 R_cen_S = frustum->getEnclosingSphereCenter(t);
+    Vec3 R_cen_S = frustum->getEnclosingSphereCenter();
 
     //search the radius of the circumsphere
     double rad_sph = frustum->getEnclosingSphereRadius();

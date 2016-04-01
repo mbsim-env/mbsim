@@ -147,7 +147,7 @@ namespace MBSim {
       /*!
        * \brief return the center of the enclosing sphere
        */
-      fmatvec::Vec3 getEnclosingSphereCenter(double t);
+      fmatvec::Vec3 getEnclosingSphereCenter();
 
       /*!
        * \brief get coefficient vector of the polynomial
