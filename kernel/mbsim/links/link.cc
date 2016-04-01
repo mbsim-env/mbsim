@@ -217,20 +217,19 @@ namespace MBSim {
     corr >> ref(corrInd,corrInd+corrSize-1);
   }
 
-  const Vec& Link::getg(double t) {
-    if(ds->updateg()) ds->updateg(t);
+  const Vec& Link::evalg() {
+    if(ds->updateg()) ds->updateg(getTime());
     return g;
   }
 
-  const Vec& Link::getgd(double t) {
-    if(ds->updategd()) ds->updategd(t);
+  const Vec& Link::evalgd() {
+    if(ds->updategd()) ds->updategd(getTime());
     return gd;
   }
 
-  const Vec& Link::getwb(double t) {
-    if(ds->updatewb()) ds->updatewb(t);
+  const Vec& Link::evalwb() {
+    if(ds->updatewb()) ds->updatewb(getTime());
     return wb;
   }
 
 }
-

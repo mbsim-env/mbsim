@@ -389,9 +389,9 @@ namespace MBSim {
 //      fmatvec::Vec& getg() { return g; }
 //      fmatvec::Vec& getgd() { return gd; }
 //      fmatvec::Vec& getwb() { return wb; }
-      const fmatvec::Vec& getg(double t);
-      const fmatvec::Vec& getgd(double t);
-      const fmatvec::Vec& getwb(double t);
+      const fmatvec::Vec& evalg();
+      const fmatvec::Vec& evalgd();
+      const fmatvec::Vec& evalwb();
 
       int getgdInd() const { return gdInd; } 
       int getgSize() const { return gSize; } 
