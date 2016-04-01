@@ -101,7 +101,7 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void RigidBodyLink::updateForceDirections(double t) {
+  void RigidBodyLink::updateForceDirections() {
     for(unsigned i=0; i<body.size(); i++) {
       DF[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->evalPJT();
       DM[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->evalPJR();

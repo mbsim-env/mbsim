@@ -179,7 +179,7 @@ namespace MBSim {
     updM = false;
   }
 
-  void FloatingFrameLink::updateForceDirections(double t) {
+  void FloatingFrameLink::updateForceDirections() {
     DF = refFrame->evalOrientation() * forceDir;
     DM = refFrame->evalOrientation() * momentDir;
     updFD = false;

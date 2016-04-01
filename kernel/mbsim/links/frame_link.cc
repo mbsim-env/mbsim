@@ -139,7 +139,7 @@ namespace MBSim {
     updF = false;
   }
 
-  void FrameLink::updateForceDirections(double t) {
+  void FrameLink::updateForceDirections() {
     if(evalGeneralizedRelativePosition()(0)>epsroot())
       DF=evalGlobalRelativePosition()/rrel(0);
     else

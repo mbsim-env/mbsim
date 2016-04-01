@@ -110,7 +110,7 @@ namespace MBSim {
 //    W[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(Index(0,2),Index(0,laSize-1));
   }
 
-  void ContourLink::updateForceDirections(double t) {
+  void ContourLink::updateForceDirections() {
     DF.set(0,cFrame[0]->evalOrientation().col(0));
     if (DF.cols()>1) {
       DF.set(1, cFrame[0]->getOrientation().col(1));
