@@ -63,12 +63,12 @@ namespace MBSim {
     ratio.push_back(transmission.ratio);
   }
 
-  void GearConstraint::updateGeneralizedCoordinates(double t) {
+  void GearConstraint::updateGeneralizedCoordinates() {
     bd->getqRel(false).init(0);
     bd->getuRel(false).init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getqRel(false) += bi[i]->getqRel(t)*ratio[i];
-      bd->getuRel(false) += bi[i]->getuRel(t)*ratio[i];
+      bd->getqRel(false) += bi[i]->getqRel(getTime())*ratio[i];
+      bd->getuRel(false) += bi[i]->getuRel(getTime())*ratio[i];
     }
     updGC = false;
   }

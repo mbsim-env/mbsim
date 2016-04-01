@@ -43,7 +43,7 @@ namespace MBSim {
 
       void setDependentBody(RigidBody* body_) {bd=body_; }
 
-      void updateGeneralizedCoordinates(double t);
+      void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(double t, int j=0); 
       void setUpInverseKinetics();
 

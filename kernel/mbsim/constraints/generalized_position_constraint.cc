@@ -36,9 +36,9 @@ namespace MBSim {
     f->init(stage);
   }
 
-  void GeneralizedPositionConstraint::updateGeneralizedCoordinates(double t) {
-    bd->getqRel(false) = (*f)(t);
-    bd->getuRel(false) = f->parDer(t);
+  void GeneralizedPositionConstraint::updateGeneralizedCoordinates() {
+    bd->getqRel(false) = (*f)(getTime());
+    bd->getuRel(false) = f->parDer(getTime());
     updGC = false;
   }
 

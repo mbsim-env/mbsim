@@ -54,7 +54,7 @@ namespace MBSim {
       virtual void setUpInverseKinetics();
 
       void updatexd(double t);
-      void updateGeneralizedCoordinates(double t);
+      void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(double t, int j=0);
 
       void initializeUsingXML(xercesc::DOMElement * element);

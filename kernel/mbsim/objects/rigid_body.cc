@@ -435,7 +435,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateGeneralizedCoordinates(double t) {
-    if(constraint and constraint->updateGeneralizedCoordinates()) constraint->updateGeneralizedCoordinates(t);
+    if(constraint and constraint->getUpdateGeneralizedCoordinates()) constraint->updateGeneralizedCoordinates();
     qTRel = qRel(iqT);
     qRRel = qRel(iqR);
     uTRel = uRel(iuT);
@@ -444,7 +444,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateGeneralizedJacobians(double t, int j) {
-    if(constraint and constraint->updateGeneralizedJacobians()) constraint->updateGeneralizedJacobians(getTime(),j);
+    if(constraint and constraint->getUpdateGeneralizedJacobians()) constraint->updateGeneralizedJacobians(getTime(),j);
     updGJ = false;
   }
 

@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, double t_, vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), t(t_), i1(i1_), i2(i2_) {}
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), i1(i1_), i2(i2_) {}
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
@@ -184,8 +184,8 @@ namespace MBSim {
       q = q0;
   }
 
-  void JointConstraint::updateGeneralizedCoordinates(double t) {
-    Residuum f(bd1,bd2,forceDir,momentDir,frame1,frame2,refFrame,t,if1,if2);
+  void JointConstraint::updateGeneralizedCoordinates() {
+    Residuum f(bd1,bd2,forceDir,momentDir,frame1,frame2,refFrame,if1,if2);
     MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
     if(newton.getInfo()!=0)

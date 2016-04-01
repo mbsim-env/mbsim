@@ -60,7 +60,7 @@ namespace MBSim {
       void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
-      void updateGeneralizedCoordinates(double t); 
+      void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(double t, int j=0); 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -89,10 +89,9 @@ namespace MBSim {
           std::vector<RigidBody*> body1, body2;
           fmatvec::Mat3xV forceDir, momentDir;
           Frame *frame1, *frame2, *refFrame;
-          double t;
           std::vector<Frame*> i1,i2;
         public:
-          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, Frame *frame1_, Frame *frame2_, Frame *refFrame, double t_, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, Frame *frame1_, Frame *frame2_, Frame *refFrame, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
           fmatvec::Vec operator()(const fmatvec::Vec &x);
       };
       std::vector<RigidBody*> bd1;

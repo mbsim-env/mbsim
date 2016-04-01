@@ -49,9 +49,9 @@ namespace MBSim {
     xd = bd->transformCoordinates()?bd->getTRel(t)*bd->getuRel(t):bd->getuRel(t);
   }
 
-  void GeneralizedVelocityConstraint::updateGeneralizedCoordinates(double t) {
+  void GeneralizedVelocityConstraint::updateGeneralizedCoordinates() {
     bd->getqRel(false) = x;
-    bd->getuRel(false) = (*f)(x,t);
+    bd->getuRel(false) = (*f)(x,getTime());
     updGC = false;
   }
 

@@ -50,7 +50,7 @@ namespace MBSim {
     xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel(t);
   }
 
-  void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates(double t) {
+  void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {
     bd->getqRel(false) = x(0,bd->getqRelSize()-1);
     bd->getuRel(false) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
     updGC = false;

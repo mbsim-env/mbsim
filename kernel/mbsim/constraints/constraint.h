@@ -32,10 +32,10 @@ namespace MBSim {
 
     public:
       Constraint(const std::string &name);
-      virtual void updateGeneralizedCoordinates(double t) {}
-      virtual void updateGeneralizedJacobians(double t, int j=0) {}
-      virtual void updatedx(double t, double dt) {}
-      virtual void updatexd(double t) {}
+      virtual void updateGeneralizedCoordinates() {}
+      virtual void updateGeneralizedJacobians(double t, int j=0) { }
+      virtual void updatedx(double t, double dt) { }
+      virtual void updatexd(double t) { }
       virtual void calcxSize() { xSize = 0; }
       virtual const fmatvec::Vec& getx() const { return x; }
       virtual fmatvec::Vec& getx() { return x; }
@@ -50,12 +50,12 @@ namespace MBSim {
       std::string getType() const { return "Constraint"; }
       virtual void plot();
       virtual void closePlot();
-      virtual void setUpInverseKinetics() {}
+      virtual void setUpInverseKinetics() { }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return boost::shared_ptr<OpenMBV::Group>();}
 #endif
-      bool updateGeneralizedCoordinates() const { return updGC; }
-      bool updateGeneralizedJacobians() const { return updGJ; }
+      bool getUpdateGeneralizedCoordinates() const { return updGC; }
+      bool getUpdateGeneralizedJacobians() const { return updGJ; }
       void resetUpToDate() { updGC = true; updGJ = true; }
 
     protected:
