@@ -36,17 +36,17 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
 
-  SpringDamper::SpringDamper(const string &name) : FrameLink(name), func(NULL), l0(0)
-  {}
+  SpringDamper::SpringDamper(const string &name) : FrameLink(name), func(NULL), l0(0) {
+  }
 
   SpringDamper::~SpringDamper() {
     delete func;
   }
 
-  void SpringDamper::updatelaF(double t) {
+  void SpringDamper::updatelaF() {
     lambdaF(0)=-(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
     if(rrel(0)<=epsroot() && abs(lambda(0))>epsroot())
-      msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
+      msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<getTime()<<endl;
     updlaF = false;
   }
 

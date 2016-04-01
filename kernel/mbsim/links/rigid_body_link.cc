@@ -109,19 +109,19 @@ namespace MBSim {
     updFD = false;
   }
 
-  void RigidBodyLink::updateForce(double t) { 
+  void RigidBodyLink::updateForce() {
     for(unsigned i=0; i<body.size(); i++)
       F[i] = getGlobalForceDirection(i)*evalGeneralizedForce()(iF);
     updF = false;
   }
 
-  void RigidBodyLink::updateMoment(double t) { 
+  void RigidBodyLink::updateMoment() {
     for(unsigned i=0; i<body.size(); i++)
       M[i] = getGlobalMomentDirection(i)*evalGeneralizedForce()(iM);
     updM = false;
   }
 
-  void RigidBodyLink::updateR(double t) {
+  void RigidBodyLink::updateR() {
     for(unsigned i=0; i<body.size(); i++) {
       RF[i].set(Index(0,2), Index(iF), getGlobalForceDirection(i));
       RM[i].set(Index(0,2), Index(iM), getGlobalMomentDirection(i));

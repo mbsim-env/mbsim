@@ -134,7 +134,7 @@ namespace MBSim {
     updla = false;
   }
 
-  void FrameLink::updateForce(double t) {
+  void FrameLink::updateForce() {
     F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
     updF = false;
   }
@@ -172,7 +172,7 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void FrameLink::updateR(double t) {
+  void FrameLink::updateR() {
     RF.set(Index(0,2), Index(iF), evalGlobalForceDirection());
     updRMV = false;
   }

@@ -56,17 +56,17 @@ namespace MBSim {
       virtual void updatePositions();
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
-      void updateForce(double t);
-      void updateMoment(double t);
+      void updateForce();
+      void updateMoment();
       void updateForceDirections(double t);
-      void updateR(double t);
+      void updateR();
       void updatewb(double t);
       const fmatvec::Mat3xV& getGlobalForceDirection(int i) { if(updFD) updateForceDirections(0.); return DF[i]; }
       const fmatvec::Mat3xV& getGlobalMomentDirection(int i) { if(updFD) updateForceDirections(0.); return DM[i]; }
-      const fmatvec::Vec3& getForce(int i) { if(updF) updateForce(0.); return F[i]; }
-      const fmatvec::Vec3& getMoment(int i) { if(updM) updateMoment(0.); return M[i]; }
-      const fmatvec::Mat3xV& getRF(int i) { if(updRMV) updateR(0.); return RF[i]; }
-      const fmatvec::Mat3xV& getRM(int i) { if(updRMV) updateR(0.); return RM[i]; }
+      const fmatvec::Vec3& getForce(int i) { if(updF) updateForce(); return F[i]; }
+      const fmatvec::Vec3& getMoment(int i) { if(updM) updateMoment(); return M[i]; }
+      const fmatvec::Mat3xV& getRF(int i) { if(updRMV) updateR(); return RF[i]; }
+      const fmatvec::Mat3xV& getRM(int i) { if(updRMV) updateR(); return RM[i]; }
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);

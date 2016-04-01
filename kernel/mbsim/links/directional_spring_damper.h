@@ -48,7 +48,7 @@ namespace MBSim {
       void updatePositions(Frame *frame);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
-      void updatelaF(double t);
+      void updatelaF();
 
       /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }

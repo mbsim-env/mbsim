@@ -59,7 +59,7 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void DirectionalSpringDamper::updatelaF(double t) {
+  void DirectionalSpringDamper::updatelaF() {
     lambdaF(0)=-(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
     updlaF = false;
   }

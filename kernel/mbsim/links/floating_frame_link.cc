@@ -169,12 +169,12 @@ namespace MBSim {
     updla = false;
   }
 
-  void FloatingFrameLink::updateForce(double t) {
+  void FloatingFrameLink::updateForce() {
     F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
     updF = false;
   }
 
-  void FloatingFrameLink::updateMoment(double t) {
+  void FloatingFrameLink::updateMoment() {
     M = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
     updM = false;
   }
@@ -231,7 +231,7 @@ namespace MBSim {
     }
   } 
 
-  void FloatingFrameLink::updateR(double t) {
+  void FloatingFrameLink::updateR() {
     RF.set(Index(0,2), Index(iF), evalGlobalForceDirection());
     RM.set(Index(0,2), Index(iM), evalGlobalMomentDirection());
     updRMV = false;

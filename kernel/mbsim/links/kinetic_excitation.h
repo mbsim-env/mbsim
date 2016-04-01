@@ -46,8 +46,8 @@ namespace MBSim {
 
       void updateGeneralizedPositions(double t) { }
       void updateGeneralizedVelocities(double t) { }
-      void updatelaF(double t);
-      void updatelaM(double t);
+      void updatelaF();
+      void updatelaM();
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void init(InitStage stage);

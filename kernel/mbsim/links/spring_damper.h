@@ -43,7 +43,7 @@ namespace MBSim {
     public:
       SpringDamper(const std::string &name="");
       ~SpringDamper();
-      void updatelaF(double t);
+      void updatelaF();
 
       /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }

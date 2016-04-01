@@ -89,15 +89,15 @@ namespace MBSim {
       virtual void updatePositions() { }
       virtual void updateVelocities() { }
       virtual void updateForceDirections(double t);
-      void updateForce(double t);
-      void updateMoment(double t);
+      void updateForce();
+      void updateMoment();
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomP0P1; }
       const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(0.); return DF; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection() { if(updFD) updateForceDirections(0.); return DM; }
-      const fmatvec::Vec3& evalForce() { if(updF) updateForce(0.); return F; }
-      const fmatvec::Vec3& evalMoment() { if(updM) updateMoment(0.); return M; }
+      const fmatvec::Vec3& evalForce() { if(updF) updateForce(); return F; }
+      const fmatvec::Vec3& evalMoment() { if(updM) updateMoment(); return M; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }

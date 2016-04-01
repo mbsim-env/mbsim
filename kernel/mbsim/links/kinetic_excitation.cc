@@ -63,13 +63,13 @@ namespace MBSim {
     if(M) M->init(stage);
   }
 
-  void KineticExcitation::updatelaF(double t) {
-    if(F) lambdaF = (*F)(t);
+  void KineticExcitation::updatelaF() {
+    if(F) lambdaF = (*F)(getTime());
     updlaF = false;
   }
 
-  void KineticExcitation::updatelaM(double t) {
-    if(M) lambdaM = (*M)(t);
+  void KineticExcitation::updatelaM() {
+    if(M) lambdaM = (*M)(getTime());
     updlaM = false;
   }
 
