@@ -30,13 +30,13 @@ namespace MBSim {
   double FuncPairPlanarContourCircle::operator()(const double &alpha) {
     zeta(0) = alpha;
     Vec3 Wd = getWrD(alpha);
-    Vec3 Wt = contour->getWu(t,zeta);
+    Vec3 Wt = contour->getWu(zeta);
     return Wt.T() * Wd;
   }
 
   Vec3 FuncPairPlanarContourCircle::getWrD(const double &alpha) {
     zeta(0) = alpha;
-    return contour->getPosition(t,zeta) - (circle->getFrame()->evalPosition() - (circle->getSign()*circle->getRadius()) * contour->getWn(t,zeta));
+    return contour->getPosition(zeta) - (circle->getFrame()->evalPosition() - (circle->getSign()*circle->getRadius()) * contour->getWn(zeta));
   }
 
 }

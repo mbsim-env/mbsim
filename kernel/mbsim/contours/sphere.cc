@@ -107,7 +107,7 @@ namespace MBSim {
     return parDer2Kv;
   }
 
-  Vec2 Sphere::getZeta(double t, const fmatvec::Vec3 &WrPoint) {
+  Vec2 Sphere::getZeta(const fmatvec::Vec3 &WrPoint) {
     Vec3 SrPoint = R->evalOrientation().T() * (WrPoint - R->evalPosition());
     Vec2 zeta;
     double r = nrm2(SrPoint);

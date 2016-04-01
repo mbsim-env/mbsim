@@ -156,9 +156,9 @@ namespace MBSim {
   }
 
   void ContactKinematicsPlatePolynomialFrustum::setFrustumOrienationKinematics(double t, const double & x, const double & phi, std::vector<ContourFrame*> &cFrame) {
-    cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(t, zeta));
-    cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(t, zeta));
-    cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(t, zeta));
+    cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(zeta));
+    cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(zeta));
+    cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(zeta));
   }
 
   bool ContactKinematicsPlatePolynomialFrustum::cpLocationInPlate(double t, double & g, std::vector<ContourFrame*> &cFrame) {

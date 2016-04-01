@@ -156,9 +156,9 @@ namespace MBSim {
         Vec3 rF = frustum->getFrame()->getPosition();
         SqrMat3 AWF = frustum->getFrame()->getOrientation();
         cFrame[ifrustum]->setPosition(rF + AWF * contactPointFrustum);
-        cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(t,zeta));
-        cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(t,zeta));
-        cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(t,zeta));
+        cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(zeta));
+        cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(zeta));
+        cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(zeta));
 
         //Point
         cFrame[ipoint]->setPosition(rF + AWF  * rPoint);

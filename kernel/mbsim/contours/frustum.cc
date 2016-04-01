@@ -59,7 +59,7 @@ namespace MBSim {
   }
 
   //TODO: Same function as in flexible_body_2s_13_mfr_mindlin (transformCW) --> this is just the transformation into cylindrical coordinates --> get it into utils?
-  Vec2 Frustum::getZeta(double t, const Vec3 &WrPoint) {
+  Vec2 Frustum::getZeta(const Vec3 &WrPoint) {
     Vec3 CrPoint = WrPoint;
 
     CrPoint -= R->evalPosition();

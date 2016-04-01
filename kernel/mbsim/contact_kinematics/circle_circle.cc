@@ -55,18 +55,18 @@ namespace MBSim {
     Vec2 zeta1;
     zeta1(0)=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
     const Vec3 n1 = cFrame[0]->getOrientation().col(0); //crossProduct(s1, t1);
-    const Vec3 u1 = circle0->getWu(t,zeta1);
-    const Vec3 R1 = circle0->getWs(t,zeta1);
-    const Vec3 N1 = circle0->getParDer1Wn(t,zeta1);
-    const Vec3 U1 = circle0->getParDer1Wu(t,zeta1);
+    const Vec3 u1 = circle0->getWu(zeta1);
+    const Vec3 R1 = circle0->getWs(zeta1);
+    const Vec3 N1 = circle0->getParDer1Wn(zeta1);
+    const Vec3 U1 = circle0->getParDer1Wu(zeta1);
 
     const Vec3 KrPC2 = circle1->getFrame()->evalOrientation().T()*(cFrame[1]->evalPosition() - circle1->getFrame()->evalPosition());
     Vec2 zeta2;
     zeta2(0)=(KrPC2(1)>0) ? acos(KrPC2(0)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(0)/nrm2(KrPC2));
     const Vec3 n2 = cFrame[1]->getOrientation().col(0); //crossProduct(s1, t1);
-    const Vec3 u2 = circle1->getWu(t,zeta2);
-    const Vec3 R2 = circle1->getWs(t,zeta2);
-    const Vec3 U2 = circle1->getParDer1Wu(t,zeta2);
+    const Vec3 u2 = circle1->getWu(zeta2);
+    const Vec3 R2 = circle1->getWs(zeta2);
+    const Vec3 U2 = circle1->getParDer1Wu(zeta2);
     const Vec3 v2 = crossProduct(n2, u2);
 
     const Vec3 vC1 = cFrame[0]->getVelocity();

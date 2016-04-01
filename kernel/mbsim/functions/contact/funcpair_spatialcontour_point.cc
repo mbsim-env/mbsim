@@ -29,8 +29,8 @@ namespace MBSim {
 
   Vec FuncPairSpatialContourPoint::operator()(const Vec &alpha) {  // Vec2: U and V direction
     Vec3 Wd = getWrD(alpha);
-    Vec3 Wt1 = contour->getWu(t,alpha);
-    Vec3 Wt2 = contour->getWv(t,alpha);
+    Vec3 Wt1 = contour->getWu(alpha);
+    Vec3 Wt2 = contour->getWv(alpha);
     Vec2 Wt(NONINIT);  // TODO:: check this?
     Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
     Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
@@ -38,7 +38,7 @@ namespace MBSim {
   }
 
   Vec3 FuncPairSpatialContourPoint::getWrD(const Vec &alpha) {
-    return contour->getPosition(t,alpha) - point->getFrame()->evalPosition();
+    return contour->getPosition(alpha) - point->getFrame()->evalPosition();
   }
 
 }

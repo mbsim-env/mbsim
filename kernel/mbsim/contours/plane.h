@@ -57,37 +57,37 @@ namespace MBSim {
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWn(const fmatvec::Vec2 &zeta);
 
      /**
        * \return first tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param zeta contour position
        */
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3 &WrPoint);
+      virtual fmatvec::Vec2 getZeta(const fmatvec::Vec3 &WrPoint);
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

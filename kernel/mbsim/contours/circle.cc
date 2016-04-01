@@ -60,7 +60,7 @@ namespace MBSim {
     return parDer1Ku;
   }
 
-  Vec2 Circle::getZeta(double t, const Vec3& WrPoint) {
+  Vec2 Circle::getZeta(const Vec3& WrPoint) {
     Vec2 zeta;
 
     Vec3 CrPoint = WrPoint;

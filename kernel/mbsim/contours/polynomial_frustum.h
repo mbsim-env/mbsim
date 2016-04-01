@@ -64,7 +64,7 @@ namespace MBSim {
        *    index 0: x,   height coordinate of frustum
        *    index 1: phi, angle of point
        */
-      virtual fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3 &WrPS);
+      virtual fmatvec::Vec2 getZeta(const fmatvec::Vec3 &WrPS);
       /*********************************/
 
       /*!
@@ -183,9 +183,9 @@ namespace MBSim {
        */
       fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
 
-      fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta);
 
     protected:
       /*!

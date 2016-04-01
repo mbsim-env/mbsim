@@ -53,7 +53,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec2 getZeta(double t, const fmatvec::Vec3 &WrPoint);
+      virtual fmatvec::Vec2 getZeta(const fmatvec::Vec3 &WrPoint);
       /***************************************************/
 
       /**

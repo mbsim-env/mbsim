@@ -34,7 +34,7 @@ namespace MBSim {
     hInd[1] = 0;
   }
 
-  Vec3 Contour::getPosition(double t, const Vec2 &zeta) {
+  Vec3 Contour::getPosition(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getPosition): Not implemented.");
     return 0;
   }
@@ -73,18 +73,18 @@ namespace MBSim {
     return 0;
   }
 
-  Vec3 Contour::getWu(double t, const Vec2 &zeta) {
-    Vec3 Ws=getWs(t,zeta);
+  Vec3 Contour::getWu(const Vec2 &zeta) {
+    Vec3 Ws=getWs(zeta);
     return Ws/nrm2(Ws);
   }
 
-  Vec3 Contour::getWv(double t, const Vec2 &zeta) {
-    Vec3 Wt=getWt(t,zeta);
+  Vec3 Contour::getWv(const Vec2 &zeta) {
+    Vec3 Wt=getWt(zeta);
     return Wt/nrm2(Wt);
   }
 
-  Vec3 Contour::getWn(double t, const Vec2 &zeta) {
-    Vec3 N=crossProduct(getWs(t,zeta),getWt(t,zeta));
+  Vec3 Contour::getWn(const Vec2 &zeta) {
+    Vec3 N=crossProduct(getWs(zeta),getWt(zeta));
     return N/nrm2(N);
   }
 
@@ -119,80 +119,80 @@ namespace MBSim {
     return 0;
   }
 
-  Vec3 Contour::getParDer1Wn(double t, const Vec2 &zeta) {
+  Vec3 Contour::getParDer1Wn(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer1Wn): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer2Wn(double t, const Vec2 &zeta) {
+  Vec3 Contour::getParDer2Wn(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer2Wn): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer1Wu(double t, const Vec2 &zeta) {
+  Vec3 Contour::getParDer1Wu(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer1Wu): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer2Wu(double t, const Vec2 &zeta) {
+  Vec3 Contour::getParDer2Wu(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer2Wu): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer1Wv(double t, const Vec2 &zeta) {
+  Vec3 Contour::getParDer1Wv(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer1Wv): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getParDer2Wv(double t, const Vec2 &zeta) {
+  Vec3 Contour::getParDer2Wv(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getParDer2Wv): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getWrPS(double t, const Vec2 &zeta) {
+  Vec3 Contour::getWrPS(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getWrPS): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getWs(double t, const Vec2 &zeta) {
+  Vec3 Contour::getWs(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getWs): Not implemented.");
     return 0;
   }
 
-  Vec3 Contour::getWt(double t, const Vec2 &zeta) {
+  Vec3 Contour::getWt(const Vec2 &zeta) {
     THROW_MBSIMERROR("(Contour::getWt): Not implemented.");
     return 0;
   }
 
-  Mat3x2 Contour::getWN(double t, const Vec2 &zeta) {
+  Mat3x2 Contour::getWN(const Vec2 &zeta) {
     Mat3x2 WN(NONINIT);
-    WN.set(0,getParDer1Wn(t,zeta));
-    WN.set(1,getParDer2Wn(t,zeta));
+    WN.set(0,getParDer1Wn(zeta));
+    WN.set(1,getParDer2Wn(zeta));
     return WN;
   }
 
-  Mat3x2 Contour::getWR(double t, const Vec2 &zeta) {
+  Mat3x2 Contour::getWR(const Vec2 &zeta) {
     Mat3x2 WR(NONINIT);
-    WR.set(0,getWs(t,zeta));
-    WR.set(1,getWt(t,zeta));
+    WR.set(0,getWs(zeta));
+    WR.set(1,getWt(zeta));
     return WR;
   }
 
-  Mat3x2 Contour::getWU(double t, const Vec2 &zeta) {
+  Mat3x2 Contour::getWU(const Vec2 &zeta) {
     Mat3x2 WU(NONINIT);
-    WU.set(0,getParDer1Wu(t,zeta));
-    WU.set(1,getParDer2Wu(t,zeta));
+    WU.set(0,getParDer1Wu(zeta));
+    WU.set(1,getParDer2Wu(zeta));
     return WU;
   }
 
-  Mat3x2 Contour::getWV(double t, const Vec2 &zeta) {
+  Mat3x2 Contour::getWV(const Vec2 &zeta) {
     Mat3x2 WV(NONINIT);
-    WV.set(0,getParDer1Wv(t,zeta));
-    WV.set(1,getParDer2Wv(t,zeta));
+    WV.set(0,getParDer1Wv(zeta));
+    WV.set(1,getParDer2Wv(zeta));
     return WV;
   }
 
-  Vec2 Contour::getZeta(double t, const Vec3 &WrPS) {
+  Vec2 Contour::getZeta(const Vec3 &WrPS) {
     THROW_MBSIMERROR("(Contour::getZeta): Not implemented.");
     return 0;
   }

@@ -72,7 +72,7 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec2 PolynomialFrustum::getZeta(double t, const Vec3 & WrPoint) {
+  Vec2 PolynomialFrustum::getZeta(const Vec3 & WrPoint) {
     Vec2 returnVal(NONINIT);
     Vec3 inFramePoint = -R->evalPosition() + R->evalOrientation().T() * WrPoint;
 
@@ -254,15 +254,15 @@ namespace MBSim {
     sphereRadius = (temp1 > temp) ? temp1 : temp;
   }
 
-  Vec3 PolynomialFrustum::getWn(double t, const Vec2 &zeta) {
+  Vec3 PolynomialFrustum::getWn(const Vec2 &zeta) {
     return R->getOrientation() * getKn(zeta);
   }
 
-  Vec3 PolynomialFrustum::getWu(double t, const Vec2 &zeta) {
+  Vec3 PolynomialFrustum::getWu(const Vec2 &zeta) {
     return R->getOrientation() * getKu(zeta);
   }
 
-  Vec3 PolynomialFrustum::getWv(double t, const Vec2 &zeta) {
+  Vec3 PolynomialFrustum::getWv(const Vec2 &zeta) {
     return R->getOrientation() * getKv(zeta);
   }
 

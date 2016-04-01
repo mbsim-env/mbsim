@@ -117,16 +117,16 @@ namespace MBSim {
           zeta(1) = phi;
 
           //Orientation
-          cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(t,zeta));
-          cFrame[ifrustum]->getOrientation(false).set(1, frustum->getWu(t,zeta));
-          cFrame[ifrustum]->getOrientation(false).set(2, frustum->getWv(t,zeta));
+          cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(zeta));
+          cFrame[ifrustum]->getOrientation(false).set(1, frustum->getWu(zeta));
+          cFrame[ifrustum]->getOrientation(false).set(2, frustum->getWv(zeta));
 
           cFrame[isphere]->getOrientation(false).set(0, - cFrame[ifrustum]->getOrientation(false).col(0));
           cFrame[isphere]->getOrientation(false).set(1, - cFrame[ifrustum]->getOrientation(false).col(1));
           cFrame[isphere]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
 
           //Position
-          cFrame[ifrustum]->setPosition(frustum->getPosition(t,zeta));
+          cFrame[ifrustum]->setPosition(frustum->getPosition(zeta));
           cFrame[isphere]->setPosition(rS + cFrame[isphere]->getOrientation(false).col(0) * sphere->getRadius());
 
           //Distance

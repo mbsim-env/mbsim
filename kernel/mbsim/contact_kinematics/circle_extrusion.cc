@@ -77,13 +77,13 @@ namespace MBSim {
 
     cFrame[iextrusion]->setEta(search.slv());
 
-    cFrame[iextrusion]->getOrientation(false).set(0, extrusion->getWn(t,cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(1, extrusion->getWu(t,cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(2, extrusion->getWv(t,cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->getOrientation(false).set(0, extrusion->getWn(cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->getOrientation(false).set(1, extrusion->getWu(cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->getOrientation(false).set(2, extrusion->getWv(cFrame[iextrusion]->getZeta()));
     cFrame[icircle]->getOrientation(false).set(0, -cFrame[iextrusion]->getOrientation(false).col(0));
     cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
-    cFrame[iextrusion]->setPosition(extrusion->getPosition(t,cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->setPosition(extrusion->getPosition(cFrame[iextrusion]->getZeta()));
     cFrame[icircle]->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
     Vec3 Wd = cFrame[icircle]->getPosition(false) - cFrame[iextrusion]->getPosition(false);
@@ -106,8 +106,8 @@ namespace MBSim {
 
     const Vec3 u2 = cFrame[iextrusion]->evalOrientation().col(1);
     const Vec3 v2 = cFrame[iextrusion]->getOrientation().col(2);
-    const Vec3 R2 = extrusion->getWs(t,cFrame[iextrusion]->getZeta());
-    const Vec3 U2 = extrusion->getParDer1Wu(t,cFrame[iextrusion]->getZeta());
+    const Vec3 R2 = extrusion->getWs(cFrame[iextrusion]->getZeta());
+    const Vec3 U2 = extrusion->getParDer1Wu(cFrame[iextrusion]->getZeta());
 
     const Vec3 vC1 = cFrame[icircle]->evalVelocity();
     const Vec3 vC2 = cFrame[iextrusion]->evalVelocity();

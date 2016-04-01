@@ -71,13 +71,13 @@ namespace MBSim {
 
     Vec3 u1 = cFrame[iplane]->getOrientation().col(1);
     Vec3 v1 = cFrame[iplane]->getOrientation().col(2);
-    Vec3 u2 = sphere->getWu(t,zeta);
+    Vec3 u2 = sphere->getWu(zeta);
     Vec3 v2 = crossProduct(n2,u2);
 
-    Mat3x2 R1 = plane->getWR(t,zeta);
-    Mat3x2 R2 = sphere->getWR(t,zeta);
-    Mat3x2 U2 = sphere->getWU(t,zeta);
-    Mat3x2 V2 = sphere->getWV(t,zeta);
+    Mat3x2 R1 = plane->getWR(zeta);
+    Mat3x2 R2 = sphere->getWR(zeta);
+    Mat3x2 U2 = sphere->getWU(zeta);
+    Mat3x2 V2 = sphere->getWV(zeta);
 
     SqrMat A(4,NONINIT);
     A(Index(0,0),Index(0,1)) = -u1.T()*R1;

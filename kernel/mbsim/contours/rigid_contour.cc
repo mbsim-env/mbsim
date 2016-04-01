@@ -64,43 +64,43 @@ namespace MBSim {
     return frame;
   }
 
-  Vec3 RigidContour::getPosition(double t, const Vec2 &zeta) {
-    return R->evalPosition() + getWrPS(t,zeta);
+  Vec3 RigidContour::getPosition(const Vec2 &zeta) {
+    return R->evalPosition() + getWrPS(zeta);
   }
 
-  Vec3 RigidContour::getParDer1Wn(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getParDer1Wn(const Vec2 &zeta) {
     return R->evalOrientation()*getParDer1Kn(zeta);
   }
 
-  Vec3 RigidContour::getParDer2Wn(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getParDer2Wn(const Vec2 &zeta) {
     return R->evalOrientation()*getParDer2Kn(zeta);
   }
 
-  Vec3 RigidContour::getParDer1Wu(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getParDer1Wu(const Vec2 &zeta) {
     return R->evalOrientation()*getParDer1Ku(zeta);
   }
 
-  Vec3 RigidContour::getParDer2Wu(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getParDer2Wu(const Vec2 &zeta) {
     return R->evalOrientation()*getParDer2Ku(zeta);
   }
 
-  Vec3 RigidContour::getParDer1Wv(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getParDer1Wv(const Vec2 &zeta) {
     return R->evalOrientation()*getParDer1Kv(zeta);
   }
 
-  Vec3 RigidContour::getParDer2Wv(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getParDer2Wv(const Vec2 &zeta) {
     return R->evalOrientation()*getParDer2Kv(zeta);
   }
 
-  Vec3 RigidContour::getWrPS(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getWrPS(const Vec2 &zeta) {
     return R->evalOrientation()*getKrPS(zeta);
   }
 
-  Vec3 RigidContour::getWs(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getWs(const Vec2 &zeta) {
     return R->evalOrientation()*getKs(zeta);
   }
 
-  Vec3 RigidContour::getWt(double t, const Vec2 &zeta) {
+  Vec3 RigidContour::getWt(const Vec2 &zeta) {
     return R->evalOrientation()*getKt(zeta);
   }
 

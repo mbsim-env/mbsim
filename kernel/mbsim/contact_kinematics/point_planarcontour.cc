@@ -65,10 +65,10 @@ namespace MBSim {
 
     cFrame[iplanarcontour]->setEta(search.slv());
 
-    cFrame[iplanarcontour]->setPosition(planarcontour->getPosition(t,cFrame[iplanarcontour]->getZeta()));
-    cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->getWn(t,cFrame[iplanarcontour]->getZeta()));
-    cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(t,cFrame[iplanarcontour]->getZeta()));
-    cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(t,cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->setPosition(planarcontour->getPosition(cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->getWn(cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(cFrame[iplanarcontour]->getZeta()));
 
     cFrame[ipoint]->setPosition(point->getFrame()->evalPosition());
     cFrame[ipoint]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
