@@ -448,9 +448,9 @@ namespace MBSim {
     updGJ = false;
   }
 
-  void RigidBody::updatePositions(double t) {
-    if(fPrPK) PrPK = (*fPrPK)(evalqTRel(),t);
-    if(fAPK) APK = (*fAPK)(evalqRRel(),t);
+  void RigidBody::updatePositions() {
+    if(fPrPK) PrPK = (*fPrPK)(evalqTRel(),getTime());
+    if(fAPK) APK = (*fAPK)(evalqRRel(),getTime());
     WrPK = R->evalOrientation()*PrPK;
     updPos = false;
   }
@@ -503,7 +503,7 @@ namespace MBSim {
     updPjb = false;
   }
 
-  void RigidBody::updatePositions(double t, Frame *frame) {
+  void RigidBody::updatePositions(Frame *frame) {
     frame->setPosition(R->evalPosition() + evalGlobalRelativePosition());
     frame->setOrientation(R->getOrientation()*APK); // APK already update to date
   }

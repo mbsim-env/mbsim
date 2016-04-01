@@ -49,7 +49,7 @@ namespace MBSim {
   void Frame::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
-        if(updPos) updatePositions(0.);
+        if(updPos) updatePositions();
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
         Vec3 cardan=AIK2Cardan(AWP);
@@ -73,7 +73,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
-          if(updPos) updatePositions(0.);
+          if(updPos) updatePositions();
           vector<double> data;
           data.push_back(getTime());
           data.push_back(WrOP(0));

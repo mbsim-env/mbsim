@@ -152,7 +152,7 @@ namespace MBSim {
     h[j][1]+=frame[1]->evalJacobianOfTranslation(j).T()*evalForce();
   }
   
-  void FrameLink::updatePositions(double t) {
+  void FrameLink::updatePositions() {
     WrP0P1=frame[1]->evalPosition() - frame[0]->evalPosition();
     updPos = false;
   }

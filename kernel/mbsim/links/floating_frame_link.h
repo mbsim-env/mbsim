@@ -100,8 +100,8 @@ namespace MBSim {
       void setFrameOfReferenceID(int ID) { refFrameID = ID; }
 
       void resetUpToDate();
-      void updatePositions(double t, Frame *frame);
-      virtual void updatePositions(double t);
+      void updatePositions(Frame *frame);
+      virtual void updatePositions();
       virtual void updateVelocities(double t);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
@@ -112,7 +112,7 @@ namespace MBSim {
       void updateR(double t);
       virtual void updatelaF(double t) { }
       virtual void updatelaM(double t) { }
-      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(0.); return WrP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(0.); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomP0P1; }
       const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(0.); return DF; }

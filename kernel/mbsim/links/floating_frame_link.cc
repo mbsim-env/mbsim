@@ -135,12 +135,12 @@ namespace MBSim {
     h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalForce() + frame[1]->evalJacobianOfRotation(j).T() * evalMoment();
   }
 
-  void FloatingFrameLink::updatePositions(double t) {
+  void FloatingFrameLink::updatePositions() {
     WrP0P1 = frame[1]->evalPosition() - frame[0]->evalPosition();
     updPos = false;
   }
 
-  void FloatingFrameLink::updatePositions(double t, Frame *frame_) {
+  void FloatingFrameLink::updatePositions(Frame *frame_) {
     frame_->setPosition(frame[1]->evalPosition());
     frame_->setOrientation(frame[0]->evalOrientation());
   }

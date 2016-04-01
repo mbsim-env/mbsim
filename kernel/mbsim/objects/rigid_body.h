@@ -74,11 +74,11 @@ namespace MBSim {
       void updateInertiaTensor(double t);
       void updateGeneralizedCoordinates(double t); 
       void updateGeneralizedJacobians(double t, int j=0); 
-      void updatePositions(double t); 
+      void updatePositions();
       void updateVelocities(double t);
       void updateJacobians(double t);
       void updateGyroscopicAccelerations(double t);
-      void updatePositions(double t, Frame *frame);
+      void updatePositions(Frame *frame);
       void updateVelocities(double t, Frame *frame);
       void updateAccelerations(double t, Frame *frame);
       void updateJacobians(double t, Frame *frame, int j=0) { (this->*updateJacobians_[j])(t,frame); }
@@ -179,7 +179,7 @@ namespace MBSim {
       Frame* getFrameForKinematics() { return &Z; };
       FixedRelativeFrame* getFrameC() { return C; };
 
-      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(0.); return WrPK; }
+      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrPK; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(0.); return WvPKrel; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomPK; }
       const fmatvec::SymMat3& evalGlobalInertiaTensor() { if(updWTS) updateInertiaTensor(0.); return WThetaS; }

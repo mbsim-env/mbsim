@@ -280,7 +280,7 @@ namespace MBSim {
       const fmatvec::Vec& evalgd();
       const fmatvec::Mat& evalWInverseKinetics(int i=0);
       const fmatvec::Mat& evalbInverseKinetics();
-//      const fmatvec::Vec& getsv(double t);
+      const fmatvec::Vec& evalsv();
 
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }

@@ -79,7 +79,7 @@ namespace MBSim {
     }
   } 
 
-  void RigidBodyLink::updatePositions(double t) {
+  void RigidBodyLink::updatePositions() {
     for(unsigned i=0; i<body.size(); i++) {
       C[i].setPosition(body[i]->getFrameForKinematics()->evalPosition());
       C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());

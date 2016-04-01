@@ -197,7 +197,7 @@ namespace MBSim {
     return 0;
   }
 
-  void Contour::updatePositions(double t, ContourFrame *frame) {
+  void Contour::updatePositions(ContourFrame *frame) {
     THROW_MBSIMERROR("(Contour::updatePositions): Not implemented.");
   }
 

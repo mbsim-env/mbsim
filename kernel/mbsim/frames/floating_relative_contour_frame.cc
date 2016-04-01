@@ -27,8 +27,8 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void FloatingRelativeContourFrame::updatePositions(double t) { 
-    parent->updatePositions(t,this);
+  void FloatingRelativeContourFrame::updatePositions() {
+    parent->updatePositions(this);
     WrRP = getPosition(false) - R->evalPosition();
     updPos = false;
   }

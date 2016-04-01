@@ -37,7 +37,7 @@ namespace MBSim {
 
       std::string getType() const { return "FloatingContourFrame"; }
 
-      void updatePositions(double t);
+      void updatePositions();
       void updateVelocities(double t);
       void updateAccelerations(double t);
       void updateJacobians(double t, int j=0);

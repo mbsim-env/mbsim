@@ -1676,8 +1676,8 @@ namespace MBSim {
     return bInverseKinetics;
   }
 
-//  const Mat& DynamicSystem::getsv(double t) {
-//    ds->updateStopVector(t);
+//  const Mat& DynamicSystem::evalsv() {
+//    ds->updateStopVector(getTime());
 //    return sv;
 //  }
 

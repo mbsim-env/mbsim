@@ -68,12 +68,12 @@ namespace MBSim {
       const fmatvec::Vec3& getPosition(bool check=true) const { assert((not check) or (not updPos)); return WrOP; }
       fmatvec::Vec3& getPosition(bool check=true) { assert((not check) or (not updPos)); return WrOP; }
       void setPosition(const fmatvec::Vec3 &v) { WrOP = v; }
-      const fmatvec::Vec3& evalPosition() { if(updPos) updatePositions(0.); return WrOP; }
+      const fmatvec::Vec3& evalPosition() { if(updPos) updatePositions(); return WrOP; }
 
       const fmatvec::SqrMat3& getOrientation(bool check=true) const { assert((not check) or (not updPos)); return AWP; }
       fmatvec::SqrMat3& getOrientation(bool check=true) { assert((not check) or (not updPos)); return AWP; }
       void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
-      const fmatvec::SqrMat3& evalOrientation() { if(updPos) updatePositions(0.); return AWP; }
+      const fmatvec::SqrMat3& evalOrientation() { if(updPos) updatePositions(); return AWP; }
 
       const fmatvec::Vec3& getVelocity(bool check=true) const { assert((not check) or (not updVel)); return WvP; }
       fmatvec::Vec3& getVelocity(bool check=true) { assert((not check) or (not updVel)); return WvP; }
@@ -132,7 +132,7 @@ namespace MBSim {
       virtual void resetVelocitiesUpToDate();
       virtual void resetJacobiansUpToDate();
       virtual void resetGyroscopicAccelerationsUpToDate();
-      virtual void updatePositions(double t) { parent->updatePositions(t,this); updPos = false; }
+      virtual void updatePositions() { parent->updatePositions(this); updPos = false; }
       virtual void updateVelocities(double t) { parent->updateVelocities(t,this); updVel = false; }
       virtual void updateAccelerations(double t) { parent->updateAccelerations(t,this); updAcc = false; }
       virtual void updateJacobians(double t, int j=0) { parent->updateJacobians(t,this,j); updJac[j] = false; }

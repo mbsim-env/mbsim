@@ -86,12 +86,12 @@ namespace MBSim {
       ContourFrame* getContourFrame(int i) { return cFrame[i]; }
 
       void resetUpToDate();
-      virtual void updatePositions(double t) { }
+      virtual void updatePositions() { }
       virtual void updateVelocities(double t) { }
       virtual void updateForceDirections(double t);
       void updateForce(double t);
       void updateMoment(double t);
-      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(0.); return WrP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(0.); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomP0P1; }
       const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(0.); return DF; }

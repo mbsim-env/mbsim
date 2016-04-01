@@ -61,7 +61,7 @@ namespace MBSim {
    return ele0;
   }
 
-  void FixedRelativeFrame::updatePositions(double t) { 
+  void FixedRelativeFrame::updatePositions() {
     setOrientation(R->evalOrientation()*ARP);
     WrRP = R->getOrientation()*RrRP;
     setPosition(R->getPosition() + WrRP);

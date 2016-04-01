@@ -113,7 +113,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedPositions(double t) {
-    updatePositions(t);
+    updatePositions();
     updrrel = false;
   }
 
@@ -122,13 +122,13 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void SingleContact::updatePositions(double t) {
-    contactKinematics->updateg(t, rrel(0), cFrame);
+  void SingleContact::updatePositions() {
+    contactKinematics->updateg(getTime(), rrel(0), cFrame);
     updPos = false;
   }
 
-  void SingleContact::updatePositions(double t, Frame *frame) {
-    if(updPos) contactKinematics->updateg(t, rrel(0), cFrame);
+  void SingleContact::updatePositions(Frame *frame) {
+    if(updPos) contactKinematics->updateg(getTime(), rrel(0), cFrame);
   }
 
   void SingleContact::updateVelocities(double t) {

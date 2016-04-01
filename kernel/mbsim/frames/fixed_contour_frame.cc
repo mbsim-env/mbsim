@@ -23,8 +23,8 @@
 
 namespace MBSim {
 
-  void FixedContourFrame::updatePositions(double t) {
-    contour->updatePositions(t,this);
+  void FixedContourFrame::updatePositions() {
+    contour->updatePositions(this);
     updPos = false;
   }
 

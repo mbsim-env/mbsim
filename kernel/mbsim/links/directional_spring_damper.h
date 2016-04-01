@@ -45,7 +45,7 @@ namespace MBSim {
       DirectionalSpringDamper(const std::string &name="");
       ~DirectionalSpringDamper();
 
-      void updatePositions(double t, Frame *frame);
+      void updatePositions(Frame *frame);
       void updateGeneralizedPositions(double t);
       void updateGeneralizedVelocities(double t);
       void updatelaF(double t);

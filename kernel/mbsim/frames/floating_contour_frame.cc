@@ -23,8 +23,8 @@
 
 namespace MBSim {
 
-  void FloatingContourFrame::updatePositions(double t) {
-    parent->updatePositions(t,this);
+  void FloatingContourFrame::updatePositions() {
+    parent->updatePositions(this);
     updPos = false;
   }
 
