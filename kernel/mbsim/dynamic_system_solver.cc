@@ -866,12 +866,12 @@ namespace MBSim {
 //  }
 
   void DynamicSystemSolver::updater(double t, int j) {
-    r[j] = getV(t,j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    r[j] = evalV(j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updr[j] = false;
   }
 
   void DynamicSystemSolver::updaterdt(double t, int j) {
-    rdt[j] = getV(t,j) * La; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    rdt[j] = evalV(j) * La; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updrdt[j] = false;
   }
 
@@ -898,7 +898,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateV(double t, int j) {
-    V[j] = getW(t,j);
+    V[j] = evalW(j);
     Group::updateV(t, j);
     updV[j] = false;
   }
@@ -1041,12 +1041,12 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations(double t, double dt) {
-    La = slvLS(evalG(), -(getgd(t) + getW(t).T() * slvLLFac(getLLM(t), geth(t)) * dt));
+    La = slvLS(evalG(), -(evalgd() + evalW().T() * slvLLFac(evalLLM(), evalh()) * dt));
     return 1;
   }
 
   void DynamicSystemSolver::updateG(double t, int j) {
-    G << SqrMat(getW(t,j).T() * slvLLFac(getLLM(t,j), getV(t,j)));
+    G << SqrMat(evalW(j).T() * slvLLFac(evalLLM(j), evalV(j)));
 
     if (checkGSize)
       ; // Gs.resize();
@@ -1144,20 +1144,20 @@ namespace MBSim {
     Vec nu(getuSize());
     calclaSize(laID);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-    SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
-    Mat T = getT(t);
+    SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
+    Mat T = evalT();
     int iter = 0;
-    while (nrmInf(getg(t) - corr) >= tolProj) {
+    while (nrmInf(evalg() - corr) >= tolProj) {
       if (++iter > 500) {
         msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed at t = " << t << "!" << endl;
         break;
       }
-      Vec mu = slvLS(Gv, -getg(t) + getW(0,false).T() * nu + corr);
+      Vec mu = slvLS(Gv, -evalg() + getW(0,false).T() * nu + corr);
       Vec dnu = slvLLFac(getLLM(0,false), getW(0,false) * mu) - nu;
       nu += dnu;
       q += T * dnu;
       resetUpToDate();
-      if(fullUpdate) Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
+      if(fullUpdate) Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
    }
     calclaSize(3);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
@@ -1193,8 +1193,8 @@ namespace MBSim {
       updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
 
       if (laSize) {
-        SqrMat Gv = SqrMat(getW(t).T() * slvLLFac(getLLM(t), getW(t)));
-        Vec mu = slvLS(Gv, -getgd(t) + corr);
+        SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
+        Vec mu = slvLS(Gv, -evalgd() + corr);
         u += slvLLFac(getLLM(), getW() * mu);
         resetUpToDate();
       }
@@ -1320,16 +1320,16 @@ namespace MBSim {
     msg(Info) << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");
 
-    contactDrop << "constraint functions g" << endl << getg(t) << endl << endl;
+    contactDrop << "constraint functions g" << endl << evalg() << endl << endl;
     contactDrop << endl;
-    contactDrop << "mass matrix M" << endl << getM(t) << endl << endl;
-    contactDrop << "generalized force vector h" << endl << geth(t) << endl << endl;
-    contactDrop << "generalized force directions W" << endl << getW(t) << endl << endl;
-    contactDrop << "generalized force directions V" << endl << getV(t) << endl << endl;
+    contactDrop << "mass matrix M" << endl << evalM() << endl << endl;
+    contactDrop << "generalized force vector h" << endl << evalh() << endl << endl;
+    contactDrop << "generalized force directions W" << endl << evalW() << endl << endl;
+    contactDrop << "generalized force directions V" << endl << evalV() << endl << endl;
     contactDrop << "mass action matrix G" << endl << evalG() << endl << endl;
-    contactDrop << "vector wb" << endl << getwb(t) << endl << endl;
+    contactDrop << "vector wb" << endl << evalwb() << endl << endl;
     contactDrop << endl;
-    contactDrop << "constraint velocities gp" << endl << getgd(t) << endl << endl;
+    contactDrop << "constraint velocities gp" << endl << evalgd() << endl << endl;
     contactDrop << "non-holonomic part in gp; b" << endl << b << endl << endl;
     contactDrop << "Lagrange multipliers la" << endl << la << endl << endl;
     contactDrop << "Lagrange multipliers La" << endl << La << endl << endl;
@@ -1445,7 +1445,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(evalG(), -(getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t))); // slvLS because of undeterminded system of equations
+    la = slvLS(evalG(), -(evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb())); // slvLS because of undeterminded system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1649,10 +1649,10 @@ namespace MBSim {
       updateLaRef(LaParent(0, laSize - 1));
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-      V[0] = getW(t); //updateV(t) not allowed here
+      V[0] = evalW(); //updateV(t) not allowed here
       updV[0] = false;
 
-      b << getgd(t); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+      b << evalgd(); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       solveImpacts(t);
       u += deltau(zParent, t, 0);
       resetUpToDate();
@@ -1675,7 +1675,7 @@ namespace MBSim {
         updatewbRef(wbParent(0, laSize - 1));
         updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-        b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
+        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints(t);
 
         checkActive(t,4);
@@ -1696,7 +1696,7 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
       if (laSize) {
-        b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
+        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints(t);
 
         checkActive(t,4);
@@ -1737,7 +1737,7 @@ namespace MBSim {
       updatezdRef(zdParent);
 
     if (laSize) {
-      b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
+      b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
       solveConstraints(t);
     }
     updateStopVector(t);
@@ -1768,7 +1768,7 @@ namespace MBSim {
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     if (laSize) {
       if(useConstraintSolverForPlot) {
-        b << getW(t).T() * slvLLFac(getLLM(t), geth(t)) + getwb(t);
+        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints(t);
       }
       else
@@ -1777,14 +1777,14 @@ namespace MBSim {
 
     updatezd(t);
     if (true) {
-      int n = getWInverseKinetics(t,1).cols();
+      int n = evalWInverseKinetics(1).cols();
       int m1 = WInverseKinetics[1].rows();
-      int m2 = getbInverseKinetics(t).rows();
+      int m2 = evalbInverseKinetics().rows();
       Mat A(m1 + m2, n);
       Vec b(m1 + m2);
       A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics[1];
       A(Index(m1, m1 + m2 - 1), Index(0, n - 1)) = bInverseKinetics;
-      b(0, m1 - 1) = -geth(t,1) - getr(t,1);
+      b(0, m1 - 1) = -evalh(1) - evalr(1);
       laInverseKinetics = slvLL(JTJ(A), A.T() * b);
     }
 

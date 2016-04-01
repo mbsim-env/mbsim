@@ -267,19 +267,19 @@ namespace MBSim {
       const fmatvec::VecInt& getLinkStatus() const { return LinkStatus; }
       const fmatvec::VecInt& getLinkStatusReg() const { return LinkStatusReg; }
 
-      const fmatvec::Mat& getT(double t);
-      const fmatvec::Vec& geth(double t, int i=0);
-      const fmatvec::SymMat& getM(double t, int i=0);
-      const fmatvec::SymMat& getLLM(double t, int i=0);
-      const fmatvec::Mat& getW(double t, int i=0);
-      const fmatvec::Mat& getV(double t, int i=0);
-      const fmatvec::Vec& getwb(double t);
-      const fmatvec::Vec& getr(double t, int i=0);
-      const fmatvec::Vec& getrdt(double t, int i=0);
-      const fmatvec::Vec& getg(double t);
-      const fmatvec::Vec& getgd(double t);
-      const fmatvec::Mat& getWInverseKinetics(double t, int i=0);
-      const fmatvec::Mat& getbInverseKinetics(double t);
+      const fmatvec::Mat& evalT();
+      const fmatvec::Vec& evalh(int i=0);
+      const fmatvec::SymMat& evalM(int i=0);
+      const fmatvec::SymMat& evalLLM(int i=0);
+      const fmatvec::Mat& evalW(int i=0);
+      const fmatvec::Mat& evalV(int i=0);
+      const fmatvec::Vec& evalwb();
+      const fmatvec::Vec& evalr(int i=0);
+      const fmatvec::Vec& evalrdt(int i=0);
+      const fmatvec::Vec& evalg();
+      const fmatvec::Vec& evalgd();
+      const fmatvec::Mat& evalWInverseKinetics(int i=0);
+      const fmatvec::Mat& evalbInverseKinetics();
 //      const fmatvec::Vec& getsv(double t);
 
       void setx(const fmatvec::Vec& x_) { x = x_; }

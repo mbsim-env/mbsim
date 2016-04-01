@@ -1611,68 +1611,68 @@ namespace MBSim {
 //    return V[i];
 //  }
 
-  const Mat& DynamicSystem::getT(double t) {
-    if(ds->getUpdateT()) ds->updateT(t);
+  const Mat& DynamicSystem::evalT() {
+    if(ds->getUpdateT()) ds->updateT(getTime());
     return T;
   }
 
-  const Vec& DynamicSystem::geth(double t, int i) {
-    if(ds->getUpdateh(i)) ds->updateh(t,i);
+  const Vec& DynamicSystem::evalh(int i) {
+    if(ds->getUpdateh(i)) ds->updateh(getTime(),i);
     return h[i];
   }
 
-  const Vec& DynamicSystem::getr(double t, int i) {
-    if(ds->getUpdater(i)) ds->updater(t,i);
+  const Vec& DynamicSystem::evalr(int i) {
+    if(ds->getUpdater(i)) ds->updater(getTime(),i);
     return r[i];
   }
 
-  const Vec& DynamicSystem::getrdt(double t, int i) {
-    if(ds->getUpdaterdt(i)) ds->updaterdt(t,i);
+  const Vec& DynamicSystem::evalrdt(int i) {
+    if(ds->getUpdaterdt(i)) ds->updaterdt(getTime(),i);
     return rdt[i];
   }
 
-  const SymMat& DynamicSystem::getM(double t, int i) {
-    if(ds->getUpdateM(i)) ds->updateM(t,i);
+  const SymMat& DynamicSystem::evalM(int i) {
+    if(ds->getUpdateM(i)) ds->updateM(getTime(),i);
     return M[i];
   }
 
-  const SymMat& DynamicSystem::getLLM(double t, int i) {
-    if(ds->getUpdateLLM(i)) ds->updateLLM(t,i);
+  const SymMat& DynamicSystem::evalLLM(int i) {
+    if(ds->getUpdateLLM(i)) ds->updateLLM(getTime(),i);
     return LLM[i];
   }
 
-  const Mat& DynamicSystem::getW(double t, int i) {
-    if(ds->getUpdateW(i)) ds->updateW(t,i);
+  const Mat& DynamicSystem::evalW(int i) {
+    if(ds->getUpdateW(i)) ds->updateW(getTime(),i);
     return W[i];
   }
 
-  const Mat& DynamicSystem::getV(double t, int i) {
-    if(ds->getUpdateV(i)) ds->updateV(t,i);
+  const Mat& DynamicSystem::evalV(int i) {
+    if(ds->getUpdateV(i)) ds->updateV(getTime(),i);
     return V[i];
   }
 
-  const Vec& DynamicSystem::getwb(double t) {
-    if(ds->getUpdatewb()) ds->updatewb(t);
+  const Vec& DynamicSystem::evalwb() {
+    if(ds->getUpdatewb()) ds->updatewb(getTime());
     return wb;
   }
 
-  const Vec& DynamicSystem::getg(double t) {
-    if(ds->getUpdateg()) ds->updateg(t);
+  const Vec& DynamicSystem::evalg() {
+    if(ds->getUpdateg()) ds->updateg(getTime());
     return g;
   }
 
-  const Vec& DynamicSystem::getgd(double t) {
-    if(ds->getUpdategd()) ds->updategd(t);
+  const Vec& DynamicSystem::evalgd() {
+    if(ds->getUpdategd()) ds->updategd(getTime());
     return gd;
   }
 
-  const Mat& DynamicSystem::getWInverseKinetics(double t, int i) {
-    ds->updateWInverseKinetics(t,i);
+  const Mat& DynamicSystem::evalWInverseKinetics(int i) {
+    ds->updateWInverseKinetics(getTime(),i);
     return WInverseKinetics[i];
   }
 
-  const Mat& DynamicSystem::getbInverseKinetics(double t) {
-    ds->updatebInverseKinetics(t);
+  const Mat& DynamicSystem::evalbInverseKinetics() {
+    ds->updatebInverseKinetics(getTime());
     return bInverseKinetics;
   }
 

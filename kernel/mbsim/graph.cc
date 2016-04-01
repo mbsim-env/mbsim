@@ -40,17 +40,17 @@ namespace MBSim {
   Graph::~Graph() {}
 
   void Graph::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(getLLM(t), geth(t)*dt+getrdt(t));
+    ud[0] = slvLLFac(evalLLM(), evalh()*dt+evalrdt());
   }
 
   void Graph::updateud(double t, int j) {
-    ud[j] =  slvLLFac(getLLM(t,j), geth(t,j)+getr(t,j));
+    ud[j] =  slvLLFac(evalLLM(j), evalh(j)+evalr(j));
   }
 
   void Graph::updatezd(double t) {
     for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i)
       (**i).updateqd(t);
-    ud[0] = slvLLFac(getLLM(t), geth(t)+getr(t));
+    ud[0] = slvLLFac(evalLLM(), evalh()+evalr());
   }
 
   void Graph::sethSize0(int hSize_) {
@@ -126,7 +126,7 @@ namespace MBSim {
   }
 
   void Graph::updateLLM(double t, int i) {
-    LLM[i] = facLL(getM(t,i)); 
+    LLM[i] = facLL(evalM(i));
   }
 
   void Graph::addObject(int level, Object* object) {

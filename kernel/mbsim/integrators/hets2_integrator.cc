@@ -113,10 +113,10 @@ namespace MBSimIntegrator {
       // save values
       Vec qStage0 = system.getq().copy();
       Vec uStage0 = system.getu().copy();
-      Mat TStage0 = system.getT(t).copy();
-      SymMat LLMStage0 = system.getLLM(t).copy();
-      Vec hStage0 = system.geth(t).copy();
-      Mat VStage0 = system.getV(t).copy();
+      Mat TStage0 = system.evalT().copy();
+      SymMat LLMStage0 = system.evalLLM().copy();
+      Vec hStage0 = system.evalh().copy();
+      Mat VStage0 = system.evalV().copy();
 
       // plot
       if(t >= tPlot) {
@@ -133,7 +133,7 @@ namespace MBSimIntegrator {
 
       /* CHECK IMPACTS */
       // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
-      q += system.getT(t)*u*dt;
+      q += system.evalT()*u*dt;
       t += dt;
 
       system.resetUpToDate();
@@ -151,7 +151,7 @@ namespace MBSimIntegrator {
         dtInfo = dt;
 
         // update right hand side of constraint equation system
-        system.getb(false) << system.getgd(t)/dt + system.getW(t).T()*slvLLFac(LLMStage0,hStage0);
+        system.getb(false) << system.evalgd()/dt + system.evalW().T()*slvLLFac(LLMStage0,hStage0);
 
         // solve the constraint equation system
         if (system.getla().size() not_eq 0) {
@@ -172,7 +172,7 @@ namespace MBSimIntegrator {
 
         /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND OUTPUT STAGE */
         // output stage position update
-        q = qStage0 + (system.getT(t)*u+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
+        q = qStage0 + (system.evalT()*u+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
 
         system.resetUpToDate();
 
@@ -180,7 +180,7 @@ namespace MBSimIntegrator {
         evaluateStage(system);
 
         // output stage velocity update without constraint force
-        u = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.getLLM(t),system.geth(t)))*dt*0.5;
+        u = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dt*0.5;
 
         system.resetUpToDate();
 
@@ -188,7 +188,7 @@ namespace MBSimIntegrator {
         evaluateStage(system);
 
         // update right hand side of constraint equation system
-        system.getb(false) << 2.*system.getgd(t)/dt;
+        system.getb(false) << 2.*system.evalgd()/dt;
 
         // solve the constraint equation system
         if (system.getla().size() not_eq 0) {
@@ -201,7 +201,7 @@ namespace MBSimIntegrator {
         sumIter += iter;
 
         // output stage velocity update
-        u += slvLLFac(system.getLLM(t),system.getV(t)*system.getla())*dt*0.5;
+        u += slvLLFac(system.evalLLM(),system.evalV()*system.getla())*dt*0.5;
 
         system.resetUpToDate();
 
@@ -220,7 +220,7 @@ namespace MBSimIntegrator {
         dtInfo = dtImpulsive;
 
         // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
-        q = qStage0 + system.getT(t)*u*dtImpulsive;
+        q = qStage0 + system.evalT()*u*dtImpulsive;
         t += dtImpulsive-dt;
 
         // first stage velocity update
@@ -235,7 +235,7 @@ namespace MBSimIntegrator {
         evaluateStage(system);
 
         // output stage velocity update without impact
-        u = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.getLLM(t),system.geth(t)))*dtImpulsive*0.5;
+        u = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dtImpulsive*0.5;
 
         system.resetUpToDate();
 
@@ -243,7 +243,7 @@ namespace MBSimIntegrator {
         evaluateStage(system);
 
         // update right hand side of impact equation system
-        system.getb(false) << system.getgd(t);
+        system.getb(false) << system.evalgd();
 
         // solve the impact equation system
         if (system.getLa().size() not_eq 0) {
@@ -256,7 +256,7 @@ namespace MBSimIntegrator {
         sumIter += iter;
 
         // output stage velocity update
-        u += slvLLFac(system.getLLM(t),system.getV(t)*system.getLa());
+        u += slvLLFac(system.evalLLM(),system.evalV()*system.getLa());
       }
       /*****************************************/
     }
