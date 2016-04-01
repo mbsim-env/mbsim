@@ -121,18 +121,18 @@ namespace MBSim {
   }
 
   void ContourLink::updateForce(double t) {
-    F = getGlobalForceDirection(t)*evalGeneralizedForce()(iF);
+    F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
     updF = false;
   }
 
   void ContourLink::updateMoment(double t) {
-    M = getGlobalMomentDirection(t)*evalGeneralizedForce()(iM);
+    M = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
     updM = false;
   }
 
 //  void ContourLink::updateR(double t) {
-//    RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
-//    RM.set(Index(0,2), Index(iM), getGlobalMomentDirection(t));
+//    RF.set(Index(0,2), Index(iF), evalGlobalForceDirection());
+//    RM.set(Index(0,2), Index(iM), evalGlobalMomentDirection());
 //    updR = false;
 //  }
 

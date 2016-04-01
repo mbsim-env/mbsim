@@ -91,13 +91,13 @@ namespace MBSim {
       virtual void updateForceDirections(double t);
       void updateForce(double t);
       void updateMoment(double t);
-      const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrP0P1; }
-      const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
-      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
-      const fmatvec::Mat3xV& getGlobalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF; }
-      const fmatvec::Mat3xV& getGlobalMomentDirection(double t) { if(updFD) updateForceDirections(t); return DM; }
-      const fmatvec::Vec3& getForce(double t) { if(updF) updateForce(t); return F; }
-      const fmatvec::Vec3& getMoment(double t) { if(updM) updateMoment(t); return M; }
+      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(0.); return WrP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(0.); return WvP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomP0P1; }
+      const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(0.); return DF; }
+      const fmatvec::Mat3xV& evalGlobalMomentDirection() { if(updFD) updateForceDirections(0.); return DM; }
+      const fmatvec::Vec3& evalForce() { if(updF) updateForce(0.); return F; }
+      const fmatvec::Vec3& evalMoment() { if(updM) updateMoment(0.); return M; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }

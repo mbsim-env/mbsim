@@ -52,10 +52,10 @@ namespace MBSim {
 
   void Joint::updatewb(double t) {
     Mat3xV WJT = refFrame->evalOrientation() * JT;
-    VecV sdT = WJT.T() * getGlobalRelativeVelocity(t);
+    VecV sdT = WJT.T() * evalGlobalRelativeVelocity();
 
-    wb(0, DF.cols() - 1) += getGlobalForceDirection(t).T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), getGlobalRelativeVelocity(t) + WJT * sdT));
-    wb(DF.cols(), DM.cols() + DF.cols() - 1) += getGlobalMomentDirection(t).T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), getGlobalRelativeAngularVelocity(t)));
+    wb(0, DF.cols() - 1) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeVelocity() + WJT * sdT));
+    wb(DF.cols(), DM.cols() + DF.cols() - 1) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
   }
 
   void Joint::updatelaFM(double t) {
@@ -87,8 +87,8 @@ namespace MBSim {
   }
 
   void Joint::updateh(double t, int j) {
-    Vec3 F = (ffl and not ffl->isSetValued())?getGlobalForceDirection(t)*getlaF(t):Vec3();
-    Vec3 M = (fml and not fml->isSetValued())?getGlobalMomentDirection(t)*getlaM(t):Vec3();
+    Vec3 F = (ffl and not ffl->isSetValued())?evalGlobalForceDirection()*getlaF(t):Vec3();
+    Vec3 M = (fml and not fml->isSetValued())?evalGlobalMomentDirection()*getlaM(t):Vec3();
 
     h[j][0] -= C.evalJacobianOfTranslation(j).T() * F + C.evalJacobianOfRotation(j).T() * M;
     h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * F + frame[1]->evalJacobianOfRotation(j).T() * M;
@@ -99,8 +99,8 @@ namespace MBSim {
     int nM = (fml and fml->isSetValued())?momentDir.cols():0;
     Mat3xV RF(nF+nM);
     Mat3xV RM(RF.cols());
-    RF.set(Index(0,2), Index(0,nF-1), getGlobalForceDirection(t)(Index(0,2),Index(0,nF-1)));
-    RM.set(Index(0,2), Index(nF,nF+nM-1), getGlobalMomentDirection(t)(Index(0,2),Index(0,nM-1)));
+    RF.set(Index(0,2), Index(0,nF-1), evalGlobalForceDirection()(Index(0,2),Index(0,nF-1)));
+    RM.set(Index(0,2), Index(nF,nF+nM-1), evalGlobalMomentDirection()(Index(0,2),Index(0,nM-1)));
 
     W[j][0] -= C.evalJacobianOfTranslation(j).T() * RF + C.evalJacobianOfRotation(j).T() * RM;
     W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * RF + frame[1]->evalJacobianOfRotation(j).T() * RM;

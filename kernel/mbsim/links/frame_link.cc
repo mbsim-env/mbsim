@@ -65,7 +65,7 @@ namespace MBSim {
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
         data.push_back(toPoint(2));
-        Vec3 WF = getForce(t);
+        Vec3 WF = evalForce();
         data.push_back(WF(0));
         data.push_back(WF(1));
         data.push_back(WF(2));
@@ -135,21 +135,21 @@ namespace MBSim {
   }
 
   void FrameLink::updateForce(double t) {
-    F = getGlobalForceDirection(t)*evalGeneralizedForce()(iF);
+    F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
     updF = false;
   }
 
   void FrameLink::updateForceDirections(double t) {
     if(evalGeneralizedRelativePosition()(0)>epsroot())
-      DF=getGlobalRelativePosition(t)/rrel(0);
+      DF=evalGlobalRelativePosition()/rrel(0);
     else
       DF.init(0);
     updFD = false;
   }
 
   void FrameLink::updateh(double t, int j) {
-    h[j][0]-=frame[0]->evalJacobianOfTranslation(j).T()*getForce(t);
-    h[j][1]+=frame[1]->evalJacobianOfTranslation(j).T()*getForce(t);
+    h[j][0]-=frame[0]->evalJacobianOfTranslation(j).T()*evalForce();
+    h[j][1]+=frame[1]->evalJacobianOfTranslation(j).T()*evalForce();
   }
   
   void FrameLink::updatePositions(double t) {
@@ -163,17 +163,17 @@ namespace MBSim {
   }
 
   void FrameLink::updateGeneralizedPositions(double t) {
-    rrel(0)=nrm2(getGlobalRelativePosition(t));
+    rrel(0)=nrm2(evalGlobalRelativePosition());
     updrrel = false;
   }
 
   void FrameLink::updateGeneralizedVelocities(double t) {
-    vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
+    vrel=evalGlobalForceDirection().T()*evalGlobalRelativeVelocity();
     updvrel = false;
   }
 
   void FrameLink::updateR(double t) {
-    RF.set(Index(0,2), Index(iF), getGlobalForceDirection(t));
+    RF.set(Index(0,2), Index(iF), evalGlobalForceDirection());
     updRMV = false;
   }
 

@@ -45,17 +45,17 @@ namespace MBSim {
   }
 
   void DirectionalSpringDamper::updatePositions(double t, Frame *frame_) {
-    frame_->setPosition(frame[1]->getPosition() - getGlobalForceDirection(t)*(getGlobalForceDirection(t).T()*getGlobalRelativePosition(t)));
+    frame_->setPosition(frame[1]->getPosition() - evalGlobalForceDirection()*(evalGlobalForceDirection().T()*evalGlobalRelativePosition()));
     frame_->setOrientation(frame[0]->getOrientation());
   }
 
   void DirectionalSpringDamper::updateGeneralizedPositions(double t) {
-    rrel=getGlobalForceDirection(t).T()*getGlobalRelativePosition(t);
+    rrel=evalGlobalForceDirection().T()*evalGlobalRelativePosition();
     updrrel = false;
   }
 
   void DirectionalSpringDamper::updateGeneralizedVelocities(double t) {
-    vrel=getGlobalForceDirection(t).T()*getGlobalRelativeVelocity(t);
+    vrel=evalGlobalForceDirection().T()*evalGlobalRelativeVelocity();
     updvrel = false;
   }
 

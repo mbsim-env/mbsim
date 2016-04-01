@@ -94,12 +94,12 @@ namespace MBSim {
       void updateR(double t);
       virtual void updatelaF(double t) { }
       virtual void updatelaM(double t) { }
-      const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrP0P1; }
-      const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvP0P1; }
-      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomP0P1; }
-      const fmatvec::Mat3xV& getGlobalForceDirection(double t) { if(updFD) updateForceDirections(t); return DF; }
-      const fmatvec::Vec3& getForce(double t) { if(updF) updateForce(t); return F; }
-      const fmatvec::Mat3xV& getRF(double t) { if(updRMV) updateR(t); return RF; }
+      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(0.); return WrP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(0.); return WvP0P1; }
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(0.); return WomP0P1; }
+      const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(0.); return DF; }
+      const fmatvec::Vec3& evalForce() { if(updF) updateForce(0.); return F; }
+      const fmatvec::Mat3xV& getRF(double t) { if(updRMV) updateR(0.); return RF; }
       const fmatvec::VecV& getlaF(double t) { if(updlaF) updatelaF(t); return lambdaF; }
       const fmatvec::VecV& getlaM(double t) { if(updlaM) updatelaM(t); return lambdaM; }
 

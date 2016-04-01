@@ -68,13 +68,13 @@ namespace MBSim {
       normal /= nrm2(normal);
 
     //g(IR) = Wm.T() * normal * (alpha - alpha0); // TODO (T.S. : Perhaps you can use alpha for the force law and the normal for the direction independently.)
-    rrel = getGlobalMomentDirection(t).T() * normal * alpha;
+    rrel = evalGlobalMomentDirection().T() * normal * alpha;
 
     updrrel = false;
   }
 
   void IsotropicRotationalSpringDamper::updateGeneralizedVelocities(double t) {
-    vrel = getGlobalMomentDirection(t).T() * getGlobalRelativeVelocity(t);
+    vrel = evalGlobalMomentDirection().T() * evalGlobalRelativeVelocity();
     updvrel = false;
   }
 
