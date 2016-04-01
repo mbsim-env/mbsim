@@ -72,8 +72,8 @@ namespace MBSim {
       void updateh(double t, int j=0);
       void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
       void updateInertiaTensor(double t);
-      void updateGeneralizedCoordinates(double t); 
-      void updateGeneralizedJacobians(double t, int j=0); 
+      void updateGeneralizedCoordinates();
+      void updateGeneralizedJacobians(int j=0);
       void updatePositions();
       void updateVelocities();
       void updateJacobians();
@@ -254,14 +254,14 @@ namespace MBSim {
       void resetVelocitiesUpToDate();
       void resetJacobiansUpToDate();
       void resetGyroscopicAccelerationsUpToDate();
-      const fmatvec::Vec& evalqRel() { if(updGC) updateGeneralizedCoordinates(0.); return qRel; }
-      const fmatvec::Vec& evaluRel() { if(updGC) updateGeneralizedCoordinates(0.); return uRel; }
-      const fmatvec::VecV& evalqTRel() { if(updGC) updateGeneralizedCoordinates(0.); return qTRel; }
-      const fmatvec::VecV& evalqRRel() { if(updGC) updateGeneralizedCoordinates(0.); return qRRel; }
-      const fmatvec::VecV& evaluTRel() { if(updGC) updateGeneralizedCoordinates(0.); return uTRel; }
-      const fmatvec::VecV& evaluRRel() { if(updGC) updateGeneralizedCoordinates(0.); return uRRel; }
-      const fmatvec::Mat& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(0.); return JRel[j]; }
-      const fmatvec::Vec& evaljRel() { if(updGJ) updateGeneralizedJacobians(0.); return jRel; }
+      const fmatvec::Vec& evalqRel() { if(updGC) updateGeneralizedCoordinates(); return qRel; }
+      const fmatvec::Vec& evaluRel() { if(updGC) updateGeneralizedCoordinates(); return uRel; }
+      const fmatvec::VecV& evalqTRel() { if(updGC) updateGeneralizedCoordinates(); return qTRel; }
+      const fmatvec::VecV& evalqRRel() { if(updGC) updateGeneralizedCoordinates(); return qRRel; }
+      const fmatvec::VecV& evaluTRel() { if(updGC) updateGeneralizedCoordinates(); return uTRel; }
+      const fmatvec::VecV& evaluRRel() { if(updGC) updateGeneralizedCoordinates(); return uRRel; }
+      const fmatvec::Mat& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
+      const fmatvec::Vec& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
       const fmatvec::Mat& evalTRel() { if(updT) updateT(0.); return TRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
