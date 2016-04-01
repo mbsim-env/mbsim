@@ -116,9 +116,9 @@ namespace MBSim {
       }
       if (getPlotFeature(rightHandSide) == enabled) {
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(geth(getTime())(i));
+          plotVector.push_back(evalh()(i));
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(getr(getTime())(i));
+          plotVector.push_back(evalr()(i));
       }
       if (getPlotFeature(energy) == enabled) {
         double Ttemp = computeKineticEnergy();
@@ -275,50 +275,50 @@ namespace MBSim {
     return Element::writeXMLFile(parent);
   }
 
-  const Mat& Object::getT(double t) {
-    if(ds->getUpdateT()) ds->updateT(t);
+  const Mat& Object::evalT() {
+    if(ds->getUpdateT()) ds->updateT(getTime());
     return T;
   }
 
-  const Vec& Object::geth(double t, int i) {
-    if(ds->getUpdateh(i)) ds->updateh(t,i);
+  const Vec& Object::evalh(int i) {
+    if(ds->getUpdateh(i)) ds->updateh(getTime(),i);
     return h[i];
   }
 
-  const Vec& Object::getr(double t, int i) {
-    if(ds->getUpdater(i)) ds->updater(t,i);
+  const Vec& Object::evalr(int i) {
+    if(ds->getUpdater(i)) ds->updater(getTime(),i);
     return r[i];
   }
 
-  const Vec& Object::getrdt(double t, int i) {
-    if(ds->getUpdaterdt(i)) ds->updaterdt(t,i);
+  const Vec& Object::evalrdt(int i) {
+    if(ds->getUpdaterdt(i)) ds->updaterdt(getTime(),i);
     return rdt[i];
   }
 
-  const SymMat& Object::getM(double t, int i) {
-    if(ds->getUpdateM(i)) ds->updateM(t,i);
+  const SymMat& Object::evalM(int i) {
+    if(ds->getUpdateM(i)) ds->updateM(getTime(),i);
     return M[i];
   }
 
-  const SymMat& Object::getLLM(double t, int i) {
-    if(ds->getUpdateLLM(i)) ds->updateLLM(t,i);
+  const SymMat& Object::evalLLM(int i) {
+    if(ds->getUpdateLLM(i)) ds->updateLLM(getTime(),i);
     return LLM[i];
   }
 
   void Object::updatedq(double t, double dt) {
-    qd = getT(t) * u * dt;
+    qd = evalT() * u * dt;
   }
 
   void Object::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(getLLM(t), geth(t) * dt + getrdt(t));
+    ud[0] = slvLLFac(evalLLM(), evalh() * dt + evalrdt());
   }
 
   void Object::updateud(double t, int i) {
-    ud[i] = slvLLFac(getLLM(t,i), geth(t,i) + getr(t,i));
+    ud[i] = slvLLFac(evalLLM(i), evalh(i) + evalr(i));
   }
 
   void Object::updateqd(double t) {
-    qd = getT(t) * u;
+    qd = evalT() * u;
   }
 
   const fmatvec::Vec& Object::geth(int i, bool check) const {

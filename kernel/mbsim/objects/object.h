@@ -206,7 +206,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(getM(t,i)); }
+      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(evalM(i)); }
 
       /**
        * \return kinetic energy 
@@ -256,12 +256,12 @@ namespace MBSim {
       fmatvec::Vec& getqd() { return qd; };
       fmatvec::Vec& getud(int i=0) { return ud[i]; };
 
-      const fmatvec::Mat& getT(double t);
-      const fmatvec::Vec& geth(double t, int i=0);
-      const fmatvec::SymMat& getM(double t, int i=0);
-      const fmatvec::SymMat& getLLM(double t, int i=0);
-      const fmatvec::Vec& getr(double t, int i=0);
-      const fmatvec::Vec& getrdt(double t, int i=0);
+      const fmatvec::Mat& evalT();
+      const fmatvec::Vec& evalh(int i=0);
+      const fmatvec::SymMat& evalM(int i=0);
+      const fmatvec::SymMat& evalLLM(int i=0);
+      const fmatvec::Vec& evalr(int i=0);
+      const fmatvec::Vec& evalrdt(int i=0);
 
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
