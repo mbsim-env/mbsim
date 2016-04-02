@@ -404,7 +404,7 @@ namespace MBSim {
     }
   }
 
-  void RigidBody::updateqd(double t) {
+  void RigidBody::updateqd() {
     if(!constraint) {
       qd(iqT) = evaluTRel();
       if(fTR)

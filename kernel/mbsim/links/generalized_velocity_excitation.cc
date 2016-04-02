@@ -35,8 +35,8 @@ namespace MBSim {
     f->init(stage);
   }
 
-  void GeneralizedVelocityExcitation::updatexd(double t) {
-    if(f) xd = (*f)(x,t);
+  void GeneralizedVelocityExcitation::updatexd() {
+    if(f) xd = (*f)(x,getTime());
   }
 
   void GeneralizedVelocityExcitation::updateGeneralizedPositions() {

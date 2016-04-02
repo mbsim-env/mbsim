@@ -99,7 +99,7 @@ namespace MBSimIntegrator {
       t += dt;
 
       system.checkActive(t,1);
-      if (system.gActiveChanged()) system.resize_(t);
+      if (system.gActiveChanged()) system.resize_();
 
       system.getb(false) << system.evalgd() + system.evalW().T()*slvLLFac(system.evalLLM(),system.evalh())*dt;
       iter = system.solveImpacts(t,dt);

@@ -55,12 +55,12 @@ namespace MBSim {
       virtual void updateT() { }
       virtual void updateh(double t, int j=0) { }
       virtual void updateM(double t, int i=0) { }
-      virtual void updatedhdz(double t);
+      virtual void updatedhdz();
       virtual void updatedq(double t, double dt); 
       virtual void updatedu(double t, double dt);
       virtual void updateud(double t, int i=0);
-      virtual void updateqd(double t);
-      virtual void updatezd(double t) { updateqd(t); updateud(t); }
+      virtual void updateqd();
+      virtual void updatezd() { updateqd(); updateud(getTime()); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }

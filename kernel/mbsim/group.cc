@@ -72,18 +72,18 @@ namespace MBSim {
       (*i)->updateud(t,j);
   }
 
-  void Group::updatezd(double t) {
+  void Group::updatezd() {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatezd(t);
+      (*i)->updatezd();
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updatezd(t);
+      (*i)->updatezd();
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (*i)->updatexd(t);
+      (*i)->updatexd();
 
     for(vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
-      (*i)->updatexd(t);
+      (*i)->updatexd();
   }
 
   void Group::initializeUsingXML(DOMElement *element) {

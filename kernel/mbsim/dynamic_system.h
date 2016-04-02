@@ -74,9 +74,9 @@ namespace MBSim {
       virtual void updateM(double t, int i=0);
       virtual void updatedq(double t, double dt); 
       virtual void updateud(double t, int i=0) { THROW_MBSIMERROR("(DynamicSystem::updateud): Not implemented!"); }
-      virtual void updatezd(double t) = 0;
+      virtual void updatezd() = 0;
       virtual void updatedu(double t, double dt) = 0;
-      virtual void updateqd(double t);
+      virtual void updateqd();
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
@@ -118,7 +118,7 @@ namespace MBSim {
       virtual void updatebInverseKinetics();
 
       virtual void updatedx(double t, double dt);
-      virtual void updatexd(double t);
+      virtual void updatexd();
       virtual void calcxSize();
       const fmatvec::Vec& getx() const { return x; };
       fmatvec::Vec& getx() { return x; };

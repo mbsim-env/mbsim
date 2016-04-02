@@ -537,8 +537,8 @@ namespace MBSim {
 
       fmatvec::Mat dhdq(double t, int lb=0, int ub=0);
       fmatvec::Mat dhdu(double t, int lb=0, int ub=0);
-      fmatvec::Mat dhdx(double t);
-      fmatvec::Vec dhdt(double t);
+      fmatvec::Mat dhdx();
+      fmatvec::Vec dhdt();
 
       void setRootID(int ID) {rootID = ID;}
       int getRootID() const {return rootID;}
@@ -557,7 +557,7 @@ namespace MBSim {
       bool getUpdateg() { return updg; }
       bool getUpdategd() { return updgd; }
 
-      void resize_(double t);
+      void resize_();
 
       /**
        * \brief references to relative distances of dynamic system parent

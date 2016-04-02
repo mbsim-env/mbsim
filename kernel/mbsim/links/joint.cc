@@ -78,7 +78,7 @@ namespace MBSim {
       lambdaM(j) = (*fml)(evalGeneralizedRelativePosition()(i), evalGeneralizedRelativeVelocity()(i));
   }
 
-  void Joint::updatexd(double t) {
+  void Joint::updatexd() {
     xd = evalGeneralizedRelativeVelocity()(iM);
   }
 

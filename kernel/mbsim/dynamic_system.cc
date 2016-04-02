@@ -282,23 +282,23 @@ namespace MBSim {
       (**i).updatedx(t, dt);
   }
 
-  void DynamicSystem::updateqd(double t) {
+  void DynamicSystem::updateqd() {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (*i)->updateqd(t);
+      (*i)->updateqd();
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updateqd(t);
+      (*i)->updateqd();
   }
 
-  void DynamicSystem::updatexd(double t) {
+  void DynamicSystem::updatexd() {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatexd(t);
+      (**i).updatexd();
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexd(t);
+      (**i).updatexd();
 
     for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
-      (**i).updatexd(t);
+      (**i).updatexd();
   }
 
   void DynamicSystem::updateStopVector() {

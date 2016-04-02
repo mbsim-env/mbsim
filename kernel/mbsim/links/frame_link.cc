@@ -51,7 +51,7 @@ namespace MBSim {
     updlaM = true;
   }
 
-  void FrameLink::updatedhdz(double t) {
+  void FrameLink::updatedhdz() {
     THROW_MBSIMERROR("Internal error");
   }
 

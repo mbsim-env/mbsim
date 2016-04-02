@@ -51,7 +51,7 @@ namespace MBSim {
       FloatingFrameLink(const std::string &name);
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatedhdz(double t);
+      virtual void updatedhdz();
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */

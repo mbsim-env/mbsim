@@ -349,9 +349,10 @@ namespace MBSimIntegrator {
               zT1 << zi;
               qT1 += sysT1->deltaq(zT1,t,dt);
 //              sysT1->update(zT1,t+dt,1);
+              system.setTime(t+dt);
               system.resetUpToDate();
               system.checkActive(t+dt,1);
-              if (system.gActiveChanged()) system.resize_(t+dt);
+              if (system.gActiveChanged()) system.resize_();
               sysT1->getb(false) << sysT1->getgd(t+dt) + sysT1->getW(t+dt).T()*slvLLFac(sysT1->getLLM(t+dt),sysT1->geth(t+dt))*dt;
               iterA  = sysT1->solveImpacts(t+dt,dt);
               getAllSetValuedla(la1d,la1dSizes,SetValuedLinkListT1);
@@ -376,8 +377,9 @@ namespace MBSimIntegrator {
                 qT1 += sysT1->deltaq(zT1,t,dtHalf);
 //                sysT1->update(zT1,t+dtHalf,1);
                 system.resetUpToDate();
+                system.setTime(t+dtHalf);
                 system.checkActive(t+dtHalf,1);
-                if (system.gActiveChanged()) system.resize_(t+dtHalf);
+                if (system.gActiveChanged()) system.resize_();
                 sysT1->getb(false) << sysT1->getgd(t+dtHalf) + sysT1->getW(t+dtHalf).T()*slvLLFac(sysT1->getLLM(t+dtHalf),sysT1->geth(t+dtHalf))*dtHalf;
                 iterB1  = sysT1->solveImpacts(t+dtHalf,dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT1);
@@ -397,9 +399,10 @@ namespace MBSimIntegrator {
                 zT1  << zi;
                 qT1 += sysT1->deltaq(zT1,t,dtThird);
 //                sysT1->update(zT1,t+dtThird,1);
+                system.setTime(t+dtThird);
                 system.resetUpToDate();
                 system.checkActive(t+dtThird,1);
-                if (system.gActiveChanged()) system.resize_(t+dtThird);
+                if (system.gActiveChanged()) system.resize_();
                 sysT1->getb(false) << sysT1->getgd(t+dtThird) + sysT1->getW(t+dtThird).T()*slvLLFac(sysT1->getLLM(t+dtThird),sysT1->geth(t+dtThird))*dtThird;
                 sysT1->solveImpacts(t+dtThird,dtThird);
                 uT1 += sysT1->deltau(zT1,t+dtThird,dtThird);
@@ -417,9 +420,10 @@ namespace MBSimIntegrator {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtHalf);
 //                sysT2->update(zT2,t+dtHalf,1);
+                system.setTime(t+dtHalf);
                 system.resetUpToDate();
                 system.checkActive(t+dtHalf,1);
-                if (system.gActiveChanged()) system.resize_(t+dtHalf);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dtHalf) + sysT2->getW(t+dtHalf).T()*slvLLFac(sysT2->getLLM(t+dtHalf),sysT2->geth(t+dtHalf))*dtHalf;
                 iterB1  = sysT2->solveImpacts(t+dtHalf,dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
@@ -439,9 +443,10 @@ namespace MBSimIntegrator {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtQuarter);
 //                sysT2->update(zT2,t+dtQuarter,1);
+                system.setTime(t+dtQuarter);
                 system.resetUpToDate();
                 system.checkActive(t+dtQuarter,1);
-                if (system.gActiveChanged()) system.resize_(t+dtQuarter);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dtQuarter)+sysT2->getW(t+dtQuarter).T()*slvLLFac(sysT2->getLLM(t+dtQuarter),sysT2->geth(t+dtQuarter))*dtQuarter;
                 iterC1 = sysT2->solveImpacts(t+dtQuarter,dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtQuarter,dtQuarter);
@@ -453,9 +458,10 @@ namespace MBSimIntegrator {
 
                 qT2 += sysT2->deltaq(zT2,t+dtQuarter,dtQuarter);
 //                sysT2->update(zT2,t+dtHalf);
+                system.setTime(t+dtHalf);
                 system.resetUpToDate();
                 system.checkActive(t+dtHalf,1);
-                if (system.gActiveChanged()) system.resize_(t+dtHalf);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dtHalf)+sysT2->getW(t+dtHalf).T()*slvLLFac(sysT2->getLLM(t+dtHalf),sysT2->geth(t+dtHalf))*dtQuarter;
                 iterC2 = sysT2->solveImpacts(t+dtHalf,dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf,dtQuarter);
@@ -472,9 +478,10 @@ namespace MBSimIntegrator {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtThird);
 //                sysT2->update(zT2,t+dtThird,1);
+                system.setTime(t+dtThird);
                 system.resetUpToDate();
                 system.checkActive(t+dtThird,1);
-                if (system.gActiveChanged()) system.resize_(t+dtThird);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dtThird) + sysT2->getW(t+dtThird).T()*slvLLFac(sysT2->getLLM(t+dtThird),sysT2->geth(t+dtThird))*dtThird;
                 sysT2->solveImpacts(t+dtThird,dtThird);
                 uT2 += sysT2->deltau(zT2,t+dtThird,dtThird);
@@ -483,9 +490,10 @@ namespace MBSimIntegrator {
 
                 qT2 += sysT2->deltaq(zT2,t+dtThird,dtThird);
 //                sysT2->update(zT2,t+2.0*dtThird);
+                system.setTime(t+2.0*dtThird);
                 system.resetUpToDate();
                 system.checkActive(t+2.0*dtThird,1);
-                if (system.gActiveChanged()) system.resize_(t+2.0*dtThird);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+2.0*dtThird) + sysT2->getW(t+2.0*dtThird).T()*slvLLFac(sysT2->getLLM(t+2.0*dtThird),sysT2->geth(t+2.0*dtThird))*dtThird;
                 sysT2->solveImpacts(t+2.0*dtThird,dtThird);
                 uT2 += sysT2->deltau(zT2,t+2.0*dtThird,dtThird);
@@ -503,9 +511,10 @@ namespace MBSimIntegrator {
                 zT3  << zi;
                 qT3 += sysT3->deltaq(zT3,t,dtSixth);
 //                sysT3->update(zT3,t+dtSixth,1);
+                system.setTime(t+dtSixth);
                 system.resetUpToDate();
                 system.checkActive(t+dtSixth,1);
-                if (system.gActiveChanged()) system.resize_(t+dtSixth);
+                if (system.gActiveChanged()) system.resize_();
                 sysT3->getb(false) << sysT3->getgd(t+dtSixth) + sysT3->getW(t+dtSixth).T()*slvLLFac(sysT3->getLLM(t+dtSixth),sysT3->geth(t+dtSixth))*dtSixth;
                 sysT3->solveImpacts(t+dtSixth,dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtSixth,dtSixth);
@@ -517,9 +526,10 @@ namespace MBSimIntegrator {
 
                 qT3 += sysT3->deltaq(zT3,t+dtSixth,dtSixth);
 //                sysT3->update(zT3,t+dtThird);
+                system.setTime(t+dtThird);
                 system.resetUpToDate();
                 system.checkActive(t+dtThird,1);
-                if (system.gActiveChanged()) system.resize_(t+dtThird);
+                if (system.gActiveChanged()) system.resize_();
                 sysT3->getb(false) << sysT3->getgd(t+dtThird) + sysT3->getW(t+dtThird).T()*slvLLFac(sysT3->getLLM(t+dtThird),sysT3->geth(t+dtThird))*dtSixth;
                 sysT3->solveImpacts(t+dtThird,dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtThird,dtSixth);
@@ -532,9 +542,10 @@ namespace MBSimIntegrator {
 
                 qT3 += sysT3->deltaq(zT3,t+dtThird,dtSixth);
 //                sysT3->update(zT3,t+dtHalf);
+                system.setTime(t+dtHalf);
                 system.resetUpToDate();
                 system.checkActive(t+dtHalf,1);
-                if (system.gActiveChanged()) system.resize_(t+dtHalf);
+                if (system.gActiveChanged()) system.resize_();
                 sysT3->getb(false) << sysT3->getgd(t+dtHalf) + sysT3->getW(t+dtHalf).T()*slvLLFac(sysT3->getLLM(t+dtHalf),sysT3->geth(t+dtHalf))*dtSixth;
                 sysT3->solveImpacts(t+dtHalf,dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtHalf,dtSixth);
@@ -576,9 +587,10 @@ namespace MBSimIntegrator {
                 zT1  << z2b;
                 qT1 += sysT1->deltaq(zT1,t+dtHalf,dtHalf);
 //                sysT1->update(zT1,t+dt,1);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT1->getb(false) << sysT1->getgd(t+dt) + sysT1->getW(t+dt).T()*slvLLFac(sysT1->getLLM(t+dt),sysT1->geth(t+dt))*dtHalf;
                 iterB2  = sysT1->solveImpacts(t+dt,dtHalf);
                 uT1 += sysT1->deltau(zT1,t+dt,dtHalf);
@@ -594,9 +606,10 @@ namespace MBSimIntegrator {
                 zT1 << zStern;
                 qT1 += sysT1->deltaq(zT1,t+dtHalf,dtHalf);
 //                sysT1->update(zT1,t+dt,1);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT1->getb(false) << sysT1->getgd(t+dt) + sysT1->getW(t+dt).T()*slvLLFac(sysT1->getLLM(t+dt),sysT1->geth(t+dt))*dtHalf;
                 iterB2RE  = sysT1->solveImpacts(t+dt,dtHalf);
                 uT1 += sysT1->deltau(zT1,t+dt,dtHalf);
@@ -610,9 +623,10 @@ namespace MBSimIntegrator {
                 zT1  << z3b;
                 qT1 += sysT1->deltaq(zT1,t+dtThird,dtThird);
 //                sysT1->update(zT1,t+2.0*dtThird,1);
+                system.setTime(t+2.0*dtThird);
                 system.resetUpToDate();
                 system.checkActive(t+2.0*dtThird,1);
-                if (system.gActiveChanged()) system.resize_(t+2.0*dtThird);
+                if (system.gActiveChanged()) system.resize_();
                 sysT1->getb(false) << sysT1->getgd(t+2.0*dtThird) + sysT1->getW(t+2.0*dtThird).T()*slvLLFac(sysT1->getLLM(t+2.0*dtThird),sysT1->geth(t+2.0*dtThird))*dtThird;
                 sysT1->solveImpacts(t+2.0*dtThird,dtThird);
                 uT1 += sysT1->deltau(zT1,t+2.0*dtThird,dtThird);
@@ -621,9 +635,10 @@ namespace MBSimIntegrator {
 
                 qT1 += sysT1->deltaq(zT1,t+2.0*dtThird,dtThird);
 //                sysT1->update(zT1,t+dt);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT1->getb(false) << sysT1->getgd(t+dt) + sysT1->getW(t+dt).T()*slvLLFac(sysT1->getLLM(t+dt),sysT1->geth(t+dt))*dtThird;
                 sysT1->solveImpacts(t+dt,dtThird);
                 uT1 += sysT1->deltau(zT1,t+dt,dtThird);
@@ -641,9 +656,10 @@ namespace MBSimIntegrator {
                 else zT2 << zStern; 
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtQuarter);
 //                sysT2->update(zT2,t+dtHalf+dtQuarter,1);
+                system.setTime(t+dtHalf+dtQuarter);
                 system.resetUpToDate();
                 system.checkActive(t+dtHalf+dtQuarter,1);
-                if (system.gActiveChanged()) system.resize_(t+dtHalf+dtQuarter);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dtHalf+dtQuarter)+sysT2->getW(t+dtHalf+dtQuarter).T()*slvLLFac(sysT2->getLLM(t+dtHalf+dtQuarter),sysT2->geth(t+dtHalf+dtQuarter))*dtQuarter;
                 iterC3  = sysT2->solveImpacts(t+dtHalf+dtQuarter,dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf+dtQuarter,dtQuarter);
@@ -653,9 +669,10 @@ namespace MBSimIntegrator {
                 LSC3 = LStmp_T2;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf+dtQuarter,dtQuarter);
 //                sysT2->update(zT2,t+dt);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dt)+sysT2->getW(t+dt).T()*slvLLFac(sysT2->getLLM(t+dt),sysT2->geth(t+dt))*dtQuarter;
                 iterC4 = sysT2->solveImpacts(t+dt,dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dt,dtQuarter);
@@ -674,9 +691,10 @@ namespace MBSimIntegrator {
                 zT2  << z2b;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtHalf);
 //                sysT2->update(zT2,t+dt,1);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dt) + sysT2->getW(t+dt).T()*slvLLFac(sysT2->getLLM(t+dt),sysT2->geth(t+dt))*dtHalf;
                 iterB2  = sysT2->solveImpacts(t+dt,dtHalf);
                 uT2 += sysT2->deltau(zT2,t+dt,dtHalf);
@@ -695,9 +713,10 @@ namespace MBSimIntegrator {
                 zT2 << zStern;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtHalf);
 //                sysT2->update(zT2,t+dt,1);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb(false) << sysT2->getgd(t+dt) + sysT2->getW(t+dt).T()*slvLLFac(sysT2->getLLM(t+dt),sysT2->geth(t+dt))*dtHalf;
                 iterB2RE  = sysT2->solveImpacts(t+dt,dtHalf);
                 uT2 += sysT2->deltau(zT2,t+dt,dtHalf);
@@ -711,9 +730,10 @@ namespace MBSimIntegrator {
                 zT2  << z3b;
                 qT2 += sysT2->deltaq(zT2,t+2.0*dtThird,dtThird);
 //                sysT2->update(zT2,t+dt,1);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT2->getb() << sysT2->getgd(t+dt) + sysT2->getW(t+dt).T()*slvLLFac(sysT2->getLLM(t+dt),sysT2->geth(t+dt))*dtThird;
                 sysT2->solveImpacts(t+dt,dtThird);
                 uT2 += sysT2->deltau(zT2,t+dt,dtThird);
@@ -731,9 +751,10 @@ namespace MBSimIntegrator {
                 else zT3<<zStern;
                 qT3 += sysT3->deltaq(zT3,t+dtHalf,dtSixth);
 //                sysT3->update(zT3,t+4.0*dtSixth,1);
+                system.setTime(t+4.0*dtSixth);
                 system.resetUpToDate();
                 system.checkActive(t+4.0*dtSixth,1);
-                if (system.gActiveChanged()) system.resize_(t+4.0*dtSixth);
+                if (system.gActiveChanged()) system.resize_();
                 sysT3->getb() << sysT3->getgd(t+4.0*dtSixth) + sysT3->getW(t+4.0*dtSixth).T()*slvLLFac(sysT3->getLLM(t+4.0*dtSixth),sysT3->geth(t+4.0*dtSixth))*dtSixth;
                 sysT3->solveImpacts(t+4.0*dtSixth,dtSixth);
                 uT3 += sysT3->deltau(zT3,t+4.0*dtSixth,dtSixth);
@@ -745,9 +766,10 @@ namespace MBSimIntegrator {
 
                 qT3 += sysT3->deltaq(zT3,t+4.0*dtSixth,dtSixth);
 //                sysT3->update(zT3,t+5.0*dtSixth);
+                system.setTime(t+5.0*dtSixth);
                 system.resetUpToDate();
                 system.checkActive(t+5.0*dtSixth,1);
-                if (system.gActiveChanged()) system.resize_(t+5.0*dtSixth);
+                if (system.gActiveChanged()) system.resize_();
                 sysT3->getb() << sysT3->getgd(t+5.0*dtSixth) + sysT3->getW(t+5.0*dtSixth).T()*slvLLFac(sysT3->getLLM(t+5.0*dtSixth),sysT3->geth(t+5.0*dtSixth))*dtSixth;
                 sysT3->solveImpacts(t+5.0*dtSixth,dtSixth);
                 uT3 += sysT3->deltau(zT3,t+5.0*dtSixth,dtSixth);
@@ -759,9 +781,10 @@ namespace MBSimIntegrator {
 
                 qT3 += sysT3->deltaq(zT3,t+5.0*dtSixth,dtSixth);
 //                sysT3->update(zT3,t+dt);
+                system.setTime(t+dt);
                 system.resetUpToDate();
                 system.checkActive(t+dt,1);
-                if (system.gActiveChanged()) system.resize_(t+dt);
+                if (system.gActiveChanged()) system.resize_();
                 sysT3->getb() << sysT3->getgd(t+dt) + sysT3->getW(t+dt).T()*slvLLFac(sysT3->getLLM(t+dt),sysT3->geth(t+dt))*dtSixth;
                 sysT3->solveImpacts(t+dt,dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dt,dtSixth);

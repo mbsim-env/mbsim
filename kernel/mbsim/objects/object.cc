@@ -47,10 +47,10 @@ namespace MBSim {
   Object::~Object() {
   }
 
-  void Object::updatedhdz(double t) {
+  void Object::updatedhdz() {
     Vec h0 = h[0].copy();
 
-    updateh(t); // update with correct state
+    updateh(getTime()); // update with correct state
     Vec hEnd = h[0].copy();
 
     /**************** velocity dependent calculations ********************/
@@ -62,7 +62,7 @@ namespace MBSim {
       u(i) += epsroot(); // update with disturbed positions assuming same active links
       throw;
       //updateStateDependentVariables(t);
-      updateh(t);
+      updateh(getTime());
 
       //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
       u(i) = ui;
@@ -317,7 +317,7 @@ namespace MBSim {
     ud[i] = slvLLFac(evalLLM(i), evalh(i) + evalr(i));
   }
 
-  void Object::updateqd(double t) {
+  void Object::updateqd() {
     qd = evalT() * u;
   }
 

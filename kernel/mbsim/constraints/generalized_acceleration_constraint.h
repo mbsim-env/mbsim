@@ -53,7 +53,7 @@ namespace MBSim {
 
       virtual void setUpInverseKinetics();
 
-      void updatexd(double t);
+      void updatexd();
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
 

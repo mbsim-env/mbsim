@@ -35,9 +35,9 @@ namespace MBSim {
     f->init(stage);
   }
 
-  void GeneralizedAccelerationExcitation::updatexd(double t) {
+  void GeneralizedAccelerationExcitation::updatexd() {
     xd(0,body[0]->getqRelSize()-1) = x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
-    xd(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1) = (*f)(x,t);
+    xd(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1) = (*f)(x,getTime());
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedPositions() {

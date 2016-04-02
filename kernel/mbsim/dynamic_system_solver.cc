@@ -818,11 +818,11 @@ namespace MBSim {
     return J;
   }
 
-  Mat DynamicSystemSolver::dhdx(double t) {
+  Mat DynamicSystemSolver::dhdx() {
     THROW_MBSIMERROR("Internal error");
   }
 
-  Vec DynamicSystemSolver::dhdt(double t) {
+  Vec DynamicSystemSolver::dhdt() {
     THROW_MBSIMERROR("Internal error");
   }
 
@@ -1048,7 +1048,7 @@ namespace MBSim {
       (*i)->decreaserFactors();
   }
 
-  void DynamicSystemSolver::resize_(double t) {
+  void DynamicSystemSolver::resize_() {
       calcgdSize(2); // contacts which stay closed
       calclaSize(2); // contacts which stay closed
       calcrFactorSize(2); // contacts which stay closed
@@ -1727,7 +1727,7 @@ namespace MBSim {
       updatezRef(zParent);
     }
     if (laSize) computeConstraintForces();
-    updatezd(t);
+    updatezd();
 
     return zdParent;
   }
@@ -1752,7 +1752,7 @@ namespace MBSim {
         computeConstraintForces();
     }
 
-    updatezd(t);
+    updatezd();
     if (true) {
       int n = evalWInverseKinetics(1).cols();
       int m1 = WInverseKinetics[1].rows();

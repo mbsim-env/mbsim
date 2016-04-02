@@ -46,7 +46,7 @@ namespace MBSim {
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void connect(double r1, Frame* frame1_, double r2, Frame* frame2_);
-      virtual void updatexd(double t);
+      virtual void updatexd();
       virtual void updatedx(double t, double dt);
       virtual void calcxSize();
 

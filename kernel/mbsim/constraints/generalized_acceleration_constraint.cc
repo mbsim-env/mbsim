@@ -45,9 +45,9 @@ namespace MBSim {
     xSize = bd->getqRelSize()+bd->getuRelSize();
   }
 
-  void GeneralizedAccelerationConstraint::updatexd(double t) {
-    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel(t)*bd->getuRel(t):bd->getuRel(t);
-    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel(t);
+  void GeneralizedAccelerationConstraint::updatexd() {
+    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel(getTime())*bd->getuRel(getTime()):bd->getuRel(getTime());
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel(getTime());
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {

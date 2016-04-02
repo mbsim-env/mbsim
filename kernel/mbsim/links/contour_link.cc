@@ -38,7 +38,7 @@ namespace MBSim {
   ContourLink::ContourLink(const std::string &name) : Link(name), contour(2), cFrame(2), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updR(true) {
   }
 
-  void ContourLink::updatedhdz(double t) {
+  void ContourLink::updatedhdz() {
     THROW_MBSIMERROR("Internal error");
   }
 

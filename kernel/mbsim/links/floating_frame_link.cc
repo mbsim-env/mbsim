@@ -79,7 +79,7 @@ namespace MBSim {
     corrSize = forceDir.cols() + momentDir.cols();
   }
 
-  void FloatingFrameLink::updatedhdz(double t) {
+  void FloatingFrameLink::updatedhdz() {
     THROW_MBSIMERROR("Internal error");
   }
 

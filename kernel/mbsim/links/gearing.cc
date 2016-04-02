@@ -261,7 +261,7 @@ namespace MBSim {
     }
   }
 
-  void Gearing::updatexd(double t) {
+  void Gearing::updatexd() {
     xd = gd;
   }
 
