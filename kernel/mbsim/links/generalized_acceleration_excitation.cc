@@ -41,12 +41,12 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedPositions() {
-    rrel=body[0]->getqRel(getTime())-x(0,body[0]->getqRelSize()-1);
+    rrel=body[0]->evalqRel()-x(0,body[0]->getqRelSize()-1);
     updrrel = false;
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedVelocities() {
-    vrel=body[0]->getuRel(getTime())-x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
+    vrel=body[0]->evaluRel()-x(body[0]->getqRelSize(),body[0]->getqRelSize()+body[0]->getuRelSize()-1);
     updvrel = false;
   }
 

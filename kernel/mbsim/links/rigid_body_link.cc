@@ -90,14 +90,14 @@ namespace MBSim {
   void RigidBodyLink::updateGeneralizedPositions() {
     rrel.init(0);
     for(unsigned i=0; i<body.size(); i++)
-      rrel+=body[i]->getqRel(getTime())*ratio[i];
+      rrel+=body[i]->evalqRel()*ratio[i];
     updrrel = false;
   }
 
   void RigidBodyLink::updateGeneralizedVelocities() {
     vrel.init(0);
     for(unsigned i=0; i<body.size(); i++)
-      vrel+=body[i]->getuRel(getTime())*ratio[i];
+      vrel+=body[i]->evaluRel()*ratio[i];
     updvrel = false;
   }
 
@@ -164,7 +164,7 @@ namespace MBSim {
 
   void RigidBodyLink::updatewb() {
     for(unsigned i=0; i<body.size(); i++)
-      wb += body[i]->getjRel(getTime())*ratio[i];
+      wb += body[i]->evaljRel()*ratio[i];
   }
 
   void RigidBodyLink::init(InitStage stage) {

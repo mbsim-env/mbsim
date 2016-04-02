@@ -46,21 +46,21 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityConstraint::updatexd() {
-    xd = bd->transformCoordinates()?bd->getTRel(getTime())*bd->getuRel(getTime()):bd->getuRel(getTime());
+    xd = bd->transformCoordinates()?bd->evalTRel()*bd->evaluRel():bd->evaluRel();
   }
 
   void GeneralizedVelocityConstraint::updateGeneralizedCoordinates() {
-    bd->getqRel(false) = x;
-    bd->getuRel(false) = (*f)(x,getTime());
+    bd->setqRel(x);
+    bd->setuRel((*f)(x,getTime()));
     updGC = false;
   }
 
   void GeneralizedVelocityConstraint::updateGeneralizedJacobians(int jj) {
     MatV J = f->parDer1(x,getTime());
     if(J.cols())
-      bd->getjRel(false) = J*xd + f->parDer2(x,getTime());
+      bd->setjRel(J*xd + f->parDer2(x,getTime()));
     else
-      bd->getjRel(false) = f->parDer2(x,getTime());
+      bd->setjRel(f->parDer2(x,getTime()));
     updGJ = false;
   }
 

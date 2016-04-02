@@ -421,18 +421,18 @@ namespace MBSim {
           static_cast<RigidContour*>(contour[k])->setFrameOfReference(I);
       }
       if (R) {
-        I->setPosition(R->getPosition(0.) + R->getOrientation(0.) * PrPF);
-        I->setOrientation(R->getOrientation(0.) * APF);
+        I->setOrientation(R->evalOrientation() * APF);
+        I->setPosition(R->getPosition() + R->getOrientation() * PrPF);
       }
       else {
         DynamicSystem* sys = dynamic_cast<DynamicSystem*>(parent);
         if (sys) {
-          I->setPosition(sys->getFrameI()->getPosition(0.) + sys->getFrameI()->getOrientation(0.) * PrPF);
-          I->setOrientation(sys->getFrameI()->getOrientation(0.) * APF);
+          I->setOrientation(sys->getFrameI()->evalOrientation() * APF);
+          I->setPosition(sys->getFrameI()->getPosition() + sys->getFrameI()->getOrientation() * PrPF);
         }
         else {
-          I->setPosition(getFrameI()->getPosition(0.) + getFrameI()->getOrientation(0.) * PrPF);
-          I->setOrientation(getFrameI()->getOrientation(0.) * APF);
+          I->setOrientation(getFrameI()->evalOrientation() * APF);
+          I->setPosition(getFrameI()->getPosition() + getFrameI()->getOrientation() * PrPF);
         }
       }
     }
@@ -1680,7 +1680,7 @@ namespace MBSim {
   }
 
 //  const Mat& DynamicSystem::evalsv() {
-//    ds->updateStopVector(getTime());
+//    ds->updateStopVector();
 //    return sv;
 //  }
 

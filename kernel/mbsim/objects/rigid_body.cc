@@ -304,7 +304,7 @@ namespace MBSim {
       T.init(Eye());
 
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
-        SThetaS = JMJT(C->getOrientation(0.).T()*frameForInertiaTensor->getOrientation(0.),SThetaS) - m*JTJ(tilde(C->getOrientation(0.).T()*(frameForInertiaTensor->getPosition(0.)-C->getPosition(0.))));
+        SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
     }
     else if(stage==plotting) {
       updatePlotFeatures();

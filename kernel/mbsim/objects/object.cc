@@ -50,7 +50,7 @@ namespace MBSim {
   void Object::updatedhdz() {
     Vec h0 = h[0].copy();
 
-    updateh(getTime()); // update with correct state
+    updateh(); // update with correct state
     Vec hEnd = h[0].copy();
 
     /**************** velocity dependent calculations ********************/
@@ -62,7 +62,7 @@ namespace MBSim {
       u(i) += epsroot(); // update with disturbed positions assuming same active links
       throw;
       //updateStateDependentVariables(t);
-      updateh(getTime());
+      updateh();
 
       //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
       u(i) = ui;

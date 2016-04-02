@@ -46,18 +46,18 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updatexd() {
-    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->getTRel(getTime())*bd->getuRel(getTime()):bd->getuRel(getTime());
-    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->getjRel(getTime());
+    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->evalTRel()*bd->evaluRel():bd->evaluRel();
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->evaljRel();
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {
-    bd->getqRel(false) = x(0,bd->getqRelSize()-1);
-    bd->getuRel(false) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
+    bd->setqRel(x(0,bd->getqRelSize()-1));
+    bd->setuRel(x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
     updGC = false;
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(int jj) {
-    bd->getjRel(false) = (*f)(x,getTime());
+    bd->setjRel((*f)(x,getTime()));
     updGJ = false;
   }
 

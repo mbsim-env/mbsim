@@ -67,8 +67,8 @@ namespace MBSim {
     bd->getqRel(false).init(0);
     bd->getuRel(false).init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getqRel(false) += bi[i]->getqRel(getTime())*ratio[i];
-      bd->getuRel(false) += bi[i]->getuRel(getTime())*ratio[i];
+      bd->getqRel(false) += bi[i]->evalqRel()*ratio[i];
+      bd->getuRel(false) += bi[i]->evaluRel()*ratio[i];
     }
     updGC = false;
   }

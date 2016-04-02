@@ -37,13 +37,13 @@ namespace MBSim {
   }
 
   void GeneralizedPositionConstraint::updateGeneralizedCoordinates() {
-    bd->getqRel(false) = (*f)(getTime());
-    bd->getuRel(false) = f->parDer(getTime());
+    bd->setqRel((*f)(getTime()));
+    bd->setuRel(f->parDer(getTime()));
     updGC = false;
   }
 
   void GeneralizedPositionConstraint::updateGeneralizedJacobians(int jj) {
-    bd->getjRel(false) = f->parDerParDer(getTime());
+    bd->setjRel(f->parDerParDer(getTime()));
     updGJ = false;
   }
 

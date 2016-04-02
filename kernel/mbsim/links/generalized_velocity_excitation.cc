@@ -40,17 +40,17 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityExcitation::updateGeneralizedPositions() {
-    rrel=body[0]->getqRel(getTime())-x;
+    rrel=body[0]->evalqRel()-x;
     updrrel = false;
   } 
 
   void GeneralizedVelocityExcitation::updateGeneralizedVelocities() {
-    vrel=body[0]->getuRel(getTime())-(*f)(x,getTime());
+    vrel=body[0]->evaluRel()-(*f)(x,getTime());
     updvrel = false;
   }
 
   void GeneralizedVelocityExcitation::updatewb() {
-    wb += body[0]->getjRel(getTime())-(f->parDer1(x,getTime())*xd + f->parDer2(x,getTime()));
+    wb += body[0]->evaljRel()-(f->parDer1(x,getTime())*xd + f->parDer2(x,getTime()));
   }
 
 }
