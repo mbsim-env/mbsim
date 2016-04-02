@@ -98,7 +98,8 @@ namespace MBSimIntegrator {
 
       t += dt;
 
-      system.checkActive(t,1);
+      system.setTime(t);
+      system.checkActive(1);
       if (system.gActiveChanged()) system.resize_();
 
       system.getb(false) << system.evalgd() + system.evalW().T()*slvLLFac(system.evalLLM(),system.evalh())*dt;

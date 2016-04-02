@@ -124,7 +124,7 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double t, double dt);
-      virtual void checkActive(double t, int j);
+      virtual void checkActive(int j);
       virtual void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
  

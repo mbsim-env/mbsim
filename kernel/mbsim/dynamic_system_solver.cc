@@ -962,9 +962,9 @@ namespace MBSim {
   void DynamicSystemSolver::computeInitialCondition() {
     resetUpToDate();
     updateg();
-    checkActive(0,1);
+    checkActive(1);
     updategd();
-    checkActive(0,2);
+    checkActive(2);
     calclaSize(3);
     calcrFactorSize(3);
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)), 0);
@@ -1613,7 +1613,7 @@ namespace MBSim {
     checkRoot();
     int maxj = getRootID();
     if (maxj == 3) { // impact (velocity jump)
-      checkActive(t,6); // decide which contacts have closed
+      checkActive(6); // decide which contacts have closed
       //msg(Info) << "stoss" << endl;
 
       calcgdSize(1); // IG
@@ -1633,7 +1633,7 @@ namespace MBSim {
       solveImpacts(t);
       u += deltau(zParent, t, 0);
       resetUpToDate();
-      checkActive(t,3); // neuer Zustand nach Stoss
+      checkActive(3); // neuer Zustand nach Stoss
       // Projektion:
       // - es müssen immer alle Größen projiziert werden
       // - neuer Zustand ab hier bekannt
@@ -1655,14 +1655,14 @@ namespace MBSim {
         b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints();
 
-        checkActive(t,4);
+        checkActive(4);
         projectGeneralizedPositions(t, 2);
         projectGeneralizedVelocities(t, 2);
       }
     }
     else if (maxj == 2) { // transition from slip to stick (acceleration jump)
       //msg(Info) << "haften" << endl;
-      checkActive(t,7); // decide which contacts may stick
+      checkActive(7); // decide which contacts may stick
 
       calclaSize(3); // IH
       calcrFactorSize(3); // IH
@@ -1676,19 +1676,19 @@ namespace MBSim {
         b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints();
 
-        checkActive(t,4);
+        checkActive(4);
 
         projectGeneralizedPositions(t, 2);
         projectGeneralizedVelocities(t, 2);
       }
     }
     else if (maxj == 1) { // contact opens or transition from stick to slip
-      checkActive(t,8);
+      checkActive(8);
 
       projectGeneralizedPositions(t, 1);
       projectGeneralizedVelocities(t, 1);
     }
-    checkActive(t,5); // final update von gActive, ...
+    checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH
     calcrFactorSize(3); // IH
     updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));

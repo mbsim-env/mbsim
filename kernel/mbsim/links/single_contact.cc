@@ -1170,7 +1170,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::checkActive(double t, int j) {
+  void SingleContact::checkActive(int j) {
     if (j == 1) { // formerly checkActiveg()
       gActive = fcl->isClosed(evalGeneralizedRelativePosition()(0), gTol) ? 1 : 0;
       gdActive[0] = gActive;

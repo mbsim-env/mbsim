@@ -705,10 +705,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkActive(double t, int j) {
+  void Contact::checkActive(int j) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkActive(t,j);
+        jter->checkActive(j);
     }
   }
 

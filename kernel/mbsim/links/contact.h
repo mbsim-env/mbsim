@@ -117,7 +117,7 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double t, double dt);
-      virtual void checkActive(double t, int j);
+      virtual void checkActive(int j);
       virtual void setlaTol(double tol);
       virtual void setLaTol(double tol);
       virtual void setgTol(double tol);

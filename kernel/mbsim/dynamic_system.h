@@ -639,12 +639,12 @@ namespace MBSim {
        *
        * see SingleContact for the implementation
        */
-      void checkActive(double t, int i);
+      void checkActive(int i);
 
       /**
        * \brief check if single-valued contacts are active
        */
-      void checkActiveReg(double t, int i);
+      void checkActiveReg(int i);
 
       /**
        * \param tolerance for relative velocity
