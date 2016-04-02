@@ -114,7 +114,7 @@ namespace MBSim {
       virtual void updateLinkStatus();
       virtual void updateLinkStatusReg();
 
-      virtual void updateWInverseKinetics(double t, int j=0);
+      virtual void updateWInverseKinetics(int j=0);
       virtual void updatebInverseKinetics();
 
       virtual void updatedx(double t, double dt);

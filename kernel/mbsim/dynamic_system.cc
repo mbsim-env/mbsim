@@ -239,7 +239,7 @@ namespace MBSim {
       (**i).updateW(j);
   }
 
-  void DynamicSystem::updateWInverseKinetics(double t, int j) {
+  void DynamicSystem::updateWInverseKinetics(int j) {
     WInverseKinetics[j].init(0);
 
     for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
@@ -1667,7 +1667,7 @@ namespace MBSim {
   }
 
   const Mat& DynamicSystem::evalWInverseKinetics(int i) {
-    ds->updateWInverseKinetics(getTime(),i);
+    ds->updateWInverseKinetics(i);
     return WInverseKinetics[i];
   }
 
