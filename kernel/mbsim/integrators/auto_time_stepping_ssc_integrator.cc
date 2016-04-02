@@ -260,7 +260,7 @@ namespace MBSimIntegrator {
     throw;
     //system.updategd();
     //system.updateT();
-    //system.updateh(t);
+    //system.updateh();
     //system.updateM(t);
     //if (SetValuedForceLawsExplicit) system.updateLLM(t);
     //system.updateW(t);

@@ -95,10 +95,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateh(double t, int j) {
+  void Contact::updateh(int j) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updateh(t, j);
+        jter->updateh(j);
     }
   }
 

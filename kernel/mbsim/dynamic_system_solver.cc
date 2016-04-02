@@ -739,9 +739,9 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::updateh(double t, int j) {
+  void DynamicSystemSolver::updateh(int j) {
     h[j].init(0);
-    Group::updateh(t, j);
+    Group::updateh(j);
     updh[j] = false;
     checkExitRequest(); // updateh is called by all solvers
   }
@@ -761,7 +761,7 @@ namespace MBSim {
     updateg();
     updategd();
     updateT();
-    updateh(t);
+    updateh();
     Vec hOld = h[0].copy();
     for (int i = lb; i < ub; i++) {
       double qtmp = q(i);
@@ -769,7 +769,7 @@ namespace MBSim {
       updateg();
       updategd();
       updateT();
-      updateh(t);
+      updateh();
       J.col(i) = (h[0] - hOld) / delta;
       q(i) = qtmp;
     }
@@ -778,7 +778,7 @@ namespace MBSim {
     updateg();
     updategd();
     updateT();
-    updateh(t);
+    updateh();
 
     return J;
   }
@@ -798,7 +798,7 @@ namespace MBSim {
     updateg();
     updategd();
     updateT();
-    updateh(t);
+    updateh();
     Vec hOld = h[0].copy();
     for (int i = lb; i < ub; i++) {
       //msg(Info) << "bin bei i=" << i << endl;
@@ -807,13 +807,13 @@ namespace MBSim {
       //updateg();
       updategd();
       //updateT();
-      updateh(t);
+      updateh();
       J.col(i) = (h[0] - hOld) / delta;
       u(i) = utmp;
     }
     h[0] = hOld;
     updategd();
-    updateh(t);
+    updateh();
 
     return J;
   }

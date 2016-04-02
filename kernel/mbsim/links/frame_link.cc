@@ -147,7 +147,7 @@ namespace MBSim {
     updFD = false;
   }
 
-  void FrameLink::updateh(double t, int j) {
+  void FrameLink::updateh(int j) {
     h[j][0]-=frame[0]->evalJacobianOfTranslation(j).T()*evalForce();
     h[j][1]+=frame[1]->evalJacobianOfTranslation(j).T()*evalForce();
   }

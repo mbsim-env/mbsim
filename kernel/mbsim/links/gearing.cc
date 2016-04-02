@@ -72,7 +72,7 @@ namespace MBSim {
     W[j][1] -= Z1.getJacobianOfTranslation(j).T()*Wt;
   }
 
-  void Gearing::updateh(double t, int j) {
+  void Gearing::updateh(int j) {
     la(0) = (*func)(g(0),gd(0));
     h[j][0] += Z0.getJacobianOfTranslation(j).T()*Wt*la(0);
     h[j][1] -= Z1.getJacobianOfTranslation(j).T()*Wt*la(0);

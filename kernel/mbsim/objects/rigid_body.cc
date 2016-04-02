@@ -88,7 +88,7 @@ namespace MBSim {
     assert(frameForInertiaTensor);
   }
 
-  void RigidBody::updateh(double t, int j) {
+  void RigidBody::updateh(int j) {
     if(j==0) {
       Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       Vec3 WM = crossProduct(evalGlobalInertiaTensor()*C->evalAngularVelocity(),C->evalAngularVelocity()) ;

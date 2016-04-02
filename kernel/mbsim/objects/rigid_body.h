@@ -69,7 +69,7 @@ namespace MBSim {
       void updatedq(double t, double dt);
       void updateqd();
       void updateT();
-      void updateh(double t, int j=0);
+      void updateh(int j=0);
       void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
       void updateInertiaTensor();
       void updateGeneralizedCoordinates();

@@ -88,7 +88,7 @@ namespace MBSim {
       virtual void updateVelocities();
       virtual void updateg();
       virtual void updategd();
-      virtual void updateh(double t, int i=0);
+      virtual void updateh(int i=0);
       virtual void updateW(double t, int i=0);
       virtual void updateStopVector();
       /***************************************************/

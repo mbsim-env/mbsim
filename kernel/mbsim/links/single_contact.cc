@@ -162,7 +162,7 @@ namespace MBSim {
     gd = evalGeneralizedRelativeVelocity()(Index(addIndexnormal,gdSize+addIndexnormal-1));
   }
 
-  void SingleContact::updateh(double t, int j) {
+  void SingleContact::updateh(int j) {
     Vec3 F = evalGlobalForceDirection().col(0)*evalGeneralizedNormalForce();
     if(fdf and not fdf->isSetValued())
       F += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(1,getFrictionDirections()))*evalGeneralizedTangentialForce();

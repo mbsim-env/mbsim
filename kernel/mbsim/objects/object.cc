@@ -89,7 +89,7 @@ namespace MBSim {
     // updateStateDependentVariables(t); 
     // updateT();
     // updateJacobians(t);
-    // updateh(t);
+    // updateh();
     // dhdt = (hObject-hObjectEnd)/epsroot();
     // t = t0;
     /******************* back to initial state **********************/
@@ -281,7 +281,7 @@ namespace MBSim {
   }
 
   const Vec& Object::evalh(int i) {
-    if(ds->getUpdateh(i)) ds->updateh(getTime(),i);
+    if(ds->getUpdateh(i)) ds->updateh(i);
     return h[i];
   }
 

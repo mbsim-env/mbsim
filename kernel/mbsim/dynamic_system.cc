@@ -86,16 +86,16 @@ namespace MBSim {
       (**i).updateT();
   }
 
-  void DynamicSystem::updateh(double t, int k) {
+  void DynamicSystem::updateh(int k) {
     for (int i = 0; i < (int) dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateh(t, k);
+      dynamicsystem[i]->updateh(k);
 
     for (int i = 0; i < (int) object.size(); i++)
-      object[i]->updateh(t, k);
+      object[i]->updateh(k);
 
     for(unsigned int i=0; i<linkOrdered.size(); i++)
       for(unsigned int j=0; j<linkOrdered[i].size(); j++)
-	linkOrdered[i][j]->updateh(t, k);
+	linkOrdered[i][j]->updateh(k);
   }
 
   void DynamicSystem::updateM(double t, int j) {
@@ -1617,7 +1617,7 @@ namespace MBSim {
   }
 
   const Vec& DynamicSystem::evalh(int i) {
-    if(ds->getUpdateh(i)) ds->updateh(getTime(),i);
+    if(ds->getUpdateh(i)) ds->updateh(i);
     return h[i];
   }
 

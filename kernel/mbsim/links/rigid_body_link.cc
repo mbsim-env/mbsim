@@ -129,7 +129,7 @@ namespace MBSim {
     updRMV = false;
   }
 
-  void RigidBodyLink::updateh(double t, int j) {
+  void RigidBodyLink::updateh(int j) {
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)
         h[j][i]+=body[i]->evalJRel(j).T()*evalGeneralizedForce()*ratio[i];

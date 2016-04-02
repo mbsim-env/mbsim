@@ -49,7 +49,7 @@ namespace MBSim {
       void calcgSize(int j) { gSize = 1; }
       void calcgdSize(int j) { gdSize = 1; }
 
-      void updateh(double t, int i=0);
+      void updateh(int i=0);
       void updateW(double t, int i=0);
       void updateg();
       void updategd();

@@ -86,7 +86,7 @@ namespace MBSim {
     xd = evalGeneralizedRelativeVelocity()(iM) * dt;
   }
 
-  void Joint::updateh(double t, int j) {
+  void Joint::updateh(int j) {
     Vec3 F = (ffl and not ffl->isSetValued())?evalGlobalForceDirection()*evallaF():Vec3();
     Vec3 M = (fml and not fml->isSetValued())?evalGlobalMomentDirection()*evallaM():Vec3();
 

@@ -59,7 +59,7 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateh(double t, int i=0);
+      void updateh(int i=0);
       void updatedhdz();
 
       /* INHERITED INTERFACE OF LINK */

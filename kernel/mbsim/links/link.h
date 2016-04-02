@@ -62,7 +62,7 @@ namespace MBSim {
       virtual void updatewb() { }
       virtual void updateW(double t, int i=0) { }
       virtual void updateV(double t, int i=0) { }
-      virtual void updateh(double t, int i=0) { }
+      virtual void updateh(int i=0) { }
       virtual void updateStopVector() { }
       virtual void updateLinkStatus() { }
       virtual void updateLinkStatusReg() { }
