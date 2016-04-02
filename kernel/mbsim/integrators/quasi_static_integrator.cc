@@ -230,6 +230,7 @@ namespace MBSimIntegrator {
     Vec hg(qla.size());
 
     // need new h, W, g, input la (not from the system, but from the input value),
+    sys->setTime(t);
     sys->resetUpToDate();
     hg(0, qSize - 1) = sys->evalh() + sys->evalW() * qla(qSize, qlaSize - 1);
     hg(qSize, qlaSize - 1) = sys->evalg().copy();

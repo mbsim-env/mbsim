@@ -344,6 +344,9 @@ namespace MBSim {
 
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->setDynamicSystemSolver(sys);
+
+    for (unsigned i = 0; i < observer.size(); i++)
+      observer[i]->setDynamicSystemSolver(sys);
   }
 
   void DynamicSystem::plot() {
@@ -507,10 +510,10 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveImpactsFixpointSingle(double t, double dt) {
+  int DynamicSystem::solveImpactsFixpointSingle() {
 
     for (int i = 0; i < (int) linkSetValuedActive.size(); i++)
-      linkSetValuedActive[i]->solveImpactsFixpointSingle(t,dt);
+      linkSetValuedActive[i]->solveImpactsFixpointSingle();
 
     return 0;
   }
@@ -523,10 +526,10 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveImpactsGaussSeidel(double t, double dt) {
+  int DynamicSystem::solveImpactsGaussSeidel() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->solveImpactsGaussSeidel(t,dt);
+      (*i)->solveImpactsGaussSeidel();
 
     return 0;
   }
@@ -539,10 +542,10 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveImpactsRootFinding(double t, double dt) {
+  int DynamicSystem::solveImpactsRootFinding() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->solveImpactsRootFinding(t,dt);
+      (*i)->solveImpactsRootFinding();
 
     return 0;
   }
@@ -555,10 +558,10 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::jacobianImpacts(double t, double dt) {
+  int DynamicSystem::jacobianImpacts() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->jacobianImpacts(t,dt);
+      (*i)->jacobianImpacts();
 
     return 0;
   }
@@ -569,10 +572,10 @@ namespace MBSim {
       (**i).checkConstraintsForTermination();
   }
 
-  void DynamicSystem::checkImpactsForTermination(double t, double dt) {
+  void DynamicSystem::checkImpactsForTermination() {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).checkImpactsForTermination(t,dt);
+      (**i).checkImpactsForTermination();
   }
 
   void DynamicSystem::updaterFactors() {

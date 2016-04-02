@@ -223,6 +223,8 @@ namespace MBSimIntegrator {
         q = qStage0 + system.evalT()*u*dtImpulsive;
         t += dtImpulsive-dt;
 
+        system.setTime(t);
+
         // first stage velocity update
         u += slvLLFac(LLMStage0,hStage0)*dtImpulsive;
 
@@ -247,7 +249,8 @@ namespace MBSimIntegrator {
 
         // solve the impact equation system
         if (system.getLa().size() not_eq 0) {
-          iter = system.solveImpacts(t);
+          system.setStepSize(0);
+          iter = system.solveImpacts();
         }
 
         if(iter>maxIter) {

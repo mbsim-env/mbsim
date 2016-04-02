@@ -628,10 +628,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveImpactsFixpointSingle(double t, double dt) {
+  void Contact::solveImpactsFixpointSingle() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsFixpointSingle(t,dt);
+        jter->solveImpactsFixpointSingle();
     }
   }
 
@@ -642,10 +642,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveImpactsGaussSeidel(double t, double dt) {
+  void Contact::solveImpactsGaussSeidel() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsGaussSeidel(t,dt);
+        jter->solveImpactsGaussSeidel();
     }
   }
 
@@ -656,10 +656,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveImpactsRootFinding(double t, double dt) {
+  void Contact::solveImpactsRootFinding() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->solveImpactsRootFinding(t,dt);
+        jter->solveImpactsRootFinding();
     }
   }
 
@@ -677,10 +677,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::jacobianImpacts(double t, double dt) {
+  void Contact::jacobianImpacts() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->jacobianImpacts(t,dt);
+        jter->jacobianImpacts();
     }
   }
 
@@ -698,10 +698,10 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkImpactsForTermination(double t, double dt) {
+  void Contact::checkImpactsForTermination() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->checkImpactsForTermination(t,dt);
+        jter->checkImpactsForTermination();
     }
   }
 

@@ -78,6 +78,7 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
+    system.setStepSize(dt);
     while(t<tStop) { // time loop
       system.resetUpToDate();
       integrationSteps++;
@@ -103,7 +104,7 @@ namespace MBSimIntegrator {
       if (system.gActiveChanged()) system.resize_();
 
       system.getb(false) << system.evalgd() + system.evalW().T()*slvLLFac(system.evalLLM(),system.evalh())*dt;
-      iter = system.solveImpacts(t,dt);
+      iter = system.solveImpacts();
 
       if(iter>maxIter) maxIter = iter;
       sumIter += iter;

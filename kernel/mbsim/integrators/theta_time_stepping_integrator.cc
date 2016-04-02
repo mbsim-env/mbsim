@@ -97,6 +97,7 @@ namespace MBSimIntegrator {
   }
 
   void ThetaTimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
+    system.setStepSize(dt);
     while (t <= tStop) { // time loop
       integrationSteps++;
       if ((step * stepPlot - integrationSteps) < 0) {
@@ -115,6 +116,7 @@ namespace MBSimIntegrator {
 
       double te = t + dt;
       t += theta * dt;
+      system.setTime(t);
       update(system, z, t);
 
       Mat T = system.getT().copy();
@@ -132,7 +134,7 @@ namespace MBSimIntegrator {
       system.getGs() << system.getG();
       system.getb() << system.getgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
 
-      iter = system.solveImpacts(t,dt);
+      iter = system.solveImpacts();
       if (iter > maxIter)
         maxIter = iter;
       sumIter += iter;

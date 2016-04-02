@@ -259,7 +259,7 @@ namespace MBSim {
        * solve impact equations of motion with single step fixed point scheme on velocity level
        * \param time step-size
        */
-      virtual void solveImpactsFixpointSingle(double t, double dt) { THROW_MBSIMERROR("(Link::solveImpactsFixpointSingle): Not implemented."); }
+      virtual void solveImpactsFixpointSingle() { THROW_MBSIMERROR("(Link::solveImpactsFixpointSingle): Not implemented."); }
 
       /**
        * solve contact equations of motion with single step fixed point scheme
@@ -270,7 +270,7 @@ namespace MBSim {
        * solve impact equations of motion with Gauss-Seidel scheme on velocity level
        * \param time step-size
        */
-      virtual void solveImpactsGaussSeidel(double t, double dt) { THROW_MBSIMERROR("(Link::solveImpactsGaussSeidel): Not implemented."); }
+      virtual void solveImpactsGaussSeidel() { THROW_MBSIMERROR("(Link::solveImpactsGaussSeidel): Not implemented."); }
 
       /**
        * solve contact equations of motion with Gauss-Seidel scheme
@@ -281,7 +281,7 @@ namespace MBSim {
        * solve impact equations of motion with Newton scheme on velocity level
        * \param time step-size
        */
-      virtual void solveImpactsRootFinding(double t, double dt) { THROW_MBSIMERROR("(Link::solveImpactsRootFinding): Not implemented."); }
+      virtual void solveImpactsRootFinding() { THROW_MBSIMERROR("(Link::solveImpactsRootFinding): Not implemented."); }
 
       /**
        * solve contact equations of motion with Newton scheme
@@ -296,7 +296,7 @@ namespace MBSim {
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on velocity level
        */
-      virtual void jacobianImpacts(double t, double dt) { THROW_MBSIMERROR("(Link::jacobianImpacts): Not implemented."); }
+      virtual void jacobianImpacts() { THROW_MBSIMERROR("(Link::jacobianImpacts): Not implemented."); }
 
       /**
        * \brief update relaxation factors for contact equations
@@ -306,7 +306,7 @@ namespace MBSim {
       /**
        * \brief verify underlying force laws on velocity level concerning given tolerances
        */
-      virtual void checkImpactsForTermination(double t, double dt) { THROW_MBSIMERROR("(Link::checkImpactsForTermination): Not implemented."); }
+      virtual void checkImpactsForTermination() { THROW_MBSIMERROR("(Link::checkImpactsForTermination): Not implemented."); }
       
       /**
        * \brief verify underlying force laws concerning given tolerances

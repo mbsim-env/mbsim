@@ -183,7 +183,7 @@ namespace MBSim {
     return flag;
   }
 
-  void Joint::solveImpactsFixpointSingle(double t, double dt) {
+  void Joint::solveImpactsFixpointSingle() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
@@ -231,7 +231,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveImpactsGaussSeidel(double t, double dt) {
+  void Joint::solveImpactsGaussSeidel() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
@@ -279,7 +279,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveImpactsRootFinding(double t, double dt) {
+  void Joint::solveImpactsRootFinding() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
@@ -356,7 +356,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::jacobianImpacts(double t, double dt) {
+  void Joint::jacobianImpacts() {
 
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
@@ -407,7 +407,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::checkImpactsForTermination(double t, double dt) {
+  void Joint::checkImpactsForTermination() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();

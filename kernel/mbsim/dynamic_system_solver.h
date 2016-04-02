@@ -130,13 +130,13 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
       virtual int solveConstraintsFixpointSingle();
-      virtual int solveImpactsFixpointSingle(double t, double dt = 0);
+      virtual int solveImpactsFixpointSingle();
       virtual int solveConstraintsGaussSeidel();
-      virtual int solveImpactsGaussSeidel(double t, double dt = 0);
+      virtual int solveImpactsGaussSeidel();
       virtual int solveConstraintsRootFinding();
-      virtual int solveImpactsRootFinding(double t, double dt = 0);
+      virtual int solveImpactsRootFinding();
       virtual void checkConstraintsForTermination();
-      virtual void checkImpactsForTermination(double t, double dt = 0);
+      virtual void checkImpactsForTermination();
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -189,7 +189,7 @@ namespace MBSim {
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpacts(double t, double dt = 0);
+      virtual int solveImpacts();
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -290,7 +290,7 @@ namespace MBSim {
        * \param time step
        * \return iterations of solver
        */
-      int (DynamicSystemSolver::*solveImpacts_)(double t, double dt);
+      int (DynamicSystemSolver::*solveImpacts_)();
 
       /**
        * \brief solution of contact equations with Cholesky decomposition
@@ -305,7 +305,7 @@ namespace MBSim {
        * \return iterations of solver
        * \todo put in dynamic system? TODO
        */
-      int solveImpactsLinearEquations(double t, double dt = 0);
+      int solveImpactsLinearEquations();
 
       /**
        * \brief updates mass action matrix
@@ -362,25 +362,25 @@ namespace MBSim {
        * \param result vector
        * \param time
        */
-      void getLinkStatus(fmatvec::VecInt &LinkStatusExt, double t);
+      void getLinkStatus(fmatvec::VecInt &LinkStatusExt);
 
       /** brief collect status of all single-valued links
        * \param result vector
        * \param time
        */
 
-      void getLinkStatusReg(fmatvec::VecInt &LinkStatusRegExt, double t);
+      void getLinkStatusReg(fmatvec::VecInt &LinkStatusRegExt);
       /**
        * \brief drift projection for positions
        * \param time
        */
-      void projectGeneralizedPositions(double t, int mode, bool fullUpdate=false);
+      void projectGeneralizedPositions(int mode, bool fullUpdate=false);
 
       /**
        * \brief drift projection for positions
        * \param time
        */
-      void projectGeneralizedVelocities(double t, int mode);
+      void projectGeneralizedVelocities(int mode);
 
       /**
        * \brief save contact forces for use as starting value in next time step

@@ -157,7 +157,7 @@ namespace MBSim {
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpactsFixpointSingle(double t, double dt);
+      virtual int solveImpactsFixpointSingle();
 
       /**
        * \brief solve contact equations with Gauss-Seidel scheme
@@ -170,7 +170,7 @@ namespace MBSim {
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpactsGaussSeidel(double t, double dt);
+      virtual int solveImpactsGaussSeidel();
 
       /**
        * \brief solve contact equations with Newton scheme
@@ -183,7 +183,7 @@ namespace MBSim {
        * \param time step-size
        * \return iterations of solver
        */
-      virtual int solveImpactsRootFinding(double t, double dt);
+      virtual int solveImpactsRootFinding();
 
       /**
        * \brief compute JACOBIAN of contact equations
@@ -193,7 +193,7 @@ namespace MBSim {
       /**
        * \brief compute JACOBIAN of contact equations on velocity level
        */
-      virtual int jacobianImpacts(double t, double dt);
+      virtual int jacobianImpacts();
 
       /**
        * \brief validate force laws concerning given tolerances
@@ -203,7 +203,7 @@ namespace MBSim {
       /**
        * \brief validate force laws concerning given tolerances on velocity level
        */
-      virtual void checkImpactsForTermination(double t, double dt);
+      virtual void checkImpactsForTermination();
 
       /**
        * \brief update relaxation factors for contact equations

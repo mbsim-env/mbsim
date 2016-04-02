@@ -495,10 +495,10 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveImpactsFixpointSingle(double t, double dt) {
+  int DynamicSystemSolver::solveImpactsFixpointSingle() {
     updaterFactors();
 
-    checkImpactsForTermination(t,dt);
+    checkImpactsForTermination();
     if (term)
       return 0;
 
@@ -515,11 +515,11 @@ namespace MBSim {
           msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
-      Group::solveImpactsFixpointSingle(t,dt);
+      Group::solveImpactsFixpointSingle();
 
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkImpactsForTermination(t,dt);
+        checkImpactsForTermination();
         if (term)
           break;
       }
@@ -547,8 +547,8 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveImpactsGaussSeidel(double t, double dt) {
-    checkImpactsForTermination(t,dt);
+  int DynamicSystemSolver::solveImpactsGaussSeidel() {
+    checkImpactsForTermination();
     if (term)
       return 0;
 
@@ -556,10 +556,10 @@ namespace MBSim {
     int checkTermLevel = 0;
 
     for (iter = 1; iter <= maxIter; iter++) {
-      Group::solveImpactsGaussSeidel(t,dt);
+      Group::solveImpactsGaussSeidel();
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkImpactsForTermination(t,dt);
+        checkImpactsForTermination();
         if (term)
           break;
       }
@@ -643,19 +643,19 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveImpactsRootFinding(double t, double dt) {
+  int DynamicSystemSolver::solveImpactsRootFinding() {
     updaterFactors();
 
     int iter;
     int checkTermLevel = 0;
     
     updateresRef(resParent(0, laSize - 1));
-    Group::solveImpactsRootFinding(t,dt);
+    Group::solveImpactsRootFinding();
 
     double nrmf0 = nrm2(res);
     Vec res0 = res.copy();
 
-    checkImpactsForTermination(dt);
+    checkImpactsForTermination();
     if (term)
       return 0;
 
@@ -675,13 +675,13 @@ namespace MBSim {
           while (fabs(xj + dx - La(j)) < epsroot());
           
           La(j) += dx;
-          Group::solveImpactsRootFinding(t,dt);
+          Group::solveImpactsRootFinding();
           La(j) = xj;
           Jprox.col(j) = (res - res0) / dx;
         }
       }
       else
-        jacobianImpacts(t,dt);
+        jacobianImpacts();
       Vec dx;
       if (linAlg == LUDecomposition)
         dx >> slvLU(Jprox, res0);
@@ -699,7 +699,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k = 0; k < maxDampingSteps; k++) {
         La = La_old - alpha * dx;
-        Group::solveImpactsRootFinding(t,dt);
+        Group::solveImpactsRootFinding();
         nrmf = nrm2(res);
         if (nrmf < nrmf0)
           break;
@@ -710,7 +710,7 @@ namespace MBSim {
 
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkImpactsForTermination(dt);
+        checkImpactsForTermination();
         if (term)
           break;
       }
@@ -729,11 +729,11 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::checkImpactsForTermination(double t, double dt) {
+  void DynamicSystemSolver::checkImpactsForTermination() {
     term = true;
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
-      (**i).checkImpactsForTermination(t,dt);
+      (**i).checkImpactsForTermination();
       if (term == false)
         return;
     }
@@ -920,7 +920,7 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveImpacts(double t, double dt) {
+  int DynamicSystemSolver::solveImpacts() {
     if (La.size() == 0)
       return 0;
     double H = 1;
@@ -935,7 +935,7 @@ namespace MBSim {
     int iter;
     Vec LaOld;
     LaOld << La;
-    iter = (this->*solveImpacts_)(t,dt); // solver election
+    iter = (this->*solveImpacts_)(); // solver election
     if (iter >= maxIter) {
       msg(Warn) << "\n";
       msg(Warn) << "Iterations: " << iter << "\n";
@@ -1006,8 +1006,8 @@ namespace MBSim {
 
     // Perform a projection of generalized positions and velocities at time t=0
     if(initialProjection) { 
-      projectGeneralizedPositions(0, 1, true);
-      projectGeneralizedVelocities(0, 1);
+      projectGeneralizedPositions(1, true);
+      projectGeneralizedVelocities(1);
     }
   }
 
@@ -1017,7 +1017,7 @@ namespace MBSim {
     return 1;
   }
 
-  int DynamicSystemSolver::solveImpactsLinearEquations(double t, double dt) {
+  int DynamicSystemSolver::solveImpactsLinearEquations() {
     La = slvLS(evalG(), -(evalgd() + evalW().T() * slvLLFac(evalLLM(), evalh()) * dt));
     return 1;
   }
@@ -1075,7 +1075,7 @@ namespace MBSim {
     zdot(zParent, t);
   }
 
-  void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt, double t) {
+  void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt) {
     if (LinkStatusExt.size() < LinkStatusSize)
       LinkStatusExt.resize(LinkStatusSize);
     if (LinkStatus() != LinkStatusExt())
@@ -1083,7 +1083,7 @@ namespace MBSim {
     updateLinkStatus();
   }
 
-  void DynamicSystemSolver::getLinkStatusReg(VecInt &LinkStatusRegExt, double t) {
+  void DynamicSystemSolver::getLinkStatusReg(VecInt &LinkStatusRegExt) {
     if (LinkStatusRegExt.size() < LinkStatusRegSize)
       LinkStatusRegExt.resize(LinkStatusRegSize);
     if (LinkStatusReg() != LinkStatusRegExt())
@@ -1091,7 +1091,7 @@ namespace MBSim {
     updateLinkStatusReg();
   }
 
-  void DynamicSystemSolver::projectGeneralizedPositions(double t, int mode, bool fullUpdate) {
+  void DynamicSystemSolver::projectGeneralizedPositions(int mode, bool fullUpdate) {
     int gID = 0;
     int laID = 0;
     int corrID = 0;
@@ -1142,7 +1142,7 @@ namespace MBSim {
     updategRef(gParent(0, gSize - 1));
   }
 
-  void DynamicSystemSolver::projectGeneralizedVelocities(double t, int mode) {
+  void DynamicSystemSolver::projectGeneralizedVelocities(int mode) {
     int gdID = 0; // IH
     int corrID = 0;
     if (mode == 3) { // impact
@@ -1630,7 +1630,8 @@ namespace MBSim {
       updV[0] = false;
 
       b << evalgd(); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
-      solveImpacts(t);
+      setStepSize(0);
+      solveImpacts();
       u += deltau(zParent, t, 0);
       resetUpToDate();
       checkActive(3); // neuer Zustand nach Stoss
@@ -1638,9 +1639,9 @@ namespace MBSim {
       // - es müssen immer alle Größen projiziert werden
       // - neuer Zustand ab hier bekannt
       // - Auswertung vor Setzen von gActive und gdActive
-      projectGeneralizedPositions(t, 3);
+      projectGeneralizedPositions(3);
       // Projektion der Geschwindikgeiten erst am Schluss
-      //projectGeneralizedVelocities(t,3);
+      //projectGeneralizedVelocities(3);
 
       if (laSize) {
 
@@ -1656,8 +1657,8 @@ namespace MBSim {
         solveConstraints();
 
         checkActive(4);
-        projectGeneralizedPositions(t, 2);
-        projectGeneralizedVelocities(t, 2);
+        projectGeneralizedPositions(2);
+        projectGeneralizedVelocities(2);
       }
     }
     else if (maxj == 2) { // transition from slip to stick (acceleration jump)
@@ -1678,15 +1679,15 @@ namespace MBSim {
 
         checkActive(4);
 
-        projectGeneralizedPositions(t, 2);
-        projectGeneralizedVelocities(t, 2);
+        projectGeneralizedPositions(2);
+        projectGeneralizedVelocities(2);
       }
     }
     else if (maxj == 1) { // contact opens or transition from stick to slip
       checkActive(8);
 
-      projectGeneralizedPositions(t, 1);
-      projectGeneralizedVelocities(t, 1);
+      projectGeneralizedPositions(1);
+      projectGeneralizedVelocities(1);
     }
     checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH

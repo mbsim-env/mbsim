@@ -266,7 +266,7 @@ namespace MBSimIntegrator {
     //system.updateW();
     //system.updateV();
 
-    system.getLinkStatusReg(LS_Reg_tmp_after,t);
+    system.getLinkStatusReg(LS_Reg_tmp_after);
 
     if (*LS_Reg_tmp_before!=LS_Reg_tmp_after) { 
       if (nrSys_==1) gAC_reg_T1=true;
@@ -311,7 +311,7 @@ namespace MBSimIntegrator {
     q_l += system_.deltaq(z_l,t_,dt_);
     system_.update(z_,t_+dt_,1);
     system_.getb().resize() = system_.getgd() + system_.getW().T()*slvLLFac(system_.getLLM(),system_.geth())*dt_;
-    *piter  = system_.solveImpacts(t,dt_);
+    *piter  = system_.solveImpacts();
     u_l += system_.deltau(z_,t_+dt_,dt_);
     x_l += system_.deltax(z_,t_+dt_,dt_);
   }
@@ -488,7 +488,7 @@ namespace MBSimIntegrator {
         system_.getb().resize() = system_.getgd() + W_n.T()*slvLLFac(M_LLM,h_n)*dt_;      
       }
 
-      *piter = system_.solveImpacts(t,dt_);
+      *piter = system_.solveImpacts();
 
       Vec du_n = slvLUFac(luMeff_n,heff_n*dt_ + W_n*system_.getla(),ipiv);
       u_n += du_n;
@@ -642,7 +642,7 @@ namespace MBSimIntegrator {
     system_.getGs().resize() << system_.getG();
     system_.getb().resize() = system_.getgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
 
-    *piter = system_.solveImpacts(t,dt);
+    *piter = system_.solveImpacts();
 
     Vec du = slvLUFac(luMeff,heff*dt + V*system_.getla(),ipiv);
 
@@ -950,8 +950,8 @@ namespace MBSimIntegrator {
       sysTP->update(zi,t);
     //}
     
-    sysT1->getLinkStatus(LS,t);
-    sysT1->getLinkStatusReg(LS_Reg,t);
+    sysT1->getLinkStatus(LS);
+    sysT1->getLinkStatusReg(LS_Reg);
 
     dhdq_T1 << dhdq_n_T1; dhdu_T1 << dhdu_n_T1;
     dhdq_T2 << dhdq_n_T2; dhdu_T2 << dhdu_n_T2;
@@ -1005,8 +1005,8 @@ namespace MBSimIntegrator {
               getAllSetValuedla(la1d,la1dSizes,SetValuedLinkListT1);
               la1d/=dt;
 
-              sysT1->getLinkStatus(LSA,t+dt);
-              if (inexactJac) sysT1->getLinkStatusReg(LSA_Reg,t+dt);
+              sysT1->getLinkStatus(LSA);
+              if (inexactJac) sysT1->getLinkStatusReg(LSA_Reg);
 
               ConstraintsChangedA = changedLinkStatus(LSA,LS,indexLSException);
               singleStepsT1++;
@@ -1033,8 +1033,8 @@ namespace MBSimIntegrator {
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT1);
                 la2b/=dtHalf;          
 
-                sysT1->getLinkStatus(LSB1,t+dtHalf);
-                if (inexactJac) sysT1->getLinkStatusReg(LSB1_Reg,t+dtHalf);
+                sysT1->getLinkStatus(LSB1);
+                if (inexactJac) sysT1->getLinkStatusReg(LSB1_Reg);
 
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT1++;
@@ -1059,7 +1059,7 @@ namespace MBSimIntegrator {
                 doStep(*sysT1,zT1,1,t,dtThird,expInt);
                 singleStepsT1++;
 
-                if (inexactJac) sysT1->getLinkStatusReg(LSB1_2_Reg,t+dtThird);
+                if (inexactJac) sysT1->getLinkStatusReg(LSB1_2_Reg);
 
                 z3b << zT1;
 
@@ -1086,8 +1086,8 @@ namespace MBSimIntegrator {
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
                 la2b/=dtHalf;
 
-                sysT2->getLinkStatus(LSB1,t+dtHalf);
-                if (inexactJac) sysT2->getLinkStatusReg(LSB1_Reg,t+dtHalf);
+                sysT2->getLinkStatus(LSB1);
+                if (inexactJac) sysT2->getLinkStatusReg(LSB1_Reg);
 
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT2++;
@@ -1112,16 +1112,16 @@ namespace MBSimIntegrator {
                 doStep(*sysT2,zT2,2,t,dtQuarter,expInt);
                 iterC1 = iter_T2;
 
-                sysT2->getLinkStatus(LSC1,t+dtQuarter);
-                if (inexactJac) sysT2->getLinkStatusReg(LSC1_Reg,t+dtQuarter);
+                sysT2->getLinkStatus(LSC1);
+                if (inexactJac) sysT2->getLinkStatusReg(LSC1_Reg);
 
                 ConstraintsChangedC =  changedLinkStatus(LSC1,LS,indexLSException);
 
                 doStep(*sysT2,zT2,2,t+dtQuarter,dtQuarter,expInt);
                 iterC2 = iter_T2;
 
-                sysT2->getLinkStatus(LSC2,t+dtHalf);
-                if (inexactJac) sysT2->getLinkStatusReg(LSC2_Reg,t+dtHalf);
+                sysT2->getLinkStatus(LSC2);
+                if (inexactJac) sysT2->getLinkStatusReg(LSC2_Reg);
 
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC2,LSC1,indexLSException);
                 singleStepsT2+=2;
@@ -1148,7 +1148,7 @@ namespace MBSimIntegrator {
                 doStep(*sysT2,zT2,2,t+dtThird,dtThird,expInt);
                 singleStepsT2+=2;
 
-                if (inexactJac) sysT2->getLinkStatusReg(LS_tmp,t+dtThird*2.);
+                if (inexactJac) sysT2->getLinkStatusReg(LS_tmp);
 
                 z3b << zT2;
 
@@ -1171,22 +1171,22 @@ namespace MBSimIntegrator {
 
                 doStep(*sysT3,zT3,3,t,dtSixth,expInt);
 
-                sysT3->getLinkStatus(LSD1,t+dtSixth);
-                if (inexactJac) sysT3->getLinkStatusReg(LSD1_Reg,t+dtSixth);
+                sysT3->getLinkStatus(LSD1);
+                if (inexactJac) sysT3->getLinkStatusReg(LSD1_Reg);
 
                 ConstraintsChangedD = changedLinkStatus(LSD1,LS,indexLSException);
 
                 doStep(*sysT3,zT3,3,t+dtSixth,dtSixth,expInt);
 
-                sysT3->getLinkStatus(LSD2,t+dtThird);
-                if (inexactJac) sysT3->getLinkStatusReg(LSD2_Reg,t+dtThird);
+                sysT3->getLinkStatus(LSD2);
+                if (inexactJac) sysT3->getLinkStatusReg(LSD2_Reg);
 
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD2,LSD1,indexLSException);
 
                 doStep(*sysT3,zT3,3,t+2.*dtSixth,dtSixth,expInt);
 
-                sysT3->getLinkStatus(LSD3,t+dtHalf);
-                if (inexactJac) sysT3->getLinkStatusReg(LSD3_Reg,t+dtHalf);
+                sysT3->getLinkStatus(LSD3);
+                if (inexactJac) sysT3->getLinkStatusReg(LSD3_Reg);
 
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD3,LSD2,indexLSException);
                 singleStepsT3+=3;
@@ -1247,8 +1247,8 @@ namespace MBSimIntegrator {
 
                 doStep(*sysT1,zT1,1,t+dtHalf,dtHalf,expInt);
 
-                sysT1->getLinkStatus(LSB2,t+dt);
-                if (inexactJac) sysT1->getLinkStatusReg(LSB2_Reg,t+dt);
+                sysT1->getLinkStatus(LSB2);
+                if (inexactJac) sysT1->getLinkStatusReg(LSB2_Reg);
 
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
                 singleStepsT1++;
@@ -1313,14 +1313,14 @@ namespace MBSimIntegrator {
                 doStep(*sysT2,zT2,2,t+dtHalf,dtQuarter,expInt);
                 iterC3 = iter_T2;
 
-                sysT2->getLinkStatus(LSC3,t+dtHalf+dtQuarter);
-                if (inexactJac) sysT2->getLinkStatusReg(LSC3_Reg,t+dtHalf+dtQuarter);
+                sysT2->getLinkStatus(LSC3);
+                if (inexactJac) sysT2->getLinkStatusReg(LSC3_Reg);
 
                 doStep(*sysT2,zT2,2,t+dtHalf+dtQuarter,dtQuarter,expInt);
                 iterC4 = iter_T2;
 
-                sysT2->getLinkStatus(LSC4,t+dt);
-                if (inexactJac) sysT2->getLinkStatusReg(LSC4_Reg,t+dt);
+                sysT2->getLinkStatus(LSC4);
+                if (inexactJac) sysT2->getLinkStatusReg(LSC4_Reg);
 
                 ConstraintsChangedC = changedLinkStatus(LSC2,LSC3,indexLSException);
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC3,LSC4,indexLSException);
@@ -1346,8 +1346,8 @@ namespace MBSimIntegrator {
                 doStep(*sysT2,zT2,2,t+dtHalf,dtHalf,expInt);
                 iterB2 = iter_T2;
 
-                sysT2->getLinkStatus(LSB2,t+dt);
-                if (inexactJac) sysT2->getLinkStatusReg(LSB2_Reg,t+dt);
+                sysT2->getLinkStatus(LSB2);
+                if (inexactJac) sysT2->getLinkStatusReg(LSB2_Reg);
 
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
 
@@ -1412,22 +1412,22 @@ namespace MBSimIntegrator {
 
                 doStep(*sysT3,zT3,3,t+dtHalf,dtSixth,expInt);
 
-                sysT3->getLinkStatus(LSD4,t+4.0*dtSixth);
-                if (inexactJac) sysT3->getLinkStatusReg(LSD4_Reg,t+4.0*dtSixth);
+                sysT3->getLinkStatus(LSD4);
+                if (inexactJac) sysT3->getLinkStatusReg(LSD4_Reg);
 
                 ConstraintsChangedD =  changedLinkStatus(LSD4,LSD3,indexLSException);
 
                 doStep(*sysT3,zT3,3,t+4.0*dtSixth,dtSixth,expInt);
 
-                sysT3->getLinkStatus(LSD5,t+5.0*dtSixth);
-                if (inexactJac) sysT3->getLinkStatusReg(LSD5_Reg,t+5.0*dtSixth);
+                sysT3->getLinkStatus(LSD5);
+                if (inexactJac) sysT3->getLinkStatusReg(LSD5_Reg);
 
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD4,LSD5,indexLSException);
 
                 doStep(*sysT3,zT3,3,t+5.0*dtSixth,dtSixth,expInt);
 
-                sysT3->getLinkStatus(LSD6,t+dt);
-                if (inexactJac) sysT3->getLinkStatusReg(LSD6_Reg,t+dt);
+                sysT3->getLinkStatus(LSD6);
+                if (inexactJac) sysT3->getLinkStatusReg(LSD6_Reg);
 
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD5,LSD6,indexLSException);
 

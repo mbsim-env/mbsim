@@ -735,7 +735,7 @@ namespace MBSim {
       ftil->setParent(this);
   }
 
-  void SingleContact::solveImpactsFixpointSingle(double t, double dt) {
+  void SingleContact::solveImpactsFixpointSingle() {
     if (gActive) {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
@@ -761,7 +761,7 @@ namespace MBSim {
         }
 
         //            if (ftil) //There must be a ftil coming with a setValued fdf
-        LaT = ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*dt, rFactor(addIndexNormal));
+        LaT = ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(addIndexNormal));
       }
     }
   }
@@ -797,7 +797,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveImpactsGaussSeidel(double t, double dt) {
+  void SingleContact::solveImpactsGaussSeidel() {
     assert(getFrictionDirections() <= 1);
     if (gActive) {
 
@@ -825,7 +825,7 @@ namespace MBSim {
         for (int j = ia[laInd + addIndexnormal] + 1; j < ia[laInd + addIndexnormal + 1]; j++)
           gdnT(0) += a[j] * LaMBS(ja[j]);
 
-        Vec buf = ftil->solve(ds->getG()(Index(laInd + addIndexnormal, laInd + getFrictionDirections())), gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*dt);
+        Vec buf = ftil->solve(ds->getG()(Index(laInd + addIndexnormal, laInd + getFrictionDirections())), gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize());
         LaT += om * (buf - LaT);
       }
     }
@@ -866,7 +866,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveImpactsRootFinding(double t, double dt) {
+  void SingleContact::solveImpactsRootFinding() {
     if (gActive) {
 
       const double *a = ds->evalGs()();
@@ -894,7 +894,7 @@ namespace MBSim {
             gdnT(i) += a[j] * LaMBS(ja[j]);
         }
         //            if (ftil) There must be a frictional impact law if fdf is set valued!
-        res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = LaT - ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*dt, rFactor(addIndexnormal));
+        res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = LaT - ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(addIndexnormal));
       }
     }
   }
@@ -983,7 +983,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::jacobianImpacts(double t, double dt) {
+  void SingleContact::jacobianImpacts() {
     if (gActive) {
 
       const SqrMat Jprox = ds->getJprox();
@@ -1005,7 +1005,7 @@ namespace MBSim {
       }
 
       if (getFrictionDirections() == 1) {
-        Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*dt, rFactor(addIndexNormal));
+        Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(addIndexNormal));
         RowVec jp2 = Jprox.row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
         e2(laInd + addIndexNormal) = 1;
@@ -1019,7 +1019,7 @@ namespace MBSim {
 
       }
       else if (getFrictionDirections() == 2) {
-        Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*dt, rFactor(addIndexNormal));
+        Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(addIndexNormal));
         Mat jp2 = Jprox(Index(laInd + addIndexNormal, laInd + addIndexNormal + 1), Index(0, Jprox.cols() - 1));
         Mat e2(2, jp2.cols());
         e2(0, laInd + addIndexNormal) = 1;
@@ -1135,7 +1135,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::checkImpactsForTermination(double t, double dt) {
+  void SingleContact::checkImpactsForTermination() {
     if (gActive) {
 
       const double *a = ds->evalGs()();
@@ -1162,7 +1162,7 @@ namespace MBSim {
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)
             gdnT(i) += a[j] * LaMBS(ja[j]);
         }
-        if (!ftil->isFulfilled(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*dt, LaTol, gdTol)) {
+        if (!ftil->isFulfilled(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), LaTol, gdTol)) {
           ds->setTermination(false);
           return;
         }
