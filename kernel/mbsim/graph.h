@@ -48,7 +48,7 @@ namespace MBSim {
       virtual ~Graph();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updatedu(double t, double dt);
+      virtual void updatedu();
       virtual void updatezd();
       virtual void updateud(int i=0);
       virtual void sethSize(int h, int j=0) {(this->*sethSize_[j])(h);}

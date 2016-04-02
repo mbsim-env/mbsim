@@ -980,14 +980,14 @@ namespace MBSim {
     if (q() != zParent())
       updatezRef(zParent);
 
-    updatedu(t, dt);
+    updatedu();
     return ud[0];
   }
 
   Vec DynamicSystemSolver::deltaq(const Vec &zParent, double t, double dt) {
     if (q() != zParent())
       updatezRef(zParent);
-    updatedq(t, dt);
+    updatedq();
 
     return qd;
   }
@@ -996,7 +996,7 @@ namespace MBSim {
     if (q() != zParent()) {
       updatezRef(zParent);
     }
-    updatedx(t, dt);
+    updatedx();
     return xd;
   }
 

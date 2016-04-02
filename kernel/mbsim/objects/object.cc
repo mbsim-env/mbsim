@@ -305,12 +305,12 @@ namespace MBSim {
     return LLM[i];
   }
 
-  void Object::updatedq(double t, double dt) {
-    qd = evalT() * u * dt;
+  void Object::updatedq() {
+    qd = evalT() * u * getStepSize();
   }
 
-  void Object::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(evalLLM(), evalh() * dt + evalrdt());
+  void Object::updatedu() {
+    ud[0] = slvLLFac(evalLLM(), evalh() * getStepSize() + evalrdt());
   }
 
   void Object::updateud(int i) {

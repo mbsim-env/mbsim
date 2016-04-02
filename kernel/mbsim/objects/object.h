@@ -56,8 +56,8 @@ namespace MBSim {
       virtual void updateh(int j=0) { }
       virtual void updateM(int i=0) { }
       virtual void updatedhdz();
-      virtual void updatedq(double t, double dt); 
-      virtual void updatedu(double t, double dt);
+      virtual void updatedq();
+      virtual void updatedu();
       virtual void updateud(int i=0);
       virtual void updateqd();
       virtual void updatezd() { updateqd(); updateud(); }

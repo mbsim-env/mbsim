@@ -66,7 +66,7 @@ namespace MBSim {
 
       void addDependency(Constraint* constraint_);
 
-      void updatedq(double t, double dt);
+      void updatedq();
       void updateqd();
       void updateT();
       void updateh(int j=0);

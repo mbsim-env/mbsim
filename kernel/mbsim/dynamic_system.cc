@@ -106,12 +106,12 @@ namespace MBSim {
       object[i]->updateM(j);
   }
 
-  void DynamicSystem::updatedq(double t, double dt) {
+  void DynamicSystem::updatedq() {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatedq(t, dt);
+      (**i).updatedq();
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updatedq(t, dt);
+      (**i).updatedq();
   }
 
   void DynamicSystem::sethSize(int hSize_, int j) {
@@ -271,15 +271,15 @@ namespace MBSim {
       linkSetValued[i]->updategd();
   }
 
-  void DynamicSystem::updatedx(double t, double dt) {
+  void DynamicSystem::updatedx() {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatedx(t, dt);
+      (**i).updatedx();
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatedx(t, dt);
+      (**i).updatedx();
 
     for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
-      (**i).updatedx(t, dt);
+      (**i).updatedx();
   }
 
   void DynamicSystem::updateqd() {

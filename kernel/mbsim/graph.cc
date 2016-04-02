@@ -39,8 +39,8 @@ namespace MBSim {
 
   Graph::~Graph() {}
 
-  void Graph::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(evalLLM(), evalh()*dt+evalrdt());
+  void Graph::updatedu() {
+    ud[0] = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
   }
 
   void Graph::updateud(int j) {

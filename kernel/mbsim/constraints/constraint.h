@@ -34,7 +34,7 @@ namespace MBSim {
       Constraint(const std::string &name);
       virtual void updateGeneralizedCoordinates() {}
       virtual void updateGeneralizedJacobians(int j=0) { }
-      virtual void updatedx(double t, double dt) { }
+      virtual void updatedx() { }
       virtual void updatexd() { }
       virtual void calcxSize() { xSize = 0; }
       virtual const fmatvec::Vec& getx() const { return x; }

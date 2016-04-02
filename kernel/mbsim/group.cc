@@ -56,12 +56,12 @@ namespace MBSim {
       (*i)->updateLLM(j);
   }
 
-  void Group::updatedu(double t, double dt) {
+  void Group::updatedu() {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatedu(t,dt);
+      (*i)->updatedu();
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updatedu(t,dt);
+      (*i)->updatedu();
   }
 
   void Group::updateud(int j) {

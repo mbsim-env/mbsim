@@ -51,7 +51,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updatedu(double t, double dt);
+      virtual void updatedu();
       virtual void updatezd();
       virtual void updateud(int i=0);
       /***************************************************/
