@@ -67,7 +67,7 @@ namespace MBSim {
     Z1.setGyroscopicAccelerationOfRotation(P1->getGyroscopicAccelerationOfRotation(j),j);
   }
 
-  void Gearing::updateW(double t, int j) {
+  void Gearing::updateW(int j) {
     W[j][0] += Z0.getJacobianOfTranslation(j).T()*Wt;
     W[j][1] -= Z1.getJacobianOfTranslation(j).T()*Wt;
   }

@@ -50,7 +50,7 @@ namespace MBSim {
       void calcgdSize(int j) { gdSize = 1; }
 
       void updateh(int i=0);
-      void updateW(double t, int i=0);
+      void updateW(int i=0);
       void updateg();
       void updategd();
       virtual void updatePositions();

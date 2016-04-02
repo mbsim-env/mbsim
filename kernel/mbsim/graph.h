@@ -63,7 +63,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF SUBSYSTEM */
-      void updateLLM(double t, int i=0); 
+      void updateLLM(int i=0);
 
       void (Graph::*calcuSize_[2])(); 
       void (Graph::*sethSize_[2])(int h); 

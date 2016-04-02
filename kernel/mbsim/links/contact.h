@@ -65,8 +65,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb();
-      virtual void updateW(double t, int i = 0);
-      virtual void updateV(double t, int i = 0);
+      virtual void updateW(int i = 0);
+      virtual void updateV(int i = 0);
       virtual void updateh(int i = 0);
       virtual void updateg();
       virtual void updategd();

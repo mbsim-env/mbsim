@@ -171,7 +171,7 @@ namespace MBSim {
     h[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F;
   }
 
-  void SingleContact::updateW(double t, int j) {
+  void SingleContact::updateW(int j) {
     int i = fcl->isSetValued()?0:1;
     Mat3xV RF = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(i,i+laSize-1));
 
@@ -179,7 +179,7 @@ namespace MBSim {
     W[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF;
   }
 
-  void SingleContact::updateV(double t, int j) {
+  void SingleContact::updateV(int j) {
     if (getFrictionDirections()) {
       if (fdf->isSetValued()) {
         if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)

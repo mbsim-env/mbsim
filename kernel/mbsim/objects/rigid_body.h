@@ -70,7 +70,7 @@ namespace MBSim {
       void updateqd();
       void updateT();
       void updateh(int j=0);
-      void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
+      void updateM(int i=0) { (this->*updateM_)(i); }
       void updateInertiaTensor();
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
@@ -97,7 +97,7 @@ namespace MBSim {
       virtual void updateuRef(const fmatvec::Vec& ref);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void updateLLM(double t, int i=0) { (this->*updateLLM_)(t,i); }
+      virtual void updateLLM(int i=0) { (this->*updateLLM_)(i); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
 
@@ -321,32 +321,32 @@ namespace MBSim {
       /**
        * \brief function pointer to update mass matrix
        */
-      void (RigidBody::*updateM_)(double t, int i);
+      void (RigidBody::*updateM_)(int i);
 
       /**
        * \brief update constant mass matrix
        */
-      void updateMConst(double t, int i=0);
+      void updateMConst(int i=0);
 
       /**
        * \brief update time dependend mass matrix
        */
-      void updateMNotConst(double t, int i=0); 
+      void updateMNotConst(int i=0);
 
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (RigidBody::*updateLLM_)(double t, int i);
+      void (RigidBody::*updateLLM_)(int i);
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
        */
-      void updateLLMConst(double t, int i=0) { }
+      void updateLLMConst(int i=0) { }
 
       /**
        * \brief Cholesky decomposition of time dependent mass matrix
        */
-      void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
+      void updateLLMNotConst(int i=0) { Object::updateLLM(i); }
 
       void (RigidBody::*updateJacobians_[3])(Frame *frame);
 
@@ -388,4 +388,3 @@ namespace MBSim {
 }
 
 #endif
-

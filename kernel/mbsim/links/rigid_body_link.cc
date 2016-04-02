@@ -141,7 +141,7 @@ namespace MBSim {
     }
   }
 
-  void RigidBodyLink::updateW(double t, int j) {
+  void RigidBodyLink::updateW(int j) {
     if(j==0) {
       for(unsigned i=0; i<body.size(); i++)  {
         W[j][i]+=body[i]->evalJRel(j).T()*ratio[i];

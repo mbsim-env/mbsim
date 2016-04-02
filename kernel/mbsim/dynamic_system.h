@@ -71,7 +71,7 @@ namespace MBSim {
       /* INTERFACE FOR DERIVED CLASSES */
       virtual void updateT();
       virtual void updateh(int i=0);
-      virtual void updateM(double t, int i=0);
+      virtual void updateM(int i=0);
       virtual void updatedq(double t, double dt); 
       virtual void updateud(double t, int i=0) { THROW_MBSIMERROR("(DynamicSystem::updateud): Not implemented!"); }
       virtual void updatezd() = 0;
@@ -106,8 +106,8 @@ namespace MBSim {
 #endif
 
       virtual void updatewb();
-      virtual void updateW(double t, int j=0); 
-      virtual void updateV(double t, int j=0); 
+      virtual void updateW(int j=0);
+      virtual void updateV(int j=0);
       virtual void updateg();
       virtual void updategd();
       virtual void updateStopVector();
@@ -144,7 +144,7 @@ namespace MBSim {
       /**
        * \brief compute Cholesky decomposition of mass matrix TODO necessary?
        */
-      virtual void updateLLM(double t, int i=0) = 0;
+      virtual void updateLLM(int i=0) = 0;
 
       /**
        * \brief solve contact equations with single step fixed point scheme

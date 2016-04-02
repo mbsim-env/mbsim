@@ -831,23 +831,23 @@ namespace MBSim {
     updT = false;
   }
 
-  void DynamicSystemSolver::updateM(double t, int i) {
+  void DynamicSystemSolver::updateM(int i) {
     M[i].init(0);
-    Group::updateM(t, i);
+    Group::updateM(i);
     updM[i] = false;
   }
 
-  void DynamicSystemSolver::updateLLM(double t, int i) {
-    Group::updateLLM(t, i);
+  void DynamicSystemSolver::updateLLM(int i) {
+    Group::updateLLM(i);
     updLLM[i] = false;
   }
 
-  void DynamicSystemSolver::updater(double t, int j) {
+  void DynamicSystemSolver::updater(int j) {
     r[j] = evalV(j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updr[j] = false;
   }
 
-  void DynamicSystemSolver::updaterdt(double t, int j) {
+  void DynamicSystemSolver::updaterdt(int j) {
     rdt[j] = evalV(j) * La; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updrdt[j] = false;
   }
@@ -868,15 +868,15 @@ namespace MBSim {
     updgd = false;
   }
 
-  void DynamicSystemSolver::updateW(double t, int j) {
+  void DynamicSystemSolver::updateW(int j) {
     W[j].init(0);
-    Group::updateW(t, j);
+    Group::updateW(j);
     updW[j] = false;
   }
 
-  void DynamicSystemSolver::updateV(double t, int j) {
+  void DynamicSystemSolver::updateV(int j) {
     V[j] = evalW(j);
-    Group::updateV(t, j);
+    Group::updateV(j);
     updV[j] = false;
   }
 
@@ -1626,7 +1626,7 @@ namespace MBSim {
       updateLaRef(LaParent(0, laSize - 1));
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-      V[0] = evalW(); //updateV(t) not allowed here
+      V[0] = evalW(); //updateV() not allowed here
       updV[0] = false;
 
       b << evalgd(); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0

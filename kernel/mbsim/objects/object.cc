@@ -286,22 +286,22 @@ namespace MBSim {
   }
 
   const Vec& Object::evalr(int i) {
-    if(ds->getUpdater(i)) ds->updater(getTime(),i);
+    if(ds->getUpdater(i)) ds->updater(i);
     return r[i];
   }
 
   const Vec& Object::evalrdt(int i) {
-    if(ds->getUpdaterdt(i)) ds->updaterdt(getTime(),i);
+    if(ds->getUpdaterdt(i)) ds->updaterdt(i);
     return rdt[i];
   }
 
   const SymMat& Object::evalM(int i) {
-    if(ds->getUpdateM(i)) ds->updateM(getTime(),i);
+    if(ds->getUpdateM(i)) ds->updateM(i);
     return M[i];
   }
 
   const SymMat& Object::evalLLM(int i) {
-    if(ds->getUpdateLLM(i)) ds->updateLLM(getTime(),i);
+    if(ds->getUpdateLLM(i)) ds->updateLLM(i);
     return LLM[i];
   }
 

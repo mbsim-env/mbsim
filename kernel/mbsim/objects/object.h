@@ -54,7 +54,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT() { }
       virtual void updateh(int j=0) { }
-      virtual void updateM(double t, int i=0) { }
+      virtual void updateM(int i=0) { }
       virtual void updatedhdz();
       virtual void updatedq(double t, double dt); 
       virtual void updatedu(double t, double dt);
@@ -206,7 +206,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void updateLLM(double t, int i=0) { LLM[i] = facLL(evalM(i)); }
+      virtual void updateLLM(int i=0) { LLM[i] = facLL(evalM(i)); }
 
       /**
        * \return kinetic energy 

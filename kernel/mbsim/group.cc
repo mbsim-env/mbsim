@@ -48,12 +48,12 @@ namespace MBSim {
 
   Group::~Group() {}
 
-  void Group::updateLLM(double t, int j) {
+  void Group::updateLLM(int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (*i)->updateLLM(t,j);
+      (*i)->updateLLM(j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updateLLM(t,j);
+      (*i)->updateLLM(j);
   }
 
   void Group::updatedu(double t, double dt) {

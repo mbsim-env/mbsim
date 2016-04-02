@@ -46,7 +46,7 @@ namespace MBSim {
       virtual ~Group();
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual void updateLLM(double t, int i=0);
+      virtual void updateLLM(int i=0);
       using DynamicSystem::addObject;
       /***************************************************/
 

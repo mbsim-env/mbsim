@@ -125,7 +125,7 @@ namespace MBSim {
     }
   }
 
-  void FloatingFrameLink::updateW(double t, int j) {
+  void FloatingFrameLink::updateW(int j) {
     W[j][0] -= C.evalJacobianOfTranslation(j).T() * evalRF() + C.evalJacobianOfRotation(j).T() * evalRM();
     W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalRF() + frame[1]->evalJacobianOfRotation(j).T() * evalRM();
   }

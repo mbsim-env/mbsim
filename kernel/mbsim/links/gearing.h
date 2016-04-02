@@ -38,7 +38,7 @@ namespace MBSim {
     public:
       Gearing(const std::string &name);
       void updateh(int i=0);
-      void updateW(double t, int i=0);
+      void updateW(int i=0);
       void updateJacobians(int j=0);
       void updateg();
       void updategd();

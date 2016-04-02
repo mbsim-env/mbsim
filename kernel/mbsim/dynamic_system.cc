@@ -98,12 +98,12 @@ namespace MBSim {
 	linkOrdered[i][j]->updateh(k);
   }
 
-  void DynamicSystem::updateM(double t, int j) {
+  void DynamicSystem::updateM(int j) {
     for (int i = 0; i < (int) dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateM(t, j);
+      dynamicsystem[i]->updateM(j);
 
     for (int i = 0; i < (int) object.size(); i++)
-      object[i]->updateM(t, j);
+      object[i]->updateM(j);
   }
 
   void DynamicSystem::updatedq(double t, double dt) {
@@ -233,17 +233,17 @@ namespace MBSim {
       (**i).updatewb();
   }
 
-  void DynamicSystem::updateW(double t, int j) {
+  void DynamicSystem::updateW(int j) {
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updateW(t, j);
+      (**i).updateW(j);
   }
 
   void DynamicSystem::updateWInverseKinetics(double t, int j) {
     WInverseKinetics[j].init(0);
 
     for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
-      (**i).updateW(t, j);
+      (**i).updateW(j);
   }
 
   void DynamicSystem::updatebInverseKinetics() {
@@ -253,10 +253,10 @@ namespace MBSim {
       (**i).updateb();
   }
 
-  void DynamicSystem::updateV(double t, int j) {
+  void DynamicSystem::updateV(int j) {
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).updateV(t, j);
+      (**i).updateV(j);
   }
 
   void DynamicSystem::updateg() {
@@ -1622,32 +1622,32 @@ namespace MBSim {
   }
 
   const Vec& DynamicSystem::evalr(int i) {
-    if(ds->getUpdater(i)) ds->updater(getTime(),i);
+    if(ds->getUpdater(i)) ds->updater(i);
     return r[i];
   }
 
   const Vec& DynamicSystem::evalrdt(int i) {
-    if(ds->getUpdaterdt(i)) ds->updaterdt(getTime(),i);
+    if(ds->getUpdaterdt(i)) ds->updaterdt(i);
     return rdt[i];
   }
 
   const SymMat& DynamicSystem::evalM(int i) {
-    if(ds->getUpdateM(i)) ds->updateM(getTime(),i);
+    if(ds->getUpdateM(i)) ds->updateM(i);
     return M[i];
   }
 
   const SymMat& DynamicSystem::evalLLM(int i) {
-    if(ds->getUpdateLLM(i)) ds->updateLLM(getTime(),i);
+    if(ds->getUpdateLLM(i)) ds->updateLLM(i);
     return LLM[i];
   }
 
   const Mat& DynamicSystem::evalW(int i) {
-    if(ds->getUpdateW(i)) ds->updateW(getTime(),i);
+    if(ds->getUpdateW(i)) ds->updateW(i);
     return W[i];
   }
 
   const Mat& DynamicSystem::evalV(int i) {
-    if(ds->getUpdateV(i)) ds->updateV(getTime(),i);
+    if(ds->getUpdateV(i)) ds->updateV(i);
     return V[i];
   }
 

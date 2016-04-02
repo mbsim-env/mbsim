@@ -596,11 +596,11 @@ namespace MBSim {
   }
 #endif
 
-  void RigidBody::updateMConst(double t, int i) {
+  void RigidBody::updateMConst(int i) {
     M[i] += Mbuf;
   }
 
-  void RigidBody::updateMNotConst(double t, int i) {
+  void RigidBody::updateMNotConst(int i) {
     M[i] += m*JTJ(C->evalJacobianOfTranslation(i)) + JTMJ(evalGlobalInertiaTensor(),C->evalJacobianOfRotation(i));
   }
 

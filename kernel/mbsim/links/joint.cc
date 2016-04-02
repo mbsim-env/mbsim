@@ -94,7 +94,7 @@ namespace MBSim {
     h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * F + frame[1]->evalJacobianOfRotation(j).T() * M;
   }
 
-  void Joint::updateW(double t, int j) {
+  void Joint::updateW(int j) {
     int nF = (ffl and ffl->isSetValued())?forceDir.cols():0;
     int nM = (fml and fml->isSetValued())?momentDir.cols():0;
     Mat3xV RF(nF+nM);

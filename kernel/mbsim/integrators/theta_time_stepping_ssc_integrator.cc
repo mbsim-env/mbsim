@@ -60,9 +60,9 @@ namespace MBSimIntegrator {
 
     system.updateT();
     system.updateJacobians(t);
-    system.updateM(t);
-    system.updateW(t); 
-    system.updateV(t);
+    system.updateM();
+    system.updateW();
+    system.updateV();
   }
   
   void ThetaTimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& system) {

@@ -64,7 +64,7 @@ namespace MBSim {
       void (Joint::*updatelaF_)();
       void (Joint::*updatelaM_)();
       void updateh(int i=0);
-      void updateW(double t, int i=0);
+      void updateW(int i=0);
       void updatewb();
       /***************************************************/
 

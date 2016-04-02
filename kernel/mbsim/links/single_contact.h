@@ -69,7 +69,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb();
-      virtual void updateV(double t, int i=0);
+      virtual void updateV(int i=0);
       void updateGeneralizedNormalForce() { (this->*updateGeneralizedNormalForce_)(); updlaN = false; }
       void updateGeneralizedTangentialForce() { (this->*updateGeneralizedTangentialForce_)(); updlaT = false; }
       void updateGeneralizedNormalForceS();
@@ -89,7 +89,7 @@ namespace MBSim {
       virtual void updateg();
       virtual void updategd();
       virtual void updateh(int i=0);
-      virtual void updateW(double t, int i=0);
+      virtual void updateW(int i=0);
       virtual void updateStopVector();
       /***************************************************/
 

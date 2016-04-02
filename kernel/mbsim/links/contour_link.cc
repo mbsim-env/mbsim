@@ -105,7 +105,7 @@ namespace MBSim {
 //    h[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * getSingleValuedForce(t);
   }
 
-  void ContourLink::updateW(double t, int j) {
+  void ContourLink::updateW(int j) {
 //    W[j][0] -= cpData[0].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(Index(0,2),Index(0,laSize-1));
 //    W[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(Index(0,2),Index(0,laSize-1));
   }

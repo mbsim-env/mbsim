@@ -142,8 +142,8 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT();
       virtual void updateh(int i=0);
-      virtual void updateM(double t, int i=0);
-      virtual void updateLLM(double t, int i=0);
+      virtual void updateM(int i=0);
+      virtual void updateLLM(int i=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
@@ -158,13 +158,13 @@ namespace MBSim {
        * \brief update smooth link force law
        * \param simulation time
        */
-      virtual void updater(double t, int j=0);
-      virtual void updaterdt(double t, int j=0);
+      virtual void updater(int j=0);
+      virtual void updaterdt(int j=0);
       virtual void updatewb();
       virtual void updateg();
       virtual void updategd();
-      virtual void updateW(double t, int j=0);
-      virtual void updateV(double t, int j=0);
+      virtual void updateW(int j=0);
+      virtual void updateV(int j=0);
       virtual void updateb();
       /***************************************************/
 
