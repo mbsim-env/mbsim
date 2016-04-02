@@ -766,7 +766,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsFixpointSingle(double t) {
+  void SingleContact::solveConstraintsFixpointSingle() {
     if (gdActive[0]) {
 
       const double *a = ds->evalGs()();
@@ -831,7 +831,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsGaussSeidel(double t) {
+  void SingleContact::solveConstraintsGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
     if (gdActive[0]) {
@@ -899,7 +899,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::solveConstraintsRootFinding(double t) {
+  void SingleContact::solveConstraintsRootFinding() {
     if (gdActive[0]) {
 
       const double *a = ds->evalGs()();
@@ -932,7 +932,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::jacobianConstraints(double t) {
+  void SingleContact::jacobianConstraints() {
     if (gdActive[0]) {
 
       const SqrMat Jprox = ds->getJprox();
@@ -1033,7 +1033,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::updaterFactors(double t) {
+  void SingleContact::updaterFactors() {
     if (gdActive[0]) {
 
       const double *a = ds->evalGs()();
@@ -1096,7 +1096,7 @@ namespace MBSim {
     }
   }
 
-  void SingleContact::checkConstraintsForTermination(double t) {
+  void SingleContact::checkConstraintsForTermination() {
     if (gdActive[0]) {
 
       const double *a = ds->evalGs()();
@@ -1409,7 +1409,7 @@ namespace MBSim {
       THROW_MBSIMERROR("Internal error");
   }
 
-  void SingleContact::checkRoot(double t) {
+  void SingleContact::checkRoot() {
     rootID = 0;
     if (jsv(0)) {
       if (gActive)

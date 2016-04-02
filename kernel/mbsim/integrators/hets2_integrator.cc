@@ -155,7 +155,7 @@ namespace MBSimIntegrator {
 
         // solve the constraint equation system
         if (system.getla().size() not_eq 0) {
-          iter = system.solveConstraints(t);
+          iter = system.solveConstraints();
         }
 
         if(iter>maxIter) {
@@ -192,7 +192,7 @@ namespace MBSimIntegrator {
 
         // solve the constraint equation system
         if (system.getla().size() not_eq 0) {
-          iter = system.solveConstraints(t);
+          iter = system.solveConstraints();
         }
 
         if(iter>maxIter) {

@@ -463,10 +463,10 @@ namespace MBSim {
       Group::init(stage);
   }
 
-  int DynamicSystemSolver::solveConstraintsFixpointSingle(double t) {
-    updaterFactors(t);
+  int DynamicSystemSolver::solveConstraintsFixpointSingle() {
+    updaterFactors();
 
-    checkConstraintsForTermination(t);
+    checkConstraintsForTermination();
     if (term)
       return 0;
 
@@ -483,11 +483,11 @@ namespace MBSim {
           msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
-      Group::solveConstraintsFixpointSingle(t);
+      Group::solveConstraintsFixpointSingle();
 
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkConstraintsForTermination(t);
+        checkConstraintsForTermination();
         if (term)
           break;
       }
@@ -496,7 +496,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsFixpointSingle(double t, double dt) {
-    updaterFactors(t);
+    updaterFactors();
 
     checkImpactsForTermination(t,dt);
     if (term)
@@ -527,8 +527,8 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveConstraintsGaussSeidel(double t) {
-    checkConstraintsForTermination(t);
+  int DynamicSystemSolver::solveConstraintsGaussSeidel() {
+    checkConstraintsForTermination();
     if (term)
       return 0;
 
@@ -536,10 +536,10 @@ namespace MBSim {
     int checkTermLevel = 0;
 
     for (iter = 1; iter <= maxIter; iter++) {
-      Group::solveConstraintsGaussSeidel(t);
+      Group::solveConstraintsGaussSeidel();
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkConstraintsForTermination(t);
+        checkConstraintsForTermination();
         if (term)
           break;
       }
@@ -567,19 +567,19 @@ namespace MBSim {
     return iter;
   }
 
-  int DynamicSystemSolver::solveConstraintsRootFinding(double t) {
-    updaterFactors(t);
+  int DynamicSystemSolver::solveConstraintsRootFinding() {
+    updaterFactors();
 
     int iter;
     int checkTermLevel = 0;
 
     updateresRef(resParent(0, laSize - 1));
-    Group::solveConstraintsRootFinding(t);
+    Group::solveConstraintsRootFinding();
 
     double nrmf0 = nrm2(res);
     Vec res0 = res.copy();
 
-    checkConstraintsForTermination(t);
+    checkConstraintsForTermination();
     if (term)
       return 0;
 
@@ -599,13 +599,13 @@ namespace MBSim {
           while (fabs(xj + dx - la(j)) < epsroot());
 
           la(j) += dx;
-          Group::solveConstraintsRootFinding(t);
+          Group::solveConstraintsRootFinding();
           la(j) = xj;
           Jprox.col(j) = (res - res0) / dx;
         }
       }
       else
-        jacobianConstraints(t);
+        jacobianConstraints();
       Vec dx;
       if (linAlg == LUDecomposition)
         dx >> slvLU(Jprox, res0);
@@ -623,7 +623,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k = 0; k < maxDampingSteps; k++) {
         la = La_old - alpha * dx;
-        Group::solveConstraintsRootFinding(t);
+        Group::solveConstraintsRootFinding();
         nrmf = nrm2(res);
         if (nrmf < nrmf0)
           break;
@@ -635,7 +635,7 @@ namespace MBSim {
 
       if (checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkConstraintsForTermination(t);
+        checkConstraintsForTermination();
         if (term)
           break;
       }
@@ -644,7 +644,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsRootFinding(double t, double dt) {
-    updaterFactors(t);
+    updaterFactors();
 
     int iter;
     int checkTermLevel = 0;
@@ -718,11 +718,11 @@ namespace MBSim {
     return iter;
   }
 
-  void DynamicSystemSolver::checkConstraintsForTermination(double t) {
+  void DynamicSystemSolver::checkConstraintsForTermination() {
     term = true;
 
     for (vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
-      (**i).checkConstraintsForTermination(t);
+      (**i).checkConstraintsForTermination();
       if (term == false) {
         return;
       }
@@ -758,7 +758,6 @@ namespace MBSim {
     double delta = epsroot();
     Mat J(hSize[0], qSize, INIT, 0.0);
     throw;
-//    updateStateDependentVariables(t);
     updateg();
     updategd();
     updateT();
@@ -767,7 +766,6 @@ namespace MBSim {
     for (int i = lb; i < ub; i++) {
       double qtmp = q(i);
       q(i) += delta;
-      //updateStateDependentVariables(t);
       updateg();
       updategd();
       updateT();
@@ -777,7 +775,6 @@ namespace MBSim {
     }
     h[0] = hOld;
 
-    //updateStateDependentVariables(t);
     updateg();
     updategd();
     updateT();
@@ -798,7 +795,6 @@ namespace MBSim {
     double delta = epsroot();
     Mat J(hSize[0], uSize[0], INIT, 0.0);
     throw;
-    //updateStateDependentVariables(t);
     updateg();
     updategd();
     updateT();
@@ -808,7 +804,6 @@ namespace MBSim {
       //msg(Info) << "bin bei i=" << i << endl;
       double utmp = u(i);
       u(i) += delta;
-      //updateStateDependentVariables(t);
       //updateg();
       updategd();
       //updateT();
@@ -817,7 +812,6 @@ namespace MBSim {
       u(i) = utmp;
     }
     h[0] = hOld;
-    //updateStateDependentVariables(t);
     updategd();
     updateh(t);
 
@@ -847,23 +841,6 @@ namespace MBSim {
     Group::updateLLM(t, i);
     updLLM[i] = false;
   }
-
-//  void DynamicSystemSolver::updateStateDependentVariables(double t) {
-//    Group::updateStateDependentVariables(t);
-//
-//    if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
-//      msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
-//      exit(1);
-//    }
-//
-//    if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
-//      msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
-//      H5::File::flushAllFiles(); // flush files
-//      integratorExitRequest = true;
-//    }
-//
-//    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
-//  }
 
   void DynamicSystemSolver::updater(double t, int j) {
     r[j] = evalV(j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
@@ -909,7 +886,7 @@ namespace MBSim {
     }
   }
 
-  int DynamicSystemSolver::solveConstraints(double t) {
+  int DynamicSystemSolver::solveConstraints() {
     if (la.size() == 0)
       return 0;
 
@@ -921,14 +898,14 @@ namespace MBSim {
     int iter;
     Vec laOld;
     laOld << la;
-    iter = (this->*solveConstraints_)(t); // solver election
+    iter = (this->*solveConstraints_)(); // solver election
     if (iter >= maxIter) {
       msg(Warn) << "\n";
       msg(Warn) << "Iterations: " << iter << "\n";
       msg(Warn) << "\nError: no convergence." << endl;
       if (stopIfNoConvergence) {
         if (dropContactInfo)
-          dropContactMatrices(t);
+          dropContactMatrices();
         THROW_MBSIMERROR("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
@@ -965,7 +942,7 @@ namespace MBSim {
       msg(Warn) << "\nError: no convergence." << endl;
       if (stopIfNoConvergence) {
         if (dropContactInfo)
-          dropContactMatrices(t);
+          dropContactMatrices();
         THROW_MBSIMERROR("Maximal Number of Iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
@@ -1034,7 +1011,7 @@ namespace MBSim {
     }
   }
 
-  int DynamicSystemSolver::solveConstraintsLinearEquations(double t) {
+  int DynamicSystemSolver::solveConstraintsLinearEquations() {
     la = slvLS(evalG(), -b);
     //la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
     return 1;
@@ -1316,7 +1293,7 @@ namespace MBSim {
     return info.str();
   }
 
-  void DynamicSystemSolver::dropContactMatrices(double t) {
+  void DynamicSystemSolver::dropContactMatrices() {
     msg(Info) << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");
 
@@ -1422,7 +1399,7 @@ namespace MBSim {
     updateudallRef(ud[0]);
   }
 
-  void DynamicSystemSolver::updaterFactors(double t) {
+  void DynamicSystemSolver::updaterFactors() {
     if (strategy == global) {
       //     double rFac;
       //     if(G.size() == 1) rFac = 1./G(0,0);
@@ -1439,12 +1416,12 @@ namespace MBSim {
       THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Global r-Factor strategy currently not not available.");
     }
     else if (strategy == local)
-      Group::updaterFactors(t);
+      Group::updaterFactors();
     else
       THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Unknown strategy.");
   }
 
-  void DynamicSystemSolver::computeConstraintForces(double t) {
+  void DynamicSystemSolver::computeConstraintForces() {
     la = slvLS(evalG(), -(evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb())); // slvLS because of undeterminded system of equations
   }
 
@@ -1633,7 +1610,7 @@ namespace MBSim {
     }
     jsv = jsv_;
 
-    checkRoot(t);
+    checkRoot();
     int maxj = getRootID();
     if (maxj == 3) { // impact (velocity jump)
       checkActive(t,6); // decide which contacts have closed
@@ -1676,7 +1653,7 @@ namespace MBSim {
         updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
         b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
-        solveConstraints(t);
+        solveConstraints();
 
         checkActive(t,4);
         projectGeneralizedPositions(t, 2);
@@ -1697,7 +1674,7 @@ namespace MBSim {
 
       if (laSize) {
         b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
-        solveConstraints(t);
+        solveConstraints();
 
         checkActive(t,4);
 
@@ -1738,7 +1715,7 @@ namespace MBSim {
 
     if (laSize) {
       b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
-      solveConstraints(t);
+      solveConstraints();
     }
     updateStopVector();
     sv(sv.size() - 1) = 1;
@@ -1749,7 +1726,7 @@ namespace MBSim {
     if (q() != zParent()) {
       updatezRef(zParent);
     }
-    if (laSize) computeConstraintForces(t);
+    if (laSize) computeConstraintForces();
     updatezd(t);
 
     return zdParent;
@@ -1769,10 +1746,10 @@ namespace MBSim {
     if (laSize) {
       if(useConstraintSolverForPlot) {
         b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
-        solveConstraints(t);
+        solveConstraints();
       }
       else
-        computeConstraintForces(t);
+        computeConstraintForces();
     }
 
     updatezd(t);

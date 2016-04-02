@@ -107,15 +107,15 @@ namespace MBSim {
       virtual bool gActiveChanged();
       virtual bool detectImpact();
       virtual void solveImpactsFixpointSingle(double t, double dt);
-      virtual void solveConstraintsFixpointSingle(double t);
+      virtual void solveConstraintsFixpointSingle();
       virtual void solveImpactsGaussSeidel(double t, double dt);
-      virtual void solveConstraintsGaussSeidel(double t);
+      virtual void solveConstraintsGaussSeidel();
       virtual void solveImpactsRootFinding(double t, double dt);
-      virtual void solveConstraintsRootFinding(double t);
-      virtual void jacobianConstraints(double t);
+      virtual void solveConstraintsRootFinding();
+      virtual void jacobianConstraints();
       virtual void jacobianImpacts(double t, double dt);
-      virtual void updaterFactors(double t);
-      virtual void checkConstraintsForTermination(double t);
+      virtual void updaterFactors();
+      virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double t, double dt);
       virtual void checkActive(double t, int j);
       virtual void setlaTol(double tol);
@@ -137,7 +137,7 @@ namespace MBSim {
       virtual void updatecorr(int j);
       virtual void calccorrSize(int j);
       virtual void setcorrInd(int corrInd_);
-      virtual void checkRoot(double t);
+      virtual void checkRoot();
       virtual void updateGeneralizedNormalForce();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

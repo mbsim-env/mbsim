@@ -207,7 +207,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsFixpointSingle(double t) {
+  void Joint::solveConstraintsFixpointSingle() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
@@ -255,7 +255,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsGaussSeidel(double t) {
+  void Joint::solveConstraintsGaussSeidel() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
@@ -303,7 +303,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::solveConstraintsRootFinding(double t) {
+  void Joint::solveConstraintsRootFinding() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
@@ -327,7 +327,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::jacobianConstraints(double t) {
+  void Joint::jacobianConstraints() {
 
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
@@ -384,7 +384,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::updaterFactors(double t) {
+  void Joint::updaterFactors() {
     if (isActive()) {
 
       const double *a = ds->evalGs()();
@@ -437,7 +437,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::checkConstraintsForTermination(double t) {
+  void Joint::checkConstraintsForTermination() {
 
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();

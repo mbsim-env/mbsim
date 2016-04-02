@@ -129,13 +129,13 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual int solveConstraintsFixpointSingle(double t);
+      virtual int solveConstraintsFixpointSingle();
       virtual int solveImpactsFixpointSingle(double t, double dt = 0);
-      virtual int solveConstraintsGaussSeidel(double t);
+      virtual int solveConstraintsGaussSeidel();
       virtual int solveImpactsGaussSeidel(double t, double dt = 0);
-      virtual int solveConstraintsRootFinding(double t);
+      virtual int solveConstraintsRootFinding();
       virtual int solveImpactsRootFinding(double t, double dt = 0);
-      virtual void checkConstraintsForTermination(double t);
+      virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double t, double dt = 0);
       /***************************************************/
 
@@ -182,7 +182,7 @@ namespace MBSim {
        * \brief solves prox-functions for contact forces using sparsity structure
        * \return iterations of solver
        */
-      virtual int solveConstraints(double t);
+      virtual int solveConstraints();
 
       /**
        * \brief solves prox-functions for impacts on velocity level using sparsity structure
@@ -283,7 +283,7 @@ namespace MBSim {
        * \function pointer for election of prox-solver for contact equations
        * \return iterations of solver
        */
-      int (DynamicSystemSolver::*solveConstraints_)(double t);
+      int (DynamicSystemSolver::*solveConstraints_)();
 
       /**
        * \brief function pointer for election of prox-solver for impact equations on velocity level
@@ -297,7 +297,7 @@ namespace MBSim {
        * \return iterations of solver
        * \todo put in dynamic system? TODO
        */
-      int solveConstraintsLinearEquations(double t);
+      int solveConstraintsLinearEquations();
 
       /**
        * \brief solution of contact equations with Cholesky decomposition on velocity level
@@ -444,7 +444,7 @@ namespace MBSim {
       /**
        * writes a file with relevant matrices for debugging
        */
-      void dropContactMatrices(double t);
+      void dropContactMatrices();
 
       /**
        * \brief handler for user interrupt signal
@@ -842,13 +842,13 @@ namespace MBSim {
        * \brief update relaxation factors for contact equations
        * \todo global not available because of unsymmetric mass action matrix TODO
        */
-      virtual void updaterFactors(double t);
+      virtual void updaterFactors();
 
       /**
        * \brief compute inverse kinetics constraint forces
        * \param current time
        */
-      void computeConstraintForces(double t);
+      void computeConstraintForces();
 
       /**
        * \brief

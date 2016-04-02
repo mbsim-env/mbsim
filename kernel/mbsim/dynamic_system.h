@@ -114,10 +114,10 @@ namespace MBSim {
       virtual void updateLinkStatus();
       virtual void updateLinkStatusReg();
 
-      virtual void updateWInverseKinetics(double t, int j=0); 
-      virtual void updatebInverseKinetics(double t); 
+      virtual void updateWInverseKinetics(double t, int j=0);
+      virtual void updatebInverseKinetics();
 
-      virtual void updatedx(double t, double dt); 
+      virtual void updatedx(double t, double dt);
       virtual void updatexd(double t);
       virtual void calcxSize();
       const fmatvec::Vec& getx() const { return x; };
@@ -150,7 +150,7 @@ namespace MBSim {
        * \brief solve contact equations with single step fixed point scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsFixpointSingle(double t);
+      virtual int solveConstraintsFixpointSingle();
 
       /**
        * \brief solve impact equations with single step fixed point scheme on velocity level 
@@ -163,7 +163,7 @@ namespace MBSim {
        * \brief solve contact equations with Gauss-Seidel scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsGaussSeidel(double t);
+      virtual int solveConstraintsGaussSeidel();
 
       /**
        * \brief solve impact equations with Gauss-Seidel scheme on velocity level 
@@ -176,7 +176,7 @@ namespace MBSim {
        * \brief solve contact equations with Newton scheme
        * \return iterations of solver
        */
-      virtual int solveConstraintsRootFinding(double t);
+      virtual int solveConstraintsRootFinding();
 
       /**
        * \brief solve impact equations with Newton scheme on velocity level 
@@ -188,7 +188,7 @@ namespace MBSim {
       /**
        * \brief compute JACOBIAN of contact equations
        */
-      virtual int jacobianConstraints(double t);
+      virtual int jacobianConstraints();
 
       /**
        * \brief compute JACOBIAN of contact equations on velocity level
@@ -198,7 +198,7 @@ namespace MBSim {
       /**
        * \brief validate force laws concerning given tolerances
        */
-      virtual void checkConstraintsForTermination(double t);
+      virtual void checkConstraintsForTermination();
 
       /**
        * \brief validate force laws concerning given tolerances on velocity level
@@ -208,7 +208,7 @@ namespace MBSim {
       /**
        * \brief update relaxation factors for contact equations
        */
-      virtual void updaterFactors(double t);
+      virtual void updaterFactors();
 
       /**
        * \param name of the frame
@@ -763,7 +763,7 @@ namespace MBSim {
       void updatecorrRef(const fmatvec::Vec &ref);
       void calccorrSize(int j);
 
-      void checkRoot(double t);
+      void checkRoot();
 
       void resetUpToDate();
 
