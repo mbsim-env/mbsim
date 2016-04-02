@@ -50,7 +50,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updatedu(double t, double dt);
       virtual void updatezd();
-      virtual void updateud(double t, int i=0);
+      virtual void updateud(int i=0);
       virtual void sethSize(int h, int j=0) {(this->*sethSize_[j])(h);}
       virtual void calcqSize();
       virtual void calcuSize(int j=0) {(this->*calcuSize_[j])();}

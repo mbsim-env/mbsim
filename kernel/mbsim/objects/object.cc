@@ -313,7 +313,7 @@ namespace MBSim {
     ud[0] = slvLLFac(evalLLM(), evalh() * dt + evalrdt());
   }
 
-  void Object::updateud(double t, int i) {
+  void Object::updateud(int i) {
     ud[i] = slvLLFac(evalLLM(i), evalh(i) + evalr(i));
   }
 

@@ -1022,8 +1022,8 @@ namespace MBSim {
     return 1;
   }
 
-  void DynamicSystemSolver::updateG(double t, int j) {
-    G << SqrMat(evalW(j).T() * slvLLFac(evalLLM(j), evalV(j)));
+  void DynamicSystemSolver::updateG() {
+    G << SqrMat(evalW().T() * slvLLFac(evalLLM(), evalV()));
 
     if (checkGSize)
       ; // Gs.resize();

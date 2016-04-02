@@ -43,7 +43,7 @@ namespace MBSim {
     ud[0] = slvLLFac(evalLLM(), evalh()*dt+evalrdt());
   }
 
-  void Graph::updateud(double t, int j) {
+  void Graph::updateud(int j) {
     ud[j] =  slvLLFac(evalLLM(j), evalh(j)+evalr(j));
   }
 

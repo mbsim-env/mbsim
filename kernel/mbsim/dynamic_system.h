@@ -73,7 +73,7 @@ namespace MBSim {
       virtual void updateh(int i=0);
       virtual void updateM(int i=0);
       virtual void updatedq(double t, double dt); 
-      virtual void updateud(double t, int i=0) { THROW_MBSIMERROR("(DynamicSystem::updateud): Not implemented!"); }
+      virtual void updateud(int i=0) { THROW_MBSIMERROR("(DynamicSystem::updateud): Not implemented!"); }
       virtual void updatezd() = 0;
       virtual void updatedu(double t, double dt) = 0;
       virtual void updateqd();
