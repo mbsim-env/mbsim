@@ -28,7 +28,9 @@ CPPFLAGS="$CFLAGS -Wall -Werror -Wno-sign-compare"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
-LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
+LDFLAGS_NOLIBTOOL="$LDFLAGS -Wl,--no-undefined"
+LDFLAGS="$LDFLAGS_NOLIBTOOL -no-undefined"
+AC_SUBST([LDFLAGS_NOLIBTOOL])
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 dnl shared libraries
@@ -44,6 +46,8 @@ else
   FMIPLATFORM=linux$(getconf LONG_BIT)
 fi
 AC_SUBST([FMIPLATFORM])
+
+AM_CONDITIONAL([COND_MINGW], [test "_$host_os" = "_mingw32"])
 
 AC_ARG_WITH([boost-date-time-lib],
   [  --with-boost-date-time-lib=LIBNAME  The library name of boost data_time excluding prefix/suffix (Default: boost_data_time).],

@@ -1,12 +1,25 @@
-noinst_LTLIBRARIES = libmbsim_fmi.la
-lib_LTLIBRARIES = mbsim.la libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_fmi.la
+if COND_MINGW
+  staticLink = -static
+  shext = .dll
+else
+  shext = .so
+  staticLink = -static-libgcc -static-libstdc++
+endif
+
+noinst_LTLIBRARIES = libmbsim_fmi.la libmbsimwrapper.la
+lib_LTLIBRARIES = libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_fmi.la
 
 # build FMU library; just a wrapper which loads at runtime libmbsimXXX_fmi.la); this library
-# should NOT depend on any library except system libraries!
-mbsim_la_SOURCES = fmiModelFunctions.cc
-mbsim_la_CPPFLAGS = $(MBXMLUTILSHELPERDEPS_CFLAGS)
-mbsim_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN
-mbsim_la_LIBADD = $(LIBDL)
+# should NOT depend on any library except glibc ones!
+libmbsimwrapper_la_SOURCES = fmiModelFunctions.cc
+libmbsimwrapper_la_CPPFLAGS = $(MBXMLUTILSHELPERDEPS_CFLAGS) -fvisibility=hidden
+# the mbsim$(shext) file needs very special linking
+.libs/mbsim$(shext): libmbsimwrapper.la
+	$(CXX) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS_NOLIBTOOL) -shared $(staticLink) \
+	-Wl,-u,mbsim_fmiGetVersion,--version-script=$(srcdir)/mbsim.map -o .libs/mbsim$(shext) .libs/libmbsimwrapper.a $(LIBDL)
+mbsimdir = $(libdir)
+mbsim_DATA = .libs/mbsim$(shext)
+CLEANFILES = .libs/mbsim$(shext)
 
 
 
