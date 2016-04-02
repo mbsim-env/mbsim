@@ -12,12 +12,9 @@ AC_LANG([C++])
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
 PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 
-AC_SUBST([PIC])
 if test "_$host_os" = "_mingw32" ; then
-  PIC=""
   EXTRA_LIBS=""
 else
-  PIC="-fPIC -DPIC"
   EXTRA_LIBS="-ldl"
 fi
 AC_SUBST([EXTRA_LIBS])
@@ -74,6 +71,9 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
+if test "_$host_os" != "_mingw32"; then
+  CPPFLAGS="$CPPFLAGS -fPIC"
+fi
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"

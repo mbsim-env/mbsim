@@ -43,6 +43,9 @@ fi
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes"
+if test "_$host_os" != "_mingw32"; then
+  CPPFLAGS="$CPPFLAGS -fPIC"
+fi
 
 AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
 

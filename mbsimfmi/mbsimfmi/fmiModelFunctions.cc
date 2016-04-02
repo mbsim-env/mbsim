@@ -70,7 +70,7 @@ extern "C" {
       for(int i=0; i<3; ++i)
         s=fmuDir.find_last_of("/\\", s)-1;
       // load main mbsim FMU library
-      SharedLibrary lib(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT, true);
+      SharedLibrary lib(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT);
       fmiInstanceCreatePtr fmiInstanceCreate=lib.getSymbol<fmiInstanceCreatePtr>("fmiInstanceCreate");
       return new Instance(lib, fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));
     }
