@@ -374,11 +374,11 @@ namespace MBSim {
     return lOld;
   }
 
-  double Element::getTime() {
+  double Element::getTime() const {
     return ds->getTime();
   }
 
-  double Element::getStepSize() {
+  double Element::getStepSize() const {
     return ds->getStepSize();
   }
   

@@ -6,9 +6,9 @@ using namespace std;
 PressBound::PressBound(string name) : Link(name) {
 }
 
-void PressBound::updateh(double t) {
+void PressBound::updateh(int k) {
   for(unsigned int i=0; i<conIn.size(); i++)
-    conIn[i]->geth()+=trans(conIn[i]->getJ(t))*p;
+    conIn[i]->geth(0,false)+=trans(conIn[i]->evalJ())*p;
   for(unsigned int i=0; i<conOut.size(); i++)
-    conOut[i]->geth()-=trans(conOut[i]->getJ(t))*p;
+    conOut[i]->geth(0,false)-=trans(conOut[i]->evalJ())*p;
 }

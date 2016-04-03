@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage);
 
-      void plot(double t, double dt);
+      void plot();
 
       void initializeUsingXML(xercesc::DOMElement *element);
     private:
@@ -69,8 +69,8 @@ namespace MBSimHydraulics {
       void setMinimalValue(double v) {cpLMinValue=v; }
       double getMinimalValue() const {return cpLMinValue; }
       void setBilateral(bool b=true) {cpLBilateral=b; }
-      bool isClosed(double t) const;
-      double getRegularizedValue(double t) const;
+      bool isClosed() const;
+      double evalRegularizedValue() const;
 
       void init(InitStage stage);
 

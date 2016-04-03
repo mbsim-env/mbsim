@@ -39,16 +39,16 @@ namespace MBSimHydraulics {
     delete lpl;
   }
 
-  double LeakageLine::getGapLength(double t) const {
-    return (glFunction)?(*glFunction)(t):length;
+  double LeakageLine::evalGapLength() const {
+    return (glFunction)?(*glFunction)(getTime()):length;
   }
 
-  double LeakageLine::getSurface1Velocity(double t) const {
-    return (s1vFunction)?(*s1vFunction)(t):0;
+  double LeakageLine::evalSurface1Velocity() const {
+    return (s1vFunction)?(*s1vFunction)(getTime()):0;
   }
 
-  double LeakageLine::getSurface2Velocity(double t) const {
-    return (s2vFunction)?(*s2vFunction)(t):0;
+  double LeakageLine::evalSurface2Velocity() const {
+    return (s2vFunction)?(*s2vFunction)(getTime()):0;
   }
 
   void LeakageLine::init(InitStage stage) {

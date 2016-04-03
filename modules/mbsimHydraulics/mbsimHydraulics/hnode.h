@@ -83,17 +83,17 @@ namespace MBSimHydraulics {
       void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
 
-      double getQHyd(double t) { if(updQHyd) updateQHyd(t); return QHyd; }
+      double evalQHyd() { if(updQHyd) updateQHyd(); return QHyd; }
       double getQHyd(bool check=true) const { assert((not check) or (not updQHyd)); return QHyd; }
-      virtual void updateQHyd(double t);
+      virtual void updateQHyd();
 
-      void updateh(double t, int j=0);
-      void updatedhdz(double t);
-      void updategd(double t);
+      void updateh(int j=0);
+      void updatedhdz();
+      void updategd();
       bool isActive() const {return false; }
       bool gActiveChanged() {return false; }
 
-      void plot(double t, double dt);
+      void plot();
 
       void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -128,7 +128,7 @@ namespace MBSimHydraulics {
         pFun->setName("p");
       }
 
-      void updateGeneralizedForces(double t);
+      void updateGeneralizedForces();
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
       virtual bool isSingleValued() const {return true;}
@@ -166,12 +166,12 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateGeneralizedForces(double t);
+      void updateGeneralizedForces();
 
-      void updatexd(double t);
-      void updatedx(double t, double dt);
+      void updatexd();
+      void updatedx();
 
-      void plot(double t, double dt);
+      void plot();
 
       virtual bool isSingleValued() const {return true;}
 
@@ -199,22 +199,22 @@ namespace MBSimHydraulics {
       //void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize(int j) {rFactorSize=1; }
 
-      void updateGeneralizedForces(double t);
+      void updateGeneralizedForces();
 
-      void updategd(double t);
-      void updateW(double t, int j=0);
+      void updategd();
+      void updateW(int j=0);
 
-      void updaterFactors(double t);
-      void solveImpactsFixpointSingle(double t, double dt);
-      void solveConstraintsFixpointSingle(double t);
-      void solveImpactsGaussSeidel(double t, double dt);
-      void solveConstraintsGaussSeidel(double t);
-      void solveImpactsRootFinding(double t, double dt);
-      void solveConstraintsRootFinding(double t);
-      void jacobianImpacts(double t, double dt);
-      void jacobianConstraints(double t);
-      void checkImpactsForTermination(double t, double dt);
-      void checkConstraintsForTermination(double t);
+      void updaterFactors();
+      void solveImpactsFixpointSingle();
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianImpacts();
+      void jacobianConstraints();
+      void checkImpactsForTermination();
+      void checkConstraintsForTermination();
     private:
       double gdn, gdd;
       MBSim::GeneralizedForceLaw * gfl;
@@ -245,31 +245,31 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
-      void plot(double t, double dt);
+      void plot();
 
-      void checkActive(double t, int j);
+      void checkActive(int j);
       //void checkActivegdn();
       bool gActiveChanged();
 
-      void updateGeneralizedForces(double t);
-      void updateg(double t);
-      void updateW(double t, int j=0);
-      void updatexd(double t);
-      void updatedx(double t, double dt);
-      void updateStopVector(double t);
-      void checkRoot(double t);
+      void updateGeneralizedForces();
+      void updateg();
+      void updateW(int j=0);
+      void updatexd();
+      void updatedx();
+      void updateStopVector();
+      void checkRoot();
 
-      void updaterFactors(double t);
-      void solveImpactsFixpointSingle(double t, double dt);
-      void solveConstraintsFixpointSingle(double t);
-      void solveImpactsGaussSeidel(double t, double dt);
-      void solveConstraintsGaussSeidel(double t);
-      void solveImpactsRootFinding(double t, double dt);
-      void solveConstraintsRootFinding(double t);
-      void jacobianImpacts(double t, double dt);
-      void jacobianConstraints(double t);
-      void checkImpactsForTermination(double t, double dt);
-      void checkConstraintsForTermination(double t);
+      void updaterFactors();
+      void solveImpactsFixpointSingle();
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianImpacts();
+      void jacobianConstraints();
+      void checkImpactsForTermination();
+      void checkConstraintsForTermination();
     protected:
       double pCav;
     private:
@@ -290,7 +290,7 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage);
 
-      void updateGeneralizedForces(double t);
+      void updateGeneralizedForces();
       void initializeUsingXML(xercesc::DOMElement *element);
 
     private:

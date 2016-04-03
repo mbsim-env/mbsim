@@ -70,12 +70,12 @@ namespace MBSimHydraulics {
       void calcqSize() {qSize=n-1; }
       void calcuSize(int j) {uSize[j]=n; }
 
-      void updateQ(double t);
-      void updateh(double t, int j=0);
-      void updateT(double t) {T=Tlocal; }
-      void updateM(double t, int j=0) {M[j]=Mlocal; }
+      void updateQ();
+      void updateh(int j=0);
+      void updateT() {T=Tlocal; }
+      void updateM(int j=0) {M[j]=Mlocal; }
 
-      void plot(double t, double dt);
+      void plot();
       void plotParameters();
 
       void initializeUsingXML(xercesc::DOMElement * element);

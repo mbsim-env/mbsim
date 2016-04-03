@@ -42,7 +42,7 @@ namespace MBSimHydraulics {
       RigidLinePressureLoss(const std::string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_=false, bool unilateral_=false);
       ~RigidLinePressureLoss();
       virtual std::string getType() const { return "RigidLinePressureLoss"; }
-      void plot(double t, double dt);
+      void plot();
 
       bool hasSmoothPart() const {return (bilateral || (unilateral && (fabs(dpMin)>1e-6))); }
 
@@ -67,8 +67,8 @@ namespace MBSimHydraulics {
       // ================================
       // Methods for update-Process
       // ================================
-      void updateg(double t); /* zdotStandard */
-      void checkActive(double t, int j); /* update */
+      void updateg(); /* zdotStandard */
+      void checkActive(int j); /* update */
       //void checkActivegdn(); // event-driven
       bool gActiveChanged(); /* update */
       bool isActive() const {return active; }
@@ -76,29 +76,29 @@ namespace MBSimHydraulics {
       void calclaSize(int j) {laSize=active?1:0; }
       //void calclaSizeForActiveg() {laSize=0; } // event-driven
       void calcrFactorSize(int j) {rFactorSize=active?1:0; }
-      void updateGeneralizedForces(double t);
-      void updategd(double t); /* zdotStandard */
-      void updateStopVector(double t); // event-driven
-      void updateh(double t, int j); /* zdotStandard */
-      void updateW(double t, int j); /* zdotStandard */
-      void updatedhdz(double t);
+      void updateGeneralizedForces();
+      void updategd(); /* zdotStandard */
+      void updateStopVector(); // event-driven
+      void updateh(int j); /* zdotStandard */
+      void updateW(int j); /* zdotStandard */
+      void updatedhdz();
       // ==== END Methods for update-Process ===
 
       // ================================
       // Methods for solve-Process
       // ================================
-      void checkRoot(double t);
-      void updaterFactors(double t);
-      void solveImpactsFixpointSingle(double t, double dt);
-      void solveConstraintsFixpointSingle(double t);
-      void solveImpactsGaussSeidel(double t, double dt);
-      void solveConstraintsGaussSeidel(double t);
-      void solveImpactsRootFinding(double t, double dt);
-      void solveConstraintsRootFinding(double t);
-      void jacobianImpacts(double t, double dt);
-      void jacobianConstraints(double t);
-      void checkImpactsForTermination(double t, double dt);
-      void checkConstraintsForTermination(double t);
+      void checkRoot();
+      void updaterFactors();
+      void solveImpactsFixpointSingle();
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianImpacts();
+      void jacobianConstraints();
+      void checkImpactsForTermination();
+      void checkConstraintsForTermination();
       // ==== END Methods for solve-Process ===
 
 

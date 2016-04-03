@@ -74,10 +74,10 @@ namespace MBSimHydraulics {
     if(pL) pL->init(stage);
   }
   
-  void RigidLine::plot(double t, double dt) {
+  void RigidLine::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(fabs(getQIn(t)(0))*ReynoldsFactor);
-      RigidHLine::plot(t, dt);
+      plotVector.push_back(fabs(evalQIn()(0))*ReynoldsFactor);
+      RigidHLine::plot();
     }
   }
 
@@ -103,12 +103,12 @@ namespace MBSimHydraulics {
     cpL->setName("cpL");
   }
 
-  bool ClosableRigidLine::isClosed(double t) const {
-    return ((*cpLFunction)(t)<cpLMinValue);
+  bool ClosableRigidLine::isClosed() const {
+    return ((*cpLFunction)(getTime())<cpLMinValue);
   }
 
-  double ClosableRigidLine::getRegularizedValue(double t) const {
-    return isClosed(t)?cpLMinValue:(*cpLFunction)(t);
+  double ClosableRigidLine::evalRegularizedValue() const {
+    return isClosed()?cpLMinValue:(*cpLFunction)(getTime());
   }
 
   void ClosableRigidLine::init(InitStage stage) {

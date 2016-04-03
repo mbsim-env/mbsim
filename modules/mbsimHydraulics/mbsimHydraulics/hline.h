@@ -40,9 +40,9 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "HLine"; }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      void updateh(double t, int j=0) { }
-      void updateJacobians(double t, int j=0) { }
-      void updateInverseKineticsJacobians(double t) { }
+      void updateh(int j=0) { }
+      void updateJacobians(int j=0) { }
+      void updateInverseKineticsJacobians() { }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
 #endif
@@ -59,14 +59,14 @@ namespace MBSimHydraulics {
       virtual fmatvec::VecV getInflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, -1.); }
       virtual fmatvec::VecV getOutflowFactor() {return fmatvec::VecV(1, fmatvec::INIT, 1.); }
 
-      const fmatvec::VecV& getQIn(double t) { if(updQ) updateQ(t); return QIn; }
-      const fmatvec::VecV& getQOut(double t) { if(updQ) updateQ(t); return QOut; }
+      const fmatvec::VecV& evalQIn() { if(updQ) updateQ(); return QIn; }
+      const fmatvec::VecV& evalQOut() { if(updQ) updateQ(); return QOut; }
       const fmatvec::VecV& getQIn(bool check=true) const { assert((not check) or (not updQ)); return QIn; }
       const fmatvec::VecV& getQOut(bool check=true) const { assert((not check) or (not updQ)); return QOut; }
       const fmatvec::MatV& getJacobian() const { return Jacobian; }
 
-      virtual void updateQ(double t) { }
-      void updateM(double t, int j=0) { M[j]=Mlocal; }
+      virtual void updateQ() { }
+      void updateM(int j=0) { M[j]=Mlocal; }
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -104,16 +104,16 @@ namespace MBSimHydraulics {
       void calcuSize(int j=0) {uSize[j]=(dependency.size()?0:1); }
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
-      void updatePressureLossGravity(double t);
-      double getPressureLossGravity(double t) { if(updPLG) updatePressureLossGravity(t); return pressureLossGravity; }
+      void updatePressureLossGravity();
+      double evalPressureLossGravity() { if(updPLG) updatePressureLossGravity(); return pressureLossGravity; }
 
-      void updateQ(double t);
-      void updateh(double t, int j=0);
-      void updateM(double t, int j=0);
+      void updateQ();
+      void updateh(int j=0);
+      void updateM(int j=0);
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void plot(double t, double dt);
+      void plot();
       
       void resetUpToDate() { HLine::resetUpToDate(); updPLG = true; }
 
@@ -140,7 +140,7 @@ namespace MBSimHydraulics {
       void calcqSize() { qSize=0; }
       void calcuSize(int j) { uSize[j]=0; }
       
-      void updateQ(double t);
+      void updateQ();
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
@@ -160,7 +160,7 @@ namespace MBSimHydraulics {
       void calcqSize() { qSize=0; }
       void calcuSize(int j) { uSize[j]=0; }
       
-      void updateQ(double t);
+      void updateQ();
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
@@ -185,11 +185,11 @@ namespace MBSimHydraulics {
       void calcqSize() { qSize=0; }
       void calcuSize(int j) { uSize[j]=0; }
       
-      void updateQ(double t);
+      void updateQ();
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void plot(double t, double dt);
+      void plot();
       
     private:
       MBSim::Function<double(double)> *inflowFunction, *outflowFunction, *openingFunction;

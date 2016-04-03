@@ -40,7 +40,7 @@ namespace MBSimHydraulics {
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
-      void plot(double t, double dt);
+      void plot();
     protected:
       double length;
   };
@@ -59,21 +59,21 @@ namespace MBSimHydraulics {
         glFunction=s;
         glFunction->setParent(this);
       }
-      double getGapLength(double t) const;
+      double evalGapLength() const;
       void setSurface1VelocityFunction(MBSim::Function<double(double)> * s) {
         s1vFunction=s;
         s1vFunction->setParent(this);
       }
-      double getSurface1Velocity(double t) const;
+      double evalSurface1Velocity() const;
       void setSurface2VelocityFunction(MBSim::Function<double(double)> * s) {
         s2vFunction=s;
         s2vFunction->setParent(this);
       }
-      double getSurface2Velocity(double t) const;
+      double evalSurface2Velocity() const;
 
       void init(InitStage stage);
 
-      void updateQ(double t);
+      void updateQ();
 
       void initializeUsingXML(xercesc::DOMElement * element);
     protected:

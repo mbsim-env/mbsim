@@ -13,8 +13,8 @@ class PressBound : public Link {
     std::vector<Line*> conIn, conOut;
   public:
     PressBound(std::string name);
-    void updateg(double) {}
-    void updategd(double) {}
+    void updateg() {}
+    void updategd() {}
     void updateWRef(const fmatvec::Mat&, int) {}
     void updateVRef(const fmatvec::Mat&, int) {}
     void updatehRef(const fmatvec::Vec&, int) {}
@@ -29,7 +29,7 @@ class PressBound : public Link {
     void setPressure(double p_) { p=p_; }
     void addInConnection(Line *l) { conIn.push_back(l); }
     void addOutConnection(Line *l) { conOut.push_back(l); }
-    void updateh(double);
+    void updateh(int k=0);
 };
 
 }

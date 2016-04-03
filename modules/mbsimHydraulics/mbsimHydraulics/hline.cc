@@ -110,31 +110,31 @@ namespace MBSimHydraulics {
     return JLocal;
   }
 
-  void RigidHLine::updateQ(double t) {
+  void RigidHLine::updateQ() {
     if(dependency.size()==0)
       QIn(0)=u(0);
     else {
       QIn.init(0);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
-        QIn+=(dependencyOnOutflow[i])->getQIn(t);
+        QIn+=(dependencyOnOutflow[i])->evalQIn();
       for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
-        QIn-=(dependencyOnInflow[i])->getQIn(t);
+        QIn-=(dependencyOnInflow[i])->evalQIn();
     }
     QOut = -QIn;
     updQ = false;
   }
 
-  void RigidHLine::updatePressureLossGravity(double t) {
+  void RigidHLine::updatePressureLossGravity() {
     if (frameOfReference)
-      pressureLossGravity=-trans(frameOfReference->getOrientation(t)*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*HydraulicEnvironment::getInstance()->getSpecificMass()*length;
+      pressureLossGravity=-trans(frameOfReference->evalOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*HydraulicEnvironment::getInstance()->getSpecificMass()*length;
     updPLG = false;
   }
 
-  void RigidHLine::updateh(double t, int j) {
-    h[j]-=trans(Jacobian.row(0))*getPressureLossGravity(t);
+  void RigidHLine::updateh(int j) {
+    h[j]-=trans(Jacobian.row(0))*evalPressureLossGravity();
   }
       
-  void RigidHLine::updateM(double t, int j) {
+  void RigidHLine::updateM(int j) {
     M[j]+=Mlocal(0,0)*JTJ(Jacobian); 
   }
 
@@ -174,13 +174,13 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
   
-  void RigidHLine::plot(double t, double dt) {
+  void RigidHLine::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(getQIn(t)(0)*6e4);
+      plotVector.push_back(evalQIn()(0)*6e4);
       plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       if (frameOfReference)
-        plotVector.push_back(getPressureLossGravity(t)*1e-5);
-      HLine::plot(t, dt);
+        plotVector.push_back(evalPressureLossGravity()*1e-5);
+      HLine::plot();
     }
   }
 
@@ -208,8 +208,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedLine,  MBSIMHYDRAULICS%"ConstrainedLine")
 
-  void ConstrainedLine::updateQ(double t) {
-    QIn(0)=(*QFunction)(t);
+  void ConstrainedLine::updateQ() {
+    QIn(0)=(*QFunction)(getTime());
     QOut = -QIn;
     updQ = false;
   }
@@ -235,8 +235,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FluidPump,  MBSIMHYDRAULICS%"FluidPump")
 
-  void FluidPump::updateQ(double t) {
-    QIn(0) = (*QFunction)(t);
+  void FluidPump::updateQ() {
+    QIn(0) = (*QFunction)(getTime());
     QOut = -QIn;
     updQ = false;
   }
@@ -312,9 +312,9 @@ namespace MBSimHydraulics {
     openingFunction->init(stage);
   }
 
-  void StatelessOrifice::plot(double t, double dt) {
+  void StatelessOrifice::plot() {
     if (getPlotFeature(plotRecursive)==enabled) {
-      double Q = getQIn(t)(0);
+      double Q = evalQIn()(0);
       plotVector.push_back(pIn*1e-5);
       plotVector.push_back(pOut*1e-5);
       plotVector.push_back(dp*1e-5);
@@ -323,16 +323,16 @@ namespace MBSimHydraulics {
       plotVector.push_back(area*1e6);
       plotVector.push_back(sqrt_dp*sqrt(1e-5));
       plotVector.push_back(Q*6e4);
-      HLine::plot(t, dt);
+      HLine::plot();
     }
   }
 
-  void StatelessOrifice::updateQ(double t) {
-    pIn=(*inflowFunction)(t);
-    pOut=(*outflowFunction)(t);
+  void StatelessOrifice::updateQ() {
+    pIn=(*inflowFunction)(getTime());
+    pOut=(*outflowFunction)(getTime());
     dp=fabs(pIn-pOut);
     sign=((pIn-pOut)<0)?-1.:1.;
-    opening=(*openingFunction)(t);
+    opening=(*openingFunction)(getTime());
     if (opening<0)
       opening=0;
     if (calcAreaModus==0) { // wie <GammaCheckvalveClosablePressureLoss>

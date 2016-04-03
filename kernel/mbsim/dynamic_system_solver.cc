@@ -1071,7 +1071,6 @@ namespace MBSim {
     if (qd() != zdParent()) {
       updatezdRef(zdParent);
     }
-    setTime(t);
     zdot(zParent, t);
   }
 
@@ -1723,6 +1722,7 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
+    setTime(t);
     resetUpToDate();
     if (q() != zParent()) {
       updatezRef(zParent);

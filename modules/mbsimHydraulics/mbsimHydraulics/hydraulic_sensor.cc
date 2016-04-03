@@ -33,8 +33,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlowSensor, MBSIMHYDRAULICS%"FlowSensor")
 
-  void FlowSensor::updateSignal(double t) {
-    s = line->getQIn(t);
+  void FlowSensor::updateSignal() {
+    s = line->evalQIn();
     upds = false;
   }
 
@@ -57,8 +57,8 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PressureSensor, MBSIMHYDRAULICS%"PressureSensor")
 
-  void PressureSensor::updateSignal(double t) {
-    s = node->getGeneralizedForce(t);
+  void PressureSensor::updateSignal() {
+    s = node->evalGeneralizedForce();
     upds = false;
   }
 

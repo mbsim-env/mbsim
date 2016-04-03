@@ -34,14 +34,12 @@ namespace MBSimHydraulics {
   /*! PressureLoss */
   class PressureLoss : public MBSim::Function<double(double)> {
     public:
-      PressureLoss() : line(0), initialized(false), t(-1) {}
+      PressureLoss() : line(0), initialized(false) {}
       virtual void setLine(const HLine *line_) { line = line_; }
-      void setTime(double t_) { t = t_; }
 //      void init(InitStage stage);
     protected:
       const HLine *line;
       bool initialized;
-      double t;
   };
 
 

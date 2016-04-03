@@ -80,22 +80,22 @@ namespace MBSimHydraulics {
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
       virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
 
-      double getQMec(double t) { if(updQMec) updateQMec(t); return QMec; }
-      double getQMecTrans(double t) { if(updQMec) updateQMec(t); return QMecTrans; }
-      double getQMecRot(double t) { if(updQMec) updateQMec(t); return QMecRot; }
+      double evalQMec() { if(updQMec) updateQMec(); return QMec; }
+      double evalQMecTrans() { if(updQMec) updateQMec(); return QMecTrans; }
+      double evalQMecRot() { if(updQMec) updateQMec(); return QMecRot; }
       double getQMec(bool check=true) const { assert((not check) or (not updQMec)); return QMec; }
       double getQMecTrans(bool check=true) const { assert((not check) or (not updQMec)); return QMecTrans; }
       double getQMecRot(bool check=true) const { assert((not check) or (not updQMec)); return QMecRot; }
-      virtual void updateQMec(double t);
+      virtual void updateQMec();
 
-      void updateh(double t, int j=0);
-      void updater(double t, int j=0);
-      void updategd(double t);
-      void updatexd(double t);
-      void updatedx(double t, double dt);
-      void updatedhdz(double t);
+      void updateh(int j=0);
+      void updater(int j=0);
+      void updategd();
+      void updatexd();
+      void updatedx();
+      void updatedhdz();
 
-      void plot(double t, double dt);
+      void plot();
 
       void resetUpToDate() { HNode::resetUpToDate(); updQMec = true; }
 
@@ -134,7 +134,7 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateGeneralizedForces(double t);
+      void updateGeneralizedForces();
 
       virtual bool isSingleValued() const {return true;}
 
@@ -170,12 +170,12 @@ namespace MBSimHydraulics {
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
 
-      void updateGeneralizedForces(double t);
+      void updateGeneralizedForces();
 
-      void updatexd(double t);
-      void updatedx(double t, double dt);
+      void updatexd();
+      void updatedx();
 
-      void plot(double t, double dt);
+      void plot();
 
       virtual bool isSingleValued() const {return true;}
 
@@ -207,22 +207,22 @@ namespace MBSimHydraulics {
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 
-      void updateGeneralizedForces(double t);
+      void updateGeneralizedForces();
 
-      void updategd(double t);
-      void updateW(double t, int j=0);
+      void updategd();
+      void updateW(int j=0);
 
-      void updaterFactors(double t);
-      void solveImpactsFixpointSingle(double t, double dt);
-      void solveConstraintsFixpointSingle(double t);
-      void solveImpactsGaussSeidel(double t, double dt);
-      void solveConstraintsGaussSeidel(double t);
-      void solveImpactsRootFinding(double t, double dt);
-      void solveConstraintsRootFinding(double t);
-      void jacobianImpacts(double t, double dt);
-      void jacobianConstraints(double t);
-      void checkImpactsForTermination(double t, double dt);
-      void checkConstraintsForTermination(double t);
+      void updaterFactors();
+      void solveImpactsFixpointSingle();
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianImpacts();
+      void jacobianConstraints();
+      void checkImpactsForTermination();
+      void checkConstraintsForTermination();
     private:
       double gdn, gdd;
       MBSim::GeneralizedForceLaw * gfl;

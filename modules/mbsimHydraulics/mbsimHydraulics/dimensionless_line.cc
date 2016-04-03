@@ -56,11 +56,11 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
 
-  void DimensionlessLine::plot(double t, double dt) {
+  void DimensionlessLine::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(getQIn(t)(0)*6e4);
+      plotVector.push_back(evalQIn()(0)*6e4);
       plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
-      HLine::plot(t, dt);
+      HLine::plot();
     }
   }
 
@@ -75,16 +75,16 @@ namespace MBSimHydraulics {
     delete lpl;
   }
 
-  double Leakage0DOF::getGapLength(double t) const {
-    return (glFunction)?(*glFunction)(t):length;
+  double Leakage0DOF::evalGapLength() const {
+    return (glFunction)?(*glFunction)(getTime()):length;
   }
 
-  double Leakage0DOF::getSurface1Velocity(double t) const {
-    return (s1vFunction)?(*s1vFunction)(t):0;
+  double Leakage0DOF::evalSurface1Velocity() const {
+    return (s1vFunction)?(*s1vFunction)(getTime()):0;
   }
 
-  double Leakage0DOF::getSurface2Velocity(double t) const {
-    return (s2vFunction)?(*s2vFunction)(t):0;
+  double Leakage0DOF::evalSurface2Velocity() const {
+    return (s2vFunction)?(*s2vFunction)(getTime()):0;
   }
 
   void Leakage0DOF::init(InitStage stage) {
@@ -95,9 +95,8 @@ namespace MBSimHydraulics {
     if(glFunction) glFunction->init(stage);
   }
 
-  void Leakage0DOF::updateQ(double t) {
-    lpl->setTime(t);
-    QIn(0)=(*lpl)(nTo->getGeneralizedForce(t)(0)-nFrom->getGeneralizedForce(t)(0));
+  void Leakage0DOF::updateQ() {
+    QIn(0)=(*lpl)(nTo->evalGeneralizedForce()(0)-nFrom->evalGeneralizedForce()(0));
     QOut = -QIn;
     updQ = false;
   }

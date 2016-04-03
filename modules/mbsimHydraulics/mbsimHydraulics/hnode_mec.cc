@@ -284,33 +284,33 @@ namespace MBSimHydraulics {
     }
   }
 
-  void HNodeMec::updateQMec(double t) {
+  void HNodeMec::updateQMec() {
     QMecTrans=0;
     for (unsigned int i=0; i<nTrans; i++)
       if (connectedTransFrames[i].considerVolumeChange)
         QMecTrans += 
           connectedTransFrames[i].area * 
           trans(
-              connectedTransFrames[i].frame->getOrientation(t) * 
+              connectedTransFrames[i].frame->evalOrientation() *
               connectedTransFrames[i].normal
-              ) * connectedTransFrames[i].frame->getVelocity(t);
+              ) * connectedTransFrames[i].frame->evalVelocity();
 
     QMecRot=0;
     for (unsigned int i=0; i<nRot; i++) {
       if (connectedRotFrames[i].considerVolumeChange) {
         Vec3 WrRefF = 
-          -connectedRotFrames[i].fref->getPosition(t)
-          +connectedRotFrames[i].frame->getPosition(t);
+          -connectedRotFrames[i].fref->evalPosition()
+          +connectedRotFrames[i].frame->evalPosition();
         double distance = nrm2(WrRefF);
         double OmegaRel = 
           trans(
               crossProduct(
                 WrRefF / distance, 
-                connectedRotFrames[i].frame->getOrientation(t)*connectedRotFrames[i].normal
+                connectedRotFrames[i].frame->evalOrientation()*connectedRotFrames[i].normal
                 )
               ) * (
-                connectedRotFrames[i].frame->getAngularVelocity(t)
-                - connectedRotFrames[i].fref->getAngularVelocity(t)
+                connectedRotFrames[i].frame->evalAngularVelocity()
+                - connectedRotFrames[i].fref->evalAngularVelocity()
                 );
         QMecRot += 
           OmegaRel * distance * connectedRotFrames[i].area;
@@ -320,77 +320,77 @@ namespace MBSimHydraulics {
     updQMec = false;
   }
 
-  void HNodeMec::updategd(double t) {
-    gd(0)=getQMec(t)-getQHyd(t);
+  void HNodeMec::updategd() {
+    gd(0)=evalQMec()-evalQHyd();
   }
 
-  void HNodeMec::updateh(double t, int j) {
-    HNode::updateh(t, j);
+  void HNodeMec::updateh(int j) {
+    HNode::updateh(j);
     for (unsigned int i=0; i<nTrans; i++) {
       h[j][nLines+i] +=
         connectedTransFrames[i].area * 
-        trans(connectedTransFrames[i].frame->getJacobianOfTranslation(t,j)) * 
+        trans(connectedTransFrames[i].frame->evalJacobianOfTranslation(j)) *
         (
-         connectedTransFrames[i].frame->getOrientation(t) * 
+         connectedTransFrames[i].frame->evalOrientation() *
          connectedTransFrames[i].normal
-        ) * getGeneralizedForce(t);
+        ) * evalGeneralizedForce();
     }
     for (unsigned int i=0; i<nRot; i++) {
       h[j][nTrans+nLines+i] += 
         connectedRotFrames[i].area * 
-        trans(connectedRotFrames[i].frame->getJacobianOfTranslation(t,j)) * 
+        trans(connectedRotFrames[i].frame->evalJacobianOfTranslation(j)) *
         (
-         connectedRotFrames[i].frame->getOrientation(t) * 
+         connectedRotFrames[i].frame->evalOrientation() *
          connectedRotFrames[i].normal
-        ) * getGeneralizedForce(t);
+        ) * evalGeneralizedForce();
     }
   }
 
-  void HNodeMec::updatedhdz(double t) {
+  void HNodeMec::updatedhdz() {
   }
 
-  void HNodeMec::updater(double t, int j) {
+  void HNodeMec::updater(int j) {
     THROW_MBSIMERROR("updater(): not implemented."); 
   }
 
-  void HNodeMec::updatexd(double t) {
-    xd(0)=getQMec(t);
+  void HNodeMec::updatexd() {
+    xd(0)=evalQMec();
   }
 
-  void HNodeMec::updatedx(double t, double dt) {
-    xd(0)=getQMec(t)*dt;
+  void HNodeMec::updatedx() {
+    xd(0)=evalQMec()*getStepSize();
   }
 
-  void HNodeMec::plot(double t, double dt) {
+  void HNodeMec::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(x(0)*1e9);
       if(getPlotFeature(debug)==enabled) {
-        plotVector.push_back(getQMecTrans(t)*1e9);
+        plotVector.push_back(evalQMecTrans()*1e9);
         plotVector.push_back(getQMecRot()*1e9);
         plotVector.push_back(getQMec()*1e9);
         for (unsigned int i=0; i<nTrans; i++)
-          plotVector.push_back(connectedTransFrames[i].area*getGeneralizedForce(t)(0));
+          plotVector.push_back(connectedTransFrames[i].area*evalGeneralizedForce()(0));
         for (unsigned int i=0; i<nRot; i++)
-          plotVector.push_back(connectedRotFrames[i].area*getGeneralizedForce(t)(0));
+          plotVector.push_back(connectedRotFrames[i].area*evalGeneralizedForce()(0));
       }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
         WrON.init(0);
         for (unsigned int i=0; i<nTrans; i++)
-          WrON+=connectedTransFrames[i].frame->getPosition(t);
+          WrON+=connectedTransFrames[i].frame->evalPosition();
         for (unsigned int i=0; i<nRot; i++)
-          WrON+=connectedRotFrames[i].frame->getPosition(t);
+          WrON+=connectedRotFrames[i].frame->evalPosition();
         WrON/=double(nTrans+nRot);
         if (openMBVArrows.size()) {
           for (unsigned int i=0; i<nTrans; i++) {
             vector<double> data;
-            Vec toPoint=connectedTransFrames[i].frame->getPosition(t);
+            Vec toPoint=connectedTransFrames[i].frame->evalPosition();
             Vec dir=(
-                connectedTransFrames[i].frame->getOrientation(t) * 
+                connectedTransFrames[i].frame->evalOrientation() *
                 connectedTransFrames[i].normal
                 ) *
-              openMBVArrowSize*1e-5*getGeneralizedForce(t)(0);
-            data.push_back(t);
+              openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
+            data.push_back(getTime());
             data.push_back(toPoint(0));
             data.push_back(toPoint(1));
             data.push_back(toPoint(2));
@@ -402,13 +402,13 @@ namespace MBSimHydraulics {
           }
           for (unsigned int i=0; i<nRot; i++) {
             vector<double> data;
-            Vec toPoint=connectedRotFrames[i].frame->getPosition(t);
+            Vec toPoint=connectedRotFrames[i].frame->evalPosition();
             Vec dir=(
-                connectedRotFrames[i].frame->getOrientation(t) * 
+                connectedRotFrames[i].frame->evalOrientation() *
                 connectedRotFrames[i].normal
                 ) *
-              openMBVArrowSize*1e-5*getGeneralizedForce(t)(0);
-            data.push_back(t);
+              openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
+            data.push_back(getTime());
             data.push_back(toPoint(0));
             data.push_back(toPoint(1));
             data.push_back(toPoint(2));
@@ -421,7 +421,7 @@ namespace MBSimHydraulics {
         }
       }
 #endif
-      HNode::plot(t, dt);
+      HNode::plot();
     }
   }
 
@@ -477,8 +477,8 @@ namespace MBSimHydraulics {
     pFun->init(stage);
   }
 
-  void ConstrainedNodeMec::updateGeneralizedForces(double t) {
-    lambda(0)=(*pFun)(t);
+  void ConstrainedNodeMec::updateGeneralizedForces() {
+    lambda(0)=(*pFun)(getTime());
     updla = false;
   }
 
@@ -536,27 +536,27 @@ namespace MBSimHydraulics {
       HNodeMec::init(stage);
   }
 
-  void ElasticNodeMec::updateGeneralizedForces(double t) {
+  void ElasticNodeMec::updateGeneralizedForces() {
     lambda(0) = x(1);
     updla = false;
   }
 
-  void ElasticNodeMec::updatexd(double t) {
-    HNodeMec::updatexd(t);
-    E=(*bulkModulus)(getGeneralizedForce(t)(0));
-    xd(1)=-E/x(0)*(getQMec(t)-getQHyd(t));
+  void ElasticNodeMec::updatexd() {
+    HNodeMec::updatexd();
+    E=(*bulkModulus)(evalGeneralizedForce()(0));
+    xd(1)=-E/x(0)*(evalQMec()-evalQHyd());
   }
 
-  void ElasticNodeMec::updatedx(double t, double dt) {
-    HNodeMec::updatedx(t, dt);
-    E=(*bulkModulus)(getGeneralizedForce(t)(0));
-    xd(1)=-E/x(0)*(getQMec(t)-getQHyd(t))*dt;
+  void ElasticNodeMec::updatedx() {
+    HNodeMec::updatedx();
+    E=(*bulkModulus)(evalGeneralizedForce()(0));
+    xd(1)=-E/x(0)*(evalQMec()-evalQHyd())*getStepSize();
   }
 
-  void ElasticNodeMec::plot(double t, double dt) {
+  void ElasticNodeMec::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(E*1e-6);
-      HNodeMec::plot(t, dt);
+      HNodeMec::plot();
     }
   }
 
@@ -636,54 +636,54 @@ namespace MBSimHydraulics {
     gd >> wb;
   }
 
-  void RigidNodeMec::updateGeneralizedForces(double t) {
+  void RigidNodeMec::updateGeneralizedForces() {
     cout << "updateGeneralizedSetValuedForces" << endl;
     cout << la << endl;
     lambda = la;
     updla = false;
   }
 
-  void RigidNodeMec::updategd(double t) {
-    HNodeMec::updategd(t);
-    if (t<epsroot()) {
-      if (fabs(getQHyd(t))>epsroot())
+  void RigidNodeMec::updategd() {
+    HNodeMec::updategd();
+    if (getTime()<epsroot()) {
+      if (fabs(evalQHyd())>epsroot())
         msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly (QHyd=" << QHyd << ")." << endl;
-      if (fabs(getQMecTrans(t))>epsroot())
+      if (fabs(evalQMecTrans())>epsroot())
         msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecTrans=" << QMecTrans << ")." << endl;
-      if (fabs(getQMecRot(t))>epsroot())
+      if (fabs(evalQMecRot())>epsroot())
         msg(Warn) << "RigidNodeMec \"" << getPath() << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecRot=" << QMecRot << ")." << endl;
     }
   }
 
-  void RigidNodeMec::updateW(double t, int j) {
+  void RigidNodeMec::updateW(int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hJ=connectedLines[i].line->getJacobian().cols()-1;
       W[j][i](Index(0,hJ), Index(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;      
     }
     for (unsigned int i=0; i<nTrans; i++) {
-      const int hJ=connectedTransFrames[i].frame->getJacobianOfTranslation(t,j).cols()-1;
+      const int hJ=connectedTransFrames[i].frame->evalJacobianOfTranslation(j).cols()-1;
       W[j][nLines+i](Index(0,hJ), Index(0, 0)) +=
         connectedTransFrames[i].area * 
-        trans(connectedTransFrames[i].frame->getJacobianOfTranslation(t,j)) * 
+        trans(connectedTransFrames[i].frame->evalJacobianOfTranslation(j)) *
         (
-         connectedTransFrames[i].frame->getOrientation(t) * 
+         connectedTransFrames[i].frame->evalOrientation() *
          connectedTransFrames[i].normal
         );
     }
     for (unsigned int i=0; i<nRot; i++) {
-      const int hJ=connectedRotFrames[i].frame->getJacobianOfTranslation(t,j).cols()-1;
+      const int hJ=connectedRotFrames[i].frame->evalJacobianOfTranslation(j).cols()-1;
       W[j][nTrans+nLines+i](Index(0,hJ), Index(0, 0)) += 
         connectedRotFrames[i].area * 
-        trans(connectedRotFrames[i].frame->getJacobianOfTranslation(t,j)) * 
+        trans(connectedRotFrames[i].frame->evalJacobianOfTranslation(j)) *
         (
-         connectedRotFrames[i].frame->getOrientation(t) * 
+         connectedRotFrames[i].frame->evalOrientation() *
          connectedRotFrames[i].normal
         );
     }
   }
 
-  void RigidNodeMec::updaterFactors(double t) {
-    const double *a = ds->getGs(t)();
+  void RigidNodeMec::updaterFactors() {
+    const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
 
     double sum = 0;
@@ -701,8 +701,8 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNodeMec::solveImpactsFixpointSingle(double t, double dt) {
-    const double *a = ds->getGs(t)();
+  void RigidNodeMec::solveImpactsFixpointSingle() {
+    const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
@@ -715,8 +715,8 @@ namespace MBSimHydraulics {
     La(0) = gil->project(La(0), gdn, gd(0), rFactor(0));
   }
 
-  void RigidNodeMec::solveConstraintsFixpointSingle(double t) {
-    const double *a = ds->getGs(t)();
+  void RigidNodeMec::solveConstraintsFixpointSingle() {
+    const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
@@ -729,8 +729,8 @@ namespace MBSimHydraulics {
     la(0) = gfl->project(la(0), gdd, rFactor(0));
   }
 
-  void RigidNodeMec::solveImpactsGaussSeidel(double t, double dt) {
-    const double *a = ds->getGs(t)();
+  void RigidNodeMec::solveImpactsGaussSeidel() {
+    const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
@@ -743,8 +743,8 @@ namespace MBSimHydraulics {
     La(0) = gil->solve(a[ia[laInd]], gdn, gd(0));
   }
 
-  void RigidNodeMec::solveConstraintsGaussSeidel(double t) {
-    const double *a = ds->getGs(t)();
+  void RigidNodeMec::solveConstraintsGaussSeidel() {
+    const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
@@ -757,7 +757,7 @@ namespace MBSimHydraulics {
     la(0) = gfl->solve(a[ia[laInd]], gdd);
   }
 
-  void RigidNodeMec::solveImpactsRootFinding(double t, double dt) {
+  void RigidNodeMec::solveImpactsRootFinding() {
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
@@ -771,8 +771,8 @@ namespace MBSimHydraulics {
     res(0) = La(0) - gil->project(La(0), gdn, gd(0), rFactor(0));
   }
 
-  void RigidNodeMec::solveConstraintsRootFinding(double t) {
-    const double *a = ds->getGs(t)();
+  void RigidNodeMec::solveConstraintsRootFinding() {
+    const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
@@ -785,9 +785,9 @@ namespace MBSimHydraulics {
     res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0));
   }
 
-  void RigidNodeMec::jacobianImpacts(double t, double dt) {
+  void RigidNodeMec::jacobianImpacts() {
     const SqrMat Jprox = ds->getJprox();
-    const SqrMat G = ds->getG(t);
+    const SqrMat G = ds->evalG();
 
     RowVec jp1=Jprox.row(laInd);
     RowVec e1(jp1.size());
@@ -799,9 +799,9 @@ namespace MBSimHydraulics {
       jp1(j) -= diff(1)*G(laInd,j);
   }
 
-  void RigidNodeMec::jacobianConstraints(double t) {
+  void RigidNodeMec::jacobianConstraints() {
     const SqrMat Jprox = ds->getJprox();
-    const SqrMat G = ds->getG(t);
+    const SqrMat G = ds->evalG();
 
     RowVec jp1=Jprox.row(laInd);
     RowVec e1(jp1.size());
@@ -813,8 +813,8 @@ namespace MBSimHydraulics {
       jp1(j) -= diff(1)*G(laInd,j);
   }
 
-  void RigidNodeMec::checkImpactsForTermination(double t, double dt) {
-    const double *a = ds->getGs(t)();
+  void RigidNodeMec::checkImpactsForTermination() {
+    const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
@@ -828,7 +828,7 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
-  void RigidNodeMec::checkConstraintsForTermination(double t) {
+  void RigidNodeMec::checkConstraintsForTermination() {
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();

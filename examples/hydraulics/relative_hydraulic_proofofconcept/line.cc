@@ -26,11 +26,11 @@ void Line::calcuSize(int j) {
     uSize[j]=0;
 }
 
-void Line::updateM(double t, int k) {
-  M[k]+=1.*JTJ(getJ(t));
+void Line::updateM(int k) {
+  M[k]+=1.*JTJ(evalJ(k));
 }
 
-void Line::updateJacobians(double t, int k) {
+void Line::updateJacobians(int k) {
   // How to calcualte the reactive forces for relative hydraulic lines?
   // Don't know => do nothing => this leads to wrong reactive forces in the whole model
   // but this does not influence the dynamics.
@@ -46,7 +46,7 @@ void Line::updateJacobians(double t, int k) {
     else {
       J=Mat(1,M[k].size());
       for(size_t i=0; i<dependency.size(); i++) {
-        Mat Jdep=((Line*)dependency[i])->getJ(t);
+        Mat Jdep=((Line*)dependency[i])->evalJ(k);
         J(0,Index(0,Jdep.cols()-1))+=Jdep;
       }
     }
@@ -68,10 +68,10 @@ void Line::init(InitStage stage) {
     Object::init(stage);
 }
 
-void Line::plot(double t, double dt) {
+void Line::plot() {
   if(getPlotFeature(plotRecursive)==enabled) {
     plotVector.push_back(flowrate);
 
-    Object::plot(t,dt);
+    Object::plot();
   }
 }

@@ -152,25 +152,25 @@ namespace MBSimHydraulics {
 
   }
 
-  void ElasticLineGalerkin::updateQ(double t) {
+  void ElasticLineGalerkin::updateQ() {
     QIn(0)=Area*trans(wA)*u;
     QOut(0)=-Area*trans(wE)*u;
     updQ = false;
   }
 
-  void ElasticLineGalerkin::updateT(double t) {
+  void ElasticLineGalerkin::updateT() {
     T=SqrMat(mdim, EYE);
   }
 
-  void ElasticLineGalerkin::updateM(double t, int j) {
+  void ElasticLineGalerkin::updateM(int j) {
     M[j]=MFac;
   }
 
-  void ElasticLineGalerkin::updateh(double t, int j) {
+  void ElasticLineGalerkin::updateh(int j) {
     h[j] = (-k*WInt + p0*(wE-wA))*Area - D*u - K*q;
   }
 
-  void ElasticLineGalerkin::plot(double t, double dt) {
+  void ElasticLineGalerkin::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if (getPlotFeature(globalVelocity)==enabled)
         for (int i=0; i<plotdim; i++)
@@ -178,7 +178,7 @@ namespace MBSimHydraulics {
       if (getPlotFeature(globalPosition)==enabled)
         for (int i=0; i<plotdim; i++)
           plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
-      HLine::plot(t,dt);
+      HLine::plot();
     }
   }
 

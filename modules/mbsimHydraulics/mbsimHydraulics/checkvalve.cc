@@ -72,9 +72,9 @@ namespace MBSimHydraulics {
       bool gActiveChanged() { return false; }
       virtual bool isSingleValued() const { return true; }
       void init(InitStage stage) { }
-      void updateg(double t)  { }
-      void updategd(double t) { }
-      void plot(double t, double dt) { Link::plot(t); body->setDynamicColor((l->isClosed(t))?.9:.1); }
+      void updateg()  { }
+      void updategd() { }
+      void plot() { Link::plot(); body->setDynamicColor((l->isClosed())?.9:.1); }
     private:
       shared_ptr<OpenMBV::DynamicColoredBody> body;
       ClosableRigidLine * l;

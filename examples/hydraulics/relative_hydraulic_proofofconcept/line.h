@@ -20,12 +20,12 @@ class Line : public Object {
 
     void calcqSize() { qSize=0; }
     void calcuSize(int j);
-    void updateM(double, int k);
-    fmatvec::Mat getJ(double t) { if(updJ) updateJacobians(t); return J; }
-    void updateJacobians(double t ,int k=0);
+    void updateM(int k);
+    fmatvec::Mat evalJ(int k=0) { if(updJ) updateJacobians(k); return J; }
+    void updateJacobians(int k=0);
     double getFlowrate() { return flowrate; }
     void init(InitStage stage);
-    void plot(double t, double dt=1);
+    void plot();
     void resetUpToDate() { Object::resetUpToDate(); updJ = true; }
 };
 

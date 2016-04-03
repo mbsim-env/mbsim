@@ -213,13 +213,13 @@ namespace MBSimHydraulics {
       HLine::init(stage);
   }
 
-  void ElasticLineVariational::updateQ(double t) {
+  void ElasticLineVariational::updateQ() {
     QIn(0)=trans(wO)*u;
     QOut(0)=trans(wI)*u;
     updQ = false;
   }
 
-  void ElasticLineVariational::updateh(double t, int j) {
+  void ElasticLineVariational::updateh(int j) {
     h[j]=hp0;
     for (int i=1; i<n; i++)
       h[j](i)+=hq(i-1)*q(i-1);
@@ -227,7 +227,7 @@ namespace MBSimHydraulics {
       h[j](i)+=hu(i)*u(i);
   }
 
-  void ElasticLineVariational::plot(double t, double dt) {
+  void ElasticLineVariational::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       VecV y(n,NONINIT);
       for (int i=0; i<n; i++)
@@ -239,7 +239,7 @@ namespace MBSimHydraulics {
       if(getPlotFeature(state)==enabled)
         for (int i=0; i<n; i++)
           plotVector.push_back(y(i));
-      HLine::plot(t,dt);
+      HLine::plot();
     }
   }
 
