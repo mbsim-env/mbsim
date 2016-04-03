@@ -29,11 +29,11 @@ namespace MBSimElectronics {
       Object::init(stage);
   }
 
-  void ElectronicObject::plot(double t, double dt) {
+  void ElectronicObject::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(getCharge(t));
-      plotVector.push_back(getCurrent(t));
-      Object::plot(t,dt);
+      plotVector.push_back(evalCharge());
+      plotVector.push_back(evalCurrent());
+      Object::plot();
     }
   }
 
@@ -83,24 +83,24 @@ namespace MBSimElectronics {
       Link::init(stage);
   }
 
-  void ElectronicLink::updateg(double t) {
-    g(0) = getCharge(t);
+  void ElectronicLink::updateg() {
+    g(0) = evalCharge();
   }
 
-  void ElectronicLink::updategd(double t) {
-    gd(0) = getCurrent(t);
+  void ElectronicLink::updategd() {
+    gd(0) = evalCurrent();
   }
 
-  void ElectronicLink::plot(double t, double dt) {
+  void ElectronicLink::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(getCharge(t));
-      plotVector.push_back(getCurrent(t));
-      plotVector.push_back(getGeneralizedForce(t)(0));
-      Link::plot(t,dt);
+      plotVector.push_back(evalCharge());
+      plotVector.push_back(evalCurrent());
+      plotVector.push_back(evalGeneralizedForce()(0));
+      Link::plot();
     }
   }
 
-  void ElectronicLink::updateW(double t, int j) {
+  void ElectronicLink::updateW(int j) {
     W[j][0] += branch->getJacobian(j).T()*vz;
   }
 
@@ -123,8 +123,8 @@ namespace MBSimElectronics {
   void ElectronicLink::updateVRef(const fmatvec::Mat& ref, int j) {
   }
 
-  void ElectronicLink::updateh(double t, int j) {
-    h[j][0] += branch->getJacobian(j).T()*getGeneralizedForce(t)(0)*vz;
+  void ElectronicLink::updateh(int j) {
+    h[j][0] += branch->getJacobian(j).T()*evalGeneralizedForce()(0)*vz;
   }
 
   void Mesh::init(InitStage stage) {
@@ -147,14 +147,14 @@ namespace MBSimElectronics {
       Object::init(stage);
   }
 
-  void Branch::updateCharge(double t) {
+  void Branch::updateCharge() {
     Q(0) = 0;
     for(size_t i=0; i<mesh.size(); i++)
       Q(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getq()(0);
     updQ = false;
   }
 
-  void Branch::updateCurrent(double t) {
+  void Branch::updateCurrent() {
     I(0) = 0;
     for(size_t i=0; i<mesh.size(); i++)
       I(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getu()(0);
@@ -233,7 +233,7 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Inductor::updateM(double t, int i) {
+  void Inductor::updateM(int i) {
     M[i] += L*JTJ(branch->getJacobian(i));
   }
 
@@ -243,20 +243,20 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Diode::updateGeneralizedForces(double t) {
+  void Diode::updateGeneralizedForces() {
     if(isSetValued())
       lambda = la;
     else {
       double slope=1e4;
-      double I = getCurrent(t);
+      double I = evalCurrent();
       lambda(0) = (I >= 0) ? 0 : -slope*I;
     }
     updla = false;
   }
 
-  void Diode::checkImpactsForTermination(double t, double dt) {
+  void Diode::checkImpactsForTermination() {
 
-    const double *a = ds->getGs(t)();
+    const double *a = ds->evalGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
     Vec &LaMBS = ds->getLa();
@@ -275,8 +275,8 @@ namespace MBSimElectronics {
     }
   }
 
-  void Diode::solveImpactsGaussSeidel(double t, double dt) {
-    const double *a = ds->getGs(t)();
+  void Diode::solveImpactsGaussSeidel() {
+    const double *a = ds->evalGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
     Vec &LaMBS = ds->getLa();
@@ -298,13 +298,13 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Switch::updateGeneralizedForces(double t) {
+  void Switch::updateGeneralizedForces() {
     if(isSetValued())
       lambda = la;
     else {
       double gdLim = 0.01;
-      double U0 = (*voltageSignal)(t)(0);
-      double I = getCurrent(t);
+      double U0 = (*voltageSignal)(getTime())(0);
+      double I = evalCurrent();
       if(fabs(I) < gdLim)
         lambda(0) = -U0*I/gdLim;
       else
@@ -313,15 +313,15 @@ namespace MBSimElectronics {
     updla = false;
   }
 
-  void Switch::checkImpactsForTermination(double t, double dt) {
+  void Switch::checkImpactsForTermination() {
 
-    const double *a = ds->getGs(t)();
+    const double *a = ds->evalGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
     Vec &LaMBS = ds->getLa();
     Vec &b = ds->getb(false);
 
-    double U0 = (*voltageSignal)(t)(0);
+    double U0 = (*voltageSignal)(getTime())(0);
 
     gdn(0) = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -337,14 +337,14 @@ namespace MBSimElectronics {
     }
   }
 
-  void Switch::solveImpactsGaussSeidel(double t, double dt) {
-    const double *a = ds->getGs(t)();
+  void Switch::solveImpactsGaussSeidel() {
+    const double *a = ds->evalGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
     Vec &LaMBS = ds->getLa();
     Vec &b = ds->getb(false);
 
-    double U0 = (*voltageSignal)(t)(0);
+    double U0 = (*voltageSignal)(getTime())(0);
 
     gdn(0) = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -363,8 +363,8 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Resistor::updateGeneralizedForces(double t) {
-    lambda(0) = -R*getCurrent(t);
+  void Resistor::updateGeneralizedForces() {
+    lambda(0) = -R*evalCurrent();
     updla = false;
   }
 
@@ -374,8 +374,8 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Capacitor::updateGeneralizedForces(double t) {
-    lambda(0) = -getCharge(t)/C;
+  void Capacitor::updateGeneralizedForces() {
+    lambda(0) = -evalCharge()/C;
     updla = false;
   }
 
@@ -385,8 +385,8 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void VoltageSource::updateGeneralizedForces(double t) {
-    lambda(0) = (*voltageSignal)(t)(0);
+  void VoltageSource::updateGeneralizedForces() {
+    lambda(0) = (*voltageSignal)(getTime())(0);
     updla = false;
   }
 

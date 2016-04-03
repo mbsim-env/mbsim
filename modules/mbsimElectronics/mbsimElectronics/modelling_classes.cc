@@ -253,13 +253,13 @@ namespace MBSimElectronics {
     branch=branch_;
   }
 
-  void ElectronicComponent::updateCharge(double t) {
-    Q = branch->getCharge(t)(0)*vz;
+  void ElectronicComponent::updateCharge() {
+    Q = branch->evalCharge()(0)*vz;
     updQ = false;
   }
 
-  void ElectronicComponent::updateCurrent(double t) {
-    I = branch->getCurrent(t)(0)*vz;
+  void ElectronicComponent::updateCurrent() {
+    I = branch->evalCurrent()(0)*vz;
     updI = false;
   }
 

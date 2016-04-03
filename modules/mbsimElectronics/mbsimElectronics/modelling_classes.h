@@ -57,10 +57,10 @@ namespace MBSimElectronics {
       Branch* getBranch() {return branch;}
       void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList);
       double getvz() const { return vz;}
-      virtual void updateCharge(double t);
-      virtual void updateCurrent(double t);
-      double getCurrent(double t) { if(updI) updateCurrent(t); return I; }
-      double getCharge(double t) { if(updQ) updateCharge(t); return Q; }
+      virtual void updateCharge();
+      virtual void updateCurrent();
+      double evalCurrent() { if(updI) updateCurrent(); return I; }
+      double evalCharge() { if(updQ) updateCharge(); return Q; }
   };
 
 }

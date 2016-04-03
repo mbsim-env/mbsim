@@ -25,8 +25,8 @@ class VoltageSensor : public MBSimControl::Sensor {
     void setComponent(MBSimElectronics::ElectronicLink *comp_) {comp = comp_;}
     VoltageSensor(const std::string &name) : Sensor(name) { }
     std::string getType() const { return "VoltageSensor"; }
-    void updateSignal(double t) {
-      s = comp->getGeneralizedForce(t);
+    void updateSignal() {
+      s = comp->evalGeneralizedForce();
       upds = false;
     }
     int getSignalSize() const { return 1; }
@@ -46,10 +46,10 @@ class SwitchSignal : public MBSimControl::Signal {
       uref = 11.3;
       K=8.2;
     }
-    void updateSignal(double t) {
-      double ug = u1+mod(t,T)/T*(uu-u1);
+    void updateSignal() {
+      double ug = u1+mod(getTime(),T)/T*(uu-u1);
       h = uref+1./K*ug;
-      double UR = inputSignal->getSignal(t)(0);
+      double UR = inputSignal->evalSignal()(0);
       s = VecV(1, INIT, (-UR <= h ? 0 : 100));
       upds = false;
     }
