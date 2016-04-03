@@ -52,11 +52,11 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalMux::updateSignal(double t) {
-    VecV y=signals[0]->getSignal(t);
+  void SignalMux::updateSignal() {
+    VecV y=signals[0]->evalSignal();
     for (unsigned int i=1; i<signals.size(); i++) {
       VecV s1=y;
-      VecV s2=signals[i]->getSignal(t);
+      VecV s2=signals[i]->evalSignal();
       y.resize(s1.size()+s2.size());
       y.set(Index(0, s1.size()-1),s1);
       y.set(Index(s1.size(), y.size()-1),s2);
@@ -86,10 +86,10 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalDemux::updateSignal(double t) {
+  void SignalDemux::updateSignal() {
     VecV y(indices.size(), INIT, 0);
     for (int k=0; k<indices.size(); k++) {
-      y(k)=signal->getSignal(t)(indices(k));
+      y(k)=signal->evalSignal()(indices(k));
     }
     s = y;
     upds = false;
@@ -117,11 +117,11 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void SignalTimeDiscretization::updateSignal(double t) {
-    if (fabs(tOld-t)>epsroot()) {
-      Signal::s=s->getSignal(t); 
-      tOld=t; 
-    } 
+  void SignalTimeDiscretization::updateSignal() {
+    if (fabs(tOld-getTime())>epsroot()) {
+      Signal::s=s->evalSignal();
+      tOld=getTime();
+    }
     upds = false;
   }
 
@@ -143,12 +143,12 @@ namespace MBSimControl {
     setPID(p, i, d);
   }
 
-  void PIDController::updatedx(double t, double dt) {
-    if(xSize) xd=s->getSignal(t)*dt;
+  void PIDController::updatedx() {
+    if(xSize) xd=s->evalSignal()*getStepSize();
   }
 
-  void PIDController::updatexd(double t) {
-    if(xSize) xd=s->getSignal(t);
+  void PIDController::updatexd() {
+    if(xSize) xd=s->evalSignal();
   }
 
   void PIDController::init(InitStage stage) {
@@ -173,17 +173,17 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void PIDController::updateSignal(double t) {
-    (this->*updateSignalMethod)(t);
+  void PIDController::updateSignal() {
+    (this->*updateSignalMethod)();
     upds = false;
   }
 
-  void PIDController::updateSignalPID(double t) {
-    Signal::s = P*s->getSignal(t) + D*sd->getSignal(t) + I*x;
+  void PIDController::updateSignalPID() {
+    Signal::s = P*s->evalSignal() + D*sd->evalSignal() + I*x;
   }
 
-  void PIDController::updateSignalPD(double t) {
-    Signal::s = P*s->getSignal(t) + D*sd->getSignal(t);
+  void PIDController::updateSignalPD() {
+    Signal::s = P*s->evalSignal() + D*sd->evalSignal();
   }
 
   void PIDController::setPID(double PP, double II, double DD) {
@@ -219,8 +219,8 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  void UnarySignalOperation::updateSignal(double t) {
-    Signal::s = (*f)(s->getSignal(t)); 
+  void UnarySignalOperation::updateSignal() {
+    Signal::s = (*f)(s->evalSignal());
     upds = false;
   }
 
@@ -253,8 +253,8 @@ namespace MBSimControl {
     f->init(stage);
   }
 
-  void BinarySignalOperation::updateSignal(double t) {
-    s = (*f)(s1->getSignal(t),s2->getSignal(t)); 
+  void BinarySignalOperation::updateSignal() {
+    s = (*f)(s1->evalSignal(),s2->evalSignal());
     upds = false;
   }
 

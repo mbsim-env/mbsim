@@ -40,7 +40,7 @@ namespace MBSimControl {
       void setReturnSignal(Signal *ret_);
 
       virtual Ret operator()(const double& t) {
-        return MBSim::FromVecV<Ret>::cast(ret->getSignal(t));
+        return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
 
       void init(MBSim::Element::InitStage stage);

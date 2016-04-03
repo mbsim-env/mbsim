@@ -68,8 +68,8 @@ namespace MBSimControl {
       setMaximumPositionValue(getDouble(e));
   }
 
-  void MasslessSpringDamper::updatedx(double t, double dt) {
-    const double F=(inputSignal->getSignal(t))(0);
+  void MasslessSpringDamper::updatedx() {
+    const double F=(inputSignal->evalSignal())(0);
     double h=F+F0-c*x(0);
     if (h<0) {
       if (x(0)<xMin)
@@ -92,11 +92,11 @@ namespace MBSimControl {
       }
     }
     xdLocal=xd(0);
-    xd(0)*=dt;
+    xd(0)*=getStepSize();
   }
 
-  void MasslessSpringDamper::updatexd(double t) {
-    const double F=(inputSignal->getSignal(t))(0);
+  void MasslessSpringDamper::updatexd() {
+    const double F=(inputSignal->evalSignal())(0);
     double h=F+F0-c*x(0);
     if (h<0) {
       if (x(0)<xMin)
@@ -175,14 +175,14 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  void MasslessSpringDamper::plot(double t, double dt) {
+  void MasslessSpringDamper::plot() {
 //    if(getPlotFeature(plotRecursive)==enabled) {
 //      if (getPlotFeature(globalPosition)==enabled) {
 //        plotVector.push_back(x(0));
 //        plotVector.push_back(xdLocal);
 //      }
 //    }
-    Signal::plot(t,dt);
+    Signal::plot();
   }
 
 }

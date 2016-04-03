@@ -53,7 +53,7 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionSensor, MBSIMCONTROL%"GeneralizedPositionSensor")
 
-  void GeneralizedPositionSensor::updateSignal(double t) {
+  void GeneralizedPositionSensor::updateSignal() {
     if (object->getq().size()==0)
       s = fmatvec::VecV(1, fmatvec::INIT, 0);
     else
@@ -63,7 +63,7 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocitySensor, MBSIMCONTROL%"GeneralizedVelocitySensor")
 
-  void GeneralizedVelocitySensor::updateSignal(double t) {
+  void GeneralizedVelocitySensor::updateSignal() {
     if (object->getu().size()==0)
       s = fmatvec::VecV(1, fmatvec::INIT, 0);
     else

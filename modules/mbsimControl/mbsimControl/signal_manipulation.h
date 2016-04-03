@@ -35,7 +35,7 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void addInputSignal(Signal * signal) {signals.push_back(signal); }
-      void updateSignal(double t);
+      void updateSignal();
       int getSignalSize() const { return signals[0]->getSignalSize(); }
     private:
       std::vector<Signal *> signals;
@@ -53,7 +53,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       void setInputSignal(Signal * signal_) { signal=signal_; }
       void setIndices(const fmatvec::VecInt &indices_) { indices = indices_; }
-      void updateSignal(double t);
+      void updateSignal();
       int getSignalSize() const { return signal->getSignalSize(); }
     private:
       Signal *signal;
@@ -72,7 +72,7 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setInputSignal(Signal * signal_) {s=signal_; }
-      void updateSignal(double t);
+      void updateSignal();
       int getSignalSize() const { return s->getSignalSize(); }
     private:
       Signal * s;
@@ -94,23 +94,23 @@ namespace MBSimControl {
       
       void init(InitStage stage);
 
-      void updatedx(double t, double dt);
-      void updatexd(double t);
+      void updatedx();
+      void updatexd();
       
       void setPID(double P_, double I_, double D_);
       void setInputSignal(Signal *inputSignal_) {s=inputSignal_; }
       void setDerivativeOfInputSignal(Signal *inputSignal_) {sd=inputSignal_; }
 
-      void updateSignal(double t);
+      void updateSignal();
       int getSignalSize() const { return s->getSignalSize(); }
 
     protected:
       double P,I,D;
       Signal *s, *sd;
       std::string sString, sdString;
-      void (PIDController::*updateSignalMethod)(double t);
-      void updateSignalPD(double t);
-      void updateSignalPID(double t);
+      void (PIDController::*updateSignalMethod)();
+      void updateSignalPD();
+      void updateSignalPID();
   };
 
   /*!
@@ -128,7 +128,7 @@ namespace MBSimControl {
         f->setParent(this);
         f->setName("Function");
       };
-      void updateSignal(double t);
+      void updateSignal();
       int getSignalSize() const { return s->getSignalSize(); }
     private:
       Signal *s;
@@ -152,7 +152,7 @@ namespace MBSimControl {
         f->setParent(this);
         f->setName("Function");
       };
-      void updateSignal(double t);
+      void updateSignal();
       int getSignalSize() const { return s1->getSignalSize(); }
     private:
       Signal *s1, *s2;

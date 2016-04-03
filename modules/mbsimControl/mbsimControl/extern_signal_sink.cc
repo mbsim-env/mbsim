@@ -42,8 +42,8 @@ namespace MBSimControl {
       Link::init(stage);
   }
 
-  void ExternSignalSink::updateSignal(double t) {
-    s = signal->getSignal(t);
+  void ExternSignalSink::updateSignal() {
+    s = signal->evalSignal();
     upds = false;
   }
 

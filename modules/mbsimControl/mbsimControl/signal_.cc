@@ -47,14 +47,14 @@ namespace MBSimControl {
   }
 
 
-  void Signal::plot(double t, double dt) {
+  void Signal::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled) {
-        for (int i=0; i<getSignal(t).size(); i++)
+        for (int i=0; i<evalSignal().size(); i++)
           plotVector.push_back(getSignal()(i));
       }
     }
-    Link::plot(t, dt);
+    Link::plot();
   }
 
 }

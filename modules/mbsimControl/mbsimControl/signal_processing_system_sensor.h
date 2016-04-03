@@ -38,7 +38,7 @@ namespace MBSimControl {
       void init(InitStage stage);
       
       void setSignalProcessingSystem(SignalProcessingSystem * sps_) {sps=sps_; }
-      void updateh(double t, int j=0);
+      void updateSignal();
       int getSignalSize() const;
 
     private:

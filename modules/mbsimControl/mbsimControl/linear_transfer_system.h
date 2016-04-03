@@ -43,11 +43,11 @@ namespace MBSimControl {
       
       void init(InitStage stage);
 
-      void updateSignal(double t);
-      void updatedx(double t, double dt);
-      void updatexd(double t);
+      void updateSignal();
+      void updatedx();
+      void updatexd();
       
-      void plot(double t,double dt);
+      void plot();
      
       void setPID(double P_, double I_, double D_);
       void setABCD(fmatvec::Mat A_,fmatvec::Mat B_,fmatvec::Mat C_,fmatvec::Mat D_);
@@ -66,10 +66,10 @@ namespace MBSimControl {
       std::string inputSignalString;
       fmatvec::Mat A,B,C,D;
       double R1,R2,c;
-      fmatvec::VecV (LinearTransferSystem::*calculateOutputMethod)(double t);
-      fmatvec::VecV outputMethodC(double t);
-      fmatvec::VecV outputMethodD(double t);
-      fmatvec::VecV outputMethodCD(double t);
+      fmatvec::VecV (LinearTransferSystem::*calculateOutputMethod)();
+      fmatvec::VecV outputMethodC();
+      fmatvec::VecV outputMethodD();
+      fmatvec::VecV outputMethodCD();
   };
 }
 

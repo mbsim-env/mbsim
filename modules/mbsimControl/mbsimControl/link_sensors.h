@@ -52,8 +52,8 @@ namespace MBSimControl {
     public:
       LinkDistanceSensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "GeneralizedRelativePositionSensor"; }
-      void updateSignal(double t);
-      int getSignalSize() const { return link->getGeneralizedRelativePosition(0).size(); }
+      void updateSignal();
+      int getSignalSize() const { return link->evalGeneralizedRelativePosition().size(); }
   };
 
   /*!
@@ -64,8 +64,8 @@ namespace MBSimControl {
     public:
       LinkVelocitySensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "GeneralizedRelativeVelocitySensor"; }
-      void updateSignal(double t);
-      int getSignalSize() const { return link->getGeneralizedRelativeVelocity(0).size(); }
+      void updateSignal();
+      int getSignalSize() const { return link->evalGeneralizedRelativeVelocity().size(); }
   };
 
 }

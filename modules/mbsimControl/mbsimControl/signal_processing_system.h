@@ -43,8 +43,8 @@ namespace MBSimControl {
 
       void init(InitStage stage);
 
-      void updateg(double t) {}
-      void updategd(double t) {}
+      void updateg() {}
+      void updategd() {}
       void updateWRef(const fmatvec::Mat& ref, int i=0) {}
       void updateVRef(const fmatvec::Mat& ref, int i=0) {}
       void updatehRef(const fmatvec::Vec &hRef, int i=0) {}

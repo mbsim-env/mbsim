@@ -88,17 +88,17 @@ namespace MBSimControl {
       showABCD();
   }
 
-  void LinearTransferSystem::updateSignal(double t) {
-    s=(this->*calculateOutputMethod)(t);
+  void LinearTransferSystem::updateSignal() {
+    s=(this->*calculateOutputMethod)();
     upds = false;
   }
 
-  void LinearTransferSystem::updatedx(double t, double dt) {
-    xd=(A*x+B*inputSignal->getSignal(t))*dt;
+  void LinearTransferSystem::updatedx() {
+    xd=(A*x+B*inputSignal->evalSignal())*getStepSize();
   }
 
-  void LinearTransferSystem::updatexd(double t) {
-    xd=A*x+B*inputSignal->getSignal(t);
+  void LinearTransferSystem::updatexd() {
+    xd=A*x+B*inputSignal->evalSignal();
   }
 
   void LinearTransferSystem::init(InitStage stage) {
@@ -124,16 +124,16 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  VecV LinearTransferSystem::outputMethodC(double t) {
+  VecV LinearTransferSystem::outputMethodC() {
     return C*x;
   }
 
-  VecV LinearTransferSystem::outputMethodD(double t) {
-    return D*inputSignal->getSignal(t);
+  VecV LinearTransferSystem::outputMethodD() {
+    return D*inputSignal->evalSignal();
   }
 
-  VecV LinearTransferSystem::outputMethodCD(double t) {
-    return outputMethodC(t)+outputMethodD(t);
+  VecV LinearTransferSystem::outputMethodCD() {
+    return outputMethodC()+outputMethodD();
   }
 
   void LinearTransferSystem::showABCD() {
@@ -216,13 +216,13 @@ namespace MBSimControl {
     setPID(P, 0, 0);
   }
 
-  void LinearTransferSystem::plot(double t, double dt) {
+  void LinearTransferSystem::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if (getPlotFeature(rightHandSide)==enabled)
         for (int i=0; i<B.cols(); i++)
-          plotVector.push_back(inputSignal->getSignal(t)(i));
+          plotVector.push_back(inputSignal->evalSignal()(i));
     }
-    Signal::plot(t,dt);
+    Signal::plot();
   }
 
 }

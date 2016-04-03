@@ -43,12 +43,12 @@ namespace MBSimControl {
 
       void init(InitStage stage);
 
-      void updateSignal(double t) { s = x; upds = false; }
+      void updateSignal() { s = x; upds = false; }
 
-      void updatedx(double t, double dt);
-      void updatexd(double t);
+      void updatedx();
+      void updatexd();
 
-      void plot(double t,double dt);
+      void plot();
 
       void setSpringStiffness(double c_) {c=c_; }
       void setBasicSpringForce(double F0_) {F0=F0_; }

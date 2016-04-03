@@ -42,8 +42,8 @@ namespace MBSimControl {
     s=(*function)(0); 
   }
 
-  void FunctionSensor::updateSignal(double t) {
-    s=(*function)(t); 
+  void FunctionSensor::updateSignal() {
+    s=(*function)(getTime());
     upds = false;
   }
 
