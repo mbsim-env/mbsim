@@ -83,7 +83,7 @@ namespace MBSimPowertrain {
       void setRigidBodyFirstSide(MBSim::RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(MBSim::RigidBody* body_) { body[1] = body_; }
 
-      void plot(double t, double dt=1);
+      void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
