@@ -15,8 +15,6 @@ extern "C" {
 #define MBXMLUTILS_SHAREDLIBNAME FMUWrapper
 #include <mbxmlutilshelper/getsharedlibpath_impl.h>
 
-#define DLLEXPORT __attribute__((visibility("default")))
-
 // use namespaces
 using namespace std;
 using namespace MBSimFMI;
@@ -44,19 +42,18 @@ namespace {
 extern "C" {
 
   // global FMI function.
-  DLLEXPORT const char* fmiGetModelTypesPlatform() {
+  const char* fmiGetModelTypesPlatform() {
     return "standard32";
   }
 
   // global FMI function.
-  DLLEXPORT const char* fmiGetVersion() {
+  const char* fmiGetVersion() {
     return "1.0";
   }
 
   // FMI instantiate function: just calls the FMIInstanceBase ctor
   // Convert exceptions to FMI logger calls and return no instance.
-  DLLEXPORT fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions,
-                                             fmiBoolean loggingOn) {
+  fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) {
     try {
       string fmuDir=MBXMLUtils::getFMUWrapperSharedLibPath();
       size_t s=string::npos;
@@ -92,7 +89,7 @@ extern "C" {
 
   // FMI free instance function: just calls the FMIInstanceBase dtor.
   // No exception handling needed since the dtor must not throw.
-  DLLEXPORT void fmiFreeModelInstance(fmiComponent c) {
+  void fmiFreeModelInstance(fmiComponent c) {
     // must not throw
     delete static_cast<Instance*>(c);
   }
@@ -100,7 +97,7 @@ extern "C" {
   // All other FMI functions: just calls the corresponding member function in FMIInstanceBase
   // Convert exceptions to call of logError which itself passed these to the FMI logge and return with fmiError.
   #define FMIFUNC(fmiFuncName, instanceMemberName, Sig, sig) \
-  DLLEXPORT fmiStatus fmiFuncName Sig { \
+  fmiStatus fmiFuncName Sig { \
     boost::shared_ptr<FMIInstanceBase> instance=static_cast<Instance*>(c)->instance; \
     try { \
       instance->instanceMemberName sig; \
