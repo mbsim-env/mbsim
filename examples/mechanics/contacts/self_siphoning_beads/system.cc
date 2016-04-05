@@ -9,7 +9,7 @@
 #include <mbsim/contours/sphere.h>
 #include <mbsim/contours/plate.h>
 #include <mbsim/links/joint.h>
-#include <mbsim/isotropic_rotational_links/spring_damper.h>
+#include <mbsim/links/isotropic_rotational_spring_damper.h>
 #include <mbsim/links/contact.h>
 #include <mbsim/constitutive_laws/constitutive_laws.h>
 #include <mbsim/utils/rotarymatrices.h>
