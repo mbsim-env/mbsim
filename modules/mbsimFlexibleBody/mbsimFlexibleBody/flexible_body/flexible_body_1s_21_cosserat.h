@@ -25,7 +25,6 @@
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
-#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_translation.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_rotation.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
