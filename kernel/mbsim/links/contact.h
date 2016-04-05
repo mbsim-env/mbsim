@@ -101,8 +101,8 @@ namespace MBSim {
       virtual void init(InitStage stage);
       virtual bool isSetValued() const;
       virtual bool isSingleValued() const;
-      virtual void updateLinkStatus(double dt);
-      virtual void updateLinkStatusReg(double dt);
+      virtual void updateLinkStatus();
+      virtual void updateLinkStatusReg();
       virtual bool isActive() const;
       virtual bool gActiveChanged();
       virtual bool detectImpact();

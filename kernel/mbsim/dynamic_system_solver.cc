@@ -977,6 +977,8 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::deltau(const Vec &zParent, double t, double dt) {
+    setTime(t);
+    setStepSize(dt);
     if (q() != zParent())
       updatezRef(zParent);
 
@@ -985,6 +987,8 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::deltaq(const Vec &zParent, double t, double dt) {
+    setTime(t);
+    setStepSize(dt);
     if (q() != zParent())
       updatezRef(zParent);
     updatedq();
@@ -993,6 +997,8 @@ namespace MBSim {
   }
 
   Vec DynamicSystemSolver::deltax(const Vec &zParent, double t, double dt) {
+    setTime(t);
+    setStepSize(dt);
     if (q() != zParent()) {
       updatezRef(zParent);
     }
@@ -1598,6 +1604,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
+    setTime(t);
     if(msgAct(Debug))
       msg(Debug) << "System shift at t = " << t << "." << endl;
 
@@ -1702,6 +1709,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) {
+    setTime(t);
     resetUpToDate();
     if (sv() != svExt()) {
       updatesvRef(svExt);
@@ -1784,6 +1792,7 @@ namespace MBSim {
       updatezdRef(zdParent);
 
     setTime(t);
+    setStepSize(dt);
 
     plot();
 

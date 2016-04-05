@@ -459,7 +459,7 @@ namespace MBSim {
     return true;
   }
 
-  void Contact::updateLinkStatus(double dt) {
+  void Contact::updateLinkStatus() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->updateLinkStatus();
@@ -467,7 +467,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateLinkStatusReg(double dt) {
+  void Contact::updateLinkStatusReg() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->updateLinkStatusReg();
