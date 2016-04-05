@@ -216,12 +216,12 @@ class ExternSignalSourceInput : public Variable {
         "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     void setValue(const double &v) {
-      fmatvec::VecV curv = sig->getSignal(0.);
+      fmatvec::VecV curv = sig->evalSignal();
       curv(idx) = v;
       sig->setSignal(curv);
     }
-    const double& getValue(const double &t) {
-      value=sig->getSignal(t)(idx);
+    const double& getValue(const double &) {
+      value=sig->evalSignal()(idx);
       return value;
     }
   protected:
@@ -237,8 +237,8 @@ class ExternSignalSinkOutput : public Variable {
       Variable(mbsimPathToFMIName(sig_->getPath())+"["+boost::lexical_cast<std::string>(idx_)+"]",
         "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
-    const double& getValue(const double &t) {
-      value=sig->getSignal(t)(idx);
+    const double& getValue(const double &) {
+      value=sig->evalSignal()(idx);
       return value;
     }
   protected:
