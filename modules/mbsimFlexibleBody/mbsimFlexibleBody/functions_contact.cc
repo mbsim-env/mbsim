@@ -28,9 +28,9 @@ namespace MBSimFlexibleBody {
 
   double FuncPairCircleNurbsDisk2s::operator()(const double &alpha) {
     //Parameters of the AWK of the nurbs disk and the circle
-            SqrMat3 AWK_disk   = nurbsdisk->getOrientation(t);
-            Vec3 r_disk   = nurbsdisk->getPosition(t);
-            SqrMat3 AWK_circle = circle->getFrame()->getOrientation(t);
+            SqrMat3 AWK_disk   = nurbsdisk->evalOrientation();
+            Vec3 r_disk   = nurbsdisk->evalPosition();
+            SqrMat3 AWK_circle = circle->getFrame()->evalOrientation();
     
             //Point on the Circle
             Vec3 WP_circle(INIT,0.);  //world-coordinates of the point on the circle
@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
     
             //compute radial and azimuthal nurbsdisk-coordinates out of alpha (saved in the LagrangeParameterPosition)
 //            MBSim::ContourPointData cp_nurbsdisk;
-            Vec2 zeta = nurbsdisk->transformCW(t, AWK_disk.T() * (WP_circle - r_disk) )(0,1); // position of the point in the cylinder-coordinates of the disk
+            Vec2 zeta = nurbsdisk->transformCW(AWK_disk.T() * (WP_circle - r_disk) )(0,1); // position of the point in the cylinder-coordinates of the disk
     
             //compute the derivates of the radial and the azimuthal coordinates with respect to alpha
             SqrMat A_inv(3,EYE);
@@ -57,8 +57,8 @@ namespace MBSimFlexibleBody {
             Vec drphidalpha = A_inv * AWK_disk.T()* circle_tangent; // AWK_disk * A_inv * trans(AWK_disk)* circle_tangent CHANGED
     
             //compution of the single elements in the function
-            Vec nurbs_radial_tangent    = nurbsdisk->getWu(t,zeta);
-            Vec nurbs_azimuthal_tangent = nurbsdisk->getWv(t,zeta);
+            Vec nurbs_radial_tangent    = nurbsdisk->getWu(zeta);
+            Vec nurbs_azimuthal_tangent = nurbsdisk->getWv(zeta);
     
             return AWK_disk.col(2).T() * (circle_tangent - (nurbs_radial_tangent *  drphidalpha(0)+ nurbs_azimuthal_tangent * drphidalpha(1)));
   }
@@ -68,11 +68,11 @@ namespace MBSimFlexibleBody {
     Vec WP_circle(3,INIT,0.);
     WP_circle(0) = cos(alpha);
     WP_circle(1) = sin(alpha);
-    WP_circle = circle->getFrame()->getPosition(t) + circle->getRadius() * circle->getFrame()->getOrientation(t) * WP_circle;
+    WP_circle = circle->getFrame()->evalPosition() + circle->getRadius() * circle->getFrame()->evalOrientation() * WP_circle;
 
     //get the position on the nurbsdisk
-    Vec2 zeta = nurbsdisk->transformCW(t, nurbsdisk->getOrientation(t).T()*(WP_circle - nurbsdisk->getPosition(t)))(0,1); // position of the point in the cylinder-coordinates of the disk
-    Vec WP_nurbsdisk = nurbsdisk->getPosition(t,zeta);
+    Vec2 zeta = nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(WP_circle - nurbsdisk->evalPosition()))(0,1); // position of the point in the cylinder-coordinates of the disk
+    Vec WP_nurbsdisk = nurbsdisk->getPosition(zeta);
 
     return WP_circle - WP_nurbsdisk;
   }

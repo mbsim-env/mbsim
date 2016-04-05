@@ -25,21 +25,21 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  Vec3 NeutralNurbsLocalPosition1s::getLocalPosition(double t, double s){
-//    if(updCurve) computeCurve(t,true);
+  Vec3 NeutralNurbsLocalPosition1s::getLocalPosition(double s){
+//    if(updCurve) computeCurve(true);
     return curve.pointAt(s);
   }
 
-  void NeutralNurbsLocalPosition1s::update(double t, ContourFrame *frame) {
+  void NeutralNurbsLocalPosition1s::update(ContourFrame *frame) {
     throw;
-//    if(updCurve) computeCurve(t,true);
+//    if(updCurve) computeCurve(true);
 //    frame->setLocalPosition(curve.pointAt(frame->getEta()));
   }
 
-  void NeutralNurbsLocalPosition1s::buildNodelist(double t){
+  void NeutralNurbsLocalPosition1s::buildNodelist(){
     Vec3 r;
     for (int i = 0; i < nodes.size(); i++) {
-      r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getLocalPosition(t,nodes(i));
+      r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getLocalPosition(nodes(i));
       Nodelist.set(i, trans(r));
     }
     cout << "neutralLocalPosition"<< Nodelist << endl << endl;

@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
     func= new FuncPairContour1sPoint(point,cylinder);
   }
 
-  void ContactKinematicsPointCylinderFlexible::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsPointCylinderFlexible::updateg(double &g, ContourPointData *cpData, int index) {
     throw;
 //
 //    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());

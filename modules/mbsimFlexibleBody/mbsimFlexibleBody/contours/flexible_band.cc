@@ -76,12 +76,12 @@ namespace MBSimFlexibleBody {
     ARK = BasicRotAIKx(al);
   }
 
-  void FlexibleBand::updatePositions(double t, double s) {
+  void FlexibleBand::updatePositions(double s) {
     static Vec3 Kt("[0;0;1]");
     FixedContourFrame P;
     P.setContourOfReference(contour);
     P.setEta(s);
-    Ws = P.getOrientation(t).col(1);
+    Ws = P.evalOrientation().col(1);
     Wt = P.getOrientation()*(ARK*Kt);
     WrOP = P.getPosition() + P.getOrientation()*RrRP;
     sOld = s;
@@ -92,26 +92,26 @@ namespace MBSimFlexibleBody {
     sOld = -1e12;
   }
 
-  void FlexibleBand::plot(double t, double dt) {
+  void FlexibleBand::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSpineExtrusion) {
         vector<double> data;
-        data.push_back(t);
+        data.push_back(getTime());
         double L = getEtaNodes()[getEtaNodes().size()-1];
         double ds = static_cast<FlexibleBody1s*>(parent)->getOpenStructure() ? L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-1) : L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-2);
         for(int i=0; i<openMBVSpineExtrusion->getNumberOfSpinePoints(); i++) {
-          Vec3 pos = getPosition(t,ds*i);
+          Vec3 pos = getPosition(ds*i);
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
-          data.push_back(static_cast<FlexibleBody1s*>(parent)->getAngles(t,ds*i)(0)); // local twist
+          data.push_back(static_cast<FlexibleBody1s*>(parent)->getAngles(ds*i)(0)); // local twist
         }
         openMBVSpineExtrusion->append(data);
       }
 #endif
     }
-    Contour1s::plot(t,dt);
+    Contour1s::plot();
   }
 
 }

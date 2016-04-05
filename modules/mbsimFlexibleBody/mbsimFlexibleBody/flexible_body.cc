@@ -52,9 +52,9 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody::updateh(double t, int k) {
+  void FlexibleBody::updateh(int k) {
     for (int i = 0; i < (int) discretization.size(); i++)
-      discretization[i]->computeh(getqElement(t,i), getuElement(t,i)); // compute attributes of finite element
+      discretization[i]->computeh(getqElement(i), getuElement(i)); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalVectorContribution(i, discretization[i]->geth(), h[k]); // assemble
 
@@ -63,15 +63,15 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody::updateM(double t, int k) {
+  void FlexibleBody::updateM(int k) {
     for (int i = 0; i < (int) discretization.size(); i++)
-      discretization[i]->computeM(getqElement(t,i)); // compute attributes of finite element
+      discretization[i]->computeM(getqElement(i)); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getM(), M[k]); // assemble
   }
 
-  void FlexibleBody::updatedhdz(double t) {
-    updateh(t);
+  void FlexibleBody::updatedhdz() {
+    updateh();
     for (int i = 0; i < (int) discretization.size(); i++)
       discretization[i]->computedhdz(qElement[i], uElement[i]); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
@@ -80,29 +80,29 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
-  void FlexibleBody::updatePositions(double t, NodeFrame* frame) {
+  void FlexibleBody::updatePositions(NodeFrame* frame) {
     THROW_MBSIMERROR("(FlexibleBody::updatePositions): Not implemented.");
   }
 
-  void FlexibleBody::updateVelocities(double t, NodeFrame* frame) {
+  void FlexibleBody::updateVelocities(NodeFrame* frame) {
     THROW_MBSIMERROR("(FlexibleBody::updateVelocities): Not implemented.");
   }
 
-  void FlexibleBody::updateAccelerations(double t, NodeFrame* frame) {
+  void FlexibleBody::updateAccelerations(NodeFrame* frame) {
     THROW_MBSIMERROR("(FlexibleBody::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody::updateJacobians(double t, NodeFrame* frame, int j) {
+  void FlexibleBody::updateJacobians(NodeFrame* frame, int j) {
     THROW_MBSIMERROR("(FlexibleBody::updateJacobians): Not implemented.");
   }
 
-  void FlexibleBody::updateGyroscopicAccelerations(double t, NodeFrame* frame) {
+  void FlexibleBody::updateGyroscopicAccelerations(NodeFrame* frame) {
     THROW_MBSIMERROR("(FlexibleBody::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody::plot(double t, double dt) {
+  void FlexibleBody::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
-      Body::plot(t, dt);
+      Body::plot();
     }
   }
 
@@ -122,18 +122,18 @@ namespace MBSimFlexibleBody {
       Body::init(stage);
   }
 
-  double FlexibleBody::computeKineticEnergy(double t) {
+  double FlexibleBody::computeKineticEnergy() {
     double T = 0.;
     for (unsigned int i = 0; i < discretization.size(); i++) {
-      T += discretization[i]->computeKineticEnergy(getqElement(t,i), getuElement(t,i));
+      T += discretization[i]->computeKineticEnergy(getqElement(i), getuElement(i));
     }
     return T;
   }
 
-  double FlexibleBody::computePotentialEnergy(double t) {
+  double FlexibleBody::computePotentialEnergy() {
     double V = 0.;
     for (unsigned int i = 0; i < discretization.size(); i++) {
-      V += discretization[i]->computeElasticEnergy(getqElement(t,i)) + discretization[i]->computeGravitationalEnergy(getqElement(t,i));
+      V += discretization[i]->computeElasticEnergy(getqElement(i)) + discretization[i]->computeGravitationalEnergy(getqElement(i));
     }
     return V;
   }

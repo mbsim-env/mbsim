@@ -47,7 +47,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21Cosserat::BuildElements(double t) {
+  void FlexibleBody1s21Cosserat::BuildElements() {
     if (PODreduced) {
       qFull << U * q;
       uFull << U * u;
@@ -145,42 +145,42 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21Cosserat::updatePositions(double t, Frame1s *frame) {
+  void FlexibleBody1s21Cosserat::updatePositions(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updatePositions): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updateVelocities(double t, Frame1s *frame) {
+  void FlexibleBody1s21Cosserat::updateVelocities(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateVelocities): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updateAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s21Cosserat::updateAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updateJacobians(double t, Frame1s *frame, int j) {
+  void FlexibleBody1s21Cosserat::updateJacobians(Frame1s *frame, int j) {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateJacobians): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updatePositions(double t, NodeFrame *frame) {
+  void FlexibleBody1s21Cosserat::updatePositions(NodeFrame *frame) {
     int node = frame->getNodeNumber();
     /* 2D -> 3D mapping */
     Vec qTmpNODE(3, INIT, 0.);
-    qTmpNODE(0, 1) = getqFull(t)(3 * node + 0, 3 * node + 1);
+    qTmpNODE(0, 1) = evalqFull()(3 * node + 0, 3 * node + 1);
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
 
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * qTmpNODE);
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * qTmpNODE);
 
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(qTmpANGLE));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(qTmpANGLE));
     frame->getOrientation(false).set(2, R->getOrientation() * angle->computeb(qTmpANGLE));
   }
 
-  void FlexibleBody1s21Cosserat::updateVelocities(double t, NodeFrame *frame) {
+  void FlexibleBody1s21Cosserat::updateVelocities(NodeFrame *frame) {
     int node = frame->getNodeNumber();
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
@@ -189,31 +189,31 @@ namespace MBSimFlexibleBody {
     Vec uTmpANGLE(3, INIT, 0.);
     uTmpANGLE(2) = uFull(3 * node + 2);
 
-    frame->setVelocity(R->getOrientation(t) * uTmp);
-    frame->setAngularVelocity(R->getOrientation(t) * angle->computeOmega(qTmpANGLE, uTmpANGLE));
+    frame->setVelocity(R->evalOrientation() * uTmp);
+    frame->setAngularVelocity(R->evalOrientation() * angle->computeOmega(qTmpANGLE, uTmpANGLE));
  }
 
-  void FlexibleBody1s21Cosserat::updateAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s21Cosserat::updateAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updateJacobians(double t, NodeFrame *frame, int j) {
+  void FlexibleBody1s21Cosserat::updateJacobians(NodeFrame *frame, int j) {
     int node = frame->getNodeNumber();
     /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
-    Mat3xV Jacobian_trans(getqFull(t).size(), INIT, 0.);
+    Mat3xV Jacobian_trans(evalqFull().size(), INIT, 0.);
     Jacobian_trans(0, 3 * node) = 1;
     Jacobian_trans(1, 3 * node + 1) = 1;
 
-    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans, j);
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian_trans, j);
 
     /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
-    Mat3xV Jacobian_rot(getqFull(t).size(), INIT, 0.);
+    Mat3xV Jacobian_rot(evalqFull().size(), INIT, 0.);
     Jacobian_rot(2, 3 * node + 2) = 1;
 
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot, j);
   }
 
-  void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -284,9 +284,9 @@ namespace MBSimFlexibleBody {
     //curve->initContourFromBody(stage);
   }
 
-  double FlexibleBody1s21Cosserat::computePotentialEnergy(double t) {
+  double FlexibleBody1s21Cosserat::computePotentialEnergy() {
     /* translational elements */
-    double V = FlexibleBody1sCosserat::computePotentialEnergy(t);
+    double V = FlexibleBody1sCosserat::computePotentialEnergy();
 
     /* rotational elements */
     for (unsigned int i = 0; i < rotationDiscretization.size(); i++) {
@@ -296,18 +296,18 @@ namespace MBSimFlexibleBody {
     return V;
   }
 
-  void FlexibleBody1s21Cosserat::updateh(double t, int k) {
+  void FlexibleBody1s21Cosserat::updateh(int k) {
     /* translational elements */
     hFull.init(0); //TODO: avoid this as values are overwritten in GlobalVectorContribution anyway?!
     for (int i = 0; i < (int) discretization.size(); i++)
-      discretization[i]->computeh(getqElement(t,i), getuElement(t,i)); // compute attributes of finite element
+      discretization[i]->computeh(getqElement(i), getuElement(i)); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++) {
       GlobalVectorContribution(i, discretization[i]->geth(), hFull); // assemble
     }
 
     /* rotational elements */
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
-      rotationDiscretization[i]->computeh(getqRotationElement(t,i), getuRotationElement(t,i)); // compute attributes of finite element
+      rotationDiscretization[i]->computeh(evalqRotationElement(i), evaluRotationElement(i)); // compute attributes of finite element
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
       GlobalVectorContributionRotation(i, rotationDiscretization[i]->geth(), hFull); // assemble
 
@@ -363,26 +363,26 @@ namespace MBSimFlexibleBody {
 
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s21Cosserat::getPositions(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s21Cosserat::getPositions(double sGlobal) {
     fmatvec::Vector<Fixed<6>, double> temp(NONINIT);
     Vec2 zeta;
     zeta(0) = sGlobal;
     FixedContourFrame P("P",zeta);
 
-    temp.set(Index(0,2),P.getPosition(t));
-    temp.set(Index(3,5),computeAngles(sGlobal, qFull(t)));
+    temp.set(Index(0,2),P.evalPosition());
+    temp.set(Index(3,5),computeAngles(sGlobal, evalqFull()));
 
 
     return temp;
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s21Cosserat::getVelocities(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s21Cosserat::getVelocities(double sGlobal) {
     fmatvec::Vector<Fixed<6>, double> temp(NONINIT);
     Vec2 zeta;
     zeta(0) = sGlobal;
     FixedContourFrame P("P",zeta);
 
-    temp.set(Index(0,2),P.getVelocity(t));
+    temp.set(Index(0,2),P.evalVelocity());
     temp.set(Index(3,5),P.getAngularVelocity());
 
     return temp;

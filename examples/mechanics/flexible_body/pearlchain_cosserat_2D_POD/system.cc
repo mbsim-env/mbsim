@@ -176,11 +176,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
           zeta(0) = xL;
           FixedContourFrame P("P",zeta,cont);
           P.setParent(rodInfo);
-          Vec3 r = P.getPosition(0.);
+          Vec3 r = P.evalPosition();
           q0(0) = r(0);
           q0(1) = r(1);
 
-          SqrMat3 A = P.getOrientation(0.);
+          SqrMat3 A = P.evalOrientation();
           q0(2) = -AIK2Cardan(A)(2) + 0.5 * M_PI;
           balls[i]->setInitialGeneralizedPosition(q0);
 	}

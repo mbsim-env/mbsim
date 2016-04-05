@@ -154,11 +154,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //  cp.getLagrangeParameterPosition()(0) = xL;
 
   //  rodInfo->updateKinematicsForFrame(cp,Frame::position_cosy);
-    Vec3 r = rodInfo->getPosition(0,xL);
+    Vec3 r = rodInfo->getPosition(xL);
     q0(0) = r(0);
     q0(1) = r(1);
 
-    SqrMat3 A = rodInfo->getOrientation(0,xL);
+    SqrMat3 A = rodInfo->getOrientation(xL);
     q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
     balls[i]->setInitialGeneralizedPosition(q0);
   }

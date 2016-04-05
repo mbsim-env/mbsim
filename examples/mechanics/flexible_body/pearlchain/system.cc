@@ -47,21 +47,22 @@ void Perlchain::initialize() {
   }
 }
 
-void Perlchain::updateG(double t, int j) {
-  const int nDofs = getLLM(t,j).cols();
-  const int nLa = getW(t,j).cols();
+void Perlchain::updateG() {
+  int j=0;
+  const int nDofs = evalLLM(j).cols();
+  const int nLa = evalW(j).cols();
   if (0) {
-    DynamicSystemSolver::updateG(t, j);
+    DynamicSystemSolver::updateG();
   }
   else if (1) {
     cs *cs_L_LLM, *cs_Wj;
 
     int n = LLM[j].cols();
 
-//      cs_L_LLM = compressLLM_LToCsparse_direct(t, j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
+//      cs_L_LLM = compressLLM_LToCsparse_direct(j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
 //      cs_Wj = compressWToCsparse_direct(j); // compress the W into compressed column by constructing the three arrays directly
-    cs_L_LLM = compressLLM_LToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
-    cs_Wj = compressWToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
+    cs_L_LLM = compressLLM_LToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
+    cs_Wj = compressWToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
 
     int * xi = (int *) cs_malloc(2 * nDofs, sizeof(int));
     double * yy = (double*) calloc(nLa * nDofs, sizeof(double));
@@ -113,11 +114,11 @@ void Perlchain::updateG(double t, int j) {
     int directCompress = 0;
     // Remark: The compression process is not the one that takes time!
     if (directCompress == 1) {
-      cs_L_LLM = compressLLM_LToCsparse_direct(t, j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
+      cs_L_LLM = compressLLM_LToCsparse_direct(j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
       cs_Wj = compressWToCsparse_direct(j); // compress the W into compressed column by constructing the three arrays directly
     }
     else {
-      cs_L_LLM = compressLLM_LToCsparse(t, j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
+      cs_L_LLM = compressLLM_LToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
       cs_Wj = compressWToCsparse(j); // transform into the triplet form first and then using cs_triplet (const cs *T) to compress
     }
 
@@ -206,7 +207,7 @@ void Perlchain::updateG(double t, int j) {
     if (compare) {
       double t_cs = sw.stop(true);
       sw.start();
-      SqrMat Greference(W[j].T() * slvLLFac(LLM[j], getV(t,j)));
+      SqrMat Greference(W[j].T() * slvLLFac(LLM[j], evalV(j)));
       double t_ref = sw.stop(true);
       cout << "t_cs = " << t_cs << " s   | t_ref =" << t_ref << "s   | dt = " << (t_ref - t_cs) / t_ref * 100 << " %" << endl;
 
@@ -272,7 +273,7 @@ void Perlchain::updateG(double t, int j) {
   }
 }
 
-cs * Perlchain::compressWToCsparse(double t, int j) {
+cs * Perlchain::compressWToCsparse(int j) {
 
   int m, n, nzMax; // row, column, nz;//, I1;
   cs *C;
@@ -348,7 +349,7 @@ cs * Perlchain::compressWToCsparse(double t, int j) {
   return cs_Wj;
 }
 
-cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
+cs * Perlchain::compressLLM_LToCsparse(int j) {
 
   int n, nz;
   cs *LLM_L_csTriplet;
@@ -376,7 +377,7 @@ cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
     // this one gives appropriate memory size as needed. nz is only calculate once, but has branches.
     //this one can be still simplified, is j always equto 0
     static int nz0, nz1;
-    if (t < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
+    if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
         nz0 = countElementsLT(LLM[j]) + 50;
       else if (j == 1)
@@ -437,7 +438,7 @@ cs * Perlchain::compressLLM_LToCsparse(double t, int j) {
 
 }
 
-cs * Perlchain::compressWToCsparse_direct(double t, int j) {
+cs * Perlchain::compressWToCsparse_direct(int j) {
 
   int m, n, nz, *Cp, *Ci, counter;
   ;
@@ -508,7 +509,7 @@ cs * Perlchain::compressWToCsparse_direct(double t, int j) {
 
 }
 
-cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
+cs * Perlchain::compressLLM_LToCsparse_direct(int j) {
 
   int n, nzMax, *Cp, *Ci, counter;
   ;
@@ -536,7 +537,7 @@ cs * Perlchain::compressLLM_LToCsparse_direct(double t, int j) {
     // this one gives appropriate memory size as needed. nz is only calculate once, but has branches.
     //this one can be still simplified, is j always equto 0
     static int nz0, nz1;
-    if (t < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
+    if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
         nz0 = countElementsLT(LLM[j]) + 50;
       else if (j == 1)
@@ -735,11 +736,11 @@ Perlchain::Perlchain(const string &projectName) :
     Vec q0(3, INIT, 0.);
     double xL = fmod(i * rodInfo->getLength() / balls.size() + rodInfo->getLength() * 0.25, rodInfo->getLength());
 
-    Vec3 r = rodInfo->getPosition(0,xL);
+    Vec3 r = rodInfo->getPosition(xL);
     q0(0) = r(0);
     q0(1) = r(1);
 
-    SqrMat3 A = rodInfo->getOrientation(0,xL);
+    SqrMat3 A = rodInfo->getOrientation(xL);
      cout <<  fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI) << endl;
     q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
     balls[i]->setInitialGeneralizedPosition(q0);

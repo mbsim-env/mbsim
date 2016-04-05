@@ -65,21 +65,21 @@ namespace MBSimFlexibleBody {
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARK; }
 
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta) { return getPosition(t,zeta(0)); }
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta(0)); }
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta(0)); }
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta) { return getPosition(zeta(0)); }
+      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta) { return getWs(zeta(0)); }
+      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta) { return getWt(zeta(0)); }
+      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta) { return getWs(zeta); }
+      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta) { return getWt(zeta); }
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1] or zeta(1) < -0.5*width or zeta(1) > 0.5*width; }
 
-      void updatePositions(double t, double s);
+      void updatePositions(double s);
 
-      fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return WrOP; }
-      fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Ws; }
-      fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Wt; }
+      fmatvec::Vec3 getPosition(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return WrOP; }
+      fmatvec::Vec3 getWs(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Ws; }
+      fmatvec::Vec3 getWt(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Wt; }
 
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
 
       void setContourOfReference(Contour1s *contour_) { contour = contour_; }
 

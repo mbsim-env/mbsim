@@ -41,7 +41,7 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s(const std::string &name, bool openStructure);
 
       virtual void init(InitStage stage);
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
 
       void setLength(double L_) { L = L_; }
       double getLength() const { return L; }
@@ -51,15 +51,15 @@ namespace MBSimFlexibleBody {
       void addFrame(Frame1s *frame);
       using FlexibleBodyContinuum<double>::addFrame;
 
-      virtual void updatePositions(double t, Frame1s* frame);
-      virtual void updateVelocities(double t, Frame1s* frame);
-      virtual void updateAccelerations(double t, Frame1s* frame);
-      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+      virtual void updatePositions(Frame1s* frame);
+      virtual void updateVelocities(Frame1s* frame);
+      virtual void updateAccelerations(Frame1s* frame);
+      virtual void updateJacobians(Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(Frame1s* frame);
 
-      virtual fmatvec::Vec3 getPosition(double t, double s);
-      virtual fmatvec::SqrMat3 getOrientation(double t, double s);
-      virtual fmatvec::Vec3 getAngles(double t, double s) { return fmatvec::Vec3(); }
+      virtual fmatvec::Vec3 getPosition(double s);
+      virtual fmatvec::SqrMat3 getOrientation(double s);
+      virtual fmatvec::Vec3 getAngles(double s) { return fmatvec::Vec3(); }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }

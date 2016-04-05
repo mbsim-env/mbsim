@@ -70,40 +70,40 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody1s21Cosserat();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements(double t);
-      const fmatvec::Vec& getqFull(double t) { if(updEle) BuildElements(t); return qFull; }
-      const fmatvec::Vec& getuFull(double t) { if(updEle) BuildElements(t); return uFull; }
+      virtual void BuildElements();
+      const fmatvec::Vec& evalqFull() { if(updEle) BuildElements(); return qFull; }
+      const fmatvec::Vec& evaluFull() { if(updEle) BuildElements(); return uFull; }
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
       virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
 
-      virtual void updatePositions(double t, Frame1s* frame);
-      virtual void updateVelocities(double t, Frame1s* frame);
-      virtual void updateAccelerations(double t, Frame1s* frame);
-      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+      virtual void updatePositions(Frame1s* frame);
+      virtual void updateVelocities(Frame1s* frame);
+      virtual void updateAccelerations(Frame1s* frame);
+      virtual void updateJacobians(Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(Frame1s* frame);
 
-      virtual void updatePositions(double t, NodeFrame* frame);
-      virtual void updateVelocities(double t, NodeFrame* frame);
-      virtual void updateAccelerations(double t, NodeFrame* frame);
-      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+      virtual void updatePositions(NodeFrame* frame);
+      virtual void updateVelocities(NodeFrame* frame);
+      virtual void updateAccelerations(NodeFrame* frame);
+      virtual void updateJacobians(NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
 
-//      virtual fmatvec::Vec3 getAngles(double t, int i);
-//      virtual fmatvec::Vec3 getDerivativeOfAngles(double t, int i);
+//      virtual fmatvec::Vec3 getAngles(int i);
+//      virtual fmatvec::Vec3 getDerivativeOfAngles(int i);
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual double computePotentialEnergy(double t);
-      virtual void updateM(double t, int k = 0);
-      virtual void updateLLM(double t, int i = 0);
-//      virtual void updatedu(double t, double dt);
+      virtual double computePotentialEnergy();
+      virtual void updateM(int k = 0);
+      virtual void updateLLM(int i = 0);
+//      virtual void updatedu();
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t, int i = 0);
+      virtual void updateh(int i = 0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBody1s21Cosserat"; }
@@ -149,13 +149,13 @@ namespace MBSimFlexibleBody {
        * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(double t, double x);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getPositions(double x);
 
       /**
        * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(double t, double x);
+      fmatvec::Vector<fmatvec::Fixed<6>, double> getVelocities(double x);
 
       /**
        * \brief compute angles at Lagrangian coordinate in local FE coordinates
@@ -261,11 +261,11 @@ namespace MBSimFlexibleBody {
   }
   ;
 
-  inline void FlexibleBody1s21Cosserat::updateM(double t, int k) {
+  inline void FlexibleBody1s21Cosserat::updateM(int k) {
     M[k] << MConst;
   }
 
-  inline void FlexibleBody1s21Cosserat::updateLLM(double t, int k) {
+  inline void FlexibleBody1s21Cosserat::updateLLM(int k) {
     LLM[k] << LLMConst;
   }
 

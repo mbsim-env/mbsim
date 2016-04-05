@@ -129,28 +129,28 @@ namespace MBSimFlexibleBody {
   //  addFrame("COG", s);
   }
 
-  void FlexibleBody2s13::updateM(double t, int j) {
+  void FlexibleBody2s13::updateM(int j) {
     M[j] = MConst;
   }
 
-  void FlexibleBody2s13::updateh(double t, int j) {
+  void FlexibleBody2s13::updateh(int j) {
     h[j] = -K * q;
   }
 
-  void FlexibleBody2s13::updatedhdz(double t) {
-    updateh(t);
+  void FlexibleBody2s13::updatedhdz() {
+    updateh();
     for(int i = 0; i < dhdq.cols(); i++)
       for(int j = 0; j < dhdq.rows(); j++)
         dhdq(i, j) = -K(i, j);
   }
 
-  void FlexibleBody2s13::plot(double t, double dt) {
+  void FlexibleBody2s13::plot() {
     if(getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #ifdef HAVE_NURBS
 //      if(getPlotFeature(openMBV) == enabled && openMBVBody) {
 //        vector<double> data;
-//        data.push_back(t); //time
+//        data.push_back(getTime()); //time
 //
 //        ContourPointData cp;
 //
@@ -213,7 +213,7 @@ namespace MBSimFlexibleBody {
 #endif
 #endif
     }
-    FlexibleBody2s::plot(t, dt);
+    FlexibleBody2s::plot();
   }
 
   void FlexibleBody2s13::setNumberElements(int nr_, int nj_) {
@@ -254,7 +254,7 @@ namespace MBSimFlexibleBody {
     updAG = true;
   }
 
-  void FlexibleBody2s13::updateExt(double t) {
+  void FlexibleBody2s13::updateExt() {
     qext = Jext * q;
     uext = Jext * u;
     updExt = false;

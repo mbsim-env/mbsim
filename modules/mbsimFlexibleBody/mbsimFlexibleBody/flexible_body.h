@@ -64,27 +64,27 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updatedq(double t, double dt) { qd = u*dt; }
-      virtual void updateqd(double t) { qd = u; }
-      virtual void updateh(double t, int k=0);
-      virtual void updateM(double t, int k=0);
-      virtual void updatedhdz(double t);
-      virtual void updatePositions(double t, NodeFrame* frame);
-      virtual void updateVelocities(double t, NodeFrame* frame);
-      virtual void updateAccelerations(double t, NodeFrame* frame);
-      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+      virtual void updatedq() { qd = u*getStepSize(); }
+      virtual void updateqd() { qd = u; }
+      virtual void updateh(int k=0);
+      virtual void updateM(int k=0);
+      virtual void updatedhdz();
+      virtual void updatePositions(NodeFrame* frame);
+      virtual void updateVelocities(NodeFrame* frame);
+      virtual void updateAccelerations(NodeFrame* frame);
+      virtual void updateJacobians(NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
       virtual std::string getType() const { return "FlexibleBody"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual double computeKineticEnergy(double t);
-      virtual double computePotentialEnergy(double t);
+      virtual double computeKineticEnergy();
+      virtual double computePotentialEnergy();
       virtual void setFrameOfReference(MBSim::Frame *frame);
       virtual void setq0(fmatvec::Vec q0_) { if(q0_.size()) MBSim::Body::setInitialGeneralizedPosition(q0_); q<<q0; }
       virtual void setu0(fmatvec::Vec u0_) { if(u0_.size()) MBSim::Body::setInitialGeneralizedVelocity(u0_); u<<u0; }
@@ -94,14 +94,14 @@ namespace MBSimFlexibleBody {
       /**
        * \brief references finite element coordinates to assembled coordinates
        */
-      virtual void BuildElements(double t) = 0;
+      virtual void BuildElements() = 0;
 
-      const fmatvec::Vec& getqElement(double t, int i) { if(updEle) BuildElements(t); return qElement[i]; }
+      const fmatvec::Vec& getqElement(int i) { if(updEle) BuildElements(); return qElement[i]; }
 
-      const fmatvec::Vec& getuElement(double t, int i) { if(updEle) BuildElements(t); return uElement[i]; }
+      const fmatvec::Vec& getuElement(int i) { if(updEle) BuildElements(); return uElement[i]; }
 
-      virtual fmatvec::Vec3 getAngles(double t, int i) { return fmatvec::Vec3(); }
-      virtual fmatvec::Vec3 getDerivativeOfAngles(double t, int i) { return fmatvec::Vec3(); }
+      virtual fmatvec::Vec3 getAngles(int i) { return fmatvec::Vec3(); }
+      virtual fmatvec::Vec3 getDerivativeOfAngles(int i) { return fmatvec::Vec3(); }
 
       /**
        * \brief insert 'local' information in global vectors

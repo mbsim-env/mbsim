@@ -20,17 +20,17 @@ class Perlchain : public MBSim::DynamicSystemSolver {
      * \brief compress the W matrix into csparse compressed-column form
      * \param time
      */
-    cs * compressWToCsparse(double t, int j = 0);
-    cs * compressWToCsparse_direct(double t, int j = 0);
+    cs * compressWToCsparse(int j = 0);
+    cs * compressWToCsparse_direct(int j = 0);
 
     /**
      * \brief compress the W matrix into csparse compressed-column form
      * \param time
      */
-    cs * compressLLM_LToCsparse(double t, int j = 0);
-    cs * compressLLM_LToCsparse_direct(double t, int j = 0);
+    cs * compressLLM_LToCsparse(int j = 0);
+    cs * compressLLM_LToCsparse_direct(int j = 0);
 
-    virtual void updateG(double t, int i = 0);
+    virtual void updateG();
 
   private:
     /** flexible ring */

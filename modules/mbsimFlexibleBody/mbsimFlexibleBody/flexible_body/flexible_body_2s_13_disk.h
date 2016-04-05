@@ -51,25 +51,25 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13Disk() { }
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements(double t);
+      virtual void BuildElements();
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
 
-      fmatvec::Vec3 getPosition(double t);
-      fmatvec::SqrMat3 getOrientation(double t);
+      fmatvec::Vec3 evalPosition();
+      fmatvec::SqrMat3 evalOrientation();
 
-      virtual void updatePositions(double t, Frame2s* frame);
-      virtual void updateVelocities(double t, Frame2s* frame);
-      virtual void updateAccelerations(double t, Frame2s* frame);
-      virtual void updateJacobians(double t, Frame2s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, Frame2s* frame);
+      virtual void updatePositions(Frame2s* frame);
+      virtual void updateVelocities(Frame2s* frame);
+      virtual void updateAccelerations(Frame2s* frame);
+      virtual void updateJacobians(Frame2s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(Frame2s* frame);
 
-      virtual void updatePositions(double t, NodeFrame* frame);
-      virtual void updateVelocities(double t, NodeFrame* frame);
-      virtual void updateAccelerations(double t, NodeFrame* frame);
-      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+      virtual void updatePositions(NodeFrame* frame);
+      virtual void updateVelocities(NodeFrame* frame);
+      virtual void updateAccelerations(NodeFrame* frame);
+      virtual void updateJacobians(NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
@@ -80,13 +80,13 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
-      virtual fmatvec::Vec transformCW(double t, const fmatvec::Vec& WrPoint);
+      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
       /***************************************************/
 
     protected:
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
       virtual void initMatrices();
-      virtual void updateAG(double t);
+      virtual void updateAG();
       /***************************************************/
 
   };

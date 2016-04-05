@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33Cosserat::BuildElements(double t) {
+  void FlexibleBody1s33Cosserat::BuildElements() {
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
       int j = 6 * i; // start index in entire beam coordinates
@@ -147,30 +147,30 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33Cosserat::updatePositions(double t, Frame1s *frame) {
+  void FlexibleBody1s33Cosserat::updatePositions(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updatePositions): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updateVelocities(double t, Frame1s *frame) {
+  void FlexibleBody1s33Cosserat::updateVelocities(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateVelocities): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updateAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s33Cosserat::updateAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updateJacobians(double t, Frame1s *frame, int j) {
+  void FlexibleBody1s33Cosserat::updateJacobians(Frame1s *frame, int j) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateJacobians): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updateGyroscopicAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s33Cosserat::updateGyroscopicAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updatePositions(double t, NodeFrame *frame) {
+  void FlexibleBody1s33Cosserat::updatePositions(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * q(6 * node + 0, 6 * node + 2));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * q(6 * node + 0, 6 * node + 2));
 
     Vec3 angles = q(6 * node + 3, 6 * node + 5);
 
@@ -178,24 +178,24 @@ namespace MBSimFlexibleBody {
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(angles));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(angles));
     frame->getOrientation(false).set(2, R->getOrientation() * angle->computeb(angles));
-//    frame->setAngles(R->getOrientation(t) * angles);
+//    frame->setAngles(R->evalOrientation() * angles);
   }
 
-  void FlexibleBody1s33Cosserat::updateVelocities(double t, NodeFrame *frame) {
+  void FlexibleBody1s33Cosserat::updateVelocities(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
     Vec3 angles = q(6 * node + 3, 6 * node + 5);
     Vec3 dotAngles = u(6 * node + 3, 6 * node + 5); //TODO
-    frame->setVelocity(R->getOrientation(t) * u(6 * node + 0, 6 * node + 2));
+    frame->setVelocity(R->evalOrientation() * u(6 * node + 0, 6 * node + 2));
     frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(angles, dotAngles));
-//    frame->setDerivativeOfAngles(R->getOrientation(t) * dotAngles);
+//    frame->setDerivativeOfAngles(R->evalOrientation() * dotAngles);
  }
 
-  void FlexibleBody1s33Cosserat::updateAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s33Cosserat::updateAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33Cosserat::updateJacobians(double t, NodeFrame *frame, int j) {
+  void FlexibleBody1s33Cosserat::updateJacobians(NodeFrame *frame, int j) {
 
     //Translational Node
     int node = frame->getNodeNumber();
@@ -203,7 +203,7 @@ namespace MBSimFlexibleBody {
 
     Jacobian_trans.set(Index(0, 2), Index(6 * node, 6 * node + 2), SqrMat(3, EYE)); // translation
 
-    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans, j);
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian_trans, j);
 
     // Rotational Node
     // TODO: Is it necessary to separate in two functions?
@@ -215,16 +215,16 @@ namespace MBSimFlexibleBody {
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot, j);
   }
 
-  void FlexibleBody1s33Cosserat::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s33Cosserat::updateGyroscopicAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  Vec3 FlexibleBody1s33Cosserat::getAngles(double t, int i) {
-    return R->getOrientation(t) * q(6 * i + 3, 6 * i + 5);
+  Vec3 FlexibleBody1s33Cosserat::getAngles(int i) {
+    return R->evalOrientation() * q(6 * i + 3, 6 * i + 5);
   }
 
-  Vec3 FlexibleBody1s33Cosserat::getDerivativeOfAngles(double t, int i) {
-    return R->getOrientation(t) * u(6 * i + 3, 6 * i + 5);
+  Vec3 FlexibleBody1s33Cosserat::getDerivativeOfAngles(int i) {
+    return R->evalOrientation() * u(6 * i + 3, 6 * i + 5);
   }
 
   void FlexibleBody1s33Cosserat::init(InitStage stage) {
@@ -264,21 +264,21 @@ namespace MBSimFlexibleBody {
 //curve->initContourFromBody(stage);
   }
 
-  double FlexibleBody1s33Cosserat::computePotentialEnergy(double t) {
+  double FlexibleBody1s33Cosserat::computePotentialEnergy() {
     /* translational elements */
-    double V = FlexibleBody1sCosserat::computePotentialEnergy(t);
+    double V = FlexibleBody1sCosserat::computePotentialEnergy();
 
     /* rotational elements */
     for (unsigned int i = 0; i < rotationDiscretization.size(); i++) {
-      V += rotationDiscretization[i]->computeElasticEnergy(getqRotationElement(t,i));
+      V += rotationDiscretization[i]->computeElasticEnergy(evalqRotationElement(i));
     }
 
     return V;
   }
 
-  void FlexibleBody1s33Cosserat::updateLLM(double t, int k) {
-//    FlexibleBody1sCosserat::updateLLM(t);
-    getM(t,k); // be sure that M is update to date
+  void FlexibleBody1s33Cosserat::updateLLM(int k) {
+//    FlexibleBody1sCosserat::updateLLM();
+    evalM(k); // be sure that M is update to date
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
       LLM[k](Index(j + 3, j + 5)) = facLL(discretization[i]->getM()(Index(3, 5)));
@@ -320,7 +320,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getPositions(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getPositions(double sGlobal) {
 //    double sLocal;
 //    int currentElement;
 //    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
@@ -335,7 +335,7 @@ namespace MBSimFlexibleBody {
     return temp;
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getVelocities(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33Cosserat::getVelocities(double sGlobal) {
 //    double sLocal;
 //    int currentElement;
 //    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE

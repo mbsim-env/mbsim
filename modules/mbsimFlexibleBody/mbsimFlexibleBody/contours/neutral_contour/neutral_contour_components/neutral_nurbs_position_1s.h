@@ -16,13 +16,13 @@ namespace MBSimFlexibleBody {
     public:
       NeutralNurbsPosition1s(MBSim::Element* parent_, const fmatvec::VecInt & nodes, double nodeOffset_, double uMin_, double uMax_, int degU_, bool openStructure_);
       virtual ~NeutralNurbsPosition1s();
-      fmatvec::Vec3 getPosition(double t, double s);
-      fmatvec::Vec3 getWs(double t, double s);
-      fmatvec::Vec3 getWt(double t, double s);
-      virtual void update(double t, MBSim::ContourFrame *frame);
-      virtual void updatePositionNormal(double t, MBSim::ContourFrame *frame);
-      virtual void updatePositionFirstTangent(double t, MBSim::ContourFrame *frame);
-      virtual void updatePositionSecondTangent(double t, MBSim::ContourFrame *frame);
+      fmatvec::Vec3 getPosition(double s);
+      fmatvec::Vec3 getWs(double s);
+      fmatvec::Vec3 getWt(double s);
+      virtual void update(MBSim::ContourFrame *frame);
+      virtual void updatePositionNormal(MBSim::ContourFrame *frame);
+      virtual void updatePositionFirstTangent(MBSim::ContourFrame *frame);
+      virtual void updatePositionSecondTangent(MBSim::ContourFrame *frame);
       virtual void setBinormalDir(const fmatvec::Vec3 & b) { binormalDir = b / fmatvec::nrm2(b); }
     protected:
       /*!
@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec3 binormalDir;
 
-      virtual void buildNodelist(double t);
+      virtual void buildNodelist();
   };
 
 } /* namespace MBSimFlexibleBody */

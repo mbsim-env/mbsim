@@ -60,7 +60,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveTranslations(double t, bool update) {
+  void NurbsCurve1s::computeCurveTranslations(bool update) {
 
     int nodes = Elements;
     if (openStructure)
@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      Nodelist.set(i, trans(cp.getFrameOfReference().getPosition(t)));
+      Nodelist.set(i, trans(cp.getFrameOfReference().evalPosition()));
     }
 
     if (update)
@@ -84,7 +84,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveVelocities(double t, bool update) {
+  void NurbsCurve1s::computeCurveVelocities(bool update) {
     int nodes = Elements;
     if (openStructure)
       nodes++;
@@ -92,7 +92,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      Nodelist.set(i, trans(cp.getFrameOfReference().getVelocity(t)));
+      Nodelist.set(i, trans(cp.getFrameOfReference().evalVelocity()));
     }
 
     if (update)
@@ -107,7 +107,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveAngularVelocities(double t, bool update) {
+  void NurbsCurve1s::computeCurveAngularVelocities(bool update) {
     int nodes = Elements;
     if (openStructure)
       nodes++;
@@ -115,7 +115,7 @@ namespace MBSimFlexibleBody {
     MatVx3 Nodelist(nodes, NONINIT);
     for (int i = 0; i < nodes; i++) {
       ContourPointData cp(i);
-      Nodelist.set(i, trans(cp.getFrameOfReference().getAngularVelocity(t)));
+      Nodelist.set(i, trans(cp.getFrameOfReference().evalAngularVelocity()));
     }
 
     if (update)
@@ -130,7 +130,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeCurveJacobians(double t, bool translational, bool rot, bool update) {
+  void NurbsCurve1s::computeCurveJacobians(bool translational, bool rot, bool update) {
 //TODO: All the if's should be unnecessary if every interpolation would be capsulated in two routines
     int nodes = Elements;
     if (openStructure)
@@ -142,10 +142,10 @@ namespace MBSimFlexibleBody {
     for (int k = 0; k < qSize; k++) {
       for (int i = 0; i < nodes; i++) {
         if (translational)
-          NodelistTrans.set(i, trans(jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation(t,0).col(k)));
+          NodelistTrans.set(i, trans(jacobiansTrans[i].getFrameOfReference().evalJacobianOfTranslation(0).col(k)));
 
         if (rot)
-          NodelistRot.set(i, trans(jacobiansRot[i].getFrameOfReference().getJacobianOfRotation(t,0).col(k)));
+          NodelistRot.set(i, trans(jacobiansRot[i].getFrameOfReference().evalJacobianOfRotation(0).col(k)));
       }
 
       if (update) {
@@ -167,19 +167,19 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsCurve1s::computeRootFunctionPosition(double t, MBSim::ContourFrame *frame) {
+  void NurbsCurve1s::computeRootFunctionPosition(MBSim::ContourFrame *frame) {
     THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
   }
 
-  void NurbsCurve1s::computeRootFunctionFirstTangent(double t, MBSim::ContourFrame *frame) {
+  void NurbsCurve1s::computeRootFunctionFirstTangent(MBSim::ContourFrame *frame) {
     THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
   }
 
-  void NurbsCurve1s::computeRootFunctionNormal(double t, MBSim::ContourFrame *frame) {
+  void NurbsCurve1s::computeRootFunctionNormal(MBSim::ContourFrame *frame) {
     THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
   }
 
-  void NurbsCurve1s::computeRootFunctionSecondTangent(double t, MBSim::ContourFrame *frame) {
+  void NurbsCurve1s::computeRootFunctionSecondTangent(MBSim::ContourFrame *frame) {
     THROW_MBSIMERROR("(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
   }
 

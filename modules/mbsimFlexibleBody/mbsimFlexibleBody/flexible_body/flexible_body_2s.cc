@@ -40,48 +40,48 @@ namespace MBSimFlexibleBody {
       FlexibleBodyContinuum<Vec2>::init(stage);
   }
 
-  void FlexibleBody2s::plot(double t, double dt) {
+  void FlexibleBody2s::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 //#ifdef HAVE_OPENMBVCPPINTERFACE
 //      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
 //        vector<double> data;
-//        data.push_back(t);
+//        data.push_back(getTime());
 //        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
 //        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
-//          Vec3 pos = getPosition(t,ds*i);
+//          Vec3 pos = getPosition(ds*i);
 //          data.push_back(pos(0)); // global x-position
 //          data.push_back(pos(1)); // global y-position
 //          data.push_back(pos(2)); // global z-position
-//          data.push_back(getLocalTwist(t,ds*i)); // local twist
+//          data.push_back(getLocalTwist(ds*i)); // local twist
 //        }
 //        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
 //      }
 //#endif
     }
-    FlexibleBodyContinuum<Vec2>::plot(t,dt);
+    FlexibleBodyContinuum<Vec2>::plot();
   }
 
   void FlexibleBody2s::addFrame(Frame2s *frame) { 
     Body::addFrame(frame); 
   }
 
-  void FlexibleBody2s::updatePositions(double t, Frame2s *frame) {
+  void FlexibleBody2s::updatePositions(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s::updatePositions): Not implemented.");
   }
 
-  void FlexibleBody2s::updateVelocities(double t, Frame2s *frame) {
+  void FlexibleBody2s::updateVelocities(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s::updateVelocities): Not implemented.");
   }
 
-  void FlexibleBody2s::updateAccelerations(double t, Frame2s *frame) {
+  void FlexibleBody2s::updateAccelerations(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s::updateJacobians(double t, Frame2s *frame, int j) {
+  void FlexibleBody2s::updateJacobians(Frame2s *frame, int j) {
     THROW_MBSIMERROR("(FlexibleBody2s::updateJacobians): Not implemented.");
   }
 
-  void FlexibleBody2s::updateGyroscopicAccelerations(double t, Frame2s *frame) {
+  void FlexibleBody2s::updateGyroscopicAccelerations(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s::updateGyroscopicAccelerations): Not implemented.");
   }
 

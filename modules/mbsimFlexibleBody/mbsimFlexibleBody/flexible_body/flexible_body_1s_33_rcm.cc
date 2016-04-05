@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
   FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), angle(new RevCardan()), Elements(0), l0(0.), E(0.), G(0.), A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), epstD(0.), k0D(0.), epstL(0.), k0L(0.), initialised(false), nGauss(3) {
   }
 
-  void FlexibleBody1s33RCM::BuildElements(double t) {
+  void FlexibleBody1s33RCM::BuildElements() {
     for (int i = 0; i < Elements; i++) {
       int j = 10 * i; // start index in entire beam coordinates
 
@@ -136,33 +136,33 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s33RCM::updatePositions(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,frame->getParameter());
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * X(Range<Fixed<0>,Fixed<2> >()));
+  void FlexibleBody1s33RCM::updatePositions(Frame1s *frame) {
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * X(Range<Fixed<0>,Fixed<2> >()));
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(X(Range<Fixed<3>,Fixed<5> >())));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(X(Range<Fixed<3>,Fixed<5> >())));
     frame->getOrientation(false).set(2, crossProduct(frame->getOrientation(false).col(0), frame->getOrientation(false).col(1)));
   }
 
-  void FlexibleBody1s33RCM::updateVelocities(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,frame->getParameter());
-    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(t,frame->getParameter());
-    frame->setVelocity(R->getOrientation(t) * Xt(Range<Fixed<0>,Fixed<2> >()));
+  void FlexibleBody1s33RCM::updateVelocities(Frame1s *frame) {
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
+    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(frame->getParameter());
+    frame->setVelocity(R->evalOrientation() * Xt(Range<Fixed<0>,Fixed<2> >()));
     frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(X(Range<Fixed<3>,Fixed<5> >()), Xt(Range<Fixed<3>,Fixed<5> >())));
   }
 
-  void FlexibleBody1s33RCM::updateAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s33RCM::updateAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33RCM::updateJacobians(double t, Frame1s *frame, int j) {
+  void FlexibleBody1s33RCM::updateJacobians(Frame1s *frame, int j) {
     Index All(0, 5);
     Mat Jacobian(qSize, 6, INIT, 0.);
 
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement);
-    Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(getqElement(t,currentElement), sLocal); // this local ansatz yields continuous and finite wave propagation
+    Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(getqElement(currentElement), sLocal); // this local ansatz yields continuous and finite wave propagation
 
     if (currentElement < Elements - 1 || openStructure) {
       Jacobian(Index(10 * currentElement, 10 * currentElement + 15), All) = Jtmp;
@@ -172,38 +172,38 @@ namespace MBSimFlexibleBody {
       Jacobian(Index(0, 5), All) = Jtmp(Index(10, 15), All);
     }
 
-    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(Index(0, qSize - 1), Index(3, 5)).T(),j);
   }
 
-  void FlexibleBody1s33RCM::updateGyroscopicAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s33RCM::updateGyroscopicAccelerations(Frame1s *frame) {
 //    THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33RCM::updatePositions(double t, NodeFrame *frame) {
+  void FlexibleBody1s33RCM::updatePositions(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
     const Vec &Phi = q(10 * node + 3, 10 * node + 5);
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * q(10 * node + 0, 10 * node + 2));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * q(10 * node + 0, 10 * node + 2));
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(Phi));
     frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));
   }
 
-  void FlexibleBody1s33RCM::updateVelocities(double t, NodeFrame *frame) {
+  void FlexibleBody1s33RCM::updateVelocities(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
     const Vec &Phi = q(10 * node + 3, 10 * node + 5);
     const Vec &Phit = u(10 * node + 3, 10 * node + 5);
-    frame->setVelocity(R->getOrientation(t) * u(10 * node + 0, 10 * node + 2));
+    frame->setVelocity(R->evalOrientation() * u(10 * node + 0, 10 * node + 2));
     frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(Phi, Phit));
   }
 
-  void FlexibleBody1s33RCM::updateAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s33RCM::updateAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s33RCM::updateJacobians(double time, NodeFrame *frame, int j) {
+  void FlexibleBody1s33RCM::updateJacobians(NodeFrame *frame, int j) {
     Index All(0, 5);
     Index One(0, 2);
     Mat Jacobian(qSize, 6, INIT, 0.);
@@ -222,16 +222,16 @@ namespace MBSimFlexibleBody {
     Jacobian(Index(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(0, 0, 0, 2).T() + n(2) * np(0, 0, 0, 2).T() + b(2) * bp(0, 0, 0, 2).T();
     Jacobian(Index(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();
 
-    frame->setJacobianOfTranslation(R->getOrientation(time) * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(Index(0, qSize - 1), Index(3, 5)).T(),j);
   }
 
-  void FlexibleBody1s33RCM::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s33RCM::updateGyroscopicAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  Vec3 FlexibleBody1s33RCM::getAngles(double t, double s) {
-    return getPositions(t,s)(Range<Fixed<3>,Fixed<5> >());
+  Vec3 FlexibleBody1s33RCM::getAngles(double s) {
+    return getPositions(s)(Range<Fixed<3>,Fixed<5> >());
   }
 
   void FlexibleBody1s33RCM::init(InitStage stage) {
@@ -291,25 +291,25 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getPositions(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getPositions(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getPositions(getqElement(t,currentElement), sLocal);
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getVelocities(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getVelocities(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getVelocities(getqElement(t,currentElement), getuElement(t,currentElement), sLocal);
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
   }
 
-  double FlexibleBody1s33RCM::computePhysicalStrain(double t, const double sGlobal) {
+  double FlexibleBody1s33RCM::computePhysicalStrain(const double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(t,currentElement), getuElement(t,currentElement));
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(currentElement), getuElement(currentElement));
   }
 
   void FlexibleBody1s33RCM::initInfo() {

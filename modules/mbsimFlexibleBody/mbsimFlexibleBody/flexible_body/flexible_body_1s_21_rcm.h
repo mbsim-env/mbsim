@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s21RCM(const std::string &name, bool openStructure);
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements(double t);
+      virtual void BuildElements();
 
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
@@ -65,17 +65,17 @@ namespace MBSimFlexibleBody {
       virtual void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false);
       virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ));
 
-      virtual void updatePositions(double t, Frame1s* frame);
-      virtual void updateVelocities(double t, Frame1s* frame);
-      virtual void updateAccelerations(double t, Frame1s* frame);
-      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+      virtual void updatePositions(Frame1s* frame);
+      virtual void updateVelocities(Frame1s* frame);
+      virtual void updateAccelerations(Frame1s* frame);
+      virtual void updateJacobians(Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(Frame1s* frame);
 
-      virtual void updatePositions(double t, NodeFrame* frame);
-      virtual void updateVelocities(double t, NodeFrame* frame);
-      virtual void updateAccelerations(double t, NodeFrame* frame);
-      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+      virtual void updatePositions(NodeFrame* frame);
+      virtual void updateVelocities(NodeFrame* frame);
+      virtual void updateAccelerations(NodeFrame* frame);
+      virtual void updateJacobians(NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
       /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -83,7 +83,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
       virtual std::string getType() const { return "FlexibleBody1s21RCM"; }
       /***************************************************/
 
@@ -108,18 +108,18 @@ namespace MBSimFlexibleBody {
        * \brief compute positions and angle at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec3 getPositions(double t, double x);
+      fmatvec::Vec3 getPositions(double x);
 
       /**
        * \brief compute velocities and differentiated angles at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec3 getVelocities(double t, double x);
+      fmatvec::Vec3 getVelocities(double x);
 
       /*!
        * \brief computes the phyiscal strain (compare Zander p.71) of the element, defined by the global position
        */
-      double computePhysicalStrain(double t, double sGlobal);
+      double computePhysicalStrain(double sGlobal);
 
       /**
        * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring

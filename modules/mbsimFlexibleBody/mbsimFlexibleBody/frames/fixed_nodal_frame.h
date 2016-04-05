@@ -67,20 +67,20 @@ namespace MBSimFlexibleBody {
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
       const FrameFFR* getFrameOfReference() const { return R; }
 
-      const fmatvec::Vec3& getGlobalRelativePosition(bool check=true) const { assert((not check) or (not updatePos)); return WrRP; }
-      const fmatvec::Mat3xV& getGlobalPhi(bool check=true) const { assert((not check) or (not updatePos)); return WPhi; }
-      const fmatvec::Mat3xV& getGlobalPsi(bool check=true) const { assert((not check) or (not updatePos)); return WPsi; }
+      const fmatvec::Vec3& getGlobalRelativePosition(bool check=true) const { assert((not check) or (not updPos)); return WrRP; }
+      const fmatvec::Mat3xV& getGlobalPhi(bool check=true) const { assert((not check) or (not updPos)); return WPhi; }
+      const fmatvec::Mat3xV& getGlobalPsi(bool check=true) const { assert((not check) or (not updPos)); return WPsi; }
 
-      const fmatvec::Vec3& getGlobalRelativePosition(double t);
-      const fmatvec::Mat3xV& getGlobalPhi(double t);
-      const fmatvec::Mat3xV& getGlobalPsi(double t);
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateAccelerations(double t);
-      void updateJacobians(double t, int j=0);
-      void updateGyroscopicAccelerations(double t);
+      const fmatvec::Vec3& evalGlobalRelativePosition();
+      const fmatvec::Mat3xV& evalGlobalPhi();
+      const fmatvec::Mat3xV& evalGlobalPsi();
+      void updatePositions();
+      void updateVelocities();
+      void updateAccelerations();
+      void updateJacobians(int j=0);
+      void updateGyroscopicAccelerations();
 
-      virtual void plot(double t, double dt = 1); 
+      virtual void plot();
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

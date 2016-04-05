@@ -44,30 +44,30 @@ namespace MBSimFlexibleBody {
        */
       virtual ~FlexibleBodyFFR();
 
-      void updatedq(double t, double dt);
-      void updateqd(double t);
-      void updateT(double t);
-      void updateh(double t, int j=0);
-      void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
-      void updateGeneralizedCoordinates(double t);
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateAccelerations(double t);
-      void updateJacobians(double t);
-      void updateGyroscopicAccelerations(double t);
-      void updatePositions(double t, MBSim::Frame *frame);
-      void updateVelocities(double t, MBSim::Frame *frame);
-      void updateAccelerations(double t, MBSim::Frame *frame);
-      void updateJacobians(double t, MBSim::Frame *frame, int j=0) { (this->*updateJacobians_[j])(t,frame); }
-      void updateGyroscopicAccelerations(double t, MBSim::Frame *frame);
-      void updateJacobians0(double t, MBSim::Frame *frame);
-      void updateJacobians1(double t, MBSim::Frame *frame) { }
-      void updateMb(double t);
-      void updatehb(double t);
-      void updateKJ(double t, int j=0) { (this->*updateKJ_[j])(t); }
-      void updateKJ0(double t);
-      void updateKJ1(double t);
-      void (FlexibleBodyFFR::*updateKJ_[2])(double t);
+      void updatedq();
+      void updateqd();
+      void updateT();
+      void updateh(int j=0);
+      void updateM(int i=0) { (this->*updateM_)(i); }
+      void updateGeneralizedCoordinates();
+      void updatePositions();
+      void updateVelocities();
+      void updateAccelerations();
+      void updateJacobians();
+      void updateGyroscopicAccelerations();
+      void updatePositions(MBSim::Frame *frame);
+      void updateVelocities(MBSim::Frame *frame);
+      void updateAccelerations(MBSim::Frame *frame);
+      void updateJacobians(MBSim::Frame *frame, int j=0) { (this->*updateJacobians_[j])(frame); }
+      void updateGyroscopicAccelerations(MBSim::Frame *frame);
+      void updateJacobians0(MBSim::Frame *frame);
+      void updateJacobians1(MBSim::Frame *frame) { }
+      void updateMb();
+      void updatehb();
+      void updateKJ(int j=0) { (this->*updateKJ_[j])(); }
+      void updateKJ0();
+      void updateKJ1();
+      void (FlexibleBodyFFR::*updateKJ_[2])();
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -77,13 +77,13 @@ namespace MBSimFlexibleBody {
       virtual void updateudRef(const fmatvec::Vec& ref, int i=0);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void updateLLM(double t, int i=0) { (this->*updateLLM_)(t,i); }
+      virtual void updateLLM(int i=0) { (this->*updateLLM_)(i); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBodyFFR"; }
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
       /*****************************************************/
 
       /* GETTER / SETTER */
@@ -259,24 +259,24 @@ namespace MBSimFlexibleBody {
       bool transformCoordinates() const {return fTR!=NULL;}
 
       void resetUpToDate();
-      const fmatvec::Vec& getqRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRel; }
-      const fmatvec::Vec& getuRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRel; }
-      const fmatvec::VecV& getqTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qTRel; }
-      const fmatvec::VecV& getqRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return qRRel; }
-      const fmatvec::VecV& getuTRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uTRel; }
-      const fmatvec::VecV& getuRRel(double t) { if(updGC) updateGeneralizedCoordinates(t); return uRRel; }
-      const fmatvec::Mat& getTRel(double t) { if(updT) updateT(t); return TRel; }
-      const fmatvec::Vec3& getGlobalRelativePosition(double t) { if(updPos) updatePositions(t); return WrPK; }
-      const fmatvec::Vec3& getGlobalRelativeVelocity(double t) { if(updVel) updateVelocities(t); return WvPKrel; }
-      const fmatvec::Vec3& getGlobalRelativeAngularVelocity(double t) { if(updVel) updateVelocities(t); return WomPK; }
-      const fmatvec::Vec3& getPjbT(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbT; }
-      const fmatvec::Vec3& getPjbR(double t) { if(updPjb) updateGyroscopicAccelerations(t); return PjbR; }
-      const fmatvec::Mat3xV& getPJTT(double t) { if(updPJ) updateJacobians(t); return PJTT; }
-      const fmatvec::Mat3xV& getPJRR(double t) { if(updPJ) updateJacobians(t); return PJRR; }
-      const fmatvec::SymMatV& getMb(double t) { if(updMb) updateMb(t); return M_; }
-      const fmatvec::VecV& gethb(double t) { if(updMb) updateMb(t); return h_; }
-      const fmatvec::MatV& getKJ(double t, int j=0) { if(updKJ[j]) updateKJ(t,j); return KJ[j]; }
-      const fmatvec::VecV& getKi(double t) { if(updKJ[0]) updateKJ(t,0); return Ki; }
+      const fmatvec::Vec& evalqRel() { if(updGC) updateGeneralizedCoordinates(); return qRel; }
+      const fmatvec::Vec& evaluRel() { if(updGC) updateGeneralizedCoordinates(); return uRel; }
+      const fmatvec::VecV& evalqTRel() { if(updGC) updateGeneralizedCoordinates(); return qTRel; }
+      const fmatvec::VecV& evalqRRel() { if(updGC) updateGeneralizedCoordinates(); return qRRel; }
+      const fmatvec::VecV& evaluTRel() { if(updGC) updateGeneralizedCoordinates(); return uTRel; }
+      const fmatvec::VecV& evaluRRel() { if(updGC) updateGeneralizedCoordinates(); return uRRel; }
+      const fmatvec::Mat& evalTRel() { if(updT) updateT(); return TRel; }
+      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrPK; }
+      const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvPKrel; }
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomPK; }
+      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
+      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
+      const fmatvec::Mat3xV& evalPJTT() { if(updPJ) updateJacobians(); return PJTT; }
+      const fmatvec::Mat3xV& evalPJRR() { if(updPJ) updateJacobians(); return PJRR; }
+      const fmatvec::SymMatV& evalMb() { if(updMb) updateMb(); return M_; }
+      const fmatvec::VecV& evalhb() { if(updMb) updateMb(); return h_; }
+      const fmatvec::MatV& evalKJ(int j=0) { if(updKJ[j]) updateKJ(j); return KJ[j]; }
+      const fmatvec::VecV& evalKi() { if(updKJ[0]) updateKJ(0); return Ki; }
 
     protected:
       // Basic input data
@@ -356,34 +356,34 @@ namespace MBSimFlexibleBody {
       /**
        * \brief function pointer to update mass matrix
        */
-      void (FlexibleBodyFFR::*updateM_)(double t, int i);
+      void (FlexibleBodyFFR::*updateM_)(int i);
 
       /**
        * \brief update constant mass matrix
        */
-      void updateMConst(double t, int i=0);
+      void updateMConst(int i=0);
 
       /**
        * \brief update time dependend mass matrix
        */
-      void updateMNotConst(double t, int i=0); 
+      void updateMNotConst(int i=0);
 
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (FlexibleBodyFFR::*updateLLM_)(double t, int i);
+      void (FlexibleBodyFFR::*updateLLM_)(int i);
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
        */
-      void updateLLMConst(double t, int i=0) { }
+      void updateLLMConst(int i=0) { }
 
       /**
        * \brief Cholesky decomposition of time dependent mass matrix
        */
-      void updateLLMNotConst(double t, int i=0) { Object::updateLLM(t,i); }
+      void updateLLMNotConst(int i=0) { Object::updateLLM(i); }
 
-      void (FlexibleBodyFFR::*updateJacobians_[2])(double t, MBSim::Frame *frame);
+      void (FlexibleBodyFFR::*updateJacobians_[2])(MBSim::Frame *frame);
 
       fmatvec::Vec aT, aR;
 

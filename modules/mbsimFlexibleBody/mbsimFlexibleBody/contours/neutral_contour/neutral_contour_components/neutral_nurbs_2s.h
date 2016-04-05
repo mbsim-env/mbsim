@@ -22,14 +22,14 @@ namespace MBSimFlexibleBody {
       virtual ~NeutralNurbs2s();
       void setuk(const fmatvec::Vec &uk_) { uk = uk_; }
       void setvl(const fmatvec::Vec &vl_) { vl = vl_; }
-      virtual void computeCurve(double t, bool update = false);
-      virtual void update(double t, MBSim::ContourFrame *frame) = 0;
+      virtual void computeCurve(bool update = false);
+      virtual void update(MBSim::ContourFrame *frame) = 0;
 //      virtual const fmatvec::Vec getuVec() {
 //        return surface.getuVec();
 //      }
       void resetUpToDate();
     protected:
-      virtual void buildNodelist(double t) = 0;
+      virtual void buildNodelist() = 0;
       MBSim::NurbsSurface surface;
       MBSim::Element *parent;
       fmatvec::MatVI nodes;

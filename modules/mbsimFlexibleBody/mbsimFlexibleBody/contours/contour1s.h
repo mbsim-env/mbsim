@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Contour1s"; }
       void init(InitStage stage_);
-      void plot(double t, double dt);
+      void plot();
       /***************************************************/
 
       virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);

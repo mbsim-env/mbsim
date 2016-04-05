@@ -89,8 +89,5 @@ namespace MBSimFlexibleBody {
     return findContactPairingFlexible(type0.c_str(), type1.c_str());
   }
 
-//  void Contour1sNeutralFlexibleBody1SReferenceCurve::updateStateDependentVariables(double t) {
-//  }
-
 }
 /* namespace MBSimFlexibleBody */

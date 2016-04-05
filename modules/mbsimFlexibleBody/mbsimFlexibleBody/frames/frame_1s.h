@@ -34,11 +34,11 @@ namespace MBSimFlexibleBody {
       void setParameter(double s_) { s = s_; }
       double getParameter() const { return s; }
 
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateAccelerations(double t);
-      void updateJacobians(double t, int j=0);
-      void updateGyroscopicAccelerations(double t);
+      void updatePositions();
+      void updateVelocities();
+      void updateAccelerations();
+      void updateJacobians(int j=0);
+      void updateGyroscopicAccelerations();
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

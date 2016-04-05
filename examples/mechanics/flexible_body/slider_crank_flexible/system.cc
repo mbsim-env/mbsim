@@ -13,7 +13,7 @@
 #include <mbsim/functions/kinetics/kinetics.h>
 // Beginning Contact
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 // End Contact
 #include "mbsim/environment.h"

@@ -52,9 +52,8 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleNurbsDisk2s::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleNurbsDisk2s::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
     FuncPairCircleNurbsDisk2s *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
-    func->setTime(t);
     PlanarContactSearch search(func);
 
     if(LOCALSEARCH) { // select start value from last search (local search)
@@ -74,19 +73,19 @@ namespace MBSimFlexibleBody {
     fmatvec::Vec P_circle(3,fmatvec::INIT,0);
     P_circle(0) = cos(cFrame[icircle]->getEta());
     P_circle(1) = sin(cFrame[icircle]->getEta());
-    P_circle = circle->getFrame()->getPosition(t) + circle->getRadius() * circle->getFrame()->getOrientation(t) * P_circle;
+    P_circle = circle->getFrame()->evalPosition() + circle->getRadius() * circle->getFrame()->evalOrientation() * P_circle;
     cFrame[icircle]->setPosition(P_circle); // position of the point in world coordinates
 
-    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(t,nurbsdisk->getOrientation(t).T()*(cFrame[icircle]->getPosition(false) - nurbsdisk->getPosition(t)))(0,1));
+    cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(cFrame[icircle]->getPosition(false) - nurbsdisk->evalPosition()))(0,1));
 
     if(nurbsdisk->isZetaOutside(cFrame[inurbsdisk]->getZeta()))
       g = 1.;
     else {
 
-      cFrame[inurbsdisk]->setPosition(nurbsdisk->getPosition(t,cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->getWn(t,cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->getWu(t,cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->getWv(t,cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->setPosition(nurbsdisk->getPosition(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->getWn(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->getWu(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->getWv(cFrame[inurbsdisk]->getZeta()));
 
       cFrame[icircle]->getOrientation(false).set(0, -cFrame[inurbsdisk]->getOrientation(false).col(0));
       cFrame[icircle]->getOrientation(false).set(1, -cFrame[inurbsdisk]->getOrientation(false).col(1));
@@ -98,7 +97,7 @@ namespace MBSimFlexibleBody {
     delete func;
   }
 
-  void ContactKinematicsCircleNurbsDisk2s::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCircleNurbsDisk2s::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
     throw MBSim::MBSimError("(ContactKinematicsCircleNurbsDisk2s:updatewb): Not implemented!");
   }
 

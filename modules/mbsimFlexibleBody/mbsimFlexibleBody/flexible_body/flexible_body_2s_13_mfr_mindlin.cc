@@ -53,14 +53,14 @@ namespace MBSimFlexibleBody {
     delete R_ij;
   }
 
-  void FlexibleBody2s13MFRMindlin::updateM(double t, int k) {
+  void FlexibleBody2s13MFRMindlin::updateM(int k) {
     SymMat Mext = MConst.copy(); // copy constant mass matrix parts
-    Vec qf = getqExt(t)(RefDofs, Dofs - 1).copy();
+    Vec qf = evalqExt()(RefDofs, Dofs - 1).copy();
 
     /* M_RR is constant */
     /* M_RTheta */
     Vec u_bar = (*R_compl) + (*N_compl) * qf;
-    SqrMat3 M_RTheta = (-getA(t)) * tilde(u_bar) * getG(t);
+    SqrMat3 M_RTheta = (-evalA()) * tilde(u_bar) * evalG();
 
     /* M_RF */
     Mat3xV M_RF = Mat3xV(Dofs - RefDofs, INIT, 0.); //= A*(*N_compl);
@@ -103,14 +103,14 @@ namespace MBSimFlexibleBody {
     /* Eigenvalues of M */
     if (DEBUGLEVEL >= 2) {
       stringstream filenameM;
-      filenameM << "M" << nr << "x" << nj << "t" << t << ".txt";
+      filenameM << "M" << nr << "x" << nj << "t" << getTime() << ".txt";
       ofstream file_M(filenameM.str().c_str());
       file_M << M << endl;
       file_M << eigval(M[k]) << endl;
       file_M.close();
 
       ofstream file_TS("LastTimeStep.txt");
-      file_TS << t << endl;
+      file_TS << getTime() << endl;
       file_TS.close();
 
       stringstream filenameMpart;
@@ -164,7 +164,7 @@ namespace MBSimFlexibleBody {
     LLM[k] = facLL(M[k]);
   }
 
-  void FlexibleBody2s13MFRMindlin::BuildElements(double t) {
+  void FlexibleBody2s13MFRMindlin::BuildElements() {
     for (int i = 0; i < Elements; i++) {
       //  ^ phi
       //  |
@@ -197,23 +197,23 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!");
   }
 
-  Vec3 FlexibleBody2s13MFRMindlin::getPosition(double t) {
-    return R->getPosition(t);
+  Vec3 FlexibleBody2s13MFRMindlin::evalPosition() {
+    return R->evalPosition();
   }
 
-  SqrMat3 FlexibleBody2s13MFRMindlin::getOrientation(double t) {
-    return R->getOrientation(t);
+  SqrMat3 FlexibleBody2s13MFRMindlin::evalOrientation() {
+    return R->evalOrientation();
   }
 
-  void FlexibleBody2s13MFRMindlin::updatePositions(double t, Frame2s *frame) {
+  void FlexibleBody2s13MFRMindlin::updatePositions(Frame2s *frame) {
     if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
-      frame->setOrientation(R->getOrientation(t)*getA(t));
+      frame->setOrientation(R->evalOrientation()*evalA());
       switch(RefDofs) {
       case 2:
-        frame->setPosition(R->getPosition(t) + R->getOrientation(t) * Vec3("[0;0;1]") * getq()(0));
+        frame->setPosition(R->evalPosition() + R->evalOrientation() * Vec3("[0;0;1]") * getq()(0));
         break;
       case 6:
-        frame->setPosition(R->getPosition(t) + R->getOrientation(t) * getq()(0,2));
+        frame->setPosition(R->evalPosition() + R->evalOrientation() * getq()(0,2));
         break;
       default:
         THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Unknown number of reference dofs!");
@@ -223,17 +223,17 @@ namespace MBSimFlexibleBody {
       THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updatePositions): Parameters must be zero!");
   }
 
-  void FlexibleBody2s13MFRMindlin::updateVelocities(double t, Frame2s *frame) {
+  void FlexibleBody2s13MFRMindlin::updateVelocities(Frame2s *frame) {
    if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
       switch(RefDofs) {
         case 2:
-        frame->setVelocity(R->getOrientation(t) * Vec3("[0;0;1]") * getu()(0));
+        frame->setVelocity(R->evalOrientation() * Vec3("[0;0;1]") * getu()(0));
         frame->setAngularVelocity(R->getOrientation() * Vec3("[0;0;1]") * getu()(1));
         break;
         case 6:
-        frame->setPosition(R->getOrientation(t) * getq()(0,2));
+        frame->setPosition(R->evalOrientation() * getq()(0,2));
         frame->setVelocity(R->getOrientation() * getu()(0,2));
-        frame->setAngularVelocity(R->getOrientation() * getA(t) * getG(t) * getu()(3,5));
+        frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(3,5));
         break;
         default:
         THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Unknown number of reference dofs!");
@@ -243,25 +243,25 @@ namespace MBSimFlexibleBody {
       THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateVelocities): Parameters must be zero!");
   }
 
-  void FlexibleBody2s13MFRMindlin::updateAccelerations(double t, Frame2s *frame) {
+  void FlexibleBody2s13MFRMindlin::updateAccelerations(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13MFRMindlin::updateJacobians(double t, Frame2s *frame, int j) {
+  void FlexibleBody2s13MFRMindlin::updateJacobians(Frame2s *frame, int j) {
     Vec2 alpha = frame->getParameters();
 
     if (nrm2(alpha) < epsroot()) { // center of gravity
       Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
 
       Jacext_trans(0, 0, 2, 2) = SqrMat(3, EYE);
-      Jacext_rot(0, 3, 2, 5) = getA(t) * getG(t);
+      Jacext_rot(0, 3, 2, 5) = evalA() * evalG();
 
       // condensation
       Mat Jacobian_trans = condenseMatrixCols(Jacext_trans, ILocked);
       Mat Jacobian_rot = condenseMatrixCols(Jacext_rot, ILocked);
 
       // transformation
-      frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans,j);
+      frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian_trans,j);
       frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot,j);
     }
     else { // on the disk
@@ -269,43 +269,43 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(double t, Frame2s *frame) {
+  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13MFRMindlin::updatePositions(double t, NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updatePositions(NodeFrame *frame) {
     Vec3 r_ref(NONINIT);
     int node = frame->getNodeNumber();
     //first compute vector
-    r_ref(0) = getqExt(t)(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0); // radial component
+    r_ref(0) = evalqExt()(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0); // radial component
     r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2.; // azimuthal component
     r_ref(2) = qext(RefDofs + node * NodeDofs) + computeThickness(NodeCoordinates(node, 0)) / 2.; //z-component
 
     r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref; //transformation into local frame  ---->?  transformation from intermediate frame(which are initially parallel to the local frame) to the FFR
-    r_ref = getA(t) * r_ref; //transformation from the moving frame of reference  ---->  ??? transformation from the moving frame of reference FFR to the Reference frame
+    r_ref = evalA() * r_ref; //transformation from the moving frame of reference  ---->  ??? transformation from the moving frame of reference FFR to the Reference frame
     r_ref += qext(0, 2); //translation of moving frame of reference relative to frame of reference ---> add the translation displacement of the origin of FFR expressed in the Reference Frame
     // TODO:  is qext in Reference frame R or in the world frame ?
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * r_ref); //at last step: transformation into world frame
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * r_ref); //at last step: transformation into world frame
   }
 
-  void FlexibleBody2s13MFRMindlin::updateVelocities(double t, NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updateVelocities(NodeFrame *frame) {
     Vec3 u_ref_1(NONINIT);
     int node = frame->getNodeNumber();
-    u_ref_1(0) = computeThickness(NodeCoordinates(node, 0)) / 2. * getuExt(t)(RefDofs + node * NodeDofs + 1);
+    u_ref_1(0) = computeThickness(NodeCoordinates(node, 0)) / 2. * evaluExt()(RefDofs + node * NodeDofs + 1);
     u_ref_1(1) = -computeThickness(NodeCoordinates(node, 0)) / 2. * uext(RefDofs + node * NodeDofs + 2);
     u_ref_1(2) = uext(RefDofs + node * NodeDofs);
 
     Vec3 r_ref(NONINIT);
-    r_ref(0) = getqExt(t)(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0);
+    r_ref(0) = evalqExt()(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0);
     r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2.;
     r_ref(2) = qext(RefDofs + node * NodeDofs) + computeThickness(NodeCoordinates(node, 0)) / 2.;
 
     r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref;
 
-    Vec3 u_ref_2 = getA(t) * (-tilde(r_ref) * getG(t) * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * u_ref_1);
+    Vec3 u_ref_2 = evalA() * (-tilde(r_ref) * evalG() * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * u_ref_1);
     u_ref_2 += uext(0, 2);
 
-    frame->setVelocity(R->getOrientation(t) * u_ref_2);
+    frame->setVelocity(R->evalOrientation() * u_ref_2);
 
     Vec3 w_ref_1(INIT, 0.);
     w_ref_1(0) = -uext(RefDofs + node * NodeDofs + 2);
@@ -316,11 +316,11 @@ namespace MBSimFlexibleBody {
     frame->setAngularVelocity(R->getOrientation() * w_ref_2);
   }
 
-  void FlexibleBody2s13MFRMindlin::updateAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updateAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13MFRMindlin::updateJacobians(double t, NodeFrame *frame, int j) {
+  void FlexibleBody2s13MFRMindlin::updateJacobians(NodeFrame *frame, int j) {
     int Node = frame->getNodeNumber();
 
     // Jacobian of element
@@ -332,7 +332,7 @@ namespace MBSimFlexibleBody {
     // rotational DOFs (d/dTheta)
     SqrMat dAdalpha(3, NONINIT), dAdbeta(3, NONINIT), dAdgamma(3, NONINIT);
 
-    double const &alpha = getqExt(t)(3);
+    double const &alpha = evalqExt()(3);
     double const &beta = qext(4);
     double const &gamma = qext(5);
 
@@ -377,7 +377,7 @@ namespace MBSimFlexibleBody {
     Jactmp_trans(0, 4, 2, 4) = dAdbeta * r_tmp;
     Jactmp_trans(0, 5, 2, 5) = dAdgamma * r_tmp;
 
-    Jactmp_rot(0, 3, 2, 5) = getA(t) * getG(t);
+    Jactmp_rot(0, 3, 2, 5) = evalA() * evalG();
 
     // elastic DOFs
     // translation
@@ -410,11 +410,11 @@ namespace MBSimFlexibleBody {
     Mat Jacobian_rot = condenseMatrixCols(Jacext_rot, ILocked);
 
     // transformation
-    frame->setJacobianOfTranslation(R->getOrientation(t) * Jacobian_trans,j);
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian_trans,j);
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot,j);
   }
 
-  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -472,7 +472,7 @@ namespace MBSimFlexibleBody {
         ElementalNodes.push_back(Vec(4, INIT, 0.));
       }
 
-      BuildElements(0);
+      BuildElements();
 
       for (int i = 0; i < Elements; i++) {
         discretization.push_back(new FiniteElement2s13MFRMindlin(E, nu, rho, d(0), d(1), d(2), ElementalNodes[i]));
@@ -506,11 +506,11 @@ namespace MBSimFlexibleBody {
       FlexibleBody2s13::init(stage);
   }
 
-  Vec FlexibleBody2s13MFRMindlin::transformCW(double t, const Vec& WrPoint) {
+  Vec FlexibleBody2s13MFRMindlin::transformCW(const Vec& WrPoint) {
     Vec CrPoint = WrPoint.copy();
 
     CrPoint -= q(0, 2);
-    CrPoint = getA(t).T() * CrPoint; // position in moving frame of reference
+    CrPoint = evalA().T() * CrPoint; // position in moving frame of reference
 
     const double xt = CrPoint(0);
     const double yt = CrPoint(1);
@@ -527,7 +527,7 @@ namespace MBSimFlexibleBody {
     updateM(0);
   }
 
-  void FlexibleBody2s13MFRMindlin::updateAG(double t) {
+  void FlexibleBody2s13MFRMindlin::updateAG() {
     double sinalpha = sin(q(3));
     double cosalpha = cos(q(3));
     double sinbeta = sin(q(4));

@@ -49,26 +49,26 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s33ANCF(const std::string &name, bool openStructure);
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void updateM(double t, int k) { }
-      virtual void updateLLM(double t, int i=0) { }
+      virtual void updateM(int k) { }
+      virtual void updateLLM(int i=0) { }
 
-      virtual void BuildElements(double t);
+      virtual void BuildElements();
 
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
 
-      virtual void updatePositions(double t, Frame1s* frame);
-      virtual void updateVelocities(double t, Frame1s* frame);
-      virtual void updateAccelerations(double t, Frame1s* frame);
-      virtual void updateJacobians(double t, Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, Frame1s* frame);
+      virtual void updatePositions(Frame1s* frame);
+      virtual void updateVelocities(Frame1s* frame);
+      virtual void updateAccelerations(Frame1s* frame);
+      virtual void updateJacobians(Frame1s* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(Frame1s* frame);
 
-      virtual void updatePositions(double t, NodeFrame* frame);
-      virtual void updateVelocities(double t, NodeFrame* frame);
-      virtual void updateAccelerations(double t, NodeFrame* frame);
-      virtual void updateJacobians(double t, NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(double t, NodeFrame* frame);
+      virtual void updatePositions(NodeFrame* frame);
+      virtual void updateVelocities(NodeFrame* frame);
+      virtual void updateAccelerations(NodeFrame* frame);
+      virtual void updateJacobians(NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
       /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
       virtual std::string getType() const { return "FlexibleBody1s33ANCF"; }
       /***************************************************/
 

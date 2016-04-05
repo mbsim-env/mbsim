@@ -69,15 +69,15 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateM(double t, int k = 0);
+      virtual void updateM(int k = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements(double t);
+      virtual void BuildElements();
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateh(double t, int k = 0);
+      virtual void updateh(int k = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -117,24 +117,24 @@ namespace MBSimFlexibleBody {
 #endif
 
       void resetUpToDate();
-      const fmatvec::SqrMat3& getA(double t) { if(updAG) updateAGbarGbardot(t); return A; }
-      const fmatvec::SqrMat3& getG_bar(double t) { if(updAG) updateAGbarGbardot(t); return G_bar; }
-      const fmatvec::SqrMat3& getG_bar_Dot(double t) { if(updAG) updateAGbarGbardot(t); return G_bar_Dot; }
-      const fmatvec::Vec& getQv(double t) { if(updQv) updateQv(t); return Qv; }
+      const fmatvec::SqrMat3& evalA() { if(updAG) updateAGbarGbardot(); return A; }
+      const fmatvec::SqrMat3& evalG_bar() { if(updAG) updateAGbarGbardot(); return G_bar; }
+      const fmatvec::SqrMat3& evalG_bar_Dot() { if(updAG) updateAGbarGbardot(); return G_bar_Dot; }
+      const fmatvec::Vec& evalQv() { if(updQv) updateQv(); return Qv; }
 
-      void updatePositions(double t, MBSim::Frame *frame);
-      void updateVelocities(double t, MBSim::Frame *frame);
-      void updateAccelerations(double t, MBSim::Frame *frame);
-      void updateJacobians(double t, MBSim::Frame *frame, int j=0);
-      void updateGyroscopicAccelerations(double t, MBSim::Frame *frame);
+      void updatePositions(MBSim::Frame *frame);
+      void updateVelocities(MBSim::Frame *frame);
+      void updateAccelerations(MBSim::Frame *frame);
+      void updateJacobians(MBSim::Frame *frame, int j=0);
+      void updateGyroscopicAccelerations(MBSim::Frame *frame);
 
-      void updatePositions(double t, NodeFrame *frame);
-      void updateVelocities(double t, NodeFrame *frame);
-      void updateAccelerations(double t, NodeFrame *frame);
-      void updateJacobians(double t, NodeFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(double t, NodeFrame *frame);
+      void updatePositions(NodeFrame *frame);
+      void updateVelocities(NodeFrame *frame);
+      void updateAccelerations(NodeFrame *frame);
+      void updateJacobians(NodeFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(NodeFrame *frame);
 
-      fmatvec::Vec3 getLocalPosition(double t, int i);
+      fmatvec::Vec3 getLocalPosition(int i);
 
     protected:
       /*!
@@ -150,7 +150,7 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief update the quadratic velocity vector
        */
-      void updateQv(double t);
+      void updateQv();
 
       /*!
        * \brief compute the constant shape integrals of the whole body
@@ -160,7 +160,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief  update A, G_bar, and G_bar_Dot
        */
-      void updateAGbarGbardot(double t);
+      void updateAGbarGbardot();
 
       /**
        * \brief total number of nodes

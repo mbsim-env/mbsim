@@ -92,17 +92,16 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13() { }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t, int j=0);
-      virtual void updatedhdz(double t);
-//      virtual void updateStateDependentVariables(double t);
+      virtual void updateh(int j=0);
+      virtual void updatedhdz();
       /******************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void updateM(double t, int i=0);
-      virtual void updateLLM(double t, int i=0) { }
+      virtual void updateM(int i=0);
+      virtual void updateLLM(int i=0) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
       virtual std::string getType() const { return "FlexibleBody2s13"; }
       /***************************************************/
 
@@ -120,8 +119,8 @@ namespace MBSimFlexibleBody {
       double getOuterRadius() const { return Ra; }
       double getAzimuthalDegree() const { return degU; }
       double getRadialDegree() const { return degV; }
-      fmatvec::SqrMat3& getA(double t) { if(updAG) updateAG(t); return A; }
-      fmatvec::SqrMat3& getG(double t) { if(updAG) updateAG(t); return G; }
+      fmatvec::SqrMat3& evalA() { if(updAG) updateAG(); return A; }
+      fmatvec::SqrMat3& evalG() { if(updAG) updateAG(); return G; }
       void setReferenceInertia(double m0_, fmatvec::SymMat3 J0_) { m0 = m0_; J0 = J0_; }
       void setLockType(LockType LT_) { LType = LT_; }
       /***************************************************/
@@ -143,17 +142,17 @@ namespace MBSimFlexibleBody {
        * \param Cartesian vector in world system of plate
        * \return cylindrical coordinates
        */
-      virtual fmatvec::Vec transformCW(double t, const fmatvec::Vec& WrPoint) = 0;
+      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint) = 0;
 
       void resetUpToDate();
 
-      void updateExt(double t);
+      void updateExt();
 
-      const fmatvec::Vec& getqExt(double t) { if(updExt) updateExt(t); return qext; }
-      const fmatvec::Vec& getuExt(double t) { if(updExt) updateExt(t); return uext; }
+      const fmatvec::Vec& evalqExt() { if(updExt) updateExt(); return qext; }
+      const fmatvec::Vec& evaluExt() { if(updExt) updateExt(); return uext; }
 
-      virtual fmatvec::Vec3 getPosition(double t) { return fmatvec::Vec3(); }
-      virtual fmatvec::SqrMat3 getOrientation(double t) { return fmatvec::SqrMat3(fmatvec::EYE); }
+      virtual fmatvec::Vec3 evalPosition() { return fmatvec::Vec3(); }
+      virtual fmatvec::SqrMat3 evalOrientation() { return fmatvec::SqrMat3(fmatvec::EYE); }
 
     protected:
       /**
@@ -330,7 +329,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief update the transformation matrices A and G
        */
-      virtual void updateAG(double t) = 0;
+      virtual void updateAG() = 0;
 
       /*!
        * \return thickness of disk at radial coordinate

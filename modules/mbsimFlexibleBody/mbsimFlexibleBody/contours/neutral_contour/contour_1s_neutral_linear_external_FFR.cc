@@ -88,40 +88,40 @@ namespace MBSimFlexibleBody {
     Contour1sNeutralFactory::init(stage);
   }
 
-  Vec3 Contour1sNeutralLinearExternalFFR::getPosition(double t, const Vec2 &zeta) {
-    return NP->getPosition(t,zeta(0));
+  Vec3 Contour1sNeutralLinearExternalFFR::getPosition(const Vec2 &zeta) {
+    return NP->getPosition(zeta(0));
   }
 
-  Vec3 Contour1sNeutralLinearExternalFFR::getWs(double t, const Vec2 &zeta) {
-    return NP->getWs(t,zeta(0));
+  Vec3 Contour1sNeutralLinearExternalFFR::getWs(const Vec2 &zeta) {
+    return NP->getWs(zeta(0));
   }
 
-  Vec3 Contour1sNeutralLinearExternalFFR::getWt(double t, const Vec2 &zeta) {
-    return NP->getWt(t,zeta(0));
+  Vec3 Contour1sNeutralLinearExternalFFR::getWt(const Vec2 &zeta) {
+    return NP->getWt(zeta(0));
   }
 
-  void Contour1sNeutralLinearExternalFFR::updatePositions(double t, ContourFrame *frame) {
-    NP->update(t,frame);
-    NP->updatePositionNormal(t,frame);
-    NP->updatePositionFirstTangent(t,frame);
-    NP->updatePositionSecondTangent(t,frame);
+  void Contour1sNeutralLinearExternalFFR::updatePositions(ContourFrame *frame) {
+    NP->update(frame);
+    NP->updatePositionNormal(frame);
+    NP->updatePositionFirstTangent(frame);
+    NP->updatePositionSecondTangent(frame);
   }
 
-  void Contour1sNeutralLinearExternalFFR::updateVelocities(double t, ContourFrame *frame) {
-    NV->update(t,frame);
+  void Contour1sNeutralLinearExternalFFR::updateVelocities(ContourFrame *frame) {
+    NV->update(frame);
     frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity());
   }
 
-  void Contour1sNeutralLinearExternalFFR::updateJacobians(double t, ContourFrame *frame, int j) {
+  void Contour1sNeutralLinearExternalFFR::updateJacobians(ContourFrame *frame, int j) {
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
     Mat3xV Jacobian_trans(qSize, INIT, 0.);
     // translational DOF
     Jacobian_trans.set(Index(0, 2), Index(0, 2), SqrMat(3, EYE));
 
     // rotational DOF
-    SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getA(t);
-    SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getG_bar(t);
-    Vec3 u_bar = NLP->getLocalPosition(t,frame->getEta());
+    SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalA();
+    SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalG_bar();
+    Vec3 u_bar = NLP->getLocalPosition(frame->getEta());
     Jacobian_trans.set(Index(0, 2), Index(3, 5), -A * tilde(u_bar) * G_bar);
 
     // elastic DOF

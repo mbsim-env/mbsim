@@ -45,7 +45,6 @@ namespace MBSimFlexibleBody {
 //      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
 //      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
-//      virtual void updateStateDependentVariables(double t);
 
       double getuMax() const {
         return uMax;

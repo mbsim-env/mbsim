@@ -31,15 +31,15 @@ namespace MBSimFlexibleBody {
       virtual NeutralNurbsAngle1s* createNeutralAngle();
       virtual NeutralNurbsDotangle1s* createNeutralDotangle();
 
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta) { return getWs(zeta); }
+      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta) { return getWt(zeta); }
 
-      void updatePositions(double t, MBSim::ContourFrame *frame);
-      void updateVelocities(double t, MBSim::ContourFrame *frame);
-      void updateJacobians(double t, MBSim::ContourFrame *frame, int j=0);
+      void updatePositions(MBSim::ContourFrame *frame);
+      void updateVelocities(MBSim::ContourFrame *frame);
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
 
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 

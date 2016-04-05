@@ -40,11 +40,11 @@ namespace MBSimFlexibleBody {
 
       std::string getType() const { return "FloatingRelativeFlexibleContourFrame"; }
 
-      void updatePositions(double t);
-      void updateVelocities(double t);
-      void updateAccelerations(double t);
-      void updateJacobians(double t, int j=0);
-      void updateGyroscopicAccelerations(double t);
+      void updatePositions();
+      void updateVelocities();
+      void updateAccelerations();
+      void updateJacobians(int j=0);
+      void updateGyroscopicAccelerations();
 
       void resetUpToDate();
 

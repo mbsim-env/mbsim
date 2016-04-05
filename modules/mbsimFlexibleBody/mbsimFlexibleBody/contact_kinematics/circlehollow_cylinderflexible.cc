@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
     func= new FuncPairContour1sCircleHollow(circle,cylinder);
   }
 
-  void ContactKinematicsCircleHollowCylinderFlexible::updateg(double t, double &g, ContourPointData *cpData, int index) {
+  void ContactKinematicsCircleHollowCylinderFlexible::updateg(double &g, ContourPointData *cpData, int index) {
     throw;
 
 //    Vec WrOP_circle =  circle->getFrame()->getPosition();

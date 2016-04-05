@@ -426,7 +426,7 @@ namespace MBSimFlexibleBody {
     FlexibleBodyContinuum<double>::plot(t, dt);
   }
 
-  void FlexibleBody1SReferenceCurve::BuildElements(double t) {
+  void FlexibleBody1SReferenceCurve::BuildElements() {
     for (int eleNo = 0; eleNo < elements; eleNo++) {
       FlexibleBody1SReferenceCurveFE * ele = static_cast<FlexibleBody1SReferenceCurveFE*>(discretization[eleNo]);
       vector<int> freeDofs = ele->getFreeDofs();
@@ -461,7 +461,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1SReferenceCurve::updateh(double t, int k) {
+  void FlexibleBody1SReferenceCurve::updateh(int k) {
 // Remark: as the
     if (1) {
       for (int i = 0; i < (int) discretization.size(); i++)
@@ -539,7 +539,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1SReferenceCurve::updateM(double t, int k) {
+  void FlexibleBody1SReferenceCurve::updateM(int k) {
     if (1) {
       FlexibleBodyContinuum<double>::updateM(t, k);
 

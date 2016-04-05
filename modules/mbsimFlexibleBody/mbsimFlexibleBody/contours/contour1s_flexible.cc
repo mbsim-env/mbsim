@@ -41,44 +41,44 @@ namespace MBSimFlexibleBody {
     sOld = -1e12;
   }
 
-  void Contour1sFlexible::updatePositions(double t, double s) {
+  void Contour1sFlexible::updatePositions(double s) {
     static Vec3 Kt("[0;0;1]");
     Frame1s P("P",s);
     P.setParent(parent);
-    Ws = P.getOrientation(t).col(0);
+    Ws = P.evalOrientation().col(0);
     Wt = P.getOrientation()*Kt;
     WrOP = P.getPosition();
     sOld = s;
   }
 
-  void Contour1sFlexible::updatePositions(double t, ContourFrame *frame) {
+  void Contour1sFlexible::updatePositions(ContourFrame *frame) {
     Frame1s P("P",frame->getEta());
     P.setParent(parent);
-    frame->getOrientation(false).set(0,P.getOrientation(t).col(1));
+    frame->getOrientation(false).set(0,P.evalOrientation().col(1));
     frame->getOrientation(false).set(1,P.getOrientation().col(0));
     frame->getOrientation(false).set(2,-P.getOrientation().col(2));
     frame->setPosition(P.getPosition());
   }
 
-  void Contour1sFlexible::updateVelocities(double t, ContourFrame *frame) {
+  void Contour1sFlexible::updateVelocities(ContourFrame *frame) {
     Frame1s P("P",frame->getEta());
     P.setParent(parent);
-    frame->setAngularVelocity(P.getAngularVelocity(t));
+    frame->setAngularVelocity(P.evalAngularVelocity());
     frame->setVelocity(P.getVelocity());
  }
 
-  void Contour1sFlexible::updateAccelerations(double t, ContourFrame *frame) {
+  void Contour1sFlexible::updateAccelerations(ContourFrame *frame) {
     THROW_MBSIMERROR("(Contour1sFlexible::updateAccelerations): Not implemented!");
   }
 
-  void Contour1sFlexible::updateJacobians(double t, ContourFrame *frame, int j) {
+  void Contour1sFlexible::updateJacobians(ContourFrame *frame, int j) {
     Frame1s P("P",frame->getEta());
     P.setParent(parent);
-    frame->setJacobianOfRotation(P.getJacobianOfRotation(t,j),j);
+    frame->setJacobianOfRotation(P.evalJacobianOfRotation(j),j);
     frame->setJacobianOfTranslation(P.getJacobianOfTranslation(j),j);
   }
 
-  void Contour1sFlexible::updateGyroscopicAccelerations(double t, ContourFrame *frame) {
+  void Contour1sFlexible::updateGyroscopicAccelerations(ContourFrame *frame) {
     THROW_MBSIMERROR("(Contour1sFlexible::updateGyroscopicAccelerations): Not implemented!");
   }
 

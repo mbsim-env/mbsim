@@ -38,31 +38,31 @@ namespace MBSimFlexibleBody {
     P.resetUpToDate();
   }
 
-  void FloatingRelativeFlexibleContourFrame::updatePositions(double t) {
-    parent->updatePositions(t,this);
+  void FloatingRelativeFlexibleContourFrame::updatePositions() {
+    parent->updatePositions(this);
     static_cast<ContourFrame*>(R)->setZeta(getZeta());
-    WrRP = getPosition(false) - R->getPosition(t);
-    updatePos = false;
+    WrRP = getPosition(false) - R->evalPosition();
+    updPos = false;
   }
 
-  void FloatingRelativeFlexibleContourFrame::updateVelocities(double t) {
+  void FloatingRelativeFlexibleContourFrame::updateVelocities() {
     static_cast<ContourFrame*>(R)->setZeta(getZeta());
-    FloatingRelativeContourFrame::updateVelocities(t);
+    FloatingRelativeContourFrame::updateVelocities();
   }
 
-  void FloatingRelativeFlexibleContourFrame::updateAccelerations(double t) {
+  void FloatingRelativeFlexibleContourFrame::updateAccelerations() {
     static_cast<ContourFrame*>(R)->setZeta(getZeta());
-    FloatingRelativeContourFrame::updateAccelerations(t);
+    FloatingRelativeContourFrame::updateAccelerations();
   }
 
-  void FloatingRelativeFlexibleContourFrame::updateJacobians(double t, int j) {
+  void FloatingRelativeFlexibleContourFrame::updateJacobians(int j) {
     static_cast<ContourFrame*>(R)->setZeta(getZeta());
-    FloatingRelativeContourFrame::updateJacobians(t,j);
+    FloatingRelativeContourFrame::updateJacobians(j);
   }
 
-  void FloatingRelativeFlexibleContourFrame::updateGyroscopicAccelerations(double t) {
+  void FloatingRelativeFlexibleContourFrame::updateGyroscopicAccelerations() {
     static_cast<ContourFrame*>(R)->setZeta(getZeta());
-    FloatingRelativeContourFrame::updateGyroscopicAccelerations(t);
+    FloatingRelativeContourFrame::updateGyroscopicAccelerations();
   }
 
 }

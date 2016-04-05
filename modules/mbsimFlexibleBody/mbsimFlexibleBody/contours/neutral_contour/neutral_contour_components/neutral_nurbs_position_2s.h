@@ -16,16 +16,16 @@ namespace MBSimFlexibleBody {
     public:
       NeutralNurbsPosition2s(MBSim::Element* parent_, const fmatvec::MatVI & nodes, double nodeOffset, int degU_, int degV_, bool openStructure_);
       virtual ~NeutralNurbsPosition2s();
-      fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
-      virtual void update(double t, MBSim::ContourFrame *frame);
-      virtual void updatePositionNormal(double t, MBSim::ContourFrame *frame);
-      virtual void updatePositionFirstTangent(double t, MBSim::ContourFrame *frame);
-      virtual void updatePositionSecondTangent(double t, MBSim::ContourFrame *frame);
+      fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 getWn(const fmatvec::Vec2 &zeta);
+      virtual void update(MBSim::ContourFrame *frame);
+      virtual void updatePositionNormal(MBSim::ContourFrame *frame);
+      virtual void updatePositionFirstTangent(MBSim::ContourFrame *frame);
+      virtual void updatePositionSecondTangent(MBSim::ContourFrame *frame);
     protected:
-      virtual void buildNodelist(double t);
+      virtual void buildNodelist();
   };
 
 } /* namespace MBSimFlexibleBody */

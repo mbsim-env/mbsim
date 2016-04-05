@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
     RefDofs = 2;
   }
 
-  void FlexibleBody2s13Disk::BuildElements(double t) {
+  void FlexibleBody2s13Disk::BuildElements() {
     for (int i = 0; i < Elements; i++) {
       //  ^ phi
       //  |
@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      qElement[i](0, RefDofs - 1) << getqExt(t)(0, RefDofs - 1);
+      qElement[i](0, RefDofs - 1) << evalqExt()(0, RefDofs - 1);
       qElement[i](RefDofs, RefDofs + NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
       qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
       qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof velocity from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      uElement[i](0, RefDofs - 1) << getuExt(t)(0, RefDofs - 1);
+      uElement[i](0, RefDofs - 1) << evaluExt()(0, RefDofs - 1);
       uElement[i](RefDofs, RefDofs + NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
       uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
       uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
@@ -72,41 +72,41 @@ namespace MBSimFlexibleBody {
     updEle = false;
   }
 
-  Vec3 FlexibleBody2s13Disk::getPosition(double t) {
+  Vec3 FlexibleBody2s13Disk::evalPosition() {
     switch(RefDofs) {
       case 2:
-        return R->getPosition(t) + R->getOrientation(t) * Vec3("[0;0;1]") * getq()(0);
+        return R->evalPosition() + R->evalOrientation() * Vec3("[0;0;1]") * getq()(0);
       case 6:
-        return R->getPosition(t) + R->getOrientation(t) * getq()(0,2);
+        return R->evalPosition() + R->evalOrientation() * getq()(0,2);
       default:
         THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateKinematicsForFrame): Unknown number of reference dofs!");
     }
   }
 
-  SqrMat3 FlexibleBody2s13Disk::getOrientation(double t) {
-    return R->getOrientation(t) * getA(t);
+  SqrMat3 FlexibleBody2s13Disk::evalOrientation() {
+    return R->evalOrientation() * evalA();
   }
 
-  void FlexibleBody2s13Disk::updatePositions(double t, Frame2s *frame) {
+  void FlexibleBody2s13Disk::updatePositions(Frame2s *frame) {
     if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
-      frame->setOrientation(getOrientation(t));
-      frame->setPosition(getPosition(t));
+      frame->setOrientation(evalOrientation());
+      frame->setPosition(evalPosition());
     }
     else
       THROW_MBSIMERROR("(FlexibleBody2s13Disk::updatePositions): Parameters must be zero!");
   }
 
-  void FlexibleBody2s13Disk::updateVelocities(double t, Frame2s *frame) {
+  void FlexibleBody2s13Disk::updateVelocities(Frame2s *frame) {
     if(nrm2(frame->getParameters()) < epsroot()) { // center of gravity
       switch(RefDofs) {
         case 2:
-        frame->setVelocity(R->getOrientation(t) * Vec3("[0;0;1]") * getu()(0));
+        frame->setVelocity(R->evalOrientation() * Vec3("[0;0;1]") * getu()(0));
         frame->setAngularVelocity(R->getOrientation() * Vec3("[0;0;1]") * getu()(1));
         break;
         case 6:
-        frame->setPosition(R->getOrientation(t) * getq()(0,2));
+        frame->setPosition(R->evalOrientation() * getq()(0,2));
         frame->setVelocity(R->getOrientation() * getu()(0,2));
-        frame->setAngularVelocity(R->getOrientation() * getA(t) * getG(t) * getu()(3,5));
+        frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(3,5));
         break;
         default:
         THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateVelocities): Unknown number of reference dofs!");
@@ -116,11 +116,11 @@ namespace MBSimFlexibleBody {
       THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateVelocities): Parameters must be zero!");
   }
 
-  void FlexibleBody2s13Disk::updateAccelerations(double t, Frame2s *frame) {
+  void FlexibleBody2s13Disk::updateAccelerations(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13Disk::updateJacobians(double t, Frame2s *frame, int j) {
+  void FlexibleBody2s13Disk::updateJacobians(Frame2s *frame, int j) {
     Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
 
@@ -147,19 +147,19 @@ namespace MBSimFlexibleBody {
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
 
     // transformation
-    frame->setJacobianOfTranslation(R->getOrientation(t).col(2) * Jacobian(0, 0, qSize - 1, 0).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation().col(2) * Jacobian(0, 0, qSize - 1, 0).T(),j);
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T(),j);
   }
 
-  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(double t, Frame2s *frame) {
+  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(Frame2s *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13Disk::updatePositions(double t, NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updatePositions(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
 
-    tmp(0) = NodeCoordinates(node, 0) + getqExt(t)(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(0) = NodeCoordinates(node, 0) + evalqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
     tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec2 tmp_add(NONINIT);
@@ -170,7 +170,7 @@ namespace MBSimFlexibleBody {
     tmp(1) = sin(qext(1)) * tmp_add(0) + cos(qext(1)) * tmp_add(1);
 
     tmp(2) = qext(0) + qext(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * tmp);
 
 //    cout << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
     //frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
@@ -178,11 +178,11 @@ namespace MBSimFlexibleBody {
     //frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));
   }
 
-  void FlexibleBody2s13Disk::updateVelocities(double t, NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updateVelocities(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
 
-    tmp(0) = NodeCoordinates(node, 0) + getqExt(t)(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
+    tmp(0) = NodeCoordinates(node, 0) + evalqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
     tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
 
     Vec2 tmp_add_1(NONINIT);
@@ -192,7 +192,7 @@ namespace MBSimFlexibleBody {
     tmp(0) = -sin(qext(1)) * tmp_add_1(0) - cos(qext(1)) * tmp_add_1(1); // in sheave frame of reference
     tmp(1) = cos(qext(1)) * tmp_add_1(0) - sin(qext(1)) * tmp_add_1(1);
 
-    tmp(0) *= getuExt(t)(1);
+    tmp(0) *= evaluExt()(1);
     tmp(1) *= uext(1);
 
     Vec2 tmp_add_2(NONINIT);
@@ -211,7 +211,7 @@ namespace MBSimFlexibleBody {
 
     tmp(2) = uext(0) + uext(RefDofs + node * NodeDofs);
 
-    frame->setVelocity(R->getOrientation(t) * tmp);
+    frame->setVelocity(R->evalOrientation() * tmp);
 
     tmp(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
     tmp(1) = uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 2) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
@@ -220,11 +220,11 @@ namespace MBSimFlexibleBody {
     frame->setAngularVelocity(R->getOrientation() * tmp);
   }
 
-  void FlexibleBody2s13Disk::updateAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updateAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13Disk::updateJacobians(double t, NodeFrame *frame, int j) {
+  void FlexibleBody2s13Disk::updateJacobians(NodeFrame *frame, int j) {
     Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
 
@@ -239,7 +239,7 @@ namespace MBSimFlexibleBody {
 
     // rotation
     Wtmp(1, 3) = 1; // ref
-    Wtmp(3, 1) = -sin(getqExt(t)(1) + NodeCoordinates(node, 1)); // node
+    Wtmp(3, 1) = -sin(evalqExt()(1) + NodeCoordinates(node, 1)); // node
     Wtmp(3, 2) = cos(qext(1) + NodeCoordinates(node, 1));
     Wtmp(4, 1) = cos(qext(1) + NodeCoordinates(node, 1));
     Wtmp(4, 2) = sin(qext(1) + NodeCoordinates(node, 1));
@@ -255,11 +255,11 @@ namespace MBSimFlexibleBody {
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
 
     // transformation
-    frame->setJacobianOfTranslation(R->getOrientation(t).col(2) * Jacobian(0, 0, qSize - 1, 0).T());
+    frame->setJacobianOfTranslation(R->evalOrientation().col(2) * Jacobian(0, 0, qSize - 1, 0).T());
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T());
   }
 
-  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -330,7 +330,7 @@ namespace MBSimFlexibleBody {
       FlexibleBody2s13::init(stage);
   }
 
-  Vec FlexibleBody2s13Disk::transformCW(double t, const Vec& WrPoint) {
+  Vec FlexibleBody2s13Disk::transformCW(const Vec& WrPoint) {
     Vec CrPoint(WrPoint.size());
 
     double &alpha = q(1);
@@ -346,7 +346,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::initMatrices() {
-    BuildElements(0);
+    BuildElements();
 
     // initialising of mass and stiffness matrix
     SymMat Mext(Dofs, INIT, 0.);
@@ -456,7 +456,7 @@ namespace MBSimFlexibleBody {
     LLM[0] = facLL(MConst);
   }
 
-  void FlexibleBody2s13Disk::updateAG(double t) {
+  void FlexibleBody2s13Disk::updateAG() {
     //A(0,0) = cos(q(1)); // not used at the moment
     //A(0,1) = -sin(q(1));
 

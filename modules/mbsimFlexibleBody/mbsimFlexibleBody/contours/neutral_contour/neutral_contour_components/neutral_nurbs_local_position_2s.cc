@@ -21,22 +21,22 @@ namespace MBSimFlexibleBody {
   NeutralNurbsLocalPosition2s::~NeutralNurbsLocalPosition2s() {
   }
 
-  Vec3 NeutralNurbsLocalPosition2s::getLocalPosition(double t, const Vec2 &zeta){
-//    if(updSurface) computeCurve(t,true);
+  Vec3 NeutralNurbsLocalPosition2s::getLocalPosition(const Vec2 &zeta){
+//    if(updSurface) computeCurve(true);
     return surface.pointAt(zeta(0),zeta(1));
   }
 
-  void NeutralNurbsLocalPosition2s::update(double t, ContourFrame *frame) {
+  void NeutralNurbsLocalPosition2s::update(ContourFrame *frame) {
     throw;
 //    Vec3 Tmpv = surface.pointAt(cp.getLagrangeParameterPosition()(0), cp.getLagrangeParameterPosition()(1));
 //    cp.getFrameOfReference().setLocalPosition(Tmpv);
   }
 
-  void NeutralNurbsLocalPosition2s::buildNodelist(double t){
+  void NeutralNurbsLocalPosition2s::buildNodelist() {
     Vec3 r;
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
-        r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getLocalPosition(t,nodes(i,j));
+        r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getLocalPosition(nodes(i,j));
         Nodelist(i,j) = r;
 //        cout << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
 //        cout << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
@@ -45,13 +45,13 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NeutralNurbsLocalPosition2s::surfMeshParamsClosedU(double t, Vec& uk, Vec& vl) {
-    buildNodelist(t);
+  void NeutralNurbsLocalPosition2s::surfMeshParamsClosedU(Vec& uk, Vec& vl) {
+    buildNodelist();
     MBSim::surfMeshParamsClosedU(Nodelist, uk, vl, degU);
   }
 
-  void NeutralNurbsLocalPosition2s::surfMeshParams(double t, Vec& uk, Vec& vl) {
-    buildNodelist(t);
+  void NeutralNurbsLocalPosition2s::surfMeshParams(Vec& uk, Vec& vl) {
+    buildNodelist();
     MBSim::surfMeshParams(Nodelist, uk, vl);
   }
 

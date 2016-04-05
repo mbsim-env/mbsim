@@ -56,11 +56,11 @@ namespace MBSimFlexibleBody {
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta) { return getPosition(t,zeta(0)); }
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta(0)); }
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta(0)); }
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta) { return getPosition(zeta(0)); }
+      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta) { return getWs(zeta(0)); }
+      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta) { return getWt(zeta(0)); }
+      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta) { return getWs(zeta); }
+      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta) { return getWt(zeta); }
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
 
@@ -69,17 +69,17 @@ namespace MBSimFlexibleBody {
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
       void resetUpToDate();
-      virtual void updatePositions(double t, double s);
+      virtual void updatePositions(double s);
 
-      fmatvec::Vec3 getPosition(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return WrOP; }
-      fmatvec::Vec3 getWs(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Ws; }
-      fmatvec::Vec3 getWt(double t, double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(t,s); return Wt; }
+      fmatvec::Vec3 getPosition(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return WrOP; }
+      fmatvec::Vec3 getWs(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Ws; }
+      fmatvec::Vec3 getWt(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Wt; }
 
-      void updatePositions(double t, MBSim::ContourFrame *frame);
-      void updateVelocities(double t, MBSim::ContourFrame *frame);
-      void updateAccelerations(double t, MBSim::ContourFrame *frame);
-      void updateJacobians(double t, MBSim::ContourFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(double t, MBSim::ContourFrame *frame);
+      void updatePositions(MBSim::ContourFrame *frame);
+      void updateVelocities(MBSim::ContourFrame *frame);
+      void updateAccelerations(MBSim::ContourFrame *frame);
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
 
     protected:
       fmatvec::Vec3 WrOP, Ws, Wt;

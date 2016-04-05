@@ -170,11 +170,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   for(unsigned int i=0;i<balls.size();i++) {
     Vec q0(3,INIT,0.);
     double xL = i*rodInfo->getLength()/balls.size(); // TODO
-    Vec3 r = rodInfo->getPosition(0,xL);
+    Vec3 r = rodInfo->getPosition(xL);
     q0(0) = r(0);
     q0(1) = r(1);
 
-    SqrMat3 A = rodInfo->getOrientation(0,xL);
+    SqrMat3 A = rodInfo->getOrientation(xL);
     q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
     balls[i]->setInitialGeneralizedPosition(q0);
   }

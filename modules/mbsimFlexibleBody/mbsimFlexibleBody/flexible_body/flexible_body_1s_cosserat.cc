@@ -23,13 +23,13 @@ namespace MBSimFlexibleBody {
   FlexibleBody1sCosserat::FlexibleBody1sCosserat(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), angle(new Cardan()), Elements(0), rotationalElements(0), l0(0.), E(0.), G(0.), A(0.), I1(0.), rho(0.), R1(0.), cEps0D(0.), cEps1D(0.), initialised(false), bound_ang_start(3, INIT, 0.), bound_ang_end(3, INIT, 0.), bound_ang_vel_start(3, INIT, 0.), bound_ang_vel_end(3, INIT, 0.) {
   }
 
-  void FlexibleBody1sCosserat::updateh(double t, int k) {
+  void FlexibleBody1sCosserat::updateh(int k) {
     /* translational elements */
-    FlexibleBody1s::updateh(t,k);
+    FlexibleBody1s::updateh(k);
 
     /* rotational elements */
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
-      rotationDiscretization[i]->computeh(getqRotationElement(t,i), getuRotationElement(t,i)); // compute attributes of finite element
+      rotationDiscretization[i]->computeh(evalqRotationElement(i), evaluRotationElement(i)); // compute attributes of finite element
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
       GlobalVectorContributionRotation(i, rotationDiscretization[i]->geth(), h[0]); // assemble
   }

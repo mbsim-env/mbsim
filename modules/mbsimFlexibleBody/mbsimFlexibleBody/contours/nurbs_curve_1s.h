@@ -52,10 +52,10 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(double t, MBSim::ContourFrame *frame);
-      virtual void computeRootFunctionFirstTangent(double t, MBSim::ContourFrame *frame);
-      virtual void computeRootFunctionNormal(double t, MBSim::ContourFrame *frame);
-      virtual void computeRootFunctionSecondTangent(double t, MBSim::ContourFrame *frame);
+      virtual void computeRootFunctionPosition(MBSim::ContourFrame *frame);
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourFrame *frame);
+      virtual void computeRootFunctionNormal(MBSim::ContourFrame *frame);
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourFrame *frame);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
@@ -75,24 +75,24 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief interpolates the translations with node-data from body
        */
-      void computeCurveTranslations(double t, bool update = false);
+      void computeCurveTranslations(bool update = false);
 
       /*!
        * \brief interpolates the velocities with the node-data from the body
        */
-      void computeCurveVelocities(double t, bool update = false);
+      void computeCurveVelocities(bool update = false);
 
       /*!
        * \brief interpolates the angular velocities with the node-data from the body
        */
-      void computeCurveAngularVelocities(double t, bool update = false);
+      void computeCurveAngularVelocities(bool update = false);
 
       /*!
        * \brief interpolates the Jacobians of translation with the node-data from the body
        * \param interpolate translational jacobian
        * \param interpolate rotational jacobian
        */
-      void computeCurveJacobians(double t, bool trans = true, bool rot = true, bool update = false);
+      void computeCurveJacobians(bool trans = true, bool rot = true, bool update = false);
 
     protected:
       /**

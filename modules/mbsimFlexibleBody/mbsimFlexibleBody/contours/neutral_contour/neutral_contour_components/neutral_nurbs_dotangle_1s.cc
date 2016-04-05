@@ -24,7 +24,7 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  void NeutralNurbsDotangle1s::update(double t, ContourFrame *frame) {
+  void NeutralNurbsDotangle1s::update(ContourFrame *frame) {
     throw;
 //    double uStaggered;
 //    double oringnalPosition = cp.getLagrangeParameterPosition()(0);
@@ -38,15 +38,15 @@ namespace MBSimFlexibleBody {
 //    cp.getFrameOfReference().setDotAnglesOfOrientation(Tmpv);
   }
 
-  void NeutralNurbsDotangle1s::buildNodelist(double t) {
+  void NeutralNurbsDotangle1s::buildNodelist() {
     for (int i = 0; i < nodes.size(); i++) {
-      Nodelist.set(i, trans(static_cast<FlexibleBody*>(parent)->getDerivativeOfAngles(t,nodes(i))));
+      Nodelist.set(i, trans(static_cast<FlexibleBody*>(parent)->getDerivativeOfAngles(nodes(i))));
     }
 //    cout << "neutralDotAngle" << Nodelist << endl << endl;
   }
 
-  void NeutralNurbsDotangle1s::computeCurve(double t, bool update) {
-    buildNodelist(t);
+  void NeutralNurbsDotangle1s::computeCurve(bool update) {
+    buildNodelist();
 
     if (update)
       curve.update(Nodelist);

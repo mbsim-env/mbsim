@@ -76,25 +76,25 @@ namespace MBSimFlexibleBody {
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
-      virtual fmatvec::Vec3 getPosition(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWs(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWt(double t, const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWu(double t, const fmatvec::Vec2 &zeta) { return getWs(t,zeta); }
-      virtual fmatvec::Vec3 getWv(double t, const fmatvec::Vec2 &zeta) { return getWt(t,zeta); }
-      virtual fmatvec::Vec3 getWn(double t, const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta) { return getWs(zeta); }
+      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta) { return getWt(zeta); }
+      virtual fmatvec::Vec3 getWn(const fmatvec::Vec2 &zeta);
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
 
-      void updatePositions(double t, MBSim::ContourFrame *frame);
-      void updateVelocities(double t, MBSim::ContourFrame *frame);
-      void updateAccelerations(double t, MBSim::ContourFrame *frame);
-      void updateJacobians(double t, MBSim::ContourFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(double t, MBSim::ContourFrame *frame);
+      void updatePositions(MBSim::ContourFrame *frame);
+      void updateVelocities(MBSim::ContourFrame *frame);
+      void updateAccelerations(MBSim::ContourFrame *frame);
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
 
-      fmatvec::Vec3 getPosition(double t);
-      fmatvec::SqrMat3 getOrientation(double t);
+      fmatvec::Vec3 evalPosition();
+      fmatvec::SqrMat3 evalOrientation();
 
-      virtual void plot(double t, double dt=1);
+      virtual void plot();
 
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
 
@@ -117,7 +117,7 @@ namespace MBSimFlexibleBody {
        * \param cartesian vector in world system
        * \return cylindrical coordinates
        */
-      fmatvec::Vec transformCW(double t, const fmatvec::Vec& WrPoint);
+      fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
 
 #ifdef HAVE_NURBS
       /*! 
@@ -158,21 +158,21 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief interpolates the surface with node-data from body
        */
-      void computeSurface(double t);
+      void computeSurface();
 #endif
 
 #ifdef HAVE_NURBS
       /*!
        * \brief interpolates the velocities of the surface with the node-data from the body
        */
-      void computeSurfaceVelocities(double t);
+      void computeSurfaceVelocities();
 #endif
 
 #ifdef HAVE_NURBS
       /*! 
        * \brief interpolates the Jacobians of translation of the surface with the node-data from the body
        */
-      void computeSurfaceJacobians(double t);
+      void computeSurfaceJacobians();
 #endif
 
 #ifdef HAVE_NURBS

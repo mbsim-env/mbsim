@@ -27,29 +27,29 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  void Frame2s::updatePositions(double t) {
-    static_cast<FlexibleBody2s*>(parent)->updatePositions(t,this);
-    updatePos = false;
+  void Frame2s::updatePositions() {
+    static_cast<FlexibleBody2s*>(parent)->updatePositions(this);
+    updPos = false;
   }
 
-  void Frame2s::updateVelocities(double t) {
-    static_cast<FlexibleBody2s*>(parent)->updateVelocities(t,this);
-    updateVel = false;
+  void Frame2s::updateVelocities() {
+    static_cast<FlexibleBody2s*>(parent)->updateVelocities(this);
+    updVel = false;
   }
 
-  void Frame2s::updateAccelerations(double t) {
-    static_cast<FlexibleBody2s*>(parent)->updateAccelerations(t,this);
-    updateAcc = true;
+  void Frame2s::updateAccelerations() {
+    static_cast<FlexibleBody2s*>(parent)->updateAccelerations(this);
+    updAcc = true;
   }
 
-  void Frame2s::updateJacobians(double t, int j) {
-    static_cast<FlexibleBody2s*>(parent)->updateJacobians(t,this,j);
-    updateJac[j] = false;
+  void Frame2s::updateJacobians(int j) {
+    static_cast<FlexibleBody2s*>(parent)->updateJacobians(this,j);
+    updJac[j] = false;
   }
 
-  void Frame2s::updateGyroscopicAccelerations(double t) {
-    static_cast<FlexibleBody2s*>(parent)->updateGyroscopicAccelerations(t,this);
-    updateGA = false;
+  void Frame2s::updateGyroscopicAccelerations() {
+    static_cast<FlexibleBody2s*>(parent)->updateGyroscopicAccelerations(this);
+    updGA = false;
   }
 
   void Frame2s::initializeUsingXML(DOMElement *element) {

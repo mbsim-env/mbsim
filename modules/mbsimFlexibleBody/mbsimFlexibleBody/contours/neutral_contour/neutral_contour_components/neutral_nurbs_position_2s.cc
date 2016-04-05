@@ -25,13 +25,13 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  Vec3 NeutralNurbsPosition2s::getPosition(double t, const Vec2 &zeta) {
-    if(updSurface) computeCurve(t,true);
+  Vec3 NeutralNurbsPosition2s::getPosition(const Vec2 &zeta) {
+    if(updSurface) computeCurve(true);
     return surface.pointAt(zeta(0), zeta(1));
   }
 
-  Vec3 NeutralNurbsPosition2s::getWs(double time, const Vec2 &zeta) {
-    if(updSurface) computeCurve(time,true);
+  Vec3 NeutralNurbsPosition2s::getWs(const Vec2 &zeta) {
+    if(updSurface) computeCurve(true);
     GeneralMatrix<Vec3> skl;
     /************************************************************************************
      *       | s(u,v)   Sv |   | s(u,v)                                \partial{s(u,v)} / \partial{v} |
@@ -47,43 +47,43 @@ namespace MBSimFlexibleBody {
     return Tmpv / nrm2(Tmpv);  // normalize the vector
   }
 
-  Vec3 NeutralNurbsPosition2s::getWt(double time, const Vec2 &zeta) {
-    if(updSurface) computeCurve(time,true);
+  Vec3 NeutralNurbsPosition2s::getWt(const Vec2 &zeta) {
+    if(updSurface) computeCurve(true);
     GeneralMatrix<Vec3> skl;
     surface.deriveAt(zeta(0), zeta(1), 1, skl);
     Vec3 Tmpv = skl(0, 1);  // Sv
     return Tmpv / nrm2(Tmpv);  // normalize the vector
   }
 
-  Vec3 NeutralNurbsPosition2s::getWn(double time, const Vec2 &zeta) {
-    if(updSurface) computeCurve(time,true);
+  Vec3 NeutralNurbsPosition2s::getWn(const Vec2 &zeta) {
+    if(updSurface) computeCurve(true);
     Vec3 Tmpv = surface.normal(zeta(0), zeta(1));  // TODO: check whether this normal point outwards of the material. In the nurbs_disk_2s, the normal is been reversed manually.
     return Tmpv / nrm2(Tmpv);  // normalize the normal vector
   }
 
-  void NeutralNurbsPosition2s::update(double t, ContourFrame *frame){
-    if(updSurface) computeCurve(t,true);
+  void NeutralNurbsPosition2s::update(ContourFrame *frame){
+    if(updSurface) computeCurve(true);
     frame->setPosition(surface.pointAt(frame->getEta(), frame->getXi()));
   }
 
-  void NeutralNurbsPosition2s::updatePositionNormal(double t, ContourFrame *frame) {
-    frame->getOrientation(false).set(0, getWn(t,frame->getZeta()));
+  void NeutralNurbsPosition2s::updatePositionNormal(ContourFrame *frame) {
+    frame->getOrientation(false).set(0, getWn(frame->getZeta()));
   }
 
-  void NeutralNurbsPosition2s::updatePositionFirstTangent(double t, ContourFrame *frame) {
-    frame->getOrientation(false).set(1, getWs(t,frame->getZeta()));
+  void NeutralNurbsPosition2s::updatePositionFirstTangent(ContourFrame *frame) {
+    frame->getOrientation(false).set(1, getWs(frame->getZeta()));
   }
 
-  void NeutralNurbsPosition2s::updatePositionSecondTangent(double t, ContourFrame *frame) {
-    frame->getOrientation(false).set(2, getWt(t,frame->getZeta()));
+  void NeutralNurbsPosition2s::updatePositionSecondTangent(ContourFrame *frame) {
+    frame->getOrientation(false).set(2, getWt(frame->getZeta()));
   }
 
-  void NeutralNurbsPosition2s::buildNodelist(double t){
+  void NeutralNurbsPosition2s::buildNodelist(){
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
         NodeFrame P("P",nodes(i,j));
         P.setParent(parent);
-        Nodelist(i,j) = P.getPosition(t);
+        Nodelist(i,j) = P.evalPosition();
 //        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        cout << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
       }

@@ -26,16 +26,16 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  void NeutralNurbsVelocity1s::update(double t, ContourFrame *frame) {
-    if(updCurve) computeCurve(t,true);
+  void NeutralNurbsVelocity1s::update(ContourFrame *frame) {
+    if(updCurve) computeCurve(true);
     frame->setVelocity(curve.pointAt(frame->getEta()));
   }
 
-  void NeutralNurbsVelocity1s::buildNodelist(double t){
+  void NeutralNurbsVelocity1s::buildNodelist() {
     for (int i = 0; i < nodes.size(); i++) {
       NodeFrame P("P",nodes(i));
       P.setParent(parent);
-      Nodelist.set(i, trans(P.getVelocity(t)));
+      Nodelist.set(i, trans(P.evalVelocity()));
     }
 //    cout << "neutralVelocity"<< Nodelist << endl << endl;
   }

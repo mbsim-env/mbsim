@@ -77,34 +77,34 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21ANCF::updatePositions(double t, Frame1s *frame) {
+  void FlexibleBody1s21ANCF::updatePositions(Frame1s *frame) {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPosition(getqElement(t,currentElement),sLocal));
-    frame->setOrientation(R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getOrientation(getqElement(t,currentElement),sLocal));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getPosition(getqElement(currentElement),sLocal));
+    frame->setOrientation(R->evalOrientation() *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal));
   }
 
-  void FlexibleBody1s21ANCF::updateVelocities(double t, Frame1s *frame) {
+  void FlexibleBody1s21ANCF::updateVelocities(Frame1s *frame) {
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement); // Lagrange parameter of affected FE
-    frame->setVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getVelocity(getqElement(t,currentElement),getuElement(t,currentElement),sLocal));
-    frame->setAngularVelocity(R->getOrientation(t) *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getAngularVelocity(getqElement(t,currentElement),getuElement(t,currentElement),sLocal));
+    frame->setVelocity(R->evalOrientation() *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
+    frame->setAngularVelocity(R->evalOrientation() *  static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->getAngularVelocity(getqElement(currentElement),getuElement(currentElement),sLocal));
   }
 
-  void FlexibleBody1s21ANCF::updateAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s21ANCF::updateAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21ANCF::updateJacobians(double t, Frame1s *frame, int j) {
+  void FlexibleBody1s21ANCF::updateJacobians(Frame1s *frame, int j) {
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
 
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(),sLocal,currentElement);
-    Mat Jtmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->JGeneralized(getqElement(t,currentElement),sLocal);
+    Mat Jtmp = static_cast<FiniteElement1s21ANCF*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
     if(currentElement<Elements-1 || openStructure) {
       Jacobian(Index(4*currentElement,4*currentElement+7),All) = Jtmp;
     }
@@ -113,21 +113,21 @@ namespace MBSimFlexibleBody {
       Jacobian(Index(               0,                 3),All) = Jtmp(Index(4,7),All);
     }
 
-    frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T(),j);
-    frame->setJacobianOfRotation(R->getOrientation(t)(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation()(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T(),j);
+    frame->setJacobianOfRotation(R->evalOrientation()(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T(),j);
   }
 
-  void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21ANCF::updatePositions(double t, NodeFrame *frame) {
+  void FlexibleBody1s21ANCF::updatePositions(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
     tmp(0) = q(4*node+0);
     tmp(1) = q(4*node+1);
     tmp(2) = 0.;
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * tmp);
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * tmp);
     tmp(0) = q(4*node+2);
     tmp(1) = q(4*node+3);
     tmp(2) = 0.;
@@ -142,7 +142,7 @@ namespace MBSimFlexibleBody {
     frame->getOrientation(false).set(2, R->getOrientation().col(2));
   }
 
-  void FlexibleBody1s21ANCF::updateVelocities(double t, NodeFrame *frame) {
+  void FlexibleBody1s21ANCF::updateVelocities(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
     tmp(0) = u(4*node+0);
@@ -152,7 +152,7 @@ namespace MBSimFlexibleBody {
       tmp(0) += v0*q(4*node+2);
       tmp(1) += v0*q(4*node+3);
     }
-    frame->setVelocity(R->getOrientation(t) * tmp);
+    frame->setVelocity(R->evalOrientation() * tmp);
     if(Euler) {
       double der2_1; // curvature first component
       double der2_2; // curvature second component
@@ -170,14 +170,14 @@ namespace MBSimFlexibleBody {
       tmp(1) = 0.;
       tmp(2) = (-q(4*node+3)*u(4*node+2)+q(4*node+2)*u(4*node+3))/sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
     }
-    frame->setAngularVelocity(R->getOrientation(t) * tmp);
+    frame->setAngularVelocity(R->evalOrientation() * tmp);
   }
 
-  void FlexibleBody1s21ANCF::updateAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s21ANCF::updateAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21ANCF::updateJacobians(double t, NodeFrame *frame, int j) {
+  void FlexibleBody1s21ANCF::updateJacobians(NodeFrame *frame, int j) {
     Index All(0, 3 - 1);
     Mat Jacobian(qSize, 3, INIT, 0.);
     int node = frame->getNodeNumber();
@@ -188,11 +188,11 @@ namespace MBSimFlexibleBody {
     Jacobian(4*node+3,2) = q(4*node+2);
     Jacobian(Index(4*node+2,4*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
 
-    frame->setJacobianOfTranslation(R->getOrientation(t)(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
-    frame->setJacobianOfRotation(R->getOrientation(t)(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation()(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
+    frame->setJacobianOfRotation(R->evalOrientation()(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
   }
 
-  void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s21ANCF::updateGyroscopicAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s21ANCF::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -225,7 +225,7 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s::init(stage);
   }
 
-  void FlexibleBody1s21ANCF::plot(double t, double dt) {
+  void FlexibleBody1s21ANCF::plot() {
     if(Euler) {
       for(int i=0;i<q.size()/4;i++) {
         plotVector.push_back(sqrt(pow(u(4*i+0) + v0*q(4*i+2),2.)+pow(u(4*i+1) + v0*q(4*i+3),2.)));
@@ -236,10 +236,10 @@ namespace MBSimFlexibleBody {
         plotVector.push_back(sqrt(pow(u(4*i+0),2.)+pow(u(4*i+1),2.)));
       }
     }
-    FlexibleBody1s::plot(t,dt);
+    FlexibleBody1s::plot();
   }
 
-  void FlexibleBody1s21ANCF::setNumberElements(int n){
+  void FlexibleBody1s21ANCF::setNumberElements(int n) {
     Elements = n;
     if(openStructure) {
       qSize = 4 * (n+1);
@@ -252,7 +252,7 @@ namespace MBSimFlexibleBody {
     u0.resize(uSize[0]);
   }
 
-  void FlexibleBody1s21ANCF::BuildElements(double t) {
+  void FlexibleBody1s21ANCF::BuildElements() {
     for(int i=0;i<Elements;i++) {
       int n = 4 * i ;
 

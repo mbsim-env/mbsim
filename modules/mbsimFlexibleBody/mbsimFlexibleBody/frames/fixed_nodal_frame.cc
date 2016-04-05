@@ -61,24 +61,24 @@ namespace MBSimFlexibleBody {
       FrameFFR::init(stage);
   }
       
-  const Vec3& FixedNodalFrame::getGlobalRelativePosition(double t) {
-    if(updatePos) updatePositions(t);
+  const Vec3& FixedNodalFrame::evalGlobalRelativePosition() {
+    if(updPos) updatePositions();
     return WrRP;
   }
 
-  const Mat3xV& FixedNodalFrame::getGlobalPhi(double t) {
-    if(updatePos) updatePositions(t);
+  const Mat3xV& FixedNodalFrame::evalGlobalPhi() {
+    if(updPos) updatePositions();
     return WPhi;
   }
 
-  const Mat3xV& FixedNodalFrame::getGlobalPsi(double t) {
-    if(updatePos) updatePositions(t);
+  const Mat3xV& FixedNodalFrame::evalGlobalPsi() {
+    if(updPos) updatePositions();
     return WPsi;
   }
 
-  void FixedNodalFrame::updatePositions(double t) {
+  void FixedNodalFrame::updatePositions() {
     APK = E+tilde(Psi*q);
-    setOrientation(R->getOrientation(t)*ARP*APK);
+    setOrientation(R->evalOrientation()*ARP*APK);
     if(K0F.size()) {
       MatVx3 PhigeoT(nq,NONINIT);
       for(int i=0; i<3; i++)
@@ -97,35 +97,35 @@ namespace MBSimFlexibleBody {
       WPsi = R->getOrientation()*Psi;
     WrRP = R->getOrientation()*RrRP + WPhi*q;
     setPosition(R->getPosition() + WrRP);
-    updatePos = false;
+    updPos = false;
   }
 
-  void FixedNodalFrame::updateVelocities(double t) {
-    setAngularVelocity(R->getAngularVelocity(t) + getGlobalPsi(t)*qd);
+  void FixedNodalFrame::updateVelocities() {
+    setAngularVelocity(R->evalAngularVelocity() + evalGlobalPsi()*qd);
     setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition()) + getGlobalPhi()*qd);
-    updateVel = false;
+    updVel = false;
   }
 
-  void FixedNodalFrame::updateAccelerations(double t) {
-    setAngularAcceleration(R->getAngularAcceleration(t) +  crossProduct(R->getAngularVelocity(t),getGlobalPsi(t)*qd) + getGlobalPsi(t)*qdd);
+  void FixedNodalFrame::updateAccelerations() {
+    setAngularAcceleration(R->evalAngularAcceleration() +  crossProduct(R->evalAngularVelocity(),evalGlobalPsi()*qd) + evalGlobalPsi()*qdd);
     setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd) + getGlobalPhi()*qdd);
-    updateAcc = false;
+    updAcc = false;
   }
 
-  void FixedNodalFrame::updateJacobians(double t, int j) {
-    setJacobianOfDeformation(R->getJacobianOfDeformation(t,j),j);
-    setJacobianOfRotation(R->getJacobianOfRotation(j) + getGlobalPsi(t)*R->getJacobianOfDeformation(j),j);
+  void FixedNodalFrame::updateJacobians(int j) {
+    setJacobianOfDeformation(R->evalJacobianOfDeformation(j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j) + evalGlobalPsi()*R->getJacobianOfDeformation(j),j);
     setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j) + getGlobalPhi()*R->getJacobianOfDeformation(j),j);
-    updateJac[j] = false;
+    updJac[j] = false;
   }
 
-  void FixedNodalFrame::updateGyroscopicAccelerations(double t) {
-    setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(t) + crossProduct(R->getAngularVelocity(t),getGlobalPsi(t)*qd));
+  void FixedNodalFrame::updateGyroscopicAccelerations() {
+    setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation() + crossProduct(R->evalAngularVelocity(),evalGlobalPsi()*qd));
     setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),getGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd));
-    updateGA = false;
+    updGA = false;
   }
 
-  void FixedNodalFrame::plot(double t, double dt) {
+  void FixedNodalFrame::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 //      if(getPlotFeature(stresses)==enabled) {
       Vector<Fixed<6>,double> sigma = sigma0;
@@ -138,7 +138,7 @@ namespace MBSimFlexibleBody {
       for(int i=0; i<6; i++)
         plotVector.push_back(sigma(i));
 //      }
-      Frame::plot(t,dt);
+      Frame::plot();
     }
   }
 

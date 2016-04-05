@@ -54,12 +54,12 @@ namespace MBSimFlexibleBody {
     return Kt;
   }
 
-  void Contour1s::plot(double t, double dt) {
+  void Contour1s::plot() {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
 
       vector<double> data;
-      data.push_back(t);
+      data.push_back(getTime());
       double s = etaNodes[0];
       double ds = (etaNodes[etaNodes.size()-1] - etaNodes[0]) / (openMBVSpineExtrusion->getNumberOfSpinePoints() - 1);
       Vec2 zeta;
@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
 //        ds = (uMax - uMin) / (openMBVBody->getNumberOfSpinePoints() - 2);
       for (int i = 0; i < openMBVSpineExtrusion->getNumberOfSpinePoints() - 1; i++) {
         zeta(0) = s;
-        Vec3 pos = getPosition(t,zeta);
+        Vec3 pos = getPosition(zeta);
         data.push_back(pos(0)); // global x-position
         data.push_back(pos(1)); // global y-position
         data.push_back(pos(2)); // global z-position
@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
       }
       // Avoid s-parameters to be longer than etaNodes[etaNodes.size()-1]!
       zeta(0) = etaNodes[etaNodes.size()-1];
-      Vec3 pos = getPosition(t,zeta);
+      Vec3 pos = getPosition(zeta);
       data.push_back(pos(0)); // global x-position
       data.push_back(pos(1)); // global y-position
       data.push_back(pos(2)); // global z-position

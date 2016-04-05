@@ -27,8 +27,8 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  Vec3 NeutralNurbsAngle1s::calculateStaggeredAngle(double t, double oringnalPosition){
-    if(updCurve) computeCurve(t,true);
+  Vec3 NeutralNurbsAngle1s::calculateStaggeredAngle(double oringnalPosition){
+    if(updCurve) computeCurve(true);
     double uStaggered;
     // for closeStructure the maximum of the Lagrange parameter equals the length of body.
     //  the offset between ROTNODE and TRANSNODE is not equal zero, contour parameter starts with the TRANSNODE while the curveAngularVelocities start with ROTNODE.
@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
     return curve.pointAt(uStaggered);
   }
 
-  void NeutralNurbsAngle1s::update(double t, ContourFrame *frame){
+  void NeutralNurbsAngle1s::update(ContourFrame *frame){
     throw;
 //    Vec3 Tmpv = calculateStaggeredAngle(frame->getEta());
 ////    if (Tmpv(2) < - 2 * M_PI)
@@ -48,22 +48,22 @@ namespace MBSimFlexibleBody {
 //    frame->setAngles(Tmpv);
   }
 
-  void NeutralNurbsAngle1s::updateAngleNormal(double t, ContourFrame *frame){
-    frame->getOrientation(false).set(1, ANGLE->computen(calculateStaggeredAngle(t,frame->getEta())));
+  void NeutralNurbsAngle1s::updateAngleNormal(ContourFrame *frame){
+    frame->getOrientation(false).set(1, ANGLE->computen(calculateStaggeredAngle(frame->getEta())));
   }
 
-  void NeutralNurbsAngle1s::updateAngleFirstTangent(double t, ContourFrame *frame){
-    frame->getOrientation(false).set(0, ANGLE->computet(calculateStaggeredAngle(t,frame->getEta())));
+  void NeutralNurbsAngle1s::updateAngleFirstTangent(ContourFrame *frame){
+    frame->getOrientation(false).set(0, ANGLE->computet(calculateStaggeredAngle(frame->getEta())));
   }
 
-  void NeutralNurbsAngle1s::updateAngleSecondTangent(double t, ContourFrame *frame){
-    frame->getOrientation(false).set(2, ANGLE->computeb(calculateStaggeredAngle(t,frame->getEta()))); // binormal (cartesian system)
+  void NeutralNurbsAngle1s::updateAngleSecondTangent(ContourFrame *frame){
+    frame->getOrientation(false).set(2, ANGLE->computeb(calculateStaggeredAngle(frame->getEta()))); // binormal (cartesian system)
   }
 
-  void NeutralNurbsAngle1s::buildNodelist(double t){
+  void NeutralNurbsAngle1s::buildNodelist(){
     Vec3 angles;
     for (int i = 0; i < nodes.size(); i++) {
-      angles = static_cast<FlexibleBody*>(parent)->getAngles(t,nodes(i));
+      angles = static_cast<FlexibleBody*>(parent)->getAngles(nodes(i));
       Nodelist.set(i, trans(angles));
     }
 //    for (int i = 0; i < degU; i++){
@@ -80,8 +80,8 @@ namespace MBSimFlexibleBody {
     Nodelist.set(nodes.size(), temp);
   }
 
-  void NeutralNurbsAngle1s::computeCurve(double t, bool update){  // overwrite the computeCurve as it need open interpolation for both open and closed structure
-    buildNodelist(t);
+  void NeutralNurbsAngle1s::computeCurve(bool update){  // overwrite the computeCurve as it need open interpolation for both open and closed structure
+    buildNodelist();
 
     if (update)
       curve.update(Nodelist);

@@ -26,46 +26,46 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  Vec3 NeutralNurbsPosition1s::getPosition(double t, double s) {
-    if(updCurve) computeCurve(t,true);
+  Vec3 NeutralNurbsPosition1s::getPosition(double s) {
+    if(updCurve) computeCurve(true);
     return curve.pointAt(s);
   }
 
-  Vec3 NeutralNurbsPosition1s::getWs(double time, double s) {
-    if(updCurve) computeCurve(time,true);
+  Vec3 NeutralNurbsPosition1s::getWs(double s) {
+    if(updCurve) computeCurve(true);
     Vec3 t = curve.firstDn(s);
     return t / nrm2(t);
   }
 
-  Vec3 NeutralNurbsPosition1s::getWt(double time, double s) {
-    Vec3 t = getWs(time,s);
+  Vec3 NeutralNurbsPosition1s::getWt(double s) {
+    Vec3 t = getWs(s);
     Vec3 n = crossProduct(t,binormalDir);
     return crossProduct(n,t);
   }
 
-  void NeutralNurbsPosition1s::update(double t, ContourFrame *frame) {
-    if(updCurve) computeCurve(t,true);
+  void NeutralNurbsPosition1s::update(ContourFrame *frame) {
+    if(updCurve) computeCurve(true);
     frame->setPosition(curve.pointAt(frame->getEta()));
   }
 
   // TODO: this Normal and secondTangent is only work for the neutral curve on the xy plane. Need to adapt to different situations.
-  void NeutralNurbsPosition1s::updatePositionNormal(double t, ContourFrame *frame) {
-    frame->getOrientation(false).set(0, crossProduct(getWs(t,frame->getEta()),binormalDir));
+  void NeutralNurbsPosition1s::updatePositionNormal(ContourFrame *frame) {
+    frame->getOrientation(false).set(0, crossProduct(getWs(frame->getEta()),binormalDir));
   }
 
-  void NeutralNurbsPosition1s::updatePositionFirstTangent(double t, ContourFrame *frame) {
-    frame->getOrientation(false).set(1, getWs(t,frame->getEta()));
+  void NeutralNurbsPosition1s::updatePositionFirstTangent(ContourFrame *frame) {
+    frame->getOrientation(false).set(1, getWs(frame->getEta()));
   }
 
-  void NeutralNurbsPosition1s::updatePositionSecondTangent(double t, ContourFrame *frame) {
-    frame->getOrientation(false).set(2, getWt(t,frame->getEta()));
+  void NeutralNurbsPosition1s::updatePositionSecondTangent(ContourFrame *frame) {
+    frame->getOrientation(false).set(2, getWt(frame->getEta()));
   }
 
-  void NeutralNurbsPosition1s::buildNodelist(double t) {
+  void NeutralNurbsPosition1s::buildNodelist() {
     for (int i = 0; i < nodes.size(); i++) {
       NodeFrame P("P",nodes(i));
       P.setParent(parent);
-      Nodelist.set(i, trans(P.getPosition(t)));
+      Nodelist.set(i, trans(P.evalPosition()));
     }
 //    cout << "neutralPosition"<< Nodelist << endl << endl;
   }

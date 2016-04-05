@@ -63,9 +63,9 @@ namespace MBSimFlexibleBody {
       FlexibleBody1sCosserat(const std::string &name, bool openStructure);
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements(double t)=0;
-      const fmatvec::Vec& getqRotationElement(double t, int i) { if(updEle) BuildElements(t); return qRotationElement[i]; }
-      const fmatvec::Vec& getuRotationElement(double t, int i) { if(updEle) BuildElements(t); return uRotationElement[i]; }
+      virtual void BuildElements()=0;
+      const fmatvec::Vec& evalqRotationElement(int i) { if(updEle) BuildElements(); return qRotationElement[i]; }
+      const fmatvec::Vec& evaluRotationElement(int i) { if(updEle) BuildElements(); return uRotationElement[i]; }
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat)=0;
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat)=0;
@@ -74,7 +74,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t, int i = 0);
+      virtual void updateh(int i = 0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBody1sCosserat"; }

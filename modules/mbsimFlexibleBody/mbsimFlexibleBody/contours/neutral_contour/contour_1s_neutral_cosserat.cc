@@ -61,10 +61,10 @@ namespace MBSimFlexibleBody {
       Contour1sNeutralFactory::init(stage);
     }
     else if(stage == unknownStage) {
-      NP->computeCurve(0,false); // the first time call the computeCurveVelocity, the flag should be false
-      NV->computeCurve(0,false);
-      NA->computeCurve(0,false);
-      NDA->computeCurve(0,false);
+      NP->computeCurve(false); // the first time call the computeCurveVelocity, the flag should be false
+      NV->computeCurve(false);
+      NA->computeCurve(false);
+      NDA->computeCurve(false);
 
       Vec u(NV->getuVec());
       for (int i = 0; i < u.size() - degU; i++)
@@ -77,30 +77,30 @@ namespace MBSimFlexibleBody {
     Contour1sNeutralFactory::init(stage);
   }
 
-  Vec3 Contour1sNeutralCosserat::getPosition(double t, const Vec2 &zeta) {
-    return NP->getPosition(t,zeta(0));
+  Vec3 Contour1sNeutralCosserat::getPosition(const Vec2 &zeta) {
+    return NP->getPosition(zeta(0));
   }
 
-  Vec3 Contour1sNeutralCosserat::getWs(double t, const Vec2 &zeta) {
-    return NP->getWs(t,zeta(0));
+  Vec3 Contour1sNeutralCosserat::getWs(const Vec2 &zeta) {
+    return NP->getWs(zeta(0));
   }
 
-  Vec3 Contour1sNeutralCosserat::getWt(double t, const Vec2 &zeta) {
-    return NP->getWt(t,zeta(0));
+  Vec3 Contour1sNeutralCosserat::getWt(const Vec2 &zeta) {
+    return NP->getWt(zeta(0));
   }
 
-  void Contour1sNeutralCosserat::updatePositions(double t, ContourFrame *frame) {
-    NP->update(t,frame);
-    NP->updatePositionNormal(t,frame);
-    NP->updatePositionFirstTangent(t,frame);
-    NP->updatePositionSecondTangent(t,frame);
+  void Contour1sNeutralCosserat::updatePositions(ContourFrame *frame) {
+    NP->update(frame);
+    NP->updatePositionNormal(frame);
+    NP->updatePositionFirstTangent(frame);
+    NP->updatePositionSecondTangent(frame);
   }
 
-  void Contour1sNeutralCosserat::updateVelocities(double t, ContourFrame *frame) {
-    NV->update(t,frame);
+  void Contour1sNeutralCosserat::updateVelocities(ContourFrame *frame) {
+    NV->update(frame);
   }
 
-  void Contour1sNeutralCosserat::updateJacobians(double t, ContourFrame *frame, int j) {
+  void Contour1sNeutralCosserat::updateJacobians(ContourFrame *frame, int j) {
     int qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getqSizeFull();
 
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
@@ -160,7 +160,7 @@ namespace MBSimFlexibleBody {
     // TODO: index are different for open structure
     Mat3xV Jacobian_rot(qSize, INIT, 0.);
     if (parent->getType() == "FlexibleBody1s33Cosserat") {
-      Vec3 angles = NA->calculateStaggeredAngle(t,sGlobal);
+      Vec3 angles = NA->calculateStaggeredAngle(sGlobal);
       SqrMat3 Jacobian_rot_total = ANGLE->computeT(angles);
 
 //      cout << "angles: " << angles << endl;

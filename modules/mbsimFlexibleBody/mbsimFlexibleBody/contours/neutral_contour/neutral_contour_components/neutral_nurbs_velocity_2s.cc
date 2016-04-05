@@ -22,17 +22,17 @@ namespace MBSimFlexibleBody {
   NeutralNurbsVelocity2s::~NeutralNurbsVelocity2s() {
   }
 
-  void NeutralNurbsVelocity2s::update(double t, ContourFrame *frame) {
-    if(updSurface) computeCurve(t,true);
+  void NeutralNurbsVelocity2s::update(ContourFrame *frame) {
+    if(updSurface) computeCurve(true);
     frame->setVelocity(surface.pointAt(frame->getEta(),frame->getXi()));
   }
 
-  void NeutralNurbsVelocity2s::buildNodelist(double t) {
+  void NeutralNurbsVelocity2s::buildNodelist() {
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
         NodeFrame P("P",nodes(i,j));
         P.setParent(parent);
-        Nodelist(i,j) = P.getVelocity(t);
+        Nodelist(i,j) = P.evalVelocity();
 //        cout << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        cout << "neutralVelocity2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
       }

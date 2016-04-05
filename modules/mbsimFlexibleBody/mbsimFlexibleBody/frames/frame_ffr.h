@@ -37,9 +37,9 @@ namespace MBSimFlexibleBody {
       /* INTERFACE FOR DERIVED CLASSES */
       /***************************************************/
 
-      fmatvec::MatV& getJacobianOfDeformation(int j=0,  bool check=true) { assert((not check) or (not updateJac[j])); return WJD[j]; }
+      fmatvec::MatV& getJacobianOfDeformation(int j=0,  bool check=true) { assert((not check) or (not updJac[j])); return WJD[j]; }
       void setJacobianOfDeformation(const fmatvec::MatV &J, int j=0) { WJD[j] = J; }
-      const fmatvec::MatV& getJacobianOfDeformation(double t, int j=0) { if(updateJac[j]) updateJacobians(t,j); return WJD[j]; }
+      const fmatvec::MatV& evalJacobianOfDeformation(int j=0) { if(updJac[j]) updateJacobians(j); return WJD[j]; }
 
     protected:
 

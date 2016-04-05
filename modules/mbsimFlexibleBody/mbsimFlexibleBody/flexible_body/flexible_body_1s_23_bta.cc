@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
 //    addContour(cylinderFlexible);
   }
 
-  void FlexibleBody1s23BTA::BuildElements(double t) {
+  void FlexibleBody1s23BTA::BuildElements() {
     for(int i=0;i<Elements;i++) {
       Index activeElement( discretization[i]->getuSize()/2*i , discretization[i]->getuSize()/2*(i+2) -1 );
       qElement[i] = q(activeElement);
@@ -63,24 +63,24 @@ namespace MBSimFlexibleBody {
     gloMat(activeElement) += locMat;
   }
 
-  void FlexibleBody1s23BTA::updatePositions(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> X = getPositions(t,frame->getParameter());
+  void FlexibleBody1s23BTA::updatePositions(Frame1s *frame) {
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
     X(0) = frame->getParameter();
-    frame->setPosition(R->getPosition(t) + R->getOrientation(t) * X(Range<Fixed<0>,Fixed<2> >()));
-    frame->setOrientation(R->getOrientation() * getOrientation(t,frame->getParameter()));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * X(Range<Fixed<0>,Fixed<2> >()));
+    frame->setOrientation(R->getOrientation() * getOrientation(frame->getParameter()));
   }
 
-  void FlexibleBody1s23BTA::updateVelocities(double t, Frame1s *frame) {
-    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(t,frame->getParameter());
-    frame->setVelocity(R->getOrientation(t) * Xt(Range<Fixed<0>,Fixed<2> >()));
+  void FlexibleBody1s23BTA::updateVelocities(Frame1s *frame) {
+    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(frame->getParameter());
+    frame->setVelocity(R->evalOrientation() * Xt(Range<Fixed<0>,Fixed<2> >()));
     frame->setAngularVelocity(R->getOrientation() * Xt(Range<Fixed<3>,Fixed<5> >()));
   }
 
-  void FlexibleBody1s23BTA::updateAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s23BTA::updateAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s23BTA::updateJacobians(double t, Frame1s *frame, int j) {
+  void FlexibleBody1s23BTA::updateJacobians(Frame1s *frame, int j) {
     Index All(0,5-1);
     Mat Jacobian(qSize, 5, INIT, 0); // boeser Kaefer, Initialisierung notwendig!!! M. Schneider
 
@@ -89,33 +89,33 @@ namespace MBSimFlexibleBody {
     BuildElement(frame->getParameter(), sLocal, currentElement);
 
     Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
-    Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(getqElement(t,currentElement),sLocal);
+    Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
 
     frame->setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
     frame->setJacobianOfRotation(R->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
   }
 
-  void FlexibleBody1s23BTA::updateGyroscopicAccelerations(double t, Frame1s *frame) {
+  void FlexibleBody1s23BTA::updateGyroscopicAccelerations(Frame1s *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s23BTA::updatePositions(double t, NodeFrame *frame) {
+  void FlexibleBody1s23BTA::updatePositions(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updatePositions): Not implemented.");
   }
 
-  void FlexibleBody1s23BTA::updateVelocities(double t, NodeFrame *frame) {
+  void FlexibleBody1s23BTA::updateVelocities(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateVelocities): Not implemented.");
   }
 
-  void FlexibleBody1s23BTA::updateAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s23BTA::updateAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s23BTA::updateJacobians(double time, NodeFrame *frame, int j) {
+  void FlexibleBody1s23BTA::updateJacobians(NodeFrame *frame, int j) {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateJacobians): Not implemented.");
   }
 
-  void FlexibleBody1s23BTA::updateGyroscopicAccelerations(double t, NodeFrame *frame) {
+  void FlexibleBody1s23BTA::updateGyroscopicAccelerations(NodeFrame *frame) {
     THROW_MBSIMERROR("(FlexibleBody1s23BTA::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -156,25 +156,25 @@ namespace MBSimFlexibleBody {
     u0.resize(uSize[0]);
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getPositions(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getPositions(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getPositions(getqElement(t,currentElement), sLocal);
+    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
   }
 
-  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getVelocities(double t, double sGlobal) {
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s23BTA::getVelocities(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getVelocities(getqElement(t,currentElement), getuElement(t,currentElement), sLocal);
+    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
   }
 
-  SqrMat3 FlexibleBody1s23BTA::getOrientation(double t, double sGlobal) {
+  SqrMat3 FlexibleBody1s23BTA::getOrientation(double sGlobal) {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getOrientation(getqElement(t,currentElement),sLocal);
+    return static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->getOrientation(getqElement(currentElement),sLocal);
   }
 
   void FlexibleBody1s23BTA::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
@@ -187,8 +187,8 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  Vec3 FlexibleBody1s23BTA::getAngles(double t, double s) {
-    return getPositions(t,s)(Range<Fixed<3>,Fixed<5> >());
+  Vec3 FlexibleBody1s23BTA::getAngles(double s) {
+    return getPositions(s)(Range<Fixed<3>,Fixed<5> >());
   }
 
   void FlexibleBody1s23BTA::initializeUsingXML(DOMElement *element) {

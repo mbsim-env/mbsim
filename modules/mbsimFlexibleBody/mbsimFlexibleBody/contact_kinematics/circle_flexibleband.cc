@@ -35,8 +35,8 @@ namespace MBSimFlexibleBody {
     public:
       ContactKinematicsCircleNode(double node_) : node(node_), circle(0), extrusion(0) { }
       virtual void assignContours(const vector<Contour*> &contour);
-      virtual void updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
+      virtual void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNode::updatewb not implemented!"); }
     private:
       double node;
       int icircle, inode;
@@ -59,13 +59,13 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleNode::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleNode::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
 
     cFrame[inode]->setEta(node);
 
-    cFrame[inode]->setPosition(extrusion->getPosition(t,cFrame[inode]->getZeta()));
+    cFrame[inode]->setPosition(extrusion->getPosition(cFrame[inode]->getZeta()));
 
-    const Vec3 WrD = cFrame[inode]->getPosition(false) - circle->getFrame()->getPosition(t);
+    const Vec3 WrD = cFrame[inode]->getPosition(false) - circle->getFrame()->evalPosition();
     
     cFrame[icircle]->getOrientation(false).set(0, WrD/nrm2(WrD));
     cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(false).col(2));
@@ -91,8 +91,8 @@ namespace MBSimFlexibleBody {
     public:
       ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(0), extrusion(0) { }
       virtual void assignContours(const vector<Contour*> &contour);
-      virtual void updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index = 0);
-      virtual void updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
+      virtual void updateg(double &g, vector<ContourFrame*> &cFrame, int index = 0);
+      virtual void updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) { throw MBSimError("ContactKinematicsCircleNodeInterpolation::updatewb not implemented!"); }
     private:
       Vec nodes;
       int icircle, inode;
@@ -115,7 +115,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleNodeInterpolation::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleNodeInterpolation::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
     FuncPairPlanarContourCircle *func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
     PlanarContactSearch search(func);
 
@@ -127,17 +127,17 @@ namespace MBSimFlexibleBody {
 
       cFrame[inode]->setEta(result(0,0));
 
-      cFrame[inode]->getOrientation(false).set(0, extrusion->getWn(t,cFrame[inode]->getZeta()));
-      cFrame[inode]->getOrientation(false).set(1, extrusion->getWu(t,cFrame[inode]->getZeta()));
-      cFrame[inode]->getOrientation(false).set(2, extrusion->getWv(t,cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(0, extrusion->getWn(cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(1, extrusion->getWu(cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(2, extrusion->getWv(cFrame[inode]->getZeta()));
       cFrame[icircle]->getOrientation(false).set(0, -cFrame[inode]->getOrientation(false).col(0));
-      cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->getOrientation(t).col(2));
+      cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
       cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
 
-      cFrame[inode]->setPosition(extrusion->getPosition(t,cFrame[inode]->getZeta()));
-      cFrame[icircle]->setPosition(circle->getFrame()->getPosition(t)+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
+      cFrame[inode]->setPosition(extrusion->getPosition(cFrame[inode]->getZeta()));
+      cFrame[icircle]->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
-      Vec Wd = circle->getFrame()->getPosition(t) - cFrame[inode]->getPosition(false);
+      Vec Wd = circle->getFrame()->evalPosition() - cFrame[inode]->getPosition(false);
       cFrame[inode]->setXi(cFrame[inode]->getOrientation(false).col(2).T() * Wd); // get contact parameter of second tangential direction
       cFrame[inode]->getPosition(false) += cFrame[inode]->getXi() * cFrame[inode]->getOrientation(false).col(2);
 
@@ -185,11 +185,11 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleFlexibleBand::updateg(double t, double &g, vector<ContourFrame*> &cFrame, int index) {
+  void ContactKinematicsCircleFlexibleBand::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
     throw MBSimError("ContactKinematicsCircleFlexibleBand::updateg not implemented!");
   }
 
-  void ContactKinematicsCircleFlexibleBand::updatewb(double t, Vec &wb, double g, vector<ContourFrame*> &cFrame) {
+  void ContactKinematicsCircleFlexibleBand::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
     throw MBSimError("ContactKinematicsCircleFlexibleBand::updatewb not implemented!");
   }
 }

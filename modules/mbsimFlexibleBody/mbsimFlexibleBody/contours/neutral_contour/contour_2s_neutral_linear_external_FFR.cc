@@ -59,9 +59,9 @@ namespace MBSimFlexibleBody {
 
       // use the local position to generate the lagrange parameters for nurbs interpolation in the undeformed state.
       if (openStructure)
-        NLP->surfMeshParams(0, uk, vl);
+        NLP->surfMeshParams(uk, vl);
       else
-        NLP->surfMeshParamsClosedU(0, uk, vl);
+        NLP->surfMeshParamsClosedU(uk, vl);
 
       NP->setuk(uk);
       NP->setvl(vl);
@@ -72,9 +72,9 @@ namespace MBSimFlexibleBody {
 
       createNeutralModeShape();
 
-      NP->computeCurve(0, false); // the first time call the computeCurveVelocity, the flag should be false
-      NLP->computeCurve(0, false);
-      NV->computeCurve(0, false);
+      NP->computeCurve(false); // the first time call the computeCurveVelocity, the flag should be false
+      NLP->computeCurve(false);
+      NV->computeCurve(false);
 
       Contour2sNeutralFactory::init(stage);
     }
@@ -82,44 +82,44 @@ namespace MBSimFlexibleBody {
     Contour2sNeutralFactory::init(stage);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getPosition(double t, const Vec2 &zeta) {
-    return NP->getPosition(t,zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::getPosition(const Vec2 &zeta) {
+    return NP->getPosition(zeta);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getWs(double t, const Vec2 &zeta) {
-    return NP->getWs(t,zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::getWs(const Vec2 &zeta) {
+    return NP->getWs(zeta);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getWt(double t, const Vec2 &zeta) {
-    return NP->getWt(t,zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::getWt(const Vec2 &zeta) {
+    return NP->getWt(zeta);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getWn(double t, const Vec2 &zeta) {
-    return NP->getWn(t,zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::getWn(const Vec2 &zeta) {
+    return NP->getWn(zeta);
   }
 
-  void Contour2sNeutralLinearExternalFFR::updatePositions(double t, ContourFrame *frame) {
-    NP->update(t,frame);
-    NP->updatePositionNormal(t,frame);
-    NP->updatePositionFirstTangent(t,frame);
-    NP->updatePositionSecondTangent(t,frame);
+  void Contour2sNeutralLinearExternalFFR::updatePositions(ContourFrame *frame) {
+    NP->update(frame);
+    NP->updatePositionNormal(frame);
+    NP->updatePositionFirstTangent(frame);
+    NP->updatePositionSecondTangent(frame);
   }
 
-  void Contour2sNeutralLinearExternalFFR::updateVelocities(double t, ContourFrame *frame) {
-    NV->update(t,frame);
-    frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity(t));
+  void Contour2sNeutralLinearExternalFFR::updateVelocities(ContourFrame *frame) {
+    NV->update(frame);
+    frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->evalAngularVelocity());
   }
 
-  void Contour2sNeutralLinearExternalFFR::updateJacobians(double t, ContourFrame *frame, int j) {
+  void Contour2sNeutralLinearExternalFFR::updateJacobians(ContourFrame *frame, int j) {
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
     Mat3xV Jacobian_trans(qSize, INIT, 0.);
     // translational DOF
     Jacobian_trans.set(Index(0, 2), Index(0, 2), SqrMat(3, EYE));
 
     // rotational DOF
-    SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getA(t);
-    SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getG_bar(t);
-    Vec3 u_bar = NLP->getLocalPosition(t,frame->getZeta());
+    SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalA();
+    SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalG_bar();
+    Vec3 u_bar = NLP->getLocalPosition(frame->getZeta());
     Jacobian_trans.set(Index(0, 2), Index(3, 5), -A * tilde(u_bar) * G_bar);
 
     // elastic DOF
