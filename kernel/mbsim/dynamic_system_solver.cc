@@ -923,12 +923,9 @@ namespace MBSim {
   int DynamicSystemSolver::solveImpacts() {
     if (La.size() == 0)
       return 0;
-    double H = 1;
-    if (dt > 0)
-      H = dt;
 
     if (useOldla)
-      initLa(H);
+      initLa();
     else
       La.init(0);
     
@@ -952,7 +949,7 @@ namespace MBSim {
       msg(Warn) << "high number of iterations: " << iter << endl;
 
     if (useOldla)
-      saveLa(H);
+      saveLa();
 
     la = La/dt;
 
@@ -1187,24 +1184,24 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::savela(double dt) {
+  void DynamicSystemSolver::savela() {
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).savela(dt);
+      (**i).savela();
   }
 
-  void DynamicSystemSolver::initla(double dt) {
+  void DynamicSystemSolver::initla() {
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).initla(dt);
+      (**i).initla();
   }
 
-  void DynamicSystemSolver::saveLa(double dt) {
+  void DynamicSystemSolver::saveLa() {
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).saveLa(dt);
+      (**i).saveLa();
   }
 
-  void DynamicSystemSolver::initLa(double dt) {
+  void DynamicSystemSolver::initLa() {
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).initLa(dt);
+      (**i).initLa();
   }
 
   double DynamicSystemSolver::computePotentialEnergy() {

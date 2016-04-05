@@ -419,22 +419,22 @@ namespace MBSim {
       /**
        * \brief saves contact forces for use as starting value in next time step
        */
-      void savela(double dt=1.0);
+      void savela();
 
       /**
        * \brief saves contact impulses for use as starting value in next time step
        */
-      void saveLa(double dt=1.0);
+      void saveLa();
 
       /**
        * \brief load contact forces for use as starting value
        */
-      void initla(double dt=1.0);
+      void initla();
 
       /**
        * \brief load contact impulses for use as starting value
        */
-      void initLa(double dt=1.0);
+      void initLa();
 
       /**
        * \brief decrease rfactor if mass action matrix is not diagonal dominant (cf. Foerg: Dissertation, page 80 et seq.) 

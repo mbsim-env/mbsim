@@ -184,22 +184,22 @@ namespace MBSim {
     x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
   }
 
-  void Link::savela(double dt) {
+  void Link::savela() {
     la0 >> la;
   }
 
-  void Link::initla(double dt) {
+  void Link::initla() {
     if(la0.size() == la.size()) // TODO check if initialising to 0 is better if contact was inactive before
       la = la0;
     else
       la.init(0);
   }
 
-  void Link::saveLa(double dt) {
+  void Link::saveLa() {
     La0 >> La;
   }
 
-  void Link::initLa(double dt) {
+  void Link::initLa() {
     if(La0.size() == La.size()) // TODO check if initialising to 0 is better if contact was inactive before
       La = La0;
     else
