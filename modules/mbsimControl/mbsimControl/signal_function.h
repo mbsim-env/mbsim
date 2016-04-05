@@ -31,53 +31,6 @@ namespace MBSimControl {
   template<typename Sig>
   class SignalFunction;
 
-  //! A function with double argument which get its return value from a signal
-  template<typename Ret>
-  class SignalFunction<Ret(double)> : public MBSim::Function<Ret(double)> {
-    public:
-      SignalFunction(Signal *ret_=NULL) : ret(ret_) {}
-
-      void setReturnSignal(Signal *ret_);
-
-      virtual Ret operator()(const double& t) {
-        return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
-      }
-
-      void init(MBSim::Element::InitStage stage);
-
-      void initializeUsingXML(xercesc::DOMElement *element);
-
-      MBSim::Element* getDependency() const { return ret; }
-
-    protected:
-      std::string retString;
-      Signal *ret;
-  };
-
-  template<typename Ret>
-  void SignalFunction<Ret(double)>::setReturnSignal(Signal *ret_) {
-    ret=ret_;
-  }
-
-  template<typename Ret>
-  void SignalFunction<Ret(double)>::initializeUsingXML(xercesc::DOMElement *element) {
-    MBSim::Function<Ret(double)>::initializeUsingXML(element);
-    xercesc::DOMElement *e;
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"returnSignal");
-    retString=MBXMLUtils::E(e)->getAttribute("ref");
-  }
-
-  template<typename Ret>
-  void SignalFunction<Ret(double)>::init(MBSim::Element::InitStage stage) {
-    if(stage==MBSim::Element::resolveXMLPath) {
-      if(retString!="")
-        setReturnSignal(this->template getByPath<Signal>(retString));
-      MBSim::Function<Ret(double)>::init(stage);
-    }
-    else
-      MBSim::Function<Ret(double)>::init(stage);
-  }
-
   //! A function with one argument which get its return value from a signal
   template<typename Ret, typename Arg>
   class SignalFunction<Ret(Arg)> : public MBSim::Function<Ret(Arg)> {
@@ -87,7 +40,7 @@ namespace MBSimControl {
       void setReturnSignal(Signal *ret_);
 
       virtual Ret operator()(const Arg& a) {
-        return MBSim::FromVecV<Ret>::cast(ret->getSignal(0.));
+        return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
 
       void init(MBSim::Element::InitStage stage);
@@ -134,7 +87,7 @@ namespace MBSimControl {
       void setReturnSignal(Signal *ret_);
 
       virtual Ret operator()(const Arg1& a1, const Arg2& a2) {
-        return MBSim::FromVecV<Ret>::cast(ret->getSignal(0.));
+        return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
 
       void init(MBSim::Element::InitStage stage);
