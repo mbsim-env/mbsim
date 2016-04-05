@@ -1,1 +1,1 @@
-SUBDIRS = 3rdparty general createfmu mbsimfmi
+SUBDIRS = 3rdparty general createfmu mbsimfmi test

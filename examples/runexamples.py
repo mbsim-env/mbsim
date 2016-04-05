@@ -28,6 +28,7 @@ import threading
 import time
 import json
 import fcntl
+import zipfile
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -41,7 +42,7 @@ mbxmlutilsvalidate=None
 ombvSchema=None
 mbsimXMLSchema=None
 timeID=None
-directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
+directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by --directories)
 # the following examples will fail: do not report them in the Atom feed as errors
 willFail=set([
   # unknown large difference to reference solution (caused by mbsimFlexibleBody?)
@@ -681,8 +682,9 @@ def addExamplesByFilter(baseDir, directoriesSet):
     except:
       print("Unable to evaluate the filter:\n"+args.filter)
       exit(1)
-    if filterResult:
-      addOrDiscard(os.path.normpath(root))
+    path=os.path.normpath(root)
+    if filterResult and not "unpacked_fmu" in path.split(os.sep):
+      addOrDiscard(path)
 
 
 
@@ -1016,6 +1018,7 @@ def executeFlatXMLExample(executeFD, example):
 
 # helper function for executeFMIXMLExample and executeFMISrcExample
 def executeFMIExample(executeFD, example, fmiInputFile):
+  ### create the FMU
   # run mbsimCreateFMU to export the model as a FMU
   # use option --nocompress, just to speed up mbsimCreateFMU
   print("\n\n\n", file=executeFD)
@@ -1027,6 +1030,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   ret1=[abs(subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/5))]
   outFiles1=getOutFilesAndAdaptRet(example, ret1)
 
+  ### run using fmuChecker
   # get fmuChecker executable
   fmuCheck=glob.glob(pj(mbsimBinDir, "fmuCheck.*"))
   if len(fmuCheck)!=1:
@@ -1059,14 +1063,27 @@ def executeFMIExample(executeFD, example, fmiInputFile):
     d.attrs.create("Column Label", dtype=h5py.special_dtype(vlen=bytes), data=header) # create Column Label attr with header
     f.close() # close h5 file
 
+  ### run using mbsimTestFMU
+  # unpack FMU
+  zipfile.ZipFile("mbsim.fmu").extractall("unpacked_fmu")
+  # run mbsimTestFMU
+  print("\n\n\n", file=executeFD)
+  print("Running command:", file=executeFD)
+  comm=exePrefix()+[pj(mbsimBinDir, "mbsimTestFMU"+args.exeExt), "unpacked_fmu"]
+  list(map(lambda x: print(x, end=" ", file=executeFD), comm))
+  print("\n", file=executeFD)
+  ret3=[abs(subprocessCall(prefixSimulation(example, 'fmutst')+comm, executeFD, maxExecutionTime=args.maxExecutionTime))]
+  outFiles3=getOutFilesAndAdaptRet(example, ret3)
+
   # return
-  if ret1[0]==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode:
+  if ret1[0]==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode or ret3[0]==subprocessCall.timedOutErrorCode:
     ret=subprocessCall.timedOutErrorCode
   else:
-    ret=abs(ret1[0])+abs(ret2[0])
+    ret=abs(ret1[0])+abs(ret2[0])+abs(ret3[0])
   outFiles=[]
   outFiles.extend(outFiles1)
   outFiles.extend(outFiles2)
+  outFiles.extend(outFiles3)
   return ret, dt, outFiles
 
 # execute the FMI XML export example in the current directory (write everything to fd executeFD)

@@ -67,7 +67,7 @@ PKG_CHECK_MODULES(FMUPPXMLDEPS, mbxmlutils mbsimxml)
 PKG_CHECK_MODULES(CREATEDEPS, mbsimxml mbsim mbsimControl mbxmlutils)
 PKG_CHECK_MODULES(LIBARCHIVEDEPS, libarchive)
 
-AC_CONFIG_FILES([Makefile 3rdparty/Makefile general/Makefile createfmu/Makefile mbsimfmi/Makefile])
+AC_CONFIG_FILES([Makefile 3rdparty/Makefile general/Makefile createfmu/Makefile mbsimfmi/Makefile test/Makefile])
 AC_OUTPUT
 
 echo "
