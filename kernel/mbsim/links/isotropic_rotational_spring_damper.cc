@@ -13,13 +13,12 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: ghorst@amm.mw.tum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
-
 #include "isotropic_rotational_spring_damper.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/objects/rigid_body.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 
@@ -29,13 +28,13 @@ using namespace fmatvec;
 namespace MBSim {
 
   IsotropicRotationalSpringDamper::IsotropicRotationalSpringDamper(const string &name) :
-      FloatinFrameLink(name), c(0.), d(0.), alpha0(0.) {
+      FloatingFrameLink(name), c(0.), d(0.), alpha0(0.) {
   }
 
   IsotropicRotationalSpringDamper::~IsotropicRotationalSpringDamper() {
   }
 
-  void IsotropicRotationalSpringDamper::updateGeneralizedSingleValuedForces(doublet) {
+  void IsotropicRotationalSpringDamper::updateGeneralizedForces() {
     la = -evalGeneralizedRelativeVelocity() * d - evalGeneralizedRelativePosition() * c;
   }
 
@@ -82,8 +81,7 @@ namespace MBSim {
     momentDir = md;
 
     for (int i = 0; i < md.cols(); i++)
-      momentDir.col(i) = momentDir.col(i) / nrm2(md.col(i));
+      momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
   }
 
 }
-

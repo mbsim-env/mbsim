@@ -13,13 +13,13 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: ghorst@amm.mw.tum.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _ISOTROPICROTATIONALSPRINGDAMPER_H_
 #define _ISOTROPICROTATIONALSPRINGDAMPER_H_
 
-#include "mbsim/floating_frame_link.h"
+#include "mbsim/links/floating_frame_link.h"
 
 namespace MBSim {
 
@@ -33,7 +33,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2012-03-21 initial commit (Thorsten Schindler)
    */
-  class IsotropicRotationalSpringDamper : public FloatinFrameLink {
+  class IsotropicRotationalSpringDamper : public FloatingFrameLink {
     public:
       /**
        * \brief constructor
@@ -46,11 +46,9 @@ namespace MBSim {
        */
       virtual ~IsotropicRotationalSpringDamper();
 
+      virtual void updateGeneralizedForces();
       virtual void updateGeneralizedPositions();
       virtual void updateGeneralizedVelocities();
-      /***************************************************/
-
-      virtual void init(InitStage stage);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -78,4 +76,3 @@ namespace MBSim {
 }
 
 #endif /* _ISOTROPICROTATIONALSPRINGDAMPER_H_ */
-
