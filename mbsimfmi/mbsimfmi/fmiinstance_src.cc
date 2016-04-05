@@ -19,7 +19,7 @@ namespace MBSimFMI {
 
     modelLib=boost::make_shared<SharedLibrary>(absolute(mbsimsrclibfile).string());
     DynamicSystemSolver *dssPtr;
-    reinterpret_cast<mbsimSrcFMIPtr>(modelLib->getAddress("mbsimSrcFMI"))(dssPtr);
+    modelLib->getSymbol<mbsimSrcFMIPtr>("mbsimSrcFMI")(dssPtr);
     dss.reset(dssPtr);
   }
 

@@ -4,9 +4,9 @@ lib_LTLIBRARIES = mbsim.la libmbsimxml_fmi.la libmbsimppxml_fmi.la libmbsimsrc_f
 # build FMU library; just a wrapper which loads at runtime libmbsimXXX_fmi.la); this library
 # should NOT depend on any library except system libraries!
 mbsim_la_SOURCES = fmiModelFunctions.cc
-mbsim_la_CPPFLAGS = $(MBXMLUTILSBASEDEPS_CFLAGS)
-mbsim_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN # mbsim.so links with libmbxmlutilsbase in the same dir (not under local)
-mbsim_la_LIBADD = $(MBXMLUTILSBASEDEPS_LIBS)
+mbsim_la_CPPFLAGS = $(MBXMLUTILSHELPERDEPS_CFLAGS) -fvisibility=hidden
+mbsim_la_LDFLAGS = -module -avoid-version -Wl,-rpath,\$$ORIGIN -Wl,--version-script=$(srcdir)/mbsim.map
+mbsim_la_LIBADD = $(LIBDL)
 
 
 
@@ -28,8 +28,8 @@ libmbsimppxml_fmi_la_LDFLAGS = -avoid-version
 
 # build main FMU library for source models
 libmbsimsrc_fmi_la_SOURCES = fmiinstance_src.cc
-libmbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS) $(MBXMLUTILSBASEDEPS_CFLAGS)
-libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la ../general/libfmivariables.la $(FMUDEPS_LIBS) $(MBXMLUTILSBASEDEPS_LIBS)
+libmbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS) $(MBXMLUTILSHELPERDEPS_CFLAGS)
+libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la ../general/libfmivariables.la $(FMUDEPS_LIBS)
 libmbsimsrc_fmi_la_LDFLAGS = -avoid-version
 
 

@@ -40,6 +40,9 @@ else
 fi
 
 CPPFLAGS="$CPPFLAGS -Wall -Werror"
+if test "_$host_os" != "_mingw32"; then
+  CPPFLAGS="$CPPFLAGS -fPIC"
+fi
 
 dnl needed for XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])

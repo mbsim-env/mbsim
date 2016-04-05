@@ -1,0 +1,29 @@
+{
+  global:
+    mbsim_fmiGetModelTypesPlatform;
+    mbsim_fmiGetVersion;
+    mbsim_fmiInstantiateModel;
+    mbsim_fmiFreeModelInstance;
+    mbsim_fmiSetDebugLogging;
+    mbsim_fmiSetTime;
+    mbsim_fmiSetContinuousStates;
+    mbsim_fmiCompletedIntegratorStep;
+    mbsim_fmiSetReal;
+    mbsim_fmiSetInteger;
+    mbsim_fmiSetBoolean;
+    mbsim_fmiSetString;
+    mbsim_fmiInitialize;
+    mbsim_fmiGetDerivatives;
+    mbsim_fmiGetEventIndicators;
+    mbsim_fmiGetReal;
+    mbsim_fmiGetInteger;
+    mbsim_fmiGetBoolean;
+    mbsim_fmiGetString;
+    mbsim_fmiEventUpdate;
+    mbsim_fmiGetContinuousStates;
+    mbsim_fmiGetNominalContinuousStates;
+    mbsim_fmiGetStateValueReferences;
+    mbsim_fmiTerminate;
+  local:
+    *;
+};

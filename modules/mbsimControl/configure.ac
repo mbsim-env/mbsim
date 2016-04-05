@@ -46,6 +46,9 @@ AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
+if test "_$host_os" != "_mingw32"; then
+  CPPFLAGS="$CPPFLAGS -fPIC"
+fi
 AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
 CPPFLAGS_OLD=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"

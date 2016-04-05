@@ -40,6 +40,9 @@ else
   FFLAGS="$FFLAGS -g -O2"
 fi
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
+if test "_$host_os" != "_mingw32"; then
+  CPPFLAGS="$CPPFLAGS -fPIC"
+fi
 CPPFLAGS="$CPPFLAGS -Wno-error=sign-compare" # casadi headers use some wrong sign-compare
 
 dnl Check for casadi 

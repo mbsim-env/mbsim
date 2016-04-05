@@ -1039,7 +1039,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   endTime=[]
   if 'MBSIM_SET_MINIMAL_TEND' in os.environ:
     endTime=['-s', '0.01']
-  comm=exePrefix()+[pj(mbsimBinDir, fmuCheck)]+endTime+["-l", "5", "mbsim.fmu"]
+  comm=exePrefix()+[pj(mbsimBinDir, fmuCheck)]+endTime+["-f", "-l", "5", "-o", "fmuCheck.result.csv", "mbsim.fmu"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
@@ -1047,6 +1047,17 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
+  # convert fmuCheck result csv file to h5 format (this is then checked as usual by compareExample)
+  if canCompare:
+    import h5py
+    import numpy
+    data=numpy.genfromtxt("fmuCheck.result.csv", dtype=float, delimiter=",", skip_header=1) # get data from csv
+    header=open("fmuCheck.result.csv", "r").readline().rstrip().split(',') # get header from csv
+    header=list(map(lambda x: x[1:-1], header)) # remove leading/trailing " form each header
+    f=h5py.File("fmuCheck.result.h5", "w") # create h5 file
+    d=f.create_dataset("fmuCheckResult", dtype='d', data=data) # create dataset with data
+    d.attrs.create("Column Label", dtype=h5py.special_dtype(vlen=bytes), data=header) # create Column Label attr with header
+    f.close() # close h5 file
 
   # return
   if ret1[0]==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode:

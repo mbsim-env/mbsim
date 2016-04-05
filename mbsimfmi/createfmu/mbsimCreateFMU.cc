@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
       cout<<"Build up the model (by just getting it from the shared library)."<<endl;
       shLib=boost::make_shared<SharedLibrary>(absolute(inputFilename).string());
       DynamicSystemSolver *dssPtr;
-      reinterpret_cast<mbsimSrcFMIPtr>(shLib->getAddress("mbsimSrcFMI"))(dssPtr);
+      shLib->getSymbol<mbsimSrcFMIPtr>("mbsimSrcFMI")(dssPtr);
       dss.reset(dssPtr);
 
       // we do not have a integrator for src models (but this is only used for convinence settings)
