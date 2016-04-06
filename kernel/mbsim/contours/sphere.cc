@@ -53,7 +53,7 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec3 Sphere::getKs(const fmatvec::Vec2 &zeta) {
+  Vec3 Sphere::evalKs(const fmatvec::Vec2 &zeta) {
     Vec3 Ks(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
@@ -63,7 +63,7 @@ namespace MBSim {
     return Ks;
   }
 
-  Vec3 Sphere::getKt(const fmatvec::Vec2 &zeta) {
+  Vec3 Sphere::evalKt(const fmatvec::Vec2 &zeta) {
     Vec3 Kt(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
@@ -73,7 +73,7 @@ namespace MBSim {
     return Kt;
   }
 
-  Vec3 Sphere::getParDer1Ku(const fmatvec::Vec2 &zeta) {
+  Vec3 Sphere::evalParDer1Ku(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Ku(NONINIT);
     double a = zeta(0);
     parDer1Ku(0) = -cos(a);
@@ -82,12 +82,12 @@ namespace MBSim {
     return parDer1Ku;
   }
 
-  Vec3 Sphere::getParDer2Ku(const fmatvec::Vec2 &zeta) {
+  Vec3 Sphere::evalParDer2Ku(const fmatvec::Vec2 &zeta) {
     static Vec3 parDer2Ku;
     return parDer2Ku;
   }
 
-  Vec3 Sphere::getParDer1Kv(const fmatvec::Vec2 &zeta) {
+  Vec3 Sphere::evalParDer1Kv(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
@@ -97,7 +97,7 @@ namespace MBSim {
     return parDer1Kv;
   }
 
-  Vec3 Sphere::getParDer2Kv(const fmatvec::Vec2 &zeta) {
+  Vec3 Sphere::evalParDer2Kv(const fmatvec::Vec2 &zeta) {
     Vec3 parDer2Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
@@ -107,7 +107,7 @@ namespace MBSim {
     return parDer2Kv;
   }
 
-  Vec2 Sphere::getZeta(const fmatvec::Vec3 &WrPoint) {
+  Vec2 Sphere::evalZeta(const fmatvec::Vec3 &WrPoint) {
     Vec3 SrPoint = R->evalOrientation().T() * (WrPoint - R->evalPosition());
     Vec2 zeta;
     double r = nrm2(SrPoint);

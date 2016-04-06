@@ -82,10 +82,10 @@ namespace MBSimFlexibleBody {
       g = 1.;
     else {
 
-      cFrame[inurbsdisk]->setPosition(nurbsdisk->getPosition(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->getWn(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->getWu(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->getWv(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->setPosition(nurbsdisk->evalPosition(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->evalWn(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->evalWu(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->evalWv(cFrame[inurbsdisk]->getZeta()));
 
       cFrame[icircle]->getOrientation(false).set(0, -cFrame[inurbsdisk]->getOrientation(false).col(0));
       cFrame[icircle]->getOrientation(false).set(1, -cFrame[inurbsdisk]->getOrientation(false).col(1));

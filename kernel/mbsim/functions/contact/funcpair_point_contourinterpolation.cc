@@ -28,11 +28,11 @@ using namespace fmatvec;
 namespace MBSim {
 
   Vec2 FuncPairPointContourInterpolation::operator()(const Vec2 &alpha) {
-    return (contour->getWu(alpha)).T() * (contour->getPosition(alpha) - point->getFrame()->evalPosition());
+    return (contour->evalWu(alpha)).T() * (contour->evalPosition(alpha) - point->getFrame()->evalPosition());
   }
 
-  Vec3 FuncPairPointContourInterpolation::getWrD(const Vec2 &alpha) {
-    return contour->getPosition(alpha) - point->getFrame()->evalPosition();
+  Vec3 FuncPairPointContourInterpolation::evalWrD(const Vec2 &alpha) {
+    return contour->evalPosition(alpha) - point->getFrame()->evalPosition();
   }
 
 }

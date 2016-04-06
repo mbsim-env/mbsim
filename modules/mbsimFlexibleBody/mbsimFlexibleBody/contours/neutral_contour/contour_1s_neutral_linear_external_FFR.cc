@@ -73,7 +73,7 @@ namespace MBSimFlexibleBody {
       qSize = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getqSize();
 
       NP = createNeutralPosition();
-      NP->setBinormalDir(-R->getOrientation(0.).col(2));
+      NP->setBinormalDir(-R->evalOrientation().col(2));
       NLP = createNeutralLocalPosition();
       NV = createNeutralVelocity();
       createNeutralModeShape();
@@ -88,16 +88,16 @@ namespace MBSimFlexibleBody {
     Contour1sNeutralFactory::init(stage);
   }
 
-  Vec3 Contour1sNeutralLinearExternalFFR::getPosition(const Vec2 &zeta) {
-    return NP->getPosition(zeta(0));
+  Vec3 Contour1sNeutralLinearExternalFFR::evalPosition(const Vec2 &zeta) {
+    return NP->evalPosition(zeta(0));
   }
 
-  Vec3 Contour1sNeutralLinearExternalFFR::getWs(const Vec2 &zeta) {
-    return NP->getWs(zeta(0));
+  Vec3 Contour1sNeutralLinearExternalFFR::evalWs(const Vec2 &zeta) {
+    return NP->evalWs(zeta(0));
   }
 
-  Vec3 Contour1sNeutralLinearExternalFFR::getWt(const Vec2 &zeta) {
-    return NP->getWt(zeta(0));
+  Vec3 Contour1sNeutralLinearExternalFFR::evalWt(const Vec2 &zeta) {
+    return NP->evalWt(zeta(0));
   }
 
   void Contour1sNeutralLinearExternalFFR::updatePositions(ContourFrame *frame) {
@@ -109,7 +109,7 @@ namespace MBSimFlexibleBody {
 
   void Contour1sNeutralLinearExternalFFR::updateVelocities(ContourFrame *frame) {
     NV->update(frame);
-    frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->getAngularVelocity());
+    frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->evalAngularVelocity());
   }
 
   void Contour1sNeutralLinearExternalFFR::updateJacobians(ContourFrame *frame, int j) {
@@ -121,7 +121,7 @@ namespace MBSimFlexibleBody {
     // rotational DOF
     SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalA();
     SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalG_bar();
-    Vec3 u_bar = NLP->getLocalPosition(frame->getEta());
+    Vec3 u_bar = NLP->evalLocalPosition(frame->getEta());
     Jacobian_trans.set(Index(0, 2), Index(3, 5), -A * tilde(u_bar) * G_bar);
 
     // elastic DOF
@@ -134,7 +134,7 @@ namespace MBSimFlexibleBody {
 
     Jacobian_trans.set(Index(0, 2), Index(6, qSize - 1), A * modeShapeMatrix);
 
-    SqrMat3 wRA = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
+    SqrMat3 wRA = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->evalOrientation();
     frame->setJacobianOfTranslation(wRA * Jacobian_trans,j);
 
     /******************************************************************  Jacobian of Rotation  *******************************************************************************/

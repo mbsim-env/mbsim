@@ -47,7 +47,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha);
 
-      fmatvec::Vec3 getWrD(const double &alpha);
+      fmatvec::Vec3 evalWrD(const double &alpha);
       /***************************************************/
 
     private:

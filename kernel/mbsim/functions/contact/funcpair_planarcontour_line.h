@@ -46,15 +46,15 @@ namespace MBSim {
         //return trans(WtC)*WnL;
       }
 
-      virtual fmatvec::Vec3 getWrD(const double &s) {
-        THROW_MBSIMERROR("(FuncPairPlanarContourLine::getWrD): Not implemented!");
+      virtual fmatvec::Vec3 evalWrD(const double &s) {
+        THROW_MBSIMERROR("(FuncPairPlanarContourLine::evalWrD): Not implemented!");
         //fmatvec::Vec WrOCContour =  contour->getWrOC(s);
         //fmatvec::Vec Wn = contour->computeWn(s);
         //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition());
         //return Wn*g;
       }
 
-      virtual double operator[](const double &s) { return nrm2(getWrD(s)); }
+      virtual double operator[](const double &s) { return nrm2(evalWrD(s)); }
 
     private:
       Contour *contour;

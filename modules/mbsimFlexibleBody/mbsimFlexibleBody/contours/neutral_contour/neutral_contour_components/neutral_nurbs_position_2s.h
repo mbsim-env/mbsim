@@ -16,10 +16,10 @@ namespace MBSimFlexibleBody {
     public:
       NeutralNurbsPosition2s(MBSim::Element* parent_, const fmatvec::MatVI & nodes, double nodeOffset, int degU_, int degV_, bool openStructure_);
       virtual ~NeutralNurbsPosition2s();
-      fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta);
       virtual void update(MBSim::ContourFrame *frame);
       virtual void updatePositionNormal(MBSim::ContourFrame *frame);
       virtual void updatePositionFirstTangent(MBSim::ContourFrame *frame);

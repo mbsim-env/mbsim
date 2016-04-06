@@ -35,7 +35,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Circle, MBSIM%"Circle")
 
-  Vec3 Circle::getKs(const fmatvec::Vec2 &zeta) {
+  Vec3 Circle::evalKs(const fmatvec::Vec2 &zeta) {
     Vec3 Ks(NONINIT);
     double a = zeta(0);
     Ks(0)=-r*sin(a);
@@ -44,7 +44,7 @@ namespace MBSim {
     return Ks;
   }
 
-  Vec3 Circle::getParDer1Kn(const fmatvec::Vec2 &zeta) {
+  Vec3 Circle::evalParDer1Kn(const fmatvec::Vec2 &zeta) {
     static Vec3 parDer1Kn;
     double a = zeta(0);
     parDer1Kn(0)=-sign*sin(a);
@@ -52,7 +52,7 @@ namespace MBSim {
     return parDer1Kn;
   }
 
-  Vec3 Circle::getParDer1Ku(const fmatvec::Vec2 &zeta) {
+  Vec3 Circle::evalParDer1Ku(const fmatvec::Vec2 &zeta) {
     static Vec3 parDer1Ku;
     double a = zeta(0);
     parDer1Ku(0)=-cos(a);
@@ -60,7 +60,7 @@ namespace MBSim {
     return parDer1Ku;
   }
 
-  Vec2 Circle::getZeta(const Vec3& WrPoint) {
+  Vec2 Circle::evalZeta(const Vec3& WrPoint) {
     Vec2 zeta;
 
     Vec3 CrPoint = WrPoint;

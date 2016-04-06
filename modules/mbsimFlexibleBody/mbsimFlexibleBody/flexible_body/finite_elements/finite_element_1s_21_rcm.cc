@@ -265,7 +265,7 @@ namespace MBSimFlexibleBody {
 
     BuildqLocal(qElement,qLocal);
 
-    return getLocalPositions(qLocal,s);
+    return evalLocalPositions(qLocal,s);
   }
 
   Vec3 FiniteElement1s21RCM::getVelocities(const Vec& qElement, const Vec& qpElement, double s) {
@@ -278,7 +278,7 @@ namespace MBSimFlexibleBody {
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
     qpLocal = Jeg*qpElement;
 
-    return getLocalVelocities(qLocal,qpLocal,s);
+    return evalLocalVelocities(qLocal,qpLocal,s);
   }
 
   Mat FiniteElement1s21RCM::JGeneralizedInternal(const Vec& qElement, double s) {
@@ -639,7 +639,7 @@ namespace MBSimFlexibleBody {
     Jegp(7,7) = (11*(one_p_cos_dphi*((-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (phi1p*(x1 - x2) - y1p + y2p)*sin(phi1)) - (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
   }
 
-  Vec3 FiniteElement1s21RCM::getLocalPositions(const Vec& qLocal, double s) {
+  Vec3 FiniteElement1s21RCM::evalLocalPositions(const Vec& qLocal, double s) {
     Vec3 X(NONINIT); // x,y and phi
 
     double xS     = qLocal(0);      double yS    = qLocal(1);
@@ -660,7 +660,7 @@ namespace MBSimFlexibleBody {
     return X;
   }
 
-  Vec3 FiniteElement1s21RCM::getLocalVelocities(const Vec& qLocal, const Vec& qpLocal, double s) {
+  Vec3 FiniteElement1s21RCM::evalLocalVelocities(const Vec& qLocal, const Vec& qpLocal, double s) {
     Vec3 X(NONINIT); // xp,yp and phip
 
     double phiS   = qLocal(2);      double eps   = qLocal(3);

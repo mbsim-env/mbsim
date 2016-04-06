@@ -127,7 +127,7 @@ namespace MBSimFlexibleBody {
     return frame;
   }
 
-  Vec3 NurbsDisk2s::getPosition(const Vec2 &zeta) {
+  Vec3 NurbsDisk2s::evalPosition(const Vec2 &zeta) {
     Vec3 r(NONINIT);
     computeSurface();
     Point3Dd Tmppt = Surface->pointAt(zeta(1),zeta(0));  // U-direction is azimuthal, V-direction is radial!
@@ -137,17 +137,17 @@ namespace MBSimFlexibleBody {
     return r;
   }
 
-  Vec3 NurbsDisk2s::getWs(const Vec2 &zeta) {
+  Vec3 NurbsDisk2s::evalWs(const Vec2 &zeta) {
     computeSurface();
     return computeDirectionalDerivatives(zeta(1),zeta(0),1).col(0);
   }
 
-  Vec3 NurbsDisk2s::getWt(const Vec2 &zeta) {
+  Vec3 NurbsDisk2s::evalWt(const Vec2 &zeta) {
     computeSurface();
     return computeDirectionalDerivatives(zeta(1),zeta(0),1).col(1);
   }
 
-  Vec3 NurbsDisk2s::getWn(const Vec2 &zeta) {
+  Vec3 NurbsDisk2s::evalWn(const Vec2 &zeta) {
     computeSurface();
     Point3Dd normal(Surface->normal(zeta(1),zeta(0)));
     double normalLength = sqrt(normal.x()*normal.x() + normal.y()*normal.y() + normal.z()*normal.z());  // to normalize the vector
@@ -268,7 +268,7 @@ namespace MBSimFlexibleBody {
           for(int j = 0; j < drawDegree; j++) {
             zeta(0) = Ri;
             zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            Vec3 pos = getPosition(zeta);
+            Vec3 pos = evalPosition(zeta);
 
             data.push_back(pos(0)); //global x-coordinate
             data.push_back(pos(1)); //global y-coordinate
@@ -282,7 +282,7 @@ namespace MBSimFlexibleBody {
           for(int j = 0; j < drawDegree; j++) {
             zeta(0) = Ra;
             zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            Vec3 pos = getPosition(zeta);
+            Vec3 pos = evalPosition(zeta);
 
             data.push_back(pos(0)); //global x-coordinate
             data.push_back(pos(1)); //global y-coordinate

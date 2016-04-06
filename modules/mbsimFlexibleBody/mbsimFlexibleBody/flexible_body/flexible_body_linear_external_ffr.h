@@ -134,7 +134,7 @@ namespace MBSimFlexibleBody {
       void updateJacobians(NodeFrame *frame, int j=0);
       void updateGyroscopicAccelerations(NodeFrame *frame);
 
-      fmatvec::Vec3 getLocalPosition(int i);
+      fmatvec::Vec3 evalLocalPosition(int i);
 
     protected:
       /*!

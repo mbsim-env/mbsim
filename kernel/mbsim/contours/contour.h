@@ -74,143 +74,143 @@ namespace MBSim {
       virtual void sethSize(int size, int i=0) { hSize[i] = size; }
       virtual void sethInd(int ind, int i=0) { hInd[i] = ind; }
 
-      virtual fmatvec::Vec3 getKrPS(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getKs(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getParDer1Ks(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getParDer2Ks(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getParDer1Kt(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getParDer2Kt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Ks(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Kt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Kt(const fmatvec::Vec2 &zeta);
 
       /**
        * \return position in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
 
       /**
        * \return first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param Lagrangian position
        */
-      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return normal in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec3 getWn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getParDer1Kn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getParDer2Kn(const fmatvec::Vec2 &zeta);
-
-      /**
-       * \return derivative of first tangent
-       * \param t time
-       * \param cp contour position
-       */
-      virtual fmatvec::Vec3 getParDer1Ku(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Kn(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent
        * \param t time
        * \param cp contour position
        */
+      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getParDer2Ku(const fmatvec::Vec2 &zeta);
+      /**
+       * \return derivative of first tangent
+       * \param t time
+       * \param cp contour position
+       */
+
+      virtual fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
       /**
        * \return derivative of second tangent
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Kv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative second first tangent
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Kv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of normal in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Wn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of normal in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Wn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Wu(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Wu(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of second tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer1Wv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of second tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getParDer2Wv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta);
 
       /**
        * \return derivative of first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWrPS(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta);
 
       /**
        * \return first tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
 
       /**
        * \return second tangent in world frame
        * \param t time
        * \param cp contour position
        */
-      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWN(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Mat3x2 evalWN(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWR(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Mat3x2 evalWR(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWU(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Mat3x2 evalWU(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Mat3x2 getWV(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Mat3x2 evalWV(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec2 getZeta(const fmatvec::Vec3 &WrPS);
+      virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS);
 
       virtual void updatePositions(ContourFrame *frame);
       virtual void updateVelocities(ContourFrame *frame);

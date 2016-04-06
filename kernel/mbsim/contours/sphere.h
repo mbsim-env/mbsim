@@ -55,20 +55,20 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
-      virtual fmatvec::Vec3 getKs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getParDer1Ku(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getParDer2Ku(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getParDer1Kv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
 
-      virtual fmatvec::Vec3 getParDer2Kv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
 
       /* INHERITED INTERFACE OF CONTOUR */
-      fmatvec::Vec2 getZeta(const fmatvec::Vec3 &WrPoint);
+      fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint);
       /**********************************/
 
       /* GETTER / SETTER */

@@ -43,7 +43,7 @@ namespace MBSim {
 
       fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha);
 
-      fmatvec::Vec3 getWrD(const fmatvec::Vec2 &alpha);
+      fmatvec::Vec3 evalWrD(const fmatvec::Vec2 &alpha);
 
     private:
       /**

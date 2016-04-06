@@ -56,11 +56,11 @@ namespace MBSimFlexibleBody {
 
       virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
 
-      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta) { return getPosition(zeta(0)); }
-      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta) { return getWs(zeta(0)); }
-      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta) { return getWt(zeta(0)); }
-      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta) { return getWs(zeta); }
-      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta) { return getWt(zeta); }
+      virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) { return evalPosition(zeta(0)); }
+      virtual fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) { return evalWs(zeta(0)); }
+      virtual fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) { return evalWt(zeta(0)); }
+      virtual fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) { return evalWs(zeta); }
+      virtual fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) { return evalWt(zeta); }
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
 
@@ -71,9 +71,9 @@ namespace MBSimFlexibleBody {
       void resetUpToDate();
       virtual void updatePositions(double s);
 
-      fmatvec::Vec3 getPosition(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return WrOP; }
-      fmatvec::Vec3 getWs(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Ws; }
-      fmatvec::Vec3 getWt(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Wt; }
+      fmatvec::Vec3 evalPosition(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return WrOP; }
+      fmatvec::Vec3 evalWs(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Ws; }
+      fmatvec::Vec3 evalWt(double s) { if(fabs(s-sOld)>MBSim::macheps()) updatePositions(s); return Wt; }
 
       void updatePositions(MBSim::ContourFrame *frame);
       void updateVelocities(MBSim::ContourFrame *frame);

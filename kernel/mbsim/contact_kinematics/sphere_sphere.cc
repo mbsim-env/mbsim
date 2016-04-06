@@ -72,8 +72,8 @@ namespace MBSim {
 //    cpData[isphere1].WrOC = sphere1->getWrOP()+WrPC[isphere1];
 //    WrPC[isphere0] = cpData[isphere0].Wn*(-sphere0->getRadius());
 //    cpData[isphere0].WrOC = sphere0->getWrOP()+WrPC[isphere0];
-//    WvC[isphere0] = sphere0->getWvP()+crossProduct(sphere0->getWomegaC(),WrPC[isphere0]);
-//    WvC[isphere1] = sphere1->getWvP()+crossProduct(sphere1->getWomegaC(),WrPC[isphere1]);
+//    WvC[isphere0] = sphere0->evalWvP()+crossProduct(sphere0->getWomegaC(),WrPC[isphere0]);
+//    WvC[isphere1] = sphere1->evalWvP()+crossProduct(sphere1->getWomegaC(),WrPC[isphere1]);
 //    Vec WvD = WvC[isphere0] - WvC[isphere1];
 //    gd(0) = trans(cpData[isphere0].Wn)*WvD;
 //

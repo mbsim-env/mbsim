@@ -59,16 +59,16 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
-      fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getParDer1Wn(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getParDer2Wn(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getParDer1Wu(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getParDer2Wu(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getParDer1Wv(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getParDer2Wv(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWrPS(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWrPS(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
 
       /**
        * \brief contact search for RigidContours

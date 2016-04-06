@@ -64,44 +64,44 @@ namespace MBSim {
     return frame;
   }
 
-  Vec3 RigidContour::getPosition(const Vec2 &zeta) {
-    return R->evalPosition() + getWrPS(zeta);
+  Vec3 RigidContour::evalPosition(const Vec2 &zeta) {
+    return R->evalPosition() + evalWrPS(zeta);
   }
 
-  Vec3 RigidContour::getParDer1Wn(const Vec2 &zeta) {
-    return R->evalOrientation()*getParDer1Kn(zeta);
+  Vec3 RigidContour::evalParDer1Wn(const Vec2 &zeta) {
+    return R->evalOrientation()*evalParDer1Kn(zeta);
   }
 
-  Vec3 RigidContour::getParDer2Wn(const Vec2 &zeta) {
-    return R->evalOrientation()*getParDer2Kn(zeta);
+  Vec3 RigidContour::evalParDer2Wn(const Vec2 &zeta) {
+    return R->evalOrientation()*evalParDer2Kn(zeta);
   }
 
-  Vec3 RigidContour::getParDer1Wu(const Vec2 &zeta) {
-    return R->evalOrientation()*getParDer1Ku(zeta);
+  Vec3 RigidContour::evalParDer1Wu(const Vec2 &zeta) {
+    return R->evalOrientation()*evalParDer1Ku(zeta);
   }
 
-  Vec3 RigidContour::getParDer2Wu(const Vec2 &zeta) {
-    return R->evalOrientation()*getParDer2Ku(zeta);
+  Vec3 RigidContour::evalParDer2Wu(const Vec2 &zeta) {
+    return R->evalOrientation()*evalParDer2Ku(zeta);
   }
 
-  Vec3 RigidContour::getParDer1Wv(const Vec2 &zeta) {
-    return R->evalOrientation()*getParDer1Kv(zeta);
+  Vec3 RigidContour::evalParDer1Wv(const Vec2 &zeta) {
+    return R->evalOrientation()*evalParDer1Kv(zeta);
   }
 
-  Vec3 RigidContour::getParDer2Wv(const Vec2 &zeta) {
-    return R->evalOrientation()*getParDer2Kv(zeta);
+  Vec3 RigidContour::evalParDer2Wv(const Vec2 &zeta) {
+    return R->evalOrientation()*evalParDer2Kv(zeta);
   }
 
-  Vec3 RigidContour::getWrPS(const Vec2 &zeta) {
-    return R->evalOrientation()*getKrPS(zeta);
+  Vec3 RigidContour::evalWrPS(const Vec2 &zeta) {
+    return R->evalOrientation()*evalKrPS(zeta);
   }
 
-  Vec3 RigidContour::getWs(const Vec2 &zeta) {
-    return R->evalOrientation()*getKs(zeta);
+  Vec3 RigidContour::evalWs(const Vec2 &zeta) {
+    return R->evalOrientation()*evalKs(zeta);
   }
 
-  Vec3 RigidContour::getWt(const Vec2 &zeta) {
-    return R->evalOrientation()*getKt(zeta);
+  Vec3 RigidContour::evalWt(const Vec2 &zeta) {
+    return R->evalOrientation()*evalKt(zeta);
   }
 
   void RigidContour::plot() {

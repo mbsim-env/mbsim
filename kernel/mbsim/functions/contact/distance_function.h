@@ -47,13 +47,13 @@ namespace MBSim {
        * \param contour parameter
        * \return possible contact-distance at contour parameter
        */
-      virtual double operator[](const Arg& x) { return nrm2(getWrD(x)); }
+      virtual double operator[](const Arg& x) { return nrm2(evalWrD(x)); }
 
       /*!
        * \param contour parameter
        * \return helping distance vector at contour parameter
        */
-      virtual fmatvec::Vec3 getWrD(const Arg& x) = 0;
+      virtual fmatvec::Vec3 evalWrD(const Arg& x) = 0;
       /*************************************************/
   };
 

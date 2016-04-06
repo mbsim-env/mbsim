@@ -54,7 +54,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       virtual double operator()(const double &phi) = 0;
       double operator[](const double &phi);
-      virtual fmatvec::Vec3 getWrD(const double &phi) = 0;
+      virtual fmatvec::Vec3 evalWrD(const double &phi) = 0;
       /*************************************************/
 
       /* GETTER / SETTER */
@@ -94,9 +94,9 @@ namespace MBSim {
   }
   inline double FuncPairConeSectionCircle::operator[](const double &phi) {
     if (sec_IN_ci)
-      return R - nrm2(getWrD(phi));
+      return R - nrm2(evalWrD(phi));
     else
-      return nrm2(getWrD(phi)) - R;
+      return nrm2(evalWrD(phi)) - R;
   }
 
 }

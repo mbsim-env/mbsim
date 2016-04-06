@@ -68,10 +68,10 @@ namespace MBSim {
     zeta(0)=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
 
     const Vec3 n1 = cFrame[icircle]->getOrientation().col(0); //crossProduct(s1, t1);
-    const Vec3 u1 = circle->getWu(zeta);
-    const Vec3 R1 = circle->getWs(zeta);
-    const Vec3 N1 = circle->getParDer1Wn(zeta);
-    const Vec3 U1 = circle->getParDer1Wu(zeta);
+    const Vec3 u1 = circle->evalWu(zeta);
+    const Vec3 R1 = circle->evalWs(zeta);
+    const Vec3 N1 = circle->evalParDer1Wn(zeta);
+    const Vec3 U1 = circle->evalParDer1Wu(zeta);
 
     const Vec vC1 = cFrame[icircle]->evalVelocity();
     const Vec vC2 = cFrame[ipoint]->evalVelocity();

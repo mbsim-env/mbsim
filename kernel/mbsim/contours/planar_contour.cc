@@ -45,20 +45,20 @@ namespace MBSim {
      funcCrPC=NULL;
   }
 
-  Vec3 PlanarContour::getKrPS(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalKrPS(const fmatvec::Vec2 &zeta) {
     return (*funcCrPC)(zeta(0));
   }
 
-  Vec3 PlanarContour::getKs(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalKs(const fmatvec::Vec2 &zeta) {
     return funcCrPC->parDer(zeta(0));
   }
 
-  Vec3 PlanarContour::getKt(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalKt(const fmatvec::Vec2 &zeta) {
     static Vec3 Kt("[0;0;1]");
     return Kt;
   }
 
-  Vec3 PlanarContour::getParDer1Ks(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalParDer1Ks(const fmatvec::Vec2 &zeta) {
     return funcCrPC->parDerParDer(zeta(0));
   }
 

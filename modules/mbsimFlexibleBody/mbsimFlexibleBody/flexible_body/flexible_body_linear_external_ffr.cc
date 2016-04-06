@@ -672,7 +672,7 @@ namespace MBSimFlexibleBody {
     THROW_MBSIMERROR("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  Vec3 FlexibleBodyLinearExternalFFR::getLocalPosition(int i) {
+  Vec3 FlexibleBodyLinearExternalFFR::evalLocalPosition(int i) {
     FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[i-1]);
 
     return node->getU0() + node->getModeShape() * q(6, 5 + nf); // don't need to transform to the system coordinates,  needed to be done in neutral contour when calculating the Jacobian matrix

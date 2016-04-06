@@ -28,17 +28,17 @@ using namespace fmatvec;
 namespace MBSim {
 
   Vec FuncPairSpatialContourPoint::operator()(const Vec &alpha) {  // Vec2: U and V direction
-    Vec3 Wd = getWrD(alpha);
-    Vec3 Wt1 = contour->getWu(alpha);
-    Vec3 Wt2 = contour->getWv(alpha);
+    Vec3 Wd = evalWrD(alpha);
+    Vec3 Wt1 = contour->evalWu(alpha);
+    Vec3 Wt2 = contour->evalWv(alpha);
     Vec2 Wt(NONINIT);  // TODO:: check this?
     Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
     Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
     return Wt;
   }
 
-  Vec3 FuncPairSpatialContourPoint::getWrD(const Vec &alpha) {
-    return contour->getPosition(alpha) - point->getFrame()->evalPosition();
+  Vec3 FuncPairSpatialContourPoint::evalWrD(const Vec &alpha) {
+    return contour->evalPosition(alpha) - point->getFrame()->evalPosition();
   }
 
 }

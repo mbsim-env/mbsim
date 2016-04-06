@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
     Contour::init(stage);
   }
 
-  Vec3 Contour1s::getKt(const fmatvec::Vec2 &zeta) {
+  Vec3 Contour1s::evalKt(const fmatvec::Vec2 &zeta) {
     static Vec3 Kt("[0;0;1]");
     return Kt;
   }
@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
 //        ds = (uMax - uMin) / (openMBVBody->getNumberOfSpinePoints() - 2);
       for (int i = 0; i < openMBVSpineExtrusion->getNumberOfSpinePoints() - 1; i++) {
         zeta(0) = s;
-        Vec3 pos = getPosition(zeta);
+        Vec3 pos = evalPosition(zeta);
         data.push_back(pos(0)); // global x-position
         data.push_back(pos(1)); // global y-position
         data.push_back(pos(2)); // global z-position
@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
       }
       // Avoid s-parameters to be longer than etaNodes[etaNodes.size()-1]!
       zeta(0) = etaNodes[etaNodes.size()-1];
-      Vec3 pos = getPosition(zeta);
+      Vec3 pos = evalPosition(zeta);
       data.push_back(pos(0)); // global x-position
       data.push_back(pos(1)); // global y-position
       data.push_back(pos(2)); // global z-position

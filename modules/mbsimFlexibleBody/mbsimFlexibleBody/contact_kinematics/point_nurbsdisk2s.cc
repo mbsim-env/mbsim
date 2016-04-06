@@ -56,22 +56,13 @@ namespace MBSimFlexibleBody {
     cFrame[ipoint]->setPosition(point->getFrame()->evalPosition()); // position of the point in worldcoordinates
     cFrame[inurbsdisk]->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(cFrame[ipoint]->getPosition(false) - nurbsdisk->evalPosition()))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
 
-    /*TESTING*/
-    //cout << "Platten-Posi:" << nurbsdisk->getFrame()->getPosition() << endl;
-    //cout << "Punkt-Posi:" << cpData[ipoint].getFrameOfReference().getPosition() << endl;
-    //cout << "NurbsDisk-Orientation:" << nurbsdisk->getFrame()->getOrientation() << endl;
-    //cout << "nach TransformCW: " << cpData[inurbsdisk].getLagrangeParameterPosition() << endl;
-    /*END-TESTING*/
-
     if(nurbsdisk->isZetaOutside(cFrame[inurbsdisk]->getZeta()))
       g = 1.;
     else {
-      // cout << "Position auf Scheibe: " << cpData[inurbsdisk].getFrameOfReference().getPosition() << endl;
-
-      cFrame[inurbsdisk]->setPosition(nurbsdisk->getPosition(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->getWn(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->getWu(cFrame[inurbsdisk]->getZeta()));
-      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->getWv(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->setPosition(nurbsdisk->evalPosition(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(0, nurbsdisk->evalWn(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(1, nurbsdisk->evalWu(cFrame[inurbsdisk]->getZeta()));
+      cFrame[inurbsdisk]->getOrientation(false).set(2, nurbsdisk->evalWv(cFrame[inurbsdisk]->getZeta()));
 
       cFrame[ipoint]->getOrientation(false).set(0, -cFrame[inurbsdisk]->getOrientation(false).col(0));
       cFrame[ipoint]->getOrientation(false).set(1, -cFrame[inurbsdisk]->getOrientation(false).col(1));

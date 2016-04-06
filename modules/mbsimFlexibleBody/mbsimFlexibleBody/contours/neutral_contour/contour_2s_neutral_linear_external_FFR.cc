@@ -82,20 +82,20 @@ namespace MBSimFlexibleBody {
     Contour2sNeutralFactory::init(stage);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getPosition(const Vec2 &zeta) {
-    return NP->getPosition(zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::evalPosition(const Vec2 &zeta) {
+    return NP->evalPosition(zeta);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getWs(const Vec2 &zeta) {
-    return NP->getWs(zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::evalWs(const Vec2 &zeta) {
+    return NP->evalWs(zeta);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getWt(const Vec2 &zeta) {
-    return NP->getWt(zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::evalWt(const Vec2 &zeta) {
+    return NP->evalWt(zeta);
   }
 
-  Vec3 Contour2sNeutralLinearExternalFFR::getWn(const Vec2 &zeta) {
-    return NP->getWn(zeta);
+  Vec3 Contour2sNeutralLinearExternalFFR::evalWn(const Vec2 &zeta) {
+    return NP->evalWn(zeta);
   }
 
   void Contour2sNeutralLinearExternalFFR::updatePositions(ContourFrame *frame) {
@@ -119,7 +119,7 @@ namespace MBSimFlexibleBody {
     // rotational DOF
     SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalA();
     SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalG_bar();
-    Vec3 u_bar = NLP->getLocalPosition(frame->getZeta());
+    Vec3 u_bar = NLP->evalLocalPosition(frame->getZeta());
     Jacobian_trans.set(Index(0, 2), Index(3, 5), -A * tilde(u_bar) * G_bar);
 
     // elastic DOF
@@ -133,7 +133,7 @@ namespace MBSimFlexibleBody {
 
     Jacobian_trans.set(Index(0, 2), Index(6, qSize - 1), A * modeShapeMatrix);
 
-    SqrMat3 wRA = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->getOrientation();
+    SqrMat3 wRA = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->evalOrientation();
     frame->setJacobianOfTranslation(wRA * Jacobian_trans,j);
 
     /******************************************************************  Jacobian of Rotation  *******************************************************************************/

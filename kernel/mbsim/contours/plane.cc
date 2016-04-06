@@ -36,27 +36,27 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Plane, MBSIM%"Plane")
 
-  Vec3 Plane::getWu(const Vec2 &zeta) {
-    return getWs(zeta);
+  Vec3 Plane::evalWu(const Vec2 &zeta) {
+    return evalWs(zeta);
   }
 
-  Vec3 Plane::getWv(const Vec2 &zeta) {
-    return getWt(zeta);
+  Vec3 Plane::evalWv(const Vec2 &zeta) {
+    return evalWt(zeta);
   }
 
-  Vec3 Plane::getWn(const Vec2 &zeta) {
+  Vec3 Plane::evalWn(const Vec2 &zeta) {
     return R->evalOrientation().col(0);
   }
 
-  Vec3 Plane::getWs(const Vec2 &zeta) {
+  Vec3 Plane::evalWs(const Vec2 &zeta) {
     return R->evalOrientation().col(1);
   }
 
-  Vec3 Plane::getWt(const Vec2 &zeta) {
+  Vec3 Plane::evalWt(const Vec2 &zeta) {
     return R->evalOrientation().col(2);
   }
 
-  Vec2 Plane::getZeta(const Vec3 &WrPoint) {
+  Vec2 Plane::evalZeta(const Vec3 &WrPoint) {
     return (R->evalOrientation().T() *(WrPoint - R->evalPosition()) )(Range<Fixed<1>,Fixed<2> >());
   }
 

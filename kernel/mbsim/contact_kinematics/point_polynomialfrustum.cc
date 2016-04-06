@@ -48,14 +48,14 @@ namespace MBSim {
 
     const double & x = xin(0);
 
-    const double fd = frustum->getValueD1(x);
+    const double fd = frustum->evalValueD1(x);
 
     //to avoid numerical instabilities chose one of the two options
     double tmp = referencePoint(1) /  cos(phi);
     if(fabs(cos(phi)) < 1e-2)
       tmp = referencePoint(2) / sin(phi);
 
-    result(0) = referencePoint(0) - (frustum->getValue(x) * fd - fd * tmp + x);
+    result(0) = referencePoint(0) - (frustum->evalValue(x) * fd - fd * tmp + x);
 
     return result;
   }
@@ -77,15 +77,15 @@ namespace MBSim {
 
     const double & x = xin(0);
 
-    const double fd = frustum->getValueD1(x);
-    const double fdd = frustum->getValueD2(x);
+    const double fd = frustum->evalValueD1(x);
+    const double fdd = frustum->evalValueD2(x);
 
     //to avoid numerical instabilities chose one of the two options
     double tmp = referencePoint(1) /  cos(phi);
     if(fabs(cos(phi)) < 1e-2)
       tmp = referencePoint(2) / sin(phi);
 
-    Jac(0,0) =  - fd*fd - frustum->getValue(x) * fdd + fdd * tmp - 1;
+    Jac(0,0) =  - fd*fd - frustum->evalValue(x) * fdd + fdd * tmp - 1;
 
     return Jac;
   }
@@ -134,7 +134,7 @@ namespace MBSim {
     const double & h = rPoint(0);
     //radial position of point
     const double r = sqrt(pow(rPoint(1), 2) + pow(rPoint(2), 2));
-    const double R = frustum->getValue(h);
+    const double R = frustum->evalValue(h);
 
     if(signh*h >= 0 and signh*h <= signh*frustum->getHeight() and r <= R) {
       double phi = ArcTan(rPoint(1), rPoint(2));
@@ -147,18 +147,18 @@ namespace MBSim {
       zeta(0) = x(0);
       zeta(1) = phi;
 
-      Vec3 contactPointFrustum = frustum->getKrPS(zeta);
+      Vec3 contactPointFrustum = frustum->evalKrPS(zeta);
 
-      g = frustum->getKn(zeta).T() * (rPoint - contactPointFrustum);
+      g = frustum->evalKn(zeta).T() * (rPoint - contactPointFrustum);
 
       if (g < 0.) {
         //Frustum
         Vec3 rF = frustum->getFrame()->getPosition();
         SqrMat3 AWF = frustum->getFrame()->getOrientation();
         cFrame[ifrustum]->setPosition(rF + AWF * contactPointFrustum);
-        cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(zeta));
-        cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(zeta));
-        cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(zeta));
+        cFrame[ifrustum]->getOrientation(false).set(0, frustum->evalWn(zeta));
+        cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->evalWu(zeta));
+        cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->evalWv(zeta));
 
         //Point
         cFrame[ipoint]->setPosition(rF + AWF  * rPoint);

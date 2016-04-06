@@ -220,7 +220,7 @@ namespace MBSim {
           if ((*funcRho)[zeta(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->getWrD(zeta(0));
+            Vec3 dTilde_tmp = funcRho->evalWrD(zeta(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
             cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
             Vec3 Wd_PF = cFrame[icircle]->getPosition(false) - frustum->getFrame()->getPosition();
@@ -352,7 +352,7 @@ namespace MBSim {
           if ((*funcRho)[zeta(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->getWrD(zeta(0));
+            Vec3 dTilde_tmp = funcRho->evalWrD(zeta(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
             cFrame[icircle]->setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
             Vec3 Wd_PF = cFrame[icircle]->getPosition(false) - frustum->getFrame()->getPosition();

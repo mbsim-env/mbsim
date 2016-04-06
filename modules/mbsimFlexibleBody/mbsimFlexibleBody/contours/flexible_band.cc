@@ -44,7 +44,7 @@ namespace MBSimFlexibleBody {
         if(getPlotFeature(openMBV)==enabled && openMBVSpineExtrusion) {
           openMBVSpineExtrusion->setName(name);
           openMBVSpineExtrusion->setShilouetteEdge(true);
-          openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(static_cast<Body*>(parent)->getFrameOfReference()->getOrientation(0.)));
+          openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(static_cast<Body*>(parent)->getFrameOfReference()->evalOrientation()));
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
           shared_ptr<OpenMBV::PolygonPoint>  corner1 = OpenMBV::PolygonPoint::create(0, 0.5*width, 1);
           rectangle->push_back(corner1);
@@ -101,7 +101,7 @@ namespace MBSimFlexibleBody {
         double L = getEtaNodes()[getEtaNodes().size()-1];
         double ds = static_cast<FlexibleBody1s*>(parent)->getOpenStructure() ? L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-1) : L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-2);
         for(int i=0; i<openMBVSpineExtrusion->getNumberOfSpinePoints(); i++) {
-          Vec3 pos = getPosition(ds*i);
+          Vec3 pos = evalPosition(ds*i);
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position

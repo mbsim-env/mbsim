@@ -33,11 +33,11 @@ namespace MBSimFlexibleBody {
        */
       void readTransNodes(std::string file);
 
-      virtual fmatvec::Vec3 getPosition(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWs(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWt(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getWu(const fmatvec::Vec2 &zeta) { return getWs(zeta); }
-      virtual fmatvec::Vec3 getWv(const fmatvec::Vec2 &zeta) { return getWt(zeta); }
+      virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) { return evalWs(zeta); }
+      virtual fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) { return evalWt(zeta); }
 
       void updatePositions(MBSim::ContourFrame *frame);
       void updateVelocities(MBSim::ContourFrame *frame);

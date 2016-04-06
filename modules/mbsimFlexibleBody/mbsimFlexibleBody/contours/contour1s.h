@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
       void plot();
       /***************************************************/
 
-      virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) { openMBVSpineExtrusion = spineExtrusion; }

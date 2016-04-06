@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
 
     cFrame[inode]->setEta(node);
 
-    cFrame[inode]->setPosition(extrusion->getPosition(cFrame[inode]->getZeta()));
+    cFrame[inode]->setPosition(extrusion->evalPosition(cFrame[inode]->getZeta()));
 
     const Vec3 WrD = cFrame[inode]->getPosition(false) - circle->getFrame()->evalPosition();
     
@@ -127,14 +127,14 @@ namespace MBSimFlexibleBody {
 
       cFrame[inode]->setEta(result(0,0));
 
-      cFrame[inode]->getOrientation(false).set(0, extrusion->getWn(cFrame[inode]->getZeta()));
-      cFrame[inode]->getOrientation(false).set(1, extrusion->getWu(cFrame[inode]->getZeta()));
-      cFrame[inode]->getOrientation(false).set(2, extrusion->getWv(cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(0, extrusion->evalWn(cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(1, extrusion->evalWu(cFrame[inode]->getZeta()));
+      cFrame[inode]->getOrientation(false).set(2, extrusion->evalWv(cFrame[inode]->getZeta()));
       cFrame[icircle]->getOrientation(false).set(0, -cFrame[inode]->getOrientation(false).col(0));
       cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
       cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
 
-      cFrame[inode]->setPosition(extrusion->getPosition(cFrame[inode]->getZeta()));
+      cFrame[inode]->setPosition(extrusion->evalPosition(cFrame[inode]->getZeta()));
       cFrame[icircle]->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
       Vec Wd = circle->getFrame()->evalPosition() - cFrame[inode]->getPosition(false);

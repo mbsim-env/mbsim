@@ -26,19 +26,19 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  Vec3 NeutralNurbsPosition1s::getPosition(double s) {
+  Vec3 NeutralNurbsPosition1s::evalPosition(double s) {
     if(updCurve) computeCurve(true);
     return curve.pointAt(s);
   }
 
-  Vec3 NeutralNurbsPosition1s::getWs(double s) {
+  Vec3 NeutralNurbsPosition1s::evalWs(double s) {
     if(updCurve) computeCurve(true);
     Vec3 t = curve.firstDn(s);
     return t / nrm2(t);
   }
 
-  Vec3 NeutralNurbsPosition1s::getWt(double s) {
-    Vec3 t = getWs(s);
+  Vec3 NeutralNurbsPosition1s::evalWt(double s) {
+    Vec3 t = evalWs(s);
     Vec3 n = crossProduct(t,binormalDir);
     return crossProduct(n,t);
   }
@@ -50,15 +50,15 @@ namespace MBSimFlexibleBody {
 
   // TODO: this Normal and secondTangent is only work for the neutral curve on the xy plane. Need to adapt to different situations.
   void NeutralNurbsPosition1s::updatePositionNormal(ContourFrame *frame) {
-    frame->getOrientation(false).set(0, crossProduct(getWs(frame->getEta()),binormalDir));
+    frame->getOrientation(false).set(0, crossProduct(evalWs(frame->getEta()),binormalDir));
   }
 
   void NeutralNurbsPosition1s::updatePositionFirstTangent(ContourFrame *frame) {
-    frame->getOrientation(false).set(1, getWs(frame->getEta()));
+    frame->getOrientation(false).set(1, evalWs(frame->getEta()));
   }
 
   void NeutralNurbsPosition1s::updatePositionSecondTangent(ContourFrame *frame) {
-    frame->getOrientation(false).set(2, getWt(frame->getEta()));
+    frame->getOrientation(false).set(2, evalWt(frame->getEta()));
   }
 
   void NeutralNurbsPosition1s::buildNodelist() {

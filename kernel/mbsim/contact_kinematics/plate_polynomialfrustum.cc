@@ -54,7 +54,7 @@ namespace MBSim {
     const double s = sin(phi);
     const double c = cos(phi);
 
-    const double fD1 = frustum->getValueD1(x);
+    const double fD1 = frustum->evalValueD1(x);
     const double fD1SQp1 = fD1 * fD1 + 1;
     const double sqrtfD1SQp1 = sqrt(fD1SQp1);
 
@@ -156,9 +156,9 @@ namespace MBSim {
   }
 
   void ContactKinematicsPlatePolynomialFrustum::setFrustumOrienationKinematics(const double & x, const double & phi, std::vector<ContourFrame*> &cFrame) {
-    cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(zeta));
-    cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->getWu(zeta));
-    cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->getWv(zeta));
+    cFrame[ifrustum]->getOrientation(false).set(0, frustum->evalWn(zeta));
+    cFrame[ifrustum]->getOrientation(false).set(1, signh * frustum->evalWu(zeta));
+    cFrame[ifrustum]->getOrientation(false).set(2, signh * frustum->evalWv(zeta));
   }
 
   bool ContactKinematicsPlatePolynomialFrustum::cpLocationInPlate(double & g, std::vector<ContourFrame*> &cFrame) {
@@ -254,7 +254,7 @@ namespace MBSim {
         const double & x = currentPoint(0);
         //radial position of point
         const double r = sqrt(pow(currentPoint(1), 2) + pow(currentPoint(2), 2));
-        const double R = frustum->getValue(x);
+        const double R = frustum->evalValue(x);
         if (signh * x >= 0 and signh * x <= signh * h and r <= R) {
           //Possible contact point found --> assumed to be at x-position of corner point
           double weight = R - r;
@@ -282,8 +282,8 @@ namespace MBSim {
     zeta(0) = x(0);
     zeta(1) = phi;
 
-    Vec3 contactPointFrustum = frustum->getKrPS(zeta);
-    g = frustum->getKn(zeta).T() * (contactPointPlate - contactPointFrustum);
+    Vec3 contactPointFrustum = frustum->evalKrPS(zeta);
+    g = frustum->evalKn(zeta).T() * (contactPointPlate - contactPointFrustum);
 
     if (g < 0.) {
       //Frustum
@@ -319,7 +319,7 @@ namespace MBSim {
       const double & x = cornerPoints[i](0);
       //radial position of point
       const double r = sqrt(pow(cornerPoints[i](1), 2) + pow(cornerPoints[i](2), 2));
-      const double R = frustum->getValue(x);
+      const double R = frustum->evalValue(x);
       if (signh * x >= 0 and signh * x <= signh * h and r <= R) {
         //Possible contact point found --> assumed to be at x-position of corner point
         weights[i] = R - r;
@@ -351,9 +351,9 @@ namespace MBSim {
     jacobianProjectAlongNormal->setUpSystemParamters(contactPointPlate, phi);
     x = newtonProjectAlongNormal.solve(x);
 
-    Vec3 contactPointFrustum = frustum->getKrPS(zeta);
+    Vec3 contactPointFrustum = frustum->evalKrPS(zeta);
 
-    g = frustum->getKn(zeta).T() * (contactPointPlate - contactPointFrustum);
+    g = frustum->evalKn(zeta).T() * (contactPointPlate - contactPointFrustum);
 
     if (g < 0.) {
       //Frustum
@@ -423,9 +423,9 @@ namespace MBSim {
         const double phi = ArcTan(contactPointPlate(1), contactPointPlate(2));
         zeta(0) = x;
         zeta(1) = phi;
-        Vec3 contactPointFrustum = frustum->getKrPS(zeta);
+        Vec3 contactPointFrustum = frustum->evalKrPS(zeta);
 
-        g = frustum->getKn(zeta).T() * (contactPointPlate - contactPointFrustum);
+        g = frustum->evalKn(zeta).T() * (contactPointPlate - contactPointFrustum);
         if (g < 0.) {
 
           //Frustum
@@ -511,8 +511,8 @@ namespace MBSim {
 
   Vec3 ContactKinematicsPlatePolynomialFrustum::computeContourPointFrustum(const double & x, const Vec3 & n) {
     Vec3 contourPoint(NONINIT);
-    double y1 = -(frustum->getValue(x)) * (frustum->getValueD1(x)) * (n(1)) / (n(0));     //y=-f(x)*f'(x)*v2/v1
-    double z1 = -(frustum->getValue(x)) * (frustum->getValueD1(x)) * (n(2)) / (n(0));     //z=-f(x)*f'(x)*v3/v1
+    double y1 = -(frustum->evalValue(x)) * (frustum->evalValueD1(x)) * (n(1)) / (n(0));     //y=-f(x)*f'(x)*v2/v1
+    double z1 = -(frustum->evalValue(x)) * (frustum->evalValueD1(x)) * (n(2)) / (n(0));     //z=-f(x)*f'(x)*v3/v1
 
     contourPoint(0) = x;
     contourPoint(1) = y1;

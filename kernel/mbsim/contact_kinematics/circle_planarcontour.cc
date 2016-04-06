@@ -76,13 +76,13 @@ namespace MBSim {
 
     cFrame[iplanarcontour]->setEta(search.slv());
 
-    cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->getWn(cFrame[iplanarcontour]->getZeta()));
-    cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->getWu(cFrame[iplanarcontour]->getZeta()));
-    cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->getWv(cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(0, planarcontour->evalWn(cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(1, planarcontour->evalWu(cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->getOrientation(false).set(2, planarcontour->evalWv(cFrame[iplanarcontour]->getZeta()));
     cFrame[icircle]->getOrientation(false).set(0, -cFrame[iplanarcontour]->getOrientation(false).col(0));
     cFrame[icircle]->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
     cFrame[icircle]->getOrientation(false).set(1, crossProduct(cFrame[icircle]->getOrientation(false).col(2),cFrame[icircle]->getOrientation(false).col(0)));
-    cFrame[iplanarcontour]->setPosition(planarcontour->getPosition(cFrame[iplanarcontour]->getZeta()));
+    cFrame[iplanarcontour]->setPosition(planarcontour->evalPosition(cFrame[iplanarcontour]->getZeta()));
     cFrame[icircle]->setPosition(circle->getFrame()->evalPosition()+circle->getRadius()*cFrame[icircle]->getOrientation(false).col(0));
 
     if(planarcontour->isZetaOutside(cFrame[iplanarcontour]->getZeta()))
@@ -101,8 +101,8 @@ namespace MBSim {
 
     const Vec3 u2 = cFrame[iplanarcontour]->evalOrientation().col(1);
     const Vec3 v2 = cFrame[iplanarcontour]->getOrientation().col(2);
-    const Vec3 R2 = planarcontour->getWs(cFrame[iplanarcontour]->getZeta());
-    const Vec3 U2 = planarcontour->getParDer1Wu(cFrame[iplanarcontour]->getZeta());
+    const Vec3 R2 = planarcontour->evalWs(cFrame[iplanarcontour]->getZeta());
+    const Vec3 U2 = planarcontour->evalParDer1Wu(cFrame[iplanarcontour]->getZeta());
 
     const Vec3 vC1 = cFrame[icircle]->evalVelocity();
     const Vec3 vC2 = cFrame[iplanarcontour]->evalVelocity();

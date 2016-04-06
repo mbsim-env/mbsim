@@ -25,12 +25,12 @@ namespace MBSimFlexibleBody {
     // TODO Auto-generated destructor stub
   }
 
-  Vec3 NeutralNurbsPosition2s::getPosition(const Vec2 &zeta) {
+  Vec3 NeutralNurbsPosition2s::evalPosition(const Vec2 &zeta) {
     if(updSurface) computeCurve(true);
     return surface.pointAt(zeta(0), zeta(1));
   }
 
-  Vec3 NeutralNurbsPosition2s::getWs(const Vec2 &zeta) {
+  Vec3 NeutralNurbsPosition2s::evalWs(const Vec2 &zeta) {
     if(updSurface) computeCurve(true);
     GeneralMatrix<Vec3> skl;
     /************************************************************************************
@@ -47,7 +47,7 @@ namespace MBSimFlexibleBody {
     return Tmpv / nrm2(Tmpv);  // normalize the vector
   }
 
-  Vec3 NeutralNurbsPosition2s::getWt(const Vec2 &zeta) {
+  Vec3 NeutralNurbsPosition2s::evalWt(const Vec2 &zeta) {
     if(updSurface) computeCurve(true);
     GeneralMatrix<Vec3> skl;
     surface.deriveAt(zeta(0), zeta(1), 1, skl);
@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
     return Tmpv / nrm2(Tmpv);  // normalize the vector
   }
 
-  Vec3 NeutralNurbsPosition2s::getWn(const Vec2 &zeta) {
+  Vec3 NeutralNurbsPosition2s::evalWn(const Vec2 &zeta) {
     if(updSurface) computeCurve(true);
     Vec3 Tmpv = surface.normal(zeta(0), zeta(1));  // TODO: check whether this normal point outwards of the material. In the nurbs_disk_2s, the normal is been reversed manually.
     return Tmpv / nrm2(Tmpv);  // normalize the normal vector
@@ -67,15 +67,15 @@ namespace MBSimFlexibleBody {
   }
 
   void NeutralNurbsPosition2s::updatePositionNormal(ContourFrame *frame) {
-    frame->getOrientation(false).set(0, getWn(frame->getZeta()));
+    frame->getOrientation(false).set(0, evalWn(frame->getZeta()));
   }
 
   void NeutralNurbsPosition2s::updatePositionFirstTangent(ContourFrame *frame) {
-    frame->getOrientation(false).set(1, getWs(frame->getZeta()));
+    frame->getOrientation(false).set(1, evalWs(frame->getZeta()));
   }
 
   void NeutralNurbsPosition2s::updatePositionSecondTangent(ContourFrame *frame) {
-    frame->getOrientation(false).set(2, getWt(frame->getZeta()));
+    frame->getOrientation(false).set(2, evalWt(frame->getZeta()));
   }
 
   void NeutralNurbsPosition2s::buildNodelist(){

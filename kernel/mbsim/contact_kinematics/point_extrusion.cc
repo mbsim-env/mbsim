@@ -65,10 +65,10 @@ namespace MBSim {
 
     cFrame[iextrusion]->setEta(search.slv());
 
-    cFrame[iextrusion]->setPosition(extrusion->getPosition(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(0, extrusion->getWn(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(1, extrusion->getWu(cFrame[iextrusion]->getZeta()));
-    cFrame[iextrusion]->getOrientation(false).set(2, extrusion->getWv(cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->setPosition(extrusion->evalPosition(cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->getOrientation(false).set(0, extrusion->evalWn(cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->getOrientation(false).set(1, extrusion->evalWu(cFrame[iextrusion]->getZeta()));
+    cFrame[iextrusion]->getOrientation(false).set(2, extrusion->evalWv(cFrame[iextrusion]->getZeta()));
 
     cFrame[ipoint]->setPosition(point->getFrame()->evalPosition()); // position of point
     cFrame[ipoint]->getOrientation(false).set(0, -cFrame[iextrusion]->getOrientation(false).col(0));

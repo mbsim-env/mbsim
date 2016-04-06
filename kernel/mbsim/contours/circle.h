@@ -51,11 +51,11 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec3 getKs(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getKt(const fmatvec::Vec2 &zeta) { return Kt; }
-      virtual fmatvec::Vec3 getParDer1Kn(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 getParDer1Ku(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec2 getZeta(const fmatvec::Vec3& WrPoint);
+      virtual fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) { return Kt; }
+      virtual fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3& WrPoint);
       /***************************************************/
 
       /* GETTER / SETTER */

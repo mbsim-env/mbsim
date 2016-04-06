@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
 
     if (stage == preInit) {
       NP = createNeutralPosition();
-      NP->setBinormalDir(-R->getOrientation(0.).col(2));
+      NP->setBinormalDir(-R->evalOrientation().col(2));
       NV = createNeutralVelocity();
       NA = createNeutralAngle();
       NDA = createNeutralDotangle();
@@ -77,16 +77,16 @@ namespace MBSimFlexibleBody {
     Contour1sNeutralFactory::init(stage);
   }
 
-  Vec3 Contour1sNeutralCosserat::getPosition(const Vec2 &zeta) {
-    return NP->getPosition(zeta(0));
+  Vec3 Contour1sNeutralCosserat::evalPosition(const Vec2 &zeta) {
+    return NP->evalPosition(zeta(0));
   }
 
-  Vec3 Contour1sNeutralCosserat::getWs(const Vec2 &zeta) {
-    return NP->getWs(zeta(0));
+  Vec3 Contour1sNeutralCosserat::evalWs(const Vec2 &zeta) {
+    return NP->evalWs(zeta(0));
   }
 
-  Vec3 Contour1sNeutralCosserat::getWt(const Vec2 &zeta) {
-    return NP->getWt(zeta(0));
+  Vec3 Contour1sNeutralCosserat::evalWt(const Vec2 &zeta) {
+    return NP->evalWt(zeta(0));
   }
 
   void Contour1sNeutralCosserat::updatePositions(ContourFrame *frame) {

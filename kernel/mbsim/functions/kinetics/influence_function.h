@@ -39,7 +39,7 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
     protected:
-      fmatvec::Vec2 getZeta(const std::pair<Contour*, ContourFrame*>& contourInfo);
+      fmatvec::Vec2 evalZeta(const std::pair<Contour*, ContourFrame*>& contourInfo);
   };
 
 }

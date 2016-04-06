@@ -42,13 +42,10 @@ namespace MBSim {
 
   }
 
-  PolynomialFrustum::~PolynomialFrustum() {
-  }
-
   void PolynomialFrustum::init(InitStage stage) {
 
     if (stage == preInit) {
-      computeEnclosingSphere();
+      updateEnclosingSphere();
     }
 
     else if (stage == plotting) {
@@ -72,7 +69,7 @@ namespace MBSim {
       RigidContour::init(stage);
   }
 
-  Vec2 PolynomialFrustum::getZeta(const Vec3 & WrPoint) {
+  Vec2 PolynomialFrustum::evalZeta(const Vec3 & WrPoint) {
     Vec2 returnVal(NONINIT);
     Vec3 inFramePoint = -R->evalPosition() + R->evalOrientation().T() * WrPoint;
 
@@ -81,18 +78,6 @@ namespace MBSim {
 
     return returnVal;
 
-  }
-
-  void PolynomialFrustum::setHeight(const double & height_) {
-    height = height_;
-  }
-
-  double PolynomialFrustum::getHeight() {
-    return height;
-  }
-
-  double PolynomialFrustum::getHeight() const {
-    return height;
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -122,7 +107,7 @@ namespace MBSim {
   }
 #endif
 
-  double PolynomialFrustum::getValue(const double & x) {
+  double PolynomialFrustum::evalValue(const double & x) {
     double val = 0;
     for (int i = 0; i < parameters.size(); i++) {
       val += parameters(i) * pow(x, i);
@@ -130,7 +115,7 @@ namespace MBSim {
     return val;
   }
 
-  double PolynomialFrustum::getValue(const double & x) const {
+  double PolynomialFrustum::evalValue(const double & x) const {
     double val = 0;
     for (int i = 0; i < parameters.size(); i++) {
       val += parameters(i) * pow(x, i);
@@ -138,7 +123,7 @@ namespace MBSim {
     return val;
   }
 
-  double PolynomialFrustum::getValueD1(const double & x) {
+  double PolynomialFrustum::evalValueD1(const double & x) {
     double val = 0;
     for (int i = 1; i < parameters.size(); i++) {
       val += i * parameters(i) * pow(x, (i - 1));
@@ -146,7 +131,7 @@ namespace MBSim {
     return val;
   }
 
-  double PolynomialFrustum::getValueD1(const double & x) const {
+  double PolynomialFrustum::evalValueD1(const double & x) const {
     double val = 0;
     for (int i = 1; i < parameters.size(); i++) {
       val += i * parameters(i) * pow(x, (i - 1));
@@ -154,7 +139,7 @@ namespace MBSim {
     return val;
   }
 
-  double PolynomialFrustum::getValueD2(const double & x) {
+  double PolynomialFrustum::evalValueD2(const double & x) {
     double val = 0;
     for (int i = 2; i < parameters.size(); i++) {
       val += i * (i - 1) * parameters(i) * pow(x, (i - 2));
@@ -162,7 +147,7 @@ namespace MBSim {
     return val;
   }
 
-  double PolynomialFrustum::getValueD2(const double & x) const {
+  double PolynomialFrustum::evalValueD2(const double & x) const {
     double val = 0;
     for (int i = 2; i < parameters.size(); i++) {
       val += i * (i - 1) * parameters(i) * pow(x, (i - 2));
@@ -173,8 +158,8 @@ namespace MBSim {
   double PolynomialFrustum::getXPolyMax() {
     double x = height / 2;
     int iter = 1;
-    while (iter < 500 && fabs(getValueD1(x)) > 1e-6) {
-      x = x - getValueD1(x) / getValueD2(x);
+    while (iter < 500 && fabs(evalValueD1(x)) > 1e-6) {
+      x = x - evalValueD1(x) / evalValueD2(x);
       iter++;
     }
     return x;
@@ -194,76 +179,76 @@ namespace MBSim {
     return parameters;
   }
 
-  Vec3 PolynomialFrustum::getKrPS(const Vec2 &zeta) {
+  Vec3 PolynomialFrustum::evalKrPS(const Vec2 &zeta) {
     Vec3 point(NONINIT);
     double x = zeta(0);
     double phi = zeta(1);
     point(0) = x;
-    point(1) = getValue(x) * cos(phi);
-    point(2) = getValue(x) * sin(phi);
+    point(1) = evalValue(x) * cos(phi);
+    point(2) = evalValue(x) * sin(phi);
     return point;
   }
 
-  Vec3 PolynomialFrustum::getKn(const Vec2 &zeta) {
+  Vec3 PolynomialFrustum::evalKn(const Vec2 &zeta) {
     Vec3 normal(NONINIT);
     double x = zeta(0);
     double phi = zeta(1);
-    const double f = getValue(x);
-    normal(0) =  f * getValueD1(x);
+    const double f = evalValue(x);
+    normal(0) =  f * evalValueD1(x);
     normal(1) = - f * cos(phi);
     normal(2) = - f * sin(phi);
     return -normal/nrm2(normal);
   }
 
-  Vec3 PolynomialFrustum::getKu(const Vec2 &zeta) {
+  Vec3 PolynomialFrustum::evalKu(const Vec2 &zeta) {
     Vec3 tangent(NONINIT);
     double x = zeta(0);
     double phi = zeta(1);
-    const double fd = getValueD1(x);
+    const double fd = evalValueD1(x);
     tangent(0) = 1;
     tangent(1) = fd * cos(phi);
     tangent(2) = fd * sin(phi);
     return tangent/nrm2(tangent);
   }
 
-  Vec3 PolynomialFrustum::getKv(const Vec2 &zeta) {
+  Vec3 PolynomialFrustum::evalKv(const Vec2 &zeta) {
     Vec3 tangent(NONINIT);
     double x = zeta(0);
     double phi = zeta(1);
-    const double f = getValue(x);
+    const double f = evalValue(x);
     tangent(0) = 0;
     tangent(1) = f * sin(phi);
     tangent(2) = -f * cos(phi);
     return tangent/nrm2(tangent);
   }
 
-  void PolynomialFrustum::computeEnclosingSphere() {
-    double fa = getValue(0);
-    double fb = getValue(height);
-    double fda = getValueD1(0); //f'(a)
-    double fdb = getValueD1(height); //f'(b)
+  void PolynomialFrustum::updateEnclosingSphere() {
+    double fa = evalValue(0);
+    double fb = evalValue(height);
+    double fda = evalValueD1(0); //f'(a)
+    double fdb = evalValueD1(height); //f'(b)
     double temp1 = sqrt(pow(fb, 2) + pow(height, 2) / 4);
     double temp2 = sqrt(pow(fa, 2) + pow(height, 2) / 4);
     double temp = (temp1 > temp2) ? temp1 : temp2;
     if (fda * fdb < 0) { //only of derivative turns around there is a maximum between the two sides
       double x = getXPolyMax();
-      double fmax = getValue(x);
+      double fmax = evalValue(x);
       temp1 = sqrt(pow(fmax, 2) + pow((x - height / 2), 2));
     }
 
     sphereRadius = (temp1 > temp) ? temp1 : temp;
   }
 
-  Vec3 PolynomialFrustum::getWn(const Vec2 &zeta) {
-    return R->getOrientation() * getKn(zeta);
+  Vec3 PolynomialFrustum::evalWn(const Vec2 &zeta) {
+    return R->evalOrientation() * evalKn(zeta);
   }
 
-  Vec3 PolynomialFrustum::getWu(const Vec2 &zeta) {
-    return R->getOrientation() * getKu(zeta);
+  Vec3 PolynomialFrustum::evalWu(const Vec2 &zeta) {
+    return R->evalOrientation() * evalKu(zeta);
   }
 
-  Vec3 PolynomialFrustum::getWv(const Vec2 &zeta) {
-    return R->getOrientation() * getKv(zeta);
+  Vec3 PolynomialFrustum::evalWv(const Vec2 &zeta) {
+    return R->evalOrientation() * evalKv(zeta);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -294,7 +279,7 @@ namespace MBSim {
 
     for (int i = 0; i < polynomialPoints + 1; i++) {
       double x = (height * i) / polynomialPoints;
-      double r = getValue(x);
+      double r = evalValue(x);
       for (int j = 0; j < circularPoints; j++) {
         double phi = j * 2. * M_PI / circularPoints;
         double y = r * cos(phi);
@@ -395,7 +380,7 @@ namespace MBSim {
   }
 
   double ContactPolyfun::operator()(const double & x) {
-    const double d1 = frustum->getValueD1(x);
+    const double d1 = frustum->evalValueD1(x);
     return d1 * d1 - rhs;
   }
 #endif

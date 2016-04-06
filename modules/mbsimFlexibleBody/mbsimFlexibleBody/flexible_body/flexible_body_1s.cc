@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
  void FlexibleBody1s::init(InitStage stage) {
     if(stage==plotting) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if(openMBVBody) ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation(0.)));
+      if(openMBVBody) ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->evalOrientation()));
 #endif
       FlexibleBodyContinuum<double>::init(stage);
     }

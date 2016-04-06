@@ -31,13 +31,13 @@ using namespace std;
 namespace MBSim {
 
   Vec PolyFurstumSphereContact::operator()(const Vec &x) {
-    double res = x(0) - sphereCenter(0) + frustum->getValueD1(x(0)) * (frustum->getValue(x(0)) - rS);
+    double res = x(0) - sphereCenter(0) + frustum->evalValueD1(x(0)) * (frustum->evalValue(x(0)) - rS);
 
     return Vec(1, INIT, res);;
   }
 
   SqrMat PolyFurstumSphereContactJacobian::operator()(const Vec &x) {
-    double res = 1 + frustum->getValueD2(x(0)) * (frustum->getValue(x(0)) - rS) + frustum->getValueD1(x(0)) * frustum->getValueD1(x(0));
+    double res = 1 + frustum->evalValueD2(x(0)) * (frustum->evalValue(x(0)) - rS) + frustum->evalValueD1(x(0)) * frustum->evalValueD1(x(0));
 
     return SqrMat(1, INIT, res);;
   }
@@ -117,16 +117,16 @@ namespace MBSim {
           zeta(1) = phi;
 
           //Orientation
-          cFrame[ifrustum]->getOrientation(false).set(0, frustum->getWn(zeta));
-          cFrame[ifrustum]->getOrientation(false).set(1, frustum->getWu(zeta));
-          cFrame[ifrustum]->getOrientation(false).set(2, frustum->getWv(zeta));
+          cFrame[ifrustum]->getOrientation(false).set(0, frustum->evalWn(zeta));
+          cFrame[ifrustum]->getOrientation(false).set(1, frustum->evalWu(zeta));
+          cFrame[ifrustum]->getOrientation(false).set(2, frustum->evalWv(zeta));
 
           cFrame[isphere]->getOrientation(false).set(0, - cFrame[ifrustum]->getOrientation(false).col(0));
           cFrame[isphere]->getOrientation(false).set(1, - cFrame[ifrustum]->getOrientation(false).col(1));
           cFrame[isphere]->getOrientation(false).set(2, cFrame[ifrustum]->getOrientation(false).col(2));
 
           //Position
-          cFrame[ifrustum]->setPosition(frustum->getPosition(zeta));
+          cFrame[ifrustum]->setPosition(frustum->evalPosition(zeta));
           cFrame[isphere]->setPosition(rS + cFrame[isphere]->getOrientation(false).col(0) * sphere->getRadius());
 
           //Distance

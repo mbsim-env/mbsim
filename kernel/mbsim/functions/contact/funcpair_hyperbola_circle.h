@@ -55,14 +55,14 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &phi);
-      fmatvec::Vec3 getWrD(const double &phi);
+      fmatvec::Vec3 evalWrD(const double &phi);
       /*************************************************/
   };
 
   inline double FuncPairHyperbolaCircle::operator()(const double &phi) {
     return -2 * b * (b2(0) * d(0) + b2(1) * d(1) + b2(2) * d(2)) * cosh(phi) - 2 * a * (b1(0) * d(0) + b1(1) * d(1) + b1(2) * d(2)) * sinh(phi) - ((a * a) + (b * b)) * sinh(2 * phi);
   }
-  inline fmatvec::Vec3 FuncPairHyperbolaCircle::getWrD(const double &phi) {
+  inline fmatvec::Vec3 FuncPairHyperbolaCircle::evalWrD(const double &phi) {
     return d + b1 * a * cosh(phi) + b2 * b * sinh(phi);
   }
 

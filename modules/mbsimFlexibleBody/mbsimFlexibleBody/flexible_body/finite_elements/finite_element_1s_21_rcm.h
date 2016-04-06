@@ -222,7 +222,7 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return Cartesian position
        */
-      fmatvec::Vec3 getLocalPositions(const fmatvec::Vec& qLocal, double s);
+      fmatvec::Vec3 evalLocalPositions(const fmatvec::Vec& qLocal, double s);
 
       /**
        * \brief calculates Cartesian velocity
@@ -231,7 +231,7 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return Cartesian velocity
        */
-      fmatvec::Vec3 getLocalVelocities(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, double s);
+      fmatvec::Vec3 evalLocalVelocities(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, double s);
 
       /**
        * \brief calculates JACOBIAN of implicit integration

@@ -21,7 +21,7 @@ namespace MBSimFlexibleBody {
   NeutralNurbsLocalPosition2s::~NeutralNurbsLocalPosition2s() {
   }
 
-  Vec3 NeutralNurbsLocalPosition2s::getLocalPosition(const Vec2 &zeta){
+  Vec3 NeutralNurbsLocalPosition2s::evalLocalPosition(const Vec2 &zeta){
 //    if(updSurface) computeCurve(true);
     return surface.pointAt(zeta(0),zeta(1));
   }
@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
     Vec3 r;
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
-        r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getLocalPosition(nodes(i,j));
+        r = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalLocalPosition(nodes(i,j));
         Nodelist(i,j) = r;
 //        cout << "contourLocalPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl; // the index get here is one less than the index in Abaqus.
 //        cout << "neutralLocalPosition2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
