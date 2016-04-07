@@ -2,8 +2,10 @@
 #include <mbxmlutilshelper/shared_library.h>
 #include <fmiModelFunctions.h>
 #include <boost/make_shared.hpp>
-#include <boost/filesystem/path.hpp>
+#include <boost/filesystem.hpp>
 #include <cstdarg>
+#include <cstdio>
+#include <iostream>
 
 // typedefs for FMI function (must be in sync with fmiModelFunction.h)
 typedef fmiStatus (*t_fmiSetString)(fmiComponent, const fmiValueReference[], size_t, const fmiString[]);
@@ -46,83 +48,74 @@ void fmiCallbackLoggerImpl(fmiComponent c, fmiString instanceName, fmiStatus sta
 }
 
 // set FMI parmeter
-void setOutput(const shared_ptr<SharedLibrary> &fmu, void *comp, const string &modelIdentifier, fmiValueReference vr, const string &output) {
+void setOutput(const path &fmuFile, void *comp, const string &modelIdentifier, fmiValueReference vr, const string &output) {
   const char* str=output.c_str();
-  if(fmu->getSymbol<t_fmiSetString>(modelIdentifier+"_fmiSetString")(comp, &vr, 1, &str)!=fmiOK)
+  if(SharedLibrary::getSymbol<t_fmiSetString>(fmuFile.string(), modelIdentifier+"_fmiSetString")(comp, &vr, 1, &str)!=fmiOK)
     throw runtime_error("fmisetString failed");
 }
 
 // load, init and deinit one FMU
 void singleLoad(const path &fmuFile, fmiCallbackFunctions cbFuncs, const string &guid, const string &modelIdentifier, int outputVR) {
-  shared_ptr<SharedLibrary> fmu=make_shared<SharedLibrary>(fmuFile.string());
-
-  void *comp=fmu->getSymbol<t_fmiInstantiateModel>(modelIdentifier+"_fmiInstantiateModel")("fmu1", guid.c_str(), cbFuncs, fmiFalse);
+  void *comp=SharedLibrary::getSymbol<t_fmiInstantiateModel>(fmuFile.string(), 
+    modelIdentifier+"_fmiInstantiateModel")("fmu1", guid.c_str(), cbFuncs, fmiFalse);
   if(!comp)
     throw runtime_error("fmiInstantiateModel failed");
 
-  setOutput(fmu, comp, modelIdentifier, outputVR, "fmuOutput");
+  setOutput(fmuFile, comp, modelIdentifier, outputVR, "fmuOutput");
 
   fmiEventInfo ei;
-  if(fmu->getSymbol<t_fmiInitialize>(modelIdentifier+"_fmiInitialize")(comp, fmiFalse, 0.0, &ei)!=fmiOK)
+  if(SharedLibrary::getSymbol<t_fmiInitialize>(fmuFile.string(), modelIdentifier+"_fmiInitialize")(comp, fmiFalse, 0.0, &ei)!=fmiOK)
     throw runtime_error("fmiInitialize failed");
   if(!ei.iterationConverged || ei.terminateSimulation)
     throw runtime_error("fmiInitialize failed by eventInfo");
 
-  if(fmu->getSymbol<t_fmiTerminate>(modelIdentifier+"_fmiTerminate")(comp)!=fmiOK)
+  if(SharedLibrary::getSymbol<t_fmiTerminate>(fmuFile.string(), modelIdentifier+"_fmiTerminate")(comp)!=fmiOK)
     throw runtime_error("fmiTerminate failed");
 
-  fmu->getSymbol<t_fmiFreeModelInstance>(modelIdentifier+"_fmiFreeModelInstance")(comp);
-
-  fmu.reset();
+  SharedLibrary::getSymbol<t_fmiFreeModelInstance>(fmuFile.string(), modelIdentifier+"_fmiFreeModelInstance")(comp);
 }
 
 // load, init and deinit two FMU
 void doubleLoad(const path &fmuFile, fmiCallbackFunctions cbFuncs, const string &guid, const string &modelIdentifier, int outputVR) {
-  shared_ptr<SharedLibrary> fmu1=make_shared<SharedLibrary>(fmuFile.string());
-
-  void *comp1=fmu1->getSymbol<t_fmiInstantiateModel>(modelIdentifier+"_fmiInstantiateModel")("fmu1", guid.c_str(), cbFuncs, fmiFalse);
+  void *comp1=SharedLibrary::getSymbol<t_fmiInstantiateModel>(fmuFile.string(),
+    modelIdentifier+"_fmiInstantiateModel")("fmu1", guid.c_str(), cbFuncs, fmiFalse);
   if(!comp1)
     throw runtime_error(modelIdentifier+"_fmiInstantiateModel failed");
 
-  setOutput(fmu1, comp1, modelIdentifier, outputVR, "fmuOutput1");
+  setOutput(fmuFile, comp1, modelIdentifier, outputVR, "fmuOutput1");
 
-  shared_ptr<SharedLibrary> fmu2=make_shared<SharedLibrary>(fmuFile.string());
-
-  void *comp2=fmu2->getSymbol<t_fmiInstantiateModel>(modelIdentifier+"_fmiInstantiateModel")("fmu2", guid.c_str(), cbFuncs, fmiFalse);
+  void *comp2=SharedLibrary::getSymbol<t_fmiInstantiateModel>(fmuFile.string(), 
+    modelIdentifier+"_fmiInstantiateModel")("fmu2", guid.c_str(), cbFuncs, fmiFalse);
   if(!comp2)
     throw runtime_error(modelIdentifier+"_fmiInstantiateModel failed");
 
-  setOutput(fmu2, comp2, modelIdentifier, outputVR, "fmuOutput2");
+  setOutput(fmuFile, comp2, modelIdentifier, outputVR, "fmuOutput2");
 
 
 
   fmiEventInfo ei;
 
-  if(fmu1->getSymbol<t_fmiInitialize>(modelIdentifier+"_fmiInitialize")(comp1, fmiFalse, 0.0, &ei)!=fmiOK)
+  if(SharedLibrary::getSymbol<t_fmiInitialize>(fmuFile.string(), modelIdentifier+"_fmiInitialize")(comp1, fmiFalse, 0.0, &ei)!=fmiOK)
     throw runtime_error("fmiInitialize failed");
   if(!ei.iterationConverged || ei.terminateSimulation)
     throw runtime_error("fmiInitialize failed by eventInfo");
 
-  if(fmu2->getSymbol<t_fmiInitialize>(modelIdentifier+"_fmiInitialize")(comp2, fmiFalse, 0.0, &ei)!=fmiOK)
+  if(SharedLibrary::getSymbol<t_fmiInitialize>(fmuFile.string(), modelIdentifier+"_fmiInitialize")(comp2, fmiFalse, 0.0, &ei)!=fmiOK)
     throw runtime_error("fmiInitialize failed");
   if(!ei.iterationConverged || ei.terminateSimulation)
     throw runtime_error("fmiInitialize failed by eventInfo");
 
 
 
-  if(fmu1->getSymbol<t_fmiTerminate>(modelIdentifier+"_fmiTerminate")(comp1)!=fmiOK)
+  if(SharedLibrary::getSymbol<t_fmiTerminate>(fmuFile.string(), modelIdentifier+"_fmiTerminate")(comp1)!=fmiOK)
     throw runtime_error("fmiTerminate failed");
 
-  fmu1->getSymbol<t_fmiFreeModelInstance>(modelIdentifier+"_fmiFreeModelInstance")(comp1);
+  SharedLibrary::getSymbol<t_fmiFreeModelInstance>(fmuFile.string(), modelIdentifier+"_fmiFreeModelInstance")(comp1);
 
-  fmu1.reset();
-
-  if(fmu2->getSymbol<t_fmiTerminate>(modelIdentifier+"_fmiTerminate")(comp2)!=fmiOK)
+  if(SharedLibrary::getSymbol<t_fmiTerminate>(fmuFile.string(), modelIdentifier+"_fmiTerminate")(comp2)!=fmiOK)
     throw runtime_error("fmiTerminate failed");
 
-  fmu2->getSymbol<t_fmiFreeModelInstance>(modelIdentifier+"_fmiFreeModelInstance")(comp2);
-
-  fmu1.reset();
+  SharedLibrary::getSymbol<t_fmiFreeModelInstance>(fmuFile.string(), modelIdentifier+"_fmiFreeModelInstance")(comp2);
 }
 
 }
@@ -143,7 +136,7 @@ int main(int argc, char *argv[]) {
     int outputVR=0; // the VR of the "Output directory"
 
     // arguments
-    path fmuFile=path(argv[1])/"binaries"/FMIOS/fmu;
+    path fmuFile=canonical(path(argv[1])/"binaries"/FMIOS/fmu);
 
     // callbacks
     fmiCallbackFunctions cbFuncs;

@@ -17,9 +17,8 @@ namespace MBSimFMI {
     path mbsimsrclibfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/
       "model"/("libmbsimfmi_model"+SHEXT);
 
-    modelLib=boost::make_shared<SharedLibrary>(absolute(mbsimsrclibfile).string());
     DynamicSystemSolver *dssPtr;
-    modelLib->getSymbol<mbsimSrcFMIPtr>("mbsimSrcFMI")(dssPtr);
+    SharedLibrary::getSymbol<mbsimSrcFMIPtr>(canonical(mbsimsrclibfile).string(), "mbsimSrcFMI")(dssPtr);
     dss.reset(dssPtr);
   }
 

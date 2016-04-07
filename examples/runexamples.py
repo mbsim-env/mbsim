@@ -1052,7 +1052,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   dt=(t1-t0).total_seconds()
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
   # convert fmuCheck result csv file to h5 format (this is then checked as usual by compareExample)
-  if canCompare:
+  if canCompare and os.path.exists("fmuCheck.result.csv"):
     import h5py
     import numpy
     data=numpy.genfromtxt("fmuCheck.result.csv", dtype=float, delimiter=",", skip_header=1) # get data from csv
