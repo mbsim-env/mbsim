@@ -50,7 +50,7 @@ namespace MBSimIntegrator {
   void ODEXIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    system->zdot(z, zd, *t);
+    zdot(zd, z, *t);
   }
 
   void ODEXIntegrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {

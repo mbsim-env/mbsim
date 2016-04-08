@@ -231,9 +231,11 @@ namespace MBSimIntegrator {
     if(z0.size()) zi = z0; 					// define initial state
     else sysT1->initz(zi); 
 
+    if((sysT1->getq())()!=zi()) sysT1->updatezRef(zi);
+    sysT1->setTime(t);
+    sysT1->setStepSize(1);
     sysT1->resetUpToDate();
-
-    sysT1->plot2(zi,t,1.);
+    sysT1->plot();
 
     tPlot = t;
   }
@@ -883,7 +885,11 @@ namespace MBSimIntegrator {
       tPlot+=dtPlot;
       zT1 << ze;
       setAllSetValuedla(lae,laeSizes,SetValuedLinkListT1);
-      sysT1->plot2(zT1,t,1);
+      if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
+      sysT1->setTime(t);
+      sysT1->setStepSize(1);
+      sysT1->resetUpToDate();
+      sysT1->plot();
     }
     if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
 
@@ -920,7 +926,11 @@ namespace MBSimIntegrator {
         double ratio = (tPlot -(t-dte))/dte;
         zT1 << zi + (ze-zi)*ratio;
         setAllSetValuedla(laSynchron+(laeSynchron-laSynchron)*ratio,laSizesSynchron,SetValuedLinkListT1);
-        sysT1->plot2(zT1,tPlot,1);
+        if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
+        sysT1->setTime(tPlot);
+        sysT1->setStepSize(1);
+        sysT1->resetUpToDate();
+        sysT1->plot();
         tPlot += dtPlot;
       }
     }

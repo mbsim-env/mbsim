@@ -35,7 +35,6 @@ namespace MBSimIntegrator {
     private:
 
       static void fzdot(int* zSize, double* t, double* z_, double* zd_);
-      static void fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_);
 
       /** maximal step size */
       double dtMax;

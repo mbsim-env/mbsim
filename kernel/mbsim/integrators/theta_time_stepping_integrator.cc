@@ -87,6 +87,9 @@ namespace MBSimIntegrator {
     else
       system.initz(z);
 
+    system.updatezRef(z);
+    system.setStepSize(dt);
+
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
     
@@ -104,7 +107,7 @@ namespace MBSimIntegrator {
         step++;
         if (driftCompensation)
           system.projectGeneralizedPositions(t, 0);
-        system.plot2(z, t, dt);
+        system.plot();
         double s1 = clock();
         time += (s1 - s0) / CLOCKS_PER_SEC;
         s0 = s1;
@@ -116,6 +119,7 @@ namespace MBSimIntegrator {
 
       double te = t + dt;
       t += theta * dt;
+      system.resetUpToDate();
       system.setTime(t);
       update(system, z, t);
 
@@ -145,6 +149,8 @@ namespace MBSimIntegrator {
       u += du;
       x += system.deltax(z, t, dt);
       t = te;
+      system.resetUpToDate();
+      system.setTime(t);
     }
   }
 

@@ -97,6 +97,8 @@ namespace MBSim {
       virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
       virtual fmatvec::Vec& getu() { return u; };
+      virtual const fmatvec::Vec& getqd() const { return qd; };
+      virtual fmatvec::Vec& getqd() { return qd; };
       void setq(const fmatvec::Vec& q_){ q = q_;}
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
@@ -253,7 +255,7 @@ namespace MBSim {
       void setla(const fmatvec::Vec &la_) { la = la_; }
       void setLa(const fmatvec::Vec &La_) { La = La_; }
 //      const fmatvec::Vec& getsv(bool check=true) const { return sv; }
-//      const fmatvec::VecInt& getjsv() const { return jsv; }
+      const fmatvec::VecInt& getjsv() const { return jsv; }
 //      const fmatvec::Vec& getres() const { return res; }
 //      const fmatvec::Vec& getcorr(bool check=true) const { return corr; };
       fmatvec::Mat& getW(int i=0, bool check=true);

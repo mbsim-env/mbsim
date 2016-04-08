@@ -63,6 +63,9 @@ namespace MBSimIntegrator {
     u>>z(Iu);
     x>>z(Ix);
 
+    system.updatezRef(z);
+    system.setStepSize(dt);
+
     if(z0.size()) z = z0; // define initial state
     else system.initz(z);
 
@@ -78,14 +81,12 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-    system.setStepSize(dt);
     while(t<tStop) { // time loop
-      system.resetUpToDate();
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
         if(driftCompensation) system.projectGeneralizedPositions(t,0);
-        system.plot2(z,t,dt);
+        system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
@@ -95,9 +96,8 @@ namespace MBSimIntegrator {
       }
 
       q += system.deltaq(z,t,dt);
-      system.resetUpToDate();
-
       t += dt;
+      system.resetUpToDate();
 
       system.setTime(t);
       system.checkActive(1);
@@ -111,6 +111,7 @@ namespace MBSimIntegrator {
 
       u += system.deltau(z,t,dt);
       x += system.deltax(z,t,dt);
+      system.resetUpToDate();
     }
   }
 

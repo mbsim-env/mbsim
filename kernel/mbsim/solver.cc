@@ -19,9 +19,29 @@
 
 #include <config.h>
 #include "solver.h"
+#include "mbsim/dynamic_system_solver.h"
+
+using namespace fmatvec;
 
 namespace MBSim {
 
   DynamicSystemSolver * Solver::system = 0;
+
+  void Solver::zdot(const Vec &zd, const Vec &z, double t) {
+    if (system->getq()() != z()) system->updatezRef(z);
+    if (system->getqd()() != zd()) system->updatezdRef(zd);
+    system->setTime(t);
+    system->resetUpToDate();
+    if (system->getlaSize()) system->computeConstraintForces();
+    system->updatezd();
+  }
+
+  Vec Solver::zdot(const Vec &z, double t) {
+    if (system->getq()() != z()) system->updatezRef(z);
+    system->setTime(t);
+    system->resetUpToDate();
+    if (system->getlaSize()) system->computeConstraintForces();
+    return system->evalzd();
+  }
 
 }

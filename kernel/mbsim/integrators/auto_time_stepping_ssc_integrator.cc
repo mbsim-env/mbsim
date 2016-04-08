@@ -309,7 +309,7 @@ namespace MBSimIntegrator {
     x_l >> z_(Ix);
 
     q_l += system_.deltaq(z_l,t_,dt_);
-    system_.update(z_,t_+dt_,1);
+//    system_.update(z_,t_+dt_,1);
     system_.getb().resize() = system_.getgd() + system_.getW().T()*slvLLFac(system_.getLLM(),system_.geth())*dt_;
     *piter  = system_.solveImpacts();
     u_l += system_.deltau(z_,t_+dt_,dt_);
@@ -822,7 +822,11 @@ namespace MBSimIntegrator {
     if(z0.size()) zi = z0; 					// define initial state
     else sysT1->initz(zi); 
 
-    sysTP->plot2(zi,t,1.);
+    if((sysT1->getq())()!=zi()) sysT1->updatezRef(zi);
+    sysT1->setTime(t);
+    sysT1->setStepSize(1);
+    sysT1->resetUpToDate();
+    sysT1->plot();
 
     tPlot = t;
   }
@@ -944,10 +948,10 @@ namespace MBSimIntegrator {
     }
     
     //if (theta > epsroot() && inexactJac==true) {
-      sysT1->update(zi,t);
-      sysT2->update(zi,t);
-      sysT3->update(zi,t);
-      sysTP->update(zi,t);
+//      sysT1->update(zi,t);
+//      sysT2->update(zi,t);
+//      sysT3->update(zi,t);
+//      sysTP->update(zi,t);
     //}
     
     sysT1->getLinkStatus(LS);
@@ -1546,7 +1550,11 @@ namespace MBSimIntegrator {
       tPlot+=dtPlot;
       zT1 << ze;
       setAllSetValuedla(lae,laeSizes,SetValuedLinkListT1);
-      sysTP->plot2(zT1,t,1);
+      if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
+      sysT1->setTime(t);
+      sysT1->setStepSize(1);
+      sysT1->resetUpToDate();
+      sysT1->plot();
     }
     if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
 
@@ -1582,7 +1590,11 @@ namespace MBSimIntegrator {
         double ratio = (tPlot -(t-dte))/dte;
         zT1 << zi + (ze-zi)*ratio;
         setAllSetValuedla(laSynchron+(laeSynchron-laSynchron)*ratio,laSizesSynchron,SetValuedLinkListT1);
-        sysTP->plot2(zT1,tPlot,1);
+        if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
+        sysT1->setTime(tPlot);
+        sysT1->setStepSize(1);
+        sysT1->resetUpToDate();
+        sysT1->plot();
         tPlot += dtPlot;
       }
     }
@@ -1603,7 +1615,11 @@ namespace MBSimIntegrator {
       tPlotP+=dtPlot;
       zTP << zeP;
       setAllSetValuedla(laeP,laeSizesP,SetValuedLinkListTP);
-      sysTP->plot2(zTP,t,1);
+      if((sysTP->getq())()!=zTP()) sysTP->updatezRef(zTP);
+      sysTP->setTime(t);
+      sysTP->setStepSize(1);
+      sysTP->resetUpToDate();
+      sysTP->plot();
     }
     if ((t>=tPlotP) && outputInterpolation && !FlagPlotEveryStep) {
       // Dimension/size von la und lae synchronisieren
@@ -1638,7 +1654,11 @@ namespace MBSimIntegrator {
         double ratio = (tPlotP -(t-dte))/dte;
         zTP << ziP + (zeP-ziP)*ratio;
         setAllSetValuedla(laSynchron+(laeSynchron-laSynchron)*ratio,laSizesSynchron,SetValuedLinkListTP);
-        sysTP->plot2(zTP,tPlotP,1);
+        if((sysTP->getq())()!=zTP()) sysTP->updatezRef(zTP);
+        sysTP->setTime(tPlotP);
+        sysTP->setStepSize(1);
+        sysTP->resetUpToDate();
+        sysTP->plot();
         tPlotP += dtPlot;
       }
     }

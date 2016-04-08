@@ -172,7 +172,6 @@ namespace MBSim {
       /** DEPRECATED */
       virtual std::string getType() const { return "DynamicSystemSolver"; }
       virtual void plot(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
-      virtual void plot2(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
 
       virtual void closePlot();
       /***************************************************/
@@ -228,6 +227,7 @@ namespace MBSim {
       fmatvec::Vec& getb(bool check=true) { assert((not check) or (not updb)); return b; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
+      const fmatvec::Vec& evalzd() { updatezd(); return zdParent; }
       const fmatvec::SqrMat& evalG() { if(updG) updateG(); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(); return Gs; }
       const fmatvec::Vec& evalb() { if(updb) updateb(); return b; }
@@ -319,36 +319,12 @@ namespace MBSim {
       void decreaserFactors();
 
       /**
-       * \brief update of dynamic system for time-stepping integrator
-       * \param state
-       * \param time
-       * \param options  = 0 (default) nothing
-       *                 = 1 force updates as if active constraints has changed
-       */
-      void update(const fmatvec::Vec &z, double t, int options=0);
-
-      /**
        * \brief update for event driven integrator for event
        * \param state (return)
        * \param boolean evaluation of stop vector
        * \param time
        */
-      virtual void shift(fmatvec::Vec& z, const fmatvec::VecInt& jsv, double t);
-
-      /**
-       * \brief update for event driven integrator during smooth phase
-       * \param state
-       * \param differentiated state (return)
-       * \param time
-       */
-      virtual void zdot(const fmatvec::Vec& z, fmatvec::Vec& zd, double t);
-
-      /**
-       * \brief standard invocation of smooth update for event driven integration
-       * \param state
-       * \param time
-       */
-      virtual fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t);
+      virtual void shift();
 
       /**
        * \brief evaluation of stop vector
@@ -522,6 +498,12 @@ namespace MBSim {
       void updatezRef(const fmatvec::Vec &ext);
 
       /**
+       * \brief references to differentiated external state
+       * \param differentiated external state
+       */
+      void updatezdRef(const fmatvec::Vec &ext);
+
+      /**
        * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed
        * \param flag
        */
@@ -590,6 +572,12 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updateVRef(const fmatvec::Mat &ref, int i=0) { Group::updateVRef(ref,i); updV[i] = true; }
+
+      /**
+       * \brief compute inverse kinetics constraint forces
+       * \param current time
+       */
+      void computeConstraintForces();
 
     protected:
       /**
@@ -833,22 +821,10 @@ namespace MBSim {
       double tolProj;
 
       /**
-       * \brief references to differentiated external state
-       * \param differentiated external state
-       */
-      void updatezdRef(const fmatvec::Vec &ext);
-
-      /**
        * \brief update relaxation factors for contact equations
        * \todo global not available because of unsymmetric mass action matrix TODO
        */
       virtual void updaterFactors();
-
-      /**
-       * \brief compute inverse kinetics constraint forces
-       * \param current time
-       */
-      void computeConstraintForces();
 
       /**
        * \brief

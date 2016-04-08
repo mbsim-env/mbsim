@@ -103,6 +103,8 @@ namespace MBSimIntegrator {
        */
       virtual std::string getType() const { return "Integrator"; }
 
+//      static void plot(const fmatvec::Vec& z, double t);
+
     protected:
       /**
        * \brief start, end, plot time

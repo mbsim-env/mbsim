@@ -45,7 +45,7 @@ namespace MBSimIntegrator {
   void LSODARIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
     Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    system->zdot(z, zd, *t);
+    zdot(zd, z, *t);
   }
 
   void LSODARIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
@@ -131,6 +131,7 @@ namespace MBSimIntegrator {
     integrationSteps = 0;
     integPlot.open((name + ".plt").c_str());
     jsv.resize(nsv);  
+    system->updatejsvRef(jsv);
     cout.setf(ios::scientific, ios::floatfield);
   }
 
@@ -138,7 +139,6 @@ namespace MBSimIntegrator {
     int one = 1;
     int two = 2;
     rWork(4) = dt0;
-    //system->shift(z, jsv, t);
     system->plot(z, t);
     cout << "System shiftet and plotted" << endl;
     while(t < tStop) {  
@@ -163,7 +163,10 @@ namespace MBSimIntegrator {
           system->plot(z, t);
           system->plotAtSpecialEvent(t);
         }
-        system->shift(z, jsv, t);
+        system->setTime(t);
+        if(system->getq()() != z()) system->updatezRef(z);
+        system->resetUpToDate();
+        system->shift();
         if(plotOnRoot) { // plot after shifting
           system->plot(z, t);
           system->plotAtSpecialEvent(t);

@@ -42,7 +42,7 @@ namespace MBSimIntegrator {
   void LSODERIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
     Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    system->zdot(z, zd, *t);
+    zdot(zd, z, *t);
   }
 
   void LSODERIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {

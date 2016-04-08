@@ -58,6 +58,9 @@ namespace MBSim {
 
       virtual const fmatvec::Vec& getInitialState() const = 0;
 
+      static void zdot(const fmatvec::Vec& zd, const fmatvec::Vec& z, double t);
+      static fmatvec::Vec zdot(const fmatvec::Vec& z, double t);
+
     protected:
       /**
        * \brief dynamic system

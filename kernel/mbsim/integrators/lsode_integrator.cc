@@ -48,13 +48,7 @@ namespace MBSimIntegrator {
   void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
     Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    system->zdot(z, zd, *t);
-  }
-
-  void LSODEIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
-    Vec z(*zSize, z_);
-    Vec sv(*nsv, sv_);
-    system->getsv(z, sv, *t);
+    zdot(zd, z, *t);
   }
 
   void LSODEIntegrator::integrate(DynamicSystemSolver& system_) {

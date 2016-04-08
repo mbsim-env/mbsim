@@ -258,7 +258,7 @@ namespace MBSimIntegrator {
 
     // recover the old sys state
     sys->setq(qOld);
-    sys->update(z, t);
+//    sys->update(z, t);
 
     return jac;
   }

@@ -90,7 +90,7 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      z += system.zdot(z,t)*dt; 
+      z += zdot(z,t)*dt; 
       
       t += dt;
     }

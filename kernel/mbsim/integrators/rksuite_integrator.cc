@@ -157,7 +157,7 @@ namespace MBSimIntegrator {
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
     Vec z(zSize, z_);
     Vec zd(zSize, zd_);
-    system->zdot(z, zd, *t);
+    zdot(zd, z, *t);
   }
 
   int RKSuiteIntegrator::zSize = 0;

@@ -1066,17 +1066,6 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
   }
 
-  void DynamicSystemSolver::update(const Vec &zParent, double t, int options) {
-    throw;
-  }
-
-  void DynamicSystemSolver::zdot(const Vec &zParent, Vec &zdParent, double t) {
-    if (qd() != zdParent()) {
-      updatezdRef(zdParent);
-    }
-    zdot(zParent, t);
-  }
-
   void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt) {
     if (LinkStatusExt.size() < LinkStatusSize)
       LinkStatusExt.resize(LinkStatusSize);
@@ -1600,18 +1589,11 @@ namespace MBSim {
         addToGraph(graph, A, j, eleList);
   }
 
-  void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
-    setTime(t);
+  void DynamicSystemSolver::shift() {
     if(msgAct(Debug))
       msg(Debug) << "System shift at t = " << t << "." << endl;
 
-    resetUpToDate();
     useOldla = false;
-
-    if (q() != zParent()) {
-      updatezRef(zParent);
-    }
-    jsv = jsv_;
 
     checkRoot();
     int maxj = getRootID();
@@ -1635,7 +1617,8 @@ namespace MBSim {
       b << evalgd(); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       setStepSize(0);
       solveImpacts();
-      u += deltau(zParent, t, 0);
+      updatedu();
+      u += ud[0];
       resetUpToDate();
       checkActive(3); // neuer Zustand nach Stoss
       // Projektion:
@@ -1726,18 +1709,6 @@ namespace MBSim {
     sv(sv.size() - 1) = 1;
   }
 
-  Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
-    setTime(t);
-    resetUpToDate();
-    if (q() != zParent()) {
-      updatezRef(zParent);
-    }
-    if (laSize) computeConstraintForces();
-    updatezd();
-
-    return zdParent;
-  }
-
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
     resetUpToDate();
     if (q() != zParent()) {
@@ -1780,25 +1751,6 @@ namespace MBSim {
   }
 
   // TODO: Momentan für TimeStepping benötigt
-  void DynamicSystemSolver::plot2(const fmatvec::Vec& zParent, double t, double dt) {
-    if (q() != zParent()) {
-      updatezRef(zParent);
-    }
-
-    if (qd() != zdParent())
-      updatezdRef(zdParent);
-
-    setTime(t);
-    setStepSize(dt);
-
-    plot();
-
-    if (++flushCount > flushEvery) {
-      flushCount = 0;
-      H5::File::flushAllFiles();
-    }
-  }
-
   void DynamicSystemSolver::resetUpToDate() {
     updT = true;
     updh[0] = true;

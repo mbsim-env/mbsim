@@ -55,10 +55,10 @@ namespace MBSimAnalyser {
   Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) {}
 
   Vec Eigenanalyser::Residuum::operator()(const Vec &z) {
-      Vec res;
-      res = sys->zdot(z,t);
-      return res;
-    } 
+    Vec res;
+    res = zdot(z,t);
+    return res;
+  } 
 
   void Eigenanalyser::analyse(DynamicSystemSolver& system_) {
     system = &system_;
@@ -101,11 +101,11 @@ namespace MBSimAnalyser {
       double delta = epsroot();
       SqrMat A(zEq.size());
       Vec zd, zdOld;
-      zdOld = system->zdot(zEq,tStart);
+      zdOld = zdot(zEq,tStart);
       for (int i=0; i<zEq.size(); i++) {
         double ztmp = zEq(i);
         zEq(i) += delta;
-        zd = system->zdot(zEq,tStart);
+        zd = zdot(zEq,tStart);
         A.col(i) = (zd - zdOld) / delta;
         zEq(i) = ztmp;
       }

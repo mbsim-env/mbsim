@@ -84,4 +84,23 @@ namespace MBSimIntegrator {
       setEndTime(getStartTime()+1.1*getPlotStepSize());
   }
 
+//  void Integrator::plot(const Vec& z, double t) {
+//    system->resetUpToDate();
+//    if (system->getq()() != z()) system->updatezRef(z);
+//
+////    if (qd() != zdParent()) updatezdRef(zdParent);
+//    system->setTime(t);
+//    system->updateWRef(system->getWParent(1)(Index(0, system->getuSize(1) - 1), Index(0, system->getlaSize() - 1)), 1);
+//    system->updateVRef(system->getVParent(1)(Index(0, system->getuSize(1) - 1), Index(0, system->getlaSize() - 1)), 1);
+////    if (system->getlaSize()) {
+////      if(useConstraintSolverForPlot) {
+////        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+////        solveConstraints();
+////      }
+////      else
+////        system->computeConstraintForces();
+//    system->updatezd();
+//    system->plot();
+//  }
+    
 }
