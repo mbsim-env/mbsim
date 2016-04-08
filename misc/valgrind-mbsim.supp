@@ -84,6 +84,23 @@
    fun:fmi1_check
    fun:main
 }
+{
+   fmuchecker
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:jm_vector_alloc_jm_voidp
+   fun:fmi1_xml_handle_ModelVariables
+   fun:fmi1_parse_element_end
+   fun:doContent
+   fun:contentProcessor
+   fun:prologProcessor
+   fun:XML_ParseBuffer
+   fun:fmi1_xml_parse_model_description
+   fun:fmi1_import_parse_xml
+   fun:fmi1_check
+   fun:main
+}
 
 # XERCES
 {
@@ -109,4 +126,58 @@
    fun:_ZN6casadi6MatrixINS_9SXElementEE3setERKS2_bRKNS_5SliceES7_
    fun:_ZN6casadi9SubMatrixINS_6MatrixINS_9SXElementEEENS_5SliceES4_EaSERKS3_
    ...
+}
+
+# HDF5
+{
+   hdf5
+   Memcheck:Value8
+   fun:deflate_fast
+   fun:deflate
+   fun:compress2
+   fun:H5Z_filter_deflate
+   fun:H5Z_pipeline
+   fun:H5D__chunk_flush_entry
+   fun:H5D__chunk_flush
+   fun:H5D__flush_real
+}
+{
+   hdf5
+   Memcheck:Cond
+   fun:longest_match
+   fun:deflate_fast
+   fun:deflate
+   fun:compress2
+   fun:H5Z_filter_deflate
+   fun:H5Z_pipeline
+   fun:H5D__chunk_flush_entry
+   fun:H5D__chunk_flush
+   fun:H5D__flush_real
+}
+{
+   hdf5
+   Memcheck:Value8
+   fun:compress_block
+   fun:_tr_flush_block
+   fun:deflate_fast
+   fun:deflate
+   fun:compress2
+   fun:H5Z_filter_deflate
+   fun:H5Z_pipeline
+   fun:H5D__chunk_flush_entry
+   fun:H5D__chunk_flush
+   fun:H5D__flush_real
+}
+{
+   hdf5
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:H5FD_sec2_write
+   fun:H5FD_write
+   fun:H5F_accum_write
+   fun:H5F_block_write
+   fun:H5D__chunk_flush_entry
+   fun:H5D__chunk_flush
+   fun:H5D__flush_real
 }
