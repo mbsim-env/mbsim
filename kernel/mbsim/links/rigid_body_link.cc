@@ -135,8 +135,8 @@ namespace MBSim {
         h[j][i]+=body[i]->evalJRel(j).T()*evalGeneralizedForce()*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        h[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getForce(i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getMoment(i))*ratio[i];
-        h[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*getForce(i) + C[i].evalJacobianOfRotation(j).T()*getMoment(i))*ratio[i];
+        h[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalForce(i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalMoment(i))*ratio[i];
+        h[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*evalForce(i) + C[i].evalJacobianOfRotation(j).T()*evalMoment(i))*ratio[i];
       }
     }
   }
@@ -148,8 +148,8 @@ namespace MBSim {
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        W[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*getRF(i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*getRM(i))*ratio[i];
-        W[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*getRF(i) + C[i].evalJacobianOfRotation(j).T()*getRM(i))*ratio[i];
+        W[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalRF(i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalRM(i))*ratio[i];
+        W[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*evalRF(i) + C[i].evalJacobianOfRotation(j).T()*evalRM(i))*ratio[i];
       }
     }
   }
@@ -262,7 +262,7 @@ namespace MBSim {
           for(unsigned i=0; i<body.size(); i++) {
             vector<double> data;
             data.push_back(getTime());
-            Vec3 WF = getForce(i)*ratio[i];
+            Vec3 WF = evalForce(i)*ratio[i];
             Vec3 WrOS=body[i]->getFrameForKinematics()->evalPosition();
             data.push_back(WrOS(0));
             data.push_back(WrOS(1));
@@ -278,7 +278,7 @@ namespace MBSim {
           for(unsigned i=0; i<body.size(); i++) {
             vector<double> data;
             data.push_back(getTime());
-            Vec3 WM = getMoment(i)*ratio[i];
+            Vec3 WM = evalMoment(i)*ratio[i];
             Vec3 WrOS=body[i]->getFrameForKinematics()->evalPosition();
             data.push_back(WrOS(0));
             data.push_back(WrOS(1));
@@ -334,5 +334,3 @@ namespace MBSim {
   }
 
 }
-
-

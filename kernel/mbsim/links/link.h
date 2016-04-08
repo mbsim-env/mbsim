@@ -359,11 +359,6 @@ namespace MBSim {
       virtual void checkRoot() { }
       /***************************************************/
 
-      /* GETTER / SETTER */
-      const std::vector<fmatvec::Mat>& getW(int i=0) const { return W[i]; }
-      const std::vector<fmatvec::Mat>& getV(int i=0) const { return V[i]; }
-      const std::vector<fmatvec::Vec>& geth(int i=0) const { return h[i]; }
-
       void setx(const fmatvec::Vec &x_) { x = x_; }
       const fmatvec::Vec& getxd() const { return xd; }
       
@@ -383,12 +378,6 @@ namespace MBSim {
       int getlaSize() const { return laSize; } 
       int getbSize() const { return bSize; }
 
-//      const fmatvec::Vec& getg() const { return g; }
-//      const fmatvec::Vec& getgd() const { return gd; }
-//      const fmatvec::Vec& getwb() const { return wb; }
-//      fmatvec::Vec& getg() { return g; }
-//      fmatvec::Vec& getgd() { return gd; }
-//      fmatvec::Vec& getwb() { return wb; }
       const fmatvec::Vec& evalg();
       const fmatvec::Vec& evalgd();
       const fmatvec::Vec& evalwb();
@@ -397,9 +386,6 @@ namespace MBSim {
       int getgSize() const { return gSize; } 
       int getgdSize() const { return gdSize; } 
 
-//      const fmatvec::Index& getgIndex() const { return Ig; }
-//      const fmatvec::Index& getlaIndex() const { return Ila; }
-      
       int getrFactorSize() const { return rFactorSize; } 
       
       const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
