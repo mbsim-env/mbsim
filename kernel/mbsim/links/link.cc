@@ -60,7 +60,7 @@ namespace MBSim {
         for(int i=0; i<sv.size(); ++i)
           plotVector.push_back(sv(i));
       if(getPlotFeature(energy)==enabled) {
-        plotVector.push_back(computePotentialEnergy()); 
+        plotVector.push_back(evalPotentialEnergy());
       }
 
       Element::plot();

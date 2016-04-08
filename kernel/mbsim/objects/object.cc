@@ -121,8 +121,8 @@ namespace MBSim {
           plotVector.push_back(evalr()(i));
       }
       if (getPlotFeature(energy) == enabled) {
-        double Ttemp = computeKineticEnergy();
-        double Vtemp = computePotentialEnergy();
+        double Ttemp = evalKineticEnergy();
+        double Vtemp = evalPotentialEnergy();
         plotVector.push_back(Ttemp);
         plotVector.push_back(Vtemp);
         plotVector.push_back(Ttemp + Vtemp);

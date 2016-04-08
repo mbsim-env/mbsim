@@ -409,13 +409,13 @@ namespace MBSim {
       /**
        * \brief compute kinetic energy of entire dynamic system
        */
-      double computeKineticEnergy() { return 0.5*u.T()*M[0]*u; }
+      double evalKineticEnergy() { return 0.5*u.T()*M[0]*u; }
 
       /**
        * \brief compute potential energy of entire dynamic system
        * \tofo change? TODO
        */
-      double computePotentialEnergy();
+      double evalPotentialEnergy();
 
       /**
        * \param element to add

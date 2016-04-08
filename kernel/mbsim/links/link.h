@@ -324,7 +324,7 @@ namespace MBSim {
       /**
        * \brief compute potential energy
        */
-      virtual double computePotentialEnergy() { return 0; }
+      virtual double evalPotentialEnergy() { return 0; }
 
       virtual void setlaTol(double tol) { laTol = tol; }
       virtual void setLaTol(double tol) { LaTol = tol; }

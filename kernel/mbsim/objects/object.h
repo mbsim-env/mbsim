@@ -211,12 +211,12 @@ namespace MBSim {
       /**
        * \return kinetic energy 
        */
-      virtual double computeKineticEnergy() { return 0.5*u.T()*M[0]*u; }
+      virtual double evalKineticEnergy() { return 0.5*u.T()*M[0]*u; }
 
       /**
        * \return potential energy
        */
-      virtual double computePotentialEnergy() { return 0; }
+      virtual double evalPotentialEnergy() { return 0; }
 
       /**
        * \brief TODO
@@ -234,14 +234,6 @@ namespace MBSim {
 
       const fmatvec::Vec& geth(int i=0, bool check=true) const;
       fmatvec::Vec& geth(int i=0, bool check=true);
-//      const fmatvec::Vec& getr(int i=0) const { return r[i]; };
-//      fmatvec::Vec& getr(int i=0) { return r[i]; };
-//      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
-//      fmatvec::SymMat& getM(int i=0) { return M[i]; };
-//      const fmatvec::Mat& getT() const { return T; };
-//      fmatvec::Mat& getT() { return T; };
-//      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
-//      fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
 
       fmatvec::Vec& getq() { return q; };
       fmatvec::Vec& getu() { return u; };
