@@ -25,10 +25,6 @@ namespace MBSimControl {
   class ExternSignalSink;
 }
 
-namespace MBXMLUtils {
-  class SharedLibrary;
-}
-
 namespace MBSimFMI {
 
   /*! A MBSim FMI instance */
@@ -121,9 +117,6 @@ namespace MBSimFMI {
 
       int completedStepCounter;
       double nextPlotTime;
-
-      // shared library of a user supplied model (only used for source code models)
-      boost::shared_ptr<MBXMLUtils::SharedLibrary> modelLib;
 
       void addModelParametersAndCreateDSS(std::vector<boost::shared_ptr<Variable> > &varSim);
   };

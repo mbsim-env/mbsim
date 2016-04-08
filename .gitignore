@@ -41,6 +41,7 @@ mbsimfmi/general/Makefile.in
 mbsimfmi/install-sh
 mbsimfmi/ltmain.sh
 mbsimfmi/mbsimfmi/Makefile.in
+mbsimfmi/test/Makefile.in
 mbsimfmi/missing
 mbsimgui/INSTALL
 mbsimgui/Makefile.in

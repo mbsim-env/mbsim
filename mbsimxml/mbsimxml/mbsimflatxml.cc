@@ -55,22 +55,12 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
     for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries"))->
         getFirstElementChildNamed(MBSIMPLUGIN%"Library");
         e!=NULL; e=e->getNextElementSibling())
-      pluginLibFile.insert(installDir/relLibName(E(e)->getAttribute("basename")));
+      pluginLibFile.insert(canonical(installDir/relLibName(E(e)->getAttribute("basename"))));
   }
-
-  static set<SharedLibrary> loadedPlugin;
-
-  // unload no longer existing plugins or plugins with newer write time
-  for(set<SharedLibrary>::iterator it=loadedPlugin.begin(); it!=loadedPlugin.end(); it++)
-    if(pluginLibFile.count(it->file)==0 || boost::myfilesystem::last_write_time(it->file)>it->writeTime) {
-      set<SharedLibrary>::iterator it2=it; it2--;
-      loadedPlugin.erase(it);
-      it=it2;
-    }
 
   // load plugins which are not already loaded
   for(set<boost::filesystem::path>::iterator it=pluginLibFile.begin(); it!=pluginLibFile.end(); it++)
-    loadedPlugin.insert(SharedLibrary(it->generic_string()));
+    SharedLibrary::load(it->string());
 
   return pluginLibFile;
 }

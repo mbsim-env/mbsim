@@ -34,8 +34,7 @@ namespace {
 
   // FMI instance struct of mbsim.so: hold the real SharedLibrary and the real instance
   struct Instance {
-    Instance(const SharedLibrary &lib_, const boost::shared_ptr<FMIInstanceBase> &instance_) : lib(lib_), instance(instance_) {}
-    SharedLibrary lib;
+    Instance(const boost::shared_ptr<FMIInstanceBase> &instance_) : instance(instance_) {}
     boost::shared_ptr<FMIInstanceBase> instance;
   };
 }
@@ -72,9 +71,9 @@ extern "C" {
       for(int i=0; i<3; ++i)
         s=fmuDir.find_last_of("/\\", s)-1;
       // load main mbsim FMU library
-      SharedLibrary lib(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT);
-      fmiInstanceCreatePtr fmiInstanceCreate=lib.getSymbol<fmiInstanceCreatePtr>("fmiInstanceCreate");
-      return new Instance(lib, fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));
+      fmiInstanceCreatePtr fmiInstanceCreate=SharedLibrary::getSymbol<fmiInstanceCreatePtr>(
+        fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT, "fmiInstanceCreate");
+      return new Instance(fmiInstanceCreate(instanceName_, GUID, functions, loggingOn));
     }
     // note: we can not use the instance here since the creation has failed
     catch(const exception &ex) {

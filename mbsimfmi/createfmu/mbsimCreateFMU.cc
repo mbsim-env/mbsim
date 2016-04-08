@@ -8,6 +8,7 @@
 #include <mbsim/integrators/integrator.h>
 #include <mbsimxml/mbsimxml.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "zip.h"
 #include <../general/fmi_variables.h>
 #include <../general/xmlpp_utils.h>
@@ -94,8 +95,6 @@ int main(int argc, char *argv[]) {
     boost::shared_ptr<DOMParser> parserNoneVali=DOMParser::create(false);
 
     // note: the order of these variable definitions is importend for proper deallocation
-    // (dss and integrator must be deallocated before the shLib is unlaoded)
-    boost::shared_ptr<SharedLibrary> shLib;
     boost::shared_ptr<DynamicSystemSolver> dss;
     boost::shared_ptr<MBSimIntegrator::Integrator> integrator;
 
@@ -216,9 +215,8 @@ int main(int argc, char *argv[]) {
 
       // load the shared library and call mbsimSrcFMI function to get the dss
       cout<<"Build up the model (by just getting it from the shared library)."<<endl;
-      shLib=boost::make_shared<SharedLibrary>(absolute(inputFilename).string());
       DynamicSystemSolver *dssPtr;
-      shLib->getSymbol<mbsimSrcFMIPtr>("mbsimSrcFMI")(dssPtr);
+      SharedLibrary::getSymbol<mbsimSrcFMIPtr>(canonical(inputFilename).string(), "mbsimSrcFMI")(dssPtr);
       dss.reset(dssPtr);
 
       // we do not have a integrator for src models (but this is only used for convinence settings)
