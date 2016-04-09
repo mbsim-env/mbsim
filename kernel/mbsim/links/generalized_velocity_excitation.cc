@@ -50,7 +50,7 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityExcitation::updatewb() {
-    wb += body[0]->evaljRel()-(f->parDer1(x,getTime())*xd + f->parDer2(x,getTime()));
+    wb += body[0]->evaljRel()-(f->parDer1(x,getTime())*(*f)(x,getTime()) + f->parDer2(x,getTime()));
   }
 
 }
