@@ -67,10 +67,10 @@ namespace MBSimIntegrator {
     u >> z(Iu);
     x >> z(Ix);
 
-    if (z0.size())
-      z = z0; // define initial state
+    if(z0.size())
+      z = z0;
     else
-      system.initz(z);
+      z = system.evalz0();
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);

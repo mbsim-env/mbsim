@@ -63,11 +63,12 @@ namespace MBSimIntegrator {
     u>>z(Iu);
     x>>z(Ix);
 
-    system.updatezRef(z);
     system.setStepSize(dt);
 
-    if(z0.size()) z = z0; // define initial state
-    else system.initz(z);
+    if(z0.size())
+      z = z0;
+    else
+      z = system.evalz0();
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
@@ -100,6 +101,7 @@ namespace MBSimIntegrator {
       system.resetUpToDate();
 
       system.setTime(t);
+      system.setq(q);
       system.checkActive(1);
       if (system.gActiveChanged()) system.resize_();
 
@@ -111,6 +113,8 @@ namespace MBSimIntegrator {
 
       u += system.evaldu();
       x += system.evaldx();
+      system.setu(u);
+      system.setx(x);
       system.resetUpToDate();
     }
   }

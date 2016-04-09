@@ -58,11 +58,6 @@ namespace MBSim {
 
       virtual const fmatvec::Vec& getInitialState() const = 0;
 
-      static void zdot(const fmatvec::Vec& zd, const fmatvec::Vec& z, double t);
-      static fmatvec::Vec zdot(const fmatvec::Vec& z, double t);
-      static void plot(const fmatvec::Vec& z, double t);
-      static void stopVector(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
-
     protected:
       /**
        * \brief dynamic system
@@ -73,4 +68,3 @@ namespace MBSim {
 }
 
 #endif /* _SOLVER_H_ */
-

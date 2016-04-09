@@ -100,6 +100,7 @@ namespace MBSim {
       virtual const fmatvec::Vec& getqd() const { return qd; };
       virtual fmatvec::Vec& getqd() { return qd; };
       void setq(const fmatvec::Vec& q_){ q = q_;}
+      void setu(const fmatvec::Vec& u_){ u = u_;}
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };

@@ -47,8 +47,10 @@ namespace MBSimIntegrator {
     zSize=system->getzSize();
 
     z.resize(zSize);
-    if(z0.size()) z = z0; // define initial state
-    else system->initz(z);
+    if(z0.size())
+      z = z0;
+    else
+      z = system->evalz0();
 
     if(thres.size() == 1) {
       double buf = thres(0);
@@ -64,7 +66,10 @@ namespace MBSimIntegrator {
     zMax.resize(zSize);
 
     t=tStart;
-    plot(z, t);
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    system->solveAndPlot();
 
     tPlot = t + dtPlot;
     integPlot.open((name + ".plt").c_str());
@@ -94,7 +99,10 @@ namespace MBSimIntegrator {
       UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
 
       if(result==1 || result==2 || fabs(t-tPlot)<epsroot()) {
-        plot(z, t);
+        system->setTime(t);
+        system->setState(z);
+        system->resetUpToDate();
+        system->solveAndPlot();
 
         if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
 
@@ -157,7 +165,10 @@ namespace MBSimIntegrator {
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
     Vec z(zSize, z_);
     Vec zd(zSize, zd_);
-    zdot(zd, z, *t);
+    system->setTime(*t);
+    system->setState(z);
+    system->resetUpToDate();
+    zd = system->evalzd();
   }
 
   int RKSuiteIntegrator::zSize = 0;

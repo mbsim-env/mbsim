@@ -54,7 +54,10 @@ namespace MBSimIntegrator {
   void RADAU5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    zdot(zd, z, *t);
+    system->setTime(*t);
+    system->setState(z);
+    system->resetUpToDate();
+    zd = system->evalzd();
   }
 
   void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
@@ -62,7 +65,10 @@ namespace MBSimIntegrator {
     while(*t >= tPlot) {
       for(int i=1; i<=*n; i++)
 	zInp(i-1) = CONTR5(&i,&tPlot,cont,lrc);
-      Solver::plot(zInp, tPlot);
+      system->setTime(tPlot);
+      system->setState(zInp);
+      system->resetUpToDate();
+      system->solveAndPlot();
       if(output_)
 	cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
 
@@ -88,7 +94,7 @@ namespace MBSimIntegrator {
     if(z0.size())
       z = z0;
     else
-      system->initz(z);
+      z = system->evalz0();
 
     if(aTol.size() == 0) 
       aTol.resize(1,INIT,1e-6);
@@ -141,7 +147,11 @@ namespace MBSimIntegrator {
 
     tPlot = t + dtPlot;
     dtOut = dtPlot;
-    Solver::plot(z, t);
+
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    system->solveAndPlot();
 
     zInp.resize(zSize);
 

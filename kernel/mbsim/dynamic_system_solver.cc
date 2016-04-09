@@ -973,17 +973,6 @@ namespace MBSim {
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
   }
 
-  void DynamicSystemSolver::initz(Vec& z) {
-    updatezRef(z);
-    Group::initz();
-
-    // Perform a projection of generalized positions and velocities at time t=0
-    if(initialProjection) { 
-      projectGeneralizedPositions(1, true);
-      projectGeneralizedVelocities(1);
-    }
-  }
-
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
     la = slvLS(evalG(), -b);
     //la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
@@ -1695,6 +1684,46 @@ namespace MBSim {
     updG = true;
     updb = true;
     Group::resetUpToDate();
+  }
+
+  const Vec& DynamicSystemSolver::evalzd() {
+    if(laSize) computeConstraintForces();
+    updatezd();
+    return zdParent;
+  }
+
+  void DynamicSystemSolver::solveAndPlot() {
+    if(laSize) {
+      if(useConstraintSolverForPlot) {
+        getb(false) = evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+        solveConstraints();
+      }
+      else
+        computeConstraintForces();
+    }
+    updatezd();
+    computeInverseKinetics();
+    plot();
+  }
+
+  const Vec& DynamicSystemSolver::evalsv() {
+    if(getlaSize()) {
+      getb(false) << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+      solveConstraints();
+    }
+    updateStopVector();
+    sv(sv.size() - 1) = 1;
+    return sv;
+  }
+
+  const Vec& DynamicSystemSolver::evalz0() {
+    initz();
+    // Perform a projection of generalized positions and velocities at time t=0
+    if(initialProjection) {
+      projectGeneralizedPositions(1, true);
+      projectGeneralizedVelocities(1);
+    }
+    return zParent;
   }
 
 }

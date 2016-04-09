@@ -831,10 +831,11 @@ namespace MBSimIntegrator {
       integPlot << "#15 ConstraintsChanged_B1_A :" << endl;
     }
 
-    if(z0.size()) zi = z0; 					// define initial state
-    else sysT1->initz(zi); 
+    if(z0.size())
+      zi = z0;
+    else
+      zi = sysT1->evalz0();
 
-    if((sysT1->getq())()!=zi()) sysT1->updatezRef(zi);
     sysT1->setTime(t);
     sysT1->setStepSize(1);
     sysT1->resetUpToDate();

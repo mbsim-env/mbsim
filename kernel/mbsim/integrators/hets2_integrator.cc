@@ -81,8 +81,10 @@ namespace MBSimIntegrator {
     x>>z(Ix);
 
     // define initial state
-    if(z0.size()) z = z0;
-    else system.initz(z);
+    if(z0.size())
+      z = z0;
+    else
+      z = system.evalz0();
     system.setUseOldla(false);
     system.setlaTol(1e-10/dt); // adaptation from impulse
     system.setgddTol(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints

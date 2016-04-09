@@ -55,14 +55,14 @@ namespace MBSimAnalyser {
   Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) {}
 
   Vec Eigenanalyser::Residuum::operator()(const Vec &z) {
-    Vec res;
-    res = zdot(z,t);
-    return res;
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    return system->evalzd();
   } 
 
   void Eigenanalyser::analyse(DynamicSystemSolver& system_) {
     system = &system_;
-    system->updatezdRef();
 
     if(task == eigenfrequencies) computeEigenvalues();
     else if(task == eigenmode) computeEigenmode();
@@ -85,10 +85,8 @@ namespace MBSimAnalyser {
   }
 
   void Eigenanalyser::computeEigenvalues() {
-      if(not(zEq.size())) {
-        zEq.resize(system->getzSize());
-        system->initz(zEq);          
-      }
+      if(not(zEq.size()))
+        zEq = system->evalz0();
 
       if(compEq) {
         Residuum f(system,tStart);
@@ -102,11 +100,16 @@ namespace MBSimAnalyser {
       double delta = epsroot();
       SqrMat A(zEq.size());
       Vec zd, zdOld;
-      zdOld = zdot(zEq,tStart);
+      system->setTime(tStart);
+      system->setState(zEq);
+      system->resetUpToDate();
+      zdOld = system->evalzd();
       for (int i=0; i<zEq.size(); i++) {
         double ztmp = zEq(i);
         zEq(i) += delta;
-        zd = zdot(zEq,tStart);
+        system->setState(zEq);
+        system->resetUpToDate();
+        zd = system->evalzd();
         A.col(i) = (zd - zdOld) / delta;
         zEq(i) = ztmp;
       }
@@ -137,7 +140,10 @@ namespace MBSimAnalyser {
         for(int i=0; i<wbuf.size(); i++)
           deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
         z = zEq + fromComplex(deltaz);
-        plot(z,t);
+        system->setTime(t);
+        system->setState(z);
+        system->resetUpToDate();
+        system->solveAndPlot();
       }
       t0 += T+dtPlot;
       c(f[j].second) = complex<double>(0,0);
@@ -167,7 +173,10 @@ namespace MBSimAnalyser {
       for(int i=0; i<wbuf.size(); i++)
         deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
       z = zEq + fromComplex(deltaz);
-      plot(z,t);
+      system->setTime(t);
+      system->setState(z);
+      system->resetUpToDate();
+      system->solveAndPlot();
     }
   }
 
@@ -187,7 +196,10 @@ namespace MBSimAnalyser {
       for(int i=0; i<w.size(); i++)
         deltaz += c(i)*V.col(i)*exp(w(i)*t); 
       z = zEq + fromComplex(deltaz);
-      plot(z,t);
+      system->setTime(t);
+      system->setState(z);
+      system->resetUpToDate();
+      system->solveAndPlot();
     }
   }
 

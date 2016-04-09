@@ -45,13 +45,19 @@ namespace MBSimIntegrator {
   void LSODARIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
     Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    zdot(zd, z, *t);
+    system->setTime(*t);
+    system->setState(z);
+    system->resetUpToDate();
+    zd = system->evalzd();
   }
 
   void LSODARIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
     Vec z(*zSize, z_);
     Vec sv(*nsv, sv_);
-    stopVector(z, sv, *t);
+    system->setTime(*t);
+    system->setState(z);
+    system->resetUpToDate();
+    sv = system->evalsv();
   }
 
   void LSODARIntegrator::initializeUsingXML(DOMElement *element) {
@@ -103,7 +109,7 @@ namespace MBSimIntegrator {
     if(z0.size())
       z = z0;
     else
-      system->initz(z);
+      z = system->evalz0();
     system->computeInitialCondition();
     t=tStart;
     tPlot=t+dtPlot;
@@ -125,7 +131,10 @@ namespace MBSimIntegrator {
     liWork = (20+zSize)*10;
     iWork.resize(liWork);
     iWork(5) = 10000;
-    plot(z, t);
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    system->solveAndPlot();
     s0 = clock();
     time = 0;
     integrationSteps = 0;
@@ -139,7 +148,10 @@ namespace MBSimIntegrator {
     int one = 1;
     int two = 2;
     rWork(4) = dt0;
-    plot(z, t);
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    system->solveAndPlot();
     cout << "System shiftet and plotted" << endl;
     while(t < tStop) {  
       integrationSteps++;
@@ -147,7 +159,10 @@ namespace MBSimIntegrator {
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, jsv());
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
-        plot(z, t);
+        system->setTime(t);
+        system->setState(z);
+        system->resetUpToDate();
+        system->solveAndPlot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
@@ -160,15 +175,21 @@ namespace MBSimIntegrator {
       }
       if(istate==3) {
         if(plotOnRoot) { // plot before shifting
-          plot(z, t);
+          system->setTime(t);
+          system->setState(z);
+          system->resetUpToDate();
+          system->solveAndPlot();
           system->plotAtSpecialEvent();
         }
         system->setTime(t);
-        if(system->getq()() != z()) system->updatezRef(z);
+        system->setState(z);
         system->resetUpToDate();
         system->shift();
         if(plotOnRoot) { // plot after shifting
-          plot(z, t);
+          system->setTime(t);
+          system->setState(z);
+          system->resetUpToDate();
+          system->solveAndPlot();
           system->plotAtSpecialEvent();
         }
         istate=1;
@@ -179,7 +200,11 @@ namespace MBSimIntegrator {
   }
 
   void LSODARIntegrator::postIntegrate(DynamicSystemSolver& system_) {
-    plot(z, t);
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    system->solveAndPlot();
+    system->plotAtSpecialEvent();
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());

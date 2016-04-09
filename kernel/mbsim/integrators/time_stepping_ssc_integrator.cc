@@ -228,12 +228,10 @@ namespace MBSimIntegrator {
       integPlot << "#7 calculation time [s]:" << endl;
     }
 
-    if(z0.size()) zi = z0; 					// define initial state
-    else sysT1->initz(zi); 
-
-    sysT1->updatezRef(zT1);
-    sysT2->updatezRef(zT2);
-    sysT3->updatezRef(zT3);
+    if(z0.size())
+      zi = z0;
+    else
+      zi = sysT1->evalz0();
 
     zT1 << zi;
 

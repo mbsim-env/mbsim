@@ -82,12 +82,11 @@ namespace MBSimIntegrator {
     u >> z(Iu);
     x >> z(Ix);
 
-    if (z0.size())
+    if(z0.size())
       z = z0;
     else
-      system.initz(z);
+      z = system.evalz0();
 
-    system.updatezRef(z);
     system.setStepSize(dt);
 
     integPlot.open((name + ".plt").c_str());

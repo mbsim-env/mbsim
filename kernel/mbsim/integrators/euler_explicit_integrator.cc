@@ -58,10 +58,10 @@ namespace MBSimIntegrator {
     u>>z(Iu);
     x>>z(Ix);
 
-    if(z0.size()) z = z0; // define initial state
-    else system->initz(z);
-
-    system->updatezdRef();
+    if(z0.size())
+      z = z0;
+    else
+      z = system->evalz0();
 
     tPlot = 0.;
     integPlot.open((name + ".plt").c_str());
@@ -84,7 +84,10 @@ namespace MBSimIntegrator {
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
         
-        plot(z,t);
+        system.setTime(t);
+        system.setState(z);
+        system.resetUpToDate();
+        system.solveAndPlot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
@@ -93,7 +96,10 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      z += zdot(z,t)*dt; 
+      system.setTime(t);
+      system.setState(z);
+      system.resetUpToDate();
+      z += system.evalzd()*dt;
       
       t += dt;
     }

@@ -217,6 +217,9 @@ namespace MBSim {
       double getStepSize() const { return dt; }
       void setStepSize(double dt_) { dt = dt_; }
 
+      const fmatvec::Vec& getState() { return zParent; }
+      void setState(const fmatvec::Vec &z) { zParent = z; }
+
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
       const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
       const fmatvec::Vec& getb(bool check=true) const { assert((not check) or (not updb)); return b; }
@@ -229,10 +232,12 @@ namespace MBSim {
       const fmatvec::Vec& evaldu() { updatedu(); return ud[0]; }
       const fmatvec::Vec& evaldq() { updatedq(); return qd; }
       const fmatvec::Vec& evaldx() { updatedx(); return xd; }
-      const fmatvec::Vec& evalzd() { updatezd(); return zdParent; }
+      const fmatvec::Vec& evalzd();
       const fmatvec::SqrMat& evalG() { if(updG) updateG(); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(); return Gs; }
       const fmatvec::Vec& evalb() { if(updb) updateb(); return b; }
+      const fmatvec::Vec& evalsv();
+      const fmatvec::Vec& evalz0();
 
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
@@ -251,11 +256,6 @@ namespace MBSim {
        * \brief compute initial condition for links for event driven integrator
        */
       void computeInitialCondition();
-
-      /**
-       * \brief initialises state variables
-       */
-      virtual void initz(fmatvec::Vec& z0);
 
       /**
        * \function pointer for election of prox-solver for contact equations
@@ -429,7 +429,6 @@ namespace MBSim {
       void writeXMLFile(const std::string &name);
       void writeXMLFile() { writeXMLFile(getName()); }
 
-
       /**
        * \brief set tolerance for projection of generalized position
        * \param tolerance
@@ -472,7 +471,6 @@ namespace MBSim {
        * \param differentiated external state
        */
       void updatezdRef(const fmatvec::Vec &ext);
-      void updatezdRef() { updatezdRef(zdParent); }
 
       /**
        * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed
@@ -551,6 +549,8 @@ namespace MBSim {
        */
       void computeConstraintForces();
       void computeInverseKinetics();
+
+      void solveAndPlot();
 
     protected:
       /**

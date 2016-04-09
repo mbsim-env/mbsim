@@ -48,7 +48,10 @@ namespace MBSimIntegrator {
   void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
     Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    zdot(zd, z, *t);
+    system->setTime(*t);
+    system->setState(z);
+    system->resetUpToDate();
+    zd = system->evalzd();
   }
 
   void LSODEIntegrator::integrate(DynamicSystemSolver& system_) {
@@ -60,7 +63,7 @@ namespace MBSimIntegrator {
     if(z0.size())
       z = z0;
     else
-      system->initz(z);
+      z = system->evalz0();
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
@@ -87,7 +90,10 @@ namespace MBSimIntegrator {
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
-    plot(z, t);
+    system->setTime(t);
+    system->setState(z);
+    system->resetUpToDate();
+    system->solveAndPlot();
 
     double s0 = clock();
     double time = 0;
@@ -113,7 +119,10 @@ namespace MBSimIntegrator {
         &one, &istate, &one, rWork(), &lrWork, iWork(), 
         &liWork, 0, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
-        plot(z, t);
+        system->setTime(t);
+        system->setState(z);
+        system->resetUpToDate();
+        system->solveAndPlot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
