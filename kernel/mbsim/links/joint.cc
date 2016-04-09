@@ -554,4 +554,3 @@ namespace MBSim {
   }
 
 }
-
