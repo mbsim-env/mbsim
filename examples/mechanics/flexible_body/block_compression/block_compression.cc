@@ -190,8 +190,8 @@ BlockCompression::BlockCompression(const string &projectName) :
   }
 }
 
-void BlockCompression::plot(double t, double dt) {
-  DynamicSystemSolver::plot(t,dt);
+void BlockCompression::plot() {
+  DynamicSystemSolver::plot();
 
 //  cout << h[0] + W[0]*la << endl;
 }

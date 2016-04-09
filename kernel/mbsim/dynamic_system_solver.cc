@@ -746,7 +746,7 @@ namespace MBSim {
     checkExitRequest(); // updateh is called by all solvers
   }
 
-  Mat DynamicSystemSolver::dhdq(double t, int lb, int ub) {
+  Mat DynamicSystemSolver::dhdq(int lb, int ub) {
     if (lb != 0 || ub != 0) {
       assert(lb >= 0);
       assert(ub <= qSize);
@@ -783,7 +783,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat DynamicSystemSolver::dhdu(double t, int lb, int ub) {
+  Mat DynamicSystemSolver::dhdu(int lb, int ub) {
     if (lb != 0 || ub != 0) {
       assert(lb >= 0);
       assert(ub <= uSize[0]);
@@ -971,36 +971,6 @@ namespace MBSim {
     updatelaRef(laParent(0, laSize - 1));
     updatewbRef(wbParent(0, laSize - 1));
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-  }
-
-  Vec DynamicSystemSolver::deltau(const Vec &zParent, double t, double dt) {
-    setTime(t);
-    setStepSize(dt);
-    if (q() != zParent())
-      updatezRef(zParent);
-
-    updatedu();
-    return ud[0];
-  }
-
-  Vec DynamicSystemSolver::deltaq(const Vec &zParent, double t, double dt) {
-    setTime(t);
-    setStepSize(dt);
-    if (q() != zParent())
-      updatezRef(zParent);
-    updatedq();
-
-    return qd;
-  }
-
-  Vec DynamicSystemSolver::deltax(const Vec &zParent, double t, double dt) {
-    setTime(t);
-    setStepSize(dt);
-    if (q() != zParent()) {
-      updatezRef(zParent);
-    }
-    updatedx();
-    return xd;
   }
 
   void DynamicSystemSolver::initz(Vec& z) {
@@ -1688,66 +1658,18 @@ namespace MBSim {
     useOldla = true;
   }
 
-  void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) {
-    setTime(t);
-    resetUpToDate();
-    if (sv() != svExt()) {
-      updatesvRef(svExt);
-    }
-
-    if (q() != zParent())
-      updatezRef(zParent);
-
-    if (qd() != zdParent())
-      updatezdRef(zdParent);
-
-    if (laSize) {
-      b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
-      solveConstraints();
-    }
-    updateStopVector();
-    sv(sv.size() - 1) = 1;
-  }
-
-  void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
-    resetUpToDate();
-    if (q() != zParent()) {
-      updatezRef(zParent);
-    }
-
-    if (qd() != zdParent())
-      updatezdRef(zdParent);
-    setTime(t);
+  void DynamicSystemSolver::computeInverseKinetics() {
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
-    if (laSize) {
-      if(useConstraintSolverForPlot) {
-        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
-        solveConstraints();
-      }
-      else
-        computeConstraintForces();
-    }
-
-    updatezd();
-    if (true) {
-      int n = evalWInverseKinetics(1).cols();
-      int m1 = WInverseKinetics[1].rows();
-      int m2 = evalbInverseKinetics().rows();
-      Mat A(m1 + m2, n);
-      Vec b(m1 + m2);
-      A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics[1];
-      A(Index(m1, m1 + m2 - 1), Index(0, n - 1)) = bInverseKinetics;
-      b(0, m1 - 1) = -evalh(1) - evalr(1);
-      laInverseKinetics = slvLL(JTJ(A), A.T() * b);
-    }
-
-    DynamicSystemSolver::plot();
-
-    if (++flushCount > flushEvery) {
-      flushCount = 0;
-      H5::File::flushAllFiles();
-    }
+    int n = evalWInverseKinetics(1).cols();
+    int m1 = WInverseKinetics[1].rows();
+    int m2 = evalbInverseKinetics().rows();
+    Mat A(m1 + m2, n);
+    Vec b(m1 + m2);
+    A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics[1];
+    A(Index(m1, m1 + m2 - 1), Index(0, n - 1)) = bInverseKinetics;
+    b(0, m1 - 1) = -evalh(1) - evalr(1);
+    laInverseKinetics = slvLL(JTJ(A), A.T() * b);
   }
 
   // TODO: Momentan für TimeStepping benötigt

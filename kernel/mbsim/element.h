@@ -144,7 +144,7 @@ namespace MBSim {
        * \param simulation time
        * \param simulation time step size for derivative calculation
        */
-      virtual void plotAtSpecialEvent(double t, double dt = 1) {}
+      virtual void plotAtSpecialEvent() {}
 
       /**
        * \brief closes plot file

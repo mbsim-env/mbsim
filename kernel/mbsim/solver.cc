@@ -44,4 +44,35 @@ namespace MBSim {
     return system->evalzd();
   }
 
+  void Solver::plot(const Vec &z, double t) {
+    if (system->getq()() != z()) system->updatezRef(z);
+    system->updatezdRef();
+    system->setTime(t);
+    system->resetUpToDate();
+    if (system->getlaSize()) {
+      if(system->getUseConstraintSolverForPlot()) {
+        system->getb(false) = system->evalW().T() * slvLLFac(system->evalLLM(), system->evalh()) + system->evalwb();
+        system->solveConstraints();
+      }
+      else
+        system->computeConstraintForces();
+    }
+    system->updatezd();
+    system->computeInverseKinetics();
+    system->plot();
+  }
+
+  void Solver::stopVector(const Vec& z, Vec& sv, double t) {
+    if (system->getq()() != z()) system->updatezRef(z);
+    if (system->getsv(false)() != sv()) system->updatesvRef(sv);
+    system->setTime(t);
+    system->resetUpToDate();
+    if (system->getlaSize()) {
+      system->getb(false) << system->evalW().T() * slvLLFac(system->evalLLM(), system->evalh()) + system->evalwb();
+      system->solveConstraints();
+    }
+    system->updateStopVector();
+    sv(sv.size() - 1) = 1;
+  }
+
 }

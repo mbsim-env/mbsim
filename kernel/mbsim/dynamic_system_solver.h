@@ -171,7 +171,6 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       /** DEPRECATED */
       virtual std::string getType() const { return "DynamicSystemSolver"; }
-      virtual void plot(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
 
       virtual void closePlot();
       /***************************************************/
@@ -227,6 +226,9 @@ namespace MBSim {
       fmatvec::Vec& getb(bool check=true) { assert((not check) or (not updb)); return b; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
+      const fmatvec::Vec& evaldu() { updatedu(); return ud[0]; }
+      const fmatvec::Vec& evaldq() { updatedq(); return qd; }
+      const fmatvec::Vec& evaldx() { updatedx(); return xd; }
       const fmatvec::Vec& evalzd() { updatezd(); return zdParent; }
       const fmatvec::SqrMat& evalG() { if(updG) updateG(); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(); return Gs; }
@@ -249,30 +251,6 @@ namespace MBSim {
        * \brief compute initial condition for links for event driven integrator
        */
       void computeInitialCondition();
-
-      /**
-       * \param state
-       * \param time
-       * \param time step
-       * \return velocity difference for current time
-       */
-      fmatvec::Vec deltau(const fmatvec::Vec &zParent, double t, double dt);
-
-      /**
-       * \return position difference for current time
-       * \param state
-       * \param time
-       * \param time step
-       */
-      fmatvec::Vec deltaq(const fmatvec::Vec &zParent, double t, double dt);
-
-      /**
-       * \brief return x-state difference for current time
-       * \param parent state
-       * \param time
-       * \param time step
-       */
-      fmatvec::Vec deltax(const fmatvec::Vec &zParent, double t, double dt);
 
       /**
        * \brief initialises state variables
@@ -325,14 +303,6 @@ namespace MBSim {
        * \param time
        */
       virtual void shift();
-
-      /**
-       * \brief evaluation of stop vector
-       * \param state
-       * \param TODO
-       * \param time
-       */
-      virtual void getsv(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
 
       /** brief collect status of all set-valued links
        * \param result vector
@@ -502,6 +472,7 @@ namespace MBSim {
        * \param differentiated external state
        */
       void updatezdRef(const fmatvec::Vec &ext);
+      void updatezdRef() { updatezdRef(zdParent); }
 
       /**
        * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed
@@ -516,9 +487,10 @@ namespace MBSim {
       void setInitialProjection(bool initialProjection_) {initialProjection = initialProjection_;}
 
       void setUseConstraintSolverForPlot(bool useConstraintSolverForPlot_) {useConstraintSolverForPlot = useConstraintSolverForPlot_;}
+      bool getUseConstraintSolverForPlot() const { return useConstraintSolverForPlot; }
 
-      fmatvec::Mat dhdq(double t, int lb=0, int ub=0);
-      fmatvec::Mat dhdu(double t, int lb=0, int ub=0);
+      fmatvec::Mat dhdq(int lb=0, int ub=0);
+      fmatvec::Mat dhdu(int lb=0, int ub=0);
       fmatvec::Mat dhdx();
       fmatvec::Vec dhdt();
 
@@ -578,6 +550,7 @@ namespace MBSim {
        * \param current time
        */
       void computeConstraintForces();
+      void computeInverseKinetics();
 
     protected:
       /**

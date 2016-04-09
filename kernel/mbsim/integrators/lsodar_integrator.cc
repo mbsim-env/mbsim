@@ -51,7 +51,7 @@ namespace MBSimIntegrator {
   void LSODARIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
     Vec z(*zSize, z_);
     Vec sv(*nsv, sv_);
-    system->getsv(z, sv, *t);
+    stopVector(z, sv, *t);
   }
 
   void LSODARIntegrator::initializeUsingXML(DOMElement *element) {
@@ -125,7 +125,7 @@ namespace MBSimIntegrator {
     liWork = (20+zSize)*10;
     iWork.resize(liWork);
     iWork(5) = 10000;
-    //system->plot(z, t);
+    plot(z, t);
     s0 = clock();
     time = 0;
     integrationSteps = 0;
@@ -139,7 +139,7 @@ namespace MBSimIntegrator {
     int one = 1;
     int two = 2;
     rWork(4) = dt0;
-    system->plot(z, t);
+    plot(z, t);
     cout << "System shiftet and plotted" << endl;
     while(t < tStop) {  
       integrationSteps++;
@@ -147,7 +147,7 @@ namespace MBSimIntegrator {
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, jsv());
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
-        system->plot(z, t);
+        plot(z, t);
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
@@ -160,16 +160,16 @@ namespace MBSimIntegrator {
       }
       if(istate==3) {
         if(plotOnRoot) { // plot before shifting
-          system->plot(z, t);
-          system->plotAtSpecialEvent(t);
+          plot(z, t);
+          system->plotAtSpecialEvent();
         }
         system->setTime(t);
         if(system->getq()() != z()) system->updatezRef(z);
         system->resetUpToDate();
         system->shift();
         if(plotOnRoot) { // plot after shifting
-          system->plot(z, t);
-          system->plotAtSpecialEvent(t);
+          plot(z, t);
+          system->plotAtSpecialEvent();
         }
         istate=1;
         rWork(4)=dt0;
@@ -179,7 +179,7 @@ namespace MBSimIntegrator {
   }
 
   void LSODARIntegrator::postIntegrate(DynamicSystemSolver& system_) {
-    system->plot(z, t);
+    plot(z, t);
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());

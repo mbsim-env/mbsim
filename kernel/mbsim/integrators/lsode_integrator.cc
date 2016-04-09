@@ -87,7 +87,7 @@ namespace MBSimIntegrator {
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
-    system->plot(z, t);
+    plot(z, t);
 
     double s0 = clock();
     double time = 0;
@@ -113,7 +113,7 @@ namespace MBSimIntegrator {
         &one, &istate, &one, rWork(), &lrWork, iWork(), 
         &liWork, 0, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
-        system->plot(z, t);
+        plot(z, t);
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();

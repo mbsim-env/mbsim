@@ -123,20 +123,20 @@ namespace MBSimIntegrator {
       system.setTime(t);
       update(system, z, t);
 
-      Mat T = system.getT().copy();
-      SymMat M = system.getM().copy();
-      Vec h = system.geth().copy();
-      Mat W = system.getW().copy();
-      Mat V = system.getV().copy();
+      Mat T = system.evalT().copy();
+      SymMat M = system.evalM().copy();
+      Vec h = system.evalh().copy();
+      Mat W = system.evalW().copy();
+      Mat V = system.evalV().copy();
       Mat dhdq = system.dhdq(t);
       Mat dhdu = system.dhdu(t);
 
       VecInt ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta * dt * dhdu - theta * theta * dt * dt * dhdq * T, ipiv));
       Vec heff = h + theta * dhdq * T * u * dt;
-      system.getG() << SqrMat(W.T() * slvLUFac(luMeff, V, ipiv));
-      system.getGs() << system.getG();
-      system.getb() << system.getgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
+      system.getG(false) << SqrMat(W.T() * slvLUFac(luMeff, V, ipiv));
+      system.getGs(false) << system.evalG();
+      system.getb(false) << system.evalgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
 
       iter = system.solveImpacts();
       if (iter > maxIter)
@@ -147,7 +147,7 @@ namespace MBSimIntegrator {
 
       q += T * (u + theta * du) * dt;
       u += du;
-      x += system.deltax(z, t, dt);
+      x += system.evaldx();
       t = te;
       system.resetUpToDate();
       system.setTime(t);

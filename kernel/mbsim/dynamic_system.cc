@@ -370,18 +370,24 @@ namespace MBSim {
     }
   }
   
-  void DynamicSystem::plotAtSpecialEvent(double t, double dt) {
+  void DynamicSystem::plotAtSpecialEvent() {
     if (getPlotFeature(plotRecursive) == enabled) {
       for (unsigned i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->plotAtSpecialEvent(t, dt);
+        dynamicsystem[i]->plotAtSpecialEvent();
       for (unsigned i = 0; i < object.size(); i++)
-        object[i]->plotAtSpecialEvent(t, dt);
+        object[i]->plotAtSpecialEvent();
       for (unsigned i = 0; i < link.size(); i++)
-        link[i]->plotAtSpecialEvent(t, dt);
+        link[i]->plotAtSpecialEvent();
+      for (unsigned i = 0; i < constraint.size(); i++)
+        constraint[i]->plotAtSpecialEvent();
       for (unsigned i = 0; i < frame.size(); i++)
-        frame[i]->plotAtSpecialEvent(t, dt);
+        frame[i]->plotAtSpecialEvent();
+      for (unsigned i = 0; i < contour.size(); i++)
+        contour[i]->plotAtSpecialEvent();
       for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
-        inverseKineticsLink[i]->plotAtSpecialEvent(t, dt);
+        inverseKineticsLink[i]->plotAtSpecialEvent();
+      for (unsigned i = 0; i < observer.size(); i++)
+        observer[i]->plotAtSpecialEvent();
     }
   }
 

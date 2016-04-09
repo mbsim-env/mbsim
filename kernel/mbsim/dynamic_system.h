@@ -138,7 +138,7 @@ namespace MBSim {
       virtual std::string getType() const { return "DynamicSystem"; }
       virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
       virtual void plot();
-      virtual void plotAtSpecialEvent(double t, double dt=1.);
+      virtual void plotAtSpecialEvent();
       virtual void closePlot();
       /*****************************************************/
 
@@ -254,7 +254,7 @@ namespace MBSim {
       fmatvec::Vec& getLa() { return La; }
       void setla(const fmatvec::Vec &la_) { la = la_; }
       void setLa(const fmatvec::Vec &La_) { La = La_; }
-//      const fmatvec::Vec& getsv(bool check=true) const { return sv; }
+      const fmatvec::Vec& getsv(bool check=true) const { return sv; }
       const fmatvec::VecInt& getjsv() const { return jsv; }
 //      const fmatvec::Vec& getres() const { return res; }
 //      const fmatvec::Vec& getcorr(bool check=true) const { return corr; };

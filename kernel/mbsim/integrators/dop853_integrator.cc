@@ -55,7 +55,7 @@ namespace MBSimIntegrator {
     while(*t >= tPlot) {
       for(int i=1; i<=*n; i++)
 	zInp(i-1) = CONTD8(&i,&tPlot,con,icomp,nd);
-      system->plot(zInp, tPlot);
+      Solver::plot(zInp, tPlot);
       if(output_)
 	cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
 
@@ -114,7 +114,7 @@ namespace MBSimIntegrator {
 
     tPlot = t + dtPlot;
     dtOut = dtPlot;
-    system->plot(z, t);
+    Solver::plot(z, t);
 
     zInp.resize(zSize);
 
@@ -126,7 +126,7 @@ namespace MBSimIntegrator {
 
     s0 = clock();
 
-    DOP853(&zSize,fzdot,&t,z(),&tEnd, rTol(),aTol(),&iTol, plot,&out,
+    DOP853(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
 	work(),&lWork,iWork(),&liWork,&rPar,&iPar,&idid);
 
     integPlot.close();

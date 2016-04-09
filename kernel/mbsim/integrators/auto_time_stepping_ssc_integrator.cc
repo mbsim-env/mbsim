@@ -184,12 +184,12 @@ namespace MBSimIntegrator {
             if(i==0) {
               int index = (nsys_-1)*(nthr)+i;
               if((*psystems)[index]->getq()() != zsys[index]()) (*psystems)[index]->updatezRef(zsys[index]);
-              dhdqtmp[i]=(*psystems)[index]->dhdq(t,0,static_cast<int>(Grenzen_q(i)));
+              dhdqtmp[i]=(*psystems)[index]->dhdq(0,static_cast<int>(Grenzen_q(i)));
             }
             else {
               int index = (nsys_-1)*(nthr)+i;
               if((*psystems)[index]->getq()() != zsys[index]()) (*psystems)[index]->updatezRef(zsys[index]);
-              dhdqtmp[i]=(*psystems)[index]->dhdq(t,static_cast<int>(Grenzen_q(i-1)),static_cast<int>(Grenzen_q(i)));
+              dhdqtmp[i]=(*psystems)[index]->dhdq(static_cast<int>(Grenzen_q(i-1)),static_cast<int>(Grenzen_q(i)));
             }
           }
         }
@@ -200,12 +200,12 @@ namespace MBSimIntegrator {
             if(i==0) {
               int index = (nsysMax*nthr)+(nsys_-1)*(nthr)+i;
               if((*psystems)[index]->getq()() != zsys[index]()) (*psystems)[index]->updatezRef(zsys[index]);
-              dhdutmp[i]=(*psystems)[index]->dhdu(t,0,static_cast<int>(Grenzen_u(i)));
+              dhdutmp[i]=(*psystems)[index]->dhdu(0,static_cast<int>(Grenzen_u(i)));
             }
             else {
               int index = (nsysMax*nthr)+(nsys_-1)*(nthr)+i;
               if((*psystems)[index]->getq()() != zsys[index]()) (*psystems)[index]->updatezRef(zsys[index]);
-              dhdutmp[i]=(*psystems)[index]->dhdu(t,static_cast<int>(Grenzen_u(i-1)),static_cast<int>(Grenzen_u(i)));
+              dhdutmp[i]=(*psystems)[index]->dhdu(static_cast<int>(Grenzen_u(i-1)),static_cast<int>(Grenzen_u(i)));
             }
           }
         }
@@ -308,12 +308,18 @@ namespace MBSimIntegrator {
     u_l >> z_(Iu);
     x_l >> z_(Ix);
 
-    q_l += system_.deltaq(z_l,t_,dt_);
+    q_l += system_.evaldq();
+    system_.setTime(t_);
+    system_.setStepSize(dt_);
+//    q_l += system_.deltaq(z_l,t_,dt_);
 //    system_.update(z_,t_+dt_,1);
-    system_.getb().resize() = system_.getgd() + system_.getW().T()*slvLLFac(system_.getLLM(),system_.geth())*dt_;
+    system_.getb(false) = system_.evalgd() + system_.evalW().T()*slvLLFac(system_.evalLLM(),system_.evalh())*dt_;
     *piter  = system_.solveImpacts();
-    u_l += system_.deltau(z_,t_+dt_,dt_);
-    x_l += system_.deltax(z_,t_+dt_,dt_);
+    system_.setTime(t_+dt_);
+    u_l += system_.evaldu();
+    x_l += system_.evaldx();
+//    u_l += system_.deltau(z_,t_+dt_,dt_);
+//    x_l += system_.deltax(z_,t_+dt_,dt_);
   }
 
   void AutoTimeSteppingSSCIntegrator::doImpStep(DynamicSystemSolver& system_, Vec& z_, int nrSys_, double t_, double dt_) {
@@ -496,7 +502,10 @@ namespace MBSimIntegrator {
       Vec dq_n = (1.-theta)*T_n*u_l*dt_ + theta*T_n*u_n*dt_;
       q_n = q_l + dq_n;
 
-      x_n += system_.deltax(z_n,t_,dt_);       
+//      x_n += system_.deltax(z_n,t_,dt_);
+      system_.setTime(t_);
+      system_.setStepSize(dt_);
+      x_n += system_.evaldx();
 
       Vec dev_u = M_n*u_n - M_n*u_l - (1.-theta)*h_l*dt_ - theta*h_n*dt_ - W_n*system_.getla();
       maxdevi_u = 1e-18;
@@ -635,12 +644,15 @@ namespace MBSimIntegrator {
       saveJac=false;
     }
 
+    system_.setTime(t);
+    system_.setStepSize(dt);
+
     VecInt ipiv(M.size());
     SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu_n - theta*theta*dt*dt*dhdq_n*T,ipiv));
     Vec heff = h+theta*dhdq_n*T*u_l*dt;
-    system_.getG().resize() = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
-    system_.getGs().resize() << system_.getG();
-    system_.getb().resize() = system_.getgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
+    system_.getG(false) = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
+    system_.getGs(false) << system_.evalG();
+    system_.getb(false) = system_.evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
 
     *piter = system_.solveImpacts();
 
@@ -648,7 +660,7 @@ namespace MBSimIntegrator {
 
     q_l += T*(u_l+theta*du)*dt;
     u_l += du;
-    x_l += system_.deltax(z_l,t,dt);
+    x_l += system_.evaldx();
   }
 
   void AutoTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system_) {

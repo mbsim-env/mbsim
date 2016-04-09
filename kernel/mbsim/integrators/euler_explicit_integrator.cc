@@ -38,14 +38,16 @@ namespace MBSimIntegrator {
   EulerExplicitIntegrator::EulerExplicitIntegrator() : dt(1e-3) {
   }
 
-  void EulerExplicitIntegrator::preIntegrate(DynamicSystemSolver& system) {
+  void EulerExplicitIntegrator::preIntegrate(DynamicSystemSolver& system_) {
     assert(dtPlot >= dt);
+
+    system = &system_;
 
     t = tStart;
 
-    int nq = system.getqSize();
-    int nu = system.getuSize();
-    int nx = system.getxSize();
+    int nq = system->getqSize();
+    int nu = system->getuSize();
+    int nx = system->getxSize();
     int n = nq + nu + nx;
 
     Index Iq(0,nq-1);
@@ -57,7 +59,9 @@ namespace MBSimIntegrator {
     x>>z(Ix);
 
     if(z0.size()) z = z0; // define initial state
-    else system.initz(z);
+    else system->initz(z);
+
+    system->updatezdRef();
 
     tPlot = 0.;
     integPlot.open((name + ".plt").c_str());
@@ -65,7 +69,6 @@ namespace MBSimIntegrator {
     
     stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
-    
     
     step = 0;
     integrationSteps = 0;
@@ -81,7 +84,7 @@ namespace MBSimIntegrator {
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
         
-        system.plot(z,t);
+        plot(z,t);
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;

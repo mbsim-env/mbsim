@@ -64,7 +64,7 @@ namespace MBSimIntegrator {
     zMax.resize(zSize);
 
     t=tStart;
-    system->plot(z, t);
+    plot(z, t);
 
     tPlot = t + dtPlot;
     integPlot.open((name + ".plt").c_str());
@@ -94,7 +94,7 @@ namespace MBSimIntegrator {
       UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
 
       if(result==1 || result==2 || fabs(t-tPlot)<epsroot()) {
-        system->plot(z, t);
+        plot(z, t);
 
         if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
 

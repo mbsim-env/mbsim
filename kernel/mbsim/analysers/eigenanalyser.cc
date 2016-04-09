@@ -62,6 +62,7 @@ namespace MBSimAnalyser {
 
   void Eigenanalyser::analyse(DynamicSystemSolver& system_) {
     system = &system_;
+    system->updatezdRef();
 
     if(task == eigenfrequencies) computeEigenvalues();
     else if(task == eigenmode) computeEigenmode();
@@ -136,7 +137,7 @@ namespace MBSimAnalyser {
         for(int i=0; i<wbuf.size(); i++)
           deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
         z = zEq + fromComplex(deltaz);
-        system->plot(z,t);
+        plot(z,t);
       }
       t0 += T+dtPlot;
       c(f[j].second) = complex<double>(0,0);
@@ -166,7 +167,7 @@ namespace MBSimAnalyser {
       for(int i=0; i<wbuf.size(); i++)
         deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
       z = zEq + fromComplex(deltaz);
-      system->plot(z,t);
+      plot(z,t);
     }
   }
 
@@ -186,7 +187,7 @@ namespace MBSimAnalyser {
       for(int i=0; i<w.size(); i++)
         deltaz += c(i)*V.col(i)*exp(w(i)*t); 
       z = zEq + fromComplex(deltaz);
-      system->plot(z,t);
+      plot(z,t);
     }
   }
 

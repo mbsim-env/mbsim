@@ -95,7 +95,7 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
 
-      q += system.deltaq(z,t,dt);
+      q += system.evaldq();
       t += dt;
       system.resetUpToDate();
 
@@ -109,8 +109,8 @@ namespace MBSimIntegrator {
       if(iter>maxIter) maxIter = iter;
       sumIter += iter;
 
-      u += system.deltau(z,t,dt);
-      x += system.deltax(z,t,dt);
+      u += system.evaldu();
+      x += system.evaldx();
       system.resetUpToDate();
     }
   }
