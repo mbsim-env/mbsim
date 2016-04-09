@@ -58,7 +58,7 @@ namespace MBSim {
   void GeneralizedVelocityConstraint::updateGeneralizedJacobians(int jj) {
     MatV J = f->parDer1(x,getTime());
     if(J.cols())
-      bd->setjRel(J*xd + f->parDer2(x,getTime()));
+      bd->setjRel(J*(bd->transformCoordinates()?bd->evalTRel()*bd->evaluRel():bd->evaluRel()) + f->parDer2(x,getTime()));
     else
       bd->setjRel(f->parDer2(x,getTime()));
     updGJ = false;
