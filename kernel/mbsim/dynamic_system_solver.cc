@@ -1695,7 +1695,7 @@ namespace MBSim {
   void DynamicSystemSolver::solveAndPlot() {
     if(laSize) {
       if(useConstraintSolverForPlot) {
-        getb(false) = evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+        b = evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints();
       }
       else
