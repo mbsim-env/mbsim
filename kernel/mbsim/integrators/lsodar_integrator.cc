@@ -131,16 +131,11 @@ namespace MBSimIntegrator {
     liWork = (20+zSize)*10;
     iWork.resize(liWork);
     iWork(5) = 10000;
-    system->setTime(t);
-    system->setState(z);
-    system->resetUpToDate();
-    system->solveAndPlot();
     s0 = clock();
     time = 0;
     integrationSteps = 0;
     integPlot.open((name + ".plt").c_str());
     jsv.resize(nsv);  
-    system->updatejsvRef(jsv);
     cout.setf(ios::scientific, ios::floatfield);
   }
 
@@ -183,8 +178,9 @@ namespace MBSimIntegrator {
         }
         system->setTime(t);
         system->setState(z);
+        system->setjsv(jsv);
         system->resetUpToDate();
-        system->shift();
+        z = system->shift();
         if(plotOnRoot) { // plot after shifting
           system->setTime(t);
           system->setState(z);

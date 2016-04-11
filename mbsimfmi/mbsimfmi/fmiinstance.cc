@@ -165,14 +165,20 @@ namespace MBSimFMI {
         completedStepCounter++;
         if(completedStepCounter==predefinedParameterStruct.plotEachNStep) {
           completedStepCounter=0;
-          dss->plot(z, time);
+          dss->setTime(time);
+          dss->setState(z);
+          dss->resetUpToDate();
+          dss->solveAndPlot();
         }
         break;
       // plot if this is the first completed step after nextPlotTime
       case NextCompletedStepAfterSampleTime:
         if(time>=nextPlotTime) {
           nextPlotTime += predefinedParameterStruct.plotStepSize * (floor((time-nextPlotTime)/predefinedParameterStruct.plotStepSize)+1);
-          dss->plot(z, time);
+          dss->setTime(time);
+          dss->setState(z);
+          dss->resetUpToDate();
+          dss->solveAndPlot();
         }
         break;
       // do not plot at completed steps -> plot at discrete sample times
@@ -287,7 +293,7 @@ namespace MBSimFMI {
     msg(Debug)<<"Initialize initial conditions of the DynamicSystemSolver."<<endl;
     z.resize(dss->getzSize());
     zd.resize(dss->getzSize());
-    dss->initz(z);
+    z = dss->evalz0();
     dss->computeInitialCondition();
 
     // initialize stop vector
@@ -295,10 +301,13 @@ namespace MBSimFMI {
     svLast.resize(dss->getsvSize());
     jsv.resize(dss->getsvSize(), fmatvec::INIT, 0); // init with 0 = no shift in all indices
     // initialize last stop vector with initial stop vector state
-    dss->getsv(z, svLast, time);
+    dss->setTime(time);
+    dss->setState(z);
+    dss->resetUpToDate();
+    svLast = dss->evalsv();
 
     // plot initial state
-    dss->plot(z, time);
+    dss->solveAndPlot();
 
     // handling of plot mode
     switch(predefinedParameterStruct.plotMode) {
@@ -332,7 +341,10 @@ namespace MBSimFMI {
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
       // calcualte MBSim zd and return it
     if(updateDerivativesRequired) {
-      dss->zdot(z, zd, time);
+      dss->setTime(time);
+      dss->setState(z);
+      dss->resetUpToDate();
+      zd = dss->evalzd();
       updateDerivativesRequired=false;
     }
     for(size_t i=0; i<nx; ++i)
@@ -342,7 +354,10 @@ namespace MBSimFMI {
   void FMIInstance::getEventIndicators(fmiReal eventIndicators[], size_t ni) {
     // calcualte MBSim stop vector and return it
     if(updateEventIndicatorsRequired) {
-      dss->getsv(z, sv, time);
+      dss->setTime(time);
+      dss->setState(z);
+      dss->resetUpToDate();
+      sv = dss->evalsv();
       updateEventIndicatorsRequired=false;
     }
     for(size_t i=0; i<ni; ++i)
@@ -397,7 +412,10 @@ namespace MBSimFMI {
 
     // get current stop vector
     if(updateEventIndicatorsRequired) {
-      dss->getsv(z, sv, time);
+      dss->setTime(time);
+      dss->setState(z);
+      dss->resetUpToDate();
+      sv = dss->evalsv();
       updateEventIndicatorsRequired=false;
     }
     // compare last (svLast) and current (sv) stop vector, based on the FMI standard
@@ -412,7 +430,11 @@ namespace MBSimFMI {
         jsv(i)=0;
     if(shiftRequired) {
       // shift MBSim system
-      dss->shift(z, jsv, time);
+      dss->setTime(time);
+      dss->setState(z);
+      dss->setjsv(jsv);
+      dss->resetUpToDate();
+      z = dss->shift();
       // A MBSim shift always changes state values (at least by a minimal projection)
       // This must be reported to the environment (the integrator must be resetted in this case).
       eventInfo->stateValuesChanged=true;
@@ -421,7 +443,9 @@ namespace MBSimFMI {
       updateDerivativesRequired=true;
       updateValueRequired=true;
       // get current stop vector with is now also the last stop vector
-      dss->getsv(z, sv, time);
+      dss->setState(z);
+      dss->resetUpToDate();
+      sv = dss->evalsv();
       svLast=sv;
       updateEventIndicatorsRequired=false; // we have the stop vector always updated
     }
@@ -440,7 +464,10 @@ namespace MBSimFMI {
         // next event wenn plotting with sample time and we currently match that time
         if(fabs(time-nextPlotTime)<1.0e-10) {
           // plot
-          dss->plot(z, time);
+          dss->setTime(time);
+          dss->setState(z);
+          dss->resetUpToDate();
+          dss->solveAndPlot();
           // next time event
           nextPlotTime=time+predefinedParameterStruct.plotStepSize;
           eventInfo->nextEventTime=nextPlotTime;
@@ -474,8 +501,12 @@ namespace MBSimFMI {
 
   void FMIInstance::terminate() {
     // plot end state
-    if(dss)
-      dss->plot(z, time);
+    if(dss) {
+      dss->setTime(time);
+      dss->setState(z);
+      dss->resetUpToDate();
+      dss->solveAndPlot();
+    }
 
     // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
     // calls to fmiFreeModelInstance and fmiInstantiateModel)

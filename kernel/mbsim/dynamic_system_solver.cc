@@ -1548,7 +1548,7 @@ namespace MBSim {
         addToGraph(graph, A, j, eleList);
   }
 
-  void DynamicSystemSolver::shift() {
+  const Vec& DynamicSystemSolver::shift() {
     if(msgAct(Debug))
       msg(Debug) << "System shift at t = " << t << "." << endl;
 
@@ -1645,6 +1645,7 @@ namespace MBSim {
 
     setRootID(0);
     useOldla = true;
+    return zParent;
   }
 
   void DynamicSystemSolver::computeInverseKinetics() {

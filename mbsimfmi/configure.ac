@@ -20,8 +20,8 @@ if test "_$debug" = "_yes" ; then
   CFLAGS="$CFLAGS -ggdb"
   CXXFLAGS="$CXXFLAGS -ggdb"
 else
-  CFLAGS="$CFLAGS -g -O3"
-  CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
+  CFLAGS="$CFLAGS -g -O2"
+  CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
 fi
 
 CPPFLAGS="$CFLAGS -Wall -Werror -Wno-sign-compare"

@@ -112,8 +112,8 @@ namespace MBSimIntegrator {
       sumIter += iter;
 
       u += system.evaldu();
-      x += system.evaldx();
       system.setu(u);
+      x += system.evaldx();
       system.setx(x);
       system.resetUpToDate();
     }

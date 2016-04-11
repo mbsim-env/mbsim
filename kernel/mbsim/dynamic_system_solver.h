@@ -302,7 +302,7 @@ namespace MBSim {
        * \param boolean evaluation of stop vector
        * \param time
        */
-      virtual void shift();
+      virtual const fmatvec::Vec& shift();
 
       /** brief collect status of all set-valued links
        * \param result vector
