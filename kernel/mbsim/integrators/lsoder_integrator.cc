@@ -40,15 +40,19 @@ namespace MBSimIntegrator {
   }
 
   void LSODERIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
-    Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
-    zdot(zd, z, *t);
+    system->setTime(*t);
+//    system->setState(z); Not needed as the integrator uses the state of the system
+    system->resetUpToDate();
+    zd = system->evalzd();
   }
 
   void LSODERIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
-    Vec z(*zSize, z_);
     Vec sv(*nsv, sv_);
-    system->getsv(z, sv, *t);
+    system->setTime(*t);
+//    system->setState(z); Not needed as the integrator uses the state of the system
+    system->resetUpToDate();
+    sv = system->evalsv();
   }
 
   void LSODERIntegrator::integrate(DynamicSystemSolver& system_) {
@@ -56,11 +60,11 @@ namespace MBSimIntegrator {
     system = &system_;
 
     int zSize=system->getzSize();
-    Vec z(zSize);
     if(z0.size())
-      z = z0;
+      system->setState(z0);
     else
-      system->initz(z);
+      system->evalz0();
+//    system->setState(z); Not needed as the integrator uses the state of the system
     system->computeInitialCondition();
     double t=tStart;
     double tPlot=t+dtPlot;
@@ -85,7 +89,10 @@ namespace MBSimIntegrator {
     VecInt iWork(liWork);
     iWork(5) = 10000;
 
-    system->plot(z, t);
+    system->setTime(t);
+//    system->setState(z); Not needed as the integrator uses the state of the system
+    system->resetUpToDate();
+    system->solveAndPlot();
 
     double s0 = clock();
     double time = 0;
@@ -93,19 +100,20 @@ namespace MBSimIntegrator {
 
     ofstream integPlot((name + ".plt").c_str());
 
-    VecInt jsv(nsv);  
-
     cout.setf(ios::scientific, ios::floatfield);
 
     while(t<tEnd) {
 
       integrationSteps++;
 
-      DLSODER(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
+      DLSODER(fzdot, &zSize, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
-          &liWork, NULL, &two, fsv, &nsv, jsv());
+          &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
-        system->plot(z, t);
+        system->setTime(t);
+//        system->setState(z); Not needed as the integrator uses the state of the system
+        system->resetUpToDate();
+        system->solveAndPlot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
@@ -115,11 +123,25 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
       }
       if(istate==3) {
-        if(plotOnRoot) // plot before shifting
-          system->plot(z, t);
-        system->shift(z, jsv, t);
-        if(plotOnRoot) // plot after shifting
-          system->plot(z, t);
+        if(plotOnRoot) { // plot before shifting
+          system->setTime(t);
+//          system->setState(z); Not needed as the integrator uses the state of the system
+          system->resetUpToDate();
+          system->solveAndPlot();
+          system->plotAtSpecialEvent();
+        }
+        system->setTime(t);
+//        system->setState(z); Not needed as the integrator uses the state of the system
+//        system->setjsv(jsv);
+        system->resetUpToDate();
+        system->shift();
+        if(plotOnRoot) { // plot after shifting
+          system->setTime(t);
+//          system->setState(z); Not needed as the integrator uses the state of the system
+          system->resetUpToDate();
+          system->solveAndPlot();
+          system->plotAtSpecialEvent();
+        }
         istate=1;
         rWork(4)=dt0;
       }

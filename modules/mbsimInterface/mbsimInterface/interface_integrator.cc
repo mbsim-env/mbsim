@@ -121,19 +121,19 @@ namespace MBSimInterface {
   }
 
   void InterfaceIntegrator::getz(double** z_) {
-    *z_=system->getState()();
+    *z_ = system->getState()();
   }
 
   void InterfaceIntegrator::getzdot(double** zd_) {
     system->resetUpToDate();
-    zd = system->evalzd();
+    Vec zd = system->evalzd();
     *zd_= zd();
   }
 
   void InterfaceIntegrator::getsv(double** sv_) {
     system->resetUpToDate();
-    sv = system->evalsv();
-    *sv_=sv();
+    Vec sv = system->evalsv();
+    *sv_ = sv();
 
     for (int i=0; i<svSize; i++)
       system->getjsv()(i)=round(sv(i));

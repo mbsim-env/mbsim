@@ -70,7 +70,6 @@ namespace MBSimInterface {
 
       // internal routines
       int zSize, svSize;
-      fmatvec::Vec zd, sv;
 
       bool printCommunication;
 
