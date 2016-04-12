@@ -801,10 +801,9 @@ def runExample(resultQueue, example):
     if not args.disableRun:
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
-        match=re.search("([0-9]+) deprecated features were called:", line)
+        match=re.search("Deprecated feature called:", line)
         if match!=None:
-          nrDeprecated=match.expand("\\1")
-          break
+          nrDeprecated=nrDeprecated+1
       if nrDeprecated==0:
         resultStr+='<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
       else:

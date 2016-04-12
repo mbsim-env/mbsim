@@ -237,29 +237,30 @@ def addMBSimEnvTest():
   print("Add test script mbsim-env-test[.bat]")
 
   if platform=="linux":
-    text='''#! /bin/sh
+    text='''#!/bin/sh
 
-set -e
 INSTDIR="$(readlink -f $(dirname $0)/..)"
+
+ERROR=""
 
 echo "XMLFLAT_HIERACHICAL_MODELLING"
 cd $INSTDIR/examples/xmlflat/hierachical_modelling
-$INSTDIR/bin/mbsimflatxml MBS.mbsimprj.flat.xml
+$INSTDIR/bin/mbsimflatxml MBS.mbsimprj.flat.xml || ERROR="$ERROR XMLFLAT_HIERACHICAL_MODELLING"
 echo "DONE"
 
 echo "XML_HIERACHICAL_MODELLING"
 cd $INSTDIR/examples/xml/hierachical_modelling
-$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml
+$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR XML_HIERACHICAL_MODELLING"
 echo "DONE"
 
 echo "XML_TIME_DEPENDENT_KINEMATICS"
 cd $INSTDIR/examples/xml/time_dependent_kinematics
-$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml
+$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR XML_TIME_DEPENDENT_KINEMATICS"
 echo "DONE"
 
 echo "XML_HYDRAULICS_BALLCHECKVALVE"
 cd $INSTDIR/examples/xml/hydraulics_ballcheckvalve
-$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml
+$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR XML_HYDRAULICS_BALLCHECKVALVE"
 echo "DONE"
 
 
@@ -267,39 +268,44 @@ export OPENMBVCPPINTERFACE_PREFIX="$INSTDIR"
 
 echo "OPENMBVCPPINTERFACE_SWIG_OCTAVE"
 cd $INSTDIR/share/openmbvcppinterface/examples/swig
-$INSTDIR/bin/octave octavetest.m
+$INSTDIR/bin/octave octavetest.m || ERROR="$ERROR OPENMBVCPPINTERFACE_SWIG_OCTAVE"
 echo "DONE"
 
 if [ "_$MBSIMENV_TEST_PYTHON" == "_1" ]; then
   echo "OPENMBVCPPINTERFACE_SWIG_PYTHON"
   cd $INSTDIR/share/openmbvcppinterface/examples/swig
-  python pythontest.py
+  python pythontest.py || ERROR="$ERROR OPENMBVCPPINTERFACE_SWIG_PYTHON"
   echo "DONE"
 fi
 
 if [ "_$MBSIMENV_TEST_JAVA" == "_1" ]; then
   echo "OPENMBVCPPINTERFACE_SWIG_JAVA"
   cd $INSTDIR/share/openmbvcppinterface/examples/swig
-  java -classpath .:$INSTDIR/bin/openmbv.jar javatest
+  java -classpath .:$INSTDIR/bin/openmbv.jar javatest || ERROR="$ERROR OPENMBVCPPINTERFACE_SWIG_JAVA"
   echo "DONE"
 fi
 
 
-echo "STARTING H5PLOTSERIE"
+echo "H5PLOTSERIE"
 cd $INSTDIR/examples/xml/hierachical_modelling
-$INSTDIR/bin/h5plotserie TS.mbsim.h5
+$INSTDIR/bin/h5plotserie TS.mbsim.h5 || ERROR="$ERROR H5PLOTSERIE"
 echo "DONE"
 
-echo "STARTING OPENMBV"
+echo "OPENMBV"
 cd $INSTDIR/examples/xml/hierachical_modelling
-$INSTDIR/bin/openmbv TS.ombv.xml
+$INSTDIR/bin/openmbv TS.ombv.xml || ERROR="$ERROR OPENMBV"
 echo "DONE"
 
-echo "STARTING MBSIMGUI"
-$INSTDIR/bin/mbsimgui
+echo "MBSIMGUI"
+$INSTDIR/bin/mbsimgui || ERROR="$ERROR MBSIMGUI"
 echo "DONE"
 
-echo "ALL TESTS DONE"'''
+if [ -z $ERROR ]; then
+  echo "ALL TESTS PASSED"
+else
+  echo "THE FOLLOWING TESTS FAILED:"
+  echo $ERROR
+fi'''
 
   if platform=="win":
     text=r'''@echo off
@@ -308,28 +314,30 @@ set PWD=%CD%
 
 set INSTDIR=%~dp0..
 
+set ERROR=
+
 echo XMLFLAT_HIERACHICAL_MODELLING
 cd %INSTDIR%\examples\xmlflat\hierachical_modelling
 "%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% XMLFLAT_HIERACHICAL_MODELLING
 echo DONE
 
 echo XML_HIERACHICAL_MODELLING
 cd %INSTDIR%\examples\xml\hierachical_modelling
 "%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% XML_HIERACHICAL_MODELLING
 echo DONE
 
 echo XML_TIME_DEPENDENT_KINEMATICS
 cd %INSTDIR%\examples\xml\time_dependent_kinematics
 "%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% XML_TIME_DEPENDENT_KINEMATICS
 echo DONE
 
 echo XML_HYDRAULICS_BALLCHECKVALVE
 cd %INSTDIR%\examples\xml\hydraulics_ballcheckvalve
 "%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% XML_HYDRAULICS_BALLCHECKVALVE
 echo DONE
 
 
@@ -338,14 +346,14 @@ set OPENMBVCPPINTERFACE_PREFIX=%INSTDIR%
 echo OPENMBVCPPINTERFACE_SWIG_OCTAVE
 cd %INSTDIR%\share\openmbvcppinterface\examples\swig
 %INSTDIR%\bin\octave.exe octavetest.m
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_OCTAVE
 echo DONE
 
 IF "%MBSIMENV_TEST_PYTHON%"=="1" (
   echo OPENMBVCPPINTERFACE_SWIG_PYTHON
   cd %INSTDIR%\share\openmbvcppinterface\examples\swig
   python pythontest.py
-  if ERRORLEVEL 1 goto end
+  if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_PYTHON
   echo DONE
 )
 
@@ -353,31 +361,35 @@ IF "%MBSIMENV_TEST_JAVA%"=="1" (
   echo OPENMBVCPPINTERFACE_SWIG_JAVA
   cd %INSTDIR%\share\openmbvcppinterface\examples\swig
   java -classpath .;%INSTDIR%/bin/openmbv.jar javatest
-  if ERRORLEVEL 1 goto end
+  if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_JAVA
   echo DONE
 )
 
 
-echo STARTING H5PLOTSERIE
+echo H5PLOTSERIE
 cd %INSTDIR%\examples\xml\hierachical_modelling
 "%INSTDIR%\bin\h5plotserie.exe" TS.mbsim.h5
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% H5PLOTSERIE
 echo DONE
 
-echo STARTING OPENMBV
+echo OPENMBV
 cd %INSTDIR%\examples\xml\hierachical_modelling
 "%INSTDIR%\bin\openmbv.exe" TS.ombv.xml
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBV
 echo DONE
 
-echo STARTING MBSIMGUI
+echo MBSIMGUI
 "%INSTDIR%\bin\mbsimgui.exe"
-if ERRORLEVEL 1 goto end
+if ERRORLEVEL 1 set ERROR=%ERROR% MBSIMGUI
 echo DONE
 
-echo ALL TESTS DONE
+if %ERROR%=="" (
+  echo ALL TESTS PASSED
+) else (
+  echo THE FOLLOWING TESTS FAILED:
+  echo %ERROR%
+)
 
-:end
 cd "%PWD%"'''
 
   addStrToDist(text, 'mbsim-env/bin/mbsim-env-test'+('.bat' if platform=="win" else ""), True)

@@ -864,6 +864,8 @@ namespace MBSim {
       // However, we must hold this container until the dtor of DynamicSystemSolver is called to avoid the deallocation of other
       // elements hold by DynamicSystem elements (especially (currently only) hdf5File)
       std::vector<DynamicSystem*> dynamicsystemPreReorganize;
+
+      double facSizeGs;
   };
 
 }

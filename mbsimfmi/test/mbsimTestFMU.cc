@@ -23,12 +23,14 @@ namespace {
 
 // some platform dependent file suffixes, directory names, ...
 #ifdef _WIN32
+  std::string SHEXT(".dll");
   #ifdef _WIN64
     const string FMIOS("win64");
   #else
     const string FMIOS("win32");
   #endif
 #else
+  std::string SHEXT(".so");
   #ifdef __x86_64__
     const string FMIOS("linux64");
   #else
@@ -130,7 +132,7 @@ int main(int argc, char *argv[]) {
 
   try {
     // configuration
-    string fmu="mbsim.so";
+    string fmu="mbsim" + SHEXT;
     string guid="mbsimfmi_guid";
     string modelIdentifier="mbsim";
     int outputVR=0; // the VR of the "Output directory"
