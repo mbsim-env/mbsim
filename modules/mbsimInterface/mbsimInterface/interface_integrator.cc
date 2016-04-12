@@ -49,7 +49,7 @@ namespace MBSimInterface {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(InterfaceIntegrator, MBSIMINTERFACE%"InterfaceIntegrator")
 
-    InterfaceIntegrator::InterfaceIntegrator(): MBSimIntegrator::Integrator(), zSize(0), svSize(0), t(tStart), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
+    InterfaceIntegrator::InterfaceIntegrator(): MBSimIntegrator::Integrator(), zSize(0), svSize(0), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
     }
 
   void InterfaceIntegrator::initializeUsingXML(xercesc::DOMElement *element) {
@@ -93,15 +93,13 @@ namespace MBSimInterface {
     system = &system_;
 
     zSize=system->getzSize();
-    z.resize(zSize, INIT, 0);
     if(getInitialState().size())
-      z = getInitialState();
+      system->setState(getInitialState());
     else
-      system->initz(z);
+      system->evalz0();
     system->computeInitialCondition();
 
     svSize=system->getsvSize();
-    jsv.resize(svSize, INIT, 0);
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
@@ -123,23 +121,30 @@ namespace MBSimInterface {
   }
 
   void InterfaceIntegrator::getz(double** z_) {
-    *z_=&z(0);
+    *z_=system->getState()();
   }
 
   void InterfaceIntegrator::getzdot(double** zd_) {
-    zd.resize(zSize, NONINIT);
-    system->zdot(z, zd, t);
-    *zd_=&zd(0);
+    system->resetUpToDate();
+    zd = system->evalzd();
+    *zd_= zd();
   }
 
   void InterfaceIntegrator::getsv(double** sv_) {
-    sv.resize(svSize, NONINIT);
-    system->getsv(z, sv, t);
-    *sv_=&sv(0);
+    system->resetUpToDate();
+    sv = system->evalsv();
+    *sv_=sv();
 
-    jsv.resize(svSize, NONINIT);// jsv is necessary for shift 
     for (int i=0; i<svSize; i++)
-      jsv(i)=round(sv(i));
+      system->getjsv()(i)=round(sv(i));
+  }
+
+  void InterfaceIntegrator::setTime(double t_) {
+    system->setTime(t_);
+  }
+
+  void InterfaceIntegrator::setz(const fmatvec::Vec& z_) {
+    system->setState(z_);
   }
 
   void InterfaceIntegrator::resolveInputOutputNames() {
@@ -282,10 +287,10 @@ namespace MBSimInterface {
 
         // getTime
       case _SI_getTime_asciiString_SI_:
-        double2str(mbsim2interface, &t, 1);
+        double2str(mbsim2interface, &system->getTime(), 1);
         break;
       case _SI_getTime_memoryDump_SI_:
-        dumpMemory(mbsim2interface, &t, sizeof(double));
+        dumpMemory(mbsim2interface, &system->getTime(), sizeof(double));
         break;
       case _SI_getTime_memoryAdress_SI_:
         //TODO
@@ -401,10 +406,13 @@ namespace MBSimInterface {
 
         // different mbsim actions
       case _SI_plot_SI_:
-        system->plot(z, t);
+        system->resetUpToDate();
+        system->solveAndPlot();
         break;
       case _SI_shift_SI_:
-        system->shift(z, jsv, t);
+        system->resetUpToDate();
+        system->solveAndPlot();
+        system->shift();
         break;
       case _SI_exitRequest_SI_:
         exitRequest=true;

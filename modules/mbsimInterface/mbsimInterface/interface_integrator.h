@@ -65,14 +65,12 @@ namespace MBSimInterface {
       void getsv(double** sv_);
 
       // set values
-      void setTime(double t_) {t=t_; }
-      void setz(const fmatvec::Vec& z_) {z << z_; }
+      void setTime(double t_);
+      void setz(const fmatvec::Vec& z_);
 
       // internal routines
       int zSize, svSize;
-      double t;
-      fmatvec::Vec z, zd, sv;
-      fmatvec::VecInt jsv;
+      fmatvec::Vec zd, sv;
 
       bool printCommunication;
 
