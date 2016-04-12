@@ -56,11 +56,10 @@ namespace MBSimIntegrator {
        */
       double dt;
 
-      double t, tPlot;
+      double tPlot;
       int iter, step, integrationSteps;
       double s0, time;
       int stepPlot;
-      fmatvec::Vec z, q, u, x;
       std::ofstream integPlot;
   };
 

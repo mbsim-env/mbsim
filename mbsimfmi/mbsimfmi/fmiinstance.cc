@@ -294,7 +294,6 @@ namespace MBSimFMI {
     z.resize(dss->getzSize());
     zd.resize(dss->getzSize());
     z = dss->evalz0();
-    dss->computeInitialCondition();
 
     // initialize stop vector
     sv.resize(dss->getsvSize());
@@ -304,6 +303,7 @@ namespace MBSimFMI {
     dss->setTime(time);
     dss->setState(z);
     dss->resetUpToDate();
+    dss->computeInitialCondition();
     svLast = dss->evalsv();
 
     // plot initial state

@@ -50,14 +50,12 @@ namespace MBSimIntegrator {
   double DOPRI5Integrator::time = 0;
   //int DOPRI5Integrator::integrationSteps = 0;
   ofstream DOPRI5Integrator::integPlot;
-  Vec DOPRI5Integrator::zInp;
   bool DOPRI5Integrator::output_;
 
   void DOPRI5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
-    Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
     system->setTime(*t);
-    system->setState(z);
+    system->setState(Vec(*zSize, z_));
     system->resetUpToDate();
     zd = system->evalzd();
   }
@@ -65,10 +63,9 @@ namespace MBSimIntegrator {
   void DOPRI5Integrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
 
     while(*t >= tPlot) {
-      for(int i=1; i<=*n; i++)
-	zInp(i-1) = CONTD5(&i,&tPlot,con,icomp,nd);
       system->setTime(tPlot);
-      system->setState(zInp);
+      for(int i=1; i<=*n; i++)
+	system->getState()(i-1) = CONTD5(&i,&tPlot,con,icomp,nd);
       system->resetUpToDate();
       system->solveAndPlot();
       if(output_)
@@ -144,8 +141,6 @@ namespace MBSimIntegrator {
     system->setState(z);
     system->resetUpToDate();
     system->solveAndPlot();
-
-    zInp.resize(zSize);
 
     integPlot.open((name + ".plt").c_str());
 

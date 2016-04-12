@@ -43,7 +43,6 @@ namespace MBSimIntegrator {
   HETS2Integrator::HETS2Integrator() : dt(1e-3),
   dtImpulsive(1e-4), 
   dtInfo(1e-3), 
-  t(0.), 
   tPlot(0.),
   iter(0), 
   integrationSteps(0), 
@@ -53,38 +52,19 @@ namespace MBSimIntegrator {
   sumIter(0), 
   s0(0.), 
   time(0.), 
-  z(),
-  q(),
-  u(),
-  x(),
   integPlot() {}
 
   void HETS2Integrator::preIntegrate(DynamicSystemSolver& system) {
 
     // set the time
     assert(dtPlot >= dt);
-    t = tStart;
-
-    // size of positions, velocities, state
-    int nq = system.getqSize();
-    int nu = system.getuSize();
-    int nx = system.getxSize();
-    int n = nq + nu + nx;
-
-    // referencing the dynamic system
-    Index Iq(0,nq-1);
-    Index Iu(nq,nq+nu-1);
-    Index Ix(nq+nu,n-1);
-    z.resize(n);
-    q>>z(Iq);
-    u>>z(Iu);
-    x>>z(Ix);
+    system.setTime(tStart);
 
     // define initial state
     if(z0.size())
-      z = z0;
+      system.setState(z0);
     else
-      z = system.evalz0();
+      system.evalz0();
     system.setUseOldla(false);
     system.setlaTol(1e-10/dt); // adaptation from impulse
     system.setgddTol(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
@@ -102,7 +82,7 @@ namespace MBSimIntegrator {
 
   void HETS2Integrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
 
-    while(t<tStop) { // time loop
+    while(system.getTime()<tStop) { // time loop
       system.resetUpToDate();
 
       // increase integration step counter
@@ -121,22 +101,21 @@ namespace MBSimIntegrator {
       Mat VStage0 = system.evalV().copy();
 
       // plot
-      if(t >= tPlot) {
-        system.setTime(t);
+      if(system.getTime() >= tPlot) {
         system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot << t << " " << dtInfo << " " <<  iter << " " << time << " "<< system.getlaSize() << endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        integPlot << system.getTime() << " " << dtInfo << " " <<  iter << " " << time << " "<< system.getlaSize() << endl;
+        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
         tPlot += dtPlot;
       }
       /*****************************************/
 
       /* CHECK IMPACTS */
       // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
-      q += system.evalT()*u*dt;
-      t += dt;
+      system.getq() += system.evalT()*system.getu()*dt;
+      system.getTime() += dt;
 
       system.resetUpToDate();
 
@@ -169,12 +148,12 @@ namespace MBSimIntegrator {
         Vec laStage0 = system.getla().copy();
 
         // first stage velocity update
-        u += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
+        system.getu() += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
         /*****************************************/
 
         /* CALCULATE CONSTRAINT FORCES ON VELOCITY LEVEL AND OUTPUT STAGE */
         // output stage position update
-        q = qStage0 + (system.evalT()*u+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
+        system.getq() = qStage0 + (system.evalT()*system.getu()+TStage0*uStage0)*dt*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with constraint forces
 
         system.resetUpToDate();
 
@@ -182,7 +161,7 @@ namespace MBSimIntegrator {
         evaluateStage(system);
 
         // output stage velocity update without constraint force
-        u = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dt*0.5;
+        system.getu() = uStage0 + (slvLLFac(LLMStage0,hStage0+VStage0*laStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dt*0.5;
 
         system.resetUpToDate();
 
@@ -203,7 +182,7 @@ namespace MBSimIntegrator {
         sumIter += iter;
 
         // output stage velocity update
-        u += slvLLFac(system.evalLLM(),system.evalV()*system.getla())*dt*0.5;
+        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.getla())*dt*0.5;
 
         system.resetUpToDate();
 
@@ -222,16 +201,14 @@ namespace MBSimIntegrator {
         dtInfo = dtImpulsive;
 
         // first stage position and time update (velocity is unknown and has to be calculated with constraints/impacts)
-        q = qStage0 + system.evalT()*u*dtImpulsive;
-        t += dtImpulsive-dt;
-
-        system.setTime(t);
+        system.getq() = qStage0 + system.evalT()*system.getu()*dtImpulsive;
+        system.getTime() += dtImpulsive-dt;
 
         // first stage velocity update
-        u += slvLLFac(LLMStage0,hStage0)*dtImpulsive;
+        system.getu() += slvLLFac(LLMStage0,hStage0)*dtImpulsive;
 
         // output stage position update
-        q = qStage0 + (system.getT()*u+TStage0*uStage0)*dtImpulsive*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with impacts 
+        system.getq() = qStage0 + (system.getT()*system.getu()+TStage0*uStage0)*dtImpulsive*0.5; // T-matrix in the sense of Brasey1994a, velocity is unknown and has to be calculated with impacts
 
         system.resetUpToDate();
 
@@ -239,7 +216,7 @@ namespace MBSimIntegrator {
         evaluateStage(system);
 
         // output stage velocity update without impact
-        u = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dtImpulsive*0.5;
+        system.getu() = uStage0 + (slvLLFac(LLMStage0,hStage0) + slvLLFac(system.evalLLM(),system.evalh()))*dtImpulsive*0.5;
 
         system.resetUpToDate();
 
@@ -261,7 +238,7 @@ namespace MBSimIntegrator {
         sumIter += iter;
 
         // output stage velocity update
-        u += slvLLFac(system.evalLLM(),system.evalV()*system.getLa());
+        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.getLa());
       }
       /*****************************************/
     }
@@ -307,9 +284,6 @@ namespace MBSimIntegrator {
   }
 
   bool HETS2Integrator::evaluateStage(DynamicSystemSolver& system) {
-    if (system.getq()() != z())
-      system.updatezRef(z);
-
     system.checkActive(1);
 
     bool impact = system.detectImpact();

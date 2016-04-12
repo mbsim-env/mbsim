@@ -211,13 +211,15 @@ namespace MBSim {
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
+      double& getTime() { return t; }
       double getTime() const { return t; }
       void setTime(double t_) { t = t_; }
 
       double getStepSize() const { return dt; }
       void setStepSize(double dt_) { dt = dt_; }
 
-      const fmatvec::Vec& getState() { return zParent; }
+      fmatvec::Vec& getState() { return zParent; }
+      const fmatvec::Vec& getState() const { return zParent; }
       void setState(const fmatvec::Vec &z) { zParent = z; }
 
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }

@@ -39,7 +39,6 @@ namespace MBSimIntegrator {
 
       static double tPlot;
       static double dtOut;
-      static fmatvec::Vec zInp;
       static bool output_; 
       static std::ofstream integPlot;
       static double s0; 

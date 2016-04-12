@@ -42,33 +42,20 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TimeSteppingIntegrator, MBSIMINT%"TimeSteppingIntegrator")
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
+  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
   void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
     // initialisation
     assert(dtPlot >= dt);
 
-    t = tStart;
-
-    int nq = system.getqSize(); // size of positions, velocities, state
-    int nu = system.getuSize();
-    int nx = system.getxSize();
-    int n = nq + nu + nx;
-
-    Index Iq(0,nq-1);
-    Index Iu(nq,nq+nu-1);
-    Index Ix(nq+nu,n-1);
-    z.resize(n);
-    q>>z(Iq);
-    u>>z(Iu);
-    x>>z(Ix);
+    system.setTime(tStart);
 
     system.setStepSize(dt);
 
     if(z0.size())
-      z = z0;
+      system.setState(z0);
     else
-      z = system.evalz0();
+      system.evalz0();
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
@@ -82,26 +69,24 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-    while(t<tStop) { // time loop
+    while(system.getTime()<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(driftCompensation) system.projectGeneralizedPositions(t,0);
+        if(driftCompensation) system.projectGeneralizedPositions(0);
         system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+        integPlot<< system.getTime() << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
         tPlot += dtPlot;
       }
 
-      q += system.evaldq();
-      t += dt;
+      system.getq() += system.evaldq();
+      system.getTime() += dt;
       system.resetUpToDate();
 
-      system.setTime(t);
-      system.setq(q);
       system.checkActive(1);
       if (system.gActiveChanged()) system.resize_();
 
@@ -111,10 +96,8 @@ namespace MBSimIntegrator {
       if(iter>maxIter) maxIter = iter;
       sumIter += iter;
 
-      u += system.evaldu();
-      system.setu(u);
-      x += system.evaldx();
-      system.setx(x);
+      system.getu() += system.evaldu();
+      system.getx() += system.evaldx();
       system.resetUpToDate();
     }
   }

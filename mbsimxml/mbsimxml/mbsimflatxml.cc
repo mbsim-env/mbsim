@@ -158,8 +158,8 @@ void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
     z = solver->getInitialState();
   else
     z = dss->evalz0();
-  dss->computeInitialCondition();
   dss->setState(z);
+  dss->computeInitialCondition();
   dss->plot();
 }
 

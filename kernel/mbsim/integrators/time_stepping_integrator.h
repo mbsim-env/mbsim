@@ -64,7 +64,7 @@ namespace MBSimIntegrator {
       /**
        * \brief time and plot time
        */
-      double t, tPlot;
+      double tPlot;
 
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
@@ -80,11 +80,6 @@ namespace MBSimIntegrator {
        * \brief plot step difference
        */
       int stepPlot;
-
-      /**
-       * \brief state, position, velocity, order coordinate of dynamical system
-       */
-      fmatvec::Vec z, q, u, x;
 
       /**
        * \brief file stream for integration information

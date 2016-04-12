@@ -41,17 +41,15 @@ namespace MBSimIntegrator {
 
   double ODEXIntegrator::tPlot = 0;
   double ODEXIntegrator::dtOut = 0;
-  Vec ODEXIntegrator::zInp;
   ofstream ODEXIntegrator::integPlot;
   double ODEXIntegrator::s0;
   double ODEXIntegrator::time = 0;
   bool ODEXIntegrator::output_;
 
   void ODEXIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
-    Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
     system->setTime(*t);
-    system->setState(z);
+    system->setState(Vec(*zSize, z_));
     system->resetUpToDate();
     zd = system->evalzd();
   }
@@ -59,10 +57,9 @@ namespace MBSimIntegrator {
   void ODEXIntegrator::plot(int* nr, double* told, double* t,double* z, int* n, double* con, int *ncon, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
 
     while(*t >= tPlot) {
-      for(int i=1; i<=*n; i++)
-	zInp(i-1) = CONTEX(&i,&tPlot,con,ncon,icomp,nd);
       system->setTime(tPlot);
-      system->setState(zInp);
+      for(int i=1; i<=*n; i++)
+	system->getState()(i-1) = CONTEX(&i,&tPlot,con,ncon,icomp,nd);
       system->resetUpToDate();
       system->solveAndPlot();
       if(output_)
@@ -129,8 +126,6 @@ namespace MBSimIntegrator {
     system->setState(z);
     system->resetUpToDate();
     system->solveAndPlot();
-
-    zInp.resize(zSize);
 
     integPlot.open((name + ".plt").c_str());
 

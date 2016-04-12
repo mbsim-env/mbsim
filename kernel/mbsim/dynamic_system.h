@@ -257,6 +257,7 @@ namespace MBSim {
       void setla(const fmatvec::Vec &la_) { la = la_; }
       void setLa(const fmatvec::Vec &La_) { La = La_; }
       const fmatvec::Vec& getsv(bool check=true) const { return sv; }
+      fmatvec::VecInt& getjsv() { return jsv; }
       const fmatvec::VecInt& getjsv() const { return jsv; }
 //      const fmatvec::Vec& getres() const { return res; }
 //      const fmatvec::Vec& getcorr(bool check=true) const { return corr; };

@@ -43,19 +43,17 @@ namespace MBSimIntegrator {
   }
 
   void LSODARIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
-    Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
     system->setTime(*t);
-    system->setState(z);
+//    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
     zd = system->evalzd();
   }
 
   void LSODARIntegrator::fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_) {
-    Vec z(*zSize, z_);
     Vec sv(*nsv, sv_);
     system->setTime(*t);
-    system->setState(z);
+//    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
     sv = system->evalsv();
   }
@@ -105,11 +103,11 @@ namespace MBSimIntegrator {
   void LSODARIntegrator::preIntegrate(DynamicSystemSolver& system_) {
     system = &system_;
     zSize=system->getzSize();
-    z.resize(zSize);
     if(z0.size())
-      z = z0;
+      system->setState(z0);
     else
-      z = system->evalz0();
+      system->evalz0();
+//    system->setState(z); Not needed as the integrator uses the state of the system
     system->computeInitialCondition();
     t=tStart;
     tPlot=t+dtPlot;
@@ -135,7 +133,6 @@ namespace MBSimIntegrator {
     time = 0;
     integrationSteps = 0;
     integPlot.open((name + ".plt").c_str());
-    jsv.resize(nsv);  
     cout.setf(ios::scientific, ios::floatfield);
   }
 
@@ -144,18 +141,18 @@ namespace MBSimIntegrator {
     int two = 2;
     rWork(4) = dt0;
     system->setTime(t);
-    system->setState(z);
+//    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
     system->solveAndPlot();
     cout << "System shiftet and plotted" << endl;
     while(t < tStop) {  
       integrationSteps++;
-      DLSODAR(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
+      DLSODAR(fzdot, &zSize, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
-          &liWork, NULL, &two, fsv, &nsv, jsv());
+          &liWork, NULL, &two, fsv, &nsv, system->getjsv()());
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
         system->setTime(t);
-        system->setState(z);
+//        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();
         system->solveAndPlot();
         if(output)
@@ -171,19 +168,19 @@ namespace MBSimIntegrator {
       if(istate==3) {
         if(plotOnRoot) { // plot before shifting
           system->setTime(t);
-          system->setState(z);
+//          system->setState(z); Not needed as the integrator uses the state of the system
           system->resetUpToDate();
           system->solveAndPlot();
           system->plotAtSpecialEvent();
         }
         system->setTime(t);
-        system->setState(z);
-        system->setjsv(jsv);
+//        system->setState(z); Not needed as the integrator uses the state of the system
+//        system->setjsv(jsv);
         system->resetUpToDate();
-        z = system->shift();
+        system->shift();
         if(plotOnRoot) { // plot after shifting
           system->setTime(t);
-          system->setState(z);
+//          system->setState(z); Not needed as the integrator uses the state of the system
           system->resetUpToDate();
           system->solveAndPlot();
           system->plotAtSpecialEvent();
@@ -197,7 +194,7 @@ namespace MBSimIntegrator {
 
   void LSODARIntegrator::postIntegrate(DynamicSystemSolver& system_) {
     system->setTime(t);
-    system->setState(z);
+//    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
     system->solveAndPlot();
     system->plotAtSpecialEvent();

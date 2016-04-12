@@ -163,15 +163,13 @@ namespace MBSimIntegrator {
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
-    Vec z(zSize, z_);
     Vec zd(zSize, zd_);
     system->setTime(*t);
-    system->setState(z);
+    system->setState(Vec(zSize, z_));
     system->resetUpToDate();
     zd = system->evalzd();
   }
 
   int RKSuiteIntegrator::zSize = 0;
-
 
 }

@@ -46,10 +46,9 @@ namespace MBSimIntegrator {
   }
 
   void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
-    Vec z(*zSize, z_);
     Vec zd(*zSize, zd_);
     system->setTime(*t);
-    system->setState(z);
+//    system->setState(Vec(*zSize, z_)); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
     zd = system->evalzd();
   }
@@ -59,11 +58,10 @@ namespace MBSimIntegrator {
     system = &system_;
 
     int zSize=system->getzSize();
-    Vec z(zSize);
     if(z0.size())
-      z = z0;
+      system->setState(z0);
     else
-      z = system->evalz0();
+      system->evalz0();
 
     double t = tStart;
     double tPlot = min(tEnd,t + dtPlot);
@@ -91,7 +89,7 @@ namespace MBSimIntegrator {
     iWork(5) = maxSteps;
 
     system->setTime(t);
-    system->setState(z);
+//    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
     system->solveAndPlot();
 
@@ -115,12 +113,12 @@ namespace MBSimIntegrator {
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
-      DLSODE (fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), 
+      DLSODE (fzdot, &zSize, system->getState()(), &t, &tPlot, &iTol, &rTol, aTol(),
         &one, &istate, &one, rWork(), &lrWork, iWork(), 
         &liWork, 0, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
         system->setTime(t);
-        system->setState(z);
+//        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();
         system->solveAndPlot();
         if(output)
@@ -187,6 +185,5 @@ namespace MBSimIntegrator {
 //    addElementText(ele0,MBSIMINT%"stiffModus",stiff);
     return ele0;
   }
-
 
 }

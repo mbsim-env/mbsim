@@ -43,25 +43,12 @@ namespace MBSimIntegrator {
 
     system = &system_;
 
-    t = tStart;
-
-    int nq = system->getqSize();
-    int nu = system->getuSize();
-    int nx = system->getxSize();
-    int n = nq + nu + nx;
-
-    Index Iq(0,nq-1);
-    Index Iu(nq,nq+nu-1);
-    Index Ix(nq+nu,n-1);
-    z.resize(n);
-    q>>z(Iq);
-    u>>z(Iu);
-    x>>z(Ix);
+    system->setTime(tStart);
 
     if(z0.size())
-      z = z0;
+      system->setState(z0);
     else
-      z = system->evalz0();
+      system->evalz0();
 
     tPlot = 0.;
     integPlot.open((name + ".plt").c_str());
@@ -75,33 +62,26 @@ namespace MBSimIntegrator {
     
     s0 = clock();
     time = 0;
-
   }
 
   void EulerExplicitIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { 
-    while(t<tStop) { // time loop
+    while(system.getTime()<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        
-        system.setTime(t);
-        system.setState(z);
         system.resetUpToDate();
         system.solveAndPlot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;
-        integPlot<< t << " " << dt << " " << time << endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << "\r"<<flush;
+        integPlot<< system.getTime() << " " << dt << " " << time << endl;
+        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dt << "\r"<<flush;
         tPlot += dtPlot;
       }
 
-      system.setTime(t);
-      system.setState(z);
       system.resetUpToDate();
-      z += system.evalzd()*dt;
-      
-      t += dt;
+      system.getState() += system.evalzd()*dt;
+      system.getTime() += dt;
     }
   }
 

@@ -51,8 +51,8 @@ namespace MBSimIntegrator {
 
       int zSize, iTol, istate, nsv, lrWork, liWork, integrationSteps;
       double t, tPlot, s0, time;
-      fmatvec::Vec z, rWork;
-      fmatvec::VecInt iWork, jsv;
+      fmatvec::Vec rWork;
+      fmatvec::VecInt iWork;
       std::ofstream integPlot;
     public:
 
