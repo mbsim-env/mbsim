@@ -136,7 +136,6 @@ namespace MBSimIntegrator {
       if (method==0 && maxOrder==2 && !FlagSSC) dtMin = 2.0*eps1;
     }
 
-
     if ( safetyFactorGapControl <0) {
       safetyFactorGapControl= 1.0 + nrmInf(rTol)*100;
       if (safetyFactorGapControl>1.001) safetyFactorGapControl=1.001;
@@ -146,31 +145,10 @@ namespace MBSimIntegrator {
     if ((!method) && (maxOrder>=3) && (FlagSSC)) maxOrder=3;
     if (!method && maxOrder<1) maxOrder=1;
 
-
     qSize = sysT1->getqSize(); // size of positions, velocities, state
     uSize = sysT1->getuSize();
     xSize = sysT1->getxSize();
     zSize = qSize + uSize + xSize;
-
-    Index Iq(0,qSize-1);
-    Index Iu(qSize, qSize+uSize-1);
-    Index Ix(qSize+uSize, zSize-1);
-
-    zT1.resize(zSize);
-    if (sysT1==sysT2) zT2>>zT1; else zT2.resize(zSize);
-    if (sysT1==sysT3) zT3>>zT1; else zT3.resize(zSize);
-
-    qT1 >> zT1(Iq);
-    uT1 >> zT1(Iu);
-    xT1 >> zT1(Ix);
-
-    qT2 >> zT2(Iq);
-    uT2 >> zT2(Iu);
-    xT2 >> zT2(Ix);
-
-    qT3 >> zT3(Iq);
-    uT3 >> zT3(Iu);
-    xT3 >> zT3(Ix);
 
     zi.resize(zSize); 	// starting value for ith step
 
@@ -233,11 +211,9 @@ namespace MBSimIntegrator {
     else
       zi = sysT1->evalz0();
 
-    zT1 << zi;
-
     sysT1->setTime(t);
     sysT1->setStepSize(1);
-    sysT1->setState(zT1);
+    sysT1->setState(zi);
     sysT1->resetUpToDate();
     sysT1->plot();
 
@@ -352,13 +328,11 @@ namespace MBSimIntegrator {
 #pragma omp section           //thread 1
             {
               // one step integration (A)
-              zT1 << zi;
               sysT1->setTime(t);
+              sysT1->setState(zi);
               sysT1->setStepSize(dt);
-              sysT1->setState(zT1);
-              qT1 += sysT1->evaldq();
-              sysT1->setTime(t+dt);
-              sysT1->setq(qT1);
+              sysT1->getq() += sysT1->evaldq();
+              sysT1->getTime() += dt;
               sysT1->resetUpToDate();
               sysT1->checkActive(1);
               if (sysT1->gActiveChanged()) sysT1->resize_();
@@ -366,10 +340,8 @@ namespace MBSimIntegrator {
               iterA  = sysT1->solveImpacts();
               getAllSetValuedla(la1d,la1dSizes,SetValuedLinkListT1);
 //              la1d/=dt;
-              uT1 += sysT1->evaldu();
-              sysT1->setu(uT1);
-              xT1 += sysT1->evaldx();
-              sysT1->setx(xT1);
+              sysT1->getu() += sysT1->evaldu();
+              sysT1->getx() += sysT1->evaldx();
               sysT1->resetUpToDate();
               // wird jetzt von testTolerances() direkt aufgerufen; nach jedem erfolgreichen Schritt!
               //              if (FlagGapControl) {
@@ -380,17 +352,15 @@ namespace MBSimIntegrator {
               LSA = LStmp_T1;
               ConstraintsChangedA = changedLinkStatus(LSA,LS,indexLSException);
               singleStepsT1++;
-              z1d << zT1;
+              z1d << sysT1->getState();
 
               // two step integration (first step) (B1) 
               if (calcJobBT1) {
-                zT1 << zi;
+                sysT1->setState(zi);
                 sysT1->setTime(t);
                 sysT1->setStepSize(dtHalf);
-                sysT1->setState(zT1);
-                qT1 += sysT1->evaldq();
+                sysT1->getq() += sysT1->evaldq();
                 sysT1->setTime(t+dtHalf);
-                sysT1->setq(qT1);
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
@@ -398,39 +368,33 @@ namespace MBSimIntegrator {
                 iterB1  = sysT1->solveImpacts();
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT1);
 //                la2b/=dtHalf;
-                uT1 += sysT1->evaldu();
-                sysT1->setu(uT1);
-                xT1 += sysT1->evaldx();
-                sysT1->setx(xT1);
+                sysT1->getu() += sysT1->evaldu();
+                sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 sysT1->getLinkStatus(LStmp_T1);
                 LSB1 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT1++;
-                z2b << zT1;
+                z2b << sysT1->getState();
               }
               // three step integration (first step) (E1) 
               if (calcJobE1T1) {
 
-                zT1 << zi;
+                sysT1->setState(zi);
                 sysT1->setTime(t);
                 sysT1->setStepSize(dtThird);
-                sysT1->setState(zT1);
-                qT1 += sysT1->evaldq();
+                sysT1->getq() += sysT1->evaldq();
                 sysT1->setTime(t+dtThird);
-                sysT1->setq(qT1);
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
                 sysT1->getb(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->solveImpacts();
-                uT1 += sysT1->evaldu();
-                sysT1->setu(uT1);
-                xT1 += sysT1->evaldx();
-                sysT1->setx(xT1);
+                sysT1->getu() += sysT1->evaldu();
+                sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 singleStepsT1++;
-                z3b << zT1;
+                z3b << sysT1->getState();
               }
             }  // close omp thread 1
 
@@ -438,13 +402,11 @@ namespace MBSimIntegrator {
             {
               // two step integration (first step) (B1) 
               if (calcJobBT2) {
-                zT2 << zi;
+                sysT2->setState(zi);
                 sysT2->setTime(t);
-                sysT2->setState(zT2);
                 sysT2->setStepSize(dtHalf);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dtHalf);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
@@ -452,36 +414,30 @@ namespace MBSimIntegrator {
                 iterB1  = sysT2->solveImpacts();
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
 //                la2b/=dtHalf;
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2);
                 LSB1 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT2++;
-                z2b << zT2;
+                z2b << sysT2->getState();
               }
 
               // four step integration (first two steps) (C12)
               if (calcJobC) {
-                zT2 << zi;
+                sysT2->setState(zi);
                 sysT2->setTime(t);
                 sysT2->setStepSize(dtQuarter);
-                sysT2->setState(zT2);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dtQuarter);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 iterC1 = sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2);
                 LSC1 = LStmp_T2;
@@ -489,62 +445,52 @@ namespace MBSimIntegrator {
 
                 sysT2->setTime(t+dtQuarter);
                 sysT2->setStepSize(dtQuarter);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dtHalf);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 iterC2 = sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2);
                 LSC2 = LStmp_T2;
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC2,LSC1,indexLSException);
                 singleStepsT2+=2;
-                z4b << zT2;
+                z4b << sysT2->getState();
               }
               // three step integration (first two steps ) (E12)
               if (calcJobE12T2) {
-                zT2 << zi;
+                sysT2->setState(zi);
                 sysT2->setTime(t);
                 sysT2->setStepSize(dtThird);
-                sysT2->setState(zT2);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dtThird);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
 
                 sysT2->setTime(t+dtThird);
                 sysT2->setStepSize(dtThird);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+2.0*dtThird);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 singleStepsT2+=2;
-                z3b << zT2;
+                z3b << sysT2->getState();
               }
             }  // close omp thread 2
 
@@ -552,22 +498,18 @@ namespace MBSimIntegrator {
             {
               // six step integration (first three steps)   
               if(calcJobD) {
-                zT3 << zi;
+                sysT3->setState(zi);
                 sysT3->setTime(t);
                 sysT3->setStepSize(dtSixth);
-                sysT3->setState(zT3);
-                qT3 += sysT3->evaldq();
+                sysT3->getq() += sysT3->evaldq();
                 sysT3->setTime(t+dtSixth);
-                sysT3->setq(qT3);
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
                 sysT3->getb(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->solveImpacts();
-                uT3 += sysT3->evaldu();
-                sysT3->setu(uT3);
-                xT3 += sysT3->evaldx();
-                sysT3->setx(xT3);
+                sysT3->getu() += sysT3->evaldu();
+                sysT3->getx() += sysT3->evaldx();
                 sysT3->resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3);
                 LSD1 = LStmp_T3;
@@ -575,18 +517,15 @@ namespace MBSimIntegrator {
 
                 sysT3->setTime(t+dtSixth);
                 sysT3->setStepSize(dtSixth);
-                qT3 += sysT3->evaldq();
+                sysT3->getq() += sysT3->evaldq();
                 sysT3->setTime(t+dtThird);
-                sysT3->setq(qT3);
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
                 sysT3->getb(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->solveImpacts();
-                uT3 += sysT3->evaldu();
-                sysT3->setu(uT3);
-                xT3 += sysT3->evaldx();
-                sysT3->setx(xT3);
+                sysT3->getu() += sysT3->evaldu();
+                sysT3->getx() += sysT3->evaldx();
                 sysT3->resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3);
                 LSD2 = LStmp_T3;
@@ -594,24 +533,21 @@ namespace MBSimIntegrator {
 
                 sysT3->setTime(t+dtThird);
                 sysT3->setStepSize(dtSixth);
-                qT3 += sysT3->evaldq();
+                sysT3->getq() += sysT3->evaldq();
                 sysT3->setTime(t+dtHalf);
-                sysT3->setq(qT3);
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
                 sysT3->getb(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->solveImpacts();
-                uT3 += sysT3->evaldu();
-                sysT3->setu(uT3);
-                xT3 += sysT3->evaldx();
-                sysT3->setx(xT3);
+                sysT3->getu() += sysT3->evaldu();
+                sysT3->getx() += sysT3->evaldx();
                 sysT3->resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3);
                 LSD3 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD3,LSD2,indexLSException);
                 singleStepsT3+=3;
-                z6b << zT3;
+                z6b << sysT3->getState();
               }
             }  // close omp thread 3
 
@@ -640,155 +576,129 @@ namespace MBSimIntegrator {
             {
               // two step integration (B2)
               if (calcJobBT1 && calcBlock2) {
-                zT1 << z2b;
+                sysT1->setState(z2b);
                 sysT1->setTime(t+dtHalf);
                 sysT1->setStepSize(dtHalf);
-                sysT1->setState(zT1);
-                qT1 += sysT1->evaldq();
+                sysT1->getq() += sysT1->evaldq();
                 sysT1->setTime(t+dt);
-                sysT1->setq(qT1);
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
                 sysT1->getb(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 iterB2  = sysT1->solveImpacts();
-                uT1 += sysT1->evaldu();
-                sysT1->setu(uT1);
-                xT1 += sysT1->evaldx();
-                sysT1->setx(xT1);
+                sysT1->getu() += sysT1->evaldu();
+                sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 sysT1->getLinkStatus(LStmp_T1);
                 LSB2 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
                 singleStepsT1++;
-                z2d << zT1;
+                z2d << sysT1->getState();
               }
               if (calcJobB2RET1 && calcBlock2) { //B2RE
-                zT1 << zStern;
+                sysT1->setState(zStern);
                 sysT1->setTime(t+dtHalf);
                 sysT1->setStepSize(dtHalf);
-                sysT1->setState(zT1);
-                qT1 += sysT1->evaldq();
+                sysT1->getq() += sysT1->evaldq();
                 sysT1->setTime(t+dt);
-                sysT1->setq(qT1);
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
                 sysT1->getb(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 iterB2RE  = sysT1->solveImpacts();
-                uT1 += sysT1->evaldu();
-                sysT1->setu(uT1);
-                xT1 += sysT1->evaldx();
-                sysT1->setx(xT1);
+                sysT1->getu() += sysT1->evaldu();
+                sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 singleStepsT1++;
-                z2dRE << zT1;
+                z2dRE << sysT1->getState();
               }
               // three step integration (E23) last two steps
               if (calcJobE23T1 && calcBlock2) {
-                zT1 << z3b;
+                sysT1->setState(z3b);
                 sysT1->setTime(t+dtThird);
                 sysT1->setStepSize(dtThird);
-                sysT1->setState(zT1);
-                qT1 += sysT1->evaldq();
+                sysT1->getq() += sysT1->evaldq();
                 sysT1->setTime(t+2.0*dtThird);
-                sysT1->setq(qT1);
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
                 sysT1->getb(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->solveImpacts();
-                uT1 += sysT1->evaldu();
-                sysT1->setu(uT1);
-                xT1 += sysT1->evaldx();
-                sysT1->setx(xT1);
+                sysT1->getu() += sysT1->evaldu();
+                sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
 
                 sysT1->setTime(t+2.0*dtThird);
                 sysT1->setStepSize(dtThird);
-                qT1 += sysT1->evaldq();
+                sysT1->getq() += sysT1->evaldq();
                 sysT1->setTime(t+dt);
-                sysT1->setq(qT1);
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
                 sysT1->getb(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->solveImpacts();
-                uT1 += sysT1->evaldu();
-                sysT1->setu(uT1);
-                xT1 += sysT1->evaldx();
-                sysT1->setx(xT1);
+                sysT1->getu() += sysT1->evaldu();
+                sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 singleStepsT1+=2;
-                z3d << zT1;
+                z3d << sysT1->getState();
               } 
             }  // close omp thread 1
 #pragma omp section                   // thread 2
             { 
               // four step integration (C3 and C4) (last two steps )
               if (calcJobC && calcBlock2) {
-                if (method) zT2 << z4b;
-                else zT2 << zStern; 
+                if (method) sysT2->setState(z4b);
+                else sysT2->setState(zStern);
                 sysT2->setTime(t+dtHalf);
                 sysT2->setStepSize(dtQuarter);
-                sysT2->setState(zT2);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dtHalf+dtQuarter);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 iterC3  = sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2);
                 LSC3 = LStmp_T2;
 
                 sysT2->setTime(t+dtHalf+dtQuarter);
                 sysT2->setStepSize(dtQuarter);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dt);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 iterC4 = sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                uT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getu() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2);
                 LSC4 = LStmp_T2;
                 ConstraintsChangedC = changedLinkStatus(LSC2,LSC3,indexLSException);
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC3,LSC4,indexLSException);
                 singleStepsT2+=2;
-                z4d << zT2;
+                z4d << sysT2->getState();
               }
 
               // two step integration (B2)
               if (calcJobBT2 && calcBlock2) {
-                zT2 << z2b;
+                sysT2->setState(z2b);
                 sysT2->setTime(t+dtHalf);
                 sysT2->setStepSize(dtHalf);
-                sysT2->setState(zT2);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dt);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 iterB2  = sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 sysT2->getLinkStatus(LStmp_T2);
                 LSB2 = LStmp_T2;
@@ -797,73 +707,61 @@ namespace MBSimIntegrator {
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
 //                la2b/=dtHalf;
                 singleStepsT2++;
-                z2d << zT2; 
+                z2d << sysT2->getState();
               }
               if (calcJobB2RET2 && calcBlock2) { //B2RE
-                zT2 << zStern;
+                sysT2->setState(zStern);
                 sysT2->setTime(t+dtHalf);
                 sysT2->setStepSize(dtHalf);
-                sysT2->setState(zT2);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dt);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 iterB2RE  = sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 singleStepsT2++;
-                z2dRE << zT2;
+                z2dRE << sysT2->getState();
               }
               // three step integration (E3) last step
               if (calcJobE3T2 && calcBlock2) {
-                zT2 << z3b;
+                sysT2->setState(z3b);
                 sysT2->setTime(t+2.0*dtThird);
                 sysT2->setStepSize(dtThird);
-                sysT2->setState(zT2);
-                qT2 += sysT2->evaldq();
+                sysT2->getq() += sysT2->evaldq();
                 sysT2->setTime(t+dt);
-                sysT2->setq(qT2);
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getb() << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->solveImpacts();
-                uT2 += sysT2->evaldu();
-                sysT2->setu(uT2);
-                xT2 += sysT2->evaldx();
-                sysT2->setx(xT2);
+                sysT2->getu() += sysT2->evaldu();
+                sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 singleStepsT2++;
-                z3d << zT2;
+                z3d << sysT2->getState();
               }
             }  // close omp thread 2
 #pragma omp section	        //thread 3
             {
               // six step integration (last three steps) 
               if (calcJobD && calcBlock2) {
-                if (method) zT3  << z6b;
-                else zT3 << zStern;
+                if (method) sysT3->setState(z6b);
+                else sysT3->setState(zStern);
                 sysT3->setTime(t+dtHalf);
                 sysT3->setStepSize(dtSixth);
-                sysT3->setState(zT3);
-                qT3 += sysT3->evaldq();
+                sysT3->getq() += sysT3->evaldq();
                 sysT3->setTime(t+4.0*dtSixth);
-                sysT3->setq(qT3);
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
                 sysT3->getb() << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->solveImpacts();
-                uT3 += sysT3->evaldu();
-                sysT3->setu(uT3);
-                xT3 += sysT3->evaldx();
-                sysT3->setx(xT3);
+                sysT3->getu() += sysT3->evaldu();
+                sysT3->getx() += sysT3->evaldx();
                 sysT3->resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3);
                 LSD4 = LStmp_T3;
@@ -871,18 +769,15 @@ namespace MBSimIntegrator {
 
                 sysT3->setTime(t+4.0*dtSixth);
                 sysT3->setStepSize(dtSixth);
-                qT3 += sysT3->evaldq();
+                sysT3->getq() += sysT3->evaldq();
                 sysT3->setTime(t+5.0*dtSixth);
-                sysT3->setq(qT3);
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
                 sysT3->getb() << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->solveImpacts();
-                uT3 += sysT3->evaldu();
-                sysT3->setu(uT3);
-                xT3 += sysT3->evaldx();
-                sysT3->setx(xT3);
+                sysT3->getu() += sysT3->evaldu();
+                sysT3->getx() += sysT3->evaldx();
                 sysT3->resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3);
                 LSD5 = LStmp_T3;
@@ -890,25 +785,22 @@ namespace MBSimIntegrator {
 
                 sysT3->setTime(t+5.0*dtSixth);
                 sysT3->setStepSize(dtSixth);
-                qT3 += sysT3->evaldq();
+                sysT3->getq() += sysT3->evaldq();
                 sysT3->setTime(t+dt);
-                sysT3->setq(qT3);
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
                 sysT3->getb() << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->solveImpacts();
-                uT3 += sysT3->evaldu();
-                sysT3->setu(uT3);
-                xT3 += sysT3->evaldx();
-                sysT3->setx(xT3);
+                sysT3->getu() += sysT3->evaldu();
+                sysT3->getx() += sysT3->evaldx();
                 sysT3->resetUpToDate();
                 sysT3->getLinkStatus(LStmp_T3);
                 LSD6 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD5,LSD6,indexLSException);
 
                 singleStepsT3+=3;
-                z6d << zT3;
+                z6d << sysT3->getState();
               }
             }  // close omp thread 3
 
@@ -971,11 +863,10 @@ namespace MBSimIntegrator {
     bool FlagtPlot = (t>=tPlot);
     if ((FlagPlotEveryStep) || ((t>=tPlot)&&(outputInterpolation==false))) {
       tPlot+=dtPlot;
-      zT1 << ze;
       setAllSetValuedla(lae,laeSizes,SetValuedLinkListT1);
       sysT1->setTime(t);
       sysT1->setStepSize(1);
-      sysT1->setState(zT1);
+      sysT1->setState(ze);
       sysT1->resetUpToDate();
       sysT1->plot();
     }
@@ -1012,11 +903,10 @@ namespace MBSimIntegrator {
 
       while (t>tPlot) {
         double ratio = (tPlot -(t-dte))/dte;
-        zT1 << zi + (ze-zi)*ratio;
         setAllSetValuedla(laSynchron+(laeSynchron-laSynchron)*ratio,laSizesSynchron,SetValuedLinkListT1);
         sysT1->setTime(tPlot);
         sysT1->setStepSize(1);
-        sysT1->setState(zT1);
+        sysT1->setState(zi + (ze-zi)*ratio);
         sysT1->resetUpToDate();
         sysT1->plot();
         tPlot += dtPlot;
@@ -1598,9 +1488,6 @@ namespace MBSimIntegrator {
   void TimeSteppingSSCIntegrator::getDataForGapControl() {
     int nInActive=0;
     int nActive=0;
-    zT1<<ze;
-    if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
-//    sysT1->updateStateDependentVariables(t+dte);
     throw;
     for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
       SetValuedLinkListT1[i]->checkActive(1);

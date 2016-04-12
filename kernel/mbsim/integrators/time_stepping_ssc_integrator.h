@@ -76,13 +76,10 @@ namespace MBSimIntegrator {
       bool driftCompensation;
       double t, tPlot;
       int qSize, xSize, uSize, zSize;
-      fmatvec::Vec ze, zi, zT1, zT2, zT3, z1d, z2d, z2dRE, z3d, z4d, z6d, z2b, z3b, z4b, z6b, zStern;
+      fmatvec::Vec ze, zi, z1d, z2d, z2dRE, z3d, z4d, z6d, z2b, z3b, z4b, z6b, zStern;
       fmatvec::VecInt LS, LSe, LStmp_T1, LStmp_T2, LStmp_T3, LSA, LSB1, LSB2, LSC1, LSC2, LSC3, LSC4, LSD1, LSD2, LSD3, LSD4, LSD5, LSD6;
       fmatvec::Vec la, lae, la1d, la2b;
       fmatvec::VecInt laSizes, laeSizes, la1dSizes, la2bSizes;
-      fmatvec::Vec qT1, qT2, qT3;
-      fmatvec::Vec uT1, uT2, uT3;
-      fmatvec::Vec xT1, xT2, xT3;
       fmatvec::Vec gInActive, gdInActive;
       std::vector<MBSim::Link*> SetValuedLinkListT1;
       std::vector<MBSim::Link*> SetValuedLinkListT2;
