@@ -63,10 +63,6 @@ willFail=set([
   pj("mechanics", "flexible_body", "beltdrive"),
   # valgrind errors in mbsimFlexibleBody
   pj("mechanics", "flexible_body", "rotating_beam"),
-  # MBSimFMI is still beta -> don't care about not working examples
-  pj("fmi", "hierachical_modelling"),
-  pj("fmi", "simple_test"),
-  pj("fmi", "sphere_on_plane"),
 ])
 
 # MBSim Modules
