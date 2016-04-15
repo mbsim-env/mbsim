@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/links/friction.h"
+#include "mbsim/links/generalized_friction.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/frames/fixed_relative_frame.h"

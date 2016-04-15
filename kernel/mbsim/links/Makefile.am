@@ -11,7 +11,7 @@ liblink_la_SOURCES = link.cc\
 		     directional_spring_damper.cc\
 		     generalized_spring_damper.cc\
 		     isotropic_rotational_spring_damper.cc\
-		     friction.cc\
+		     generalized_friction.cc\
 		     frame_link.cc\
 		     floating_frame_link.cc\
 		     contour_link.cc\
@@ -36,7 +36,7 @@ linkinclude_HEADERS = link.h\
 		      directional_spring_damper.h\
 		      generalized_spring_damper.h\
 		      isotropic_rotational_spring_damper.h\
-		      friction.h\
+		      generalized_friction.h\
 		      frame_link.h\
 		      floating_frame_link.h\
 		      contour_link.h\

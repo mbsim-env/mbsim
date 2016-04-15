@@ -16,8 +16,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FRICTION_H_
-#define _FRICTION_H_
+#ifndef _GENERALIZED_FRICTION_H_
+#define _GENERALIZED_FRICTION_H_
 
 #include "mbsim/links/rigid_body_link.h"
 #include "mbsim/functions/function.h"
