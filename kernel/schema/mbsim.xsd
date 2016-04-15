@@ -1465,25 +1465,58 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="MechanicalLink" substitutionGroup="Link" type="MechanicalLinkType">
+  <xs:element name="FrameLink" substitutionGroup="Link" type="FrameLinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="MechanicalLinkType">
+  <xs:complexType name="FrameLinkType">
     <xs:complexContent>
       <xs:extension base="LinkType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="KineticExcitation" substitutionGroup="MechanicalLink" type="KineticExcitationType">
+  <xs:element name="FloatingFrameLink" substitutionGroup="Link" type="FloatingFrameLinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FloatingFrameLinkType">
+    <xs:complexContent>
+      <xs:extension base="LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ContourLink" substitutionGroup="Link" type="ContourLinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="ContourLinkType">
+    <xs:complexContent>
+      <xs:extension base="LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RigidBodyLink" substitutionGroup="Link" type="RigidBodyLinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RigidBodyLinkType">
+    <xs:complexContent>
+      <xs:extension base="LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="KineticExcitation" substitutionGroup="FloatingFrameLink" type="KineticExcitationType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine externe, kinetische Anregung auf einen Körper.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="KineticExcitationType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="FloatingFrameLinkType">
         <xs:sequence>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1565,7 +1598,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SpringDamper" substitutionGroup="MechanicalLink" type="SpringDamperType">
+  <xs:element name="SpringDamper" substitutionGroup="FrameLink" type="SpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern. Es wird zwischen einer gerichteten Verbindung und einer Punkt-zu-Punkt-Verbindung unterschieden.
         <p>
@@ -1579,7 +1612,7 @@
   </xs:element>
   <xs:complexType name="SpringDamperType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="FrameLinkType">
         <xs:sequence>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1630,7 +1663,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="DirectionalSpringDamper" substitutionGroup="MechanicalLink" type="DirectionalSpringDamperType">
+  <xs:element name="DirectionalSpringDamper" substitutionGroup="FloatingFrameLink" type="DirectionalSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern. Es wird zwischen einer gerichteten Verbindung und einer Punkt-zu-Punkt-Verbindung unterschieden.
         <p>
@@ -1644,7 +1677,7 @@
   </xs:element>
   <xs:complexType name="DirectionalSpringDamperType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="FloatingFrameLinkType">
         <xs:sequence>
           <xs:element name="forceDirection" type="pv:nounitVector">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1703,14 +1736,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedSpringDamper" substitutionGroup="MechanicalLink" type="GeneralizedSpringDamperType">
+  <xs:element name="GeneralizedSpringDamper" substitutionGroup="RigidBodyLink" type="GeneralizedSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedSpringDamperType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="RigidBodyLinkType">
         <xs:sequence>
           <xs:element name="generalizedForceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1774,14 +1807,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedFriction" substitutionGroup="MechanicalLink" type="GeneralizedFrictionType">
+  <xs:element name="GeneralizedFriction" substitutionGroup="RigidBodyLink" type="GeneralizedFrictionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedFrictionType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="RigidBodyLinkType">
         <xs:sequence>
           <xs:element name="generalizedFrictionForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1840,7 +1873,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Gear" substitutionGroup="MechanicalLink" type="GearType">
+  <xs:element name="Gear" substitutionGroup="RigidBodyLink" type="GearType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1850,7 +1883,7 @@
   </xs:element>
   <xs:complexType name="GearType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="RigidBodyLinkType">
         <xs:sequence>
           <xs:element name="generalizedForceFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1947,7 +1980,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Joint" substitutionGroup="MechanicalLink" type="JointType">
+  <xs:element name="Joint" substitutionGroup="FloatingFrameLink" type="JointType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Gelenk als Verbindung zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
         Aufgabe von Gelenken ist es, die Relativbewegung zwischen einzelnen Körpern eines Mehrkörpersystems einzuschränken und somit nur bestimmte Bewegungsmöglichkeiten zuzulassen. Die Relativbewegungen, die zwei Körper im ungebundenen Zustand durchführen könnten, werden dabei durch Gelenkkräfte und -momente verhindert.<br/> 
@@ -1958,7 +1991,7 @@
   </xs:element>
   <xs:complexType name="JointType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="FloatingFrameLinkType">
         <xs:sequence>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2029,7 +2062,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SingleContact" substitutionGroup="MechanicalLink" type="SingleContactType">
+  <xs:element name="SingleContact" substitutionGroup="ContourLink" type="SingleContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Definiert einen Kontakt als Interaktion zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
@@ -2042,7 +2075,7 @@
   </xs:element>
   <xs:complexType name="SingleContactType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="ContourLinkType">
         <xs:sequence>
           <xs:element name="normalForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2126,7 +2159,7 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="Contact" substitutionGroup="MechanicalLink" type="ContactType">
+  <xs:element name="Contact" substitutionGroup="Link" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
@@ -2139,7 +2172,7 @@
   </xs:element>
   <xs:complexType name="ContactType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="LinkType">
         <xs:sequence>
           <xs:element name="normalForceLaw" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
