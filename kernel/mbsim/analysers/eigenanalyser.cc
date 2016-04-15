@@ -55,10 +55,12 @@ namespace MBSimAnalyser {
   Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) {}
 
   Vec Eigenanalyser::Residuum::operator()(const Vec &z) {
+    Vec res;
     system->setTime(t);
     system->setState(z);
     system->resetUpToDate();
-    return system->evalzd();
+    res = system->evalzd();
+    return res;
   } 
 
   void Eigenanalyser::analyse(DynamicSystemSolver& system_) {
