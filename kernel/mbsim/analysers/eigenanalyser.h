@@ -122,7 +122,7 @@ namespace MBSimAnalyser {
 
       void setTask(Task task_) { task = task_; }
 
-      const fmatvec::Vec& getInitialState() const { return z0; }
+      const fmatvec::Vec& getInitialState() const { return zEq; }
 
       /**
        * \brief Get the eigenvalues
@@ -152,7 +152,7 @@ namespace MBSimAnalyser {
 
     protected:
 
-      fmatvec::Vec z0, deltaz0, zEq;
+      fmatvec::Vec zEq, deltaz0;
       double tStart, tEnd, dtPlot, A;
       int n;
       bool compEq, autoUpdate;

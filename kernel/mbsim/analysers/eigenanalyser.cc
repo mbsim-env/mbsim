@@ -87,37 +87,36 @@ namespace MBSimAnalyser {
   }
 
   void Eigenanalyser::computeEigenvalues() {
-      if(not(zEq.size()))
-        zEq = system->evalz0();
+    if(not(zEq.size()))
+      zEq = system->evalz0();
 
-      if(compEq) {
-        Residuum f(system,tStart);
-        MultiDimNewtonMethod newton(&f);
-        newton.setLinearAlgebra(1);
-        zEq = newton.solve(zEq);
-        if(newton.getInfo() != 0)
-          throw MBSimError("In Eigenanalysis: computation of equilibrium state failed!");
-      }
+    if(compEq) {
+      Residuum f(system,tStart);
+      MultiDimNewtonMethod newton(&f);
+      newton.setLinearAlgebra(1);
+      zEq = newton.solve(zEq);
+      if(newton.getInfo() != 0)
+        throw MBSimError("In Eigenanalysis: computation of equilibrium state failed!");
+    }
 
-      double delta = epsroot();
-      SqrMat A(zEq.size());
-      Vec zd, zdOld;
-      system->setTime(tStart);
-      system->setState(zEq);
+    double delta = epsroot();
+    SqrMat A(system->getzSize());
+    Vec zd, zdOld;
+    system->setTime(tStart);
+    system->setState(zEq);
+    system->resetUpToDate();
+    zdOld = system->evalzd();
+    for (int i=0; i<system->getzSize(); i++) {
+      double ztmp = system->getState()(i);
+      system->getState()(i) += delta;
       system->resetUpToDate();
-      zdOld = system->evalzd();
-      for (int i=0; i<zEq.size(); i++) {
-        double ztmp = zEq(i);
-        zEq(i) += delta;
-        system->setState(zEq);
-        system->resetUpToDate();
-        zd = system->evalzd();
-        A.col(i) = (zd - zdOld) / delta;
-        zEq(i) = ztmp;
-      }
-      eigvec(A,V,w);
-      computeEigenfrequencies();
-      saveEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName);
+      zd = system->evalzd();
+      A.col(i) = (zd - zdOld) / delta;
+      system->getState()(i) = ztmp;
+    }
+    eigvec(A,V,w);
+    computeEigenfrequencies();
+    saveEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName);
   }
 
   void Eigenanalyser::computeEigenmodes() {
@@ -141,9 +140,8 @@ namespace MBSimAnalyser {
         deltaz.init(0);
         for(int i=0; i<wbuf.size(); i++)
           deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
-        z = zEq + fromComplex(deltaz);
         system->setTime(t);
-        system->setState(z);
+        system->setState(zEq + fromComplex(deltaz));
         system->resetUpToDate();
         system->solveAndPlot();
       }
@@ -174,9 +172,8 @@ namespace MBSimAnalyser {
       deltaz.init(0);
       for(int i=0; i<wbuf.size(); i++)
         deltaz += c(i)*V.col(i)*exp(wbuf(i)*t); 
-      z = zEq + fromComplex(deltaz);
       system->setTime(t);
-      system->setState(z);
+      system->setState(zEq + fromComplex(deltaz));
       system->resetUpToDate();
       system->solveAndPlot();
     }
@@ -197,9 +194,8 @@ namespace MBSimAnalyser {
       deltaz.init(0);
       for(int i=0; i<w.size(); i++)
         deltaz += c(i)*V.col(i)*exp(w(i)*t); 
-      z = zEq + fromComplex(deltaz);
       system->setTime(t);
-      system->setState(z);
+      system->setState(zEq + fromComplex(deltaz));
       system->resetUpToDate();
       system->solveAndPlot();
     }
@@ -210,7 +206,7 @@ namespace MBSimAnalyser {
     if(os.is_open()) {
       OctaveComplexMatrix("lambda",w).toStream(os);
       OctaveComplexMatrix("V",V).toStream(os);
-      OctaveMatrix("z",zEq).toStream(os);
+      OctaveMatrix("z",system->getState()).toStream(os);
       OctaveMatrix("f",freq).toStream(os);
       os.close();
       return true;
@@ -262,4 +258,3 @@ namespace MBSimAnalyser {
   }
 
 }
-
