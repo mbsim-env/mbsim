@@ -92,7 +92,7 @@ namespace MBSimGUI {
       void addLine();
       void addPlane();
       void addSphere();
-      void addCircleSolid();
+      void addCircle();
       void addCuboid();
       void addLineSegment();
 

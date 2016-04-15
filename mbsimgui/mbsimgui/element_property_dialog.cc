@@ -258,28 +258,29 @@ namespace MBSimGUI {
     static_cast<Sphere*>(element)->visu.fromWidget(visu);
   }
 
-  CircleSolidPropertyDialog::CircleSolidPropertyDialog(CircleSolid *circle, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(circle,parent,f) {
+  CirclePropertyDialog::CirclePropertyDialog(Circle *circle, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(circle,parent,f) {
     addTab("Visualisation",1);
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
     radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
     addToTab("General", radius);
-
-    visu = new ExtWidget("OpenMBV CircleSolid",new MBSOMBVWidget("NOTSET"),true);
+    solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    addToTab("Extra", solid);
+    visu = new ExtWidget("OpenMBV Circle",new MBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", visu);
   }
 
-  void CircleSolidPropertyDialog::toWidget(Element *element) {
+  void CirclePropertyDialog::toWidget(Element *element) {
     ContourPropertyDialog::toWidget(element);
-    static_cast<CircleSolid*>(element)->radius.toWidget(radius);
-    static_cast<CircleSolid*>(element)->visu.toWidget(visu);
+    static_cast<Circle*>(element)->radius.toWidget(radius);
+    static_cast<Circle*>(element)->visu.toWidget(visu);
   }
 
-  void CircleSolidPropertyDialog::fromWidget(Element *element) {
+  void CirclePropertyDialog::fromWidget(Element *element) {
     ContourPropertyDialog::fromWidget(element);
-    static_cast<CircleSolid*>(element)->radius.fromWidget(radius);
-    static_cast<CircleSolid*>(element)->visu.fromWidget(visu);
+    static_cast<Circle*>(element)->radius.fromWidget(radius);
+    static_cast<Circle*>(element)->visu.fromWidget(visu);
   }
 
   CuboidPropertyDialog::CuboidPropertyDialog(Cuboid *circle, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(circle,parent,f) {

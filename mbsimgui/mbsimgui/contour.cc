@@ -160,27 +160,26 @@ namespace MBSimGUI {
     return e;
   }
 
-  CircleSolid::CircleSolid(const string &str, Element *parent) : Contour(str,parent) {
+  Circle::Circle(const string &str, Element *parent) : Contour(str,parent), solid(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"radius"));
     radius.setProperty(new ExtPhysicalVarProperty(input));
-
+    solid.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"solid",vector<string>(2,"")),"",4));
     visu.setProperty(new MBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
-
   }
 
-  CircleSolid::~CircleSolid() {
+  Circle::~Circle() {
   }
 
-  DOMElement* CircleSolid::initializeUsingXML(DOMElement *element) {
+  DOMElement* Circle::initializeUsingXML(DOMElement *element) {
     Contour::initializeUsingXML(element);
     radius.initializeUsingXML(element);
     visu.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* CircleSolid::writeXMLFile(DOMNode *parent) {
+  DOMElement* Circle::writeXMLFile(DOMNode *parent) {
     DOMElement *e = Contour::writeXMLFile(parent);
     radius.writeXMLFile(e);
     visu.writeXMLFile(e);

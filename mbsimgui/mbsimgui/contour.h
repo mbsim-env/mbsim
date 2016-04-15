@@ -92,17 +92,17 @@ namespace MBSimGUI {
     ExtProperty radius, visu;
   };
 
-  class CircleSolid : public Contour {
-    friend class CircleSolidPropertyDialog;
+  class Circle : public Contour {
+    friend class CirclePropertyDialog;
     public:
-    CircleSolid(const std::string &str, Element *parent);
-    ~CircleSolid();
+    Circle(const std::string &str, Element *parent);
+    ~Circle();
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    std::string getType() const { return "CircleSolid"; }
-    ElementPropertyDialog* createPropertyDialog() {return new CircleSolidPropertyDialog(this);}
+    std::string getType() const { return "Circle"; }
+    ElementPropertyDialog* createPropertyDialog() {return new CirclePropertyDialog(this);}
     protected:
-    ExtProperty radius, visu;
+    ExtProperty radius, solid, visu;
   };
 
   class Cuboid : public Contour {

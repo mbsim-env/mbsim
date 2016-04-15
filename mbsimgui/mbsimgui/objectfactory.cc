@@ -103,8 +103,8 @@ namespace MBSimGUI {
       return new Plane(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"Sphere")
       return new Sphere(E(element)->getAttribute("name"),parent);
-    else if(E(element)->getTagName()==MBSIM%"CircleSolid")
-      return new CircleSolid(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"Circle")
+      return new Circle(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"Cuboid")
       return new Cuboid(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"LineSegment")

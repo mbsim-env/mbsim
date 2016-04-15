@@ -209,7 +209,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
     addAction(action);
     action = new QAction("Add solid circle", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addCircleSolid()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addCircle()));
     addAction(action);
     action = new QAction("Add cuboid", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addCuboid()));
@@ -235,8 +235,8 @@ namespace MBSimGUI {
     mw->addContour(new Sphere("Sphere",element));
   }
 
-  void ContourContextContextMenu::addCircleSolid() {
-    mw->addContour(new CircleSolid("CircleSolid",element));
+  void ContourContextContextMenu::addCircle() {
+    mw->addContour(new Circle("Circle",element));
   }
 
   void ContourContextContextMenu::addCuboid() {

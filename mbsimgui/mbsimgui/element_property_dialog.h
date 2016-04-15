@@ -32,7 +32,7 @@ namespace MBSimGUI {
   class Line;
   class Plane;
   class Sphere;
-  class CircleSolid;
+  class Circle;
   class Cuboid;
   class LineSegment;
   class DynamicSystemSolver;
@@ -172,14 +172,14 @@ namespace MBSimGUI {
       ExtWidget *radius, *visu;
   };
 
-  class CircleSolidPropertyDialog : public ContourPropertyDialog {
+  class CirclePropertyDialog : public ContourPropertyDialog {
 
     public:
-      CircleSolidPropertyDialog(CircleSolid *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      CirclePropertyDialog(Circle *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *radius, *visu;
+      ExtWidget *radius, *solid, *visu;
   };
 
   class CuboidPropertyDialog : public ContourPropertyDialog {
