@@ -896,8 +896,6 @@ namespace MBSim {
       la.init(0);
 
     int iter;
-    Vec laOld;
-    laOld << la;
     iter = (this->*solveConstraints_)(); // solver election
     if (iter >= maxIter) {
       msg(Warn) << "\n";
@@ -1551,6 +1549,7 @@ namespace MBSim {
     if(msgAct(Debug))
       msg(Debug) << "System shift at t = " << t << "." << endl;
 
+    bool saveUseOldLa = useOldla;
     useOldla = false;
 
     checkRoot();
@@ -1575,8 +1574,7 @@ namespace MBSim {
       b << evalgd(); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       setStepSize(0);
       solveImpacts();
-      updatedu();
-      u += ud[0];
+      u += evaldu();
       resetUpToDate();
       checkActive(3); // neuer Zustand nach Stoss
       // Projektion:
@@ -1643,7 +1641,7 @@ namespace MBSim {
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
     setRootID(0);
-    useOldla = true;
+    useOldla = saveUseOldLa;
     return zParent;
   }
 
