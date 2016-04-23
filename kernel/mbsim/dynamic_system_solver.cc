@@ -63,7 +63,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updb(true), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updb(true), updsv(true), updzd(true), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -1683,12 +1683,17 @@ namespace MBSim {
     updgd = true;
     updG = true;
     updb = true;
+    updsv = true;
+    updzd = true;
     Group::resetUpToDate();
   }
 
   const Vec& DynamicSystemSolver::evalzd() {
-    if(laSize) computeConstraintForces();
-    updatezd();
+    if(updzd) {
+      if(laSize) computeConstraintForces();
+      updatezd();
+      updzd=false;
+    }
     return zdParent;
   }
 
@@ -1707,12 +1712,15 @@ namespace MBSim {
   }
 
   const Vec& DynamicSystemSolver::evalsv() {
-    if(getlaSize()) {
-      getb(false) << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
-      solveConstraints();
+    if(updsv) {
+      if(getlaSize()) {
+        getb(false) << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+        solveConstraints();
+      }
+      updateStopVector();
+      sv(sv.size() - 1) = 1;
+      updsv = false;
     }
-    updateStopVector();
-    sv(sv.size() - 1) = 1;
     return sv;
   }
 

@@ -774,11 +774,6 @@ namespace MBSim {
       bool peds;
 
       /**
-       * \brief TODO, additional stop in event driven solver for drift correction
-       */
-      unsigned int driftCount;
-
-      /**
        * \brief flushes all hdf5-files every x-times the plot-routine is called
        * TODO
        */
@@ -823,7 +818,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updb;
+      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updb, updsv, updzd;
 
     private:
       /**

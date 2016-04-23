@@ -23,6 +23,14 @@ kernel/mbsim/numerics/nonlinear_algebra/Makefile.in
 kernel/mbsim/numerics/nurbs/Makefile.in
 kernel/mbsim/observers/Makefile.in
 kernel/mbsim/utils/Makefile.in
+kernel/mbsim/constitutive_laws/Makefile.in
+kernel/mbsim/constraints/Makefile.in
+kernel/mbsim/frames/Makefile.in
+kernel/mbsim/functions/contact/Makefile.in
+kernel/mbsim/functions/kinematics/Makefile.in
+kernel/mbsim/functions/kinetics/Makefile.in
+kernel/mbsim/links/Makefile.in
+kernel/mbsim/objects/Makefile.in
 kernel/missing
 kernel/schema/Makefile.in
 kernel/xmldoc/Makefile.in
@@ -122,6 +130,7 @@ modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/finite_elements/Makefi
 modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile.in
 modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile.in
 modules/mbsimFlexibleBody/mbsimFlexibleBody/utils/Makefile.in
+modules/mbsimFlexibleBody/mbsimFlexibleBody/frames/Makefile.in
 modules/mbsimFlexibleBody/missing
 modules/mbsimFlexibleBody/schema/Makefile.in
 modules/mbsimFlexibleBody/xmldoc/Makefile.in
