@@ -152,15 +152,12 @@ void MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolv
 }
 
 void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
-  int zSize=dss->getzSize();
-  fmatvec::Vec z(zSize);
   if(solver->getInitialState().size())
-    z = solver->getInitialState();
+    dss->setState(solver->getInitialState());
   else
-    z = dss->evalz0();
-  dss->setState(z);
+    dss->evalz0();
   dss->computeInitialCondition();
-  dss->plot();
+  dss->solveAndPlot();
 }
 
 void MBSimXML::postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss) {
