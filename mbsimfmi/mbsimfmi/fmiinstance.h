@@ -7,6 +7,7 @@
 #include <fmatvec/atom.h>
 #include "fmiinstancebase.h"
 #include <boost/make_shared.hpp>
+#include <boost/ref.hpp>
 
 // fmi function declarations must be included as extern C
 extern "C" {
@@ -79,10 +80,6 @@ namespace MBSimFMI {
 
       void rethrowVR(size_t vr, const std::exception &ex=std::runtime_error("Unknown exception."));
 
-      bool updateDerivativesRequired;
-      bool updateEventIndicatorsRequired;
-      bool updateValueRequired;
-
       // store FMI instanceName and logger
       std::string instanceName;
       fmiCallbackLogger logger;
@@ -99,15 +96,13 @@ namespace MBSimFMI {
       boost::shared_ptr<MBSim::DynamicSystemSolver> dss;
 
       // system time
-      double time;
+      double timeStore; // do not use this variable, use time
+      boost::reference_wrapper<double> time;
       // system state
-      fmatvec::Vec z;
-      // system state derivative
-      fmatvec::Vec zd;
-      // system stop vector
-      fmatvec::Vec sv, svLast;
-      // system stop vector indicator (0 = no shift in this index; 1 = shift in this index)
-      fmatvec::VecInt jsv;
+      fmatvec::Vec zStore; // do not use this variable, use z
+      boost::reference_wrapper<fmatvec::Vec> z;
+      // system stop vector (0 = no shift in this index; 1 = shift in this index)
+      fmatvec::Vec svLast;
 
       // variables store for all predefined variables (variables not owned by dss)
       PredefinedParameterStruct predefinedParameterStruct;

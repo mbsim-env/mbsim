@@ -56,14 +56,13 @@ namespace MBSimFMI {
 
   // A MBSim FMI instance. Called by fmiInstantiateModel
   FMIInstance::FMIInstance(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions functions, fmiBoolean loggingOn) :
-    updateDerivativesRequired(true),
-    updateEventIndicatorsRequired(true),
-    updateValueRequired(true),
     instanceName(instanceName_),
     logger(functions.logger),
     infoBuffer (logger, this, instanceName, fmiOK,      "info"),
     warnBuffer (logger, this, instanceName, fmiWarning, "warning"),
-    debugBuffer(logger, this, instanceName, fmiOK,      "debug") {
+    debugBuffer(logger, this, instanceName, fmiOK,      "debug"),
+    time(timeStore),
+    z(zStore) {
 
     // use the per FMIInstance provided buffers for all subsequent fmatvec::Atom objects
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  make_shared<bool>(true),  make_shared<ostream>(&infoBuffer));
@@ -88,6 +87,9 @@ namespace MBSimFMI {
     path modelDescriptionXMLFile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path().parent_path()/
       "modelDescription.xml";
     shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile);
+
+    // init state vector size (just to be usable before initialize is called)
+    z.get().resize(lexical_cast<size_t>(E(doc->getDocumentElement())->getAttribute("numberOfContinuousStates")));
 
     // add all predefined parameters
     addPredefinedParameters(var, predefinedParameterStruct, true);
@@ -136,20 +138,15 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::setTime(fmiReal time_) {
-    time=time_;
-    // everything may depend on time -> update required on next getXXX
-    updateDerivativesRequired=true;
-    updateEventIndicatorsRequired=true;
-    updateValueRequired=true;
+    time.get()=time_;
+    if(dss)
+      dss->resetUpToDate();
   }
 
   void FMIInstance::setContinuousStates(const fmiReal x[], size_t nx) {
-    for(size_t i=0; i<nx; ++i)
-      z(i)=x[i];
-    // everything may depend on the states -> update required on next getXXX
-    updateDerivativesRequired=true;
-    updateEventIndicatorsRequired=true;
-    updateValueRequired=true;
+    copy(&x[0], &x[0]+nx, &z.get()(0));
+    if(dss)
+      dss->resetUpToDate();
   }
 
   // is called when the current state is a valid/accepted integrator step.
@@ -165,9 +162,6 @@ namespace MBSimFMI {
         completedStepCounter++;
         if(completedStepCounter==predefinedParameterStruct.plotEachNStep) {
           completedStepCounter=0;
-          dss->setTime(time);
-          dss->setState(z);
-          dss->resetUpToDate();
           dss->solveAndPlot();
         }
         break;
@@ -175,9 +169,6 @@ namespace MBSimFMI {
       case NextCompletedStepAfterSampleTime:
         if(time>=nextPlotTime) {
           nextPlotTime += predefinedParameterStruct.plotStepSize * (floor((time-nextPlotTime)/predefinedParameterStruct.plotStepSize)+1);
-          dss->setTime(time);
-          dss->setState(z);
-          dss->resetUpToDate();
           dss->solveAndPlot();
         }
         break;
@@ -195,10 +186,8 @@ namespace MBSimFMI {
         throw runtime_error("No such value reference "+lexical_cast<string>(vr[i]));
       try { var[vr[i]]->setValue(CppDatatype(value[i])); } RETHROW_VR(vr[i])
     }
-    // everything may depend on inputs -> update required on next getXXX
-    updateDerivativesRequired=true;
-    updateEventIndicatorsRequired=true;
-    updateValueRequired=true;
+    if(dss)
+      dss->resetUpToDate();
   }
   // explicitly instantiate all four FMI types
   template void FMIInstance::setValue<double, fmiReal   >(const fmiValueReference vr[], size_t nvr, const fmiReal    value[]);
@@ -231,6 +220,9 @@ namespace MBSimFMI {
 
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);
+    dss->setTime(time);
+    time=ref(dss->getTime());
+    z=ref(dss->getState());
 
     // save the current dir and change to outputDir -> MBSim will create output files in the current dir
     // this must be done before the dss is initialized since dss->initialize creates files in the current dir)
@@ -291,20 +283,13 @@ namespace MBSimFMI {
 
     // initialize state
     msg(Debug)<<"Initialize initial conditions of the DynamicSystemSolver."<<endl;
-    z.resize(dss->getzSize());
-    zd.resize(dss->getzSize());
-    z = dss->evalz0();
+    dss->evalz0();
+
+    // initialize last stop vector with initial stop vector state
+    dss->computeInitialCondition();
 
     // initialize stop vector
-    sv.resize(dss->getsvSize());
-    svLast.resize(dss->getsvSize());
-    jsv.resize(dss->getsvSize(), fmatvec::INIT, 0); // init with 0 = no shift in all indices
-    // initialize last stop vector with initial stop vector state
-    dss->setTime(time);
-    dss->setState(z);
-    dss->resetUpToDate();
-    dss->computeInitialCondition();
-    svLast = dss->evalsv();
+    svLast=dss->evalsv();
 
     // plot initial state
     dss->solveAndPlot();
@@ -331,37 +316,16 @@ namespace MBSimFMI {
         eventInfo->nextEventTime=nextPlotTime;
         break;
     }
-
-    // everything may depend on inputs -> update required on next getXXX
-    updateDerivativesRequired=true;
-    updateEventIndicatorsRequired=true;
-    updateValueRequired=true;
   }
 
   void FMIInstance::getDerivatives(fmiReal derivatives[], size_t nx) {
-      // calcualte MBSim zd and return it
-    if(updateDerivativesRequired) {
-      dss->setTime(time);
-      dss->setState(z);
-      dss->resetUpToDate();
-      zd = dss->evalzd();
-      updateDerivativesRequired=false;
-    }
-    for(size_t i=0; i<nx; ++i)
-      derivatives[i]=zd(i);
+    const fmatvec::Vec &zd=dss->evalzd();
+    copy(&zd(0), &zd(0)+nx, &derivatives[0]);
   }
 
   void FMIInstance::getEventIndicators(fmiReal eventIndicators[], size_t ni) {
-    // calcualte MBSim stop vector and return it
-    if(updateEventIndicatorsRequired) {
-      dss->setTime(time);
-      dss->setState(z);
-      dss->resetUpToDate();
-      sv = dss->evalsv();
-      updateEventIndicatorsRequired=false;
-    }
-    for(size_t i=0; i<ni; ++i)
-      eventIndicators[i]=sv(i);
+    const fmatvec::Vec &sv=dss->evalsv();
+    copy(&sv(0), &sv(0)+ni, &eventIndicators[0]);
   }
 
   namespace {
@@ -376,11 +340,6 @@ namespace MBSimFMI {
   // get a real/integer/boolean/string variable
   template<typename CppDatatype, typename FMIDatatype>
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIDatatype value[]) {
-    if(updateValueRequired) {
-      // TODO: nothing to do currently since MBSimControl::Singal's is updated on demand but this will change
-      // (current branch of Foerg; MBSim issue 39)
-      updateValueRequired=false;
-    }
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
         throw runtime_error("No such value reference "+lexical_cast<string>(vr[i]));
@@ -411,16 +370,11 @@ namespace MBSimFMI {
     // * set all entries in jsv to 1 if the this condition matches
 
     // get current stop vector
-    if(updateEventIndicatorsRequired) {
-      dss->setTime(time);
-      dss->setState(z);
-      dss->resetUpToDate();
-      sv = dss->evalsv();
-      updateEventIndicatorsRequired=false;
-    }
+    const fmatvec::Vec &sv=dss->evalsv();
     // compare last (svLast) and current (sv) stop vector, based on the FMI standard
     // shift equation: (sv(i)>0) != (svLast(i)>0): build jsv and set shiftRequired
     bool shiftRequired=false;
+    fmatvec::VecInt &jsv=dss->getjsv();
     for(int i=0; i<sv.size(); ++i)
       if((svLast(i)>0) != (sv(i)>0)) { // use 0 to check for ==0
         jsv(i)=1;
@@ -430,24 +384,14 @@ namespace MBSimFMI {
         jsv(i)=0;
     if(shiftRequired) {
       // shift MBSim system
-      dss->setTime(time);
-      dss->setState(z);
-      dss->setjsv(jsv);
       dss->resetUpToDate();
-      z = dss->shift();
+      dss->shift();
       // A MBSim shift always changes state values (at least by a minimal projection)
       // This must be reported to the environment (the integrator must be resetted in this case).
       eventInfo->stateValuesChanged=true;
 
-      // everything may depend on a changed (shifted) system -> update required on next getXXX
-      updateDerivativesRequired=true;
-      updateValueRequired=true;
       // get current stop vector with is now also the last stop vector
-      dss->setState(z);
-      dss->resetUpToDate();
-      sv = dss->evalsv();
-      svLast=sv;
-      updateEventIndicatorsRequired=false; // we have the stop vector always updated
+      svLast=dss->evalsv();
     }
 
     // ***** time event (currently only for plotting) *****
@@ -464,9 +408,6 @@ namespace MBSimFMI {
         // next event wenn plotting with sample time and we currently match that time
         if(fabs(time-nextPlotTime)<1.0e-10) {
           // plot
-          dss->setTime(time);
-          dss->setState(z);
-          dss->resetUpToDate();
           dss->solveAndPlot();
           // next time event
           nextPlotTime=time+predefinedParameterStruct.plotStepSize;
@@ -483,33 +424,28 @@ namespace MBSimFMI {
   }
 
   void FMIInstance::getContinuousStates(fmiReal states[], size_t nx) {
-    for(size_t i=0; i<nx; ++i)
-      states[i]=z(i);
+    copy(&z.get()(0), &z.get()(0)+nx, &states[0]);
   }
 
   void FMIInstance::getNominalContinuousStates(fmiReal x_nominal[], size_t nx) {
     // we do not proved a nominal value for states in MBSim -> just return 1 as nominal value.
-    for(size_t i=0; i<nx; ++i)
-      x_nominal[i]=1;
+    fill(&x_nominal[0], &x_nominal[0]+nx, 1);
   }
 
   void FMIInstance::getStateValueReferences(fmiValueReference vrx[], size_t nx) {
     // we do not assign any MBSim state to a FMI valueReference -> return fmiUndefinedValueReference for all states
-    for(size_t i=0; i<nx; ++i)
-      vrx[i]=fmiUndefinedValueReference;
+    fill(&vrx[0], &vrx[0]+nx, fmiUndefinedValueReference);
   }
 
   void FMIInstance::terminate() {
     // plot end state
-    if(dss) {
-      dss->setTime(time);
-      dss->setState(z);
-      dss->resetUpToDate();
+    if(dss)
       dss->solveAndPlot();
-    }
 
     // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
     // calls to fmiFreeModelInstance and fmiInstantiateModel)
+    time=ref(timeStore);
+    z=ref(zStore);
     dss.reset();
   }
 
