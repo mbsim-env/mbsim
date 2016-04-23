@@ -1659,7 +1659,6 @@ namespace MBSim {
     laInverseKinetics = slvLL(JTJ(A), A.T() * b);
   }
 
-  // TODO: Momentan für TimeStepping benötigt
   void DynamicSystemSolver::resetUpToDate() {
     updT = true;
     updh[0] = true;
@@ -1690,7 +1689,7 @@ namespace MBSim {
     if(updzd) {
       if(laSize) computeConstraintForces();
       updatezd();
-      updzd=false;
+      updzd = false;
     }
     return zdParent;
   }
