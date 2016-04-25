@@ -998,12 +998,18 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatebc() {
-    bc << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+    if(updatebcCallBack)
+      updatebcCallBack();
+    else
+      bc << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
     updbc = false;
   }
 
   void DynamicSystemSolver::updatebi() {
-    bi << evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+    if(updatebiCallBack)
+      updatebiCallBack();
+    else
+      bi << evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
     updbi = false;
   }
 
@@ -1385,8 +1391,6 @@ namespace MBSim {
     setPlotFeature(separateFilePerGroup, enabled);
     setPlotFeatureForChildren(separateFilePerGroup, disabled);
     setPlotFeatureRecursive(openMBV, enabled);
-    setUpdatebcCallBack(boost::bind(&DynamicSystemSolver::updatebc,this));
-    setUpdatebiCallBack(boost::bind(&DynamicSystemSolver::updatebi,this));
   }
 
   void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {

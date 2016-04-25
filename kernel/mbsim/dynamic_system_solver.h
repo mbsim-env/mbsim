@@ -241,8 +241,8 @@ namespace MBSim {
       const fmatvec::Vec& evalzd();
       const fmatvec::SqrMat& evalG() { if(updG) updateG(); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(); return Gs; }
-      const fmatvec::Vec& evalbc() { if(updbc) updatebcCallBack(); return bc; }
-      const fmatvec::Vec& evalbi() { if(updbi) updatebiCallBack(); return bi; }
+      const fmatvec::Vec& evalbc() { if(updbc) updatebc(); return bc; }
+      const fmatvec::Vec& evalbi() { if(updbi) updatebi(); return bi; }
       const fmatvec::Vec& evalsv();
       const fmatvec::Vec& evalz0();
 
