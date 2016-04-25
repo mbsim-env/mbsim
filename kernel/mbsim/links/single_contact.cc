@@ -741,7 +741,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbi();
 
       int addIndexNormal = 0;
       if (fcl->isSetValued()) {
@@ -773,7 +773,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbc();
 
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
@@ -805,7 +805,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbi();
 
       //TODO: check indices (in other solution algorithms too!)
       const double om = 1.0;
@@ -840,7 +840,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbc();
 
       const double om = 1.0; // relaxation parameter omega (cf. Foerg, dissertation, p. 102)
 
@@ -873,7 +873,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbi();
 
       //compute residuum for normal direction
       int addIndexnormal = 0;
@@ -906,7 +906,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbc();
 
       //compute residuum for normal direction
       int addIndexnormal = 0;
@@ -1103,7 +1103,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &laMBS = ds->getla();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbc();
 
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
@@ -1142,7 +1142,7 @@ namespace MBSim {
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
       const Vec &LaMBS = ds->getLa();
-      const Vec &b = ds->getb(false);
+      const Vec &b = ds->evalbi();
 
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {

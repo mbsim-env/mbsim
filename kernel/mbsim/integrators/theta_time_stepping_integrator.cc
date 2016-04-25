@@ -135,7 +135,7 @@ namespace MBSimIntegrator {
       Vec heff = h + theta * dhdq * T * u * dt;
       system.getG(false) << SqrMat(W.T() * slvLUFac(luMeff, V, ipiv));
       system.getGs(false) << system.evalG();
-      system.getb(false) << system.evalgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
+      system.getbi(false) << system.evalgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
 
       iter = system.solveImpacts();
       if (iter > maxIter)

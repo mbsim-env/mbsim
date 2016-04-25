@@ -17,7 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/frames/frame.h"
@@ -36,6 +36,7 @@
 #include <hdf5serie/simpledataset.h>
 #include <limits>
 #include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
 
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
@@ -63,7 +64,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updb(true), updsv(true), updzd(true), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -972,8 +973,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
-    la = slvLS(evalG(), -b);
-    //la = slvLS(G, -(W[0].T() * slvLLFac(LLM[0], h[0]) + wb));
+    la = slvLS(evalG(), -evalbc());
     return 1;
   }
 
@@ -997,8 +997,14 @@ namespace MBSim {
     updG = false;
   }
 
-  void DynamicSystemSolver::updateb() {
-    updb = false;
+  void DynamicSystemSolver::updatebc() {
+    bc << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+    updbc = false;
+  }
+
+  void DynamicSystemSolver::updatebi() {
+    bi << evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+    updbi = false;
   }
 
   void DynamicSystemSolver::decreaserFactors() {
@@ -1254,7 +1260,8 @@ namespace MBSim {
     contactDrop << "vector wb" << endl << evalwb() << endl << endl;
     contactDrop << endl;
     contactDrop << "constraint velocities gp" << endl << evalgd() << endl << endl;
-    contactDrop << "non-holonomic part in gp; b" << endl << b << endl << endl;
+    contactDrop << "non-holonomic part in gp; bc" << endl << bc << endl << endl;
+    contactDrop << "non-holonomic part in gp; bi" << endl << bi << endl << endl;
     contactDrop << "Lagrange multipliers la" << endl << la << endl << endl;
     contactDrop << "Lagrange multipliers La" << endl << La << endl << endl;
     contactDrop.close();
@@ -1369,7 +1376,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces() {
-    la = slvLS(evalG(), -(evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb())); // slvLS because of undeterminded system of equations
+    la = slvLS(evalG(), -evalbc()); // slvLS because of undeterminded system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1378,6 +1385,8 @@ namespace MBSim {
     setPlotFeature(separateFilePerGroup, enabled);
     setPlotFeatureForChildren(separateFilePerGroup, disabled);
     setPlotFeatureRecursive(openMBV, enabled);
+    setUpdatebcCallBack(boost::bind(&DynamicSystemSolver::updatebc,this));
+    setUpdatebiCallBack(boost::bind(&DynamicSystemSolver::updatebi,this));
   }
 
   void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
@@ -1571,7 +1580,6 @@ namespace MBSim {
       V[0] = evalW(); //updateV() not allowed here
       updV[0] = false;
 
-      b << evalgd(); // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       setStepSize(0);
       solveImpacts();
       u += evaldu();
@@ -1595,7 +1603,6 @@ namespace MBSim {
         updatewbRef(wbParent(0, laSize - 1));
         updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
-        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints();
 
         checkActive(4);
@@ -1616,7 +1623,6 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
       if (laSize) {
-        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
         solveConstraints();
 
         checkActive(4);
@@ -1679,7 +1685,8 @@ namespace MBSim {
     updg = true;
     updgd = true;
     updG = true;
-    updb = true;
+    updbc = true;
+    updbi = true;
     updsv = true;
     updzd = true;
     Group::resetUpToDate();
@@ -1696,10 +1703,8 @@ namespace MBSim {
 
   void DynamicSystemSolver::solveAndPlot() {
     if(laSize) {
-      if(useConstraintSolverForPlot) {
-        b = evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+      if(useConstraintSolverForPlot)
         solveConstraints();
-      }
       else
         computeConstraintForces();
     }
@@ -1710,10 +1715,8 @@ namespace MBSim {
 
   const Vec& DynamicSystemSolver::evalsv() {
     if(updsv) {
-      if(getlaSize()) {
-        getb(false) << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+      if(getlaSize())
         solveConstraints();
-      }
       updateStopVector();
       sv(sv.size() - 1) = 1;
       updsv = false;

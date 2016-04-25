@@ -164,6 +164,8 @@ namespace MBSimIntegrator {
       int AnzahlAktiverKontakte;
       double gNDurchschnittprostep;
 
+      fmatvec::Vec bi;
+
     public:
       /*! Constructor with \default dt(1e-5), \default driftCompensation(false) */
       TimeSteppingSSCIntegrator();
@@ -240,6 +242,8 @@ namespace MBSimIntegrator {
       void plot();
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
+
+      void updatebi();
   };
 
 }

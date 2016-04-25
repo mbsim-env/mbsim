@@ -79,6 +79,8 @@ namespace MBSimIntegrator {
       void setStepSize(double dt_) { dt = dt_; dtImpulsive = dt*1e-1, dtInfo = dt; }
       /***************************************************/
 
+      void updatebc();
+
     private:
       /**
        *  \brief evaluates the dynamical system given the state of the stage until the Jacobian matrices
@@ -111,6 +113,8 @@ namespace MBSimIntegrator {
        * \brief file stream for integration information
        */
       std::ofstream integPlot;
+
+      fmatvec::Vec bc;
   };
 
 }

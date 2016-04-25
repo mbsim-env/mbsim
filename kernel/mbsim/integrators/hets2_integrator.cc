@@ -24,6 +24,7 @@
 #include <time.h>
 #include <boost/iostreams/tee.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <boost/bind.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -131,8 +132,7 @@ namespace MBSimIntegrator {
         // adapt last time step-size
         dtInfo = dt;
 
-        // update right hand side of constraint equation system
-        system.getb(false) << system.evalgd()/dt + system.evalW().T()*slvLLFac(LLMStage0,hStage0);
+        bc << system.evalgd()/dt + system.evalW().T()*slvLLFac(LLMStage0,hStage0);
 
         // solve the constraint equation system
         if (system.getla().size() not_eq 0) {
@@ -168,8 +168,7 @@ namespace MBSimIntegrator {
         // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
 
-        // update right hand side of constraint equation system
-        system.getb(false) << 2.*system.evalgd()/dt;
+        bc << 2.*system.evalgd()/dt;
 
         // solve the constraint equation system
         if (system.getla().size() not_eq 0) {
@@ -223,9 +222,6 @@ namespace MBSimIntegrator {
         // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
 
-        // update right hand side of impact equation system
-        system.getb(false) << system.evalgd();
-
         // solve the impact equation system
         if (system.getLa().size() not_eq 0) {
           system.setStepSize(0);
@@ -270,6 +266,8 @@ namespace MBSimIntegrator {
   }
 
   void HETS2Integrator::integrate(DynamicSystemSolver& system) {
+    this->system = &system;
+    system.setUpdatebcCallBack(boost::bind(&HETS2Integrator::updatebc,this));
     debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
@@ -305,5 +303,8 @@ namespace MBSimIntegrator {
     return impact; 
   }
 
-}
+  void HETS2Integrator::updatebc() {
+    system->getbc(false) << bc;
+  }
 
+}

@@ -313,7 +313,7 @@ namespace MBSimIntegrator {
     system_.setStepSize(dt_);
 //    q_l += system_.deltaq(z_l,t_,dt_);
 //    system_.update(z_,t_+dt_,1);
-    system_.getb(false) = system_.evalgd() + system_.evalW().T()*slvLLFac(system_.evalLLM(),system_.evalh())*dt_;
+    system_.getbi(false) = system_.evalgd() + system_.evalW().T()*slvLLFac(system_.evalLLM(),system_.evalh())*dt_;
     *piter  = system_.solveImpacts();
     system_.setTime(t_+dt_);
     u_l += system_.evaldu();
@@ -484,14 +484,14 @@ namespace MBSimIntegrator {
       if (!SetValuedForceLawsExplicit) {
         system_.getG().resize() = SqrMat(W_n.T()*slvLUFac(luMeff_n,V_n,ipiv));
         system_.getGs().resize() << system_.getG();
-        system_.getb().resize() = system_.getgd() + W_n.T()*slvLUFac(luMeff_n,heff_n,ipiv)*dt_;
+        system_.getbi().resize() = system_.getgd() + W_n.T()*slvLUFac(luMeff_n,heff_n,ipiv)*dt_;
       }
 
       if (SetValuedForceLawsExplicit) {
         SymMat M_LLM = system_.getLLM();
         system_.getG().resize() = SqrMat(W_n.T()*slvLLFac(M_LLM,V_n));
         system_.getGs().resize() << system_.getG();
-        system_.getb().resize() = system_.getgd() + W_n.T()*slvLLFac(M_LLM,h_n)*dt_;      
+        system_.getbi().resize() = system_.getgd() + W_n.T()*slvLLFac(M_LLM,h_n)*dt_;      
       }
 
       *piter = system_.solveImpacts();
@@ -652,7 +652,7 @@ namespace MBSimIntegrator {
     Vec heff = h+theta*dhdq_n*T*u_l*dt;
     system_.getG(false) = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
     system_.getGs(false) << system_.evalG();
-    system_.getb(false) = system_.evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
+    system_.getbi(false) = system_.evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
 
     *piter = system_.solveImpacts();
 

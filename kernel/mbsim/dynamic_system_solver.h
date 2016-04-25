@@ -22,6 +22,7 @@
 
 #include "mbsim/group.h"
 #include "fmatvec/sparse_matrix.h"
+#include <boost/function.hpp>
 
 namespace MBSim {
 
@@ -165,7 +166,8 @@ namespace MBSim {
       virtual void updategd();
       virtual void updateW(int j=0);
       virtual void updateV(int j=0);
-      virtual void updateb();
+      virtual void updatebc();
+      virtual void updatebi();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -224,11 +226,13 @@ namespace MBSim {
 
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
       const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
-      const fmatvec::Vec& getb(bool check=true) const { assert((not check) or (not updb)); return b; }
+      const fmatvec::Vec& getbc(bool check=true) const { assert((not check) or (not updbc)); return bc; }
+      const fmatvec::Vec& getbi(bool check=true) const { assert((not check) or (not updbi)); return bi; }
       const fmatvec::SqrMat& getJprox() const { return Jprox; }
       fmatvec::SqrMat& getG(bool check=true) { assert((not check) or (not updG)); return G; }
       fmatvec::SparseMat& getGs(bool check=true) { assert((not check) or (not updG)); return Gs; }
-      fmatvec::Vec& getb(bool check=true) { assert((not check) or (not updb)); return b; }
+      fmatvec::Vec& getbc(bool check=true) { assert((not check) or (not updbc)); return bc; }
+      fmatvec::Vec& getbi(bool check=true) { assert((not check) or (not updbi)); return bi; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
       const fmatvec::Vec& evaldu() { updatedu(); return ud[0]; }
@@ -237,7 +241,8 @@ namespace MBSim {
       const fmatvec::Vec& evalzd();
       const fmatvec::SqrMat& evalG() { if(updG) updateG(); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(); return Gs; }
-      const fmatvec::Vec& evalb() { if(updb) updateb(); return b; }
+      const fmatvec::Vec& evalbc() { if(updbc) updatebcCallBack(); return bc; }
+      const fmatvec::Vec& evalbi() { if(updbi) updatebiCallBack(); return bi; }
       const fmatvec::Vec& evalsv();
       const fmatvec::Vec& evalz0();
 
@@ -554,6 +559,9 @@ namespace MBSim {
 
       void solveAndPlot();
 
+      void setUpdatebcCallBack(const boost::function<void()> &updatebcCallBack_) { updatebcCallBack = updatebcCallBack_; }
+      void setUpdatebiCallBack(const boost::function<void()> &updatebiCallBack_) { updatebiCallBack = updatebiCallBack_; }
+
     protected:
       /**
        * \brief time
@@ -691,7 +699,7 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      fmatvec::Vec b;
+      fmatvec::Vec bc, bi;
 
       /**
        * \brief boolean to check for termination of contact equations solution
@@ -818,7 +826,9 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updb, updsv, updzd;
+      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd;
+
+      boost::function<void()> updatebcCallBack, updatebiCallBack;
 
     private:
       /**

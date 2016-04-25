@@ -24,6 +24,7 @@
 #include <time.h>
 #include <boost/iostreams/tee.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <boost/bind.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -90,7 +91,7 @@ namespace MBSimIntegrator {
       system.checkActive(1);
       if (system.gActiveChanged()) system.resize_();
 
-      system.getb(false) << system.evalgd() + system.evalW().T()*slvLLFac(system.evalLLM(),system.evalh())*dt;
+      system.getbi(false) << system.evalgd() + system.evalW().T()*slvLLFac(system.evalLLM(),system.evalh())*dt;
       iter = system.solveImpacts();
 
       if(iter>maxIter) maxIter = iter;
@@ -126,8 +127,9 @@ namespace MBSimIntegrator {
     cout << endl;
   }
 
-
   void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
+    this->system = &system;
+    system.setUpdatebiCallBack(boost::bind(&TimeSteppingIntegrator::updatebi,this));
     debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
@@ -141,5 +143,8 @@ namespace MBSimIntegrator {
     setStepSize(Element::getDouble(e));
   }
 
-}
+  void TimeSteppingIntegrator::updatebi() {
+    system->getbi(false) << system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
+  }
 
+}
