@@ -48,6 +48,8 @@ namespace MBSim {
        */
       Circle *circle0, *circle1;
 
+      int icircle0, icircle1;
+
       double rEff0, rEff1;
 
   };
