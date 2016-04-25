@@ -637,8 +637,6 @@ namespace MBSimHydraulics {
   }
 
   void RigidNodeMec::updateGeneralizedForces() {
-    cout << "updateGeneralizedSetValuedForces" << endl;
-    cout << la << endl;
     lambda = la;
     updla = false;
   }
