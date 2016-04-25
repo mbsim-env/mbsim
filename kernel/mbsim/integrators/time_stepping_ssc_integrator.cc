@@ -106,12 +106,14 @@ namespace MBSimIntegrator {
 
   void TimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system) {
     this->system = &system;
-    system.setUpdatebcCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatebi,this));
+    system.setUpdatebiCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatebi,this));
     debugInit();
     integrate(system, system, system,1); 
   }
 
   void TimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, int Threads) { 
+    this->system = &systemT1_;
+    systemT1_.setUpdatebiCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatebi,this));
     numThreads = Threads;
     preIntegrate(systemT1_, systemT2_, systemT3_);
     subIntegrate(systemT1_, tEnd);
