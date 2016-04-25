@@ -257,10 +257,10 @@ namespace MBSimElectronics {
   void Diode::checkImpactsForTermination() {
 
     const double *a = ds->evalGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &LaMBS = ds->getLa();
-    Vec &b = ds->getb(false);
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->evalbi();
 
     gdn(0) = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++) {
@@ -277,10 +277,10 @@ namespace MBSimElectronics {
 
   void Diode::solveImpactsGaussSeidel() {
     const double *a = ds->evalGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &LaMBS = ds->getLa();
-    Vec &b = ds->getb(false);
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->evalbi();
 
     gdn(0) = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -316,10 +316,10 @@ namespace MBSimElectronics {
   void Switch::checkImpactsForTermination() {
 
     const double *a = ds->evalGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &LaMBS = ds->getLa();
-    Vec &b = ds->getb(false);
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->evalbi();
 
     double U0 = (*voltageSignal)(getTime())(0);
 
@@ -339,10 +339,10 @@ namespace MBSimElectronics {
 
   void Switch::solveImpactsGaussSeidel() {
     const double *a = ds->evalGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &LaMBS = ds->getLa();
-    Vec &b = ds->getb(false);
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &LaMBS = ds->getLa();
+    const Vec &b = ds->evalbi();
 
     double U0 = (*voltageSignal)(getTime())(0);
 

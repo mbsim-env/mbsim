@@ -286,7 +286,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -300,7 +300,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -314,7 +314,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -330,7 +330,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
@@ -346,7 +346,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -360,7 +360,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -402,7 +402,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &LaMBS = ds->getLa();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
@@ -417,7 +417,7 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
     const Vec &laMBS = ds->getla();
-    const Vec &b = ds->getb(false);
+    const Vec &b = ds->evalbc();
     
     gdd = b(laInd);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
