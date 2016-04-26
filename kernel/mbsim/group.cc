@@ -64,20 +64,14 @@ namespace MBSim {
       (*i)->updatedu();
   }
 
-  void Group::updateud(int j) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateud(j);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updateud(j);
-  }
-
   void Group::updatezd() {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatezd();
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updatezd();
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (*i)->updateqd();
+      (*i)->updateud();
+    }
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (*i)->updatexd();
