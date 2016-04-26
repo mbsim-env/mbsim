@@ -143,8 +143,8 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT();
       virtual void updateh(int i=0);
-      virtual void updateM(int i=0);
-      virtual void updateLLM(int i=0);
+      virtual void updateM();
+      virtual void updateLLM();
       virtual void updatezd();
       /***************************************************/
 
@@ -161,7 +161,7 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updater(int j=0);
-      virtual void updaterdt(int j=0);
+      virtual void updaterdt();
       virtual void updatewb();
       virtual void updateg();
       virtual void updategd();
@@ -369,7 +369,7 @@ namespace MBSim {
       /**
        * \brief compute kinetic energy of entire dynamic system
        */
-      double evalKineticEnergy() { return 0.5*u.T()*M[0]*u; }
+      double evalKineticEnergy() { return 0.5*u.T()*M*u; }
 
       /**
        * \brief compute potential energy of entire dynamic system
@@ -512,11 +512,11 @@ namespace MBSim {
       void resetUpToDate();
 
       bool getUpdateT() { return updT; }
-      bool getUpdateM(int j) { return updM[j]; }
-      bool getUpdateLLM(int j) { return updLLM[j]; }
+      bool getUpdateM() { return updM; }
+      bool getUpdateLLM() { return updLLM; }
       bool getUpdateh(int j) { return updh[j]; }
       bool getUpdater(int j) { return updr[j]; }
-      bool getUpdaterdt(int j) { return updrdt[j]; }
+      bool getUpdaterdt() { return updrdt; }
       bool getUpdateW(int j) { return updW[j]; }
       bool getUpdateV(int j) { return updV[j]; }
       bool getUpdatewb() { return updwb; }
@@ -564,7 +564,6 @@ namespace MBSim {
        * \brief compute inverse kinetics constraint forces
        * \param current time
        */
-      void computeConstraintForces();
       void computeInverseKinetics();
 
       void solveAndPlot();
@@ -586,12 +585,12 @@ namespace MBSim {
       /**
        * \brief mass matrix
        */
-      fmatvec::SymMat MParent[2];
+      fmatvec::SymMat MParent;
 
       /**
        * \brief Cholesky decomposition of mass matrix
        */
-      fmatvec::SymMat LLMParent[2];
+      fmatvec::SymMat LLMParent;
 
       /**
        * \brief matrix of linear relation between differentiated positions and velocities
@@ -663,7 +662,7 @@ namespace MBSim {
       /**
        * \brief nonsmooth right hand side
        */
-      fmatvec::Vec rParent[2], rdtParent[2];
+      fmatvec::Vec rParent[2], rdtParent;
 
       /**
        * \brief right hand side of order one parameters
@@ -836,7 +835,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa;
+      bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa;
 
       boost::function<void()> updatebcCallBack, updatebiCallBack;
 

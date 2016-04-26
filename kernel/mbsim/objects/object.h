@@ -54,7 +54,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT() { }
       virtual void updateh(int j=0) { }
-      virtual void updateM(int i=0) { }
+      virtual void updateM() { }
       virtual void updatedhdz();
       virtual void updatedq();
       virtual void updatedu();
@@ -160,7 +160,7 @@ namespace MBSim {
        * \brief references to nonsmooth force vector of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updaterdtRef(const fmatvec::Vec& ref, int i=0);
+      virtual void updaterdtRef(const fmatvec::Vec& ref);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
@@ -173,14 +173,14 @@ namespace MBSim {
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateMRef(const fmatvec::SymMat &ref, int i=0);
+      virtual void updateMRef(const fmatvec::SymMat &ref);
 
       /**
        * \brief references to Cholesky decomposition of dynamic system parent
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateLLMRef(const fmatvec::SymMat &ref, int i=0);
+      virtual void updateLLMRef(const fmatvec::SymMat &ref);
 
       /**
        * \brief initialize object at start of simulation with respect to contours and frames
@@ -205,12 +205,12 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void updateLLM(int i=0) { LLM[i] = facLL(evalM(i)); }
+      virtual void updateLLM() { LLM = facLL(evalM()); }
 
       /**
        * \return kinetic energy 
        */
-      virtual double evalKineticEnergy() { return 0.5*u.T()*M[0]*u; }
+      virtual double evalKineticEnergy() { return 0.5*u.T()*M*u; }
 
       /**
        * \return potential energy
@@ -244,10 +244,10 @@ namespace MBSim {
 
       const fmatvec::Mat& evalT();
       const fmatvec::Vec& evalh(int i=0);
-      const fmatvec::SymMat& evalM(int i=0);
-      const fmatvec::SymMat& evalLLM(int i=0);
+      const fmatvec::SymMat& evalM();
+      const fmatvec::SymMat& evalLLM();
       const fmatvec::Vec& evalr(int i=0);
-      const fmatvec::Vec& evalrdt(int i=0);
+      const fmatvec::Vec& evalrdt();
       const fmatvec::Vec& evaludall();
 
       void setq(const fmatvec::Vec &q_) { q = q_; }
@@ -297,7 +297,7 @@ namespace MBSim {
       /** 
        * \brief complete and object smooth and nonsmooth right hand side
        */
-      fmatvec::Vec h[2], r[2], rdt[2];
+      fmatvec::Vec h[2], r[2], rdt;
 
       fmatvec::Mat W[2], V[2];
 
@@ -316,12 +316,12 @@ namespace MBSim {
       /** 
        * \brief mass matrix 
        */
-      fmatvec::SymMat M[2];
+      fmatvec::SymMat M;
 
       /**
        * \brief LU-decomposition of mass matrix 
        */
-      fmatvec::SymMat LLM[2];
+      fmatvec::SymMat LLM;
 
   };
 

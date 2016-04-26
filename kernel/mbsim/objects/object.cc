@@ -182,20 +182,20 @@ namespace MBSim {
     r[i] >> rParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
-  void Object::updaterdtRef(const Vec& rdtParent, int i) {
-    rdt[i] >> rdtParent(hInd[i], hInd[i] + hSize[i] - 1);
+  void Object::updaterdtRef(const Vec& rdtParent) {
+    rdt >> rdtParent(hInd[0], hInd[0] + hSize[0] - 1);
   }
 
   void Object::updateTRef(const Mat &TParent) {
     T >> TParent(Index(qInd, qInd + qSize - 1), Index(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
-  void Object::updateMRef(const SymMat &MParent, int i) {
-    M[i] >> MParent(Index(hInd[i], hInd[i] + hSize[i] - 1));
+  void Object::updateMRef(const SymMat &MParent) {
+    M >> MParent(Index(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
-  void Object::updateLLMRef(const SymMat &LLMParent, int i) {
-    LLM[i] >> LLMParent(Index(hInd[i], hInd[i] + hSize[i] - 1));
+  void Object::updateLLMRef(const SymMat &LLMParent) {
+    LLM >> LLMParent(Index(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
   void Object::init(InitStage stage) {
@@ -290,19 +290,19 @@ namespace MBSim {
     return r[i];
   }
 
-  const Vec& Object::evalrdt(int i) {
-    if(ds->getUpdaterdt(i)) ds->updaterdt(i);
-    return rdt[i];
+  const Vec& Object::evalrdt() {
+    if(ds->getUpdaterdt()) ds->updaterdt();
+    return rdt;
   }
 
-  const SymMat& Object::evalM(int i) {
-    if(ds->getUpdateM(i)) ds->updateM(i);
-    return M[i];
+  const SymMat& Object::evalM() {
+    if(ds->getUpdateM()) ds->updateM();
+    return M;
   }
 
-  const SymMat& Object::evalLLM(int i) {
-    if(ds->getUpdateLLM(i)) ds->updateLLM(i);
-    return LLM[i];
+  const SymMat& Object::evalLLM() {
+    if(ds->getUpdateLLM()) ds->updateLLM();
+    return LLM;
   }
 
   const Vec& Object::evaludall() {

@@ -98,12 +98,12 @@ namespace MBSim {
 	linkOrdered[i][j]->updateh(k);
   }
 
-  void DynamicSystem::updateM(int j) {
+  void DynamicSystem::updateM() {
     for (int i = 0; i < (int) dynamicsystem.size(); i++)
-      dynamicsystem[i]->updateM(j);
+      dynamicsystem[i]->updateM();
 
     for (int i = 0; i < (int) object.size(); i++)
-      object[i]->updateM(j);
+      object[i]->updateM();
   }
 
   void DynamicSystem::updatedq() {
@@ -708,14 +708,14 @@ namespace MBSim {
       (**i).updaterRef(rParent, j);
   }
 
-  void DynamicSystem::updaterdtRef(const Vec &rdtParent, int j) {
-    rdt[j] >> rdtParent(hInd[j], hInd[j] + hSize[j] - 1);
+  void DynamicSystem::updaterdtRef(const Vec &rdtParent) {
+    rdt >> rdtParent(hInd[0], hInd[0] + hSize[0] - 1);
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updaterdtRef(rdtParent, j);
+      (**i).updaterdtRef(rdtParent);
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updaterdtRef(rdtParent, j);
+      (**i).updaterdtRef(rdtParent);
   }
 
   void DynamicSystem::updateTRef(const Mat& TParent) {
@@ -728,24 +728,24 @@ namespace MBSim {
       (*i)->updateTRef(TParent);
   }
 
-  void DynamicSystem::updateMRef(const SymMat& MParent, int j) {
-    M[j] >> MParent(Index(hInd[j], hInd[j] + hSize[j] - 1));
+  void DynamicSystem::updateMRef(const SymMat& MParent) {
+    M >> MParent(Index(hInd[0], hInd[0] + hSize[0] - 1));
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (*i)->updateMRef(MParent, j);
+      (*i)->updateMRef(MParent);
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updateMRef(MParent, j);
+      (*i)->updateMRef(MParent);
   }
 
-  void DynamicSystem::updateLLMRef(const SymMat& LLMParent, int j) {
-    LLM[j] >> LLMParent(Index(hInd[j], hInd[j] + hSize[j] - 1));
+  void DynamicSystem::updateLLMRef(const SymMat& LLMParent) {
+    LLM >> LLMParent(Index(hInd[0], hInd[0] + hSize[0] - 1));
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (*i)->updateLLMRef(LLMParent, j);
+      (*i)->updateLLMRef(LLMParent);
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updateLLMRef(LLMParent, j);
+      (*i)->updateLLMRef(LLMParent);
   }
 
   void DynamicSystem::updategRef(const Vec& gParent) {
@@ -1546,14 +1546,14 @@ namespace MBSim {
     return h[i];
   }
 
-  const fmatvec::SymMat& DynamicSystem::getM(int i, bool check) const {
-    assert((not check) or (not ds->getUpdateM(i)));
-    return M[i];
+  const fmatvec::SymMat& DynamicSystem::getM(bool check) const {
+    assert((not check) or (not ds->getUpdateM()));
+    return M;
   }
 
-  const fmatvec::SymMat& DynamicSystem::getLLM(int i, bool check) const {
-    assert((not check) or (not ds->getUpdateLLM(i)));
-    return LLM[i];
+  const fmatvec::SymMat& DynamicSystem::getLLM(bool check) const {
+    assert((not check) or (not ds->getUpdateLLM()));
+    return LLM;
   }
 
   const fmatvec::Mat& DynamicSystem::getW(int i, bool check) const {
@@ -1576,19 +1576,9 @@ namespace MBSim {
     return gd;
   }
 
-//  fmatvec::Vec& DynamicSystem::geth(int i, bool check) {
-//    assert((not check) or (not ds->updh(i)));
-//    return h[i];
-//  }
-//
-//  fmatvec::Vec& DynamicSystem::getM(int i, bool check) {
-//    assert((not check) or (not ds->updM(i)));
-//    return M[i];
-//  }
-
-  fmatvec::SymMat& DynamicSystem::getLLM(int i, bool check) {
-    assert((not check) or (not ds->getUpdateLLM(i)));
-    return LLM[i];
+  fmatvec::SymMat& DynamicSystem::getLLM(bool check) {
+    assert((not check) or (not ds->getUpdateLLM()));
+    return LLM;
   }
 
   fmatvec::Mat& DynamicSystem::getW(int i, bool check) {
@@ -1616,19 +1606,19 @@ namespace MBSim {
     return r[i];
   }
 
-  const Vec& DynamicSystem::evalrdt(int i) {
-    if(ds->getUpdaterdt(i)) ds->updaterdt(i);
-    return rdt[i];
+  const Vec& DynamicSystem::evalrdt() {
+    if(ds->getUpdaterdt()) ds->updaterdt();
+    return rdt;
   }
 
-  const SymMat& DynamicSystem::evalM(int i) {
-    if(ds->getUpdateM(i)) ds->updateM(i);
-    return M[i];
+  const SymMat& DynamicSystem::evalM() {
+    if(ds->getUpdateM()) ds->updateM();
+    return M;
   }
 
-  const SymMat& DynamicSystem::evalLLM(int i) {
-    if(ds->getUpdateLLM(i)) ds->updateLLM(i);
-    return LLM[i];
+  const SymMat& DynamicSystem::evalLLM() {
+    if(ds->getUpdateLLM()) ds->updateLLM();
+    return LLM;
   }
 
   const Mat& DynamicSystem::evalW(int i) {

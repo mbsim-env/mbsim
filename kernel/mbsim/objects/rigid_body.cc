@@ -294,7 +294,7 @@ namespace MBSim {
 //          }
 //          updateM_ = &RigidBody::updateMConst;
 //          Mbuf = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
-//          LLM[0] = facLL(Mbuf);
+//          LLM = facLL(Mbuf);
 //          facLLM_ = &RigidBody::facLLMConst;
 //        }
       }
@@ -596,12 +596,12 @@ namespace MBSim {
   }
 #endif
 
-  void RigidBody::updateMConst(int i) {
-    M[i] += Mbuf;
+  void RigidBody::updateMConst() {
+    M += Mbuf;
   }
 
-  void RigidBody::updateMNotConst(int i) {
-    M[i] += m*JTJ(C->evalJacobianOfTranslation(i)) + JTMJ(evalGlobalInertiaTensor(),C->evalJacobianOfRotation(i));
+  void RigidBody::updateMNotConst() {
+    M += m*JTJ(C->evalJacobianOfTranslation()) + JTMJ(evalGlobalInertiaTensor(),C->evalJacobianOfRotation());
   }
 
   void RigidBody::initializeUsingXML(DOMElement *element) {

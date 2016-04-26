@@ -71,7 +71,7 @@ namespace MBSim {
       /* INTERFACE FOR DERIVED CLASSES */
       virtual void updateT();
       virtual void updateh(int i=0);
-      virtual void updateM(int i=0);
+      virtual void updateM();
       virtual void updatedq();
       virtual void updatezd() = 0;
       virtual void updatedu() = 0;
@@ -143,7 +143,7 @@ namespace MBSim {
       /**
        * \brief compute Cholesky decomposition of mass matrix TODO necessary?
        */
-      virtual void updateLLM(int i=0) = 0;
+      virtual void updateLLM() = 0;
 
       /**
        * \brief solve contact equations with single step fixed point scheme
@@ -237,8 +237,8 @@ namespace MBSim {
 
       const fmatvec::Mat& getT(bool check=true) const;
       const fmatvec::Vec& geth(int j=0, bool check=true) const;
-      const fmatvec::SymMat& getM(int i=0, bool check=true) const;
-      const fmatvec::SymMat& getLLM(int i=0, bool check=true) const;
+      const fmatvec::SymMat& getM(bool check=true) const;
+      const fmatvec::SymMat& getLLM(bool check=true) const;
       const fmatvec::Mat& getW(int i=0, bool check=true) const;
       const fmatvec::Mat& getV(int i=0, bool check=true) const;
       const fmatvec::Vec& getla() const { return la; }
@@ -251,13 +251,8 @@ namespace MBSim {
       void setLa(const fmatvec::Vec &La_) { La = La_; }
       fmatvec::VecInt& getjsv() { return jsv; }
       const fmatvec::VecInt& getjsv() const { return jsv; }
-//      const fmatvec::Vec& getres() const { return res; }
-//      const fmatvec::Vec& getcorr(bool check=true) const { return corr; };
       fmatvec::Mat& getW(int i=0, bool check=true);
-//      fmatvec::Mat& getV(int i=0, bool check=true);
-      fmatvec::SymMat& getLLM(int i=0, bool check=true);
-//      fmatvec::SymMat& getM(int i=0, bool check=true);
-//      fmatvec::Vec& geth(int j=0, bool check=true);
+      fmatvec::SymMat& getLLM(bool check=true);
 
       fmatvec::VecInt& getLinkStatus() { return LinkStatus; }
       fmatvec::VecInt& getLinkStatusReg() { return LinkStatusReg; }
@@ -266,13 +261,13 @@ namespace MBSim {
 
       const fmatvec::Mat& evalT();
       const fmatvec::Vec& evalh(int i=0);
-      const fmatvec::SymMat& evalM(int i=0);
-      const fmatvec::SymMat& evalLLM(int i=0);
+      const fmatvec::SymMat& evalM();
+      const fmatvec::SymMat& evalLLM();
       const fmatvec::Mat& evalW(int i=0);
       const fmatvec::Mat& evalV(int i=0);
       const fmatvec::Vec& evalwb();
       const fmatvec::Vec& evalr(int i=0);
-      const fmatvec::Vec& evalrdt(int i=0);
+      const fmatvec::Vec& evalrdt();
       const fmatvec::Vec& evalg();
       const fmatvec::Vec& evalgd();
       const fmatvec::Mat& evalWInverseKinetics(int i=0);
@@ -372,7 +367,7 @@ namespace MBSim {
        * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
        */
-      void updaterdtRef(const fmatvec::Vec &ref, int j=0);
+      void updaterdtRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
@@ -385,14 +380,14 @@ namespace MBSim {
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateMRef(const fmatvec::SymMat &ref, int i=0);
+      void updateMRef(const fmatvec::SymMat &ref);
 
       /**
        * \brief references to Cholesky decomposition of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateLLMRef(const fmatvec::SymMat &ref, int i=0);
+      void updateLLMRef(const fmatvec::SymMat &ref);
 
       /**
        * \brief references to relative distances of dynamic system parent
@@ -809,12 +804,12 @@ namespace MBSim {
       /**
        * \brief mass matrix
        */
-      fmatvec::SymMat M[2];
+      fmatvec::SymMat M;
 
       /** 
        * \brief Cholesky decomposition of mass matrix
        */
-      fmatvec::SymMat LLM[2];
+      fmatvec::SymMat LLM;
 
       /**
        * \brief positions, differentiated positions, initial positions
@@ -834,7 +829,7 @@ namespace MBSim {
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links and nonsmooth
        */
-      fmatvec::Vec h[2], r[2], rdt[2];
+      fmatvec::Vec h[2], r[2], rdt;
 
       /**
        * \brief 

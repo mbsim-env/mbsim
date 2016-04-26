@@ -64,13 +64,10 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
-      updrdt[i] = true;
-      updM[i] = true;
-      updLLM[i] = true;
       updW[i] = true;
       updV[i] = true;
     }
@@ -321,11 +318,9 @@ namespace MBSim {
     else if (stage == unknownStage) {
       setDynamicSystemSolver(this);
 
-      MParent[0].resize(getuSize(0));
-      MParent[1].resize(getuSize(1));
+      MParent.resize(getuSize(0));
       TParent.resize(getqSize(), getuSize());
-      LLMParent[0].resize(getuSize(0));
-      LLMParent[1].resize(getuSize(1));
+      LLMParent.resize(getuSize(0));
       WParent[0].resize(getuSize(0), getlaSize());
       VParent[0].resize(getuSize(0), getlaSize());
       WParent[1].resize(getuSize(1), getlaSize());
@@ -346,8 +341,7 @@ namespace MBSim {
       hParent[1].resize(getuSize(1));
       rParent[0].resize(getuSize(0));
       rParent[1].resize(getuSize(1));
-      rdtParent[0].resize(getuSize(0));
-      rdtParent[1].resize(getuSize(1));
+      rdtParent.resize(getuSize(0));
       fParent.resize(getxSize());
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
@@ -359,11 +353,9 @@ namespace MBSim {
       laInverseKineticsParent.resize(laInverseKineticsSize);
       corrParent.resize(getgdSize());
 
-      updateMRef(MParent[0], 0);
-      updateMRef(MParent[1], 1);
+      updateMRef(MParent);
       updateTRef(TParent);
-      updateLLMRef(LLMParent[0], 0);
-      updateLLMRef(LLMParent[1], 1);
+      updateLLMRef(LLMParent);
 
       Group::init(stage);
 
@@ -379,10 +371,9 @@ namespace MBSim {
       updategdRef(gdParent);
       updatehRef(hParent[0], 0);
       updaterRef(rParent[0], 0);
-      updaterdtRef(rdtParent[0], 0);
+      updaterdtRef(rdtParent);
       updatehRef(hParent[1], 1);
       updaterRef(rParent[1], 1);
-      updaterdtRef(rdtParent[1], 1);
       updateWRef(WParent[0], 0);
       updateWRef(WParent[1], 1);
       updateVRef(VParent[0], 0);
@@ -393,11 +384,10 @@ namespace MBSim {
       updateWInverseKineticsRef(WInverseKineticsParent[0], 0);
       updateWInverseKineticsRef(WInverseKineticsParent[1], 1);
       updatebInverseKineticsRef(bInverseKineticsParent);
-      updatehRef(hParent[1], 1); // TODO: warum zweifacher Auruf?
-      updaterRef(rParent[1], 1);
-      updaterdtRef(rdtParent[1], 1);
-      updateWRef(WParent[1], 1);
-      updateVRef(VParent[1], 1);
+//      updatehRef(hParent[1], 1); // TODO: warum zweifacher Auruf?
+//      updaterRef(rParent[1], 1);
+//      updateWRef(WParent[1], 1);
+//      updateVRef(VParent[1], 1);
 
       if (impactSolver == RootFinding)
         updateresRef(resParent);
@@ -830,15 +820,15 @@ namespace MBSim {
     updT = false;
   }
 
-  void DynamicSystemSolver::updateM(int i) {
-    M[i].init(0);
-    Group::updateM(i);
-    updM[i] = false;
+  void DynamicSystemSolver::updateM() {
+    M.init(0);
+    Group::updateM();
+    updM = false;
   }
 
-  void DynamicSystemSolver::updateLLM(int i) {
-    Group::updateLLM(i);
-    updLLM[i] = false;
+  void DynamicSystemSolver::updateLLM() {
+    Group::updateLLM();
+    updLLM = false;
   }
 
   void DynamicSystemSolver::updater(int j) {
@@ -846,9 +836,9 @@ namespace MBSim {
     updr[j] = false;
   }
 
-  void DynamicSystemSolver::updaterdt(int j) {
-    rdt[j] = evalV(j) * evalLa(); // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
-    updrdt[j] = false;
+  void DynamicSystemSolver::updaterdt() {
+    rdt = evalV() * evalLa(); // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    updrdt = false;
   }
 
   void DynamicSystemSolver::updatewb() {
@@ -1103,7 +1093,7 @@ namespace MBSim {
         break;
       }
       Vec mu = slvLS(Gv, -evalg() + getW(0,false).T() * nu + corr);
-      Vec dnu = slvLLFac(getLLM(0,false), getW(0,false) * mu) - nu;
+      Vec dnu = slvLLFac(getLLM(false), getW(0,false) * mu) - nu;
       nu += dnu;
       q += T * dnu;
       resetUpToDate();
@@ -1393,11 +1383,6 @@ namespace MBSim {
       Group::updaterFactors();
     else
       THROW_MBSIMERROR("(DynamicSystemSolver::updaterFactors()): Unknown strategy.");
-  }
-
-  void DynamicSystemSolver::computeConstraintForces() {
-    throw;
-//    la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1690,12 +1675,9 @@ namespace MBSim {
     updh[1] = true;
     updr[0] = true;
     updr[1] = true;
-    updrdt[0] = true;
-    updrdt[1] = true;
-    updM[0] = true;
-    updM[1] = true;
-    updLLM[0] = true;
-    updLLM[1] = true;
+    updrdt = true;
+    updM = true;
+    updLLM = true;
     updW[0] = true;
     updW[1] = true;
     updV[0] = true;
