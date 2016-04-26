@@ -95,8 +95,6 @@ namespace MBSim {
       virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
       virtual fmatvec::Vec& getu() { return u; };
-      virtual const fmatvec::Vec& getqd() const { return qd; };
-      virtual fmatvec::Vec& getqd() { return qd; };
       void setq(const fmatvec::Vec& q_){ q = q_;}
       void setu(const fmatvec::Vec& u_){ u = u_;}
       void setjsv(const fmatvec::VecInt& jsv_){ jsv = jsv_;}
@@ -234,8 +232,6 @@ namespace MBSim {
       const fmatvec::SqrMat3& getOrientation() const { return APF; }
       const Frame* getFrameOfReference() const { return R; };
 
-      const fmatvec::Vec& getxd() const { return xd; };
-      fmatvec::Vec& getxd() { return xd; };
       const fmatvec::Vec& getx0() const { return x0; };
       fmatvec::Vec& getx0() { return x0; };
 

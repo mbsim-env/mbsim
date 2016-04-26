@@ -242,11 +242,6 @@ namespace MBSim {
       fmatvec::Vec& getq0() { return q0; };
       fmatvec::Vec& getu0() { return u0; };
 
-      const fmatvec::Vec& getqd() const { return qd; };
-      const fmatvec::Vec& getud(int i=0) const { return ud[i]; };
-      fmatvec::Vec& getqd() { return qd; };
-      fmatvec::Vec& getud(int i=0) { return ud[i]; };
-
       const fmatvec::Mat& evalT();
       const fmatvec::Vec& evalh(int i=0);
       const fmatvec::SymMat& evalM(int i=0);

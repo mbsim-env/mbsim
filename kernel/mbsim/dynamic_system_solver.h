@@ -145,6 +145,7 @@ namespace MBSim {
       virtual void updateh(int i=0);
       virtual void updateM(int i=0);
       virtual void updateLLM(int i=0);
+      virtual void updatezd();
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */

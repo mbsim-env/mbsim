@@ -881,6 +881,11 @@ namespace MBSim {
     updV[j] = false;
   }
 
+  void DynamicSystemSolver::updatezd() {
+    Group::updatezd();
+    updzd = false;
+  }
+
   void DynamicSystemSolver::closePlot() {
     if (getPlotFeature(plotRecursive) == enabled) {
       Group::closePlot();
@@ -1714,7 +1719,6 @@ namespace MBSim {
     if(updzd) {
       solveDirectly = true;
       updatezd();
-      updzd = false;
     }
     return zdParent;
   }

@@ -360,7 +360,6 @@ namespace MBSim {
       /***************************************************/
 
       void setx(const fmatvec::Vec &x_) { x = x_; }
-      const fmatvec::Vec& getxd() const { return xd; }
       
       virtual void setsvInd(int svInd_) { svInd = svInd_; };
       int getsvSize() const { return svSize; }
