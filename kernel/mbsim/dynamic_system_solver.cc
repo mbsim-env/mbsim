@@ -1725,7 +1725,6 @@ namespace MBSim {
 
   void DynamicSystemSolver::solveAndPlot() {
     solveDirectly = not(useConstraintSolverForPlot);
-    updatezd();
     computeInverseKinetics();
     plot();
   }

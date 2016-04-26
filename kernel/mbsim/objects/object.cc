@@ -305,6 +305,11 @@ namespace MBSim {
     return LLM[i];
   }
 
+  const Vec& Object::evaludall() {
+    if(ds->getUpdatezd()) ds->updatezd();
+    return udall[0];
+  }
+
   void Object::updatedq() {
     qd = evalT() * u * getStepSize();
   }

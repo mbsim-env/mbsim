@@ -524,6 +524,7 @@ namespace MBSim {
       bool getUpdategd() { return updgd; }
       bool getUpdatela() { return updla; }
       bool getUpdateLa() { return updLa; }
+      bool getUpdatezd() { return updzd; }
 
       void resize_();
 

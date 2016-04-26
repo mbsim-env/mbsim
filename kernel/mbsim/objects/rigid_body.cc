@@ -514,8 +514,8 @@ namespace MBSim {
   }
 
   void RigidBody::updateAccelerations(Frame *frame) {
-    frame->setAcceleration(Z.evalJacobianOfTranslation()*udall[0] + Z.evalGyroscopicAccelerationOfTranslation());
-    frame->setAngularAcceleration(Z.evalJacobianOfRotation()*udall[0] + Z.evalGyroscopicAccelerationOfRotation());
+    frame->setAcceleration(Z.evalJacobianOfTranslation()*evaludall() + Z.evalGyroscopicAccelerationOfTranslation());
+    frame->setAngularAcceleration(Z.getJacobianOfRotation()*udall[0] + Z.getGyroscopicAccelerationOfRotation());
   }
 
   void RigidBody::updateJacobians0(Frame *frame) {
