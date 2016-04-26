@@ -71,7 +71,7 @@ namespace MBSimIntegrator {
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
-      int iter,step, integrationSteps, maxIter, sumIter;
+      int step, integrationSteps, maxIter, sumIter;
 
       /**
        * \brief computing time counter

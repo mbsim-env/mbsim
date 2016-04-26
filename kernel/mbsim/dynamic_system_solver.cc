@@ -64,7 +64,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DynamicSystemSolver, MBSIM%"DynamicSystemSolver")
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(1), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(false), useConstraintSolverForPlot(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), updT(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -844,12 +844,12 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updater(int j) {
-    r[j] = evalV(j) * la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    r[j] = evalV(j) * evalla(); // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updr[j] = false;
   }
 
   void DynamicSystemSolver::updaterdt(int j) {
-    rdt[j] = evalV(j) * La; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    rdt[j] = evalV(j) * evalLa(); // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updrdt[j] = false;
   }
 
@@ -888,71 +888,11 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraints() {
-    if (la.size() == 0)
-      return 0;
-
-    if (useOldla)
-      initla();
-    else
-      la.init(0);
-
-    int iter;
-    iter = (this->*solveConstraints_)(); // solver election
-    if (iter >= maxIter) {
-      msg(Warn) << "\n";
-      msg(Warn) << "Iterations: " << iter << "\n";
-      msg(Warn) << "\nError: no convergence." << endl;
-      if (stopIfNoConvergence) {
-        if (dropContactInfo)
-          dropContactMatrices();
-        THROW_MBSIMERROR("Maximal Number of Iterations reached");
-      }
-      msg(Warn) << "Anyway, continuing integration..." << endl;
-    }
-
-    if (warnLevel >= 1 && iter > highIter)
-      msg(Warn) << endl << "high number of iterations: " << iter << endl;
-
-    if (useOldla)
-      savela();
-
-    return iter;
+    throw;
   }
 
   int DynamicSystemSolver::solveImpacts() {
-    if (La.size() == 0)
-      return 0;
-
-    if (useOldla)
-      initLa();
-    else
-      La.init(0);
-    
-    int iter;
-    Vec LaOld;
-    LaOld << La;
-    iter = (this->*solveImpacts_)(); // solver election
-    if (iter >= maxIter) {
-      msg(Warn) << "\n";
-      msg(Warn) << "Iterations: " << iter << "\n";
-      msg(Warn) << "\nError: no convergence." << endl;
-      if (stopIfNoConvergence) {
-        if (dropContactInfo)
-          dropContactMatrices();
-        THROW_MBSIMERROR("Maximal Number of Iterations reached");
-      }
-      msg(Warn) << "Anyway, continuing integration..." << endl;
-    }
-
-    if (warnLevel >= 1 && iter > highIter)
-      msg(Warn) << "high number of iterations: " << iter << endl;
-
-    if (useOldla)
-      saveLa();
-
-    la = La/dt;
-
-    return iter;
+    throw;
   }
 
   void DynamicSystemSolver::computeInitialCondition() {
@@ -978,7 +918,7 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations() {
-    La = slvLS(evalG(), -(evalgd() + evalW().T() * slvLLFac(evalLLM(), evalh()) * dt));
+    La = slvLS(evalG(), -evalbi());
     return 1;
   }
 
@@ -1011,6 +951,77 @@ namespace MBSim {
     else
       bi << evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
     updbi = false;
+  }
+
+  void DynamicSystemSolver::updatela() {
+    if (la.size()) {
+
+    if(solveDirectly)
+      la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
+    else {
+
+    if (useOldla)
+      initla();
+    else
+      la.init(0);
+
+    iterc = (this->*solveConstraints_)(); // solver election
+    if (iterc >= maxIter) {
+      msg(Warn) << "\n";
+      msg(Warn) << "Iterations: " << iterc << "\n";
+      msg(Warn) << "\nError: no convergence." << endl;
+      if (stopIfNoConvergence) {
+        if (dropContactInfo)
+          dropContactMatrices();
+        THROW_MBSIMERROR("Maximal Number of Iterations reached");
+      }
+      msg(Warn) << "Anyway, continuing integration..." << endl;
+    }
+
+    if (warnLevel >= 1 && iterc > highIter)
+      msg(Warn) << endl << "high number of iterations: " << iterc << endl;
+
+    if (useOldla)
+      savela();
+    }
+    }
+
+    updla = false;
+  }
+
+  void DynamicSystemSolver::updateLa() {
+    if (La.size()) {
+
+    if (useOldla)
+      initLa();
+    else
+      La.init(0);
+
+    Vec LaOld;
+    LaOld << La;
+    iteri = (this->*solveImpacts_)(); // solver election
+    if (iteri >= maxIter) {
+      msg(Warn) << "\n";
+      msg(Warn) << "Iterations: " << iteri << "\n";
+      msg(Warn) << "\nError: no convergence." << endl;
+      if (stopIfNoConvergence) {
+        if (dropContactInfo)
+          dropContactMatrices();
+        THROW_MBSIMERROR("Maximal Number of Iterations reached");
+      }
+      msg(Warn) << "Anyway, continuing integration..." << endl;
+    }
+
+    if (warnLevel >= 1 && iteri > highIter)
+      msg(Warn) << "high number of iterations: " << iteri << endl;
+
+    if (useOldla)
+      saveLa();
+
+    la = La/dt;
+    }
+
+    updLa = false;
   }
 
   void DynamicSystemSolver::decreaserFactors() {
@@ -1382,7 +1393,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces() {
-    la = slvLS(evalG(), -evalbc()); // slvLS because of undeterminded system of equations
+    throw;
+//    la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
   }
 
   void DynamicSystemSolver::constructor() {
@@ -1693,12 +1705,14 @@ namespace MBSim {
     updbi = true;
     updsv = true;
     updzd = true;
+    updla = true;
+    updLa = true;
     Group::resetUpToDate();
   }
 
   const Vec& DynamicSystemSolver::evalzd() {
     if(updzd) {
-      if(laSize) computeConstraintForces();
+      solveDirectly = true;
       updatezd();
       updzd = false;
     }
@@ -1706,12 +1720,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::solveAndPlot() {
-    if(laSize) {
-      if(useConstraintSolverForPlot)
-        solveConstraints();
-      else
-        computeConstraintForces();
-    }
+    solveDirectly = not(useConstraintSolverForPlot);
     updatezd();
     computeInverseKinetics();
     plot();

@@ -227,9 +227,39 @@ namespace MBSim {
     return gd;
   }
 
+  const Vec& Link::evalla() {
+    if(ds->getUpdatela()) ds->updatela();
+    return la;
+  }
+
+  const Vec& Link::evalLa() {
+    if(ds->getUpdateLa()) ds->updateLa();
+    return La;
+  }
+
   const Vec& Link::evalwb() {
     if(ds->getUpdatewb()) ds->updatewb();
     return wb;
+  }
+
+  const fmatvec::Vec& Link::getla(bool check) const {
+    assert((not check) or (not ds->getUpdatela()));
+    return la;
+  }
+
+  fmatvec::Vec& Link::getla(bool check) {
+    assert((not check) or (not ds->getUpdatela()));
+    return la;
+  }
+
+  const fmatvec::Vec& Link::getLa(bool check) const {
+    assert((not check) or (not ds->getUpdateLa()));
+    return La;
+  }
+
+  fmatvec::Vec& Link::getLa(bool check) {
+    assert((not check) or (not ds->getUpdateLa()));
+    return La;
   }
 
 }

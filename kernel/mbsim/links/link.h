@@ -369,10 +369,10 @@ namespace MBSim {
 
       int getLinkStatusRegSize() const { return LinkStatusRegSize; }
 
-      const fmatvec::Vec& getla() const { return la; }
-      const fmatvec::Vec& getLa() const { return La; }
-      fmatvec::Vec& getla() { return la; }
-      fmatvec::Vec& getLa() { return La; }
+      const fmatvec::Vec& getla(bool check=true) const;
+      const fmatvec::Vec& getLa(bool check=true) const;
+      fmatvec::Vec& getla(bool check=true);
+      fmatvec::Vec& getLa(bool check=true);
 
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
@@ -380,6 +380,8 @@ namespace MBSim {
 
       const fmatvec::Vec& evalg();
       const fmatvec::Vec& evalgd();
+      const fmatvec::Vec& evalla();
+      const fmatvec::Vec& evalLa();
       const fmatvec::Vec& evalwb();
 
       int getgdInd() const { return gdInd; } 

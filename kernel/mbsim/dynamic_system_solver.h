@@ -168,6 +168,8 @@ namespace MBSim {
       virtual void updateV(int j=0);
       virtual void updatebc();
       virtual void updatebi();
+      virtual void updatela();
+      virtual void updateLa();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -245,6 +247,8 @@ namespace MBSim {
       const fmatvec::Vec& evalbi() { if(updbi) updatebi(); return bi; }
       const fmatvec::Vec& evalsv();
       const fmatvec::Vec& evalz0();
+      const fmatvec::Vec& evalla() { if(updla) updatela(); return la; }
+      const fmatvec::Vec& evalLa() { if(updLa) updateLa(); return La; }
 
       const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
       const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
@@ -257,6 +261,8 @@ namespace MBSim {
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
       int getMaxIter()  {return maxIter;}
+      int getIterC()  {return iterc;}
+      int getIterI()  {return iteri;}
       /***************************************************/
 
       /**
@@ -515,6 +521,8 @@ namespace MBSim {
       bool getUpdatewb() { return updwb; }
       bool getUpdateg() { return updg; }
       bool getUpdategd() { return updgd; }
+      bool getUpdatela() { return updla; }
+      bool getUpdateLa() { return updLa; }
 
       void resize_();
 
@@ -709,7 +717,7 @@ namespace MBSim {
       /**
        * \brief maximum number of contact iterations, high number of contact iterations for warnings, maximum number of damping steps for Newton scheme
        */
-      int maxIter, highIter, maxDampingSteps;
+      int maxIter, highIter, maxDampingSteps, iterc, iteri;
 
       /**
        * \brief Levenberg-Marquard parameter
@@ -826,9 +834,11 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd;
+      bool updT, updh[2], updr[2], updrdt[2], updM[2], updLLM[2], updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa;
 
       boost::function<void()> updatebcCallBack, updatebiCallBack;
+
+      bool solveDirectly;
 
     private:
       /**

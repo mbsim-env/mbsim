@@ -43,7 +43,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TimeSteppingIntegrator, MBSIMINT%"TimeSteppingIntegrator")
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
+  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), tPlot(0.), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
   void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
     // initialisation
@@ -79,8 +79,8 @@ namespace MBSimIntegrator {
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot<< system.getTime() << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+        integPlot<< system.getTime() << " " << dt << " " <<  system.getIterI() << " " << time << " "<<system.getlaSize() <<endl;
+        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system.getIterI() <<  "\r"<<flush;
         tPlot += dtPlot;
       }
 
@@ -91,14 +91,13 @@ namespace MBSimIntegrator {
       system.checkActive(1);
       if (system.gActiveChanged()) system.resize_();
 
-      iter = system.solveImpacts();
-
-      if(iter>maxIter) maxIter = iter;
-      sumIter += iter;
-
       system.getu() += system.evaldu();
       system.getx() += system.evaldx();
       system.resetUpToDate();
+
+      if(system.getIterI()>maxIter) maxIter = system.getIterI();
+      sumIter += system.getIterI();
+
     }
   }
 

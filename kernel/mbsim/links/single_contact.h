@@ -185,18 +185,6 @@ namespace MBSim {
       void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
       void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
       ContactKinematics* getContactKinematics() const { return contactKinematics; }
-      fmatvec::Vec & getlaN() { return laN; }
-      fmatvec::Vec getlaN() const { return laN; }
-      fmatvec::Vec & getlaT() { return laT; }
-      fmatvec::Vec getlaT() const { return laT; }
-      fmatvec::Vec & getLaN() { return LaN; }
-      fmatvec::Vec getLaN() const { return LaN; }
-      fmatvec::Vec & getLaT() { return LaT; }
-      fmatvec::Vec getLaT() const { return LaT; }
-      fmatvec::Vec & getgdN() { return gdN; }
-      fmatvec::Vec getgdN() const { return gdN; }
-      fmatvec::Vec & getgdT() { return gdT; }
-      fmatvec::Vec getgdT() const { return gdT; }
       /***************************************************/
 
       /**
