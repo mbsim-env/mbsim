@@ -336,13 +336,11 @@ namespace MBSim {
       gdParent.resize(getgdSize());
       zParent.resize(getzSize());
       zdParent.resize(getzSize());
-      udParent1.resize(getuSize(1));
       hParent[0].resize(getuSize(0));
       hParent[1].resize(getuSize(1));
       rParent[0].resize(getuSize(0));
       rParent[1].resize(getuSize(1));
       rdtParent.resize(getuSize(0));
-      fParent.resize(getxSize());
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
       LinkStatusParent.resize(getLinkStatusSize());
@@ -1649,7 +1647,7 @@ namespace MBSim {
     return zParent;
   }
 
-  void DynamicSystemSolver::computeInverseKinetics() {
+  void DynamicSystemSolver::updatelaInverseKinetics() {
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     int n = evalWInverseKinetics().cols();
@@ -1699,7 +1697,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::solveAndPlot() {
     solveDirectly = not(useConstraintSolverForPlot);
-    computeInverseKinetics();
+    updatelaInverseKinetics();
     plot();
   }
 

@@ -566,7 +566,7 @@ namespace MBSim {
        * \brief compute inverse kinetics constraint forces
        * \param current time
        */
-      void computeInverseKinetics();
+      void updatelaInverseKinetics();
 
       void solveAndPlot();
 
@@ -654,8 +654,6 @@ namespace MBSim {
        */
       fmatvec::Vec zdParent;
 
-      fmatvec::Vec udParent1;
-
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links right hand side
        */
@@ -665,11 +663,6 @@ namespace MBSim {
        * \brief nonsmooth right hand side
        */
       fmatvec::Vec rParent[2], rdtParent;
-
-      /**
-       * \brief right hand side of order one parameters
-       */
-      fmatvec::Vec fParent;
 
       /**
        * \brief stopvector (rootfunctions for event driven integration
