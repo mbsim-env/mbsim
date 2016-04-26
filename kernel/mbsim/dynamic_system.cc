@@ -239,11 +239,11 @@ namespace MBSim {
       (**i).updateW(j);
   }
 
-  void DynamicSystem::updateWInverseKinetics(int j) {
-    WInverseKinetics[j].init(0);
+  void DynamicSystem::updateWInverseKinetics() {
+    WInverseKinetics.init(0);
 
     for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
-      (**i).updateW(j);
+      (**i).updateW(1);
   }
 
   void DynamicSystem::updatebInverseKinetics() {
@@ -800,11 +800,11 @@ namespace MBSim {
       (**i).updateWRef(WParent, j);
   }
 
-  void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent, int j) {
-    WInverseKinetics[j] >> WParent(Index(hInd[j], hInd[j] + hSize[j] - 1), Index(0, laInverseKineticsSize - 1));
+  void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent) {
+    WInverseKinetics >> WParent(Index(hInd[1], hInd[1] + hSize[1] - 1), Index(0, laInverseKineticsSize - 1));
 
     for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
-      (**i).updateWRef(WParent, j);
+      (**i).updateWRef(WParent, 1);
   }
 
   void DynamicSystem::updatebInverseKineticsRef(const Mat &bParent) {
@@ -1646,9 +1646,9 @@ namespace MBSim {
     return gd;
   }
 
-  const Mat& DynamicSystem::evalWInverseKinetics(int i) {
-    ds->updateWInverseKinetics(i);
-    return WInverseKinetics[i];
+  const Mat& DynamicSystem::evalWInverseKinetics() {
+    ds->updateWInverseKinetics();
+    return WInverseKinetics;
   }
 
   const Mat& DynamicSystem::evalbInverseKinetics() {

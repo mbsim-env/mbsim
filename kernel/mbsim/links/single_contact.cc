@@ -78,9 +78,19 @@ namespace MBSim {
     updlaT = true;
   }
 
+  const double& SingleContact::evallaN() {
+    if(ds->getUpdatela()) ds->updatela();
+    return laN(0);
+  }
+
+  const Vec& SingleContact::evallaT() {
+    if(ds->getUpdatela()) ds->updatela();
+    return laT;
+  }
+
   void SingleContact::updateGeneralizedNormalForceM() {
     if(gdActive[0])
-      lambdaN = laN(0);
+      lambdaN = evallaN();
     else
       lambdaN = 0;
   }
@@ -95,7 +105,7 @@ namespace MBSim {
 
   void SingleContact::updateGeneralizedTangentialForceM() {
     if(gdActive[1])
-      lambdaT = laT;
+      lambdaT = evallaT();
     else if(gdActive[0])
       lambdaT = fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections()))) * evalGeneralizedNormalForce();
     else

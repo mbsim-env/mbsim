@@ -75,6 +75,8 @@ namespace MBSimIntegrator {
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
         if(driftCompensation) system.projectGeneralizedPositions(0);
+        system.setUpdatela(false);
+        system.setUpdateLa(false);
         system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;

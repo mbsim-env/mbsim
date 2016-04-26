@@ -114,7 +114,7 @@ namespace MBSim {
       virtual void updateLinkStatus();
       virtual void updateLinkStatusReg();
 
-      virtual void updateWInverseKinetics(int j=0);
+      virtual void updateWInverseKinetics();
       virtual void updatebInverseKinetics();
 
       virtual void updatedx();
@@ -270,7 +270,7 @@ namespace MBSim {
       const fmatvec::Vec& evalrdt();
       const fmatvec::Vec& evalg();
       const fmatvec::Vec& evalgd();
-      const fmatvec::Mat& evalWInverseKinetics(int i=0);
+      const fmatvec::Mat& evalWInverseKinetics();
       const fmatvec::Mat& evalbInverseKinetics();
       const fmatvec::Vec& evalsv();
 
@@ -434,7 +434,7 @@ namespace MBSim {
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWInverseKineticsRef(const fmatvec::Mat &ref, int i=0);
+      void updateWInverseKineticsRef(const fmatvec::Mat &ref);
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
@@ -955,7 +955,7 @@ namespace MBSim {
        */
       int laInverseKineticsSize, bInverseKineticsSize;
 
-      fmatvec::Mat WInverseKinetics[2], bInverseKinetics;
+      fmatvec::Mat WInverseKinetics, bInverseKinetics;
       fmatvec::Vec laInverseKinetics;
 
       int corrSize, corrInd;

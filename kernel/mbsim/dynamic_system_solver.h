@@ -525,6 +525,8 @@ namespace MBSim {
       bool getUpdatela() { return updla; }
       bool getUpdateLa() { return updLa; }
       bool getUpdatezd() { return updzd; }
+      void setUpdatela(bool updla_) { updla = updla_; }
+      void setUpdateLa(bool updLa_) { updLa = updLa_; }
 
       void resize_();
 
@@ -822,7 +824,7 @@ namespace MBSim {
       /**
        * \brief
        */
-      fmatvec::Mat WInverseKineticsParent[2];
+      fmatvec::Mat WInverseKineticsParent;
 
       bool alwaysConsiderContact;
       bool inverseKinetics;

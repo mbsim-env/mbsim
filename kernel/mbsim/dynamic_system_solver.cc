@@ -347,8 +347,7 @@ namespace MBSim {
       jsvParent.resize(getsvSize());
       LinkStatusParent.resize(getLinkStatusSize());
       LinkStatusRegParent.resize(getLinkStatusRegSize());
-      WInverseKineticsParent[0].resize(hSize[0], laInverseKineticsSize);
-      WInverseKineticsParent[1].resize(hSize[1], laInverseKineticsSize);
+      WInverseKineticsParent.resize(hSize[1], laInverseKineticsSize);
       bInverseKineticsParent.resize(bInverseKineticsSize, laInverseKineticsSize);
       laInverseKineticsParent.resize(laInverseKineticsSize);
       corrParent.resize(getgdSize());
@@ -381,13 +380,8 @@ namespace MBSim {
       updatewbRef(wbParent);
 
       updatelaInverseKineticsRef(laInverseKineticsParent);
-      updateWInverseKineticsRef(WInverseKineticsParent[0], 0);
-      updateWInverseKineticsRef(WInverseKineticsParent[1], 1);
+      updateWInverseKineticsRef(WInverseKineticsParent);
       updatebInverseKineticsRef(bInverseKineticsParent);
-//      updatehRef(hParent[1], 1); // TODO: warum zweifacher Auruf?
-//      updaterRef(rParent[1], 1);
-//      updateWRef(WParent[1], 1);
-//      updateVRef(VParent[1], 1);
 
       if (impactSolver == RootFinding)
         updateresRef(resParent);
@@ -1658,12 +1652,12 @@ namespace MBSim {
   void DynamicSystemSolver::computeInverseKinetics() {
     updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
     updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
-    int n = evalWInverseKinetics(1).cols();
-    int m1 = WInverseKinetics[1].rows();
+    int n = evalWInverseKinetics().cols();
+    int m1 = WInverseKinetics.rows();
     int m2 = evalbInverseKinetics().rows();
     Mat A(m1 + m2, n);
     Vec b(m1 + m2);
-    A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics[1];
+    A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics;
     A(Index(m1, m1 + m2 - 1), Index(0, n - 1)) = bInverseKinetics;
     b(0, m1 - 1) = -evalh(1) - evalr(1);
     laInverseKinetics = slvLL(JTJ(A), A.T() * b);

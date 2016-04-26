@@ -60,7 +60,7 @@ namespace MBSim {
 
   void Joint::updatelaFM() {
     for (int i = 0; i < forceDir.cols(); i++)
-      lambdaF(i) = la(i);
+      lambdaF(i) = evalla()(i);
   }
 
   void Joint::updatelaFS() {
@@ -70,7 +70,7 @@ namespace MBSim {
 
   void Joint::updatelaMM() {
     for (int i = forceDir.cols(), j=0; i < forceDir.cols() + momentDir.cols(); i++, j++)
-      lambdaM(j) = la(i);
+      lambdaM(j) = evalla()(i);
   }
 
   void Joint::updatelaMS() {

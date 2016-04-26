@@ -67,6 +67,9 @@ namespace MBSim {
 
       double& getGeneralizedNormalForce(bool check=true) {  assert((not check) or (not updlaN)); return lambdaN; }
 
+      const double& evallaN();
+      const fmatvec::Vec& evallaT();
+
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb();
       virtual void updateV(int i=0);
