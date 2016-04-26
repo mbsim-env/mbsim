@@ -40,13 +40,13 @@ namespace MBSim {
   Graph::~Graph() {}
 
   void Graph::updatedu() {
-    ud[0] = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
+    ud = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
   }
 
   void Graph::updatezd() {
     for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i)
       (**i).updateqd();
-    ud[0] = slvLLFac(evalLLM(), evalh()+evalr());
+    ud = slvLLFac(evalLLM(), evalh()+evalr());
   }
 
   void Graph::sethSize0(int hSize_) {

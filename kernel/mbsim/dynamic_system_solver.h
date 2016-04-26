@@ -238,7 +238,7 @@ namespace MBSim {
       fmatvec::Vec& getbi(bool check=true) { assert((not check) or (not updbi)); return bi; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
-      const fmatvec::Vec& evaldu() { updatedu(); return ud[0]; }
+      const fmatvec::Vec& evaldu() { updatedu(); return ud; }
       const fmatvec::Vec& evaldq() { updatedq(); return qd; }
       const fmatvec::Vec& evaldx() { updatedx(); return xd; }
       const fmatvec::Vec& evalzd();

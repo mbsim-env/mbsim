@@ -58,7 +58,7 @@ namespace MBSim {
       virtual void updatedhdz();
       virtual void updatedq();
       virtual void updatedu();
-      virtual void updateud(int i=0);
+      virtual void updateud();
       virtual void updateqd();
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
@@ -114,13 +114,13 @@ namespace MBSim {
        * \brief references to differentiated velocities of dynamic system parent
        * \param udRef vector to be referenced
        */
-      virtual void updateudRef(const fmatvec::Vec& udRef, int i=0);
+      virtual void updateudRef(const fmatvec::Vec& udRef);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param udallRef vector to be referenced
        */
-      virtual void updateudallRef(const fmatvec::Vec& udallRef, int i=0);
+      virtual void updateudallRef(const fmatvec::Vec& udallRef);
 
       /**
        * \brief references to smooth force vector of dynamic system parent
@@ -292,7 +292,7 @@ namespace MBSim {
       /**
        * \brief differentiated positions, velocities
        */
-      fmatvec::Vec qd, ud[2], udall[2];
+      fmatvec::Vec qd, ud, udall;
 
       /** 
        * \brief complete and object smooth and nonsmooth right hand side
@@ -328,4 +328,3 @@ namespace MBSim {
 }
 
 #endif /* _OBJECT_H_ */
-

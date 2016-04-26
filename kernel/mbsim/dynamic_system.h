@@ -345,13 +345,13 @@ namespace MBSim {
        * \brief references to differentiated velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateudRef(const fmatvec::Vec &ref, int i=0);
+      void updateudRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateudallRef(const fmatvec::Vec &ref, int i=0);
+      void updateudallRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to smooth right hand side of dynamic system parent
@@ -824,7 +824,7 @@ namespace MBSim {
       /**
        * \brief velocities, differentiated velocities, initial velocities
        */
-      fmatvec::Vec u, ud[2], u0;
+      fmatvec::Vec u, ud, u0;
 
       /**
        * \brief order one parameters, differentiated order one parameters, initial order one parameters

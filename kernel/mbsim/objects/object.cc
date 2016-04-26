@@ -112,7 +112,7 @@ namespace MBSim {
         for (int i = 0; i < qSize; ++i)
           plotVector.push_back(qd(i) / getStepSize());
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(ud[0](i) / getStepSize());
+          plotVector.push_back(ud(i) / getStepSize());
       }
       if (getPlotFeature(rightHandSide) == enabled) {
         for (int i = 0; i < uSize[0]; ++i)
@@ -154,12 +154,12 @@ namespace MBSim {
     uall >> uParent(hInd[0], hInd[0] + hSize[0] - 1);
   }
 
-  void Object::updateudRef(const Vec &udParent, int i) {
-    ud[i] >> udParent(uInd[i], uInd[i] + uSize[i] - 1);
+  void Object::updateudRef(const Vec &udParent) {
+    ud >> udParent(uInd[0], uInd[0] + uSize[0] - 1);
   }
 
-  void Object::updateudallRef(const Vec &udParent, int i) {
-    udall[i] >> udParent(hInd[i], hInd[i] + hSize[i] - 1);
+  void Object::updateudallRef(const Vec &udParent) {
+    udall >> udParent(hInd[0], hInd[0] + hSize[0] - 1);
   }
 
   void Object::updatehRef(const Vec& hParent, int i) {
@@ -307,7 +307,7 @@ namespace MBSim {
 
   const Vec& Object::evaludall() {
     if(ds->getUpdatezd()) ds->updatezd();
-    return udall[0];
+    return udall;
   }
 
   void Object::updatedq() {
@@ -315,11 +315,11 @@ namespace MBSim {
   }
 
   void Object::updatedu() {
-    ud[0] = slvLLFac(evalLLM(), evalh() * getStepSize() + evalrdt());
+    ud = slvLLFac(evalLLM(), evalh() * getStepSize() + evalrdt());
   }
 
-  void Object::updateud(int i) {
-    ud[i] = slvLLFac(evalLLM(i), evalh(i) + evalr(i));
+  void Object::updateud() {
+    ud = slvLLFac(evalLLM(), evalh() + evalr());
   }
 
   void Object::updateqd() {

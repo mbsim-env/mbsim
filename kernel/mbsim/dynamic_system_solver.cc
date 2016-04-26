@@ -373,8 +373,6 @@ namespace MBSim {
       updateLinkStatusRegRef(LinkStatusRegParent);
       updatezRef(zParent);
       updatezdRef(zdParent);
-      updateudRef(udParent1, 1);
-      updateudallRef(udParent1, 1);
       updatelaRef(laParent);
       updateLaRef(LaParent);
       updategRef(gParent);
@@ -1365,14 +1363,14 @@ namespace MBSim {
   void DynamicSystemSolver::updatezdRef(const Vec &zdParent) {
 
     qd >> (zdParent(0, qSize - 1));
-    ud[0] >> (zdParent(qSize, qSize + uSize[0] - 1));
+    ud >> (zdParent(qSize, qSize + uSize[0] - 1));
     xd >> (zdParent(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqdRef(qd);
-    updateudRef(ud[0]);
+    updateudRef(ud);
     updatexdRef(xd);
 
-    updateudallRef(ud[0]);
+    updateudallRef(ud);
   }
 
   void DynamicSystemSolver::updaterFactors() {

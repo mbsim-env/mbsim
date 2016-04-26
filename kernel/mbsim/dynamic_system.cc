@@ -637,22 +637,22 @@ namespace MBSim {
       (**i).updateuallRef(uParent);
   }
 
-  void DynamicSystem::updateudRef(const Vec &udParent, int j) {
-    ud[j] >> udParent(uInd[j], uInd[j] + uSize[j] - 1);
+  void DynamicSystem::updateudRef(const Vec &udParent) {
+    ud >> udParent(uInd[0], uInd[0] + uSize[0] - 1);
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updateudRef(udParent, j);
+      (**i).updateudRef(udParent);
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updateudRef(udParent, j);
+      (**i).updateudRef(udParent);
   }
 
-  void DynamicSystem::updateudallRef(const Vec &udParent, int j) {
+  void DynamicSystem::updateudallRef(const Vec &udParent) {
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updateudallRef(udParent, j);
+      (**i).updateudallRef(udParent);
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updateudallRef(udParent, j);
+      (**i).updateudallRef(udParent);
   }
 
   void DynamicSystem::updatexRef(const Vec &xParent) {
