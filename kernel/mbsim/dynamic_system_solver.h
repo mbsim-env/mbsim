@@ -227,6 +227,8 @@ namespace MBSim {
       const fmatvec::Vec& getState() const { return zParent; }
       void setState(const fmatvec::Vec &z) { zParent = z; }
 
+      void setzd(const fmatvec::Vec &zd) { zdParent = zd; }
+
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }
       const fmatvec::SparseMat& getGs(bool check=true) const { assert((not check) or (not updG)); return Gs; }
       const fmatvec::Vec& getbc(bool check=true) const { assert((not check) or (not updbc)); return bc; }
@@ -238,9 +240,9 @@ namespace MBSim {
       fmatvec::Vec& getbi(bool check=true) { assert((not check) or (not updbi)); return bi; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
-      const fmatvec::Vec& evaldu() { updatedu(); return ud; }
-      const fmatvec::Vec& evaldq() { updatedq(); return qd; }
-      const fmatvec::Vec& evaldx() { updatedx(); return xd; }
+      const fmatvec::Vec& evaldu() { updatedu(); return du; }
+      const fmatvec::Vec& evaldq() { updatedq(); return dq; }
+      const fmatvec::Vec& evaldx() { updatedx(); return dx; }
       const fmatvec::Vec& evalzd();
       const fmatvec::SqrMat& evalG() { if(updG) updateG(); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(); return Gs; }
@@ -568,10 +570,16 @@ namespace MBSim {
        */
       void updatelaInverseKinetics();
 
-      void solveAndPlot();
+      virtual void updatedq();
+      virtual void updatedu();
+      virtual void updatedx();
+
+      void plot();
 
       void setUpdatebcCallBack(const boost::function<void()> &updatebcCallBack_) { updatebcCallBack = updatebcCallBack_; }
       void setUpdatebiCallBack(const boost::function<void()> &updatebiCallBack_) { updatebiCallBack = updatebiCallBack_; }
+      void setUpdatelaCallBack(const boost::function<void()> &updatelaCallBack_) { updatelaCallBack = updatelaCallBack_; }
+      void setUpdatezdCallBack(const boost::function<void()> &updatezdCallBack_) { updatezdCallBack = updatezdCallBack_; }
 
     protected:
       /**
@@ -653,6 +661,8 @@ namespace MBSim {
        * \brief differentiated state
        */
       fmatvec::Vec zdParent;
+
+      fmatvec::Vec dxParent, dqParent, duParent;
 
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links right hand side
@@ -832,7 +842,7 @@ namespace MBSim {
 
       bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa;
 
-      boost::function<void()> updatebcCallBack, updatebiCallBack;
+      boost::function<void()> updatebcCallBack, updatebiCallBack, updatelaCallBack, updatezdCallBack;
 
       bool solveDirectly;
 

@@ -143,7 +143,7 @@ namespace MBSimIntegrator {
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
-    system->solveAndPlot();
+    system->plot();
     cout << "System shiftet and plotted" << endl;
     while(t < tStop) {  
       integrationSteps++;
@@ -154,7 +154,7 @@ namespace MBSimIntegrator {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();
-        system->solveAndPlot();
+        system->plot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();
@@ -170,7 +170,7 @@ namespace MBSimIntegrator {
           system->setTime(t);
 //          system->setState(z); Not needed as the integrator uses the state of the system
           system->resetUpToDate();
-          system->solveAndPlot();
+          system->plot();
           system->plotAtSpecialEvent();
         }
         system->setTime(t);
@@ -182,7 +182,7 @@ namespace MBSimIntegrator {
           system->setTime(t);
 //          system->setState(z); Not needed as the integrator uses the state of the system
           system->resetUpToDate();
-          system->solveAndPlot();
+          system->plot();
           system->plotAtSpecialEvent();
         }
         istate=1;
@@ -196,7 +196,7 @@ namespace MBSimIntegrator {
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
-    system->solveAndPlot();
+    system->plot();
     system->plotAtSpecialEvent();
     integPlot.close();
 

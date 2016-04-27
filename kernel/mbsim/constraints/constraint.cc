@@ -39,6 +39,10 @@ namespace MBSim {
     xd >> xdParent(xInd,xInd+xSize-1);
   } 
 
+  void Constraint::updatedxRef(const Vec &dxParent) {
+    dx >> dxParent(xInd,xInd+xSize-1);
+  }
+
   void Constraint::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();

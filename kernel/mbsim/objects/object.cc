@@ -146,6 +146,10 @@ namespace MBSim {
     qd >> qdParent(qInd, qInd + qSize - 1);
   }
 
+  void Object::updatedqRef(const Vec &dqParent) {
+    dq >> dqParent(qInd, qInd + qSize - 1);
+  }
+
   void Object::updateuRef(const Vec &uParent) {
     u >> uParent(uInd[0], uInd[0] + uSize[0] - 1);
   }
@@ -156,6 +160,10 @@ namespace MBSim {
 
   void Object::updateudRef(const Vec &udParent) {
     ud >> udParent(uInd[0], uInd[0] + uSize[0] - 1);
+  }
+
+  void Object::updateduRef(const Vec &duParent) {
+    du >> duParent(uInd[0], uInd[0] + uSize[0] - 1);
   }
 
   void Object::updateudallRef(const Vec &udParent) {
@@ -311,11 +319,11 @@ namespace MBSim {
   }
 
   void Object::updatedq() {
-    qd = evalT() * u * getStepSize();
+    dq = evalT() * u * getStepSize();
   }
 
   void Object::updatedu() {
-    ud = slvLLFac(evalLLM(), evalh() * getStepSize() + evalrdt());
+    du = slvLLFac(evalLLM(), evalh() * getStepSize() + evalrdt());
   }
 
   void Object::updateud() {

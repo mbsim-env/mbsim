@@ -61,7 +61,7 @@ namespace MBSimIntegrator {
       for(int i=1; i<=*n; i++)
 	system->getState()(i-1) = CONTEX(&i,&tPlot,con,ncon,icomp,nd);
       system->resetUpToDate();
-      system->solveAndPlot();
+      system->plot();
       if(output_)
 	cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
 
@@ -125,7 +125,7 @@ namespace MBSimIntegrator {
     system->setTime(t);
     system->setState(z);
     system->resetUpToDate();
-    system->solveAndPlot();
+    system->plot();
 
     integPlot.open((name + ".plt").c_str());
 

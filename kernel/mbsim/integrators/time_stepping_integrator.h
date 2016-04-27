@@ -56,6 +56,8 @@ namespace MBSimIntegrator {
       /***************************************************/
 
       void updatebi();
+      void updatela();
+      void updatezd();
     
     private:
       /**

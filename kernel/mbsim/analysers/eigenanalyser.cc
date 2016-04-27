@@ -143,7 +143,7 @@ namespace MBSimAnalyser {
         system->setTime(t);
         system->setState(zEq + fromComplex(deltaz));
         system->resetUpToDate();
-        system->solveAndPlot();
+        system->plot();
       }
       t0 += T+dtPlot;
       c(f[j].second) = complex<double>(0,0);
@@ -175,7 +175,7 @@ namespace MBSimAnalyser {
       system->setTime(t);
       system->setState(zEq + fromComplex(deltaz));
       system->resetUpToDate();
-      system->solveAndPlot();
+      system->plot();
     }
   }
 
@@ -197,7 +197,7 @@ namespace MBSimAnalyser {
       system->setTime(t);
       system->setState(zEq + fromComplex(deltaz));
       system->resetUpToDate();
-      system->solveAndPlot();
+      system->plot();
     }
   }
 

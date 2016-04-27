@@ -40,7 +40,7 @@ namespace MBSim {
   Graph::~Graph() {}
 
   void Graph::updatedu() {
-    ud = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
+    du = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
   }
 
   void Graph::updatezd() {

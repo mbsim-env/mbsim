@@ -83,7 +83,7 @@ namespace MBSim {
   }
 
   void Joint::updatedx() {
-    xd = evalGeneralizedRelativeVelocity()(iM) * getStepSize();
+    dx = evalGeneralizedRelativeVelocity()(iM) * getStepSize();
   }
 
   void Joint::updateh(int j) {

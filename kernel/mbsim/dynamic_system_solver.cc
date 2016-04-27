@@ -336,6 +336,9 @@ namespace MBSim {
       gdParent.resize(getgdSize());
       zParent.resize(getzSize());
       zdParent.resize(getzSize());
+      dqParent.resize(getqSize());
+      duParent.resize(getuSize());
+      dxParent.resize(getxSize());
       hParent[0].resize(getuSize(0));
       hParent[1].resize(getuSize(1));
       rParent[0].resize(getuSize(0));
@@ -362,6 +365,9 @@ namespace MBSim {
       updateLinkStatusRegRef(LinkStatusRegParent);
       updatezRef(zParent);
       updatezdRef(zdParent);
+      updatedxRef(dxParent);
+      updatedqRef(dqParent);
+      updateduRef(duParent);
       updatelaRef(laParent);
       updateLaRef(LaParent);
       updategRef(gParent);
@@ -862,7 +868,10 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezd() {
-    Group::updatezd();
+    if(updatezdCallBack)
+      updatezdCallBack();
+    else
+      Group::updatezd();
     updzd = false;
   }
 
@@ -941,6 +950,9 @@ namespace MBSim {
   void DynamicSystemSolver::updatela() {
     if (la.size()) {
 
+    if(updatelaCallBack)
+      updatelaCallBack();
+    else {
     if(solveDirectly)
       la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
     else {
@@ -968,6 +980,7 @@ namespace MBSim {
 
     if (useOldla)
       savela();
+    }
     }
     }
 
@@ -1003,7 +1016,6 @@ namespace MBSim {
     if (useOldla)
       saveLa();
 
-    la = La/dt;
     }
 
     updLa = false;
@@ -1661,6 +1673,18 @@ namespace MBSim {
     laInverseKinetics = slvLL(JTJ(A), A.T() * b);
   }
 
+  void DynamicSystemSolver::updatedq() {
+    Group::updatedq();
+  }
+
+  void DynamicSystemSolver::updatedu() {
+    Group::updatedu();
+  }
+
+  void DynamicSystemSolver::updatedx() {
+    Group::updatedx();
+  }
+
   void DynamicSystemSolver::resetUpToDate() {
     updT = true;
     updh[0] = true;
@@ -1695,10 +1719,10 @@ namespace MBSim {
     return zdParent;
   }
 
-  void DynamicSystemSolver::solveAndPlot() {
+  void DynamicSystemSolver::plot() {
     solveDirectly = not(useConstraintSolverForPlot);
-    updatelaInverseKinetics();
-    plot();
+    if (inverseKinetics) updatelaInverseKinetics();
+    Group::plot();
   }
 
   const Vec& DynamicSystemSolver::evalsv() {

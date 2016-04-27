@@ -80,6 +80,7 @@ namespace MBSim {
       virtual int getxSize() const { return xSize; }
       virtual void updatexRef(const fmatvec::Vec& ref);
       virtual void updatexdRef(const fmatvec::Vec& ref);
+      virtual void updatedxRef(const fmatvec::Vec& ref);
       virtual void updatebRef(const fmatvec::Mat &hRef);
       virtual void init(InitStage stage);
       virtual void initz();
@@ -441,6 +442,8 @@ namespace MBSim {
        * \brief differentiated order one parameters 
        */
       fmatvec::Vec xd;
+
+      fmatvec::Vec dx;
 
       /**
        * \brief order one initial value

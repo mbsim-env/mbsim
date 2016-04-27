@@ -416,11 +416,11 @@ namespace MBSim {
 
   void RigidBody::updatedq() {
     if(!constraint) {
-      qd(iqT) = evaluTRel()*getStepSize();
+      dq(iqT) = evaluTRel()*getStepSize();
       if(fTR)
-        qd(iqR) = (*fTR)(qRRel)*uRRel*getStepSize();
+        dq(iqR) = (*fTR)(qRRel)*uRRel*getStepSize();
       else
-        qd(iqR) = uRRel*getStepSize();
+        dq(iqR) = uRRel*getStepSize();
     }
   }
 

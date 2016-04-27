@@ -91,7 +91,7 @@ namespace MBSimIntegrator {
     system->setTime(t);
 //    system->setState(z); Not needed as the integrator uses the state of the system
     system->resetUpToDate();
-    system->solveAndPlot();
+    system->plot();
 
     double s0 = clock();
     double time = 0;
@@ -120,7 +120,7 @@ namespace MBSimIntegrator {
         system->setTime(t);
 //        system->setState(z); Not needed as the integrator uses the state of the system
         system->resetUpToDate();
-        system->solveAndPlot();
+        system->plot();
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
         double s1 = clock();

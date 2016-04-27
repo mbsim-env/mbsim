@@ -619,6 +619,16 @@ namespace MBSim {
       (**i).updateqdRef(qdParent);
   }
 
+  void DynamicSystem::updatedqRef(const Vec &dqParent) {
+    dq >> dqParent(qInd, qInd + qSize - 1);
+
+    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updatedqRef(dqParent);
+
+    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (**i).updatedqRef(dqParent);
+  }
+
   void DynamicSystem::updateuRef(const Vec &uParent) {
     u >> uParent(uInd[0], uInd[0] + uSize[0] - 1);
 
@@ -645,6 +655,16 @@ namespace MBSim {
 
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updateudRef(udParent);
+  }
+
+  void DynamicSystem::updateduRef(const Vec &duParent) {
+    du >> duParent(uInd[0], uInd[0] + uSize[0] - 1);
+
+    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updateduRef(duParent);
+
+    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (**i).updateduRef(duParent);
   }
 
   void DynamicSystem::updateudallRef(const Vec &udParent) {
@@ -679,6 +699,19 @@ namespace MBSim {
 
     for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
       (**i).updatexdRef(xdParent);
+  }
+
+  void DynamicSystem::updatedxRef(const Vec &dxParent) {
+    dx >> dxParent(xInd, xInd + xSize - 1);
+
+    for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updatedxRef(dxParent);
+
+    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (**i).updatedxRef(dxParent);
+
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
+      (**i).updatedxRef(dxParent);
   }
 
   void DynamicSystem::updatehRef(const Vec &hParent, int j) {
@@ -1576,6 +1609,16 @@ namespace MBSim {
     return gd;
   }
 
+  const fmatvec::Vec& DynamicSystem::getla(bool check) const {
+    assert((not check) or (not ds->getUpdatela()));
+    return la;
+  }
+
+  const fmatvec::Vec& DynamicSystem::getLa(bool check) const {
+    assert((not check) or (not ds->getUpdateLa()));
+    return La;
+  }
+
   fmatvec::SymMat& DynamicSystem::getLLM(bool check) {
     assert((not check) or (not ds->getUpdateLLM()));
     return LLM;
@@ -1585,6 +1628,17 @@ namespace MBSim {
     assert((not check) or (not ds->getUpdateW(i)));
     return W[i];
   }
+
+  fmatvec::Vec& DynamicSystem::getla(bool check) {
+    assert((not check) or (not ds->getUpdatela()));
+    return la;
+  }
+
+  fmatvec::Vec& DynamicSystem::getLa(bool check) {
+    assert((not check) or (not ds->getUpdateLa()));
+    return La;
+  }
+
 //
 //  fmatvec::Vec& DynamicSystem::getV(int i, bool check) {
 //    assert((not check) or (not ds->updV(i)));

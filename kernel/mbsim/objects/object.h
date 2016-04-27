@@ -99,6 +99,12 @@ namespace MBSim {
       virtual void updateqdRef(const fmatvec::Vec& qdRef);
 
       /**
+       * \brief references to differentiated positions of dynamic system parent
+       * \param qdRef vector to be referenced
+       */
+      virtual void updatedqRef(const fmatvec::Vec& dqRef);
+
+      /**
        * \brief references to velocities of dynamic system parent
        * \param uRef vector to be referenced
        */
@@ -115,6 +121,12 @@ namespace MBSim {
        * \param udRef vector to be referenced
        */
       virtual void updateudRef(const fmatvec::Vec& udRef);
+
+      /**
+       * \brief references to differentiated velocities of dynamic system parent
+       * \param udRef vector to be referenced
+       */
+      virtual void updateduRef(const fmatvec::Vec& duRef);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
@@ -292,7 +304,7 @@ namespace MBSim {
       /**
        * \brief differentiated positions, velocities
        */
-      fmatvec::Vec qd, ud, udall;
+      fmatvec::Vec qd, ud, dq, du, udall;
 
       /** 
        * \brief complete and object smooth and nonsmooth right hand side

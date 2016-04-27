@@ -124,6 +124,7 @@ namespace MBSim {
       int getxSize() const { return xSize; }
       void updatexRef(const fmatvec::Vec &ref);
       void updatexdRef(const fmatvec::Vec &ref);
+      void updatedxRef(const fmatvec::Vec &ref);
       virtual void init(InitStage stage);
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
@@ -241,12 +242,12 @@ namespace MBSim {
       const fmatvec::SymMat& getLLM(bool check=true) const;
       const fmatvec::Mat& getW(int i=0, bool check=true) const;
       const fmatvec::Mat& getV(int i=0, bool check=true) const;
-      const fmatvec::Vec& getla() const { return la; }
-      const fmatvec::Vec& getLa() const { return La; }
+      const fmatvec::Vec& getla(bool check=true) const;
+      const fmatvec::Vec& getLa(bool check=true) const;
       const fmatvec::Vec& getg(bool check=true) const;
       const fmatvec::Vec& getgd(bool check=true) const;
-      fmatvec::Vec& getla() { return la; }
-      fmatvec::Vec& getLa() { return La; }
+      fmatvec::Vec& getla(bool check=true);
+      fmatvec::Vec& getLa(bool check=true);
       void setla(const fmatvec::Vec &la_) { la = la_; }
       void setLa(const fmatvec::Vec &La_) { La = La_; }
       fmatvec::VecInt& getjsv() { return jsv; }
@@ -324,6 +325,8 @@ namespace MBSim {
        */
       void updateqdRef(const fmatvec::Vec &ref);
 
+      void updatedqRef(const fmatvec::Vec &ref);
+
       /**
        * \brief references to velocities of dynamic system parent
        * \param vector to be referenced
@@ -341,6 +344,8 @@ namespace MBSim {
        * \param vector to be referenced
        */
       void updateudRef(const fmatvec::Vec &ref);
+
+      void updateduRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to velocities of dynamic system parent
@@ -814,17 +819,17 @@ namespace MBSim {
       /**
        * \brief positions, differentiated positions, initial positions
        */
-      fmatvec::Vec q, qd, q0;
+      fmatvec::Vec q, qd, dq, q0;
 
       /**
        * \brief velocities, differentiated velocities, initial velocities
        */
-      fmatvec::Vec u, ud, u0;
+      fmatvec::Vec u, ud, du, u0;
 
       /**
        * \brief order one parameters, differentiated order one parameters, initial order one parameters
        */
-      fmatvec::Vec x, xd, x0;
+      fmatvec::Vec x, xd, dx, x0;
 
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links and nonsmooth

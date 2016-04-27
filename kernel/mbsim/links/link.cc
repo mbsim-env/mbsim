@@ -85,6 +85,10 @@ namespace MBSim {
     xd >> xdParent(xInd,xInd+xSize-1);
   } 
 
+  void Link::updatedxRef(const Vec &dxParent) {
+    dx >> dxParent(xInd,xInd+xSize-1);
+  }
+
   void Link::updatelaRef(const Vec& laParent) {
     la >> laParent(laInd,laInd+laSize-1);
   }

@@ -70,7 +70,7 @@ namespace MBSimIntegrator {
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
         system.resetUpToDate();
-        system.solveAndPlot();
+        system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1;

@@ -75,7 +75,6 @@ namespace MBSimIntegrator {
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
         if(driftCompensation) system.projectGeneralizedPositions(0);
-        system.setUpdatela(false);
         system.setUpdateLa(false);
         system.plot();
         double s1 = clock();
@@ -130,6 +129,8 @@ namespace MBSimIntegrator {
   void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
     this->system = &system;
     system.setUpdatebiCallBack(boost::bind(&TimeSteppingIntegrator::updatebi,this));
+    system.setUpdatelaCallBack(boost::bind(&TimeSteppingIntegrator::updatela,this));
+    system.setUpdatezdCallBack(boost::bind(&TimeSteppingIntegrator::updatezd,this));
     debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
@@ -146,5 +147,14 @@ namespace MBSimIntegrator {
   void TimeSteppingIntegrator::updatebi() {
     system->getbi(false) << system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
   }
+
+  void TimeSteppingIntegrator::updatela() {
+    system->setla(system->evalLa()/dt);
+  }
+
+  void TimeSteppingIntegrator::updatezd() {
+    system->setzd(system->evalzd()/dt);
+  }
+
 
 }
