@@ -188,7 +188,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     for (int i = 0; i < forceDir.cols(); i++) {
@@ -212,7 +212,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     for (int i = 0; i < forceDir.cols(); i++) {
@@ -236,7 +236,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     for (int i = 0; i < forceDir.cols(); i++) {
@@ -260,7 +260,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     for (int i = 0; i < forceDir.cols(); i++) {
@@ -284,7 +284,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     for (int i = 0; i < forceDir.cols(); i++) {
@@ -308,7 +308,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     for (int i = 0; i < forceDir.cols(); i++) {
@@ -412,7 +412,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     for (int i = 0; i < forceDir.cols(); i++) {
@@ -442,7 +442,7 @@ namespace MBSim {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     for (int i = 0; i < forceDir.cols(); i++) {

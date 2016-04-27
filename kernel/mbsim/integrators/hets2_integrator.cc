@@ -17,9 +17,9 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#include<config.h>
-#include<mbsim/dynamic_system_solver.h>
+#include <config.h>
 #include "hets2_integrator.h"
+#include <mbsim/dynamic_system_solver.h>
 
 #include <time.h>
 #include <boost/iostreams/tee.hpp>
@@ -45,7 +45,6 @@ namespace MBSimIntegrator {
   dtImpulsive(1e-4), 
   dtInfo(1e-3), 
   tPlot(0.),
-  iter(0), 
   integrationSteps(0), 
   integrationStepsConstraint(0), 
   integrationStepsImpact(0), 
@@ -103,12 +102,14 @@ namespace MBSimIntegrator {
 
       // plot
       if(system.getTime() >= tPlot) {
+        system.setUpdatela(false);
+        system.setUpdateLa(false);
         system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
-        integPlot << system.getTime() << " " << dtInfo << " " <<  iter << " " << time << " "<< system.getlaSize() << endl;
-        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        integPlot << system.getTime() << " " << dtInfo << " " <<  system.getIterC() << " " << time << " "<< system.getlaSize() << endl;
+        if(output) cout << "   t = " << system.getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system.getIterC() << "\r" << flush;
         tPlot += dtPlot;
       }
       /*****************************************/
@@ -134,18 +135,11 @@ namespace MBSimIntegrator {
 
         bc << system.evalgd()/dt + system.evalW().T()*slvLLFac(LLMStage0,hStage0);
 
-        // solve the constraint equation system
-        if (system.getla().size() not_eq 0) {
-          iter = system.solveConstraints();
-        }
-
-        if(iter>maxIter) {
-          maxIter = iter;
-        }
-        sumIter += iter;
-
         // save values
-        Vec laStage0 = system.getla().copy();
+        Vec laStage0 = system.evalla().copy();
+
+        if(system.getIterC()>maxIter) maxIter = system.getIterC();
+        sumIter += system.getIterC();
 
         // first stage velocity update
         system.getu() += slvLLFac(LLMStage0,hStage0+VStage0*laStage0)*dt;
@@ -170,23 +164,16 @@ namespace MBSimIntegrator {
 
         bc << 2.*system.evalgd()/dt;
 
-        // solve the constraint equation system
-        if (system.getla().size() not_eq 0) {
-          iter = system.solveConstraints();
-        }
-
-        if(iter>maxIter) {
-          maxIter = iter;
-        }
-        sumIter += iter;
-
         // output stage velocity update
-        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.getla())*dt*0.5;
+        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.evalla())*dt*0.5;
+
+        if(system.getIterC()>maxIter) maxIter = system.getIterC();
+        sumIter += system.getIterC();
 
         system.resetUpToDate();
 
-        // scaling to impulse level
-        system.getLa() = system.getla()*dt;
+       // scaling to impulse level
+//        system.getLa() = system.getla()*dt;
       }
       /*****************************************/
 
@@ -222,19 +209,17 @@ namespace MBSimIntegrator {
         // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
 
-        // solve the impact equation system
-        if (system.getLa().size() not_eq 0) {
-          system.setStepSize(0);
-          iter = system.solveImpacts();
-        }
-
-        if(iter>maxIter) {
-          maxIter = iter;
-        }
-        sumIter += iter;
+//        // solve the impact equation system
+//        if (system.getLa().size() not_eq 0) {
+//          system.setStepSize(0);
+//          iter = system.solveImpacts();
+//        }
 
         // output stage velocity update
-        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.getLa());
+        system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.evalLa());
+
+        if(system.getIterI()>maxIter)
+          maxIter = system.getIterI(); sumIter += system.getIterI();
       }
       /*****************************************/
     }
@@ -268,6 +253,7 @@ namespace MBSimIntegrator {
   void HETS2Integrator::integrate(DynamicSystemSolver& system) {
     this->system = &system;
     system.setUpdatebcCallBack(boost::bind(&HETS2Integrator::updatebc,this));
+    system.setUseConstraintSolverForPlot(true);
     debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
@@ -305,6 +291,15 @@ namespace MBSimIntegrator {
 
   void HETS2Integrator::updatebc() {
     system->getbc(false) << bc;
+  }
+
+//  void HETS2Integrator::updateLa() {
+//    system->setLa(system->evalla()*dt);
+//  }
+
+  void HETS2Integrator::updatezd() {
+    MBSimError("(HETS2Integrator::updatezd()): Not yet implemented");
+    //system->setzd(system->evalzd()/dt);
   }
 
 }

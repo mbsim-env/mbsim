@@ -80,6 +80,7 @@ namespace MBSimIntegrator {
       /***************************************************/
 
       void updatebc();
+      void updatezd();
 
     private:
       /**
@@ -102,7 +103,7 @@ namespace MBSimIntegrator {
       /**
        * \brief iteration counter for constraints, integration, non-impulsive integration, impulsive integration, maximum constraints, cummulation constraint
        */
-      int iter, integrationSteps, integrationStepsConstraint, integrationStepsImpact, maxIter, sumIter;
+      int integrationSteps, integrationStepsConstraint, integrationStepsImpact, maxIter, sumIter;
 
       /**
        * \brief computing time counter

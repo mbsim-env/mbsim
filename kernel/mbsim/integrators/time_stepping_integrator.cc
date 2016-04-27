@@ -156,5 +156,4 @@ namespace MBSimIntegrator {
     system->setzd(system->evalzd()/dt);
   }
 
-
 }
