@@ -144,7 +144,7 @@ namespace MBSimControl {
   }
 
   void PIDController::updatedx() {
-    if(xSize) xd=s->evalSignal()*getStepSize();
+    if(xSize) dx=s->evalSignal()*getStepSize();
   }
 
   void PIDController::updatexd() {

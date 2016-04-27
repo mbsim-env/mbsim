@@ -73,26 +73,25 @@ namespace MBSimControl {
     double h=F+F0-c*x(0);
     if (h<0) {
       if (x(0)<xMin)
-        xd(0)=0;
+        dx(0)=0;
       else {
         h+=FFricNeg;
         if (h>0)
           h=0;
-        xd(0)=h/dNeg;
+        dx(0)=h/dNeg;
       }
     }
     else {
       if (x(0)>xMax)
-        xd(0)=0;
+        dx(0)=0;
       else {
         h-=FFricPos;
         if (h<0)
           h=0;
-        xd(0)=h/dPos;
+        dx(0)=h/dPos;
       }
     }
-    xdLocal=xd(0);
-    xd(0)*=getStepSize();
+    dx(0)*=getStepSize();
   }
 
   void MasslessSpringDamper::updatexd() {

@@ -72,7 +72,7 @@ namespace MBSimControl {
   }
 
   void AbsoluteAngularPositionSensor::updatedx() {
-    xd=direction.T()*frame->evalAngularVelocity()*getStepSize();
+    dx=direction.T()*frame->evalAngularVelocity()*getStepSize();
   }
 
   void AbsoluteAngularPositionSensor::updateSignal() {
@@ -136,7 +136,7 @@ namespace MBSimControl {
 
   void RelativeAngularPositionSensor::updatedx() {
     VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
-    xd=(refFrame->getOrientation()*direction).T()*WomegaRefRel*getStepSize();
+    dx=(refFrame->getOrientation()*direction).T()*WomegaRefRel*getStepSize();
   }
 
   void RelativeAngularPositionSensor::updateSignal() {
