@@ -204,7 +204,7 @@ namespace MBSimElectronics {
       double L;
     public:
       Inductor(const std::string &name);
-      void updateM(int j=0);
+      void updateM();
       void setInductance(double L_) { L = L_;}
   };
 

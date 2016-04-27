@@ -233,8 +233,8 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Inductor::updateM(int i) {
-    M[i] += L*JTJ(branch->getJacobian(i));
+  void Inductor::updateM() {
+    M += L*JTJ(branch->getJacobian(0));
   }
 
   Diode::Diode(const string &name) : ElectronicLink(name), sv(false) {
@@ -245,7 +245,7 @@ namespace MBSimElectronics {
 
   void Diode::updateGeneralizedForces() {
     if(isSetValued())
-      lambda = la;
+      lambda = evalla();
     else {
       double slope=1e4;
       double I = evalCurrent();
@@ -259,7 +259,7 @@ namespace MBSimElectronics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     gdn(0) = b(laInd);
@@ -279,7 +279,7 @@ namespace MBSimElectronics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     gdn(0) = b(laInd);
@@ -300,7 +300,7 @@ namespace MBSimElectronics {
 
   void Switch::updateGeneralizedForces() {
     if(isSetValued())
-      lambda = la;
+      lambda = evalla();
     else {
       double gdLim = 0.01;
       double U0 = (*voltageSignal)(getTime())(0);
@@ -318,7 +318,7 @@ namespace MBSimElectronics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     double U0 = (*voltageSignal)(getTime())(0);
@@ -341,7 +341,7 @@ namespace MBSimElectronics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     double U0 = (*voltageSignal)(getTime())(0);
