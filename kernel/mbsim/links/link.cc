@@ -45,7 +45,7 @@ namespace MBSim {
           plotVector.push_back(x(i));
       if(getPlotFeature(stateDerivative)==enabled)
         for(int i=0; i<xSize; ++i)
-          plotVector.push_back(xd(i)/getStepSize());
+          plotVector.push_back(evalxd()(i));
       if(getPlotFeature(linkKinematics)==enabled) {
         for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
           plotVector.push_back(rrel(i));
@@ -210,7 +210,6 @@ namespace MBSim {
       La.init(0);
   }
 
-
   void Link::decreaserFactors() {
     for(int i=0; i<rFactor.size(); i++)
       if(rFactorUnsure(i))
@@ -244,6 +243,11 @@ namespace MBSim {
   const Vec& Link::evalwb() {
     if(ds->getUpdatewb()) ds->updatewb();
     return wb;
+  }
+
+  const Vec& Link::evalxd() {
+    if(ds->getUpdatezd()) ds->updatezd();
+    return xd;
   }
 
   const fmatvec::Vec& Link::getla(bool check) const {

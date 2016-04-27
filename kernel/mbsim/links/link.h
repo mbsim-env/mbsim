@@ -383,6 +383,7 @@ namespace MBSim {
       const fmatvec::Vec& evalla();
       const fmatvec::Vec& evalLa();
       const fmatvec::Vec& evalwb();
+      const fmatvec::Vec& evalxd();
 
       int getgdInd() const { return gdInd; } 
       int getgSize() const { return gSize; } 

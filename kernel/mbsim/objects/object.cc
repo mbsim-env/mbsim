@@ -110,9 +110,9 @@ namespace MBSim {
       }
       if (getPlotFeature(stateDerivative) == enabled) {
         for (int i = 0; i < qSize; ++i)
-          plotVector.push_back(qd(i) / getStepSize());
+          plotVector.push_back(evalqd()(i));
         for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(ud(i) / getStepSize());
+          plotVector.push_back(evalud()(i));
       }
       if (getPlotFeature(rightHandSide) == enabled) {
         for (int i = 0; i < uSize[0]; ++i)
@@ -311,6 +311,16 @@ namespace MBSim {
   const SymMat& Object::evalLLM() {
     if(ds->getUpdateLLM()) ds->updateLLM();
     return LLM;
+  }
+
+  const Vec& Object::evalqd() {
+    if(ds->getUpdatezd()) ds->updatezd();
+    return qd;
+  }
+
+  const Vec& Object::evalud() {
+    if(ds->getUpdatezd()) ds->updatezd();
+    return ud;
   }
 
   const Vec& Object::evaludall() {

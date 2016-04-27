@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "mbsim/constraints/constraint.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <hdf5serie/simpledataset.h>
 
 using namespace std;
@@ -81,7 +82,7 @@ namespace MBSim {
           plotVector.push_back(x(i));
       if(getPlotFeature(stateDerivative)==enabled)
         for(int i=0; i<xSize; ++i)
-          plotVector.push_back(xd(i)/getStepSize());
+          plotVector.push_back(evalxd()(i));
 
       Element::plot();
     }
@@ -91,6 +92,11 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
       Element::closePlot();
     }
+  }
+
+  const Vec& Constraint::evalxd() {
+    if(ds->getUpdatezd()) ds->updatezd();
+    return xd;
   }
 
 }

@@ -260,6 +260,8 @@ namespace MBSim {
       const fmatvec::SymMat& evalLLM();
       const fmatvec::Vec& evalr(int i=0);
       const fmatvec::Vec& evalrdt();
+      const fmatvec::Vec& evalqd();
+      const fmatvec::Vec& evalud();
       const fmatvec::Vec& evaludall();
 
       void setq(const fmatvec::Vec &q_) { q = q_; }

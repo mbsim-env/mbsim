@@ -59,6 +59,8 @@ namespace MBSim {
       bool getUpdateGeneralizedJacobians() const { return updGJ; }
       void resetUpToDate() { updGC = true; updGJ = true; }
 
+      const fmatvec::Vec& evalxd();
+
     protected:
       /** 
        * \brief order one parameters
