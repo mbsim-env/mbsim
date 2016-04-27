@@ -363,9 +363,9 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(notMinimalState)==enabled) {
         for(int i=0; i<nq; i++)
-          plotVector.push_back(qRel(i));
+          plotVector.push_back(evalqRel()(i));
         for(int i=0; i<nu[0]; i++)
-          plotVector.push_back(uRel(i));
+          plotVector.push_back(evaluRel()(i));
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
