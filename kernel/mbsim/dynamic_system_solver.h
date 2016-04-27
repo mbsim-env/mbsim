@@ -565,14 +565,15 @@ namespace MBSim {
       void updateVRef(const fmatvec::Mat &ref, int i=0) { Group::updateVRef(ref,i); updV[i] = true; }
 
       /**
-       * \brief compute inverse kinetics constraint forces
-       * \param current time
+       * \brief update inverse kinetics constraint forces
        */
-      void updatelaInverseKinetics();
+      virtual void updatelaInverseKinetics();
 
       virtual void updatedq();
       virtual void updatedu();
       virtual void updatedx();
+
+      virtual void updateStopVector();
 
       void plot();
 

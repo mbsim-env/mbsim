@@ -88,6 +88,26 @@ namespace MBSim {
     return laT;
   }
 
+  const double& SingleContact::evalgdnN() {
+    if(ds->getUpdateLa()) ds->updateLa();
+    return gdnN(0);
+  }
+
+  const Vec& SingleContact::evalgdnT() {
+    if(ds->getUpdateLa()) ds->updateLa();
+    return gdnT;
+  }
+
+  const double& SingleContact::evalgddN() {
+    if(ds->getUpdatela()) ds->updatela();
+    return gddN(0);
+  }
+
+  const Vec& SingleContact::evalgddT() {
+    if(ds->getUpdatela()) ds->updatela();
+    return gddT;
+  }
+
   void SingleContact::updateGeneralizedNormalForceM() {
     if(gdActive[0])
       lambdaN = evallaN();
@@ -206,10 +226,10 @@ namespace MBSim {
     if (gActive != gdActive[0])
       THROW_MBSIMERROR("Internal error");
     if (gActive) {
-      sv(0) = gddN(0) - gddTol;
+      sv(0) = evalgddN() - gddTol;
       if (gdActive[1]) {
         if (getFrictionDirections()) {
-          sv(1) = nrm2(gddT) - gddTol;
+          sv(1) = nrm2(evalgddT()) - gddTol;
           if (sv(1) > 0) {
             gddNBuf = gddN;
             gddTBuf = gddT;
@@ -750,7 +770,7 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &LaMBS = ds->getLa();
+      const Vec &LaMBS = ds->getLa(false);
       const Vec &b = ds->evalbi();
 
       int addIndexNormal = 0;
@@ -782,7 +802,7 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &laMBS = ds->getla(false);
       const Vec &b = ds->evalbc();
 
       int addIndexnormal = 0;
@@ -814,7 +834,7 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &LaMBS = ds->getLa();
+      const Vec &LaMBS = ds->getLa(false);
       const Vec &b = ds->evalbi();
 
       //TODO: check indices (in other solution algorithms too!)
@@ -849,7 +869,7 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &laMBS = ds->getla(false);
       const Vec &b = ds->evalbc();
 
       const double om = 1.0; // relaxation parameter omega (cf. Foerg, dissertation, p. 102)
@@ -882,7 +902,7 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &LaMBS = ds->getLa();
+      const Vec &LaMBS = ds->getLa(false);
       const Vec &b = ds->evalbi();
 
       //compute residuum for normal direction
@@ -915,16 +935,16 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &laMBS = ds->getla(false);
       const Vec &b = ds->evalbc();
 
       //compute residuum for normal direction
       int addIndexnormal = 0;
       if (fcl->isSetValued()) {
         addIndexnormal++;
-        gdnN(0) = b(laInd);
+        gddN(0) = b(laInd);
         for (int j = ia[laInd]; j < ia[laInd + 1]; j++)
-          gdnN(0) += a[j] * laMBS(ja[j]);
+          gddN(0) += a[j] * laMBS(ja[j]);
 
         res(0) = laN(0) - fcl->project(laN(0), gddN(0), rFactor(0));
       }
@@ -932,9 +952,9 @@ namespace MBSim {
       //compute residuum for tangential directions
       if (fdf and fdf->isSetValued()) {
         for (int i = 0; i < getFrictionDirections(); i++) {
-          gdnT(i) = b(laInd + i + addIndexnormal);
+          gddT(i) = b(laInd + i + addIndexnormal);
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)
-            gdnT(i) += a[j] * laMBS(ja[j]);
+            gddT(i) += a[j] * laMBS(ja[j]);
         }
         //            if (ftil) There must be a frictional impact law if fdf is set valued!
         res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = laT - fdf->project(laT, gddT, fcl->isSetValued()?laN(0):lambdaN, rFactor(addIndexnormal));
@@ -1112,7 +1132,7 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &laMBS = ds->getla();
+      const Vec &laMBS = ds->getla(false);
       const Vec &b = ds->evalbc();
 
       int addIndexnormal = 0;
@@ -1151,7 +1171,7 @@ namespace MBSim {
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
       const int *ja = ds->getGs().Jp();
-      const Vec &LaMBS = ds->getLa();
+      const Vec &LaMBS = ds->getLa(false);
       const Vec &b = ds->evalbi();
 
       int addIndexnormal = 0;
@@ -1194,11 +1214,11 @@ namespace MBSim {
     }
     else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
       if (gActive) { // contact is closed
-        if (gdnN(0) <= gdTol) { // contact stays closed // TODO bilateral contact
+        if (evalgdnN() <= gdTol) { // contact stays closed // TODO bilateral contact
           gdActive[0] = true;
           gddActive[0] = true;
           if (getFrictionDirections()) {
-            if (nrm2(gdnT) <= gdTol) {
+            if (nrm2(evalgdnT()) <= gdTol) {
               gdActive[1] = true;
               gddActive[1] = true;
             }
@@ -1219,11 +1239,11 @@ namespace MBSim {
     else if (j == 4) { // formerly checkActivegdd()
       if (gActive) {
         if (gdActive[0]) {
-          if (gddN(0) <= gddTol) { // contact stays closed on velocity level
+          if (evalgddN() <= gddTol) { // contact stays closed on velocity level
             gddActive[0] = true;
             if (getFrictionDirections()) {
               if (gdActive[1]) {
-                if (nrm2(gddT) <= gddTol)
+                if (nrm2(evalgddT()) <= gddTol)
                   gddActive[1] = true;
                 else
                   gddActive[1] = false;

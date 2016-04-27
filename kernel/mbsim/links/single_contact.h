@@ -70,6 +70,12 @@ namespace MBSim {
       const double& evallaN();
       const fmatvec::Vec& evallaT();
 
+      const double& evalgdnN();
+      const fmatvec::Vec& evalgdnT();
+
+      const double& evalgddN();
+      const fmatvec::Vec& evalgddT();
+
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb();
       virtual void updateV(int i=0);

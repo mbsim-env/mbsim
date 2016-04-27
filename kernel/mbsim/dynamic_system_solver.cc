@@ -295,7 +295,7 @@ namespace MBSim {
       calcgdSize(0);
       calcrFactorSize(0);
       calcsvSize();
-      svSize += 1; // TODO additional event for drift 
+//      svSize += 1; // TODO additional event for drift
       calcLinkStatusSize();
       calcLinkStatusRegSize();
 
@@ -1566,6 +1566,8 @@ namespace MBSim {
     if(msgAct(Debug))
       msg(Debug) << "System shift at t = " << t << "." << endl;
 
+    solveDirectly = false;
+
     bool saveUseOldLa = useOldla;
     useOldla = false;
 
@@ -1589,10 +1591,9 @@ namespace MBSim {
       updV[0] = false;
 
       setStepSize(0);
-      solveImpacts();
       u += evaldu();
-      resetUpToDate();
       checkActive(3); // neuer Zustand nach Stoss
+      resetUpToDate();
       // Projektion:
       // - es müssen immer alle Größen projiziert werden
       // - neuer Zustand ab hier bekannt
@@ -1610,8 +1611,6 @@ namespace MBSim {
         updatelaRef(laParent(0, laSize - 1));
         updatewbRef(wbParent(0, laSize - 1));
         updaterFactorRef(rFactorParent(0, rFactorSize - 1));
-
-        solveConstraints();
 
         checkActive(4);
         projectGeneralizedPositions(2);
@@ -1631,8 +1630,6 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
       if (laSize) {
-        solveConstraints();
-
         checkActive(4);
 
         projectGeneralizedPositions(2);
@@ -1685,6 +1682,12 @@ namespace MBSim {
     Group::updatedx();
   }
 
+  void DynamicSystemSolver::updateStopVector() {
+    Group::updateStopVector();
+//    sv(sv.size() - 1) = 1;
+    updsv = false;
+  }
+
   void DynamicSystemSolver::resetUpToDate() {
     updT = true;
     updh[0] = true;
@@ -1727,11 +1730,8 @@ namespace MBSim {
 
   const Vec& DynamicSystemSolver::evalsv() {
     if(updsv) {
-      if(getlaSize())
-        solveConstraints();
+      solveDirectly = false;
       updateStopVector();
-      sv(sv.size() - 1) = 1;
-      updsv = false;
     }
     return sv;
   }
