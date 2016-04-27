@@ -229,7 +229,7 @@ namespace MBSim {
       sv(0) = evalgddN() - gddTol;
       if (gdActive[1]) {
         if (getFrictionDirections()) {
-          sv(1) = nrm2(evalgddT()) - gddTol;
+          sv(1) = nrm2(gddT) - gddTol;
           if (sv(1) > 0) {
             gddNBuf = gddN;
             gddTBuf = gddT;
@@ -1218,7 +1218,7 @@ namespace MBSim {
           gdActive[0] = true;
           gddActive[0] = true;
           if (getFrictionDirections()) {
-            if (nrm2(evalgdnT()) <= gdTol) {
+            if (nrm2(gdnT) <= gdTol) {
               gdActive[1] = true;
               gddActive[1] = true;
             }
@@ -1243,7 +1243,7 @@ namespace MBSim {
             gddActive[0] = true;
             if (getFrictionDirections()) {
               if (gdActive[1]) {
-                if (nrm2(evalgddT()) <= gddTol)
+                if (nrm2(gddT) <= gddTol)
                   gddActive[1] = true;
                 else
                   gddActive[1] = false;
