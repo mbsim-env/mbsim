@@ -149,11 +149,13 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingIntegrator::updatela() {
-    system->setla(system->evalLa()/dt);
+    system->setla(system->getLa(false)/dt);
   }
 
   void TimeSteppingIntegrator::updatezd() {
-    system->setzd(system->evalzd()/dt);
+    system->setqd(system->getdq(false)/dt);
+    system->setud(system->getdu(false)/dt);
+    system->setxd(system->getdx(false)/dt);
   }
 
 }

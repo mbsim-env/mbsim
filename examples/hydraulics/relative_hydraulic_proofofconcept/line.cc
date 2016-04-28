@@ -26,8 +26,8 @@ void Line::calcuSize(int j) {
     uSize[j]=0;
 }
 
-void Line::updateM(int k) {
-  M[k]+=1.*JTJ(evalJ(k));
+void Line::updateM() {
+  M+=1.*JTJ(evalJ());
 }
 
 void Line::updateJacobians(int k) {
@@ -36,15 +36,15 @@ void Line::updateJacobians(int k) {
   // but this does not influence the dynamics.
   if(k==0) {
     if(dependency.size()==0) {
-      if(M[k].size()==1)
+      if(M.size()==1)
         J=Mat(1,1,INIT,1);
       else {
-        J=Mat(1,M[k].size());
+        J=Mat(1,M.size());
         J(0,uInd[0])=1;
       }
     }
     else {
-      J=Mat(1,M[k].size());
+      J=Mat(1,M.size());
       for(size_t i=0; i<dependency.size(); i++) {
         Mat Jdep=((Line*)dependency[i])->evalJ(k);
         J(0,Index(0,Jdep.cols()-1))+=Jdep;

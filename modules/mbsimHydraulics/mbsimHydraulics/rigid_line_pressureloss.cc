@@ -219,7 +219,7 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateGeneralizedForces() {
     if(isActive())
-      lambda = la;
+      lambda = evalla();
     else {
       if (linePressureLoss) {
         lambda(0)=(*linePressureLoss)(line->evalQIn()(0));

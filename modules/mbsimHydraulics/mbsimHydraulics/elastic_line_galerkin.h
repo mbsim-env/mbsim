@@ -74,7 +74,7 @@ namespace MBSimHydraulics {
       void updateQ();
       void updateh(int j=0);
       void updateT();
-      void updateM(int j=0);
+      void updateM();
 
       void plot();
       void plotParameters();

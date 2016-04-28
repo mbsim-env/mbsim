@@ -215,6 +215,8 @@ namespace MBSimHydraulics {
       void jacobianConstraints();
       void checkImpactsForTermination();
       void checkConstraintsForTermination();
+      const double& evalgdn();
+      const double& evalgdd();
     private:
       double gdn, gdd;
       MBSim::GeneralizedForceLaw * gfl;
@@ -270,6 +272,9 @@ namespace MBSimHydraulics {
       void jacobianConstraints();
       void checkImpactsForTermination();
       void checkConstraintsForTermination();
+      const double& evalgdn();
+      const double& evalgdd();
+
     protected:
       double pCav;
     private:

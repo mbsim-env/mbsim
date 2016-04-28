@@ -240,9 +240,9 @@ namespace MBSim {
       fmatvec::Vec& getbi(bool check=true) { assert((not check) or (not updbi)); return bi; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
-      const fmatvec::Vec& evaldu() { updatedu(); return du; }
-      const fmatvec::Vec& evaldq() { updatedq(); return dq; }
-      const fmatvec::Vec& evaldx() { updatedx(); return dx; }
+      const fmatvec::Vec& evaldq() { if(upddq) updatedq(); return dq; }
+      const fmatvec::Vec& evaldu() { if(upddu) updatedu(); return du; }
+      const fmatvec::Vec& evaldx() { if(upddx) updatedx(); return dx; }
       const fmatvec::Vec& evalzd();
       const fmatvec::SqrMat& evalG() { if(updG) updateG(); return G; }
       const fmatvec::SparseMat& evalGs() { if(updG) updateG(); return Gs; }
@@ -527,6 +527,9 @@ namespace MBSim {
       bool getUpdatela() { return updla; }
       bool getUpdateLa() { return updLa; }
       bool getUpdatezd() { return updzd; }
+      bool getUpdatedq() { return upddq; }
+      bool getUpdatedu() { return upddu; }
+      bool getUpdatedx() { return upddx; }
       void setUpdatela(bool updla_) { updla = updla_; }
       void setUpdateLa(bool updLa_) { updLa = updLa_; }
 
@@ -841,7 +844,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa;
+      bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
 
       boost::function<void()> updatebcCallBack, updatebiCallBack, updatelaCallBack, updatezdCallBack;
 

@@ -240,6 +240,9 @@ namespace MBSim {
       const fmatvec::Vec& geth(int j=0, bool check=true) const;
       const fmatvec::SymMat& getM(bool check=true) const;
       const fmatvec::SymMat& getLLM(bool check=true) const;
+      const fmatvec::Vec& getdq(bool check=true) const;
+      const fmatvec::Vec& getdu(bool check=true) const;
+      const fmatvec::Vec& getdx(bool check=true) const;
       const fmatvec::Mat& getW(int i=0, bool check=true) const;
       const fmatvec::Mat& getV(int i=0, bool check=true) const;
       const fmatvec::Vec& getla(bool check=true) const;
@@ -254,6 +257,9 @@ namespace MBSim {
       const fmatvec::VecInt& getjsv() const { return jsv; }
       fmatvec::Mat& getW(int i=0, bool check=true);
       fmatvec::SymMat& getLLM(bool check=true);
+      fmatvec::Vec& getdq(bool check=true);
+      fmatvec::Vec& getdu(bool check=true);
+      fmatvec::Vec& getdx(bool check=true);
 
       fmatvec::VecInt& getLinkStatus() { return LinkStatus; }
       fmatvec::VecInt& getLinkStatusReg() { return LinkStatusReg; }
@@ -278,6 +284,10 @@ namespace MBSim {
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
       void setx0(double x0_) { x0 = fmatvec::Vec(1,fmatvec::INIT,x0_); }
+
+      void setqd(const fmatvec::Vec& qd_) { qd = qd_; }
+      void setud(const fmatvec::Vec& ud_) { ud = ud_; }
+      void setxd(const fmatvec::Vec& xd_) { xd = xd_; }
 
       int getxInd() { return xInd; }
       int getlaInd() const { return laInd; } 

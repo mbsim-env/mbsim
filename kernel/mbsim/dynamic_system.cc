@@ -1619,6 +1619,21 @@ namespace MBSim {
     return La;
   }
 
+  const fmatvec::Vec& DynamicSystem::getdq(bool check) const {
+    assert((not check) or (not ds->getUpdatedq()));
+    return dq;
+  }
+
+  const fmatvec::Vec& DynamicSystem::getdu(bool check) const {
+    assert((not check) or (not ds->getUpdatedu()));
+    return du;
+  }
+
+  const fmatvec::Vec& DynamicSystem::getdx(bool check) const {
+    assert((not check) or (not ds->getUpdatedx()));
+    return dx;
+  }
+
   fmatvec::SymMat& DynamicSystem::getLLM(bool check) {
     assert((not check) or (not ds->getUpdateLLM()));
     return LLM;
@@ -1637,6 +1652,21 @@ namespace MBSim {
   fmatvec::Vec& DynamicSystem::getLa(bool check) {
     assert((not check) or (not ds->getUpdateLa()));
     return La;
+  }
+
+  fmatvec::Vec& DynamicSystem::getdq(bool check) {
+    assert((not check) or (not ds->getUpdatedq()));
+    return dq;
+  }
+
+  fmatvec::Vec& DynamicSystem::getdu(bool check) {
+    assert((not check) or (not ds->getUpdatedu()));
+    return du;
+  }
+
+  fmatvec::Vec& DynamicSystem::getdx(bool check) {
+    assert((not check) or (not ds->getUpdatedx()));
+    return dx;
   }
 
 //

@@ -369,7 +369,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticNode::updatedx() {
-    xd(0)=(*bulkModulus)(evalGeneralizedForce()(0))/V*evalQHyd()*getStepSize();
+    dx(0)=(*bulkModulus)(evalGeneralizedForce()(0))/V*evalQHyd()*getStepSize();
   }
 
   void ElasticNode::plot() {
@@ -403,10 +403,20 @@ namespace MBSimHydraulics {
     HNode::init(stage);
     if(gfl) gfl->init(stage);
     if(gil) gil->init(stage);
- }
+  }
+
+  const double& RigidNode::evalgdn() {
+    if(ds->getUpdateLa()) ds->updateLa();
+    return gdn;
+  }
+
+  const double& RigidNode::evalgdd() {
+    if(ds->getUpdatela()) ds->updatela();
+    return gdd;
+  }
 
   void RigidNode::updateGeneralizedForces() {
-    lambda = la;
+    lambda = evalla();
     updla = false;
   }
 
@@ -448,7 +458,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -462,7 +472,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
@@ -476,7 +486,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -490,7 +500,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
@@ -504,7 +514,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -518,7 +528,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
@@ -560,7 +570,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &LaMBS = ds->getLa();
+    const Vec &LaMBS = ds->getLa(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -575,7 +585,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
@@ -646,7 +656,7 @@ namespace MBSimHydraulics {
       active=(x(0)<=0);
     else if(j==3) {
       if (active) {
-        if (gdn <= gdTol)
+        if (evalgdn() <= gdTol)
           active = true;
         else
           active = false;
@@ -662,6 +672,16 @@ namespace MBSimHydraulics {
       changed = true;
     active0=active;
     return changed;
+  }
+
+  const double& RigidCavitationNode::evalgdn() {
+    if(ds->getUpdateLa()) ds->updateLa();
+    return gdn;
+  }
+
+  const double& RigidCavitationNode::evalgdd() {
+    if(ds->getUpdatela()) ds->updatela();
+    return gdd;
   }
 
   void RigidCavitationNode::updateGeneralizedForces() {
@@ -681,11 +701,11 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::updatexd() {
-    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0) : -evalQHyd();
+    xd(0) = isActive() ? (fabs(evalgdn())>(gdTol)?gdn:0) : -evalQHyd();
   }
 
   void RigidCavitationNode::updatedx() {
-    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0)*getStepSize() : -evalQHyd()*getStepSize();
+    dx(0) = isActive() ? (fabs(evalgdn())>(gdTol)?gdn:0)*getStepSize() : -evalQHyd()*getStepSize();
   }
 
   void RigidCavitationNode::updateStopVector() {
@@ -728,7 +748,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -742,7 +762,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
@@ -756,7 +776,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -774,7 +794,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
@@ -790,7 +810,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -804,7 +824,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);
@@ -846,7 +866,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbi();
 
     gdn = b(laInd);
@@ -861,7 +881,7 @@ namespace MBSimHydraulics {
     const double *a = ds->evalGs()();
     const int *ia = ds->getGs().Ip();
     const int *ja = ds->getGs().Jp();
-    const Vec &laMBS = ds->getla();
+    const Vec &laMBS = ds->getla(false);
     const Vec &b = ds->evalbc();
 
     gdd = b(laInd);

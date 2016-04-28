@@ -20,7 +20,7 @@ class Line : public Object {
 
     void calcqSize() { qSize=0; }
     void calcuSize(int j);
-    void updateM(int k);
+    void updateM();
     fmatvec::Mat evalJ(int k=0) { if(updJ) updateJacobians(k); return J; }
     void updateJacobians(int k=0);
     double getFlowrate() { return flowrate; }

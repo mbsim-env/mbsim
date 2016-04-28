@@ -88,15 +88,15 @@ namespace MBSimHydraulics {
     // TODO efficient calculation (not every loop is necessary)
     Mat JLocal;
     if(dependency.size()==0) {
-      if(M[0].size()==1)
+      if(M.size()==1)
         JLocal=Mat(1,1,INIT,1);
       else {
-        JLocal=Mat(1,M[0].size(),INIT,0);
+        JLocal=Mat(1,M.size(),INIT,0);
         JLocal(0,uInd[0])=1;
       }
     }
     else {
-      JLocal=Mat(1,M[0].size(),INIT,0);
+      JLocal=Mat(1,M.size(),INIT,0);
       dep_check.push_back(this);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++) {
         const Mat Jdep=((RigidHLine*)dependencyOnOutflow[i])->calculateJacobian(dep_check);
@@ -134,8 +134,8 @@ namespace MBSimHydraulics {
     h[j]-=trans(Jacobian.row(0))*evalPressureLossGravity();
   }
       
-  void RigidHLine::updateM(int j) {
-    M[j]+=Mlocal(0,0)*JTJ(Jacobian); 
+  void RigidHLine::updateM() {
+    M+=Mlocal(0,0)*JTJ(Jacobian);
   }
 
   void RigidHLine::init(InitStage stage) {

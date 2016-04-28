@@ -298,7 +298,7 @@ namespace MBSimIntegrator {
 //  }
 
   void HETS2Integrator::updatezd() {
-    MBSimError("(HETS2Integrator::updatezd()): Not yet implemented");
+    MBSimError("(HETS2Integrator::updatezd()): not yet implemented");
     //system->setzd(system->evalzd()/dt);
   }
 

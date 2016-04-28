@@ -162,8 +162,8 @@ namespace MBSimHydraulics {
     T=SqrMat(mdim, EYE);
   }
 
-  void ElasticLineGalerkin::updateM(int j) {
-    M[j]=MFac;
+  void ElasticLineGalerkin::updateM() {
+    M=MFac;
   }
 
   void ElasticLineGalerkin::updateh(int j) {

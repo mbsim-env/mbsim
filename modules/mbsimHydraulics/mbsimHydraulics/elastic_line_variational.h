@@ -73,7 +73,7 @@ namespace MBSimHydraulics {
       void updateQ();
       void updateh(int j=0);
       void updateT() {T=Tlocal; }
-      void updateM(int j=0) {M[j]=Mlocal; }
+      void updateM() {M=Mlocal; }
 
       void plot();
       void plotParameters();

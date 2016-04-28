@@ -179,7 +179,6 @@ namespace MBSimHydraulics {
 
       virtual bool isSingleValued() const {return true;}
 
-
     private:
       double E;
       double fracAir;

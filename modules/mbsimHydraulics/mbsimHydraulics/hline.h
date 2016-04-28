@@ -66,7 +66,7 @@ namespace MBSimHydraulics {
       const fmatvec::MatV& getJacobian() const { return Jacobian; }
 
       virtual void updateQ() { }
-      void updateM(int j=0) { M[j]=Mlocal; }
+      void updateM() { M=Mlocal; }
 
       void init(InitStage stage);
       void initializeUsingXML(xercesc::DOMElement *element);
@@ -109,7 +109,7 @@ namespace MBSimHydraulics {
 
       void updateQ();
       void updateh(int j=0);
-      void updateM(int j=0);
+      void updateM();
       
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
