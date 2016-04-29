@@ -162,14 +162,14 @@ namespace MBSimFMI {
         completedStepCounter++;
         if(completedStepCounter==predefinedParameterStruct.plotEachNStep) {
           completedStepCounter=0;
-          dss->solveAndPlot();
+          dss->plot();
         }
         break;
       // plot if this is the first completed step after nextPlotTime
       case NextCompletedStepAfterSampleTime:
         if(time>=nextPlotTime) {
           nextPlotTime += predefinedParameterStruct.plotStepSize * (floor((time-nextPlotTime)/predefinedParameterStruct.plotStepSize)+1);
-          dss->solveAndPlot();
+          dss->plot();
         }
         break;
       // do not plot at completed steps -> plot at discrete sample times
@@ -292,7 +292,7 @@ namespace MBSimFMI {
     svLast=dss->evalsv();
 
     // plot initial state
-    dss->solveAndPlot();
+    dss->plot();
 
     // handling of plot mode
     switch(predefinedParameterStruct.plotMode) {
@@ -408,7 +408,7 @@ namespace MBSimFMI {
         // next event wenn plotting with sample time and we currently match that time
         if(fabs(time-nextPlotTime)<1.0e-10) {
           // plot
-          dss->solveAndPlot();
+          dss->plot();
           // next time event
           nextPlotTime=time+predefinedParameterStruct.plotStepSize;
           eventInfo->nextEventTime=nextPlotTime;
@@ -440,7 +440,7 @@ namespace MBSimFMI {
   void FMIInstance::terminate() {
     // plot end state
     if(dss)
-      dss->solveAndPlot();
+      dss->plot();
 
     // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
     // calls to fmiFreeModelInstance and fmiInstantiateModel)
