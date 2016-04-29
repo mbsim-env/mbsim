@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
     Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
     Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
 
-    frame->setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
+    frame->setJacobianOfTranslation(R->evalOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
     frame->setJacobianOfRotation(R->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
   }
 

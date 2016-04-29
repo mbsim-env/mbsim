@@ -290,12 +290,12 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < (int) discretization.size(); i++)
       static_cast<FiniteElement1s21ANCF*>(discretization[i])->initM(); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
-      GlobalMatrixContribution(i, discretization[i]->getM(), M[0]); // assemble
+      GlobalMatrixContribution(i, discretization[i]->getM(), M); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 4 * i;
-      LLM[0](Index(j, j + 3)) = facLL(M[0](Index(j, j + 3)));
+      LLM(Index(j, j + 3)) = facLL(M(Index(j, j + 3)));
       if (openStructure && i == (int) discretization.size() - 1)
-        LLM[0](Index(j + 4, j + 7)) = facLL(M[0](Index(j + 4, j + 7)));
+        LLM(Index(j + 4, j + 7)) = facLL(M(Index(j + 4, j + 7)));
     }
   }
 

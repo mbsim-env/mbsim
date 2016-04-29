@@ -320,7 +320,7 @@ namespace MBSimFlexibleBody {
 
     // mass proportional damping
     if (d_massproportional > 0) {
-      h[k] -= d_massproportional * (M[k] * u);
+      h[k] -= d_massproportional * (M * u);
     }
   }
 

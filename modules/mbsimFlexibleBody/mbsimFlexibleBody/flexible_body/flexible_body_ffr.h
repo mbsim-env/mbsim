@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
       void updateqd();
       void updateT();
       void updateh(int j=0);
-      void updateM(int i=0) { (this->*updateM_)(i); }
+      void updateM() { (this->*updateM_)(); }
       void updateGeneralizedCoordinates();
       void updatePositions();
       void updateVelocities();
@@ -74,10 +74,10 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF OBJECT */
       virtual void updateqRef(const fmatvec::Vec& ref);
       virtual void updateuRef(const fmatvec::Vec& ref);
-      virtual void updateudRef(const fmatvec::Vec& ref, int i=0);
+      virtual void updateudRef(const fmatvec::Vec& ref);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void updateLLM(int i=0) { (this->*updateLLM_)(i); }
+      virtual void updateLLM() { (this->*updateLLM_)(); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
 
@@ -356,32 +356,32 @@ namespace MBSimFlexibleBody {
       /**
        * \brief function pointer to update mass matrix
        */
-      void (FlexibleBodyFFR::*updateM_)(int i);
+      void (FlexibleBodyFFR::*updateM_)();
 
       /**
        * \brief update constant mass matrix
        */
-      void updateMConst(int i=0);
+      void updateMConst();
 
       /**
        * \brief update time dependend mass matrix
        */
-      void updateMNotConst(int i=0);
+      void updateMNotConst();
 
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (FlexibleBodyFFR::*updateLLM_)(int i);
+      void (FlexibleBodyFFR::*updateLLM_)();
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
        */
-      void updateLLMConst(int i=0) { }
+      void updateLLMConst() { }
 
       /**
        * \brief Cholesky decomposition of time dependent mass matrix
        */
-      void updateLLMNotConst(int i=0) { Object::updateLLM(i); }
+      void updateLLMNotConst() { Object::updateLLM(); }
 
       void (FlexibleBodyFFR::*updateJacobians_[2])(MBSim::Frame *frame);
 

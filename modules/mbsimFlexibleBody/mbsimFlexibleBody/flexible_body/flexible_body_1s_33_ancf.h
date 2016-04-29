@@ -49,8 +49,8 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s33ANCF(const std::string &name, bool openStructure);
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void updateM(int k) { }
-      virtual void updateLLM(int i=0) { }
+      virtual void updateM() { }
+      virtual void updateLLM() { }
 
       virtual void BuildElements();
 

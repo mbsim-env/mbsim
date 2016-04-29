@@ -277,9 +277,9 @@ namespace MBSimFlexibleBody {
   }
 #endif
 
-  void FlexibleBodyLinearExternalFFR::initM(int k) {
+  void FlexibleBodyLinearExternalFFR::initM() {
     // allocate memeory for M and Qv
-    M[k].resize(6 + nf, INIT, 0.0);
+    M.resize(6 + nf, INIT, 0.0);
     
     double M_RR = 0;  // constant during the simulation; for each DOF M_RR is same.  !!!!Every vaule has to be initialized before using it.
     for (int j = 0; j < nNodes; j++) {
@@ -291,23 +291,23 @@ namespace MBSimFlexibleBody {
     M_FF = S_kl_bar[0][0] + S_kl_bar[1][1] + S_kl_bar[2][2];
 
     // assemble M by the submatrix M_RR, M_RTheta, M_ThetaTheta, M_RF, M_ThetaF, M_FF
-    updateM(0);
+    updateM();
 
-    M[k](0, 0) = M_RR;
-    M[k](1, 1) = M_RR;
-    M[k](2, 2) = M_RR;
+    M(0, 0) = M_RR;
+    M(1, 1) = M_RR;
+    M(2, 2) = M_RR;
 
     // copy M_FF to M in this way as the limitation of the submatrix opertor for symmetric matrix.
     for (int i = 6; i < nf + 6; i++)
       for (int j = i; j < nf + 6; j++)
-        M[k](i, j) = M_FF(i - 6, j - 6);
+        M(i, j) = M_FF(i - 6, j - 6);
     
     if (DEBUG) {
-      cout << "M init " << M[k] << endl;
+      cout << "M init " << M << endl;
     }
   }
   
-  void FlexibleBodyLinearExternalFFR::updateM(int k) {
+  void FlexibleBodyLinearExternalFFR::updateM() {
     // update M_RTheta, M_ThetaTheta, M_RF, M_ThetaF;  M_RR and M_FF is constant
     
     const fmatvec::Vec& qf = q(6, 5 + nf);
@@ -348,15 +348,15 @@ namespace MBSimFlexibleBody {
     fmatvec::Mat M_ThetaF(G_bar.T() * I_ThetaF_bar);
     
     // update M by the submatrix M_RTheta, M_ThetaTheta, M_RF, M_ThetaF
-    M[k](Index(0, 2), Index(3, 5)) = M_RTheta;
-    M[k](Index(0, 2), Index(6, nf + 5)) = M_RF;
+    M(Index(0, 2), Index(3, 5)) = M_RTheta;
+    M(Index(0, 2), Index(6, nf + 5)) = M_RF;
 
     // copy M_ThetaTheta to M in this way as the limitation of the submatrix opertor for symmetric matrix.
     for (int i = 3; i < 6; i++)
       for (int j = i; j < 6; j++)
-        M[k](i, j) = M_ThetaTheta(i - 3, j - 3);
+        M(i, j) = M_ThetaTheta(i - 3, j - 3);
 
-    M[k](Index(3, 5), Index(6, nf + 5)) = M_ThetaF;
+    M(Index(3, 5), Index(6, nf + 5)) = M_ThetaF;
     
     if (DEBUG) {
 
@@ -428,7 +428,7 @@ namespace MBSimFlexibleBody {
       f << "K" << K << endl;
       f << "Qv" << Qv << endl;
       f << "h[" << k << "]" << h[k] << endl;
-      f << "M[" << k << "]" << M[k] << endl;
+      f << "M[" << k << "]" << M << endl;
       f.close();
     }
 

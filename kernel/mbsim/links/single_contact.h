@@ -70,6 +70,9 @@ namespace MBSim {
       const double& evallaN();
       const fmatvec::Vec& evallaT();
 
+      const double& evalLaN();
+      const fmatvec::Vec& evalLaT();
+
       const double& evalgdnN();
       const fmatvec::Vec& evalgdnT();
 

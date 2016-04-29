@@ -452,8 +452,8 @@ namespace MBSimFlexibleBody {
     /*END-Eigenfrequencies*/
 
     // LU-decomposition of M
-    M[0] = MConst;
-    LLM[0] = facLL(MConst);
+    M = MConst;
+    LLM = facLL(MConst);
   }
 
   void FlexibleBody2s13Disk::updateAG() {

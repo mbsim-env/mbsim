@@ -52,7 +52,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateM(int k=0);
+      virtual void updateM();
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */

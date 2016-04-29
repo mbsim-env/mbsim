@@ -35,8 +35,8 @@ class Rod : public FlexibleBody1s21RCM {
         FlexibleBody1s21RCM(name, true) {
     }
 
-    virtual void updateLLM(double t, int i = 0) {
-      FlexibleBody1s21RCM::updateLLM(i);
+    virtual void updateLLM() {
+      FlexibleBody1s21RCM::updateLLM();
     }
 };
 

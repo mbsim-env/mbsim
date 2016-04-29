@@ -276,12 +276,12 @@ namespace MBSimFlexibleBody {
     return V;
   }
 
-  void FlexibleBody1s33Cosserat::updateLLM(int k) {
+  void FlexibleBody1s33Cosserat::updateLLM() {
 //    FlexibleBody1sCosserat::updateLLM();
-    evalM(k); // be sure that M is update to date
+    evalM(); // be sure that M is update to date
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
-      LLM[k](Index(j + 3, j + 5)) = facLL(discretization[i]->getM()(Index(3, 5)));
+      LLM(Index(j + 3, j + 5)) = facLL(discretization[i]->getM()(Index(3, 5)));
     }
   }
 
@@ -430,12 +430,12 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < (int) discretization.size(); i++)
       static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
-      GlobalMatrixContribution(i, discretization[i]->getM(), M[0]); // assemble
+      GlobalMatrixContribution(i, discretization[i]->getM(), M); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
-      LLM[0](Index(j, j + 2)) = facLL(M[0](Index(j, j + 2)));
+      LLM(Index(j, j + 2)) = facLL(M(Index(j, j + 2)));
       if (openStructure && i == (int) discretization.size() - 1)
-        LLM[0](Index(j + 6, j + 8)) = facLL(M[0](Index(j + 6, j + 8)));
+        LLM(Index(j + 6, j + 8)) = facLL(M(Index(j + 6, j + 8)));
     }
   }
 

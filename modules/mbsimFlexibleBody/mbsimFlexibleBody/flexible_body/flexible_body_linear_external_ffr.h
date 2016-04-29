@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateM(int k = 0);
+      virtual void updateM();
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
@@ -140,7 +140,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief  initialize the mass matrix
        */
-      void initM(int k = 0);
+      void initM();
 
       /*!
        * \brief  initialize the quadratic velocity vector

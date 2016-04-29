@@ -699,7 +699,7 @@ namespace MBSimFlexibleBody {
         if(FWeight) {
           vector<double> data;
           data.push_back(getTime());
-          Vec3 WrOP=K->getPosition();
+          Vec3 WrOP=K->evalPosition();
           Vec3 WG = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
           data.push_back(WrOP(0));
           data.push_back(WrOP(1));
@@ -713,7 +713,7 @@ namespace MBSimFlexibleBody {
         if(openMBVBody) {
           vector<double> data;
           data.push_back(getTime());
-          Vec3 WrOS=openMBVFrame->getPosition();
+          Vec3 WrOS=openMBVFrame->evalPosition();
           Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation());
           data.push_back(WrOS(0));
           data.push_back(WrOS(1));
@@ -835,12 +835,12 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::updatedq() {
-    qd(iqT) = uRel(iuT)*getStepSize();
+    dq(iqT) = uRel(iuT)*getStepSize();
     if(fTR)
-      qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR)*getStepSize();
+      dq(iqR) = (*fTR)(qRel(iuR))*uRel(iuR)*getStepSize();
     else
-      qd(iqR) = uRel(iuR)*getStepSize();
-    qd(iqE) = uRel(iuE)*getStepSize();
+      dq(iqR) = uRel(iuR)*getStepSize();
+    dq(iqE) = uRel(iuE)*getStepSize();
   }
   void FlexibleBodyFFR::updateT() {
     if(fTR) TRel(iqR,iuR) = (*fTR)(qRel(iuR));
@@ -936,8 +936,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::updateAccelerations(Frame *frame) {
-    frame->setAcceleration(K->evalJacobianOfTranslation()*udall[0] + K->evalGyroscopicAccelerationOfTranslation());
-    frame->setAngularAcceleration(K->evalJacobianOfRotation()*udall[0] + K->evalGyroscopicAccelerationOfRotation());
+    frame->setAcceleration(K->evalJacobianOfTranslation()*evaludall() + K->evalGyroscopicAccelerationOfTranslation());
+    frame->setAngularAcceleration(K->evalJacobianOfRotation()*udall + K->evalGyroscopicAccelerationOfRotation());
   }
 
   void FlexibleBodyFFR::updateJacobians0(Frame *frame) {
@@ -981,10 +981,10 @@ namespace MBSimFlexibleBody {
       static_cast<FixedNodalFrame*>(frame[i])->updateqdRef(u(nu[0]-ne,nu[0]-1));
   }
 
-  void FlexibleBodyFFR::updateudRef(const fmatvec::Vec& ref, int i) {
-    Body::updateudRef(ref,i);
+  void FlexibleBodyFFR::updateudRef(const fmatvec::Vec& ref) {
+    Body::updateudRef(ref);
     for(unsigned int i=1; i<frame.size(); i++)
-      static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud[0](nu[0]-ne,nu[0]-1));
+      static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud(nu[0]-ne,nu[0]-1));
   }
 
   void FlexibleBodyFFR::addFrame(FixedNodalFrame *frame_) {
@@ -997,12 +997,12 @@ namespace MBSimFlexibleBody {
   }
 #endif
 
-  void FlexibleBodyFFR::updateMConst(int i) {
-    M[i] += Mbuf;
+  void FlexibleBodyFFR::updateMConst() {
+    M += Mbuf;
   }
 
-  void FlexibleBodyFFR::updateMNotConst(int index) {
-    M[index] += JTMJ(evalMb(),evalKJ(index));
+  void FlexibleBodyFFR::updateMNotConst() {
+    M += JTMJ(evalMb(),evalKJ());
   }
 
   void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {

@@ -59,15 +59,15 @@ namespace MBSimFlexibleBody {
       GlobalVectorContribution(i, discretization[i]->geth(), h[k]); // assemble
 
     if (d_massproportional > 0) { // mass proportional damping
-      h[k] -= d_massproportional * (M[k] * u);
+      h[k] -= d_massproportional * (M * u);
     }
   }
 
-  void FlexibleBody::updateM(int k) {
+  void FlexibleBody::updateM() {
     for (int i = 0; i < (int) discretization.size(); i++)
       discretization[i]->computeM(getqElement(i)); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
-      GlobalMatrixContribution(i, discretization[i]->getM(), M[k]); // assemble
+      GlobalMatrixContribution(i, discretization[i]->getM(), M); // assemble
   }
 
   void FlexibleBody::updatedhdz() {

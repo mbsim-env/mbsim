@@ -129,8 +129,8 @@ namespace MBSimFlexibleBody {
   //  addFrame("COG", s);
   }
 
-  void FlexibleBody2s13::updateM(int j) {
-    M[j] = MConst;
+  void FlexibleBody2s13::updateM() {
+    M = MConst;
   }
 
   void FlexibleBody2s13::updateh(int j) {

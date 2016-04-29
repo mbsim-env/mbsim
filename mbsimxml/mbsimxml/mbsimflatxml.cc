@@ -157,7 +157,7 @@ void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
   else
     dss->evalz0();
   dss->computeInitialCondition();
-  dss->solveAndPlot();
+  dss->plot();
 }
 
 void MBSimXML::postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss) {

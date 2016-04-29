@@ -244,6 +244,8 @@ namespace MBSimIntegrator {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       void updatebi();
+      void updatela();
+      void updatezd();
   };
 
 }

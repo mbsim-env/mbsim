@@ -353,11 +353,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1SReferenceCurve::updatedq(double t, double dt) {
-    qd = uF * dt; //T is the identity here
+    dq = uF * dt; //T is the identity here
     /* update the controlled values (if a frequency, i.e. lambda value, is given */
     for (int i = 0; i < qSize; i++) {
       if (lambdaqF(i) < 0) {
-        qF(i) = q(i) + qd(i);
+        qF(i) = q(i) + dq(i);
       }
 // for the integration two possible (internal) integrators are used: the explicit or the implicit euler rule
       else {
@@ -369,18 +369,18 @@ namespace MBSimFlexibleBody {
           // implicit writing
           double a = 1 / (lambdaqF(i) * dt);
           double Tstar = 1 / (1 + a);
-          qF(i) += Tstar * ((q(i) + qd(i)) - qF(i));
+          qF(i) += Tstar * ((q(i) + dq(i)) - qF(i));
         }
       }
     }
   }
 
   void FlexibleBody1SReferenceCurve::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]);
+    du[0] = slvLLFac(LLM[0], h[0] * dt + r[0]);
     /* update the controlled values (if a frequency, i.e. lambda value, is given */
     for (int i = 0; i < uSize[0]; i++) {
       if (lambdauF(i) < 0) {
-        uF(i) = u(i) + ud[0](i);
+        uF(i) = u(i) + du[0](i);
       }
       else {
         if (0) {
@@ -391,7 +391,7 @@ namespace MBSimFlexibleBody {
           // implicit writing (after wikipedia http://de.wikipedia.org/wiki/PT1-Glied)
           double a = 1 / (lambdauF(i) * dt);
           double Tstar = 1 / (1 + a);
-          uF(i) += Tstar * ((u(i) + ud[0](i)) - uF(i));
+          uF(i) += Tstar * ((u(i) + du[0](i)) - uF(i));
         }
       }
     }
@@ -539,29 +539,29 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1SReferenceCurve::updateM(int k) {
+  void FlexibleBody1SReferenceCurve::updateM() {
     if (1) {
-      FlexibleBodyContinuum<double>::updateM(t, k);
+      FlexibleBodyContinuum<double>::updateM();
 
 //TODO: just for testing circular reference
       if (0) {
-        for (int i = 0; i < M[k].cols(); i++) {
-          M[k](i, 0) = 0;
-          M[k](i, 1) = 0;
+        for (int i = 0; i < M.cols(); i++) {
+          M(i, 0) = 0;
+          M(i, 1) = 0;
         }
-        M[k](0, 0) = 1;
-        M[k](1, 1) = 1;
+        M(0, 0) = 1;
+        M(1, 1) = 1;
       }
 
 //TODO: just for testing only reference movement
       if (0) {
-        for (int i = 2; i < M[k].cols(); i++) {
-          M[k](i, 0) = 0;
-          M[k](i, 1) = 0;
+        for (int i = 2; i < M.cols(); i++) {
+          M(i, 0) = 0;
+          M(i, 1) = 0;
           h[k](i) = 0;
-          M[k](i, i) = 1;
-          for (int j = i + 1; j < M[k].cols(); j++) {
-            M[k](i, j) = 0;
+          M(i, i) = 1;
+          for (int j = i + 1; j < M.cols(); j++) {
+            M(i, j) = 0;
           }
         }
       }
@@ -580,7 +580,7 @@ namespace MBSimFlexibleBody {
       ofstream myfile;
       myfile.open("M.txt", ios::app);
       myfile.precision(3);
-      myfile << M[k] << endl;
+      myfile << M << endl;
       myfile.close();
     }
   }

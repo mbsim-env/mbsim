@@ -62,6 +62,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s33RCM::computeM(const Vec& qG) { 
+    computeh(qG,qG);
     if(nrm2(qG-qG_Old)>tol_comp) {
       // /* symmetric mass matrix */
       // Mat Q = tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI();

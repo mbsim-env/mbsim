@@ -420,7 +420,7 @@ namespace MBSim {
       for (int j = ia[laInd + i]; j < ia[laInd + 1 + i]; j++)
         gdn(i) += a[j] * LaMBS(ja[j]);
 
-      if (!fifl->isFulfilled(la(i), gdn(i), gd(i), LaTol, gdTol)) {
+      if (!fifl->isFulfilled(La(i), gdn(i), gd(i), LaTol, gdTol)) {
         ds->setTermination(false);
         return;
       }

@@ -49,7 +49,7 @@ void Perlchain::initialize() {
 
 void Perlchain::updateG() {
   int j=0;
-  const int nDofs = evalLLM(j).cols();
+  const int nDofs = evalLLM().cols();
   const int nLa = evalW(j).cols();
   if (0) {
     DynamicSystemSolver::updateG();
@@ -57,7 +57,7 @@ void Perlchain::updateG() {
   else if (1) {
     cs *cs_L_LLM, *cs_Wj;
 
-    int n = LLM[j].cols();
+    int n = LLM.cols();
 
 //      cs_L_LLM = compressLLM_LToCsparse_direct(j); // compress the the lower triangular part of LLM into compressed column by constructing the three arrays directly
 //      cs_Wj = compressWToCsparse_direct(j); // compress the W into compressed column by constructing the three arrays directly
@@ -207,14 +207,14 @@ void Perlchain::updateG() {
     if (compare) {
       double t_cs = sw.stop(true);
       sw.start();
-      SqrMat Greference(W[j].T() * slvLLFac(LLM[j], evalV(j)));
+      SqrMat Greference(W[j].T() * slvLLFac(LLM, evalV(j)));
       double t_ref = sw.stop(true);
       cout << "t_cs = " << t_cs << " s   | t_ref =" << t_ref << "s   | dt = " << (t_ref - t_cs) / t_ref * 100 << " %" << endl;
 
       if (0) {
         cout << nrm1(W[j] - cs2Mat(cs_Wj)) << endl;
         cout << W[j] - cs2Mat(cs_Wj) << endl;
-        cout << nrm1(LLM[j] - cs2Mat(cs_L_LLM)) << endl;
+        cout << nrm1(LLM - cs2Mat(cs_L_LLM)) << endl;
 
         ofstream Ofile("W_reference.txt");
         Ofile << W[j];
@@ -227,13 +227,13 @@ void Perlchain::updateG() {
         Ofile.close();
 
         Ofile.open("LLM_reference.txt");
-        Ofile << LLM[j];
+        Ofile << LLM;
         Ofile.close();
         Ofile.open("LLM_cs.txt");
         Ofile << cs2Mat(cs_L_LLM);
         Ofile.close();
         Ofile.open("LLM_diff.txt");
-        Ofile << LLM[j] - cs2Mat(cs_L_LLM);
+        Ofile << LLM - cs2Mat(cs_L_LLM);
         Ofile.close();
 
         ofstream ycsOfile("y_cs.txt");
@@ -355,7 +355,7 @@ cs * Perlchain::compressLLM_LToCsparse(int j) {
   cs *LLM_L_csTriplet;
   double EPSILON = 1e-17; /*todo: a better epsilion? */
 
-  n = LLM[j].cols();
+  n = LLM.cols();
 
 // check for maximal non-zero-size: right now there are three different ways, when compare the time, the percentage is not reliable for comparing because the ref_time varies a little.
 
@@ -379,9 +379,9 @@ cs * Perlchain::compressLLM_LToCsparse(int j) {
     static int nz0, nz1;
     if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
-        nz0 = countElementsLT(LLM[j]) + 50;
+        nz0 = countElementsLT(LLM) + 50;
       else if (j == 1)
-        nz1 = countElementsLT(LLM[j]) + 50;
+        nz1 = countElementsLT(LLM) + 50;
     }
     nz = (j == 0) ? nz0 : nz1;
     //  cout << "j = " << j << endl; // j is always 0 ??
@@ -406,7 +406,7 @@ cs * Perlchain::compressLLM_LToCsparse(int j) {
     for (int row = uInd; row < uInd + uSize; row++) {
       for (int col = row; col >= uInd; col--) {
 //      for (int col = 0; col < uInd + uSize; col++) {
-        double entry = LLM[j](row, col);
+        double entry = LLM(row, col);
         if (fabs(entry) > EPSILON)
           cs_entry(LLM_L_csTriplet, row, col, entry);
       }
@@ -421,7 +421,7 @@ cs * Perlchain::compressLLM_LToCsparse(int j) {
     for (int row = uInd; row < uInd + uSize; row++) {
       for (int col = row; col >= uInd; col--) {
 //      for (int col = 0; col < uInd + uSize; col++) {
-        double entry = LLM[j](row, col);
+        double entry = LLM(row, col);
         if (fabs(entry) > EPSILON)
           cs_entry(LLM_L_csTriplet, row, col, entry);
       }
@@ -517,7 +517,7 @@ cs * Perlchain::compressLLM_LToCsparse_direct(int j) {
   cs *LLM_L_cs;
   double EPSILON = 1e-17; /*todo: a better epsilion? */
 
-  n = LLM[j].cols();
+  n = LLM.cols();
 
   int nzMethod = 3; //todo: for the dense LLM, the memory may not enough for the thrid method.
 
@@ -539,9 +539,9 @@ cs * Perlchain::compressLLM_LToCsparse_direct(int j) {
     static int nz0, nz1;
     if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
-        nz0 = countElementsLT(LLM[j]) + 50;
+        nz0 = countElementsLT(LLM) + 50;
       else if (j == 1)
-        nz1 = countElementsLT(LLM[j]) + 50;
+        nz1 = countElementsLT(LLM) + 50;
     }
     nzMax = (j == 0) ? nz0 : nz1;
   }
@@ -569,7 +569,7 @@ cs * Perlchain::compressLLM_LToCsparse_direct(int j) {
     for (int col = uInd; col < uInd + uSize; col++) {
       Cp[col] = counter;
       for (int row = col; row < uInd + uSize; row++) {
-        double entry = LLM[j](row, col);
+        double entry = LLM(row, col);
 //        if (fabs(entry) > EPSILON) {
         Ci[counter] = row;
         Cx[counter] = entry;
@@ -588,7 +588,7 @@ cs * Perlchain::compressLLM_LToCsparse_direct(int j) {
     for (int col = uInd; col < uInd + uSize; col++) {
       Cp[col] = counter;
       for (int row = col; row < uInd + uSize; row++) {
-        double entry = LLM[j](row, col);
+        double entry = LLM(row, col);
 //        if (fabs(entry) > EPSILON) {
         Ci[counter] = row;
         Cx[counter] = entry;

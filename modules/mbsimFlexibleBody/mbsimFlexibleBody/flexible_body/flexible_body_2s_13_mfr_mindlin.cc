@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
     delete R_ij;
   }
 
-  void FlexibleBody2s13MFRMindlin::updateM(int k) {
+  void FlexibleBody2s13MFRMindlin::updateM() {
     SymMat Mext = MConst.copy(); // copy constant mass matrix parts
     Vec qf = evalqExt()(RefDofs, Dofs - 1).copy();
 
@@ -98,7 +98,7 @@ namespace MBSimFlexibleBody {
 
     Mext(3, RefDofs, 5, Dofs - 1) += M_ThetaF;
 
-    M[k] = condenseMatrix(Mext, ILocked).copy();
+    M = condenseMatrix(Mext, ILocked).copy();
 
     /* Eigenvalues of M */
     if (DEBUGLEVEL >= 2) {
@@ -106,7 +106,7 @@ namespace MBSimFlexibleBody {
       filenameM << "M" << nr << "x" << nj << "t" << getTime() << ".txt";
       ofstream file_M(filenameM.str().c_str());
       file_M << M << endl;
-      file_M << eigval(M[k]) << endl;
+      file_M << eigval(M) << endl;
       file_M.close();
 
       ofstream file_TS("LastTimeStep.txt");
@@ -117,22 +117,22 @@ namespace MBSimFlexibleBody {
       filenameMpart << "Mpart" << nr << "x" << nj << ".txt";
       ofstream file_Mpart(filenameMpart.str().c_str());
       Index Ipart(3, 5);
-      file_Mpart << "M_TT" << endl << M[k](Ipart) << endl;
-      file_Mpart << eigval(M[k](Ipart)) << endl;
+      file_Mpart << "M_TT" << endl << M(Ipart) << endl;
+      file_Mpart << eigval(M(Ipart)) << endl;
       file_Mpart.close();
 
       /* EIGENFREQUENCIES */
-      if (eigval(M[k](Ipart))(0) < 0)
+      if (eigval(M(Ipart))(0) < 0)
         THROW_MBSIMERROR("TEST");
 
       //with MAPLE
       stringstream filename;
       filename << "Invertation" << nr << "x" << nj;
-      MapleOutput(M[k], "M", filename.str());
+      MapleOutput(M, "M", filename.str());
       MapleOutput(K, "K", filename.str());
 
       //with MBSIM
-      SqrMat H = static_cast<SqrMat>(inv(M[k]) * K);
+      SqrMat H = static_cast<SqrMat>(inv(M) * K);
       Vector<Ref, std::complex<double> > EigVal = eigval(H);
       Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
       for (int i = 0; i < EigVal.size() - 1; i++) {
@@ -161,7 +161,7 @@ namespace MBSimFlexibleBody {
     //throw new MBSimError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
 
     // LU-decomposition of M
-    LLM[k] = facLL(M[k]);
+    LLM = facLL(M);
   }
 
   void FlexibleBody2s13MFRMindlin::BuildElements() {
@@ -524,7 +524,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody2s13MFRMindlin::initMatrices() {
     computeStiffnessMatrix();
     computeConstantMassMatrixParts();
-    updateM(0);
+    updateM();
   }
 
   void FlexibleBody2s13MFRMindlin::updateAG() {

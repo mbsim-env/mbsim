@@ -88,6 +88,16 @@ namespace MBSim {
     return laT;
   }
 
+  const double& SingleContact::evalLaN() {
+    if(ds->getUpdateLa()) ds->updateLa();
+    return LaN(0);
+  }
+
+  const Vec& SingleContact::evalLaT() {
+    if(ds->getUpdateLa()) ds->updateLa();
+    return LaT;
+  }
+
   const double& SingleContact::evalgdnN() {
     if(ds->getUpdateLa()) ds->updateLa();
     return gdnN(0);
@@ -648,7 +658,7 @@ namespace MBSim {
     if (gActive) {
       LinkStatus(0) = 2;
       if (ftil) {
-        if (ftil->isSticking(laT, gdnT, gdT, laN(0), LaTol, gdTol))
+        if (ftil->isSticking(evalLaT(), evalgdnT(), gdT, evalLaN(), LaTol, gdTol))
           LinkStatus(0) = 3;
         else
           LinkStatus(0) = 4;

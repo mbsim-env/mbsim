@@ -89,8 +89,8 @@ namespace MBSimIntegrator {
     /* FIND EQUILIBRIUM*/
     hgFun fun_hg(&system);
 
-    VecV qla(q.size() + system.getla().size());
-    VecV la(system.getla().size());
+    VecV qla(q.size() + system.getla(false).size());
+    VecV la(system.getla(false).size());
     Index qInd = Index(0, q.size() - 1);
     Index laInd = Index(q.size(), qla.size() - 1);
 
@@ -99,7 +99,7 @@ namespace MBSimIntegrator {
     VecV qlaOldOld(qla.size());
 
     qla.set(qInd, q);
-    qla.set(laInd, system.getla());
+    qla.set(laInd, system.getla(false));
 
     /* use MultiDimNewtonMethod*/
 //    MultiDimNewtonMethod newton(&fun_hg);
@@ -121,6 +121,7 @@ namespace MBSimIntegrator {
     newton.setLinearAlgebra(1); // as system is possible underdetermined
     newton.setJacobianUpdateFreq(updateJacobianEvery);
 
+    system.setUpdatela(false);
     static_cast<DynamicSystem&>(system).plot();
 
     while (t < tStop) { // time loop
@@ -161,6 +162,7 @@ namespace MBSimIntegrator {
       if ((step * stepPlot - integrationSteps) < 0) {
         /* WRITE OUTPUT */
         step++;
+        system.setUpdatela(false);
         static_cast<DynamicSystem&>(system).plot();
         double s1 = clock();
         time += (s1 - s0) / CLOCKS_PER_SEC;

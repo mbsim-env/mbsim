@@ -96,8 +96,8 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
       virtual double computePotentialEnergy();
-      virtual void updateM(int k = 0);
-      virtual void updateLLM(int i = 0);
+      virtual void updateM();
+      virtual void updateLLM();
 //      virtual void updatedu();
       /***************************************************/
 
@@ -260,12 +260,12 @@ namespace MBSimFlexibleBody {
   }
   ;
 
-  inline void FlexibleBody1s21Cosserat::updateM(int k) {
-    M[k] << MConst;
+  inline void FlexibleBody1s21Cosserat::updateM() {
+    M << MConst;
   }
 
-  inline void FlexibleBody1s21Cosserat::updateLLM(int k) {
-    LLM[k] << LLMConst;
+  inline void FlexibleBody1s21Cosserat::updateLLM() {
+    LLM << LLMConst;
   }
 
   inline void FlexibleBody1s21Cosserat::setMomentsInertia(double I1_) {

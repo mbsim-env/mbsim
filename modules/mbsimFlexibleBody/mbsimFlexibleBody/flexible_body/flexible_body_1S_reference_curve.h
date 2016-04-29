@@ -80,11 +80,11 @@ namespace MBSimFlexibleBody {
       /*INHERITED INTERFACE*/
       virtual void BuildElements();
       virtual void updateh(int k = 0);
-      virtual void updateM(int k = 0);
-      virtual void updatedq(double t, double dt);
-      virtual void updatedu(double t, double dt);
-      virtual void updateud(double t, int i = 0);
-      virtual void updateqd(double t);
+      virtual void updateM();
+      virtual void updatedq();
+      virtual void updatedu();
+      virtual void updateud();
+      virtual void updateqd();
       virtual void initz();
       virtual void plot(double t, double dt = 1.);
 

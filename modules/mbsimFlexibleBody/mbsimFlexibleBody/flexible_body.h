@@ -64,10 +64,10 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updatedq() { qd = u*getStepSize(); }
+      virtual void updatedq() { dq = u*getStepSize(); }
       virtual void updateqd() { qd = u; }
       virtual void updateh(int k=0);
-      virtual void updateM(int k=0);
+      virtual void updateM();
       virtual void updatedhdz();
       virtual void updatePositions(NodeFrame* frame);
       virtual void updateVelocities(NodeFrame* frame);
