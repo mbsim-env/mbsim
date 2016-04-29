@@ -407,11 +407,11 @@ namespace MBSimInterface {
         // different mbsim actions
       case _SI_plot_SI_:
         system->resetUpToDate();
-        system->solveAndPlot();
+        system->plot();
         break;
       case _SI_shift_SI_:
         system->resetUpToDate();
-        system->solveAndPlot();
+        system->plot();
         system->shift();
         break;
       case _SI_exitRequest_SI_:
