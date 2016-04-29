@@ -121,8 +121,8 @@ namespace MBSimIntegrator {
     newton.setLinearAlgebra(1); // as system is possible underdetermined
     newton.setJacobianUpdateFreq(updateJacobianEvery);
 
-    system.setUpdatela(false);
-    static_cast<DynamicSystem&>(system).plot();
+//    system.setUpdatela(false);
+//    static_cast<DynamicSystem&>(system).plot();
 
     while (t < tStop) { // time loop
       integrationSteps++;
