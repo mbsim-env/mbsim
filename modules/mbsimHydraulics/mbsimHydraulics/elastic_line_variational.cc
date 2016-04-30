@@ -235,7 +235,7 @@ namespace MBSimHydraulics {
       plotVector.push_back(QIn(0)*6e4);
       plotVector.push_back(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
-        plotVector.push_back((nFrom->getla()(0)*(1-relPlotPoints(i))+nTo->getla()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
+        plotVector.push_back((nFrom->getGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->getGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
       if(getPlotFeature(state)==enabled)
         for (int i=0; i<n; i++)
           plotVector.push_back(y(i));
