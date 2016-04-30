@@ -225,10 +225,8 @@ namespace MBSimIntegrator {
 
   void TimeSteppingSSCIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { // system: only dummy!
     Timer.start();
-    if (outputInterpolation) {
-      getAllSetValuedla(la,laSizes,SetValuedLinkListT1);
-      la.init(0.0);
-    }
+
+    lae = system.getla(false);
 
     qUncertaintyByExtrapolation=0;
 
@@ -341,11 +339,10 @@ namespace MBSimIntegrator {
               if (sysT1->gActiveChanged()) sysT1->resize_();
               sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dt;
               sysT1->setUpdatebi(false);
-              la1d/=dt;
               sysT1->getu() += sysT1->evaldu();
               sysT1->getx() += sysT1->evaldx();
               iterA  = sysT1->getIterI();
-              getAllSetValuedla(la1d,la1dSizes,SetValuedLinkListT1);
+              la1d = sysT1->getLa()/dt;
               sysT1->getLinkStatus(LStmp_T1);
               sysT1->resetUpToDate();
               // wird jetzt von testTolerances() direkt aufgerufen; nach jedem erfolgreichen Schritt!
@@ -370,11 +367,10 @@ namespace MBSimIntegrator {
                 if (sysT1->gActiveChanged()) sysT1->resize_();
                 sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 sysT1->setUpdatebi(false);
-                la2b/=dtHalf;
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 iterB1  = sysT1->getIterI();
-                getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT1);
+                la2b = sysT1->getLa()/dtHalf;
                 sysT1->getLinkStatus(LStmp_T1);
                 sysT1->resetUpToDate();
                 LSB1 = LStmp_T1;
@@ -417,11 +413,10 @@ namespace MBSimIntegrator {
                 if (sysT2->gActiveChanged()) sysT2->resize_();
                 sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 sysT2->setUpdatebi(false);
-                la2b/=dtHalf;
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB1  = sysT2->getIterI();
-                getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
+                la2b = sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB1 = LStmp_T2;
@@ -717,8 +712,7 @@ namespace MBSimIntegrator {
                 LSB2 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
 
-                getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
-                la2b/=dtHalf;
+                la2b = sysT2->getLa()/dtHalf;
                 singleStepsT2++;
                 z2d << sysT2->getState();
               }
@@ -877,9 +871,9 @@ namespace MBSimIntegrator {
     bool FlagtPlot = (t>=tPlot);
     if ((FlagPlotEveryStep) || ((t>=tPlot)&&(outputInterpolation==false))) {
       tPlot+=dtPlot;
-      setAllSetValuedla(lae,laeSizes,SetValuedLinkListT1);
       sysT1->setTime(t);
       sysT1->setState(ze);
+      sysT1->getla(false) = lae;
       sysT1->resetUpToDate();
       sysT1->setUpdatela(false);
       sysT1->setUpdateLa(false);
@@ -918,9 +912,10 @@ namespace MBSimIntegrator {
 
       while (t>tPlot) {
         double ratio = (tPlot -(t-dte))/dte;
-        setAllSetValuedla(laSynchron+(laeSynchron-laSynchron)*ratio,laSizesSynchron,SetValuedLinkListT1);
+        throw;
         sysT1->setTime(tPlot);
         sysT1->setState(zi + (ze-zi)*ratio);
+        sysT1->setla(laSynchron+(laeSynchron-laSynchron)*ratio);
         sysT1->resetUpToDate();
         sysT1->setUpdatela(false);
         sysT1->setUpdateLa(false);
@@ -1460,46 +1455,6 @@ namespace MBSimIntegrator {
   // The Lagragian Multiplier of all Links stored in SetValuedLinkList of the corresponding DynamicSystemSolver (sysT1)
   // are collecte and stored in Vec la
   // Vector<int> laSizes contains the singel la-size of each link
-
-  void TimeSteppingSSCIntegrator::getAllSetValuedla(fmatvec::Vec& la_, fmatvec::VecInt& la_Sizes,vector<Link*> &SetValuedLinkList) {
-
-    int SetValuedLaSize=0;
-    int NumberOfSetValuedLinks = SetValuedLinkList.size();
-    la_Sizes.resize(NumberOfSetValuedLinks);
-
-    for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
-      la_Sizes(i)=SetValuedLinkList[i]->getlaSize();
-      SetValuedLaSize+=la_Sizes(i);
-    }
-    la_.resize(SetValuedLaSize);
-    int j=0;
-    int sizeLink;
-    for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
-      sizeLink = SetValuedLinkList[i]->getlaSize();
-      if (SetValuedLinkList[i]->isActive())
-        la_(j,j+sizeLink-1) = SetValuedLinkList[i]->getLa();
-      else 
-        la_(j,j+sizeLink-1).init(0.0);
-      j+=sizeLink;  
-    }     
-  } 
-
-  void TimeSteppingSSCIntegrator::setAllSetValuedla(const fmatvec::Vec& la_, const fmatvec::VecInt& la_Sizes,vector<Link*> &SetValuedLinkList) {
-
-    int j=0;
-    int sizeLink;
-    for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
-      sizeLink = SetValuedLinkList[i]->getlaSize();
-//      if (! SetValuedLinkList[i]->isActive())
-//        SetValuedLinkList[i]->deleteLaRef();
-      if(sizeLink >= la_Sizes(i)) 
-        SetValuedLinkList[i]->getla()(0,la_Sizes(i)-1) = la_(j,j+la_Sizes(i)-1);
-      else
-        SetValuedLinkList[i]->getla()(0,sizeLink-1) = la_(j,j+sizeLink-1);
-      j+=la_Sizes(i);  
-    }     
-  }
-
 
   void TimeSteppingSSCIntegrator::getDataForGapControl() {
     int nInActive=0;

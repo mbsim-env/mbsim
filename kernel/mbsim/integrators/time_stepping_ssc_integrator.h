@@ -232,8 +232,6 @@ namespace MBSimIntegrator {
       void preIntegrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_);
        
       /** internal subroutines */
-      void getAllSetValuedla(fmatvec::Vec& la_,fmatvec::VecInt& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
-      void setAllSetValuedla(const fmatvec::Vec& la_,const fmatvec::VecInt& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
       void getDataForGapControl();
       bool testTolerances();
       bool GapControl(double qUnsafe, bool SSCTestOK); 
