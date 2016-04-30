@@ -338,4 +338,3 @@ namespace MBSim {
   }
 
 }
-

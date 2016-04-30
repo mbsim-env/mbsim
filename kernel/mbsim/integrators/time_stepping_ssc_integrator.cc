@@ -707,12 +707,12 @@ namespace MBSimIntegrator {
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB2  = sysT2->getIterI();
+                la2b = sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB2 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
 
-                la2b = sysT2->getLa()/dtHalf;
                 singleStepsT2++;
                 z2d << sysT2->getState();
               }
