@@ -54,10 +54,6 @@ namespace MBSimIntegrator {
       void setStepSize(double dt_) { dt = dt_; }
       void setDriftCompensation(bool dc) { driftCompensation = dc; }
       /***************************************************/
-
-      void updatebi();
-      void updatela();
-      void updatezd();
     
     private:
       /**

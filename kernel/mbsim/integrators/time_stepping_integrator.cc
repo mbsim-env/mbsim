@@ -75,7 +75,9 @@ namespace MBSimIntegrator {
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
         if(driftCompensation) system.projectGeneralizedPositions(0);
+        system.setUpdatela(false);
         system.setUpdateLa(false);
+        system.setUpdatezd(false);
         system.plot();
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
@@ -92,8 +94,17 @@ namespace MBSimIntegrator {
       system.checkActive(1);
       if (system.gActiveChanged()) system.resize_();
 
+      system.getbi(false) << system.evalgd() + system.evalW().T()*slvLLFac(system.evalLLM(),system.evalh())*dt;
+      system.setUpdatebi(false);
+
       system.getu() += system.evaldu();
       system.getx() += system.evaldx();
+
+      system.setla(system.getLa()/dt);
+      system.setqd(system.getdq(false)/dt);
+      system.setud(system.getdu(false)/dt);
+      system.setxd(system.getdx(false)/dt);
+
       system.resetUpToDate();
 
       if(system.getIterI()>maxIter) maxIter = system.getIterI();
@@ -127,10 +138,6 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
-    this->system = &system;
-    system.setUpdatebiCallBack(boost::bind(&TimeSteppingIntegrator::updatebi,this));
-    system.setUpdatelaCallBack(boost::bind(&TimeSteppingIntegrator::updatela,this));
-    system.setUpdatezdCallBack(boost::bind(&TimeSteppingIntegrator::updatezd,this));
     debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
@@ -142,20 +149,6 @@ namespace MBSimIntegrator {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"stepSize");
     setStepSize(Element::getDouble(e));
-  }
-
-  void TimeSteppingIntegrator::updatebi() {
-    system->getbi(false) << system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
-  }
-
-  void TimeSteppingIntegrator::updatela() {
-    system->setla(system->getLa(false)/dt);
-  }
-
-  void TimeSteppingIntegrator::updatezd() {
-    system->setqd(system->getdq(false)/dt);
-    system->setud(system->getdu(false)/dt);
-    system->setxd(system->getdx(false)/dt);
   }
 
 }

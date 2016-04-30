@@ -868,10 +868,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezd() {
-    if(updatezdCallBack)
-      updatezdCallBack();
-    else
-      Group::updatezd();
+    Group::updatezd();
     updzd = false;
   }
 
@@ -879,14 +876,6 @@ namespace MBSim {
     if (getPlotFeature(plotRecursive) == enabled) {
       Group::closePlot();
     }
-  }
-
-  int DynamicSystemSolver::solveConstraints() {
-    throw;
-  }
-
-  int DynamicSystemSolver::solveImpacts() {
-    throw;
   }
 
   void DynamicSystemSolver::computeInitialCondition() {
@@ -932,27 +921,18 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatebc() {
-    if(updatebcCallBack)
-      updatebcCallBack();
-    else
-      bc << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+    bc << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
     updbc = false;
   }
 
   void DynamicSystemSolver::updatebi() {
-    if(updatebiCallBack)
-      updatebiCallBack();
-    else
-      bi << evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+    bi << evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
     updbi = false;
   }
 
   void DynamicSystemSolver::updatela() {
     if (la.size()) {
 
-    if(updatelaCallBack)
-      updatelaCallBack();
-    else {
     if(solveDirectly)
       la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
     else {
@@ -980,7 +960,6 @@ namespace MBSim {
 
     if (useOldla)
       savela();
-    }
     }
     }
 

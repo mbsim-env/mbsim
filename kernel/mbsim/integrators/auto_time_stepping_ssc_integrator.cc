@@ -314,7 +314,7 @@ namespace MBSimIntegrator {
 //    q_l += system_.deltaq(z_l,t_,dt_);
 //    system_.update(z_,t_+dt_,1);
     system_.getbi(false) = system_.evalgd() + system_.evalW().T()*slvLLFac(system_.evalLLM(),system_.evalh())*dt_;
-    *piter  = system_.solveImpacts();
+    system_.setUpdatebi(false);
     system_.setTime(t_+dt_);
     u_l += system_.evaldu();
     x_l += system_.evaldx();
@@ -494,7 +494,8 @@ namespace MBSimIntegrator {
         system_.getbi().resize() = system_.getgd() + W_n.T()*slvLLFac(M_LLM,h_n)*dt_;      
       }
 
-      *piter = system_.solveImpacts();
+      *piter = 0; //system_.solveImpacts();
+      throw;
 
       Vec du_n = slvLUFac(luMeff_n,heff_n*dt_ + W_n*system_.getla(),ipiv);
       u_n += du_n;
@@ -559,6 +560,8 @@ namespace MBSimIntegrator {
       dhdu_n << dhdu_n_T3;
       piter = &iter_T3;
     }
+
+    *piter = 0;
 
     z_l >> z_;
     q_l >> z_(Iq);
@@ -653,8 +656,7 @@ namespace MBSimIntegrator {
     system_.getG(false) = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
     system_.getGs(false) << system_.evalG();
     system_.getbi(false) = system_.evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
-
-    *piter = system_.solveImpacts();
+    system_.setUpdatebi(false);
 
     Vec du = slvLUFac(luMeff,heff*dt + V*system_.getla(),ipiv);
 

@@ -133,7 +133,8 @@ namespace MBSimIntegrator {
         // adapt last time step-size
         dtInfo = dt;
 
-        bc << system.evalgd()/dt + system.evalW().T()*slvLLFac(LLMStage0,hStage0);
+        system.getbc(false) << system.evalgd()/dt + system.evalW().T()*slvLLFac(LLMStage0,hStage0);
+        system.setUpdatebc(false);
 
         // save values
         Vec laStage0 = system.evalla().copy();
@@ -162,7 +163,8 @@ namespace MBSimIntegrator {
         // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
 
-        bc << 2.*system.evalgd()/dt;
+        system.getbc(false) << 2.*system.evalgd()/dt;
+        system.setUpdatebc(false);
 
         // output stage velocity update
         system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.evalla())*dt*0.5;
@@ -251,8 +253,6 @@ namespace MBSimIntegrator {
   }
 
   void HETS2Integrator::integrate(DynamicSystemSolver& system) {
-    this->system = &system;
-    system.setUpdatebcCallBack(boost::bind(&HETS2Integrator::updatebc,this));
     system.setUseConstraintSolverForPlot(true);
     debugInit();
     preIntegrate(system);
@@ -287,19 +287,6 @@ namespace MBSimIntegrator {
     }
 
     return impact; 
-  }
-
-  void HETS2Integrator::updatebc() {
-    system->getbc(false) << bc;
-  }
-
-//  void HETS2Integrator::updateLa() {
-//    system->setLa(system->evalla()*dt);
-//  }
-
-  void HETS2Integrator::updatezd() {
-    MBSimError("(HETS2Integrator::updatezd()): not yet implemented");
-    //system->setzd(system->evalzd()/dt);
   }
 
 }

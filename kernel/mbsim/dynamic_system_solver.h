@@ -180,21 +180,6 @@ namespace MBSim {
       virtual void closePlot();
       /***************************************************/
 
-      /* INHERITED INTERFACE FOR DERIVED CLASS */
-      /**
-       * \brief solves prox-functions for contact forces using sparsity structure
-       * \return iterations of solver
-       */
-      virtual int solveConstraints();
-
-      /**
-       * \brief solves prox-functions for impacts on velocity level using sparsity structure
-       * \param time step-size
-       * \return iterations of solver
-       */
-      virtual int solveImpacts();
-      /***************************************************/
-
       /* GETTER / SETTER */
 
       void setConstraintSolver(Solver solver_) { contactSolver = solver_; }
@@ -532,6 +517,9 @@ namespace MBSim {
       bool getUpdatedx() { return upddx; }
       void setUpdatela(bool updla_) { updla = updla_; }
       void setUpdateLa(bool updLa_) { updLa = updLa_; }
+      void setUpdatebi(bool updbi_) { updbi = updbi_; }
+      void setUpdatebc(bool updbc_) { updbc = updbc_; }
+      void setUpdatezd(bool updzd_) { updzd = updzd_; }
 
       void resize_();
 
@@ -579,11 +567,6 @@ namespace MBSim {
       virtual void updateStopVector();
 
       void plot();
-
-      void setUpdatebcCallBack(const boost::function<void()> &updatebcCallBack_) { updatebcCallBack = updatebcCallBack_; }
-      void setUpdatebiCallBack(const boost::function<void()> &updatebiCallBack_) { updatebiCallBack = updatebiCallBack_; }
-      void setUpdatelaCallBack(const boost::function<void()> &updatelaCallBack_) { updatelaCallBack = updatelaCallBack_; }
-      void setUpdatezdCallBack(const boost::function<void()> &updatezdCallBack_) { updatezdCallBack = updatezdCallBack_; }
 
     protected:
       /**
@@ -845,8 +828,6 @@ namespace MBSim {
       double gTol, gdTol, gddTol, laTol, LaTol;
 
       bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
-
-      boost::function<void()> updatebcCallBack, updatebiCallBack, updatelaCallBack, updatezdCallBack;
 
       bool solveDirectly;
 

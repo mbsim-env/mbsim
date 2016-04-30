@@ -137,7 +137,7 @@ namespace MBSimIntegrator {
       system.getGs(false) << system.evalG();
       system.getbi(false) << system.evalgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
 
-      iter = system.solveImpacts();
+      throw;
       if (iter > maxIter)
         maxIter = iter;
       sumIter += iter;

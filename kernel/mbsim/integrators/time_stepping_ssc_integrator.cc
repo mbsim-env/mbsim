@@ -105,19 +105,11 @@ namespace MBSimIntegrator {
   }
 
   void TimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system) {
-    this->system = &system;
-    system.setUpdatebiCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatebi,this));
-    system.setUpdatelaCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatela,this));
-    system.setUpdatezdCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatezd,this));
     debugInit();
     integrate(system, system, system,1); 
   }
 
   void TimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, int Threads) { 
-    this->system = &systemT1_;
-    systemT1_.setUpdatebiCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatebi,this));
-    systemT1_.setUpdatelaCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatela,this));
-    systemT1_.setUpdatezdCallBack(boost::bind(&TimeSteppingSSCIntegrator::updatezd,this));
     numThreads = Threads;
     preIntegrate(systemT1_, systemT2_, systemT3_);
     subIntegrate(systemT1_, tEnd);
@@ -347,7 +339,8 @@ namespace MBSimIntegrator {
               sysT1->resetUpToDate();
               sysT1->checkActive(1);
               if (sysT1->gActiveChanged()) sysT1->resize_();
-              bi << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dt;
+              sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dt;
+              sysT1->setUpdatebi(false);
               la1d/=dt;
               sysT1->getu() += sysT1->evaldu();
               sysT1->getx() += sysT1->evaldx();
@@ -375,7 +368,8 @@ namespace MBSimIntegrator {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
-                bi << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->setUpdatebi(false);
                 la2b/=dtHalf;
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -399,7 +393,8 @@ namespace MBSimIntegrator {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
-                bi << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
@@ -420,7 +415,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->setUpdatebi(false);
                 la2b/=dtHalf;
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -444,7 +440,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterC1 = sysT2->getIterI();
@@ -460,7 +457,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterC2 = sysT2->getIterI();
@@ -481,7 +479,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
@@ -493,7 +492,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
@@ -514,7 +514,8 @@ namespace MBSimIntegrator {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
-                bi << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
                 sysT3->getLinkStatus(LStmp_T3);
@@ -529,7 +530,8 @@ namespace MBSimIntegrator {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
-                bi << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
                 sysT3->getLinkStatus(LStmp_T3);
@@ -544,7 +546,8 @@ namespace MBSimIntegrator {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
-                bi << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
                 sysT3->getLinkStatus(LStmp_T3);
@@ -589,7 +592,8 @@ namespace MBSimIntegrator {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
-                bi << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 iterB2  = sysT1->getIterI();
@@ -609,7 +613,8 @@ namespace MBSimIntegrator {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
-                bi << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 iterB2RE  = sysT1->getIterI();
@@ -627,7 +632,8 @@ namespace MBSimIntegrator {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
-                bi << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
@@ -639,7 +645,8 @@ namespace MBSimIntegrator {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) sysT1->resize_();
-                bi << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
@@ -660,7 +667,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterC3  = sysT2->getIterI();
@@ -675,7 +683,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterC4 = sysT2->getIterI();
@@ -698,7 +707,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB2  = sysT2->getIterI();
@@ -721,7 +731,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB2RE  = sysT2->getIterI();
@@ -739,7 +750,8 @@ namespace MBSimIntegrator {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) sysT2->resize_();
-                bi << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
@@ -760,7 +772,8 @@ namespace MBSimIntegrator {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
-                bi << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
                 sysT3->getLinkStatus(LStmp_T3);
@@ -775,7 +788,8 @@ namespace MBSimIntegrator {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
-                bi << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
                 sysT3->getLinkStatus(LStmp_T3);
@@ -790,7 +804,8 @@ namespace MBSimIntegrator {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) sysT3->resize_();
-                bi << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
                 sysT3->getLinkStatus(LStmp_T3);
@@ -1591,22 +1606,6 @@ namespace MBSimIntegrator {
       if (ee) setSafetyFactorSSC(Element::getDouble(ee));
     }
 
-  }
-
-  void TimeSteppingSSCIntegrator::updatebi() {
-    system->getbi(false) << bi;
-  }
-
-  void TimeSteppingSSCIntegrator::updatela() {
-    throw;
-    system->setla(system->getLa(false)/system->getStepSize());
-  }
-
-  void TimeSteppingSSCIntegrator::updatezd() {
-    throw;
-    system->setqd(system->getdq(false)/system->getStepSize());
-    system->setud(system->getdu(false)/system->getStepSize());
-    system->setxd(system->getdx(false)/system->getStepSize());
   }
 
 }
