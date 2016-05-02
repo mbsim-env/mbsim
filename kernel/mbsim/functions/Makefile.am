@@ -1,7 +1,8 @@
 SUBDIRS = kinematics kinetics contact .
 
 noinst_LTLIBRARIES = libfunction.la
-libfunction_la_SOURCES = constant_function.cc\
+libfunction_la_SOURCES = identity_function.cc\
+			 constant_function.cc\
 			 linear_function.cc\
 			 quadratic_function.cc\
 			 sinusoidal_function.cc\
@@ -30,6 +31,7 @@ libfunction_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
 libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(CASADI_CFLAGS)
 
 functioninclude_HEADERS = function.h\
+			  identity_function.h\
 			  constant_function.h\
 			  linear_function.h\
 			  quadratic_function.h\
