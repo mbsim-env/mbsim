@@ -49,22 +49,17 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
 
-  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), updlaN(true), updlaT(true)
+  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), updlaN(true), updlaT(true)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
           , rootID(0), saved_ref1(""), saved_ref2("") {
   }
 
-  SingleContact::~SingleContact() {
-    if (gdActive)
-      delete[] gdActive;
-    if (gddActive)
-      delete[] gddActive;
-  }
+  SingleContact::~SingleContact() {}
 
   void SingleContact::updatewb() {
-    if(gdActive[0]) {
+    if(gdActive[normal]) {
       wb -= evalGlobalForceDirection()(Index(0,2),Index(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
       wb += evalGlobalForceDirection()(Index(0,2),Index(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
 
@@ -119,7 +114,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedNormalForceM() {
-    if(gdActive[0])
+    if(gdActive[normal])
       lambdaN = evallaN();
     else
       lambdaN = 0;
@@ -134,9 +129,9 @@ namespace MBSim {
   }
 
   void SingleContact::updateGeneralizedTangentialForceM() {
-    if(gdActive[1])
+    if(gdActive[tangential])
       lambdaT = evallaT();
-    else if(gdActive[0])
+    else if(gdActive[normal])
       lambdaT = fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections()))) * evalGeneralizedNormalForce();
     else
       lambdaT.init(0);
@@ -172,7 +167,7 @@ namespace MBSim {
   }
 
   void SingleContact::updateVelocities() {
-    if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
+    if ((fcl->isSetValued() and gdActive[normal]) or (not fcl->isSetValued() and fcl->isClosed(evalGeneralizedRelativePosition()(0), 0))) { // TODO: nicer implementation
       Vec3 Wn = cFrame[0]->evalOrientation().col(0);
 
       Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
@@ -222,7 +217,7 @@ namespace MBSim {
   void SingleContact::updateV(int j) {
     if (getFrictionDirections()) {
       if (fdf->isSetValued()) {
-        if (gdActive[0] and not gdActive[1]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
+        if (gdActive[normal] and not gdActive[tangential]) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
           Mat3xV RF = evalGlobalForceDirection()(Index(0,2),Index(1, getFrictionDirections()));
           V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())));
           V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF * fdf->dlaTdlaN(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())));
@@ -233,11 +228,11 @@ namespace MBSim {
 
   void SingleContact::updateStopVector() {
     // TODO account for regularized normal force
-    if (gActive != gdActive[0])
+    if (gActive != gdActive[normal])
       THROW_MBSIMERROR("Internal error");
     if (gActive) {
       sv(0) = evalgddN() - gddTol;
-      if (gdActive[1]) {
+      if (gdActive[tangential]) {
         if (getFrictionDirections()) {
           sv(1) = nrm2(gddT) - gddTol;
           if (sv(1) > 0) {
@@ -348,7 +343,7 @@ namespace MBSim {
         laSize += getFrictionDirections();
 
       //check if contact is active --> else lambda Size will get zero...
-      laSize *= gActive * gdActive[0];
+      laSize *= gActive * gdActive[normal];
 
     }
     else if (j == 3) { // IH
@@ -360,10 +355,10 @@ namespace MBSim {
 
       //Add number of friction directions to lambda size if friction force law is setValued and active
       if (fdf and fdf->isSetValued())
-        laSize += getFrictionDirections() * gdActive[1];
+        laSize += getFrictionDirections() * gdActive[tangential];
 
       //check if contact is active --> else lambda Size will get zero...
-      laSize *= gActive * gdActive[0];
+      laSize *= gActive * gdActive[normal];
 
     }
     else if (j == 4) { // IG
@@ -372,7 +367,7 @@ namespace MBSim {
         laSize = gActive;
     }
     else if (j == 5) { // IB
-      laSize = gActive * gdActive[0];
+      laSize = gActive * gdActive[normal];
     }
     else
       THROW_MBSIMERROR("Internal error");
@@ -387,7 +382,7 @@ namespace MBSim {
       gSize = gActive;
     }
     else if (j == 2) { // IB
-      gSize = gActive * gdActive[0];
+      gSize = gActive * gdActive[normal];
     }
     else
       THROW_MBSIMERROR("Internal error");
@@ -433,7 +428,7 @@ namespace MBSim {
       if (fdf and fdf->isSetValued())
         gdSize += getFrictionDirections();
 
-      gdSize *= gActive * gdActive[0];
+      gdSize *= gActive * gdActive[normal];
 
     }
     else if (j == 3) { // sticking contacts
@@ -445,9 +440,9 @@ namespace MBSim {
 
       // add number of friction directions to gdSize if friction force law is setValued
       if (fdf and fdf->isSetValued())
-        gdSize += gdActive[1] * getFrictionDirections();
+        gdSize += gdActive[tangential] * getFrictionDirections();
 
-      gdSize *= gActive * gdActive[0];
+      gdSize *= gActive * gdActive[normal];
 
     }
     else
@@ -466,10 +461,10 @@ namespace MBSim {
       rFactorSize = gActive * (addition + min(getFrictionDirections(), 1));
     }
     else if (j == 2) { // IB
-      rFactorSize = gActive * gdActive[0] * (addition + min(getFrictionDirections(), 1));
+      rFactorSize = gActive * gdActive[normal] * (addition + min(getFrictionDirections(), 1));
     }
     else if (j == 3) { // IB
-      rFactorSize = gActive * gdActive[0] * (addition + gdActive[1] * min(getFrictionDirections(), 1));
+      rFactorSize = gActive * gdActive[normal] * (addition + gdActive[tangential] * min(getFrictionDirections(), 1));
     }
   }
 
@@ -529,7 +524,7 @@ namespace MBSim {
       lambda.resize(1 + getFrictionDirections());
 
       if (getFrictionDirections() == 0)
-        gdActive[1] = false;
+        gdActive[tangential] = false;
     }
     else if (stage == unknownStage) {
       ContourLink::init(stage);
@@ -567,17 +562,19 @@ namespace MBSim {
 
       gActive = 1;
       gActive0 = 1;
-      gdActive = new unsigned int[2];
-      gddActive = new unsigned int[2];
 
-      for (int j = 0; j < 1 + min(1, getFrictionDirections()); j++)
-        gdActive[j] = 1;
-      for (int j = 1 + min(1, getFrictionDirections()); j < 2; j++)
-        gdActive[j] = 0;
-      for (int j = 0; j < 1 + min(1, getFrictionDirections()); j++)
-        gddActive[j] = 1;
-      for (int j = 1 + min(1, getFrictionDirections()); j < 2; j++)
-        gddActive[j] = 0;
+      if(getFrictionDirections()==0) {
+        gdActive[normal]=1;
+        gdActive[tangential]=0;
+        gddActive[normal]=1;
+        gddActive[tangential]=0;
+      }
+      else {
+        gdActive[normal]=1;
+        gdActive[tangential]=1;
+        gddActive[normal]=1;
+        gddActive[tangential]=1;
+      }
 
       if(not fcl)
         updateGeneralizedNormalForce_ = &SingleContact::updateGeneralizedNormalForceP;
@@ -807,7 +804,7 @@ namespace MBSim {
   }
 
   void SingleContact::solveConstraintsFixpointSingle() {
-    if (gdActive[0]) {
+    if (gdActive[normal]) {
 
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
@@ -825,7 +822,7 @@ namespace MBSim {
         laN(0) = fcl->project(laN(0), gddN(0), rFactor(0));
       }
 
-      if (fdf and fdf->isSetValued() and gdActive[1]) {
+      if (fdf and fdf->isSetValued() and gdActive[tangential]) {
         for (int i = 0; i < getFrictionDirections(); i++) {
           gddT(i) = b(laInd + i + addIndexnormal);
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)
@@ -874,7 +871,7 @@ namespace MBSim {
   void SingleContact::solveConstraintsGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
-    if (gdActive[0]) {
+    if (gdActive[normal]) {
 
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
@@ -895,7 +892,7 @@ namespace MBSim {
         laN(0) += om * (buf - laN(0));
       }
 
-      if (fdf and fdf->isSetValued() and gdActive[1]) {
+      if (fdf and fdf->isSetValued() and gdActive[tangential]) {
         gddT(0) = b(laInd + addIndexNormal);
         for (int j = ia[laInd + addIndexNormal] + 1; j < ia[laInd + addIndexNormal + 1]; j++)
           gddT(0) += a[j] * laMBS(ja[j]);
@@ -940,7 +937,7 @@ namespace MBSim {
   }
 
   void SingleContact::solveConstraintsRootFinding() {
-    if (gdActive[0]) {
+    if (gdActive[normal]) {
 
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
@@ -973,7 +970,7 @@ namespace MBSim {
   }
 
   void SingleContact::jacobianConstraints() {
-    if (gdActive[0]) {
+    if (gdActive[normal]) {
 
       const SqrMat Jprox = ds->getJprox();
       const SqrMat G = ds->evalG();
@@ -1074,7 +1071,7 @@ namespace MBSim {
   }
 
   void SingleContact::updaterFactors() {
-    if (gdActive[0]) {
+    if (gdActive[normal]) {
 
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
@@ -1096,7 +1093,7 @@ namespace MBSim {
         }
       }
 
-      if (fdf and gdActive[1] and fdf->isSetValued()) {
+      if (fdf and gdActive[tangential] and fdf->isSetValued()) {
         double sumT1 = 0;
         double sumT2 = 0;
         double aT1, aT2;
@@ -1137,7 +1134,7 @@ namespace MBSim {
   }
 
   void SingleContact::checkConstraintsForTermination() {
-    if (gdActive[0]) {
+    if (gdActive[normal]) {
 
       const double *a = ds->evalGs()();
       const int *ia = ds->getGs().Ip();
@@ -1159,9 +1156,9 @@ namespace MBSim {
         }
       }
 
-      if (fdf && gdActive[1]) {
+      if (fdf && gdActive[tangential]) {
 
-        for (unsigned int i = 0; i < gdActive[1] * getFrictionDirections(); i++) { //TODO: Is there any other number than 0 or one for gdActive? otherwithe the multiplication could be deleted again...
+        for (unsigned int i = 0; i < gdActive[tangential] * getFrictionDirections(); i++) { //TODO: Is there any other number than 0 or one for gdActive? otherwithe the multiplication could be deleted again...
           gddT(i) = b(laInd + i + addIndexnormal);
           for (int j = ia[laInd + i + addIndexnormal]; j < ia[laInd + 1 + i + addIndexnormal]; j++)
             gddT(i) += a[j] * laMBS(ja[j]);
@@ -1213,71 +1210,71 @@ namespace MBSim {
   void SingleContact::checkActive(int j) {
     if (j == 1) { // formerly checkActiveg()
       gActive = fcl->isClosed(evalGeneralizedRelativePosition()(0), gTol) ? 1 : 0;
-      gdActive[0] = gActive;
-      gdActive[1] = gdActive[0];
+      gdActive[normal] = gActive;
+      gdActive[tangential] = gdActive[normal];
     }
     else if (j == 2) { // formerly checkActivegd()
-      gdActive[0] = gActive ? (fcl->remainsClosed(evalGeneralizedRelativeVelocity()(0), gdTol) ? 1 : 0) : 0;
-      gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), gdTol) ? 1 : 0) : 0;
-      gddActive[0] = gdActive[0];
-      gddActive[1] = gdActive[1];
+      gdActive[normal] = gActive ? (fcl->remainsClosed(evalGeneralizedRelativeVelocity()(0), gdTol) ? 1 : 0) : 0;
+      gdActive[tangential] = getFrictionDirections() && gdActive[normal] ? (fdf->isSticking(evalGeneralizedRelativeVelocity()(Index(1,getFrictionDirections())), gdTol) ? 1 : 0) : 0;
+      gddActive[normal] = gdActive[normal];
+      gddActive[tangential] = gdActive[tangential];
     }
     else if (j == 3) { // formerly checkActivegdn() (new gap velocities)
       if (gActive) { // contact is closed
         if (evalgdnN() <= gdTol) { // contact stays closed // TODO bilateral contact
-          gdActive[0] = true;
-          gddActive[0] = true;
+          gdActive[normal] = true;
+          gddActive[normal] = true;
           if (getFrictionDirections()) {
             if (nrm2(gdnT) <= gdTol) {
-              gdActive[1] = true;
-              gddActive[1] = true;
+              gdActive[tangential] = true;
+              gddActive[tangential] = true;
             }
             else {
-              gdActive[1] = false;
-              gddActive[1] = false;
+              gdActive[tangential] = false;
+              gddActive[tangential] = false;
             }
           }
         }
         else { // contact will open
-          gdActive[0] = false;
-          gdActive[1] = false;
-          gddActive[0] = false;
-          gddActive[1] = false;
+          gdActive[normal] = false;
+          gdActive[tangential] = false;
+          gddActive[normal] = false;
+          gddActive[tangential] = false;
         }
       }
     }
     else if (j == 4) { // formerly checkActivegdd()
       if (gActive) {
-        if (gdActive[0]) {
+        if (gdActive[normal]) {
           if (evalgddN() <= gddTol) { // contact stays closed on velocity level
-            gddActive[0] = true;
+            gddActive[normal] = true;
             if (getFrictionDirections()) {
-              if (gdActive[1]) {
+              if (gdActive[tangential]) {
                 if (nrm2(gddT) <= gddTol)
-                  gddActive[1] = true;
+                  gddActive[tangential] = true;
                 else
-                  gddActive[1] = false;
+                  gddActive[tangential] = false;
               }
             }
           }
           else { // contact will open on velocity level
-            gddActive[0] = false;
-            gddActive[1] = false;
+            gddActive[normal] = false;
+            gddActive[tangential] = false;
           }
         }
       }
     }
     else if (j == 5) { // activity clean-up, if there is no activity on acceleration or velocity level, also more basic levels are set to non-active
       if (gActive) {
-        if (gdActive[0]) {
-          if (gdActive[1]) {
-            if (!gddActive[1])
-              gdActive[1] = false;
+        if (gdActive[normal]) {
+          if (gdActive[tangential]) {
+            if (!gddActive[tangential])
+              gdActive[tangential] = false;
           }
-          if (!gddActive[0]) {
+          if (!gddActive[normal]) {
             gActive = false;
-            gdActive[0] = false;
-            gdActive[1] = false;
+            gdActive[normal] = false;
+            gdActive[tangential] = false;
           }
         }
         else
@@ -1287,28 +1284,28 @@ namespace MBSim {
     else if (j == 6) { // just observe closing contact
       if (rootID == 3) {
         gActive = true;
-        gdActive[0] = true;
-        gdActive[1] = true;
-        gddActive[0] = true;
-        gddActive[1] = true;
+        gdActive[normal] = true;
+        gdActive[tangential] = true;
+        gddActive[normal] = true;
+        gddActive[tangential] = true;
       }
     }
     else if (j == 7) { // just observe slip-stick transitions
       if (getFrictionDirections()) {
         if (rootID == 2) {
-          gdActive[1] = true;
-          gddActive[1] = true;
+          gdActive[tangential] = true;
+          gddActive[tangential] = true;
         }
       }
     }
     else if (j == 8) { // just observe opening contacts and stick-slip transitions
       if (jsv(0) && rootID == 1) { // opening contact
-        gddActive[0] = false;
-        gddActive[1] = false;
+        gddActive[normal] = false;
+        gddActive[tangential] = false;
       }
       if (getFrictionDirections()) {
         if (jsv(1) && rootID == 1) { // stick-slip transition
-          gddActive[1] = false;
+          gddActive[tangential] = false;
         }
       }
     }
@@ -1383,15 +1380,15 @@ namespace MBSim {
   void SingleContact::updatecorr(int j) {
     if (j == 1) { // IG position
       if (gActive) { // Contact was closed
-        if (gdActive[0])
+        if (gdActive[normal])
           corr(0) = 0; // Contact stays closed, regular projection
         else
           corr(0) = 1e-14; // Contact opens, projection to positive normal distance
       }
     }
     else if (j == 2) {
-      if (gActive && gdActive[0]) { // Contact was closed
-        if (gddActive[0])
+      if (gActive && gdActive[normal]) { // Contact was closed
+        if (gddActive[normal])
           corr(0) = 0; // Contact stays closed, regular projection
         else
           corr(0) = 1e-14; // Contact opens, projection to positive normal distance
@@ -1402,14 +1399,14 @@ namespace MBSim {
         gddN = gddNBuf;
         gddT = gddTBuf;
       }
-      if (gActive && gdActive[0]) { // Contact was closed
-        if (gddActive[0])
+      if (gActive && gdActive[normal]) { // Contact was closed
+        if (gddActive[normal])
           corr(0) = 0; // Contact stays closed, regular projection
         else
           corr(0) = 1e-16; // Contact opens, projection to positive normal distance
         if (getFrictionDirections()) {
-          if (gdActive[1]) { // Contact was sticking
-            if (gddActive[1]) {
+          if (gdActive[tangential]) { // Contact was sticking
+            if (gddActive[tangential]) {
               corr(1) = 0; // Contact stays sticking, regular projection
               if (getFrictionDirections() > 1)
                 corr(2) = 0; // Contact stays sticking, regular projection
@@ -1433,7 +1430,7 @@ namespace MBSim {
       corrSize = gActive;
     }
     else if (j == 2) { // IB
-      corrSize = gActive * gdActive[0];
+      corrSize = gActive * gdActive[normal];
     }
     //    else if(j==3) { // IG
     //      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
@@ -1443,7 +1440,7 @@ namespace MBSim {
     //      }
     //    }
     else if (j == 4) { // IH
-      corrSize = gActive * gdActive[0] * (1 + gdActive[1] * getFrictionDirections());
+      corrSize = gActive * gdActive[normal] * (1 + gdActive[tangential] * getFrictionDirections());
     }
     else
       THROW_MBSIMERROR("Internal error");
@@ -1459,7 +1456,7 @@ namespace MBSim {
     }
     if (getFrictionDirections()) {
       if (jsv(1)) {
-        if (gdActive[1])
+        if (gdActive[tangential])
           rootID = 1; // contact was sticking -> sliding
         else {
           if (getFrictionDirections() == 1)
