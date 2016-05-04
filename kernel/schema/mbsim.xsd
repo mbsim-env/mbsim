@@ -2809,7 +2809,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PlanarContour" substitutionGroup="Contour1s" type="PlanarContourType">
+  <xs:element name="PlanarContour" substitutionGroup="RigidContour" type="PlanarContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Kurvenkontur, bei der die Parametrisierung analytisch durch einen funktionalen Zusammenhang beschrieben werden kann:
@@ -2826,8 +2826,15 @@
   </xs:element>
   <xs:complexType name="PlanarContourType">
     <xs:complexContent>
-      <xs:extension base="Contour1sType">
+      <xs:extension base="RigidContourType">
         <xs:sequence>
+          <xs:element name="nodes" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="contourFunction">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -2836,7 +2843,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FunctionContour"/>
+                <xs:element ref="Function"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -2848,6 +2855,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
+                <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
               </xs:sequence>
@@ -4431,8 +4439,25 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="FunctionContour" abstract="true" type="FunctionContourType"/>
-  <xs:complexType name="FunctionContourType"/>
+  <xs:element name="PolarContourFunction" substitutionGroup="Function" type="PolarContourFunctionType"/>
+  <xs:complexType name="PolarContourFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="radiusFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="Observer" substitutionGroup="Element" type="ObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
