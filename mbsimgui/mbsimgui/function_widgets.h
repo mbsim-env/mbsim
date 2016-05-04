@@ -36,6 +36,14 @@ namespace MBSimGUI {
   class ChoiceWidget2;
   class Element;
 
+  class IdentityFunctionWidget : public FunctionWidget {
+
+    friend class IdentityFunction;
+
+    public:
+    IdentityFunctionWidget(int m=1) { }
+  };
+
   class ConstantFunctionWidget : public FunctionWidget {
 
     friend class ConstantFunction;
@@ -354,6 +362,17 @@ namespace MBSimGUI {
     private:
     ExtWidget *sRef;
     Element *dummy;
+  };
+
+  class PolarContourFunctionWidget : public FunctionWidget {
+
+    friend class PolarContourFunction;
+
+    public:
+    PolarContourFunctionWidget();
+    void resize_(int m, int n);
+    protected:
+    ExtWidget *radiusFunction;
   };
 
 }

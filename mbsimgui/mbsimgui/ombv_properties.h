@@ -107,6 +107,19 @@ namespace MBSimGUI {
       ExtProperty length;
   };
 
+  class PlanarContourMBSOMBVProperty : public MBSOMBVProperty {
+
+    public:
+      PlanarContourMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID);
+      virtual PropertyInterface* clone() const {return new PlanarContourMBSOMBVProperty(*this);}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty nodes;
+  };
+
   class OMBVFrameProperty : public OMBVObjectProperty {
 
     public:

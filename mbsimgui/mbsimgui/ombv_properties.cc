@@ -209,6 +209,36 @@ namespace MBSimGUI {
     length.toWidget(static_cast<PlaneMBSOMBVWidget*>(widget)->length);
   }
 
+  PlanarContourMBSOMBVProperty::PlanarContourMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), nodes(0,false) {
+
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "", MBSIM%"nodes"));
+    nodes.setProperty(new ExtPhysicalVarProperty(input));
+  }
+
+  DOMElement* PlanarContourMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
+    if(e) nodes.initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* PlanarContourMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+    nodes.writeXMLFile(e);
+    writeProperties(e);
+    return e;
+  }
+
+  void PlanarContourMBSOMBVProperty::fromWidget(QWidget *widget) {
+    MBSOMBVProperty::fromWidget(widget);
+    nodes.fromWidget(static_cast<PlanarContourMBSOMBVWidget*>(widget)->nodes);
+  }
+
+  void PlanarContourMBSOMBVProperty::toWidget(QWidget *widget) {
+    MBSOMBVProperty::toWidget(widget);
+    nodes.toWidget(static_cast<PlanarContourMBSOMBVWidget*>(widget)->nodes);
+  }
+
   OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), transparency(0,false), xmlName(xmlName_) {
 
     vector<PhysicalVariableProperty> input;

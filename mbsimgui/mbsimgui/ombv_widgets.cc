@@ -114,6 +114,13 @@ namespace MBSimGUI {
     layout()->addWidget(length);
   }
 
+  PlanarContourMBSOMBVWidget::PlanarContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<QString>(3,"1")), noUnitUnits(), 4));
+    nodes = new ExtWidget("Nodes",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(nodes);
+  }
+
   OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

@@ -95,6 +95,7 @@ namespace MBSimGUI {
       void addCircle();
       void addCuboid();
       void addLineSegment();
+      void addPlanarContour();
 
     protected:
       Element *element;
@@ -165,7 +166,6 @@ namespace MBSimGUI {
       void addKineticExcitation();
       void addJoint();
       void addContact();
-      void addActuator();
       void addSignal();
       void addLinearTransferSystem();
       void addGeneralizedFriction();

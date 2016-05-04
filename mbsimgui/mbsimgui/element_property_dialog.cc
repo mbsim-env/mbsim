@@ -38,7 +38,6 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "contact.h"
-#include "actuator.h"
 #include "observer.h"
 #include "parameter.h"
 #include "integrator.h"
@@ -266,7 +265,7 @@ namespace MBSimGUI {
     radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
     addToTab("General", radius);
     solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
-    addToTab("Extra", solid);
+    addToTab("General", solid);
     visu = new ExtWidget("OpenMBV Circle",new MBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", visu);
   }
@@ -329,6 +328,33 @@ namespace MBSimGUI {
     ContourPropertyDialog::fromWidget(element);
     static_cast<LineSegment*>(element)->length.fromWidget(length);
     static_cast<LineSegment*>(element)->visu.fromWidget(visu);
+  }
+
+  PlanarContourPropertyDialog::PlanarContourPropertyDialog(PlanarContour *contour, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecWidgetFactory(2),QBoxLayout::RightToLeft));
+    addToTab("General", nodes);
+
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new ContourFunctionWidgetFactory(contour)));
+    addToTab("General", contourFunction);
+
+    visu = new ExtWidget("OpenMBV PlanarContour",new PlanarContourMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation", visu);
+  }
+
+  void PlanarContourPropertyDialog::toWidget(Element *element) {
+    ContourPropertyDialog::toWidget(element);
+    static_cast<PlanarContour*>(element)->nodes.toWidget(nodes);
+    static_cast<PlanarContour*>(element)->contourFunction.toWidget(contourFunction);
+    static_cast<PlanarContour*>(element)->visu.toWidget(visu);
+  }
+
+  void PlanarContourPropertyDialog::fromWidget(Element *element) {
+    ContourPropertyDialog::fromWidget(element);
+    static_cast<PlanarContour*>(element)->nodes.fromWidget(nodes);
+    static_cast<PlanarContour*>(element)->contourFunction.fromWidget(contourFunction);
+    static_cast<PlanarContour*>(element)->visu.fromWidget(visu);
   }
 
   GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {
@@ -1291,61 +1317,6 @@ namespace MBSimGUI {
     static_cast<Contact*>(element)->enableOpenMBVContactPoints.fromWidget(enableOpenMBVContactPoints);
     static_cast<Contact*>(element)->normalForceArrow.fromWidget(normalForceArrow);
     static_cast<Contact*>(element)->frictionArrow.fromWidget(frictionArrow);
-  }
-
-  ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *parent, Qt::WindowFlags wf) : LinkPropertyDialog(actuator,parent,wf) {
-
-    addTab("Kinetics",1);
-    addTab("Visualisation",2);
-
-    vector<PhysicalVariableWidget*> input;
-    MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
-    forceDir = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
-    addToTab("Kinetics", forceDir);
-
-    input.clear();
-    MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
-    momentDir = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
-    addToTab("Kinetics", momentDir);
-
-    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,actuator));
-    addToTab("Kinetics",connections);
-
-    frameOfReference = new ExtWidget("Frame of reference",new SpinBoxWidget(1,1,2),true); 
-    addToTab("Kinetics", frameOfReference);
-
-    inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(actuator,0));
-    addToTab("Kinetics",inputSignal);
-
-    actuatorForceArrow = new ExtWidget("OpenMBV actuator force arrow",new OMBVArrowWidget("NOTSET"),true);
-    addToTab("Visualisation",actuatorForceArrow);
-
-    actuatorMomentArrow = new ExtWidget("OpenMBV actuator moment arrow",new OMBVArrowWidget("NOTSET"),true);
-    addToTab("Visualisation",actuatorMomentArrow);
-  }
-
-  void ActuatorPropertyDialog::toWidget(Element *element) {
-    LinkPropertyDialog::toWidget(element);
-    static_cast<Actuator*>(element)->forceDir.toWidget(forceDir);
-    static_cast<Actuator*>(element)->momentDir.toWidget(momentDir);
-    static_cast<Actuator*>(element)->frameOfReference.toWidget(frameOfReference);
-    static_cast<Actuator*>(element)->connections.toWidget(connections);
-    static_cast<Actuator*>(element)->inputSignal.toWidget(inputSignal);
-    static_cast<Actuator*>(element)->actuatorForceArrow.toWidget(actuatorForceArrow);
-    static_cast<Actuator*>(element)->actuatorMomentArrow.toWidget(actuatorMomentArrow);
-  }
-
-  void ActuatorPropertyDialog::fromWidget(Element *element) {
-    LinkPropertyDialog::fromWidget(element);
-    static_cast<Actuator*>(element)->forceDir.fromWidget(forceDir);
-    static_cast<Actuator*>(element)->momentDir.fromWidget(momentDir);
-    static_cast<Actuator*>(element)->frameOfReference.fromWidget(frameOfReference);
-    static_cast<Actuator*>(element)->connections.fromWidget(connections);
-    static_cast<Actuator*>(element)->inputSignal.fromWidget(inputSignal);
-    static_cast<Actuator*>(element)->actuatorForceArrow.fromWidget(actuatorForceArrow);
-    static_cast<Actuator*>(element)->actuatorMomentArrow.fromWidget(actuatorMomentArrow);
   }
 
   ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(observer,parent,f) {

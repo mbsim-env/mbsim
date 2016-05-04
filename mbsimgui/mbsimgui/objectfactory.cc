@@ -30,7 +30,6 @@
 #include "joint.h"
 #include "spring_damper.h"
 #include "contact.h"
-#include "actuator.h"
 #include "sensor.h"
 #include "widget.h"
 #include "parameter.h"
@@ -109,6 +108,8 @@ namespace MBSimGUI {
       return new Cuboid(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"LineSegment")
       return new LineSegment(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"PlanarContour")
+      return new PlanarContour(E(element)->getAttribute("name"),parent);
     return 0;
   }
 
@@ -165,8 +166,6 @@ namespace MBSimGUI {
       return new Joint(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Contact")
       return new Contact(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIMCONTROL%"Actuator")
-      return new Actuator(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
       return new GeneralizedPositionSensor(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")

@@ -30,7 +30,6 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   gear.cc \
 		   joint.cc \
 		   contact.cc \
-		   actuator.cc \
 		   signal_.cc \
 		   sensor.cc \
 		   signal_processing_system.cc \
@@ -75,7 +74,6 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   main.cc \
 		   embed.cc \
 		   solver.cc 
-		   
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 

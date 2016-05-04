@@ -22,6 +22,7 @@
 #include "frame.h"
 #include "basic_properties.h"
 #include "ombv_properties.h"
+#include "function_property_factory.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
@@ -236,6 +237,34 @@ namespace MBSimGUI {
   DOMElement* LineSegment::writeXMLFile(DOMNode *parent) {
     DOMElement *e = Contour::writeXMLFile(parent);
     length.writeXMLFile(e);
+    visu.writeXMLFile(e);
+    return e;
+  }
+
+  PlanarContour::PlanarContour(const string &str, Element *parent) : Contour(str,parent) {
+
+    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes"),"",4));
+
+    contourFunction.setProperty(new ChoiceProperty2(new ContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
+
+    visu.setProperty(new PlanarContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
+  }
+
+  PlanarContour::~PlanarContour() {
+  }
+
+  DOMElement* PlanarContour::initializeUsingXML(DOMElement *element) {
+    Contour::initializeUsingXML(element);
+    nodes.initializeUsingXML(element);
+    contourFunction.initializeUsingXML(element);
+    visu.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PlanarContour::writeXMLFile(DOMNode *parent) {
+    DOMElement *e = Contour::writeXMLFile(parent);
+    nodes.writeXMLFile(e);
+    contourFunction.writeXMLFile(e);
     visu.writeXMLFile(e);
     return e;
   }

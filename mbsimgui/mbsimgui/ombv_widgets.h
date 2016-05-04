@@ -91,6 +91,16 @@ namespace MBSimGUI {
     ExtWidget *length;
   };
 
+  class PlanarContourMBSOMBVWidget : public MBSOMBVWidget {
+
+    friend class PlanarContourMBSOMBVProperty;
+
+    public:
+    PlanarContourMBSOMBVWidget(const QString &name="NOTSET");
+    protected:
+    ExtWidget *nodes;
+  };
+
   class OMBVFrameWidget : public OMBVObjectWidget {
 
     friend class OMBVFrameProperty;

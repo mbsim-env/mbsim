@@ -63,9 +63,13 @@ namespace MBSimGUI {
     if(i==13)
       return new SignumFunctionWidget(1);
     if(i==14)
-      return new FourierFunctionWidget(1);
+      return new ModuloFunctionWidget(1);
     if(i==15)
+      return new FourierFunctionWidget(1);
+    if(i==16)
       return new SignalFunctionWidget(parent);
+    if(i==17)
+      return new IdentityFunctionWidget(1);
     return NULL;
   }
 
@@ -85,8 +89,10 @@ namespace MBSimGUI {
     name.push_back("Tabular function");
     name.push_back("Piecewise polynom function");
     name.push_back("Signum function");
+    name.push_back("Modulo function");
     name.push_back("Fourier function");
     name.push_back("Signal function");
+    name.push_back("Identity function");
     return name;
   }
 
@@ -140,13 +146,18 @@ namespace MBSimGUI {
       return new VectorValuedFunctionWidget(parent,1,true);
     if(i==1)
       return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
-    if(i==2)
-      return new SymbolicFunctionWidget(QStringList("t"),3,3);
+    if(i==2) {
+      QStringList var;
+      var << "x" << "y";
+      return new BinaryNestedFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+    }
     if(i==3)
-      return new TabularFunctionWidget(1);
+      return new SymbolicFunctionWidget(QStringList("t"),3,3);
     if(i==4)
-      return new PiecewiseDefinedFunctionWidget(parent);
+      return new TabularFunctionWidget(1);
     if(i==5)
+      return new PiecewiseDefinedFunctionWidget(parent);
+    if(i==6)
       return new PiecewisePolynomFunctionWidget(1);
     return NULL;
   }
@@ -155,6 +166,7 @@ namespace MBSimGUI {
     vector<QString> name;
     name.push_back("Vector valued function");
     name.push_back("Nested function");
+    name.push_back("Binary nested function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
     name.push_back("Piecewise defined function");
@@ -361,6 +373,19 @@ namespace MBSimGUI {
       var << "g" << "gd";
       return new SymbolicFunctionWidget(var,1,3);
     }
+    return NULL;
+  }
+
+  ContourFunctionWidgetFactory::ContourFunctionWidgetFactory(Element *parent_) : parent(parent_){
+    name.push_back("Polar contour function");
+    name.push_back("Symbolic function");
+  }
+
+  QWidget* ContourFunctionWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PolarContourFunctionWidget;
+    if(i==1)
+      return new SymbolicFunctionWidget(QStringList("phi"),1,3);
     return NULL;
   }
 

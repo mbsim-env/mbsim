@@ -131,6 +131,20 @@ namespace MBSimGUI {
     ExtProperty length, visu;
   };
 
+  class PlanarContour : public Contour {
+    friend class PlanarContourPropertyDialog;
+    public:
+    PlanarContour(const std::string &str, Element *parent);
+    ~PlanarContour();
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    std::string getType() const { return "PlanarContour"; }
+    ElementPropertyDialog* createPropertyDialog() {return new PlanarContourPropertyDialog(this);}
+    protected:
+    ExtProperty nodes, contourFunction, visu;
+  };
+
+
 }
 
 #endif

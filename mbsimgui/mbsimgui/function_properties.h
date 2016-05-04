@@ -25,6 +25,13 @@
 
 namespace MBSimGUI {
 
+  class IdentityFunction : public Function {
+    public:
+      IdentityFunction(const std::string &name, Element *parent, int m=1) : Function(name,parent) { }
+      virtual PropertyInterface* clone() const {return new IdentityFunction(*this);}
+      inline std::string getType() const { return "IdentityFunction"; }
+  };
+
   class ConstantFunction : public Function {
     public:
       ConstantFunction(const std::string &name, Element *parent, int m=1);
@@ -396,6 +403,19 @@ namespace MBSimGUI {
 
     private:
       ExtProperty sRef;
+  };
+
+  class PolarContourFunction : public Function {
+    public:
+      PolarContourFunction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new PolarContourFunction(*this);}
+      inline std::string getType() const { return "PolarContourFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty radiusFunction;
   };
 
 }

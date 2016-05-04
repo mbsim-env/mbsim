@@ -594,4 +594,16 @@ namespace MBSimGUI {
     sRef->updateWidget(); 
   }
 
+  PolarContourFunctionWidget::PolarContourFunctionWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)));
+    layout->addWidget(radiusFunction);
+  }
+
+  void PolarContourFunctionWidget::resize_(int m, int n) {
+  }
+
 }

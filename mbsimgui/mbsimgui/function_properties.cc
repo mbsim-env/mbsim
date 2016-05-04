@@ -894,4 +894,27 @@ namespace MBSimGUI {
     sRef.toWidget(static_cast<SignalFunctionWidget*>(widget)->sRef);
   }
 
+  PolarContourFunction::PolarContourFunction(const string &name, Element *parent) : Function(name,parent) {
+    radiusFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"radiusFunction"));
+  }
+
+  DOMElement* PolarContourFunction::initializeUsingXML(DOMElement *element) {
+    radiusFunction.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PolarContourFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    radiusFunction.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void PolarContourFunction::fromWidget(QWidget *widget) {
+    radiusFunction.fromWidget(static_cast<PolarContourFunctionWidget*>(widget)->radiusFunction);
+  }
+
+  void PolarContourFunction::toWidget(QWidget *widget) {
+    radiusFunction.toWidget(static_cast<PolarContourFunctionWidget*>(widget)->radiusFunction);
+  }
+
 }

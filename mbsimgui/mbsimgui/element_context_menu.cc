@@ -27,7 +27,6 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "contact.h"
-#include "actuator.h"
 #include "sensor.h"
 #include "observer.h"
 #include "frame.h"
@@ -208,7 +207,7 @@ namespace MBSimGUI {
     action = new QAction("Add sphere", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
     addAction(action);
-    action = new QAction("Add solid circle", this);
+    action = new QAction("Add circle", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addCircle()));
     addAction(action);
     action = new QAction("Add cuboid", this);
@@ -216,6 +215,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add line segment", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addLineSegment()));
+    addAction(action);
+    action = new QAction("Add planar contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPlanarContour()));
     addAction(action);
   }
 
@@ -245,6 +247,10 @@ namespace MBSimGUI {
 
   void ContourContextContextMenu::addLineSegment() {
     mw->addContour(new LineSegment("LineSegment",element));
+  }
+
+  void ContourContextContextMenu::addPlanarContour() {
+    mw->addContour(new PlanarContour("PlanarContour",element));
   }
 
   GroupContextContextMenu::GroupContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -367,10 +373,6 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addContact() {
     mw->addLink(new Contact("Contact",element));
-  }
-
-  void LinkContextContextMenu::addActuator() {
-    mw->addLink(new Actuator("Actuator",element));
   }
 
   void LinkContextContextMenu::addSignal() {

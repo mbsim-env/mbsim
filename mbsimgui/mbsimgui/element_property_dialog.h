@@ -35,6 +35,7 @@ namespace MBSimGUI {
   class Circle;
   class Cuboid;
   class LineSegment;
+  class PlanarContour;
   class DynamicSystemSolver;
   class Group;
   class Object;
@@ -56,7 +57,6 @@ namespace MBSimGUI {
   class GeneralizedSpringDamper;
   class Joint;
   class Contact;
-  class Actuator;
   class Observer;
   class CoordinatesObserver;
   class CartesianCoordinatesObserver;
@@ -200,6 +200,16 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *length, *visu;
+  };
+
+  class PlanarContourPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      PlanarContourPropertyDialog(PlanarContour *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *nodes, *contourFunction, *visu;
   };
 
   class GroupPropertyDialog : public ElementPropertyDialog {
@@ -442,16 +452,6 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
-  };
-
-  class ActuatorPropertyDialog : public LinkPropertyDialog {
-
-    public:
-      ActuatorPropertyDialog(Actuator *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
-    protected:
-      ExtWidget *forceDir, *momentDir, *frameOfReference, *inputSignal, *connections, *actuatorForceArrow, *actuatorMomentArrow;
   };
 
   class ObserverPropertyDialog : public ElementPropertyDialog {
