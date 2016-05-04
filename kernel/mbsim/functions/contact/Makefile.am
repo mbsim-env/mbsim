@@ -9,7 +9,8 @@ libcontact_la_SOURCES = funcpair_planarcontour_point.cc\
 			funcpair_hyperbola_circle.cc\
 			jacpair_conesection_circle.cc\
 			jacpair_ellipse_circle.cc\
-			jacpair_hyperbola_circle.cc
+			jacpair_hyperbola_circle.cc\
+			polar_contour_function.cc
 
 contactincludedir = $(includedir)/mbsim/functions/contact
 
@@ -27,4 +28,5 @@ contactinclude_HEADERS = distance_function.h\
 			 funcpair_hyperbola_circle.h\
 			 jacpair_conesection_circle.h\
 			 jacpair_ellipse_circle.h\
-			 jacpair_hyperbola_circle.h
+			 jacpair_hyperbola_circle.h\
+			 polar_contour_function.h
