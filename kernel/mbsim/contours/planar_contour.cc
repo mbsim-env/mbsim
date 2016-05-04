@@ -75,7 +75,11 @@ namespace MBSim {
   #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
-          if(not(ombvNodes.size())) ombvNodes = etaNodes;
+          if(not(ombvNodes.size())) {
+            ombvNodes.resize(101);
+            for(int i=0; i<101; i++)
+              ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
+          }
           for (unsigned int i=0; i<ombvNodes.size(); i++) {
             const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
             vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
@@ -89,6 +93,14 @@ namespace MBSim {
     }
     else
       RigidContour::init(stage);
+
+    funcCrPC->init(stage);
+  }
+
+  void PlanarContour::setContourFunction(Function<Vec3(double)> *func) {
+    funcCrPC=func;
+    funcCrPC->setParent(this);
+    funcCrPC->setName("Contour");
   }
 
   double PlanarContour::getCurvature(const fmatvec::Vec2 &zeta) {
@@ -102,11 +114,12 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
     etaNodes=getVec(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
-    throw;
-//    funcCrPC=ObjectFactory::createAndInit<ContourFunction1s> >(e->getFirstElementChild());
+    setContourFunction(ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild()));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
+      if(ee) ombvNodes=getVec(ee);
       OpenMBVExtrusion ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
