@@ -36,4 +36,3 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewisePolynomFunction<Vec3(VecV)>, MBSIM%"PiecewisePolynomFunction")
 
 }
-
