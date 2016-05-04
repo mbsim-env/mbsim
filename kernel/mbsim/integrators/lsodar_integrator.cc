@@ -164,6 +164,17 @@ namespace MBSimIntegrator {
         tPlot += dtPlot;
         if (tPlot > tStop)
           tPlot = tStop;
+
+//        // check drift
+//        if(system->positionDriftCompensationNeeded(1e-5)) { // project both, first positions and then velocities//MFMF
+//          system->projectGeneralizedPositions(3);
+//          system->projectGeneralizedVelocities(3);
+//          istate=1;
+//        }
+//        else if(system->velocityDriftCompensationNeeded(1e+5)) { // project velicities//MFMF
+//          system->projectGeneralizedVelocities(3);
+//          istate=1;
+//        }
       }
       if(istate==3) {
         if(plotOnRoot) { // plot before shifting

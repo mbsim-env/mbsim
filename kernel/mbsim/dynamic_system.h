@@ -636,9 +636,9 @@ namespace MBSim {
        * \brief check if set-valued contacts are active and set corresponding attributes
        * \param flag to decide which criteria are used to define 'activity'
        * 1 = position level activity (gActive = normal gap not larger than tolerance)
-       * 2 = velocity level activity (if gActive, gdActive[0] = normal gap velocity not larger than tolerance ; if gdActive[0], gdActive[1] = tangential gap velocity not larger than tolerance, i.e., sticking)
-       * 3 = velocity level activity (if gActive, gdActive[0] = new normal gap velocity AFTER impact not larger than tolerance ; if gdActive[0], gdActive[1] = new tangential gap velocity AFTER impact not larger than tolerance, i.e., sticking)
-       * 4 = acceleration level activity (if gActive and gdActive[0], gddActive[0] = normal gap acceleration not larger than tolerance ; if gddActive[0] and gdActive[1], gddActive[1] = tangential gap acceleration not larger than tolerance, i.e., stay sticking)
+       * 2 = velocity level activity (if gActive, gdActive[normal] = normal gap velocity not larger than tolerance ; if gdActive[normal], gdActive[tangential] = tangential gap velocity not larger than tolerance, i.e., sticking)
+       * 3 = velocity level activity (if gActive, gdActive[normal] = new normal gap velocity AFTER impact not larger than tolerance ; if gdActive[normal], gdActive[tangential] = new tangential gap velocity AFTER impact not larger than tolerance, i.e., sticking)
+       * 4 = acceleration level activity (if gActive and gdActive[normal], gddActive[normal] = normal gap acceleration not larger than tolerance ; if gddActive[normal] and gdActive[tangential], gddActive[tangential] = tangential gap acceleration not larger than tolerance, i.e., stay sticking)
        * 5 = activity clean-up: if there is no activity on acceleration or velocity level, also more basic levels are set to non-active
        * 6 = closing sets all activities
        * 7 = slip-stick transition sets tangential velocity and acceleration activity

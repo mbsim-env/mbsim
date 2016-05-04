@@ -274,23 +274,29 @@ namespace MBSim {
       fmatvec::Vec gdT;
 
       /** 
-       * \brief boolean vector symbolising activity of contacts on position level with possibility to save previous time step
+       * \brief boolean flag symbolising activity of contact on position level with possibility to save previous time step
        */
       unsigned int gActive, gActive0;
 
-      /** 
-       * \brief boolean vector symbolising activity of contacts on velocity level
-       *
-       * length of array is two with index 0 for normal direction and index one for tangential direction
-       */
-      unsigned int* gdActive;
+      enum Direction {
+        normal,
+        tangential,
+        DirectionDIM
+      };
 
       /** 
-       * \brief boolean vector symbolising activity of contacts on acceleration level
+       * \brief boolean flag symbolising activity of contact on velocity level
        *
-       * length of array is two with index 0 for normal direction and index one for tangential direction
+       * gdActive[normal] = normal direction; gdActive[tangential] = tangential direction
        */
-      unsigned int* gddActive;
+      boost::array<unsigned int, DirectionDIM> gdActive;
+
+      /** 
+       * \brief boolean flag symbolising activity of contact on acceleration level
+       *
+       * gddActive[normal] = normal direction; gddActive[tangential] = tangential direction
+       */
+      boost::array<unsigned int, DirectionDIM> gddActive;
 
       /**
        * \brief new gap velocity after an impact for event driven scheme

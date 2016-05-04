@@ -315,17 +315,25 @@ namespace MBSim {
        * \param result vector
        * \param time
        */
-
       void getLinkStatusReg(fmatvec::VecInt &LinkStatusRegExt);
+
+      /**
+       * \brief check if drift compensation on position level is needed
+       */
+      bool positionDriftCompensationNeeded(double gmax);
+
+      /**
+       * \brief check if drift compensation on velocity level is needed
+       */
+      bool velocityDriftCompensationNeeded(double gdmax);
+
       /**
        * \brief drift projection for positions
-       * \param time
        */
       void projectGeneralizedPositions(int mode, bool fullUpdate=false);
 
       /**
        * \brief drift projection for positions
-       * \param time
        */
       void projectGeneralizedVelocities(int mode);
 

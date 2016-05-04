@@ -1037,6 +1037,32 @@ namespace MBSim {
     updateLinkStatusReg();
   }
 
+  bool DynamicSystemSolver::positionDriftCompensationNeeded(double gmax) {
+    // update g to represent only closed contacts
+    calcgSize(1);
+    updategRef(gParent(0, gSize - 1));
+    // get g of closed contacts
+    const fmatvec::Vec &g=evalg();
+    // check maximal drift
+    for(int i=0; i<g.size(); ++i)
+      if(abs(g(i))>gmax)
+        return true;
+    return false;
+  }
+
+  bool DynamicSystemSolver::velocityDriftCompensationNeeded(double gdmax) {
+    // update gd to represent only closed contacts in stick mode
+    calcgdSize(3);
+    updategdRef(gdParent(0, gdSize - 1));
+    // get gd of closed contacts in stick mode
+    const fmatvec::Vec &gd=evalgd();
+    // check maximal drift
+    for(int i=0; i<gd.size(); ++i)
+      if(abs(gd(i))>gdmax)
+        return true;
+    return false;
+  }
+
   void DynamicSystemSolver::projectGeneralizedPositions(int mode, bool fullUpdate) {
     int gID = 0;
     int laID = 0;
