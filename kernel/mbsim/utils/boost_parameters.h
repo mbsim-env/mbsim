@@ -48,7 +48,7 @@ namespace MBSim {
   BOOST_PARAMETER_NAME(springRadius)
   BOOST_PARAMETER_NAME(scaleFactor)
   BOOST_PARAMETER_NAME(crossSectionRadius)
-  BOOST_PARAMETER_NAME(openMBVNodes)
+  BOOST_PARAMETER_NAME(nodes)
 
 }
 
