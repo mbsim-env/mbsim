@@ -293,9 +293,9 @@ namespace MBSimGUI {
 
   QWidget* RotationWidgetFactory4::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function r=r(q)",new ChoiceWidget2(new RotationWidgetFactory2(parent)));
+      return new ExtWidget("Function A=A(q)",new ChoiceWidget2(new RotationWidgetFactory2(parent)));
     if(i==1)
-      return new ExtWidget("Function r=r(t)",new ChoiceWidget2(new RotationWidgetFactory3(parent)));
+      return new ExtWidget("Function A=A(t)",new ChoiceWidget2(new RotationWidgetFactory3(parent)));
     return NULL;
   }
 
