@@ -115,20 +115,8 @@ namespace MBSim {
       if(stage == Element::preInit) {
         f.init();
 
-        // check function: number in inputs and outputs
-        if(f.getNumInputs()!=1) THROW_MBSIMERROR("Function must have only 1 argument.");
-        if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function must have only 1 output.");
-        // check template arguments: only scalar and vector arguments are supported
-        BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg>::size2==1);
-        // check function: only scalar and vector arguments are supported
-        if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-        // check function <-> template argument dimension
-        if(fmatvec::StaticSize<Arg>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg>::size1)
-          THROW_MBSIMERROR("The dimension of a parameter does not match.");
-        if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
-          THROW_MBSIMERROR("The output dimension does not match.");
-        if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
-          THROW_MBSIMERROR("The output dimension does not match.");
+        // check symbolic function arguments: for XML models this is already done by initializeUsingXML but not for C++ models
+        checkSXFunctionIODim();
 
         pd = casadi::SXFunction(f.inputExpr(),f.jac());
         pd.init();
@@ -191,6 +179,28 @@ namespace MBSim {
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=casadi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
+      // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
+      // to test other possible combinations (more general ones)
+      checkSXFunctionIODim();
+    }
+
+    private:
+
+    void checkSXFunctionIODim() {
+      // check function: number in inputs and outputs
+      if(f.getNumInputs()!=1) THROW_MBSIMERROR("Function must have only 1 argument.");
+      if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function must have only 1 output.");
+      // check template arguments: only scalar and vector arguments are supported
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg>::size2==1);
+      // check function: only scalar and vector arguments are supported
+      if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+      // check function <-> template argument dimension
+      if(fmatvec::StaticSize<Arg>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg>::size1)
+        THROW_MBSIMERROR("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
+        THROW_MBSIMERROR("The output dimension does not match.");
+      if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
+        THROW_MBSIMERROR("The output dimension does not match.");
     }
   };
 
@@ -206,24 +216,8 @@ namespace MBSim {
       if(stage == Element::preInit) {
         f.init();
 
-        // check function: number in inputs and outputs
-        if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
-        if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
-        // check template arguments: only scalar and vector arguments are supported
-        BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
-        BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg2>::size2==1);
-        // check function: only scalar and vector arguments are supported
-        if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-        if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-        // check function <-> template argument dimension
-        if(fmatvec::StaticSize<Arg1>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg1>::size1)
-          THROW_MBSIMERROR("The dimension of a parameter does not match.");
-        if(fmatvec::StaticSize<Arg2>::size1!=0 && f.inputExpr(1).size1()!=fmatvec::StaticSize<Arg2>::size1)
-          THROW_MBSIMERROR("The dimension of a parameter does not match.");
-        if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
-          THROW_MBSIMERROR("The output dimension does not match.");
-        if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
-          THROW_MBSIMERROR("The output dimension does not match.");
+        // check symbolic function arguments: for XML models this is already done by initializeUsingXML but not for C++ models
+        checkSXFunctionIODim();
 
         pd1 = casadi::SXFunction(f.inputExpr(),f.jac(0));
         pd1.init();
@@ -337,6 +331,32 @@ namespace MBSim {
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=casadi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
+      // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
+      // to test other possible combinations (more general ones)
+      checkSXFunctionIODim();
+    }
+
+    private:
+
+    void checkSXFunctionIODim() {
+      // check function: number in inputs and outputs
+      if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
+      if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
+      // check template arguments: only scalar and vector arguments are supported
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg2>::size2==1);
+      // check function: only scalar and vector arguments are supported
+      if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+      if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+      // check function <-> template argument dimension
+      if(fmatvec::StaticSize<Arg1>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg1>::size1)
+        THROW_MBSIMERROR("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<Arg2>::size1!=0 && f.inputExpr(1).size1()!=fmatvec::StaticSize<Arg2>::size1)
+        THROW_MBSIMERROR("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
+        THROW_MBSIMERROR("The output dimension does not match.");
+      if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
+        THROW_MBSIMERROR("The output dimension does not match.");
     }
   };
 
@@ -352,24 +372,8 @@ namespace MBSim {
       if(stage == Element::preInit) {
         f.init();
 
-        // check function: number in inputs and outputs
-        if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
-        if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
-        // check template arguments: only scalar and vector arguments are supported
-        BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
-        BOOST_STATIC_ASSERT(fmatvec::StaticSize<double>::size2==1);
-        // check function: only scalar and vector arguments are supported
-        if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-        if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
-        // check function <-> template argument dimension
-        if(fmatvec::StaticSize<Arg1>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg1>::size1)
-          THROW_MBSIMERROR("The dimension of a parameter does not match.");
-        if(fmatvec::StaticSize<double>::size1!=0 && f.inputExpr(1).size1()!=fmatvec::StaticSize<double>::size1)
-          THROW_MBSIMERROR("The dimension of a parameter does not match.");
-        if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
-          THROW_MBSIMERROR("The output dimension does not match.");
-        if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
-          THROW_MBSIMERROR("The output dimension does not match.");
+        // check symbolic function arguments: for XML models this is already done by initializeUsingXML but not for C++ models
+        checkSXFunctionIODim();
 
         pd1 = casadi::SXFunction(f.inputExpr(),f.jac(0));
         pd1.init();
@@ -508,30 +512,32 @@ namespace MBSim {
 
     void initializeUsingXML(xercesc::DOMElement *element) {
       f=casadi::createCasADiSXFunctionFromXML(element->getFirstElementChild());
-    }
-  };
-
-  template <class Ret, class Arg1, class Arg2, class Arg3>
-  class SymbolicFunction<Ret(Arg1, Arg2, Arg3)> : public Function<Ret(Arg1, Arg2, Arg3)> {
-    casadi::SXFunction f;
-    public:
-    SymbolicFunction(const casadi::SXFunction &f_) : f(f_) { }
-
-    void init(Element::InitStage stage) {
-      Function<Ret(Arg1, Arg2, Arg3)>::init(stage);
-      if(stage == Element::preInit) {
-        f.init();
-      }
+      // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
+      // to test other possible combinations (more general ones)
+      checkSXFunctionIODim();
     }
 
-    casadi::SXFunction& getSXFunction() {return f;}
+    private:
 
-    Ret operator()(const Arg1& x1, const Arg2& x2, const Arg3& x3, const void * =NULL) {
-      f.setInput(ToCasadi<Arg1>::cast(x1),0);
-      f.setInput(ToCasadi<Arg2>::cast(x2),1);
-      f.setInput(ToCasadi<Arg3>::cast(x3),2);
-      f.evaluate();
-      return FromCasadi<Ret>::cast(f.output());
+    void checkSXFunctionIODim() {
+      // check function: number in inputs and outputs
+      if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
+      if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
+      // check template arguments: only scalar and vector arguments are supported
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
+      BOOST_STATIC_ASSERT(fmatvec::StaticSize<double>::size2==1);
+      // check function: only scalar and vector arguments are supported
+      if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+      if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
+      // check function <-> template argument dimension
+      if(fmatvec::StaticSize<Arg1>::size1!=0 && f.inputExpr(0).size1()!=fmatvec::StaticSize<Arg1>::size1)
+        THROW_MBSIMERROR("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<double>::size1!=0 && f.inputExpr(1).size1()!=fmatvec::StaticSize<double>::size1)
+        THROW_MBSIMERROR("The dimension of a parameter does not match.");
+      if(fmatvec::StaticSize<Ret>::size1!=0 && f.outputExpr(0).size1()!=fmatvec::StaticSize<Ret>::size1)
+        THROW_MBSIMERROR("The output dimension does not match.");
+      if(fmatvec::StaticSize<Ret>::size2!=0 && f.outputExpr(0).size2()!=fmatvec::StaticSize<Ret>::size2)
+        THROW_MBSIMERROR("The output dimension does not match.");
     }
   };
 
