@@ -275,6 +275,16 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
     plotOnRoot = new ExtWidget("Plot at root",new ExtPhysicalVarWidget(input)); 
     addToTab("Extra", plotOnRoot);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-5"),QStringList(),1));
+    gMax = new ExtWidget("Tolerance for position constraints",new ExtPhysicalVarWidget(input));
+    addToTab("Extra", gMax);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e+5"),QStringList(),1));
+    gdMax = new ExtWidget("Tolerance for velocity constraints",new ExtPhysicalVarWidget(input));
+    addToTab("Extra", gdMax);
   }
 
   void LSODARIntegratorPropertyDialog::toWidget(Solver *solver) {
@@ -284,6 +294,8 @@ namespace MBSimGUI {
     static_cast<LSODARIntegrator*>(solver)->initialStepSize.toWidget(initialStepSize);
     static_cast<LSODARIntegrator*>(solver)->maximalStepSize.toWidget(maximalStepSize);
     static_cast<LSODARIntegrator*>(solver)->plotOnRoot.toWidget(plotOnRoot);
+    static_cast<LSODARIntegrator*>(solver)->gMax.toWidget(gMax);
+    static_cast<LSODARIntegrator*>(solver)->gdMax.toWidget(gdMax);
   }
 
   void LSODARIntegratorPropertyDialog::fromWidget(Solver *solver) {
@@ -293,6 +305,8 @@ namespace MBSimGUI {
     static_cast<LSODARIntegrator*>(solver)->initialStepSize.fromWidget(initialStepSize);
     static_cast<LSODARIntegrator*>(solver)->maximalStepSize.fromWidget(maximalStepSize);
     static_cast<LSODARIntegrator*>(solver)->plotOnRoot.fromWidget(plotOnRoot);
+    static_cast<LSODARIntegrator*>(solver)->gMax.fromWidget(gMax);
+    static_cast<LSODARIntegrator*>(solver)->gdMax.fromWidget(gdMax);
   }
 
   TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {

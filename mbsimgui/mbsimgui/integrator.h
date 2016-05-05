@@ -100,7 +100,7 @@ namespace MBSimGUI {
     virtual std::string getType() const { return "LSODARIntegrator"; }
     IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
     protected:
-    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, plotOnRoot;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, plotOnRoot, gMax, gdMax;
   };
 
   class TimeSteppingIntegrator : public Integrator {

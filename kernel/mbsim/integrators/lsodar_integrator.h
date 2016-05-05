@@ -40,14 +40,19 @@ namespace MBSimIntegrator {
       double dtMax;
       /** minimal step size */
       double dtMin;
-      /** Absolute Toleranz */
+      /** absolute tolerance */
       fmatvec::Vec aTol;
-      /** Relative Toleranz */
+      /** relative tolerance */
       double rTol;
       /** step size for the first step */
       double dt0;
 
       bool plotOnRoot;
+
+      /** tolerance for position constraints */
+      double gMax;
+      /** tolerance for velocity constraints */
+      double gdMax;
 
       int zSize, iTol, istate, nsv, lrWork, liWork, integrationSteps;
       double t, tPlot, s0, time;
@@ -67,6 +72,9 @@ namespace MBSimIntegrator {
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
       void setPlotOnRoot(bool b) {plotOnRoot = b;}
+
+      void setToleranceForPositionConstraints(double gMax_) {gMax = gMax_;}
+      void setToleranceForVelocityConstraints(double gdMax_) {gdMax = gdMax_;}
 
       void integrate(MBSim::DynamicSystemSolver& system);
       void preIntegrate(MBSim::DynamicSystemSolver& system);

@@ -39,7 +39,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LSODARIntegrator, MBSIMINT%"LSODARIntegrator")
 
-  LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), plotOnRoot(true) {
+  LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), plotOnRoot(true), gMax(1e-5), gdMax(1e+5) {
   }
 
   void LSODARIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -75,6 +75,10 @@ namespace MBSimIntegrator {
     setMaximalStepSize(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     setPlotOnRoot(Element::getBool(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
+    setToleranceForPositionConstraints(Element::getDouble(e));
+    e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
+    setToleranceForVelocityConstraints(Element::getDouble(e));
   }
 
   DOMElement* LSODARIntegrator::writeXMLFile(DOMNode *parent) {
@@ -165,16 +169,16 @@ namespace MBSimIntegrator {
         if (tPlot > tStop)
           tPlot = tStop;
 
-//        // check drift
-//        if(system->positionDriftCompensationNeeded(1e-5)) { // project both, first positions and then velocities//MFMF
-//          system->projectGeneralizedPositions(3);
-//          system->projectGeneralizedVelocities(3);
-//          istate=1;
-//        }
-//        else if(system->velocityDriftCompensationNeeded(1e+5)) { // project velicities//MFMF
-//          system->projectGeneralizedVelocities(3);
-//          istate=1;
-//        }
+        // check drift
+        if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities//MFMF
+          system->projectGeneralizedPositions(3);
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
+        else if(system->velocityDriftCompensationNeeded(gdMax)) { // project velicities//MFMF
+          system->projectGeneralizedVelocities(3);
+          istate=1;
+        }
       }
       if(istate==3) {
         if(plotOnRoot) { // plot before shifting

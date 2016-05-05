@@ -114,7 +114,7 @@ namespace MBSimGUI {
       virtual void fromWidget(Solver *solver);
     protected:
       VecWidget *aTol;
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot, *gMax, *gdMax;
   };
 
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {

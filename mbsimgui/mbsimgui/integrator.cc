@@ -234,6 +234,14 @@ namespace MBSimGUI {
     input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"plotOnRoot"));
     plotOnRoot.setProperty(new ExtPhysicalVarProperty(input)); 
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-5"),"",MBSIMINT%"toleranceForPositionConstraints"));
+    gMax.setProperty(new ExtPhysicalVarProperty(input));
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e+5"),"",MBSIMINT%"toleranceForVelocityConstraints"));
+    gdMax.setProperty(new ExtPhysicalVarProperty(input));
   }
 
   void LSODARIntegrator::initializeUsingXML(DOMElement *element) {
@@ -244,6 +252,8 @@ namespace MBSimGUI {
     minimalStepSize.initializeUsingXML(element);
     maximalStepSize.initializeUsingXML(element);
     plotOnRoot.initializeUsingXML(element);
+    gMax.initializeUsingXML(element);
+    gdMax.initializeUsingXML(element);
   }
 
   DOMElement* LSODARIntegrator::writeXMLFile(DOMNode *parent) {
@@ -254,6 +264,8 @@ namespace MBSimGUI {
     minimalStepSize.writeXMLFile(ele0);
     maximalStepSize.writeXMLFile(ele0);
     plotOnRoot.writeXMLFile(ele0);
+    gMax.writeXMLFile(ele0);
+    gdMax.writeXMLFile(ele0);
     return ele0;
   }
 
