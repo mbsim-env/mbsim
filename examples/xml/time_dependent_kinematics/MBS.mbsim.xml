@@ -84,7 +84,11 @@
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <stateDependentTranslation>
               <SymbolicFunction arg1="q" arg1Dim="1">
-                [5+cos(freq1*q); sin(freq1*q(1)); 0]
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>5+cos(freq1*q)</ele>
+                  <ele>sin(freq1*q(1))</ele>
+                  <ele>0</ele>
+                </xmlVector> 
               </SymbolicFunction>
             </stateDependentTranslation>
             <frames />
