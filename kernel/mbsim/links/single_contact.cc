@@ -725,7 +725,7 @@ namespace MBSim {
         if (frictionArrow && getFrictionDirections() > 0) { // friction force
           data.clear();
           data.push_back(getTime());
-          data.push_back(cFrame[1]->getPosition()(0));
+          data.push_back(cFrame[1]->evalPosition()(0));
           data.push_back(cFrame[1]->getPosition()(1));
           data.push_back(cFrame[1]->getPosition()(2));
           Vec3 F = evalGlobalForceDirection()(Index(0,2),Index(1, getFrictionDirections()))*evalGeneralizedTangentialForce();
