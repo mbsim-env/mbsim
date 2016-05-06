@@ -61,7 +61,7 @@ namespace MBSim {
       if(openMBVArrowF) {
         vector<double> data;
         data.push_back(getTime());
-        Vec3 toPoint=frame[1]->getPosition();
+        Vec3 toPoint=frame[1]->evalPosition();
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
         data.push_back(toPoint(2));
