@@ -39,7 +39,7 @@ namespace MBSimIntegrator {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LSODARIntegrator, MBSIMINT%"LSODARIntegrator")
 
-  LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), plotOnRoot(true), gMax(1e-5), gdMax(1e+5) {
+  LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), plotOnRoot(true), gMax(1e-5), gdMax(1e-5) {
   }
 
   void LSODARIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -170,12 +170,12 @@ namespace MBSimIntegrator {
           tPlot = tStop;
 
         // check drift
-        if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities//MFMF
+        if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
           system->projectGeneralizedPositions(3);
           system->projectGeneralizedVelocities(3);
           istate=1;
         }
-        else if(system->velocityDriftCompensationNeeded(gdMax)) { // project velicities//MFMF
+        else if(system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
           system->projectGeneralizedVelocities(3);
           istate=1;
         }
