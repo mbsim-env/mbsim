@@ -212,7 +212,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  LSODARIntegrator::LSODARIntegrator() {
+  LSODARIntegrator::LSODARIntegrator() : gMax(0,false), gdMax(0,false) {
     absTol.setProperty(new ChoiceProperty2(new TolerancePropertyFactory("absolute"),"",3)); 
 
     vector<PhysicalVariableProperty> input;

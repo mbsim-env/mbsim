@@ -76,9 +76,9 @@ namespace MBSimIntegrator {
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"plotOnRoot");
     setPlotOnRoot(Element::getBool(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForPositionConstraints");
-    setToleranceForPositionConstraints(Element::getDouble(e));
+    if(e) setToleranceForPositionConstraints(Element::getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIMINT%"toleranceForVelocityConstraints");
-    setToleranceForVelocityConstraints(Element::getDouble(e));
+    if(e) setToleranceForVelocityConstraints(Element::getDouble(e));
   }
 
   DOMElement* LSODARIntegrator::writeXMLFile(DOMNode *parent) {
