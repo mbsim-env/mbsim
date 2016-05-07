@@ -467,7 +467,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *frame, *position, *velocity, *acceleration;
+      ExtWidget *frame, *position, *velocity, *acceleration, *ombvFrame;
   };
 
   class CartesianCoordinatesObserverPropertyDialog : public CoordinatesObserverPropertyDialog {

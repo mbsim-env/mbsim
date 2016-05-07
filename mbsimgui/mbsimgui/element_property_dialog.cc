@@ -1337,6 +1337,9 @@ namespace MBSimGUI {
 
     acceleration = new ExtWidget("OpenMBV acceleration arrow",new OMBVArrowWidget("NOTSET",true),true);
     addToTab("Visualisation",acceleration);
+
+    ombvFrame = new ExtWidget("OpenMBV Frame",new OMBVFrameWidget("NOTSET"),true,true);
+    addToTab("Visualisation",ombvFrame);
   }
 
   void CoordinatesObserverPropertyDialog::toWidget(Element *element) {
@@ -1345,6 +1348,7 @@ namespace MBSimGUI {
     static_cast<CoordinatesObserver*>(element)->position.toWidget(position);
     static_cast<CoordinatesObserver*>(element)->velocity.toWidget(velocity);
     static_cast<CoordinatesObserver*>(element)->acceleration.toWidget(acceleration);
+    static_cast<CoordinatesObserver*>(element)->ombvFrame.toWidget(ombvFrame);
   }
 
   void CoordinatesObserverPropertyDialog::fromWidget(Element *element) {
@@ -1353,6 +1357,7 @@ namespace MBSimGUI {
     static_cast<CoordinatesObserver*>(element)->position.fromWidget(position);
     static_cast<CoordinatesObserver*>(element)->velocity.fromWidget(velocity);
     static_cast<CoordinatesObserver*>(element)->acceleration.fromWidget(acceleration);
+    static_cast<CoordinatesObserver*>(element)->ombvFrame.fromWidget(ombvFrame);
   }
 
   CartesianCoordinatesObserverPropertyDialog::CartesianCoordinatesObserverPropertyDialog(CartesianCoordinatesObserver *observer, QWidget *parent, Qt::WindowFlags f) : CoordinatesObserverPropertyDialog(observer,parent,f) {

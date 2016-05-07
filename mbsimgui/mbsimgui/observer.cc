@@ -49,7 +49,7 @@ namespace MBSimGUI {
     return observer;
   }
 
-  CoordinatesObserver::CoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), acceleration(0,false) {
+  CoordinatesObserver::CoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), acceleration(0,false), ombvFrame(0,false) {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
@@ -61,6 +61,9 @@ namespace MBSimGUI {
 
     acceleration.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
     acceleration.setXMLName(MBSIM%"enableOpenMBVAcceleration",false);
+
+    ombvFrame.setProperty(new OMBVFrameProperty("NOTSET","",getID()));
+    ombvFrame.setXMLName(MBSIM%"enableOpenMBVFrame",false);
   }
 
   void CoordinatesObserver::initialize() {
@@ -74,6 +77,7 @@ namespace MBSimGUI {
     position.initializeUsingXML(element);
     velocity.initializeUsingXML(element);
     acceleration.initializeUsingXML(element);
+    ombvFrame.initializeUsingXML(element);
     return element;
   }
 
@@ -83,6 +87,7 @@ namespace MBSimGUI {
     position.writeXMLFile(ele0);
     velocity.writeXMLFile(ele0);
     acceleration.writeXMLFile(ele0);
+    ombvFrame.writeXMLFile(ele0);
     return ele0;
   }
 

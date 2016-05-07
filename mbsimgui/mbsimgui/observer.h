@@ -42,7 +42,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new CoordinatesObserverPropertyDialog(this);}
     protected:
-    ExtProperty frame, position, velocity, acceleration;
+    ExtProperty frame, position, velocity, acceleration, ombvFrame;
   };
 
   class CartesianCoordinatesObserver : public CoordinatesObserver {
