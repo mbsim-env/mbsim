@@ -104,6 +104,13 @@ namespace MBSimFMI {
       // system stop vector (0 = no shift in this index; 1 = shift in this index)
       fmatvec::Vec svLast;
 
+      enum DriftCompensation {
+        none,
+        positionLevel,
+        velocityLevel
+      };
+      DriftCompensation driftCompensation;
+
       // variables store for all predefined variables (variables not owned by dss)
       PredefinedParameterStruct predefinedParameterStruct;
 

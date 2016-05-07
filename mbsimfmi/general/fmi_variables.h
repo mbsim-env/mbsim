@@ -58,6 +58,8 @@ struct PredefinedParameterStruct {
   int plotMode;          // the MBSim plotting mode
   int plotEachNStep;     // plot at each n-th completed integrator step
   double plotStepSize;   // plot in equidistand time steps
+  double gMax;           // tolerance for position constraints 
+  double gdMax;          // tolerance for velocity constraints 
 };
 
 //! add all FMI predefined parameters to var.

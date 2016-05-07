@@ -54,6 +54,20 @@ void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
   if(setToDefaultValue)
     (*--var.end())->setValue(double(0.001));
 
+  // gMax
+  var.push_back(boost::make_shared<PredefinedParameter<double> >("Constraint tolerance.position",
+    "Tolerance for position constraints", boost::ref(predefinedParameterStruct.gMax)));
+  // default value: 1e-5
+  if(setToDefaultValue)
+    (*--var.end())->setValue(double(1e-5));
+
+  // gdMax
+  var.push_back(boost::make_shared<PredefinedParameter<double> >("Constraint tolerance.velocity",
+    "Tolerance for velocity constraints", boost::ref(predefinedParameterStruct.gdMax)));
+  // default value: 1e-5
+  if(setToDefaultValue)
+    (*--var.end())->setValue(double(1e-5));
+
   // ADD HERE MORE PREDEFINED PARAMETERS
 }
 

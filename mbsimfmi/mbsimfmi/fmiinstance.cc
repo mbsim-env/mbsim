@@ -63,6 +63,7 @@ namespace MBSimFMI {
     debugBuffer(logger, this, instanceName, fmiOK,      "debug"),
     time(timeStore),
     z(zStore) {
+    driftCompensation=none;
 
     // use the per FMIInstance provided buffers for all subsequent fmatvec::Atom objects
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info,  make_shared<bool>(true),  make_shared<ostream>(&infoBuffer));
@@ -153,8 +154,6 @@ namespace MBSimFMI {
   // (e.g. not a intermediate Runge-Kutta step or a step which will be rejected due to
   // the error tolerances of the integrator)
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
-    *callEventUpdate=false;
-
     // plot the current system state dependent on plotMode
     switch(predefinedParameterStruct.plotMode) {
       // plot at each n-th completed step
@@ -176,6 +175,18 @@ namespace MBSimFMI {
       case SampleTime:
         break;
     }
+
+    // check drift
+    if(dss->positionDriftCompensationNeeded(predefinedParameterStruct.gMax)) {
+      driftCompensation=positionLevel;
+      *callEventUpdate=true;
+    }
+    else if(dss->velocityDriftCompensationNeeded(predefinedParameterStruct.gdMax)) {
+      driftCompensation=velocityLevel;
+      *callEventUpdate=true;
+    }
+    else
+      *callEventUpdate=false;
   }
 
   // set a real/integer/boolean/string variable
@@ -418,9 +429,22 @@ namespace MBSimFMI {
         break;
     }
 
-    // ***** step event (currently only for plotting) *****
-
-    // not used currently (see completedIntegratorStep) -> maybe check for required drift correction and apply it
+    // ***** step event (drift compensation) *****
+    if(driftCompensation==positionLevel) {
+      // compensate drift on position and velocity level
+      dss->projectGeneralizedPositions(3);
+      dss->projectGeneralizedVelocities(3);
+      // make changed state values and reset driftCompensation flag
+      eventInfo->stateValuesChanged=true;
+      driftCompensation=none;
+    }
+    else if(driftCompensation==velocityLevel) {
+      // compensate drift on velocity level
+      dss->projectGeneralizedVelocities(3);
+      // make changed state values and reset driftCompensation flag
+      eventInfo->stateValuesChanged=true;
+      driftCompensation=none;
+    }
   }
 
   void FMIInstance::getContinuousStates(fmiReal states[], size_t nx) {
