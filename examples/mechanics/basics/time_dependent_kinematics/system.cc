@@ -4,7 +4,7 @@
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/nested_function.h"
-#include "mbsim/observers/kinematics_observer.h"
+#include "mbsim/observers/absolute_kinematics_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"

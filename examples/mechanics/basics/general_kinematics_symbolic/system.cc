@@ -2,7 +2,7 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/symbolic_function.h"
-#include "mbsim/observers/kinematics_observer.h"
+#include "mbsim/observers/absolute_kinematics_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"

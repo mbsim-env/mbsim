@@ -5,7 +5,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
-#include "mbsim/observers/kinematics_observer.h"
+#include "mbsim/observers/absolute_kinematics_observer.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
