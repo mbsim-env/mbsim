@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2015 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -19,6 +19,7 @@
 
 #ifndef _COORDINATES_OBSERVER_H__
 #define _COORDINATES_OBSERVER_H__
+
 #include "mbsim/observers/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -69,49 +70,6 @@ namespace MBSim {
       std::string saved_frame;
   };
 
-  class CartesianCoordinatesObserver : public CoordinatesObserver {
-    private:
-      fmatvec::Vec3 ex, ey, ez;
-      fmatvec::SqrMat3 A;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> openMBVXPosition, openMBVYPosition, openMBVZPosition, openMBVXVelocity, openMBVYVelocity, openMBVZVelocity, openMBVXAcceleration, openMBVYAcceleration, openMBVZAcceleration; 
-#endif
-
-    public:
-      CartesianCoordinatesObserver(const std::string &name="");
-
-      void init(InitStage stage);
-      virtual void plot();
-  };
-
-  class CylinderCoordinatesObserver : public CoordinatesObserver {
-    private:
-      fmatvec::Vec3 ez;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> openMBVRadialPosition, openMBVZPosition, openMBVRadialVelocity, openMBVCircularVelocity, openMBVZVelocity, openMBVRadialAcceleration, openMBVCircularAcceleration, openMBVZAcceleration; 
-#endif
-
-    public:
-      CylinderCoordinatesObserver(const std::string &name="");
-
-      void init(InitStage stage);
-      virtual void plot();
-  };
-
-  class NaturalCoordinatesObserver : public CoordinatesObserver {
-    private:
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> openMBVTangentialAcceleration, openMBVNormalAcceleration;
-#endif
-
-    public:
-      NaturalCoordinatesObserver(const std::string &name="");
-
-      void init(InitStage stage);
-      virtual void plot();
-  };  
-
 }
 
 #endif
-

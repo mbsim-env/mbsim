@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2013 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -42,8 +42,13 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
+        if(openMBVPosition) plotColumns.push_back("AbsolutePosition");
+        if(openMBVVelocity) plotColumns.push_back("AbsoluteVelocity");
+        if(openMBVAngularVelocity) plotColumns.push_back("AbsoluteAngularVelocity");
+        if(openMBVAcceleration) plotColumns.push_back("AbsoluteAcceleration");
+        if(openMBVAngularAcceleration) plotColumns.push_back("AbsoluteAngularAcceleration");
+        Observer::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
@@ -110,6 +115,7 @@ namespace MBSim {
           data.push_back(r(2));
           data.push_back(0.5);
           openMBVPosition->append(data);
+          plotVector.push_back(nrm2(r));
         }
         if(openMBVVelocity&& !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
@@ -124,6 +130,7 @@ namespace MBSim {
           data.push_back(v(2));
           data.push_back(0.5);
           openMBVVelocity->append(data);
+          plotVector.push_back(nrm2(v));
         }
         if(openMBVAngularVelocity&& !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
@@ -138,6 +145,7 @@ namespace MBSim {
           data.push_back(om(2));
           data.push_back(0.5);
           openMBVAngularVelocity->append(data);
+          plotVector.push_back(nrm2(om));
         }
         if(openMBVAcceleration&& !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
@@ -152,6 +160,7 @@ namespace MBSim {
           data.push_back(a(2));
           data.push_back(0.5);
           openMBVAcceleration->append(data);
+          plotVector.push_back(nrm2(a));
         }
         if(openMBVAngularAcceleration&& !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
@@ -166,6 +175,7 @@ namespace MBSim {
           data.push_back(psi(2));
           data.push_back(0.5);
           openMBVAngularAcceleration->append(data);
+          plotVector.push_back(nrm2(psi));
         }
       }
 #endif
@@ -203,319 +213,6 @@ namespace MBSim {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
         openMBVAngularAcceleration=ombv.createOpenMBV(e); 
     }
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteKinematicsObserver, MBSIM%"AbsoluteKinematicsObserver")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeKinematicsObserver, MBSIM%"RelativeKinematicsObserver")
-
-  RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : KinematicsObserver(name) {
-    refFrame = 0;
-  }
-
-  void RelativeKinematicsObserver::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      KinematicsObserver::init(stage);
-    }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-
-      KinematicsObserver::init(stage);
-      if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-        if(getPlotFeature(openMBV)==enabled) {
-          if(openMBVPosition) {
-            openMBVrTrans = OpenMBV::ObjectFactory::create(openMBVPosition);
-            openMBVrRel = OpenMBV::ObjectFactory::create(openMBVPosition);
-            openMBVrTrans->setName("Translational_Position");
-            openMBVPosGrp->addObject(openMBVrTrans);
-            openMBVrRel->setName("Relative_Position");
-            openMBVPosGrp->addObject(openMBVrRel);
-          }
-          if(openMBVVelocity) {
-            openMBVvTrans = OpenMBV::ObjectFactory::create(openMBVVelocity);
-            openMBVvRot = OpenMBV::ObjectFactory::create(openMBVVelocity);
-            openMBVvRel = OpenMBV::ObjectFactory::create(openMBVVelocity);
-            openMBVvF = OpenMBV::ObjectFactory::create(openMBVVelocity);
-            openMBVvTrans->setName("Translational_Velocity");
-            openMBVVelGrp->addObject(openMBVvTrans);
-            openMBVvRot->setName("Rotational_Velocity");
-            openMBVVelGrp->addObject(openMBVvRot);
-            openMBVvRel->setName("Relative_Velocity");
-            openMBVVelGrp->addObject(openMBVvRel);
-            openMBVvF->setName("Guiding_Velocity");
-            openMBVVelGrp->addObject(openMBVvF);
-          }
-          if(openMBVAngularVelocity) {
-            openMBVomTrans = OpenMBV::ObjectFactory::create(openMBVAngularVelocity);
-            openMBVomRel = OpenMBV::ObjectFactory::create(openMBVAngularVelocity);
-            openMBVomTrans->setName("Translational_Angular_Velocity");
-            openMBVAngVelGrp->addObject(openMBVomTrans);
-            openMBVomRel->setName("Relative_Angular_Velocity");
-            openMBVAngVelGrp->addObject(openMBVomRel);
-          }
-          if(openMBVAcceleration) {
-            openMBVaTrans = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-            openMBVaRot = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-            openMBVaZp = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-            openMBVaCor = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-            openMBVaRel = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-            openMBVaF = OpenMBV::ObjectFactory::create(openMBVAcceleration);
-            openMBVaTrans->setName("Translational_Acceleration");
-            openMBVAccGrp->addObject(openMBVaTrans);
-            openMBVaRot->setName("Rotational_Acceleration");
-            openMBVAccGrp->addObject(openMBVaRot);
-            openMBVaZp->setName("Centripetal_Acceleration");
-            openMBVAccGrp->addObject(openMBVaZp);
-            openMBVaCor->setName("Coriolis_Acceleration");
-            openMBVAccGrp->addObject(openMBVaCor);
-            openMBVaRel->setName("Relative_Acceleration");
-            openMBVAccGrp->addObject(openMBVaRel);
-            openMBVaF->setName("Guiding_Acceleration");
-            openMBVAccGrp->addObject(openMBVaF);
-          }
-          if(openMBVAngularAcceleration) {
-            openMBVpsiTrans = OpenMBV::ObjectFactory::create(openMBVAngularAcceleration);
-            openMBVpsiRot = OpenMBV::ObjectFactory::create(openMBVAngularAcceleration);
-            openMBVpsiRel = OpenMBV::ObjectFactory::create(openMBVAngularAcceleration);
-            openMBVpsiTrans->setName("Translational_Angular_Acceleration");
-            openMBVAngAccGrp->addObject(openMBVpsiTrans);
-            openMBVpsiRot->setName("Rotational_Angular_Acceleration");
-            openMBVAngAccGrp->addObject(openMBVpsiRot);
-            openMBVpsiRel->setName("Relative_Angular_Acceleration");
-            openMBVAngAccGrp->addObject(openMBVpsiRel);
-          }
-        }
-#endif
-      }
-    }
-    else
-      KinematicsObserver::init(stage);
-  }
-
-  void RelativeKinematicsObserver::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Vec3 vP = frame->evalVelocity();
-      Vec3 vOs = refFrame->evalVelocity();
-      Vec3 rOP = frame->evalPosition();
-      Vec3 rOOs = refFrame->evalPosition();
-      Vec3 rOsP = rOP - rOOs;
-      Vec3 omB = refFrame->evalAngularVelocity();
-      Vec3 vOsP = vP - vOs;
-      Vec3 vRot = crossProduct(omB,rOsP);
-      Vec3 vRel = vOsP - vRot;
-      Vec3 vF = vOs + vRot;
-      Vec3 aP = frame->evalAcceleration();
-      Vec3 aOs = refFrame->evalAcceleration();
-      Vec3 aOsP = aP - aOs;
-      Vec3 psiB = refFrame->evalAngularAcceleration();
-      Vec3 aRot = crossProduct(psiB,rOsP);
-      Vec3 aZp = crossProduct(omB,crossProduct(omB,rOsP));
-      Vec3 aCor = 2.*crossProduct(omB,vRel);
-      Vec3 aRel = aOsP - aRot - aZp - aCor;
-      Vec3 aF = aOs + aRot + aZp;
-      Vec3 omK = frame->evalAngularVelocity();
-      Vec3 omBK = omK - omB;
-      Vec3 psiK = frame->evalAngularAcceleration();
-      Vec3 psiBK = psiK - psiB;
-      Vec3 psiRot = crossProduct(omB, omBK);
-      Vec3 psiRel = psiBK - psiRot;
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled) {
-        if(openMBVPosition&& !openMBVPosition->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(rOOs(0));
-          data.push_back(rOOs(1));
-          data.push_back(rOOs(2));
-          data.push_back(0.5);
-          openMBVrTrans->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOOs(0));
-          data.push_back(rOOs(1));
-          data.push_back(rOOs(2));
-          data.push_back(rOsP(0));
-          data.push_back(rOsP(1));
-          data.push_back(rOsP(2));
-          data.push_back(0.5);
-          openMBVrRel->append(data);
-        }
-        if(openMBVVelocity&& !openMBVVelocity->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(rOOs(0));
-          data.push_back(rOOs(1));
-          data.push_back(rOOs(2));
-          data.push_back(vOs(0));
-          data.push_back(vOs(1));
-          data.push_back(vOs(2));
-          data.push_back(0.5);
-          openMBVvTrans->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(vRot(0));
-          data.push_back(vRot(1));
-          data.push_back(vRot(2));
-          data.push_back(0.5);
-          openMBVvRot->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(vRel(0));
-          data.push_back(vRel(1));
-          data.push_back(vRel(2));
-          data.push_back(0.5);
-          openMBVvRel->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(vF(0));
-          data.push_back(vF(1));
-          data.push_back(vF(2));
-          data.push_back(0.5);
-          openMBVvF->append(data);
-        }
-        if(openMBVAcceleration&& !openMBVAcceleration->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(rOOs(0));
-          data.push_back(rOOs(1));
-          data.push_back(rOOs(2));
-          data.push_back(aOs(0));
-          data.push_back(aOs(1));
-          data.push_back(aOs(2));
-          data.push_back(0.5);
-          openMBVaTrans->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(aRot(0));
-          data.push_back(aRot(1));
-          data.push_back(aRot(2));
-          data.push_back(0.5);
-          openMBVaRot->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(aZp(0));
-          data.push_back(aZp(1));
-          data.push_back(aZp(2));
-          data.push_back(0.5);
-          openMBVaZp->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(aCor(0));
-          data.push_back(aCor(1));
-          data.push_back(aCor(2));
-          data.push_back(0.5);
-          openMBVaCor->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(aRel(0));
-          data.push_back(aRel(1));
-          data.push_back(aRel(2));
-          data.push_back(0.5);
-          openMBVaRel->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOP(0));
-          data.push_back(rOP(1));
-          data.push_back(rOP(2));
-          data.push_back(aF(0));
-          data.push_back(aF(1));
-          data.push_back(aF(2));
-          data.push_back(0.5);
-          openMBVaF->append(data);
-        }
-        if(openMBVAngularVelocity&& !openMBVAngularVelocity->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(omB(0));
-          data.push_back(omB(1));
-          data.push_back(omB(2));
-          data.push_back(0.5);
-          openMBVomTrans->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOOs(0));
-          data.push_back(rOOs(1));
-          data.push_back(rOOs(2));
-          data.push_back(omBK(0));
-          data.push_back(omBK(1));
-          data.push_back(omBK(2));
-          data.push_back(0.5);
-          openMBVomRel->append(data);
-        }
-        if(openMBVAngularAcceleration&& !openMBVAngularAcceleration->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(psiB(0));
-          data.push_back(psiB(1));
-          data.push_back(psiB(2));
-          data.push_back(0.5);
-          openMBVpsiTrans->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOOs(0));
-          data.push_back(rOOs(1));
-          data.push_back(rOOs(2));
-          data.push_back(psiRot(0));
-          data.push_back(psiRot(1));
-          data.push_back(psiRot(2));
-          data.push_back(0.5);
-          openMBVpsiRot->append(data);
-          data.clear();
-          data.push_back(getTime());
-          data.push_back(rOOs(0));
-          data.push_back(rOOs(1));
-          data.push_back(rOOs(2));
-          data.push_back(psiRel(0));
-          data.push_back(psiRel(1));
-          data.push_back(psiRel(2));
-          data.push_back(0.5);
-          openMBVpsiRel->append(data);
-        }
-      }
-#endif
-
-      KinematicsObserver::plot();
-    }
-  }
-
-  void RelativeKinematicsObserver::initializeUsingXML(DOMElement *element) {
-    KinematicsObserver::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
-    if(e) saved_frameOfReference=E(e)->getAttribute("ref");
   }
 
 }

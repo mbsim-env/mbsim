@@ -1,7 +1,12 @@
 noinst_LTLIBRARIES = libobserver.la
 libobserver_la_SOURCES = observer.cc\
 			 kinematics_observer.cc \
+			 absolute_kinematics_observer.cc \
+			 relative_kinematics_observer.cc \
 			 coordinates_observer.cc \
+			 cartesian_coordinates_observer.cc \
+			 cylinder_coordinates_observer.cc \
+			 natural_coordinates_observer.cc \
 			 rigid_body_observer.cc \
 			 rigid_body_group_observer.cc
 
@@ -12,6 +17,11 @@ libobserver_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_C
 
 observerinclude_HEADERS = observer.h\
 			  kinematics_observer.h \
+			  absolute_kinematics_observer.h \
+			  relative_kinematics_observer.h \
 			  coordinates_observer.h \
+			  cartesian_coordinates_observer.h \
+			  cylinder_coordinates_observer.h \
+			  natural_coordinates_observer.h \
 			  rigid_body_observer.h \
 			  rigid_body_group_observer.h

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2013 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -18,43 +18,16 @@
  */
 
 #include <config.h>
-#include "mbsim/observers/observer.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/group.h>
-#endif
+#include "mbsim/observers/absolute_kinematics_observer.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace xercesc;
 using namespace boost;
 
 namespace MBSim {
 
-  Observer::Observer(const std::string &name) : Element(name) {
-    setPlotFeature(globalPosition, enabled);
-  }
-
-  void Observer::init(InitStage stage) {
-    if(stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-        if(getPlotFeature(openMBV)==enabled) {
-          openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
-        }
-#endif
-      }
-      Element::init(stage);
-    }
-    else
-      Element::init(stage);
-  }
-
-  void Observer::plot() {
-    Element::plot();
-  }
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteKinematicsObserver, MBSIM%"AbsoluteKinematicsObserver")
 
 }
