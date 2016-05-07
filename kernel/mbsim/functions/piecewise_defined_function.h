@@ -53,7 +53,7 @@ namespace MBSim {
       Ret operator()(const Arg &x) {
         for(unsigned int i=0; i<a.size(); i++)
           if(x<=a[i+1])
-            return (*function[i])(x-a[i]);
+            return (*function[i])(x);
         if(contDiff==0)
           return yEnd;
         else if(contDiff==1)
@@ -64,7 +64,7 @@ namespace MBSim {
       typename fmatvec::Der<Ret, double>::type parDer(const double &x) {
         for(unsigned int i=0; i<a.size(); i++)
           if(x<=a[i+1])
-            return function[i]->parDer(x-a[i]);
+            return function[i]->parDer(x);
         if(contDiff==0)
           return zeros(yEnd);
         else if(contDiff==1)
@@ -75,7 +75,7 @@ namespace MBSim {
       typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) {
         for(unsigned int i=0; i<a.size(); i++)
           if(x<=a[i+1])
-            return function[i]->parDerDirDer(xDir,x-a[i]);
+            return function[i]->parDerDirDer(xDir,x);
         if(contDiff==0)
           return zeros(yEnd);
         else if(contDiff==1)
@@ -86,7 +86,7 @@ namespace MBSim {
       typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {
         for(unsigned int i=0; i<a.size(); i++)
           if(x<=a[i+1])
-            return function[i]->parDerParDer(x-a[i]);
+            return function[i]->parDerParDer(x);
         if(contDiff==0)
           return zeros(yEnd);
         else if(contDiff==1)
@@ -110,11 +110,11 @@ namespace MBSim {
         for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
           (*it)->init(stage);
         if(stage==Element::preInit) {
-          yEnd = (*function[function.size()-1])(a[a.size()-1]-a[a.size()-2]);
+          yEnd = (*function[function.size()-1])(a[a.size()-1]);
           if(contDiff>0) {
-            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]-a[a.size()-2]);
+            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]);
             if(contDiff>1)
-              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]-a[a.size()-2]);
+              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]);
           }
         }
       }
