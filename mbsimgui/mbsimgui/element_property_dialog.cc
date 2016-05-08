@@ -333,7 +333,7 @@ namespace MBSimGUI {
   PlanarContourPropertyDialog::PlanarContourPropertyDialog(PlanarContour *contour, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecWidgetFactory(2),QBoxLayout::RightToLeft));
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft));
     addToTab("General", nodes);
 
     contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new ContourFunctionWidgetFactory(contour)));

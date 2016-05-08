@@ -212,7 +212,7 @@ namespace MBSimGUI {
   PlanarContourMBSOMBVProperty::PlanarContourMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), nodes(0,false) {
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "", MBSIM%"nodes"));
+    input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(2,"0")), "", MBSIM%"nodes"));
     nodes.setProperty(new ExtPhysicalVarProperty(input));
   }
 

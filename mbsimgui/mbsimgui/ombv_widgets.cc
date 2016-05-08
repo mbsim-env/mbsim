@@ -116,7 +116,7 @@ namespace MBSimGUI {
 
   PlanarContourMBSOMBVWidget::PlanarContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
     vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<QString>(3,"1")), noUnitUnits(), 4));
+    input.push_back(new PhysicalVariableWidget(new VecSizeVarWidget(2,1,100), noUnitUnits(), 4));
     nodes = new ExtWidget("Nodes",new ExtPhysicalVarWidget(input),true);
     layout()->addWidget(nodes);
   }
