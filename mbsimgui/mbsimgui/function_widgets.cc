@@ -327,6 +327,16 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
     contDiff = new ExtWidget("Continously differentiable",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(contDiff);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),noUnitUnits(),1));
+    shiftAbscissa = new ExtWidget("Shift abscissa",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(shiftAbscissa);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),noUnitUnits(),1));
+    shiftOrdinate = new ExtWidget("Shift ordinate",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(shiftOrdinate);
   }
 
   void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {

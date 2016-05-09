@@ -3972,6 +3972,8 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="continouslyDifferentiable" type="pv:nounitScalar" minOccurs="0"/>
+          <xs:element name="shiftAbscissa" type="pv:nounitScalar" minOccurs="0"/>
+          <xs:element name="shiftOrdinate" type="pv:nounitScalar" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

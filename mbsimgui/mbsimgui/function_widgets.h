@@ -212,8 +212,7 @@ namespace MBSimGUI {
     void resize_(int m, int n);
 
     protected:
-    ExtWidget *functions;
-    ExtWidget *contDiff;
+    ExtWidget *functions, *contDiff, *shiftAbscissa, *shiftOrdinate;
   };
 
   class SymbolicFunctionWidget : public FunctionWidget {

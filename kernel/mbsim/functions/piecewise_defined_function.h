@@ -38,7 +38,7 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   class PiecewiseDefinedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
-      PiecewiseDefinedFunction() : contDiff(0) { a.push_back(0); }
+      PiecewiseDefinedFunction() : contDiff(0), shiftAbscissa(false), shiftOrdinate(false) { a.push_back(0); }
       ~PiecewiseDefinedFunction() {
         for(unsigned int i=0; i<function.size(); i++)
           delete function[i];
@@ -51,9 +51,9 @@ namespace MBSim {
       void setContinouslyDifferentiable(Arg contDiff_) { contDiff = contDiff_; }
       Ret zeros(const Ret &x) { return Ret(x.size()); }
       Ret operator()(const Arg &x) {
-        for(unsigned int i=0; i<a.size(); i++)
+        for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
-            return (*function[i])(x);
+            return y0[i] + (*function[i])(x-x0[i]);
         if(contDiff==0)
           return yEnd;
         else if(contDiff==1)
@@ -62,9 +62,9 @@ namespace MBSim {
           return yEnd+(ysEnd+0.5*yssEnd*(x-a[a.size()-1]))*(x-a[a.size()-1]);
       }
       typename fmatvec::Der<Ret, double>::type parDer(const double &x) {
-        for(unsigned int i=0; i<a.size(); i++)
+        for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
-            return function[i]->parDer(x);
+            return function[i]->parDer(x-x0[i]);
         if(contDiff==0)
           return zeros(yEnd);
         else if(contDiff==1)
@@ -73,9 +73,9 @@ namespace MBSim {
           return ysEnd+yssEnd*(x-a[a.size()-1]);
       }
       typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) {
-        for(unsigned int i=0; i<a.size(); i++)
+        for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
-            return function[i]->parDerDirDer(xDir,x);
+            return function[i]->parDerDirDer(xDir,x-x0[i]);
         if(contDiff==0)
           return zeros(yEnd);
         else if(contDiff==1)
@@ -84,9 +84,9 @@ namespace MBSim {
           return yssEnd;
       }
       typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {
-        for(unsigned int i=0; i<a.size(); i++)
+        for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
-            return function[i]->parDerParDer(x);
+            return function[i]->parDerParDer(x-x0[i]);
         if(contDiff==0)
           return zeros(yEnd);
         else if(contDiff==1)
@@ -102,27 +102,42 @@ namespace MBSim {
           addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))));
           ee=ee->getNextElementSibling();
         }
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftAbscissa");
+        if(e) shiftAbscissa=Element::getBool(e);
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
+        if(e) shiftOrdinate=Element::getBool(e);
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continouslyDifferentiable");
-        if(e) contDiff=Element::getDouble(e);
+        if(e) contDiff=Element::getInt(e);
       }
       void init(Element::InitStage stage) {
         Function<Ret(Arg)>::init(stage);
         for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
           (*it)->init(stage);
         if(stage==Element::preInit) {
-          yEnd = (*function[function.size()-1])(a[a.size()-1]);
+          if(shiftAbscissa)
+            x0 = a;
+          else
+            x0.resize(a.size());
+          y0.resize(a.size(),zeros((*function[0])(0)));
+          if(shiftOrdinate) {
+            for(unsigned int i=1; i<a.size(); i++)
+              y0[i] = (*this)(a[i]);
+          }
+          yEnd = (*this)(a[a.size()-1]);
           if(contDiff>0) {
-            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]);
+            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]-x0[a.size()-2]);
             if(contDiff>1)
-              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]);
+              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]-x0[a.size()-2]);
           }
         }
       }
     private:
       std::vector<Function<Ret(Arg)> *> function;
-      std::vector<double> a;
+      std::vector<double> a, x0;
+      std::vector<Ret> y0;
       int contDiff;
       Ret yEnd, ysEnd, yssEnd;
+      bool shiftAbscissa, shiftOrdinate;
   };
 
   template<>
