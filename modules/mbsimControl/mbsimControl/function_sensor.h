@@ -47,4 +47,3 @@ namespace MBSimControl {
 }
 
 #endif /* _FUNCTION_SENSOR_H_ */
-
