@@ -32,14 +32,12 @@ namespace MBSimControl {
       
   FunctionSensor::FunctionSensor(const std::string &name, MBSim::Function<VecV(double)>* function_) : Sensor(name), function(function_) {
     function->setParent(this);
-    s=(*function)(0);
   }
 
   void FunctionSensor::setFunction(MBSim::Function<fmatvec::VecV(double)>* function_) {
     function=function_; 
     function->setParent(this);
     function->setName("Function");
-    s=(*function)(0); 
   }
 
   void FunctionSensor::updateSignal() {
