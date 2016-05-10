@@ -4172,6 +4172,36 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="BidirectionalFunction" substitutionGroup="Function" type="BidirectionalFunctionType"/>
+  <xs:complexType name="BidirectionalFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="negativeDirectionalFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="positiveDirectionalFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="LinearSpringDamperForce" substitutionGroup="Function" type="LinearSpringDamperForceType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
