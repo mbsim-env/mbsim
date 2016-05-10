@@ -490,6 +490,23 @@ namespace MBSimGUI {
     }
   }
 
+  BidirectionalFunctionWidget::BidirectionalFunctionWidget() {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)));
+    layout->addWidget(fn);
+    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new FunctionWidgetFactory2(NULL)));
+    layout->addWidget(fp);
+  }
+
+  void BidirectionalFunctionWidget::resize_(int m, int n) {
+    static_cast<ChoiceWidget2*>(fn->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget2*>(fp->getWidget())->resize_(m,n);
+  }
+
   LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

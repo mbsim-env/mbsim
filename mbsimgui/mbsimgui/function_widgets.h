@@ -285,6 +285,20 @@ namespace MBSimGUI {
     ChoiceWidget2* choice;
   };
 
+  class BidirectionalFunctionWidget : public FunctionWidget {
+    Q_OBJECT
+
+    friend class BidirectionalFunction;
+
+    public:
+    BidirectionalFunctionWidget();
+    void resize_(int m, int n);
+    protected:
+    QString ext;
+    ExtWidget *fn, *fp;
+    public slots:
+  };
+
   class LinearSpringDamperForceWidget : public FunctionWidget {
 
     friend class LinearSpringDamperForce;

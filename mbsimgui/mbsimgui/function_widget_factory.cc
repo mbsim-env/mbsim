@@ -70,6 +70,8 @@ namespace MBSimGUI {
       return new SignalFunctionWidget(parent);
     if(i==17)
       return new IdentityFunctionWidget(1);
+    if(i==18)
+      return new BidirectionalFunctionWidget();
     return NULL;
   }
 
@@ -93,6 +95,7 @@ namespace MBSimGUI {
     name.push_back("Fourier function");
     name.push_back("Signal function");
     name.push_back("Identity function");
+    name.push_back("Bidirectional function");
     return name;
   }
 

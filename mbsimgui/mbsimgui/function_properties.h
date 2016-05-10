@@ -296,6 +296,19 @@ namespace MBSimGUI {
       ChoiceProperty2 choice;
   };
 
+  class BidirectionalFunction : public Function {
+    public:
+      BidirectionalFunction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new BidirectionalFunction(*this);}
+      inline std::string getType() const { return "BidirectionalFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty fn, fp;
+  };
+
   class LinearSpringDamperForce : public Function {
     public:
       LinearSpringDamperForce(const std::string &name, Element *parent);

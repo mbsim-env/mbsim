@@ -677,6 +677,34 @@ namespace MBSimGUI {
     amplitudePhaseAngleForm.toWidget(static_cast<FourierFunctionWidget*>(widget)->amplitudePhaseAngleForm);
   }
 
+  BidirectionalFunction::BidirectionalFunction(const string &name, Element *parent) : Function(name,parent) {
+    fn.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"negativeDirectionalFunction",0));
+    fp.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"positiveDirectionalFunction",0));
+  }
+
+  DOMElement* BidirectionalFunction::initializeUsingXML(DOMElement *element) {
+    fn.initializeUsingXML(element);
+    fp.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* BidirectionalFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    fn.writeXMLFile(ele0);
+    fp.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void BidirectionalFunction::fromWidget(QWidget *widget) {
+    fn.fromWidget(static_cast<BidirectionalFunctionWidget*>(widget)->fn);
+    fp.fromWidget(static_cast<BidirectionalFunctionWidget*>(widget)->fp);
+  }
+
+  void BidirectionalFunction::toWidget(QWidget *widget) {
+    fn.toWidget(static_cast<BidirectionalFunctionWidget*>(widget)->fn);
+    fp.toWidget(static_cast<BidirectionalFunctionWidget*>(widget)->fp);
+  }
+
   LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;
