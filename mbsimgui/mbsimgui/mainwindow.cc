@@ -186,6 +186,10 @@ namespace MBSimGUI {
     actionH5plotserie->setDisabled(true);
     connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
     toolBar->addAction(actionH5plotserie);
+    actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
+    actionEigenanalysis->setDisabled(true);
+    connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
+    toolBar->addAction(actionEigenanalysis);
 
     elementList->setModel(new ElementTreeModel);
     elementList->setColumnWidth(0,250);
@@ -313,6 +317,7 @@ namespace MBSimGUI {
     actionSimulate->setDisabled(false);
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
+    actionEigenanalysis->setDisabled(false);
     actionRefresh->setDisabled(false);
     statusBar()->showMessage(tr("Ready"));
   }
@@ -469,6 +474,7 @@ namespace MBSimGUI {
       mbsDir = QDir::current();
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
+      actionEigenanalysis->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
@@ -744,6 +750,7 @@ namespace MBSimGUI {
         saveMBSimH5Data(dir+"/MBS.mbsim.h5");
         saveOpenMBVXMLData(dir+"/MBS.ombv.xml");
         saveOpenMBVH5Data(dir+"/MBS.ombv.h5");
+        saveEigenanalysis(dir+"/MBS.eigenanalysis.mat");
         if(saveFinalStateVector)
           saveStateVector(dir+"/statevector.asc");
       }
@@ -884,6 +891,7 @@ namespace MBSimGUI {
     actionSimulate->setDisabled(true);
     actionOpenMBV->setDisabled(true);
     actionH5plotserie->setDisabled(true);
+    actionEigenanalysis->setDisabled(true);
     actionRefresh->setDisabled(true);
     statusBar()->showMessage(tr("Simulating"));
   }
@@ -905,6 +913,24 @@ namespace MBSimGUI {
       arg.append(name);
       QProcess::startDetached((MBXMLUtils::getInstallPath()/"bin"/"h5plotserie").string().c_str(), arg);
     }
+  }
+
+  void MainWindow::eigenanalysis() {
+    QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.eigenanalysis.mat");
+    QFile file(name);
+    QPlainTextEdit *edit = new QPlainTextEdit;
+    edit->setWindowTitle("Eigenanalysis");
+    edit->setReadOnly(true);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+      edit->appendPlainText("Eigenanalysis not yet performed!");
+    else {
+      QTextStream in(&file);
+      while (!in.atEnd()) {
+        QString line = in.readLine();
+        edit->appendPlainText(line);
+      }
+    }
+    edit->show();
   }
 
   void MainWindow::selectElement(string ID) {

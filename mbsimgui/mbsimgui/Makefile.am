@@ -115,6 +115,7 @@ dist_mbsimguiicon_DATA = icons/exit.svg \
 			 icons/preview.svg \
 			 icons/openmbv.svg \
 			 icons/h5plotserie.svg \
+			 icons/eigenanalysis.svg \
 			 icons/resize.svg \
 			 icons/workdir.svg
 

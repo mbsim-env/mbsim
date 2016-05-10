@@ -79,7 +79,7 @@ namespace MBSimGUI {
       void dropEvent(QDropEvent *event);
       bool maybeSave();
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
+      QAction *actionSaveProject, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs;
       QTimer *autoSaveTimer;
       std::string currentID;
       enum { maxRecentFiles = 5 };
@@ -143,6 +143,7 @@ namespace MBSimGUI {
       void refresh();
       void openmbv();
       void h5plotserie();
+      void eigenanalysis();
       void help();
       void xmlHelp(const std::string &url="");
       void about();
