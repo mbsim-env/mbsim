@@ -114,8 +114,11 @@ namespace MBSim {
         for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
           (*it)->init(stage);
         if(stage==Element::preInit) {
-          if(shiftAbscissa)
+          if(shiftAbscissa) {
+            for(unsigned int i=1; i<a.size(); i++)
+              a[i] += a[i-1];
             x0 = a;
+          }
           else
             x0.resize(a.size());
           y0.resize(a.size(),zeros((*function[0])(0)));
