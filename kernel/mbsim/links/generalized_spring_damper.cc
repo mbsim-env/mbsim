@@ -37,6 +37,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
 
   GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : RigidBodyLink(name), func(NULL), l0(0) {
+    body[0] = NULL;
+    body[1] = NULL;
   }
 
   GeneralizedSpringDamper::~GeneralizedSpringDamper() {

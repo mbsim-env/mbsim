@@ -183,10 +183,12 @@ namespace MBSim {
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvPKrel; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomPK; }
       const fmatvec::SymMat3& evalGlobalInertiaTensor() { if(updWTS) updateInertiaTensor(); return WThetaS; }
-      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
-      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
       const fmatvec::Mat3xV& evalPJTT() { if(updPJ) updateJacobians(); return PJTT; }
       const fmatvec::Mat3xV& evalPJRR() { if(updPJ) updateJacobians(); return PJRR; }
+      const fmatvec::Vec3& evalPjhT() { if(updPJ) updateJacobians(); return PjhT; }
+      const fmatvec::Vec3& evalPjhR() { if(updPJ) updateJacobians(); return PjhR; }
+      const fmatvec::Vec3& evalPjbT() { if(updPjb) updateGyroscopicAccelerations(); return PjbT; }
+      const fmatvec::Vec3& evalPjbR() { if(updPjb) updateGyroscopicAccelerations(); return PjbR; }
 
       /**
        * \param RThetaR  inertia tensor

@@ -456,8 +456,8 @@ namespace MBSim {
   }
 
   void RigidBody::updateVelocities() {
-    if(fPrPK) WvPKrel = R->evalOrientation()*(evalPJTT()*evaluTRel() + PjhT);
-    if(fAPK) WomPK = frameForJacobianOfRotation->evalOrientation()*(evalPJRR()*evaluRRel() + PjhR);
+    if(fPrPK) WvPKrel = R->evalOrientation()*(evalPJTT()*evaluTRel() + evalPjhT());
+    if(fAPK) WomPK = frameForJacobianOfRotation->evalOrientation()*(evalPJRR()*evaluRRel() + evalPjhR());
     updVel = false;
   }
 
