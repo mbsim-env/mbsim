@@ -87,7 +87,6 @@ if subprocess.call([scriptdir+"/build.py", "--buildSystemRun", "--rotate", "30",
   "--url", "http://www.mbsim-env.de/mbsim/linux64-ci/report", "--buildType", "linux64-ci", "--passToConfigure", "--enable-debug",
   "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
-  "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.38.x86_64/include -I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.38.x86_64/include/linux",
   "--passToRunexamples", "--disableCompare", "--disableMakeClean", "xmlflat/hierachical_modelling", "xml/hierachical_modelling",
   "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane",
   "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"], env=env)!=0:

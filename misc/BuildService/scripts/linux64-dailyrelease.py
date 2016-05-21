@@ -21,7 +21,6 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribu
   "--prefix", SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "linux64-dailyrelease",
   "--enableCleanPrefix", "--passToConfigure", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--with-qmake=qmake-qt4",
-  "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.38.x86_64/include -I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.38.x86_64/include/linux",
   "--passToRunexamples", "--disableCompare", "--disableValidate", "xmlflat/hierachical_modelling", "xml/hierachical_modelling",
   "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane",
   "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"])!=0:

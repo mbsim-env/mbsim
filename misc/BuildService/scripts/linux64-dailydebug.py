@@ -44,8 +44,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
   "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
   "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
-  "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
-  "--with-javajnicflags=-I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.38.x86_64/include -I/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.38.x86_64/include/linux"])!=0:
+  "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin"])!=0:
   print("build.py failed.")
 
 # update references for download
