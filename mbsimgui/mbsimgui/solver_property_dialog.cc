@@ -282,7 +282,7 @@ namespace MBSimGUI {
     addToTab("Extra", gMax);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e+5"),QStringList(),1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-5"),QStringList(),1));
     gdMax = new ExtWidget("Tolerance for velocity constraints",new ExtPhysicalVarWidget(input),true);
     addToTab("Extra", gdMax);
   }
