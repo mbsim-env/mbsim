@@ -877,7 +877,8 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Get all drawing thingies
-    if (E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints")) {
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
+    if (e) {
       OpenMBVFrame ombv;
       openMBVFrame = ombv.createOpenMBV(e);
     }

@@ -339,6 +339,9 @@ namespace MBSimGUI {
     contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new ContourFunctionWidgetFactory(contour)));
     addToTab("General", contourFunction);
 
+    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    addToTab("General", open);
+
     visu = new ExtWidget("OpenMBV PlanarContour",new PlanarContourMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", visu);
   }
@@ -347,6 +350,7 @@ namespace MBSimGUI {
     ContourPropertyDialog::toWidget(element);
     static_cast<PlanarContour*>(element)->nodes.toWidget(nodes);
     static_cast<PlanarContour*>(element)->contourFunction.toWidget(contourFunction);
+    static_cast<PlanarContour*>(element)->open.toWidget(open);
     static_cast<PlanarContour*>(element)->visu.toWidget(visu);
   }
 
@@ -354,6 +358,7 @@ namespace MBSimGUI {
     ContourPropertyDialog::fromWidget(element);
     static_cast<PlanarContour*>(element)->nodes.fromWidget(nodes);
     static_cast<PlanarContour*>(element)->contourFunction.fromWidget(contourFunction);
+    static_cast<PlanarContour*>(element)->open.fromWidget(open);
     static_cast<PlanarContour*>(element)->visu.fromWidget(visu);
   }
 

@@ -44,7 +44,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      PlanarContour(const std::string &name="", Frame *R=NULL) : RigidContour(name,R) { }
+      PlanarContour(const std::string &name="", Frame *R=NULL) : RigidContour(name,R), open(false) { }
 
       /**
        * \brief destructor
@@ -89,10 +89,13 @@ namespace MBSim {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
+      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
+
+      void setOpen(bool open_=true) { open = open_; }
 
     protected:
       Function<fmatvec::Vec3(double)> * funcCrPC;
+      bool open;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<double> ombvNodes;

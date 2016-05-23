@@ -42,12 +42,10 @@ namespace MBSim {
     if (!searchAll) {
       NewtonMethod rf(func, jac);
       alphaC(0) = rf.solve(s0);
-      if (rf.getInfo() == 0 && alphaC(0) >= nodes(0) && alphaC(0) <= nodes(nodes.size() - 1)) { // converged
+      if (rf.getInfo() == 0)
         nRoots = 1;
-      }
-      else {
+      else
         searchAll = true;
-      }
     }
 
     if (searchAll) {

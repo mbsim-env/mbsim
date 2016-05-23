@@ -241,11 +241,13 @@ namespace MBSimGUI {
     return e;
   }
 
-  PlanarContour::PlanarContour(const string &str, Element *parent) : Contour(str,parent) {
+  PlanarContour::PlanarContour(const string &str, Element *parent) : Contour(str,parent), open(0,false) {
 
     nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
 
     contourFunction.setProperty(new ChoiceProperty2(new ContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
+
+    open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
 
     visu.setProperty(new PlanarContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
@@ -257,6 +259,7 @@ namespace MBSimGUI {
     Contour::initializeUsingXML(element);
     nodes.initializeUsingXML(element);
     contourFunction.initializeUsingXML(element);
+    open.initializeUsingXML(element);
     visu.initializeUsingXML(element);
     return element;
   }
@@ -265,6 +268,7 @@ namespace MBSimGUI {
     DOMElement *e = Contour::writeXMLFile(parent);
     nodes.writeXMLFile(e);
     contourFunction.writeXMLFile(e);
+    open.writeXMLFile(e);
     visu.writeXMLFile(e);
     return e;
   }

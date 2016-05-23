@@ -115,6 +115,8 @@ namespace MBSim {
     etaNodes=getVec(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     setContourFunction(ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"open");
+    if(e) setOpen(Element::getBool(e));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {

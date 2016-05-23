@@ -141,7 +141,7 @@ namespace MBSimGUI {
     std::string getType() const { return "PlanarContour"; }
     ElementPropertyDialog* createPropertyDialog() {return new PlanarContourPropertyDialog(this);}
     protected:
-    ExtProperty nodes, contourFunction, visu;
+    ExtProperty nodes, contourFunction, open, visu;
   };
 
 
