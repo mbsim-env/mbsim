@@ -240,7 +240,7 @@ namespace MBSimGUI {
     gMax.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e+5"),"",MBSIMINT%"toleranceForVelocityConstraints"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-5"),"",MBSIMINT%"toleranceForVelocityConstraints"));
     gdMax.setProperty(new ExtPhysicalVarProperty(input));
   }
 
