@@ -42,6 +42,8 @@ namespace MBSimGUI {
 
     frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(this,MBSIM%"tangentialImpactLaw"));
 
+    searchAllContactPoints.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"searchAllContactPoints",vector<string>(2,"")),"",4));
+
     enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
     normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
@@ -66,6 +68,7 @@ namespace MBSimGUI {
     frictionForceLaw.initializeUsingXML(element);
     frictionImpactLaw.initializeUsingXML(element);
     connections.initializeUsingXML(element);
+    searchAllContactPoints.initializeUsingXML(element);
     enableOpenMBVContactPoints.initializeUsingXML(element);
     normalForceArrow.initializeUsingXML(element);
     frictionArrow.initializeUsingXML(element);
@@ -79,6 +82,7 @@ namespace MBSimGUI {
     frictionForceLaw.writeXMLFile(ele0);
     frictionImpactLaw.writeXMLFile(ele0);
     connections.writeXMLFile(ele0);
+    searchAllContactPoints.writeXMLFile(ele0);
     enableOpenMBVContactPoints.writeXMLFile(ele0);
     normalForceArrow.writeXMLFile(ele0);
     frictionArrow.writeXMLFile(ele0);

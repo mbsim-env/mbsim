@@ -243,7 +243,7 @@ namespace MBSimGUI {
 
   PlanarContour::PlanarContour(const string &str, Element *parent) : Contour(str,parent) {
 
-    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes"),"",4));
+    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
 
     contourFunction.setProperty(new ChoiceProperty2(new ContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
 

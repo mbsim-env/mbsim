@@ -872,6 +872,9 @@ namespace MBSim {
       }
     }
 
+    e = E(element)->getFirstElementChildNamed(MBSIM%"searchAllContactPoints");
+    if (e) setSearchAllContactPoints(getBool(e));
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Get all drawing thingies
     if (E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints")) {

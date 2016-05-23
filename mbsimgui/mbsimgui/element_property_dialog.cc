@@ -333,7 +333,7 @@ namespace MBSimGUI {
   PlanarContourPropertyDialog::PlanarContourPropertyDialog(PlanarContour *contour, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft));
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
     addToTab("General", nodes);
 
     contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new ContourFunctionWidgetFactory(contour)));
@@ -1266,6 +1266,7 @@ namespace MBSimGUI {
 
     addTab("Kinetics",1);
     addTab("Visualisation",2);
+    addTab("Extra");
 
     connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
     addToTab("Kinetics", connections);
@@ -1281,6 +1282,9 @@ namespace MBSimGUI {
 
     frictionImpactLaw = new ExtWidget("Tangential impact law",new FrictionImpactLawChoiceWidget,true);
     addToTab("Kinetics", frictionImpactLaw);
+
+    searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    addToTab("Extra", searchAllContactPoints);
 
     //  vector<PhysicalVariableWidget*> input;
     //  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
@@ -1302,6 +1306,7 @@ namespace MBSimGUI {
     static_cast<Contact*>(element)->frictionForceLaw.toWidget(frictionForceLaw);
     static_cast<Contact*>(element)->frictionImpactLaw.toWidget(frictionImpactLaw);
     static_cast<Contact*>(element)->connections.toWidget(connections);
+    static_cast<Contact*>(element)->searchAllContactPoints.toWidget(searchAllContactPoints);
     static_cast<Contact*>(element)->enableOpenMBVContactPoints.toWidget(enableOpenMBVContactPoints);
     static_cast<Contact*>(element)->normalForceArrow.toWidget(normalForceArrow);
     static_cast<Contact*>(element)->frictionArrow.toWidget(frictionArrow);
@@ -1314,6 +1319,7 @@ namespace MBSimGUI {
     static_cast<Contact*>(element)->frictionForceLaw.fromWidget(frictionForceLaw);
     static_cast<Contact*>(element)->frictionImpactLaw.fromWidget(frictionImpactLaw);
     static_cast<Contact*>(element)->connections.fromWidget(connections);
+    static_cast<Contact*>(element)->searchAllContactPoints.fromWidget(searchAllContactPoints);
     static_cast<Contact*>(element)->enableOpenMBVContactPoints.fromWidget(enableOpenMBVContactPoints);
     static_cast<Contact*>(element)->normalForceArrow.fromWidget(normalForceArrow);
     static_cast<Contact*>(element)->frictionArrow.fromWidget(frictionArrow);
