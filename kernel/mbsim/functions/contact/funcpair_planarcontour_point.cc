@@ -39,4 +39,4 @@ namespace MBSim {
     return contour->evalPosition(zeta) - point->getFrame()->evalPosition();
   }
 
-}  
+}

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -32,7 +32,7 @@ using namespace std;
 namespace MBSim {
 
   ContactKinematicsCirclePlanarContour::~ContactKinematicsCirclePlanarContour() {
-    delete func; 
+    delete func;
   }
 
   void ContactKinematicsCirclePlanarContour::assignContours(const vector<Contour*> &contour) {
@@ -41,7 +41,7 @@ namespace MBSim {
       iplanarcontour = 1;
       circle = static_cast<Circle*>(contour[0]);
       planarcontour = static_cast<Contour*>(contour[1]);
-    } 
+    }
     else {
       icircle = 1; 
       iplanarcontour = 0;
@@ -69,7 +69,7 @@ namespace MBSim {
 
     if(searchAllCP==false)
       search.setInitialValue(cFrame[iplanarcontour]->getEta());
-    else { 
+    else {
       search.setSearchAll(true);
       searchAllCP=false;
     }
