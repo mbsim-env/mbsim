@@ -414,6 +414,7 @@ namespace MBSimGUI {
   ContourFunctionPropertyFactory::ContourFunctionPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"PolarContourFunction");
     name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"PeriodicFunction");
   }
 
   PropertyInterface* ContourFunctionPropertyFactory::createProperty(int i) {
@@ -421,6 +422,8 @@ namespace MBSimGUI {
       return new PolarContourFunction("NoName",parent);
     if(i==1)
       return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"phi"),1);
+    if(i==2)
+      return new PeriodicFunction("NoName",parent,new ContourFunctionPropertyFactory(parent));
     return NULL;
   }
 

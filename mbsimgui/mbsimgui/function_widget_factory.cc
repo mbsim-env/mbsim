@@ -382,6 +382,7 @@ namespace MBSimGUI {
   ContourFunctionWidgetFactory::ContourFunctionWidgetFactory(Element *parent_) : parent(parent_){
     name.push_back("Polar contour function");
     name.push_back("Symbolic function");
+    name.push_back("Periodic function");
   }
 
   QWidget* ContourFunctionWidgetFactory::createWidget(int i) {
@@ -389,6 +390,8 @@ namespace MBSimGUI {
       return new PolarContourFunctionWidget;
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("phi"),1,3);
+    if(i==2)
+      return new PeriodicFunctionWidget(new ContourFunctionWidgetFactory(parent));
     return NULL;
   }
 

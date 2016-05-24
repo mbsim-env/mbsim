@@ -309,6 +309,19 @@ namespace MBSimGUI {
       ExtProperty fn, fp;
   };
 
+  class PeriodicFunction : public Function {
+    public:
+      PeriodicFunction(const std::string &name, Element *parent, PropertyFactory *factory);
+      virtual PropertyInterface* clone() const {return new PeriodicFunction(*this);}
+      inline std::string getType() const { return "PeriodicFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty f, T;
+  };
+
   class LinearSpringDamperForce : public Function {
     public:
       LinearSpringDamperForce(const std::string &name, Element *parent);

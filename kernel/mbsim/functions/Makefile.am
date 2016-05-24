@@ -21,7 +21,8 @@ libfunction_la_SOURCES = identity_function.cc\
 			 symbolic_function.cc\
 			 piecewise_polynom_function.cc\
 			 fourier_function.cc\
-			 bidirectional_function.cc
+			 bidirectional_function.cc\
+			 periodic_function.cc
 
 functionincludedir = $(includedir)/mbsim/functions
 
@@ -53,5 +54,6 @@ functioninclude_HEADERS = function.h\
 			  piecewise_polynom_function.h\
 			  fourier_function.h\
 			  bidirectional_function.h\
+			  periodic_function.h\
 			  time_dependent_function.h\
 			  state_dependent_function.h

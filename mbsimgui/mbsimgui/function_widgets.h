@@ -294,9 +294,19 @@ namespace MBSimGUI {
     BidirectionalFunctionWidget();
     void resize_(int m, int n);
     protected:
-    QString ext;
     ExtWidget *fn, *fp;
-    public slots:
+  };
+
+  class PeriodicFunctionWidget : public FunctionWidget {
+    Q_OBJECT
+
+    friend class PeriodicFunction;
+
+    public:
+    PeriodicFunctionWidget(WidgetFactory *factory);
+    void resize_(int m, int n);
+    protected:
+    ExtWidget *f, *T;
   };
 
   class LinearSpringDamperForceWidget : public FunctionWidget {

@@ -705,6 +705,34 @@ namespace MBSimGUI {
     fp.toWidget(static_cast<BidirectionalFunctionWidget*>(widget)->fp);
   }
 
+  PeriodicFunction::PeriodicFunction(const string &name, Element *parent, PropertyFactory *factory) : Function(name,parent) {
+    f.setProperty(new ChoiceProperty2(factory,MBSIM%"function",0));
+    T.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("2*pi",MBSIM%"period",vector<string>(2,"")),"",4));
+  }
+
+  DOMElement* PeriodicFunction::initializeUsingXML(DOMElement *element) {
+    f.initializeUsingXML(element);
+    T.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* PeriodicFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    f.writeXMLFile(ele0);
+    T.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void PeriodicFunction::fromWidget(QWidget *widget) {
+    f.fromWidget(static_cast<PeriodicFunctionWidget*>(widget)->f);
+    T.fromWidget(static_cast<PeriodicFunctionWidget*>(widget)->T);
+  }
+
+  void PeriodicFunction::toWidget(QWidget *widget) {
+    f.toWidget(static_cast<PeriodicFunctionWidget*>(widget)->f);
+    T.toWidget(static_cast<PeriodicFunctionWidget*>(widget)->T);
+  }
+
   LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;
