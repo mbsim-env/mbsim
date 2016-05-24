@@ -17,7 +17,6 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-
 #include <config.h>
 #include "mbsim/functions/nested_function.h"
 

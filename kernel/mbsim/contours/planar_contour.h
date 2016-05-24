@@ -44,7 +44,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      PlanarContour(const std::string &name="", Frame *R=NULL) : RigidContour(name,R), open(false) { }
+      PlanarContour(const std::string &name="", Frame *R=NULL) : RigidContour(name,R), funcCrPC(NULL), open(false) { }
 
       /**
        * \brief destructor
