@@ -335,9 +335,6 @@ namespace MBSimGUI {
     action = new QAction("Add contact", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
     addAction(action);
-    action = new QAction("Add actuator", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addActuator()));
-    addAction(action);
     QMenu *menu = new SignalContextContextMenu(element, "Add signal");
     addMenu(menu);
     action = new QAction("Add linear transfer system", this);
