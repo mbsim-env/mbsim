@@ -4182,7 +4182,13 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="BidirectionalFunction" substitutionGroup="Function" type="BidirectionalFunctionType"/>
+  <xs:element name="BidirectionalFunction" substitutionGroup="Function" type="BidirectionalFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Bidirektionale Funktion.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="BidirectionalFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
@@ -4212,7 +4218,13 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PeriodicFunction" substitutionGroup="Function" type="PeriodicFunctionType"/>
+  <xs:element name="PeriodicFunction" substitutionGroup="Function" type="PeriodicFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Periodische Funktion.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="PeriodicFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
