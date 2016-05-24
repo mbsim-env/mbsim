@@ -289,62 +289,6 @@ namespace MBSimGUI {
     denom.toWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
   }
 
-  AdditionFunction::AdditionFunction(const string &name, Element *parent) : Function(name,parent) {
-    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"firstSummand",0));
-    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"secondSummand",0));
-  }
-
-  DOMElement* AdditionFunction::initializeUsingXML(DOMElement *element) {
-    f1.initializeUsingXML(element);
-    f2.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* AdditionFunction::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Function::writeXMLFile(parent);
-    f1.writeXMLFile(ele0);
-    f2.writeXMLFile(ele0);
-    return ele0;
-  }
-
-  void AdditionFunction::fromWidget(QWidget *widget) {
-    f1.fromWidget(static_cast<AdditionFunctionWidget*>(widget)->f1);
-    f2.fromWidget(static_cast<AdditionFunctionWidget*>(widget)->f2);
-  }
-
-  void AdditionFunction::toWidget(QWidget *widget) {
-    f1.toWidget(static_cast<AdditionFunctionWidget*>(widget)->f1);
-    f2.toWidget(static_cast<AdditionFunctionWidget*>(widget)->f2);
-  }
-
-  MultiplicationFunction::MultiplicationFunction(const string &name, Element *parent) : Function(name,parent) {
-    f1.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"firstFactor",0));
-    f2.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"secondFactor",0));
-  }
-
-  DOMElement* MultiplicationFunction::initializeUsingXML(DOMElement *element) {
-    f1.initializeUsingXML(element);
-    f2.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* MultiplicationFunction::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Function::writeXMLFile(parent);
-    f1.writeXMLFile(ele0);
-    f2.writeXMLFile(ele0);
-    return ele0;
-  }
-
-  void MultiplicationFunction::fromWidget(QWidget *widget) {
-    f1.fromWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f1);
-    f2.fromWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f2);
-  }
-
-  void MultiplicationFunction::toWidget(QWidget *widget) {
-    f1.toWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f1);
-    f2.toWidget(static_cast<MultiplicationFunctionWidget*>(widget)->f2);
-  }
-
   VectorValuedFunction::VectorValuedFunction(const string &name, Element *parent, int m) : Function(name,parent) {
     functions.setProperty(new ListProperty(new ChoicePropertyFactory(new FunctionPropertyFactory2(this),""),""));
     functions.setXMLName(MBSIM%"components");

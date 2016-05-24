@@ -134,36 +134,6 @@ namespace MBSimGUI {
       inline std::string getType() const { return "SignumFunction"; }
   };
 
-  class AdditionFunction : public Function {
-
-    public:
-      AdditionFunction(const std::string &name, Element *parent);
-      virtual PropertyInterface* clone() const {return new AdditionFunction(*this);}
-      inline std::string getType() const { return "AdditionFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-
-    protected:
-      ExtProperty f1, f2;
-  };
-
-  class MultiplicationFunction : public Function {
-
-    public:
-      MultiplicationFunction(const std::string &name, Element *parent);
-      virtual PropertyInterface* clone() const {return new MultiplicationFunction(*this);}
-      inline std::string getType() const { return "MultiplicationFunction"; }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-
-    protected:
-      ExtProperty f1, f2;
-  };
-
   class VectorValuedFunction : public Function {
     public:
       VectorValuedFunction(const std::string &name, Element *parent, int m=0);

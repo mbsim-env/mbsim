@@ -134,30 +134,6 @@ namespace MBSimGUI {
     SignumFunctionWidget(int m=0) { }
   };
 
-  class AdditionFunctionWidget : public FunctionWidget {
-
-    friend class AdditionFunction;
-
-    public:
-    AdditionFunctionWidget(Element* parent, int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *f1, *f2;
-  };
-
-  class MultiplicationFunctionWidget : public FunctionWidget {
-
-    friend class MultiplicationFunction;
-
-    public:
-    MultiplicationFunctionWidget(Element* parent, int m=0);
-    void resize_(int m, int n);
-
-    protected:
-    ExtWidget *f1, *f2;
-  };
-
   class VectorValuedFunctionWidget : public FunctionWidget {
 
     friend class VectorValuedFunction;

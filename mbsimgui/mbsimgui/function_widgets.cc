@@ -209,37 +209,6 @@ namespace MBSimGUI {
     layout->addWidget(denom);
   }
 
-  AdditionFunctionWidget::AdditionFunctionWidget(Element *parent, int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    f1 = new ExtWidget("First summand",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
-    layout->addWidget(f1);
-    f2 = new ExtWidget("Second summand",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
-    layout->addWidget(f2);
-  }
-
-  void AdditionFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget2*>(f1->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget2*>(f2->getWidget())->resize_(m,n);
-  }
-
-  MultiplicationFunctionWidget::MultiplicationFunctionWidget(Element *parent, int m) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    f1 = new ExtWidget("First factor",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
-    layout->addWidget(f1);
-    f2 = new ExtWidget("Second factor",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
-    layout->addWidget(f2);
-  }
-
-  void MultiplicationFunctionWidget::resize_(int m, int n) {
-//    functions->resize_(m,n);
-  }
-
   VectorValuedFunctionWidget::VectorValuedFunctionWidget(Element *parent, int m, bool fixedSize) {
 
     QVBoxLayout *layout = new QVBoxLayout;

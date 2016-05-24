@@ -51,7 +51,7 @@ namespace MBSimGUI {
       return new NestedFunctionWidget(new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==9) {
       QStringList var;
-      var << "q" << "t";
+      var << "x" << "y";
       return new BinaryNestedFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     }
     if(i==10)
@@ -72,6 +72,8 @@ namespace MBSimGUI {
       return new IdentityFunctionWidget(1);
     if(i==18)
       return new BidirectionalFunctionWidget();
+    if(i==19)
+      return new PeriodicFunctionWidget(new FunctionWidgetFactory2(parent));
     return NULL;
   }
 
@@ -96,6 +98,7 @@ namespace MBSimGUI {
     name.push_back("Signal function");
     name.push_back("Identity function");
     name.push_back("Bidirectional function");
+    name.push_back("Periodic function");
     return name;
   }
 

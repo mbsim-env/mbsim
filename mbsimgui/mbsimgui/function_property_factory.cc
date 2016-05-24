@@ -84,6 +84,8 @@ namespace MBSimGUI {
       return new IdentityFunction("NoName",parent);
     if(i==18)
       return new BidirectionalFunction("NoName",parent);
+    if(i==19)
+      return new PeriodicFunction("NoName",parent,new FunctionPropertyFactory2(parent));
     return NULL;
   }
 
@@ -108,6 +110,7 @@ namespace MBSimGUI {
     name.push_back(MBSIMCONTROL%"SignalFunction");
     name.push_back(MBSIM%"IdentityFunction");
     name.push_back(MBSIM%"BidirectionalFunction");
+    name.push_back(MBSIM%"PeriodicFunction");
     return name;
   }
 
