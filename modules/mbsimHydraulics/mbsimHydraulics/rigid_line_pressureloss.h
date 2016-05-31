@@ -67,7 +67,6 @@ namespace MBSimHydraulics {
       // ================================
       // Methods for update-Process
       // ================================
-      void updateg(); /* zdotStandard */
       void checkActive(int j); /* update */
       //void checkActivegdn(); // event-driven
       bool gActiveChanged(); /* update */

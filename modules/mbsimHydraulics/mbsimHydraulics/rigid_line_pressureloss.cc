@@ -178,11 +178,6 @@ namespace MBSimHydraulics {
     V[j][0].resize() >> VParent(I,J);
   }
 
-  void RigidLinePressureLoss::updateg() {
-    throw;
-    if (unilateral) gd=line->evalQIn();
-  }
-
   void RigidLinePressureLoss::checkActive(int j) {
     if(j==1) {
       if (bilateral)
