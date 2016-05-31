@@ -28,6 +28,7 @@ namespace MBSimGUI {
   class Frame;
   class FixedRelativeFrame;
   class Contour;
+  class RigidContour;
   class Point;
   class Line;
   class Plane;
@@ -129,10 +130,20 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
+      ExtWidget *thickness;
+  };
+
+  class RigidContourPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      RigidContourPropertyDialog(RigidContour *contour, QWidget * parent = 0, Qt::WindowFlags f = 0); 
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
       ExtWidget *refFrame;
   };
 
-  class PointPropertyDialog : public ContourPropertyDialog {
+  class PointPropertyDialog : public RigidContourPropertyDialog {
 
     public:
       PointPropertyDialog(Point *point, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -142,7 +153,7 @@ namespace MBSimGUI {
       ExtWidget *visu;
   };
 
-  class LinePropertyDialog : public ContourPropertyDialog {
+  class LinePropertyDialog : public RigidContourPropertyDialog {
 
     public:
       LinePropertyDialog(Line *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -152,7 +163,7 @@ namespace MBSimGUI {
       ExtWidget *visu;
   };
 
-  class PlanePropertyDialog : public ContourPropertyDialog {
+  class PlanePropertyDialog : public RigidContourPropertyDialog {
 
     public:
       PlanePropertyDialog(Plane *plane, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -162,7 +173,7 @@ namespace MBSimGUI {
       ExtWidget *radius, *visu;
   };
 
-  class SpherePropertyDialog : public ContourPropertyDialog {
+  class SpherePropertyDialog : public RigidContourPropertyDialog {
 
     public:
       SpherePropertyDialog(Sphere *sphere, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -172,7 +183,7 @@ namespace MBSimGUI {
       ExtWidget *radius, *visu;
   };
 
-  class CirclePropertyDialog : public ContourPropertyDialog {
+  class CirclePropertyDialog : public RigidContourPropertyDialog {
 
     public:
       CirclePropertyDialog(Circle *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -182,7 +193,7 @@ namespace MBSimGUI {
       ExtWidget *radius, *solid, *visu;
   };
 
-  class CuboidPropertyDialog : public ContourPropertyDialog {
+  class CuboidPropertyDialog : public RigidContourPropertyDialog {
 
     public:
       CuboidPropertyDialog(Cuboid *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -192,7 +203,7 @@ namespace MBSimGUI {
       ExtWidget *length, *visu;
   };
 
-  class LineSegmentPropertyDialog : public ContourPropertyDialog {
+  class LineSegmentPropertyDialog : public RigidContourPropertyDialog {
 
     public:
       LineSegmentPropertyDialog(LineSegment *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -202,7 +213,7 @@ namespace MBSimGUI {
       ExtWidget *length, *visu;
   };
 
-  class PlanarContourPropertyDialog : public ContourPropertyDialog {
+  class PlanarContourPropertyDialog : public RigidContourPropertyDialog {
 
     public:
       PlanarContourPropertyDialog(PlanarContour *line, QWidget * parent = 0, Qt::WindowFlags f = 0);

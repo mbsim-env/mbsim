@@ -2359,16 +2359,7 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="frameOfReference" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
-                Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
+          <xs:element name="thickness" type="pv:lengthScalar" minOccurs="0">
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -2384,7 +2375,21 @@
   </xs:element>
   <xs:complexType name="RigidContourType">
     <xs:complexContent>
-      <xs:extension base="ContourType"/>
+      <xs:extension base="ContourType">
+        <xs:sequence>
+          <xs:element name="frameOfReference" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
+                Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

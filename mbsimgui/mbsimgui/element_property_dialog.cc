@@ -168,21 +168,38 @@ namespace MBSimGUI {
   }
 
   ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
-    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(contour,0),true);
-    addToTab("General", refFrame);
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.01"), lengthUnits(), 4));
+    thickness = new ExtWidget("Thickness",new ExtPhysicalVarWidget(input),true);
+    addToTab("General", thickness);
   }
 
   void ContourPropertyDialog::toWidget(Element *element) {
     ElementPropertyDialog::toWidget(element);
-    static_cast<Contour*>(element)->refFrame.toWidget(refFrame);
+    static_cast<Contour*>(element)->thickness.toWidget(thickness);
   }
 
   void ContourPropertyDialog::fromWidget(Element *element) {
     ElementPropertyDialog::fromWidget(element);
-    static_cast<Contour*>(element)->refFrame.fromWidget(refFrame);
+    static_cast<Contour*>(element)->thickness.fromWidget(thickness);
   }
 
-  PointPropertyDialog::PointPropertyDialog(Point *point, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(point,parent,f) {
+  RigidContourPropertyDialog::RigidContourPropertyDialog(RigidContour *contour, QWidget * parent, Qt::WindowFlags f) : ContourPropertyDialog(contour,parent,f) {
+    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(contour,0),true);
+    addToTab("General", refFrame);
+  }
+
+  void RigidContourPropertyDialog::toWidget(Element *element) {
+    ContourPropertyDialog::toWidget(element);
+    static_cast<RigidContour*>(element)->refFrame.toWidget(refFrame);
+  }
+
+  void RigidContourPropertyDialog::fromWidget(Element *element) {
+    ContourPropertyDialog::fromWidget(element);
+    static_cast<RigidContour*>(element)->refFrame.fromWidget(refFrame);
+  }
+
+  PointPropertyDialog::PointPropertyDialog(Point *point, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(point,parent,f) {
     addTab("Visualisation",1);
 
     visu = new ExtWidget("OpenMBV Point",new PointMBSOMBVWidget("NOTSET"),true,true);
@@ -190,16 +207,16 @@ namespace MBSimGUI {
   }
 
   void PointPropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<Point*>(element)->visu.toWidget(visu);
   }
 
   void PointPropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<Point*>(element)->visu.fromWidget(visu);
   }
 
-  LinePropertyDialog::LinePropertyDialog(Line *line, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(line,parent,f) {
+  LinePropertyDialog::LinePropertyDialog(Line *line, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(line,parent,f) {
     addTab("Visualisation",1);
 
     visu = new ExtWidget("OpenMBV Line",new LineMBSOMBVWidget("NOTSET"),true,true);
@@ -207,16 +224,16 @@ namespace MBSimGUI {
   }
 
   void LinePropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<Line*>(element)->visu.toWidget(visu);
   }
 
   void LinePropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<Line*>(element)->visu.fromWidget(visu);
   }
 
-  PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(plane,parent,f) {
+  PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(plane,parent,f) {
     addTab("Visualisation",1);
 
     visu = new ExtWidget("OpenMBV Plane",new PlaneMBSOMBVWidget("NOTSET"),true,true);
@@ -224,16 +241,16 @@ namespace MBSimGUI {
   }
 
   void PlanePropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<Plane*>(element)->visu.toWidget(visu);
   }
 
   void PlanePropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<Plane*>(element)->visu.fromWidget(visu);
   }
 
-  SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(sphere,parent,f) {
+  SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(sphere,parent,f) {
     addTab("Visualisation",1);
 
     vector<PhysicalVariableWidget*> input;
@@ -246,18 +263,18 @@ namespace MBSimGUI {
   }
 
   void SpherePropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<Sphere*>(element)->radius.toWidget(radius);
     static_cast<Sphere*>(element)->visu.toWidget(visu);
   }
 
   void SpherePropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<Sphere*>(element)->radius.fromWidget(radius);
     static_cast<Sphere*>(element)->visu.fromWidget(visu);
   }
 
-  CirclePropertyDialog::CirclePropertyDialog(Circle *circle, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(circle,parent,f) {
+  CirclePropertyDialog::CirclePropertyDialog(Circle *circle, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(circle,parent,f) {
     addTab("Visualisation",1);
 
     vector<PhysicalVariableWidget*> input;
@@ -271,18 +288,18 @@ namespace MBSimGUI {
   }
 
   void CirclePropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<Circle*>(element)->radius.toWidget(radius);
     static_cast<Circle*>(element)->visu.toWidget(visu);
   }
 
   void CirclePropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<Circle*>(element)->radius.fromWidget(radius);
     static_cast<Circle*>(element)->visu.fromWidget(visu);
   }
 
-  CuboidPropertyDialog::CuboidPropertyDialog(Cuboid *circle, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(circle,parent,f) {
+  CuboidPropertyDialog::CuboidPropertyDialog(Cuboid *circle, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(circle,parent,f) {
     addTab("Visualisation",1);
 
     vector<PhysicalVariableWidget*> input;
@@ -295,22 +312,22 @@ namespace MBSimGUI {
   }
 
   void CuboidPropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<Cuboid*>(element)->length.toWidget(length);
     static_cast<Cuboid*>(element)->visu.toWidget(visu);
   }
 
   void CuboidPropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<Cuboid*>(element)->length.fromWidget(length);
     static_cast<Cuboid*>(element)->visu.fromWidget(visu);
   }
 
-  LineSegmentPropertyDialog::LineSegmentPropertyDialog(LineSegment *line, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(line,parent,f) {
+  LineSegmentPropertyDialog::LineSegmentPropertyDialog(LineSegment *line, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(line,parent,f) {
     addTab("Visualisation",1);
 
     vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
     length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
     addToTab("General", length);
 
@@ -319,18 +336,18 @@ namespace MBSimGUI {
   }
 
   void LineSegmentPropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<LineSegment*>(element)->length.toWidget(length);
     static_cast<LineSegment*>(element)->visu.toWidget(visu);
   }
 
   void LineSegmentPropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<LineSegment*>(element)->length.fromWidget(length);
     static_cast<LineSegment*>(element)->visu.fromWidget(visu);
   }
 
-  PlanarContourPropertyDialog::PlanarContourPropertyDialog(PlanarContour *contour, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(contour,parent,f) {
+  PlanarContourPropertyDialog::PlanarContourPropertyDialog(PlanarContour *contour, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
     nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
@@ -347,7 +364,7 @@ namespace MBSimGUI {
   }
 
   void PlanarContourPropertyDialog::toWidget(Element *element) {
-    ContourPropertyDialog::toWidget(element);
+    RigidContourPropertyDialog::toWidget(element);
     static_cast<PlanarContour*>(element)->nodes.toWidget(nodes);
     static_cast<PlanarContour*>(element)->contourFunction.toWidget(contourFunction);
     static_cast<PlanarContour*>(element)->open.toWidget(open);
@@ -355,7 +372,7 @@ namespace MBSimGUI {
   }
 
   void PlanarContourPropertyDialog::fromWidget(Element *element) {
-    ContourPropertyDialog::fromWidget(element);
+    RigidContourPropertyDialog::fromWidget(element);
     static_cast<PlanarContour*>(element)->nodes.fromWidget(nodes);
     static_cast<PlanarContour*>(element)->contourFunction.fromWidget(contourFunction);
     static_cast<PlanarContour*>(element)->open.fromWidget(open);

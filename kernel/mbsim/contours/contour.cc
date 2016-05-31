@@ -215,6 +215,19 @@ namespace MBSim {
 
   void Contour::updateGyroscopicAccelerations(ContourFrame *frame) {
     THROW_MBSIMERROR("(Contour::updateGyroscopicAccelerations): Not implemented.");
+
+  }
+
+  void Contour::initializeUsingXML(DOMElement *element) {
+    Element::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"thickness");
+    if(e) setThickness(getDouble(e));
+  }
+
+  DOMElement* Contour::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Element::writeXMLFile(parent);
+    addElementText(ele0,MBSIM%"thickness",thickness);
+    return ele0;
   }
 
 }
