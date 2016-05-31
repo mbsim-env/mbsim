@@ -76,6 +76,8 @@ namespace MBSimFlexibleBody {
     ARK = BasicRotAIKx(al);
   }
 
+  bool FlexibleBand::isZetaOutside(const fmatvec::Vec2 &zeta) { return (static_cast<FlexibleBody1s*>(parent)->getOpenStructure() and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1])) or zeta(1) < -0.5*width or zeta(1) > 0.5*width; }
+
   void FlexibleBand::updatePositions(double s) {
     static Vec3 Kt("[0;0;1]");
     FixedContourFrame P;
