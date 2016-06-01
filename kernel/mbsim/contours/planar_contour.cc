@@ -19,15 +19,8 @@
 
 #include <config.h>
 #include "mbsim/contours/planar_contour.h"
-#include "mbsim/frames/floating_relative_frame.h"
 #include "mbsim/functions/function.h"
 #include "mbsim/utils/contact_utils.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/utils/rotarymatrices.h"
-#include <openmbvcppinterface/group.h>
-#include "mbsim/utils/nonlinear_algebra.h"
-#include "mbsim/utils/eps.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -45,20 +38,20 @@ namespace MBSim {
      funcCrPC=NULL;
   }
 
-  Vec3 PlanarContour::evalKrPS(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalKrPS(const Vec2 &zeta) {
     return (*funcCrPC)(zeta(0));
   }
 
-  Vec3 PlanarContour::evalKs(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalKs(const Vec2 &zeta) {
     return funcCrPC->parDer(zeta(0));
   }
 
-  Vec3 PlanarContour::evalKt(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalKt(const Vec2 &zeta) {
     static Vec3 Kt("[0;0;1]");
     return Kt;
   }
 
-  Vec3 PlanarContour::evalParDer1Ks(const fmatvec::Vec2 &zeta) {
+  Vec3 PlanarContour::evalParDer1Ks(const Vec2 &zeta) {
     return funcCrPC->parDerParDer(zeta(0));
   }
 
@@ -103,8 +96,8 @@ namespace MBSim {
     funcCrPC->setName("Contour");
   }
 
-  double PlanarContour::getCurvature(const fmatvec::Vec2 &zeta) {
-    const fmatvec::Vec3 rs = funcCrPC->parDer(zeta(0));
+  double PlanarContour::getCurvature(const Vec2 &zeta) {
+    const Vec3 rs = funcCrPC->parDer(zeta(0));
     return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
   }
 
@@ -138,10 +131,6 @@ namespace MBSim {
 //    funcCrPC->writeXMLFile(ele1);
 //    ele0->LinkEndChild(ele1);
     return ele0;
-  }
-
-  ContactKinematics * PlanarContour::findContactPairingWith(std::string type0, std::string type1) {
-    return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
   }
 
 }

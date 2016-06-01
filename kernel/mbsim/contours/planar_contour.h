@@ -80,13 +80,6 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
-      /**
-       * \brief contact search for RigidContours
-       * \author Markus Schneider
-       * \date 2010-11-05 initial commit (Markus Schneider)
-       */
-      ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
-
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); }
