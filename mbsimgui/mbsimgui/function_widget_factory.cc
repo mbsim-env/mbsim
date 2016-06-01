@@ -386,6 +386,8 @@ namespace MBSimGUI {
     name.push_back("Polar contour function");
     name.push_back("Symbolic function");
     name.push_back("Periodic function");
+    name.push_back("Piecewise polynom function");
+    name.push_back("Piecewise defined function");
   }
 
   QWidget* ContourFunctionWidgetFactory::createWidget(int i) {
@@ -395,6 +397,10 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList("phi"),1,3);
     if(i==2)
       return new PeriodicFunctionWidget(new ContourFunctionWidgetFactory(parent));
+    if(i==3)
+      return new PiecewisePolynomFunctionWidget(1);
+    if(i==4)
+      return new PiecewiseDefinedFunctionWidget(parent);
     return NULL;
   }
 

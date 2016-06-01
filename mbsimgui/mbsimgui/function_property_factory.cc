@@ -418,6 +418,8 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"PolarContourFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"PeriodicFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
+    name.push_back(MBSIM%"PiecewiseDefinedFunction");
   }
 
   PropertyInterface* ContourFunctionPropertyFactory::createProperty(int i) {
@@ -427,6 +429,10 @@ namespace MBSimGUI {
       return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"phi"),1);
     if(i==2)
       return new PeriodicFunction("NoName",parent,new ContourFunctionPropertyFactory(parent));
+    if(i==3)
+      return new PiecewisePolynomFunction("NoName",parent);
+    if(i==4)
+      return new PiecewiseDefinedFunction("NoName",parent);
     return NULL;
   }
 
