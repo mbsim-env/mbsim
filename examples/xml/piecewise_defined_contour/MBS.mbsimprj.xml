@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="y0" unit="-">0.02</scalarParameter>
+      <scalarParameter name="v0" unit="-">0.1</scalarParameter>
+      <scalarParameter name="l" unit="-">0.1</scalarParameter>
+      <scalarParameter name="r" unit="-">0.005</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <frames/>
+      <contours>
+        <PlanarContour name="PlanarContour1">
+          <nodes unit="-">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>2*l+2*pi*r</ele>
+            </xmlVector>
+          </nodes>
+          <contourFunction>
+            <PeriodicFunction>
+              <function>
+                <PiecewiseDefinedFunction>
+                  <limitedFunctions>
+                    <LimitedFunction>
+                      <function>
+                        <SymbolicFunction arg1="s">[l/2-s;r;0]
+
+</SymbolicFunction>
+                      </function>
+                      <limit>l</limit>
+                    </LimitedFunction>
+                    <LimitedFunction>
+                      <function>
+                        <SymbolicFunction arg1="s">[-l/2-r*sin((s-l)/r);r*cos((s-l)/r);0]
+</SymbolicFunction>
+                      </function>
+                      <limit>l+pi*r</limit>
+                    </LimitedFunction>
+                    <LimitedFunction>
+                      <function>
+                        <SymbolicFunction arg1="s">[s-(3/2*l+pi*r); -r; 0]
+</SymbolicFunction>
+                      </function>
+                      <limit>2*l+pi*r</limit>
+                    </LimitedFunction>
+                    <LimitedFunction>
+                      <function>
+                        <SymbolicFunction arg1="s">[l/2+r*sin((s-2*l+pi*r)/r);-r*cos((s-2*l+pi*r)/r);0]
+</SymbolicFunction>
+                      </function>
+                      <limit>2*l+2*pi*r</limit>
+                    </LimitedFunction>
+                  </limitedFunctions>
+                </PiecewiseDefinedFunction>
+              </function>
+              <period>2*l+2*pi*r</period>
+            </PeriodicFunction>
+          </contourFunction>
+          <enableOpenMBV>
+            <?OPENMBV_ID 4?>
+            <nodes unit="-">[0:0.0005:2*l+2*pi*r]';
+</nodes>
+          </enableOpenMBV>
+        </PlanarContour>
+      </contours>
+      <groups/>
+      <objects>
+        <RigidBody name="RigidBody1">
+          <initialGeneralizedPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>y0</ele>
+            </xmlVector>
+          </initialGeneralizedPosition>
+          <initialGeneralizedVelocity>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>v0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </initialGeneralizedVelocity>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXY/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours>
+            <Point name="Point1">
+              <enableOpenMBV>
+                <?OPENMBV_ID 15?>
+              </enableOpenMBV>
+            </Point>
+          </contours>
+          <enableOpenMBVFrameC>
+            <?OPENMBV_ID 12?>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+      </objects>
+      <links>
+        <Contact name="Contact1">
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <connect ref1="../Contour[PlanarContour1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
+          <searchAllContactPoints>1</searchAllContactPoints>
+        </Contact>
+      </links>
+      <enableOpenMBVFrameI>
+        <?OPENMBV_ID 3?>
+        <size unit="cm">1</size>
+      </enableOpenMBVFrameI>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <LSODARIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
+    <initialStepSize unit="s">1e-8</initialStepSize>
+    <minimalStepSize unit="s">0</minimalStepSize>
+    <maximalStepSize unit="s">1e-2</maximalStepSize>
+    <plotOnRoot>0</plotOnRoot>
+    <toleranceForPositionConstraints>1e11</toleranceForPositionConstraints>
+    <toleranceForVelocityConstraints>1e11</toleranceForVelocityConstraints>
+  </LSODARIntegrator>
+
+</MBSimProject>
