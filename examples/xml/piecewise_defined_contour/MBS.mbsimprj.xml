@@ -19,7 +19,7 @@
             </xmlVector>
           </nodes>
           <contourFunction>
-            <PeriodicFunction>
+            <ContinuedFunction>
               <function>
                 <PiecewiseDefinedFunction>
                   <limitedFunctions>
@@ -55,8 +55,12 @@
                   </limitedFunctions>
                 </PiecewiseDefinedFunction>
               </function>
-              <period>2*l+2*pi*r</period>
-            </PeriodicFunction>
+              <continuationRule>
+                <ModuloFunction>
+                  <denominator>2*l+2*pi*r</denominator>
+                </ModuloFunction>
+              </continuationRule>
+            </ContinuedFunction>
           </contourFunction>
           <enableOpenMBV>
             <?OPENMBV_ID 4?>

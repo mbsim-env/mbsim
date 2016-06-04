@@ -476,23 +476,6 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(fp->getWidget())->resize_(m,n);
   }
 
-  PeriodicFunctionWidget::PeriodicFunctionWidget(WidgetFactory *factory) {
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    f = new ExtWidget("Function",new ChoiceWidget2(factory));
-    layout->addWidget(f);
-
-    T = new ExtWidget("Period",new ChoiceWidget2(new ScalarWidgetFactory("2*pi",vector<QStringList>(2,noUnitUnits())),QBoxLayout::RightToLeft));
-    layout->addWidget(T);
-  }
-
-  void PeriodicFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget2*>(f->getWidget())->resize_(m,n);
-  }
-
   ContinuedFunctionWidget::ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr) {
 
     QVBoxLayout *layout = new QVBoxLayout;

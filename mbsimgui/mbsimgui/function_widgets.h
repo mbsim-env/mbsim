@@ -273,18 +273,6 @@ namespace MBSimGUI {
     ExtWidget *fn, *fp;
   };
 
-  class PeriodicFunctionWidget : public FunctionWidget {
-    Q_OBJECT
-
-    friend class PeriodicFunction;
-
-    public:
-    PeriodicFunctionWidget(WidgetFactory *factory);
-    void resize_(int m, int n);
-    protected:
-    ExtWidget *f, *T;
-  };
-
   class ContinuedFunctionWidget : public FunctionWidget {
     Q_OBJECT
 

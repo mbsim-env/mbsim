@@ -85,7 +85,7 @@ namespace MBSimGUI {
     if(i==18)
       return new BidirectionalFunction("NoName",parent);
     if(i==19)
-      return new PeriodicFunction("NoName",parent,new FunctionPropertyFactory2(parent));
+      return new ContinuedFunction("NoName",parent,new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     return NULL;
   }
 
@@ -110,7 +110,7 @@ namespace MBSimGUI {
     name.push_back(MBSIMCONTROL%"SignalFunction");
     name.push_back(MBSIM%"IdentityFunction");
     name.push_back(MBSIM%"BidirectionalFunction");
-    name.push_back(MBSIM%"PeriodicFunction");
+    name.push_back(MBSIM%"ContinuedFunction");
     return name;
   }
 
@@ -417,11 +417,10 @@ namespace MBSimGUI {
   PlanarContourFunctionPropertyFactory::PlanarContourFunctionPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"PolarContourFunction");
     name.push_back(MBSIM%"SymbolicFunction");
-    name.push_back(MBSIM%"PeriodicFunction");
+    name.push_back(MBSIM%"ContinuedFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
     name.push_back(MBSIM%"NestedFunction");
-    name.push_back(MBSIM%"ContinuedFunction");
   }
 
   PropertyInterface* PlanarContourFunctionPropertyFactory::createProperty(int i) {
@@ -430,15 +429,13 @@ namespace MBSimGUI {
     if(i==1)
       return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"eta"),3);
     if(i==2)
-      return new PeriodicFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent));
+      return new ContinuedFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"SS",vector<string>(1,"x")));
     if(i==3)
       return new PiecewisePolynomFunction("NoName",parent);
     if(i==4)
       return new PiecewiseDefinedFunction("NoName",parent);
     if(i==5)
       return new NestedFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent),new FunctionPropertyFactory2(parent));
-    if(i==6)
-      return new ContinuedFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"SS",vector<string>(1,"x")));
     return NULL;
   }
 

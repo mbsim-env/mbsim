@@ -66,7 +66,7 @@
               <frameOfReference ref="../Frame[P1]"/>
               <nodes unit="-">[0:2*pi/71:2*pi]'</nodes>
               <contourFunction>
-                <PeriodicFunction>
+                <ContinuedFunction>
                   <function>
                     <PolarContourFunction>
                       <radiusFunction>
@@ -79,8 +79,12 @@
                       </radiusFunction>
                     </PolarContourFunction>
                   </function>
-                  <period>2*pi</period>
-                </PeriodicFunction>
+                  <continuationRule>
+                    <ModuloFunction>
+                      <denominator>2*pi</denominator>
+                    </ModuloFunction>
+                  </continuationRule>
+                </ContinuedFunction>
               </contourFunction>
               <enableOpenMBV>
                 <?OPENMBV_ID 7?>
