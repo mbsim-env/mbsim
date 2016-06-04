@@ -40,18 +40,10 @@ namespace MBSim {
       /*!
        * \brief constructor
        * \param root function
-       * \default numerical Jacobian evaluation
-       * \default only local search
-       */
-      SpatialContactSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_) : func(func_), jac(0), s0(2), searchAll(false) { }
-
-      /*!
-       * \brief constructor
-       * \param root function
        * \param Jacobian evaluation
        * \default only local search
        */
-      SpatialContactSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_, Function<fmatvec::Mat(fmatvec::Mat)> *jac_) : func(func_), jac(jac_), s0(2), searchAll(false) { }
+      SpatialContactSearch(DistanceFunction<fmatvec::Vec(fmatvec::Vec)> *func_=0, Function<fmatvec::SqrMat(fmatvec::Vec)> *jac_=0) : func(func_), jac(jac_), s0(2), searchAll(false) { }
 
       /* GETTER / SETTER */
       void setInitialValue(const fmatvec::Vec2 &s0_) { s0 = s0_; }
@@ -100,7 +92,7 @@ namespace MBSim {
       /**
        * \brief Jacobian of root function part of distance function
        */
-      Function<fmatvec::Mat(fmatvec::Mat)> *jac;  // TODO::check the template type
+      Function<fmatvec::SqrMat(fmatvec::Vec)> *jac;  // TODO::check the template type
 
       /**
        * \brief initial value for Newton method
