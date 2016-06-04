@@ -340,6 +340,7 @@ namespace MBSim {
     else if (stage == preInit) {
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
         contactKinematics[cK]->setSearchAllContactPoints(searchAllCP);
+        contactKinematics[cK]->setInitialGuess(zeta0);
         contactKinematics[cK]->assignContours(contour[0][cK], contour[1][cK]);
         contacts.push_back(vector<SingleContact>());
         for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
@@ -874,6 +875,9 @@ namespace MBSim {
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"searchAllContactPoints");
     if (e) setSearchAllContactPoints(getBool(e));
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
+    if (e) setInitialGuess(getVec(e));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Get all drawing thingies

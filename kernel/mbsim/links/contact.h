@@ -244,6 +244,7 @@ namespace MBSim {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       void setSearchAllContactPoints(bool searchAllCP_) { searchAllCP = searchAllCP_; }
+      void setInitialGuess(const fmatvec::VecV &zeta0_) { zeta0 = zeta0_; }
 
     protected:
       /**
@@ -293,6 +294,8 @@ namespace MBSim {
       FrictionImpactLaw *ftil;
 
       bool searchAllCP;
+
+      fmatvec::VecV zeta0;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
