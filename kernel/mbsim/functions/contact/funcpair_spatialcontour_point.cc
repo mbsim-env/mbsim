@@ -29,11 +29,11 @@ namespace MBSim {
 
   Vec FuncPairSpatialContourPoint::operator()(const Vec &alpha) {  // Vec2: U and V direction
     Vec3 Wd = evalWrD(alpha);
-    Vec3 Wt1 = contour->evalWu(alpha);
-    Vec3 Wt2 = contour->evalWv(alpha);
+    Vec3 Wu = contour->evalWu(alpha);
+    Vec3 Wv = contour->evalWv(alpha);
     Vec2 Wt(NONINIT);  // TODO:: check this?
-    Wt(0) = Wt1.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
-    Wt(1) = Wt2.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
+    Wt(0) = Wu.T() * Wd; // the projection of distance vector Wd into the first tangent direction: scalar value
+    Wt(1) = Wv.T() * Wd; // the projection of distance vector Wd into the second tangent direction: scalar value
     return Wt;
   }
 
