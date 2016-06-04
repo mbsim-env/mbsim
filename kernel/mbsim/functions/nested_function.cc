@@ -57,4 +57,5 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<VecV   (double(double))>, MBSIM%"NestedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<VecV   (VecV  (double))>, MBSIM%"NestedFunction")
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(NestedFunction<Vec3   (Vec2(Vec2  ))>, MBSIM%"NestedFunction")
 }

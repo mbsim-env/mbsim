@@ -81,11 +81,11 @@ namespace MBSim {
       }
   };
 
-  template <class Row>
-  class FromCasadi<fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> > {
+  template <class Row, class Col>
+  class FromCasadi<fmatvec::Matrix<fmatvec::General,Row,Col,double> > {
     public:
-      static fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> cast(const casadi::Matrix<double> &A) {
-        fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> B(A.size1(),A.size2(),fmatvec::NONINIT);
+      static fmatvec::Matrix<fmatvec::General,Row,Col,double> cast(const casadi::Matrix<double> &A) {
+        fmatvec::Matrix<fmatvec::General,Row,Col,double> B(A.size1(),A.size2(),fmatvec::NONINIT);
         for(int i=0; i<A.size1(); i++)
           for(int j=0; j<A.size2(); j++)
             B.e(i,j) = A(i,j).toScalar();

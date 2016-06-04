@@ -34,7 +34,7 @@ namespace MBSim {
       typename fmatvec::Size<Arg>::type getArgSize() const { return f->getArgSize(); }
       Ret operator()(const Arg &x) { return (*f)(ToDouble<Arg>::cast(x)-T*floor(ToDouble<Arg>::cast(x)/T)); }
       typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return f->parDer(ToDouble<Arg>::cast(x)-T*floor(ToDouble<Arg>::cast(x)/T)); }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) { return f->parDerDirDer(xDir,ToDouble<Arg>::cast(x)/T); }
+      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) { return f->parDerDirDer(xDir,ToDouble<Arg>::cast(x)-T*floor(ToDouble<Arg>::cast(x)/T)); }
       typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) { return f->parDerParDer(ToDouble<Arg>::cast(x)-T*floor(ToDouble<Arg>::cast(x)/T)); }
       void setFunction(Function<Ret(Arg)> *f_) {
         f = f_;
