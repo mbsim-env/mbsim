@@ -2233,6 +2233,11 @@
                 Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anfangswerte für Newton-Löser.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
@@ -2835,6 +2840,68 @@
     </xs:annotation>
   </xs:element>
   <xs:complexType name="PlanarContourType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="nodes" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="contourFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Beschreibung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SpatialContour" substitutionGroup="RigidContour" type="SpatialContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kurvenkontur, bei der die Parametrisierung analytisch durch einen funktionalen Zusammenhang beschrieben werden kann:
+        <object class="eqn">
+          <![CDATA[\mathbf{f}:\,\mathbf{R}\rightarrow\mathbf{R}^3;\quad\alpha\mapsto\mathbf{f} \left(\alpha\right)=
+          \left(\begin{array}{c}
+          f_x\left(\alpha\right) \\
+          f_y\left(\alpha\right) \\
+          f_z\left(\alpha\right)
+          \end{array}\right)]]>
+        </object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SpatialContourType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
@@ -4250,6 +4317,42 @@
                 Periodendauer.
               </xs:documentation>
             </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ContinuedFunction" substitutionGroup="Function" type="ContinuedFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Fortsetzung einer Funktion mit eingeschränktem Definitionsbereich.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ContinuedFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Funktion mit eingeschränktem Definitionsbereich.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="continuationRule">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Forsetzungsregel.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>
