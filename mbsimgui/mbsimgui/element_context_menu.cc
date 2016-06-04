@@ -219,6 +219,9 @@ namespace MBSimGUI {
     action = new QAction("Add planar contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPlanarContour()));
     addAction(action);
+    action = new QAction("Add spatial contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
+    addAction(action);
   }
 
   void ContourContextContextMenu::addPoint() {
@@ -251,6 +254,10 @@ namespace MBSimGUI {
 
   void ContourContextContextMenu::addPlanarContour() {
     mw->addContour(new PlanarContour("PlanarContour",element));
+  }
+
+  void ContourContextContextMenu::addSpatialContour() {
+    mw->addContour(new SpatialContour("SpatialContour",element));
   }
 
   GroupContextContextMenu::GroupContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

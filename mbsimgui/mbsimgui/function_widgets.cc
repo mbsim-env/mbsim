@@ -493,6 +493,24 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(f->getWidget())->resize_(m,n);
   }
 
+  ContinuedFunctionWidget::ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    f = new ExtWidget("Function",new ChoiceWidget2(factoryf));
+    layout->addWidget(f);
+
+    r = new ExtWidget("Continuation rule",new ChoiceWidget2(factoryr));
+    layout->addWidget(r);
+  }
+
+  void ContinuedFunctionWidget::resize_(int m, int n) {
+    static_cast<ChoiceWidget2*>(f->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget2*>(r->getWidget())->resize_(n,n);
+  }
+
   LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

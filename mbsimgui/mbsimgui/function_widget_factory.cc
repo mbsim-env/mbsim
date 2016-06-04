@@ -55,7 +55,7 @@ namespace MBSimGUI {
       return new BinaryNestedFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     }
     if(i==10)
-      return new SymbolicFunctionWidget(QStringList("t"),1,3);
+      return new SymbolicFunctionWidget(QStringList("x"),1,3);
     if(i==11)
       return new TabularFunctionWidget(1);
     if(i==12)
@@ -382,25 +382,47 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  ContourFunctionWidgetFactory::ContourFunctionWidgetFactory(Element *parent_) : parent(parent_){
+  PlanarContourFunctionWidgetFactory::PlanarContourFunctionWidgetFactory(Element *parent_) : parent(parent_){
     name.push_back("Polar contour function");
     name.push_back("Symbolic function");
     name.push_back("Periodic function");
     name.push_back("Piecewise polynom function");
     name.push_back("Piecewise defined function");
+    name.push_back("Nested function");
+    name.push_back("Continued function");
   }
 
-  QWidget* ContourFunctionWidgetFactory::createWidget(int i) {
+  QWidget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PolarContourFunctionWidget;
     if(i==1)
-      return new SymbolicFunctionWidget(QStringList("phi"),1,3);
+      return new SymbolicFunctionWidget(QStringList("eta"),3,1);
     if(i==2)
-      return new PeriodicFunctionWidget(new ContourFunctionWidgetFactory(parent));
+      return new PeriodicFunctionWidget(new PlanarContourFunctionWidgetFactory(parent));
     if(i==3)
       return new PiecewisePolynomFunctionWidget(1);
     if(i==4)
       return new PiecewiseDefinedFunctionWidget(parent);
+    if(i==5)
+      return new NestedFunctionWidget(new PlanarContourFunctionWidgetFactory(parent), new FunctionWidgetFactory2(parent));
+    if(i==6)
+      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
+    return NULL;
+  }
+
+  SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *parent_) : parent(parent_){
+    name.push_back("Symbolic function");
+    name.push_back("Multidimensional periodic function");
+    name.push_back("Nested function");
+  }
+
+  QWidget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new SymbolicFunctionWidget(QStringList("zeta"),3,2);
+    if(i==1)
+      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
+    if(i==2)
+      return new NestedFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
     return NULL;
   }
 

@@ -146,6 +146,17 @@ namespace MBSimGUI {
     ExtProperty nodes, contourFunction, open, visu;
   };
 
+  class SpatialContour : public RigidContour {
+    friend class SpatialContourPropertyDialog;
+    public:
+    SpatialContour(const std::string &str, Element *parent);
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    std::string getType() const { return "SpatialContour"; }
+    ElementPropertyDialog* createPropertyDialog() {return new SpatialContourPropertyDialog(this);}
+    protected:
+    ExtProperty nodes, contourFunction, open, visu;
+  };
 
 }
 

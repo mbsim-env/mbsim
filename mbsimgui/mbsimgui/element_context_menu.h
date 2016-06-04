@@ -96,6 +96,7 @@ namespace MBSimGUI {
       void addCuboid();
       void addLineSegment();
       void addPlanarContour();
+      void addSpatialContour();
 
     protected:
       Element *element;

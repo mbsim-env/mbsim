@@ -186,9 +186,20 @@ namespace MBSimGUI {
       std::vector<QString> name;
   };
 
-  class ContourFunctionWidgetFactory : public WidgetFactory {
+  class PlanarContourFunctionWidgetFactory : public WidgetFactory {
     public:
-      ContourFunctionWidgetFactory(Element *parent_);
+      PlanarContourFunctionWidgetFactory(Element *parent_);
+      QWidget* createWidget(int i=0);
+      QString getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      Element *parent;
+      std::vector<QString> name;
+  };
+
+  class SpatialContourFunctionWidgetFactory : public WidgetFactory {
+    public:
+      SpatialContourFunctionWidgetFactory(Element *parent_);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }

@@ -353,7 +353,7 @@ namespace MBSimGUI {
     nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
     addToTab("General", nodes);
 
-    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new ContourFunctionWidgetFactory(contour)));
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new PlanarContourFunctionWidgetFactory(contour)));
     addToTab("General", contourFunction);
 
     open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
@@ -377,6 +377,38 @@ namespace MBSimGUI {
     static_cast<PlanarContour*>(element)->contourFunction.fromWidget(contourFunction);
     static_cast<PlanarContour*>(element)->open.fromWidget(open);
     static_cast<PlanarContour*>(element)->visu.fromWidget(visu);
+  }
+
+  SpatialContourPropertyDialog::SpatialContourPropertyDialog(SpatialContour *contour, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(contour,parent,f) {
+    addTab("Visualisation",1);
+
+    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
+    addToTab("General", nodes);
+
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour)));
+    addToTab("General", contourFunction);
+
+    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    addToTab("General", open);
+
+    visu = new ExtWidget("OpenMBV SpatialContour",new PlanarContourMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation", visu);
+  }
+
+  void SpatialContourPropertyDialog::toWidget(Element *element) {
+    RigidContourPropertyDialog::toWidget(element);
+    static_cast<SpatialContour*>(element)->nodes.toWidget(nodes);
+    static_cast<SpatialContour*>(element)->contourFunction.toWidget(contourFunction);
+    static_cast<SpatialContour*>(element)->open.toWidget(open);
+    static_cast<SpatialContour*>(element)->visu.toWidget(visu);
+  }
+
+  void SpatialContourPropertyDialog::fromWidget(Element *element) {
+    RigidContourPropertyDialog::fromWidget(element);
+    static_cast<SpatialContour*>(element)->nodes.fromWidget(nodes);
+    static_cast<SpatialContour*>(element)->contourFunction.fromWidget(contourFunction);
+    static_cast<SpatialContour*>(element)->open.fromWidget(open);
+    static_cast<SpatialContour*>(element)->visu.fromWidget(visu);
   }
 
   GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f), position(0), orientation(0), frameOfReference(0) {
@@ -1308,6 +1340,9 @@ namespace MBSimGUI {
     searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
     addToTab("Extra", searchAllContactPoints);
 
+    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+   addToTab("Extra", initialGuess);
+
     //  vector<PhysicalVariableWidget*> input;
     //  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
     //  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
@@ -1329,6 +1364,7 @@ namespace MBSimGUI {
     static_cast<Contact*>(element)->frictionImpactLaw.toWidget(frictionImpactLaw);
     static_cast<Contact*>(element)->connections.toWidget(connections);
     static_cast<Contact*>(element)->searchAllContactPoints.toWidget(searchAllContactPoints);
+    static_cast<Contact*>(element)->initialGuess.toWidget(initialGuess);
     static_cast<Contact*>(element)->enableOpenMBVContactPoints.toWidget(enableOpenMBVContactPoints);
     static_cast<Contact*>(element)->normalForceArrow.toWidget(normalForceArrow);
     static_cast<Contact*>(element)->frictionArrow.toWidget(frictionArrow);
@@ -1342,6 +1378,7 @@ namespace MBSimGUI {
     static_cast<Contact*>(element)->frictionImpactLaw.fromWidget(frictionImpactLaw);
     static_cast<Contact*>(element)->connections.fromWidget(connections);
     static_cast<Contact*>(element)->searchAllContactPoints.fromWidget(searchAllContactPoints);
+    static_cast<Contact*>(element)->initialGuess.fromWidget(initialGuess);
     static_cast<Contact*>(element)->enableOpenMBVContactPoints.fromWidget(enableOpenMBVContactPoints);
     static_cast<Contact*>(element)->normalForceArrow.fromWidget(normalForceArrow);
     static_cast<Contact*>(element)->frictionArrow.fromWidget(frictionArrow);

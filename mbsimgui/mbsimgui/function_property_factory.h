@@ -219,9 +219,20 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> name;
   };
 
-  class ContourFunctionPropertyFactory : public PropertyFactory {
+  class PlanarContourFunctionPropertyFactory : public PropertyFactory {
     public:
-      ContourFunctionPropertyFactory(Element *parent_);
+      PlanarContourFunctionPropertyFactory(Element *parent_);
+      PropertyInterface* createProperty(int i=0);
+      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      Element *parent;
+      std::vector<MBXMLUtils::FQN> name;
+  };
+
+  class SpatialContourFunctionPropertyFactory : public PropertyFactory {
+    public:
+      SpatialContourFunctionPropertyFactory(Element *parent_);
       PropertyInterface* createProperty(int i=0);
       MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }

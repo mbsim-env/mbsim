@@ -285,6 +285,18 @@ namespace MBSimGUI {
     ExtWidget *f, *T;
   };
 
+  class ContinuedFunctionWidget : public FunctionWidget {
+    Q_OBJECT
+
+    friend class ContinuedFunction;
+
+    public:
+    ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr);
+    void resize_(int m, int n);
+    protected:
+    ExtWidget *f, *r;
+  };
+
   class LinearSpringDamperForceWidget : public FunctionWidget {
 
     friend class LinearSpringDamperForce;

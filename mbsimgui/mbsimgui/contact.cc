@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
+  Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), searchAllContactPoints(0,false), initialGuess(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 
     connections.setProperty(new ConnectContoursProperty(2,this));
 
@@ -43,6 +43,8 @@ namespace MBSimGUI {
     frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(this,MBSIM%"tangentialImpactLaw"));
 
     searchAllContactPoints.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"searchAllContactPoints",vector<string>(2,"")),"",4));
+
+    initialGuess.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGuess",vector<string>(3,"")),"",4));
 
     enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
@@ -69,6 +71,7 @@ namespace MBSimGUI {
     frictionImpactLaw.initializeUsingXML(element);
     connections.initializeUsingXML(element);
     searchAllContactPoints.initializeUsingXML(element);
+    initialGuess.initializeUsingXML(element);
     enableOpenMBVContactPoints.initializeUsingXML(element);
     normalForceArrow.initializeUsingXML(element);
     frictionArrow.initializeUsingXML(element);
@@ -83,6 +86,7 @@ namespace MBSimGUI {
     frictionImpactLaw.writeXMLFile(ele0);
     connections.writeXMLFile(ele0);
     searchAllContactPoints.writeXMLFile(ele0);
+    initialGuess.writeXMLFile(ele0);
     enableOpenMBVContactPoints.writeXMLFile(ele0);
     normalForceArrow.writeXMLFile(ele0);
     frictionArrow.writeXMLFile(ele0);

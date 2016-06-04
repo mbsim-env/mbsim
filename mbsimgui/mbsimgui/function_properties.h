@@ -292,6 +292,19 @@ namespace MBSimGUI {
       ExtProperty f, T;
   };
 
+  class ContinuedFunction : public Function {
+    public:
+      ContinuedFunction(const std::string &name, Element *parent, PropertyFactory *factoryf, PropertyFactory *factoryr);
+      virtual PropertyInterface* clone() const {return new ContinuedFunction(*this);}
+      inline std::string getType() const { return "ContinuedFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty f, r;
+  };
+
   class LinearSpringDamperForce : public Function {
     public:
       LinearSpringDamperForce(const std::string &name, Element *parent);

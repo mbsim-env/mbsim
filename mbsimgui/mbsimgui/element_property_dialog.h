@@ -37,6 +37,7 @@ namespace MBSimGUI {
   class Cuboid;
   class LineSegment;
   class PlanarContour;
+  class SpatialContour;
   class DynamicSystemSolver;
   class Group;
   class Object;
@@ -217,6 +218,16 @@ namespace MBSimGUI {
 
     public:
       PlanarContourPropertyDialog(PlanarContour *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *nodes, *contourFunction, *open, *visu;
+  };
+
+  class SpatialContourPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      SpatialContourPropertyDialog(SpatialContour *line, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
@@ -462,7 +473,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
+      ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
   };
 
   class ObserverPropertyDialog : public ElementPropertyDialog {

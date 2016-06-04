@@ -67,7 +67,7 @@ namespace MBSimGUI {
       return new BinaryNestedFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     }
     if(i==10)
-      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"t"),1);
+      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"x"),1);
     if(i==11)
       return new TabularFunction("NoName",parent);
     if(i==12)
@@ -414,25 +414,47 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  ContourFunctionPropertyFactory::ContourFunctionPropertyFactory(Element *parent_) : parent(parent_) {
+  PlanarContourFunctionPropertyFactory::PlanarContourFunctionPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"PolarContourFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"PeriodicFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
+    name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"ContinuedFunction");
   }
 
-  PropertyInterface* ContourFunctionPropertyFactory::createProperty(int i) {
+  PropertyInterface* PlanarContourFunctionPropertyFactory::createProperty(int i) {
     if(i==0)
       return new PolarContourFunction("NoName",parent);
     if(i==1)
-      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"phi"),1);
+      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"eta"),3);
     if(i==2)
-      return new PeriodicFunction("NoName",parent,new ContourFunctionPropertyFactory(parent));
+      return new PeriodicFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent));
     if(i==3)
       return new PiecewisePolynomFunction("NoName",parent);
     if(i==4)
       return new PiecewiseDefinedFunction("NoName",parent);
+    if(i==5)
+      return new NestedFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent),new FunctionPropertyFactory2(parent));
+    if(i==6)
+      return new ContinuedFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"SS",vector<string>(1,"x")));
+    return NULL;
+  }
+
+  SpatialContourFunctionPropertyFactory::SpatialContourFunctionPropertyFactory(Element *parent_) : parent(parent_) {
+    name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"ContinuedFunction");
+    name.push_back(MBSIM%"NestedFunction");
+  }
+
+  PropertyInterface* SpatialContourFunctionPropertyFactory::createProperty(int i) {
+    if(i==0)
+      return new SymbolicFunction("NoName",parent,"VV",vector<string>(2,"zeta"),3);
+    if(i==1)
+      return new ContinuedFunction("NoName",parent,new SpatialContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"VV",vector<string>(2,"x")));
+    if(i==2)
+      return new NestedFunction("NoName",parent,new SpatialContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"VV",vector<string>(2,"x")));
     return NULL;
   }
 

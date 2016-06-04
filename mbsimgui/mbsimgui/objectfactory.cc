@@ -110,6 +110,8 @@ namespace MBSimGUI {
       return new LineSegment(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"PlanarContour")
       return new PlanarContour(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"SpatialContour")
+      return new SpatialContour(E(element)->getAttribute("name"),parent);
     return 0;
   }
 

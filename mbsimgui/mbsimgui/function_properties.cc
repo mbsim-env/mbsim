@@ -677,6 +677,34 @@ namespace MBSimGUI {
     T.toWidget(static_cast<PeriodicFunctionWidget*>(widget)->T);
   }
 
+  ContinuedFunction::ContinuedFunction(const string &name, Element *parent, PropertyFactory *factoryf, PropertyFactory *factoryr) : Function(name,parent) {
+    f.setProperty(new ChoiceProperty2(factoryf,MBSIM%"function",0));
+    r.setProperty(new ChoiceProperty2(factoryr,MBSIM%"continuationRule",0));
+  }
+
+  DOMElement* ContinuedFunction::initializeUsingXML(DOMElement *element) {
+    f.initializeUsingXML(element);
+    r.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ContinuedFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    f.writeXMLFile(ele0);
+    r.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void ContinuedFunction::fromWidget(QWidget *widget) {
+    f.fromWidget(static_cast<ContinuedFunctionWidget*>(widget)->f);
+    r.fromWidget(static_cast<ContinuedFunctionWidget*>(widget)->r);
+  }
+
+  void ContinuedFunction::toWidget(QWidget *widget) {
+    f.toWidget(static_cast<ContinuedFunctionWidget*>(widget)->f);
+    r.toWidget(static_cast<ContinuedFunctionWidget*>(widget)->r);
+  }
+
   LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;

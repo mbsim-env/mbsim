@@ -36,7 +36,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
     protected:
-    ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, searchAllContactPoints, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
+    ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, searchAllContactPoints, initialGuess, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
   };
 
 }
