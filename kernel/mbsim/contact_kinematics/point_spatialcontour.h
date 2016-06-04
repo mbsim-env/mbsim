@@ -49,7 +49,10 @@ namespace MBSim {
       virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<ContourFrame*> &cFrame);
       /***************************************************/
 
-    private:
+      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
+      void setInitialGuess(const fmatvec::VecV &zeta0_) { zeta0 = zeta0_; }
+
+   private:
       /**
        * \brief contour index
        */
@@ -67,6 +70,8 @@ namespace MBSim {
       MBSim::FuncPairSpatialContourPoint *func;
 
       bool searchAllCP;
+
+      fmatvec::VecV zeta0;
   };
 
 }

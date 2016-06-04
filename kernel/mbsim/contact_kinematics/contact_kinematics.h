@@ -94,6 +94,7 @@ namespace MBSim {
       virtual ContactKinematics* getContactKinematics(int i=0) const { return 0; }
 
       virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
+      virtual void setInitialGuess(const fmatvec::VecV &zeta0_) { }
 
     protected:
       /**

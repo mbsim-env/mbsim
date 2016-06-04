@@ -46,7 +46,11 @@ namespace MBSim {
       point = static_cast<Point*>(contour[1]);
       spatialcontour = static_cast<Contour*>(contour[0]);
     }
-    func= new FuncPairSpatialContourPoint(point,spatialcontour);
+    func = new FuncPairSpatialContourPoint(point,spatialcontour);
+    if(zeta0() == NULL)
+      zeta0.resize(2);
+    else if(zeta0.size() != 2)
+      MBSimError("(ContactKinematicsPointSpatialContour::assignContours): size of zeta0 does not match");
   }
 
   void ContactKinematicsPointSpatialContour::updateg(double &g, vector<ContourFrame*> &cFrame, int index) {
@@ -59,24 +63,26 @@ namespace MBSim {
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
     if (searchAllCP==false) {
-      search.setInitialValue(cFrame[ispatialcontour]->getZeta());
+      search.setInitialValue(zeta0);
     }
     else {
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    cFrame[ispatialcontour]->setZeta(search.slv());
+    zeta0 = search.slv();
+    cFrame[ispatialcontour]->setZeta(zeta0);
 
-    cFrame[ispatialcontour]->setPosition(spatialcontour->evalPosition(cFrame[ispatialcontour]->getZeta()));
     cFrame[ispatialcontour]->getOrientation(false).set(0, spatialcontour->evalWn(cFrame[ispatialcontour]->getZeta()));
     cFrame[ispatialcontour]->getOrientation(false).set(1, spatialcontour->evalWu(cFrame[ispatialcontour]->getZeta()));
     cFrame[ispatialcontour]->getOrientation(false).set(2, spatialcontour->evalWv(cFrame[ispatialcontour]->getZeta()));
 
-    cFrame[ipoint]->setPosition(point->getFrame()->evalPosition());
     cFrame[ipoint]->getOrientation(false).set(0, -cFrame[ispatialcontour]->getOrientation(false).col(0));
     cFrame[ipoint]->getOrientation(false).set(1, -cFrame[ispatialcontour]->getOrientation(false).col(1));
     cFrame[ipoint]->getOrientation(false).set(2, cFrame[ispatialcontour]->getOrientation(false).col(2));
+
+    cFrame[ispatialcontour]->setPosition(spatialcontour->evalPosition(cFrame[ispatialcontour]->getZeta()));
+    cFrame[ipoint]->setPosition(point->getFrame()->evalPosition());
 
     if(spatialcontour->isZetaOutside(cFrame[ispatialcontour]->getZeta()))
       g = 1;
