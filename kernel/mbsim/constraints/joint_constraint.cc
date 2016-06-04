@@ -180,8 +180,12 @@ namespace MBSim {
   }
 
   void JointConstraint::initz() {
-    if(q0.size())
+    if(q0() == NULL)
+      q.init(0);
+    else if(q0.size() == q.size())
       q = q0;
+    else
+      THROW_MBSIMERROR("(JointConstraint::initz): size of q0 does not match");
   }
 
   void JointConstraint::updateGeneralizedCoordinates() {
