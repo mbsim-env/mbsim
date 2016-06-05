@@ -67,6 +67,10 @@ namespace MBSim {
 
       virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
 
+      virtual fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta);
+
       /* INHERITED INTERFACE OF CONTOUR */
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint);
       /**********************************/

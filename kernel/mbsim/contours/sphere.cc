@@ -107,6 +107,26 @@ namespace MBSim {
     return parDer2Kv;
   }
 
+  Vec3 Sphere::evalParDer1Wn(const Vec2 &zeta) {
+    Vec3 parDer1Wn(NONINIT);
+    double a = zeta(0);
+    double b = zeta(1);
+    parDer1Wn(0) = -sin(a)*cos(b);
+    parDer1Wn(1) = cos(a)*cos(b);
+    parDer1Wn(2) = 0;
+    return parDer1Wn;
+  }
+
+  Vec3 Sphere::evalParDer2Wn(const Vec2 &zeta) {
+    Vec3 parDer2Wn(NONINIT);
+    double a = zeta(0);
+    double b = zeta(1);
+    parDer2Wn(0) = -cos(a)*sin(b);
+    parDer2Wn(1) = -sin(a)*sin(b);
+    parDer2Wn(2) = cos(b);
+    return parDer2Wn;
+  }
+
   Vec2 Sphere::evalZeta(const fmatvec::Vec3 &WrPoint) {
     Vec3 SrPoint = R->evalOrientation().T() * (WrPoint - R->evalPosition());
     Vec2 zeta;

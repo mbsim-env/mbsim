@@ -46,6 +46,18 @@ namespace MBSim {
       std::string getType() const { return "Point"; }
       /***************************************************/
 
+      virtual fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta);
+
+      virtual fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta);
+
       /* INHERITED INTERFACE OF CONTOUR */
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS) { return fmatvec::Vec2(fmatvec::INIT,0.); }
       /**********************************/
