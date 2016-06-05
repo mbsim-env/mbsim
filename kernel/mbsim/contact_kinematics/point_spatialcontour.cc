@@ -23,6 +23,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/functions/contact/funcpair_spatialcontour_point.h"
 #include "mbsim/utils/spatial_contact_search.h"
+#include "mbsim/utils/contact_utils.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -92,7 +93,53 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointSpatialContour::updatewb(Vec &wb, double g, vector<ContourFrame*> &cFrame) {
-    throw MBSim::MBSimError("(ContactKinematicsPointSpatialContour:updatewb): Not implemented!");
+    const Vec3 n1 = cFrame[ipoint]->evalOrientation().col(0);
+    const Vec3 u1 = cFrame[ipoint]->getOrientation().col(1);
+    const Vec3 v1 = cFrame[ipoint]->getOrientation().col(2);
+    Vec2 zeta1 = computeAnglesOnUnitSphere(point->getFrame()->evalOrientation().T()*n1);
+    const Mat3x2 U1 = point->evalWU(zeta1);
+    const Mat3x2 V1 = point->evalWV(zeta1);
+    const Mat3x2 N1 = point->evalWN(zeta1);
+
+    const Vec3 u2 = cFrame[ispatialcontour]->evalOrientation().col(1);
+    const Vec3 v2 = cFrame[ispatialcontour]->getOrientation().col(2);
+    const Mat3x2 R2 = spatialcontour->evalWR(cFrame[ispatialcontour]->getZeta());
+    const Mat3x2 U2 = spatialcontour->evalWU(cFrame[ispatialcontour]->getZeta());
+    const Mat3x2 V2 = spatialcontour->evalWV(cFrame[ispatialcontour]->getZeta());
+
+    const Vec3 vC1 = cFrame[ipoint]->evalVelocity();
+    const Vec3 vC2 = cFrame[ispatialcontour]->evalVelocity();
+    const Vec3 Om1 = cFrame[ipoint]->evalAngularVelocity();
+    const Vec3 Om2 = cFrame[ispatialcontour]->evalAngularVelocity();
+
+    SqrMat A(4,NONINIT);
+    A(Index(0,0),Index(0,1)).init(0);// = -u1.T()*R1;
+    A(Index(0,0),Index(2,3)) = u1.T()*R2;
+    A(Index(1,1),Index(0,1)).init(0);// = -v1.T()*R1;
+    A(Index(1,1),Index(2,3)) = v1.T()*R2;
+    A(Index(2,2),Index(0,1)) = u2.T()*N1;
+    A(Index(2,2),Index(2,3)) = n1.T()*U2;
+    A(Index(3,3),Index(0,1)) = v2.T()*N1;
+    A(Index(3,3),Index(2,3)) = n1.T()*V2;
+
+    Vec b(4,NONINIT);
+    b(0) = -u1.T()*(vC2-vC1);
+    b(1) = -v1.T()*(vC2-vC1);
+    b(2) = -v2.T()*(Om2-Om1);
+    b(3) = u2.T()*(Om2-Om1);
+    Vec zetad =  slvLU(A,b);
+    Vec zetad1 = zetad(0,1);
+    Vec zetad2 = zetad(2,3);
+
+    const Mat3x3 tOm1 = tilde(Om1);
+    const Mat3x3 tOm2 = tilde(Om2);
+
+    wb(0) += ((vC2-vC1).T()*N1/**-n1.T()*tOm1*R1**/)*zetad1+n1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    if (wb.size()>1) {
+      wb(1) += ((vC2-vC1).T()*U1/**-u1.T()*tOm1*R1**/)*zetad1+u1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+      if (wb.size()>2)
+        wb(2) += ((vC2-vC1).T()*V1/**-v1.T()*tOm1*R1**/)*zetad1+v1.T()*(tOm2*R2*zetad2-tOm1*(vC2-vC1));
+    }
   }
 
 }
