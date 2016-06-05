@@ -66,8 +66,7 @@ namespace MBSim {
     Vec3 Om1 = cFrame[iplane]->evalAngularVelocity();
     Vec3 Om2 = cFrame[isphere]->evalAngularVelocity();
 
-    Vec3 KrPC2 = sphere->getFrame()->evalOrientation().T()*(cFrame[isphere]->evalPosition() - sphere->getFrame()->evalPosition());
-    Vec2 zeta = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
+    Vec2 zeta = computeAnglesOnUnitSphere(sphere->getFrame()->evalOrientation().T()*n2);
 
     Vec3 u1 = cFrame[iplane]->getOrientation().col(1);
     Vec3 v1 = cFrame[iplane]->getOrientation().col(2);
@@ -107,4 +106,3 @@ namespace MBSim {
   }
 
 }
-
