@@ -51,8 +51,23 @@ namespace MBSim {
   }
 
   Vec3 SpatialContour::evalParDer1Ks(const Vec2 &zeta) {
-    static Vec2 dir("[1;0]");
-    return funcCrPC->parDerDirDer(dir,zeta).col(0);
+    static Vec2 dir1("[1;0]");
+    return funcCrPC->parDerDirDer(dir1,zeta).col(0);
+  }
+
+  Vec3 SpatialContour::evalParDer2Ks(const Vec2 &zeta) {
+    static Vec2 dir2("[0;1]");
+    return funcCrPC->parDerDirDer(dir2,zeta).col(0);
+  }
+
+  Vec3 SpatialContour::evalParDer1Kt(const Vec2 &zeta) {
+    static Vec2 dir1("[1;0]");
+    return funcCrPC->parDerDirDer(dir1,zeta).col(1);
+  }
+
+  Vec3 SpatialContour::evalParDer2Kt(const Vec2 &zeta) {
+    static Vec2 dir2("[0;1]");
+    return funcCrPC->parDerDirDer(dir2,zeta).col(1);
   }
 
   void SpatialContour::init(InitStage stage) {

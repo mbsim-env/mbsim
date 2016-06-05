@@ -62,6 +62,9 @@ namespace MBSim {
       fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Ks(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer1Kt(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalParDer2Kt(const fmatvec::Vec2 &zeta);
       /***************************************************/
 
       /* GETTER / SETTER */
