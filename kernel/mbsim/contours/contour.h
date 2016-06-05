@@ -88,6 +88,10 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
 
+      virtual fmatvec::Vec3 evalKu(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta);
+      virtual fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta);
+
       /**
        * \return first tangent in world frame
        * \param t time
