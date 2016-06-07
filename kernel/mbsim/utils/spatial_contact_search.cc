@@ -53,8 +53,7 @@ namespace MBSim {
         searchAll = true;
     }
 
-   if (searchAll) {
-        std::cout << "search all contact points" << std::endl;
+    if (searchAll) {
       MultiDimNewtonMethod rf(func, jac);
 
       gbuf >> Vec(alphaC.size());  // TODO:: ??
