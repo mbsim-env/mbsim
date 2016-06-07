@@ -258,6 +258,8 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     pnt->setFrameOfReference(pointRef);
     crank->addContour(pnt);
 
+    contactCrankRod->setSearchAllContactPoints(true);
+
     contactCrankRod->connect(pnt, ncc, new ContactKinematicsPointSpatialContour);
   }
 
