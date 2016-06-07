@@ -48,7 +48,7 @@ namespace MBSim {
       spatialcontour = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairSpatialContourPoint(point,spatialcontour);
-    if(zeta0() == NULL)
+    if(zeta0.size() == 0)
       zeta0.resize(2);
     else if(zeta0.size() != 2)
       MBSimError("(ContactKinematicsPointSpatialContour::assignContours): size of zeta0 does not match");
