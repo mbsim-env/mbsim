@@ -40,7 +40,7 @@ namespace MBSim {
   }
 
   Vec2 SpatialContactSearch::slv() {
-    std::vector<Vec> alphaC(1); // stores the largrange position of all possible candidates of the contact points searched by root finding function
+    std::vector<Vec> alphaC((nodesU.size() - 1) * (nodesV.size() - 1)); // stores the largrange position of all possible candidates of the contact points searched by root finding function
     Vec gbuf; // stores the norm 2 distance of all contact point candidates
     int nRoots = 0; // number of found roots
 
@@ -53,67 +53,59 @@ namespace MBSim {
         searchAll = true;
     }
 
-   // if (searchAll) {
-   //   throw;
-   //   MultiDimensionalNewtonMethod rf;
-   //   rf.setFunction(func);
-   //   NumericalNewtonJacobianFunction numNewJaCFun;
-   //   rf.setJacobianFunction(&numNewJaCFun);
-   //   std::map<Index, double> tolerances;
-   //   tolerances.insert(std::pair<Index, double>(Index(0, 1), 1e-8));
-   //   LocalResidualCriteriaFunction locredcritfun(tolerances);
-   //   rf.setCriteriaFunction(&locredcritfun);
+   if (searchAll) {
+        std::cout << "search all contact points" << std::endl;
+      MultiDimNewtonMethod rf(func, jac);
 
+      gbuf >> Vec(alphaC.size());  // TODO:: ??
+      Vec startingValue(2, NONINIT);
 
-   //   gbuf >> Vec(alphaC.size());  // TODO:: ??
-   //   Vec startingValue(2, NONINIT);
-
-   //   // search in U direction
-   //   for (int i = 0; i < nodesU.size() - 1; i++) {
-   //     Vec temp(2, INIT, 0.);
-   //     temp(0) = nodesU(i);
-   //     double fa = (*func)(temp)(0);
-   //     temp(0) = nodesU(i + 1);
-   //     double fb = (*func)(temp)(0);
-   //     if (fa * fb < 0) {
-   //       startingValue(0) = nodesU(i);  // get the starting value for the U direction
-   //       std::vector<double> startingValueV = searchVdirection(nodesU(i));
-   //       for (size_t j = 0; j < startingValueV.size(); j++) {
-   //         startingValue(1) = startingValueV.at(j);
-   //         alphaC.at(nRoots) = rf.solve(startingValue);
-// //           if (rf.getInfo() == 0 && alphaC(nRoots)(0) >= nodesU(0) && alphaC(nRoots)(0) <= nodesU(nodesU.size() - 1) && alphaC(nRoots)(1) >= nodesV(0) && alphaC(nRoots)(1) <= nodesV(nodesV.size() - 1)) { // converged
-   //         if (rf.getInfo() == 0) {
-   //           gbuf(nRoots) = (*func)[alphaC.at(nRoots)];
-   //           nRoots++;
-   //         }
-   //       }
-   //     }
-   //     else if (fabs(fa) < epsroot()) {
-   //       startingValue(0) = nodesU(i);  // get the starting value for the U direction
-   //       std::vector<double> startingValueV = searchVdirection(nodesU(i));
-   //       for (size_t j = 0; j < startingValueV.size(); j++) {
-   //         startingValue(1) = startingValueV.at(j);
-   //         alphaC.at(nRoots) = rf.solve(startingValue);
-   //         if (rf.getInfo() == 0) {
-   //           gbuf(nRoots) = (*func)[alphaC.at(nRoots)];
-   //           nRoots++;
-   //         }
-   //       }
-   //     }
-   //     else if (fabs(fb) < epsroot()) {
-   //       startingValue(0) = nodesU(i + 1);  // get the starting value for the U direction
-   //       std::vector<double> startingValueV = searchVdirection(nodesU(i+1));
-   //       for (size_t j = 0; j < startingValueV.size(); j++) {
-   //         startingValue(1) = startingValueV.at(j);
-   //         alphaC.at(nRoots) = rf.solve(startingValue);
-   //         if (rf.getInfo() == 0) {
-   //           gbuf(nRoots) = (*func)[alphaC.at(nRoots)];
-   //           nRoots++;
-   //         }
-   //       }
-   //     }
-   //   } // end of search in U direction
-   // } // end of search all
+      // search in U direction
+      for (int i = 0; i < nodesU.size() - 1; i++) {
+        Vec temp(2, INIT, 0.);
+        temp(0) = nodesU(i);
+        double fa = (*func)(temp)(0);
+        temp(0) = nodesU(i + 1);
+        double fb = (*func)(temp)(0);
+        if (fa * fb < 0) {
+          startingValue(0) = nodesU(i);  // get the starting value for the U direction
+          std::vector<double> startingValueV = searchVdirection(nodesU(i));
+          for (size_t j = 0; j < startingValueV.size(); j++) {
+            startingValue(1) = startingValueV.at(j);
+            alphaC.at(nRoots) = rf.solve(startingValue);
+//            if (rf.getInfo() == 0 && alphaC(nRoots)(0) >= nodesU(0) && alphaC(nRoots)(0) <= nodesU(nodesU.size() - 1) && alphaC(nRoots)(1) >= nodesV(0) && alphaC(nRoots)(1) <= nodesV(nodesV.size() - 1)) { // converged
+            if (rf.getInfo() == 0) {
+              gbuf(nRoots) = (*func)[alphaC.at(nRoots)];
+              nRoots++;
+            }
+          }
+        }
+        else if (fabs(fa) < epsroot()) {
+          startingValue(0) = nodesU(i);  // get the starting value for the U direction
+          std::vector<double> startingValueV = searchVdirection(nodesU(i));
+          for (size_t j = 0; j < startingValueV.size(); j++) {
+            startingValue(1) = startingValueV.at(j);
+            alphaC.at(nRoots) = rf.solve(startingValue);
+            if (rf.getInfo() == 0) {
+              gbuf(nRoots) = (*func)[alphaC.at(nRoots)];
+              nRoots++;
+            }
+          }
+        }
+        else if (fabs(fb) < epsroot()) {
+          startingValue(0) = nodesU(i + 1);  // get the starting value for the U direction
+          std::vector<double> startingValueV = searchVdirection(nodesU(i+1));
+          for (size_t j = 0; j < startingValueV.size(); j++) {
+            startingValue(1) = startingValueV.at(j);
+            alphaC.at(nRoots) = rf.solve(startingValue);
+            if (rf.getInfo() == 0) {
+              gbuf(nRoots) = (*func)[alphaC.at(nRoots)];
+              nRoots++;
+            }
+          }
+        }
+      } // end of search in U direction
+    } // end of search all
 
 
 
