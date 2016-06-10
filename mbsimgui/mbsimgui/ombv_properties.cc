@@ -239,6 +239,46 @@ namespace MBSimGUI {
     nodes.toWidget(static_cast<PlanarContourMBSOMBVWidget*>(widget)->nodes);
   }
 
+  SpatialContourMBSOMBVProperty::SpatialContourMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), etaNodes(0,false), xiNodes(0,false) {
+
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(2,"0")), "", MBSIM%"etaNodes"));
+    etaNodes.setProperty(new ExtPhysicalVarProperty(input));
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(2,"0")), "", MBSIM%"xiNodes"));
+    xiNodes.setProperty(new ExtPhysicalVarProperty(input));
+  }
+
+  DOMElement* SpatialContourMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
+    if(e) {
+      etaNodes.initializeUsingXML(e);
+      xiNodes.initializeUsingXML(e);
+    }
+    return e;
+  }
+
+  DOMElement* SpatialContourMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+    etaNodes.writeXMLFile(e);
+    xiNodes.writeXMLFile(e);
+    writeProperties(e);
+    return e;
+  }
+
+  void SpatialContourMBSOMBVProperty::fromWidget(QWidget *widget) {
+    MBSOMBVProperty::fromWidget(widget);
+    etaNodes.fromWidget(static_cast<SpatialContourMBSOMBVWidget*>(widget)->etaNodes);
+    xiNodes.fromWidget(static_cast<SpatialContourMBSOMBVWidget*>(widget)->xiNodes);
+  }
+
+  void SpatialContourMBSOMBVProperty::toWidget(QWidget *widget) {
+    MBSOMBVProperty::toWidget(widget);
+    etaNodes.toWidget(static_cast<SpatialContourMBSOMBVWidget*>(widget)->etaNodes);
+    xiNodes.toWidget(static_cast<SpatialContourMBSOMBVWidget*>(widget)->xiNodes);
+  }
+
   OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), transparency(0,false), xmlName(xmlName_) {
 
     vector<PhysicalVariableProperty> input;

@@ -231,7 +231,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *nodes, *contourFunction, *open, *visu;
+      ExtWidget *etaNodes, *xiNodes, *contourFunction, *open, *visu;
   };
 
   class GroupPropertyDialog : public ElementPropertyDialog {

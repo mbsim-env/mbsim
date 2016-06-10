@@ -120,6 +120,19 @@ namespace MBSimGUI {
       ExtProperty nodes;
   };
 
+  class SpatialContourMBSOMBVProperty : public MBSOMBVProperty {
+
+    public:
+      SpatialContourMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID);
+      virtual PropertyInterface* clone() const {return new SpatialContourMBSOMBVProperty(*this);}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty etaNodes, xiNodes;
+  };
+
   class OMBVFrameProperty : public OMBVObjectProperty {
 
     public:

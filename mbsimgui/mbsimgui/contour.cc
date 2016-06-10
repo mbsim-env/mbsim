@@ -266,18 +266,21 @@ namespace MBSimGUI {
 
   SpatialContour::SpatialContour(const string &str, Element *parent) : RigidContour(str,parent), open(0,false) {
 
-    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"nodes",vector<string>(3,"")),"",4));
+    etaNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"etaNodes",vector<string>(3,"")),"",4));
+
+    xiNodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIM%"xiNodes",vector<string>(3,"")),"",4));
 
     contourFunction.setProperty(new ChoiceProperty2(new SpatialContourFunctionPropertyFactory(this),MBSIM%"contourFunction"));
 
     open.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"open",vector<string>(2,"")),"",4));
 
-    visu.setProperty(new PlanarContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
+    visu.setProperty(new SpatialContourMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
   }
 
   DOMElement* SpatialContour::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-    nodes.initializeUsingXML(element);
+    etaNodes.initializeUsingXML(element);
+    xiNodes.initializeUsingXML(element);
     contourFunction.initializeUsingXML(element);
     open.initializeUsingXML(element);
     visu.initializeUsingXML(element);
@@ -286,7 +289,8 @@ namespace MBSimGUI {
 
   DOMElement* SpatialContour::writeXMLFile(DOMNode *parent) {
     DOMElement *e = RigidContour::writeXMLFile(parent);
-    nodes.writeXMLFile(e);
+    etaNodes.writeXMLFile(e);
+    xiNodes.writeXMLFile(e);
     contourFunction.writeXMLFile(e);
     open.writeXMLFile(e);
     visu.writeXMLFile(e);

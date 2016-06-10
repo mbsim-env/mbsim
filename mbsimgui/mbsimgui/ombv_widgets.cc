@@ -121,6 +121,17 @@ namespace MBSimGUI {
     layout()->addWidget(nodes);
   }
 
+  SpatialContourMBSOMBVWidget::SpatialContourMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new VecSizeVarWidget(2,1,100), noUnitUnits(), 4));
+    etaNodes = new ExtWidget("Eta nodes",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(etaNodes);
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new VecSizeVarWidget(2,1,100), noUnitUnits(), 4));
+    xiNodes = new ExtWidget("Xi nodes",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(xiNodes);
+  }
+
   OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

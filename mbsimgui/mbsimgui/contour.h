@@ -155,7 +155,7 @@ namespace MBSimGUI {
     std::string getType() const { return "SpatialContour"; }
     ElementPropertyDialog* createPropertyDialog() {return new SpatialContourPropertyDialog(this);}
     protected:
-    ExtProperty nodes, contourFunction, open, visu;
+    ExtProperty etaNodes, xiNodes, contourFunction, open, visu;
   };
 
 }

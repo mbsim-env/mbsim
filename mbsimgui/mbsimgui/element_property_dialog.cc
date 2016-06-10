@@ -382,8 +382,11 @@ namespace MBSimGUI {
   SpatialContourPropertyDialog::SpatialContourPropertyDialog(SpatialContour *contour, QWidget *parent, Qt::WindowFlags f) : RigidContourPropertyDialog(contour,parent,f) {
     addTab("Visualisation",1);
 
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
-    addToTab("General", nodes);
+    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
+    addToTab("General", etaNodes);
+
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2,vector<QStringList>(3,noUnitUnits())),QBoxLayout::RightToLeft));
+    addToTab("General", xiNodes);
 
     contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour)));
     addToTab("General", contourFunction);
@@ -391,13 +394,14 @@ namespace MBSimGUI {
     open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
     addToTab("General", open);
 
-    visu = new ExtWidget("OpenMBV SpatialContour",new PlanarContourMBSOMBVWidget("NOTSET"),true);
+    visu = new ExtWidget("OpenMBV SpatialContour",new SpatialContourMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", visu);
   }
 
   void SpatialContourPropertyDialog::toWidget(Element *element) {
     RigidContourPropertyDialog::toWidget(element);
-    static_cast<SpatialContour*>(element)->nodes.toWidget(nodes);
+    static_cast<SpatialContour*>(element)->etaNodes.toWidget(etaNodes);
+    static_cast<SpatialContour*>(element)->xiNodes.toWidget(xiNodes);
     static_cast<SpatialContour*>(element)->contourFunction.toWidget(contourFunction);
     static_cast<SpatialContour*>(element)->open.toWidget(open);
     static_cast<SpatialContour*>(element)->visu.toWidget(visu);
@@ -405,7 +409,8 @@ namespace MBSimGUI {
 
   void SpatialContourPropertyDialog::fromWidget(Element *element) {
     RigidContourPropertyDialog::fromWidget(element);
-    static_cast<SpatialContour*>(element)->nodes.fromWidget(nodes);
+    static_cast<SpatialContour*>(element)->etaNodes.fromWidget(etaNodes);
+    static_cast<SpatialContour*>(element)->xiNodes.fromWidget(xiNodes);
     static_cast<SpatialContour*>(element)->contourFunction.fromWidget(contourFunction);
     static_cast<SpatialContour*>(element)->open.fromWidget(open);
     static_cast<SpatialContour*>(element)->visu.fromWidget(visu);

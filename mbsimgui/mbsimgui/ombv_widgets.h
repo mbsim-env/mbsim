@@ -101,6 +101,16 @@ namespace MBSimGUI {
     ExtWidget *nodes;
   };
 
+  class SpatialContourMBSOMBVWidget : public MBSOMBVWidget {
+
+    friend class SpatialContourMBSOMBVProperty;
+
+    public:
+    SpatialContourMBSOMBVWidget(const QString &name="NOTSET");
+    protected:
+    ExtWidget *etaNodes, *xiNodes;
+  };
+
   class OMBVFrameWidget : public OMBVObjectWidget {
 
     friend class OMBVFrameProperty;
