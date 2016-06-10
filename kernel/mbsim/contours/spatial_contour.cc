@@ -73,28 +73,55 @@ namespace MBSim {
   void SpatialContour::init(InitStage stage) {
     if (stage == preInit) {
       RigidContour::init(stage);
-//      if (etaNodes.size() < 2)
-//        THROW_MBSIMERROR("(SpatialContour::init): Size of etaNodes must be greater than 1.");
+      if (etaNodes.size() < 2)
+        THROW_MBSIMERROR("(SpatialContour::init): Size of etaNodes must be greater than 1.");
+      if (xiNodes.size() < 2)
+        THROW_MBSIMERROR("(SpatialContour::init): Size of xiNodes must be greater than 1.");
     }
     else if(stage==plotting) {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE
-//        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-//          shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
-//          if(not(ombvNodes.size())) {
-//            ombvNodes.resize(101);
-//            for(int i=0; i<101; i++)
-//              ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
-//          }
-//          for (unsigned int i=0; i<ombvNodes.size(); i++) {
-//            const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
-//            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
-//          }
-//          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
-//          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
-//        }
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          if(not(ombvEtaNodes.size())) {
+            ombvEtaNodes.resize(21);
+            for(unsigned int i=0; i<ombvEtaNodes.size(); i++)
+              ombvEtaNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/20.;
+          }
+          if(not(ombvXiNodes.size())) {
+            ombvXiNodes.resize(21);
+            for(unsigned int i=0; i<ombvXiNodes.size(); i++)
+              ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/20.;
+          }
+          vector<vector<double> > vp(ombvEtaNodes.size()*ombvXiNodes.size());
+          Vec2 zeta(NONINIT);
+          int n = ombvXiNodes.size();
+          for (unsigned int i=0; i<ombvEtaNodes.size(); i++) {
+            zeta(0) = ombvEtaNodes[i];
+            for (unsigned int j=0; j<ombvXiNodes.size(); j++) {
+              zeta(1) = ombvXiNodes[j];
+              const Vec3 CrPC=(*funcCrPC)(zeta);
+              vp[i*n+j].push_back(CrPC(0));
+              vp[i*n+j].push_back(CrPC(1));
+              vp[i*n+j].push_back(CrPC(2));
+            }
+          }
+          vector<int> indices(5*(ombvEtaNodes.size()-1)*(ombvXiNodes.size()-1));
+          int k=0;
+          for(unsigned int i=0; i<ombvEtaNodes.size()-1; i++) {
+            for(unsigned int j=0; j<ombvXiNodes.size()-1; j++) {
+              indices[k+2] = i*ombvXiNodes.size()+j;
+              indices[k+1] = i*ombvXiNodes.size()+j+1;
+              indices[k+3] = (i+1)*ombvXiNodes.size()+j;
+              indices[k] = (i+1)*ombvXiNodes.size()+j+1;
+              indices[k+4] = -1;
+              k+=5;
+            }
+          }
+          static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setVertexPositions(vp);
+          static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
+        }
   #endif
         RigidContour::init(stage);
       }
@@ -120,20 +147,24 @@ namespace MBSim {
   void SpatialContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"etaNodes");
     etaNodes=getVec(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
+    xiNodes=getVec(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     setContourFunction(ObjectFactory::createAndInit<Function<Vec3(Vec2)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
     if(e) setOpen(Element::getBool(e));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
-//    if(e) {
-//      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
-//      if(ee) ombvNodes=getVec(ee);
-//      OpenMBVExtrusion ombv;
-//      openMBVRigidBody=ombv.createOpenMBV(e); 
-//    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(e) {
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"etaNodes");
+      if(ee) ombvEtaNodes=getVec(ee);
+      ee=E(e)->getFirstElementChildNamed(MBSIM%"xiNodes");
+      if(ee) ombvXiNodes=getVec(ee);
+      OpenMBVIndexedFaceSet ombv;
+      openMBVRigidBody=ombv.createOpenMBV(e);
+    }
 #endif
   }
 

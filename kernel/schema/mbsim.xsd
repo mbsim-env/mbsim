@@ -2905,7 +2905,14 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="nodes" type="pv:nounitVector">
+          <xs:element name="etaNodes" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="xiNodes" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 tbd
@@ -2937,7 +2944,8 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="etaNodes" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="xiNodes" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
                 <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
               </xs:sequence>

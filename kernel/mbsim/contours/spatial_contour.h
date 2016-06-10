@@ -73,10 +73,11 @@ namespace MBSim {
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-//        OpenMBVExtrusion ombv(1,diffuseColor,transparency);
-//        openMBVRigidBody=ombv.createOpenMBV(); 
-//        ombvNodes = nodes;
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (etaNodes,(const std::vector<double>&),std::vector<double>())(xiNodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency);
+        openMBVRigidBody=ombv.createOpenMBV();
+        ombvEtaNodes = etaNodes;
+        ombvXiNodes = xiNodes;
       }
 #endif
       

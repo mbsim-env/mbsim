@@ -29,6 +29,7 @@
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/extrusion.h>
 #include <openmbvcppinterface/coilspring.h>
+#include <openmbvcppinterface/indexedfaceset.h>
 
 namespace MBSim {
   class OpenMBVObject {
@@ -145,6 +146,13 @@ namespace MBSim {
       void initializeObject(const boost::shared_ptr<OpenMBV::CoilSpring> &object);
       boost::shared_ptr<OpenMBV::CoilSpring> createOpenMBV(xercesc::DOMElement* e=0);
   };
+
+  class OpenMBVIndexedFaceSet : public OpenMBVObject {
+    public:
+      OpenMBVIndexedFaceSet(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVObject(dc,tp) { }
+      boost::shared_ptr<OpenMBV::IndexedFaceSet> createOpenMBV(xercesc::DOMElement* e=0);
+  };
+
 }
 
 #endif

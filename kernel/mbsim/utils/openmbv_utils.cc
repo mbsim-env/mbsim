@@ -281,6 +281,13 @@ namespace MBSim {
     object->setType(type);
   }
 
+  shared_ptr<OpenMBV::IndexedFaceSet> OpenMBVIndexedFaceSet::createOpenMBV(DOMElement *e) {
+    shared_ptr<OpenMBV::IndexedFaceSet> object = OpenMBV::ObjectFactory::create<OpenMBV::IndexedFaceSet>();
+    if(e) initializeUsingXML(e);
+    initializeObject(object);
+    return object;
+  }
+
 }
 
 #endif
