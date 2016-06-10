@@ -4,9 +4,9 @@
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="m" unit="-">0.7</scalarParameter>
-      <scalarParameter name="a" unit="-">0.4</scalarParameter>
+      <scalarParameter name="a">0.6</scalarParameter>
       <scalarParameter name="b" unit="-">0.4</scalarParameter>
-      <scalarParameter name="c" unit="-">0.4</scalarParameter>
+      <scalarParameter name="c">0.7</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -48,13 +48,13 @@
           <contours>
             <Point name="Point1">
               <enableOpenMBV>
-                <?OPENMBV_ID 8?>
+                <?OPENMBV_ID 6?>
                 <size unit="m">0.01</size>
               </enableOpenMBV>
             </Point>
           </contours>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 5?>
+            <?OPENMBV_ID 3?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -82,12 +82,18 @@
           <frames/>
           <contours>
             <SpatialContour name="SpatialContour3">
-              <nodes unit="-">
+              <etaNodes unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
-                  <ele>0</ele>
+                  <ele>2*pi</ele>
                 </xmlVector>
-              </nodes>
+              </etaNodes>
+              <xiNodes unit="-">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-pi/2</ele>
+                  <ele>pi/2</ele>
+                </xmlVector>
+              </xiNodes>
               <contourFunction>
                 <ContinuedFunction>
                   <function>
@@ -100,9 +106,9 @@
                     </SymbolicFunction>
                   </function>
                   <continuationRule>
-                    <SymbolicFunction arg1="x" arg1Dim="2">     n = floor((x(2)+pi/2)/pi);
- eta = x(1) + n*pi;
- s = (-1)^abs(n);
+                    <SymbolicFunction arg1="x" arg1Dim="2">n = floor((x(2)+pi/2)/pi);
+eta = x(1) + n*pi;
+s = (-1)^abs(n);
 t = s*x(2)+pi/2;
 xi = (t - pi * floor (t / pi))-pi/2;
 ret = [eta;xi]</SymbolicFunction>
@@ -110,34 +116,12 @@ ret = [eta;xi]</SymbolicFunction>
                 </ContinuedFunction>
               </contourFunction>
               <enableOpenMBV>
-                <?OPENMBV_ID 15?>
+                <?OPENMBV_ID 13?>
               </enableOpenMBV>
             </SpatialContour>
           </contours>
-          <openMBVRigidBody>
-            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 11?>
-              <transparency unit="-">0.3</transparency>
-              <initialTranslation unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialTranslation>
-              <initialRotation unit="rad">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
-              <scaleFactor unit="-">1</scaleFactor>
-              <radius unit="m">a</radius>
-            </Sphere>
-          </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 12?>
+            <?OPENMBV_ID 10?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -160,13 +144,13 @@ ret = [eta;xi]</SymbolicFunction>
             </xmlVector>
           </initialGuess>
           <enableOpenMBVContactPoints>
-            <?OPENMBV_ID 22?>
+            <?OPENMBV_ID 20?>
             <size unit="cm">1</size>
           </enableOpenMBVContactPoints>
         </Contact>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 3?>
+        <?OPENMBV_ID 1?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>
