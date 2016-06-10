@@ -85,14 +85,14 @@ namespace MBSim {
   #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           if(not(ombvEtaNodes.size())) {
-            ombvEtaNodes.resize(21);
+            ombvEtaNodes.resize(51);
             for(unsigned int i=0; i<ombvEtaNodes.size(); i++)
-              ombvEtaNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/20.;
+              ombvEtaNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/50.;
           }
           if(not(ombvXiNodes.size())) {
-            ombvXiNodes.resize(21);
+            ombvXiNodes.resize(51);
             for(unsigned int i=0; i<ombvXiNodes.size(); i++)
-              ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/20.;
+              ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/50.;
           }
           vector<vector<double> > vp(ombvEtaNodes.size()*ombvXiNodes.size());
           Vec2 zeta(NONINIT);
