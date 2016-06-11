@@ -21,6 +21,7 @@
 
 #include "mbsim/constraints/constraint.h"
 #include "mbsim/functions/function.h"
+#include "mbsim/frames/floating_relative_frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -44,6 +45,8 @@ namespace MBSim {
       void init(InitStage stage);
       void initz();
 
+      void resetUpToDate();
+
       void connect(Frame* frame1, Frame* frame2);
       void setDependentBodiesFirstSide(std::vector<RigidBody*> bd);
       void setDependentBodiesSecondSide(std::vector<RigidBody*> bd);
@@ -60,6 +63,7 @@ namespace MBSim {
       void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
+      void updatePositions(Frame *frame_);
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
@@ -107,6 +111,8 @@ namespace MBSim {
        */
       Frame *refFrame;
       int refFrameID;
+
+      FloatingRelativeFrame C;
 
       fmatvec::Mat3xV dT, dR, forceDir, momentDir;
 

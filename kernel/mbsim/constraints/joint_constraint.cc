@@ -69,7 +69,8 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(JointConstraint, MBSIM%"JointConstraint")
 
-  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), bi2(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), bi2(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+    C.setParent(this);
   }
 
   void JointConstraint::connect(Frame* frame1_, Frame* frame2_) {
@@ -137,6 +138,7 @@ namespace MBSim {
       if(bi2)
         addDependency(bi2);
       refFrame=refFrameID?frame2:frame1;
+      C.setFrameOfReference(frame1);
     }
     else if(stage==resize) {
       Constraint::init(stage);
@@ -188,6 +190,16 @@ namespace MBSim {
       THROW_MBSIMERROR("(JointConstraint::initz): size of q0 does not match");
   }
 
+  void JointConstraint::resetUpToDate() {
+    Constraint::resetUpToDate();
+    C.resetUpToDate();
+  }
+
+  void JointConstraint::updatePositions(Frame *frame) {
+    frame->setPosition(frame2->getPosition());
+    frame->setOrientation(frame1->evalOrientation());
+  }
+
   void JointConstraint::updateGeneralizedCoordinates() {
     Residuum f(bd1,bd2,forceDir,momentDir,frame1,frame2,refFrame,if1,if2);
     MultiDimNewtonMethod newton(&f);
@@ -203,8 +215,8 @@ namespace MBSim {
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
-      JT(Index(0,2),Iu1[i]) = frame1->evalJacobianOfTranslation(2);
-      JR(Index(0,2),Iu1[i]) = frame1->evalJacobianOfRotation(2);
+      JT(Index(0,2),Iu1[i]) = C.evalJacobianOfTranslation(2);
+      JR(Index(0,2),Iu1[i]) = C.evalJacobianOfRotation(2);
       for(size_t j=i+1; j<bd1.size(); j++)
         bd1[j]->resetJacobiansUpToDate();
       bd1[i]->setUpdateByReference(true);
@@ -230,8 +242,8 @@ namespace MBSim {
     A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
     Vec b(nu);
 
-    b(0,dT.cols()-1) = -(dT.T()*(frame1->evalVelocity()-frame2->evalVelocity()));
-    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->evalAngularVelocity()-frame2->evalAngularVelocity()));
+    b(0,dT.cols()-1) = -(dT.T()*(C.evalVelocity()-frame2->evalVelocity()));
+    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(C.evalAngularVelocity()-frame2->evalAngularVelocity()));
     Vec u = slvLU(A,b);
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->resetVelocitiesUpToDate();
@@ -263,8 +275,8 @@ namespace MBSim {
       Mat JT0(3,nh);
       Mat JR0(3,nh);
       if(frame1->getJacobianOfTranslation(0,false).cols()) {
-        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=frame1->evalJacobianOfTranslation();
-        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=frame1->evalJacobianOfRotation();
+        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=C.evalJacobianOfTranslation();
+        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=C.evalJacobianOfRotation();
       }
       if(frame2->getJacobianOfTranslation(0,false).cols()) {
         JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->evalJacobianOfTranslation();
@@ -273,8 +285,8 @@ namespace MBSim {
       B(Index(0,dT.cols()-1),Index(0,nh-1)) = -(dT.T()*JT0);
       B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -(dR.T()*JR0);
       Vec b(nu);
-      b(0,dT.cols()-1) = -(dT.T()*(frame1->evalGyroscopicAccelerationOfTranslation()-frame2->evalGyroscopicAccelerationOfTranslation()));
-      b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->evalGyroscopicAccelerationOfRotation()-frame2->evalGyroscopicAccelerationOfRotation()));
+      b(0,dT.cols()-1) = -(dT.T()*(C.evalGyroscopicAccelerationOfTranslation()-frame2->evalGyroscopicAccelerationOfTranslation()));
+      b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(C.evalGyroscopicAccelerationOfRotation()-frame2->evalGyroscopicAccelerationOfRotation()));
 
       Mat J = slvLU(A,B);
       Vec j = slvLU(A,b);
