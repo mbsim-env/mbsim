@@ -1161,7 +1161,6 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   if dataArrayRef.shape[0]!=dataArrayCur.shape[0]:
     print('''<div class="alert alert-danger" role="alert">
   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  <span class="sr-only">Errormfmf:</span>
   Different number of data points: ref = %d, cur = %d
 </div>'''%(dataArrayRef.shape[0], dataArrayCur.shape[0]), file=diffHTMLPlotFD)
   print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
