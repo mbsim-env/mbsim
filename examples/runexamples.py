@@ -1158,6 +1158,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
     (parDirs, myurllib.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
   print('</dl>', file=diffHTMLPlotFD)
   print('<p><span class="glyphicon glyphicon-info-sign"> </span> A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
+  if dataArrayRef.shape[0]!=dataArrayCur.shape[0]:
+    print('''<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  Different number of data points: ref = %d, cur = %d
+</div>'''%(dataArrayRef.shape[0], dataArrayCur.shape[0]), file=diffHTMLPlotFD)
   print('<p><object data="plot.svg" type="image/svg+xml"> </object></p>', file=diffHTMLPlotFD)
   print('<hr/>', file=diffHTMLPlotFD)
   print('<span class="pull-left small">', file=diffHTMLPlotFD)
@@ -1344,7 +1349,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         # check for difference
         refObjCol=getColumn(refObj,column)
         curObjCol=getColumn(curObj,column)
-        if refObjCol.shape[0]==curObjCol.shape[0] and not numpy.all(numpy_isclose(refObjCol, curObjCol, rtol=args.rtol,
+        if refObjCol.shape[0]!=curObjCol.shape[0] or not numpy.all(numpy_isclose(refObjCol, curObjCol, rtol=args.rtol,
                          atol=args.atol, equal_nan=True)):
           cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"d"))
           nrFailed[0]+=1
