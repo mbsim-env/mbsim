@@ -323,6 +323,25 @@ namespace MBSimGUI {
     return NULL;
   }
 
+  TwoDimensionalTabularFunctionWidgetFactory::TwoDimensionalTabularFunctionWidgetFactory() {
+    name.push_back("x,y and z");
+    name.push_back("xyz");
+  }
+
+  QWidget* TwoDimensionalTabularFunctionWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      ContainerWidget *widgetContainer = new ContainerWidget;
+      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
+      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList())))));
+      widgetContainer->addWidget(new ExtWidget("z",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0)))));
+      return widgetContainer;
+    }
+    if(i==1) {
+      return new ExtWidget("xyz",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(4,4)));
+    }
+    return NULL;
+  }
+
   FourierFunctionWidgetFactory::FourierFunctionWidgetFactory() {
     name.push_back("a and b");
     name.push_back("ab");

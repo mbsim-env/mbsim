@@ -175,6 +175,17 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> name;
   };
 
+  class TwoDimensionalTabularFunctionPropertyFactory : public PropertyFactory {
+    public:
+      TwoDimensionalTabularFunctionPropertyFactory(Element *parent_);
+      PropertyInterface* createProperty(int i=0);
+      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      Element *parent;
+      std::vector<MBXMLUtils::FQN> name;
+  };
+
   class FourierFunctionPropertyFactory : public PropertyFactory {
     public:
       FourierFunctionPropertyFactory(Element *parent_);

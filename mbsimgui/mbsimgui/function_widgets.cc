@@ -375,24 +375,17 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    x = new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
-    layout->addWidget(x);
-    y = new ExtWidget("y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
-    layout->addWidget(y);
-    z = new ExtWidget("z",new ChoiceWidget2(new MatWidgetFactory(getScalars<QString>(3,3,"0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
-    layout->addWidget(z);
+    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory);
+    layout->addWidget(choice);
   }
 
   void TwoDimensionalTabularFunctionWidget::resize_(int m, int n) {
-    //ChoiceWidget2 *choice_ = static_cast<ChoiceWidget2*>(x->getWidget());
-    //if(choice_->getIndex()==0)
-    //  x->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
-    //choice_ = static_cast<ChoiceWidget2*>(y->getWidget());
-    //if(choice_->getIndex()==0)
-    //  y->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
-    //choice_ = static_cast<ChoiceWidget2*>(z->getWidget());
-    //if(choice_->getIndex()==0)
-    //  z->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
+    if(choice->getIndex()==0) {
+      ChoiceWidget2 *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      ChoiceWidget2 *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      if(choice1_->getIndex()==0 && choice2_->getIndex()==0)
+        choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget())->size(),static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget())->size());
+    }
   }
 
   PiecewisePolynomFunctionWidget::PiecewisePolynomFunctionWidget(int n) {

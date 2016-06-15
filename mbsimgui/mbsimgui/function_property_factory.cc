@@ -330,24 +330,38 @@ namespace MBSimGUI {
       ContainerProperty *propertyContainer = new ContainerProperty;
       vector<Property*> choiceProperty;
 
-      //    vector<PhysicalVariableProperty> input;
-      //    input.push_back(PhysicalVariableProperty(new VecFromFileProperty,"",MBSIM%"x"));
-      //    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-
       propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"x",vector<string>(3,"")),"",4)));
 
       propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,1,"1","0"),MBSIM%"y",vector<string>(3,"")),"",4)));
-      //    input.clear();
-      //    input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIM%"y"));
-      //    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
       return propertyContainer;
     }
     if(i==1) {
-      //vector<PhysicalVariableProperty> input;
-      //input.push_back(PhysicalVariableProperty(new MatFromFileProperty,"",MBSIM%"xy"));
-      //return new ExtProperty(new ExtPhysicalVarProperty(input));
       return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,2,"1","0"),MBSIM%"xy",vector<string>(3,"")),"",4));
+    }
+    return NULL;
+  }
+
+  TwoDimensionalTabularFunctionPropertyFactory::TwoDimensionalTabularFunctionPropertyFactory(Element *parent_) : parent(parent_) {
+    name.push_back(MBSIM%"x");
+    name.push_back(MBSIM%"xyz");
+  }
+
+  PropertyInterface* TwoDimensionalTabularFunctionPropertyFactory::createProperty(int i) {
+    if(i==0) {
+      ContainerProperty *propertyContainer = new ContainerProperty;
+      vector<Property*> choiceProperty;
+
+      propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"x",vector<string>(3,"")),"",4)));
+
+      propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"y",vector<string>(3,"")),"",4)));
+
+      propertyContainer->addProperty(new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,3,"0"),MBSIM%"z",vector<string>(3,"")),"",4)));
+
+      return propertyContainer;
+    }
+    if(i==1) {
+      return new ExtProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(4,4,"0"),MBSIM%"xyz",vector<string>(3,"")),"",4));
     }
     return NULL;
   }

@@ -143,6 +143,16 @@ namespace MBSimGUI {
       std::vector<QString> name;
   };
 
+  class TwoDimensionalTabularFunctionWidgetFactory : public WidgetFactory {
+    public:
+      TwoDimensionalTabularFunctionWidgetFactory();
+      QWidget* createWidget(int i=0);
+      QString getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      std::vector<QString> name;
+  };
+
   class FourierFunctionWidgetFactory : public WidgetFactory {
     public:
       FourierFunctionWidgetFactory();
