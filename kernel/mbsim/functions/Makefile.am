@@ -20,6 +20,7 @@ libfunction_la_SOURCES = identity_function.cc\
 			 two_dimensional_tabular_function.cc\
 			 symbolic_function.cc\
 			 piecewise_polynom_function.cc\
+			 two_dimensional_piecewise_polynom_function.cc\
 			 fourier_function.cc\
 			 bidirectional_function.cc\
 			 continued_function.cc
@@ -52,6 +53,7 @@ functioninclude_HEADERS = function.h\
 			  two_dimensional_tabular_function.h\
 			  symbolic_function.h\
 			  piecewise_polynom_function.h\
+			  two_dimensional_piecewise_polynom_function.h\
 			  fourier_function.h\
 			  bidirectional_function.h\
 			  continued_function.h\
