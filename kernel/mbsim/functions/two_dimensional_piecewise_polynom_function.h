@@ -34,15 +34,20 @@ namespace MBSim {
         cSplineNatural,
         piecewiseLinear
       };
+
       TwoDimensionalPiecewisePolynomFunction() : method(cSplineNatural) { }
-      /* INHERITED INTERFACE OF FUNCTION2 */
+
       virtual void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
-        setx(Element::getVec(e));
-        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-        sety(Element::getVec(e));
-        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"z");
-        setz(Element::getMat(e, y.size(), x.size()));
+        if(e) {
+          setx(Element::getVec(e));
+          e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
+          sety(Element::getVec(e));
+          e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"z");
+          setz(Element::getMat(e, y.size(), x.size()));
+        }
+        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xyz");
+        if(e) setxyz(Element::getMat(e));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
         if(e) { 
           std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
@@ -95,11 +100,20 @@ namespace MBSim {
         return f2.parDerDirDer(ydVal,yVal);
       }
 
-      /***************************************************/
-      /* GETTER / SETTER */
       void setx(const fmatvec::VecV &x_) { x = x_; }
+
       void sety(const fmatvec::VecV &y_) { y = y_; }
+
       void setz(const fmatvec::MatV &z_) { z = z_; }
+
+      void setxyz(const fmatvec::MatV &xyz) {
+        if(xyz.rows() <= 1 or xyz.cols() <= 1)
+          THROW_MBSIMERROR("Dimension missmatch in size of xyz");
+        x = xyz.row(0)(fmatvec::Index(1,xyz.cols()-1)).T();
+        y = xyz.col(0)(fmatvec::Index(1,xyz.rows()-1));
+        z = xyz(fmatvec::Index(1,xyz.rows()-1),fmatvec::Index(1,xyz.cols()-1));
+      }
+
       void setInterpolationMethod(InterpolationMethod method_) { method = method_; }
 
       void init(Element::InitStage stage) {
@@ -118,6 +132,7 @@ namespace MBSim {
           f1.setXF(x,z.T(),static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(Arg1)>::InterpolationMethod>(method));
         }
       }
+
     protected:
       fmatvec::VecV x;
       fmatvec::VecV y;
