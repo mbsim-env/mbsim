@@ -59,44 +59,51 @@ namespace MBSim {
       }
 
       virtual Ret operator()(const Arg1& xVal, const Arg2& yVal) {
-        PiecewisePolynomFunction<Ret(Arg2)> f2;
-        f2.setXF(y,f1(xVal),static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+        f2.sety(f1(xVal));
+        f2.reset();
+        f2.calculateSpline();
         return f2(yVal);
       }
 
       typename fmatvec::Der<Ret, Arg1>::type parDer1(const Arg1 &xVal, const Arg2 &yVal) {
-        PiecewisePolynomFunction<Ret(Arg2)> f2;
-        f2.setXF(y,f1.parDer(xVal),static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+        f2.sety(f1.parDer(xVal));
+        f2.reset();
+        f2.calculateSpline();
         return f2(yVal);
       }
 
       typename fmatvec::Der<Ret, Arg2>::type parDer2(const Arg1 &xVal, const Arg2 &yVal) {
-        PiecewisePolynomFunction<Ret(Arg2)> f2;
-        f2.setXF(y,f1(xVal),static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+        f2.sety(f1(xVal));
+        f2.reset();
+        f2.calculateSpline();
         return f2.parDer(yVal);
       }
 
       typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
-        PiecewisePolynomFunction<Ret(Arg2)> f2;
-        f2.setXF(y,f1.parDerDirDer(xdVal,xVal),static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+        f2.sety(f1.parDerDirDer(xdVal,xVal));
+        f2.reset();
+        f2.calculateSpline();
         return f2(yVal);
       }
 
       typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
-        PiecewisePolynomFunction<Ret(Arg2)> f2;
-        f2.setXF(y,f1.parDer(xVal),static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+        f2.sety(f1.parDer(xVal));
+        f2.reset();
+        f2.calculateSpline();
         return f2.parDer(yVal)*ydVal;
       }
 
       typename fmatvec::Der<Ret, Arg2>::type parDer2DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
-        PiecewisePolynomFunction<Ret(Arg2)> f2;
-        f2.setXF(y,f1.parDer(xVal)*xdVal,static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+        f2.sety(f1.parDer(xVal)*xdVal);
+        f2.reset();
+        f2.calculateSpline();
         return f2.parDer(yVal);
       }
 
       typename fmatvec::Der<Ret, Arg2>::type parDer2DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
-        PiecewisePolynomFunction<Ret(Arg2)> f2;
-        f2.setXF(y,f1(xVal),static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+        f2.sety(f1(xVal));
+        f2.reset();
+        f2.calculateSpline();
         return f2.parDerDirDer(ydVal,yVal);
       }
 
@@ -129,8 +136,15 @@ namespace MBSim {
           for (int i = 1; i < y.size(); i++)
             if (y(i - 1) >= y(i))
               THROW_MBSIMERROR("y values must be strictly monotonic increasing!");
-          f1.setXF(x,z.T(),static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(Arg1)>::InterpolationMethod>(method));
+          f1.setx(x);
+          f1.sety(z.T());
+          f1.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(Arg1)>::InterpolationMethod>(method));
+          f2.setx(y);
+          f2.sety(y);
+          f2.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
         }
+        f1.init(stage);
+        f2.init(stage);
       }
 
     protected:
@@ -138,6 +152,7 @@ namespace MBSim {
       fmatvec::VecV y;
       fmatvec::MatV z;
       PiecewisePolynomFunction<fmatvec::VecV(Arg1)> f1;
+      PiecewisePolynomFunction<Ret(Arg2)> f2;
       InterpolationMethod method;
   };
 }

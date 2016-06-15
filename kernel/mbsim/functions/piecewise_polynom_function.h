@@ -70,9 +70,35 @@ namespace MBSim {
         piecewiseLinear
       };
 
-      PiecewisePolynomFunction() : f(this), fd(this), fdd(this) { }
+      PiecewisePolynomFunction() : index(0), f(this), fd(this), fdd(this) { }
 
       typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
+
+      void init(Element::InitStage stage) {
+        Function<Ret(Arg)>::init(stage);
+        if(stage==Element::preInit) {
+          if(y.rows() != x.size())
+            THROW_MBSIMERROR("Dimension missmatch in size of x");
+          if(x.size()) calculateSpline();
+          nPoly = (coefs[0]).rows();
+          order = coefs.size()-1;
+        }
+      }
+
+      void calculateSpline() {
+        if(method == cSplinePeriodic) calculateSplinePeriodic();
+        else if(method == cSplineNatural) calculateSplineNatural();
+        else if(method == piecewiseLinear) calculatePLinear();
+        else THROW_MBSIMERROR("(PiecewisePolynomFunction::init): No valid method to calculate pp-form");
+      }
+
+      void reset() {
+        index = 0;
+        f.reset();
+        fd.reset();
+        fdd.reset();
+        coefs.clear();
+      }
 
       Ret operator()(const Arg &x) { return f(x); }
       typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return fd(x); }
@@ -80,9 +106,17 @@ namespace MBSim {
       typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &argDir, const Arg &arg) { return fdd(arg)*ToDouble<Arg>::cast(argDir); }
 
       /*! 
+       * \return polynomial coefficients
+       */
+      std::vector<fmatvec::MatV> getCoefficients() { return coefs; }
+
+      /*!
+       * \return interval boundaries
+       */
+      fmatvec::VecV getBreaks() { return breaks; }
+
+      /*!
        * \brief set interpolation
-       * @param x vector of ordered x values
-       * @param f corresponding f(x) values (rowwise)
        * @param InterpolationMethod     'cSplinePeriodic' -> cubic Spline with periodic end conditions (two-times continuously differentiable)
        *                                                                                        S(x1) = S(xN) -> f(0)=f(end)
        *                                                                                        S'(x1) = S'(xN)
@@ -91,49 +125,29 @@ namespace MBSim {
        *                                                                                        S''(x1) = S''(xN) = 0
        *                                'piecewiseLinear'    -> piecewise linear function (weak differentiable)
        */
-      void setXF(const fmatvec::VecV &x, const fmatvec::MatV &f, InterpolationMethod method=cSplineNatural) {
-        if(x.size() != f.rows())
-          THROW_MBSIMERROR("Dimension missmatch in size of x");
+      void setInterpolationMethod(InterpolationMethod method_) { method = method_; }
 
-        if(method == cSplinePeriodic) {
-          calculateSplinePeriodic(x,f);   
-        }
-        else if(method == cSplineNatural) { 
-          calculateSplineNatural(x,f);   
-        }
-        else if(method == piecewiseLinear) {
-          calculatePLinear(x,f);
-        }
-        else THROW_MBSIMERROR("(PiecewisePolynomFunction::setXF): No valid method to calculate pp-form");
-
-        index = 0;
-        nPoly = x.size()-1;
-        order = coefs.size()-1;
+      void setx(const fmatvec::VecV &x_) { x = x_; }
+      void sety(const fmatvec::MatV &y_) { y = y_; }
+      void setxy(const fmatvec::MatV &xy) {
+        if(xy.cols() <= 1)
+          THROW_MBSIMERROR("Dimension missmatch in size of xy");
+        x = xy.col(0);
+        y = xy(fmatvec::Index(0, xy.rows() - 1), fmatvec::Index(1, xy.cols() - 1));
       }
-
-      /*! 
-       * \return polynomial coefficients
-       */
-      std::vector<fmatvec::MatV> getCoefs() { return coefs; }
-
-      /*! 
-       * \return interval boundaries
-       */
-      fmatvec::VecV getBreaks() { return breaks; }
 
       /*!
-       * \brief set piecewise polynomial
+       * \brief set polynomial coefficients
        * \param polynomial coefficients
+       */
+      void setCoefficients(const std::vector<fmatvec::MatV> &coefs_u) { coefs = coefs_u; }
+
+      /*!
+       * \brief set interval boundaries
        * \param interval boundaries
        */
-      void setPP(const std::vector<fmatvec::MatV> &coefs_u, const fmatvec::VecV &breaks_u) {
-        coefs = coefs_u; 
-        breaks = breaks_u;
-        index = 0;
-        nPoly = (coefs[0]).rows();
-        order = coefs.size()-1;
-      }
-        
+      void setBreaks(const std::vector<fmatvec::MatV> &coefs_u, const fmatvec::VecV &breaks_u) { breaks = breaks_u; }
+
       /**
        * \brief initialize function with XML code
        * \param XML element
@@ -166,19 +180,27 @@ namespace MBSim {
        */
       int index;
 
+      fmatvec::VecV x;
+      fmatvec::MatV y;
+
+      /**
+       * \brief interpolation method
+       */
+      InterpolationMethod method;
+
       /*! 
        * \brief calculation of periodic spline by interpolation
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplinePeriodic(const fmatvec::VecV &x, const fmatvec::MatV &f);
+      void calculateSplinePeriodic();
 
       /*! 
        * \brief calculation of natural spline by interpolation
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplineNatural(const fmatvec::VecV &x, const fmatvec::MatV &f);
+      void calculateSplineNatural();
 
       /* 
        * \brief calculation of piecewise linear interpolation
@@ -187,7 +209,7 @@ namespace MBSim {
        *
        * the first derivative is weak and the second derivative is zero elsewhere although it should be distributionally at the corners
        */
-      void calculatePLinear(const fmatvec::VecV &x, const fmatvec::MatV &f);
+      void calculatePLinear();
 
      /**
        * piecewise polynomial interpolation - zeroth derivative
@@ -195,11 +217,10 @@ namespace MBSim {
       class ZerothDerivative {
         public:
           ZerothDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
-          virtual ~ZerothDerivative() {}
 
-          /* INHERITED INTERFACE OF FUNCTION */
+          void reset() { firstCall = true; }
+
           Ret operator()(const Arg &x);
-          /***************************************************/
 
         private:
           PiecewisePolynomFunction<Ret(Arg)> *parent;
@@ -214,11 +235,10 @@ namespace MBSim {
       class FirstDerivative {
         public:
           FirstDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
-          virtual ~FirstDerivative() {}
 
-          /* INHERITED INTERFACE OF FUNCTION */
+          void reset() { firstCall = true; }
+
           Ret operator()(const Arg& x);
-          /***************************************************/
 
         private:
           PiecewisePolynomFunction<Ret(Arg)> *parent;
@@ -233,11 +253,10 @@ namespace MBSim {
       class SecondDerivative {
         public:
           SecondDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
-          virtual ~SecondDerivative() {}
 
-          /* INHERITED INTERFACE OF FUNCTION */
+          void reset() { firstCall = true; }
+
           Ret operator()(const Arg& x);
-          /***************************************************/
 
         private:
           PiecewisePolynomFunction<Ret(Arg)> *parent;
@@ -253,12 +272,12 @@ namespace MBSim {
   };
 
   template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic(const fmatvec::VecV &x, const fmatvec::MatV &f) {
+  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic() {
     double hi, hii;
     int N = x.size();
-    if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) THROW_MBSIMERROR("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
+    if(nrm2(y.row(0)-y.row(y.rows()-1))>epsroot()) THROW_MBSIMERROR("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+numtostr(y.row(0))+"!="+numtostr(y.row(y.rows()-1))+" =f(end)");
     fmatvec::SqrMat C(N-1,fmatvec::INIT,0.0);
-    fmatvec::Mat rs(N-1,f.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat rs(N-1,y.cols(),fmatvec::INIT,0.0);
 
     // Matrix C and vector rs C*c=rs
     for(int i=0; i<N-3;i++) {
@@ -267,7 +286,7 @@ namespace MBSim {
       C(i,i) = hi;
       C(i,i+1) = 2*(hi+hii);
       C(i,i+2) = hii;
-      rs.row(i) = 3.*((f.row(i+2)-f.row(i+1))/hii - (f.row(i+1)-f.row(i))/hi);
+      rs.row(i) = 3.*((y.row(i+2)-y.row(i+1))/hii - (y.row(i+1)-y.row(i))/hi);
     }
 
     // last but one row
@@ -276,7 +295,7 @@ namespace MBSim {
     C(N-3,N-3) = hi;
     C(N-3,N-2)= 2*(hi+hii);
     C(N-3,0)= hii;
-    rs.row(N-3) = 3.*((f.row(N-1)-f.row(N-2))/hii - (f.row(N-2)-f.row(N-3))/hi);
+    rs.row(N-3) = 3.*((y.row(N-1)-y.row(N-2))/hii - (y.row(N-2)-y.row(N-3))/hi);
 
     // last row
     double h1 = x(1)-x(0);
@@ -284,24 +303,24 @@ namespace MBSim {
     C(N-2,0) = 2*(h1+hN_1);
     C(N-2,1) = h1;
     C(N-2,N-2)= hN_1;
-    rs.row(N-2) = 3.*((f.row(1)-f.row(0))/h1 - (f.row(0)-f.row(N-2))/hN_1);
+    rs.row(N-2) = 3.*((y.row(1)-y.row(0))/h1 - (y.row(0)-y.row(N-2))/hN_1);
 
     // solve C*c = rs -> TODO BETTER: RANK-1-MODIFICATION FOR LINEAR EFFORT (Simeon - Numerik 1)
     fmatvec::Mat c = slvLU(C,rs);
-    fmatvec::Mat ctmp(N,f.cols());
+    fmatvec::Mat ctmp(N,y.cols());
     ctmp.row(N-1) = c.row(0); // CN = c1
-    ctmp(0,0,N-2,f.cols()-1)= c;
+    ctmp(0,0,N-2,y.cols()-1)= c;
 
     // vector ordering of the further coefficients
-    fmatvec::Mat d(N-1,f.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat b(N-1,f.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat a(N-1,f.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat b(N-1,y.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat a(N-1,y.cols(),fmatvec::INIT,0.0);
 
     for(int i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
-      a.row(i) = f.row(i);
+      a.row(i) = y.row(i);
       d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
-      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
+      b.row(i) = (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
     }
 
     breaks.resize(N);
@@ -313,17 +332,17 @@ namespace MBSim {
   }
 
   template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplineNatural(const fmatvec::VecV &x, const fmatvec::MatV &f) {
+  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplineNatural() {
     // first row
     int i=0;
     int N = x.size();
     fmatvec::SqrMat C(N-2,fmatvec::INIT,0.0);
-    fmatvec::Mat rs(N-2,f.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat rs(N-2,y.cols(),fmatvec::INIT,0.0);
     double hi = x(i+1)-x(i);
     double hii = x(i+2)-x(i+1);
     C(i,i) = 2*hi+2*hii;
     C(i,i+1) = hii;
-    rs.row(i) = 3.*(f.row(i+2)-f.row(i+1))/hii - 3.*(f.row(i+1)-f.row(i))/hi;    
+    rs.row(i) = 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi;
 
     // last row
     i = (N-3);
@@ -331,7 +350,7 @@ namespace MBSim {
     hii = x(i+2)-x(i+1);
     C(i,i-1) = hi;
     C(i,i) = 2*hii + 2*hi;
-    rs.row(i) = 3.*(f.row(i+2)-f.row(i+1))/hii - 3.*(f.row(i+1)-f.row(i))/hi;
+    rs.row(i) = 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi;
 
     for(i=1;i<N-3;i++) { 
       hi = x(i+1)-x(i);
@@ -339,58 +358,58 @@ namespace MBSim {
       C(i,i-1) = hi;
       C(i,i) = 2*(hi+hii);
       C(i,i+1) = hii;
-      rs.row(i) = 3.*(f.row(i+2)-f.row(i+1))/hii - 3.*(f.row(i+1)-f.row(i))/hi;
+      rs.row(i) = 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi;
     }
 
     // solve C*c = rs with C tridiagonal
-    fmatvec::Mat C_rs(N-2,N-1+f.cols(),fmatvec::INIT,0.0);  
+    fmatvec::Mat C_rs(N-2,N-1+y.cols(),fmatvec::INIT,0.0);
     C_rs(0,0,N-3,N-3) = C; // C_rs=[C rs] for Gauss in matrix
-    C_rs(0,N-2,N-3,N-2+f.cols()-1) = rs;
+    C_rs(0,N-2,N-3,N-2+y.cols()-1) = rs;
     for(i=1; i<N-2; i++) C_rs.row(i) = C_rs.row(i) - C_rs.row(i-1)*C_rs(i,i-1)/C_rs(i-1,i-1); // C_rs -> upper triangular matrix C1 -> C1 rs1
-    fmatvec::Mat rs1 = C_rs(0,N-2,N-3,N-2+f.cols()-1);
+    fmatvec::Mat rs1 = C_rs(0,N-2,N-3,N-2+y.cols()-1);
     fmatvec::Mat C1 = C_rs(0,0,N-3,N-3);
-    fmatvec::Mat c(N-2,f.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat c(N-2,y.cols(),fmatvec::INIT,0.0);
     for(i=N-3;i>=0 ;i--) { // backward substitution
-      fmatvec::RowVecV sum_ciCi(f.cols(),fmatvec::NONINIT); 
+      fmatvec::RowVecV sum_ciCi(y.cols(),fmatvec::NONINIT);
       sum_ciCi.init(0.);
       for(int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
       c.row(i)= (rs1.row(i) - sum_ciCi)/C1(i,i);
     }
-    fmatvec::Mat ctmp(N,f.cols(),fmatvec::INIT,0.0);
-    ctmp(1,0,N-2,f.cols()-1) = c; // c1=cN=0 natural splines c=[ 0; c; 0]
+    fmatvec::Mat ctmp(N,y.cols(),fmatvec::INIT,0.0);
+    ctmp(1,0,N-2,y.cols()-1) = c; // c1=cN=0 natural splines c=[ 0; c; 0]
 
     // vector ordering of the further coefficients
-    fmatvec::Mat d(N-1,f.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat b(N-1,f.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat a(N-1,f.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat b(N-1,y.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat a(N-1,y.cols(),fmatvec::INIT,0.0);
 
     for(i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
-      a.row(i) = f.row(i);
+      a.row(i) = y.row(i);
       d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
-      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
+      b.row(i) = (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
     }
 
     breaks.resize(N);
     breaks = x;
     coefs.push_back(d);
-    coefs.push_back(ctmp(0,0,N-2,f.cols()-1));
+    coefs.push_back(ctmp(0,0,N-2,y.cols()-1));
     coefs.push_back(b);
     coefs.push_back(a);
   }
 
   template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::calculatePLinear(const fmatvec::VecV &x, const fmatvec::MatV &f) {
+  void PiecewisePolynomFunction<Ret(Arg)>::calculatePLinear() {
     int N = x.size(); // number of supporting points
 
     breaks.resize(N);
     breaks = x;
 
-    fmatvec::Mat m(N-1,f.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat a(N-1,f.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat m(N-1,y.cols(),fmatvec::INIT,0.0);
+    fmatvec::Mat a(N-1,y.cols(),fmatvec::INIT,0.0);
     for(int i=1;i<N;i++) {
-      m.row(i-1) = (f.row(i)-f.row(i-1))/(x(i)-x(i-1)); // slope
-      a.row(i-1) = f.row(i-1);
+      m.row(i-1) = (y.row(i)-y.row(i-1))/(x(i)-x(i-1)); // slope
+      a.row(i-1) = y.row(i-1);
     }
     coefs.push_back(m);
     coefs.push_back(a);
@@ -492,19 +511,14 @@ namespace MBSim {
     fmatvec::MatV y;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
     if (e) {
-      x=Element::getVec(e);
+      setx(Element::getVec(e));
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-      y=Element::getMat(e, x.size(), 0);
+      sety(Element::getMat(e, x.size(), 0));
     }
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
-      fmatvec::MatV xy=Element::getMat(e);
-      if(xy.cols() <= 1)
-        THROW_MBSIMERROR("Dimension missmatch in size of xy");
-      x=xy.col(0);
-      y=xy(fmatvec::Index(0, xy.rows()-1), fmatvec::Index(1, xy.cols()-1));
+      setxy(Element::getMat(e));
     }
-    InterpolationMethod method=cSplineNatural;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
     if(e) { 
       std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
@@ -513,11 +527,8 @@ namespace MBSim {
       else if(str=="cSplineNatural") method=cSplineNatural;
       else if(str=="piecewiseLinear") method=piecewiseLinear;
     }
-    setXF(x, y, method);
   }
-
 
 }
 
 #endif /* PPOLYNOM */
-
