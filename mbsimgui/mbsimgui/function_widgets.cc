@@ -375,12 +375,12 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    x = new ExtWidget("X",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    x = new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
     layout->addWidget(x);
-    y = new ExtWidget("Y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
+    y = new ExtWidget("y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3,QStringList()))));
     layout->addWidget(y);
-    xy = new ExtWidget("XY",new ChoiceWidget2(new MatWidgetFactory(getScalars<QString>(3,3,"0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
-    layout->addWidget(xy);
+    z = new ExtWidget("z",new ChoiceWidget2(new MatWidgetFactory(getScalars<QString>(3,3,"0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+    layout->addWidget(z);
   }
 
   void TwoDimensionalTabularFunctionWidget::resize_(int m, int n) {
@@ -390,9 +390,9 @@ namespace MBSimGUI {
     //choice_ = static_cast<ChoiceWidget2*>(y->getWidget());
     //if(choice_->getIndex()==0)
     //  y->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
-    //choice_ = static_cast<ChoiceWidget2*>(xy->getWidget());
+    //choice_ = static_cast<ChoiceWidget2*>(z->getWidget());
     //if(choice_->getIndex()==0)
-    //  xy->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
+    //  z->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
   }
 
   PiecewisePolynomFunctionWidget::PiecewisePolynomFunctionWidget(int n) {

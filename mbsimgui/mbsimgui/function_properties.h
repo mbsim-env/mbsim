@@ -233,7 +233,7 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
 
     protected:
-      ExtProperty x, y ,xy;
+      ExtProperty x, y ,z;
   };
 
   class PiecewisePolynomFunction : public Function {

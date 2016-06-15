@@ -92,7 +92,8 @@ namespace MBSim {
        *                                'piecewiseLinear'    -> piecewise linear function (weak differentiable)
        */
       void setXF(const fmatvec::VecV &x, const fmatvec::MatV &f, InterpolationMethod method=cSplineNatural) {
-        assert(x.size() == f.rows());
+        if(x.size() != f.rows())
+          THROW_MBSIMERROR("Dimension missmatch in size of x");
 
         if(method == cSplinePeriodic) {
           calculateSplinePeriodic(x,f);   
@@ -125,7 +126,7 @@ namespace MBSim {
        * \param polynomial coefficients
        * \param interval boundaries
        */
-      void setPP(const std::vector<fmatvec::MatV> &coefs_u, const fmatvec::Vec &breaks_u) {
+      void setPP(const std::vector<fmatvec::MatV> &coefs_u, const fmatvec::VecV &breaks_u) {
         coefs = coefs_u; 
         breaks = breaks_u;
         index = 0;
@@ -148,7 +149,7 @@ namespace MBSim {
       /**
        * \brief vector of breaks (interval boundaries)
        */
-      fmatvec::Vec breaks;
+      fmatvec::VecV breaks;
 
       /**
        * \brief number of defined piecewise polynomials 
@@ -498,7 +499,8 @@ namespace MBSim {
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
       fmatvec::MatV xy=Element::getMat(e);
-      assert(xy.cols()>1);
+      if(xy.cols() <= 1)
+        THROW_MBSIMERROR("Dimension missmatch in size of xy");
       x=xy.col(0);
       y=xy(fmatvec::Index(0, xy.rows()-1), fmatvec::Index(1, xy.cols()-1));
     }

@@ -518,15 +518,15 @@ namespace MBSimGUI {
   }
 
   TwoDimensionalTabularFunction::TwoDimensionalTabularFunction(const string &name, Element *parent) : Function(name,parent) {
-    x.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"xValues",vector<string>(3,"")),"",4));
-    y.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"yValues",vector<string>(3,"")),"",4));
-    xy.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,1,"0"),MBSIM%"xyValues",vector<string>(3,"")),"",4));
+    x.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"x",vector<string>(3,"")),"",4));
+    y.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"y",vector<string>(3,"")),"",4));
+    z.setProperty(new ChoiceProperty2(new MatPropertyFactory(getScalars<string>(3,1,"0"),MBSIM%"z",vector<string>(3,"")),"",4));
   }
 
   DOMElement* TwoDimensionalTabularFunction::initializeUsingXML(DOMElement *element) {
     x.initializeUsingXML(element);
     y.initializeUsingXML(element);
-    xy.initializeUsingXML(element);
+    z.initializeUsingXML(element);
     return element;
   }
 
@@ -534,20 +534,20 @@ namespace MBSimGUI {
     DOMElement *ele0 = Function::writeXMLFile(parent);
     x.writeXMLFile(ele0);
     y.writeXMLFile(ele0);
-    xy.writeXMLFile(ele0);
+    z.writeXMLFile(ele0);
     return ele0;
   } 
 
   void TwoDimensionalTabularFunction::fromWidget(QWidget *widget) {
     x.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
     y.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
-    xy.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
+    z.fromWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->z);
   }
 
   void TwoDimensionalTabularFunction::toWidget(QWidget *widget) {
     x.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->x);
     y.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->y);
-    xy.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->xy);
+    z.toWidget(static_cast<TwoDimensionalTabularFunctionWidget*>(widget)->z);
   }
 
   PiecewisePolynomFunction::PiecewisePolynomFunction(const string &name, Element *parent) : Function(name,parent), choice(new TabularFunctionPropertyFactory(this),"",3), method(0,false) {

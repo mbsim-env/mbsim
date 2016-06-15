@@ -60,18 +60,20 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement * element) {
         xercesc::DOMElement *e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
         if (e) {
-          x = Element::getVec(e);
+          setx(Element::getVec(e));
           e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-          y = Element::getMat(e, x.size(), 0);
+          sety(Element::getMat(e, x.size(), 0));
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
-        if (e) {
-          fmatvec::MatV xy = Element::getMat(e);
-          if(xy.cols() <= 1)
-            THROW_MBSIMERROR("Dimension missmatch in size of xy");
-          x = xy.col(0);
-          y = xy(fmatvec::Range<fmatvec::Var, fmatvec::Var>(0, xy.rows() - 1), fmatvec::Range<fmatvec::Var, fmatvec::Var>(1, xy.cols() - 1));
-        }
+        if (e) setxy(Element::getMat(e));
+      }
+      void setx(const fmatvec::VecV &x_) { x = x_; }
+      void sety(const fmatvec::MatV &y_) { y = y_; }
+      void setxy(const fmatvec::MatV &xy) {
+        if(xy.cols() <= 1)
+          THROW_MBSIMERROR("Dimension missmatch in size of xy");
+        x = xy.col(0);
+        y = xy(fmatvec::Index(0, xy.rows() - 1), fmatvec::Index(1, xy.cols() - 1));
       }
       void init(Element::InitStage stage) {
         Function<Ret(Arg)>::init(stage);

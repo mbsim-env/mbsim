@@ -232,7 +232,7 @@ namespace MBSimGUI {
     void resize_(int m, int n);
 
     protected:
-    ExtWidget *x, *y, *xy;
+    ExtWidget *x, *y, *z;
   };
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {

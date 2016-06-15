@@ -17,8 +17,8 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#ifndef _TWO_DIMENSIONAL_TABULAR_FUNCTIONS_H_
-#define _TWO_DIMENSIONAL_TABULAR_FUNCTIONS_H_
+#ifndef _TWO_DIMENSIONAL_TABULAR_FUNCTION_H_
+#define _TWO_DIMENSIONAL_TABULAR_FUNCTION_H_
 
 #include "mbsim/functions/function.h"
 #include "mbsim/utils/utils.h"
@@ -30,96 +30,104 @@ namespace MBSim {
   template<typename Ret, typename Arg1, typename Arg2>
   class TwoDimensionalTabularFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
     public:
-      TwoDimensionalTabularFunction() : x0Index(0), x1Index(0), y0Index(0), y1Index(0), xy(4, fmatvec::INIT, 1), XYval(4, fmatvec::INIT, 0), XYfac(4, 4, fmatvec::INIT, 0) { }
+      TwoDimensionalTabularFunction() : x0Index(0), x1Index(0), y0Index(0), y1Index(0), zVal(4,fmatvec::INIT,1), zInd(4,fmatvec::INIT,0), zFac(4, 4,fmatvec::INIT,0) { }
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual void initializeUsingXML(xercesc::DOMElement *element) {
-        xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xValues");
-        fmatvec::Vec x_ = Element::getVec(e);
-        setXValues(x_);
-        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"yValues");
-        fmatvec::Vec y_ = Element::getVec(e);
-        setYValues(y_);
-        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xyValues");
-        fmatvec::Mat xy_ = Element::getMat(e, y_.size(), x_.size());
-        setXYMat(xy_);
+        xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
+        if(e) {
+          setx(Element::getVec(e));
+          e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
+          sety(Element::getVec(e));
+          e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"z");
+          setz(Element::getMat(e, y.size(), x.size()));
+        }
+        e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xyz");
+        if(e) setxyz(Element::getMat(e));
       }
-      virtual Ret operator()(const Arg1& x_, const Arg2& y_) {
-        double x = ToDouble<Arg1>::cast(x_);
-        double y = ToDouble<Arg2>::cast(y_);
-        calcIndex(x, xVec, xVec.size(), x0Index, x1Index);
-        calcIndex(y, yVec, yVec.size(), y0Index, y1Index);
+      virtual Ret operator()(const Arg1& xVal_, const Arg2& yVal_) {
+        double xVal = ToDouble<Arg1>::cast(xVal_);
+        double yVal = ToDouble<Arg2>::cast(yVal_);
+        calcIndex(xVal, x, x.size(), x0Index, x1Index);
+        calcIndex(yVal, y, y.size(), y0Index, y1Index);
 
-        xy(1) = x;
-        xy(2) = y;
-        xy(3) = x * y;
-        const double x0 = xVec(x0Index);
-        const double x1 = xVec(x1Index);
-        const double y0 = yVec(y0Index);
-        const double y1 = yVec(y1Index);
+        zVal(1) = xVal;
+        zVal(2) = yVal;
+        zVal(3) = xVal * yVal;
+        const double x0 = x(x0Index);
+        const double x1 = x(x1Index);
+        const double y0 = y(y0Index);
+        const double y1 = y(y1Index);
         const double nenner = (x0 - x1) * (y0 - y1);
-        XYval(0) = XY(y0Index, x0Index);
-        XYval(1) = XY(y0Index, x1Index);
-        XYval(2) = XY(y1Index, x0Index);
-        XYval(3) = XY(y1Index, x1Index);
-        XYfac(0, 0) = x1 * y1;
-        XYfac(0, 1) = -x0 * y1;
-        XYfac(0, 2) = -x1 * y0;
-        XYfac(0, 3) = x0 * y0;
-        XYfac(1, 0) = -y1;
-        XYfac(1, 1) = y1;
-        XYfac(1, 2) = y0;
-        XYfac(1, 3) = -y0;
-        XYfac(2, 0) = -x1;
-        XYfac(2, 1) = x0;
-        XYfac(2, 2) = x1;
-        XYfac(2, 3) = -x0;
-        XYfac(3, 0) = 1.;
-        XYfac(3, 1) = -1.;
-        XYfac(3, 2) = -1.;
-        XYfac(3, 3) = 1.;
+        zInd(0) = z(y0Index, x0Index);
+        zInd(1) = z(y0Index, x1Index);
+        zInd(2) = z(y1Index, x0Index);
+        zInd(3) = z(y1Index, x1Index);
+        zFac(0, 0) = x1 * y1;
+        zFac(0, 1) = -x0 * y1;
+        zFac(0, 2) = -x1 * y0;
+        zFac(0, 3) = x0 * y0;
+        zFac(1, 0) = -y1;
+        zFac(1, 1) = y1;
+        zFac(1, 2) = y0;
+        zFac(1, 3) = -y0;
+        zFac(2, 0) = -x1;
+        zFac(2, 1) = x0;
+        zFac(2, 2) = x1;
+        zFac(2, 3) = -x0;
+        zFac(3, 0) = 1.;
+        zFac(3, 1) = -1.;
+        zFac(3, 2) = -1.;
+        zFac(3, 3) = 1.;
 
-        return FromDouble<Ret>::cast(trans(1. / nenner * XYfac * XYval) * xy);
+        return FromDouble<Ret>::cast((trans(zFac*zInd)*zVal)/nenner);
       }
       /***************************************************/
       /* GETTER / SETTER */
-      void setXValues(const fmatvec::Vec &xVec_) { xVec = xVec_; }
-      void setYValues(const fmatvec::Vec &yVec_) { yVec = yVec_; }
-      void setXYMat(const fmatvec::Mat &XY_) { XY = XY_; }
+      void setx(const fmatvec::VecV &x_) { x = x_; }
+      void sety(const fmatvec::VecV &y_) { y = y_; }
+      void setz(const fmatvec::MatV &z_) { z = z_; }
+      void setxyz(const fmatvec::MatV &xyz) {
+        if(xyz.rows() <= 1 or xyz.cols() <= 1)
+          THROW_MBSIMERROR("Dimension missmatch in size of xyz");
+        x = xyz.row(0)(fmatvec::Index(1,xyz.cols()-1)).T();
+        y = xyz.col(0)(fmatvec::Index(1,xyz.rows()-1));
+        z = xyz(fmatvec::Index(1,xyz.rows()-1),fmatvec::Index(1,xyz.cols()-1));
+      }
 
-      double getxMin() { return xVec(0); }
-      double getxMax() { return xVec(xVec.size() - 1); }
-      double getyMin() { return yVec(0); }
-      double getyMax() { return yVec(yVec.size() - 1); }
+      double getxMin() { return x(0); }
+      double getxMax() { return x(x.size() - 1); }
+      double getyMin() { return y(0); }
+      double getyMax() { return y(y.size() - 1); }
       /***************************************************/
 
       void init(Element::InitStage stage) {
         Function<Ret(Arg1, Arg2)>::init(stage);
         if(stage==Element::preInit) {
-          if (XY.cols() != xVec.size())
-            THROW_MBSIMERROR("Dimension missmatch in xSize");
-          if (XY.rows() != yVec.size())
-            THROW_MBSIMERROR("Dimension missmatch in ySize");
-          for (int i = 1; i < xVec.size(); i++)
-            if (xVec(i - 1) >= xVec(i))
+          if (z.cols() != x.size())
+            THROW_MBSIMERROR("Dimension missmatch in size of x");
+          if (z.rows() != y.size())
+            THROW_MBSIMERROR("Dimension missmatch in size of y");
+          for (int i = 1; i < x.size(); i++)
+            if (x(i - 1) >= x(i))
               THROW_MBSIMERROR("x values must be strictly monotonic increasing!");
-          for (int i = 1; i < yVec.size(); i++)
-            if (yVec(i - 1) >= yVec(i))
+          for (int i = 1; i < y.size(); i++)
+            if (y(i - 1) >= y(i))
               THROW_MBSIMERROR("y values must be strictly monotonic increasing!");
         }
       }
     protected:
-      fmatvec::Vec xVec;
-      fmatvec::Vec yVec;
-      fmatvec::Mat XY;
+      fmatvec::VecV x;
+      fmatvec::VecV y;
+      fmatvec::MatV z;
 
       int x0Index, x1Index;
       int y0Index, y1Index;
 
-      fmatvec::Vec xy;
-      fmatvec::Vec XYval;
-      fmatvec::Mat XYfac;
+      fmatvec::VecV zVal;
+      fmatvec::VecV zInd;
+      fmatvec::MatV zFac;
 
-      void calcIndex(double x, const fmatvec::Vec &X, int xSize, int &xIndexMinus, int &xIndexPlus) {
+      void calcIndex(double x, const fmatvec::VecV &X, int xSize, int &xIndexMinus, int &xIndexPlus) {
         if (x <= X(0)) {
           xIndexPlus = 1;
           xIndexMinus = 0;
