@@ -35,7 +35,10 @@ namespace MBSim {
         piecewiseLinear
       };
 
-      TwoDimensionalPiecewisePolynomFunction() : method(cSplineNatural) { }
+      TwoDimensionalPiecewisePolynomFunction() : method(cSplineNatural) {
+        f1.setParent(this);
+        f2.setParent(this);
+      }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement * e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
