@@ -247,7 +247,7 @@ namespace MBSimGUI {
     if(i==1)
       return new TwoDimensionalTabularFunctionWidget(1);
     if(i==2)
-      return new PiecewisePolynomFunctionWidget(3);
+      return new TwoDimensionalPiecewisePolynomFunctionWidget(1);
     return NULL;
   }
 
@@ -255,7 +255,7 @@ namespace MBSimGUI {
     vector<QString> name;
     name.push_back("Symbolic function");
     name.push_back("Two dimensional tabular function");
-    name.push_back("Piecewise polynom function");
+    name.push_back("Two dimensional piecewise polynom function");
     return name;
   }
   QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {

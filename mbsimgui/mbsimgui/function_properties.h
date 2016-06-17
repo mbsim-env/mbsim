@@ -251,6 +251,21 @@ namespace MBSimGUI {
       ExtProperty method;
   };
 
+  class TwoDimensionalPiecewisePolynomFunction : public Function {
+    public:
+      TwoDimensionalPiecewisePolynomFunction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new TwoDimensionalPiecewisePolynomFunction(*this);}
+      inline std::string getType() const { return "TwoDimensionalPiecewisePolynomFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ChoiceProperty2 choice;
+      ExtProperty method;
+  };
+
   class FourierFunction : public Function {
     public:
       FourierFunction(const std::string &name, Element *parent);

@@ -4213,6 +4213,65 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="TwoDimensionalPiecewisePolynomFunction" substitutionGroup="Function" type="TwoDimensionalPiecewisePolynomFunctionType">
+    <xs:annotation>
+      <xs:documentation  xml:lang="de" xmlns="">
+        Spline-Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld hinterlegt ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TwoDimensionalPiecewisePolynomFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:sequence>
+              <xs:element name="x" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="">
+                    x-Werte.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="y" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="">
+                    y-Werte.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="z" type="pv:unknownMatrix">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="">
+                    z-Werte. Die Anzahl der Spalten der Matrix muss mit der Größe des x-Vektors und die Anzahl der Zeilen der Matrix muss mit der Größe des y-Vektors übereinstimmen.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="xyz" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Die Stützstellen und die Stützwerte sind in einer Matrix zusammengefasst.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  <dl>
+                    <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
+                    <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
+                    <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
+                  </dl>
+                </xs:documentation>
+              </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="FourierFunction" substitutionGroup="Function" type="FourierFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

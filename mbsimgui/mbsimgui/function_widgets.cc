@@ -417,6 +417,31 @@ namespace MBSimGUI {
     }
   }
 
+  TwoDimensionalPiecewisePolynomFunctionWidget::TwoDimensionalPiecewisePolynomFunctionWidget(int n) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory);
+    layout->addWidget(choice);
+
+    vector<QString> list;
+    list.push_back("\"cSplinePeriodic\"");
+    list.push_back("\"cSplineNatural\"");
+    list.push_back("\"piecewiseLinear\"");
+    method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true);
+    layout->addWidget(method);
+  }
+
+  void TwoDimensionalPiecewisePolynomFunctionWidget::resize_(int m, int n) {
+    if(choice->getIndex()==0) {
+      ChoiceWidget2 *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      ChoiceWidget2 *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      if(choice1_->getIndex()==0 && choice2_->getIndex()==0)
+        choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget())->size(),static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget())->size());
+    }
+  }
+
   FourierFunctionWidget::FourierFunctionWidget(int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

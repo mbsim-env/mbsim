@@ -248,6 +248,19 @@ namespace MBSimGUI {
     ExtWidget *method;
   };
 
+  class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {
+
+    friend class TwoDimensionalPiecewisePolynomFunction;
+
+    public:
+    TwoDimensionalPiecewisePolynomFunctionWidget(int n);
+    void resize_(int m, int n);
+
+    protected:
+    ChoiceWidget2* choice;
+    ExtWidget *method;
+  };
+
   class FourierFunctionWidget : public FunctionWidget {
 
     friend class FourierFunction;

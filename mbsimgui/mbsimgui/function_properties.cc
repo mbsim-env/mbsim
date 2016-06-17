@@ -568,6 +568,33 @@ namespace MBSimGUI {
     method.toWidget(static_cast<PiecewisePolynomFunctionWidget*>(widget)->method);
   }
 
+  TwoDimensionalPiecewisePolynomFunction::TwoDimensionalPiecewisePolynomFunction(const string &name, Element *parent) : Function(name,parent), choice(new TwoDimensionalTabularFunctionPropertyFactory(this),"",3), method(0,false) {
+    method.setProperty(new TextProperty("\"cSplineNatural\"", MBSIM%"interpolationMethod"));
+  }
+
+  DOMElement* TwoDimensionalPiecewisePolynomFunction::initializeUsingXML(DOMElement *element) {
+    choice.initializeUsingXML(element);
+    method.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* TwoDimensionalPiecewisePolynomFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    choice.writeXMLFile(ele0);
+    method.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void TwoDimensionalPiecewisePolynomFunction::fromWidget(QWidget *widget) {
+    choice.fromWidget(static_cast<TwoDimensionalPiecewisePolynomFunctionWidget*>(widget)->choice);
+    method.fromWidget(static_cast<TwoDimensionalPiecewisePolynomFunctionWidget*>(widget)->method);
+  }
+
+  void TwoDimensionalPiecewisePolynomFunction::toWidget(QWidget *widget) {
+    choice.toWidget(static_cast<TwoDimensionalPiecewisePolynomFunctionWidget*>(widget)->choice);
+    method.toWidget(static_cast<TwoDimensionalPiecewisePolynomFunctionWidget*>(widget)->method);
+  }
+
   FourierFunction::FourierFunction(const string &name, Element *parent) : Function(name,parent), a0(0,false), amplitudePhaseAngleForm(0,false), choice(new FourierFunctionPropertyFactory(this),"",3) {
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"frequency"));

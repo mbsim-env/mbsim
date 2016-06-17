@@ -260,7 +260,7 @@ namespace MBSimGUI {
     if(i==1)
       return new TwoDimensionalTabularFunction("NoName",parent);
     if(i==2)
-      return new PiecewisePolynomFunction("NoName",parent);
+      return new TwoDimensionalPiecewisePolynomFunction("NoName",parent);
     return NULL;
   }
 
@@ -268,7 +268,7 @@ namespace MBSimGUI {
     vector<FQN> name;
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TwoDimensionalTabularFunction");
-    name.push_back(MBSIM%"PiecewisePolynomFunction");
+    name.push_back(MBSIM%"TwoDimensionalPiecewisePolynomFunction");
     return name;
   }
 
