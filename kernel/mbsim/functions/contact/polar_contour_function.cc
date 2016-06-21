@@ -57,18 +57,18 @@ namespace MBSim {
   Vec3 PolarContourFunction::operator()(const double& alpha) {
     updateData(alpha);
     Vec3 f(NONINIT);
-    f(2) = 0;
     f(0) = rSave*calphaSave;
     f(1) = rSave*salphaSave;
+    f(2) = 0;
     return f;
   } 
 
   Vec3 PolarContourFunction::parDer(const double& alpha) {
     updateData(alpha);
     Vec3 f(NONINIT);
-    f(2) = 0;
     f(0) = drdalphaSave*calphaSave-rSave*salphaSave;
     f(1) = drdalphaSave*salphaSave+rSave*calphaSave;
+    f(2) = 0;
     return f;
   }
 
@@ -77,9 +77,9 @@ namespace MBSim {
     const double s1=-rSave+d2rdalpha2Save;
     const double s2=2.*drdalphaSave;
     Vec3 f(NONINIT);
-    f(2) = 0;
     f(0) = s1*calphaSave-s2*salphaSave;
     f(1) = s1*salphaSave+s2*calphaSave;
+    f(2) = 0;
     return f;
   }
 

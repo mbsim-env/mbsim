@@ -34,8 +34,8 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element);
 
       fmatvec::Vec3 operator()(const double& alpha);
-      fmatvec::Vec3 parDer(const double& alpha); // Tangente in C
-      fmatvec::Vec3 parDerParDer(const double& alpha); // 2. Ableitung in C
+      fmatvec::Vec3 parDer(const double& alpha);
+      fmatvec::Vec3 parDerParDer(const double& alpha);
 
     private:
       MBSim::Function<double(double)> *r;
