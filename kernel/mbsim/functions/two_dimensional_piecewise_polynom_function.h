@@ -35,7 +35,7 @@ namespace MBSim {
         piecewiseLinear
       };
 
-      TwoDimensionalPiecewisePolynomFunction() : method(cSplineNatural) {
+      TwoDimensionalPiecewisePolynomFunction() : method1(cSplineNatural), method2(cSplineNatural) {
         f1.setParent(this);
         f2.setParent(this);
       }
@@ -51,13 +51,21 @@ namespace MBSim {
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xyz");
         if(e) setxyz(Element::getMat(e));
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethodFirstDimension");
         if(e) { 
           std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
           str=str.substr(1,str.length()-2);
-          if(str=="cSplinePeriodic") method=cSplinePeriodic;
-          else if(str=="cSplineNatural") method=cSplineNatural;
-          else if(str=="piecewiseLinear") method=piecewiseLinear;
+          if(str=="cSplinePeriodic") method1=cSplinePeriodic;
+          else if(str=="cSplineNatural") method1=cSplineNatural;
+          else if(str=="piecewiseLinear") method1=piecewiseLinear;
+        }
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethodSecondDimension");
+        if(e) {
+          std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
+          str=str.substr(1,str.length()-2);
+          if(str=="cSplinePeriodic") method2=cSplinePeriodic;
+          else if(str=="cSplineNatural") method2=cSplineNatural;
+          else if(str=="piecewiseLinear") method2=piecewiseLinear;
         }
       }
 
@@ -124,7 +132,8 @@ namespace MBSim {
         z = xyz(fmatvec::Index(1,xyz.rows()-1),fmatvec::Index(1,xyz.cols()-1));
       }
 
-      void setInterpolationMethod(InterpolationMethod method_) { method = method_; }
+      void setInterpolationMethodFirstDimension(InterpolationMethod method1_) { method1 = method1_; }
+      void setInterpolationMethodSecondDimension(InterpolationMethod method2_) { method2 = method2_; }
 
       void init(Element::InitStage stage) {
         Function<Ret(Arg1, Arg2)>::init(stage);
@@ -141,10 +150,10 @@ namespace MBSim {
               THROW_MBSIMERROR("y values must be strictly monotonic increasing!");
           f1.setx(x);
           f1.sety(z.T());
-          f1.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(Arg1)>::InterpolationMethod>(method));
+          f1.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(Arg1)>::InterpolationMethod>(method1));
           f2.setx(y);
           f2.sety(y);
-          f2.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method));
+          f2.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method2));
         }
         f1.init(stage);
         f2.init(stage);
@@ -156,7 +165,7 @@ namespace MBSim {
       fmatvec::MatV z;
       PiecewisePolynomFunction<fmatvec::VecV(Arg1)> f1;
       PiecewisePolynomFunction<Ret(Arg2)> f2;
-      InterpolationMethod method;
+      InterpolationMethod method1, method2;
   };
 }
 
