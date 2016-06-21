@@ -679,7 +679,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
       print("Unable to evaluate the filter:\n"+args.filter)
       exit(1)
     path=os.path.normpath(root)
-    if filterResult and not "unpacked_fmu" in path.split(os.sep):
+    if filterResult and not "tmp_mbsimTestFMU" in path.split(os.sep) and not "tmp_fmuCheck" in path.split(os.sep):
       addOrDiscard(path)
 
 
@@ -1038,7 +1038,9 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   endTime=[]
   if 'MBSIM_SET_MINIMAL_TEND' in os.environ:
     endTime=['-s', '0.01']
-  comm=exePrefix()+[pj(mbsimBinDir, fmuCheck)]+endTime+["-f", "-l", "5", "-o", "fmuCheck.result.csv", "mbsim.fmu"]
+  if os.path.isdir("tmp_fmuCheck"): shutil.rmtree("tmp_fmuCheck")
+  os.mkdir("tmp_fmuCheck")
+  comm=exePrefix()+[pj(mbsimBinDir, fmuCheck)]+endTime+["-f", "-l", "5", "-o", "fmuCheck.result.csv", "-z", "tmp_fmuCheck", "mbsim.fmu"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   t0=datetime.datetime.now()
@@ -1060,11 +1062,12 @@ def executeFMIExample(executeFD, example, fmiInputFile):
 
   ### run using mbsimTestFMU
   # unpack FMU
-  zipfile.ZipFile("mbsim.fmu").extractall("unpacked_fmu")
+  if os.path.isdir("tmp_mbsimTestFMU"): shutil.rmtree("tmp_mbsimTestFMU")
+  zipfile.ZipFile("mbsim.fmu").extractall("tmp_mbsimTestFMU")
   # run mbsimTestFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
-  comm=exePrefix()+[pj(mbsimBinDir, "mbsimTestFMU"+args.exeExt), "unpacked_fmu"]
+  comm=exePrefix()+[pj(mbsimBinDir, "mbsimTestFMU"+args.exeExt), "tmp_mbsimTestFMU"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   ret3=[abs(subprocessCall(prefixSimulation(example, 'fmutst')+comm, executeFD, maxExecutionTime=args.maxExecutionTime))]
