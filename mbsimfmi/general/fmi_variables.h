@@ -223,13 +223,11 @@ class ExternSignalSourceInput : public Variable {
       sig->setSignal(curv);
     }
     const double& getValue(const double &) {
-      value=sig->evalSignal()(idx);
-      return value;
+      return sig->evalSignal()(idx);
     }
   protected:
     MBSimControl::ExternSignalSource *sig;
     int idx;
-    double value; // MISSING: remove this variable if getSignal returns a const reference!!!
 };
 
 //! FMI output variable for MBSim::ExternSignalSink
@@ -240,13 +238,11 @@ class ExternSignalSinkOutput : public Variable {
         "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
     const double& getValue(const double &) {
-      value=sig->evalSignal()(idx);
-      return value;
+      return sig->evalSignal()(idx);
     }
   protected:
     MBSimControl::ExternSignalSink *sig;
     int idx;
-    double value; // MISSING: remove this variable if getSignal returns a const reference!!!
 };
 
 //! A FMI variable which stores the value internally.
