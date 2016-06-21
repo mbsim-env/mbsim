@@ -70,7 +70,7 @@ namespace MBSim {
         piecewiseLinear
       };
 
-      PiecewisePolynomFunction() : index(0), f(this), fd(this), fdd(this) { }
+      PiecewisePolynomFunction() : index(0), method(cSplineNatural), f(this), fd(this), fdd(this) { }
 
       typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
 
