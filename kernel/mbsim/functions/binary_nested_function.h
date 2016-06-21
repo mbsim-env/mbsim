@@ -43,11 +43,8 @@ namespace MBSim {
         delete fi1;
         delete fi2;
       }
-      typename fmatvec::Size<double>::type getArg1Size() const {
+      typename fmatvec::Size<double>::type getArgSize() const {
         return fi1->getArgSize();
-      }
-      typename fmatvec::Size<double>::type getArg2Size() const {
-        return fi2->getArgSize();
       }
       Ret operator()(const double &arg) {
         return (*fo)((*fi1)(arg),(*fi2)(arg));
@@ -118,11 +115,8 @@ namespace MBSim {
         delete fi1;
         delete fi2;
       }
-      typename fmatvec::Size<Argi>::type getArg1Size() const {
+      typename fmatvec::Size<Argi>::type getArgSize() const {
         return fi1->getArgSize();
-      }
-      typename fmatvec::Size<Argi>::type getArg2Size() const {
-        return fi2->getArgSize();
       }
       Ret operator()(const Argi &arg) {
         return (*fo)((*fi1)(arg),(*fi2)(arg));
