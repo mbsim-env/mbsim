@@ -136,9 +136,16 @@ void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   for (int i=0; i<r.size(); i++)
     r(i)=nrm2(angleYZ(Index(i,i), Index(1,2)));
   pp_r=new PiecewisePolynomFunction<VecV(double)>;
-  pp_r->setXF(angleYZ.col(0), r, PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
-  updateData(1.);
+  pp_r->setParent(this);
+  pp_r->setx(angleYZ.col(0));
+  pp_r->sety(r);
+  pp_r->setInterpolationMethod(PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
 }   
+
+void FuncCrPC_PlanePolar::init(Element::InitStage stage) {
+  Function<Vec3(double)>::init(stage);
+  pp_r->init(stage);
+}
 
 Vec3 FuncCrPC_PlanePolar::operator()(const double& alpha) {
   updateData(alpha);

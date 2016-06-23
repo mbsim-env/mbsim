@@ -34,6 +34,8 @@ class FuncCrPC_PlanePolar : public MBSim::Function<fmatvec::Vec3(double)> {
   
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3,fmatvec::INIT, 0));
 
+    void init(Element::InitStage stage);
+
     fmatvec::Vec3 operator()(const double& alpha);
     fmatvec::Vec3 parDer(const double& alpha); // Tangente in C
     fmatvec::Vec3 parDerParDer(const double& alpha); // 2. Ableitung in C
