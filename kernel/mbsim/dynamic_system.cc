@@ -68,6 +68,8 @@ namespace MBSim {
       delete *i;
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       delete *i;
+    for (vector<Constraint*>::iterator i = constraint.begin(); i != constraint.end(); ++i)
+      delete *i;
     for (vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
       delete *i;
     for (vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
