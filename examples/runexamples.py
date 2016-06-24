@@ -1201,8 +1201,8 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   (xmax,ymax)=numpy.maximum(numpy.nanmax(dataArrayRef,0), numpy.nanmax(dataArrayCur,0))
   dx=(xmax-xmin)/50
   dy=(ymax-ymin)/50
-  if dx==0: dx=1
-  if dy==0: dy=1
+  if dx<1e-7: dx=1
+  if dy<1e-7: dy=1
   xmin=xmin-dx
   ymin=ymin-dy
   xmax=xmax+dx
