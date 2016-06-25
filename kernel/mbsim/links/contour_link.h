@@ -51,6 +51,11 @@ namespace MBSim {
        */
       ContourLink(const std::string &name);
 
+      /**
+       * \brief destructor
+       */
+      ~ContourLink();
+
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateh(int i=0);
       virtual void updateW(int i=0);
