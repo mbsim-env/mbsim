@@ -119,7 +119,8 @@ namespace MBSimControl {
    */
   class UnarySignalOperation : public Signal {  
     public:
-      UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) {}
+      UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) { }
+      ~UnarySignalOperation() { delete f; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setInputSignal(Signal *signal_) {s=signal_; }
@@ -142,7 +143,8 @@ namespace MBSimControl {
    */
   class BinarySignalOperation : public Signal {  
     public:
-      BinarySignalOperation(const std::string &name="") : Signal(name), s1(NULL), s2(NULL), signal1String(""), signal2String(""), f(0) {}
+      BinarySignalOperation(const std::string &name="") : Signal(name), s1(NULL), s2(NULL), signal1String(""), signal2String(""), f(0) { }
+      ~BinarySignalOperation() { delete f; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage);
       void setFirstInputSignal(Signal *signal_) {s1=signal_; }
