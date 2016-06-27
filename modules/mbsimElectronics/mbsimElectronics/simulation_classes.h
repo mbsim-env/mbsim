@@ -147,6 +147,7 @@ namespace MBSimElectronics {
       MBSim::Function<fmatvec::VecV(double)> *voltageSignal;
     public:
       VoltageSource(const std::string &name);
+      ~VoltageSource() { delete voltageSignal; }
       void setVoltageSignal(MBSim::Function<fmatvec::VecV(double)> *func) {voltageSignal = func;}
       void updateGeneralizedForces();
       std::string getType() const { return "VoltageSource"; }
@@ -172,6 +173,7 @@ namespace MBSimElectronics {
       bool sv;
     public:
       Switch(const std::string &name);
+      ~Switch() { delete voltageSignal; }
       void setSetValued(bool flag) {sv = flag;}
       bool isSetValued() const {return sv;}
       virtual bool isSingleValued() const {return not sv;}
