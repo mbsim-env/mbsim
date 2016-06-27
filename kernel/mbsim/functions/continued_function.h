@@ -30,7 +30,7 @@ namespace MBSim {
   class ContinuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
       ContinuedFunction() : f(NULL), rule(NULL) { }
-      ~ContinuedFunction() { delete f; }
+      ~ContinuedFunction() { delete f; delete rule; }
       typename fmatvec::Size<Arg>::type getArgSize() const { return f->getArgSize(); }
       Ret operator()(const Arg &x) { return (*f)((*rule)(x)); }
       typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return f->parDer((*rule)(x)); }
