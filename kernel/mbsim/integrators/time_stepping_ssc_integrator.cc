@@ -226,7 +226,7 @@ namespace MBSimIntegrator {
   void TimeSteppingSSCIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { // system: only dummy!
     Timer.start();
 
-    lae = system.getla(false);
+    lae << system.getla(false);
 
     qUncertaintyByExtrapolation=0;
 
@@ -342,7 +342,7 @@ namespace MBSimIntegrator {
               sysT1->getu() += sysT1->evaldu();
               sysT1->getx() += sysT1->evaldx();
               iterA  = sysT1->getIterI();
-              la1d = sysT1->getLa()/dt;
+              la1d << sysT1->getLa()/dt;
               sysT1->getLinkStatus(LStmp_T1);
               sysT1->resetUpToDate();
               // wird jetzt von testTolerances() direkt aufgerufen; nach jedem erfolgreichen Schritt!
@@ -370,7 +370,7 @@ namespace MBSimIntegrator {
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 iterB1  = sysT1->getIterI();
-                la2b = sysT1->getLa()/dtHalf;
+                la2b << sysT1->getLa()/dtHalf;
                 sysT1->getLinkStatus(LStmp_T1);
                 sysT1->resetUpToDate();
                 LSB1 = LStmp_T1;
@@ -416,7 +416,7 @@ namespace MBSimIntegrator {
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB1  = sysT2->getIterI();
-                la2b = sysT2->getLa()/dtHalf;
+                la2b << sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB1 = LStmp_T2;
@@ -707,7 +707,7 @@ namespace MBSimIntegrator {
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB2  = sysT2->getIterI();
-                la2b = sysT2->getLa()/dtHalf;
+                la2b << sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB2 = LStmp_T2;
@@ -873,7 +873,7 @@ namespace MBSimIntegrator {
       tPlot+=dtPlot;
       sysT1->setTime(t);
       sysT1->setState(ze);
-      sysT1->getla(false) = lae;
+      sysT1->getla(false) << lae;
       sysT1->resetUpToDate();
       sysT1->setUpdatela(false);
       sysT1->setUpdateLa(false);
