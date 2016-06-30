@@ -136,7 +136,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
     C8[1].resize(2);
 
     C7[0].resize() = SqrMatV("[280216, 0; 0, 457.203]");
-    C7[1].resize() = SqrMatV("[0, 49630; 98802.9  0]");
+    C7[1].resize() = SqrMatV("[0, 49630; 98802.9, 0]");
 
     C8[0][0].resize() = SqrMatV("[6386.14, 0; 0, 11.0674]");
     C8[0][1].resize() = SqrMatV("[0, 1216.23; 1216.23, 0]");
