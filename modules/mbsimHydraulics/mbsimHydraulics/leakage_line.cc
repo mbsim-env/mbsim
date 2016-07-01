@@ -37,6 +37,9 @@ namespace MBSimHydraulics {
 
   LeakageLine::~LeakageLine() {
     delete lpl;
+    delete s1vFunction;
+    delete s2vFunction;
+    delete glFunction;
   }
 
   double LeakageLine::evalGapLength() const {
