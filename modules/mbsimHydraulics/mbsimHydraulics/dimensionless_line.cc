@@ -73,6 +73,9 @@ namespace MBSimHydraulics {
 
   Leakage0DOF::~Leakage0DOF() {
     delete lpl;
+    delete s1vFunction;
+    delete s2vFunction;
+    delete glFunction;
   }
 
   double Leakage0DOF::evalGapLength() const {
