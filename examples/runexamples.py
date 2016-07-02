@@ -61,8 +61,8 @@ willFail=set([
   # timeout -> too long execution time at least for -O0 builds (>30min)
   pj("mechanics", "flexible_body", "perlchain_spatialRCM"),
   pj("mechanics", "flexible_body", "beltdrive"),
-  # valgrind errors in mbsimFlexibleBody
-  pj("mechanics", "flexible_body", "rotating_beam"),
+  # examples not yet reworked
+  pj("mechanics", "initial_value_problem"),
 ])
 
 # MBSim Modules
