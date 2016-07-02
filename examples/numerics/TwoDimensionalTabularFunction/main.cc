@@ -1,6 +1,6 @@
 #include <mbsim/utils/stopwatch.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/functions/tabular_function.h>
+#include <mbsim/functions/two_dimensional_tabular_function.h>
 
 #include <fstream>
 
@@ -23,13 +23,13 @@ TwoDimensionalTabularFunction<double(double,double)> read2DTabFun(string filenam
 
   getline(ifs, line);
   Vec x(line.c_str());
-  func.setXValues(x);
+  func.setx(x);
   getline(ifs, line);
   Vec y(line.c_str());
-  func.setYValues(y);
+  func.sety(y);
   getline(ifs, line);
   Mat Z(line.c_str());
-  func.setXYMat(Z);
+  func.setz(Z);
 
   return func;
 }
