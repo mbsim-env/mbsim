@@ -130,6 +130,7 @@ cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
   help="VALGRIND: add special arguments and handling for valgrind")
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out")
+cfgOpts.add_argument("--maxCompareFailure", default=200, type=float, help="Maximal number of compare failures to report. Use 0 for unlimited (default: 200)")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -1354,12 +1355,15 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
         curObjCol=getColumn(curObj,column)
         if refObjCol.shape[0]!=curObjCol.shape[0] or not numpy.all(numpy_isclose(refObjCol, curObjCol, rtol=args.rtol,
                          atol=args.atol, equal_nan=True)):
-          cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"d"))
           nrFailed[0]+=1
-          dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
-          dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
-          createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
-                         column, refLabels[column][0], dataArrayRef, dataArrayCur, gnuplotProcess)
+          if args.maxCompareFailure==0 or nrFailed[0]<=args.maxCompareFailure:
+            cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"d"))
+            dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
+            dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
+            createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
+                           column, refLabels[column][0], dataArrayRef, dataArrayCur, gnuplotProcess)
+          else:
+            cell.append(('failed (too many failures, skip reporting)',"d"))
         # everything OK
         else:
           cell.append(('passed',"s"))
