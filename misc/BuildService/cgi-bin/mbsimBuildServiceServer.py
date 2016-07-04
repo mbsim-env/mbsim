@@ -40,7 +40,7 @@ try:
     def __exit__(self, exc_type, exc_value, traceback):
       if self.rw:
         self.fd.seek(0)
-        json.dump(self.config, self.fd)
+        json.dump(self.config, self.fd, indent=2)
         self.fd.truncate()
         fcntl.lockf(self.fd, fcntl.LOCK_UN)
         self.fd.close()
