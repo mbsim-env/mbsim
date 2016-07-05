@@ -71,16 +71,15 @@ try:
         response_data['message']="Unknown session ID. Please login before saving."
       else:
         # get access token for login
-        access_token=config['session'][sessionid]['access_token']
+        login=config['session'][sessionid]['login']
         # check whether the sessionid is correct
-        if hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()!=sessionid:
+        if hmac.new(config['client_secret'].encode('utf-8'), login, hashlib.sha1).hexdigest()!=sessionid:
           response_data['success']=False
           response_data['message']="Invalid access token hmac! Maybe the login was faked! If not, try to relogin again."
         else:
           # check whether this login is permitted to save data on the server (query github collaborators)
-          headers={'Authorization': 'token '+access_token,
+          headers={'Authorization': 'token '+config['session'][sessionid]['access_token'],
                    'Accept': 'application/vnd.github.v3+json'}
-          login=config['session'][sessionid]['login']
           response=requests.get('https://api.github.com/teams/1451964/memberships/%s'%(login), headers=headers)
           if response.status_code!=200:
             response_data['success']=False
@@ -122,7 +121,7 @@ try:
             response=response.json()
             login=response['login']
             # redirect to the example web side and pass login and access token hmac as http get methode
-            sessionid=hmac.new(config['client_secret'].encode('utf-8'), access_token, hashlib.sha1).hexdigest()
+            sessionid=hmac.new(config['client_secret'].encode('utf-8'), login, hashlib.sha1).hexdigest()
             # save login and access token in a dictionary on the server
             config['session'][sessionid]={'access_token': access_token,
                                           'login': login,
