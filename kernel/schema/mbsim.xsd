@@ -491,7 +491,7 @@
           <xs:element name="constraints" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-              tbd.
+                Kontainer für <code>Constraint</code>'s (Zwangsbedingungen).
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -516,7 +516,7 @@
           <xs:element name="observers" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-              tbd.
+                Kontainer für <code>Observer</code>'s (Beobachter für kinematische und kinetische Größen).
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
