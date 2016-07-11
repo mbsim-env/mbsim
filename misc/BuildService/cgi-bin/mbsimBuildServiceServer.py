@@ -132,7 +132,7 @@ try:
             c['mbsimenvsessionid']=sessionid
             c['mbsimenvsessionid']['comment']="Session ID for www.mbsim-env.de"
             c['mbsimenvsessionid']['domain']='.www.ssl-id1.de'
-            c['mbsimenvsessionid']['path']='/mbsim-env.de'
+            c['mbsimenvsessionid']['path']='/www.mbsim-env.de'
             c['mbsimenvsessionid']['secure']=True
             c['mbsimenvsessionid']['httponly']=True
             defaultOutput=False
