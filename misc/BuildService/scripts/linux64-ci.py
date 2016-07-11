@@ -52,7 +52,7 @@ def checkToBuild(tobuild):
   
   # write file config file
   fd.seek(0);
-  json.dump(config, fd)
+  json.dump(config, fd, indent=2)
   fd.truncate();
   fcntl.lockf(fd, fcntl.LOCK_UN)
   fd.close()

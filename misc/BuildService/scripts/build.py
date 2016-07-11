@@ -357,7 +357,7 @@ def main():
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Build Results of MBSim-Env: <small>%s</small></title>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.css"/>
-  <link rel="stylesheet" href="https://octicons.github.com/components/octicons/octicons/octicons.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css"/>
   <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 </head>
 <body style="margin:0.5em">
