@@ -1,4 +1,4 @@
-var cgiPath="https://www.ssl-id1.de/mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
+var cgiPath="https://www.ssl-id1.de/www.mbsim-env.de/cgi-bin/mbsimBuildServiceServer.py";
 
 // indicate start of server commnication
 function statusCommunicating() {
