@@ -126,6 +126,17 @@ namespace MBSimGUI {
     ExtWidget *denom;
   };
 
+  class BoundedFunctionWidget : public FunctionWidget {
+
+    friend class BoundedFunction;
+
+    public:
+    BoundedFunctionWidget(int m=0);
+
+    protected:
+    ExtWidget *lowerBound, *upperBound;
+  };
+
   class SignumFunctionWidget : public FunctionWidget {
 
     friend class SignumFunction;

@@ -36,7 +36,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
     protected:
-    ExtProperty forceFunction, connections, coilSpring, forceArrow;
+    ExtProperty forceFunction, unloadedLength, connections, coilSpring, forceArrow;
   };
 
   class DirectionalSpringDamper : public Link {
@@ -50,7 +50,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
     protected:
-    ExtProperty forceDirection, forceFunction, connections, coilSpring, forceArrow;
+    ExtProperty forceDirection, unloadedLength, forceFunction, connections, coilSpring, forceArrow;
   };
 
   class GeneralizedSpringDamper : public Link {
@@ -64,7 +64,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
     protected:
-    ExtProperty function, body1, body2, connections, coilSpring, forceArrow, momentArrow;
+    ExtProperty function, unloadedLength, body1, body2, coilSpring, forceArrow, momentArrow;
   };
 
 }

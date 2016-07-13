@@ -277,6 +277,8 @@ namespace MBSimGUI {
       return new SymbolicFunction("NoName",parent,ext,var,1);
     if(i==1)
       return new ModuloFunction("NoName",parent);
+    if(i==2)
+      return new BoundedFunction("NoName",parent);
     return NULL;
   }
 
@@ -284,6 +286,7 @@ namespace MBSimGUI {
     vector<FQN> name;
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"ModuloFunction");
+    name.push_back(MBSIM%"BoundedFunction");
     return name;
   }
 

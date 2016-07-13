@@ -209,6 +209,22 @@ namespace MBSimGUI {
     layout->addWidget(denom);
   }
 
+  BoundedFunctionWidget::BoundedFunctionWidget(int m) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+    lowerBound = new ExtWidget("Lower bound",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(lowerBound);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),0));
+    upperBound = new ExtWidget("Upper bound",new ExtPhysicalVarWidget(input),true);
+    layout->addWidget(upperBound);
+  }
+
   VectorValuedFunctionWidget::VectorValuedFunctionWidget(Element *parent, int m, bool fixedSize) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -529,7 +545,7 @@ namespace MBSimGUI {
 
     input.clear();
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),lengthUnits(),4));
-    l0 = new ExtWidget("Unloaded length",new ExtPhysicalVarWidget(input));
+    l0 = new ExtWidget("Unloaded length",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(l0);
   }
 

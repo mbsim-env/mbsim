@@ -127,6 +127,20 @@ namespace MBSimGUI {
       ExtProperty denom;
   };
 
+  class BoundedFunction : public Function {
+    public:
+      BoundedFunction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new BoundedFunction(*this);}
+      inline std::string getType() const { return "BoundedFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty lowerBound, upperBound;
+  };
+
   class SignumFunction : public Function {
     public:
       SignumFunction(const std::string &name, Element *parent) : Function(name,parent) { }

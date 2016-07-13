@@ -263,6 +263,8 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(var,1,3);
     if(i==1)
       return new ModuloFunctionWidget;
+    if(i==2)
+      return new BoundedFunctionWidget;
     return NULL;
   }
 
@@ -270,6 +272,7 @@ namespace MBSimGUI {
     vector<QString> name;
     name.push_back("Symbolic function");
     name.push_back("Modulo function");
+    name.push_back("Bounded function");
     return name;
   }
 

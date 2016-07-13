@@ -413,7 +413,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *forceFunction, *connections, *coilSpring, *forceArrow;
+      ExtWidget *forceFunction, *unloadedLength, *connections, *coilSpring, *forceArrow;
   };
 
   class DirectionalSpringDamperPropertyDialog : public LinkPropertyDialog {
@@ -423,7 +423,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *forceDirection, *forceFunction, *connections, *coilSpring, *forceArrow;
+      ExtWidget *forceDirection, *unloadedLength, *forceFunction, *connections, *coilSpring, *forceArrow;
   };
 
   class GeneralizedSpringDamperPropertyDialog : public LinkPropertyDialog {
@@ -433,7 +433,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *function, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
+      ExtWidget *function, *unloadedLength, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
   };
 
   class GeneralizedFrictionPropertyDialog : public LinkPropertyDialog {

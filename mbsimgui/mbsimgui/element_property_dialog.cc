@@ -533,7 +533,6 @@ namespace MBSimGUI {
 
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
     addTab("Visualisation",3);
-    addTab("Extra");
 
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
     addToTab("Kinematics",K);
@@ -1067,6 +1066,9 @@ namespace MBSimGUI {
     forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", forceFunction);
 
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    addToTab("General",unloadedLength);
+
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
     addToTab("Kinetics", connections);
 
@@ -1080,6 +1082,7 @@ namespace MBSimGUI {
   void SpringDamperPropertyDialog::toWidget(Element *element) {
     LinkPropertyDialog::toWidget(element);
     static_cast<SpringDamper*>(element)->forceFunction.toWidget(forceFunction);
+    static_cast<SpringDamper*>(element)->unloadedLength.toWidget(unloadedLength);
     static_cast<SpringDamper*>(element)->connections.toWidget(connections);
     static_cast<SpringDamper*>(element)->coilSpring.toWidget(coilSpring);
     static_cast<SpringDamper*>(element)->forceArrow.toWidget(forceArrow);
@@ -1088,6 +1091,7 @@ namespace MBSimGUI {
   void SpringDamperPropertyDialog::fromWidget(Element *element) {
     LinkPropertyDialog::fromWidget(element);
     static_cast<SpringDamper*>(element)->forceFunction.fromWidget(forceFunction);
+    static_cast<SpringDamper*>(element)->unloadedLength.fromWidget(unloadedLength);
     static_cast<SpringDamper*>(element)->connections.fromWidget(connections);
     static_cast<SpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
     static_cast<SpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
@@ -1105,6 +1109,9 @@ namespace MBSimGUI {
     forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", forceFunction);
 
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    addToTab("General",unloadedLength);
+
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
     addToTab("Kinetics", connections);
 
@@ -1119,6 +1126,7 @@ namespace MBSimGUI {
     LinkPropertyDialog::toWidget(element);
     static_cast<DirectionalSpringDamper*>(element)->forceFunction.toWidget(forceFunction);
     static_cast<DirectionalSpringDamper*>(element)->forceDirection.toWidget(forceDirection);
+    static_cast<DirectionalSpringDamper*>(element)->unloadedLength.toWidget(unloadedLength);
     static_cast<DirectionalSpringDamper*>(element)->connections.toWidget(connections);
     static_cast<DirectionalSpringDamper*>(element)->coilSpring.toWidget(coilSpring);
     static_cast<DirectionalSpringDamper*>(element)->forceArrow.toWidget(forceArrow);
@@ -1128,6 +1136,7 @@ namespace MBSimGUI {
     LinkPropertyDialog::fromWidget(element);
     static_cast<DirectionalSpringDamper*>(element)->forceFunction.fromWidget(forceFunction);
     static_cast<DirectionalSpringDamper*>(element)->forceDirection.fromWidget(forceDirection);
+    static_cast<DirectionalSpringDamper*>(element)->unloadedLength.fromWidget(unloadedLength);
     static_cast<DirectionalSpringDamper*>(element)->connections.fromWidget(connections);
     static_cast<DirectionalSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
     static_cast<DirectionalSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
@@ -1139,6 +1148,9 @@ namespace MBSimGUI {
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", function);
+
+    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft),true);
+    addToTab("General",unloadedLength);
 
     body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);
     addToTab("General", body1);
@@ -1159,6 +1171,7 @@ namespace MBSimGUI {
   void GeneralizedSpringDamperPropertyDialog::toWidget(Element *element) {
     LinkPropertyDialog::toWidget(element);
     static_cast<GeneralizedSpringDamper*>(element)->function.toWidget(function);
+    static_cast<GeneralizedSpringDamper*>(element)->unloadedLength.toWidget(unloadedLength);
     static_cast<GeneralizedSpringDamper*>(element)->body1.toWidget(body1);
     static_cast<GeneralizedSpringDamper*>(element)->body2.toWidget(body2);
     static_cast<GeneralizedSpringDamper*>(element)->coilSpring.toWidget(coilSpring);
@@ -1169,6 +1182,7 @@ namespace MBSimGUI {
   void GeneralizedSpringDamperPropertyDialog::fromWidget(Element *element) {
     LinkPropertyDialog::fromWidget(element);
     static_cast<GeneralizedSpringDamper*>(element)->function.fromWidget(function);
+    static_cast<GeneralizedSpringDamper*>(element)->unloadedLength.fromWidget(unloadedLength);
     static_cast<GeneralizedSpringDamper*>(element)->body1.fromWidget(body1);
     static_cast<GeneralizedSpringDamper*>(element)->body2.fromWidget(body2);
     static_cast<GeneralizedSpringDamper*>(element)->coilSpring.fromWidget(coilSpring);

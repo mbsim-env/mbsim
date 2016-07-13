@@ -289,6 +289,38 @@ namespace MBSimGUI {
     denom.toWidget(static_cast<ModuloFunctionWidget*>(widget)->denom);
   }
 
+  BoundedFunction::BoundedFunction(const string &name, Element *parent) : Function(name,parent) {
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"lowerBound"));
+    lowerBound.setProperty(new ExtPhysicalVarProperty(input));
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIM%"upperBound"));
+    upperBound.setProperty(new ExtPhysicalVarProperty(input));
+  }
+
+  DOMElement* BoundedFunction::initializeUsingXML(DOMElement *element) {
+    lowerBound.initializeUsingXML(element);
+    upperBound.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* BoundedFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    lowerBound.writeXMLFile(ele0);
+    upperBound.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void BoundedFunction::fromWidget(QWidget *widget) {
+    lowerBound.fromWidget(static_cast<BoundedFunctionWidget*>(widget)->lowerBound);
+    upperBound.fromWidget(static_cast<BoundedFunctionWidget*>(widget)->upperBound);
+  }
+
+  void BoundedFunction::toWidget(QWidget *widget) {
+    lowerBound.toWidget(static_cast<BoundedFunctionWidget*>(widget)->lowerBound);
+    upperBound.toWidget(static_cast<BoundedFunctionWidget*>(widget)->upperBound);
+  }
+
   VectorValuedFunction::VectorValuedFunction(const string &name, Element *parent, int m) : Function(name,parent) {
     functions.setProperty(new ListProperty(new ChoicePropertyFactory(new FunctionPropertyFactory2(this),""),""));
     functions.setXMLName(MBSIM%"components");
@@ -693,7 +725,7 @@ namespace MBSimGUI {
     r.toWidget(static_cast<ContinuedFunctionWidget*>(widget)->r);
   }
 
-  LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
+  LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent), l0(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
