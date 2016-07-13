@@ -681,17 +681,17 @@
           </xs:element>
           <xs:element name="inverseKinetics" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob Gelenkreaktionen berechnet werden sollen.
+              Definiert, ob Gelenkreaktionen berechnet werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialProjection" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob vor Beginn der Simulation eine Projektion der generalisierten Lagen und Geschwindigkeiten erfolgen soll.
+              Definiert, ob vor Beginn der Simulation eine Projektion der generalisierten Lagen und Geschwindigkeiten erfolgen soll.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="useConstraintSolverForPlot" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit einem entsprechenden Lösungsverfahren berechnet werden sollen.
+              Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit einem entsprechenden Lösungsverfahren berechnet werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -791,7 +791,7 @@
   <xs:element name="RigidBody" substitutionGroup="Body" type="RigidBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Definiert einen Starrköper.<br/>
+        Definiert einen Starrkörper.<br/>
         Grundlage zur Definition aller kinematischen Zusammenhänge bei Starrkörpern sind zwei Koordinatensysteme, das <code>frameOfReference</code> (siehe <a class="link" href="mbsim:Object">&lt;Object&gt;</a>) und das <code>frameForKinematics</code>. Das <code>frameOfReference</code> gehört entweder zu einer Gruppe und ist somit inertial fest oder es gehört zu einem anderen Körper und kann somit bewegt sein. Das <code>frameForKinematics</code> ist ein beliebiges körperfestes Koordinatensystem. Schließlich wird die Bewegung des Starrkörpers mittels generalisierter Koordinaten oder zeitabhängiger Funktionen als Bewegung des <code>frameForKinematics</code> relativ zum <code>frameOfReference</code> definiert.<br/>
         Zur rekursiven Definition weiterer körperfester Koordinatensystem hat jeder Starrkörper automatisch ein Koordinatensystem "C" in seinem Schwerpunkt.
         <object class="figure" standby="4cm" data="rigid_body" title="Kinematische Beschreibung eines Starrkörpers"></object>
@@ -827,14 +827,14 @@
           <xs:element name="inertiaTensor" type="pv:inertiaMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Trägheitstensor des Körpers bezüglich des Schwerpunktkoordinatensystems "C".
+                Trägheitstensor des Körpers bezüglich des <code>frameForInertiaTensor</code> (standardmäßig das Schwerpunktkoordinatensystem "C").
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frameForInertiaTensor" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-              tbd
+                Definiert das KOS für den Trägheitstensor (standardmäßig das Schwerpunktkoordinatensystem "C").
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -940,23 +940,13 @@
           </xs:choice>
           <xs:element name="translationDependentRotation" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              tbd
+              Definiert, ob die Rotation von der Translation abhängt. In diesem Fall werden für Translation und Rotation dieselben Koordinaten verwendet.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              tbd
+              Definiert, ob für für die Beschreibung der Rotation eine Koordinatentransformation durchgeführt werden soll (standardmäßig an). Mit Koordinatentransformation werden für die generalisierten Koordinaten der Rotation kartesische Winkelgeschwindigkeiten verwendet. Ohne Koordinatentransformation werden die Ableitungen der Winkelkoordinaten verwendet.
             </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="rotationMapping" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function"/>
-              </xs:sequence>
-            </xs:complexType>
           </xs:element>
           <xs:element name="frames">
             <xs:annotation>
@@ -1010,8 +1000,7 @@
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
                   Definiert das MBSim KOS, mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt.<br/>
-                  Wird
-                  dieses Element nicht angegeben, so wird das KOS "C" verwendet.
+                  Wird dieses Element nicht angegeben, so wird das KOS "C" verwendet.
                 </xs:documentation>
               </xs:annotation>
               <xs:complexType>
