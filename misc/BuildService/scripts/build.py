@@ -600,16 +600,16 @@ def repoUpdate(mainFD):
       # write repUpd output to report dir
       print('Fetch remote repository '+repo+":", file=repoUpdFD)
       repoUpdFD.flush()
-      retlocal+=abs(subprocess.check_call(["git", "fetch"], stdout=repoUpdFD, stderr=repoUpdFD))
+      retlocal+=abs(subprocess.call(["git", "fetch"], stdout=repoUpdFD, stderr=repoUpdFD))
     # set branch based on args
     if eval('args.'+repo+'Branch')!="":
       print('Checkout branch '+eval('args.'+repo+'Branch')+' in repository '+repo+":", file=repoUpdFD)
-      retlocal+=abs(subprocess.check_call(["git", "checkout", eval('args.'+repo+'Branch')], stdout=repoUpdFD, stderr=repoUpdFD))
+      retlocal+=abs(subprocess.call(["git", "checkout", eval('args.'+repo+'Branch')], stdout=repoUpdFD, stderr=repoUpdFD))
       repoUpdFD.flush()
     if not args.disableUpdate:
       print('Pull current branch', file=repoUpdFD)
       repoUpdFD.flush()
-      retlocal+=abs(subprocess.check_call(["git", "pull"], stdout=repoUpdFD, stderr=repoUpdFD))
+      retlocal+=abs(subprocess.call(["git", "pull"], stdout=repoUpdFD, stderr=repoUpdFD))
     # get branch and commit
     branch=subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
     commitid=subprocess.check_output(['git', 'log', '-n', '1', '--format=%h', 'HEAD'], stderr=repoUpdFD).decode('utf-8').rstrip()
