@@ -72,7 +72,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   Mat3xV T(2), P(2);
   T(0,0) = 1;
   T(1,1) = 1;
-  P(2,0) = 0.0062634;
+  P(2,1) = 0.067808;
   body->addFrame(new FixedNodalFrame("Q", 2.*Kr, T, P));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("K")->enableOpenMBV(0.3);
