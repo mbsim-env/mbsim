@@ -46,21 +46,10 @@ directories=list() # a list of all examples sorted in descending order (filled r
 # the following examples will fail: do not report them in the Atom feed as errors
 willFail=set([
   # unknown large difference to reference solution (caused by mbsimFlexibleBody?)
-  pj("mechanics", "contacts", "self_siphoning_beads"),
-  pj("mechanics", "flexible_body", "spatial_beam_cosserat"),
-  pj("mechanics", "flexible_body", "pearlchain_cosserat_2D_POD"),
-  pj("mechanics", "flexible_body", "linear_external_ffr_spatial_beam"),
-  pj("mechanics", "flexible_body", "flexible_crank_mechanism_fe"),
   # dimension missmatch in matrix multiplication of mbsimFlexibleBody or HETS2 integrator
-  pj("mechanics", "flexible_body", "rotor"),
-  pj("mechanics", "contacts", "point_nurbsdisk"),
-  pj("mechanics", "contacts", "circle_nurbsdisk2s"),
-  pj("mechanics", "basics", "slider_crank"),
-  pj("mechanics", "flexible_body", "mfr_mindlin"),
-  pj("mechanics", "flexible_body", "block_compression"),
   # timeout -> too long execution time at least for -O0 builds (>30min)
-  pj("mechanics", "flexible_body", "perlchain_spatialRCM"),
-  pj("mechanics", "flexible_body", "beltdrive"),
+  pj("mechanics", "flexible_body", "sliding_mass_ffr"),
+  pj("mechanics", "flexible_body", "flexible_crank_mechanism_fe"),
   # examples not yet reworked
   pj("mechanics", "initial_value_problem"),
 ])
