@@ -345,12 +345,12 @@ void BlockCompression::clampRod() {
 void BlockCompression::addBoundaryConditions() {
 
   /*Bearing for the last element to the endBody*/
-  Joint* jointClampingLastElement = new Joint("Clamping Last Element");
-  jointClampingLastElement->setForceDirection(Mat("[1,0;0,1;0,0]"));
-
-  jointClampingLastElement->setForceLaw(new BilateralConstraint());
-
-  jointClampingLastElement->connect(rightJointBody->getFrameC(), blocks[0]->getFrameC());
+//  Joint* jointClampingLastElement = new Joint("Clamping Last Element");
+//  jointClampingLastElement->setForceDirection(Mat("[1,0;0,1;0,0]"));
+//
+//  jointClampingLastElement->setForceLaw(new BilateralConstraint());
+//
+//  jointClampingLastElement->connect(rightJointBody->getFrameC(), blocks[0]->getFrameC());
 //  addLink(jointClampingLastElement);
 
   /*Movement of the first element*/
