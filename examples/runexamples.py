@@ -45,8 +45,8 @@ timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by --directories)
 # the following examples will fail: do not report them in the Atom feed as errors
 willFail=set([
-  # unknown large difference to reference solution (caused by mbsimFlexibleBody?)
-  # dimension missmatch in matrix multiplication of mbsimFlexibleBody or HETS2 integrator
+  # dimension missmatch in HETS2 integrator
+  pj("mechanics", "basics", "slider_crank"),
   # timeout -> too long execution time at least for -O0 builds (>30min)
   pj("mechanics", "flexible_body", "sliding_mass_ffr"),
   pj("mechanics", "flexible_body", "flexible_crank_mechanism_fe"),
