@@ -114,6 +114,20 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> name;
   };
 
+  class SymbolicFunctionPropertyFactory1 : public PropertyFactory {
+    public:
+      SymbolicFunctionPropertyFactory1(Element *parent_, const std::string &ext_, const std::vector<std::string> &var_) : parent(parent_), name(SymbolicFunctionPropertyFactory1::getNames()), ext(ext_), var(var_) { }
+      PropertyInterface* createProperty(int i=0);
+      static std::vector<MBXMLUtils::FQN> getNames();
+      MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
+      int getSize() const { return name.size(); }
+    protected:
+      Element *parent;
+      std::vector<MBXMLUtils::FQN> name;
+      std::string ext;
+      std::vector<std::string> var;
+  };
+
   class SymbolicFunctionPropertyFactory2 : public PropertyFactory {
     public:
       SymbolicFunctionPropertyFactory2(Element *parent_, const std::string &ext_, const std::vector<std::string> &var_) : parent(parent_), name(SymbolicFunctionPropertyFactory2::getNames()), ext(ext_), var(var_) { }

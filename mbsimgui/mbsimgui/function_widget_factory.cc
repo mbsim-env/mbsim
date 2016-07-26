@@ -124,9 +124,11 @@ namespace MBSimGUI {
     if(i==9)
       return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
-      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q"),parent));
+      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
     if(i==11)
       return new PiecewisePolynomFunctionWidget(3);
+    if(i==12)
+      return new PiecewiseDefinedFunctionWidget(parent);
     return NULL;
   }
 
@@ -144,6 +146,7 @@ namespace MBSimGUI {
     name.push_back("Symbolic function");
     name.push_back("Nested function");
     name.push_back("Piecewise polynom function");
+    name.push_back("Piecewise defined function");
     return name;
   }
 
@@ -203,7 +206,7 @@ namespace MBSimGUI {
     if(i==9)
       return new RotationAboutFixedAxisWidget;
     if(i==10)
-      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory2(QStringList("q"),parent));
+      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
     if(i==11)
       return new SymbolicFunctionWidget(QStringList("q"),1,3);
     return NULL;
@@ -241,6 +244,24 @@ namespace MBSimGUI {
     return name;
   }
 
+  QWidget* SymbolicFunctionWidgetFactory1::createWidget(int i) {
+    if(i==0)
+      return new SymbolicFunctionWidget(var,1,3);
+    if(i==1)
+      return new PiecewisePolynomFunctionWidget(1);
+    if(i==2)
+      return new PiecewiseDefinedFunctionWidget(parent);
+    return NULL;
+  }
+
+  vector<QString> SymbolicFunctionWidgetFactory1::getNames() {
+    vector<QString> name;
+    name.push_back("Symbolic function");
+    name.push_back("Piecewise polynom function");
+    name.push_back("Piecewise defined function");
+    return name;
+  }
+
   QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
     if(i==0)
       return new SymbolicFunctionWidget(var,1,3);
@@ -258,6 +279,7 @@ namespace MBSimGUI {
     name.push_back("Two dimensional piecewise polynom function");
     return name;
   }
+
   QWidget* SymbolicFunctionWidgetFactory3::createWidget(int i) {
     if(i==0)
       return new SymbolicFunctionWidget(var,1,3);

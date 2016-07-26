@@ -136,9 +136,11 @@ namespace MBSimGUI {
     if(i==9)
       return new SymbolicFunction("NoName",parent,"VV",vector<string>(1,"q"),3);
     if(i==10)
-      return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory2(parent,"VV",vector<string>(1,"q")));
+      return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory1(parent,"VV",vector<string>(1,"q")));
     if(i==11)
       return new PiecewisePolynomFunction("NoName",parent);
+    if(i==12)
+      return new PiecewiseDefinedFunction("NoName",parent);
     return NULL;
   }
 
@@ -156,6 +158,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"NestedFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
+    name.push_back(MBSIM%"PiecewiseDefinedFunction");
     return name;
   }
 
@@ -216,7 +219,7 @@ namespace MBSimGUI {
     if(i==9)
       return new RotationAboutFixedAxis("NoName",parent);
     if(i==10)
-      return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory2(parent,"MV",vector<string>(1,"q")));
+      return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory1(parent,"MV",vector<string>(1,"q")));
     if(i==11)
       return new SymbolicFunction("NoName",parent,"MV",vector<string>(1,"q"),1);
     return NULL;
@@ -251,6 +254,24 @@ namespace MBSimGUI {
     vector<FQN> name;
     name.push_back(MBSIM%"NestedFunction");
     name.push_back(MBSIM%"SymbolicFunction");
+    return name;
+  }
+
+  PropertyInterface* SymbolicFunctionPropertyFactory1::createProperty(int i) {
+    if(i==0)
+      return new SymbolicFunction("NoName",parent,ext,var,1);
+    if(i==1)
+      return new PiecewisePolynomFunction("NoName",parent);
+    if(i==2)
+      return new PiecewiseDefinedFunction("NoName",parent);
+    return NULL;
+  }
+
+  vector<FQN> SymbolicFunctionPropertyFactory1::getNames() {
+    vector<FQN> name;
+    name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"PiecewisePolynomFunction");
+    name.push_back(MBSIM%"PiecewiseDefinedFunction");
     return name;
   }
 
