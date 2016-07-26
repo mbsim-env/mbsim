@@ -35,83 +35,60 @@ namespace MBSim {
 
   template<typename Sig> class PiecewiseDefinedFunction; 
 
-  template<typename Ret, typename Arg>
-  class PiecewiseDefinedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+  template<typename Ret>
+  class PiecewiseDefinedFunction<Ret(double)> : public Function<Ret(double)> {
     public:
-      PiecewiseDefinedFunction() : contDiff(0), shiftAbscissa(false), shiftOrdinate(false) { a.push_back(0); }
+      PiecewiseDefinedFunction() : shiftAbscissa(false), shiftOrdinate(false) { a.push_back(0); }
       ~PiecewiseDefinedFunction() {
         for(unsigned int i=0; i<function.size(); i++)
           delete function[i];
       }
-      void addLimitedFunction(const LimitedFunction<Ret(Arg)> &limitedFunction) {
+      void addLimitedFunction(const LimitedFunction<Ret(double)> &limitedFunction) {
         function.push_back(limitedFunction.function);
         limitedFunction.function->setParent(this);
         a.push_back(limitedFunction.limit);
       }
-      void setContinouslyDifferentiable(Arg contDiff_) { contDiff = contDiff_; }
       Ret zeros(const Ret &x) { return Ret(x.size()); }
-      Ret operator()(const Arg &x) {
+      Ret operator()(const double &x) {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return y0[i] + (*function[i])(x-x0[i]);
-        if(contDiff==0)
-          return yEnd;
-        else if(contDiff==1)
-          return yEnd+ysEnd*(x-a[a.size()-1]);
-        else
-          return yEnd+(ysEnd+0.5*yssEnd*(x-a[a.size()-1]))*(x-a[a.size()-1]);
+        throw MBSimError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr(a[function.size()]));
       }
       typename fmatvec::Der<Ret, double>::type parDer(const double &x) {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDer(x-x0[i]);
-        if(contDiff==0)
-          return zeros(yEnd);
-        else if(contDiff==1)
-          return ysEnd;
-        else
-          return ysEnd+yssEnd*(x-a[a.size()-1]);
+        throw MBSimError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr(a[function.size()]));
       }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) {
+      typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &xDir, const double &x) {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDerDirDer(xDir,x-x0[i]);
-        if(contDiff==0)
-          return zeros(yEnd);
-        else if(contDiff==1)
-          return zeros(yEnd);
-        else
-          return yssEnd;
+        throw MBSimError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr(a[function.size()]));
       }
       typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
             return function[i]->parDerParDer(x-x0[i]);
-        if(contDiff==0)
-          return zeros(yEnd);
-        else if(contDiff==1)
-          return zeros(yEnd);
-        else
-          return yssEnd;
+        throw MBSimError("(PiecewiseDefinedFunction::parDerParDer): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr(a[function.size()]));
       }
 
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
         xercesc::DOMElement *ee=e->getFirstElementChild();
         while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
-          addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))));
+          addLimitedFunction(LimitedFunction<Ret(double)>(ObjectFactory::createAndInit<Function<Ret(double)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))));
           ee=ee->getNextElementSibling();
         }
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftAbscissa");
         if(e) shiftAbscissa=Element::getBool(e);
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
         if(e) shiftOrdinate=Element::getBool(e);
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continouslyDifferentiable");
-        if(e) contDiff=Element::getInt(e);
       }
       void init(Element::InitStage stage) {
-        Function<Ret(Arg)>::init(stage);
-        for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
+        Function<Ret(double)>::init(stage);
+        for(typename std::vector<Function<Ret(double)> *>::iterator it=function.begin(); it!=function.end(); it++)
           (*it)->init(stage);
         if(stage==Element::preInit) {
           if(shiftAbscissa) {
@@ -126,11 +103,80 @@ namespace MBSim {
             for(unsigned int i=1; i<a.size(); i++)
               y0[i] = (*this)(a[i]);
           }
-          yEnd = (*this)(a[a.size()-1]);
-          if(contDiff>0) {
-            ysEnd = function[function.size()-1]->parDer(a[a.size()-1]-x0[a.size()-2]);
-            if(contDiff>1)
-              yssEnd = function[function.size()-1]->parDerParDer(a[a.size()-1]-x0[a.size()-2]);
+        }
+      }
+    private:
+      std::vector<Function<Ret(double)> *> function;
+      std::vector<double> a, x0;
+      std::vector<Ret> y0;
+      bool shiftAbscissa, shiftOrdinate;
+  };
+
+  template<>
+    inline double PiecewiseDefinedFunction<double(double)>::zeros(const double &x) { return 0; } 
+
+  template<typename Ret, typename Arg>
+  class PiecewiseDefinedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    public:
+      PiecewiseDefinedFunction() : shiftAbscissa(false), shiftOrdinate(false) { a.push_back(0); }
+      ~PiecewiseDefinedFunction() {
+        for(unsigned int i=0; i<function.size(); i++)
+          delete function[i];
+      }
+      void addLimitedFunction(const LimitedFunction<Ret(Arg)> &limitedFunction) {
+        function.push_back(limitedFunction.function);
+        limitedFunction.function->setParent(this);
+        a.push_back(limitedFunction.limit);
+      }
+      typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+      Ret zeros(const Ret &x) { return Ret(x.size()); }
+      Ret operator()(const Arg &x) {
+        for(unsigned int i=0; i<function.size(); i++)
+          if(ToDouble<Arg>::cast(x)<=a[i+1])
+            return y0[i] + (*function[i])(x-FromDouble<Arg>::cast(x0[i]));
+        throw MBSimError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr(a[function.size()]));
+      }
+      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {
+        for(unsigned int i=0; i<function.size(); i++)
+          if(ToDouble<Arg>::cast(x)<=a[i+1])
+            return function[i]->parDer(x-FromDouble<Arg>::cast(x0[i]));
+        throw MBSimError("(PiecewiseDefinedFunction::parDer): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr(a[function.size()]));
+      }
+      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) {
+        for(unsigned int i=0; i<function.size(); i++)
+          if(ToDouble<Arg>::cast(x)<=a[i+1])
+            return function[i]->parDerDirDer(xDir,x-FromDouble<Arg>::cast(x0[i]));
+        throw MBSimError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr(a[function.size()]));
+      }
+
+      void initializeUsingXML(xercesc::DOMElement *element) {
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
+        xercesc::DOMElement *ee=e->getFirstElementChild();
+        while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
+          addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),Element::getDouble(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))));
+          ee=ee->getNextElementSibling();
+        }
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftAbscissa");
+        if(e) shiftAbscissa=Element::getBool(e);
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftOrdinate");
+        if(e) shiftOrdinate=Element::getBool(e);
+      }
+      void init(Element::InitStage stage) {
+        Function<Ret(Arg)>::init(stage);
+        for(typename std::vector<Function<Ret(Arg)> *>::iterator it=function.begin(); it!=function.end(); it++)
+          (*it)->init(stage);
+        if(stage==Element::preInit) {
+          if(shiftAbscissa) {
+            for(unsigned int i=1; i<a.size(); i++)
+              a[i] += a[i-1];
+            x0 = a;
+          }
+          else
+            x0.resize(a.size());
+          y0.resize(a.size(),zeros((*function[0])(Arg(1))));
+          if(shiftOrdinate) {
+            for(unsigned int i=1; i<a.size(); i++)
+              y0[i] = (*this)(FromDouble<Arg>::cast(a[i]));
           }
         }
       }
@@ -138,13 +184,11 @@ namespace MBSim {
       std::vector<Function<Ret(Arg)> *> function;
       std::vector<double> a, x0;
       std::vector<Ret> y0;
-      int contDiff;
-      Ret yEnd, ysEnd, yssEnd;
       bool shiftAbscissa, shiftOrdinate;
   };
 
-  template<>
-    inline double PiecewiseDefinedFunction<double(double)>::zeros(const double &x) { return 0; } 
+  template <>
+    inline double PiecewiseDefinedFunction<double(fmatvec::VecV)>::zeros(const double &x) { return 0; }
 
 }
 

@@ -30,4 +30,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewiseDefinedFunction<double(double)>, MBSIM%"PiecewiseDefinedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewiseDefinedFunction<VecV(double)>, MBSIM%"PiecewiseDefinedFunction")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewiseDefinedFunction<Vec3(double)>, MBSIM%"PiecewiseDefinedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewiseDefinedFunction<double(VecV)>, MBSIM%"PiecewiseDefinedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewiseDefinedFunction<VecV(VecV)>, MBSIM%"PiecewiseDefinedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewiseDefinedFunction<Vec3(VecV)>, MBSIM%"PiecewiseDefinedFunction")
+
 }
