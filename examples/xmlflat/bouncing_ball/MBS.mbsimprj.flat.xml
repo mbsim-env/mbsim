@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project"><?OriginalFilename MBS.mbsimprj.xml?><?LineNr 2?>
 
+  <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
+
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS"><?LineNr 4?>
     <frames><?LineNr 5?>
       <FixedRelativeFrame name="P1"><?LineNr 6?>

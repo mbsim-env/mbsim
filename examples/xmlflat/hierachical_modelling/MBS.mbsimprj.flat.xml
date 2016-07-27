@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
   <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
       xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
     <frames/>
@@ -93,9 +94,9 @@
                   <LinearSpringDamperForce>
                     <stiffnessCoefficient>1e3</stiffnessCoefficient>
                     <dampingCoefficient>0</dampingCoefficient>
-                    <unloadedLength>0.5</unloadedLength>
                   </LinearSpringDamperForce>
                 </forceFunction>
+                <unloadedLength>0.5</unloadedLength>
                 <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
                 <enableOpenMBVCoilSpring>
                   <numberOfCoils>5</numberOfCoils>
@@ -108,9 +109,9 @@
                   <LinearSpringDamperForce>
                     <stiffnessCoefficient>1e2</stiffnessCoefficient>
                     <dampingCoefficient>0</dampingCoefficient>
-                    <unloadedLength>0.5</unloadedLength>
                   </LinearSpringDamperForce>
                 </forceFunction>
+                <unloadedLength>0.5</unloadedLength>
                 <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
                 <enableOpenMBVCoilSpring>
                   <numberOfCoils>5</numberOfCoils>
@@ -244,9 +245,9 @@
                   <LinearSpringDamperForce>
                     <stiffnessCoefficient>1e3</stiffnessCoefficient>
                     <dampingCoefficient>0</dampingCoefficient>
-                    <unloadedLength>0.5</unloadedLength>
                   </LinearSpringDamperForce>
                 </forceFunction>
+                <unloadedLength>0.5</unloadedLength>
                 <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
                 <enableOpenMBVCoilSpring>
                   <numberOfCoils>5</numberOfCoils>
@@ -259,9 +260,9 @@
                   <LinearSpringDamperForce>
                     <stiffnessCoefficient>1e2</stiffnessCoefficient>
                     <dampingCoefficient>0</dampingCoefficient>
-                    <unloadedLength>0.5</unloadedLength>
                   </LinearSpringDamperForce>
                 </forceFunction>
+                <unloadedLength>0.5</unloadedLength>
                 <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
                 <enableOpenMBVCoilSpring>
                   <numberOfCoils>5</numberOfCoils>

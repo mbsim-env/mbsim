@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+  <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
   <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
       xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
     <position>[0;0;0]</position><!-- dummy -->
