@@ -202,7 +202,7 @@ namespace MBSimGUI {
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
     protected:
-      ExtProperty functions, contDiff, shiftAbscissa, shiftOrdinate;
+      ExtProperty functions, shiftAbscissa, shiftOrdinate;
   };
 
   class SymbolicFunction : public Function {

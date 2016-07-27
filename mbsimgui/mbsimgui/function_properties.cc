@@ -427,8 +427,6 @@ namespace MBSimGUI {
     functions.setProperty(new ListProperty(new LimitedFunctionFunctionPropertyFactory(new FunctionPropertyFactory2(this),""),""));
     functions.setXMLName(MBSIM%"limitedFunctions");
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"continouslyDifferentiable"));
-    contDiff.setProperty(new ExtPhysicalVarProperty(input));
     input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"shiftAbscissa"));
     shiftAbscissa.setProperty(new ExtPhysicalVarProperty(input));
@@ -439,7 +437,6 @@ namespace MBSimGUI {
 
   DOMElement* PiecewiseDefinedFunction::initializeUsingXML(DOMElement *element) {
     functions.initializeUsingXML(element);
-    contDiff.initializeUsingXML(element);
     shiftAbscissa.initializeUsingXML(element);
     shiftOrdinate.initializeUsingXML(element);
     return element;
@@ -448,7 +445,6 @@ namespace MBSimGUI {
   DOMElement* PiecewiseDefinedFunction::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Function::writeXMLFile(parent);
     functions.writeXMLFile(ele0);
-    contDiff.writeXMLFile(ele0);
     shiftAbscissa.writeXMLFile(ele0);
     shiftOrdinate.writeXMLFile(ele0);
     return ele0;
@@ -456,14 +452,12 @@ namespace MBSimGUI {
 
   void PiecewiseDefinedFunction::fromWidget(QWidget *widget) {
     functions.fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->functions);
-    contDiff.fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
     shiftAbscissa.fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->shiftAbscissa);
     shiftOrdinate.fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->shiftOrdinate);
   }
 
   void PiecewiseDefinedFunction::toWidget(QWidget *widget) {
     functions.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->functions);
-    contDiff.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
     shiftAbscissa.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->shiftAbscissa);
     shiftOrdinate.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->shiftOrdinate);
   }

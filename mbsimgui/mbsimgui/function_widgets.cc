@@ -310,8 +310,6 @@ namespace MBSimGUI {
 
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-    contDiff = new ExtWidget("Continously differentiable",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(contDiff);
 
     input.clear();
     input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),noUnitUnits(),1));
