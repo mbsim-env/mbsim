@@ -190,9 +190,9 @@
           <LinearSpringDamperForce>
             <stiffnessCoefficient unit="N/m">1</stiffnessCoefficient>
             <dampingCoefficient unit="N*s/m">0.01</dampingCoefficient>
-            <unloadedLength unit="m">0</unloadedLength>
           </LinearSpringDamperForce>
         </generalizedForceFunction>
+        <unloadedGeneralizedLength>0</unloadedGeneralizedLength>
         <rigidBodySecondSide ref="../Object[RigidBody1]"/>
       </GeneralizedSpringDamper>
       <GeneralizedSpringDamper name="GeneralizedSpringDamper4">
@@ -200,9 +200,9 @@
           <LinearSpringDamperForce>
             <stiffnessCoefficient unit="N/m">1</stiffnessCoefficient>
             <dampingCoefficient unit="N*s/m">0.01</dampingCoefficient>
-            <unloadedLength unit="m">0</unloadedLength>
           </LinearSpringDamperForce>
         </generalizedForceFunction>
+        <unloadedGeneralizedLength>0</unloadedGeneralizedLength>
         <rigidBodyFirstSide ref="../Object[RigidBody1]"/>
         <rigidBodySecondSide ref="../Object[RigidBody2]"/>
       </GeneralizedSpringDamper>

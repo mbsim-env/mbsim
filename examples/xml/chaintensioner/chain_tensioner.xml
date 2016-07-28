@@ -36,9 +36,9 @@
           <LinearSpringDamperForce>
             <stiffnessCoefficient>75</stiffnessCoefficient>
             <dampingCoefficient>.5</dampingCoefficient>
-            <unloadedLength unit="mm">2</unloadedLength>
           </LinearSpringDamperForce>
         </h:forceFunction>
+        <h:unloadedLength unit="mm">2</h:unloadedLength>
       </h:Spring>
       <h:SeatContact>
         <h:contactForceLaw>
@@ -199,9 +199,9 @@
         <LinearSpringDamperForce>
           <stiffnessCoefficient>3500</stiffnessCoefficient>
           <dampingCoefficient>1</dampingCoefficient>
-          <unloadedLength unit="cm">6</unloadedLength>
         </LinearSpringDamperForce>
       </forceFunction>
+      <unloadedLength unit="cm">6</unloadedLength>
       <connect ref1="../Object[Housing]/Frame[PistonSpringMount]" ref2="../Object[Piston]/Frame[PistonSpringMount]"/>
       <enableOpenMBVCoilSpring>
 <!--        <minimalColorValue>-88</minimalColorValue>

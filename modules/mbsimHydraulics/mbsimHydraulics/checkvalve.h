@@ -55,6 +55,7 @@ namespace MBSimHydraulics {
       void setBallMass(double mBall_);
       void setBallInitialPosition(double x0Ball_);
       void setSpringForceFunction(MBSim::Function<double(double,double)> *func);
+      void setSpringUnloadedLength(double l0);
       void setSeatContactImpactLaw(MBSim::GeneralizedImpactLaw * seatGIL_);
       void setSeatContactForceLaw(MBSim::GeneralizedForceLaw * seatGFL_);
       void setMaximalOpening(double hMax_) {hMax=hMax_; }

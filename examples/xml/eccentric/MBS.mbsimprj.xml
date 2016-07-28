@@ -294,9 +294,9 @@
             <LinearSpringDamperForce>
               <stiffnessCoefficient unit="N/m">c1</stiffnessCoefficient>
               <dampingCoefficient unit="N*s/m">d1</dampingCoefficient>
-              <unloadedLength unit="m">l01</unloadedLength>
             </LinearSpringDamperForce>
           </forceFunction>
+          <unloadedLength unit="m">l01</unloadedLength>
           <connect ref1="../Frame[I]" ref2="../Object[Mass]/Frame[P1]"/>
           <enableOpenMBVCoilSpring>
             <?OPENMBV_ID 16?>
@@ -309,9 +309,9 @@
             <LinearSpringDamperForce>
               <stiffnessCoefficient unit="N/m">c2</stiffnessCoefficient>
               <dampingCoefficient unit="N*s/m">d2</dampingCoefficient>
-              <unloadedLength unit="m">l02</unloadedLength>
             </LinearSpringDamperForce>
           </forceFunction>
+          <unloadedLength unit="m">l02</unloadedLength>
           <connect ref1="../Object[Mass]/Frame[P2]" ref2="../Object[RigidBody]/Frame[C]"/>
           <enableOpenMBVCoilSpring>
             <?OPENMBV_ID 17?>

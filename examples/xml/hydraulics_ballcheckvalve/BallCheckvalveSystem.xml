@@ -27,9 +27,9 @@
           <LinearSpringDamperForce xmlns="http://www.mbsim-env.de/MBSim">
             <stiffnessCoefficient>cvSpringStiffness</stiffnessCoefficient>
             <dampingCoefficient>cvSpringDamping</dampingCoefficient>
-            <unloadedLength>cvMaximalOpening-cvSpringF0/cvSpringStiffness</unloadedLength>
           </LinearSpringDamperForce>
         </forceFunction>
+        <unloadedLength>cvMaximalOpening-cvSpringF0/cvSpringStiffness</unloadedLength>
       </Spring>
       <SeatContact>
         <contactForceLaw>
@@ -181,9 +181,9 @@
         <LinearSpringDamperForce>
           <stiffnessCoefficient>pistonSpringStiffness</stiffnessCoefficient>
           <dampingCoefficient>pistonSpringDamping</dampingCoefficient>
-          <unloadedLength>hpcInitialHeight-pistonSpringF0/pistonSpringStiffness</unloadedLength>
         </LinearSpringDamperForce>
       </forceFunction>
+      <unloadedLength>hpcInitialHeight-pistonSpringF0/pistonSpringStiffness</unloadedLength>
       <connect ref1="../Frame[I]" ref2="../Object[Piston]/Frame[CheckvalveF]"/>
       <enableOpenMBVCoilSpring>
         <!--<minimalColorValue>-10</minimalColorValue>
