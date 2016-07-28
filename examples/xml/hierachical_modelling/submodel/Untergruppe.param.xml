@@ -1,5 +1,5 @@
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <scalarParameter name="h1">0.5</scalarParameter>
   <scalarParameter name="h2">h1</scalarParameter>
-  <searchPath href="../{pathPrefix}files"/>
+  <import>['../',pathPrefix,'files']</import>
 </Parameter>
