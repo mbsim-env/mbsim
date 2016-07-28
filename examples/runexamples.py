@@ -1039,21 +1039,33 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   dt=(t1-t0).total_seconds()
   outFiles2=getOutFilesAndAdaptRet(example, ret2)
   # convert fmuCheck result csv file to h5 format (this is then checked as usual by compareExample)
-  if canCompare and os.path.exists("fmuCheck.result.csv"):
-    import h5py
-    import numpy
-    data=numpy.genfromtxt("fmuCheck.result.csv", dtype=float, delimiter=",", skip_header=1) # get data from csv
-    header=open("fmuCheck.result.csv", "r").readline().rstrip().split(',') # get header from csv
-    header=list(map(lambda x: x[1:-1], header)) # remove leading/trailing " form each header
-    f=h5py.File("fmuCheck.result.h5", "w") # create h5 file
-    d=f.create_dataset("fmuCheckResult", dtype='d', data=data) # create dataset with data
-    d.attrs.create("Column Label", dtype=h5py.special_dtype(vlen=bytes), data=header) # create Column Label attr with header
-    f.close() # close h5 file
+  if canCompare:
+    try:
+      print("Convert fmuCheck csv file to h5:\n", file=executeFD)
+      import h5py
+      import numpy
+      data=numpy.genfromtxt("fmuCheck.result.csv", dtype=float, delimiter=",", skip_header=1) # get data from csv
+      header=open("fmuCheck.result.csv", "r").readline().rstrip().split(',') # get header from csv
+      header=list(map(lambda x: x[1:-1], header)) # remove leading/trailing " form each header
+      f=h5py.File("fmuCheck.result.h5", "w") # create h5 file
+      d=f.create_dataset("fmuCheckResult", dtype='d', data=data) # create dataset with data
+      d.attrs.create("Column Label", dtype=h5py.special_dtype(vlen=bytes), data=header) # create Column Label attr with header
+      f.close() # close h5 file
+    except:
+      print("Failed.\n", file=executeFD)
+    else:
+      print("Done.\n", file=executeFD)
 
   ### run using mbsimTestFMU
   # unpack FMU
   if os.path.isdir("tmp_mbsimTestFMU"): shutil.rmtree("tmp_mbsimTestFMU")
-  zipfile.ZipFile("mbsim.fmu").extractall("tmp_mbsimTestFMU")
+  try:
+    print("Unzip mbsim.fmu for mbsimTestFMU:\n", file=executeFD)
+    zipfile.ZipFile("mbsim.fmu").extractall("tmp_mbsimTestFMU")
+  except:
+    print("Failed.\n", file=executeFD)
+  else:
+    print("Done.\n", file=executeFD)
   # run mbsimTestFMU
   print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
