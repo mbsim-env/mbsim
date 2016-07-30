@@ -240,7 +240,7 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
-      boost::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
+      std::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
       setOpenMBVSpineExtrusion(rb);
       rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);

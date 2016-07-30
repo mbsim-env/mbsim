@@ -16,7 +16,6 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
-using namespace boost;
 
 namespace {
 
@@ -43,7 +42,7 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
   static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
-  boost::shared_ptr<DOMParser> parser=DOMParser::create(false);
+  std::shared_ptr<DOMParser> parser=DOMParser::create(false);
 
   set<boost::filesystem::path> pluginLibFile;
 
@@ -51,7 +50,7 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
   for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(installDir/"share"/"mbsimxml"/"plugins");
       it!=boost::filesystem::directory_iterator(); it++) {
     if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
-    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+    std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
     for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries"))->
         getFirstElementChildNamed(MBSIMPLUGIN%"Library");
         e!=NULL; e=e->getNextElementSibling())
@@ -114,8 +113,8 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   // setup message streams
   static PrefixedStringBuf infoBuf("Info:    ", cout);
   static PrefixedStringBuf warnBuf("Warning: ", cerr);
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, boost::make_shared<bool>(true), boost::make_shared<ostream>(&infoBuf));
-  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, boost::make_shared<bool>(true), boost::make_shared<ostream>(&warnBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, std::make_shared<bool>(true), std::make_shared<ostream>(&infoBuf));
+  fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, std::make_shared<bool>(true), std::make_shared<ostream>(&warnBuf));
 
   loadPlugins();
 

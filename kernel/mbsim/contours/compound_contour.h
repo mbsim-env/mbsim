@@ -50,7 +50,7 @@ namespace MBSim {
       }
       virtual void plot();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGroup; }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGroup; }
 #endif
       /***************************************************/
 
@@ -82,7 +82,7 @@ namespace MBSim {
       std::vector<fmatvec::SqrMat3> AIK;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> openMBVGroup;
+      std::shared_ptr<OpenMBV::Group> openMBVGroup;
 #endif
   };
 }

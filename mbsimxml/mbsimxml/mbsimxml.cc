@@ -17,7 +17,7 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
   vector<pair<string, string> > schema; // pair<namespace, schemaLocation>
 
   static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
-  boost::shared_ptr<DOMParser> parser;
+  std::shared_ptr<DOMParser> parser;
   parser=DOMParser::create(true);
   parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd");
 
@@ -25,7 +25,7 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
   string ns, loc;
   for(bfs::directory_iterator it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
     if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
-    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+    std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
     for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas"))->
         getFirstElementChildNamed(MBSIMPLUGIN%"Schema");
         e!=NULL; e=e->getNextElementSibling())

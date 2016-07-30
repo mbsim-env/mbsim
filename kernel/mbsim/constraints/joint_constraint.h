@@ -125,7 +125,7 @@ namespace MBSim {
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
       std::string saved_IndependentBody, saved_IndependentBody2;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
+      std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
 #endif
   };
 

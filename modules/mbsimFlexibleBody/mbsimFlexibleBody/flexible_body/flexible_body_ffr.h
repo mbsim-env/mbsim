@@ -221,7 +221,7 @@ namespace MBSimFlexibleBody {
       using Body::addContour;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVRigidBody(const boost::shared_ptr<OpenMBV::RigidBody> &body);
+      void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &body);
       void setOpenMBVFrameOfReference(MBSim::Frame * frame) {openMBVFrame=frame; }
       const MBSim::Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 
@@ -417,7 +417,7 @@ namespace MBSimFlexibleBody {
        * \brief Frame of reference for drawing openMBVBody
        */
       MBSim::Frame * openMBVFrame;
-      boost::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
+      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
 #endif
   };
 

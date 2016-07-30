@@ -20,7 +20,6 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 using namespace H5;
-using namespace boost;
 
 #include <hdf5serie/vectorserie.h>
 #include <fmatvec/fmatvec.h>
@@ -105,7 +104,7 @@ System::System(const string &projectName) :
 
   Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+  std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements*4); // resolution of visualisation
   cuboid->setDiffuseColor(1/3.0, 1, 1);// color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.);// orthotropic scaling of cross section

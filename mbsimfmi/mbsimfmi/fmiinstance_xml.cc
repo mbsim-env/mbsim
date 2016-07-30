@@ -11,7 +11,7 @@ using namespace boost::filesystem;
 
 namespace MBSimFMI {
 
-  void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
+  void FMIInstance::addModelParametersAndCreateDSS(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model file
     path mbsimflatxmlfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
 
@@ -21,7 +21,7 @@ namespace MBSimFMI {
   
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim flat XML model file."<<endl;
-    boost::shared_ptr<xercesc::DOMDocument> doc=parser->parse(mbsimflatxmlfile);
+    std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(mbsimflatxmlfile);
   
     // create object for DynamicSystemSolver
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;

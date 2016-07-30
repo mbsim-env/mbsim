@@ -194,7 +194,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* OpenMBV */
 #ifdef HAVE_OPENMBVCPPINTERFACE
   /* axis */
-  boost::shared_ptr<OpenMBV::Frustum> obj1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> obj1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   obj1->setBaseRadius(r_axis);
   obj1->setTopRadius(r_axis);
   obj1->setHeight(l_axis);
@@ -204,7 +204,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   axis->setOpenMBVRigidBody(obj1);
 
   /* pole */
-  boost::shared_ptr<OpenMBV::Frustum> obj2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> obj2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   obj2->setBaseRadius(r_pole);
   obj2->setTopRadius(r_pole);
   obj2->setHeight(l_pole);

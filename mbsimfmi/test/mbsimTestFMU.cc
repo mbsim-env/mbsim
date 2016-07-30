@@ -15,7 +15,6 @@ typedef fmiStatus (*t_fmiTerminate)(fmiComponent);
 typedef void (*t_fmiFreeModelInstance)(fmiComponent);
 
 using namespace std;
-using namespace boost;
 using namespace boost::filesystem;
 using namespace MBXMLUtils;
 

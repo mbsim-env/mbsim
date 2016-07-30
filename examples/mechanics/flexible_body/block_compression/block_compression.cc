@@ -99,18 +99,18 @@ BlockCompression::BlockCompression(const string &projectName) :
     rod->setNumberElements(elements);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+    std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
     cuboid->setNumberOfSpinePoints(elements * 4); // resolution of visualisation
     cuboid->setDiffuseColor(1 / 3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
     cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
-    boost::shared_ptr<vector<boost::shared_ptr<OpenMBV::PolygonPoint> > > rectangle = boost::make_shared<vector<boost::shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
-    boost::shared_ptr<OpenMBV::PolygonPoint> corner1 = OpenMBV::PolygonPoint::create(b0 * 0.5, w0 * 0.5, 1);
+    std::shared_ptr<vector<std::shared_ptr<OpenMBV::PolygonPoint> > > rectangle = std::make_shared<vector<std::shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
+    std::shared_ptr<OpenMBV::PolygonPoint> corner1 = OpenMBV::PolygonPoint::create(b0 * 0.5, w0 * 0.5, 1);
     rectangle->push_back(corner1);
-    boost::shared_ptr<OpenMBV::PolygonPoint> corner2 = OpenMBV::PolygonPoint::create(b0 * 0.5, -w0 * 0.5, 1);
+    std::shared_ptr<OpenMBV::PolygonPoint> corner2 = OpenMBV::PolygonPoint::create(b0 * 0.5, -w0 * 0.5, 1);
     rectangle->push_back(corner2);
-    boost::shared_ptr<OpenMBV::PolygonPoint> corner3 = OpenMBV::PolygonPoint::create(-b0 * 0.5, -w0 * 0.5, 1);
+    std::shared_ptr<OpenMBV::PolygonPoint> corner3 = OpenMBV::PolygonPoint::create(-b0 * 0.5, -w0 * 0.5, 1);
     rectangle->push_back(corner3);
-    boost::shared_ptr<OpenMBV::PolygonPoint> corner4 = OpenMBV::PolygonPoint::create(-b0 * 0.5, w0 * 0.5, 1);
+    std::shared_ptr<OpenMBV::PolygonPoint> corner4 = OpenMBV::PolygonPoint::create(-b0 * 0.5, w0 * 0.5, 1);
     rectangle->push_back(corner4);
 
     cuboid->setContour(rectangle);

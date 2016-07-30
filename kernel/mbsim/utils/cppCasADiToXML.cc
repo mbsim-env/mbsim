@@ -2,7 +2,6 @@
 #include <mbxmlutilshelper/casadiXML.h>
 
 using namespace std;
-using namespace boost;
 using namespace casadi;
 using namespace MBXMLUtils;
 using namespace xercesc;

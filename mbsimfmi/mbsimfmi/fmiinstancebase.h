@@ -43,10 +43,10 @@ namespace MBSimFMI {
   };
 
   extern "C"
-  typedef boost::shared_ptr<FMIInstanceBase> (*fmiInstanceCreatePtr)(fmiString instanceName_, fmiString GUID,
+  typedef std::shared_ptr<FMIInstanceBase> (*fmiInstanceCreatePtr)(fmiString instanceName_, fmiString GUID,
                                                                       fmiCallbackFunctions functions, fmiBoolean loggingOn);
   extern "C"
-  boost::shared_ptr<FMIInstanceBase> fmiInstanceCreate(fmiString instanceName_, fmiString GUID,
+  std::shared_ptr<FMIInstanceBase> fmiInstanceCreate(fmiString instanceName_, fmiString GUID,
                                                        fmiCallbackFunctions functions, fmiBoolean loggingOn);
 
 }

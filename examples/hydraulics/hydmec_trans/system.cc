@@ -90,7 +90,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traeger->setRotation(new RotationAboutAxesXYZ<VecV>);
   traeger->setInitialGeneralizedVelocity(Vec("[0.; -0.; 0.; -30; 30; 30]"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Frustum> traegerVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> traegerVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   traegerVisu->setBaseRadius(dI/2.);
   traegerVisu->setTopRadius(dI/2.);
   traegerVisu->setHeight(l+lScheibe);
@@ -116,7 +116,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     if (i>0)
       scheibe->setTranslation(new TranslationAlongXAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Frustum> scheibeVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+    std::shared_ptr<OpenMBV::Frustum> scheibeVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     scheibeVisu->setBaseRadius(dA/2.);
     scheibeVisu->setTopRadius(dA/2.);
     scheibeVisu->setInnerBaseRadius(dI/2.);

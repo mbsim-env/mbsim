@@ -26,7 +26,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 SlidingMass::SlidingMass(const string &projectName) :
     DynamicSystemSolver(projectName) {
@@ -107,7 +106,7 @@ SlidingMass::SlidingMass(const string &projectName) :
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     {
-      boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+      std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
       cuboid->setNumberOfSpinePoints(elements * 4 + 1); // resolution of visualisation
       cuboid->setDiffuseColor(244./360., 1, 200./255.); // color in (minimalColorValue, maximalColorValue)
       cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -148,7 +147,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     ballContour1->setFrameOfReference(ball1->getFrameC());
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Sphere> sphere1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+    std::shared_ptr<OpenMBV::Sphere> sphere1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     sphere1->setRadius(r);
     sphere1->setDiffuseColor(0.5, 0.5, 1);
     sphere1->setTransparency(0.7);
@@ -190,7 +189,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+    std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
     cuboid->setNumberOfSpinePoints(elements * 4 + 1); // resolution of visualisation
     cuboid->setDiffuseColor(56./360., 132./255., 166./255.); // color in (minimalColorValue, maximalColorValue)
     cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -229,7 +228,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     ballContour->setFrameOfReference(ball2->getFrameC());
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+    std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     sphere->setRadius(r);
     sphere->setDiffuseColor(0.5, 0.5, 1);
     sphere->setTransparency(0.7);
@@ -314,7 +313,7 @@ SlidingMass::SlidingMass(const string &projectName) :
 //
 //#ifdef HAVE_OPENMBVCPPINTERFACE
 //    {
-//      boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+//      std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
 //      cuboid->setNumberOfSpinePoints(nf * 4 + 1); // resolution of visualisation
 //      cuboid->setDiffuseColor(0.5, 0.5, 0); // color in (minimalColorValue, maximalColorValue)
 //      cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -355,7 +354,7 @@ SlidingMass::SlidingMass(const string &projectName) :
 //    ballContour1->setFrameOfReference(ball1->getFrameC());
 //
 //#ifdef HAVE_OPENMBVCPPINTERFACE
-//    boost::shared_ptr<OpenMBV::Sphere> sphere1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+//    std::shared_ptr<OpenMBV::Sphere> sphere1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
 //    sphere1->setRadius(r);
 //    sphere1->setDiffuseColor(0.5, 0.5, 1);
 //    sphere1->setTransparency(0.7);

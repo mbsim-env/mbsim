@@ -13,6 +13,9 @@ SOURCES:=$(shell (cd $(SRCDIR); find -name "*.cc"))
 OBJECTS=$(SOURCES:.cc=.o)
 DEPFILES=$(SOURCES:.cc=.d)
 
+# enable C++11
+CXXFLAGS += -std=c++11
+
 # platform specific settings
 ifeq ($(PLATFORM),Windows)
   SHEXT=.dll

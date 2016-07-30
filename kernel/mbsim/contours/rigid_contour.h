@@ -81,9 +81,9 @@ namespace MBSim {
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::RigidBody>& getOpenMBVRigidBody() { return openMBVRigidBody; }
+      std::shared_ptr<OpenMBV::RigidBody>& getOpenMBVRigidBody() { return openMBVRigidBody; }
 
-      void setOpenMBVRigidBody(const boost::shared_ptr<OpenMBV::RigidBody> &ombvBody) { openMBVRigidBody = ombvBody; }
+      void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &ombvBody) { openMBVRigidBody = ombvBody; }
 #endif
 
     protected:
@@ -93,7 +93,7 @@ namespace MBSim {
       Frame *R;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
+      std::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
 #endif
 
     private:

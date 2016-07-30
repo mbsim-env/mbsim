@@ -211,17 +211,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // visualisation
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank,width_crank,thickness_crank);
   openMBVCrank->setDiffuseColor(180./360.,1,1);
   crank->setOpenMBVRigidBody(openMBVCrank);
 
-  boost::shared_ptr<OpenMBV::Cuboid> openMBVRod = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> openMBVRod = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVRod->setLength(length_rod,width_rod,thickness_rod);
   openMBVRod->setDiffuseColor(180./360.,1,1);
   rod->setOpenMBVRigidBody(openMBVRod);
 
-  boost::shared_ptr<OpenMBV::Cuboid> openMBVPiston=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> openMBVPiston=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVPiston->setLength(length_piston,width_piston,thickness_piston);
   openMBVPiston->setDiffuseColor(240./360.,1,1);
   piston->setOpenMBVRigidBody(openMBVPiston);

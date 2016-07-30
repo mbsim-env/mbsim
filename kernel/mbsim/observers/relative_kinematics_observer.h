@@ -29,11 +29,11 @@ namespace MBSim {
       Frame* refFrame;
       std::string saved_frameOfReference;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> openMBVrTrans, openMBVrRel;
-      boost::shared_ptr<OpenMBV::Arrow> openMBVvTrans, openMBVvRot, openMBVvRel, openMBVvF;
-      boost::shared_ptr<OpenMBV::Arrow> openMBVaTrans, openMBVaRot, openMBVaZp, openMBVaCor, openMBVaRel, openMBVaF;
-      boost::shared_ptr<OpenMBV::Arrow> openMBVomTrans, openMBVomRel;
-      boost::shared_ptr<OpenMBV::Arrow> openMBVpsiTrans, openMBVpsiRot, openMBVpsiRel;
+      std::shared_ptr<OpenMBV::Arrow> openMBVrTrans, openMBVrRel;
+      std::shared_ptr<OpenMBV::Arrow> openMBVvTrans, openMBVvRot, openMBVvRel, openMBVvF;
+      std::shared_ptr<OpenMBV::Arrow> openMBVaTrans, openMBVaRot, openMBVaZp, openMBVaCor, openMBVaRel, openMBVaF;
+      std::shared_ptr<OpenMBV::Arrow> openMBVomTrans, openMBVomRel;
+      std::shared_ptr<OpenMBV::Arrow> openMBVpsiTrans, openMBVpsiRot, openMBVpsiRel;
 #endif
 
     public:

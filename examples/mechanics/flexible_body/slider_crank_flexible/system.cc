@@ -34,7 +34,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 class Moment : public MBSim::Function<fmatvec::VecV(double)> {
   public:
@@ -189,7 +188,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   piston->setInertiaTensor(inertia_piston);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> openMBVPiston = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> openMBVPiston = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVPiston->setLength(width_piston, thickness_piston, length_piston);
   openMBVPiston->setDiffuseColor(1, 0, 0);
   openMBVPiston->setTransparency(0.5);
@@ -229,7 +228,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   cylinderContour->setFrameOfReference(cylinderRef);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Frustum> frustum = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> frustum = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   frustum->setHeight(thicknessRod);
   frustum->setBaseRadius(innerRadius);
   frustum->setTopRadius(innerRadius);
@@ -250,7 +249,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     crank->addFrame(pointRef);
     MBSim::Point * pnt = new MBSim::Point("CrankCylinder" + pointName);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+    std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     sphere->setRadius(1e-4);
     sphere->setDiffuseColor(1, 0, 0);
     pnt->setOpenMBVRigidBody(sphere);
@@ -284,7 +283,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
 
   // visualisation
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank, width_crank, thickness_crank);
   openMBVCrank->setDiffuseColor(0.5, 0, 0);
   openMBVCrank->setTransparency(0.5);

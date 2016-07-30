@@ -30,8 +30,8 @@ namespace MBSimFMI {
 
   /*! A MBSim FMI instance */
   class FMIInstance : public FMIInstanceBase, virtual public fmatvec::Atom {
-    friend boost::shared_ptr<FMIInstance> boost::make_shared<FMIInstance, fmiString, fmiString, fmiCallbackFunctions, fmiBoolean>(
-      const fmiString &instanceName_, const fmiString &GUID, const fmiCallbackFunctions &functions, const fmiBoolean &loggingOn);
+    friend std::shared_ptr<FMIInstanceBase> fmiInstanceCreate(fmiString instanceName_, fmiString GUID,
+                                                              fmiCallbackFunctions functions, fmiBoolean loggingOn);
     public:
       //! dtor used in fmiFreeModelInstance
       ~FMIInstance();
@@ -90,10 +90,10 @@ namespace MBSimFMI {
       LoggerBuffer debugBuffer;
 
       // XML parser (none validating)
-      boost::shared_ptr<MBXMLUtils::DOMParser> parser;
+      std::shared_ptr<MBXMLUtils::DOMParser> parser;
 
       // the system
-      boost::shared_ptr<MBSim::DynamicSystemSolver> dss;
+      std::shared_ptr<MBSim::DynamicSystemSolver> dss;
 
       // system time
       double timeStore; // do not use this variable, use time
@@ -115,12 +115,12 @@ namespace MBSimFMI {
       PredefinedParameterStruct predefinedParameterStruct;
 
       // all FMI variables
-      std::vector<boost::shared_ptr<Variable> > var;
+      std::vector<std::shared_ptr<Variable> > var;
 
       int completedStepCounter;
       double nextPlotTime;
 
-      void addModelParametersAndCreateDSS(std::vector<boost::shared_ptr<Variable> > &varSim);
+      void addModelParametersAndCreateDSS(std::vector<std::shared_ptr<Variable> > &varSim);
   };
 
 }

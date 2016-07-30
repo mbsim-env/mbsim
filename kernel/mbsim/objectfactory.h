@@ -54,11 +54,11 @@ class DOMEvalExceptionStack : public MBXMLUtils::DOMEvalException {
     DOMEvalExceptionStack(const xercesc::DOMElement *element) : MBXMLUtils::DOMEvalException("", element) {}
     DOMEvalExceptionStack(const DOMEvalExceptionStack &src) : MBXMLUtils::DOMEvalException(src), exVec(src.exVec) {}
     ~DOMEvalExceptionStack() throw() {}
-    void add(const std::string &type, const boost::shared_ptr<MBXMLUtils::DOMEvalException> &ex);
+    void add(const std::string &type, const std::shared_ptr<MBXMLUtils::DOMEvalException> &ex);
     const char* what() const throw();
-    std::vector<std::pair<std::string, boost::shared_ptr<MBXMLUtils::DOMEvalException> > > &getExceptionVector();
+    std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException> > > &getExceptionVector();
   protected:
-    std::vector<std::pair<std::string, boost::shared_ptr<MBXMLUtils::DOMEvalException> > > exVec;
+    std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException> > > exVec;
     mutable std::string whatStr;
     void generateWhat(std::stringstream &str, const std::string &indent) const;
 };
@@ -120,7 +120,7 @@ class ObjectFactory {
 #ifdef HAVE_BOOST_TYPE_TRAITS_HPP
       // just check if ContainerType is derived from fmatvec::Atom if not throw a compile error if boost is avaliable
       // if boost is not avaliable a runtime error will occure later. (so it does not care if boost is not available)
-      BOOST_STATIC_ASSERT_MSG((boost::is_convertible<ContainerType*, fmatvec::Atom*>::value),
+      BOOST_STATIC_ASSERT_MSG((std::is_convertible<ContainerType*, fmatvec::Atom*>::value),
         "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
 #endif
       // throw error if NULL is supplied as element
@@ -141,7 +141,7 @@ class ObjectFactory {
         if(!ret) {
           // cast not possible -> deallocate again and try next
           allErrors.add(boost::core::demangle(typeid(*ele).name()),
-                        boost::make_shared<DOMEvalExceptionWrongType>(
+                        std::make_shared<DOMEvalExceptionWrongType>(
                         boost::core::demangle(typeid(ContainerType).name()), element));
           allocDeallocIt->second(ele); 
           continue;
@@ -151,18 +151,18 @@ class ObjectFactory {
           return ret;
         }
         catch(DOMEvalExceptionStack &ex) {
-          allErrors.add(boost::core::demangle(typeid(*ele).name()), boost::make_shared<DOMEvalExceptionStack>(ex));
+          allErrors.add(boost::core::demangle(typeid(*ele).name()), std::make_shared<DOMEvalExceptionStack>(ex));
         }
         catch(MBXMLUtils::DOMEvalException &ex) {
-          allErrors.add(boost::core::demangle(typeid(*ele).name()), boost::make_shared<MBXMLUtils::DOMEvalException>(ex));
+          allErrors.add(boost::core::demangle(typeid(*ele).name()), std::make_shared<MBXMLUtils::DOMEvalException>(ex));
         }
         catch(std::exception &ex) { // handles also MBSimError
           allErrors.add(boost::core::demangle(typeid(*ele).name()),
-                        boost::make_shared<MBXMLUtils::DOMEvalException>(ex.what(), element));
+                        std::make_shared<MBXMLUtils::DOMEvalException>(ex.what(), element));
         }
         catch(...) {
           allErrors.add(boost::core::demangle(typeid(*ele).name()),
-                        boost::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
+                        std::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
         }
         allocDeallocIt->second(ele);
       }

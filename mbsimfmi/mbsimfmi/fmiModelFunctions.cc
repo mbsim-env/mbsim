@@ -34,8 +34,8 @@ namespace {
 
   // FMI instance struct of mbsim.so: hold the real SharedLibrary and the real instance
   struct Instance {
-    Instance(const boost::shared_ptr<FMIInstanceBase> &instance_) : instance(instance_) {}
-    boost::shared_ptr<FMIInstanceBase> instance;
+    Instance(const std::shared_ptr<FMIInstanceBase> &instance_) : instance(instance_) {}
+    std::shared_ptr<FMIInstanceBase> instance;
   };
 }
 
@@ -99,7 +99,7 @@ extern "C" {
   // Convert exceptions to call of logError which itself passed these to the FMI logge and return with fmiError.
   #define FMIFUNC(fmiFuncName, instanceMemberName, Sig, sig) \
   DLLEXPORT fmiStatus fmiFuncName Sig { \
-    boost::shared_ptr<FMIInstanceBase> instance=static_cast<Instance*>(c)->instance; \
+    std::shared_ptr<FMIInstanceBase> instance=static_cast<Instance*>(c)->instance; \
     try { \
       instance->instanceMemberName sig; \
       return fmiOK; \

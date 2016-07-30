@@ -31,7 +31,7 @@ namespace {
   path LIBDIR="lib";
 #endif
 
-  void copyShLibToFMU(const boost::shared_ptr<DOMParser> &parser,
+  void copyShLibToFMU(const std::shared_ptr<DOMParser> &parser,
                       CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src);
 }
 
@@ -90,25 +90,25 @@ int main(int argc, char *argv[]) {
     set<path> pluginLibs=MBSimXML::loadPlugins();
 
     // create parser (a validating parser for XML input and a none validating parser for shared library input)
-    boost::shared_ptr<DOMParser> parser=DOMParser::create(xmlFile);
+    std::shared_ptr<DOMParser> parser=DOMParser::create(xmlFile);
     // create parser (none validating parser for use in copyShLibToFMU)
-    boost::shared_ptr<DOMParser> parserNoneVali=DOMParser::create(false);
+    std::shared_ptr<DOMParser> parserNoneVali=DOMParser::create(false);
 
     // note: the order of these variable definitions is importend for proper deallocation
-    boost::shared_ptr<DynamicSystemSolver> dss;
-    boost::shared_ptr<MBSimIntegrator::Integrator> integrator;
+    std::shared_ptr<DynamicSystemSolver> dss;
+    std::shared_ptr<MBSimIntegrator::Integrator> integrator;
 
     vector<path> dependencies;
 
     PredefinedParameterStruct predefinedParameterStruct;
     cout<<"Create predefined parameters."<<endl;
-    vector<boost::shared_ptr<Variable> > var;
+    vector<std::shared_ptr<Variable> > var;
     addPredefinedParameters(var, predefinedParameterStruct, true);
 
-    vector<boost::shared_ptr<Variable> > xmlParam;
+    vector<std::shared_ptr<Variable> > xmlParam;
 
     string evalName="octave"; // default evaluator
-    boost::shared_ptr<Eval> eval;
+    std::shared_ptr<Eval> eval;
 
     // Create dss from XML file
     if(xmlFile) {
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
 
       // load MBSim project XML document
       cout<<"Load MBSim model from XML project file."<<endl;
-      boost::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies);
+      std::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies);
       DOMElement *modelEle=modelDoc->getDocumentElement();
 
       // create a clean evaluator (get the evaluator name first form the dom)
@@ -130,14 +130,14 @@ int main(int argc, char *argv[]) {
 
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
-      boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
+      std::shared_ptr<Preprocess::XPathParamSet> param=std::make_shared<Preprocess::XPathParamSet>();
       Preprocess::preprocess(parser, eval, dependencies, modelEle, param);
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
       convertXPathParamSetToVariable(param, xmlParam, eval);
       // remove all variables which are not in useParam
-      vector<boost::shared_ptr<Variable> > xmlParam2;
-      for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
+      vector<std::shared_ptr<Variable> > xmlParam2;
+      for(vector<std::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it) {
         string name=(*it)->getName();
         size_t pos=name.find('[');
         if(pos!=string::npos)
@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
     addModelInputOutputs(var, dss.get());
 
     // create DOM of modelDescription.xml
-    boost::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
+    std::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
 
     // root element fmiModelDescription and its attributes
     cout<<"Create the modelDescription.xml file."<<endl;
@@ -444,7 +444,7 @@ int main(int argc, char *argv[]) {
 
 namespace {
 
-  void copyShLibToFMU(const boost::shared_ptr<DOMParser> &parser,
+  void copyShLibToFMU(const std::shared_ptr<DOMParser> &parser,
                       CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src) {
     // copy src to FMU
     cout<<"."<<flush;
@@ -458,7 +458,7 @@ namespace {
     }
 
     // read *.deplibs file
-    boost::shared_ptr<xercesc::DOMDocument> depDoc=parser->parse(depFile);
+    std::shared_ptr<xercesc::DOMDocument> depDoc=parser->parse(depFile);
     for(DOMElement *e=depDoc->getDocumentElement()->getFirstElementChild(); e!=NULL; e=e->getNextElementSibling()) {
       string file=X()%E(e)->getFirstTextChild()->getData();
 

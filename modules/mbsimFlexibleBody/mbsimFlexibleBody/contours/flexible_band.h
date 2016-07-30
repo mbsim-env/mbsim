@@ -110,7 +110,7 @@ namespace MBSimFlexibleBody {
       double sOld;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
+      std::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
 #endif
   };
 

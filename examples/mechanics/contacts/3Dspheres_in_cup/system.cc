@@ -287,7 +287,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body1->getFrame("C")->enableOpenMBV(1.5*d);
-  boost::shared_ptr<OpenMBV::Sphere> dummy1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+  std::shared_ptr<OpenMBV::Sphere> dummy1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   dummy1->setRadius(2*d);
   dummy1->setScaleFactor(1.);
   dummy1->setMinimalColorValue(0);
@@ -296,7 +296,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setOpenMBVRigidBody(dummy1);
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
-  boost::shared_ptr<OpenMBV::Sphere> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+  std::shared_ptr<OpenMBV::Sphere> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   dummy2->setRadius(d);
   dummy2->setScaleFactor(1.);
   dummy2->setMinimalColorValue(0);
@@ -305,7 +305,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setOpenMBVRigidBody(dummy2);
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
-  boost::shared_ptr<OpenMBV::Sphere> dummy3 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+  std::shared_ptr<OpenMBV::Sphere> dummy3 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   dummy3->setRadius(d);
   dummy3->setScaleFactor(1.);
   dummy3->setMinimalColorValue(0);
@@ -314,7 +314,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setOpenMBVRigidBody(dummy3);
 
 //  cup2->getFrame("C")->enableOpenMBV(1.5*d);
-//  boost::shared_ptr<OpenMBV::Frustum> dummy5 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+//  std::shared_ptr<OpenMBV::Frustum> dummy5 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
 //  dummy5->setBaseRadius(radii2(0));
 //  dummy5->setTopRadius(radii2(1));
 //  dummy5->setHeight(5*d); 

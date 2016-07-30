@@ -57,7 +57,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   m->setFrameForKinematics(m->getFrame("C"));
   m->setMass(mBar);
   m->setInertiaTensor(inertiaBar);
-  boost::shared_ptr<OpenMBV::Frustum> mVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> mVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   m->setOpenMBVRigidBody(mVisu);
   if (h<0) {
     mVisu->setBaseRadius(R+.01*r);
@@ -107,7 +107,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     b->setInitialGeneralizedVelocity("[-1; 0; .5]");
   }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Frustum> bVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> bVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   b->setOpenMBVRigidBody(bVisu);
   bVisu->setBaseRadius(rBar);
   bVisu->setTopRadius(rBar);

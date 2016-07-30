@@ -11,11 +11,11 @@ namespace {
 namespace MBSimFMI {
 
 // create predefined parameters
-void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
+void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
                              PredefinedParameterStruct &predefinedParameterStruct,
                              bool setToDefaultValue) {
   // output directory
-  var.push_back(boost::make_shared<PredefinedParameter<std::string> >("Output directory",
+  var.push_back(std::make_shared<PredefinedParameter<std::string> >("Output directory",
     "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(predefinedParameterStruct.outputDir)));
   // default value: current dir
   if(setToDefaultValue)
@@ -23,7 +23,7 @@ void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
 
   // plot mode
   // generate enumeration list
-  Variable::EnumList plotModeList=boost::make_shared<Variable::EnumListCont>();
+  Variable::EnumList plotModeList=std::make_shared<Variable::EnumListCont>();
   // PlotMode::EverynthCompletedStep
   plotModeList->push_back(std::make_pair<std::string, std::string>("Every n-th completed step",
     "Plot each n-th completed integrator step, with n = 'Plot.each n-th step'."));
@@ -34,35 +34,35 @@ void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
   plotModeList->push_back(std::make_pair<std::string, std::string>("Constant sample time",
     "Plot in equidistant sample times, with sample time = 'Plot.sample time'."));
   // add variable
-  var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.mode",
+  var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.mode",
     "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(predefinedParameterStruct.plotMode), plotModeList));
   // default value
   if(setToDefaultValue)
     (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));
 
   // plot at each n-th integrator step
-  var.push_back(boost::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
+  var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
     "... n-th completed integrator step", boost::ref(predefinedParameterStruct.plotEachNStep)));
   // default value: every 5-th step
   if(setToDefaultValue)
     (*--var.end())->setValue(int(5));
 
   // plot every dt
-  var.push_back(boost::make_shared<PredefinedParameter<double> >("Plot.sample time",
+  var.push_back(std::make_shared<PredefinedParameter<double> >("Plot.sample time",
     "... sample point with this sample time", boost::ref(predefinedParameterStruct.plotStepSize)));
   // default value: every 1ms
   if(setToDefaultValue)
     (*--var.end())->setValue(double(0.001));
 
   // gMax
-  var.push_back(boost::make_shared<PredefinedParameter<double> >("Constraint tolerance.position",
+  var.push_back(std::make_shared<PredefinedParameter<double> >("Constraint tolerance.position",
     "Tolerance for position constraints", boost::ref(predefinedParameterStruct.gMax)));
   // default value: 1e-5
   if(setToDefaultValue)
     (*--var.end())->setValue(double(1e-5));
 
   // gdMax
-  var.push_back(boost::make_shared<PredefinedParameter<double> >("Constraint tolerance.velocity",
+  var.push_back(std::make_shared<PredefinedParameter<double> >("Constraint tolerance.velocity",
     "Tolerance for velocity constraints", boost::ref(predefinedParameterStruct.gdMax)));
   // default value: 1e-5
   if(setToDefaultValue)
@@ -71,7 +71,7 @@ void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
   // ADD HERE MORE PREDEFINED PARAMETERS
 }
 
-void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
+void addModelInputOutputs(std::vector<std::shared_ptr<Variable> > &var,
                           const MBSim::DynamicSystemSolver *dss) {
   // create all input/output variables for links in the dss
   std::vector<MBSim::Link*> l;
@@ -80,23 +80,23 @@ void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
     // for ExternGeneralizedIO create three variables: force input, position output and velocity output
 //    MBSim::ExternGeneralizedIO *genIO=dynamic_cast<MBSim::ExternGeneralizedIO*>(*it);
 //    if(genIO) {
-//      var.push_back(boost::make_shared<ExternGeneralizedIOForceInput>(genIO));
+//      var.push_back(std::make_shared<ExternGeneralizedIOForceInput>(genIO));
 //      (*--var.end())->setValue(double(0.0)); // default value
-//      var.push_back(boost::make_shared<ExternGeneralizedIOPositionOutput>(genIO));
-//      var.push_back(boost::make_shared<ExternGeneralizedIOVelocityOutput>(genIO));
+//      var.push_back(std::make_shared<ExternGeneralizedIOPositionOutput>(genIO));
+//      var.push_back(std::make_shared<ExternGeneralizedIOVelocityOutput>(genIO));
 //    }
     // for ExternSignalSource create one input variable for each element of the signal vector
     MBSimControl::ExternSignalSource *sigSource=dynamic_cast<MBSimControl::ExternSignalSource*>(*it);
     if(sigSource)
       for(int idx=0; idx<sigSource->evalSignal().size(); idx++) {
-        var.push_back(boost::make_shared<ExternSignalSourceInput>(sigSource, idx));
+        var.push_back(std::make_shared<ExternSignalSourceInput>(sigSource, idx));
         (*--var.end())->setValue(double(0.0)); // default value
       }
     // for ExternSignalSink create one output variable for each element of the signal vector
     MBSimControl::ExternSignalSink *sigSink=dynamic_cast<MBSimControl::ExternSignalSink*>(*it);
     if(sigSink)
       for(int idx=0; idx<sigSink->evalSignal().size(); idx++)
-        var.push_back(boost::make_shared<ExternSignalSinkOutput>(sigSink, idx));
+        var.push_back(std::make_shared<ExternSignalSinkOutput>(sigSink, idx));
     // ADD HERE MORE MBSIM TYPES WHICH SHOULD BECOME FMI INPUTS/OUTPUTS
   }
 }

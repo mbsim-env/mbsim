@@ -133,8 +133,8 @@ namespace MBSimAnalyser {
     for(int j=0; j<static_cast<int>(f.size()); j++) {
       c(f[j].second) = complex<double>(0,A);
       c(f[j].second+1) = complex<double>(0,-A);
-      real(wbuf(f[j].second)) = 0;
-      real(wbuf(f[j].second+1)) = 0;
+      wbuf(f[j].second).real(0);
+      wbuf(f[j].second+1).real(0);
       double T=10*1./f[j].first;
       for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
         deltaz.init(0);
@@ -165,8 +165,8 @@ namespace MBSimAnalyser {
     Vec z;
     c(f[n-1].second) = complex<double>(0,A);
     c(f[n-1].second+1) = complex<double>(0,-A);
-    real(wbuf(f[n-1].second)) = 0;
-    real(wbuf(f[n-1].second+1)) = 0;
+    wbuf(f[n-1].second).real(0);
+    wbuf(f[n-1].second+1).real(0);
     double T=1./f[n-1].first;
     for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
       deltaz.init(0);

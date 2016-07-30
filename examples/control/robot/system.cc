@@ -233,7 +233,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
+  std::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/basis.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialRotation(M_PI,0,0);

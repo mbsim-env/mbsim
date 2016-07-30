@@ -23,7 +23,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 System::System(const string &projectName) :
     DynamicSystemSolver(projectName) {
@@ -64,7 +63,7 @@ System::System(const string &projectName) :
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+  std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.6666, 0.3333, 0.6666); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -115,7 +114,7 @@ System::System(const string &projectName) :
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+  std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(r);
   sphere->setDiffuseColor(0.6666, 1, 0.6666); // color in (minimalColorValue, maximalColorValue)
   ball->setOpenMBVRigidBody(sphere);

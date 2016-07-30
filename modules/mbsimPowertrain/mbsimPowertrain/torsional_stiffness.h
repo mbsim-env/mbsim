@@ -42,7 +42,7 @@ namespace MBSimPowertrain {
       std::vector<MBSim::RigidBody*> body;
       MBSim::Frame C;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
+      std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
       TorsionalStiffness(const std::string &name="");

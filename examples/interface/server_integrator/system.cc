@@ -80,13 +80,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // visualisation
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::CoilSpring> openMBVspring1=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>();
+  std::shared_ptr<OpenMBV::CoilSpring> openMBVspring1=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>();
   openMBVspring1->setSpringRadius(0.1);
   openMBVspring1->setCrossSectionRadius(0.01);
   openMBVspring1->setNumberOfCoils(5);
   spring1->setOpenMBVCoilSpring(openMBVspring1);
   
-  boost::shared_ptr<OpenMBV::CoilSpring> openMBVspring2=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>();
+  std::shared_ptr<OpenMBV::CoilSpring> openMBVspring2=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>();
   openMBVspring2->setSpringRadius(0.1);
   openMBVspring2->setCrossSectionRadius(0.01);
   openMBVspring2->setNumberOfCoils(5);

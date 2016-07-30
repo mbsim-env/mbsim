@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
 
   class ControlvalveAreaFunction : public MBSim::Function<double(double)> {
     public:
-      ControlvalveAreaFunction(const string& name, double factor_, double offset_, boost::shared_ptr<MBSim::Function<double(double)> > position_, boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
+      ControlvalveAreaFunction(const string& name, double factor_, double offset_, std::shared_ptr<MBSim::Function<double(double)> > position_, std::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
         setName(name);
       }
 
@@ -51,8 +51,8 @@ namespace MBSimHydraulics {
       }
     private:
       double factor, offset;
-      boost::shared_ptr<MBSim::Function<double(double)> > position;
-      boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
+      std::shared_ptr<MBSim::Function<double(double)> > position;
+      std::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
   };
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Controlvalve43, MBSIMHYDRAULICS%"Controlvalve43")

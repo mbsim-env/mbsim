@@ -26,7 +26,6 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace xercesc;
-using namespace boost;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 

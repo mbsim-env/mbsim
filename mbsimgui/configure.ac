@@ -9,6 +9,9 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
+# enable C++11
+CXXFLAGS="$CXXFLAGS -std=c++11"
+
 if test "_$host_os" = "_mingw32" ; then
   # -fno-keep-inline-dllexport: requires gcc >= 4.6; and is reauired by Qt to avoid the generatoin of
   # code for inline functions which causes undefines symbols on linkage.

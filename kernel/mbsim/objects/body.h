@@ -119,8 +119,8 @@ namespace MBSim {
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
-      boost::shared_ptr<OpenMBV::Body>& getOpenMBVBody() { return openMBVBody; }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
+      std::shared_ptr<OpenMBV::Body>& getOpenMBVBody() { return openMBVBody; }
 #endif
       /*******************************************************/ 
 
@@ -186,8 +186,8 @@ namespace MBSim {
       bool updPos, updVel, updPJ;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Body> openMBVBody;
-      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
+      std::shared_ptr<OpenMBV::Body> openMBVBody;
+      std::shared_ptr<OpenMBV::Group> openMBVGrp;
 #endif
 
     private:

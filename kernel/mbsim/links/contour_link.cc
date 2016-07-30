@@ -31,7 +31,6 @@
 
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 namespace MBSim {
 

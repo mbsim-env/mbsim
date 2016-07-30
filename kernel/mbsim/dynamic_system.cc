@@ -41,7 +41,6 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
-using namespace boost;
 
 namespace MBSim {
 
@@ -444,7 +443,7 @@ namespace MBSim {
           if (parent)
             parent->getPlotGroup()->createExternalLink(name, make_pair(boost::filesystem::path(fileName), string("/")));
           // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
-          hdf5File = boost::make_shared<H5::File>(fileName, H5::File::write);
+          hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
           plotGroup = hdf5File.get();
         }
         else

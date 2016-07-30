@@ -64,12 +64,12 @@ struct PredefinedParameterStruct {
 
 //! add all FMI predefined parameters to var.
 //! The values of all predefined parameters are stored in the struct PredefinedParameterStruct.
-void addPredefinedParameters(std::vector<boost::shared_ptr<Variable> > &var,
+void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
                              PredefinedParameterStruct &predefinedParameterStruct,
                              bool setToDefaultValue);
 
 //! add all FMI input/outputs used by the MBSim dss to var.
-void addModelInputOutputs(std::vector<boost::shared_ptr<Variable> > &var,
+void addModelInputOutputs(std::vector<std::shared_ptr<Variable> > &var,
                           const MBSim::DynamicSystemSolver *dss);
 
 //! Type of the variable
@@ -83,7 +83,7 @@ enum Type {
 class Variable {
   public:
     typedef std::vector<std::pair<std::string, std::string> > EnumListCont;
-    typedef boost::shared_ptr<EnumListCont> EnumList;
+    typedef std::shared_ptr<EnumListCont> EnumList;
 
     //! ctor
     Variable(const std::string &name_, const std::string &desc_, Type type_, char datatypeChar_, const EnumList &enumList_=EnumList()) :

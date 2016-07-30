@@ -59,7 +59,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setTranslation(new MyPos);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(l,h,d);
   body->setOpenMBVRigidBody(cuboid);
 #endif

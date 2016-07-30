@@ -30,7 +30,6 @@ using namespace std;
 using namespace xercesc;
 using namespace MBXMLUtils;
 using namespace fmatvec;
-using namespace boost;
 
 namespace MBSim {
 

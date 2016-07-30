@@ -38,7 +38,7 @@ namespace MBSim {
       Function<double(double,double)> *func;
       double l0;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
+      std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
       SpringDamper(const std::string &name="");

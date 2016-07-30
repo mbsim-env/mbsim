@@ -25,7 +25,6 @@
 
 using namespace std;
 using namespace fmatvec;
-using namespace boost;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>

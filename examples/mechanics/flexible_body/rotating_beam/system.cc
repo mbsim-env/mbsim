@@ -153,7 +153,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   body->getFrame("K")->setPlotFeature(globalAcceleration,enabled);
 
 #if HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   dummy->setLength(l,h,d);
   dummy->setDiffuseColor(180./360.,1,1);
   dummy->setInitialTranslation(l/2,0,0);

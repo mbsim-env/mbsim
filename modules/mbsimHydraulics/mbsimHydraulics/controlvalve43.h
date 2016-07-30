@@ -42,14 +42,14 @@ namespace MBSimHydraulics {
       void setDiameter(double d_);
       void setAlpha(double alpha_, double alphaBack_=0);
       void setPARelativeAlphaFunction(MBSim::Function<double(double)> * relAlphaPA_) {
-        relAlphaPA=boost::shared_ptr<MBSim::Function<double(double)> >(relAlphaPA_);
+        relAlphaPA=std::shared_ptr<MBSim::Function<double(double)> >(relAlphaPA_);
         relAlphaPA->setParent(this);
         relAlphaPA->setName("PARealtvieAlpha");
       } 
       void setMinimalRelativeAlpha(double minRelAlpha_);
       void setOffset(double off) {offset=off; }
       void setRelativePositionFunction(MBSim::Function<double(double)> * s) {
-        position = boost::shared_ptr<MBSim::Function<double(double)> >(s); 
+        position = std::shared_ptr<MBSim::Function<double(double)> >(s); 
         position->setParent(this);
         position->setName("Position");
       }
@@ -64,7 +64,7 @@ namespace MBSimHydraulics {
       ClosableRigidLine * lPA, * lPB, * lAT, * lBT;
       RigidNode * nP, * nA, * nB, * nT;
       double offset;
-      boost::shared_ptr<MBSim::Function<double(double)> > relAlphaPA, position;
+      std::shared_ptr<MBSim::Function<double(double)> > relAlphaPA, position;
       MBSim::Function<double(double)> * checkSizeFunctionPA, * checkSizeFunctionPB, * checkSizeFunctionAT, * checkSizeFunctionBT;
     
     private:

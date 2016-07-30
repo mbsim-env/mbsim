@@ -20,12 +20,7 @@
 #include <config.h>
 #include <cstdio>
 #include "utils.h"
-#ifdef HAVE_UNORDERED_MAP
-#  include <unordered_map>
-#else
-#  include <map>
-#  define unordered_map map
-#endif
+#include <unordered_map>
 #include <iostream>
 #include <cmath>
 #include <QtGui/QTreeWidgetItem>

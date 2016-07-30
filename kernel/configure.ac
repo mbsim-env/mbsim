@@ -18,6 +18,9 @@ AC_PROG_CXXCPP
 AC_LANG([C++])
 AC_FC_WRAPPERS
 
+# enable C++11
+CXXFLAGS="$CXXFLAGS -std=c++11"
+
 AC_C_CONST
 
 requires="fmatvec hdf5serie mbxmlutilshelper"

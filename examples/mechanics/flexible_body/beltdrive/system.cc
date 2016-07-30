@@ -32,7 +32,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 class Moment : public MBSim::Function<VecV(double)> {
   double M0;
@@ -318,7 +317,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(belt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+  std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
   cuboid->setDiffuseColor(2/3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -421,7 +420,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addObject(disk);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-//    boost::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+//    std::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
 //    cylinder->setRadius(radiiDisks(i));
 //    cylinder->setDiffuseColor(1/3.0, 1, 1);
 //    disk->setOpenMBVRigidBody(cylinder);

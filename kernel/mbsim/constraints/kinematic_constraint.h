@@ -61,7 +61,7 @@ namespace MBSim {
       std::string saved_DependentBody;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
+      std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
 #endif
   };
 

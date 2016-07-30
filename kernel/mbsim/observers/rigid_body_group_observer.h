@@ -39,7 +39,7 @@ namespace MBSim {
       std::vector<RigidBody*> body;
       Frame* ref;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration, openMBVAngularVelocity, openMBVAngularAcceleration, openMBVWeight, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
+      std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration, openMBVAngularVelocity, openMBVAngularAcceleration, openMBVWeight, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
 #endif
 
     public:

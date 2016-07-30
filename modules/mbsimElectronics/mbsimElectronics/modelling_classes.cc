@@ -7,7 +7,6 @@
 using namespace fmatvec;
 using namespace std;
 using namespace MBSim;
-using namespace boost;
 
 
 namespace MBSimElectronics {
@@ -208,13 +207,13 @@ namespace MBSimElectronics {
       }
       objectList.push_back(meshList[i]);
       // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-      meshList[i]->setPath("<created_by_ModellingInterface_"+lexical_cast<string>(objectList.size()-1));
+      meshList[i]->setPath("<created_by_ModellingInterface_"+boost::lexical_cast<string>(objectList.size()-1));
     }
 
     for(unsigned int i=0; i<branchList.size(); i++) {
       objectList.push_back(branchList[i]);
       // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-      branchList[i]->setPath("<created_by_ModellingInterface_"+lexical_cast<string>(objectList.size()-1));
+      branchList[i]->setPath("<created_by_ModellingInterface_"+boost::lexical_cast<string>(objectList.size()-1));
       for(int j=0; j<branchList[i]->getNumberOfConnectedMeshes(); j++)
 	branchList[i]->addDependency(branchList[i]->getMesh(j));
     }
@@ -225,13 +224,13 @@ namespace MBSimElectronics {
       if(objectcomp) {
 	objectList.push_back(objectcomp);
         // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-        objectcomp->setPath("<created_by_ModellingInterface_"+lexical_cast<string>(objectList.size()-1));
+        objectcomp->setPath("<created_by_ModellingInterface_"+boost::lexical_cast<string>(objectList.size()-1));
 	objectcomp->addDependency(compList[i]->getBranch());
       }
       else if(linkcomp) {
 	linkList.push_back(linkcomp);
         // we need to set the path here to a dummy path since their is no path defined by the user (this element is created)
-        linkcomp->setPath("<created_by_ModellingInterface_"+lexical_cast<string>(linkList.size()-1));
+        linkcomp->setPath("<created_by_ModellingInterface_"+boost::lexical_cast<string>(linkList.size()-1));
       }
       else {
 	throw runtime_error("Error 2 in ElectronicComponent::processModellList");

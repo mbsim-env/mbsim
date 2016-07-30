@@ -70,7 +70,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AbsoluteKinematicsObserver *o = new AbsoluteKinematicsObserver("Observer");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
- // boost::shared_ptr<OpenMBV::Arrow> arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
+ // std::shared_ptr<OpenMBV::Arrow> arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
  // arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
  // arrow->setDiffuseColor(1/3.0, 1, 1);
   o->enableOpenMBVVelocity();
@@ -83,7 +83,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
-  boost::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(l,h,d);
   cuboid->setDiffuseColor(160./360.,1,1);
   body->setOpenMBVRigidBody(cuboid);

@@ -84,7 +84,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(cnf);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cube> obj = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
+  std::shared_ptr<OpenMBV::Cube> obj = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   body->setOpenMBVRigidBody(obj);
   obj->setLength(l);
 #endif

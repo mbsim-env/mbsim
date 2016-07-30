@@ -171,7 +171,7 @@ namespace MBSimGUI {
       D(doc)->validate();
 
       vector<boost::filesystem::path> dependencies;
-      boost::shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
+      std::shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
 
       // Praeprozessor starten
       DOMElement *mainxmlele=doc->getDocumentElement();

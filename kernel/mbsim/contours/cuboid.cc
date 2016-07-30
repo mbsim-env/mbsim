@@ -31,7 +31,6 @@
 
 using namespace std;
 using namespace fmatvec;
-using namespace boost;
 using namespace MBXMLUtils;
 using namespace xercesc;
 

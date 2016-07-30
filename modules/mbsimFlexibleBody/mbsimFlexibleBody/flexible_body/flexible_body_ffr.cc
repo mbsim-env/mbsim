@@ -722,7 +722,7 @@ namespace MBSimFlexibleBody {
           data.push_back(cardan(1));
           data.push_back(cardan(2));
           data.push_back(0);
-          boost::dynamic_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
+          std::dynamic_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
         }
       }
 #endif
@@ -992,7 +992,7 @@ namespace MBSimFlexibleBody {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void FlexibleBodyFFR::setOpenMBVRigidBody(const boost::shared_ptr<OpenMBV::RigidBody> &body) {
+  void FlexibleBodyFFR::setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &body) {
     openMBVBody=body;
   }
 #endif
@@ -1068,7 +1068,7 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(e) {
-      boost::shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
+      std::shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
       setOpenMBVRigidBody(rb);
       rb->initializeUsingXML(e->getFirstElementChild());
     }

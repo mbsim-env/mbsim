@@ -110,7 +110,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   Beam->addContour(BeamContour);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> openMBVBeam=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> openMBVBeam=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVBeam->setInitialTranslation(length/2,0,0);
   openMBVBeam->setLength(length,height,depth);
   openMBVBeam->setDrawMethod(OpenMBV::Body::DrawStyle(1));
@@ -164,7 +164,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
     /*Visualization of the balls*/
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Sphere> openMBVSphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
+    std::shared_ptr<OpenMBV::Sphere> openMBVSphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     openMBVSphere->setRadius(radius);
 
     switch (contactType) {

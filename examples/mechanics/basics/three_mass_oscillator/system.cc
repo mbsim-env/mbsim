@@ -126,7 +126,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   a->connect(k3->getFrame("fTop"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Frustum> k1Visu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> k1Visu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   k1Visu->setBaseRadius(dDisk/2.);
   k1Visu->setTopRadius(dDisk/2.);
   k1Visu->setInnerBaseRadius(0);
@@ -137,7 +137,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k1Visu->setDiffuseColor(120./360.,1,1);
   k1->setOpenMBVRigidBody(k1Visu);
 
-  boost::shared_ptr<OpenMBV::Frustum> k2Visu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> k2Visu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   k2Visu->setBaseRadius(dDisk/2.);
   k2Visu->setTopRadius(dDisk/2.);
   k2Visu->setInnerBaseRadius(0);
@@ -148,7 +148,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k2Visu->setDiffuseColor(120./360.,1,1);
   k2->setOpenMBVRigidBody(k2Visu);
 
-  boost::shared_ptr<OpenMBV::Frustum> k3Visu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> k3Visu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   k3Visu->setBaseRadius(dDisk/2.);
   k3Visu->setTopRadius(dDisk/2.);
   k3Visu->setInnerBaseRadius(0);

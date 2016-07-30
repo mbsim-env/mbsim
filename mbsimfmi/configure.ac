@@ -15,6 +15,9 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
+# enable C++11
+CXXFLAGS="$CXXFLAGS -std=c++11"
+
 AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
 if test "_$debug" = "_yes" ; then
   CFLAGS="$CFLAGS -ggdb"

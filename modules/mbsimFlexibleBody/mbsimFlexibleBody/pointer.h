@@ -29,10 +29,10 @@ class RevCardan;
 class Trafo33RCM;
 class Weight33RCM;
 
-typedef boost::shared_ptr<Cardan> CardanPtr;
-typedef boost::shared_ptr<RevCardan> RevCardanPtr;
-typedef boost::shared_ptr<Trafo33RCM> Trafo33RCMPtr;
-typedef boost::shared_ptr<Weight33RCM> Weight33RCMPtr;
+typedef std::shared_ptr<Cardan> CardanPtr;
+typedef std::shared_ptr<RevCardan> RevCardanPtr;
+typedef std::shared_ptr<Trafo33RCM> Trafo33RCMPtr;
+typedef std::shared_ptr<Weight33RCM> Weight33RCMPtr;
 
 }
 

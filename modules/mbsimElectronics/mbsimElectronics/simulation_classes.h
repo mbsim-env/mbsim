@@ -31,7 +31,7 @@ namespace MBSimElectronics {
       int getNumberOfBranches() {return branch.size();}
       Branch* getBranch(int i) {return branch[i];}
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 
@@ -78,7 +78,7 @@ namespace MBSimElectronics {
       void setPrecessor(Object* obj) {precessor = obj;}
       void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 
@@ -197,7 +197,7 @@ namespace MBSimElectronics {
       virtual void setName(std::string name) {Object::setName(name);}
       void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
 #endif
   };
 

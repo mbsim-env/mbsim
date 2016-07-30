@@ -491,13 +491,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   actuator->connect(shaft1->getFrame("C"),karosserie->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
+  std::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setInitialRotation(-M_PI/2,0,0);
   obj->setIvFileName("wrl/car.wrl");
   karosserie->setOpenMBVRigidBody(obj);
   obj->setScaleFactor(1);
 
-  boost::shared_ptr<OpenMBV::Frustum> cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);

@@ -12,7 +12,7 @@ using namespace boost::filesystem;
 
 namespace MBSimFMI {
 
-  void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
+  void FMIInstance::addModelParametersAndCreateDSS(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model shared library
     path mbsimsrclibfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/
       "model"/("libmbsimfmi_model"+SHEXT);

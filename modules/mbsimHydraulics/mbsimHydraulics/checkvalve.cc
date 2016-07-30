@@ -53,7 +53,6 @@ using namespace MBSim;
 using namespace MBSimControl;
 using namespace MBXMLUtils;
 using namespace xercesc;
-using namespace boost;
 
 namespace MBSimHydraulics {
 

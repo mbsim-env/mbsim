@@ -135,8 +135,8 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         setOpenMBVMoment(ombv.createOpenMBV());
       }
-      void setOpenMBVForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
-      void setOpenMBVMoment(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowM = arrow; }
+      void setOpenMBVForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
+      void setOpenMBVMoment(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowM = arrow; }
 #endif
 
     protected:
@@ -169,9 +169,9 @@ namespace MBSim {
       std::vector<Frame*> frame;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> openMBVForceGrp;
-      boost::shared_ptr<OpenMBV::Arrow> openMBVArrowF;
-      boost::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
+      std::shared_ptr<OpenMBV::Group> openMBVForceGrp;
+      std::shared_ptr<OpenMBV::Arrow> openMBVArrowF;
+      std::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
 #endif
 
       bool updPos, updVel, updFD, updF, updM, updRMV, updlaF, updlaM;

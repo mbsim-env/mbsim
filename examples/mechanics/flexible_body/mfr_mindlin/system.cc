@@ -90,7 +90,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* ball */ 
   vector<RigidBody*> balls;
   vector<Point*> points;
-  vector<boost::shared_ptr<OpenMBV::Sphere> > sphere;
+  vector<std::shared_ptr<OpenMBV::Sphere> > sphere;
   vector<Contact*> contact;
 
   double r = 1e-2; // radius of ball

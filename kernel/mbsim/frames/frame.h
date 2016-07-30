@@ -123,8 +123,8 @@ namespace MBSim {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
         openMBVFrame=ombv.createOpenMBV();
       }
-      void setOpenMBVFrame(const boost::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
-      boost::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
+      void setOpenMBVFrame(const std::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
+      std::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
 #endif
 
       void resetUpToDate();
@@ -175,7 +175,7 @@ namespace MBSim {
       fmatvec::Vec3 WaP, WpsiP;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Frame> openMBVFrame;
+      std::shared_ptr<OpenMBV::Frame> openMBVFrame;
 #endif
 
       bool updJac[3], updGA, updPos, updVel, updAcc;

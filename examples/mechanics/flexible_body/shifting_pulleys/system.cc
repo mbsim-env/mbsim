@@ -6,7 +6,6 @@
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimFlexibleBody;
-using namespace boost;
 
 ALETester::ALETester(const std::string & name_) :
     DynamicSystemSolver(name_) {
@@ -69,7 +68,7 @@ ALETester::ALETester(const std::string & name_) :
   }
 
   Contour1sNeutralFlexibleBody1SReferenceCurve* ncc = ring->createNeutralPhase("NeutralPhase");
-  boost::shared_ptr < OpenMBV::SpineExtrusion > cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+  std::shared_ptr < OpenMBV::SpineExtrusion > cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(max(100, elements * elementOrder * 10 + 1)); // resolution of visualisation
   cuboid->setDiffuseColor(0, 0, 1); // h=0, s=0, v=0 --> black
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section

@@ -35,7 +35,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* ball */ 
   vector<RigidBody*> balls;
   vector<Point*> points;
-  vector<boost::shared_ptr<OpenMBV::Sphere> > sphere;
+  vector<std::shared_ptr<OpenMBV::Sphere> > sphere;
   vector<Contact*> contact;
 
   double r = 1e-2; // radius of ball
@@ -137,7 +137,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //  body->setInitialGeneralizedVelocity(u0_body);
   //
   //#ifdef HAVE_OPENMBVCPPINTERFACE
-  //  boost::shared_ptr<OpenMBV::Cube> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
+  //  std::shared_ptr<OpenMBV::Cube> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   //  cube->setLength(e);
   //  cube->setDiffuseColor(1/3.0, 1, 1);
   //  body->setOpenMBVRigidBody(cube);

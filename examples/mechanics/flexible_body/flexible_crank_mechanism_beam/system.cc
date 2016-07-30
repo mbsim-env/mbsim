@@ -177,7 +177,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   //  load->connect(body1->getFrame("C"));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   dummy->setLength(l1,h2,d2);
   dummy->setDiffuseColor(90./360.,1,1);
   body1->setOpenMBVRigidBody(dummy);

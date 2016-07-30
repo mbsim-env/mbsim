@@ -28,7 +28,7 @@ namespace MBSim {
     private:
       fmatvec::Vec3 ez;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> openMBVRadialPosition, openMBVZPosition, openMBVRadialVelocity, openMBVCircularVelocity, openMBVZVelocity, openMBVRadialAcceleration, openMBVCircularAcceleration, openMBVZAcceleration; 
+      std::shared_ptr<OpenMBV::Arrow> openMBVRadialPosition, openMBVZPosition, openMBVRadialVelocity, openMBVCircularVelocity, openMBVZVelocity, openMBVRadialAcceleration, openMBVCircularAcceleration, openMBVZAcceleration; 
 #endif
 
     public:

@@ -243,7 +243,7 @@ namespace MBSim {
         return x;
       }
 
-      if (isnan(nrmf)) {
+      if (std::isnan(nrmf)) {
         info = -1;
         return xold;
       }
@@ -257,7 +257,7 @@ namespace MBSim {
 
     info = 1; //convergence (needs to be true for all steps)
     for (size_t i = 1; i < norms.size(); i++) {
-      if (norms[i - 1] <= norms[i] or isnan(norms[i])) { //divergence
+      if (norms[i - 1] <= norms[i] or std::isnan(norms[i])) { //divergence
         info = -1;
         break;
       }

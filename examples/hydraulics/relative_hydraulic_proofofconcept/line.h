@@ -15,7 +15,7 @@ class Line : public Object {
     void updateStateDependentVariables(double);
     void updateInverseKineticsJacobians(double) {}
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return boost::shared_ptr<OpenMBV::Group>(); }
+    std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
 #endif
 
     void calcqSize() { qSize=0; }

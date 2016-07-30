@@ -35,7 +35,7 @@ namespace MBSim {
       double l0;
       RigidBody *body[2];
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
+      std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
 #endif
     public:
       GeneralizedSpringDamper(const std::string &name="");

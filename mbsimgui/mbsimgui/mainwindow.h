@@ -95,8 +95,8 @@ namespace MBSimGUI {
     public:
       MainWindow(QStringList &arg);
       ~MainWindow();
-      boost::shared_ptr<MBXMLUtils::DOMParser> parser;
-      boost::shared_ptr<MBXMLUtils::Eval> eval;
+      std::shared_ptr<MBXMLUtils::DOMParser> parser;
+      std::shared_ptr<MBXMLUtils::Eval> eval;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter);
@@ -163,7 +163,7 @@ namespace MBSimGUI {
       void closeEvent ( QCloseEvent * event );
 
       // write parameter list to XML. The returned DOMNodes are owned by doc.
-      xercesc::DOMElement* writeProject(boost::shared_ptr<xercesc::DOMDocument> &doc);
+      xercesc::DOMElement* writeProject(std::shared_ptr<xercesc::DOMDocument> &doc);
   };
 
 }

@@ -290,7 +290,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body1->getFrame("C")->enableOpenMBV(1.5*d);
-  boost::shared_ptr<OpenMBV::Frustum> dummy1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> dummy1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy1->setBaseRadius(2*d);
   dummy1->setTopRadius(2*d);
   dummy1->setHeight(d); 
@@ -301,7 +301,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setOpenMBVRigidBody(dummy1);
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
-  boost::shared_ptr<OpenMBV::Frustum> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> dummy2 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy2->setBaseRadius(d);
   dummy2->setTopRadius(d);
   dummy2->setHeight(d); 
@@ -312,7 +312,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setOpenMBVRigidBody(dummy2);
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
-  boost::shared_ptr<OpenMBV::Frustum> dummy3 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> dummy3 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy3->setBaseRadius(d);
   dummy3->setTopRadius(d);
   dummy3->setHeight(d); 
@@ -323,7 +323,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setOpenMBVRigidBody(dummy3);
 
   body4->getFrame("C")->enableOpenMBV(1.5*d);
-  boost::shared_ptr<OpenMBV::Frustum> dummy4 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> dummy4 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy4->setBaseRadius(d);
   dummy4->setTopRadius(d);
   dummy4->setHeight(d); 

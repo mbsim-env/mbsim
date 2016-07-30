@@ -24,7 +24,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 void Perlchain::initialize() {
   //start
@@ -640,7 +639,7 @@ Perlchain::Perlchain(const string &projectName) :
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+  std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements * 4); // resolution of visualisation
   cuboid->setDiffuseColor(1 / 3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -714,7 +713,7 @@ Perlchain::Perlchain(const string &projectName) :
     balls[i]->addContour(plane);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Cuboid> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+    std::shared_ptr<OpenMBV::Cuboid> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
     cube->setLength(d, b, b);
     cube->setDiffuseColor(0, 1, 1);
     balls[i]->setOpenMBVRigidBody(cube);

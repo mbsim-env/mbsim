@@ -233,7 +233,7 @@ namespace MBSimFlexibleBody {
       double Ri, Ra;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::NurbsDisk> openMBVNurbsDisk;
+      std::shared_ptr<OpenMBV::NurbsDisk> openMBVNurbsDisk;
       double drawDegree;
 #endif
 

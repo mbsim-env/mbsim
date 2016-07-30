@@ -159,7 +159,7 @@ namespace MBSim {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
         setOpenMBVContactPoints(ombv.createOpenMBV());
       }
-      void setOpenMBVContactPoints(const boost::shared_ptr<OpenMBV::Frame> &frame) { 
+      void setOpenMBVContactPoints(const std::shared_ptr<OpenMBV::Frame> &frame) { 
         openMBVContactFrame[0]=frame;
         openMBVContactFrame[1]=OpenMBV::ObjectFactory::create(openMBVContactFrame[0]);
       }
@@ -173,7 +173,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         contactArrow=ombv.createOpenMBV(); 
       }
-      void setOpenMBVNormalForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { contactArrow=arrow; }
+      void setOpenMBVNormalForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { contactArrow=arrow; }
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the friction force vector.
@@ -186,7 +186,7 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         frictionArrow=ombv.createOpenMBV(); 
       }
-      void setOpenMBVTangentialForce(const boost::shared_ptr<OpenMBV::Arrow> &arrow) { frictionArrow=arrow; }
+      void setOpenMBVTangentialForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { frictionArrow=arrow; }
 #endif
 
       /* GETTER / SETTER */
@@ -289,14 +289,14 @@ namespace MBSim {
        *
        * gdActive[normal] = normal direction; gdActive[tangential] = tangential direction
        */
-      boost::array<unsigned int, DirectionDIM> gdActive;
+      std::array<unsigned int, DirectionDIM> gdActive;
 
       /** 
        * \brief boolean flag symbolising activity of contact on acceleration level
        *
        * gddActive[normal] = normal direction; gddActive[tangential] = tangential direction
        */
-      boost::array<unsigned int, DirectionDIM> gddActive;
+      std::array<unsigned int, DirectionDIM> gddActive;
 
       /**
        * \brief new gap velocity after an impact for event driven scheme
@@ -322,17 +322,17 @@ namespace MBSim {
       /**
        * \brief contact group to draw
        */
-      boost::shared_ptr<OpenMBV::Group> openMBVContactGrp;
+      std::shared_ptr<OpenMBV::Group> openMBVContactGrp;
 
       /**
        * \brief container of ContactFrames to draw
        */
-      std::vector<boost::shared_ptr<OpenMBV::Frame> > openMBVContactFrame;
+      std::vector<std::shared_ptr<OpenMBV::Frame> > openMBVContactFrame;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw
        */
-      boost::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
+      std::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
 #endif
 
       /**

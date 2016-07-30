@@ -14,16 +14,15 @@ using namespace std;
 using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace boost::filesystem;
-using namespace boost;
 
 namespace {
-  void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
-                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval);
+  void convertVariableToXPathParamSet(size_t startIndex, const vector<std::shared_ptr<MBSimFMI::Variable> > &var,
+                                      std::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval);
 }
 
 namespace MBSimFMI {
 
-  void FMIInstance::addModelParametersAndCreateDSS(vector<boost::shared_ptr<Variable> > &varSim) {
+  void FMIInstance::addModelParametersAndCreateDSS(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model file
     path resourcesDir=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path();
     // path to XML project file relative to resources/model
@@ -37,14 +36,14 @@ namespace MBSimFMI {
     MBSimXML::loadPlugins();
 
     // init the validating parser with the mbsimxml schema file
-    boost::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(true);
+    std::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(true);
     msg(Debug)<<"Create MBSim XML schema file including all plugins."<<endl;
     generateMBSimXMLSchema(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd", resourcesDir/"local"/"share"/"mbxmlutils"/"schema");
     validatingParser->loadGrammar(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd");
   
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim XML model file."<<endl;
-    boost::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile);
+    std::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile);
     xercesc::DOMElement *ele=doc->getDocumentElement();
 
     // create a clean evaluator (get the evaluator name first form the dom)
@@ -55,7 +54,7 @@ namespace MBSimFMI {
     shared_ptr<Eval> eval=Eval::createEvaluator(evalName);
 
     // set param according data in var
-    boost::shared_ptr<Preprocess::XPathParamSet> param=boost::make_shared<Preprocess::XPathParamSet>();
+    std::shared_ptr<Preprocess::XPathParamSet> param=std::make_shared<Preprocess::XPathParamSet>();
     convertVariableToXPathParamSet(varSim.size(), var, param, eval);
 
     // preprocess XML file
@@ -65,17 +64,17 @@ namespace MBSimFMI {
 
     // convert the parameter set from the mbxmlutils preprocessor to a "Variable" vector
     msg(Debug)<<"Convert XML parameters to FMI parameters."<<endl;
-    vector<boost::shared_ptr<Variable> > xmlParam;
+    vector<std::shared_ptr<Variable> > xmlParam;
     convertXPathParamSetToVariable(param, xmlParam, eval);
     // build a set of all Parameter's in var
     set<string> useParam;
-    for(vector<boost::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it)
+    for(vector<std::shared_ptr<Variable> >::iterator it=var.begin(); it!=var.end(); ++it)
       if((*it)->getType()==Parameter)
         useParam.insert((*it)->getName());
     // remove all variables in xmlParam which are not in var (these were not added as a parameter by the --param
     // option during creating of the FMU
-    vector<boost::shared_ptr<Variable> > xmlParam2;
-    for(vector<boost::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it)
+    vector<std::shared_ptr<Variable> > xmlParam2;
+    for(vector<std::shared_ptr<Variable> >::iterator it=xmlParam.begin(); it!=xmlParam.end(); ++it)
       if(useParam.find((*it)->getName())!=useParam.end())
         xmlParam2.push_back(*it);
     xmlParam=xmlParam2;
@@ -118,12 +117,12 @@ namespace {
     return boost::lexical_cast<size_t>(name.substr(0, name.size()-1));
   }
 
-  void convertVariableToXPathParamSet(size_t startIndex, const vector<boost::shared_ptr<MBSimFMI::Variable> > &var,
-                                      boost::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval) {
+  void convertVariableToXPathParamSet(size_t startIndex, const vector<std::shared_ptr<MBSimFMI::Variable> > &var,
+                                      std::shared_ptr<Preprocess::XPathParamSet> &param, const shared_ptr<Eval> &eval) {
     Preprocess::ParamSet &p=param->insert(make_pair(
       "/{"+MBSIMXML.getNamespaceURI()+"}MBSimProject[1]/{"+MBSIM.getNamespaceURI()+"}DynamicSystemSolver[1]",
       Preprocess::ParamSet())).first->second;
-    for(vector<boost::shared_ptr<MBSimFMI::Variable> >::const_iterator it=var.begin()+startIndex; it!=var.end(); ++it) {
+    for(vector<std::shared_ptr<MBSimFMI::Variable> >::const_iterator it=var.begin()+startIndex; it!=var.end(); ++it) {
       // skip all but parameters
       if((*it)->getType()!=MBSimFMI::Parameter)
         continue;

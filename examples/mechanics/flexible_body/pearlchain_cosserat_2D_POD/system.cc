@@ -26,7 +26,6 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 using namespace H5;
-using namespace boost;
 
 #include <hdf5serie/vectorserie.h>
 #include <fmatvec/fmatvec.h>
@@ -96,7 +95,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 	Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-	boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+	std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
 	cuboid->setNumberOfSpinePoints(elements*4+1);
         cuboid->setDiffuseColor(0.6666,1,1);
 	cuboid->setScaleFactor(1.);
@@ -151,7 +150,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		balls[i]->addContour(new Plane("Plane",balls[i]->getFrame("Plane")));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-		boost::shared_ptr<OpenMBV::Cuboid> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+		std::shared_ptr<OpenMBV::Cuboid> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
 		cube->setLength(d,b,b);
 		cube->setDiffuseColor(0.3333,0.6666,1);
 		balls[i]->setOpenMBVRigidBody(cube);

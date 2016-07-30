@@ -28,7 +28,6 @@ using namespace std;
 using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
-using namespace boost;
 
 namespace MBSimIntegrator {
 

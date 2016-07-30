@@ -27,15 +27,15 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
-void DOMEvalExceptionStack::add(const string &type, const boost::shared_ptr<DOMEvalException> &ex) {
+void DOMEvalExceptionStack::add(const string &type, const std::shared_ptr<DOMEvalException> &ex) {
   exVec.push_back(make_pair(type, ex));
 }
 
 namespace {
-  size_t calculateMaxDepth(const vector<pair<string, boost::shared_ptr<DOMEvalException> > > &exVec, size_t depth=0) {
+  size_t calculateMaxDepth(const vector<pair<string, std::shared_ptr<DOMEvalException> > > &exVec, size_t depth=0) {
     size_t maxDepth=depth;
-    for(vector<pair<string, boost::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it) {
-      boost::shared_ptr<DOMEvalExceptionStack> stack=boost::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
+    for(vector<pair<string, std::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it) {
+      std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
       if(stack) {
         size_t d=calculateMaxDepth(stack->getExceptionVector(), depth+1);
         if(d>maxDepth)
@@ -52,7 +52,7 @@ namespace {
   }
 }
 
-vector<pair<string, boost::shared_ptr<DOMEvalException> > > &DOMEvalExceptionStack::getExceptionVector() {
+vector<pair<string, std::shared_ptr<DOMEvalException> > > &DOMEvalExceptionStack::getExceptionVector() {
   return exVec;
 }
 
@@ -67,8 +67,8 @@ const char* DOMEvalExceptionStack::what() const throw() {
 
 void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::string &indent) const {
   int nr=1;
-  for(vector<pair<string, boost::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it, ++nr) {
-    boost::shared_ptr<DOMEvalExceptionStack> stack=boost::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
+  for(vector<pair<string, std::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it, ++nr) {
+    std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
     if(stack) {
       stack->generateWhat(str, indent.substr(0, indent.length()-2));
       str<<indent<<"+++ Created by "<<possibleType(nr, exVec.size(), it->first)<<endl;
@@ -78,10 +78,10 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
   nr=1;
   bool printNotCastableObjects=getenv("MBSIM_PRINT_NOT_CASTABLE")?true:false;
   int notPrintedWrongTypeErrors=0;
-  for(vector<pair<string, boost::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it, ++nr) {
-    boost::shared_ptr<DOMEvalExceptionStack> stack=boost::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
+  for(vector<pair<string, std::shared_ptr<DOMEvalException> > >::const_iterator it=exVec.begin(); it!=exVec.end(); ++it, ++nr) {
+    std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
     if(!stack) {
-      boost::shared_ptr<DOMEvalExceptionWrongType> wrongType=boost::dynamic_pointer_cast<DOMEvalExceptionWrongType>(it->second);
+      std::shared_ptr<DOMEvalExceptionWrongType> wrongType=std::dynamic_pointer_cast<DOMEvalExceptionWrongType>(it->second);
       if(!wrongType || printNotCastableObjects)
         str<<indent<<"*** Error from "<<possibleType(nr, exVec.size(), it->first)<<endl;
       if(wrongType) {

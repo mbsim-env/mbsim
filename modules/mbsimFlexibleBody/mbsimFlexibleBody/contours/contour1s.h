@@ -51,8 +51,8 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(const boost::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) { openMBVSpineExtrusion = spineExtrusion; }
-      boost::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() { return openMBVSpineExtrusion; }
+      void setOpenMBVSpineExtrusion(const std::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) { openMBVSpineExtrusion = spineExtrusion; }
+      std::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() { return openMBVSpineExtrusion; }
 #endif
 
     protected:
@@ -60,7 +60,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief body for the spine extrusion for visualisation of the 1s-body
        */
-      boost::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
+      std::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
 
 #endif
 

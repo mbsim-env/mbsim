@@ -25,7 +25,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
@@ -88,7 +87,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(belt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+  std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.6666,1,0.6666); 
   cuboid->setScaleFactor(1.); // orthotropic scaling of cross section

@@ -23,7 +23,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace boost;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
@@ -100,7 +99,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   welle->setTorsionalDamping(0.01);
   this->addObject(welle);
   #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::SpineExtrusion> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
+  std::shared_ptr<OpenMBV::SpineExtrusion> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cylinder->setNumberOfSpinePoints(Elements*4+1); // resolution of visualisation
   cylinder->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
   cylinder->setScaleFactor(1.); // orthotropic scaling of cross section
@@ -126,7 +125,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(ScheibeS);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Frustum> ScheibeSMBV = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> ScheibeSMBV = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   ScheibeSMBV->setBaseRadius(2.*r);
   ScheibeSMBV->setTopRadius(2.*r);
   ScheibeSMBV->setHeight(L/20.); 

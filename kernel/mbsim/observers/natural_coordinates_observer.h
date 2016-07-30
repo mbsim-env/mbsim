@@ -27,7 +27,7 @@ namespace MBSim {
   class NaturalCoordinatesObserver : public CoordinatesObserver {
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Arrow> openMBVTangentialAcceleration, openMBVNormalAcceleration;
+      std::shared_ptr<OpenMBV::Arrow> openMBVTangentialAcceleration, openMBVNormalAcceleration;
 #endif
 
     public:

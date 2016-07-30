@@ -59,7 +59,7 @@ namespace MBSim {
       virtual ~Contact();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 #endif
       /********************************/
 
@@ -141,9 +141,9 @@ namespace MBSim {
       virtual void updateGeneralizedNormalForce();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Frame>& getOpenMBVFrame() {return openMBVFrame;}
-      boost::shared_ptr<OpenMBV::Arrow>& getOpenMBVNormalForceArrow() {return contactArrow;}
-      boost::shared_ptr<OpenMBV::Arrow>& getOpenMBVTangentialForceArrow() {return frictionArrow;}
+      std::shared_ptr<OpenMBV::Frame>& getOpenMBVFrame() {return openMBVFrame;}
+      std::shared_ptr<OpenMBV::Arrow>& getOpenMBVNormalForceArrow() {return contactArrow;}
+      std::shared_ptr<OpenMBV::Arrow>& getOpenMBVTangentialForceArrow() {return frictionArrow;}
 #endif
       /***************************************************/
 
@@ -301,17 +301,17 @@ namespace MBSim {
       /*!
        * \brief group for the plotting of the openMBV sub elements
        */
-      boost::shared_ptr<OpenMBV::Group> openMBVGrp;
+      std::shared_ptr<OpenMBV::Group> openMBVGrp;
 
       /**
        * \brief Frame of ContactFrames to draw
        */
-      boost::shared_ptr<OpenMBV::Frame> openMBVFrame;
+      std::shared_ptr<OpenMBV::Frame> openMBVFrame;
 
       /**
        * \brief pointer to memory of normal and friction forces to draw
        */
-      boost::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
+      std::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
 #endif
 
     private:

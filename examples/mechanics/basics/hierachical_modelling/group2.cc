@@ -51,7 +51,7 @@ Group2::Group2(const string &name) : Group(name) {
 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::Cuboid> body1=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
+  std::shared_ptr<OpenMBV::Cuboid> body1=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   body1->setLength(Vec(3,INIT,1)*h1);
   box1->setOpenMBVRigidBody(body1);
   box1->getFrame("C")->enableOpenMBV();

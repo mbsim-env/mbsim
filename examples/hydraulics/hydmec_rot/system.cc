@@ -26,7 +26,6 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimHydraulics;
-using namespace boost;
 
 string getBodyName(int i) {
   string name;
@@ -116,9 +115,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
 //  traeger->setTranslation(new LinearTranslation(Mat("[0;0;1]")));
 //  traeger->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  boost::shared_ptr<OpenMBV::CompoundRigidBody> traegerVisu = OpenMBV::ObjectFactory::create<OpenMBV::CompoundRigidBody>();
+  std::shared_ptr<OpenMBV::CompoundRigidBody> traegerVisu = OpenMBV::ObjectFactory::create<OpenMBV::CompoundRigidBody>();
   
-  boost::shared_ptr<OpenMBV::Frustum> traegerVisuBoden = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> traegerVisuBoden = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   traegerVisuBoden->setBaseRadius(dA/2.);
   traegerVisuBoden->setTopRadius(dA/2.);
   traegerVisuBoden->setHeight(h/4.);
@@ -128,7 +127,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuBoden->setName("frustum1");
   traegerVisu->addRigidBody(traegerVisuBoden);
   
-  boost::shared_ptr<OpenMBV::Frustum> traegerVisuMitte = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  std::shared_ptr<OpenMBV::Frustum> traegerVisuMitte = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   traegerVisuMitte->setBaseRadius(dI/2.);
   traegerVisuMitte->setTopRadius(dI/2.);
   traegerVisuMitte->setHeight(h);
@@ -164,7 +163,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     if (i>0)
       scheibe->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0; 0; 1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    boost::shared_ptr<OpenMBV::Extrusion> scheibeVisu = OpenMBV::ObjectFactory::create<OpenMBV::Extrusion>();
+    std::shared_ptr<OpenMBV::Extrusion> scheibeVisu = OpenMBV::ObjectFactory::create<OpenMBV::Extrusion>();
     scheibeVisu->setHeight(h);
     scheibeVisu->addContour(createPiece(dI/2., dA/2., 0, phiSolid));
     scheibeVisu->setInitialRotation(0, 0, -phiSolid/2.);

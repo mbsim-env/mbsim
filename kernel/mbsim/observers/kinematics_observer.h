@@ -36,8 +36,8 @@ namespace MBSim {
       Frame* frame;
       std::string saved_frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      boost::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAngVelGrp, openMBVAccGrp, openMBVAngAccGrp;
-      boost::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAngularVelocity, openMBVAcceleration, openMBVAngularAcceleration;
+      std::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAngVelGrp, openMBVAccGrp, openMBVAngAccGrp;
+      std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAngularVelocity, openMBVAcceleration, openMBVAngularAcceleration;
 #endif
 
     public:

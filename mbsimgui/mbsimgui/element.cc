@@ -34,7 +34,6 @@
 
 using namespace std;
 using namespace MBXMLUtils;
-using namespace boost;
 using namespace xercesc;
 
 namespace MBSimGUI {
