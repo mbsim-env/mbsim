@@ -21,7 +21,6 @@
 #include "element.h"
 #include <QtGui/QFileDialog>
 #include <cmath>
-#include <boost/shared_ptr.hpp>
 #include "frame.h"
 #include "contour.h"
 #include "dynamic_system_solver.h"
@@ -30,7 +29,6 @@
 #include "observer.h"
 #include "mainwindow.h"
 #include "embed.h"
-#include <boost/bind.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -46,7 +44,7 @@ namespace MBSimGUI {
 
   Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
     name.setProperty(new TextProperty(name_,""));
-    embed.setProperty(new EmbedProperty(boost::bind(&Element::getName, this)));
+    embed.setProperty(new EmbedProperty(std::bind(&Element::getName, this)));
     plotFeature.setProperty(new PlotFeatureStatusProperty);
     ID=toStr(IDcounter++);
   }

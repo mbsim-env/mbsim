@@ -39,7 +39,7 @@ using namespace xercesc;
 namespace MBSim {
 
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
-  BOOST_STATIC_ASSERT_MSG(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
+  static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
     for(int i=0; i<LASTPLOTFEATURE; i++) {

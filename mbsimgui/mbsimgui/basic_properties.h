@@ -23,7 +23,6 @@
 #include <string>
 #include "utils.h"
 #include "extended_properties.h"
-#include <boost/function.hpp>
 #include <QFileInfo>
 
 namespace MBSimGUI {
@@ -304,7 +303,7 @@ namespace MBSimGUI {
   class EmbedProperty : public Property {
 
     public:
-      EmbedProperty(boost::function<const std::string&()> f);
+      EmbedProperty(std::function<const std::string&()> f);
       virtual PropertyInterface* clone() const {return new EmbedProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

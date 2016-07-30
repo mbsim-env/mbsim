@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  boost::scoped_ptr<MBSimEnvironment> MBSimEnvironment::instance(new MBSimEnvironment);
+  std::unique_ptr<MBSimEnvironment> MBSimEnvironment::instance(new MBSimEnvironment);
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(MBSimEnvironment, MBSIM%"MBSimEnvironment")
 

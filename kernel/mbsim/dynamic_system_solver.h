@@ -22,7 +22,6 @@
 
 #include "mbsim/group.h"
 #include "fmatvec/sparse_matrix.h"
-#include <boost/function.hpp>
 
 namespace MBSim {
 

@@ -25,8 +25,6 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/stopwatch.h"
 
-#include <boost/bind.hpp>
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif

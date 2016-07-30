@@ -35,8 +35,6 @@
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
 #include <limits>
-#include <boost/lexical_cast.hpp>
-#include <boost/bind.hpp>
 
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
@@ -149,27 +147,27 @@ namespace MBSim {
       /****** reorganize ******/
 
       for (unsigned int i = 0; i < frmList.size(); i++) {
-        frmList[i]->setName("Frame_"+boost::lexical_cast<string>(i)); // just a unique local name
+        frmList[i]->setName("Frame_"+to_string(i)); // just a unique local name
         addFrame(frmList[i]);
       }
       for (unsigned int i = 0; i < cntList.size(); i++) {
-        cntList[i]->setName("Contour_"+boost::lexical_cast<string>(i)); // just a unique local name
+        cntList[i]->setName("Contour_"+to_string(i)); // just a unique local name
         addContour(cntList[i]);
       }
       for (unsigned int i = 0; i < lnkList.size(); i++) {
-        lnkList[i]->setName("Link_"+boost::lexical_cast<string>(i)); // just a unique local name
+        lnkList[i]->setName("Link_"+to_string(i)); // just a unique local name
         addLink(lnkList[i]);
       }
       for (unsigned int i = 0; i < crtList.size(); i++) {
-        crtList[i]->setName("Constraint_"+boost::lexical_cast<string>(i)); // just a unique local name
+        crtList[i]->setName("Constraint_"+to_string(i)); // just a unique local name
         addConstraint(crtList[i]);
       }
       for (unsigned int i = 0; i < iKlnkList.size(); i++) {
-        iKlnkList[i]->setName("InverseKinematic_"+boost::lexical_cast<string>(i)); // just a unique local name
+        iKlnkList[i]->setName("InverseKinematic_"+to_string(i)); // just a unique local name
         addInverseKineticsLink(iKlnkList[i]);
       }
       for (unsigned int i = 0; i < obsrvList.size(); i++) {
-        obsrvList[i]->setName("Observer_"+boost::lexical_cast<string>(i)); // just a unique local name
+        obsrvList[i]->setName("Observer_"+to_string(i)); // just a unique local name
         addObserver(obsrvList[i]);
       }
 
@@ -208,7 +206,7 @@ namespace MBSim {
       for (int i = 0; i < A.size(); i++) {
         double a = max(A.T().col(i));
         if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
-          Graph *graph = new Graph("InvisibleGraph_"+boost::lexical_cast<string>(nt++));
+          Graph *graph = new Graph("InvisibleGraph_"+to_string(nt++));
           addToGraph(graph, A, i, eleList);
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
@@ -216,7 +214,7 @@ namespace MBSim {
         else if (fabs(a) < epsroot()) { // absolut kinematics
           Object *obj = dynamic_cast<Object*>(eleList[i]);
           if(obj) {
-            eleList[i]->setName("Object_absolute_"+boost::lexical_cast<string>(i)); // just a unique local name
+            eleList[i]->setName("Object_absolute_"+to_string(i)); // just a unique local name
             addObject(obj);
           }
         }
@@ -1556,7 +1554,7 @@ namespace MBSim {
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
     Object *obj = dynamic_cast<Object*>(eleList[i]);
     if(obj) {
-      eleList[i]->setName("Object_graph_"+boost::lexical_cast<string>(i)); // just a unique local name
+      eleList[i]->setName("Object_graph_"+to_string(i)); // just a unique local name
       graph->addObject(eleList[i]->computeLevel(), obj);
     }
     A(i, i) = -1;

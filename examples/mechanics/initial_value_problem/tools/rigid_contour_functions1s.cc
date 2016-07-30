@@ -276,7 +276,7 @@ void FuncCrPC::initializeUsingXML(DOMElement * element) {
   int dis=1;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"discretization");
   if (e)
-    dis=atoi(e->GetText());
+    dis=boost::lexical_cast<int>(e->GetText());
   Vec rYZ(3);
   e=element->FirstChildElement(MBSIMVALVETRAINNS"rYZ");
   if (e)

@@ -1,8 +1,6 @@
 #include "system.h"
 #include "mbsim/integrators/integrators.h"
 
-#include <boost/timer.hpp>
-
 using namespace std;
 using namespace MBSim;
 using namespace MBSimIntegrator;

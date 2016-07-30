@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include <mbsim/objectfactory.h>
-#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace fmatvec;

@@ -193,7 +193,7 @@ namespace MBSimFMI {
   void FMIInstance::setValue(const fmiValueReference vr[], size_t nvr, const FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
+        throw runtime_error("No such value reference "+to_string(vr[i]));
       try { var[vr[i]]->setValue(CppDatatype(value[i])); } RETHROW_VR(vr[i])
     }
     if(dss)
@@ -231,8 +231,8 @@ namespace MBSimFMI {
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);
     dss->setTime(time);
-    time=boost::ref(dss->getTime());
-    z=boost::ref(dss->getState());
+    time=std::ref(dss->getTime());
+    z=std::ref(dss->getState());
 
     // save the current dir and change to outputDir -> MBSim will create output files in the current dir
     // this must be done before the dss is initialized since dss->initialize creates files in the current dir)
@@ -255,7 +255,7 @@ namespace MBSimFMI {
     // Now we copy all values from var to varSim (varSim is generated above).
     if(var.size()!=varSim.size())
       throw runtime_error("The number of parameters from modelDescription.xml and model differ: "
-                          +boost::lexical_cast<string>(var.size())+", "+boost::lexical_cast<string>(varSim.size())+". "+
+                          +to_string(var.size())+", "+to_string(varSim.size())+". "+
                           "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
     vector<shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
     size_t vr=0;
@@ -268,8 +268,8 @@ namespace MBSimFMI {
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getType()!=(*varIt)->getType())
           throw runtime_error("Variable type (parameter, input, output) from modelDescription.xml and model does not match: "
-                              +boost::lexical_cast<string>((*varIt)->getType())+", "
-                              +boost::lexical_cast<string>((*varSimIt)->getType())+". "+
+                              +to_string((*varIt)->getType())+", "
+                              +to_string((*varSimIt)->getType())+". "+
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getDatatypeChar()!=(*varIt)->getDatatypeChar())
           throw runtime_error(string("Variable datatype from modelDescription.xml and model does not match: ")
@@ -352,7 +352,7 @@ namespace MBSimFMI {
   void FMIInstance::getValue(const fmiValueReference vr[], size_t nvr, FMIDatatype value[]) {
     for(size_t i=0; i<nvr; ++i) {
       if(vr[i]>=var.size())
-        throw runtime_error("No such value reference "+boost::lexical_cast<string>(vr[i]));
+        throw runtime_error("No such value reference "+to_string(vr[i]));
       try { value[i]=cppDatatypeToFMIDatatype<FMIDatatype, CppDatatype>(var[vr[i]]->getValue(CppDatatype())); } RETHROW_VR(vr[i])
     }
   }
@@ -467,8 +467,8 @@ namespace MBSimFMI {
 
     // delete DynamicSystemSolver (requried here since after terminate a call to initialize is allowed without
     // calls to fmiFreeModelInstance and fmiInstantiateModel)
-    time=boost::ref(timeStore);
-    z=boost::ref(zStore);
+    time=std::ref(timeStore);
+    z=std::ref(zStore);
     dss.reset();
   }
 
@@ -481,7 +481,7 @@ namespace MBSimFMI {
 
   // rethrow a exception thrown during a operation on a valueReference: prefix the exception text with the variable name.
   void FMIInstance::rethrowVR(size_t vr, const std::exception &ex) {
-    throw runtime_error(string("In variable '#")+var[vr]->getDatatypeChar()+boost::lexical_cast<string>(vr)+"#': "+ex.what());
+    throw runtime_error(string("In variable '#")+var[vr]->getDatatypeChar()+to_string(vr)+"#': "+ex.what());
   }
 
 }

@@ -1,7 +1,6 @@
 // includes
 #include <mbxmlutilshelper/shared_library.h>
 #include <fmiModelFunctions.h>
-#include <boost/make_shared.hpp>
 #include <boost/filesystem.hpp>
 #include <cstdarg>
 #include <cstdio>

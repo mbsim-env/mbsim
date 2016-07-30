@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <mbsimControl/extern_signal_source.h>
@@ -181,7 +180,7 @@ class PredefinedParameter : public Variable {
 //  public:
 //    ExternGeneralizedIOForceInput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
 //      "ExternGeneralizedIO force", Input, 'r'), io(io_) {}
-//    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+//    std::string getValueAsString() { return std::to_string(getValue(double())); }
 //    void setValue(const double &v) { io->setGeneralizedForce(v); }
 //    const double& getValue(const double&) { return io->getla()(0); }
 //  protected:
@@ -193,7 +192,7 @@ class PredefinedParameter : public Variable {
 //  public:
 //    ExternGeneralizedIOPositionOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
 //      "ExternGeneralizedIO position", Output, 'r'), io(io_) {}
-//    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+//    std::string getValueAsString() { return std::to_string(getValue(double())); }
 //    const double& getValue(const double&) { return io->getGeneralizedPosition(); }
 //  protected:
 //    MBSim::ExternGeneralizedIO *io;
@@ -204,7 +203,7 @@ class PredefinedParameter : public Variable {
 //  public:
 //    ExternGeneralizedIOVelocityOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
 //      "ExternGeneralizedIO velocity", Output, 'r'), io(io_) {}
-//    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+//    std::string getValueAsString() { return std::to_string(getValue(double())); }
 //    const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
 //  protected:
 //    MBSim::ExternGeneralizedIO *io;
@@ -214,9 +213,9 @@ class PredefinedParameter : public Variable {
 class ExternSignalSourceInput : public Variable {
   public:
     ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_, int idx_) :
-      Variable(mbsimPathToFMIName(sig_->getPath())+"["+boost::lexical_cast<std::string>(idx_)+"]",
+      Variable(mbsimPathToFMIName(sig_->getPath())+"["+std::to_string(idx_)+"]",
         "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+    std::string getValueAsString() { return std::to_string(getValue(double())); }
     void setValue(const double &v) {
       fmatvec::VecV curv = sig->evalSignal();
       curv(idx) = v;
@@ -234,9 +233,9 @@ class ExternSignalSourceInput : public Variable {
 class ExternSignalSinkOutput : public Variable {
   public:
     ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_, int idx_) :
-      Variable(mbsimPathToFMIName(sig_->getPath())+"["+boost::lexical_cast<std::string>(idx_)+"]",
+      Variable(mbsimPathToFMIName(sig_->getPath())+"["+std::to_string(idx_)+"]",
         "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
-    std::string getValueAsString() { return boost::lexical_cast<std::string>(getValue(double())); }
+    std::string getValueAsString() { return std::to_string(getValue(double())); }
     const double& getValue(const double &) {
       return sig->evalSignal()(idx);
     }

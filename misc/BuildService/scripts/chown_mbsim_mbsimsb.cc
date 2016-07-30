@@ -1,10 +1,8 @@
 #include <boost/filesystem.hpp>
-#include <boost/assign/list_of.hpp>
 #include <set>
 #include <sys/stat.h>
 
 using namespace std;
-using namespace boost::assign;
 using namespace boost::filesystem;
 
 // configuration
@@ -63,7 +61,7 @@ int main(int argc, char *argv[]) {
     }
 
     // check first parameter
-    uid_t newUID=atoi(argv[1]);
+    uid_t newUID=boost::lexical_cast<int>(argv[1]);
     if(newUID!=mbsimUID && newUID!=mbsimsbUID)
       throw runtime_error("Wrong arguments: Invalid new uid.");
 

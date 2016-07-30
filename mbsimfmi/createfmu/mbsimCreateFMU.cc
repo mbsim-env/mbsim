@@ -253,8 +253,8 @@ int main(int argc, char *argv[]) {
     desc.replace_extension();
     desc.replace_extension();
     E(modelDesc)->setAttribute("modelName", desc.string());
-    E(modelDesc)->setAttribute("numberOfContinuousStates", boost::lexical_cast<string>(dss->getzSize()));
-    E(modelDesc)->setAttribute("numberOfEventIndicators", boost::lexical_cast<string>(dss->getsvSize()));
+    E(modelDesc)->setAttribute("numberOfContinuousStates", to_string(dss->getzSize()));
+    E(modelDesc)->setAttribute("numberOfEventIndicators", to_string(dss->getsvSize()));
     E(modelDesc)->setAttribute("variableNamingConvention", "structured");
 
       // Type definition
@@ -273,7 +273,7 @@ int main(int argc, char *argv[]) {
             DOMElement *enumEle=D(modelDescDoc)->createElement("EnumerationType");
             type->appendChild(enumEle);
             E(enumEle)->setAttribute("min", "1");
-            E(enumEle)->setAttribute("max", boost::lexical_cast<string>((*it)->size()));
+            E(enumEle)->setAttribute("max", to_string((*it)->size()));
             for(size_t id=0; id<(*it)->size(); ++id) {
               DOMElement *item=D(modelDescDoc)->createElement("Item");
               enumEle->appendChild(item);
@@ -286,9 +286,9 @@ int main(int argc, char *argv[]) {
       if(integrator) {
         DOMElement *defaultExp=D(modelDescDoc)->createElement("DefaultExperiment");
         modelDesc->appendChild(defaultExp);
-        E(defaultExp)->setAttribute("startTime", boost::lexical_cast<string>(integrator->getStartTime()));
-        E(defaultExp)->setAttribute("stopTime", boost::lexical_cast<string>(integrator->getEndTime()));
-        E(defaultExp)->setAttribute("tolerance", boost::lexical_cast<string>(1e-5));
+        E(defaultExp)->setAttribute("startTime", to_string(integrator->getStartTime()));
+        E(defaultExp)->setAttribute("stopTime", to_string(integrator->getEndTime()));
+        E(defaultExp)->setAttribute("tolerance", to_string(1e-5));
       }
 
       // ModelVariables element
@@ -316,13 +316,13 @@ int main(int argc, char *argv[]) {
             if(var[vr]->getEnumerationList()) {
               E(varType)->setAttribute("declaredType", "EnumType_"+boost::lexical_cast<string>(var[vr]->getEnumerationList()));
               E(varType)->setAttribute("min", "1");
-              E(varType)->setAttribute("max", boost::lexical_cast<string>(var[vr]->getEnumerationList()->size()));
+              E(varType)->setAttribute("max", to_string(var[vr]->getEnumerationList()->size()));
             }
 
           // attributes on ScalarVariable element
           E(scalarVar)->setAttribute("name", var[vr]->getName());
           E(scalarVar)->setAttribute("description", var[vr]->getDescription());
-          E(scalarVar)->setAttribute("valueReference", boost::lexical_cast<string>(vr));
+          E(scalarVar)->setAttribute("valueReference", to_string(vr));
           switch(var[vr]->getType()) {
             case Parameter:
               E(scalarVar)->setAttribute("causality", "internal");

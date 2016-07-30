@@ -23,13 +23,11 @@
 
 #include <mbsim/utils/eps.h>
 
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
 #include <iostream>
 
 using namespace fmatvec;
 using namespace std;
+using namespace std::placeholders;
 
 namespace fmatvec {
   bool operator<(const Index & i1, const Index & i2) {
@@ -62,15 +60,15 @@ namespace MBSim {
   }
 
   Vec MultiDimensionalNewtonMethod::solve(const Vec & initialValue) {
-    boost::function<Vec(const SqrMat&, const Vec&, int&)> slv;
+    std::function<Vec(const SqrMat&, const Vec&, int&)> slv;
 
     info = 1;
     iter = 0;
 
     if (linAlg == 0)
-      slv = boost::bind(fslvLUMDNW, _1, _2, _3);
+      slv = std::bind(fslvLUMDNW, _1, _2, _3);
     else if (linAlg == 1)
-      slv = boost::bind(fslvLSMDNW, _1, _2, _3);
+      slv = std::bind(fslvLSMDNW, _1, _2, _3);
 
     /*Reset for comparing*/
     criteria->clear();

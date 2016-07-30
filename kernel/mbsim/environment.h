@@ -24,7 +24,6 @@
 #include "fmatvec/atom.h"
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/dom/DOMNode.hpp>
-#include <boost/scoped_ptr.hpp>
 
 namespace MBSim {
 
@@ -78,7 +77,7 @@ namespace MBSim {
       /**
        * class pointer to ensure singleton status
        */
-      static boost::scoped_ptr<MBSimEnvironment> instance;
+      static std::unique_ptr<MBSimEnvironment> instance;
       
       /**
        * \brief constructor

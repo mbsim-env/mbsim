@@ -480,7 +480,7 @@ namespace MBSimGUI {
         static_cast<TextProperty*>(argname[i-1].getProperty())->setText(E(element)->getAttribute(str.c_str()));
       str = "arg"+toStr(i)+"Dim";
       if(E(element)->hasAttribute(str))
-        static_cast<IntegerProperty*>(argdim[i-1].getProperty())->setValue(atoi(E(element)->getAttribute(str.c_str()).c_str()));
+        static_cast<IntegerProperty*>(argdim[i-1].getProperty())->setValue(boost::lexical_cast<int>(E(element)->getAttribute(str.c_str())));
     }
     return element;
   }
@@ -491,7 +491,7 @@ namespace MBSimGUI {
       string istr = toStr(i);
       E(ele0)->setAttribute("arg"+istr, static_cast<TextProperty*>(argname[i-1].getProperty())->getText());
       if(ext[i]=='V')
-        E(ele0)->setAttribute("arg"+istr+"Dim",boost::lexical_cast<string>(static_cast<IntegerProperty*>(argdim[i-1].getProperty())->getValue()));
+        E(ele0)->setAttribute("arg"+istr+"Dim",to_string(static_cast<IntegerProperty*>(argdim[i-1].getProperty())->getValue()));
     }
     f.writeXMLFile(ele0);
     return ele0;

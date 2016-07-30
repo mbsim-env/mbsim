@@ -22,7 +22,6 @@
 
 #include "mbsim/group.h"
 #include <mbsim/functions/function.h>
-#include <boost/shared_ptr.hpp>
 
 namespace MBSimHydraulics {
 

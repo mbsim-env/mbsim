@@ -23,7 +23,6 @@
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include <QDir>
-#include <boost/bind.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -37,7 +36,7 @@ namespace MBSimGUI {
 
   Solver::Solver() : embed(0,false), name("Solver") {
 
-    embed.setProperty(new EmbedProperty(boost::bind(&Solver::getName, this)));
+    embed.setProperty(new EmbedProperty(std::bind(&Solver::getName, this)));
   }
 
   Solver::~Solver() {

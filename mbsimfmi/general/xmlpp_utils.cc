@@ -24,7 +24,7 @@ void convertXPathParamSetToVariable(const std::shared_ptr<Preprocess::XPathParam
       else if(eval->valueIsOfType(pIt->second, Eval::VectorType)) {
         vector<double> value=eval->cast<vector<double> >(pIt->second);
         for(int i=0; i<value.size(); ++i)
-          fmiParam.push_back(std::make_shared<VariableStore<double> >(pIt->first+"["+boost::lexical_cast<string>(i+1)+"]",
+          fmiParam.push_back(std::make_shared<VariableStore<double> >(pIt->first+"["+to_string(i+1)+"]",
             Parameter, value[i]));
       }
       // add a matrix variable as seperate scalars with [rowidx,colIdx]
@@ -32,8 +32,8 @@ void convertXPathParamSetToVariable(const std::shared_ptr<Preprocess::XPathParam
         vector<vector<double> > value=eval->cast<vector<vector<double> > >(pIt->second);
         for(int r=0; r<value.size(); ++r)
           for(int c=0; c<value[r].size(); ++c)
-            fmiParam.push_back(std::make_shared<VariableStore<double> >(pIt->first+"["+boost::lexical_cast<string>(r+1)+
-              ","+boost::lexical_cast<string>(c+1)+"]", Parameter, value[r][c]));
+            fmiParam.push_back(std::make_shared<VariableStore<double> >(pIt->first+"["+to_string(r+1)+
+              ","+to_string(c+1)+"]", Parameter, value[r][c]));
       }
       // add a string variable as it
       else if(eval->valueIsOfType(pIt->second, Eval::StringType)) {

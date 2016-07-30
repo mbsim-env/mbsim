@@ -6,8 +6,6 @@
 #include <utils.h>
 #include <fmatvec/atom.h>
 #include "fmiinstancebase.h"
-#include <boost/make_shared.hpp>
-#include <boost/ref.hpp>
 
 // fmi function declarations must be included as extern C
 extern "C" {
@@ -97,10 +95,10 @@ namespace MBSimFMI {
 
       // system time
       double timeStore; // do not use this variable, use time
-      boost::reference_wrapper<double> time;
+      std::reference_wrapper<double> time;
       // system state
       fmatvec::Vec zStore; // do not use this variable, use z
-      boost::reference_wrapper<fmatvec::Vec> z;
+      std::reference_wrapper<fmatvec::Vec> z;
       // system stop vector (0 = no shift in this index; 1 = shift in this index)
       fmatvec::Vec svLast;
 

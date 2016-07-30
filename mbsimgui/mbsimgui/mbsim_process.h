@@ -26,7 +26,6 @@
 #include <QTextBrowser>
 #include <QThread>
 #include <xercesc/util/XercesDefs.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <QDir>
 

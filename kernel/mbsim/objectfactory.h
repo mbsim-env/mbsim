@@ -23,10 +23,6 @@
 #include <vector>
 #include <stdexcept>
 #include <typeinfo>
-#ifdef HAVE_BOOST_TYPE_TRAITS_HPP
-# include <boost/static_assert.hpp>
-# include <boost/type_traits.hpp>
-#endif
 #include "mbsim/utils/utils.h"
 #include <mbsim/mbsim_event.h>
 #include <mbxmlutilshelper/utils.h>
@@ -117,12 +113,9 @@ class ObjectFactory {
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
     template<class ContainerType>
     static ContainerType* createAndInit(const xercesc::DOMElement *element) {
-#ifdef HAVE_BOOST_TYPE_TRAITS_HPP
-      // just check if ContainerType is derived from fmatvec::Atom if not throw a compile error if boost is avaliable
-      // if boost is not avaliable a runtime error will occure later. (so it does not care if boost is not available)
-      BOOST_STATIC_ASSERT_MSG((std::is_convertible<ContainerType*, fmatvec::Atom*>::value),
+      // just check if ContainerType is derived from fmatvec::Atom if not throw a compile error
+      static_assert(std::is_convertible<ContainerType*, fmatvec::Atom*>::value,
         "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
-#endif
       // throw error if NULL is supplied as element
       if(element==NULL)
         throw MBSimError("Internal error: NULL argument specified.");

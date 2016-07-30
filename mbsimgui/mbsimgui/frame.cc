@@ -18,7 +18,6 @@
    */
 
 #include <config.h>
-#include <boost/shared_ptr.hpp>
 #include "frame.h"
 #include "ombv_properties.h"
 #include "objectfactory.h"

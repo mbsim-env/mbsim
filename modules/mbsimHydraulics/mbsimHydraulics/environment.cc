@@ -31,7 +31,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(HydraulicEnvironment, MBSIMHYDRAULICS%"HydraulicEnvironment")
 
-  boost::scoped_ptr<HydraulicEnvironment> HydraulicEnvironment::instance(new HydraulicEnvironment);
+  std::unique_ptr<HydraulicEnvironment> HydraulicEnvironment::instance(new HydraulicEnvironment);
 
   void HydraulicEnvironment::initializeUsingXML(DOMElement *element) {
     Environment::initializeUsingXML(element);

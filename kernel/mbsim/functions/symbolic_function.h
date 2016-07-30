@@ -23,7 +23,6 @@
 #include <mbsim/functions/function.h>
 #include <mbxmlutilshelper/casadiXML.h>
 #include "mbsim/mbsim_event.h"
-#include <boost/static_assert.hpp>
 
 namespace MBSim {
 
@@ -191,7 +190,7 @@ namespace MBSim {
       if(f.getNumInputs()!=1) THROW_MBSIMERROR("Function must have only 1 argument.");
       if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function must have only 1 output.");
       // check template arguments: only scalar and vector arguments are supported
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg>::size2==1);
+      static_assert(fmatvec::StaticSize<Arg>::size2==1, "Only scalar and vector arguments are supported");
       // check function: only scalar and vector arguments are supported
       if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       // check function <-> template argument dimension
@@ -343,8 +342,8 @@ namespace MBSim {
       if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
       if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
       // check template arguments: only scalar and vector arguments are supported
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg2>::size2==1);
+      static_assert(fmatvec::StaticSize<Arg1>::size2==1, "Only scalar and vector arguments are supported");
+      static_assert(fmatvec::StaticSize<Arg2>::size2==1, "Only scalar and vector arguments are supported");
       // check function: only scalar and vector arguments are supported
       if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
@@ -524,8 +523,8 @@ namespace MBSim {
       if(f.getNumInputs()!=2) THROW_MBSIMERROR("Function has must have exact 2 arguments.");
       if(f.getNumOutputs()!=1) THROW_MBSIMERROR("Function has must have only 1 output.");
       // check template arguments: only scalar and vector arguments are supported
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<Arg1>::size2==1);
-      BOOST_STATIC_ASSERT(fmatvec::StaticSize<double>::size2==1);
+      static_assert(fmatvec::StaticSize<Arg1>::size2==1, "Only scalar and vector arguments are supported");
+      static_assert(fmatvec::StaticSize<double>::size2==1, "Only scalar and vector arguments are supported");
       // check function: only scalar and vector arguments are supported
       if(f.inputExpr(0).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       if(f.inputExpr(1).size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");

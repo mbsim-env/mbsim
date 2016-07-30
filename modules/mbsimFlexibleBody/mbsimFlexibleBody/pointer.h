@@ -20,7 +20,7 @@
 #ifndef _POINTER_H_
 #define _POINTER_H_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace MBSimFlexibleBody {
 

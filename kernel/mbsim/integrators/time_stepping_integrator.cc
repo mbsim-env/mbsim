@@ -24,7 +24,6 @@
 #include <time.h>
 #include <boost/iostreams/tee.hpp>
 #include <boost/iostreams/stream.hpp>
-#include <boost/bind.hpp>
 
 #ifndef NO_ISO_14882
 using namespace std;

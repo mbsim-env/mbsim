@@ -2,6 +2,7 @@
 #define _MBSIMFMI_FMIINSTANCEBASE_H_
 
 #include <exception>
+#include <memory>
 
 extern "C" {
   #include <3rdparty/fmiModelFunctions.h>

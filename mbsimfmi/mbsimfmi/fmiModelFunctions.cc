@@ -2,14 +2,11 @@
 #include "config.h"
 #include <string>
 #include <stdexcept>
-#include <boost/shared_ptr.hpp>
 #include <mbxmlutilshelper/shared_library.h>
 
 // include the fmi header
-extern "C" {
-  #define MODEL_IDENTIFIER mbsim
-  #include <fmiinstancebase.h> // this includes 3rdparty/fmiModelFunctions
-}
+#define MODEL_IDENTIFIER mbsim
+#include <fmiinstancebase.h> // this includes 3rdparty/fmiModelFunctions
 
 // define getFMUWrapperSharedLibPath() which returns the FMU wrapper shared library path = .../binaries/<OS>/<fmuname>.[so|dll]
 #define MBXMLUTILS_SHAREDLIBNAME FMUWrapper

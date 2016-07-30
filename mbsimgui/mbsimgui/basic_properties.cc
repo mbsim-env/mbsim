@@ -30,9 +30,9 @@
 #include "mainwindow.h"
 #include <xercesc/dom/DOMText.hpp>
 #include <mbxmlutils/eval.h>
-#include <boost/lexical_cast.hpp>
 #include <QDir>
 #include <QTreeWidget>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -397,7 +397,7 @@ namespace MBSimGUI {
     if(e) {
       DOMText *text = E(e)->getFirstTextChild();
       if(text) {
-        value = atoi((X()%text->getData()).c_str());
+        value = boost::lexical_cast<int>(X()%text->getData());
         return e;
       }
     }
@@ -684,7 +684,7 @@ namespace MBSimGUI {
     tolerances.toWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->tolerances);
   }
 
-  EmbedProperty::EmbedProperty(boost::function<const std::string&()> f) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
+  EmbedProperty::EmbedProperty(std::function<const std::string&()> f) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
     href.setProperty(new FileProperty(""));
     static_cast<FileProperty*>(href.getProperty())->setFile(f()+".xml");
     count.setProperty(new PhysicalVariableProperty(new ScalarProperty("1")));

@@ -23,11 +23,10 @@
 #include <mbsim/utils/utils.h>
 
 #include <cmath>
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
 
 using namespace fmatvec;
 using namespace std;
+using namespace std::placeholders;
 
 namespace MBSim {
 
@@ -180,12 +179,12 @@ namespace MBSim {
   MultiDimNewtonMethod::MultiDimNewtonMethod(Function<Vec(Vec)> *fct_, Function<SqrMat(Vec)> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(50), info(1), norms(0), tol(1e-10), linAlg(0) {}
 
   Vec MultiDimNewtonMethod::solve(const Vec &x0) {
-    boost::function<Vec(const SqrMat&,const Vec&)> slv;
+    std::function<Vec(const SqrMat&,const Vec&)> slv;
 
     if(linAlg==0)
-      slv = boost::bind(fslvLU, _1, _2);
+      slv = std::bind(fslvLU, _1, _2);
     else if(linAlg==1)
-      slv = boost::bind(fslvLS, _1, _2);
+      slv = std::bind(fslvLS, _1, _2);
 
     iter=0;
     Vec x, xold;

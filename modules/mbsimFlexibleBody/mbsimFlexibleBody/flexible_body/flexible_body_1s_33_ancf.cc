@@ -27,7 +27,6 @@
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/mbsim_event.h"
-#include <boost/swap.hpp>
 
 using namespace fmatvec;
 using namespace std;
@@ -135,7 +134,7 @@ namespace MBSimFlexibleBody {
     n(1) = -q(6*node+4);
     n(2) = 0.;
     n /= nrm2(n);
-    boost::swap(n(0),n(1));
+    std::swap(n(0),n(1));
     frame->getOrientation(false).set(1, R->getOrientation() * n);
     frame->getOrientation(false).set(2, R->getOrientation() * crossProduct(s,n));
   }

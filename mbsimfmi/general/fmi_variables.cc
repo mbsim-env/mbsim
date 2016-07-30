@@ -1,7 +1,6 @@
 #include "config.h"
 #include "fmi_variables.h"
 #include <mbsim/dynamic_system_solver.h>
-#include <boost/ref.hpp>
 
 namespace {
   //! get all links form sys, recursively
@@ -16,7 +15,7 @@ void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
                              bool setToDefaultValue) {
   // output directory
   var.push_back(std::make_shared<PredefinedParameter<std::string> >("Output directory",
-    "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", boost::ref(predefinedParameterStruct.outputDir)));
+    "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", std::ref(predefinedParameterStruct.outputDir)));
   // default value: current dir
   if(setToDefaultValue)
     (*--var.end())->setValue(std::string("."));
@@ -35,35 +34,35 @@ void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
     "Plot in equidistant sample times, with sample time = 'Plot.sample time'."));
   // add variable
   var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.mode",
-    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", boost::ref(predefinedParameterStruct.plotMode), plotModeList));
+    "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", std::ref(predefinedParameterStruct.plotMode), plotModeList));
   // default value
   if(setToDefaultValue)
     (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));
 
   // plot at each n-th integrator step
   var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
-    "... n-th completed integrator step", boost::ref(predefinedParameterStruct.plotEachNStep)));
+    "... n-th completed integrator step", std::ref(predefinedParameterStruct.plotEachNStep)));
   // default value: every 5-th step
   if(setToDefaultValue)
     (*--var.end())->setValue(int(5));
 
   // plot every dt
   var.push_back(std::make_shared<PredefinedParameter<double> >("Plot.sample time",
-    "... sample point with this sample time", boost::ref(predefinedParameterStruct.plotStepSize)));
+    "... sample point with this sample time", std::ref(predefinedParameterStruct.plotStepSize)));
   // default value: every 1ms
   if(setToDefaultValue)
     (*--var.end())->setValue(double(0.001));
 
   // gMax
   var.push_back(std::make_shared<PredefinedParameter<double> >("Constraint tolerance.position",
-    "Tolerance for position constraints", boost::ref(predefinedParameterStruct.gMax)));
+    "Tolerance for position constraints", std::ref(predefinedParameterStruct.gMax)));
   // default value: 1e-5
   if(setToDefaultValue)
     (*--var.end())->setValue(double(1e-5));
 
   // gdMax
   var.push_back(std::make_shared<PredefinedParameter<double> >("Constraint tolerance.velocity",
-    "Tolerance for velocity constraints", boost::ref(predefinedParameterStruct.gdMax)));
+    "Tolerance for velocity constraints", std::ref(predefinedParameterStruct.gdMax)));
   // default value: 1e-5
   if(setToDefaultValue)
     (*--var.end())->setValue(double(1e-5));

@@ -28,6 +28,7 @@
 #include <limits>
 #include <vector>
 #include <set>
+#include <boost/lexical_cast.hpp>
 
 namespace MBSim {
 
@@ -187,7 +188,7 @@ namespace MBSim {
   class FromMatStr<double> {
     public:
       static double cast(const char *x) {
-        return atof(x);
+        return boost::lexical_cast<double>(x);
       }
   };
 

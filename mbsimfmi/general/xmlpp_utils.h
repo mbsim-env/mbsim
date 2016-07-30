@@ -1,7 +1,6 @@
 #ifndef _MBSIMFMI_XMLPP_UTILS_H_
 #define _MBSIMFMI_XMLPP_UTILS_H_
 
-#include <boost/shared_ptr.hpp>
 #include <mbxmlutils/preprocess.h>
 #include "fmi_variables.h"
 
