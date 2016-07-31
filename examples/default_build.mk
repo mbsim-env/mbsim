@@ -52,7 +52,7 @@ rpath: $(OBJECTS)
 
 # generate make rules for all source files using gcc -M with pkg-config options from PACKAGES
 %.d: %.cc
-	$(CXX) -M $(CPPFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $< > $@
+	$(CXX) -M $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $< > $@
 
 # clean target: remove all generated files
 clean:
