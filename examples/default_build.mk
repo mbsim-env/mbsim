@@ -11,7 +11,7 @@ VPATH=$(SRCDIR)
 SOURCES:=$(shell (cd $(SRCDIR); find -name "*.cc"))
 # object and dependency files (derived from SOURCES)
 OBJECTS=$(SOURCES:.cc=.o)
-DEPFILES=$(SOURCES:.cc=.d)
+DEPFILES=$(SOURCES:.cc=.o.d)
 
 # enable C++11
 CXXFLAGS += -std=c++11
@@ -46,13 +46,11 @@ mbsimfmi_model$(SHEXT): $(OBJECTS)
 rpath: $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))  $(shell pkg-config --libs-only-L $(PACKAGES) | sed 's/-L/-Wl,-rpath,/g')
 
-# compile source with pkg-config options from PACKAGES
+# compile source with pkg-config options from PACKAGES (and generate dependency file)
 %.o: %.cc
-	$(CXX) -c $(PIC) -o $@ $< $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES))
-
-# generate make rules for all source files using gcc -M with pkg-config options from PACKAGES
-%.d: %.cc
-	$(CXX) -M $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $< > $@
+	@$(CXX) -MM $(PIC) $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $< > $@.d
+	@cat $@.d | sed -re "s/^[^:]+://;s/ *\\\\$$/:/;s/^ *//;s/ +/:\n/g;s/([^:])$$/\1:/" >> $@.d
+	$(CXX) -c $(PIC) -o $@ $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $<
 
 # clean target: remove all generated files
 clean:
