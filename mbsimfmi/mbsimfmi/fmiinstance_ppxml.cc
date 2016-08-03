@@ -141,7 +141,7 @@ namespace {
             type=Eval::MatrixType;
         }
         name=name.substr(0, poss);
-        shared_ptr<void> value;
+        Eval::Value value;
         switch(type) {
           case Eval::ScalarType:
             value=eval->create(getValueAsDouble(**it));
