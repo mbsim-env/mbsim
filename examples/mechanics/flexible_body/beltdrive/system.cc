@@ -494,7 +494,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        // ----------------------- Definition der 1. Feder --------------------  
        SpringDamper *spring = new SpringDamper("TensionerSpring");
        addLink(spring);
-       spring->setForceFunction(new LinearSpringDamperForce(cSpring,dSpring,l0Spring));
+       spring->setForceFunction(new LinearSpringDamperForce(cSpring,dSpring));
+       spring->setUnloadedLength(l0Spring);
        spring->connect(disk->getFrame("C"),this->getFrame("BS"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
        spring->enableOpenMBVCoilSpring(_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);

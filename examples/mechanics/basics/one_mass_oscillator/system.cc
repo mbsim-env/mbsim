@@ -49,10 +49,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // spring
   SpringDamper *spring1 = new SpringDamper("Spring1");
-  spring1->setForceFunction(new LinearSpringDamperForce(1,1,0));
+  spring1->setForceFunction(new LinearSpringDamperForce(1,1));
   spring1->connect(mass1->getFrame("C"),this->getFrame("I"));
   SpringDamper *spring2 = new SpringDamper("Spring2");
-  spring2->setForceFunction(new LinearSpringDamperForce(100,1,0));
+  spring2->setForceFunction(new LinearSpringDamperForce(100,1));
   spring2->connect(mass2->getFrame("C"),this->getFrame("I"));
 
   // add spring to dynamical system

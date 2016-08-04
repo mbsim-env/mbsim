@@ -175,7 +175,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
     if (i>0) {
       SpringDamper * sp = new SpringDamper("Spring_"+getBodyName(i-1)+"_"+getBodyName(i));
       addLink(sp);
-      sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
+      sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF));
+      sp->setUnloadedLength(l0);
       sp->connect(
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
@@ -186,7 +187,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   }
   SpringDamper * sp = new SpringDamper("Spring_"+getBodyName(4)+"_"+getBodyName(0));
   addLink(sp);
-  sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
+  sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF));
+  sp->setUnloadedLength(l0);
   sp->connect(
       dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
       dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));
