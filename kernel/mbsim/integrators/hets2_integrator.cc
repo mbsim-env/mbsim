@@ -173,9 +173,6 @@ namespace MBSimIntegrator {
         sumIter += system.getIterC();
 
         system.resetUpToDate();
-
-       // scaling to impulse level
-//        system.getLa() = system.getla()*dt;
       }
       /*****************************************/
 
@@ -210,12 +207,6 @@ namespace MBSimIntegrator {
 
         // update until the Jacobian matrices, especially also the active set
         evaluateStage(system);
-
-//        // solve the impact equation system
-//        if (system.getLa().size() not_eq 0) {
-//          system.setStepSize(0);
-//          iter = system.solveImpacts();
-//        }
 
         // output stage velocity update
         system.getu() += slvLLFac(system.evalLLM(),system.evalV()*system.evalLa());
