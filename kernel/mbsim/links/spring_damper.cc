@@ -54,6 +54,7 @@ namespace MBSim {
     if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("Deflection");
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(coilspringOpenMBV) {
@@ -73,6 +74,7 @@ namespace MBSim {
   void SpringDamper::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      plotVector.push_back(evalGeneralizedRelativePosition()(0)-l0);
       if(getPlotFeature(openMBV)==enabled) {
         if (coilspringOpenMBV) {
           Vec3 WrOToPoint;
