@@ -1,5 +1,7 @@
 #include <config.h>
 #include <mbxmlutilshelper/casadiXML.h>
+#include <sstream>
+#include <casadi/core/function/function.hpp>
 
 using namespace std;
 using namespace casadi;
@@ -7,58 +9,69 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 int main() {
-//  // test SXFunction you want to export as XML
-//  vector<SX> input;
-//  SX t=SX::sym("t"); // a scalar input
-//  input.push_back(t);
-//  SX q=casadi::ssym("q", 2, 1); // a column vector input
-//  input.push_back(q);
-//  SX qd=casadi::ssym("qd", 1, 2); // a row vector input
-//  input.push_back(qd);
-//  SX J=casadi::ssym("J", 2, 2); // a matrix input
-//  input.push_back(J);
-//  SX r=q.elem(0)*q.elem(1)+sin(5*t)+t*t; // a scalar output
-//  SXFunction f(input, r); // the function
-
-//  // the translation symbolic equation using by xmlflat/time_dependent_kinematics
-//  double freq1 = M_PI;
-//  double v0y = 1;
-//  SX t=SX::sym("t");
-//  SX fexp=SX::zeros(3);
-//  fexp[0] = sin(freq1*t + M_PI/2);
-//  fexp[1] = v0y*t; 
-//  fexp[2] = 0; 
-//  SXFunction f(t,fexp);
-
   // the rotation symbolic equation using by xmlflat/time_dependent_kinematics
   double freq2=M_PI/3;
   SX t=SX::sym("t");
   SX fexp=5*sin(freq2*t);
-  SXFunction f(t,fexp);
 
   shared_ptr<DOMParser> parser=DOMParser::create(false);
   shared_ptr<DOMDocument> xmlFile=parser->createDocument();
 
-  DOMElement *ele=convertCasADiToXML(f,xmlFile.get());
+  DOMElement *ele=convertCasADiToXML({{t}, {fexp}},xmlFile.get());
   xmlFile->insertBefore(ele, NULL);
 
-  cout << E(ele)->getTagName().second << endl;
-
-  cout<<"XML representation"<<endl<<endl;
+  cout<<"Output XML representation to out.xml"<<endl<<endl;
   DOMParser::serialize(xmlFile.get(), "out.xml");
 
   cout<<endl<<"Reread XML and print original and reread as CasADi stream"<<endl<<endl;
-  casadi::SXFunction fReread=createCasADiSXFunctionFromXML(xmlFile->getDocumentElement());
-  fReread.init();
-  fReread.evaluate();
-  for(size_t i=0; i<f.inputExpr().size(); i++) {
-    cout<<"original input  "<<i<<": "<<f.inputExpr(i)<<endl;
-    cout<<"reread   input  "<<i<<": "<<fReread.inputExpr(i)<<endl;
+  auto fReread=createCasADiFunctionFromXML(xmlFile->getDocumentElement());
+  auto tReread=fReread.first;
+  auto fexpReread=fReread.second;
+  {
+    stringstream fStr; fStr<<t;
+    stringstream fRereadStr; fRereadStr<<tReread;
+    cout<<"original input  : "<<fStr.str()<<endl;
+    cout<<"reread   input  : "<<fRereadStr.str()<<endl;
+    if(fStr.str()!=fRereadStr.str())
+      return 1;
   }
-  for(size_t i=0; i<f.outputExpr().size(); i++) {
-    cout<<"original output "<<i<<": "<<f.outputExpr(i)<<endl;
-    cout<<"reread   output "<<i<<": "<<fReread.outputExpr(i)<<endl;
+  {
+    stringstream fStr; fStr<<fexp;
+    stringstream fRereadStr; fRereadStr<<fexpReread;
+    cout<<"original output : "<<fStr.str()<<endl;
+    cout<<"reread   output : "<<fRereadStr.str()<<endl;
+    if(fStr.str()!=fRereadStr.str())
+      return 1;
   }
+
+
+  cout<<endl<<"Evaluate function"<<endl<<endl;
+
+  vector<DM> arg{3.546}, ret;
+  Function f("noname", {t}, {fexp});
+  ret=f(arg);
+  cout<<"Arg: "<<arg[0].scalar()<<endl;
+  cout<<"Ret: "<<ret[0].scalar()<<endl;
+  cout<<"Ref: "<<5*sin(freq2*arg[0].scalar())<<endl;
+
+
+  cout<<endl<<"Evaluate jacobian"<<endl<<endl;
+
+  Function j=Function("noname", {t}, {jacobian(fexp, t)});
+  cout<<"Arg: "<<arg[0].scalar()<<endl;
+  cout<<"Ret: "<<j(arg)[0].scalar()<<endl;
+  cout<<"Ref: "<<freq2*5*cos(freq2*arg[0].scalar())<<endl;
+
+
+  cout<<endl<<"Evaluate directional derivative"<<endl<<endl;
+
+  SX td=SX::sym("td");
+  DM argd(6.424);
+  Function dd=Function("noname", {td, t}, {jtimes(fexp, t, td)});
+  cout<<"Arg: "<<arg[0].scalar()<<endl;
+  cout<<"Argd: "<<argd.scalar()<<endl;
+  cout<<"Ret: "<<dd(vector<SX>{argd, arg[0]})[0].scalar()<<endl;
+  cout<<"Ref: "<<freq2*5*cos(freq2*arg[0].scalar())*argd.scalar()<<endl;
 
   return 0;
 }

@@ -45,9 +45,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //pos[1] = -a*cos(sq[1]);
   //pos[2] = -a*sin(sq[0])*sin(sq[1]); 
 
-  //SXFunction spos(sq,pos);
-  //
-  //body->setTranslation(new SymbolicFunction<Vec3(VecV)>(spos));
+  //body->setTranslation(new SymbolicFunction<Vec3(VecV)>(pos, sq));
 
   body->setFrameForKinematics(body->getFrame("P"));
   body->setRotation(new RotationAboutAxesYZ<VecV>);

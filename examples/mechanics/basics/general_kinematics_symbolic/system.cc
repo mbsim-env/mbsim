@@ -46,14 +46,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   pos[0] = cos(SX(sq[0]));
   pos[1] = sin(SX(sq[0]));
   pos[2] = sq[1]; 
-
-  vector<SX> input1(2);
-  input1[0] = sq;
-  input1[1] = st;
-
-  SXFunction spos(input1,pos);
   
-  SymbolicFunction<Vec3(VecV,double)> *position = new SymbolicFunction<Vec3(VecV,double)>(spos);
+  SymbolicFunction<Vec3(VecV,double)> *position = new SymbolicFunction<Vec3(VecV,double)>(pos, sq, st);
   body1->setTranslation(position);
   
   body1->setInitialGeneralizedVelocity("[0;1]");

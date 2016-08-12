@@ -14,7 +14,7 @@
             <timeDependentTranslation>
               <SymbolicFunction arg1="t">
                 % Test the access to the (locally) casadi object
-                half=casadi.DMatrix.zeros(1, 1);
+                half=casadi.DM.zeros(1, 1);
                 half(1)=2;
                 ret=[sin(freq1*t + pi/half); v0y*t; 0];
               </SymbolicFunction>

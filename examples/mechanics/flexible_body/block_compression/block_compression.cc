@@ -361,9 +361,8 @@ void BlockCompression::addBoundaryConditions() {
   double startPos = hingeDistanceLeft + l0 - endShift - (NoBlocks - 1) * dxElement;
   double velocity = 10;
   SX fexp2 = startPos + velocity * t;
-  SXFunction foo2(t, fexp2);
 
-  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
+  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
   compressionBody->setTranslation(new NestedFunction<Vec3(double(double))>(new TranslationAlongXAxis<double>(), f2));
 
   compressionBody->setMass(1e-6);

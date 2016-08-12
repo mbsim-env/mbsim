@@ -33,15 +33,15 @@ class SelfSiphoningBeats : public MBSim::DynamicSystemSolver {
 
     int elements;
 
-    const static double radius = 1e-3;
-    const static double mass = 2e-3;
-    const static double distance = 3e-3;
-    const static double angle = M_PI / 10;
+    constexpr static double radius = 1e-3;
+    constexpr static double mass = 2e-3;
+    constexpr static double distance = 3e-3;
+    constexpr static double angle = M_PI / 10;
 
-    const static double stiffness = 1e4;
-    const static double damping = 1;
+    constexpr static double stiffness = 1e4;
+    constexpr static double damping = 1;
 
-    const static bool ODE = false;
+    constexpr static bool ODE = false;
 
 };
 

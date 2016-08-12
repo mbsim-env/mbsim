@@ -85,9 +85,8 @@ System::System(const string &projectName) :
 
   SX t=SX::sym("t");
   SX fexp2 = log(cosh(t));
-  SXFunction foo2(t, fexp2);
 
-  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
+  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
   crank->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), f2));
   crank->setTranslation(new TranslationAlongAxesXYZ<VecV>());
   Joint * fix = new Joint("Fix");

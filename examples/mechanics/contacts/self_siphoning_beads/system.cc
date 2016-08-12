@@ -254,9 +254,8 @@ void SelfSiphoningBeats::addTrajectory(double tEnd) {
 //  fexp[1] = radius + (a * v * t * v * t + b * v * t);
 //  fexp[1] = radius;
   fexp[2] = 0;
-  SXFunction foo(t, fexp);
 
-  SymbolicFunction<Vec3(double)> *f = new SymbolicFunction<Vec3(double)>(foo);
+  SymbolicFunction<Vec3(double)> *f = new SymbolicFunction<Vec3(double)>(fexp, t);
 
   leader->setTranslation(f);
   if (elements) {

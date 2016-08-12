@@ -120,16 +120,12 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   SX s1 = SX::sym("s1",1);
   SX s2 = SX::sym("s2",1);
   SX y = s1-s2;
-  vector<SX> input(2);
-  input[0] = s1;
-  input[1] = s2;
-  SXFunction f(input,y);
 
   BinarySignalOperation * basePositionDiff = new BinarySignalOperation("BasePositionDiff");
   addLink(basePositionDiff);
   basePositionDiff->setFirstInputSignal(basePositionSoll);
   basePositionDiff->setSecondInputSignal(basePosition);
-  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
+  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 
   LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
   addLink(basisControl);
@@ -170,7 +166,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(armPositionDiff);
   armPositionDiff->setFirstInputSignal(armPositionSoll);
   armPositionDiff->setSecondInputSignal(armPosition);
-  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
+  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 
   LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
   addLink(armControl);
@@ -211,7 +207,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(spitzePositionDiff);
   spitzePositionDiff->setFirstInputSignal(spitzePositionSoll);
   spitzePositionDiff->setSecondInputSignal(spitzePosition);
-  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
+  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 
   LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addLink(spitzeControl);

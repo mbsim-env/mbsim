@@ -49,14 +49,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   pos[1] = -sin(sq[0]/R)*R;
   pos[2] = 0;
 
-  SXFunction spos(sq,pos);
-  
-  body->setTranslation(new SymbolicFunction<Vec3(VecV)>(spos));
+  body->setTranslation(new SymbolicFunction<Vec3(VecV)>(pos, sq));
 
   SX al=M_PI/2+sq[0]/R;
 
-  SXFunction sangle(sq,al);
-  SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(sangle);
+  SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(al, sq);
   body->setRotation(new NestedFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
   body->setTranslationDependentRotation(true);
   

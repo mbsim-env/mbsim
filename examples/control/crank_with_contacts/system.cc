@@ -366,17 +366,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SX s1 = SX::sym("s1",1);
   SX s2 = SX::sym("s2",1);
   SX y = s2-s1;
-  vector<SX> input(2);
-  input[0] = s1;
-  input[1] = s2;
-  SXFunction f(input,y);
 
   // Signal-Addition
   BinarySignalOperation * Regelfehler = new BinarySignalOperation("Regelfehler");
   addLink(Regelfehler);
   Regelfehler->setFirstInputSignal(AbsVelSensorAnCrank);
   Regelfehler->setSecondInputSignal(VelSoll);
-  Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(f));
+  Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
 
   // Regler
   LinearTransferSystem *Regler = new LinearTransferSystem("Regler");
