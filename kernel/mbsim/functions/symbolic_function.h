@@ -116,6 +116,7 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class SymbolicFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     casadi::SX ret, arg;
     casadi::Function f, pd, dd, pddd, pdpd;
     public:
@@ -144,7 +145,7 @@ namespace MBSim {
       }
     }
 
-    typename fmatvec::Size<Arg>::type getArgSize() const {
+    int getArgSize() const {
       return arg.size1();
     }
 
@@ -152,20 +153,20 @@ namespace MBSim {
       return c<Ret>(f(std::vector<casadi::SX>{c(x)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {
-      return c<typename fmatvec::Der<Ret, Arg>::type>(pd(std::vector<casadi::SX>{c(x)})[0]);
+    typename B::DRetDArg parDer(const Arg &x) {
+      return c<typename B::DRetDArg>(pd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
     Ret dirDer(const Arg &xd, const Arg &x) {
       return c<Ret>(dd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xd, const Arg &x) {
-      return c<typename fmatvec::Der<Ret, Arg>::type>(pddd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
+    typename B::DRetDArg parDerDirDer(const Arg &xd, const Arg &x) {
+      return c<typename B::DRetDArg>(pddd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
     }
 
-    typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) {
-      return c<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type>(pdpd(std::vector<casadi::SX>{c(x)})[0]);
+    typename B::DDRetDDArg parDerParDer(const Arg &x) {
+      return c<typename B::DDRetDDArg>(pdpd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
     void initializeUsingXML(xercesc::DOMElement *element) {
@@ -180,22 +181,21 @@ namespace MBSim {
     private:
 
     void checkFunctionIODim() {
-      // check template arguments: only scalar and vector arguments are supported
-      static_assert(fmatvec::StaticSize<Arg>::size2==1, "Only scalar and vector arguments are supported");
       // check function: only scalar and vector arguments are supported
       if(arg.size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       // check function <-> template argument dimension
-      if(fmatvec::StaticSize<Arg>::size1!=0 && arg.size1()!=fmatvec::StaticSize<Arg>::size1)
+      if(this->argSize!=0 && arg.size1()!=this->argSize)
         THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<Ret>::size1!=0 && ret.size1()!=fmatvec::StaticSize<Ret>::size1)
+      if(this->retSize1!=0 && ret.size1()!=this->retSize1)
         THROW_MBSIMERROR("The output dimension does not match.");
-      if(fmatvec::StaticSize<Ret>::size2!=0 && ret.size2()!=fmatvec::StaticSize<Ret>::size2)
+      if(this->retSize2!=0 && ret.size2()!=this->retSize2)
         THROW_MBSIMERROR("The output dimension does not match.");
     }
   };
 
   template<typename Ret, typename Arg1, typename Arg2>
   class SymbolicFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
+    using B = fmatvec::Function<Ret(Arg1, Arg2)>; 
     casadi::SX ret, arg1, arg2;
     casadi::Function f, pd1, pd2, pd1dd1, pd1dd2, pd2dd1, pd2dd2;
     public:
@@ -231,11 +231,11 @@ namespace MBSim {
       }
     }
 
-    typename fmatvec::Size<Arg1>::type getArg1Size() const {
+    int getArg1Size() const {
       return arg1.size1();
     }
 
-    typename fmatvec::Size<Arg2>::type getArg2Size() const {
+    int getArg2Size() const {
       return arg2.size1();
     }
 
@@ -243,35 +243,28 @@ namespace MBSim {
       return c<Ret>(f(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg1>::type parDer1(const Arg1 &x1, const Arg2 &x2) {
-      return c<typename fmatvec::Der<Ret, Arg1>::type>(pd1(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
+    typename B::DRetDArg1 parDer1(const Arg1 &x1, const Arg2 &x2) {
+      return c<typename B::DRetDArg1>(pd1(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg2>::type parDer2(const Arg1 &x1, const Arg2 &x2) {
-      return c<typename fmatvec::Der<Ret, Arg2>::type>(pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
+    typename B::DRetDArg2 parDer2(const Arg1 &x1, const Arg2 &x2) {
+      return c<typename B::DRetDArg2>(pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) {
-      return c<typename fmatvec::Der<Ret, Arg1>::type>(pd1dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
+    typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) {
+      return c<typename B::DRetDArg1>(pd1dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) {
-      return c<typename fmatvec::Der<Ret, Arg1>::type>(pd1dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
+    typename B::DRetDArg1 parDer1DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) {
+      return c<typename B::DRetDArg1>(pd1dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
-    //    typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, Arg1>::type parDer1ParDer1(const Arg1 &x1, const Arg2 &x2) {
-    //      pd1pd1.setInput(c(x1),0);
-    //      pd1pd1.setInput(c(x2),1);
-    //      pd1pd1.evaluate();
-    //      return c<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, Arg1>::type>(pd1pd1.output());
-    //    }
-
-    typename fmatvec::Der<Ret, Arg2>::type parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) {
-      return c<typename fmatvec::Der<Ret, Arg2>::type>(pd2dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
+    typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) {
+      return c<typename B::DRetDArg2>(pd2dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg2>::type parDer2DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) {
-      return c<typename fmatvec::Der<Ret, Arg2>::type>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
+    typename B::DRetDArg2 parDer2DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) {
+      return c<typename B::DRetDArg2>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
     void initializeUsingXML(xercesc::DOMElement *element) {
@@ -287,26 +280,24 @@ namespace MBSim {
     private:
 
     void checkFunctionIODim() {
-      // check template arguments: only scalar and vector arguments are supported
-      static_assert(fmatvec::StaticSize<Arg1>::size2==1, "Only scalar and vector arguments are supported");
-      static_assert(fmatvec::StaticSize<Arg2>::size2==1, "Only scalar and vector arguments are supported");
       // check function: only scalar and vector arguments are supported
       if(arg1.size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       if(arg2.size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       // check function <-> template argument dimension
-      if(fmatvec::StaticSize<Arg1>::size1!=0 && arg1.size1()!=fmatvec::StaticSize<Arg1>::size1)
+      if(this->arg1Size!=0 && arg1.size1()!=this->arg1Size)
         THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<Arg2>::size1!=0 && arg2.size1()!=fmatvec::StaticSize<Arg2>::size1)
+      if(this->arg2Size!=0 && arg2.size1()!=this->arg2Size)
         THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<Ret>::size1!=0 && ret.size1()!=fmatvec::StaticSize<Ret>::size1)
+      if(this->retSize1!=0 && ret.size1()!=this->retSize1)
         THROW_MBSIMERROR("The output dimension does not match.");
-      if(fmatvec::StaticSize<Ret>::size2!=0 && ret.size2()!=fmatvec::StaticSize<Ret>::size2)
+      if(this->retSize2!=0 && ret.size2()!=this->retSize2)
         THROW_MBSIMERROR("The output dimension does not match.");
     }
   };
 
   template<typename Ret, typename Arg1>
   class SymbolicFunction<Ret(Arg1, double)> : public Function<Ret(Arg1, double)> {
+    using B = fmatvec::Function<Ret(Arg1, double)>; 
     casadi::SX ret, arg1, arg2;
     casadi::Function f, pd1, pd2, pd1dd1, pd1dd2, pd1pd2, pd2dd1, pd2dd2, pd2pd2;
     public:
@@ -346,11 +337,11 @@ namespace MBSim {
       }
     }
 
-    typename fmatvec::Size<Arg1>::type getArg1Size() const {
+    int getArg1Size() const {
       return arg1.size1();
     }
 
-    typename fmatvec::Size<double>::type getArg2Size() const {
+    int getArg2Size() const {
       return arg2.size1();
     }
 
@@ -358,43 +349,36 @@ namespace MBSim {
       return c<Ret>(f(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg1>::type parDer1(const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<Ret, Arg1>::type>(pd1(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
+    typename B::DRetDArg1 parDer1(const Arg1 &x1, const double &x2) {
+      return c<typename B::DRetDArg1>(pd1(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, double>::type parDer2(const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<Ret, double>::type>(pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
+    typename B::DRetDArg2 parDer2(const Arg1 &x1, const double &x2) {
+      return c<typename B::DRetDArg2>(pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<Ret, Arg1>::type>(pd1dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
+    typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) {
+      return c<typename B::DRetDArg1>(pd1dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer2(const double &xd2, const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<Ret, Arg1>::type>(pd1dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
+    typename B::DRetDArg1 parDer1DirDer2(const double &xd2, const Arg1 &x1, const double &x2) {
+      return c<typename B::DRetDArg1>(pd1dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
-    //    typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, Arg1>::type parDer1ParDer1(const Arg1 &x1, const double &x2) {
-    //      pd1pd1.setInput(c(x1),0);
-    //      pd1pd1.setInput(c(x2),1);
-    //      pd1pd1.evaluate();
-    //      return c<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, Arg1>::type>(pd1pd1.output());
-    //    }
-
-    typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, double>::type parDer1ParDer2(const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<typename fmatvec::Der<Ret, Arg1>::type, double>::type>(pd1pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
+    typename B::DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &x1, const double &x2) {
+      return c<typename B::DDRetDArg1DArg2>(pd1pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, double>::type parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<Ret, double>::type>(pd2dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
+    typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) {
+      return c<typename B::DRetDArg2>(pd2dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<Ret, double>::type parDer2DirDer2(const double &xd2, const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<Ret, double>::type>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
+    typename B::DRetDArg2 parDer2DirDer2(const double &xd2, const Arg1 &x1, const double &x2) {
+      return c<typename B::DRetDArg2>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
-    typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDer2ParDer2(const Arg1 &x1, const double &x2) {
-      return c<typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type>(pd2pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
+    typename B::DDRetDDArg2 parDer2ParDer2(const Arg1 &x1, const double &x2) {
+      return c<typename B::DDRetDDArg2>(pd2pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
     void initializeUsingXML(xercesc::DOMElement *element) {
@@ -410,20 +394,17 @@ namespace MBSim {
     private:
 
     void checkFunctionIODim() {
-      // check template arguments: only scalar and vector arguments are supported
-      static_assert(fmatvec::StaticSize<Arg1>::size2==1, "Only scalar and vector arguments are supported");
-      static_assert(fmatvec::StaticSize<double>::size2==1, "Only scalar and vector arguments are supported");
       // check function: only scalar and vector arguments are supported
       if(arg1.size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       if(arg2.size2()!=1) THROW_MBSIMERROR("Matrix parameter are not allowed.");
       // check function <-> template argument dimension
-      if(fmatvec::StaticSize<Arg1>::size1!=0 && arg1.size1()!=fmatvec::StaticSize<Arg1>::size1)
+      if(this->arg1Size!=0 && arg1.size1()!=this->arg1Size)
         THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<double>::size1!=0 && arg2.size1()!=fmatvec::StaticSize<double>::size1)
+      if(arg2.size1()!=1)
         THROW_MBSIMERROR("The dimension of a parameter does not match.");
-      if(fmatvec::StaticSize<Ret>::size1!=0 && ret.size1()!=fmatvec::StaticSize<Ret>::size1)
+      if(this->retSize1!=0 && ret.size1()!=this->retSize1)
         THROW_MBSIMERROR("The output dimension does not match.");
-      if(fmatvec::StaticSize<Ret>::size2!=0 && ret.size2()!=fmatvec::StaticSize<Ret>::size2)
+      if(this->retSize2!=0 && ret.size2()!=this->retSize2)
         THROW_MBSIMERROR("The output dimension does not match.");
     }
   };

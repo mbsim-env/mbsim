@@ -26,6 +26,7 @@ namespace MBSim {
 
   template <class Ret>
   class StateDependentFunction : public Function<Ret(fmatvec::VecV,double)> {
+    using B = fmatvec::Function<Ret(fmatvec::VecV,double)>; 
     private:
       Function<Ret(fmatvec::VecV)> *f;
       int n;
@@ -35,15 +36,15 @@ namespace MBSim {
           f->setParent(this);
       }
       ~StateDependentFunction() { delete f; }
-      typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return f->getArgSize();}
-      typename fmatvec::Size<double>::type getArg2Size() const { return 0; }
+      int getArg1Size() const { return f->getArgSize();}
+      int getArg2Size() const { return 0; }
       Ret operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg1); }
-      typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return f->parDer(arg1); }
-      typename fmatvec::Der<Ret, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return typename fmatvec::Der<Ret, double>::type(n); }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type(n); }
-      typename fmatvec::Der<Ret, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return typename fmatvec::Der<Ret, double>::type(n); }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return typename fmatvec::Der<typename fmatvec::Der<Ret, fmatvec::VecV>::type, double>::type(n,getArg1Size()); }
-      typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
+      typename B::DRetDArg1 parDer1(const fmatvec::VecV &arg1, const double &arg2) { return f->parDer(arg1); }
+      typename B::DRetDArg2 parDer2(const fmatvec::VecV &arg1, const double &arg2) {return typename B::DRetDArg2(n); }
+      typename B::DDRetDDArg2 parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return typename B::DDRetDDArg2(n); }
+      typename B::DRetDArg2 parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return typename B::DRetDArg2(n); }
+      typename B::DDRetDArg1DArg2 parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return typename B::DDRetDArg1DArg2(n,getArg1Size()); }
+      typename B::DRetDArg1 parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
       bool constParDer1() const { return f->constParDer(); }
       bool constParDer2() const { return true; }
       Function<Ret(fmatvec::VecV)>* getFunction() const { return f; }

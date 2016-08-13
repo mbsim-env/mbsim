@@ -62,6 +62,7 @@ namespace MBSim {
    */
   template<typename Ret, typename Arg>
   class PiecewisePolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
 
     public:
       enum InterpolationMethod {
@@ -72,7 +73,7 @@ namespace MBSim {
 
       PiecewisePolynomFunction() : index(0), method(cSplineNatural), f(this), fd(this), fdd(this) { }
 
-      typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
+      int getArgSize() const { return 1; }
 
       void init(Element::InitStage stage) {
         Function<Ret(Arg)>::init(stage);
@@ -101,9 +102,9 @@ namespace MBSim {
       }
 
       Ret operator()(const Arg &x) { return f(x); }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return fd(x); }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return fdd(x); }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &argDir, const Arg &arg) { return fdd(arg)*ToDouble<Arg>::cast(argDir); }
+      typename B::DRetDArg parDer(const Arg &x) { return fd(x); }
+      Ret parDerParDer(const double &x) { return fdd(x); }
+      typename B::DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg) { return fdd(arg)*ToDouble<Arg>::cast(argDir); }
 
       /*! 
        * \return polynomial coefficients

@@ -26,17 +26,18 @@ namespace MBSim {
 
   template<typename Arg>
   class TranslationAlongYAxis : public Function<fmatvec::Vec3(Arg)> {
+    using B = fmatvec::Function<fmatvec::Vec3(Arg)>; 
     private:
       fmatvec::Vec3 r, a;
     public:
       TranslationAlongYAxis() { a.e(1) = 1; }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
+      int getArgSize() const { return 1; }
       fmatvec::Vec3 operator()(const Arg &q) { 
         r.e(1) = ToDouble<Arg>::cast(q);
         return r; 
       }
-      typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return a; }
-      typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(1); }
+      typename B::DRetDArg parDer(const Arg &arg) { return a; }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename B::DRetDArg(1); }
       bool constParDer() const { return true; }
   };
 

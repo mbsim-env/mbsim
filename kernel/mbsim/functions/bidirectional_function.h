@@ -28,6 +28,7 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class BidirectionalFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     public:
       BidirectionalFunction(Function<Ret(Arg)> *fn_=0, Function<Ret(Arg)> *fp_=0) : fn(fn_), fp(fp_) {
         if(fn) fn->setParent(this);
@@ -37,19 +38,19 @@ namespace MBSim {
         delete fn;
         delete fp;
       }
-      typename fmatvec::Size<double>::type getArgSize() const {
+      int getArgSize() const {
         return fn->getArgSize();
       }
       Ret operator()(const Arg &x) {
         return (ToDouble<Arg>::cast(x)>=0)?(*fp)(x):(*fn)(-x);
       }
-      typename fmatvec::Der<Ret, double>::type parDer(const double &x) {
+      typename B::DRetDArg parDer(const double &x) {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDer(x):fn->parDer(-x);
       }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) {
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDerDirDer(xDir,x):fn->parDerDirDer(-xDir,-x);
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {
+      typename B::DDRetDDArg parDerParDer(const double &x) {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDerParDer(x):fn->parDerParDer(-x);
       }
       void setNegativeDirectionalFunction(Function<Ret(Arg)> *fn_) {

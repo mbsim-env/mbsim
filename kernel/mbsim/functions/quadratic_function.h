@@ -28,6 +28,7 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class QuadraticFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     private:
       double a0, a1, a2;
     public:
@@ -38,15 +39,15 @@ namespace MBSim {
         double x = ToDouble<Arg>::cast(x_);
         return FromDouble<Ret>::cast(a0+(a1+a2*x)*x);
       }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x_) {  
+      typename B::DRetDArg parDer(const Arg &x_) {  
         double x = ToDouble<Arg>::cast(x_);
         return FromDouble<Ret>::cast(a1+2.*a2*x);
       }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir_, const Arg &x) { 
+      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x) { 
         double xDir = ToDouble<Arg>::cast(xDir_);
         return FromDouble<Ret>::cast(2.*a2*xDir);
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+      Ret parDerParDer(const double &x) {  
         return FromDouble<Ret>::cast(2.*a2);
       }
       void initializeUsingXML(xercesc::DOMElement *element) {

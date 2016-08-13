@@ -26,17 +26,18 @@ namespace MBSim {
 
   template<class Arg>
   class TranslationAlongFixedAxis : public Function<fmatvec::Vec3(Arg)> {
+    using B = fmatvec::Function<fmatvec::Vec3(Arg)>; 
     private:
       fmatvec::Vec3 a;
-      fmatvec::Vec3 zeros(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &x) { return fmatvec::Vec3(x.rows()); }
+      fmatvec::Vec3 zeros(const typename B::DRetDArg &x) { return fmatvec::Vec3(x.rows()); }
     public:
       TranslationAlongFixedAxis() { }
       TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
+      int getArgSize() const { return 1; }
       fmatvec::Vec3 operator()(const Arg &arg) { return a*arg; }
-      typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return a; }
-      typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(1); }
-      typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDerParDer(const double &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
+      typename B::DRetDArg parDer(const Arg &arg) { return a; }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename B::DRetDArg(1); }
+      typename B::DDRetDDArg parDerParDer(const double &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
       bool constParDer() const { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfTranslation");

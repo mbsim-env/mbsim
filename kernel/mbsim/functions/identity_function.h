@@ -28,12 +28,13 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class IdentityFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     public:
-      typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+      int getArgSize() const { return 1; }
       Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(ToDouble<Arg>::cast(x)); }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return FromDouble<Ret>::cast(1); }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
+      typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(1); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
+      Ret parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
   };
 
 }

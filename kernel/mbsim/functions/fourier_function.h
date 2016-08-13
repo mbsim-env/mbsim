@@ -29,6 +29,7 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class FourierFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
 
     public:
       FourierFunction() { }
@@ -44,7 +45,7 @@ namespace MBSim {
         }
         return FromDouble<Ret>::cast(y);
       }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &t_) {  
+      typename B::DRetDArg parDer(const Arg &t_) {  
         double t = ToDouble<Arg>::cast(t_);
         double yd = 0;
         double Om = 2.*M_PI*f;
@@ -55,7 +56,7 @@ namespace MBSim {
         }
         return FromDouble<Ret>::cast(yd);
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &t_) {  
+      Ret parDerParDer(const double &t_) {  
         double t = ToDouble<Arg>::cast(t_);
         double ydd = 0;
         double Om = 2.*M_PI*f;

@@ -28,6 +28,7 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class PolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     public:
       PolynomFunction() { }
       PolynomFunction(const fmatvec::VecV &a_) : a(a_) { }
@@ -36,9 +37,9 @@ namespace MBSim {
         if(stage == Element::preInit) {
           ad.resize(a.size()-1);
           add.resize(ad.size()-1);
-          for(unsigned int i=1; i<a.size(); i++)
+          for(int i=1; i<a.size(); i++)
             ad.e(i-1) = double(i)*a.e(i);
-          for(unsigned int i=1; i<ad.size(); i++)
+          for(int i=1; i<ad.size(); i++)
             add.e(i-1) = double(i)*ad(i);
         }
       }
@@ -49,14 +50,14 @@ namespace MBSim {
           value=value*x+a.e(i);
         return FromDouble<Ret>::cast(value);
       }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x_) {  
+      typename B::DRetDArg parDer(const Arg &x_) {  
         double x = ToDouble<Arg>::cast(x_);
         double value=ad(ad.size()-1);
         for (int i=int(ad.size())-2; i>-1; i--)
           value=value*x+ad.e(i);
         return FromDouble<Ret>::cast(value);
       }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir_, const Arg &x_) { 
+      typename B::DRetDArg parDerDirDer(const Arg &xDir_, const Arg &x_) { 
         double x = ToDouble<Arg>::cast(x_);
         double xDir = ToDouble<Arg>::cast(xDir_);
         double value=add(add.size()-1);
@@ -64,7 +65,7 @@ namespace MBSim {
           value=value*x+add.e(i);
         return FromDouble<Ret>::cast(value*xDir);
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+      Ret parDerParDer(const double &x) {  
         double value=add(add.size()-1);
         for (int i=int(add.size())-2; i>-1; i--)
           value=value*x+add.e(i);

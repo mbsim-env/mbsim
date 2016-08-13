@@ -29,6 +29,7 @@ namespace MBSim {
   // NestedFunction with a double as inner argument (including 2nd derivative)
   template<typename Ret, typename Argo> 
   class NestedFunction<Ret(Argo(double))> : public Function<Ret(double)> {
+    using B = Function<Ret(double)>; 
     public:
       NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) {
         if(fo)
@@ -40,19 +41,19 @@ namespace MBSim {
         delete fo;
         delete fi;
       }
-      typename fmatvec::Size<double>::type getArgSize() const {
+      int getArgSize() const {
         return fi->getArgSize();
       }
       Ret operator()(const double &arg) {
         return (*fo)((*fi)(arg));
       }
-      typename fmatvec::Der<Ret, double>::type parDer(const double &arg) {
+      typename B::DRetDArg parDer(const double &arg) {
         return fo->parDer((*fi)(arg))*fi->parDer(arg);
       }
-      typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &argDir, const double &arg) {
+      typename B::DRetDArg parDerDirDer(const double &argDir, const double &arg) {
         return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) {
+      typename B::DDRetDDArg parDerParDer(const double &arg) {
         return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg);
       }
       void setOuterFunction(Function<Ret(Argo)> *fo_) {
@@ -87,6 +88,7 @@ namespace MBSim {
   // VectorValuedFunction with a vector as inner argument (no 2nd derivative defined)
   template<typename Ret, typename Argo, typename Argi> 
   class NestedFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
+    using B = Function<Ret(Argi)>; 
     public:
       NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) {
         if(fo)
@@ -98,16 +100,16 @@ namespace MBSim {
         delete fo;
         delete fi;
       }
-      typename fmatvec::Size<Argi>::type getArgSize() const {
+      int getArgSize() const {
         return fi->getArgSize();
       }
       Ret operator()(const Argi &arg) {
         return (*fo)((*fi)(arg));
       }
-      typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) {
+      typename B::DRetDArg parDer(const Argi &arg) {
         return fo->parDer((*fi)(arg))*fi->parDer(arg);
       }
-      typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) {
+      typename B::DRetDArg parDerDirDer(const Argi &argDir, const Argi &arg) {
         return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
       }
       void setOuterFunction(Function<Ret(Argo)> *fo_) {

@@ -26,13 +26,14 @@ namespace MBSim {
 
   template<class Arg> 
   class RotationAboutFixedAxis : public Function<fmatvec::RotMat3(Arg)> {
+    using B = fmatvec::Function<fmatvec::RotMat3(Arg)>; 
     private:
       fmatvec::RotMat3 A;
       fmatvec::Vec3 a;
     public:
       RotationAboutFixedAxis() { }
       RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
+      int getArgSize() const { return 1; }
       fmatvec::RotMat3 operator()(const Arg &q) {
         double alpha = ToDouble<Arg>::cast(q);
         const double cosq=cos(alpha);
@@ -52,9 +53,9 @@ namespace MBSim {
         A.e(2,2) = cosq+onemcosq*a.e(2)*a.e(2);
         return A;
       }
-      typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) { return a; }
-      typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) { return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1); }
-      typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, Arg>::type, Arg>::type parDerParDer(const Arg &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
+      typename B::DRetDArg parDer(const Arg &q) { return a; }
+      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) { return typename B::DRetDArg(1); }
+      typename B::DDRetDDArg parDerParDer(const Arg &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
       bool constParDer() const { return true; }
       const fmatvec::Vec3& getAxisOfRotation() const { return a; }
       void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }

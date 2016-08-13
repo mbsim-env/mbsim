@@ -29,6 +29,7 @@ namespace MBSim {
   // VectorValuedFunction with a double as argument (including 2nd derivative)
   template<typename Ret>
   class VectorValuedFunction<Ret(double)> : public Function<Ret(double)> {
+    using B = fmatvec::Function<Ret(double)>; 
     public:
       VectorValuedFunction() { }
       VectorValuedFunction(const std::vector<Function<double(double)> *> &component_) : component(component_) {
@@ -49,14 +50,14 @@ namespace MBSim {
           y(i)=(*component[i])(x);
         return y;
       }
-      typename fmatvec::Der<Ret, double>::type parDer(const double &x) {
-        typename fmatvec::Der<Ret, double>::type y(component.size(),fmatvec::NONINIT);
+      typename B::DRetDArg parDer(const double &x) {
+        typename B::DRetDArg y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
           y(i)=component[i]->parDer(x);
         return y;
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {
-        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(component.size(),fmatvec::NONINIT);
+      typename B::DDRetDDArg parDerParDer(const double &x) {
+        typename B::DDRetDDArg y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
           y(i)=component[i]->parDerParDer(x);
         return y;
@@ -81,6 +82,7 @@ namespace MBSim {
   // VectorValuedFunction with a vector as argument (no 2nd derivative defined)
   template<typename Ret, typename Arg>
   class VectorValuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     public:
       VectorValuedFunction() { }
       VectorValuedFunction(const std::vector<Function<double(Arg)> *> &component_) : component(component_) {
@@ -101,10 +103,10 @@ namespace MBSim {
           y(i)=(*component[i])(x);
         return y;
       }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {
-        typename fmatvec::Der<Ret, Arg>::type y(component.size(),x.size(),fmatvec::NONINIT);
+      typename B::DRetDArg parDer(const Arg &x) {
+        typename B::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++) {
-          typename fmatvec::Der<double, Arg>::type row=component[i]->parDer(x);
+          auto row=component[i]->parDer(x);
           for (unsigned int j=0; j<x.size(); j++)
             y(i,j)=row(j);
         }

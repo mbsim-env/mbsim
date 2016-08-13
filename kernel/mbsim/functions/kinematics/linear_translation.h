@@ -26,28 +26,29 @@ namespace MBSim {
 
   template<class Arg>
   class LinearTranslation : public Function<fmatvec::Vec3(Arg)> {
+    using B = fmatvec::Function<fmatvec::Vec3(Arg)>; 
     private:
-      typename fmatvec::Der<fmatvec::Vec3, Arg>::type A;
+      typename B::DRetDArg A;
       fmatvec::Vec3 b;
-      fmatvec::Vec3 zeros(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &x) { return fmatvec::Vec3(x.rows()); }
+      fmatvec::Vec3 zeros(const typename B::DRetDArg &x) { return fmatvec::Vec3(x.rows()); }
     public:
       LinearTranslation() { }
-      LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_) : A(A_) { }
-      LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_, const fmatvec::Vec3 &b_) : A(A_), b(b_) { }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return A.cols(); }
+      LinearTranslation(const typename B::DRetDArg &A_) : A(A_) { }
+      LinearTranslation(const typename B::DRetDArg &A_, const fmatvec::Vec3 &b_) : A(A_), b(b_) { }
+      int getArgSize() const { return A.cols(); }
       fmatvec::Vec3 operator()(const Arg &arg) { return A*arg+b; }
-      typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return A; }
-      typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(A.rows(),A.cols()); }
-      typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDerParDer(const double &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
+      typename B::DRetDArg parDer(const Arg &arg) { return A; }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename B::DRetDArg(A.rows(),A.cols()); }
+      typename B::DDRetDDArg parDerParDer(const double &arg) { THROW_MBSIMERROR("parDerParDer is not available for given template parameters."); }
       bool constParDer() const { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"translationVectors");
-        A=FromMatStr<typename fmatvec::Der<fmatvec::Vec3, Arg>::type>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
+        A=FromMatStr<typename B::DRetDArg>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
         b=e?FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()):zeros(A);
       }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
-      void setSlope(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_) { A = A_; }
+      void setSlope(const typename B::DRetDArg &A_) { A = A_; }
       void setIntercept(const fmatvec::Vec3 &b_) { b = b_; }
   };
 

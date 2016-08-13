@@ -28,15 +28,16 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class ConstantFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     protected:
       double a0;
     public:
       ConstantFunction(double a0_=0) : a0(a0_) {}
-      typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+      int getArgSize() const { return 1; }
       Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a0); }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return FromDouble<Ret>::cast(0); }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
+      typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(0); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
+      Ret parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
         a0=Element::getDouble(e);

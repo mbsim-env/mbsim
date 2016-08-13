@@ -29,6 +29,7 @@ namespace MBSim {
   // BinaryNestedFunction with a double as inner argument (2nd derivative defined)
   template<typename Ret, typename Argo1, typename Argo2>
   class BinaryNestedFunction<Ret(Argo1(double),Argo2(double))> : public Function<Ret(double)> {
+    using B = fmatvec::Function<Ret(double)>; 
     public:
       BinaryNestedFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(double)> *fi1_=0, Function<Argo2(double)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
         if(fo)
@@ -43,16 +44,16 @@ namespace MBSim {
         delete fi1;
         delete fi2;
       }
-      typename fmatvec::Size<double>::type getArgSize() const {
+      int getArgSize() const {
         return fi1->getArgSize();
       }
       Ret operator()(const double &arg) {
         return (*fo)((*fi1)(arg),(*fi2)(arg));
       }
-      typename fmatvec::Der<Ret, double>::type parDer(const double &arg) {
+      typename B::DRetDArg parDer(const double &arg) {
         return fo->parDer1((*fi1)(arg),(*fi2)(arg))*fi1->parDer(arg) + fo->parDer2((*fi1)(arg),(*fi2)(arg))*fi2->parDer(arg);
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) {
+      typename B::DDRetDDArg parDerParDer(const double &arg) {
         return fo->parDer1DirDer1(fi1->parDer(arg),(*fi1)(arg),(*fi2)(arg))*fi1->parDer(arg) \
           + fo->parDer1DirDer2(fi2->parDer(arg),(*fi1)(arg),(*fi2)(arg))*fi1->parDer(arg) \
           + fo->parDer2DirDer1(fi1->parDer(arg),(*fi1)(arg),(*fi2)(arg))*fi2->parDer(arg) \
@@ -101,6 +102,7 @@ namespace MBSim {
   // BinaryNestedFunction with a vector as inner argument (no 2nd derivative defined)
   template<typename Ret, typename Argo1, typename Argo2, typename Argi>
   class BinaryNestedFunction<Ret(Argo1(Argi),Argo2(Argi))> : public Function<Ret(Argi)> {
+    using B = fmatvec::Function<Ret(Argi)>; 
     public:
       BinaryNestedFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(Argi)> *fi1_=0, Function<Argo2(Argi)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
         if(fo)
@@ -115,13 +117,13 @@ namespace MBSim {
         delete fi1;
         delete fi2;
       }
-      typename fmatvec::Size<Argi>::type getArgSize() const {
+      int getArgSize() const {
         return fi1->getArgSize();
       }
       Ret operator()(const Argi &arg) {
         return (*fo)((*fi1)(arg),(*fi2)(arg));
       }
-      typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) {
+      typename B::DRetDArg parDer(const Argi &arg) {
         return fo->parDer1((*fi1)(arg),(*fi2)(arg))*fi1->parDer(arg) + fo->parDer2((*fi1)(arg),(*fi2)(arg))*fi2->parDer(arg);
       }
       void setOuterFunction(Function<Ret(Argo1,Argo2)> *fo_) {

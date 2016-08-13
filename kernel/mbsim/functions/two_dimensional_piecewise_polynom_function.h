@@ -28,6 +28,7 @@ namespace MBSim {
 
   template<typename Ret, typename Arg1, typename Arg2>
   class TwoDimensionalPiecewisePolynomFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
+    using B = fmatvec::Function<Ret(Arg1, Arg2)>; 
     public:
       enum InterpolationMethod {
         cSplinePeriodic,
@@ -76,42 +77,42 @@ namespace MBSim {
         return f2(yVal);
       }
 
-      typename fmatvec::Der<Ret, Arg1>::type parDer1(const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg1 parDer1(const Arg1 &xVal, const Arg2 &yVal) {
         f2.sety(f1.parDer(xVal));
         f2.reset();
         f2.calculateSpline();
         return f2(yVal);
       }
 
-      typename fmatvec::Der<Ret, Arg2>::type parDer2(const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg2 parDer2(const Arg1 &xVal, const Arg2 &yVal) {
         f2.sety(f1(xVal));
         f2.reset();
         f2.calculateSpline();
         return f2.parDer(yVal);
       }
 
-      typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
         f2.sety(f1.parDerDirDer(xdVal,xVal));
         f2.reset();
         f2.calculateSpline();
         return f2(yVal);
       }
 
-      typename fmatvec::Der<Ret, Arg1>::type parDer1DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg1 parDer1DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
         f2.sety(f1.parDer(xVal));
         f2.reset();
         f2.calculateSpline();
         return f2.parDer(yVal)*ydVal;
       }
 
-      typename fmatvec::Der<Ret, Arg2>::type parDer2DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
         f2.sety(f1.parDer(xVal)*xdVal);
         f2.reset();
         f2.calculateSpline();
         return f2.parDer(yVal);
       }
 
-      typename fmatvec::Der<Ret, Arg2>::type parDer2DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg2 parDer2DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
         f2.sety(f1(xVal));
         f2.reset();
         f2.calculateSpline();

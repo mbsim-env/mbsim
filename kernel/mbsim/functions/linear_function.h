@@ -28,16 +28,17 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class LinearFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     private:
       double a0, a1;
     public:
       LinearFunction(double a1_=0) : a0(0), a1(a1_) { }
       LinearFunction(double a0_, double a1_) : a0(a0_), a1(a1_) { }
-      typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+      int getArgSize() const { return 1; }
       Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a1*ToDouble<Arg>::cast(x)+a0); }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return FromDouble<Ret>::cast(a1); }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
+      typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(a1); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }
+      Ret parDerParDer(const double &x) { return FromDouble<Ret>::cast(0); }
       void initializeUsingXML(xercesc::DOMElement *element) {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
         if(e) a0=Element::getDouble(e);

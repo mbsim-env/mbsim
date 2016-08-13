@@ -30,7 +30,7 @@ namespace MBSim {
       fmatvec::MatV T;
     public:
       RotationAboutAxesZYXMapping() : T(3,3) { T.e(0,2) = 1; }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
+      int getArgSize() const { return 3; }
       fmatvec::MatV operator()(const Arg &q) {
         double alpha = q.e(0);
         double beta = q.e(1);

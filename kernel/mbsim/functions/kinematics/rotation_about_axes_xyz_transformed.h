@@ -26,12 +26,13 @@ namespace MBSim {
 
   template<class Arg> 
   class RotationAboutAxesXYZTransformed : public Function<fmatvec::RotMat3(Arg)> {
+    using B = fmatvec::Function<fmatvec::RotMat3(Arg)>; 
     private:
       fmatvec::RotMat3 A;
       fmatvec::Mat3xV J, Jd;
     public:
       RotationAboutAxesXYZTransformed() : J(3), Jd(3) { J.e(2,2) = 1; }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
+      int getArgSize() const { return 3; }
       fmatvec::RotMat3 operator()(const Arg &q) {
         double a=q.e(0);
         double b=q.e(1);
@@ -53,7 +54,7 @@ namespace MBSim {
         A.e(2,2) = cosa*cosb;
         return A;
       }
-      typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+      typename B::DRetDArg parDer(const Arg &q) {
         double b = q.e(1);
         double g = q.e(2);
         J.e(0,0) = cos(b)*cos(g);
@@ -67,7 +68,7 @@ namespace MBSim {
         //J.e(2,2) = 1;
         return J;
       }
-      typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+      typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) {
         double b = q.e(1);
         double g = q.e(2);
         double bd = qd.e(1);

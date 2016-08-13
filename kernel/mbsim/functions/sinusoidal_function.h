@@ -28,6 +28,7 @@ namespace MBSim {
 
   template<typename Ret, typename Arg>
   class SinusoidalFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     protected:
       double A, f, phi0, y0;
     public:
@@ -35,15 +36,15 @@ namespace MBSim {
       Ret operator()(const Arg &x) {  
         return FromDouble<Ret>::cast(y0+A*sin(2.*M_PI*f*ToDouble<Arg>::cast(x)+phi0));
       }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {  
+      typename B::DRetDArg parDer(const Arg &x) {  
         double om = 2.*M_PI*f;
         return FromDouble<Ret>::cast(A*om*cos(om*ToDouble<Arg>::cast(x)+phi0));
       }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) { 
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { 
         double om = 2.*M_PI*f;
         return FromDouble<Ret>::cast(-A*om*om*sin(om*ToDouble<Arg>::cast(x)+phi0)*ToDouble<Arg>::cast(xDir));
       }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+      Ret parDerParDer(const double &x) {  
         double om = 2.*M_PI*f;
         return FromDouble<Ret>::cast(-A*om*om*sin(om*x+phi0));
       }

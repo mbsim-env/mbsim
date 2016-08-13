@@ -28,14 +28,15 @@ namespace MBSim {
 
   template<typename Ret, typename Arg> 
   class ContinuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    using B = fmatvec::Function<Ret(Arg)>; 
     public:
       ContinuedFunction() : f(NULL), rule(NULL) { }
       ~ContinuedFunction() { delete f; delete rule; }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return f->getArgSize(); }
+      int getArgSize() const { return f->getArgSize(); }
       Ret operator()(const Arg &x) { return (*f)((*rule)(x)); }
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return f->parDer((*rule)(x)); }
-      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xDir, const Arg &x) { return f->parDerDirDer(xDir,(*rule)(x)); }
-      typename fmatvec::Der<typename fmatvec::Der<Ret, Arg>::type, Arg>::type parDerParDer(const Arg &x) { return f->parDerParDer((*rule)(x)); }
+      typename B::DRetDArg parDer(const Arg &x) { return f->parDer((*rule)(x)); }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return f->parDerDirDer(xDir,(*rule)(x)); }
+      typename B::DDRetDDArg parDerParDer(const Arg &x) { return f->parDerParDer((*rule)(x)); }
       void setFunction(Function<Ret(Arg)> *f_) {
         f = f_;
         f->setParent(this);
