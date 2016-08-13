@@ -23,9 +23,21 @@
 #include "mbsim/functions/function.h"
 
 namespace MBSim {
-
   class ContourFrame;
   class Contour;
+}
+
+namespace fmatvec {
+
+  //! We need to define fmatvec::StaticSize for the special arguement types defined by InfluenceFunction.
+  template<>
+  struct StaticSize<std::pair<MBSim::Contour*, MBSim::ContourFrame*>> {
+    enum { size1=-1, size2=-1 }; // define as -1 = not meaningful
+  };
+
+}
+
+namespace MBSim {
 
   /**
    * \brief function describing the influence between the deformations on a body

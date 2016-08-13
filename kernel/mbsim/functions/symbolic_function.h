@@ -118,21 +118,20 @@ namespace MBSim {
   class SymbolicFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
     casadi::SX ret, arg;
+    mutable casadi::SX pd_;
     casadi::Function f, pd, dd, pddd, pdpd;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg_) : ret(ret_), arg(arg_) {}
+    SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg_) : ret(ret_), arg(arg_) {
+      checkFunctionIODim();
+    }
 
     void init(Element::InitStage stage) {
       Function<Ret(Arg)>::init(stage);
       if(stage == Element::preInit) {
-
-        // check symbolic function arguments: for XML models this is already done by initializeUsingXML but not for C++ models
-        checkFunctionIODim();
-
         casadi::SX argd=casadi::SX::sym("argd", getArgSize());
 
-        casadi::SX pd_ = jac(ret, arg);
+                   pd_ = jac(ret, arg);
         casadi::SX dd_ = jtimes(ret, arg, argd);
         casadi::SX pddd_ = jac(dd_, arg);
         casadi::SX pdpd_ = jac(pd_, arg);
@@ -145,31 +144,45 @@ namespace MBSim {
       }
     }
 
-    int getArgSize() const {
+    std::pair<int, int> getRetSize() const override {
+      return std::make_pair(this->ret.size1(), this->ret.size2());
+    }
+
+    int getArgSize() const override {
       return arg.size1();
     }
 
-    Ret operator()(const Arg& x) {
+    bool constParDer() const override {
+      if(pd_.is_empty(true))
+        pd_ = jac(ret, arg);
+      return pd_.is_constant();
+    }
+
+    Ret operator()(const Arg& x) override {
       return c<Ret>(f(std::vector<casadi::SX>{c(x)})[0]);
     }
 
-    typename B::DRetDArg parDer(const Arg &x) {
+    typename B::DRetDArg parDer(const Arg &x) override {
       return c<typename B::DRetDArg>(pd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
-    Ret dirDer(const Arg &xd, const Arg &x) {
+    Ret dirDer(const Arg &xd, const Arg &x) override {
       return c<Ret>(dd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
     }
 
-    typename B::DRetDArg parDerDirDer(const Arg &xd, const Arg &x) {
+    typename B::DRetDArg parDerDirDer(const Arg &xd, const Arg &x) override {
       return c<typename B::DRetDArg>(pddd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
     }
 
-    typename B::DDRetDDArg parDerParDer(const Arg &x) {
+    typename B::DDRetDDArg parDerParDer(const Arg &x) override {
       return c<typename B::DDRetDDArg>(pdpd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
-    void initializeUsingXML(xercesc::DOMElement *element) {
+    Ret dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    void initializeUsingXML(xercesc::DOMElement *element) override {
       auto io=casadi::createCasADiFunctionFromXML(element->getFirstElementChild());
       arg=io.first[0];
       ret=io.second[0];
@@ -197,23 +210,22 @@ namespace MBSim {
   class SymbolicFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
     using B = fmatvec::Function<Ret(Arg1, Arg2)>; 
     casadi::SX ret, arg1, arg2;
+    mutable casadi::SX pd1_, pd2_;
     casadi::Function f, pd1, pd2, pd1dd1, pd1dd2, pd2dd1, pd2dd2;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg1_, const casadi::SX &arg2_) : ret(ret_), arg1(arg1_), arg2(arg2_) {}
+    SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg1_, const casadi::SX &arg2_) : ret(ret_), arg1(arg1_), arg2(arg2_) {
+      checkFunctionIODim();
+    }
 
     void init(Element::InitStage stage) {
       Function<Ret(Arg1, Arg2)>::init(stage);
       if(stage == Element::preInit) {
-
-        // check symbolic function arguments: for XML models this is already done by initializeUsingXML but not for C++ models
-        checkFunctionIODim();
-
         casadi::SX arg1d=casadi::SX::sym("arg1d", getArg1Size());
         casadi::SX arg2d=casadi::SX::sym("arg2d", getArg2Size());
 
-        casadi::SX pd1_ = jac(ret, arg1);
-        casadi::SX pd2_ = jac(ret, arg2);
+                   pd1_ = jac(ret, arg1);
+                   pd2_ = jac(ret, arg2);
         casadi::SX dd1_ = jtimes(ret, arg1, arg1d);
         casadi::SX dd2_ = jtimes(ret, arg2, arg2d);
         casadi::SX pd1dd1_ = jac(dd1_, arg1);
@@ -231,39 +243,87 @@ namespace MBSim {
       }
     }
 
-    int getArg1Size() const {
+    std::pair<int, int> getRetSize() const override {
+      return std::make_pair(ret.size1(), ret.size2());
+    }
+
+    int getArg1Size() const override {
       return arg1.size1();
     }
 
-    int getArg2Size() const {
+    int getArg2Size() const override {
       return arg2.size1();
     }
 
-    Ret operator()(const Arg1& x1, const Arg2& x2) {
+    bool constParDer1() const override {
+      if(pd1_.is_empty(true))
+        pd1_ = jac(ret, arg1);
+      return pd1_.is_constant();
+    }
+
+    bool constParDer2() const override {
+      if(pd2_.is_empty(true))
+        pd2_ = jac(ret, arg2);
+      return pd2_.is_constant();
+    }
+
+    Ret operator()(const Arg1& x1, const Arg2& x2) override {
       return c<Ret>(f(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg1 parDer1(const Arg1 &x1, const Arg2 &x2) {
+    typename B::DRetDArg1 parDer1(const Arg1 &x1, const Arg2 &x2) override {
       return c<typename B::DRetDArg1>(pd1(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg2 parDer2(const Arg1 &x1, const Arg2 &x2) {
+    Ret dirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    typename B::DRetDArg2 parDer2(const Arg1 &x1, const Arg2 &x2) override {
       return c<typename B::DRetDArg2>(pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) {
+    Ret dirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    typename B::DDRetDDArg1 parDer1ParDer1(const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) override {
       return c<typename B::DRetDArg1>(pd1dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg1 parDer1DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) {
+    Ret dirDer1DirDer1(const Arg1 &arg1Dir_1, const Arg1 &arg1Dir_2, const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    typename B::DDRetDDArg2 parDer2ParDer2(const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    typename B::DRetDArg1 parDer1DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) override {
       return c<typename B::DRetDArg1>(pd1dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) {
+    typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) override {
       return c<typename B::DRetDArg2>(pd2dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg2 parDer2DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) {
+    Ret dirDer2DirDer2(const Arg2 &arg2Dir_1, const Arg2 &arg2Dir_2, const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    typename B::DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    Ret dirDer2DirDer1(const Arg2 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2) override {
+      throw std::runtime_error("mfmf");
+    }
+
+    typename B::DRetDArg2 parDer2DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) override {
       return c<typename B::DRetDArg2>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
@@ -299,23 +359,22 @@ namespace MBSim {
   class SymbolicFunction<Ret(Arg1, double)> : public Function<Ret(Arg1, double)> {
     using B = fmatvec::Function<Ret(Arg1, double)>; 
     casadi::SX ret, arg1, arg2;
+    mutable casadi::SX pd1_, pd2_;
     casadi::Function f, pd1, pd2, pd1dd1, pd1dd2, pd1pd2, pd2dd1, pd2dd2, pd2pd2;
     public:
     SymbolicFunction() {}
-    SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg1_, const casadi::SX &arg2_) : ret(ret_), arg1(arg1_), arg2(arg2_) {}
+    SymbolicFunction(const casadi::SX &ret_, const casadi::SX &arg1_, const casadi::SX &arg2_) : ret(ret_), arg1(arg1_), arg2(arg2_) {
+      checkFunctionIODim();
+    }
 
     void init(Element::InitStage stage) {
       Function<Ret(Arg1, double)>::init(stage);
       if(stage == Element::preInit) {
-
-        // check symbolic function arguments: for XML models this is already done by initializeUsingXML but not for C++ models
-        checkFunctionIODim();
-
         casadi::SX arg1d=casadi::SX::sym("arg1d", getArg1Size());
         casadi::SX arg2d=casadi::SX::sym("arg2d", getArg2Size());
 
-        casadi::SX pd1_ = jac(ret, arg1);
-        casadi::SX pd2_ = jac(ret, arg2);
+                   pd1_ = jac(ret, arg1);
+                   pd2_ = jac(ret, arg2);
         casadi::SX dd1_ = jtimes(ret, arg1, arg1d);
         casadi::SX dd2_ = jtimes(ret, arg2, arg2d);
         casadi::SX pd1dd1_ = jac(dd1_, arg1);
@@ -337,47 +396,63 @@ namespace MBSim {
       }
     }
 
-    int getArg1Size() const {
+    std::pair<int, int> getRetSize() const override {
+      return std::make_pair(ret.size1(), ret.size2());
+    }
+
+    int getArg1Size() const override {
       return arg1.size1();
     }
 
-    int getArg2Size() const {
+    int getArg2Size() const override {
       return arg2.size1();
     }
 
-    Ret operator()(const Arg1& x1, const double& x2) {
+    bool constParDer1() const override {
+      if(pd1_.is_empty(true))
+        pd1_ = jac(ret, arg1);
+      return pd1_.is_constant();
+    }
+
+    bool constParDer2() const override {
+      if(pd2_.is_empty(true))
+        pd2_ = jac(ret, arg2);
+      return pd2_.is_constant();
+    }
+
+    Ret operator()(const Arg1& x1, const double& x2) override {
       return c<Ret>(f(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg1 parDer1(const Arg1 &x1, const double &x2) {
+    typename B::DRetDArg1 parDer1(const Arg1 &x1, const double &x2) override {
       return c<typename B::DRetDArg1>(pd1(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg2 parDer2(const Arg1 &x1, const double &x2) {
+    typename B::DRetDArg2 parDer2(const Arg1 &x1, const double &x2) override {
       return c<typename B::DRetDArg2>(pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) {
+    typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) override {
       return c<typename B::DRetDArg1>(pd1dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg1 parDer1DirDer2(const double &xd2, const Arg1 &x1, const double &x2) {
+    typename B::DRetDArg1 parDer1DirDer2(const double &xd2, const Arg1 &x1, const double &x2) override {
       return c<typename B::DRetDArg1>(pd1dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
-    typename B::DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &x1, const double &x2) {
+    typename B::DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &x1, const double &x2) override {
       return c<typename B::DDRetDArg1DArg2>(pd1pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) {
+    typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xd1, const Arg1 &x1, const double &x2) override {
       return c<typename B::DRetDArg2>(pd2dd1(std::vector<casadi::SX>{c(xd1), c(x1), c(x2)})[0]);
     }
 
-    typename B::DRetDArg2 parDer2DirDer2(const double &xd2, const Arg1 &x1, const double &x2) {
+    typename B::DRetDArg2 parDer2DirDer2(const double &xd2, const Arg1 &x1, const double &x2) override {
       return c<typename B::DRetDArg2>(pd2dd2(std::vector<casadi::SX>{c(xd2), c(x1), c(x2)})[0]);
     }
 
-    typename B::DDRetDDArg2 parDer2ParDer2(const Arg1 &x1, const double &x2) {
+    typename B::DDRetDDArg2 parDer2ParDer2(const Arg1 &x1, const double &x2) override {
       return c<typename B::DDRetDDArg2>(pd2pd2(std::vector<casadi::SX>{c(x1), c(x2)})[0]);
     }
 
@@ -408,43 +483,6 @@ namespace MBSim {
         THROW_MBSIMERROR("The output dimension does not match.");
     }
   };
-
-  // The following classes may be faster when calculating the function value
-  // together with the first and second derivative
-
-  //  template <class Ret>
-  //  class SymbolicFunctionDerivatives1 : public Function1<Ret,double> {
-  //    private:
-  //      casadi::Function f;
-  //      casadi::FX fder1, fder2;
-  //    public:
-  //    SymbolicFunctionDerivatives1(const casadi::Function &f_) : f(f_) {
-  //      fder1 = f.jacobian();
-  //      fder2 = fder1.jacobian();
-  //    }
-  //    std::string getType() const { return "CasadiDiffFunction"; }
-  //
-  //    casadi::FX& getFXFunction() {return fder2;}
-  //
-  //    Ret operator()(const double& x_, const void * =NULL) {
-  //      fder2.setInput(x_);
-  //      fder2.evaluate();
-  //      return c<Ret>(fder2.output(2));
-  //    }
-  //  };
-  //
-  //  template <class Ret>
-  //  class SymbolicFXFunction : public Function1<Ret,double> {
-  //    private:
-  //    casadi::FX &f;
-  //    int index;
-  //    public:
-  //    SymbolicFXFunction(casadi::FX &f_, int index_=0) : f(f_), index(index_) {}
-  //
-  //    Ret operator()(const double& x_, const void * =NULL) {
-  //      return c<Ret>(f.output(2-index));
-  //    }
-  //  };
 
 }
 
