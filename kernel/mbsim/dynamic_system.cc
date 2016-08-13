@@ -1075,7 +1075,7 @@ namespace MBSim {
         linkSingleValued.push_back(link[i]);
       }
       if (not hasForceLaw) {
-        throw new MBSimError("The Link \"" + link[i]->getPath() + "\" comprises now force law!");
+        throw MBSimError("The Link \"" + link[i]->getPath() + "\" comprises now force law!");
       }
     }
   }
