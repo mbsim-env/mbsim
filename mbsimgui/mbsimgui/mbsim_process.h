@@ -76,11 +76,13 @@ namespace MBSimGUI {
       void setParser(const boost::shared_ptr<MBXMLUtils::DOMParser> &parser_) { parser = parser_; }
       void setDocument(const boost::shared_ptr<xercesc::DOMDocument> &doc_) { doc = doc_; }
       void setProjectFile(const QString &file) { projectFile = file; }
+      void setEvaluator(const std::string &evaluator_) { evaluator = evaluator_; }
       const QString& getErrorText() const { return errText; }
     private:
       boost::shared_ptr<MBXMLUtils::DOMParser> parser;
       boost::shared_ptr<xercesc::DOMDocument> doc;
       QString projectFile, errText;
+      std::string evaluator;
     signals:
       void resultReady(int result);
   };

@@ -29,7 +29,7 @@ namespace MBSimGUI {
   class ScalarParameter;
   class VectorParameter;
   class MatrixParameter;
-  class SearchPathParameter;
+  class ImportParameter;
   class TextWidget;
   class ExtWidget;
 
@@ -86,10 +86,10 @@ namespace MBSimGUI {
       ExtWidget *value;
   };
 
-  class SearchPathParameterPropertyDialog : public ParameterPropertyDialog {
+  class ImportParameterPropertyDialog : public ParameterPropertyDialog {
 
     public:
-      SearchPathParameterPropertyDialog(SearchPathParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      ImportParameterPropertyDialog(ImportParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
       virtual void toWidget(Parameter *parameter);
       virtual void fromWidget(Parameter *parameter);
     protected:

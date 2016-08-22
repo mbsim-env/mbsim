@@ -38,6 +38,7 @@
 #include "solver_view.h"
 #include "embed.h"
 #include "mbsim_process.h"
+#include "project_property_dialog.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
@@ -71,9 +72,11 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./") {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), evalSelect(0,false) {
     // use html output of MBXMLUtils
     putenv(const_cast<char*>("MBXMLUTILS_HTMLOUTPUT=1"));
+
+    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", true));
     
     mw = this;
 
@@ -143,6 +146,8 @@ namespace MBSimGUI {
     updateRecentProjectFileActions();
     menu->addSeparator();
     menuBar()->addMenu(menu);
+    menu->addSeparator();
+    action = menu->addAction("Settings", this, SLOT(projectSettings()));
 
     menu=new QMenu("Export", menuBar());
     actionSaveDataAs = menu->addAction("Export all data", this, SLOT(saveDataAs()));
@@ -536,7 +541,11 @@ namespace MBSimGUI {
       //setWindowTitle(QString::fromStdString(E(ele0)->getAttribute("name")));
       setWindowTitle(fileProject+"[*]");
 
+      evalSelect.initializeUsingXML(ele0);
+
       DOMElement *ele1 = ele0->getFirstElementChild();
+      if(evalSelect.isActive()) ele1 = ele1->getNextElementSibling();
+
       DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1,0);
       dss->initialize();
 
@@ -610,6 +619,8 @@ namespace MBSimGUI {
       DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
       doc->insertBefore(ele0, NULL);
       E(ele0)->setAttribute("name", "Project");
+
+      evalSelect.writeXMLFile(ele0);
 
       ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
       QModelIndex index = model->index(0,0);
@@ -721,11 +732,10 @@ namespace MBSimGUI {
     string message;
     try {
       D(doc)->validate();
-
       // create a new empty evaluator
       // Note: do not use "eval.reset(); eval=..." or something like this here since this will possibly deinit
       // static part of the evaluator and then reinit these and will be time consuming.
-      eval=Eval::createEvaluator("octave", &dependencies);
+      eval=Eval::createEvaluator(evalSelect.isActive()?static_cast<TextProperty*>(evalSelect.getProperty())->getText():"octave", &dependencies);
 
       // add parameter
       eval->addParamSet(doc->getDocumentElement());
@@ -854,6 +864,7 @@ namespace MBSimGUI {
     if(ele0) {
       mbsimThread->setDocument(doc);
       mbsimThread->setProjectFile(projectFile);
+      mbsimThread->setEvaluator(evalSelect.isActive()?static_cast<TextProperty*>(evalSelect.getProperty())->getText():"octave");
       mbsimThread->start();
     }
   }
@@ -1112,7 +1123,7 @@ namespace MBSimGUI {
     QModelIndex index = embeddingList->selectionModel()->currentIndex();
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingList->model());
     Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    if(parameter->getName()!="searchPath")
+    if(parameter->getName()!="import")
       parameter->setName(parameter->getName()+toStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     element->addParameter(parameter);
@@ -1191,6 +1202,27 @@ namespace MBSimGUI {
       recentProjectFileActs[j]->setVisible(false);
 
     //separatorAct->setVisible(numRecentFiles > 0);
+  }
+
+  void MainWindow::projectSettings() {
+    ProjectPropertyDialog *editor = new ProjectPropertyDialog(this);
+    editor->setAttribute(Qt::WA_DeleteOnClose);
+    editor->toWidget();
+    editor->show();
+    connect(editor,SIGNAL(apply()),this,SLOT(applySettings()));
+    connect(editor,SIGNAL(finished(int)),this,SLOT(settingsFinished(int)));
+  }
+
+  void MainWindow::settingsFinished(int result) {
+    if(result != 0) {
+      setProjectChanged(true);
+      mbsimxml(1);
+    }
+  }
+
+  void MainWindow::applySettings() {
+    setProjectChanged(true);
+    mbsimxml(1);
   }
 
 }

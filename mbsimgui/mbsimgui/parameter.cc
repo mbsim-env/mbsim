@@ -39,8 +39,6 @@ namespace MBSimGUI {
     name.setProperty(new TextProperty(name_,""));
   }
 
-  //return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
-
   void Parameter::initializeUsingXML(DOMElement *element) {
   }
 
@@ -53,31 +51,20 @@ namespace MBSimGUI {
   }
 
   StringParameter::StringParameter(const string &name) : Parameter(name) {
-
-   value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("'string'","",vector<string>(2,"")),"",5));
+    value.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("'string'","",vector<string>(2,"")),"",5));
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-//   value.setProperty(new TextProperty("0","",true));
-//    setValue(static_cast<const TextProperty*>(value.getProperty())->getText());
   }
 
   void StringParameter::initializeUsingXML(DOMElement *element) {
     Parameter::initializeUsingXML(element);
     value.initializeUsingXML(element);
     setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(value.getProperty())->getProperty())->getValue());
-//    Parameter::initializeUsingXML(element);
-//    TextProperty *val = static_cast<TextProperty*>(value.getProperty());
-//    val->initializeUsingXML(element);
-//    setValue(val->getText());
   }
 
   DOMElement* StringParameter::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Parameter::writeXMLFile(parent);
     value.writeXMLFile(ele0);
     return ele0;
-//    DOMElement *ele0 = Parameter::writeXMLFile(parent);
-//    TextProperty *val = static_cast<TextProperty*>(value.getProperty());
-//    val->writeXMLFile(ele0);
-//    return ele0;
   }
 
   ScalarParameter::ScalarParameter(const string &name, const string &value_) : Parameter(name) {
@@ -134,21 +121,22 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SearchPathParameter::SearchPathParameter() : Parameter("searchPath") {
-    value.setProperty(new FileProperty(""));
-    setValue(static_cast<FileProperty*>(value.getProperty())->getFile());
+  ImportParameter::ImportParameter() : Parameter("import") {
+    value.setProperty(new ExpressionProperty("'.'"));
+    setValue(static_cast<ExpressionProperty*>(value.getProperty())->getValue());
+  }
+
+  void ImportParameter::initializeUsingXML(DOMElement *element) {
+    Parameter::initializeUsingXML(element);
+    value.initializeUsingXML(element);
+    setValue(static_cast<ExpressionProperty*>(value.getProperty())->getValue());
   }
   
-  void SearchPathParameter::initializeUsingXML(DOMElement *element) {
-     string value = E(element)->getAttribute("href"); 
-     setValue(value);
-  }
-  
-  DOMElement* SearchPathParameter::writeXMLFile(DOMNode *parent) {
+  DOMElement* ImportParameter::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(PV%getType());
     parent->insertBefore(ele0, NULL);
-    E(ele0)->setAttribute("href", getValue());
+    value.writeXMLFile(ele0);
     return ele0;
   }
 

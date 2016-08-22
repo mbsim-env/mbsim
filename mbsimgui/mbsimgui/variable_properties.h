@@ -44,7 +44,7 @@ namespace MBSimGUI {
 
   class ExpressionProperty : public VariableProperty {
     public:
-      ExpressionProperty() {}
+      ExpressionProperty(const std::string &value_="") : value(value_) {}
       virtual PropertyInterface* clone() const {return new ExpressionProperty(*this);}
       std::string getValue() const { return value; }
       void setValue(const std::string &str) { value = str; }

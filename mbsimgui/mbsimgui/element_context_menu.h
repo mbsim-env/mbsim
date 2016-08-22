@@ -37,7 +37,7 @@ namespace MBSimGUI {
       void addVectorParameter();
       void addMatrixParameter();
       void addStringParameter();
-      void addSearchPathParameter();
+      void addImportParameter();
 
     protected:
       Element *element;
