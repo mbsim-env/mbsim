@@ -31,7 +31,7 @@ namespace MBSimGUI {
     addTab("General");
     vector<QString> list;
     list.push_back("octave");
-    list.push_back("python");
+//    list.push_back("python"); status of python evaluator is still alpha
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),true);
     addToTab("General",evalSelect);
   }
