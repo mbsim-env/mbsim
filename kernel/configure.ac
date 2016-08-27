@@ -49,7 +49,7 @@ fi
 CPPFLAGS="$CPPFLAGS -Wno-error=sign-compare" # casadi headers use some wrong sign-compare
 
 dnl Check for casadi 
-PKG_CHECK_MODULES(CASADI, casadi, [casadi=yes; requires="$requires casadi"; CPPFLAGS="$CPPFLAGS -DHAVE_CASADI"; DEFINES="$DEFINES -DHAVE_CASADI"], [casadi=no])
+PKG_CHECK_MODULES(CASADI, casadi >= 3.0.0, [casadi=yes; requires="$requires casadi"; CPPFLAGS="$CPPFLAGS -DHAVE_CASADI"; DEFINES="$DEFINES -DHAVE_CASADI"], [casadi=no])
 AM_CONDITIONAL([COND_CASADI], [test $casadi = yes])
 
 dnl check for numerics library
