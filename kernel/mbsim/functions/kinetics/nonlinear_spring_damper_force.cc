@@ -32,10 +32,10 @@ namespace MBSim {
   void NonlinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
-    e = E(element)->getFirstElementChildNamed(MBSIM%"distanceForce");
-    setDistanceFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
-    e = E(element)->getFirstElementChildNamed(MBSIM%"velocityForce");
-    setVelocityFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"forceDeflectionFunction");
+    setForceDeflectionFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"forceVelocityFunction");
+    setForceVelocityFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
   }
 
 }

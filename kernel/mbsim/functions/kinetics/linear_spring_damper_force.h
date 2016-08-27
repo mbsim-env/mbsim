@@ -25,7 +25,7 @@
 namespace MBSim {
 
   /**
-   * \brief function describing a linear relationship between the input relative distance / velocity and the output for a spring
+   * \brief function describing a linear relationship between the input deflection / relative velocity and the output for a spring
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
@@ -34,25 +34,17 @@ namespace MBSim {
       /** 
        * \brief constructor
        */
-      LinearSpringDamperForce() : l0(0) {}
+      LinearSpringDamperForce() {}
 
       /** 
        * \brief constructor
        * \param stiffness
        * \param damping
        */
-      LinearSpringDamperForce(double c_, double d_) : c(c_), d(d_), l0(0) {}
-
-      /** 
-       * \brief constructor
-       * \param stiffness
-       * \param damping
-       * \param undeformed length
-       */
-      LinearSpringDamperForce(double c_, double d_, double l0_); 
+      LinearSpringDamperForce(double c_, double d_) : c(c_), d(d_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const double& g, const double& gd) { return c*(g-l0) + d*gd; }
+      virtual double operator()(const double& s, const double& sd) { return c*s + d*sd; }
       void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/
 
@@ -65,7 +57,7 @@ namespace MBSim {
       /**
        * \brief stiffness, damping, undeformed length
        */
-      double c, d, l0;
+      double c, d;
   };
 
 }

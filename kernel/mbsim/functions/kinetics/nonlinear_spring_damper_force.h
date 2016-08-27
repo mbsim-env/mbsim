@@ -25,7 +25,7 @@
 namespace MBSim {
 
   /**
-   * \brief function describing a nonlinear relationship between the input relative distance / velocity and the output for a spring
+   * \brief function describing a nonlinear relationship between the input deflection / relative velocity and the output for a spring
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
@@ -40,8 +40,8 @@ namespace MBSim {
        * \brief destructor
        */
       ~NonlinearSpringDamperForce() {
-        delete gForceFun;
-        delete gdForceFun;
+        delete sF;
+        delete sdF;
       }
 
       /** 
@@ -49,45 +49,45 @@ namespace MBSim {
        * \param distance depending force function
        * \param relative velocity depending force function
        */
-      NonlinearSpringDamperForce(Function<double(double)> * gForceFun_, Function<double(double)> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {
-        gForceFun->setParent(this);
-        gdForceFun->setParent(this);
+      NonlinearSpringDamperForce(Function<double(double)> *sF_, Function<double(double)> *sdF_) : sF(sF_), sdF(sdF_) {
+        sF->setParent(this);
+        sdF->setParent(this);
       }
 
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const double& g, const double& gd) { return (*gForceFun)(g) + (*gdForceFun)(gd); }
+      virtual double operator()(const double& s, const double& sd) { return (*sF)(s) + (*sdF)(sd); }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(Element::InitStage stage) {
         Function<double(double,double)>::init(stage);
-        gForceFun->init(stage);
-        gdForceFun->init(stage);
+        sF->init(stage);
+        sdF->init(stage);
       }
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setDistanceFunction(Function<double(double)> * gForceFun_) {
-        gForceFun=gForceFun_;
-        gForceFun->setParent(this);
-        gForceFun->setName("Distance");
+      void setForceDeflectionFunction(Function<double(double)> * sF_) {
+        sF=sF_;
+        sF->setParent(this);
+        sF->setName("ForceDeflection");
       }
 
-      void setVelocityFunction(Function<double(double)> * gdForceFun_) {
-        gdForceFun=gdForceFun_;
-        gdForceFun->setParent(this);
-        gdForceFun->setName("Velocity");
+      void setForceVelocityFunction(Function<double(double)> * sdF_) {
+        sdF=sdF_;
+        sdF->setParent(this);
+        sdF->setName("ForceVelocity");
       }
       /***************************************************/
 
     protected:
       /**
-       * \brief distance depending force function
+       * \brief deflection depending force function
        */
-      Function<double(double)> * gForceFun;
+      Function<double(double)> * sF;
 
       /**
        * \brief relative velocity depending force function
        */
-      Function<double(double)> * gdForceFun;
+      Function<double(double)> * sdF;
   };
 
 }

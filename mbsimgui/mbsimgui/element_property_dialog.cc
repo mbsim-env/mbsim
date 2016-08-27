@@ -1066,7 +1066,7 @@ namespace MBSimGUI {
     forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", forceFunction);
 
-    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
@@ -1109,7 +1109,7 @@ namespace MBSimGUI {
     forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", forceFunction);
 
-    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
@@ -1149,7 +1149,7 @@ namespace MBSimGUI {
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", function);
 
-    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft),true);
+    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
     body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);

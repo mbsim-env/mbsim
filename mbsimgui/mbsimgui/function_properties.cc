@@ -719,7 +719,7 @@ namespace MBSimGUI {
     r.toWidget(static_cast<ContinuedFunctionWidget*>(widget)->r);
   }
 
-  LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent), l0(0,false) {
+  LinearSpringDamperForce::LinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIM%"stiffnessCoefficient"));
@@ -728,16 +728,11 @@ namespace MBSimGUI {
     input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"N*s/m",MBSIM%"dampingCoefficient"));
     d.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"m",MBSIM%"unloadedLength"));
-    l0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
   DOMElement* LinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     c.initializeUsingXML(element);
     d.initializeUsingXML(element);
-    l0.initializeUsingXML(element);
     return element;
   }
 
@@ -745,50 +740,47 @@ namespace MBSimGUI {
     DOMElement *ele0 = Function::writeXMLFile(parent);
     c.writeXMLFile(ele0);
     d.writeXMLFile(ele0);
-    l0.writeXMLFile(ele0);
     return ele0;
   } 
 
   void LinearSpringDamperForce::fromWidget(QWidget *widget) {
     c.fromWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->c);
     d.fromWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->d);
-    l0.fromWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->l0);
   }
 
   void LinearSpringDamperForce::toWidget(QWidget *widget) {
     c.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->c);
     d.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->d);
-    l0.toWidget(static_cast<LinearSpringDamperForceWidget*>(widget)->l0);
   }
 
   NonlinearSpringDamperForce::NonlinearSpringDamperForce(const string &name, Element *parent) : Function(name,parent) {
 
-    g.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"distanceForce",0));
+    s.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceDeflectionFunction",0));
 
-    gd.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"velocityForce",0));
+    sd.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceVelocityFunction",0));
   }
 
   DOMElement* NonlinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
-    g.initializeUsingXML(element);
-    gd.initializeUsingXML(element);
+    s.initializeUsingXML(element);
+    sd.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* NonlinearSpringDamperForce::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Function::writeXMLFile(parent);
-    g.writeXMLFile(ele0);
-    gd.writeXMLFile(ele0);
+    s.writeXMLFile(ele0);
+    sd.writeXMLFile(ele0);
     return ele0;
   } 
 
   void NonlinearSpringDamperForce::fromWidget(QWidget *widget) {
-    g.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
-    gd.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
+    s.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->s);
+    sd.fromWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->sd);
   }
 
   void NonlinearSpringDamperForce::toWidget(QWidget *widget) {
-    g.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->g);
-    gd.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->gd);
+    s.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->s);
+    sd.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->sd);
   }
 
   LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint(const string &name, Element *parent) : Function(name,parent) {

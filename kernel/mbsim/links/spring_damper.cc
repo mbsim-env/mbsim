@@ -105,7 +105,7 @@ namespace MBSim {
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
-    if(e) l0 = Element::getDouble(e);
+    l0 = Element::getDouble(e);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
