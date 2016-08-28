@@ -98,17 +98,20 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   // connection between bodies
   SpringDamper *sp01 = new SpringDamper("S01");
   addLink(sp01);
-  sp01->setForceFunction(new LinearSpringDamperForce(springStiffness,0.05*springStiffness,h0Cylinder-.5*hDisk));
+  sp01->setForceFunction(new LinearSpringDamperForce(springStiffness,0.05*springStiffness));
+  sp01->setUnloadedLength(h0Cylinder-.5*hDisk);
   sp01->connect(getFrame("I"), k1->getFrame("fBottom"));
 
   SpringDamper *sp12 = new SpringDamper("S12");
   addLink(sp12);
-  sp12->setForceFunction(new LinearSpringDamperForce(springStiffness,0.05*springStiffness,h0Cylinder-hDisk));
+  sp12->setForceFunction(new LinearSpringDamperForce(springStiffness,0.05*springStiffness));
+  sp12->setUnloadedLength(h0Cylinder-hDisk);
   sp12->connect(k1->getFrame("fTop"), k2->getFrame("fBottom"));
 
   SpringDamper *sp23 = new SpringDamper("S23");
   addLink(sp23);
-  sp23->setForceFunction(new LinearSpringDamperForce(springStiffness,0.05*springStiffness,h0Cylinder-hDisk));
+  sp23->setForceFunction(new LinearSpringDamperForce(springStiffness,0.05*springStiffness));
+  sp23->setUnloadedLength(h0Cylinder-hDisk);
   sp23->connect(k2->getFrame("fTop"), k3->getFrame("fBottom"));
 
   // joint between the upper two bodies

@@ -24,6 +24,7 @@
 #include <QProcess>
 #include <boost/filesystem/path.hpp>
 #include <xercesc/util/XercesDefs.hpp>
+#include "extended_properties.h"
 
 class QAction;
 class QModelIndex;
@@ -97,6 +98,7 @@ namespace MBSimGUI {
       ~MainWindow();
       std::shared_ptr<MBXMLUtils::DOMParser> parser;
       std::shared_ptr<MBXMLUtils::Eval> eval;
+      ExtProperty evalSelect;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
       void addParameter(Parameter *parameter);
@@ -150,6 +152,7 @@ namespace MBSimGUI {
       void updateParameters(Element *element);
       void removeElement();
       void saveElementAs();
+      void projectSettings();
     protected slots:
       void selectElement(std::string);
       void changeWorkingDir();
@@ -159,6 +162,8 @@ namespace MBSimGUI {
       void openRecentProjectFile();
       void preprocessFinished(int result);
       void autoSaveProject();
+      void applySettings();
+      void settingsFinished(int result);
     protected:
       void closeEvent ( QCloseEvent * event );
 

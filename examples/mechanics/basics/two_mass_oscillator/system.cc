@@ -118,7 +118,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(spring1);
 
   // define the Force function (a linear force function with stiffness, damping value and relaxed length)
-  spring1->setForceFunction(new LinearSpringDamperForce(c1,d1,l01));
+  spring1->setForceFunction(new LinearSpringDamperForce(c1,d1));
+  spring1->setUnloadedLength(l01);
 
   // Define the two coordinate systems (i.e. frames) where the force law should act
   // --> (in this case between the lower frame on box1 and the I-Frame of the dynamic system)
@@ -127,7 +128,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // ----------------------- Definition of spring 2 (analog to spring 1) --------------------
   SpringDamper *spring2 = new SpringDamper("Spring2");
   addLink(spring2);
-  spring2->setForceFunction(new LinearSpringDamperForce(c2,d2,l02));
+  spring2->setForceFunction(new LinearSpringDamperForce(c2,d2));
+  spring2->setUnloadedLength(l02);
   spring2->connect(box1->getFrame("UpperFrame"),box2->getFrame("LowerFrame"));
 
   // ----------------------- Define initial states of the bodies -------------------

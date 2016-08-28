@@ -193,7 +193,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SpringDamper *sd = new SpringDamper("FederVL");
   addLink(sd);
-  sd->setForceFunction(new LinearSpringDamperForce(cs,ds,l0));
+  sd->setForceFunction(new LinearSpringDamperForce(cs,ds));
+  sd->setUnloadedLength(l0);
   sd->connect(karosserie->getFrame("FVL"),vl->getFrame("C"));
 
 
@@ -210,7 +211,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   sd = new SpringDamper("FederVR");
   addLink(sd);
-  sd->setForceFunction(new LinearSpringDamperForce(cs,ds,l0));
+  sd->setForceFunction(new LinearSpringDamperForce(cs,ds));
+  sd->setUnloadedLength(l0);
   sd->connect(karosserie->getFrame("FVR"),vr->getFrame("C"));
 
   RigidBody *hl = new RigidBody("HinterradLinks");
@@ -226,7 +228,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   sd = new SpringDamper("FederHL");
   addLink(sd);
-  sd->setForceFunction(new LinearSpringDamperForce(cs,ds,l0));
+  sd->setForceFunction(new LinearSpringDamperForce(cs,ds));
+  sd->setUnloadedLength(l0);
   sd->connect(karosserie->getFrame("FHL"),hl->getFrame("C"));
 
   RigidBody *hr = new RigidBody("HinterradRechts");
@@ -242,7 +245,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   sd = new SpringDamper("FederHR");
   addLink(sd);
-  sd->setForceFunction(new LinearSpringDamperForce(cs,ds,l0));
+  sd->setForceFunction(new LinearSpringDamperForce(cs,ds));
+  sd->setUnloadedLength(l0);
   sd->connect(karosserie->getFrame("FHR"),hr->getFrame("C"));
 
   SrSP.init(0);

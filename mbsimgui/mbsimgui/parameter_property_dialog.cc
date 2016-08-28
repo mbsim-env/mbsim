@@ -104,22 +104,22 @@ namespace MBSimGUI {
     ParameterPropertyDialog::fromWidget(parameter);
     static_cast<MatrixParameter*>(parameter)->value.fromWidget(value);
     parameter->setValue(static_cast<PhysicalVariableProperty*>(static_cast<ChoiceProperty2*>(static_cast<MatrixParameter*>(parameter)->value.getProperty())->getProperty())->getValue());
-
   }
 
-  SearchPathParameterPropertyDialog::SearchPathParameterPropertyDialog(SearchPathParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f,true) {
-    value = new ExtWidget("Path",new FileWidget("Path","",3));
+  ImportParameterPropertyDialog::ImportParameterPropertyDialog(ImportParameter *parameter,QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f,true) {
+    value = new ExtWidget("Value",new ExpressionWidget("0"));
     addToTab("General", value);
   }
 
-  void SearchPathParameterPropertyDialog::toWidget(Parameter *parameter) {
+  void ImportParameterPropertyDialog::toWidget(Parameter *parameter) {
     ParameterPropertyDialog::toWidget(parameter);
-    static_cast<FileWidget*>(value->getWidget())->setFile(QString::fromStdString(parameter->getValue()));
+    static_cast<ImportParameter*>(parameter)->value.toWidget(value);
   }
 
-  void SearchPathParameterPropertyDialog::fromWidget(Parameter *parameter) {
+  void ImportParameterPropertyDialog::fromWidget(Parameter *parameter) {
     ParameterPropertyDialog::fromWidget(parameter);
-    parameter->setValue(static_cast<FileWidget*>(value->getWidget())->getFile().toStdString());
+    static_cast<ImportParameter*>(parameter)->value.fromWidget(value);
+    parameter->setValue(static_cast<ExpressionProperty*>(static_cast<ImportParameter*>(parameter)->value.getProperty())->getValue());
   }
 
 }

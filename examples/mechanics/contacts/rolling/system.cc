@@ -120,7 +120,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Spring 
   SpringDamper *spring = new SpringDamper("Spring");
   addLink(spring);
-  spring->setForceFunction(new LinearSpringDamperForce(c,c/10.,d));
+  spring->setForceFunction(new LinearSpringDamperForce(c,c/10.));
+  spring->setUnloadedLength(d);
   spring->connect(body4->getFrame("C"), getFrame("D"));
 
 

@@ -4,9 +4,9 @@
     <LinearSpringDamperForce>
       <stiffnessCoefficient>3</stiffnessCoefficient>
       <dampingCoefficient>0</dampingCoefficient>
-      <unloadedLength>0</unloadedLength>
     </LinearSpringDamperForce>
   </forceFunction>
+  <unloadedLength>0</unloadedLength>
   <connect ref1="../Frame[SpringMount]" ref2="../Object[Ball]/Frame[C]"/>
   <enableOpenMBVCoilSpring>
     <numberOfCoils>20</numberOfCoils>

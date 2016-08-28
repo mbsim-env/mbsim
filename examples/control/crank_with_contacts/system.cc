@@ -321,7 +321,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addFrame(new FixedRelativeFrame("L",Plane3_q0,SqrMat(3,EYE)));
 
   SpringDamper *spring1 = new SpringDamper("spring1");
-  spring1->setForceFunction(new LinearSpringDamperForce(30,1,0.5));
+  spring1->setForceFunction(new LinearSpringDamperForce(30,1));
+  spring1->setUnloadedLength(0.5);
   spring1->connect(Block->getFrame("C"),this->getFrame("L"));
 
   // add spring to dynamical system

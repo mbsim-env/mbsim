@@ -55,7 +55,8 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   lCV->setLinePressureLoss(lCVPressureLoss);
   lCV->setLineMinimalXOpen(1e-4);
   lCV->setBallMass(0.1);
-  lCV->setSpringForceFunction(new LinearSpringDamperForce(200, 5, 5e-3));
+  lCV->setSpringForceFunction(new LinearSpringDamperForce(200, 5));
+  lCV->setSpringUnloadedLength(5e-3);
   double c=1e5;
   double d=1e3;
   if (unilateral) {

@@ -63,6 +63,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   solver_property_dialog.cc \
 		   parameter_property_dialog.cc \
 		   embedding_property_dialog.cc \
+		   project_property_dialog.cc \
 		   element_context_menu.cc \
 		   parameter_context_menu.cc \
 		   element_view.cc \
@@ -93,6 +94,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   solver_property_dialog.moc.cc \
 		   parameter_property_dialog.moc.cc \
 		   embedding_property_dialog.moc.cc \
+		   project_property_dialog.moc.cc \
 		   element_context_menu.moc.cc \
 		   element_view.moc.cc \
 		   embedding_view.moc.cc \

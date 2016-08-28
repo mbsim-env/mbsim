@@ -155,7 +155,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   GeneralizedSpringDamper *feder = new GeneralizedSpringDamper("Drehfeder");
   feder->setRigidBodySecondSide(specht);
   double cDF = 0.5;
-  feder->setGeneralizedForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));
+  feder->setGeneralizedForceFunction(new LinearSpringDamperForce(cDF,0.0));
   addLink(feder);
 
   UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;

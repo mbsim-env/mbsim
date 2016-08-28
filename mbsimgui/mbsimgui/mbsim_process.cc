@@ -171,11 +171,16 @@ namespace MBSimGUI {
       D(doc)->validate();
 
       vector<boost::filesystem::path> dependencies;
-      std::shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
+      std::shared_ptr<Eval> eval=Eval::createEvaluator(evaluator, &dependencies);
 
       // Praeprozessor starten
       DOMElement *mainxmlele=doc->getDocumentElement();
       Preprocess::preprocess(parser, eval, dependencies, mainxmlele);
+
+      // adapt the evaluator in the dom
+      DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
+      evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
+      mainxmlele->insertBefore(evaluator, mainxmlele->getFirstChild());
     }
     catch(exception &ex) {
       errText = ex.what();

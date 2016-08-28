@@ -132,7 +132,8 @@ System::System(const string &projectName) :
 
   // spring
   SpringDamper *spring1 = new SpringDamper("Spring1");
-  spring1->setForceFunction(new LinearSpringDamperForce(1000, 0, length_spring));
+  spring1->setForceFunction(new LinearSpringDamperForce(1000, 0));
+  spring1->setUnloadedLength(length_spring);
   spring1->connect(mass1->getFrame("C"), crankToSpring);
 
   // add spring to dynamical system
