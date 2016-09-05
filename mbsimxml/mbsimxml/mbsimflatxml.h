@@ -9,7 +9,7 @@
 
 namespace MBSim {
 
-  const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML");
+  extern const MBXMLUtils::NamespaceURI MBSIMXML;
 
   //! A string buffer which prefixes every line.
   class PrefixedStringBuf : public std::stringbuf {

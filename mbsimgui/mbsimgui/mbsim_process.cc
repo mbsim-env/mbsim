@@ -26,9 +26,6 @@
 #include <mbxmlutils/eval.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbxmlutils/preprocess.h>
-#include "mbsim/dynamic_system_solver.h"
-#include "mbsim/objectfactory.h"
-#include "mbsim/integrators/integrator.h"
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 

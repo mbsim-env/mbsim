@@ -33,7 +33,7 @@ namespace MBSimFlexibleBody {
   class DiscretizationInterface;
   class NodeFrame;
 
-  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
+  extern const MBXMLUtils::NamespaceURI MBSIMFLEX;
 
   /**
    * \brief upmost class for flexible body implementation

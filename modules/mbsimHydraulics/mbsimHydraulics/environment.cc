@@ -29,6 +29,8 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
+  const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS("http://www.mbsim-env.de/MBSimHydraulics");
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(HydraulicEnvironment, MBSIMHYDRAULICS%"HydraulicEnvironment")
 
   std::unique_ptr<HydraulicEnvironment> HydraulicEnvironment::instance(new HydraulicEnvironment);

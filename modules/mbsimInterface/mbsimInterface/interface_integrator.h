@@ -32,6 +32,8 @@ namespace MBSimControl {
 
 namespace MBSimInterface {
 
+  extern const MBXMLUtils::NamespaceURI MBSIMINTERFACE;
+
   class MBSimServer;
 
   /** \brief Dummy-Integrator InterfaceIntegrator

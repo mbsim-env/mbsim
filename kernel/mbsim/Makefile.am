@@ -38,5 +38,6 @@ mbsiminclude_HEADERS = element.h\
 		       mbsim_event.h\
 		       modelling_interface.h\
 		       objectfactory.h\
+		       objectfactory_part.h\
 		       graph.h\
 		       solver.h

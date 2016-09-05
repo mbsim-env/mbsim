@@ -18,6 +18,8 @@ using namespace MBSim;
 
 namespace MBSimPowertrain {
 
+  const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN("http://www.mbsim-env.de/MBSimPowertrain");
+
   PlanetaryGear::PlanetaryGear(const std::string &name, int model_) : Group(name), model(model_) {
     double mS = 1;
     double mH = 1.5;

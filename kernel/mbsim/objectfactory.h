@@ -20,6 +20,7 @@
 #ifndef _MBSIM_OBJECTFACTORY_H_
 #define _MBSIM_OBJECTFACTORY_H_
 
+#include "objectfactory_part.h"
 #include <vector>
 #include <stdexcept>
 #include <typeinfo>
@@ -74,6 +75,9 @@ class DOMEvalExceptionWrongType : public MBXMLUtils::DOMEvalException {
  */
 class ObjectFactory {
 
+  friend void registerXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc);
+  friend void deregisterXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
+
   public:
 
     /** Register the class CreateType which the XML element name name by the object factory.
@@ -81,7 +85,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
     template<class CreateType>
     static void registerXMLName(const MBXMLUtils::FQN &name) {
-      registerXMLName(name, &allocate<CreateType>, &deallocate);
+      MBSim::registerXMLName(name, new Allocate<CreateType>(), new Deallocate());
     }
 
     /** Register the class CreateType which the XML element name name by the object factory.
@@ -89,7 +93,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
     template<class CreateType>
     static void registerXMLNameAsSingleton(const MBXMLUtils::FQN &name) {
-      registerXMLName(name, &getSingleton<CreateType>, &deallocateSingleton);
+      MBSim::registerXMLName(name, new GetSingleton<CreateType>(), new DeallocateSingleton());
     }
 
     /** Deregister the class CreateType.
@@ -97,7 +101,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
     template<class CreateType>
     static void deregisterXMLName(const MBXMLUtils::FQN &name) {
-      deregisterXMLName(name, &allocate<CreateType>);
+      MBSim::deregisterXMLName(name, new Allocate<CreateType>());
     }
 
     /** Deregister the class CreateType.
@@ -105,7 +109,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
     template<class CreateType>
     static void deregisterXMLNameAsSingleton(const MBXMLUtils::FQN &name) {
-      deregisterXMLName(name, &getSingleton<CreateType>);
+      MBSim::deregisterXMLName(name, new GetSingleton<CreateType>());
     }
 
     /** Create and initialize an object corresponding to the XML element element and return a pointer of type ContainerType.
@@ -128,7 +132,7 @@ class ObjectFactory {
       // try to create and init a object which each of the allocate function
       for(AllocDeallocVectorIt allocDeallocIt=nameIt->second.begin(); allocDeallocIt!=nameIt->second.end(); ++allocDeallocIt) {
         // create element
-        fmatvec::Atom *ele=allocDeallocIt->first();
+        fmatvec::Atom *ele=(*allocDeallocIt->first)();
         // try to cast the element to ContainerType
         ContainerType *ret=dynamic_cast<ContainerType*>(ele);
         if(!ret) {
@@ -136,7 +140,7 @@ class ObjectFactory {
           allErrors.add(boost::core::demangle(typeid(*ele).name()),
                         std::make_shared<DOMEvalExceptionWrongType>(
                         boost::core::demangle(typeid(ContainerType).name()), element));
-          allocDeallocIt->second(ele); 
+          (*allocDeallocIt->second)(ele); 
           continue;
         }
         try {
@@ -157,7 +161,7 @@ class ObjectFactory {
           allErrors.add(boost::core::demangle(typeid(*ele).name()),
                         std::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
         }
-        allocDeallocIt->second(ele);
+        (*allocDeallocIt->second)(ele);
       }
       // if all failed -> return errors of all trys
       throw allErrors;
@@ -165,23 +169,15 @@ class ObjectFactory {
 
   private:
 
-    // a pointer to a function allocating an object
-    typedef fmatvec::Atom* (*AllocateFkt)();
-    // a pointer to a function deallocating an object
-    typedef void (*DeallocateFkt)(fmatvec::Atom *obj);
-
     // convinence typedefs
-    typedef std::vector<std::pair<AllocateFkt, DeallocateFkt> > AllocDeallocVector;
+    typedef std::pair<const AllocateBase*, const DeallocateBase*> AllocDeallocPair;
+    typedef std::vector<AllocDeallocPair> AllocDeallocVector;
     typedef AllocDeallocVector::iterator AllocDeallocVectorIt;
     typedef std::map<MBXMLUtils::FQN, AllocDeallocVector> NameMap;
     typedef NameMap::iterator NameMapIt;
 
     // private ctor
     ObjectFactory() {}
-
-    static void registerXMLName(const MBXMLUtils::FQN &name, AllocateFkt alloc, DeallocateFkt dealloc);
-
-    static void deregisterXMLName(const MBXMLUtils::FQN &name, AllocateFkt alloc);
 
     // create an singleton instance of the object factory.
     // only declaration here and defition and explicit instantation for all fmatvec::Atom in objectfactory.cc (required for Windows)
@@ -192,25 +188,49 @@ class ObjectFactory {
 
     // a wrapper to allocate an object of type CreateType
     template<class CreateType>
-    static fmatvec::Atom* allocate() {
-      return new CreateType;
-    }
+    struct Allocate : public AllocateBase {
+      // create a new object of type CreateType using new
+      fmatvec::Atom* operator()() const override {
+        return new CreateType;
+      }
+      // check if this Allocator allocates the same object as other.
+      // This is the case if the type of this template class matches
+      // the type of other.
+      bool operator==(const AllocateBase& other) const override {
+        return typeid(*this)==typeid(other);
+      }
+    };
 
     // a wrapper to deallocate an object created by allocate
-    static void deallocate(fmatvec::Atom *obj) {
-      delete obj;
-    }
+    struct Deallocate : public DeallocateBase {
+      // deallocate a object using delete
+      void operator()(fmatvec::Atom *obj) const override {
+        delete obj;
+      }
+    };
 
     // a wrapper to get an singleton object of type CreateType (Must have the same signature as allocate()
     template<class CreateType>
-    static fmatvec::Atom* getSingleton() {
-      return CreateType::getInstance();
-    }
+    struct GetSingleton : public AllocateBase {
+      // create a new singelton object of type CreateType using CreateType::getInstance
+      fmatvec::Atom* operator()() const override {
+        return CreateType::getInstance();
+      }
+      // check if this Allocator returns the same object as other.
+      // This is the case if the type of this template class matches
+      // the type of other.
+      bool operator==(const AllocateBase& other) const override {
+        return typeid(*this)==typeid(other);
+      }
+    };
 
     // a wrapper to "deallocate" an singleton object (Must have the same signature as deallocate()
-    static void deallocateSingleton(fmatvec::Atom *obj) {
-      // just do nothing for singletons
-    }
+    struct DeallocateSingleton : public DeallocateBase {
+      // deallocate a singleton object -> just do nothing
+      void operator()(fmatvec::Atom *obj) const override {
+        // just do nothing for singletons
+       }
+    };
 
 };
 

@@ -105,23 +105,30 @@ ObjectFactory& ObjectFactory::instance() {
   return of;
 }
 
-void ObjectFactory::registerXMLName(const FQN &name, AllocateFkt alloc, DeallocateFkt dealloc) {
-  AllocDeallocVector &allocDealloc=instance().registeredType.insert(make_pair(name, AllocDeallocVector())).first->second;
-  if(find(allocDealloc.begin(), allocDealloc.end(), make_pair(alloc, dealloc))==allocDealloc.end())
-    allocDealloc.push_back(make_pair(alloc, dealloc));
+void registerXMLName(const FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc) {
+  ObjectFactory::AllocDeallocVector &allocDealloc=ObjectFactory::instance().registeredType.insert(make_pair(name, ObjectFactory::AllocDeallocVector())).first->second;
+  if(find_if(allocDealloc.begin(), allocDealloc.end(), [&alloc](const ObjectFactory::AllocDeallocPair &x){
+    return *x.first == *alloc;
+  })!=allocDealloc.end())
+    throw MBSimError("Internal error: Redundant registration of a class in the XML object factory.");
+  allocDealloc.push_back(make_pair(alloc, dealloc));
 }
 
-void ObjectFactory::deregisterXMLName(const FQN &name, AllocateFkt alloc) {
-  NameMapIt nameIt=instance().registeredType.find(name);
-  if(nameIt==instance().registeredType.end())
+void deregisterXMLName(const FQN &name, const AllocateBase *alloc) {
+  ObjectFactory::NameMapIt nameIt=ObjectFactory::instance().registeredType.find(name);
+  if(nameIt==ObjectFactory::instance().registeredType.end())
     return;
-  AllocDeallocVectorIt allocDeallocIt=nameIt->second.begin();
-  while(allocDeallocIt!=nameIt->second.end() && allocDeallocIt->first!=alloc)
+  ObjectFactory::AllocDeallocVectorIt allocDeallocIt=nameIt->second.begin();
+  while(allocDeallocIt!=nameIt->second.end() && !(*allocDeallocIt->first == *alloc))
     ++allocDeallocIt;
-  if(allocDeallocIt!=nameIt->second.end())
+  if(allocDeallocIt!=nameIt->second.end()) {
+    delete allocDeallocIt->first;
+    delete allocDeallocIt->second;
     nameIt->second.erase(allocDeallocIt);
+  }
   if(nameIt->second.empty())
-    instance().registeredType.erase(nameIt);
+    ObjectFactory::instance().registeredType.erase(nameIt);
+  delete alloc;
 }
 
 }

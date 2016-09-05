@@ -47,6 +47,8 @@ enum IPCmethods {
 
 namespace MBSimInterface {
 
+  const MBXMLUtils::NamespaceURI MBSIMINTERFACE("http://www.mbsim-env.de/MBSimInterface");
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(InterfaceIntegrator, MBSIMINTERFACE%"InterfaceIntegrator")
 
     InterfaceIntegrator::InterfaceIntegrator(): MBSimIntegrator::Integrator(), zSize(0), svSize(0), printCommunication(true), exitRequest(false), mbsimServer(NULL) {

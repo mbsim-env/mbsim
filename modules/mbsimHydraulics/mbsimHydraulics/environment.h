@@ -25,7 +25,7 @@
 
 namespace MBSimHydraulics {
 
-  const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS("http://www.mbsim-env.de/MBSimHydraulics");
+  extern const MBXMLUtils::NamespaceURI MBSIMHYDRAULICS;
 
   /*! HydraulicEnvironment */
   class HydraulicEnvironment : public MBSim::Environment {
