@@ -122,7 +122,7 @@ namespace MBSim {
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedGeneralizedLength");
-    if(e) l0 = Element::getDouble(e);
+    l0 = Element::getDouble(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
     if(e) saved_body1=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");

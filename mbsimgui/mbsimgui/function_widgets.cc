@@ -540,11 +540,6 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
     d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
     layout->addWidget(d);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),lengthUnits(),4));
-    l0 = new ExtWidget("Unloaded length",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(l0);
   }
 
   NonlinearSpringDamperForceWidget::NonlinearSpringDamperForceWidget(Element *parent) {
@@ -552,11 +547,11 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    g = new ExtWidget("Distance function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
-    layout->addWidget(g);
+    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
+    layout->addWidget(s);
 
-    gd = new ExtWidget("Velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
-    layout->addWidget(gd);
+    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(parent)));
+    layout->addWidget(sd);
   }
 
   LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraintWidget() {

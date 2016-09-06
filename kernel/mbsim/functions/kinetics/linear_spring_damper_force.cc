@@ -29,10 +29,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearSpringDamperForce, MBSIM%"LinearSpringDamperForce")
 
-  LinearSpringDamperForce::LinearSpringDamperForce(double c_, double d_, double l0_) : c(c_), d(d_), l0(l0_) { 
-    Deprecated::message(cerr,"The parameter unloadedLength in class LinearSpringDamperForce is deprecated. Use the paramter unloadedLength of class SpringDamper instead.");
-  }
-
   void LinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
@@ -40,11 +36,6 @@ namespace MBSim {
     c = Element::getDouble(e);
     e = E(element)->getFirstElementChildNamed(MBSIM%"dampingCoefficient");
     d = Element::getDouble(e);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
-    if(e) {
-      l0 = Element::getDouble(e);
-      Deprecated::message(cerr,"The parameter unloadedLength in class LinearSpringDamperForce is deprecated. Use the paramter unloadedLength of class SpringDamper instead.");
-    }
   }
 
 }
