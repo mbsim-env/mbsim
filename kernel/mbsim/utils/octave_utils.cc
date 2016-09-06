@@ -21,6 +21,7 @@
 #include <iostream>
 #include "mbsim/utils/octave_utils.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 using namespace std;
 
@@ -120,21 +121,21 @@ namespace MBSim {
   OctaveScalar* OctaveParser::readScalar() {
     string buf;
     is >> buf;
-    double a = boost::lexical_cast<double>(buf.c_str());
+    double a = boost::lexical_cast<double>(boost::algorithm::trim_copy(buf));
     return new OctaveScalar("",a);
   }
 
   OctaveMatrix* OctaveParser::readMatrix() {
     string buf;
     is >> buf >> buf >> buf;
-    int m = boost::lexical_cast<int>(buf.c_str());
+    int m = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     is >> buf >> buf >> buf;
-    int n = boost::lexical_cast<int>(buf.c_str());
+    int n = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     fmatvec::MatV A(m,n,fmatvec::NONINIT);
     for(int i=0; i<m; i++) {
       for(int j=0; j<n; j++) {
         is >> buf;
-        A(i,j) = boost::lexical_cast<double>(buf.c_str());
+        A(i,j) = boost::lexical_cast<double>(boost::algorithm::trim_copy(buf));
       }
     }
     return new OctaveMatrix("",A);
@@ -143,13 +144,13 @@ namespace MBSim {
   OctaveMatrix* OctaveParser::readDiagonalMatrix() {
     string buf;
     is >> buf >> buf >> buf;
-    int m = boost::lexical_cast<int>(buf.c_str());
+    int m = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     is >> buf >> buf >> buf;
-    int n = boost::lexical_cast<int>(buf.c_str());
+    int n = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     fmatvec::MatV A(m,n,fmatvec::INIT,0.);
     for(int i=0; i<m; i++) {
       is >> buf;
-      A(i,i) = boost::lexical_cast<double>(buf.c_str());
+      A(i,i) = boost::lexical_cast<double>(boost::algorithm::trim_copy(buf));
     }
     return new OctaveMatrix("",A);
   }
@@ -157,15 +158,15 @@ namespace MBSim {
   OctaveComplexMatrix* OctaveParser::readComplexMatrix() {
     string buf;
     is >> buf >> buf >> buf;
-    int m = boost::lexical_cast<int>(buf.c_str());
+    int m = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     is >> buf >> buf >> buf;
-    int n = boost::lexical_cast<int>(buf.c_str());
+    int n = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,complex<double> > A(m,n,fmatvec::NONINIT);
     for(int i=0; i<m; i++) {
       for(int j=0; j<n; j++) {
         is >> buf;
         int pos = buf.find(",");
-        A(i,j) = complex<double>(boost::lexical_cast<double>(buf.substr(1,pos-1).c_str()),boost::lexical_cast<double>(buf.substr(pos+1,buf.length()-pos-2).c_str()));
+        A(i,j) = complex<double>(boost::lexical_cast<double>(boost::algorithm::trim_copy(buf.substr(1,pos-1))),boost::lexical_cast<double>(boost::algorithm::trim_copy(buf.substr(pos+1,buf.length()-pos-2))));
       }
     }
     return new OctaveComplexMatrix("",A);
@@ -174,9 +175,9 @@ namespace MBSim {
   OctaveCell* OctaveParser::readCell() {
     string buf;
     is >> buf >> buf >> buf;
-    int m = boost::lexical_cast<int>(buf.c_str());
+    int m = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     is >> buf >> buf >> buf;
-    int n = boost::lexical_cast<int>(buf.c_str());
+    int n = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     OctaveCell *cell = new OctaveCell("",m,n);
     for(int i=0; i<m; i++) {
       for(int j=0; j<n; j++)
@@ -190,7 +191,7 @@ namespace MBSim {
     is >> buf >> buf >> buf;
     is >> buf >> buf;
     is >> buf >> buf >> buf;
-    int n = boost::lexical_cast<int>(buf.c_str());
+    int n = boost::lexical_cast<int>(boost::algorithm::trim_copy(buf));
     OctaveStruct *strct = new OctaveStruct("",n);
     for(int i=0; i<n; i++)
       strct->setElement(i,parseElement());

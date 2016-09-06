@@ -219,7 +219,7 @@ namespace MBSimFlexibleBody {
       std::vector<double> KLine;
       istringstream sin(s);
       for (string tempxx; getline(sin, tempxx, ',');) {
-        KLine.push_back(boost::lexical_cast<double>(tempxx.c_str()));  // atof()change char to double
+        KLine.push_back(boost::lexical_cast<double>(boost::algorithm::trim_copy(tempxx)));  // atof()change char to double
       }
       KFull(3 * KLine[0] + KLine[1] - 4, 3 * KLine[2] + KLine[3] - 4) = KLine[4] * power;
     }

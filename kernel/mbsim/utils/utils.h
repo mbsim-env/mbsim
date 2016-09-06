@@ -29,6 +29,7 @@
 #include <vector>
 #include <set>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 namespace MBSim {
 
@@ -187,8 +188,8 @@ namespace MBSim {
   template <>
   class FromMatStr<double> {
     public:
-      static double cast(const char *x) {
-        return boost::lexical_cast<double>(x);
+      static double cast(const std::string &x) {
+        return boost::lexical_cast<double>(boost::algorithm::trim_copy(x));
       }
   };
 
