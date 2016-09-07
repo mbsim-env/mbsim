@@ -1614,7 +1614,7 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="unloadedLength" type="pv:lengthScalar" minOccurs="0">
+          <xs:element name="unloadedLength" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Entspannte Federlänge <object class="inlineeqn">l_0</object>.
@@ -1687,7 +1687,7 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="unloadedLength" type="pv:lengthScalar" minOccurs="0">
+          <xs:element name="unloadedLength" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Entspannte Federlänge <object class="inlineeqn">l_0</object>.
@@ -1744,7 +1744,7 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="unloadedGeneralizedLength" type="pv:unknownScalar" minOccurs="0">
+          <xs:element name="unloadedGeneralizedLength" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Entspannte Federlänge <object class="inlineeqn">l_0</object>.
@@ -4407,7 +4407,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Lineares funktionelles Feder- / Dämpfergesetz.<br/>
-        Die resultierende Kraft ergibt sich zu <object class="inlineeqn">f=c\,\left(g-l_0\right)+d\,\dot{g}</object> mit der Auslenkung g und der relativen Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.
+        Die resultierende Kraft ergibt sich zu <object class="inlineeqn">f=c\,s+d\,\dot{s}</object> mit der Auslenkung <object class="inlineeqn">s</object> und der relativen Geschwindigkeit <object class="inlineeqn">\dot{s}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -4418,21 +4418,14 @@
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Steifigkeit c.
+                Steifigkeit <object class="inlineeqn">c</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dampingCoefficient" type="pv:dampingScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Dämpfungskoeffizient d.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="unloadedLength" type="pv:lengthScalar" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Entspannte Federlänge <object class="inlineeqn">l_0</object>.
+                Dämpfungskoeffizient <object class="inlineeqn">d</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -4445,7 +4438,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Nichtlineares funktionelles Feder- / Dämpfergesetz.<br/>
-        Die resultierende Kraft ergibt sich zu <object class="inlineeqn">f=f_g\left(g\right)+f_{\dot{g}}\left(\dot{g}\right)</object> mit der Auslenkung g und der relativen Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.
+        Die resultierende Kraft ergibt sich zu <object class="inlineeqn">f=f_s\left(s\right)+f_{\dot{s}}\left(\dot{s}\right)</object> mit der Auslenkung <object class="inlineeqn">s</object> und der relativen Geschwindigkeit <object class="inlineeqn">\dot{s}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -4453,10 +4446,10 @@
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
-          <xs:element name="distanceForce">
+          <xs:element name="forceDeflectionFunction">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Lagereaktion <object class="inlineeqn">f_g\left(g\right)</object> (Feder).
+                Lagereaktion <object class="inlineeqn">f_s\left(s\right)</object> (Feder).
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -4465,10 +4458,10 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="velocityForce">
+          <xs:element name="forceVelocityFunction">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Geschwindigkeitsreaktion <object class="inlineeqn">f_{\dot{g}}\left(\dot{g}\right)</object> (Dämpfer).
+                Geschwindigkeitsreaktion <object class="inlineeqn">f_{\dot{s}}\left(\dot{s}\right)</object> (Dämpfer).
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>

@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), unloadedLength(0,false), coilSpring(0,true), forceArrow(0,false) {
+  SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false) {
 
     forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"forceFunction"));
 
@@ -74,7 +74,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DirectionalSpringDamper::DirectionalSpringDamper(const string &str, Element *parent) : Link(str, parent), unloadedLength(0,false), coilSpring(0,true), forceArrow(0,false) {
+  DirectionalSpringDamper::DirectionalSpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIM%"forceDirection"));
@@ -123,7 +123,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), unloadedLength(0,false), body1(0,false), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), body1(0,false), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
 

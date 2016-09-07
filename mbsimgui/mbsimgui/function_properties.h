@@ -332,7 +332,7 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
 
     protected:
-      ExtProperty c, d, l0;
+      ExtProperty c, d;
   };
 
   class NonlinearSpringDamperForce : public Function {
@@ -346,7 +346,7 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
 
     protected:
-      ExtProperty g, gd;
+      ExtProperty s, sd;
   };
 
   class LinearRegularizedBilateralConstraint: public Function {

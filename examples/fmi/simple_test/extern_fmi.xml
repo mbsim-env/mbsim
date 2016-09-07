@@ -6,6 +6,7 @@
       <control:returnSignal ref="../../Link[ExternForce]"/>
     </control:SignalFunction>
   </forceFunction>
+  <unloadedLength>0</unloadedLength>
   <connect ref1="../Frame[SpringMount]" ref2="../Object[Ball]/Frame[C]"/>
   <enableOpenMBVCoilSpring>
     <numberOfCoils>20</numberOfCoils>
