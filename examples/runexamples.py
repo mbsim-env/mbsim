@@ -36,6 +36,7 @@ else:
 
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
+buildSystemRootURL="http://www.mbsim-env.de/mbsim"
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 mbxmlutilsvalidate=None
@@ -270,7 +271,7 @@ def main():
     argparser.print_usage()
     print("error: unknown argument --action "+args.action+" (see -h)")
     return 1
-  args.updateURL="http://www.mbsim-env.de/mbsim/linux64-dailydebug/references" # default value
+  args.updateURL=buildSystemRootURL+"/linux64-dailydebug/references" # default value
   args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
@@ -366,7 +367,6 @@ def main():
   </head>
   <body style="margin:0.5em">
   <script type="text/javascript" src="https://cdn.datatables.net/s/bs-3.3.5/jq-2.1.4,dt-1.10.10/datatables.min.js"> </script>
-  <script type="text/javascript" src="../../../../../html/mbsimBuildServiceClient.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       // init table
@@ -394,27 +394,30 @@ def main():
       // if this is the current example table from the build server and is finished than enable the reference update
       if($(location).attr('href').search("/mbsim/linux64-dailydebug/report/result_current/runexamples_report/result_current")>=0 &&
           $("#FINISHED").length>0) {
-        // show reference update and status
-        $("#UPDATEREFERENCES").css("display", "block");
-        $("#STATUSPANEL").css("display", "block");
-
-        // update checked examples using server data
-        statusCommunicating();
-        $.ajax({url: cgiPath+"/getcheck", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
-          if(!response.success)
-            statusMessage(response);
-          else {
-            // "check" and enable these
-            $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
-              $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
-              $(this).prop("disabled", false);
-            });
-            statusMessage(response);
-          }
+        // load mbsimBuildServiceClient.js
+        $.getScript("%s/html/mbsimBuildServiceClient.js", function() {
+          // show reference update and status
+          $("#UPDATEREFERENCES").css("display", "block");
+          $("#STATUSPANEL").css("display", "block");
+    
+          // update checked examples using server data
+          statusCommunicating();
+          $.ajax({url: cgiPath+"/getcheck", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
+            if(!response.success)
+              statusMessage(response);
+            else {
+              // "check" and enable these
+              $("#SortThisTable").DataTable().$("._EXAMPLE").each(function() {
+                $(this).prop("checked", $.inArray($(this).attr("name"), response.checkedExamples)>=0);
+                $(this).prop("disabled", false);
+              });
+              statusMessage(response);
+            }
+          });
         });
       }
     });
-  </script>'''%(args.buildType), file=mainFD)
+  </script>'''%(args.buildType, buildSystemRootURL), file=mainFD)
 
   print('<h1>MBSim runexamples Results: <small>%s</small></h1>'%(args.buildType), file=mainFD)
   print('<dl class="dl-horizontal">', file=mainFD)
