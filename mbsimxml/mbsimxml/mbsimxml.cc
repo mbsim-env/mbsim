@@ -5,6 +5,7 @@
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace bfs=boost::filesystem;
 using namespace std;
@@ -30,9 +31,13 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
     for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas"))->
         getFirstElementChildNamed(MBSIMPLUGIN%"Schema");
         e!=NULL; e=e->getNextElementSibling()) {
-      bfs::path xsdFile=E(e)->getAttribute("schemaLocation");
-      if(xsdFile.is_relative())
-        xsdFile=MBXMLUTILSSCHEMA/xsdFile;
+      bfs::path xsdFile;
+      xercesc::DOMElement *c=e->getFirstElementChild();
+      if(E(c)->getTagName()==MBSIMPLUGIN%"file") {
+        string location=E(c)->getAttribute("location");
+        boost::algorithm::replace_all(location, "@MBSIMSCHEMADIR@", MBXMLUTILSSCHEMA.string());
+        xsdFile=location;
+      }
       schema.push_back(make_pair(E(e)->getAttribute("namespace"), xsdFile));
     }
   }

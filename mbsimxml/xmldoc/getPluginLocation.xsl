@@ -6,11 +6,11 @@
   <xsl:output method="text"/>
 
   <xsl:template match="/">
-    <xsl:apply-templates select="/plugin:MBSimPlugin/plugin:schemas/plugin:Schema"/>
+    <xsl:apply-templates select="/plugin:MBSimPlugin/plugin:schemas/plugin:Schema/plugin:file"/>
   </xsl:template>
 
-  <xsl:template match="/plugin:MBSimPlugin/plugin:schemas/plugin:Schema">
-    <xsl:value-of select="@schemaLocation"/><xsl:text>
+  <xsl:template match="/plugin:MBSimPlugin/plugin:schemas/plugin:Schema/plugin:file">
+    <xsl:value-of select="@location"/><xsl:text>
 </xsl:text>
   </xsl:template>
 

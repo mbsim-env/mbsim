@@ -21,15 +21,19 @@ namespace {
 
 // return the full relative path of a shared library (relative to the install directory, hance including the lib or bin subdir).
 // the library base filename 'base' is given with the prefix (lib on Linux) and without the extension.
-boost::filesystem::path relLibName(const string &base) {
+boost::filesystem::path fullLibName(const string &base) {
 #ifndef _WIN32
-  static const boost::filesystem::path subDir("lib");
-  return subDir/("lib"+base+".so");
+  return "lib"+base+".so";
 #else
-  static const boost::filesystem::path subDir("bin");
-  return subDir/("lib"+base+".dll");
+  return "lib"+base+".dll";
 #endif
 }
+
+#ifndef _WIN32
+  const string libDir="lib";
+#else
+  const string libDir="bin";
+#endif
 
 }
 
@@ -53,10 +57,15 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
       it!=boost::filesystem::directory_iterator(); it++) {
     if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
     std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
-    for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries"))->
-        getFirstElementChildNamed(MBSIMPLUGIN%"Library");
-        e!=NULL; e=e->getNextElementSibling())
-      pluginLibFile.insert(canonical(installDir/relLibName(E(e)->getAttribute("basename"))));
+    for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries")->
+        getFirstElementChild();
+        e!=NULL; e=e->getNextElementSibling()) {
+      if(E(e)->getTagName()==MBSIMPLUGIN%"CppLibrary") {
+        string location=E(e)->getAttribute("location");
+        boost::algorithm::replace_all(location, "@MBSIMLIBDIR@", installDir.string()+"/"+libDir);
+        pluginLibFile.insert(canonical(boost::filesystem::path(location)/fullLibName(E(e)->getAttribute("basename"))));
+      }
+    }
   }
 
   // load plugins which are not already loaded

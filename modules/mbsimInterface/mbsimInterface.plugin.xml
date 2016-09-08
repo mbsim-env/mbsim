@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<MBSimPlugin name="mbsimInterface" xmlns="http://www.mbsim-env.de/MBSimPlugin">
+<MBSimPlugin xmlns="http://www.mbsim-env.de/MBSimPlugin">
   <schemas>
-    <Schema namespace="http://www.mbsim-env.de/MBSimInterface"
-            schemaLocation="http___www_mbsim-env_de_MBSimInterface/mbsiminterface.xsd"/>
+    <Schema namespace="http://www.mbsim-env.de/MBSimInterface">
+      <file location="@MBSIMSCHEMADIR@/http___www_mbsim-env_de_MBSimInterface/mbsiminterface.xsd"/>
+    </Schema>
   </schemas>
   <libraries>
-    <Library basename="mbsimInterface"/>
+    <CppLibrary basename="mbsimInterface" location="@MBSIMLIBDIR@"/>
   </libraries>
 </MBSimPlugin>
