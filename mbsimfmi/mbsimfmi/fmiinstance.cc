@@ -37,7 +37,7 @@ namespace {
     else
       throw runtime_error("Internal error: Unknwon variable type.");
     // get default
-    Datatype defaultValue;
+    Datatype defaultValue{};
     if(E(scalarVar->getFirstElementChild())->hasAttribute("start"))
       defaultValue=boost::lexical_cast<Datatype>(E(scalarVar->getFirstElementChild())->getAttribute("start"));
     // create preprocessing variable
