@@ -39,10 +39,10 @@ def config():
 
   # enviroment variables
   if platform=="linux":
-    os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi-local-linux64/lib"
+    os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3-local-linux64/lib"
   if platform=="win":
     os.environ["WINEPATH"]="/usr/x86_64-w64-mingw32/sys-root/mingw/bin;/home/mbsim/3rdparty/lapack-local-win64/bin;"+ \
-      "/home/mbsim/3rdparty/xerces-c-local-win64/bin;/home/mbsim/3rdparty/casadi-local-win64/lib;"+ \
+      "/home/mbsim/3rdparty/xerces-c-local-win64/bin;/home/mbsim/3rdparty/casadi3-local-win64/lib;"+ \
       "/home/mbsim/win64-dailyrelease/local/bin;/home/mbsim/3rdparty/octave-local-win64/bin;"+ \
       "/home/mbsim/3rdparty/hdf5-local-win64/bin;/home/mbsim/3rdparty/libarchive-local-win64/bin;"+\
       "/home/mbsim/3rdparty/qwt-6.1.1/lib;/home/mbsim/3rdparty/coin-local-win64/bin"
