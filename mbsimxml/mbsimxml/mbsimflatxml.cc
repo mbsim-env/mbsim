@@ -39,8 +39,6 @@ boost::filesystem::path fullLibName(const string &base) {
 
 namespace MBSim {
 
-const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML");
-
 // load all MBSim module plugins:
 // If a module plugin (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.

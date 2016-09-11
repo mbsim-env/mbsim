@@ -31,8 +31,6 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  const MBXMLUtils::NamespaceURI MBSIMINT("http://www.mbsim-env.de/MBSimIntegrator");
-
   Integrator::Integrator() : tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
 
   void Integrator::initializeUsingXML(DOMElement *element) {

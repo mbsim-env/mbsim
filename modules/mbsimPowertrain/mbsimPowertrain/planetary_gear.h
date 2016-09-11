@@ -5,8 +5,6 @@
 
 namespace MBSimPowertrain {
 
-  extern const MBXMLUtils::NamespaceURI MBSIMPOWERTRAIN;
-
   class PlanetaryGear : public MBSim::Group { 
     protected:
       int model;

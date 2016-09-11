@@ -50,8 +50,6 @@ const Vector<Ref, double> fromComplex(const Vector<Ref, complex<double> > &x) {
 
 namespace MBSimAnalyser {
 
-  const MBXMLUtils::NamespaceURI MBSIMANALYSER("http://www.mbsim-env.de/MBSimAnalyser");
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Eigenanalyser, MBSIMANALYSER%"Eigenanalyser")
 
   Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) {}
