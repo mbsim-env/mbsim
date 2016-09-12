@@ -37,8 +37,8 @@ namespace MBSimFMI {
 
     // init the validating parser with the mbsimxml schema file
     msg(Debug)<<"Create MBSim XML schema file including all plugins."<<endl;
-    generateMBSimXMLSchema(path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd", resourcesDir/"local"/"share"/"mbxmlutils"/"schema");
-    std::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create({path(predefinedParameterStruct.outputDir)/".mbsimxml.xsd"});
+    set<path> schemas=getMBSimXMLSchemas();
+    std::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(schemas);
   
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim XML model file."<<endl;

@@ -14,12 +14,21 @@ using namespace xercesc;
 
 namespace MBSim {
 
-void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXMLUTILSSCHEMA) {
-  vector<pair<string, bfs::path> > schema; // pair<namespace, schemaLocation>
+set<bfs::path> getMBSimXMLSchemas() {
+  bfs::path MBXMLUTILSSCHEMA=getInstallPath()/"share"/"mbxmlutils"/"schema";
+  set<bfs::path> schemas {
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSim"/"mbsim.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimIntegrator"/"mbsimintegrator.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimAnalyser"/"mbsimanalyser.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils"/"physicalvariable.xsd"
+  };
 
+
+  // create parser for plugin.xml
   static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
   std::shared_ptr<DOMParser> parser;
-  parser=DOMParser::create({getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd"});
+  parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd"});
 
   // read plugin schemas
   for(auto it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
@@ -27,38 +36,19 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
     if(path.length()<=string(".plugin.xml").length() || path.substr(path.length()-string(".plugin.xml").length())!=".plugin.xml")
       continue;
     std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
-    for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas"))->
-        getFirstElementChildNamed(MBSIMPLUGIN%"Schema");
+    for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas")->getFirstElementChild();
         e!=NULL; e=e->getNextElementSibling()) {
       bfs::path xsdFile;
-      xercesc::DOMElement *c=e->getFirstElementChild();
-      if(E(c)->getTagName()==MBSIMPLUGIN%"file") {
-        string location=E(c)->getAttribute("location");
+      if(E(e)->getTagName()==MBSIMPLUGIN%"File") {
+        string location=E(e)->getAttribute("location");
         boost::algorithm::replace_all(location, "@MBSIMSCHEMADIR@", MBXMLUTILSSCHEMA.string());
         xsdFile=location;
       }
-      schema.push_back(make_pair(E(e)->getAttribute("namespace"), xsdFile));
+      schemas.insert(xsdFile);
     }
   }
 
-  // write MBSimXML schema
-  bfs::ofstream file(mbsimxml_xsd);
-  file<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"<<endl;
-  file<<"<xs:schema targetNamespace=\"http://www.mbsim-env.de/MBSimXML\""<<endl;
-  file<<"  elementFormDefault=\"qualified\""<<endl;
-  file<<"  attributeFormDefault=\"unqualified\""<<endl;
-  file<<"  xmlns=\"http://www.mbsim-env.de/MBSimXML\""<<endl;
-  file<<"  xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"<<endl;
-  file<<endl;
-  // include the schema for MBSimProject (this imports the MBSim and MBSimIntegrator schemas)
-  file<<"  <xs:include schemaLocation=\""<<MBXMLUTILSSCHEMA.generic_string()<<"/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd\"/>"<<endl;
-  file<<endl;
-  // import all schemas from mbsim modules (plugins)
-  for(auto it=schema.begin(); it!=schema.end(); it++) {
-    file<<"  <xs:import namespace=\""<<it->first<<"\""<<endl;
-    file<<"             schemaLocation=\""<<it->second.string()<<"\"/>"<<endl;
-  }
-  file<<"</xs:schema>"<<endl;
+  return schemas;
 }
 
 }

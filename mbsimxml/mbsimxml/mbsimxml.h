@@ -6,7 +6,7 @@
 
 namespace MBSim {
 
-  void generateMBSimXMLSchema(const boost::filesystem::path &mbsimxml_xsd, const boost::filesystem::path &MBXMLUTILSSCHEMA);
+  std::set<boost::filesystem::path> getMBSimXMLSchemas();
 
 }
 

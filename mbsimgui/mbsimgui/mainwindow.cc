@@ -89,11 +89,13 @@ namespace MBSimGUI {
 
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
-    arguments << "--onlyGenerateSchema" << (uniqueTempDir/"mbsimxml.xsd").string().c_str();
+    arguments << "--onlyListSchemas";
     mbsim->getProcess()->execute(program,arguments);
+    set<bfs::path> schemas;
+    //MFMF get output from this process as a set<path> (line by line) and stroe in variable "schemas"
 
     mbsimThread = new MBSimThread(this);
-    parser=DOMParser::create({arguments[1].toStdString()});
+    parser=DOMParser::create(schemas);
     mbsimThread->setParser(parser);
     connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(preprocessFinished(int)));
 

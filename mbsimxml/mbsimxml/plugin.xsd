@@ -10,20 +10,13 @@
       <xs:sequence>
         <xs:element name="schemas">
           <xs:complexType>
-            <xs:sequence>
-              <xs:element name="Schema" maxOccurs="unbounded">
+            <xs:choice maxOccurs="unbounded">
+              <xs:element name="File">
                 <xs:complexType>
-                  <xs:choice>
-                    <xs:element name="file">
-                      <xs:complexType>
-                        <xs:attribute name="location" type="xs:anyURI" use="required"/>
-                      </xs:complexType> 
-                    </xs:element>
-                  </xs:choice>
-                  <xs:attribute name="namespace" type="xs:anyURI" use="required"/>
+                  <xs:attribute name="location" type="xs:anyURI" use="required"/>
                 </xs:complexType> 
               </xs:element>
-            </xs:sequence>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
         <xs:element name="libraries">

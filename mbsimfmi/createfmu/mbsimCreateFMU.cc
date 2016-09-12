@@ -112,11 +112,11 @@ int main(int argc, char *argv[]) {
     if(xmlFile) {
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all plugins."<<endl;
-      generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
+      set<path> schemas=getMBSimXMLSchemas();
 
       // create parser (a validating parser for XML input and a none validating parser for shared library input)
       cout<<"Create validating XML parser."<<endl;
-      std::shared_ptr<DOMParser> parser=DOMParser::create({".mbsimxml.xsd"});
+      std::shared_ptr<DOMParser> parser=DOMParser::create(schemas);
 
       // load MBSim project XML document
       cout<<"Load MBSim model from XML project file."<<endl;
