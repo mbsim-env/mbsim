@@ -46,7 +46,7 @@ set<boost::filesystem::path> MBSimXML::loadPlugins() {
   static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
-  std::shared_ptr<DOMParser> parser=DOMParser::create(false);
+  std::shared_ptr<DOMParser> parser=DOMParser::create();
 
   set<boost::filesystem::path> pluginLibFile;
 
@@ -128,7 +128,7 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   loadPlugins();
 
   // load MBSim project XML document
-  shared_ptr<DOMParser> parser=DOMParser::create(false);
+  shared_ptr<DOMParser> parser=DOMParser::create();
   shared_ptr<xercesc::DOMDocument> doc=parser->parse(argv[startArg]);
   DOMElement *e=doc->getDocumentElement();
 

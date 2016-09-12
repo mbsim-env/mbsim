@@ -1534,7 +1534,7 @@ namespace MBSim {
   }
 
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
-    shared_ptr<DOMParser> parser=DOMParser::create(false);
+    shared_ptr<DOMParser> parser=DOMParser::create();
     shared_ptr<DOMDocument> doc=parser->parse(filename);
     DOMElement *e = doc->getDocumentElement();
     DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createAndInit<Group>(e));

@@ -19,8 +19,7 @@ void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXM
 
   static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
   std::shared_ptr<DOMParser> parser;
-  parser=DOMParser::create(true);
-  parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd");
+  parser=DOMParser::create({getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd"});
 
   // read plugin schemas
   for(auto it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {

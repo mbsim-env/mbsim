@@ -89,10 +89,8 @@ int main(int argc, char *argv[]) {
     cout<<"Load MBSim plugins."<<endl;
     set<path> pluginLibs=MBSimXML::loadPlugins();
 
-    // create parser (a validating parser for XML input and a none validating parser for shared library input)
-    std::shared_ptr<DOMParser> parser=DOMParser::create(xmlFile);
     // create parser (none validating parser for use in copyShLibToFMU)
-    std::shared_ptr<DOMParser> parserNoneVali=DOMParser::create(false);
+    std::shared_ptr<DOMParser> parserNoneVali=DOMParser::create();
 
     // note: the order of these variable definitions is importend for proper deallocation
     std::shared_ptr<DynamicSystemSolver> dss;
@@ -115,7 +113,10 @@ int main(int argc, char *argv[]) {
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all plugins."<<endl;
       generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
-      parser->loadGrammar(".mbsimxml.xsd");
+
+      // create parser (a validating parser for XML input and a none validating parser for shared library input)
+      cout<<"Create validating XML parser."<<endl;
+      std::shared_ptr<DOMParser> parser=DOMParser::create({".mbsimxml.xsd"});
 
       // load MBSim project XML document
       cout<<"Load MBSim model from XML project file."<<endl;
@@ -234,7 +235,7 @@ int main(int argc, char *argv[]) {
     addModelInputOutputs(var, dss.get());
 
     // create DOM of modelDescription.xml
-    std::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
+    std::shared_ptr<xercesc::DOMDocument> modelDescDoc(parserNoneVali->createDocument());
 
     // root element fmiModelDescription and its attributes
     cout<<"Create the modelDescription.xml file."<<endl;

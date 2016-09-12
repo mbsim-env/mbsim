@@ -14,7 +14,7 @@ int main() {
   SX t=SX::sym("t");
   SX fexp=5*sin(freq2*t);
 
-  shared_ptr<DOMParser> parser=DOMParser::create(false);
+  shared_ptr<DOMParser> parser=DOMParser::create();
   shared_ptr<DOMDocument> xmlFile=parser->createDocument();
 
   DOMElement *ele=convertCasADiToXML({{t}, {fexp}},xmlFile.get());
