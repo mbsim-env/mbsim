@@ -23,7 +23,6 @@
 #include "mbsim/objects/body.h"
 #include "mbsim/functions/time_dependent_function.h"
 #include "mbsim/functions/state_dependent_function.h"
-#include "mbsimFlexibleBody/utils/taylor.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -36,7 +35,7 @@ namespace MBSimFlexibleBody {
   class FixedNodalFrame;
 
   /*!
-   *  \brief Flexible body using a floating frame of reference
+   *  \brief Flexible body using a floating frame of reference formulation
    *
    * */
   class FlexibleBodyFFR : public MBSim::Body {
@@ -173,8 +172,8 @@ namespace MBSimFlexibleBody {
       void setShapeFunctionIntegral(const fmatvec::Mat3xV &Pdm_) { Pdm = Pdm_; }
       void setPositionShapeFunctionIntegral(const std::vector<std::vector<fmatvec::RowVecV> > &rPdm_) { rPdm = rPdm_; }
       void setShapeFunctionShapeFunctionIntegral(const std::vector<std::vector<fmatvec::SqrMatV> > &PPdm_) { PPdm = PPdm_; }
-      void setStiffnessMatrix(const fmatvec::SymMatV &Ke_) { Ke.setM0(Ke_); }
-      void setDampingMatrix(const fmatvec::SymMatV &De_) { De.setM0(De_); }
+      void setStiffnessMatrix(const fmatvec::SymMatV &Ke0_) { Ke0 = Ke0_; }
+      void setDampingMatrix(const fmatvec::SymMatV &De0_) { De0 = De0_; }
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of interface
 
@@ -190,8 +189,8 @@ namespace MBSimFlexibleBody {
       // End of interface
 
       // Interface for reference stresses 
-      void setke0(const fmatvec::VecV &ke0_) { ke0 = ke0_; }
-      void setKe0(const fmatvec::SqrMatV &Ke0_) { Ke0 = Ke0_; }
+      void setksigma0(const fmatvec::VecV &ksigma0_) { ksigma0 = ksigma0_; }
+      void setksigma1(const fmatvec::SqrMatV &ksigma1_) { ksigma1 = ksigma1_; }
       // End of interface
 
       void addFrame(FixedNodalFrame *frame); 
@@ -257,37 +256,23 @@ namespace MBSimFlexibleBody {
       const fmatvec::VecV& evalKi() { if(updKJ[0]) updateKJ(0); return Ki; }
 
     protected:
-      // Basic input data
       double m;
       fmatvec::Vec3 rdm;
-//      fmatvec::SymMat3 I0;
-      fmatvec::SymMat3 rrdm;
+      fmatvec::SymMat3 rrdm, mmi0;
       fmatvec::Mat3xV Pdm, C2;
-      std::vector<std::vector<fmatvec::SqrMatV> > PPdm;
+      std::vector<std::vector<fmatvec::SqrMatV> > PPdm, Knl2, Ke2, De2;
       std::vector<std::vector<fmatvec::RowVecV> > rPdm;
-//      std::vector<fmatvec::SqrMat3> C4;
       std::vector<fmatvec::Mat3xV> C5;
-      std::vector<std::vector<fmatvec::SqrMat3> > C6;
-      std::vector<fmatvec::SqrMatV> Knl1;
-      std::vector<std::vector<fmatvec::SqrMatV> > Knl2;
-      std::vector<fmatvec::SqrMatV> K0t, K0r, K0om;
+      std::vector<std::vector<fmatvec::SqrMat3> > C6, mmi2, Gr1;
+      std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;
       fmatvec::Vec2 beta;
-      fmatvec::VecV ke0;
-      fmatvec::SqrMatV Ke0;
-      // End of basic input data
-
-      // Standard input data (SID)
-      Taylor<fmatvec::Vec3,fmatvec::Mat3xV> mCM;
-      Taylor<fmatvec::SymMat3,std::vector<fmatvec::SymMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > mmi;
-      Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > Ct;
-      Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > Cr;
-      Taylor<fmatvec::SymMatV> Me;
-      Taylor<std::vector<fmatvec::SqrMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > Gr;
-      Taylor<std::vector<fmatvec::SqrMatV> > Ge;
-      Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > Oe;
-      Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > Ke, De;
-      Taylor<fmatvec::VecV,fmatvec::SqrMatV> ksigma;
-      // End of standard input data (SID)
+      fmatvec::VecV ksigma0;
+      fmatvec::SqrMatV ksigma1;
+      std::vector<fmatvec::SymMat3> mmi1;
+      fmatvec::MatVx3 Ct0, Cr0;
+      fmatvec::SymMatV Me, Ke0, De0;
+      std::vector<fmatvec::SqrMat3> Gr0;
+      fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe0;
 
       // Number of mode shapes 
       int ne;
