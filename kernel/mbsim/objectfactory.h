@@ -229,7 +229,7 @@ class ObjectFactory {
       // deallocate a singleton object -> just do nothing
       void operator()(fmatvec::Atom *obj) const override {
         // just do nothing for singletons
-       }
+      }
     };
 
 };

@@ -30,7 +30,7 @@
 
 namespace MBSimIntegrator {
 
-  extern const MBXMLUtils::NamespaceURI MBSIMINT;
+  const MBXMLUtils::NamespaceURI MBSIMINT("http://www.mbsim-env.de/MBSimIntegrator");
 
   /**
    * \brief integrator-interface for dynamic systems

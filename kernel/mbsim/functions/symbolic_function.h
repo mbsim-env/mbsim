@@ -142,14 +142,6 @@ namespace MBSim {
         pddd_ = jac(dd_, arg);
         pdpd_ = jac(pd_, arg);
         casadi::SX dddd_ = jtimes(dd_, arg, argd_2);
-        std::cerr<<"MFMF1 start"<<std::endl;
-        std::cerr<<"MFMF1 arg   "<<arg.size1()<<std::endl;
-        std::cerr<<"MFMF1 ret   "<<ret.size1()<<" "<<ret.size2()<<std::endl;
-        std::cerr<<"MFMF1 pd_   "<<pd_.size1()<<" "<<pd_.size2()<<std::endl;
-        std::cerr<<"MFMF1 dd_   "<<dd_.size1()<<" "<<dd_.size2()<<std::endl;
-        std::cerr<<"MFMF1 pddd_ "<<pddd_.size1()<<" "<<pddd_.size2()<<std::endl;
-        std::cerr<<"MFMF1 pdpd_ "<<pdpd_.size1()<<" "<<pdpd_.size2()<<std::endl;
-        std::cerr<<"MFMF1 dddd_ "<<dddd_.size1()<<" "<<dddd_.size2()<<std::endl;
 
         f = casadi::Function("noname", {arg}, {ret});
         pd = casadi::Function("noname", {arg}, {pd_});
@@ -258,19 +250,6 @@ namespace MBSim {
         pd2dd1_ = jac(dd1_, arg2);
         pd2dd2_ = jac(dd2_, arg2);
         pd2pd2_ = jac(pd2_, arg2);
-        std::cerr<<"MFMF2 start"<<std::endl;
-        std::cerr<<"MFMF2 arg 1 and 2 "<<arg1.size1()<<" "<<arg2.size1()<<std::endl;
-        std::cerr<<"MFMF2 ret         "<<ret.size1()<<" "<<ret.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd1_        "<<pd1_.size1()<<" "<<pd1_.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd2_        "<<pd2_.size1()<<" "<<pd2_.size2()<<std::endl;
-        std::cerr<<"MFMF2 dd1_        "<<dd1_.size1()<<" "<<dd1_.size2()<<std::endl;
-        std::cerr<<"MFMF2 dd2_        "<<dd2_.size1()<<" "<<dd2_.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd1dd1_     "<<pd1dd1_.size1()<<" "<<pd1dd1_.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd1dd2_     "<<pd1dd2_.size1()<<" "<<pd1dd2_.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd1pd2_     "<<pd1pd2_.size1()<<" "<<pd1pd2_.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd2dd1_     "<<pd2dd1_.size1()<<" "<<pd2dd1_.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd2dd2_     "<<pd2dd2_.size1()<<" "<<pd2dd2_.size2()<<std::endl;
-        std::cerr<<"MFMF2 pd2pd2_     "<<pd2pd2_.size1()<<" "<<pd2pd2_.size2()<<std::endl;
 
         f = casadi::Function("noname", {arg1, arg2}, {ret});
         pd1 = casadi::Function("noname", {arg1, arg2}, {pd1_});
@@ -319,7 +298,7 @@ namespace MBSim {
     }
 
     Ret dirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("mfmf");
+      THROW_MBSIMERROR("Not implemented");
     }
 
     typename B::DRetDArg2 parDer2(const Arg1 &x1, const Arg2 &x2) override {
@@ -329,11 +308,11 @@ namespace MBSim {
     }
 
     Ret dirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("mfmf");
+      THROW_MBSIMERROR("Not implemented");
     }
 
     typename B::DDRetDDArg1 parDer1ParDer1(const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("mfmf");
+      THROW_MBSIMERROR("Not implemented");
     }
 
     typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xd1, const Arg1 &x1, const Arg2 &x2) override {
@@ -343,7 +322,7 @@ namespace MBSim {
     }
 
     Ret dirDer1DirDer1(const Arg1 &arg1Dir_1, const Arg1 &arg1Dir_2, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("mfmf");
+      THROW_MBSIMERROR("Not implemented");
     }
 
     typename B::DDRetDDArg2 parDer2ParDer2(const Arg1 &arg1, const Arg2 &arg2) override {
@@ -365,7 +344,7 @@ namespace MBSim {
     }
 
     Ret dirDer2DirDer2(const Arg2 &arg2Dir_1, const Arg2 &arg2Dir_2, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("mfmf");
+      THROW_MBSIMERROR("Not implemented");
     }
 
     typename B::DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &arg1, const Arg2 &arg2) override {
@@ -375,7 +354,7 @@ namespace MBSim {
     }
 
     Ret dirDer2DirDer1(const Arg2 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2) override {
-      THROW_MBSIMERROR("mfmf");
+      THROW_MBSIMERROR("Not implemented");
     }
 
     typename B::DRetDArg2 parDer2DirDer2(const Arg2 &xd2, const Arg1 &x1, const Arg2 &x2) override {

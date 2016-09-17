@@ -15,7 +15,7 @@ all: mbsimxml.html http___www_mbsim-env_de_MBSimXML/index.html
 xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml
 	echo "$(XSDFILES)" | tr ' ' '\n' > xsdfiles.txt
 	for F in $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml; do \
-	  @XALAN@ $$F $(srcdir)/getPluginLocation.xsl >> xsdfiles.txt; \
+	  @XALAN@ $$F $(srcdir)/getPluginLocation.xsl | sed -re "s/^@MBSIMSCHEMADIR@//" >> xsdfiles.txt; \
 	done
 
 # XML representation of all xsd files

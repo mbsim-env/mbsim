@@ -14,7 +14,7 @@ OBJECTS=$(SOURCES:.cc=.o)
 DEPFILES=$(SOURCES:.cc=.o.d)
 
 # enable C++11
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++11 -D_USE_MATH_DEFINES
 
 # platform specific settings
 ifeq ($(PLATFORM),Windows)

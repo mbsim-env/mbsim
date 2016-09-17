@@ -27,6 +27,8 @@
 
 namespace MBSimInterface {
 
+  const MBXMLUtils::NamespaceURI MBSIMINTERFACE("http://www.mbsim-env.de/MBSimInterface");
+
   class InterfaceIntegrator;
 
   class MBSimServer {

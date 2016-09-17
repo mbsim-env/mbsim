@@ -13,7 +13,6 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS)
 
 mbsimgui_SOURCES = mainwindow.cc \
-		   property.cc \
 		   options.cc \
 		   element.cc \
 		   frame.cc \
