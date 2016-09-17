@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Eigenanalyser::Eigenanalyser() : initialState(0,false), task(0,false), amplitude(0,false), mode(0,false), determineEquilibriumState(0,false), autoUpdate(0,true) {
+  Eigenanalyser::Eigenanalyser() : initialState(0,false), task(0,false), amplitude(0,false), mode(0,false), determineEquilibriumState(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMANALYSER%"startTime"));
@@ -50,9 +50,6 @@ namespace MBSimGUI {
     mode.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMANALYSER%"mode",vector<string>(2,"")),"",4));
 
     determineEquilibriumState.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMANALYSER%"determineEquilibriumState",vector<string>(2,"")),"",4));
-
-    autoUpdate.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMANALYSER%"autoUpdate",vector<string>(2,"")),"",4));
-
   }
 
   Eigenanalyser::~Eigenanalyser() {
@@ -67,7 +64,6 @@ namespace MBSimGUI {
     amplitude.initializeUsingXML(element);
     mode.initializeUsingXML(element);
     determineEquilibriumState.initializeUsingXML(element);
-    autoUpdate.initializeUsingXML(element);
   }
 
   DOMElement* Eigenanalyser::writeXMLFile(DOMNode *parent) {
@@ -83,10 +79,8 @@ namespace MBSimGUI {
     amplitude.writeXMLFile(ele0);
     mode.writeXMLFile(ele0);
     determineEquilibriumState.writeXMLFile(ele0);
-    autoUpdate.writeXMLFile(ele0);
 
     return ele0;
   }
-
 
 }

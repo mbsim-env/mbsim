@@ -50,7 +50,7 @@ namespace MBSimAnalyser {
       /**
        * \brief Standard constructor 
        */
-      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), n(1), compEq(false), autoUpdate(false), task(eigenmode) {}
+      Eigenanalyser() : tStart(0), tEnd(1), dtPlot(1e-2), A(1), n(1), compEq(false), task(eigenmode) {}
       
       /**
        * \brief Destructor
@@ -114,12 +114,6 @@ namespace MBSimAnalyser {
        */
       void setDetermineEquilibriumState(bool eq) { compEq = eq; }
 
-      /**
-       * \brief Automatic update of the eigenanalysis
-       * \param update True, if the eigenanalysis should be updated, automatically
-       */
-      void setAutoUpdate(bool update) { autoUpdate = update; }
-
       void setTask(Task task_) { task = task_; }
 
       const fmatvec::Vec& getInitialState() const { return zEq; }
@@ -155,7 +149,7 @@ namespace MBSimAnalyser {
       fmatvec::Vec zEq, deltaz0;
       double tStart, tEnd, dtPlot, A;
       int n;
-      bool compEq, autoUpdate;
+      bool compEq;
       Task task;
 
       fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
@@ -166,7 +160,6 @@ namespace MBSimAnalyser {
       std::string fileName;
 
       bool saveEigenanalyis(const std::string &fileName);
-      bool loadEigenanalyis(const std::string &fileName);
       void computeEigenfrequencies();
       void computeEigenvalues();
       void computeEigenmodes();

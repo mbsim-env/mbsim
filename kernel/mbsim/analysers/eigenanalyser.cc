@@ -24,7 +24,6 @@
 #include "fmatvec/linear_algebra_complex.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/octave_utils.h"
 #include <iostream>
 
 using namespace std;
@@ -120,9 +119,7 @@ namespace MBSimAnalyser {
   }
 
   void Eigenanalyser::computeEigenmodes() {
-    if(autoUpdate) computeEigenvalues();
-    else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
-      throw MBSimError("In Eigenanalysis: eigenanalysis not yet performed!");
+    computeEigenvalues();
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
     Vector<Ref, complex<double> > wbuf;
@@ -152,9 +149,7 @@ namespace MBSimAnalyser {
   }
 
   void Eigenanalyser::computeEigenmode() {
-    if(autoUpdate) computeEigenvalues();
-    else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
-      throw MBSimError("In Eigenanalysis: eigenanalysis not yet performed!");
+    computeEigenvalues();
     if(n<1 or n>static_cast<int>(f.size()))
       throw MBSimError("In Eigenanalysis: frequency number out of range!");
     Vector<Ref, complex<double> > c(w.size());
@@ -180,9 +175,7 @@ namespace MBSimAnalyser {
   }
 
   void Eigenanalyser::computeEigenmotion() {
-    if(autoUpdate) computeEigenvalues();
-    else if(not(w.size()) and not(loadEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName)))
-      throw MBSimError("In Eigenanalysis: eigenanalysis not yet performed!");
+    computeEigenvalues();
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
 
     Vec z;
@@ -204,28 +197,41 @@ namespace MBSimAnalyser {
   bool Eigenanalyser::saveEigenanalyis(const string& fileName) {
     ofstream os(fileName.c_str());
     if(os.is_open()) {
-      OctaveComplexMatrix("lambda",w).toStream(os);
-      OctaveComplexMatrix("V",V).toStream(os);
-      OctaveMatrix("z",system->getState()).toStream(os);
-      OctaveMatrix("f",freq).toStream(os);
+      os << "# name: " << "lambda" << endl;
+      os << "# type: " << "complex matrix" << endl;
+      os << "# rows: " << w.size() << endl;
+      os << "# columns: " << 1 << endl;
+      for(int i=0; i<w.size(); i++)
+        os << setw(28) << w.e(i) << endl;
+      os << endl;
+      os << "# name: " << "V" << endl;
+      os << "# type: " << "complex matrix" << endl;
+      os << "# rows: " << V.rows() << endl;
+      os << "# columns: " << V.cols() << endl;
+      for(int i=0; i<V.rows(); i++) {
+        for(int j=0; j<V.cols(); j++)
+          os << setw(28) << V.e(i,j) << " ";
+        os << endl;
+      }
+      os << endl;
+      os << "# name: " << "z" << endl;
+      os << "# type: " << "matrix" << endl;
+      os << "# rows: " << system->getState().size() << endl;
+      os << "# columns: " << 1 << endl;
+      for(int i=0; i<system->getState().size(); i++)
+        os << setw(28) << system->getState().e(i) << endl;
+      os << endl;
+      os << "# name: " << "f" << endl;
+      os << "# type: " << "matrix" << endl;
+      os << "# rows: " << freq.size() << endl;
+      os << "# columns: " << 1 << endl;
+      for(int i=0; i<freq.size(); i++)
+        os << setw(28) << freq.e(i) << endl;
+      os << endl;
       os.close();
       return true;
     }
     return false;
-  }
-
-  bool Eigenanalyser::loadEigenanalyis(const string& fileName) {
-    OctaveParser op(fileName);
-    if(op.fileOpen()) {
-      op.parse();
-      w = static_cast<const OctaveComplexMatrix*>(op.get(0))->get<Vector<Ref, complex<double> > >();
-      V = static_cast<const OctaveComplexMatrix*>(op.get(1))->get<SquareMatrix<Ref, complex<double> > >();
-      zEq = static_cast<const OctaveMatrix*>(op.get(2))->get<Vec>();
-      computeEigenfrequencies();
-      return true;
-    }
-    else
-      return false;
   }
 
   void Eigenanalyser::initializeUsingXML(DOMElement *element) {
@@ -253,8 +259,6 @@ namespace MBSimAnalyser {
     if(e) setMode(Element::getInt(e));
     e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"determineEquilibriumState");
     if(e) setDetermineEquilibriumState(Element::getBool(e));
-    e=E(element)->getFirstElementChildNamed(MBSIMANALYSER%"autoUpdate");
-    if(e) setAutoUpdate(Element::getBool(e));
   }
 
 }

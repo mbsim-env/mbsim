@@ -98,4 +98,3 @@ namespace MBSimFlexibleBody {
 }
 
 #endif /* _FIXED_NODAL_FRAME_H_ */
-

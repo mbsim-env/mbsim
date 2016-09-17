@@ -34,7 +34,6 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_zyx_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
-#include "mbsim/utils/octave_utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
