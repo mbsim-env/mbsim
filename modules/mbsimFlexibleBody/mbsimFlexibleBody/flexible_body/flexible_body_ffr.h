@@ -259,11 +259,10 @@ namespace MBSimFlexibleBody {
       double m;
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm, mmi0;
-      fmatvec::Mat3xV Pdm, C2;
+      fmatvec::Mat3xV Pdm;
       std::vector<std::vector<fmatvec::SqrMatV> > PPdm, Knl2, Ke2, De2;
       std::vector<std::vector<fmatvec::RowVecV> > rPdm;
-      std::vector<fmatvec::Mat3xV> C5;
-      std::vector<std::vector<fmatvec::SqrMat3> > C6, mmi2, Gr1;
+      std::vector<std::vector<fmatvec::SqrMat3> > mmi2, Gr1;
       std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;
       fmatvec::Vec2 beta;
       fmatvec::VecV ksigma0;

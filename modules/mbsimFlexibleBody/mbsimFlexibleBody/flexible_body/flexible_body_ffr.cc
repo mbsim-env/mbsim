@@ -95,10 +95,9 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::determineSID() {
-    C2.resize(ne,NONINIT);
+    Cr0.resize(ne,NONINIT);
     if(not(PPdm.size()))
       PPdm.resize(3,vector<SqrMatV>(3));
-    C6.resize(ne);
     Gr0.resize(ne);
     Gr1.resize(ne);
     Ge.resize(ne);
@@ -122,16 +121,31 @@ namespace MBSimFlexibleBody {
     Kom[0][0] = -PPdm[1][1]-PPdm[2][2];
     Kom[1][1] = -PPdm[2][2]-PPdm[0][0];
     Kom[2][2] = -PPdm[0][0]-PPdm[1][1];
-    for(int i=0; i<ne; i++)
-      C6[i].resize(ne);
+
+    Me.resize(ne,NONINIT);
+    mmi1.resize(ne);
+    mmi2.resize(ne);
 
     for(int i=0; i<ne; i++) {
+      Gr1[i].resize(ne);
+      mmi2[i].resize(ne);
+    }
+
+    for(int i=0; i<ne; i++) {
+      mmi1[i](0,0) = 2.*(rPdm[1][1](i) + rPdm[2][2](i));
+      mmi1[i](0,1) = -(rPdm[1][0](i) + rPdm[0][1](i));
+      mmi1[i](0,2) = -(rPdm[2][0](i) + rPdm[0][2](i));
+      mmi1[i](1,1) = 2.*(rPdm[0][0](i) + rPdm[2][2](i));
+      mmi1[i](1,2) = -(rPdm[2][1](i) + rPdm[1][2](i));
+      mmi1[i](2,2) = 2.*(rPdm[0][0](i) + rPdm[1][1](i));
+
       Oe0.e(i,0) = -rPdm[2][2](i) - rPdm[1][1](i);
       Oe0.e(i,1) = -rPdm[2][2](i) - rPdm[0][0](i);
       Oe0.e(i,2) = -rPdm[1][1](i) - rPdm[0][0](i);
       Oe0(i,3) = rPdm[0][1](i) + rPdm[1][0](i);
       Oe0(i,4) = rPdm[1][2](i) + rPdm[2][1](i);
       Oe0(i,5) = rPdm[2][0](i) + rPdm[0][2](i);
+
       Gr0[i](0,0) = 2.*(rPdm[2][2](i) + rPdm[1][1](i));
       Gr0[i](0,1) = -2.*rPdm[1][0](i);
       Gr0[i](0,2) = -2.*rPdm[2][0](i);
@@ -141,31 +155,32 @@ namespace MBSimFlexibleBody {
       Gr0[i](2,0) = -2.*rPdm[0][2](i);
       Gr0[i](2,1) = -2.*rPdm[1][2](i);
       Gr0[i](2,2) = 2.*(rPdm[1][1](i) + rPdm[0][0](i));
-      Gr1[i].resize(ne);
-      C2.e(0,i) = rPdm[1][2].e(i) - rPdm[2][1].e(i);
-      C2.e(1,i) = rPdm[2][0].e(i) - rPdm[0][2].e(i);
-      C2.e(2,i) = rPdm[0][1].e(i) - rPdm[1][0].e(i);
-      for(int j=i; j<ne; j++) {
-        C6[i][j].e(0,0) = -PPdm[1][1].e(i,j) - PPdm[2][2].e(i,j);
-        C6[i][j].e(1,1) = -PPdm[0][0].e(i,j) - PPdm[2][2].e(i,j);
-        C6[i][j].e(2,2) = -PPdm[0][0].e(i,j) - PPdm[1][1].e(i,j);
 
-        C6[i][j].e(0,1) = PPdm[1][0].e(i,j);
-        C6[i][j].e(0,2) = PPdm[2][0].e(i,j);
-        C6[i][j].e(1,2) = PPdm[2][1].e(i,j);
-        C6[i][j].e(1,0) = PPdm[0][1].e(i,j);
-        C6[i][j].e(2,0) = PPdm[0][2].e(i,j);
-        C6[i][j].e(2,1) = PPdm[1][2].e(i,j);
-        C6[j][i] = C6[i][j].T();
+      Cr0.e(i,0) = rPdm[1][2].e(i) - rPdm[2][1].e(i);
+      Cr0.e(i,1) = rPdm[2][0].e(i) - rPdm[0][2].e(i);
+      Cr0.e(i,2) = rPdm[0][1].e(i) - rPdm[1][0].e(i);
+
+      for(int j=i; j<ne; j++) {
+        Me.ej(i,j) = PPdm[0][0].e(i,j) + PPdm[1][1].e(i,j) + PPdm[2][2].e(i,j);
+
+        mmi2[i][j].e(0,0) = PPdm[1][1].e(i,j) + PPdm[2][2].e(i,j);
+        mmi2[i][j].e(1,1) = PPdm[0][0].e(i,j) + PPdm[2][2].e(i,j);
+        mmi2[i][j].e(2,2) = PPdm[0][0].e(i,j) + PPdm[1][1].e(i,j);
+        mmi2[i][j].e(0,1) = -PPdm[1][0].e(i,j);
+        mmi2[i][j].e(0,2) = -PPdm[2][0].e(i,j);
+        mmi2[i][j].e(1,2) = -PPdm[2][1].e(i,j);
+        mmi2[i][j].e(1,0) = -PPdm[0][1].e(i,j);
+        mmi2[i][j].e(2,0) = -PPdm[0][2].e(i,j);
+        mmi2[i][j].e(2,1) = -PPdm[1][2].e(i,j);
+        mmi2[j][i] = mmi2[i][j].T();
+
+        Gr1[i][j] = 2.*mmi2[i][j];
+        Gr1[j][i] = Gr1[i][j].T();
       }
-      for(int j=0; j<ne; j++)
-        Gr1[i][j] = -2.*C6[i][j];
     }
     Ct0 = Pdm.T();
     for(unsigned int i=0; i<K0t.size(); i++)
       Ct1.push_back(K0t[i]);
-
-    Cr0 = C2.T();
 
     std::vector<fmatvec::SqrMatV> Kr(3);
     for(int i=0; i<3; i++)
@@ -178,23 +193,6 @@ namespace MBSimFlexibleBody {
       Cr1.push_back(Kr[i]);
     for(unsigned int i=0; i<K0r.size(); i++)
       Cr1[i] += K0r[i];
-
-    Me.resize(ne,NONINIT);
-    mmi1.resize(ne);
-    mmi2.resize(ne);
-    for(int i=0; i<ne; i++) {
-      mmi1[i](0,0) = 2.*(rPdm[1][1](i) + rPdm[2][2](i));
-      mmi1[i](0,1) = -(rPdm[1][0](i) + rPdm[0][1](i));
-      mmi1[i](0,2) = -(rPdm[2][0](i) + rPdm[0][2](i));
-      mmi1[i](1,1) = 2.*(rPdm[0][0](i) + rPdm[2][2](i));
-      mmi1[i](1,2) = -(rPdm[2][1](i) + rPdm[1][2](i));
-      mmi1[i](2,2) = 2.*(rPdm[0][0](i) + rPdm[1][1](i));
-      mmi2[i].resize(ne);
-      for(int j=0; j<ne; j++)
-        mmi2[i][j] = -C6[i][j];
-      for(int j=i; j<ne; j++)
-        Me.ej(i,j) = PPdm[0][0].e(i,j) + PPdm[1][1].e(i,j) + PPdm[2][2].e(i,j);
-    }
 
     Ge.resize(3);
     for(int i=0; i<3; i++)
