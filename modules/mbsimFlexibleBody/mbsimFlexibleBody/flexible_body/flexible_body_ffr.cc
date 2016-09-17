@@ -534,22 +534,6 @@ namespace MBSimFlexibleBody {
         I2 += mmi2[i][j]*(q(iqE).e(i)*q(iqE).e(j));
     }
 
-//    double u11 = rrdm(0,0) + 2. * rPdm[0][0] * q(iqE) + q(iqE).T() * PPdm[0][0] * q(iqE);
-//    double u22 = rrdm(1,1) + 2. * rPdm[1][1] * q(iqE) + q(iqE).T() * PPdm[1][1] * q(iqE);
-//    double u33 = rrdm(2,2) + 2. * rPdm[2][2] * q(iqE) + q(iqE).T() * PPdm[2][2] * q(iqE);
-//    double u21 = rrdm(1,0) + (rPdm[1][0] + rPdm[0][1]) * q(iqE) + q(iqE).T() * PPdm[1][0] * q(iqE);
-//    double u31 = rrdm(2,0) + (rPdm[2][0] + rPdm[0][2]) * q(iqE) + q(iqE).T() * PPdm[2][0] * q(iqE);
-//    double u32 = rrdm(2,1) + (rPdm[2][1] + rPdm[1][2]) * q(iqE) + q(iqE).T() * PPdm[2][1] * q(iqE);
-//
-//    fmatvec::SymMat3 I;
-//
-//    I(0,0) = u22 + u33;
-//    I(0,1) = -u21;
-//    I(0,2) = -u31;
-//    I(1,1) = u11 + u33;
-//    I(1,2) = -u32;
-//    I(2,2) = u11 + u22;
-
     SymMat3 I = mmi0 + I1 + SymMat3(I2);
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
