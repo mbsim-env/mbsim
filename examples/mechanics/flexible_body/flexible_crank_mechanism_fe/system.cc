@@ -83,30 +83,35 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   body2->getFrame("Q")->enableOpenMBV(0.3);
 #endif
   body2->setFrameOfReference(body1->getFrame("Q"));
-  body2->setc0(Kr);
-  body2->setMass(m2);
-  Theta(2,2)=J2;
-  body2->setI0(Theta);
+
+  SymMat rrdm(3);
+  rrdm(0,0) = J2;
 
   double D = l2/n;
-  Mat3xV C1(2*n);
-  Mat3xV C1g(2*n+2);
-  vector<vector<SqrMatV> > C3e(3);
-  vector<vector<SqrMatV> > C3g(3);
-  vector<vector<SqrMatV> > C3(3);
+  Mat3xV Pdm(2*n);
+  Mat3xV Pdmg(2*n+2);
+  vector<vector<SqrMatV> > PPdme(3);
+  vector<vector<SqrMatV> > PPdmg(3);
+  vector<vector<SqrMatV> > PPdm(3);
+  vector<vector<RowVecV> > rPdme(3);
+  vector<vector<RowVecV> > rPdmg(3);
+  vector<vector<RowVecV> > rPdm(3);
   for(int i=0; i<3; i++) {
-    C3e[i].resize(3);
-    C3g[i].resize(3);
-    C3[i].resize(3);
+    PPdme[i].resize(3);
+    PPdmg[i].resize(3);
+    PPdm[i].resize(3);
+    rPdme[i].resize(3);
+    rPdmg[i].resize(3);
+    rPdm[i].resize(3);
     for(int j=0; j<3; j++) {
-      C3e[i][j].resize(4);
-      C3g[i][j].resize(2*n+2);
-      C3[i][j].resize(2*n);
+      PPdme[i][j].resize(4);
+      PPdmg[i][j].resize(2*n+2);
+      PPdm[i][j].resize(2*n);
+      rPdme[i][j].resize(4);
+      rPdmg[i][j].resize(2*n+2);
+      rPdm[i][j].resize(2*n);
     }
   }
-  vector<SqrMat3> C4e(4);
-  vector<SqrMat3> C4g(2*n+2);
-  vector<SqrMat3> C4(2*n);
   SymMatV Kee(4);
   SqrMatV Keg(2*n+2);
   SymMatV Ke(2*n);
@@ -114,55 +119,55 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
     int i1=i*2;
     int i2=i1+2+1;
 
-    Mat3xV C1e(4);
-    C1e(1,0) = 1./2;
-    C1e(1,1) = 1./12*D;
-    C1e(1,2) = 1./2; 
-    C1e(1,3) = -1./12*D;
-    C1e*=rho*d2*h2*D;
-    C1g.add(Index(0,2),Index(i1,i2),C1e);
+    Mat3xV Pdme(4);
+    Pdme(1,0) = 1./2;
+    Pdme(1,1) = 1./12*D;
+    Pdme(1,2) = 1./2;
+    Pdme(1,3) = -1./12*D;
+    Pdme*=rho*d2*h2*D;
+    Pdmg.add(Index(0,2),Index(i1,i2),Pdme);
 
-    C3e[0][0](0,0) = 6./5/D;
-    C3e[0][0](0,1) = 1./10;
-    C3e[0][0](0,2) = -6./5/D;
-    C3e[0][0](0,3) = 1./10;
-    C3e[0][0](1,1) = 2*D/15;
-    C3e[0][0](1,2) = -1./10;
-    C3e[0][0](1,3) = -D/30;
-    C3e[0][0](2,2) = 6./5/D;
-    C3e[0][0](2,3) = -1./10;
-    C3e[0][0](3,3) = 2*D/15;
-    C3e[1][1](0,0) = 13./35*D;
-    C3e[1][1](0,1) = 11./210*pow(D,2);
-    C3e[1][1](0,2) = 9./70*D;
-    C3e[1][1](0,3) = -13./420*pow(D,2);
-    C3e[1][1](1,1) = pow(D,3)/105;
-    C3e[1][1](1,2) = 13./420*pow(D,2);
-    C3e[1][1](1,3) = -pow(D,3)/140;
-    C3e[1][1](2,2) = 13./35*D;
-    C3e[1][1](2,3) = -11./210*pow(D,2);
-    C3e[1][1](3,3) = pow(D,3)/105;
+    PPdme[0][0](0,0) = 6./5/D;
+    PPdme[0][0](0,1) = 1./10;
+    PPdme[0][0](0,2) = -6./5/D;
+    PPdme[0][0](0,3) = 1./10;
+    PPdme[0][0](1,1) = 2*D/15;
+    PPdme[0][0](1,2) = -1./10;
+    PPdme[0][0](1,3) = -D/30;
+    PPdme[0][0](2,2) = 6./5/D;
+    PPdme[0][0](2,3) = -1./10;
+    PPdme[0][0](3,3) = 2*D/15;
+    PPdme[1][1](0,0) = 13./35*D;
+    PPdme[1][1](0,1) = 11./210*pow(D,2);
+    PPdme[1][1](0,2) = 9./70*D;
+    PPdme[1][1](0,3) = -13./420*pow(D,2);
+    PPdme[1][1](1,1) = pow(D,3)/105;
+    PPdme[1][1](1,2) = 13./420*pow(D,2);
+    PPdme[1][1](1,3) = -pow(D,3)/140;
+    PPdme[1][1](2,2) = 13./35*D;
+    PPdme[1][1](2,3) = -11./210*pow(D,2);
+    PPdme[1][1](3,3) = pow(D,3)/105;
     for(int k=0; k<4; k++) {
       for(int j=0; j<k; j++) {
-	C3e[0][0](k,j) = C3e[0][0](j,k);
-	C3e[1][1](k,j) = C3e[1][1](j,k);
+	PPdme[0][0](k,j) = PPdme[0][0](j,k);
+	PPdme[1][1](k,j) = PPdme[1][1](j,k);
       }
     }
-    C3e[0][0] *= 1./12*rho*d2*pow(h2,3);
-    C3e[1][1] *= rho*d2*h2;
-    for(int j=0; j<3; j++) 
-      for(int k=0; k<3; k++)
-	C3g[j][k].add(Index(i1,i2),Index(i1,i2),C3e[j][k]);
+    PPdme[0][0] *= 1./12*rho*d2*pow(h2,3);
+    PPdme[1][1] *= rho*d2*h2;
 
-    C4e[0](0,1) = rho*1./12*d2*pow(h2,3);
-    C4e[0](1,0) = rho*d2*h2*pow(D,2)*((i+1)/2.-7./20);
-    C4e[1](1,0) = rho*d2*h2*pow(D,2)*((i+1)*D/12.-D/20);
-    C4e[2](0,1) = rho*-1./12*d2*pow(h2,3);
-    C4e[2](1,0) = rho*d2*h2*pow(D,2)*((i+1)/2.-3./20);
-    C4e[3](1,0) = rho*d2*h2*pow(D,2)*(-(i+1)*D/12+D/30);
-    int k=0;
-    for(int j=i1; j<=i2; j++)
-      C4g[j] += C4e[k++];
+    rPdme[0][1](0) = rho*d2*h2*pow(D,2)*((i+1)/2.-7./20);
+    rPdme[0][1](1) = rho*d2*h2*pow(D,2)*((i+1)*D/12.-D/20);
+    rPdme[0][1](2) = rho*d2*h2*pow(D,2)*((i+1)/2.-3./20);
+    rPdme[0][1](3) = rho*d2*h2*pow(D,2)*(-(i+1)*D/12+D/30);
+    rPdme[1][0](0) = rho*1./12*d2*pow(h2,3);
+    rPdme[1][0](2) = rho*-1./12*d2*pow(h2,3);
+
+    for(int j=0; j<3; j++)
+      for(int k=0; k<3; k++) {
+	PPdmg[j][k].add(Index(i1,i2),Index(i1,i2),PPdme[j][k]);
+	rPdmg[j][k].add(Index(i1,i2),rPdme[j][k]);
+      }
 
     Kee(0,0) = 12./pow(D,3);
     Kee(0,1) = 6./pow(D,2);
@@ -180,8 +185,8 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
 
   int j=0;
   for(int i=1; i<2*n; i++)
-    C1.set(j++,C1g.col(i));
-  C1.set(j++,C1g.col(2*n+1));
+    Pdm.set(j++,Pdmg.col(i));
+  Pdm.set(j++,Pdmg.col(2*n+1));
 
   for(int j=0; j<3; j++) {
     for(int k=0; k<3; k++) {
@@ -189,21 +194,18 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
       for(int ii=0; ii<2*n+2; ii++) {
 	int r=0;
 	if(ii!=0 and ii!=2*n) {
-	  for(int jj=0; jj<2*n+2; jj++)
+	  for(int jj=0; jj<2*n+2; jj++) {
 	    if(jj!=0 and jj!=2*n) {
-	      C3[j][k](h,r) = C3g[j][k](ii,jj);
+	      PPdm[j][k](h,r) = PPdmg[j][k](ii,jj);
 	      r++;
 	    }
+          }
+          rPdm[j][k](h) = rPdmg[j][k](ii);
 	  h++;
 	}
       }
     }
   }
-
-  int k=0;
-  for(int i=0; i<2*n+2; i++)
-    if(i!=0 and i!=2*n) 
-      C4[k++] = C4g[i];
 
   int h=0;
   for(int ii=0; ii<2*n+2; ii++) {
@@ -218,10 +220,13 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
     }
   }
 
-  body2->setC1(C1);
-  body2->setC3(C3);
-  body2->setC4(C4);
-  body2->setKe(Ke);
+  body2->setMass(m2);
+  body2->setPositionIntegral(m2*Kr);
+  body2->setPositionPositionIntegral(rrdm);
+  body2->setShapeFunctionIntegral(Pdm);
+  body2->setShapeFunctionShapeFunctionIntegral(PPdm);
+  body2->setPositionShapeFunctionIntegral(rPdm);
+  body2->setStiffnessMatrix(Ke);
 
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body2->getFrame("Q")->setPlotFeature(globalPosition,enabled);

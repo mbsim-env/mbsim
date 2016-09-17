@@ -21,7 +21,6 @@
 #define _FIXED_NODAL_FRAME_H__
 
 #include "mbsimFlexibleBody/frames/frame_ffr.h"
-#include "mbsimFlexibleBody/utils/taylor.h"
 
 namespace MBSimFlexibleBody {
 
@@ -58,10 +57,6 @@ namespace MBSimFlexibleBody {
       void setsigmahen(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
       void setFrameOfReference(FrameFFR *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
-
-      void setPhi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Phi_) { Phi = Phi_.getM0(); K0F = Phi_.getM1(); }
-      void setPsi(const Taylor<fmatvec::Mat3xV,std::vector<fmatvec::SqrMatV> > &Psi_) { Psi = Psi_.getM0(); K0M = Psi_.getM1(); }
-      void setsigma(const Taylor<fmatvec::Vector<fmatvec::Fixed<6>, double >,fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>,std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > &sigma_) { sigma0 = sigma_.getM0(); sigmahel = sigma_.getM1(); sigmahen = sigma_.getM2(); }
 
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }

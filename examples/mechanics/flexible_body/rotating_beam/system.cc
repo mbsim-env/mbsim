@@ -78,48 +78,50 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   body->getFrame("K")->enableOpenMBV(0.3);
   body->getFrame("Q")->enableOpenMBV(0.3);
 #endif
-  body->setc0(Kr);
-  body->setMass(m);
-  Theta(2,2)=J;
-  body->setI0(Theta);
 
-  Mat3xV C1(2);
-  C1(0,0) = rho*0.00516935;
-  C1(1,1) = rho*0.00317895;
+  SymMat rrdm(3);
+  rrdm(0,0) = J;
 
-  vector<vector<SqrMatV> > C3(3);
+  Mat3xV Pdm(2);
+  Pdm(0,0) = rho*0.00516935;
+  Pdm(1,1) = rho*0.00317895;
+
+  vector<vector<SqrMatV> > PPdm(3);
+  vector<vector<RowVecV> > rPdm(3);
   for(int i=0; i<3; i++) {
-    C3[i].resize(3);
-    for(int j=0; j<3; j++)
-      C3[i][j].resize(2);
+    PPdm[i].resize(3);
+    rPdm[i].resize(3);
+    for(int j=0; j<3; j++) {
+      PPdm[i][j].resize(2);
+      rPdm[i][j].resize(2);
+    }
   }
-  C3[0][0](0,0) = rho*0.00406;
-  C3[0][0](1,1) = 0;
+  PPdm[0][0](0,0) = rho*0.00406;
+  PPdm[0][0](1,1) = 0;
 
-  C3[1][1](0,0) = 0;
-  C3[1][1](1,1) = rho*0.00203;
+  PPdm[1][1](0,0) = 0;
+  PPdm[1][1](1,1) = rho*0.00203;
 
-  C3[0][1](0,1) = rho*0.00275212;
+  PPdm[0][1](0,1) = rho*0.00275212;
 
-  C3[1][0] = C3[0][1].T();
-  C3[2][1] = C3[1][2].T();
-  C3[2][0] = C3[0][2].T();
+  PPdm[1][0] = PPdm[0][1].T();
+  PPdm[2][1] = PPdm[1][2].T();
+  PPdm[2][0] = PPdm[0][2].T();
 
-  vector<SqrMat3> C4;
-  C4.push_back(SqrMat3(3));
-  C4[0](1,1) = -rho*0.0668055;
-  C4[0](2,2) = -rho*0.0668055;
-  C4.push_back(SqrMat3(3));
-  C4[1](1,0) = rho*0.0468815;
+  rPdm[0][0](0) = rho*0.0668055;
+  rPdm[0][1](1) = rho*0.0468815;
 
   SymMatV Ke(2);
   Ke(0,0) = 2.8442e+06;
   Ke(1,1) = 4249.06;
 
-  body->setC1(C1);
-  body->setC3(C3);
-  body->setC4(C4);
-  body->setKe(Ke);
+  body->setMass(m);
+  body->setPositionIntegral(m*Kr);
+  body->setPositionPositionIntegral(rrdm);
+  body->setShapeFunctionIntegral(Pdm);
+  body->setShapeFunctionShapeFunctionIntegral(PPdm);
+  body->setPositionShapeFunctionIntegral(rPdm);
+  body->setStiffnessMatrix(Ke);
 
   if(stiffening==1) {
     std::vector<SqrMatV> K0om(6);
@@ -130,21 +132,21 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
     body->setK0om(K0om);
   }
   else if(stiffening==2) {
-    vector<SqrMatV> C7(2);
-    vector<vector<SqrMatV> > C8(2);
-    C8[0].resize(2);
-    C8[1].resize(2);
+    vector<SqrMatV> Kn1(2);
+    vector<vector<SqrMatV> > Kn2(2);
+    Kn2[0].resize(2);
+    Kn2[1].resize(2);
 
-    C7[0].resize() = SqrMatV("[280216, 0; 0, 457.203]");
-    C7[1].resize() = SqrMatV("[0, 49630; 98802.9, 0]");
+    Kn1[0].resize() = SqrMatV("[186811, 0; 0, 304.802]");
+    Kn1[1].resize() = SqrMatV("[0, 98650.5; 304.802, 0]");
 
-    C8[0][0].resize() = SqrMatV("[6386.14, 0; 0, 11.0674]");
-    C8[0][1].resize() = SqrMatV("[0, 1216.23; 1216.23, 0]");
-    C8[1][0].resize() = SqrMatV("[0, 1216.23; 1216.23, 0]");
-    C8[1][1].resize() = SqrMatV("[11.0674, 0; 0, 5039.25]");
+    Kn2[0][0].resize() = SqrMatV("[12772.3, 0; 0, 22.1348]");
+    Kn2[0][1].resize() = SqrMatV("[0, 2432.46; 2432.46, 0]");
+    Kn2[1][0].resize() = SqrMatV("[0, 2432.46; 2432.46, 0]");
+    Kn2[1][1].resize() = SqrMatV("[22.1348, 0; 0, 10078.5]");
 
-    body->setC7(C7);
-    body->setC8(C8);
+    body->setFirstNonlinearStiffnessPart(Kn1);
+    body->setSecondNonlinearStiffnessPart(Kn2);
   }
 
   body->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), new Angle));

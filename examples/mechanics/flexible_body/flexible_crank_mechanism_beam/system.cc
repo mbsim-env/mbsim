@@ -86,52 +86,48 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->getFrame("Q")->enableOpenMBV(0.3);
 #endif
   body2->setFrameOfReference(body1->getFrame("Q"));
-  body2->setc0(Kr);
-  body2->setMass(m2);
-  Theta(2,2)=J2;
-  body2->setI0(Theta);
 
-  Mat3xV C1(4);
-  C1(1,0) = 2./M_PI;
-  C1(0,2) = 2./3;
-  C1(0,3) = 1./6;
-  C1*=rho*d2*h2*l2;
+  SymMat rrdm(3);
+  rrdm(0,0) = J2;
 
-  vector<vector<SqrMatV> > C3(3);
+  Mat3xV Pdm(4);
+  Pdm(1,0) = 2./M_PI;
+  Pdm(0,2) = 2./3;
+  Pdm(0,3) = 1./6;
+  Pdm*=rho*d2*h2*l2;
+
+  vector<vector<SqrMatV> > PPdm(3);
+  vector<vector<RowVecV> > rPdm(3);
   for(int i=0; i<3; i++) {
-    C3[i].resize(3);
-    for(int j=0; j<3; j++)
-      C3[i][j].resize(4);
+    PPdm[i].resize(3);
+    rPdm[i].resize(3);
+    for(int j=0; j<3; j++) {
+      PPdm[i][j].resize(4);
+      rPdm[i][j].resize(4);
+    }
   }
-  C3[0][0](0,0) = 1./24*pow(h2*M_PI/l2,2);
-  C3[0][0](1,1) = 1./6*pow(h2*M_PI/l2,2);
-  C3[0][0](2,2) = 8./15;
-  C3[0][0](2,3) = 1./15;
-  C3[0][0](3,2) = C3[0][0](2,3);
-  C3[0][0](3,3) = 2./15;
-  C3[0][0]*=rho*d2*h2*l2;
-  C3[1][1](0,0) = 1./2;
-  C3[1][1](1,1) = 1./2;
-  C3[1][1]*=rho*d2*h2*l2;
-  C3[0][1](2,0) = 16./pow(M_PI,3);
-  C3[0][1](3,0) = -8./pow(M_PI,3)+1./M_PI;
-  C3[0][1](3,1) = -1./2/M_PI;
-  C3[0][1]*=rho*d2*h2*l2;
-  C3[1][0] = C3[0][1].T();
-  C3[2][1] = C3[1][2].T();
-  C3[2][0] = C3[0][2].T();
+  PPdm[0][0](0,0) = 1./24*pow(h2*M_PI/l2,2);
+  PPdm[0][0](1,1) = 1./6*pow(h2*M_PI/l2,2);
+  PPdm[0][0](2,2) = 8./15;
+  PPdm[0][0](2,3) = 1./15;
+  PPdm[0][0](3,2) = PPdm[0][0](2,3);
+  PPdm[0][0](3,3) = 2./15;
+  PPdm[0][0]*=rho*d2*h2*l2;
+  PPdm[1][1](0,0) = 1./2;
+  PPdm[1][1](1,1) = 1./2;
+  PPdm[1][1]*=rho*d2*h2*l2;
+  PPdm[0][1](2,0) = 16./pow(M_PI,3);
+  PPdm[0][1](3,0) = -8./pow(M_PI,3)+1./M_PI;
+  PPdm[0][1](3,1) = -1./2/M_PI;
+  PPdm[0][1]*=rho*d2*h2*l2;
+  PPdm[1][0] = PPdm[0][1].T();
+  PPdm[2][1] = PPdm[1][2].T();
+  PPdm[2][0] = PPdm[0][2].T();
 
-  vector<SqrMat3> C4;
-  C4.push_back(SqrMat3(3));
-  C4[0](1,0) = rho*d2*h2*pow(l2,2)*1./M_PI;
-  C4.push_back(SqrMat3(3));
-  C4[1](1,0) = rho*d2*h2*pow(l2,2)*-1./2/M_PI;
-  C4.push_back(SqrMat3(3));
-  C4[2](1,1) = -rho*d2*h2*pow(l2,2)*1./3;
-  C4[2](2,2) = C4[2](1,1);
-  C4.push_back(SqrMat3(3));
-  C4[3](1,1) = -rho*d2*h2*pow(l2,2)*1./6;
-  C4[3](2,2) = C4[3](1,1);
+  rPdm[0][0](2) = rho*d2*h2*pow(l2,2)*1./3;
+  rPdm[0][0](3) = rho*d2*h2*pow(l2,2)*1./6;
+  rPdm[0][1](0) = rho*d2*h2*pow(l2,2)*1./M_PI;
+  rPdm[0][1](1) = rho*d2*h2*pow(l2,2)*-1./2/M_PI;
 
   SymMatV Ke(4);
   Ke(0,0) = 1./24*pow(M_PI,4)*pow(h2/l2,2);
@@ -141,10 +137,13 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Ke(3,3) = 7./3;
   Ke*=E/(1-pow(nu,2))*d2*h2/l2;
 
-  body2->setC1(C1);
-  body2->setC3(C3);
-  body2->setC4(C4);
-  body2->setKe(Ke);
+  body2->setMass(m2);
+  body2->setPositionIntegral(m2*Kr);
+  body2->setPositionPositionIntegral(rrdm);
+  body2->setShapeFunctionIntegral(Pdm);
+  body2->setShapeFunctionShapeFunctionIntegral(PPdm);
+  body2->setPositionShapeFunctionIntegral(rPdm);
+  body2->setStiffnessMatrix(Ke);
 
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body2->getFrame("Q")->setPlotFeature(globalPosition,enabled);

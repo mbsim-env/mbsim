@@ -50,15 +50,6 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  template <class Row, class AT>
-  inline Matrix<Symmetric, Row, Row, AT> ApAT(const SquareMatrix<Row, AT> &A) {
-    Matrix<Symmetric, Row, Row, AT> S(A.size(), A.size(), NONINIT);
-    for (int i = 0; i < A.cols(); i++)
-      for (int j = i; j < A.cols(); j++)
-        S.ej(i, j) = A.e(i, j) + A.e(j, i);
-    return S;
-  }
-
   Range<Var,Var> i02(0,2);
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEXIBLEBODY%"FlexibleBodyFFR")
@@ -105,8 +96,8 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::determineSID() {
     C2.resize(ne,NONINIT);
-    if(not(C3.size()))
-      C3.resize(3,vector<SqrMatV>(3));
+    if(not(PPdm.size()))
+      PPdm.resize(3,vector<SqrMatV>(3));
     C6.resize(ne);
     Gr.getM0().resize(ne);
     Gr.getM1().resize(ne);
@@ -114,50 +105,65 @@ namespace MBSimFlexibleBody {
     Oe.getM0().resize(ne,NONINIT);
     Oe.getM1().resize(6);
     std::vector<std::vector<fmatvec::SqrMatV> > Kom(3);
-    mCM.getM0() = m*c0;
-    mmi.getM0() = I0;
-    mCM.getM1() = C1;
+    mCM.getM0() = rdm;
+    mmi.getM0()(0,0) = rrdm(1,1) + rrdm(2,2);
+    mmi.getM0()(0,1) = -rrdm(1,0);
+    mmi.getM0()(0,2) = -rrdm(2,0);
+    mmi.getM0()(1,1) = rrdm(0,0) + rrdm(2,2);
+    mmi.getM0()(1,2) = -rrdm(2,1);
+    mmi.getM0()(2,2) = rrdm(0,0) + rrdm(1,1);
+    mCM.getM1() = Pdm;
     for(int i=0; i<3; i++) {
       Kom[i].resize(3);
       for(int j=0; j<3; j++) {
         Kom[i][j].resize(ne,NONINIT);
         if(i!=j)
-          Kom[i][j] = C3[i][j];
+          Kom[i][j] = PPdm[i][j];
       }
     }
-    Kom[0][0] = -C3[1][1]-C3[2][2];
-    Kom[1][1] = -C3[2][2]-C3[0][0];
-    Kom[2][2] = -C3[0][0]-C3[1][1];
+    Kom[0][0] = -PPdm[1][1]-PPdm[2][2];
+    Kom[1][1] = -PPdm[2][2]-PPdm[0][0];
+    Kom[2][2] = -PPdm[0][0]-PPdm[1][1];
     for(int i=0; i<ne; i++)
       C6[i].resize(ne);
-    for(int i=0; i<ne; i++) {
-      for(int j=0; j<3; j++)
-        Oe.getM0().e(i,j) = C4[i](j,j);
-      Oe.getM0()(i,3) = C4[i].e(0,1)+C4[i].e(1,0);
-      Oe.getM0()(i,4) = C4[i].e(1,2)+C4[i].e(2,1); 
-      Oe.getM0()(i,5) = C4[i].e(2,0)+C4[i].e(0,2);
-      Gr.getM0()[i] = -2.*C4[i];
-      Gr.getM1()[i].resize(ne);
-      C2.e(0,i) = C4[i].e(2,1)-C4[i].e(1,2);
-      C2.e(1,i) = C4[i].e(0,2)-C4[i].e(2,0);
-      C2.e(2,i) = C4[i].e(1,0)-C4[i].e(0,1);
-      for(int j=i; j<ne; j++) {
-        C6[i][j].e(0,0) = -C3[1][1].e(i,j) - C3[2][2].e(i,j);
-        C6[i][j].e(1,1) = -C3[0][0].e(i,j) - C3[2][2].e(i,j);
-        C6[i][j].e(2,2) = -C3[0][0].e(i,j) - C3[1][1].e(i,j);
 
-        C6[i][j].e(0,1) = C3[1][0].e(i,j);
-        C6[i][j].e(0,2) = C3[2][0].e(i,j);
-        C6[i][j].e(1,2) = C3[2][1].e(i,j);
-        C6[i][j].e(1,0) = C3[0][1].e(i,j);
-        C6[i][j].e(2,0) = C3[0][2].e(i,j);
-        C6[i][j].e(2,1) = C3[1][2].e(i,j);
+    for(int i=0; i<ne; i++) {
+      Oe.getM0().e(i,0) = -rPdm[2][2](i) - rPdm[1][1](i);
+      Oe.getM0().e(i,1) = -rPdm[2][2](i) - rPdm[0][0](i);
+      Oe.getM0().e(i,2) = -rPdm[1][1](i) - rPdm[0][0](i);
+      Oe.getM0()(i,3) = rPdm[0][1](i) + rPdm[1][0](i);
+      Oe.getM0()(i,4) = rPdm[1][2](i) + rPdm[2][1](i);
+      Oe.getM0()(i,5) = rPdm[2][0](i) + rPdm[0][2](i);
+      Gr.getM0()[i](0,0) = 2.*(rPdm[2][2](i) + rPdm[1][1](i));
+      Gr.getM0()[i](0,1) = -2.*rPdm[1][0](i);
+      Gr.getM0()[i](0,2) = -2.*rPdm[2][0](i);
+      Gr.getM0()[i](1,0) = -2.*rPdm[0][1](i);
+      Gr.getM0()[i](1,1) = 2.*(rPdm[2][2](i) + rPdm[0][0](i));
+      Gr.getM0()[i](1,2) = -2.*rPdm[2][1](i);
+      Gr.getM0()[i](2,0) = -2.*rPdm[0][2](i);
+      Gr.getM0()[i](2,1) = -2.*rPdm[1][2](i);
+      Gr.getM0()[i](2,2) = 2.*(rPdm[1][1](i) + rPdm[0][0](i));
+      Gr.getM1()[i].resize(ne);
+      C2.e(0,i) = rPdm[1][2].e(i) - rPdm[2][1].e(i);
+      C2.e(1,i) = rPdm[2][0].e(i) - rPdm[0][2].e(i);
+      C2.e(2,i) = rPdm[0][1].e(i) - rPdm[1][0].e(i);
+      for(int j=i; j<ne; j++) {
+        C6[i][j].e(0,0) = -PPdm[1][1].e(i,j) - PPdm[2][2].e(i,j);
+        C6[i][j].e(1,1) = -PPdm[0][0].e(i,j) - PPdm[2][2].e(i,j);
+        C6[i][j].e(2,2) = -PPdm[0][0].e(i,j) - PPdm[1][1].e(i,j);
+
+        C6[i][j].e(0,1) = PPdm[1][0].e(i,j);
+        C6[i][j].e(0,2) = PPdm[2][0].e(i,j);
+        C6[i][j].e(1,2) = PPdm[2][1].e(i,j);
+        C6[i][j].e(1,0) = PPdm[0][1].e(i,j);
+        C6[i][j].e(2,0) = PPdm[0][2].e(i,j);
+        C6[i][j].e(2,1) = PPdm[1][2].e(i,j);
         C6[j][i] = C6[i][j].T();
       }
       for(int j=0; j<ne; j++)
         Gr.getM1()[i][j] = -2.*C6[i][j];
     }
-    Ct.getM0() = C1.T();
+    Ct.getM0() = Pdm.T();
     for(unsigned int i=0; i<K0t.size(); i++)
       Ct.getM1().push_back(K0t[i]);
 
@@ -166,9 +172,9 @@ namespace MBSimFlexibleBody {
     std::vector<fmatvec::SqrMatV> Kr(3);
     for(int i=0; i<3; i++)
       Kr[i].resize(ne,NONINIT);
-    Kr[0] = -C3[1][2] + C3[1][2].T();
-    Kr[1] = -C3[2][0] + C3[2][0].T();
-    Kr[2] = -C3[0][1] + C3[0][1].T();
+    Kr[0] = -PPdm[1][2] + PPdm[1][2].T();
+    Kr[1] = -PPdm[2][0] + PPdm[2][0].T();
+    Kr[2] = -PPdm[0][1] + PPdm[0][1].T();
 
     for(unsigned int i=0; i<Kr.size(); i++)
       Cr.getM1().push_back(Kr[i]);
@@ -179,12 +185,17 @@ namespace MBSimFlexibleBody {
     mmi.getM1().resize(ne);
     mmi.getM2().resize(ne);
     for(int i=0; i<ne; i++) {
-      mmi.getM1()[i] = -ApAT(C4[i]);
+      mmi.getM1()[i](0,0) = 2.*(rPdm[1][1](i) + rPdm[2][2](i));
+      mmi.getM1()[i](0,1) = -(rPdm[1][0](i) + rPdm[0][1](i));
+      mmi.getM1()[i](0,2) = -(rPdm[2][0](i) + rPdm[0][2](i));
+      mmi.getM1()[i](1,1) = 2.*(rPdm[0][0](i) + rPdm[2][2](i));
+      mmi.getM1()[i](1,2) = -(rPdm[2][1](i) + rPdm[1][2](i));
+      mmi.getM1()[i](2,2) = 2.*(rPdm[0][0](i) + rPdm[1][1](i));
       mmi.getM2()[i].resize(ne);
       for(int j=0; j<ne; j++)
         mmi.getM2()[i][j] = -C6[i][j];
       for(int j=i; j<ne; j++)
-        Me.getM0().ej(i,j) = C3[0][0].e(i,j) + C3[1][1].e(i,j) + C3[2][2].e(i,j);
+        Me.getM0().ej(i,j) = PPdm[0][0].e(i,j) + PPdm[1][1].e(i,j) + PPdm[2][2].e(i,j);
     }
 
     Ge.getM0().resize(3);
@@ -202,235 +213,23 @@ namespace MBSimFlexibleBody {
     if(not(De.getM0().size()))
       De.getM0() = beta.e(0)*Me.getM0() + beta.e(1)*Ke.getM0();
 
-    if(C7.size()) {
-      Ke.getM1().resize(C7.size());
-      if(C8.size()) {
-        Ke.getM2().resize(C8.size());
-        for(unsigned int i=0; i<C8.size(); i++)
-          Ke.getM2()[i].resize(C8.size());
+    if(Knl1.size()) {
+      Ke.getM1().resize(Knl1.size());
+      if(Knl2.size()) {
+        Ke.getM2().resize(Knl2.size());
+        for(unsigned int i=0; i<Knl2.size(); i++)
+          Ke.getM2()[i].resize(Knl2.size());
       }
-      for(unsigned int i=0; i<C7.size(); i++) {
-        Ke.getM1()[i].resize() = (C7[i].T() + 0.5*C7[i]);
-        for(unsigned int j=0; j<C8.size(); j++)
-          Ke.getM2()[i][j].resize() = 0.5*C8[i][j];
+      for(unsigned int i=0; i<Knl1.size(); i++) {
+        Ke.getM1()[i].resize() = (Knl1[i].T() + 0.5*Knl1[i]);
+        for(unsigned int j=0; j<Knl2.size(); j++)
+          Ke.getM2()[i][j].resize() = 0.5*Knl2[i][j];
       }
     }
 
     ksigma.setM0(ke0);
     ksigma.setM1(Ke0);
  }
-
-  void FlexibleBodyFFR::readBIDFromFile(const string& file) {
-    OctaveParser op(file);
-    op.parse();
-
-    const OctaveScalar *octscalar = dynamic_cast<const OctaveScalar*>(op.find("mass"));
-    if(octscalar) 
-      m = octscalar->get();
-    else
-      throw MBSimError("In read BID from file: mass not existing!");
-
-    const OctaveMatrix *octmat = dynamic_cast<const OctaveMatrix*>(op.find("c0"));
-    if(octmat) 
-      c0 = octmat->get<Vec3>();
-    else
-      throw MBSimError("In read BID from file: c0 not existing!");
-
-    octmat = dynamic_cast<const OctaveMatrix*>(op.find("I0"));
-    if(octmat) 
-      I0 = octmat->get<SymMat3>();
-    else
-      throw MBSimError("In read BID from file: I0 not existing!");
-
-    octmat = dynamic_cast<const OctaveMatrix*>(op.find("C1"));
-    if(octmat) 
-      C1 = octmat->get<Mat3xV>();
-    else
-      throw MBSimError("In read BID from file: C1 not existing!");
-
-    const OctaveCell *octcell = dynamic_cast<const OctaveCell*>(op.find("C3"));
-    if(octcell)
-      C3 = octcell->get<SqrMatV>();
-    else
-      throw MBSimError("In read BID from file: C3 not existing!");
-
-    octcell = dynamic_cast<const OctaveCell*>(op.find("C4"));
-    if(octcell)
-      C4 = octcell->get<SqrMat3>()[0];
-    else
-      throw MBSimError("In read BID from file: C4 not existing!");
-
-    octmat = dynamic_cast<const OctaveMatrix*>(op.find("Ke"));
-    if(octmat) 
-      Ke = octmat->get<SymMatV>();
-    else
-      throw MBSimError("In read BID from file: Ke not existing!");
-
-    octmat = dynamic_cast<const OctaveMatrix*>(op.find("De"));
-    if(octmat) 
-      De = octmat->get<SymMatV>();
-
-    octcell = dynamic_cast<const OctaveCell*>(op.find("C7"));
-    if(octcell)
-      C7 = octcell->get<SqrMatV>()[0];
-
-    octcell = dynamic_cast<const OctaveCell*>(op.find("C8"));
-    if(octcell)
-      C8 = octcell->get<SqrMatV>();
-
-    octcell = dynamic_cast<const OctaveCell*>(op.find("K0t"));
-    if(octcell)
-      K0t = octcell->get<SqrMatV>()[0];
-
-    octcell = dynamic_cast<const OctaveCell*>(op.find("K0r"));
-    if(octcell)
-      K0r = octcell->get<SqrMatV>()[0];
-
-    octcell = dynamic_cast<const OctaveCell*>(op.find("K0om"));
-    if(octcell)
-      K0om = octcell->get<SqrMatV>()[0];
-  }
-
-  void FlexibleBodyFFR::readSIDFromFile(const string& file) {
-    OctaveParser op(file);
-    op.parse();
-
-    const OctaveScalar *octscalar = dynamic_cast<const OctaveScalar*>(op.find("mass"));
-    if(octscalar) 
-      m = octscalar->get();
-    else
-      throw MBSimError("In read SID from file: mass not existing!");
-    
-    const OctaveMatrix *octmat;
-    const OctaveCell *octcell;
-    OctaveStruct *octstruct = dynamic_cast<OctaveStruct*>(op.find("mCM"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        mCM.setM0(octmat->get<Vec3>());
-      else
-        throw MBSimError("In read SID from file: mCM.M0 not existing!");
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M1"));
-      if(octmat)
-        mCM.setM1(octmat->get<Mat3xV>());
-    }
-    else
-      throw MBSimError("In read SID from file: mCM not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("mmi"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        mmi.setM0(octmat->get<SymMat3>());
-      else
-        throw MBSimError("In read SID from file: mmi.M0 not existing!");
-      octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M1"));
-      if(octcell)
-        mmi.setM1(octcell->get<SymMat3>()[0]);
-      octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M2"));
-      if(octcell)
-        mmi.setM2(octcell->get<SqrMat3>());
-    }
-    else
-      throw MBSimError("In read SID from file: mmi not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("Ct"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        Ct.setM0(octmat->get<MatVx3>());
-      else
-        throw MBSimError("In read SID from file: Ct.M0 not existing!");
-    }
-    else
-      throw MBSimError("In read SID from file: Ct not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("Cr"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        Cr.setM0(octmat->get<MatVx3>());
-      else
-        throw MBSimError("In read SID from file: Cr.M0 not existing!");
-      octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M1"));
-      if(octcell)
-        Cr.setM1(octcell->get<SqrMatV>()[0]);
-    }
-    else
-      throw MBSimError("In read SID from file: Cr not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("Me"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        Me.setM0(octmat->get<SymMatV>());
-      else
-        throw MBSimError("In read SID from file: Me.M0 not existing!");
-    }
-    else
-      throw MBSimError("In read SID from file: Me not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("Gr"));
-    if(octstruct) {
-      octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M0"));
-      if(octcell)
-        Gr.setM0(octcell->get<SqrMat3>()[0]);
-      else
-        throw MBSimError("In read SID from file: Gr.M0 not existing!");
-      octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M1"));
-      if(octcell)
-        Gr.setM1(octcell->get<SqrMat3>());
-    }
-    else
-      throw MBSimError("In read SID from file: Gr not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("Ge"));
-    if(octstruct) {
-      octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M0"));
-      if(octcell)
-        Ge.setM0(octcell->get<SqrMatV>()[0]);
-      else
-        throw MBSimError("In read SID from file: Ge.M0 not existing!");
-    }
-    else
-      throw MBSimError("In read SID from file: Ge not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("Oe"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        Oe.setM0(octmat->get<Matrix<General,Var,Fixed<6>,double> >());
-      else
-        throw MBSimError("In read SID from file: Oe.M0 not existing!");
-      octcell = dynamic_cast<const OctaveCell*>(octstruct->find("M1"));
-      if(octcell)
-        Oe.setM1(octcell->get<SqrMatV>()[0]);
-    }
-    else
-      throw MBSimError("In read SID from file: Oe not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("Ke"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        Ke.setM0(octmat->get<SymMatV>());
-      else
-        throw MBSimError("In read SID from file: Ke.M0 not existing!");
-    }
-    else
-      throw MBSimError("In read SID from file: Ke not existing!");
-
-    octstruct = dynamic_cast<OctaveStruct*>(op.find("De"));
-    if(octstruct) {
-      octmat = dynamic_cast<const OctaveMatrix*>(octstruct->find("M0"));
-      if(octmat)
-        De.setM0(octmat->get<SymMatV>());
-      else
-        throw MBSimError("In read SID from file: De.M0 not existing!");
-    }
-    else
-      throw MBSimError("In read SID from file: De not existing!");
-  }
 
   void FlexibleBodyFFR::prefillMassMatrix() {
     M_.resize(6+ne,NONINIT);
@@ -454,7 +253,7 @@ namespace MBSimFlexibleBody {
           static_cast<FixedNodalFrame*>(frame[k])->setFrameOfReference(K);
       }
 
-      ne = C1.cols()?C1.cols():Me.getM0().size();
+      ne = Pdm.cols()?Pdm.cols():Me.getM0().size();
       for(unsigned int i=1; i<frame.size(); i++)
         static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
 
@@ -741,6 +540,23 @@ namespace MBSimFlexibleBody {
       for (int j=0; j<ne; j++)
         I2 += mmi.getM2()[i][j]*(q(iqE).e(i)*q(iqE).e(j));
     }
+
+//    double u11 = I_kl(0,0) + 2. * rPdm[0][0] * q(iqE) + q(iqE).T() * PPdm[0][0] * q(iqE);
+//    double u22 = I_kl(1,1) + 2. * rPdm[1][1] * q(iqE) + q(iqE).T() * PPdm[1][1] * q(iqE);
+//    double u33 = I_kl(2,2) + 2. * rPdm[2][2] * q(iqE) + q(iqE).T() * PPdm[2][2] * q(iqE);
+//    double u21 = I_kl(1,0) + (rPdm[1][0] + rPdm[0][1]) * q(iqE) + q(iqE).T() * PPdm[1][0] * q(iqE);
+//    double u31 = I_kl(2,0) + (rPdm[2][0] + rPdm[0][2]) * q(iqE) + q(iqE).T() * PPdm[2][0] * q(iqE);
+//    double u32 = I_kl(2,1) + (rPdm[2][1] + rPdm[1][2]) * q(iqE) + q(iqE).T() * PPdm[2][1] * q(iqE);
+//
+//    fmatvec::SymMat3 I;
+//
+//    I(0,0) = u22 + u33;
+//    I(0,1) = -u21;
+//    I(0,2) = -u31;
+//    I(1,1) = u11 + u33;
+//    I(1,2) = -u32;
+//    I(2,2) = u11 + u22;
+
     SymMat3 I = mmi.getM0() + I1 + SymMat3(I2);
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
@@ -1028,8 +844,6 @@ namespace MBSimFlexibleBody {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"mass");
     setMass(getDouble(e));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"inertiaTensor");
-    setI0(getSymMat3(e));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV,double)> >(e->getFirstElementChild());
@@ -1107,77 +921,6 @@ namespace MBSimFlexibleBody {
 
   DOMElement* FlexibleBodyFFR::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Body::writeXMLFile(parent);
-
-//    DOMElement * ele1 = new DOMElement( MBSIM%"frameForKinematics" );
-//    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
-//    ele1->SetAttribute("ref", str);
-//    ele0->LinkEndChild(ele1);
-//
-//    addElementText(ele0,MBSIM%"mass",getMass());
-//    if(frameForInertiaTensor)
-//      THROW_MBSIMERROR("Inertia tensor with respect to frame " + frameForInertiaTensor->getPath() + " not supported in XML. Provide inertia tensor with respect to frame C.");
-//    addElementText(ele0,MBSIM%"inertiaTensor",getInertiaTensor());
-//
-//    ele1 = new DOMElement( MBSIM%"translation" );
-//    if(getTranslation()) 
-//      getTranslation()->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new DOMElement( MBSIM%"rotation" );
-//    if(getRotation()) 
-//      getRotation()->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new DOMElement( MBSIM%"frames" );
-//    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//    ele1 = new DOMElement( MBSIM%"contours" );
-//    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(getOpenMBVBody()) {
-//      ele1 = new DOMElement( MBSIM%"openMBVRigidBody" );
-//      getOpenMBVBody()->writeXMLFile(ele1);
-//
-//      if(getOpenMBVFrameOfReference()) {
-//        DOMElement * ele2 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
-//        ele2->SetAttribute("ref", str);
-//        ele1->LinkEndChild(ele2);
-//      }
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(C->getOpenMBVFrame()) {
-//      ele1 = new DOMElement( MBSIM%"enableOpenMBVFrameC" );
-//      addElementText(ele1,MBSIM%"size",C->getOpenMBVFrame()->getSize());
-//      addElementText(ele1,MBSIM%"offset",C->getOpenMBVFrame()->getOffset());
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(FWeight) {
-//      ele1 = new DOMElement( MBSIM%"openMBVWeightArrow" );
-//      FWeight->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(FArrow) {
-//      ele1 = new DOMElement( MBSIM%"openMBVJointForceArrow" );
-//      FArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(MArrow) {
-//      ele1 = new DOMElement( MBSIM%"openMBVJointMomentArrow" );
-//      MArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//#endif
-
     return ele0;
   }
 

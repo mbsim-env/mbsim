@@ -35,6 +35,10 @@ namespace MBSimFlexibleBody {
   class FrameFFR;
   class FixedNodalFrame;
 
+  /*!
+   *  \brief Flexible body using a floating frame of reference
+   *
+   * */
   class FlexibleBodyFFR : public MBSim::Body {
     public:
 
@@ -158,27 +162,25 @@ namespace MBSimFlexibleBody {
       FrameFFR* getFrameK() { return K; };
 
       // Interface for basic data
-      /**
-       * \brief Set the mass.
-       */
+      /*! \brief Set mass
+       *
+       * Set the mass of the flexible body.
+       * \param m The mass of the body
+       * */
       void setMass(double m_) { m = m_; }
-      void setc0(const fmatvec::Vec3 &c0_) { c0 = c0_; }
-      /**
-       * \brief Set the inertia tensor of the undeformend state w.r.t. the frame
-       * K.
-       */
-      void setI0(const fmatvec::SymMat3& I0_) { I0 = I0_; }
-      void setC1(const fmatvec::Mat3xV &C1_) { C1 = C1_; }
-      void setC3(const std::vector<std::vector<fmatvec::SqrMatV> > &C3_) { C3 = C3_; }
-      void setC4(const std::vector<fmatvec::SqrMat3> &C4_) { C4 = C4_; }
-      void setKe(const fmatvec::SymMatV &Ke_) { Ke.setM0(Ke_); }
-      void setDe(const fmatvec::SymMatV &De_) { De.setM0(De_); }
+      void setPositionIntegral(const fmatvec::Vec3 &rdm_) { rdm = rdm_; }
+      void setPositionPositionIntegral(const fmatvec::SymMat3& rrdm_) { rrdm = rrdm_; }
+      void setShapeFunctionIntegral(const fmatvec::Mat3xV &Pdm_) { Pdm = Pdm_; }
+      void setPositionShapeFunctionIntegral(const std::vector<std::vector<fmatvec::RowVecV> > &rPdm_) { rPdm = rPdm_; }
+      void setShapeFunctionShapeFunctionIntegral(const std::vector<std::vector<fmatvec::SqrMatV> > &PPdm_) { PPdm = PPdm_; }
+      void setStiffnessMatrix(const fmatvec::SymMatV &Ke_) { Ke.setM0(Ke_); }
+      void setDampingMatrix(const fmatvec::SymMatV &De_) { De.setM0(De_); }
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of interface
 
       // Interface for nonlinear stiffness matrices
-      void setC7(const std::vector<fmatvec::SqrMatV> &C7_) { C7 = C7_; }
-      void setC8(const std::vector<std::vector<fmatvec::SqrMatV> > &C8_) { C8 = C8_; }
+      void setFirstNonlinearStiffnessPart(const std::vector<fmatvec::SqrMatV> &Knl1_) { Knl1 = Knl1_; }
+      void setSecondNonlinearStiffnessPart(const std::vector<std::vector<fmatvec::SqrMatV> > &Knl2_) { Knl2 = Knl2_; }
       // End of interface
 
       // Interface for geometric stiffness matrices 
@@ -191,30 +193,6 @@ namespace MBSimFlexibleBody {
       void setke0(const fmatvec::VecV &ke0_) { ke0 = ke0_; }
       void setKe0(const fmatvec::SqrMatV &Ke0_) { Ke0 = Ke0_; }
       // End of interface
-
-      // Interface for standard input data
-      void setmCM(const Taylor<fmatvec::Vec3,fmatvec::Mat3xV> &mCM_) { mCM = mCM_; }
-      void setmmi(const Taylor<fmatvec::SymMat3,std::vector<fmatvec::SymMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > &mmi_) { mmi = mmi_; }
-      void setCt(const Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > &Ct_) { Ct = Ct_; }
-      void setCr(const Taylor<fmatvec::MatVx3,std::vector<fmatvec::SqrMatV> > &Cr_) { Cr = Cr_; }
-      void setMe(const Taylor<fmatvec::SymMatV> &Me_) { Me = Me_; }
-      void setGr(const Taylor<std::vector<fmatvec::SqrMat3>,std::vector<std::vector<fmatvec::SqrMat3> > > &Gr_) { Gr = Gr_; }
-      void setGe(const Taylor<std::vector<fmatvec::SqrMatV> > &Ge_) { Ge = Ge_; }
-      void setOe(const Taylor<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double>,std::vector<fmatvec::SqrMatV> > &Oe_) { Oe = Oe_; }
-      void setKe(const Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > &Ke_) { Ke = Ke_; }
-      void setDe(const Taylor<fmatvec::SymMatV,std::vector<fmatvec::SqrMatV>, std::vector<std::vector<fmatvec::SqrMatV> > > &De_) { De = De_; }
-      void setksigma(const Taylor<fmatvec::VecV,fmatvec::SqrMatV> &ksigma_) { ksigma = ksigma_; }
-      // End of interface
-      
-      /**
-       * \brief Read basic input data (BID) from file.
-       */
-      void readBIDFromFile(const std::string& file);
-
-      /**
-       * \brief Read standard input data (SID) from file.
-       */
-      void readSIDFromFile(const std::string& file);
 
       void addFrame(FixedNodalFrame *frame); 
 
@@ -281,15 +259,17 @@ namespace MBSimFlexibleBody {
     protected:
       // Basic input data
       double m;
-      fmatvec::Vec3 c0;
-      fmatvec::SymMat3 I0;
-      fmatvec::Mat3xV C1, C2;
-      std::vector<std::vector<fmatvec::SqrMatV> > C3;
-      std::vector<fmatvec::SqrMat3> C4;
+      fmatvec::Vec3 rdm;
+//      fmatvec::SymMat3 I0;
+      fmatvec::SymMat3 rrdm;
+      fmatvec::Mat3xV Pdm, C2;
+      std::vector<std::vector<fmatvec::SqrMatV> > PPdm;
+      std::vector<std::vector<fmatvec::RowVecV> > rPdm;
+//      std::vector<fmatvec::SqrMat3> C4;
       std::vector<fmatvec::Mat3xV> C5;
       std::vector<std::vector<fmatvec::SqrMat3> > C6;
-      std::vector<fmatvec::SqrMatV> C7;
-      std::vector<std::vector<fmatvec::SqrMatV> > C8;
+      std::vector<fmatvec::SqrMatV> Knl1;
+      std::vector<std::vector<fmatvec::SqrMatV> > Knl2;
       std::vector<fmatvec::SqrMatV> K0t, K0r, K0om;
       fmatvec::Vec2 beta;
       fmatvec::VecV ke0;
