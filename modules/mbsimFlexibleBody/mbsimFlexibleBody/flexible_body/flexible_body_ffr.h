@@ -29,9 +29,12 @@
 #include "mbsim/utils/openmbv_utils.h"
 #endif
 
+namespace MBSim {
+  class Frame;
+}
+
 namespace MBSimFlexibleBody {
 
-  class FrameFFR;
   class FixedNodalFrame;
 
   /*!
@@ -158,7 +161,7 @@ namespace MBSimFlexibleBody {
       MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* getRotation() { return fAPK; }
 
       double getMass() const { return m; }
-      FrameFFR* getFrameK() { return K; };
+      MBSim::Frame* getFrameK() { return K; };
 
       // Interface for basic data
       /*! \brief Set mass
@@ -276,7 +279,7 @@ namespace MBSimFlexibleBody {
       // Number of mode shapes 
       int ne;
 
-      FrameFFR *K;
+      MBSim::Frame *K;
 
       /**
        * \brief TODO

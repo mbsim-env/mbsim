@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
     updKJ[0] = true;
     updKJ[1] = true;
 
-    K=new FrameFFR("K");
+    K=new Frame("K");
     Body::addFrame(K);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=K;
@@ -295,17 +295,11 @@ namespace MBSimFlexibleBody {
     else if(stage==resize) {
       Body::init(stage);
 
-  
       KJ[0].resize(6+ne,hSize[0]);
       KJ[1].resize(6+ne,hSize[1]);
-      K->getJacobianOfDeformation(0,false).resize(ne,hSize[0]);
-      K->getJacobianOfDeformation(1,false).resize(ne,hSize[1]);
-
       for(int i=0; i<ne; i++) {
         KJ[0](6+i,hSize[0]-ne+i) = 1;
         KJ[1](6+i,hSize[1]-ne+i) = 1;
-        K->getJacobianOfDeformation(0,false)(i,hSize[0]-ne+i) = 1;
-        K->getJacobianOfDeformation(1,false)(i,hSize[1]-ne+i) = 1;
       }
 
       Ki.resize(6+ne);
@@ -713,7 +707,6 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::updateKJ1() {
     KJ[1].set(Index(0,2),Index(0,KJ[1].cols()-1),K->evalOrientation().T()*K->evalJacobianOfTranslation(1));
     KJ[1].set(Index(3,5),Index(0,KJ[1].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation(1));
-    KJ[1].set(Index(6,KJ[1].rows()-1),Index(0,KJ[1].cols()-1),K->getJacobianOfDeformation(1));
     updKJ[1] = false;
   }
 
