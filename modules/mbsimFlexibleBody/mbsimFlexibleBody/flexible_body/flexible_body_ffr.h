@@ -181,8 +181,8 @@ namespace MBSimFlexibleBody {
       // End of interface
 
       // Interface for nonlinear stiffness matrices
-      void setFirstNonlinearStiffnessPart(const std::vector<fmatvec::SqrMatV> &Knl1_) { Knl1 = Knl1_; }
-      void setSecondNonlinearStiffnessPart(const std::vector<std::vector<fmatvec::SqrMatV> > &Knl2_) { Knl2 = Knl2_; }
+      void setFirstNonlinearStiffnessMatrix(const std::vector<fmatvec::SqrMatV> &Knl1_) { Knl1 = Knl1_; }
+      void setSecondNonlinearStiffnessMatrix(const std::vector<std::vector<fmatvec::SqrMatV> > &Knl2_) { Knl2 = Knl2_; }
       // End of interface
 
       // Interface for geometric stiffness matrices 
@@ -192,8 +192,8 @@ namespace MBSimFlexibleBody {
       // End of interface
 
       // Interface for reference stresses 
-      void setksigma0(const fmatvec::VecV &ksigma0_) { ksigma0 = ksigma0_; }
-      void setksigma1(const fmatvec::SqrMatV &ksigma1_) { ksigma1 = ksigma1_; }
+      void setInitialStressIntegral(const fmatvec::VecV &ksigma0_) { ksigma0 = ksigma0_; }
+      void setNonlinearInitialStressIntegral(const fmatvec::SqrMatV &ksigma1_) { ksigma1 = ksigma1_; }
       // End of interface
 
       void addFrame(FixedNodalFrame *frame); 
@@ -263,7 +263,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm, mmi0;
       fmatvec::Mat3xV Pdm;
-      std::vector<std::vector<fmatvec::SqrMatV> > PPdm, Knl2, Ke2, De2;
+      std::vector<std::vector<fmatvec::SqrMatV> > PPdm, Knl2, Ke2;
       std::vector<std::vector<fmatvec::RowVecV> > rPdm;
       std::vector<std::vector<fmatvec::SqrMat3> > mmi2, Gr1;
       std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;

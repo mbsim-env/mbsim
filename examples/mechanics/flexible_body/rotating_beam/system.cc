@@ -86,11 +86,9 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   Pdm(0,0) = rho*0.00516935;
   Pdm(1,1) = rho*0.00317895;
 
-  vector<vector<SqrMatV> > PPdm(3);
-  vector<vector<RowVecV> > rPdm(3);
+  vector<vector<SqrMatV> > PPdm(3,vector<SqrMatV>(3));
+  vector<vector<RowVecV> > rPdm(3,vector<RowVecV>(3));
   for(int i=0; i<3; i++) {
-    PPdm[i].resize(3);
-    rPdm[i].resize(3);
     for(int j=0; j<3; j++) {
       PPdm[i][j].resize(2);
       rPdm[i][j].resize(2);
@@ -103,7 +101,6 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   PPdm[1][1](1,1) = rho*0.00203;
 
   PPdm[0][1](0,1) = rho*0.00275212;
-
   PPdm[1][0] = PPdm[0][1].T();
   PPdm[2][1] = PPdm[1][2].T();
   PPdm[2][0] = PPdm[0][2].T();
@@ -145,8 +142,8 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
     Kn2[1][0].resize() = SqrMatV("[0, 2432.46; 2432.46, 0]");
     Kn2[1][1].resize() = SqrMatV("[22.1348, 0; 0, 10078.5]");
 
-    body->setFirstNonlinearStiffnessPart(Kn1);
-    body->setSecondNonlinearStiffnessPart(Kn2);
+    body->setFirstNonlinearStiffnessMatrix(Kn1);
+    body->setSecondNonlinearStiffnessMatrix(Kn2);
   }
 
   body->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), new Angle));

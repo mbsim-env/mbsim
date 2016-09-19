@@ -90,19 +90,13 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   double D = l2/n;
   Mat3xV Pdm(2*n);
   Mat3xV Pdmg(2*n+2);
-  vector<vector<SqrMatV> > PPdme(3);
-  vector<vector<SqrMatV> > PPdmg(3);
-  vector<vector<SqrMatV> > PPdm(3);
-  vector<vector<RowVecV> > rPdme(3);
-  vector<vector<RowVecV> > rPdmg(3);
-  vector<vector<RowVecV> > rPdm(3);
+  vector<vector<SqrMatV> > PPdme(3,vector<SqrMatV>(3));
+  vector<vector<SqrMatV> > PPdmg(3,vector<SqrMatV>(3));
+  vector<vector<SqrMatV> > PPdm(3,vector<SqrMatV>(3));
+  vector<vector<RowVecV> > rPdme(3,vector<RowVecV>(3));
+  vector<vector<RowVecV> > rPdmg(3,vector<RowVecV>(3));
+  vector<vector<RowVecV> > rPdm(3,vector<RowVecV>(3));
   for(int i=0; i<3; i++) {
-    PPdme[i].resize(3);
-    PPdmg[i].resize(3);
-    PPdm[i].resize(3);
-    rPdme[i].resize(3);
-    rPdmg[i].resize(3);
-    rPdm[i].resize(3);
     for(int j=0; j<3; j++) {
       PPdme[i][j].resize(4);
       PPdmg[i][j].resize(2*n+2);
@@ -231,8 +225,6 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body2->getFrame("Q")->setPlotFeature(globalPosition,enabled);
   
-//  static_cast<FixedNodalFrame*>(body2->getFrame("Q"))->setsigmahel("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
-
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);
   body3->setFrameOfReference(getFrame("I"));

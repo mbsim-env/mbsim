@@ -304,5 +304,320 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="FixedNodalFrame" substitutionGroup="mbsim:Frame" type="FixedNodalFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Klasse zur Beschreibung von Koordinatensystemen.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FixedNodalFrameType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FrameType">
+        <xs:sequence>
+          <xs:element name="relativePosition" type="pv:lengthVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Relative Lage des Koordinatensystems.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="relativeOrientation" type="pv:rotationMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Relative Orientierung des Koordinatensystems.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="modeShapeOfTranslation" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="modeShapeOfRotation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="stressMatrix" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FlexibleBodyFFR" substitutionGroup="mbsim:Body" type="FlexibleBodyFFRType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Definiert einen elatsichen Körper mit einer Frame Of Reference Formulierung.<br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FlexibleBodyFFRType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:BodyType">
+        <xs:sequence>
+          <xs:element name="mass" type="pv:massScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Masse des Körpers.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="positionIntegral" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="positionPositionIntegral" type="pv:inertiaMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="shapeFunctionIntegral" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="positionShapeFunctionIntegral">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="ele11" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele12" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele13" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele21" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele22" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele23" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele31" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele32" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele33" minOccurs="0" type="pv:nounitMatrix"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="shapeFunctionShapeFunctionIntegral">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="ele11" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele12" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele13" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele21" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele22" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele23" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele31" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele32" minOccurs="0" type="pv:nounitMatrix"/>
+                <xs:element name="ele33" minOccurs="0" type="pv:nounitMatrix"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="stiffnessMatrix" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="dampingMatrix" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:choice minOccurs="0">
+            <xs:element name="generalTranslation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Gibt die Vorschrift zur Berechnung des Translationsvektors
+                  <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+                  im KOS <code>frameOfReference</code> dargestellt und stellt die
+                  Relativverschiebung zwischen dem KOS <code>frameOfReference</code> und dem KOS <code>frameForKinematics</code> dar.
+                  <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="timeDependentTranslation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Gibt die Vorschrift zur Berechnung des Translationsvektors
+                  <object class="inlineeqn">\boldsymbol{r}_q=f(t)</object> in Abhängigkeit der
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+                  im KOS <code>frameOfReference</code> dargestellt und stellt die
+                  Relativverschiebung zwischen dem KOS <code>frameOfReference</code> und dem KOS <code>frameForKinematics</code> dar.
+                  <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="stateDependentTranslation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Gibt die Vorschrift zur Berechnung des Translationsvektors
+                  <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q})</object> in Abhängigkeit der
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+                  im KOS <code>frameOfReference</code> dargestellt und stellt die
+                  Relativverschiebung zwischen dem KOS <code>frameOfReference</code> und dem KOS <code>frameForKinematics</code> dar.
+                  <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:choice minOccurs="0">
+            <xs:element name="generalRotation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+                  <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+                  Transformation vom KOS <code>frameForKinematics</code> in das KOS <code>frameOfReference</code> dar.
+                  <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="timeDependentRotation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+                  <object class="inlineeqn">\boldsymbol{A}_q=f(t)</object> in Abhängigkeit der
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+                  Transformation vom KOS <code>frameForKinematics</code> in das KOS <code>frameOfReference</code> dar.
+                  <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="stateDependentRotation">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+                  <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q})</object> in Abhängigkeit der
+                  generalisierten Lagen und der Zeit an.<br/>
+                  Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+                  Transformation vom KOS <code>frameForKinematics</code> in das KOS <code>frameOfReference</code> dar.
+                  <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:Function"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="translationDependentRotation" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert, ob die Rotation von der Translation abhängt. In diesem Fall werden für Translation und Rotation dieselben Koordinaten verwendet.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert, ob für für die Beschreibung der Rotation eine Koordinatentransformation durchgeführt werden soll (standardmäßig an). Mit Koordinatentransformation werden für die generalisierten Koordinaten der Rotation kartesische Winkelgeschwindigkeiten verwendet. Ohne Koordinatentransformation werden die Ableitungen der Winkelkoordinaten verwendet.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="frames">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Kontainer für lokale Koordinatensysteme dieses Körpers.<br/>
+                Da es sich um einen Starrkörper
+                handelt, ist die relative Lage dieser KOS untereinander (und auch zum KOS "C") während
+                der gesamten Simulation konstant.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="FixedNodalFrame"/>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="contours">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Kontainer für lokale Kontaktkonturen dieses Körpers.<br/>
+                Da es sich um einen Starrkörper handelt, ist die relative Lage dieser Kontaktkonturen
+                untereinander (und auch zum KOS "C") während der gesamten Simulation konstant.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="mbsim:Contour"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVFrameK" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung des Referenzkoordinatensystems "K" dieses Körpers in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVJointForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVJointMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>
 

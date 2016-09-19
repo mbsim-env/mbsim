@@ -22,6 +22,7 @@
 #define _FLEXIBLE_BODY_H_
 
 #include "mbsim/objects/body.h"
+#include "namespace.h"
 
 namespace MBSim {
   class FixedRelativeFrame;
@@ -32,8 +33,6 @@ namespace MBSimFlexibleBody {
 
   class DiscretizationInterface;
   class NodeFrame;
-
-  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
 
   /**
    * \brief upmost class for flexible body implementation

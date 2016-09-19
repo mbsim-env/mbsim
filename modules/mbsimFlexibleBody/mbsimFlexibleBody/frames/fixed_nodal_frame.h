@@ -48,13 +48,14 @@ namespace MBSimFlexibleBody {
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
-      void setPhi(const fmatvec::Mat3xV &Phi_) { Phi = Phi_; }
-      void setPsi(const fmatvec::Mat3xV &Psi_) { Psi = Psi_; }
+      void setModeShapeOfTranslation(const fmatvec::Mat3xV &Phi_) { Phi = Phi_; }
+      void setModeShapeOfRotation(const fmatvec::Mat3xV &Psi_) { Psi = Psi_; }
+      void setStressMatrix(const fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> &sigmahel_) { sigmahel = sigmahel_; }
+      void setNonlinearStressMatrix(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
+      void setInitialStress(const fmatvec::Vector<fmatvec::Fixed<6>, double > &sigma0_) { sigma0 = sigma0_; }
       void setK0F(const std::vector<fmatvec::SqrMatV> &K0F_) { K0F = K0F_; }
       void setK0M(const std::vector<fmatvec::SqrMatV> &K0M_) { K0M = K0M_; }
-      void setsigma0(const fmatvec::Vector<fmatvec::Fixed<6>, double > &sigma0_) { sigma0 = sigma0_; }
-      void setsigmahel(const fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> &sigmahel_) { sigmahel = sigmahel_; }
-      void setsigmahen(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
+
       void setFrameOfReference(MBSim::Frame *frame) { R = frame; }
 
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
@@ -95,4 +96,4 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif /* _FIXED_NODAL_FRAME_H_ */
+#endif

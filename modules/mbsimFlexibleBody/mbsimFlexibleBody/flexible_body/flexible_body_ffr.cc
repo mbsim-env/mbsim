@@ -34,6 +34,7 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_zyx_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
+#include "mbsimFlexibleBody/namespace.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
@@ -51,7 +52,7 @@ namespace MBSimFlexibleBody {
 
   Range<Var,Var> i02(0,2);
 
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEXIBLEBODY%"FlexibleBodyFFR")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEX%"FlexibleBodyFFR")
 
   FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true) {
 
@@ -95,14 +96,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::determineSID() {
     Cr0.resize(ne,NONINIT);
-    if(not(PPdm.size()))
-      PPdm.resize(3,vector<SqrMatV>(3));
     Gr0.resize(ne);
-    Gr1.resize(ne);
+    Gr1.resize(ne,vector<SqrMat3>(ne));
     Ge.resize(ne);
     Oe0.resize(ne,NONINIT);
     Oe1.resize(6);
-    std::vector<std::vector<fmatvec::SqrMatV> > Kom(3);
+    vector<vector<SqrMatV> > Kom(3,vector<SqrMatV>(3));
     mmi0(0,0) = rrdm(1,1) + rrdm(2,2);
     mmi0(0,1) = -rrdm(1,0);
     mmi0(0,2) = -rrdm(2,0);
@@ -110,25 +109,18 @@ namespace MBSimFlexibleBody {
     mmi0(1,2) = -rrdm(2,1);
     mmi0(2,2) = rrdm(0,0) + rrdm(1,1);
     for(int i=0; i<3; i++) {
-      Kom[i].resize(3);
       for(int j=0; j<3; j++) {
-        Kom[i][j].resize(ne,NONINIT);
         if(i!=j)
-          Kom[i][j] = PPdm[i][j];
+          Kom[i][j].resize() = PPdm[i][j];
       }
     }
-    Kom[0][0] = -PPdm[1][1]-PPdm[2][2];
-    Kom[1][1] = -PPdm[2][2]-PPdm[0][0];
-    Kom[2][2] = -PPdm[0][0]-PPdm[1][1];
+    Kom[0][0].resize() = -PPdm[1][1]-PPdm[2][2];
+    Kom[1][1].resize() = -PPdm[2][2]-PPdm[0][0];
+    Kom[2][2].resize() = -PPdm[0][0]-PPdm[1][1];
 
     Me.resize(ne,NONINIT);
     mmi1.resize(ne);
-    mmi2.resize(ne);
-
-    for(int i=0; i<ne; i++) {
-      Gr1[i].resize(ne);
-      mmi2[i].resize(ne);
-    }
+    mmi2.resize(ne,vector<SqrMat3>(ne));
 
     for(int i=0; i<ne; i++) {
       mmi1[i](0,0) = 2.*(rPdm[1][1](i) + rPdm[2][2](i));
@@ -182,11 +174,9 @@ namespace MBSimFlexibleBody {
       Ct1.push_back(K0t[i]);
 
     std::vector<fmatvec::SqrMatV> Kr(3);
-    for(int i=0; i<3; i++)
-      Kr[i].resize(ne,NONINIT);
-    Kr[0] = -PPdm[1][2] + PPdm[1][2].T();
-    Kr[1] = -PPdm[2][0] + PPdm[2][0].T();
-    Kr[2] = -PPdm[0][1] + PPdm[0][1].T();
+    Kr[0].resize() = -PPdm[1][2] + PPdm[1][2].T();
+    Kr[1].resize() = -PPdm[2][0] + PPdm[2][0].T();
+    Kr[2].resize() = -PPdm[0][1] + PPdm[0][1].T();
 
     for(unsigned int i=0; i<Kr.size(); i++)
       Cr1.push_back(Kr[i]);
@@ -210,11 +200,7 @@ namespace MBSimFlexibleBody {
 
     if(Knl1.size()) {
       Ke1.resize(Knl1.size());
-      if(Knl2.size()) {
-        Ke2.resize(Knl2.size());
-        for(unsigned int i=0; i<Knl2.size(); i++)
-          Ke2[i].resize(Knl2.size());
-      }
+      if(Knl2.size()) Ke2.resize(Knl2.size(),vector<SqrMatV>(Knl2.size()));
       for(unsigned int i=0; i<Knl1.size(); i++) {
         Ke1[i].resize() = (Knl1[i].T() + 0.5*Knl1[i]);
         for(unsigned int j=0; j<Knl2.size(); j++)
@@ -245,7 +231,7 @@ namespace MBSimFlexibleBody {
           static_cast<FixedNodalFrame*>(frame[k])->setFrameOfReference(K);
       }
 
-      ne = Pdm.cols()?Pdm.cols():Me.size();
+      ne = Pdm.cols();
       for(unsigned int i=1; i<frame.size(); i++)
         static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
 
@@ -791,11 +777,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
+    DOMElement *e, *ee;
     Body::initializeUsingXML(element);
 
     // frames
-    e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     while(e) {
       FixedNodalFrame *f=new FixedNodalFrame(E(e)->getAttribute("name"));
       addFrame(f);
@@ -804,82 +790,111 @@ namespace MBSimFlexibleBody {
     }
 
     // contours
-    e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"contours")->getFirstElementChild();
     while(e) {
       Contour *c=ObjectFactory::createAndInit<Contour>(e);
       addContour(c);
       e=e->getNextElementSibling();
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIM%"mass");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"mass");
     setMass(getDouble(e));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionIntegral");
+    setPositionIntegral(getVec3(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionPositionIntegral");
+    setPositionPositionIntegral(getSymMat3(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionIntegral");
+    setShapeFunctionIntegral(getMat3xV(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegral");
+    vector<vector<RowVecV> > rPdm(3,vector<RowVecV>(3));
+    for(int i=0; i<3; i++) {
+      for(int j=0; j<3; j++) {
+        stringstream s;
+        s << "ele" << i+1 << j+1;
+        ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
+        if(ee)
+          rPdm[i][j].resize() = getRowVec(ee);
+      }
+    }
+    setPositionShapeFunctionIntegral(rPdm);
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
+    vector<vector<SqrMatV> > PPdm(3,vector<SqrMatV>(3));
+    for(int i=0; i<3; i++) {
+      for(int j=0; j<3; j++) {
+        stringstream s;
+        s << "ele" << i+1 << j+1;
+        ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
+        if(ee)
+          PPdm[i][j].resize() = getSqrMat(ee);
+      }
+    }
+    setShapeFunctionShapeFunctionIntegral(PPdm);
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stiffnessMatrix");
+    setStiffnessMatrix(getSymMat(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"dampingMatrix");
+    if(e) setDampingMatrix(getSymMat(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
+    if(e) setProportionalDamping(getVec(e));
+
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV,double)> >(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentTranslation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"timeDependentTranslation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<Vec3(double)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(double)> >(e->getFirstElementChild());
       setTimeDependentTranslation(trans);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentTranslation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"stateDependentTranslation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<Vec3(VecV)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV)> >(e->getFirstElementChild());
       setStateDependentTranslation(trans);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"generalRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalRotation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<RotMat3(VecV,double)> *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"timeDependentRotation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<RotMat3(double)> *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(double)> >(e->getFirstElementChild());
       setTimeDependentRotation(rot);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"stateDependentRotation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<RotMat3(VecV)> *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV)> >(e->getFirstElementChild());
       setStateDependentRotation(rot);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"translationDependentRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"translationDependentRotation");
     if(e) translationDependentRotation = getBool(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"coordinateTransformationForRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"coordinateTransformationForRotation");
     if(e) coordinateTransformation = getBool(e);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
-    if(e) {
-      std::shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
-      setOpenMBVRigidBody(rb);
-      rb->initializeUsingXML(e->getFirstElementChild());
-    }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVFrameOfReference");
-    if(e) setOpenMBVFrameOfReference(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(e) {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
       K->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
-    if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FWeight=ombv.createOpenMBV(e);
-    }
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVJointForce");
     if (e) {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVJointMoment");
     if (e) {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);

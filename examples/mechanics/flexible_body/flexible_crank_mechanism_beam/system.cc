@@ -96,11 +96,9 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Pdm(0,3) = 1./6;
   Pdm*=rho*d2*h2*l2;
 
-  vector<vector<SqrMatV> > PPdm(3);
-  vector<vector<RowVecV> > rPdm(3);
+  vector<vector<SqrMatV> > PPdm(3,vector<SqrMatV>(3));
+  vector<vector<RowVecV> > rPdm(3,vector<RowVecV>(3));
   for(int i=0; i<3; i++) {
-    PPdm[i].resize(3);
-    rPdm[i].resize(3);
     for(int j=0; j<3; j++) {
       PPdm[i][j].resize(4);
       rPdm[i][j].resize(4);
@@ -148,7 +146,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body2->getFrame("Q")->setPlotFeature(globalPosition,enabled);
   
-  static_cast<FixedNodalFrame*>(body2->getFrame("Q"))->setsigmahel("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
+  static_cast<FixedNodalFrame*>(body2->getFrame("Q"))->setStressMatrix("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
 
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);

@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "fixed_nodal_frame.h"
-#include "mbsim/utils/utils.h"
+#include "mbsimFlexibleBody/namespace.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -142,27 +142,23 @@ namespace MBSimFlexibleBody {
 
   void FixedNodalFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
-//    DOMElement *ec=element->getFirstElementChild();
-//    ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
-//    if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
-//    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");
-//    if(ec) setRelativePosition(getVec3(ec));
-//    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativeOrientation");
-//    if(ec) setRelativeOrientation(getSqrMat3(ec));
+    DOMElement *ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativePosition");
+    if(ec) setRelativePosition(getVec3(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeOrientation");
+    if(ec) setRelativeOrientation(getSqrMat3(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeShapeOfTranslation");
+    setModeShapeOfTranslation(getMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeShapeOfRotation");
+    if(ec) setModeShapeOfRotation(getSqrMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stressMatrix");
+    if(ec) setStressMatrix(getMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"initialStress");
+    if(ec) setInitialStress(getVec(ec));
   }
 
   DOMElement* FixedNodalFrame::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Frame::writeXMLFile(parent);
-//     if(getFrameOfReference()) {
-//        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-//        ele1->SetAttribute("ref", str);
-//        ele0->LinkEndChild(ele1);
-//      }
-//     addElementText(ele0,MBSIM%"relativePosition",getRelativePosition());
-//     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
    return ele0;
   }
 
 }
-

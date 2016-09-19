@@ -303,6 +303,19 @@ namespace MBSim {
     return Vec();
   }
 
+  RowVec Element::getRowVec(DOMElement *e, int cols) {
+    Mat m=Mat((X()%E(e)->getFirstTextChild()->getData()).c_str());
+    if((cols==0 || m.cols()==cols) && m.rows()==1)
+      return m.row(0);
+    else if(m.cols()) {
+      ostringstream str;
+      str<<"Wrong type: Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<X()%E(e)->getFirstTextChild()->getData()<<") "<<
+           "where a row vector of size "<<((cols==0)?-1:cols)<<" was requested for element "<<X()%e->getTagName();
+      throw DOMEvalException(str.str(), e);
+    }
+    return RowVec();
+  }
+
   Mat3xV Element::getMat3xV(DOMElement *e, int cols) {
     Mat A = getMat(e,3,cols);
     return Mat3xV(A);
