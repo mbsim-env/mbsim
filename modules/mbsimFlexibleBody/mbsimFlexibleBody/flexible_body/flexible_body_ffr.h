@@ -181,19 +181,19 @@ namespace MBSimFlexibleBody {
       // End of interface
 
       // Interface for nonlinear stiffness matrices
-      void setFirstNonlinearStiffnessMatrix(const std::vector<fmatvec::SqrMatV> &Knl1_) { Knl1 = Knl1_; }
-      void setSecondNonlinearStiffnessMatrix(const std::vector<std::vector<fmatvec::SqrMatV> > &Knl2_) { Knl2 = Knl2_; }
-      // End of interface
-
-      // Interface for geometric stiffness matrices 
-      void setK0t(const std::vector<fmatvec::SqrMatV> &K0t_) { K0t = K0t_; }
-      void setK0r(const std::vector<fmatvec::SqrMatV> &K0r_) { K0r = K0r_; }
-      void setK0om(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
+      void setNonlinearStiffnessMatrixOfFirstOrder(const std::vector<fmatvec::SqrMatV> &Knl1_) { Knl1 = Knl1_; }
+      void setNonlinearStiffnessMatrixOfSecondOrder(const std::vector<std::vector<fmatvec::SqrMatV> > &Knl2_) { Knl2 = Knl2_; }
       // End of interface
 
       // Interface for reference stresses 
       void setInitialStressIntegral(const fmatvec::VecV &ksigma0_) { ksigma0 = ksigma0_; }
       void setNonlinearInitialStressIntegral(const fmatvec::SqrMatV &ksigma1_) { ksigma1 = ksigma1_; }
+      // End of interface
+
+      // Interface for geometric stiffness matrices
+      void setGeometricStiffnessMatrixDueToAcceleration(const std::vector<fmatvec::SqrMatV> &K0t_) { K0t = K0t_; }
+      void setGeometricStiffnessMatrixDueToAngularAcceleration(const std::vector<fmatvec::SqrMatV> &K0r_) { K0r = K0r_; }
+      void setGeometricStiffnessMatrixDueToAngularVelocity(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
       // End of interface
 
       void addFrame(FixedNodalFrame *frame); 

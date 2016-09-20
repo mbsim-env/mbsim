@@ -53,8 +53,8 @@ namespace MBSimFlexibleBody {
       void setStressMatrix(const fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> &sigmahel_) { sigmahel = sigmahel_; }
       void setNonlinearStressMatrix(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
       void setInitialStress(const fmatvec::Vector<fmatvec::Fixed<6>, double > &sigma0_) { sigma0 = sigma0_; }
-      void setK0F(const std::vector<fmatvec::SqrMatV> &K0F_) { K0F = K0F_; }
-      void setK0M(const std::vector<fmatvec::SqrMatV> &K0M_) { K0M = K0M_; }
+      void setGeometricStiffnessMatrixDueToForce(const std::vector<fmatvec::SqrMatV> &K0F_) { K0F = K0F_; }
+      void setGeometricStiffnessMatrixDueToMoment(const std::vector<fmatvec::SqrMatV> &K0M_) { K0M = K0M_; }
 
       void setFrameOfReference(MBSim::Frame *frame) { R = frame; }
 

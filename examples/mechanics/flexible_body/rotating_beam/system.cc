@@ -126,7 +126,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
       K0om[i].resize(2);
     K0om[2](1,1) = rho*0.00242247;
 
-    body->setK0om(K0om);
+    body->setGeometricStiffnessMatrixDueToAngularVelocity(K0om);
   }
   else if(stiffening==2) {
     vector<SqrMatV> Kn1(2);
@@ -142,8 +142,8 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
     Kn2[1][0].resize() = SqrMatV("[0, 2432.46; 2432.46, 0]");
     Kn2[1][1].resize() = SqrMatV("[22.1348, 0; 0, 10078.5]");
 
-    body->setFirstNonlinearStiffnessMatrix(Kn1);
-    body->setSecondNonlinearStiffnessMatrix(Kn2);
+    body->setNonlinearStiffnessMatrixOfFirstOrder(Kn1);
+    body->setNonlinearStiffnessMatrixOfSecondOrder(Kn2);
   }
 
   body->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), new Angle));

@@ -152,8 +152,32 @@ namespace MBSimFlexibleBody {
     if(ec) setModeShapeOfRotation(getSqrMat(ec));
     ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stressMatrix");
     if(ec) setStressMatrix(getMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStressMatrix");
+    if(ec) {
+      ec=ec->getFirstElementChild();
+      while(ec) {
+        sigmahen.push_back(getMat(ec));
+        ec=ec->getNextElementSibling();
+      }
+    }
     ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"initialStress");
     if(ec) setInitialStress(getVec(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToForce");
+    if(ec) {
+      ec=ec->getFirstElementChild();
+      while(ec) {
+        K0F.push_back(getSqrMat(ec));
+        ec=ec->getNextElementSibling();
+      }
+    }
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToMoment");
+    if(ec) {
+      ec=ec->getFirstElementChild();
+      while(ec) {
+        K0M.push_back(getSqrMat(ec));
+        ec=ec->getNextElementSibling();
+      }
+    }
   }
 
   DOMElement* FixedNodalFrame::writeXMLFile(DOMNode *parent) {
