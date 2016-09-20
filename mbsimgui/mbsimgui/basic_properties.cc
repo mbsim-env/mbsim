@@ -21,7 +21,7 @@
 #include "basic_properties.h"
 #include "frame.h"
 #include "contour.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "signal_.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"

@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _RIGIDBODY__H_
-#define _RIGIDBODY__H_
+#ifndef _RIGID_BODY__H_
+#define _RIGID_BODY__H_
 
 #include "body.h"
 #include "extended_properties.h"

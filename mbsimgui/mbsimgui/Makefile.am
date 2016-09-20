@@ -21,7 +21,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   dynamic_system_solver.cc \
 		   object.cc \
 		   body.cc \
-		   rigidbody.cc \
+		   rigid_body.cc \
 		   constraint.cc \
 		   link.cc \
 		   kinetic_excitation.cc \

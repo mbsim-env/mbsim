@@ -23,7 +23,7 @@
 #include "contour.h"
 #include "dynamic_system_solver.h"
 #include "group.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "constraint.h"
 #include "linear_transfer_system.h"
 #include "kinetic_excitation.h"

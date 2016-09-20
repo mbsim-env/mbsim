@@ -18,7 +18,7 @@
    */
 
 #include <config.h>
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "objectfactory.h"
 #include "frame.h"
 #include "contour.h"

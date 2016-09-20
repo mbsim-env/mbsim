@@ -20,7 +20,7 @@
 #include <config.h>
 #include "element_context_menu.h"
 #include "mainwindow.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "constraint.h"
 #include "linear_transfer_system.h"
 #include "kinetic_excitation.h"

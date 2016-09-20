@@ -22,7 +22,7 @@
 #include "variable_properties.h"
 #include "extended_properties.h"
 #include "ombv_widgets.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "frame.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 

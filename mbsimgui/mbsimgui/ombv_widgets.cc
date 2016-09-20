@@ -21,7 +21,7 @@
 #include "ombv_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "frame.h"
 #include <QtGui>
 

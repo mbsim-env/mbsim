@@ -30,7 +30,7 @@
 #include "dynamic_system_solver.h"
 #include "frame.h"
 #include "contour.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "constraint.h"
 #include "signal_processing_system.h"
 #include "linear_transfer_system.h"
