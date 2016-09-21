@@ -26,5 +26,5 @@ mbsimxml_SOURCES = mbsimxml-main.cc
 schemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML
 dist_schema_DATA = mbsimproject.xsd
 
-pluginschemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimPlugin
-dist_pluginschema_DATA = plugin.xsd
+mbsimmoduleschemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimModule
+dist_mbsimmoduleschema_DATA = mbsimmodule.xsd

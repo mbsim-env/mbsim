@@ -15,9 +15,9 @@ namespace MBSimFMI {
     // get the model file
     path mbsimflatxmlfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
 
-    // load all plugins
-    msg(Debug)<<"Load MBSim plugins."<<endl;
-    MBSimXML::loadPlugins();
+    // load all MBSim modules
+    msg(Debug)<<"Load MBSim modules."<<endl;
+    MBSimXML::loadModules();
   
     // load MBSim project XML document
     msg(Debug)<<"Read MBSim flat XML model file."<<endl;

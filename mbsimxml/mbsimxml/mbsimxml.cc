@@ -26,21 +26,21 @@ set<bfs::path> getMBSimXMLSchemas() {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils_CasADi"/"casadi.xsd"
   };
 
-  // create parser for plugin.xml
-  static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
+  // create parser for mbsimmodule.xml files
+  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   std::shared_ptr<DOMParser> parser;
-  parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd"});
+  parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimModule"/"mbsimmodule.xsd"});
 
-  // read plugin schemas
-  for(auto it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
+  // read MBSim module schemas
+  for(auto it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimmodules"); it!=bfs::directory_iterator(); it++) {
     string path=it->path().string();
-    if(path.length()<=string(".plugin.xml").length() || path.substr(path.length()-string(".plugin.xml").length())!=".plugin.xml")
+    if(path.length()<=string(".mbsimmodule.xml").length() || path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml")
       continue;
     std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
-    for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas")->getFirstElementChild();
+    for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"schemas")->getFirstElementChild();
         e!=NULL; e=e->getNextElementSibling()) {
       bfs::path xsdFile;
-      if(E(e)->getTagName()==MBSIMPLUGIN%"File") {
+      if(E(e)->getTagName()==MBSIMMODULE%"File") {
         string location=E(e)->getAttribute("location");
         boost::algorithm::replace_all(location, "@MBSIMSCHEMADIR@", MBXMLUTILSSCHEMA.string());
         xsdFile=location;

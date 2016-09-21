@@ -85,9 +85,9 @@ int main(int argc, char *argv[]) {
     // create FMU zip file
     CreateZip fmuFile("mbsim.fmu", compress);
 
-    // load all plugins
-    cout<<"Load MBSim plugins."<<endl;
-    set<path> pluginLibs=MBSimXML::loadPlugins();
+    // load all MBSim modules
+    cout<<"Load MBSim modules."<<endl;
+    set<path> moduleLibs=MBSimXML::loadModules();
 
     // create parser (none validating parser for use in copyShLibToFMU)
     std::shared_ptr<DOMParser> parserNoneVali=DOMParser::create();
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
     // Create dss from XML file
     if(xmlFile) {
       // init the validating parser with the mbsimxml schema file
-      cout<<"Create MBSimXML XML schema including all plugins."<<endl;
+      cout<<"Create MBSimXML XML schema including all modules."<<endl;
       set<path> schemas=getMBSimXMLSchemas();
 
       // create parser (a validating parser for XML input and a none validating parser for shared library input)
@@ -402,15 +402,15 @@ int main(int argc, char *argv[]) {
         cout<<endl;
       }
 
-      cout<<"Copy MBSim plugin files to FMU."<<endl;
-      for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins");
+      cout<<"Copy MBSim module files to FMU."<<endl;
+      for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimmodules");
         srcIt!=directory_iterator(); ++srcIt) {
         cout<<"."<<flush;
-        fmuFile.add(path("resources")/"local"/"share"/"mbsimxml"/"plugins"/srcIt->path().filename(), srcIt->path());
+        fmuFile.add(path("resources")/"local"/"share"/"mbsimmodules"/srcIt->path().filename(), srcIt->path());
       }
       cout<<endl;
-      for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
-        cout<<"Copy MBSim plugin module "<<it->filename()<<" and dependencies to FMU."<<endl;
+      for(set<path>::iterator it=moduleLibs.begin(); it!=moduleLibs.end(); ++it) {
+        cout<<"Copy MBSim module "<<it->filename()<<" and dependencies to FMU."<<endl;
         copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/it->filename(), path("resources")/"local"/LIBDIR,
                        *it);
         cout<<endl;

@@ -9,8 +9,8 @@ DIST_SUBDIRS = mbsimInterface doc schema
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimInterface.pc
 
-plugindir = $(datadir)/mbsimxml/plugins
-plugin_DATA = mbsimInterface.plugin.xml
+mbsimmodulesdir = $(datadir)/mbsimmodules
+mbsimmodules_DATA = mbsimInterface.mbsimmodule.xml
 
 # wrapper target for doxygen in dir doc
 .PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc install-xmldoc uninstall-xmldoc

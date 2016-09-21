@@ -39,38 +39,38 @@ boost::filesystem::path fullLibName(const string &base) {
 
 namespace MBSim {
 
-// load all MBSim module plugins:
-// If a module plugin (shared library) is already loaded but the file has a newer last write time than the
+// load all MBSim modules:
+// If a module (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
-set<boost::filesystem::path> MBSimXML::loadPlugins() {
-  static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
+set<boost::filesystem::path> MBSimXML::loadModules() {
+  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   static const boost::filesystem::path installDir(getInstallPath());
-  // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
+  // note: we do not validate the module xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
   std::shared_ptr<DOMParser> parser=DOMParser::create();
 
-  set<boost::filesystem::path> pluginLibFile;
+  set<boost::filesystem::path> moduleLibFile;
 
-  // read plugin libraries
-  for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(installDir/"share"/"mbsimxml"/"plugins");
+  // read MBSim module libraries
+  for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(installDir/"share"/"mbsimmodules");
       it!=boost::filesystem::directory_iterator(); it++) {
-    if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
+    if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
     std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
-    for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries")->
+    for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
         getFirstElementChild();
         e!=NULL; e=e->getNextElementSibling()) {
-      if(E(e)->getTagName()==MBSIMPLUGIN%"CppLibrary") {
+      if(E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
         string location=E(e)->getAttribute("location");
         boost::algorithm::replace_all(location, "@MBSIMLIBDIR@", installDir.string()+"/"+libDir);
-        pluginLibFile.insert(canonical(boost::filesystem::path(location)/fullLibName(E(e)->getAttribute("basename"))));
+        moduleLibFile.insert(canonical(boost::filesystem::path(location)/fullLibName(E(e)->getAttribute("basename"))));
       }
     }
   }
 
-  // load plugins which are not already loaded
-  for(set<boost::filesystem::path>::iterator it=pluginLibFile.begin(); it!=pluginLibFile.end(); it++)
+  // load MBSim modules which are not already loaded
+  for(set<boost::filesystem::path>::iterator it=moduleLibFile.begin(); it!=moduleLibFile.end(); it++)
     SharedLibrary::load(it->string());
 
-  return pluginLibFile;
+  return moduleLibFile;
 }
 
 int PrefixedStringBuf::sync() {
@@ -125,7 +125,7 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, std::make_shared<bool>(true), std::make_shared<ostream>(&infoBuf));
   fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, std::make_shared<bool>(true), std::make_shared<ostream>(&warnBuf));
 
-  loadPlugins();
+  loadModules();
 
   // load MBSim project XML document
   shared_ptr<DOMParser> parser=DOMParser::create();

@@ -10,12 +10,12 @@ XSDFILES = http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd\
 
 all: mbsimxml.html http___www_mbsim-env_de_MBSimXML/index.html
 
-# list of all xsd files: variables XSDFILES and all modules (plugins)
+# list of all xsd files: variables XSDFILES and all MBSim modules
 .DELETE_ON_ERROR: xsdfiles.txt
-xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml
+xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimmodules/*.mbsimmodule.xml
 	echo "$(XSDFILES)" | tr ' ' '\n' > xsdfiles.txt
-	for F in $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml; do \
-	  @XALAN@ $$F $(srcdir)/getPluginLocation.xsl | sed -re "s-^@MBSIMSCHEMADIR@/--" >> xsdfiles.txt; \
+	for F in $(MBXMLUTILSBINDIR)/../share/mbsimmodules/*.mbsimmodule.xml; do \
+	  @XALAN@ $$F $(srcdir)/getModuleLocation.xsl | sed -re "s-^@MBSIMSCHEMADIR@/--" >> xsdfiles.txt; \
 	done
 
 # XML representation of all xsd files

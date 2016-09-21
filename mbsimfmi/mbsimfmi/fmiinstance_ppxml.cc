@@ -31,12 +31,12 @@ namespace MBSimFMI {
     getline(xmlProjectStream, xmlProjectFile);
     path mbsimxmlfile=resourcesDir/"model"/xmlProjectFile;
 
-    // load all plugins
-    msg(Debug)<<"Load MBSim plugins."<<endl;
-    MBSimXML::loadPlugins();
+    // load all MBSim modules
+    msg(Debug)<<"Load MBSim modules."<<endl;
+    MBSimXML::loadModules();
 
     // init the validating parser with the mbsimxml schema file
-    msg(Debug)<<"Create MBSim XML schema file including all plugins."<<endl;
+    msg(Debug)<<"Create MBSim XML schema file including all modules."<<endl;
     set<path> schemas=getMBSimXMLSchemas();
     std::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(schemas);
   

@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
           <<"                     This generates a HDF5 output file with only one time serie"<<endl
           <<"--autoreload         Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
           <<"                     a input file is newer than the output file"<<endl
-          <<"--onlyListSchemas    List all XML schema files including plugins"<<endl
+          <<"--onlyListSchemas    List all XML schema files including MBSim modules"<<endl
           <<"<mbsimprjfile>       Use <mbsimprjfile> as mbsim xml project file"<<endl;
       return 0;
     }

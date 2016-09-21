@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimPlugin"
+<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimModule"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
-  xmlns="http://www.mbsim-env.de/MBSimPlugin"
+  xmlns="http://www.mbsim-env.de/MBSimModule"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:element name="MBSimPlugin">
+  <xs:element name="MBSimModule">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="schemas">
