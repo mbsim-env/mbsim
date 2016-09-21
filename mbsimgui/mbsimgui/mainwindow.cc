@@ -90,9 +90,14 @@ namespace MBSimGUI {
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
     arguments << "--onlyListSchemas";
-    mbsim->getProcess()->execute(program,arguments);
+    QProcess process;
+    process.start(program,arguments);
+    process.waitForFinished(-1);
+    QStringList line=QString(process.readAllStandardOutput().data()).split("\n");
     set<bfs::path> schemas;
-    //MFMF get output from this process as a set<path> (line by line) and stroe in variable "schemas"
+    for(int i=0; i<line.size(); ++i)
+      if(!line.at(i).isEmpty())
+        schemas.insert(line.at(i).toStdString());
 
     mbsimThread = new MBSimThread(this);
     parser=DOMParser::create(schemas);

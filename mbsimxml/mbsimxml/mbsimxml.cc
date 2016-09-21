@@ -18,12 +18,13 @@ set<bfs::path> getMBSimXMLSchemas() {
   bfs::path MBXMLUTILSSCHEMA=getInstallPath()/"share"/"mbxmlutils"/"schema";
   set<bfs::path> schemas {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_OpenMBV"/"openmbv.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSim"/"mbsim.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimIntegrator"/"mbsimintegrator.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimAnalyser"/"mbsimanalyser.xsd",
-    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils"/"physicalvariable.xsd"
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils"/"physicalvariable.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils_CasADi"/"casadi.xsd"
   };
-
 
   // create parser for plugin.xml
   static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");

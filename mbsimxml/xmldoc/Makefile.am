@@ -15,7 +15,7 @@ all: mbsimxml.html http___www_mbsim-env_de_MBSimXML/index.html
 xsdfiles.txt: $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml
 	echo "$(XSDFILES)" | tr ' ' '\n' > xsdfiles.txt
 	for F in $(MBXMLUTILSBINDIR)/../share/mbsimxml/plugins/*.plugin.xml; do \
-	  @XALAN@ $$F $(srcdir)/getPluginLocation.xsl | sed -re "s/^@MBSIMSCHEMADIR@//" >> xsdfiles.txt; \
+	  @XALAN@ $$F $(srcdir)/getPluginLocation.xsl | sed -re "s-^@MBSIMSCHEMADIR@/--" >> xsdfiles.txt; \
 	done
 
 # XML representation of all xsd files
@@ -41,7 +41,7 @@ mbsimxml.html: $(srcdir)/genContent.xsl combindedSchema.xsd
 
 
 http___www_mbsim-env_de_MBSimXML/index.html: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd
-	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd none none MBSimXML MBSimXML::
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd none none MBSimXML MBSimXML:: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSim/mbsim.xsd
 
 install-data-local:
 	cp -r http___* @MBXMLUTILSDOCDIR@
