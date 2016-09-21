@@ -87,11 +87,11 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   Pdm(1,1) = rho*0.00317895;
 
   vector<vector<SqrMatV> > PPdm(3,vector<SqrMatV>(3));
-  vector<vector<RowVecV> > rPdm(3,vector<RowVecV>(3));
+  vector<Mat3xV> rPdm(3);
   for(int i=0; i<3; i++) {
+    rPdm[i].resize(2);
     for(int j=0; j<3; j++) {
       PPdm[i][j].resize(2);
-      rPdm[i][j].resize(2);
     }
   }
   PPdm[0][0](0,0) = rho*0.00406;
@@ -105,8 +105,8 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   PPdm[2][1] = PPdm[1][2].T();
   PPdm[2][0] = PPdm[0][2].T();
 
-  rPdm[0][0](0) = rho*0.0668055;
-  rPdm[0][1](1) = rho*0.0468815;
+  rPdm[0](0,0) = rho*0.0668055;
+  rPdm[0](1,1) = rho*0.0468815;
 
   SymMatV Ke(2);
   Ke(0,0) = 2.8442e+06;

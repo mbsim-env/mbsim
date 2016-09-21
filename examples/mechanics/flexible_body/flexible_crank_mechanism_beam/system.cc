@@ -97,11 +97,11 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Pdm*=rho*d2*h2*l2;
 
   vector<vector<SqrMatV> > PPdm(3,vector<SqrMatV>(3));
-  vector<vector<RowVecV> > rPdm(3,vector<RowVecV>(3));
+  vector<Mat3xV> rPdm(3);
   for(int i=0; i<3; i++) {
+    rPdm[i].resize(4);
     for(int j=0; j<3; j++) {
       PPdm[i][j].resize(4);
-      rPdm[i][j].resize(4);
     }
   }
   PPdm[0][0](0,0) = 1./24*pow(h2*M_PI/l2,2);
@@ -122,10 +122,10 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   PPdm[2][1] = PPdm[1][2].T();
   PPdm[2][0] = PPdm[0][2].T();
 
-  rPdm[0][0](2) = rho*d2*h2*pow(l2,2)*1./3;
-  rPdm[0][0](3) = rho*d2*h2*pow(l2,2)*1./6;
-  rPdm[0][1](0) = rho*d2*h2*pow(l2,2)*1./M_PI;
-  rPdm[0][1](1) = rho*d2*h2*pow(l2,2)*-1./2/M_PI;
+  rPdm[0](0,2) = rho*d2*h2*pow(l2,2)*1./3;
+  rPdm[0](0,3) = rho*d2*h2*pow(l2,2)*1./6;
+  rPdm[0](1,0) = rho*d2*h2*pow(l2,2)*1./M_PI;
+  rPdm[0](1,1) = rho*d2*h2*pow(l2,2)*-1./2/M_PI;
 
   SymMatV Ke(4);
   Ke(0,0) = 1./24*pow(M_PI,4)*pow(h2/l2,2);

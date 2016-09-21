@@ -93,17 +93,17 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   vector<vector<SqrMatV> > PPdme(3,vector<SqrMatV>(3));
   vector<vector<SqrMatV> > PPdmg(3,vector<SqrMatV>(3));
   vector<vector<SqrMatV> > PPdm(3,vector<SqrMatV>(3));
-  vector<vector<RowVecV> > rPdme(3,vector<RowVecV>(3));
-  vector<vector<RowVecV> > rPdmg(3,vector<RowVecV>(3));
-  vector<vector<RowVecV> > rPdm(3,vector<RowVecV>(3));
+  vector<Mat3xV> rPdme(3);
+  vector<Mat3xV> rPdmg(3);
+  vector<Mat3xV> rPdm(3);
   for(int i=0; i<3; i++) {
+    rPdme[i].resize(4);
+    rPdmg[i].resize(2*n+2);
+    rPdm[i].resize(2*n);
     for(int j=0; j<3; j++) {
       PPdme[i][j].resize(4);
       PPdmg[i][j].resize(2*n+2);
       PPdm[i][j].resize(2*n);
-      rPdme[i][j].resize(4);
-      rPdmg[i][j].resize(2*n+2);
-      rPdm[i][j].resize(2*n);
     }
   }
   SymMatV Kee(4);
@@ -150,18 +150,19 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
     PPdme[0][0] *= 1./12*rho*d2*pow(h2,3);
     PPdme[1][1] *= rho*d2*h2;
 
-    rPdme[0][1](0) = rho*d2*h2*pow(D,2)*((i+1)/2.-7./20);
-    rPdme[0][1](1) = rho*d2*h2*pow(D,2)*((i+1)*D/12.-D/20);
-    rPdme[0][1](2) = rho*d2*h2*pow(D,2)*((i+1)/2.-3./20);
-    rPdme[0][1](3) = rho*d2*h2*pow(D,2)*(-(i+1)*D/12+D/30);
-    rPdme[1][0](0) = rho*1./12*d2*pow(h2,3);
-    rPdme[1][0](2) = rho*-1./12*d2*pow(h2,3);
+    rPdme[0](1,0) = rho*d2*h2*pow(D,2)*((i+1)/2.-7./20);
+    rPdme[0](1,1) = rho*d2*h2*pow(D,2)*((i+1)*D/12.-D/20);
+    rPdme[0](1,2) = rho*d2*h2*pow(D,2)*((i+1)/2.-3./20);
+    rPdme[0](1,3) = rho*d2*h2*pow(D,2)*(-(i+1)*D/12+D/30);
+    rPdme[1](0,0) = rho*1./12*d2*pow(h2,3);
+    rPdme[1](0,2) = rho*-1./12*d2*pow(h2,3);
 
-    for(int j=0; j<3; j++)
+    for(int j=0; j<3; j++) {
+      rPdmg[j].add(Index(0,2),Index(i1,i2),rPdme[j]);
       for(int k=0; k<3; k++) {
 	PPdmg[j][k].add(Index(i1,i2),Index(i1,i2),PPdme[j][k]);
-	rPdmg[j][k].add(Index(i1,i2),rPdme[j][k]);
       }
+    }
 
     Kee(0,0) = 12./pow(D,3);
     Kee(0,1) = 6./pow(D,2);
@@ -194,7 +195,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
 	      r++;
 	    }
           }
-          rPdm[j][k](h) = rPdmg[j][k](ii);
+          rPdm[j](k,h) = rPdmg[j](k,ii);
 	  h++;
 	}
       }
