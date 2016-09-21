@@ -1,5 +1,6 @@
 PROJECT_BRIEF          = "MBSim Flexible Body Module"
 INPUT                  = @top_srcdir@/mbsimFlexibleBody
+RECURSIVE              = YES
 PROJECT_NAME           = @PACKAGE@
 PROJECT_NUMBER         = @VERSION@
 GENERATE_TAGFILE       = html/mbsimflexiblebody.tag
