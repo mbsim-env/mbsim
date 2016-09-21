@@ -249,7 +249,6 @@ namespace MBSim {
       static bool getBool(xercesc::DOMElement *e);
       static fmatvec::Vec3 getVec3(xercesc::DOMElement *e);
       static fmatvec::Vec getVec(xercesc::DOMElement *e, int rows=0);
-      static fmatvec::RowVec getRowVec(xercesc::DOMElement *e, int cols=0);
       static fmatvec::Mat3xV getMat3xV(xercesc::DOMElement *e, int cols=0);
       static fmatvec::Mat getMat(xercesc::DOMElement *e, int rows=0, int cols=0);
       static fmatvec::SqrMat3 getSqrMat3(xercesc::DOMElement *e);

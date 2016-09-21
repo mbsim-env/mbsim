@@ -123,33 +123,33 @@ namespace MBSimFlexibleBody {
     mmi2.resize(ne,vector<SqrMat3>(ne));
 
     for(int i=0; i<ne; i++) {
-      mmi1[i](0,0) = 2.*(rPdm[1][1](i) + rPdm[2][2](i));
-      mmi1[i](0,1) = -(rPdm[1][0](i) + rPdm[0][1](i));
-      mmi1[i](0,2) = -(rPdm[2][0](i) + rPdm[0][2](i));
-      mmi1[i](1,1) = 2.*(rPdm[0][0](i) + rPdm[2][2](i));
-      mmi1[i](1,2) = -(rPdm[2][1](i) + rPdm[1][2](i));
-      mmi1[i](2,2) = 2.*(rPdm[0][0](i) + rPdm[1][1](i));
+      mmi1[i](0,0) = 2.*(rPdm[1](1,i) + rPdm[2](2,i));
+      mmi1[i](0,1) = -(rPdm[1](0,i) + rPdm[0](1,i));
+      mmi1[i](0,2) = -(rPdm[2](0,i) + rPdm[0](2,i));
+      mmi1[i](1,1) = 2.*(rPdm[0](0,i) + rPdm[2](2,i));
+      mmi1[i](1,2) = -(rPdm[2](1,i) + rPdm[1](2,i));
+      mmi1[i](2,2) = 2.*(rPdm[0](0,i) + rPdm[1](1,i));
 
-      Oe0.e(i,0) = -rPdm[2][2](i) - rPdm[1][1](i);
-      Oe0.e(i,1) = -rPdm[2][2](i) - rPdm[0][0](i);
-      Oe0.e(i,2) = -rPdm[1][1](i) - rPdm[0][0](i);
-      Oe0(i,3) = rPdm[0][1](i) + rPdm[1][0](i);
-      Oe0(i,4) = rPdm[1][2](i) + rPdm[2][1](i);
-      Oe0(i,5) = rPdm[2][0](i) + rPdm[0][2](i);
+      Oe0.e(i,0) = -rPdm[2](2,i) - rPdm[1](1,i);
+      Oe0.e(i,1) = -rPdm[2](2,i) - rPdm[0](0,i);
+      Oe0.e(i,2) = -rPdm[1](1,i) - rPdm[0](0,i);
+      Oe0(i,3) = rPdm[0](1,i) + rPdm[1](0,i);
+      Oe0(i,4) = rPdm[1](2,i) + rPdm[2](1,i);
+      Oe0(i,5) = rPdm[2](0,i) + rPdm[0](2,i);
 
-      Gr0[i](0,0) = 2.*(rPdm[2][2](i) + rPdm[1][1](i));
-      Gr0[i](0,1) = -2.*rPdm[1][0](i);
-      Gr0[i](0,2) = -2.*rPdm[2][0](i);
-      Gr0[i](1,0) = -2.*rPdm[0][1](i);
-      Gr0[i](1,1) = 2.*(rPdm[2][2](i) + rPdm[0][0](i));
-      Gr0[i](1,2) = -2.*rPdm[2][1](i);
-      Gr0[i](2,0) = -2.*rPdm[0][2](i);
-      Gr0[i](2,1) = -2.*rPdm[1][2](i);
-      Gr0[i](2,2) = 2.*(rPdm[1][1](i) + rPdm[0][0](i));
+      Gr0[i](0,0) = 2.*(rPdm[2](2,i) + rPdm[1](1,i));
+      Gr0[i](0,1) = -2.*rPdm[1](0,i);
+      Gr0[i](0,2) = -2.*rPdm[2](0,i);
+      Gr0[i](1,0) = -2.*rPdm[0](1,i);
+      Gr0[i](1,1) = 2.*(rPdm[2](2,i) + rPdm[0](0,i));
+      Gr0[i](1,2) = -2.*rPdm[2](1,i);
+      Gr0[i](2,0) = -2.*rPdm[0](2,i);
+      Gr0[i](2,1) = -2.*rPdm[1](2,i);
+      Gr0[i](2,2) = 2.*(rPdm[1](1,i) + rPdm[0](0,i));
 
-      Cr0.e(i,0) = rPdm[1][2].e(i) - rPdm[2][1].e(i);
-      Cr0.e(i,1) = rPdm[2][0].e(i) - rPdm[0][2].e(i);
-      Cr0.e(i,2) = rPdm[0][1].e(i) - rPdm[1][0].e(i);
+      Cr0.e(i,0) = rPdm[1](2,i) - rPdm[2](1,i);
+      Cr0.e(i,1) = rPdm[2](0,i) - rPdm[0](2,i);
+      Cr0.e(i,2) = rPdm[0](1,i) - rPdm[1](0,i);
 
       for(int j=i; j<ne; j++) {
         Me.ej(i,j) = PPdm[0][0].e(i,j) + PPdm[1][1].e(i,j) + PPdm[2][2].e(i,j);
@@ -810,15 +810,12 @@ namespace MBSimFlexibleBody {
     setShapeFunctionIntegral(getMat3xV(e));
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegral");
-    rPdm = vector<vector<RowVecV> >(3,vector<RowVecV>(3));
+    rPdm = vector<Mat3xV>(3);
     for(int i=0; i<3; i++) {
-      for(int j=0; j<3; j++) {
-        stringstream s;
-        s << "ele" << i+1 << j+1;
-        ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
-        if(ee)
-          rPdm[i][j].resize() = getRowVec(ee);
-      }
+      stringstream s;
+      s << "ele" << i+1;
+      ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
+      rPdm[i].resize() = getMat3xV(ee);
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
@@ -828,8 +825,7 @@ namespace MBSimFlexibleBody {
         stringstream s;
         s << "ele" << i+1 << j+1;
         ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
-        if(ee)
-          PPdm[i][j].resize() = getSqrMat(ee);
+        PPdm[i][j].resize() = getSqrMat(ee);
       }
     }
 

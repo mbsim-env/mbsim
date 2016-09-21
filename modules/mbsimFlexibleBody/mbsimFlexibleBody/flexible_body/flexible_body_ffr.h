@@ -173,7 +173,7 @@ namespace MBSimFlexibleBody {
       void setPositionIntegral(const fmatvec::Vec3 &rdm_) { rdm = rdm_; }
       void setPositionPositionIntegral(const fmatvec::SymMat3& rrdm_) { rrdm = rrdm_; }
       void setShapeFunctionIntegral(const fmatvec::Mat3xV &Pdm_) { Pdm = Pdm_; }
-      void setPositionShapeFunctionIntegral(const std::vector<std::vector<fmatvec::RowVecV> > &rPdm_) { rPdm = rPdm_; }
+      void setPositionShapeFunctionIntegral(const std::vector<fmatvec::Mat3xV> &rPdm_) { rPdm = rPdm_; }
       void setShapeFunctionShapeFunctionIntegral(const std::vector<std::vector<fmatvec::SqrMatV> > &PPdm_) { PPdm = PPdm_; }
       void setStiffnessMatrix(const fmatvec::SymMatV &Ke0_) { Ke0 = Ke0_; }
       void setDampingMatrix(const fmatvec::SymMatV &De0_) { De0 = De0_; }
@@ -264,7 +264,7 @@ namespace MBSimFlexibleBody {
       fmatvec::SymMat3 rrdm, mmi0;
       fmatvec::Mat3xV Pdm;
       std::vector<std::vector<fmatvec::SqrMatV> > PPdm, Knl2, Ke2;
-      std::vector<std::vector<fmatvec::RowVecV> > rPdm;
+      std::vector<fmatvec::Mat3xV> rPdm;
       std::vector<std::vector<fmatvec::SqrMat3> > mmi2, Gr1;
       std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;
       fmatvec::Vec2 beta;
