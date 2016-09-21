@@ -48,8 +48,8 @@ namespace MBSimFlexibleBody {
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
-      void setModeShapeOfTranslation(const fmatvec::Mat3xV &Phi_) { Phi = Phi_; }
-      void setModeShapeOfRotation(const fmatvec::Mat3xV &Psi_) { Psi = Psi_; }
+      void setShapeMatrixOfTranslation(const fmatvec::Mat3xV &Phi_) { Phi = Phi_; }
+      void setShapeMatrixOfRotation(const fmatvec::Mat3xV &Psi_) { Psi = Psi_; }
       void setStressMatrix(const fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> &sigmahel_) { sigmahel = sigmahel_; }
       void setNonlinearStressMatrix(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahen_) { sigmahen = sigmahen_; }
       void setInitialStress(const fmatvec::Vector<fmatvec::Fixed<6>, double > &sigma0_) { sigma0 = sigma0_; }

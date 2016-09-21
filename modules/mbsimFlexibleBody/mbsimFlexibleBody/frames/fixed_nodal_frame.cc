@@ -146,10 +146,10 @@ namespace MBSimFlexibleBody {
     if(ec) setRelativePosition(getVec3(ec));
     ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeOrientation");
     if(ec) setRelativeOrientation(getSqrMat3(ec));
-    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeShapeOfTranslation");
-    setModeShapeOfTranslation(getMat(ec));
-    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeShapeOfRotation");
-    if(ec) setModeShapeOfRotation(getSqrMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfTranslation");
+    setShapeMatrixOfTranslation(getMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfRotation");
+    if(ec) setShapeMatrixOfRotation(getMat(ec));
     ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stressMatrix");
     if(ec) setStressMatrix(getMat(ec));
     ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStressMatrix");

@@ -327,14 +327,14 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="modeShapeOfTranslation" type="pv:nounitMatrix">
+          <xs:element name="shapeMatrixOfTranslation" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="modeShapeOfRotation" type="pv:nounitMatrix" minOccurs="0">
+          <xs:element name="shapeMatrixOfRotation" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 tbd
@@ -516,10 +516,10 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="elei" maxOccurs="unbounded">
+                <xs:element name="ele" maxOccurs="unbounded">
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element name="elej" type="pv:nounitMatrix" maxOccurs="unbounded"/>
+                      <xs:element name="ele" type="pv:nounitMatrix" maxOccurs="unbounded"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
