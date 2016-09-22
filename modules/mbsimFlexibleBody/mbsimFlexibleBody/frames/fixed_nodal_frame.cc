@@ -164,18 +164,20 @@ namespace MBSimFlexibleBody {
     if(ec) setInitialStress(getVec(ec));
     ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToForce");
     if(ec) {
-      ec=ec->getFirstElementChild();
-      while(ec) {
-        K0F.push_back(getSqrMat(ec));
-        ec=ec->getNextElementSibling();
+      K0F = vector<SqrMatV>(3);
+      for(int i=0; i<3; i++) {
+        stringstream s;
+        s << "ele" << i+1;
+        K0F[i].resize() = getSqrMat(MBXMLUtils::E(ec)->getFirstElementChildNamed(MBSIMFLEX%s.str()));
       }
     }
     ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToMoment");
     if(ec) {
-      ec=ec->getFirstElementChild();
-      while(ec) {
-        K0M.push_back(getSqrMat(ec));
-        ec=ec->getNextElementSibling();
+      K0M = vector<SqrMatV>(3);
+      for(int i=0; i<3; i++) {
+        stringstream s;
+        s << "ele" << i+1;
+        K0M[i].resize() = getSqrMat(MBXMLUtils::E(ec)->getFirstElementChildNamed(MBSIMFLEX%s.str()));
       }
     }
   }
