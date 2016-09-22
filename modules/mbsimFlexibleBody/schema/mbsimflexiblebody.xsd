@@ -375,9 +375,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele1" type="pv:nounitMatrix"/>
-                <xs:element name="ele2" type="pv:nounitMatrix"/>
-                <xs:element name="ele3" type="pv:nounitMatrix"/>
+                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -389,9 +387,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele1" type="pv:nounitMatrix"/>
-                <xs:element name="ele2" type="pv:nounitMatrix"/>
-                <xs:element name="ele3" type="pv:nounitMatrix"/>
+                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -447,9 +443,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele1" type="pv:nounitMatrix"/>
-                <xs:element name="ele2" type="pv:nounitMatrix"/>
-                <xs:element name="ele3" type="pv:nounitMatrix"/>
+                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -461,15 +455,13 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele11" type="pv:nounitMatrix"/>
-                <xs:element name="ele12" type="pv:nounitMatrix"/>
-                <xs:element name="ele13" type="pv:nounitMatrix"/>
-                <xs:element name="ele21" type="pv:nounitMatrix"/>
-                <xs:element name="ele22" type="pv:nounitMatrix"/>
-                <xs:element name="ele23" type="pv:nounitMatrix"/>
-                <xs:element name="ele31" type="pv:nounitMatrix"/>
-                <xs:element name="ele32" type="pv:nounitMatrix"/>
-                <xs:element name="ele33" type="pv:nounitMatrix"/>
+                <xs:element name="row" minOccurs="3" maxOccurs="3">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -514,7 +506,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele" maxOccurs="unbounded">
+                <xs:element name="row" maxOccurs="unbounded">
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element name="ele" type="pv:nounitMatrix" maxOccurs="unbounded"/>
@@ -546,9 +538,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele1" type="pv:nounitMatrix"/>
-                <xs:element name="ele2" type="pv:nounitMatrix"/>
-                <xs:element name="ele3" type="pv:nounitMatrix"/>
+                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -560,9 +550,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele1" type="pv:nounitMatrix"/>
-                <xs:element name="ele2" type="pv:nounitMatrix"/>
-                <xs:element name="ele3" type="pv:nounitMatrix"/>
+                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -574,9 +562,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ele1" type="pv:nounitMatrix"/>
-                <xs:element name="ele2" type="pv:nounitMatrix"/>
-                <xs:element name="ele3" type="pv:nounitMatrix"/>
+                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

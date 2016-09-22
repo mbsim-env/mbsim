@@ -777,7 +777,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
+    DOMElement *e;
     Body::initializeUsingXML(element);
 
     // frames
@@ -811,22 +811,22 @@ namespace MBSimFlexibleBody {
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegral");
     rPdm = vector<Mat3xV>(3);
+    e=e->getFirstElementChild();
     for(int i=0; i<3; i++) {
-      stringstream s;
-      s << "ele" << i+1;
-      ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
-      rPdm[i].resize() = getMat3xV(ee);
+      rPdm[i].resize() = getMat3xV(e);
+      e=e->getNextElementSibling();
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
     PPdm = vector<vector<SqrMatV> >(3,vector<SqrMatV>(3));
+    e=e->getFirstElementChild();
     for(int i=0; i<3; i++) {
+      DOMElement *ee=e->getFirstElementChild();
       for(int j=0; j<3; j++) {
-        stringstream s;
-        s << "ele" << i+1 << j+1;
-        ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
         PPdm[i][j].resize() = getSqrMat(ee);
+        ee=ee->getNextElementSibling();
       }
+      e=e->getNextElementSibling();
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stiffnessMatrix");
@@ -852,7 +852,7 @@ namespace MBSimFlexibleBody {
       e=e->getFirstElementChild();
       while(e) {
         Knl2.push_back(vector<SqrMatV>());
-        ee=e->getFirstElementChild();
+        DOMElement *ee=e->getFirstElementChild();
         while(ee) {
           Knl2[Knl2.size()-1].push_back(getSqrMat(ee));
           ee=ee->getNextElementSibling();
@@ -870,33 +870,30 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration");
     if(e) {
       K0t = vector<SqrMatV>(3);
+      e=e->getFirstElementChild();
       for(int i=0; i<3; i++) {
-        stringstream s;
-        s << "ele" << i+1;
-        ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
-        K0t[i].resize() = getSqrMat(ee);
+        K0t[i].resize() = getSqrMat(e);
+        e=e->getNextElementSibling();
       }
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration");
     if(e) {
       K0r = vector<SqrMatV>(3);
+      e=e->getFirstElementChild();
       for(int i=0; i<3; i++) {
-        stringstream s;
-        s << "ele" << i+1;
-        ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
-        K0r[i].resize() = getSqrMat(ee);
+        K0r[i].resize() = getSqrMat(e);
+        e=e->getNextElementSibling();
       }
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity");
     if(e) {
       K0om = vector<SqrMatV>(3);
+      e=e->getFirstElementChild();
       for(int i=0; i<3; i++) {
-        stringstream s;
-        s << "ele" << i+1;
-        ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%s.str());
-        K0om[i].resize() = getSqrMat(ee);
+        K0om[i].resize() = getSqrMat(e);
+        e=e->getNextElementSibling();
       }
     }
 
