@@ -53,7 +53,6 @@ namespace MBSimGUI {
     xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
-    QMenu* createContextMenu() {return new BodyContextMenu(this);}
     protected:
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;

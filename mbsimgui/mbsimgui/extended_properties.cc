@@ -126,13 +126,31 @@ namespace MBSimGUI {
         }
         return 0;
       }
-      else {
+      else if(mode<=5) {
         DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
         if(e) {
           DOMElement* ee=e;
           if(ee) {
             for(int i=0; i<factory->getSize(); i++) {
               DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
+              if(eee) {
+                index = i;
+                property = factory->createProperty(i);
+                if(property->initializeUsingXML(ee))
+                  return eee;
+              }
+            }
+          }
+        }
+        return 0;
+      }
+      else {
+        DOMElement *e=element;
+        if(e) {
+          DOMElement* ee=e;
+          if(ee) {
+            for(int i=0; i<factory->getSize(); i++) {
+              DOMElement *eee=(mode==6)?ee->getFirstElementChild():ee;
               if(eee) {
                 index = i;
                 property = factory->createProperty(i);

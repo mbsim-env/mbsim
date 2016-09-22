@@ -73,7 +73,6 @@ namespace MBSimGUI {
       void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
       void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
       void createConstraintItem(Constraint *observer, const QModelIndex &parent = QModelIndex());
-
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 
       std::map<std::string, QModelIndex> idEleMap;

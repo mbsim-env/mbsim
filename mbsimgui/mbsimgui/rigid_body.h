@@ -41,6 +41,8 @@ namespace MBSimGUI {
     void setConstrained(bool b) {constrained = b;}
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
+    QMenu* createContextMenu() {return new RigidBodyContextMenu(this);}
+    QMenu* createFrameContextMenu() {return new FixedRelativeFrameContextContextMenu(this);}
     protected:
     bool constrained;
     ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow;

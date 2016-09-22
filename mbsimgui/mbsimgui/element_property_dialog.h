@@ -27,6 +27,7 @@ namespace MBSimGUI {
   class Element;
   class Frame;
   class FixedRelativeFrame;
+  class FixedNodalFrame;
   class Contour;
   class RigidContour;
   class Point;
@@ -43,6 +44,7 @@ namespace MBSimGUI {
   class Object;
   class Body;
   class RigidBody;
+  class FlexibleBodyFFR;
   class Constraint;
   class GearConstraint;
   class KinematicConstraint;
@@ -122,6 +124,16 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *refFrame, *position, *orientation;
+  };
+
+  class FixedNodalFramePropertyDialog : public FramePropertyDialog {
+
+    public:
+      FixedNodalFramePropertyDialog(FixedNodalFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *position, *orientation, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M;
   };
 
   class ContourPropertyDialog : public ElementPropertyDialog {
@@ -291,6 +303,21 @@ namespace MBSimGUI {
     protected:
       ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
       RigidBody *body;
+  };
+
+  class FlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
+
+    public:
+      FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+      void resizeGeneralizedPosition();
+      void resizeGeneralizedVelocity();
+      int getqRelSize() const;
+      int getuRelSize() const;
+    protected:
+      ExtWidget *mass, *pdm, *ppdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *jointForceArrow, *jointMomentArrow;
+      FlexibleBodyFFR *body;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {

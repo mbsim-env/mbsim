@@ -68,14 +68,27 @@ namespace MBSimGUI {
       void addModel();
   };
 
-  class FrameContextContextMenu : public QMenu {
+  class FixedRelativeFrameContextContextMenu : public QMenu {
     Q_OBJECT
 
     public:
-      FrameContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+      FixedRelativeFrameContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
 
       protected slots:
         void addFixedRelativeFrame();
+
+    protected:
+      Element *element;
+  };
+
+  class FixedNodalFrameContextContextMenu : public QMenu {
+    Q_OBJECT
+
+    public:
+      FixedNodalFrameContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+
+      protected slots:
+        void addFixedNodalFrame();
 
     protected:
       Element *element;
@@ -132,6 +145,7 @@ namespace MBSimGUI {
 
       protected slots:
         void addRigidBody();
+        void addFlexibleBodyFFR();
 
     protected:
       Element *element;
@@ -275,20 +289,36 @@ namespace MBSimGUI {
       FixedRelativeFrameContextMenu(Element *frame, QWidget * parent = 0); 
   };
 
+  class FixedNodalFrameContextMenu : public FrameContextMenu {
+
+    public:
+      FixedNodalFrameContextMenu(Element *frame, QWidget * parent = 0);
+  };
+
   class ObjectContextMenu : public ElementContextMenu {
 
     public:
       ObjectContextMenu(Element *object, QWidget * parent = 0);
   };
 
-  class BodyContextMenu : public ObjectContextMenu {
+  class RigidBodyContextMenu : public ObjectContextMenu {
     Q_OBJECT
 
     public:
-      BodyContextMenu(Element *body, QWidget * parent = 0);
+      RigidBodyContextMenu(Element *body, QWidget * parent = 0);
 
       protected slots:
         void addFixedRelativeFrame();
+  };
+
+  class FlexibleBodyFFRContextMenu : public ObjectContextMenu {
+    Q_OBJECT
+
+    public:
+      FlexibleBodyFFRContextMenu(Element *body, QWidget * parent = 0);
+
+      protected slots:
+        void addFixedNodalFrame();
   };
 
 }

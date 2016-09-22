@@ -21,6 +21,7 @@
 #include "element_context_menu.h"
 #include "mainwindow.h"
 #include "rigid_body.h"
+#include "flexible_body_ffr.h"
 #include "constraint.h"
 #include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
@@ -97,6 +98,9 @@ namespace MBSimGUI {
   FixedRelativeFrameContextMenu::FixedRelativeFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
   }
 
+  FixedNodalFrameContextMenu::FixedNodalFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
+  }
+
   GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool removable) : ElementContextMenu(element,parent,removable) {
     QAction *action;
     action = new QAction("Add frame", this);
@@ -171,7 +175,7 @@ namespace MBSimGUI {
   ObjectContextMenu::ObjectContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,true) {
   } 
 
-  BodyContextMenu::BodyContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
+  RigidBodyContextMenu::RigidBodyContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
     QAction *action;
     action = new QAction("Add frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
@@ -180,18 +184,42 @@ namespace MBSimGUI {
     addMenu(menu);
   } 
 
-  void BodyContextMenu::addFixedRelativeFrame() {
+  void RigidBodyContextMenu::addFixedRelativeFrame() {
     mw->addFrame(new FixedRelativeFrame("P",element));
   }
 
-  FrameContextContextMenu::FrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  FlexibleBodyFFRContextMenu::FlexibleBodyFFRContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
+    QAction *action;
+    action = new QAction("Add frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFixedNodalFrame()));
+    addAction(action);
+    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
+    addMenu(menu);
+  }
+
+  void FlexibleBodyFFRContextMenu::addFixedNodalFrame() {
+    std::cout << "addFixedNodalFrame" <<std::endl;
+    mw->addFrame(new FixedNodalFrame("P",element));
+  }
+
+  FixedRelativeFrameContextContextMenu::FixedRelativeFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QAction *action = new QAction("Add frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
     addAction(action);
   }
 
-  void FrameContextContextMenu::addFixedRelativeFrame() {
+  void FixedRelativeFrameContextContextMenu::addFixedRelativeFrame() {
     mw->addFrame(new FixedRelativeFrame("P",element));
+  }
+
+  FixedNodalFrameContextContextMenu::FixedNodalFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+    QAction *action = new QAction("Add frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFixedNodalFrame()));
+    addAction(action);
+  }
+
+  void FixedNodalFrameContextContextMenu::addFixedNodalFrame() {
+    mw->addFrame(new FixedNodalFrame("P",element));
   }
 
   ContourContextContextMenu::ContourContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -279,10 +307,17 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add rigid body", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
     addAction(action);
+    action = new QAction("Add flexible body ffr", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleBodyFFR()));
+    addAction(action);
   }
 
   void BodyContextContextMenu::addRigidBody() {
     mw->addObject(new RigidBody("RigidBody",element));
+  }
+
+  void BodyContextContextMenu::addFlexibleBodyFFR() {
+    mw->addObject(new FlexibleBodyFFR("FlexibleBodyFFR",element));
   }
 
   ConstraintContextContextMenu::ConstraintContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
