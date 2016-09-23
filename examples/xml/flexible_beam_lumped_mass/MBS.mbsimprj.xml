@@ -16,7 +16,7 @@
         <fromFile href="mij.dat"/>
       </matrixParameter>
       <scalarParameter name="nf" unit="-">size(u0,1)</scalarParameter>
-      <scalarParameter name="a7" unit="-">id = fopen('data.asc')
+      <scalarParameter name="m" unit="-">id = fopen('data.asc')
 if(id==-1)
 
 nn = size(mij,1);
@@ -73,12 +73,60 @@ save -append -text 'data.asc' rPdm
 save -append -text 'data.asc' PPdm
 save -append -text 'data.asc' Ke
 
-ret = 1;
+ret = m;
 else
 fclose(id)
-ret = 0;
+  ret=load('data.asc','m').m
 end
 </scalarParameter>
+      <vectorParameter name="rdm" unit="-">
+          load('data.asc','rdm').rdm
+</vectorParameter>
+      <matrixParameter name="rrdm" unit="-">
+          load('data.asc','rrdm').rrdm
+</matrixParameter>
+      <matrixParameter name="Pdm" unit="-">
+          load('data.asc','Pdm').Pdm
+</matrixParameter>
+      <matrixParameter name="rPdm1" unit="-">
+            load('data.asc','rPdm').rPdm{1}
+</matrixParameter>
+      <matrixParameter name="rPdm2" unit="-">
+            load('data.asc','rPdm').rPdm{2}
+</matrixParameter>
+      <matrixParameter name="rPdm3" unit="-">
+            load('data.asc','rPdm').rPdm{3}
+</matrixParameter>
+      <matrixParameter name="PPdm11" unit="-">
+              load('data.asc','PPdm').PPdm{1,1}
+</matrixParameter>
+      <matrixParameter name="PPdm12" unit="-">
+              load('data.asc','PPdm').PPdm{1,2}
+</matrixParameter>
+      <matrixParameter name="PPdm13" unit="-">
+              load('data.asc','PPdm').PPdm{1,3}
+</matrixParameter>
+      <matrixParameter name="PPdm21" unit="-">
+              load('data.asc','PPdm').PPdm{2,1}
+</matrixParameter>
+      <matrixParameter name="PPdm22" unit="-">
+              load('data.asc','PPdm').PPdm{2,2}
+</matrixParameter>
+      <matrixParameter name="PPdm23" unit="-">
+              load('data.asc','PPdm').PPdm{2,3}
+</matrixParameter>
+      <matrixParameter name="PPdm31" unit="-">
+              load('data.asc','PPdm').PPdm{3,1}
+</matrixParameter>
+      <matrixParameter name="PPdm32" unit="-">
+              load('data.asc','PPdm').PPdm{3,2}
+</matrixParameter>
+      <matrixParameter name="PPdm33" unit="-">
+              load('data.asc','PPdm').PPdm{3,3}
+</matrixParameter>
+      <matrixParameter name="Ke" unit="-">
+          load('data.asc','Ke').Ke
+</matrixParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -86,34 +134,34 @@ end
       <groups/>
       <objects>
         <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
-          <mass unit="mg">load('data.asc','m').m</mass>
-          <positionIntegral>load('data.asc','rdm').rdm</positionIntegral>
-          <positionPositionIntegral unit="kg*m^2">load('data.asc','rrdm').rrdm</positionPositionIntegral>
-          <shapeFunctionIntegral>load('data.asc','Pdm').Pdm</shapeFunctionIntegral>
+          <mass unit="kg">m</mass>
+          <positionIntegral>rdm</positionIntegral>
+          <positionPositionIntegral unit="kg*m^2">rrdm</positionPositionIntegral>
+          <shapeFunctionIntegral>Pdm</shapeFunctionIntegral>
           <positionShapeFunctionIntegral>
-            <ele>load('data.asc','rPdm').rPdm{1}
+            <ele>rPdm1
 </ele>
-            <ele>load('data.asc','rPdm').rPdm{2}</ele>
-            <ele>load('data.asc','rPdm').rPdm{3}</ele>
+            <ele>rPdm2</ele>
+            <ele>rPdm3</ele>
           </positionShapeFunctionIntegral>
           <shapeFunctionShapeFunctionIntegral>
             <row>
-              <ele>load('data.asc','PPdm').PPdm{1,1}</ele>
-              <ele>load('data.asc','PPdm').PPdm{1,2}</ele>
-              <ele>load('data.asc','PPdm').PPdm{1,3}</ele>
+              <ele>PPdm11</ele>
+              <ele>PPdm12</ele>
+              <ele>PPdm13</ele>
             </row>
             <row>
-              <ele>load('data.asc','PPdm').PPdm{2,1}</ele>
-              <ele>load('data.asc','PPdm').PPdm{2,2}</ele>
-              <ele>load('data.asc','PPdm').PPdm{2,3}</ele>
+              <ele>PPdm21</ele>
+              <ele>PPdm22</ele>
+              <ele>PPdm23</ele>
             </row>
             <row>
-              <ele>load('data.asc','PPdm').PPdm{3,1}</ele>
-              <ele>load('data.asc','PPdm').PPdm{3,2}</ele>
-              <ele>load('data.asc','PPdm').PPdm{3,3}</ele>
+              <ele>PPdm31</ele>
+              <ele>PPdm32</ele>
+              <ele>PPdm33</ele>
             </row>
           </shapeFunctionShapeFunctionIntegral>
-          <stiffnessMatrix>load('data.asc','Ke').Ke</stiffnessMatrix>
+          <stiffnessMatrix>Ke</stiffnessMatrix>
           <frames>
             <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="nf" counterName="n">
               <Parameter/>
