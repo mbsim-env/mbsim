@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <matrixParameter name="u0" unit="-">
+        <fromFile href="u0.dat"/>
+      </matrixParameter>
+      <scalarParameter name="nf" unit="-">size(u0,1)</scalarParameter>
+      <matrixParameter name="V" unit="-">
+        <fromFile href="modeShapeMatrix.dat"/>
+      </matrixParameter>
+      <scalarParameter name="nm">size(V,2)</scalarParameter>
+      <matrixParameter name="mij" unit="-">
+        <fromFile href="mij.dat"/>
+      </matrixParameter>
+      <matrixParameter name="Kmat" unit="-">
+        <fromFile href="stiffnessMatrix.dat"/>
+      </matrixParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
+          <mass unit="kg">sum(mij)</mass>
+          <positionIntegral unit="-">ret = zeros(3,1);
+for j = 1:nf 
+  ret += mij(j)*u0(j,:)';
+end
+</positionIntegral>
+          <positionPositionIntegral unit="kg*m^2">ret = zeros(3,3);
+for k = 1:3
+  for l = 1:3
+    for j = 1:nf 
+      ret(k,l) += mij(j)*u0(j,k)*u0(j,l);
+    end
+  end
+end
+</positionPositionIntegral>
+          <shapeFunctionIntegral unit="-">Sb = zeros(3,nm);
+for j = 1:nf
+  Sb += mij(j)*V(3*(j-1)+1:3*(j-1)+3,:);
+end
+ret = Sb(:,1)
+</shapeFunctionIntegral>
+          <positionShapeFunctionIntegral>
+            <ele unit="-">k=1
+A = zeros(3,nm);
+for j = 1:nf 
+  A += mij(j)*u0(j,k)*V(3*(j-1)+1:3*(j-1)+3,:);
+end
+ret = A(:,1)
+</ele>
+            <ele unit="-">k=2
+A = zeros(3,nm);
+for j = 1:nf 
+  A += mij(j)*u0(j,k)*V(3*(j-1)+1:3*(j-1)+3,:);
+end
+ret = A(:,1)
+</ele>
+            <ele unit="-">k=3
+A = zeros(3,nm);
+for j = 1:nf 
+  A += mij(j)*u0(j,k)*V(3*(j-1)+1:3*(j-1)+3,:);
+end
+ret = A(:,1)
+</ele>
+          </positionShapeFunctionIntegral>
+          <shapeFunctionShapeFunctionIntegral>
+            <row>
+              <ele unit="-">k=1;l=1;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)</ele>
+              <ele unit="-">k=1;l=2;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)</ele>
+              <ele unit="-">k=1;l=3;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)
+        </ele>
+            </row>
+            <row>
+              <ele unit="-">k=2;l=1;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)</ele>
+              <ele unit="-">k=2;l=2;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)
+         </ele>
+              <ele unit="-">k=2;l=3;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)</ele>
+            </row>
+            <row>
+              <ele unit="-">k=3;l=1;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)</ele>
+              <ele unit="-">k=3;l=2;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)
+        </ele>
+              <ele unit="-">k=3;l=3;
+A = zeros(nm,nm);
+for j = 1:nf
+  A += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+end
+ret=A(1,1)</ele>
+            </row>
+          </shapeFunctionShapeFunctionIntegral>
+          <stiffnessMatrix unit="-">K = zeros(3*nf);
+for i=1:size(Kmat,1)
+  z = Kmat(i,:);
+  K(3*z(1)+z(2)-3,3*z(3)+z(4)-3) = z(5);
+  K(3*z(3)+z(4)-3,3*z(1)+z(2)-3) = z(5);
+end
+Ke = V'*K*V;
+ret = Ke(1,1)</stiffnessMatrix>
+          <frames>
+            <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="nf" counterName="n">
+              <Parameter/>
+              <FixedNodalFrame xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="P{n}">
+                <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                  <?OPENMBV_ID 6?>
+                </enableOpenMBV>
+                <relativePosition unit="m">u0(n,:)'</relativePosition>
+                <shapeMatrixOfTranslation unit="-">V(3*(n-1)+1:3*(n-1)+3,1)</shapeMatrixOfTranslation>
+              </FixedNodalFrame>
+            </Embed>
+          </frames>
+          <contours/>
+          <enableOpenMBVFrameK>
+            <?OPENMBV_ID 3?>
+          </enableOpenMBVFrameK>
+        </FlexibleBodyFFR>
+      </objects>
+      <links>
+        <KineticExcitation name="KineticExcitation">
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>-1</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceFunction>
+            <ConstantFunction>
+              <a0>1e7</a0>
+            </ConstantFunction>
+          </forceFunction>
+          <connect ref="../Object[Body]/Frame[P{138}]"/>
+          <enableOpenMBVForce>
+            <?OPENMBV_ID 7?>
+            <scaleLength unit="-">1e-6</scaleLength>
+          </enableOpenMBVForce>
+          <enableOpenMBVMoment>
+            <?OPENMBV_ID 7?>
+          </enableOpenMBVMoment>
+        </KineticExcitation>
+      </links>
+      <enableOpenMBVFrameI>
+        <?OPENMBV_ID 1?>
+      </enableOpenMBVFrameI>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
+    <initialStepSize unit="s">0</initialStepSize>
+    <maximalStepSize unit="s">0</maximalStepSize>
+  </DOPRI5Integrator>
+
+</MBSimProject>
