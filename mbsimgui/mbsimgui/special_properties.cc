@@ -83,15 +83,15 @@ namespace MBSimGUI {
   }
 
   void OneDimMatArrayProperty::fromWidget(QWidget *widget) {
-    resize_(static_cast<OneDimBasicMatArrayWidget*>(widget)->getArray().size());
+    resize_(static_cast<OneDimMatArrayWidget*>(widget)->getArray().size());
     for(int i=0; i<ele.size(); i++)
-      ele[i].fromWidget(static_cast<OneDimBasicMatArrayWidget*>(widget)->getArray()[i]);
+      ele[i].fromWidget(static_cast<OneDimMatArrayWidget*>(widget)->getArray()[i]);
   }
 
   void OneDimMatArrayProperty::toWidget(QWidget *widget) {
-    static_cast<OneDimBasicMatArrayWidget*>(widget)->resize_(ele.size());
+    static_cast<OneDimMatArrayWidget*>(widget)->resize_(ele.size(),0,0);
     for(int i=0; i<ele.size(); i++)
-      ele[i].toWidget(static_cast<OneDimBasicMatArrayWidget*>(widget)->getArray()[i]);
+      ele[i].toWidget(static_cast<OneDimMatArrayWidget*>(widget)->getArray()[i]);
   }
 
   TwoDimMatArrayProperty::TwoDimMatArrayProperty(int size, int m, int n, const MBXMLUtils::FQN &xmlName_, bool var_) : xmlName(xmlName_), var(var_) {
@@ -178,17 +178,17 @@ namespace MBSimGUI {
   }
 
   void TwoDimMatArrayProperty::fromWidget(QWidget *widget) {
-    resize_(static_cast<TwoDimBasicMatArrayWidget*>(widget)->getArray().size());
+    resize_(static_cast<TwoDimMatArrayWidget*>(widget)->getArray().size());
     for(int i=0; i<ele.size(); i++)
       for(int j=0; j<ele.size(); j++)
-        ele[i][j].fromWidget(static_cast<TwoDimBasicMatArrayWidget*>(widget)->getArray()[i][j]);
+        ele[i][j].fromWidget(static_cast<TwoDimMatArrayWidget*>(widget)->getArray()[i][j]);
   }
 
   void TwoDimMatArrayProperty::toWidget(QWidget *widget) {
-    static_cast<TwoDimBasicMatArrayWidget*>(widget)->resize_(ele.size());
+    static_cast<TwoDimMatArrayWidget*>(widget)->resize_(ele.size(),0,0);
     for(int i=0; i<ele.size(); i++)
       for(int j=0; j<ele.size(); j++)
-        ele[i][j].toWidget(static_cast<TwoDimBasicMatArrayWidget*>(widget)->getArray()[i][j]);
+        ele[i][j].toWidget(static_cast<TwoDimMatArrayWidget*>(widget)->getArray()[i][j]);
   }
 
 }

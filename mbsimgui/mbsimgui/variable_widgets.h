@@ -291,6 +291,7 @@ namespace MBSimGUI {
       SymMatWidget(int rows);
       SymMatWidget(const std::vector<std::vector<QString> > &A);
       void resize_(int rows);
+      void resize_(int rows, int cols) { resize_(rows); }
       std::vector<std::vector<QString> > getMat() const;
       void setMat(const std::vector<std::vector<QString> > &A);
       void setReadOnly(bool flag);
@@ -375,8 +376,8 @@ namespace MBSimGUI {
       QComboBox* unit;
       QStringList units;
       int defaultUnit;
-      protected slots:
-        void openEvalDialog();
+    protected slots:
+      void openEvalDialog();
     public:
       PhysicalVariableWidget(VariableWidget *widget, const QStringList &units=QStringList(), int defaultUnit=0);
       QString getValue() const {return widget->getValue();}
@@ -499,6 +500,7 @@ namespace MBSimGUI {
   class MatWidgetFactory : public WidgetFactory {
     public:
       MatWidgetFactory();
+      MatWidgetFactory(int m, int n, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
       MatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
       MatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
       QWidget* createWidget(int i=0);

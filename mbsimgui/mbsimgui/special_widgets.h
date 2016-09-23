@@ -28,91 +28,24 @@ namespace MBSimGUI {
   class ExtWidget;
   class ExtProperty;
 
-  class OneDimBasicMatArrayWidget : public Widget {
-    public:
-      virtual const std::vector<ExtWidget*>& getArray() const = 0;
-      virtual void resize_(int size, int m=3, int n=1) = 0;
-    protected:
-  };
-
-  class OneDimMatColsVarArrayWidget : public OneDimBasicMatArrayWidget {
+  class OneDimMatArrayWidget : public Widget {
       std::vector<ExtWidget*> ele;
     public:
-      OneDimMatColsVarArrayWidget(int size=3, int m=3, int n=1);
+      OneDimMatArrayWidget(int size=3, int m=3, int n=1);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
-      void resize_(int size, int m=3, int n=1);
+      void resize_(int size, int m, int n);
+      void resize_(int size, int m);
   };
 
-  class OneDimSqrMatSizeVarArrayWidget : public OneDimBasicMatArrayWidget {
-      std::vector<ExtWidget*> ele;
-    public:
-      OneDimSqrMatSizeVarArrayWidget(int size=3, int n=1);
-      const std::vector<ExtWidget*>& getArray() const { return ele; }
-      void resize_(int size, int m=3, int n=1);
-  };
-
-  class OneDimVarSizeMatColsVarArrayWidget : public OneDimBasicMatArrayWidget {
-    Q_OBJECT
-    protected:
-      OneDimMatColsVarArrayWidget *widget;
-      CustomSpinBox *sizeCombo;
-      int m;
-    public:
-      OneDimVarSizeMatColsVarArrayWidget(int size, int m, int n);
-      const std::vector<ExtWidget*>& getArray() const { return widget->getArray(); }
-      void resize_(int size, int m=3, int n=1);
-    public slots:
-      void currentIndexChanged(int);
-    signals:
-      void sizeChanged(int);
-  };
-
-  class OneDimVarSizeSqrMatSizeVarArrayWidget : public OneDimBasicMatArrayWidget {
-    Q_OBJECT
-    protected:
-      OneDimSqrMatSizeVarArrayWidget *widget;
-      CustomSpinBox *sizeCombo;
-    public:
-      OneDimVarSizeSqrMatSizeVarArrayWidget(int size, int n);
-      const std::vector<ExtWidget*>& getArray() const { return widget->getArray(); }
-      void resize_(int size, int m=3, int n=1);
-    public slots:
-      void currentIndexChanged(int);
-    signals:
-      void sizeChanged(int);
-  };
-
-  class TwoDimBasicMatArrayWidget : public Widget {
-    public:
-      virtual const std::vector<std::vector<ExtWidget*> >& getArray() const = 0;
-      virtual void resize_(int size, int m=3, int n=1) = 0;
-    protected:
-  };
-
-  class TwoDimSqrMatSizeVarArrayWidget: public TwoDimBasicMatArrayWidget {
+  class TwoDimMatArrayWidget: public Widget {
     protected:
       std::vector<std::vector<ExtWidget*> > ele;
     public:
-      TwoDimSqrMatSizeVarArrayWidget(int size=3, int n=1);
+      TwoDimMatArrayWidget(int size=3, int m=3, int n=1);
       const std::vector<std::vector<ExtWidget*> >& getArray() const { return ele; }
-      void resize_(int size, int m=3, int n=1);
+      void resize_(int size, int m, int n);
+      void resize_(int m, int n);
  };
-
- class TwoDimVarSizeSqrMatSizeVarArrayWidget : public TwoDimBasicMatArrayWidget {
-    Q_OBJECT
-    protected:
-      TwoDimSqrMatSizeVarArrayWidget *widget;
-      CustomSpinBox *sizeCombo;
-    public:
-      TwoDimVarSizeSqrMatSizeVarArrayWidget(int size, int n);
-      const std::vector<std::vector<ExtWidget*> >& getArray() const { return widget->getArray(); }
-      void resize_(int size, int m=3, int n=1);
-    public slots:
-      void currentIndexChanged(int);
-    signals:
-      void sizeChanged(int);
-  };
-
 
 }
 

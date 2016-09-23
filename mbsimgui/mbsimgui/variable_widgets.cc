@@ -995,6 +995,12 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
+  MatWidgetFactory::MatWidgetFactory(int m, int n, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(getMat<QString>(m,n,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
   MatWidgetFactory::MatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Matrix";
     name[1] = "File";

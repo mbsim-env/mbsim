@@ -741,11 +741,12 @@ namespace MBSimGUI {
     }
     catch(const std::exception &error) {
       message = string("An exception occurred in updateParameters: ") + error.what();
+      cout << message << endl;
     }
     catch(...) {
       message = "An unknown exception occurred in updateParameters.";
+      cout << message << endl;
     }
-    cout << message << endl;
   }
 
   void MainWindow::saveDataAs() {

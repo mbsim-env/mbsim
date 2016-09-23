@@ -28,14 +28,14 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  OneDimMatColsVarArrayWidget::OneDimMatColsVarArrayWidget(int size, int m, int n) {
+  OneDimMatArrayWidget::OneDimMatArrayWidget(int size, int m, int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     resize_(size,m,n);
   }
 
-  void OneDimMatColsVarArrayWidget::resize_(int size, int m, int n) {
+  void OneDimMatArrayWidget::resize_(int size, int m, int n) {
     if(ele.size()!=size) {
 //      vector<QString> buf(box.size());
       for(unsigned int i=0; i<ele.size(); i++) {
@@ -46,7 +46,7 @@ namespace MBSimGUI {
       ele.resize(size);
       for(int i=0; i<size; i++) {
         QString name = QString("ele")+QString::number(i+1);
-        ele[i] = new ExtWidget(name,new ChoiceWidget2(new MatColsVarWidgetFactory(m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
+        ele[i] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
         layout()->addWidget(ele[i]);
       }
 //      for(int i=0; i<min((int)buf.size(),size); i++)
@@ -54,98 +54,19 @@ namespace MBSimGUI {
     }
   }
 
-  OneDimSqrMatSizeVarArrayWidget::OneDimSqrMatSizeVarArrayWidget(int size, int n)  {
+  void OneDimMatArrayWidget::resize_(int m, int n) {
+    for(int i=0; i<ele.size(); i++)
+      ele[i]->resize_(m,n);
+  }
+
+  TwoDimMatArrayWidget::TwoDimMatArrayWidget(int size, int m, int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    resize_(size,n,n);
-  }
-
-  void OneDimSqrMatSizeVarArrayWidget::resize_(int size, int m, int n) {
-    if(ele.size()!=size) {
-      for(unsigned int i=0; i<ele.size(); i++) {
-        layout()->removeWidget(ele[i]);
-        delete ele[i];
-      }
-      ele.resize(size);
-      for(int i=0; i<size; i++) {
-        QString name = QString("ele")+QString::number(i+1);
-        ele[i] = new ExtWidget(name,new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(m,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
-        layout()->addWidget(ele[i]);
-      }
-    }
-  }
-
-  OneDimVarSizeMatColsVarArrayWidget::OneDimVarSizeMatColsVarArrayWidget(int size, int m_, int n) : m(m_) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    layout->addWidget(box);
-    sizeCombo = new CustomSpinBox;
-    sizeCombo->setRange(1,100);
-    sizeCombo->setValue(size);
-    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    hbox->addWidget(sizeCombo);
-    hbox->addStretch(2);
-    widget = new OneDimMatColsVarArrayWidget(size,m,n);
-    layout->addWidget(widget);
-  }
-
-  void OneDimVarSizeMatColsVarArrayWidget::resize_(int size, int m, int n) {
-    widget->resize_(size,m,n);
-    sizeCombo->blockSignals(true);
-    sizeCombo->setValue(size);
-    sizeCombo->blockSignals(false);
-  }
-
-  void OneDimVarSizeMatColsVarArrayWidget::currentIndexChanged(int size) {
-    widget->resize_(size,m,size);
-    emit sizeChanged(size);
-  }
-
-  OneDimVarSizeSqrMatSizeVarArrayWidget::OneDimVarSizeSqrMatSizeVarArrayWidget(int size, int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    layout->addWidget(box);
-    sizeCombo = new CustomSpinBox;
-    sizeCombo->setRange(1,100);
-    sizeCombo->setValue(size);
-    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    hbox->addWidget(sizeCombo);
-    hbox->addStretch(2);
-    widget = new OneDimSqrMatSizeVarArrayWidget(size,n);
-    layout->addWidget(widget);
-  }
-
-  void OneDimVarSizeSqrMatSizeVarArrayWidget::resize_(int size, int m, int n) {
-    widget->resize_(size,m,n);
-    sizeCombo->blockSignals(true);
-    sizeCombo->setValue(size);
-    sizeCombo->blockSignals(false);
-  }
-
-  void OneDimVarSizeSqrMatSizeVarArrayWidget::currentIndexChanged(int size) {
-    widget->resize_(size,size,size);
-    emit sizeChanged(size);
-  }
-
-  TwoDimSqrMatSizeVarArrayWidget::TwoDimSqrMatSizeVarArrayWidget(int size, int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    resize_(size,n,n);
+    resize_(size,m,n);
  }
 
-  void TwoDimSqrMatSizeVarArrayWidget::resize_(int size, int m, int n) {
+  void TwoDimMatArrayWidget::resize_(int size, int m, int n) {
     if(ele.size()!=size) {
       for(unsigned int i=0; i<ele.size(); i++) {
         for(unsigned int j=0; j<ele.size(); j++) {
@@ -158,42 +79,17 @@ namespace MBSimGUI {
         ele[i].resize(size);
         for(int j=0; j<size; j++) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
-          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(m,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
+          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,m,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
           layout()->addWidget(ele[i][j]);
         }
       }
     }
   }
 
-  TwoDimVarSizeSqrMatSizeVarArrayWidget::TwoDimVarSizeSqrMatSizeVarArrayWidget(int size, int n) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    layout->addWidget(box);
-    sizeCombo = new CustomSpinBox;
-    sizeCombo->setRange(1,100);
-    sizeCombo->setValue(size);
-    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    hbox->addWidget(sizeCombo);
-    hbox->addStretch(2);
-    widget = new TwoDimSqrMatSizeVarArrayWidget(size,n);
-    layout->addWidget(widget);
-  }
-
-  void TwoDimVarSizeSqrMatSizeVarArrayWidget::resize_(int size, int m, int n) {
-    widget->resize_(size,m,n);
-    sizeCombo->blockSignals(true);
-    sizeCombo->setValue(size);
-    sizeCombo->blockSignals(false);
-  }
-
-  void TwoDimVarSizeSqrMatSizeVarArrayWidget::currentIndexChanged(int size) {
-    widget->resize_(size,size,size);
-    emit sizeChanged(size);
+  void TwoDimMatArrayWidget::resize_(int m, int n) {
+    for(int i=0; i<ele.size(); i++)
+      for(int j=0; j<ele[i].size(); j++)
+        ele[i][j]->resize_(m,n);
   }
 
 }
