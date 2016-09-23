@@ -170,11 +170,16 @@ namespace MBSimGUI {
     setValue(str);
   }
 
-  QWidget* ExpressionWidget::getValidatedWidget() const {
+  vector<vector<QString> > ExpressionWidget::getMat() const {
+    if(getValue().isEmpty())
+      return vector<vector<QString> >();
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
-    vector<vector<QString> > A = strToMat(str);
-    return new MatWidget(A);
+    return strToMat(str);
+  }
+
+  QWidget* ExpressionWidget::getValidatedWidget() const {
+    return new MatWidget(getMat());
   }
 
   ScalarWidget::ScalarWidget(const QString &d) {
@@ -453,6 +458,7 @@ namespace MBSimGUI {
   void MatColsVarWidget::currentIndexChanged(int cols) {
     widget->resize_(widget->rows(),cols);
     emit sizeChanged(cols);
+    emit Widget::resize_();
   }
 
   bool MatColsVarWidget::validate(const vector<vector<QString> > &A) const {
@@ -858,6 +864,8 @@ namespace MBSimGUI {
     QPushButton *evalButton = new QPushButton("Eval");
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
     layout->addWidget(evalButton);
+
+    connect(widget_,SIGNAL(resize_()),this,SIGNAL(resize_()));
   }
 
   void PhysicalVariableWidget::openEvalDialog() {

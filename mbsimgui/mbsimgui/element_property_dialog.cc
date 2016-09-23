@@ -178,25 +178,27 @@ namespace MBSimGUI {
     orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", orientation);
 
-    Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
+    int size = static_cast<FlexibleBodyFFR*>(element->getParent())->getqElSize();
+
+    Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new MatWidgetFactory(3,size,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
     addToTab("General",Phi);
 
-    Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new MatWidgetFactory(3,size,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
     addToTab("General",Psi);
 
-    sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new MatWidgetFactory(6,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new MatWidgetFactory(6,size,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
     addToTab("General",sigmahel);
 
-    sigmahen = new ExtWidget("Nonlinear stress matrix",new OneDimMatArrayWidget(1,6,1),true);
+    sigmahen = new ExtWidget("Nonlinear stress matrix",new OneDimMatArrayWidget(size,6,size),true);
     addToTab("General",sigmahen);
 
     sigma0 = new ExtWidget("Initial stress",new ChoiceWidget2(new VecWidgetFactory(6,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
     addToTab("General",sigma0);
 
-    K0F = new ExtWidget("Geometric stiffness matrix due to force",new OneDimMatArrayWidget(3,1,1),true);
+    K0F = new ExtWidget("Geometric stiffness matrix due to force",new OneDimMatArrayWidget(3,size,size),true);
     addToTab("General",K0F);
 
-    K0M = new ExtWidget("Geometric stiffness matrix due to moment",new OneDimMatArrayWidget(3,1,1),true);
+    K0M = new ExtWidget("Geometric stiffness matrix due to moment",new OneDimMatArrayWidget(3,size,size),true);
     addToTab("General",K0M);
 
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
@@ -204,8 +206,6 @@ namespace MBSimGUI {
 
   void FixedNodalFramePropertyDialog::resizeVariables() {
     int size = static_cast<FlexibleBodyFFR*>(element->getParent())->getqElSize();
-    if(size==-1)
-      size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->getWidget())->cols();
     Phi->resize_(3,size);
     Psi->resize_(3,size);
     sigmahel->resize_(6,size);
@@ -228,6 +228,7 @@ namespace MBSimGUI {
     static_cast<FixedNodalFrame*>(element)->sigma0.toWidget(sigma0);
     static_cast<FixedNodalFrame*>(element)->K0F.toWidget(K0F);
     static_cast<FixedNodalFrame*>(element)->K0M.toWidget(K0M);
+    resizeVariables();
   }
 
   void FixedNodalFramePropertyDialog::fromWidget(Element *element) {
@@ -800,15 +801,13 @@ namespace MBSimGUI {
     jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
     addToTab("Visualisation",jointMomentArrow);
 
-//    connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
-//    connect(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget()), SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
-    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+    connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+    connect(Pdm->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(resizeVariables()));
   }
 
   void FlexibleBodyFFRPropertyDialog::resizeVariables() {
-    MatColsVarWidget *mat = dynamic_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->getWidget());
-    int size = 1;
-    if(mat) size = mat->cols();
+    int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
     static_cast<OneDimMatArrayWidget*>(rPdm->getWidget())->resize_(3,size);
     static_cast<TwoDimMatArrayWidget*>(PPdm->getWidget())->resize_(size,size);
     Ke->resize_(size,size);
@@ -1262,33 +1261,17 @@ namespace MBSimGUI {
     refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
     addToTab("Kinetics", refFrameID);
 
-    vector<PhysicalVariableWidget*> input;
-    MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
-    forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft),true);
     addToTab("Kinetics",forceDirection);
-
-    connect(forceDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
-    connect(forceDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
     forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
     addToTab("Kinetics",forceFunction);
 
-    connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-    input.clear();
-    MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
-    momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft),true);
     addToTab("Kinetics",momentDirection);
-
-    connect(momentDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
-    connect(momentDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
     momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
     addToTab("Kinetics",momentFunction);
-
-    connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
     connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectFramesWidgetFactory(kineticExcitation)));
     addToTab("Kinetics",connections);
@@ -1299,12 +1282,24 @@ namespace MBSimGUI {
     momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
     addToTab("Visualisation",momentArrow);
 
+    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+    connect(forceDirection->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+    connect(momentDirection->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
   }
 
   void KineticExcitationPropertyDialog::resizeVariables() {
-    int size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(forceDirection->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->cols();
-    forceFunction->resize_(size,1);
+    if(forceDirection->isActive()) {
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(forceDirection->getWidget())->getWidget())->cols();
+      forceFunction->resize_(size,1);
+    }
+    if(momentDirection->isActive()) {
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(momentDirection->getWidget())->getWidget())->cols();
+      momentFunction->resize_(size,1);
+    }
   }
 
   void KineticExcitationPropertyDialog::toWidget(Element *element) {

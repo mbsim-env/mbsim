@@ -51,6 +51,8 @@ namespace MBSimGUI {
       virtual QString getType() const = 0;
       virtual bool validate(const std::vector<std::vector<QString> > &A) const {return true;}
       virtual QWidget* getValidatedWidget() const {return 0;}
+      virtual int rows() const { return 1; }
+      virtual int cols() const { return 1; }
   };
 
   class BoolWidget : public VariableWidget {
@@ -74,6 +76,9 @@ namespace MBSimGUI {
       void setValue(const QString &str) { value->setPlainText(str); }
       virtual QString getType() const {return "Editor";}
       virtual QWidget* getValidatedWidget() const;
+      std::vector<std::vector<QString> > getMat() const;
+      int rows() const { return getMat().size(); }
+      int cols() const { return getMat().size()?getMat()[0].size():0; }
 
     private:
       QPlainTextEdit *value;
@@ -391,6 +396,8 @@ namespace MBSimGUI {
       QString getUnit() const {return unit->currentText();}
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       void resize_(int rows, int cols) { widget->resize_(rows,cols); }
+      int rows() const { return widget->rows(); }
+      int cols() const { return widget->cols(); }
   };
 
   //class VecFromFileWidget : public VariableWidget {

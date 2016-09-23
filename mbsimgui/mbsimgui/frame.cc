@@ -24,6 +24,7 @@
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
+#include "flexible_body_ffr.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -116,19 +117,21 @@ namespace MBSimGUI {
 
     orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIMFLEX%"relativeOrientation"),"",4));
 
-    Phi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfTranslation",vector<string>(3,"")),"",4));
+    int size = static_cast<FlexibleBodyFFR*>(parent)->getqElSize();
 
-    Psi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfRotation",vector<string>(3,"")),"",4));
+    Phi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,size,"0"),MBSIMFLEX%"shapeMatrixOfTranslation",vector<string>(3,"")),"",4));
 
-    sigmahel.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,1,"0"),MBSIMFLEX%"stressMatrix",vector<string>(3,"")),"",4));
+    Psi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,size,"0"),MBSIMFLEX%"shapeMatrixOfRotation",vector<string>(3,"")),"",4));
 
-    sigmahen.setProperty(new OneDimMatArrayProperty(1,6,1,MBSIMFLEX%"nonlinearStressMatrix",true));
+    sigmahel.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,size,"0"),MBSIMFLEX%"stressMatrix",vector<string>(3,"")),"",4));
+
+    sigmahen.setProperty(new OneDimMatArrayProperty(size,6,size,MBSIMFLEX%"nonlinearStressMatrix",true));
 
     sigma0.setProperty(new ChoiceProperty2(new VecPropertyFactory(6,MBSIMFLEX%"initialStress",vector<string>(3,"")),"",4));
 
-    K0F.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToForce"));
+    K0F.setProperty(new OneDimMatArrayProperty(3,size,size,MBSIMFLEX%"geometricStiffnessMatrixDueToForce"));
 
-    K0M.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToMoment"));
+    K0M.setProperty(new OneDimMatArrayProperty(3,size,size,MBSIMFLEX%"geometricStiffnessMatrixDueToMoment"));
   }
 
   DOMElement* FixedNodalFrame::initializeUsingXML(DOMElement *element) {

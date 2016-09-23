@@ -34,6 +34,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
   extern QDir mbsDir;
   extern bool absolutePath;
 
@@ -92,6 +93,14 @@ namespace MBSimGUI {
     DOMText *text = doc->createTextNode(X()%getValue());
     parent->insertBefore(text, NULL);
     return 0;
+  }
+
+  vector<vector<string> > ExpressionProperty::getMat() const {
+    if(getValue().empty())
+      return vector<vector<string> >();
+    string str = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue()));
+    str = removeWhiteSpace(str);
+    return strToMat(str);
   }
 
   DOMElement* ScalarProperty::initializeUsingXML(DOMElement *element) {

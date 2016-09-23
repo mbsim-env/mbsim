@@ -198,7 +198,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyFFRContextMenu::addFixedNodalFrame() {
-    std::cout << "addFixedNodalFrame" <<std::endl;
     mw->addFrame(new FixedNodalFrame("P",element));
   }
 

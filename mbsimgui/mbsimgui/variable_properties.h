@@ -40,6 +40,8 @@ namespace MBSimGUI {
       virtual void setValue(const std::string &str) = 0;
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
+      virtual int rows() const { return 1; }
+      virtual int cols() const { return 1; }
   };
 
   class ExpressionProperty : public VariableProperty {
@@ -50,6 +52,9 @@ namespace MBSimGUI {
       void setValue(const std::string &str) { value = str; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      std::vector<std::vector<std::string> > getMat() const;
+      int rows() const { return getMat().size(); }
+      int cols() const { return getMat().size()?getMat()[0].size():0; }
 
     private:
       std::string value;
@@ -165,6 +170,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
+      int rows() const { return value->rows(); }
+      int cols() const { return value->cols(); }
   };
 
   //class VecFromFileProperty : public VariableProperty {
