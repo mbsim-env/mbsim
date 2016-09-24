@@ -33,23 +33,14 @@ namespace MBSimGUI {
 
     refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
 
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
-    forceDirection.setProperty(new ExtPhysicalVarProperty(input));
+    forceDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"forceDirection",vector<string>(3,"-")),"",4));
 
     forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceFunction",0));
 
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
-    momentDirection.setProperty(new ExtPhysicalVarProperty(input));
+    momentDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"momentDirection",vector<string>(3,"-")),"",4));
 
     momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
 
-    // vector<Property*> widget;
-    // widget.push_back(new ConnectFramesProperty(1,this));
-    // widget.push_back(new ConnectFramesProperty(2,this));
-
-    // connections.setProperty(new ChoiceProperty2("",widget,2)); 
     connections.setProperty(new ChoiceProperty2(new ConnectFramesPropertyFactory(this),"",4)); 
 
     forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));

@@ -21,6 +21,7 @@
 #include "element_property_dialog.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
+#include "special_widgets.h"
 #include "kinematics_widgets.h"
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
@@ -30,7 +31,8 @@
 #include "dynamic_system_solver.h"
 #include "frame.h"
 #include "contour.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
+#include "flexible_body_ffr.h"
 #include "constraint.h"
 #include "signal_processing_system.h"
 #include "linear_transfer_system.h"
@@ -165,6 +167,81 @@ namespace MBSimGUI {
     static_cast<FixedRelativeFrame*>(element)->position.fromWidget(position);
     static_cast<FixedRelativeFrame*>(element)->orientation.fromWidget(orientation);
     static_cast<FixedRelativeFrame*>(element)->refFrame.fromWidget(refFrame);
+  }
+
+  FixedNodalFramePropertyDialog::FixedNodalFramePropertyDialog(FixedNodalFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
+    addTab("Kinematics",1);
+
+    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft),true);
+    addToTab("Kinematics", position);
+
+    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true);
+    addToTab("Kinematics", orientation);
+
+    int size = static_cast<FlexibleBodyFFR*>(element->getParent())->getqElSize();
+
+    Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new MatWidgetFactory(3,size,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
+    addToTab("General",Phi);
+
+    Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new MatWidgetFactory(3,size,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    addToTab("General",Psi);
+
+    sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new MatWidgetFactory(6,size,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    addToTab("General",sigmahel);
+
+    sigmahen = new ExtWidget("Nonlinear stress matrix",new OneDimMatArrayWidget(size,6,size),true);
+    addToTab("General",sigmahen);
+
+    sigma0 = new ExtWidget("Initial stress",new ChoiceWidget2(new VecWidgetFactory(6,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
+    addToTab("General",sigma0);
+
+    K0F = new ExtWidget("Geometric stiffness matrix due to force",new OneDimMatArrayWidget(3,size,size),true);
+    addToTab("General",K0F);
+
+    K0M = new ExtWidget("Geometric stiffness matrix due to moment",new OneDimMatArrayWidget(3,size,size),true);
+    addToTab("General",K0M);
+
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+  }
+
+  void FixedNodalFramePropertyDialog::resizeVariables() {
+    int size = static_cast<FlexibleBodyFFR*>(element->getParent())->getqElSize();
+    Phi->resize_(3,size);
+    Psi->resize_(3,size);
+    sigmahel->resize_(6,size);
+    if(sigmahen->isActive())
+      static_cast<OneDimMatArrayWidget*>(sigmahen->getWidget())->resize_(size,6,size);
+    if(K0F->isActive())
+      static_cast<OneDimMatArrayWidget*>(K0F->getWidget())->resize_(size,size);
+    if(K0M->isActive())
+      static_cast<OneDimMatArrayWidget*>(K0M->getWidget())->resize_(size,size);
+  }
+
+  void FixedNodalFramePropertyDialog::toWidget(Element *element) {
+    FramePropertyDialog::toWidget(element);
+    static_cast<FixedNodalFrame*>(element)->position.toWidget(position);
+    static_cast<FixedNodalFrame*>(element)->orientation.toWidget(orientation);
+    static_cast<FixedNodalFrame*>(element)->Phi.toWidget(Phi);
+    static_cast<FixedNodalFrame*>(element)->Psi.toWidget(Psi);
+    static_cast<FixedNodalFrame*>(element)->sigmahel.toWidget(sigmahel);
+    static_cast<FixedNodalFrame*>(element)->sigmahen.toWidget(sigmahen);
+    static_cast<FixedNodalFrame*>(element)->sigma0.toWidget(sigma0);
+    static_cast<FixedNodalFrame*>(element)->K0F.toWidget(K0F);
+    static_cast<FixedNodalFrame*>(element)->K0M.toWidget(K0M);
+    resizeVariables();
+  }
+
+  void FixedNodalFramePropertyDialog::fromWidget(Element *element) {
+    FramePropertyDialog::fromWidget(element);
+    static_cast<FixedNodalFrame*>(element)->position.fromWidget(position);
+    static_cast<FixedNodalFrame*>(element)->orientation.fromWidget(orientation);
+    static_cast<FixedNodalFrame*>(element)->Phi.fromWidget(Phi);
+    static_cast<FixedNodalFrame*>(element)->Psi.fromWidget(Psi);
+    static_cast<FixedNodalFrame*>(element)->sigmahel.fromWidget(sigmahel);
+    static_cast<FixedNodalFrame*>(element)->sigmahen.fromWidget(sigmahen);
+    static_cast<FixedNodalFrame*>(element)->sigma0.fromWidget(sigma0);
+    static_cast<FixedNodalFrame*>(element)->K0F.fromWidget(K0F);
+    static_cast<FixedNodalFrame*>(element)->K0M.fromWidget(K0M);
   }
 
   ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
@@ -647,6 +724,200 @@ namespace MBSimGUI {
     u0->resize_(size,1);
   }
 
+  FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
+    addTab("Visualisation",3);
+
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits())),QBoxLayout::RightToLeft));
+    addToTab("General",mass);
+
+    pdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft));
+    addToTab("General", pdm);
+
+    ppdm = new ExtWidget("Position position integral",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    addToTab("General",ppdm);
+
+    Pdm = new ExtWidget("Shape function integral",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
+    addToTab("General",Pdm);
+
+    rPdm = new ExtWidget("Position shape function integral",new OneDimMatArrayWidget());
+    addToTab("General",rPdm);
+
+    PPdm = new ExtWidget("Shape function shape function integral",new TwoDimMatArrayWidget(3,1,1));
+    addToTab("General",PPdm);
+
+    Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    addToTab("General",Ke);
+
+    De = new ExtWidget("Damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft),true);
+    addToTab("General",De);
+
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget2(new VecWidgetFactory(2,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
+    addToTab("General", beta);
+
+    Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new OneDimMatArrayWidget(1,1,1),true);
+    addToTab("General",Knl1);
+
+    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new TwoDimMatArrayWidget(1,1,1),true);
+    addToTab("General",Knl2);
+
+    ksigma0 = new ExtWidget("Initial stress integral",new ChoiceWidget2(new VecWidgetFactory(1,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
+    addToTab("General", ksigma0);
+
+    ksigma1 = new ExtWidget("Nonlinear initial stress integral",new ChoiceWidget2(new MatWidgetFactory(1,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    addToTab("General", ksigma1);
+
+    K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new OneDimMatArrayWidget(3,1,1),true);
+    addToTab("General",K0t);
+
+    K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new OneDimMatArrayWidget(3,1,1),true);
+    addToTab("General",K0r);
+
+    K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new OneDimMatArrayWidget(3,1,1),true);
+    addToTab("General",K0om);
+
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
+    addToTab("Kinematics", translation);
+    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
+    addToTab("Kinematics", rotation);
+    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true);
+    addToTab("Kinematics", translationDependentRotation);
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true);
+    addToTab("Kinematics", coordinateTransformationForRotation);
+
+//    ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
+//    addToTab("Visualisation", ombvEditor);
+
+    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",jointForceArrow);
+
+    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",jointMomentArrow);
+
+    connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+    connect(Pdm->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(resizeVariables()));
+  }
+
+  void FlexibleBodyFFRPropertyDialog::resizeVariables() {
+    int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
+    static_cast<OneDimMatArrayWidget*>(rPdm->getWidget())->resize_(3,size);
+    static_cast<TwoDimMatArrayWidget*>(PPdm->getWidget())->resize_(size,size);
+    Ke->resize_(size,size);
+    De->resize_(size,size);
+    if(Knl1->isActive())
+      static_cast<OneDimMatArrayWidget*>(Knl1->getWidget())->resize_(size,size,size);
+    if(Knl2->isActive())
+      static_cast<OneDimMatArrayWidget*>(Knl2->getWidget())->resize_(size,size,size);
+    ksigma0->resize_(size,1);
+    ksigma1->resize_(size,size);
+    if(K0t->isActive())
+      static_cast<OneDimMatArrayWidget*>(K0t->getWidget())->resize_(size,size);
+    if(K0r->isActive())
+      static_cast<OneDimMatArrayWidget*>(K0r->getWidget())->resize_(size,size);
+    if(K0om->isActive())
+      static_cast<OneDimMatArrayWidget*>(K0om->getWidget())->resize_(size,size);
+  }
+
+  void FlexibleBodyFFRPropertyDialog::toWidget(Element *element) {
+    BodyPropertyDialog::toWidget(element);
+    static_cast<FlexibleBodyFFR*>(element)->mass.toWidget(mass);
+    static_cast<FlexibleBodyFFR*>(element)->pdm.toWidget(pdm);
+    static_cast<FlexibleBodyFFR*>(element)->ppdm.toWidget(ppdm);
+    static_cast<FlexibleBodyFFR*>(element)->Pdm.toWidget(Pdm);
+    static_cast<FlexibleBodyFFR*>(element)->rPdm.toWidget(rPdm);
+    static_cast<FlexibleBodyFFR*>(element)->PPdm.toWidget(PPdm);
+    static_cast<FlexibleBodyFFR*>(element)->Ke.toWidget(Ke);
+    static_cast<FlexibleBodyFFR*>(element)->De.toWidget(De);
+    static_cast<FlexibleBodyFFR*>(element)->beta.toWidget(beta);
+    static_cast<FlexibleBodyFFR*>(element)->Knl1.toWidget(Knl1);
+    static_cast<FlexibleBodyFFR*>(element)->Knl2.toWidget(Knl2);
+    static_cast<FlexibleBodyFFR*>(element)->ksigma0.toWidget(ksigma0);
+    static_cast<FlexibleBodyFFR*>(element)->ksigma1.toWidget(ksigma1);
+    static_cast<FlexibleBodyFFR*>(element)->K0t.toWidget(K0t);
+    static_cast<FlexibleBodyFFR*>(element)->K0r.toWidget(K0r);
+    static_cast<FlexibleBodyFFR*>(element)->K0om.toWidget(K0om);
+    static_cast<FlexibleBodyFFR*>(element)->translation.toWidget(translation);
+    static_cast<FlexibleBodyFFR*>(element)->rotation.toWidget(rotation);
+    static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
+    static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
+//    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.toWidget(ombvEditor);
+    static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.toWidget(jointForceArrow);
+    static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
+  }
+
+  void FlexibleBodyFFRPropertyDialog::fromWidget(Element *element) {
+    BodyPropertyDialog::fromWidget(element);
+    static_cast<FlexibleBodyFFR*>(element)->mass.fromWidget(mass);
+    static_cast<FlexibleBodyFFR*>(element)->pdm.fromWidget(pdm);
+    static_cast<FlexibleBodyFFR*>(element)->ppdm.fromWidget(ppdm);
+    static_cast<FlexibleBodyFFR*>(element)->Pdm.fromWidget(Pdm);
+    static_cast<FlexibleBodyFFR*>(element)->rPdm.fromWidget(rPdm);
+    static_cast<FlexibleBodyFFR*>(element)->PPdm.fromWidget(PPdm);
+    static_cast<FlexibleBodyFFR*>(element)->Ke.fromWidget(Ke);
+    static_cast<FlexibleBodyFFR*>(element)->De.fromWidget(De);
+    static_cast<FlexibleBodyFFR*>(element)->beta.fromWidget(beta);
+    static_cast<FlexibleBodyFFR*>(element)->Knl1.fromWidget(Knl1);
+    static_cast<FlexibleBodyFFR*>(element)->Knl2.fromWidget(Knl2);
+    static_cast<FlexibleBodyFFR*>(element)->ksigma0.fromWidget(ksigma0);
+    static_cast<FlexibleBodyFFR*>(element)->ksigma1.fromWidget(ksigma1);
+    static_cast<FlexibleBodyFFR*>(element)->K0t.fromWidget(K0t);
+    static_cast<FlexibleBodyFFR*>(element)->K0r.fromWidget(K0r);
+    static_cast<FlexibleBodyFFR*>(element)->K0om.fromWidget(K0om);
+    static_cast<FlexibleBodyFFR*>(element)->translation.fromWidget(translation);
+    static_cast<FlexibleBodyFFR*>(element)->rotation.fromWidget(rotation);
+    static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
+    static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
+//    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.fromWidget(ombvEditor);
+    static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.fromWidget(jointForceArrow);
+    static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
+  }
+
+  int FlexibleBodyFFRPropertyDialog::getqRelSize() const {
+    int nqT=0, nqR=0;
+    if(translation->isActive()) {
+      ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget());
+      ChoiceWidget2 *trans = static_cast<ChoiceWidget2*>(extWidget->getWidget());
+      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()==1)
+        nqT = 0;
+      else
+        nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
+    }
+    if(rotation->isActive()) {
+      ExtWidget *extWidget = static_cast<ExtWidget*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget());
+      ChoiceWidget2 *rot = static_cast<ChoiceWidget2*>(extWidget->getWidget());
+      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()==1)
+        nqR = 0;
+      else
+        nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
+    }
+    int nq = nqT + nqR;
+    return nq;
+  }
+
+  int FlexibleBodyFFRPropertyDialog::getuRelSize() const {
+    return getqRelSize();
+  }
+
+  void FlexibleBodyFFRPropertyDialog::resizeGeneralizedPosition() {
+    int size =  getqRelSize();
+    q0->resize_(size,1);
+    translation->resize_(3,1);
+    rotation->resize_(3,1);
+    }
+
+  void FlexibleBodyFFRPropertyDialog::resizeGeneralizedVelocity() {
+    int size =  getuRelSize();
+    u0->resize_(size,1);
+  }
+
   ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(constraint,parent,f) {
   }
 
@@ -990,33 +1261,17 @@ namespace MBSimGUI {
     refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
     addToTab("Kinetics", refFrameID);
 
-    vector<PhysicalVariableWidget*> input;
-    MatColsVarWidget *forceDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(forceDirection_,noUnitUnits(),1));
-    forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft),true);
     addToTab("Kinetics",forceDirection);
-
-    connect(forceDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
-    connect(forceDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
     forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
     addToTab("Kinetics",forceFunction);
 
-    connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-    input.clear();
-    MatColsVarWidget *momentDirection_ = new MatColsVarWidget(3,1,1,3);
-    input.push_back(new PhysicalVariableWidget(momentDirection_,noUnitUnits(),1));
-    momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft),true);
     addToTab("Kinetics",momentDirection);
-
-    connect(momentDirection->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
-    connect(momentDirection_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
     momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new FunctionWidgetFactory2(kineticExcitation)),true);
     addToTab("Kinetics",momentFunction);
-
-    connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
     connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectFramesWidgetFactory(kineticExcitation)));
     addToTab("Kinetics",connections);
@@ -1027,12 +1282,24 @@ namespace MBSimGUI {
     momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
     addToTab("Visualisation",momentArrow);
 
+    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+    connect(forceDirection->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(forceFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+    connect(momentDirection->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(momentFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
   }
 
   void KineticExcitationPropertyDialog::resizeVariables() {
-    int size = static_cast<MatColsVarWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ExtPhysicalVarWidget*>(forceDirection->getWidget())->getCurrentPhysicalVariableWidget())->getWidget())->cols();
-    forceFunction->resize_(size,1);
+    if(forceDirection->isActive()) {
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(forceDirection->getWidget())->getWidget())->cols();
+      forceFunction->resize_(size,1);
+    }
+    if(momentDirection->isActive()) {
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(momentDirection->getWidget())->getWidget())->cols();
+      momentFunction->resize_(size,1);
+    }
   }
 
   void KineticExcitationPropertyDialog::toWidget(Element *element) {

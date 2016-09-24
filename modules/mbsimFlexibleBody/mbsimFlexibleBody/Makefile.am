@@ -15,7 +15,8 @@ libmbsimFlexibleBody_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NUR
 libmbsimFlexibleBody_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
 
 mbsimFlexibleBodyincludedir = $(includedir)/mbsimFlexibleBody
-mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
+mbsimFlexibleBodyinclude_HEADERS = namespace.h\
+				   flexible_body.h\
 				   functions_contact.h\
 				   pointer.h\
 				   discretization_interface.h

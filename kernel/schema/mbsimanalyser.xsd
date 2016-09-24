@@ -61,11 +61,6 @@
             tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="autoUpdate" type="pv:booleanFullEval" minOccurs="0">  
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

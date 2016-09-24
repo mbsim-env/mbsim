@@ -111,6 +111,7 @@ namespace MBSimGUI {
     virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
     virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
     virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
+    virtual QMenu* createFrameContextMenu() {return NULL;}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }

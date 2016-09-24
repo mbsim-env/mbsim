@@ -9,7 +9,6 @@ libutils_la_SOURCES = colors.cc\
                       stopwatch.cc\
                       ansatz_functions.cc\
                       openmbv_utils.cc\
-		      octave_utils.cc\
 		      planar_contact_search.cc\
 		      spatial_contact_search.cc
 
@@ -29,7 +28,6 @@ utilsinclude_HEADERS = colors.h\
                        ansatz_functions.h\
 		       boost_parameters.h\
 		       openmbv_utils.h\
-		       octave_utils.h\
 		       planar_contact_search.h\
 		       spatial_contact_search.h
 

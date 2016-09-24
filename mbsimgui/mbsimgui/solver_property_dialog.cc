@@ -428,9 +428,6 @@ namespace MBSimGUI {
 
     determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
     addToTab("General",determineEquilibriumState);
-
-    autoUpdate = new ExtWidget("Auto update",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
-    addToTab("General",autoUpdate);
   }
 
   void EigenanalyserPropertyDialog::toWidget(Solver *solver) {
@@ -443,7 +440,6 @@ namespace MBSimGUI {
     static_cast<Eigenanalyser*>(solver)->amplitude.toWidget(amplitude);
     static_cast<Eigenanalyser*>(solver)->mode.toWidget(mode);
     static_cast<Eigenanalyser*>(solver)->determineEquilibriumState.toWidget(determineEquilibriumState);
-    static_cast<Eigenanalyser*>(solver)->autoUpdate.toWidget(autoUpdate);
   }
 
   void EigenanalyserPropertyDialog::fromWidget(Solver *solver) {
@@ -456,7 +452,6 @@ namespace MBSimGUI {
     static_cast<Eigenanalyser*>(solver)->amplitude.fromWidget(amplitude);
     static_cast<Eigenanalyser*>(solver)->mode.fromWidget(mode);
     static_cast<Eigenanalyser*>(solver)->determineEquilibriumState.fromWidget(determineEquilibriumState);
-    static_cast<Eigenanalyser*>(solver)->autoUpdate.fromWidget(autoUpdate);
   }
 
 }

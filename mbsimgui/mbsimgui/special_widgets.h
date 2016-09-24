@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2016 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,37 +17,35 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _CUSTOM_WIDGETS_H_
-#define _CUSTOM_WIDGETS_H_
+#ifndef _SPECIAL_WIDGETS_H_
+#define _SPECIAL_WIDGETS_H_
 
-#include <QComboBox>
-#include <QSpinBox>
+#include "widget.h"
+#include "custom_widgets.h"
 
 namespace MBSimGUI {
 
-  class CustomComboBox :public QComboBox {
-    public:
-      CustomComboBox(QWidget* parent = 0) : QComboBox(parent) {
-        setFocusPolicy(Qt::StrongFocus);
-      }
+  class ExtWidget;
+  class ExtProperty;
 
-      void wheelEvent(QWheelEvent *e) {
-        if(hasFocus())
-          QComboBox::wheelEvent(e);
-      }
+  class OneDimMatArrayWidget : public Widget {
+      std::vector<ExtWidget*> ele;
+    public:
+      OneDimMatArrayWidget(int size=3, int m=3, int n=1);
+      const std::vector<ExtWidget*>& getArray() const { return ele; }
+      void resize_(int size, int m, int n);
+      void resize_(int size, int m);
   };
 
-  class CustomSpinBox :public QSpinBox {
+  class TwoDimMatArrayWidget: public Widget {
+    protected:
+      std::vector<std::vector<ExtWidget*> > ele;
     public:
-      CustomSpinBox(QWidget* parent = 0) : QSpinBox(parent) {
-        setFocusPolicy(Qt::StrongFocus);
-      }
-
-      void wheelEvent(QWheelEvent *e) {
-        if(hasFocus())
-          QSpinBox::wheelEvent(e);
-      }
-  };
+      TwoDimMatArrayWidget(int size=3, int m=3, int n=1);
+      const std::vector<std::vector<ExtWidget*> >& getArray() const { return ele; }
+      void resize_(int size, int m, int n);
+      void resize_(int m, int n);
+ };
 
 }
 

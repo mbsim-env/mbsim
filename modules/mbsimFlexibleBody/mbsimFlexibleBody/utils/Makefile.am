@@ -12,5 +12,4 @@ libutils_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 utilsinclude_HEADERS = contact_utils.h\
 		       angles.h\
 		       cardan.h\
-		       revcardan.h\
-		       taylor.h
+		       revcardan.h

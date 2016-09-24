@@ -27,6 +27,7 @@
 #include <QVector>
 #include <QApplication>
 #include "element_context_menu.h"
+#include "element.h"
 
 namespace MBSimGUI {
 
@@ -51,7 +52,7 @@ namespace MBSimGUI {
       Element *element;
     public:
       FrameItemData(Element *element_) : BasicItemData("frames",""), element(element_) {}
-      virtual QMenu* createContextMenu() {return new FrameContextContextMenu(element);}
+      virtual QMenu* createContextMenu() {return element->createFrameContextMenu();}
   };
 
   class ContourItemData : public BasicItemData {

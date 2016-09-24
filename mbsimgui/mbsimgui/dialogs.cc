@@ -22,7 +22,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "signal_.h"
 #include "mainwindow.h"
 #include <QVBoxLayout>

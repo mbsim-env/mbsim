@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <matrixParameter name="u0" unit="-">
+        <fromFile href="u0.dat"/>
+      </matrixParameter>
+      <matrixParameter name="V" unit="-">
+        <fromFile href="modeShapeMatrix.dat"/>
+      </matrixParameter>
+      <matrixParameter name="Kmat" unit="-">
+        <fromFile href="stiffnessMatrix.dat"/>
+      </matrixParameter>
+      <matrixParameter name="mij" unit="-">
+        <fromFile href="mij.dat"/>
+      </matrixParameter>
+      <scalarParameter name="nf" unit="-">size(u0,1)</scalarParameter>
+      <scalarParameter name="m" unit="-">id = fopen('data.asc')
+if(id==-1)
+
+nn = size(mij,1);
+nm = size(V,2);
+I = [1:1]';
+
+K = zeros(3*nn);
+for i=1:size(Kmat,1)
+  z = Kmat(i,:);
+  K(3*z(1)+z(2)-3,3*z(3)+z(4)-3) = z(5);
+  K(3*z(3)+z(4)-3,3*z(1)+z(2)-3) = z(5);
+end
+
+Pdm = zeros(3,nm);
+rdm = zeros(3,1);
+rrdm = zeros(3);
+for j = 1:nn
+  Pdm += mij(j)*V(3*(j-1)+1:3*(j-1)+3,:);
+  rdm += mij(j)*u0(j,:)';
+  rrdm += mij(j)*u0(j,:)'*u0(j,:);
+end
+
+for k = 1:3
+  rPdm{k} = zeros(3,nm);
+  for j = 1:nn
+    rPdm{k} += mij(j)*u0(j,k)*V(3*(j-1)+1:3*(j-1)+3,:);
+  end
+  for l = 1:3
+    PPdm{k,l} = zeros(nm);
+    for j = 1:nn
+      PPdm{k,l} += mij(j)*V(3*(j-1)+k:3*(j-1)+k,:)'*V(3*(j-1)+l:3*(j-1)+l,:);
+    end
+  end
+end
+
+m = sum(mij);
+
+Ke = V'*K*V;
+
+Pdm = Pdm(:,I);
+Ke = Ke(I,I);
+ for i=1:3
+rPdm{i} = rPdm{i}(:,I);
+for j=1:3
+PPdm{i,j} = PPdm{i,j}(I,I);
+end
+end
+
+save -text 'data.asc' m
+save -append -text 'data.asc' rdm
+save -append -text 'data.asc' rrdm
+save -append -text 'data.asc' Pdm
+save -append -text 'data.asc' rPdm
+save -append -text 'data.asc' PPdm
+save -append -text 'data.asc' Ke
+
+ret = m;
+else
+fclose(id)
+  ret=load('data.asc','m').m
+end
+</scalarParameter>
+      <vectorParameter name="rdm" unit="-">
+          load('data.asc','rdm').rdm
+</vectorParameter>
+      <matrixParameter name="rrdm" unit="-">
+          load('data.asc','rrdm').rrdm
+</matrixParameter>
+      <matrixParameter name="Pdm" unit="-">
+          load('data.asc','Pdm').Pdm
+</matrixParameter>
+      <matrixParameter name="rPdm1" unit="-">
+            load('data.asc','rPdm').rPdm{1}
+</matrixParameter>
+      <matrixParameter name="rPdm2" unit="-">
+            load('data.asc','rPdm').rPdm{2}
+</matrixParameter>
+      <matrixParameter name="rPdm3" unit="-">
+            load('data.asc','rPdm').rPdm{3}
+</matrixParameter>
+      <matrixParameter name="PPdm11" unit="-">
+              load('data.asc','PPdm').PPdm{1,1}
+</matrixParameter>
+      <matrixParameter name="PPdm12" unit="-">
+              load('data.asc','PPdm').PPdm{1,2}
+</matrixParameter>
+      <matrixParameter name="PPdm13" unit="-">
+              load('data.asc','PPdm').PPdm{1,3}
+</matrixParameter>
+      <matrixParameter name="PPdm21" unit="-">
+              load('data.asc','PPdm').PPdm{2,1}
+</matrixParameter>
+      <matrixParameter name="PPdm22" unit="-">
+              load('data.asc','PPdm').PPdm{2,2}
+</matrixParameter>
+      <matrixParameter name="PPdm23" unit="-">
+              load('data.asc','PPdm').PPdm{2,3}
+</matrixParameter>
+      <matrixParameter name="PPdm31" unit="-">
+              load('data.asc','PPdm').PPdm{3,1}
+</matrixParameter>
+      <matrixParameter name="PPdm32" unit="-">
+              load('data.asc','PPdm').PPdm{3,2}
+</matrixParameter>
+      <matrixParameter name="PPdm33" unit="-">
+              load('data.asc','PPdm').PPdm{3,3}
+</matrixParameter>
+      <matrixParameter name="Ke" unit="-">
+          load('data.asc','Ke').Ke
+</matrixParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
+          <mass unit="kg">m</mass>
+          <positionIntegral>rdm</positionIntegral>
+          <positionPositionIntegral unit="kg*m^2">rrdm</positionPositionIntegral>
+          <shapeFunctionIntegral>Pdm</shapeFunctionIntegral>
+          <positionShapeFunctionIntegral>
+            <ele>rPdm1
+</ele>
+            <ele>rPdm2</ele>
+            <ele>rPdm3</ele>
+          </positionShapeFunctionIntegral>
+          <shapeFunctionShapeFunctionIntegral>
+            <row>
+              <ele>PPdm11</ele>
+              <ele>PPdm12</ele>
+              <ele>PPdm13</ele>
+            </row>
+            <row>
+              <ele>PPdm21</ele>
+              <ele>PPdm22</ele>
+              <ele>PPdm23</ele>
+            </row>
+            <row>
+              <ele>PPdm31</ele>
+              <ele>PPdm32</ele>
+              <ele>PPdm33</ele>
+            </row>
+          </shapeFunctionShapeFunctionIntegral>
+          <stiffnessMatrix>Ke</stiffnessMatrix>
+          <frames>
+            <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="nf" counterName="n">
+              <Parameter/>
+              <FixedNodalFrame xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="P{n}">
+                <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                  <?OPENMBV_ID 6?>
+                </enableOpenMBV>
+                <relativePosition unit="m">u0(n,:)'</relativePosition>
+                <shapeMatrixOfTranslation unit="-">V(3*(n-1)+1:3*(n-1)+3,1)</shapeMatrixOfTranslation>
+              </FixedNodalFrame>
+            </Embed>
+          </frames>
+          <contours/>
+          <enableOpenMBVFrameK>
+            <?OPENMBV_ID 3?>
+          </enableOpenMBVFrameK>
+        </FlexibleBodyFFR>
+      </objects>
+      <links>
+        <KineticExcitation name="KineticExcitation">
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>-1</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceFunction>
+            <ConstantFunction>
+              <a0>1e7</a0>
+            </ConstantFunction>
+          </forceFunction>
+          <connect ref="../Object[Body]/Frame[P{138}]"/>
+          <enableOpenMBVForce>
+            <?OPENMBV_ID 7?>
+            <scaleLength unit="-">1e-6</scaleLength>
+          </enableOpenMBVForce>
+          <enableOpenMBVMoment>
+            <?OPENMBV_ID 7?>
+          </enableOpenMBVMoment>
+        </KineticExcitation>
+      </links>
+      <enableOpenMBVFrameI>
+        <?OPENMBV_ID 1?>
+      </enableOpenMBVFrameI>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
+    <initialStepSize unit="s">0</initialStepSize>
+    <maximalStepSize unit="s">0</maximalStepSize>
+  </DOPRI5Integrator>
+
+</MBSimProject>
