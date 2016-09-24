@@ -10,6 +10,7 @@ kernel/depcomp
 kernel/doc/Makefile.in
 kernel/install-sh
 kernel/ltmain.sh
+kernel/swig/Makefile.in
 kernel/mbsim/Makefile.in
 kernel/mbsim/analysers/Makefile.in
 kernel/mbsim/contact_kinematics/Makefile.in

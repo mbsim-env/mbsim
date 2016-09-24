@@ -103,6 +103,7 @@ int main(int argc, char *argv[]) {
        std::find(arg.begin(), arg.end(), "-?")!=arg.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
           <<"                 --autoreload|--onlyListSchemas]"<<endl
+          <<"                [--modulesPath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                <mbsimprjfile>"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
@@ -118,6 +119,7 @@ int main(int argc, char *argv[]) {
           <<"--autoreload         Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
           <<"                     a input file is newer than the output file"<<endl
           <<"--onlyListSchemas    List all XML schema files including MBSim modules"<<endl
+          <<"--modulePath <dir>   Search path for MBSim modules"<<endl
           <<"<mbsimprjfile>       Use <mbsimprjfile> as mbsim xml project file"<<endl;
       return 0;
     }
@@ -136,7 +138,14 @@ int main(int argc, char *argv[]) {
     // parse parameters
 
     // generate mbsimxml.xsd
-    set<bfs::path> schemas=MBSim::getMBSimXMLSchemas();
+    set<bfs::path> searchDirs;
+    while((i=find(arg.begin(), arg.end(), "--modulePath"))!=arg.end()) {
+      i2=i; i2++;
+      searchDirs.insert(*i2);
+      arg.erase(i);
+      arg.erase(i2);
+    }
+    set<bfs::path> schemas=MBSim::getMBSimXMLSchemas(searchDirs);
     if(ONLYLISTSCHEMAS) {
       for(auto &schema: schemas)
         cout<<schema.string()<<endl;

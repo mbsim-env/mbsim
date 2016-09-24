@@ -71,7 +71,15 @@ dnl MBXMLUtilsDOCDIR
 MBXMLUTILSDOCDIR=$(pkg-config mbxmlutils --variable DOCDIR)
 AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
-
+dnl Check for python
+AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: 2.7).],
+  [pythonversion="$withval"],[pythonversion="2.7"])
+AC_ARG_ENABLE([python], [--enable-python  Enable MBSim moudles in python. This is ALPHA hence it must be enabled explicitly.])
+AM_CONDITIONAL([COND_PYTHON], [test "x$enable_python" == "xyes"])
+if test "x$enable_python" == "xyes"; then
+  PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
+  AC_DEFINE([MBSIMXML_COND_PYTHON],[1],[Enable Python])
+fi
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 if test "_$host_os" != "_mingw32"; then

@@ -6,7 +6,7 @@
 
 namespace MBSim {
 
-  std::set<boost::filesystem::path> getMBSimXMLSchemas();
+  std::set<boost::filesystem::path> getMBSimXMLSchemas(const std::set<boost::filesystem::path> &searchDirs={}); //MISSING remove ={} if mbsimfmi supports searchDirs
 
 }
 

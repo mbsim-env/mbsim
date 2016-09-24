@@ -16,6 +16,12 @@
                   <xs:attribute name="location" type="xs:anyURI" use="required"/>
                 </xs:complexType> 
               </xs:element>
+              <xs:element name="PythonGenerated">
+                <xs:complexType>
+                  <xs:attribute name="moduleName" type="xs:string" use="required"/>
+                  <xs:attribute name="location" type="xs:anyURI" use="required"/>
+                </xs:complexType> 
+              </xs:element>
             </xs:choice>
           </xs:complexType>
         </xs:element>
@@ -25,6 +31,12 @@
               <xs:element name="CppLibrary">
                 <xs:complexType>
                   <xs:attribute name="basename" type="xs:string" use="required"/>
+                  <xs:attribute name="location" type="xs:anyURI" use="required"/>
+                </xs:complexType> 
+              </xs:element>
+              <xs:element name="PythonModule">
+                <xs:complexType>
+                  <xs:attribute name="moduleName" type="xs:string" use="required"/>
                   <xs:attribute name="location" type="xs:anyURI" use="required"/>
                 </xs:complexType> 
               </xs:element>

@@ -773,10 +773,12 @@ namespace MBSim {
 
       void resetUpToDate();
 
-    protected:
+    private:
+      friend class DynamicSystemSolver;
       void addFrame(Frame *frame);
 
       void addContour(Contour *contour);
+    protected:
 
       /**
        * \brief parent frame

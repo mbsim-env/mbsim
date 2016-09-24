@@ -44,7 +44,9 @@ namespace H5 {
  */
 namespace MBSim {
 
+#ifndef SWIG
   const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
+#endif
 
   class DynamicSystemSolver;
   class Frame;
