@@ -1,13 +1,16 @@
 #!/usr/bin/python2
 
+# import mbsim module
 import mbsim
 
 
 
-NS=mbsim.getNS(__name__)
+# XML namespace of this module (prefixed with { and postfixed with })
+NS="{http://mypytest}"
 
 
 
+# A python class derived from MBSim::Object
 class PyO1(mbsim.Object):
 
   def __init__(self):
@@ -18,6 +21,7 @@ class PyO1(mbsim.Object):
 
 
 
+# A python class derived from MBSim::Object
 class PyO2(mbsim.Object):
 
   def __init__(self):
@@ -42,9 +46,12 @@ class PyO2(mbsim.Object):
 
 
 
-mbsim.registerClass(PyO1)
-mbsim.registerClass(PyO2)
+# register the classes as a XML name
+mbsim.registerXMLName(PyO1)
+mbsim.registerXMLName(PyO2)
 
 
+
+# generate a standard schema
 def generateXMLSchemaFile():
   return mbsim.generateXMLSchemaFile(__name__)

@@ -98,13 +98,13 @@
           <?OPENMBV_ID 7?>
         </enableOpenMBVFrameC>
       </RigidBody>
-      <mypytest:PyO1 name="mypytestObject1" xmlns:mypytest="http://localhost/mbsimmodule/python/mypytest">
+      <mypytest:PyO1 name="mypytestObject1" xmlns:mypytest="http://mypytest">
         <plotFeature feature="+separateFilePerGroup"/>
         <mypytest:pyinit.PyO1>
           self.setData(99)
         </mypytest:pyinit.PyO1>
       </mypytest:PyO1>
-      <PyO2 name="mypytestObject2" xmlns="http://localhost/mbsimmodule/python/mypytest" xmlns:mbsim="http://www.mbsim-env.de/MBSim">
+      <PyO2 name="mypytestObject2" xmlns="http://mypytest" xmlns:mbsim="http://www.mbsim-env.de/MBSim">
         <mbsim:plotFeature feature="+separateFilePerGroup"/>
         <data1>6</data1>
         <data2>3+3</data2>

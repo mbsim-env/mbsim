@@ -123,11 +123,6 @@ std::string _getObjectInitCode(xercesc::DOMElement *e, const MBXMLUtils::FQN &na
   return boost::join(lines, "\n"); // join the lines to a single string
 }
 
-//MFMF// internal helper function to get the path of MBSim
-//MFMFstd::string _getMBSimInstallPath() {
-//MFMF  return MBXMLUtils::getInstallPath().generic_string();
-//MFMF}
-
 // internal helper function to get the filename of e
 std::string _getDocumentFileNameOf(xercesc::DOMElement *e) {
   std::string uri=MBXMLUtils::X()%e->getOwnerDocument()->getDocumentURI();
@@ -202,6 +197,12 @@ class _DeallocateSingletonPython(DeallocateBase):
   def __call__(self, e):
     pass
 
+# get namespace of moudle moudleName (sourounded with { and } for the python moudle moduleName
+def _getNSOf(moduleName):
+  import sys
+  ns=sys.modules[moduleName].NS
+  return ns[1:-1]
+
 _moduleData={}
 
 # internal helper function to extend a Python class
@@ -213,7 +214,7 @@ def _extendClass(className):
     # where the variable 'self' represents this object
     def implicitInitializeUsingXML(self, e):
       super(className, self).initializeUsingXML(e)
-      code=_getObjectInitCode(e, _FQN(getNS(className.__module__, False), "pyinit."+className.__name__))
+      code=_getObjectInitCode(e, _FQN(_getNSOf(className.__module__), "pyinit."+className.__name__))
       if code!="":
         exec(code, {'self': self})
     className.initializeUsingXML=types.MethodType(implicitInitializeUsingXML, None, className)
@@ -264,25 +265,18 @@ def _extendClass(className):
 
 
 
-# get namespace (sourounded with { and } for the python moudle moduleName
-def getNS(moduleName, withBrackets=True):
-  ns="http://localhost/mbsimmodule/python/"+moduleName
-  if withBrackets:
-    ns="{"+ns+"}"
-  return ns
-
 # register class in the MBSim::ObjectFactory.
 # This also extents className with some special members.
-def registerClass(className):
+def registerXMLName(className):
   _extendClass(className)
-  registerXMLName(_FQN(getNS(className.__module__, False), className.__name__),
+  registerXMLName_internal(_FQN(_getNSOf(className.__module__), className.__name__),
     _AllocatePython(className).__disown__(), _DeallocatePython().__disown__())
 
 # register singelton class in the MBSim::ObjectFactory
 # This also extents className with some special members.
-def registerClassAsSingleton(className):
+def registerXMLNameAsSingleton(className):
   _extendClass(className)
-  registerXMLName(_FQN(getNS(className.__module__, False), className.__name__),
+  registerXMLName_internal(_FQN(_getNSOf(className.__module__), className.__name__),
     _GetSingletonPython(className).__disown__(), _DeallocateSingletonPython().__disown__())
 
 # create the xsd for this module.
@@ -294,24 +288,8 @@ def generateXMLSchemaFile(moduleName):
   nsPrefixDef=""
   nsImportDef=""
   for module in _moduleData[moduleName]['requiredModules']:
-#mfmf    # get some path
-#mfmf    moduleFilename=_getMBSimInstallPath()+"/share/mbsimmodules/"+module+".mbsimmodule.xml"
-    # handle the mbsim module specially: its not a module its the kernel
-    if module=='mbsim':
-      ns="http://www.mbsim-env.de/MBSim"
-    #mfmf handle other mbsim internal "modules"
-#mfmf    # handle modules
-#mfmf    elif os.path.isfile(moduleFilename):
-#mfmf      import xml.etree.ElementTree
-#mfmf      root=xml.etree.ElementTree.parse(moduleFilename).getroot()
-#mfmf      ns=root.findall('./{http://www.mbsim-env.de/MBSimModule}schemas/{http://www.mbsim-env.de/MBSimModule}Schema')[0]\
-#mfmf        .get('namespace')
-    # error case
-    else:
-      raise RuntimeError("Unable to find the MBSim module file for "+module)
-
-    nsPrefixDef+='xmlns:%s="%s"\n' % (module, ns)
-    nsImportDef+='<xs:import namespace="%s"/>\n' % (ns)
+    nsPrefixDef+='xmlns:%s="%s"\n' % (module, _getNSOf(module))
+    nsImportDef+='<xs:import namespace="%s"/>\n' % (_getNSOf(module))
 
   # create xsd file
   xsd='''<?xml version="1.0" encoding="UTF-8"?>
@@ -330,7 +308,10 @@ def generateXMLSchemaFile(moduleName):
   %s
 
 </xs:schema>
-''' % (getNS(moduleName, False), getNS(moduleName, False), nsPrefixDef, nsImportDef, _moduleData[moduleName]['xsdElements'])
+''' % (_getNSOf(moduleName), _getNSOf(moduleName), nsPrefixDef, nsImportDef, _moduleData[moduleName]['xsdElements'])
   return xsd
+
+# XML namespace of this module (prefixed with { and postfixed with })
+NS="{http://www.mbsim-env.de/MBSim}"
 
 %}

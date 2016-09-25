@@ -75,8 +75,8 @@ class DOMEvalExceptionWrongType : public MBXMLUtils::DOMEvalException {
  */
 class ObjectFactory {
 
-  friend void registerXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc);
-  friend void deregisterXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
+  friend void registerXMLName_internal(const MBXMLUtils::FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc);
+  friend void deregisterXMLName_internal(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
 
   public:
 
@@ -85,7 +85,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
     template<class CreateType>
     static void registerXMLName(const MBXMLUtils::FQN &name) {
-      MBSim::registerXMLName(name, new Allocate<CreateType>(), new Deallocate());
+      MBSim::registerXMLName_internal(name, new Allocate<CreateType>(), new Deallocate());
     }
 
     /** Register the class CreateType which the XML element name name by the object factory.
@@ -93,7 +93,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
     template<class CreateType>
     static void registerXMLNameAsSingleton(const MBXMLUtils::FQN &name) {
-      MBSim::registerXMLName(name, new GetSingleton<CreateType>(), new DeallocateSingleton());
+      MBSim::registerXMLName_internal(name, new GetSingleton<CreateType>(), new DeallocateSingleton());
     }
 
     /** Deregister the class CreateType.
@@ -101,7 +101,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
     template<class CreateType>
     static void deregisterXMLName(const MBXMLUtils::FQN &name) {
-      MBSim::deregisterXMLName(name, new Allocate<CreateType>());
+      MBSim::deregisterXMLName_internal(name, new Allocate<CreateType>());
     }
 
     /** Deregister the class CreateType.
@@ -109,7 +109,7 @@ class ObjectFactory {
      * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
     template<class CreateType>
     static void deregisterXMLNameAsSingleton(const MBXMLUtils::FQN &name) {
-      MBSim::deregisterXMLName(name, new GetSingleton<CreateType>());
+      MBSim::deregisterXMLName_internal(name, new GetSingleton<CreateType>());
     }
 
     /** Create and initialize an object corresponding to the XML element element and return a pointer of type ContainerType.
