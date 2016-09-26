@@ -21,7 +21,7 @@
 #include "ombv_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#include "rigid_body.h"
+#include "body.h"
 #include "frame.h"
 #include <QtGui>
 
@@ -362,7 +362,7 @@ namespace MBSimGUI {
     layout->addWidget(bodies);
   }
 
-  OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {
+  OMBVBodySelectionWidget::OMBVBodySelectionWidget(Body *body) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

@@ -74,12 +74,9 @@ namespace MBSimGUI {
 
     K0om.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"));
 
-    translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this),"",3)); 
+    translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this,MBSIMFLEX),"",3));
 
-    vector<FQN> name;
-    name.push_back(MBSIMFLEX%"stateDependentRotation");
-    name.push_back(MBSIMFLEX%"timeDependentRotation");
-    rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4(this,name),"",3)); 
+    rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4(this,MBSIMFLEX),"",3));
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMFLEX%"translationDependentRotation"));
@@ -88,7 +85,7 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMFLEX%"coordinateTransformationForRotation"));
     coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
-//    ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
+    ombvEditor.setProperty(new OMBVBodySelectionProperty(this,MBSIMFLEX));
 
     jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
     jointForceArrow.setXMLName(MBSIMFLEX%"enableOpenMBVJointForce",false);
@@ -174,7 +171,7 @@ namespace MBSimGUI {
     translationDependentRotation.initializeUsingXML(element);
     coordinateTransformationForRotation.initializeUsingXML(element);
 
-//    ombvEditor.initializeUsingXML(element);
+    ombvEditor.initializeUsingXML(element);
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(e)
@@ -226,7 +223,7 @@ namespace MBSimGUI {
       Embed<Contour>::writeXML(contour[i],ele1);
     ele0->insertBefore( ele1, NULL );
 
-//    ombvEditor.writeXMLFile(ele0);
+    ombvEditor.writeXMLFile(ele0);
 
     Frame *K = getFrame(0);
     if(K->openMBVFrame()) {

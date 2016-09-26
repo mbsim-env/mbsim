@@ -311,10 +311,10 @@ namespace MBSimGUI {
     return name;
   }
 
-  TranslationPropertyFactory4::TranslationPropertyFactory4(Element *parent_) : parent(parent_) {
-    name.push_back(MBSIM%"stateDependentTranslation");
-    name.push_back(MBSIM%"timeDependentTranslation");
-    name.push_back(MBSIM%"generalTranslation");
+  TranslationPropertyFactory4::TranslationPropertyFactory4(Element *parent_, const NamespaceURI &uri) : parent(parent_) {
+    name.push_back(uri%"stateDependentTranslation");
+    name.push_back(uri%"timeDependentTranslation");
+    name.push_back(uri%"generalTranslation");
   }
 
   PropertyInterface* TranslationPropertyFactory4::createProperty(int i) {
@@ -331,12 +331,9 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  RotationPropertyFactory4::RotationPropertyFactory4(Element *parent_) : parent(parent_) {
-    name.push_back(MBSIM%"stateDependentRotation");
-    name.push_back(MBSIM%"timeDependentRotation");
-  }
-
-  RotationPropertyFactory4::RotationPropertyFactory4(Element *parent_, vector<FQN> name_) : parent(parent_), name(name_) {
+  RotationPropertyFactory4::RotationPropertyFactory4(Element *parent_, const NamespaceURI &uri) : parent(parent_) {
+    name.push_back(uri%"stateDependentRotation");
+    name.push_back(uri%"timeDependentRotation");
   }
 
   PropertyInterface* RotationPropertyFactory4::createProperty(int i) {

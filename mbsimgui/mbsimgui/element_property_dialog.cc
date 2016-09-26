@@ -792,8 +792,8 @@ namespace MBSimGUI {
     coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true);
     addToTab("Kinematics", coordinateTransformationForRotation);
 
-//    ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
-//    addToTab("Visualisation", ombvEditor);
+    ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
+    addToTab("Visualisation", ombvEditor);
 
     jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
     addToTab("Visualisation",jointForceArrow);
@@ -848,7 +848,7 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->rotation.toWidget(rotation);
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
     static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
-//    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.toWidget(ombvEditor);
+    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.toWidget(ombvEditor);
     static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.toWidget(jointForceArrow);
     static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
   }
@@ -875,7 +875,7 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->rotation.fromWidget(rotation);
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
     static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
-//    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.fromWidget(ombvEditor);
+    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.fromWidget(ombvEditor);
     static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.fromWidget(jointForceArrow);
     static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
   }
