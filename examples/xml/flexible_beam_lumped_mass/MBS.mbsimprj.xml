@@ -64,6 +64,7 @@ end
 m = sum(mij);
 
 Ke = V'*K*V;
+Ke = tril(Ke,-1)'+tril(Ke,0);
 
 Pdm = Pdm(:,I);
 Ke = Ke(I,I);
