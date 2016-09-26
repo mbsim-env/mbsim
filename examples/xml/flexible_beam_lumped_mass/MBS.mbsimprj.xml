@@ -2,7 +2,9 @@
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-    <Parameter/>
+    <Parameter>
+      <scalarParameter name="modes">1</scalarParameter>
+    </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
       <contours/>
@@ -121,16 +123,16 @@ end
                 <Parameter/>
                 <FixedNodalFrame xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="P{n}">
                   <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                    <?OPENMBV_ID 6?>
+                    <?OPENMBV_ID 8?>
                   </enableOpenMBV>
                   <relativePosition unit="m">u0(n,:)'</relativePosition>
-                  <shapeMatrixOfTranslation unit="-">V(3*(n-1)+1:3*(n-1)+3,1)</shapeMatrixOfTranslation>
+                  <shapeMatrixOfTranslation unit="-">V(3*(n-1)+1:3*(n-1)+3,1:modes)</shapeMatrixOfTranslation>
                 </FixedNodalFrame>
               </Embed>
             </frames>
             <contours/>
             <enableOpenMBVFrameK>
-              <?OPENMBV_ID 3?>
+              <?OPENMBV_ID 5?>
             </enableOpenMBVFrameK>
           </FlexibleBodyFFR>
         </Embed>
@@ -157,16 +159,16 @@ end
           </forceFunction>
           <connect ref="../Object[Body]/Frame[P{138}]"/>
           <enableOpenMBVForce>
-            <?OPENMBV_ID 7?>
+            <?OPENMBV_ID 9?>
             <scaleLength unit="-">1e-6</scaleLength>
           </enableOpenMBVForce>
           <enableOpenMBVMoment>
-            <?OPENMBV_ID 7?>
+            <?OPENMBV_ID 9?>
           </enableOpenMBVMoment>
         </KineticExcitation>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
+        <?OPENMBV_ID 3?>
       </enableOpenMBVFrameI>
       <environments>
         <MBSimEnvironment>
