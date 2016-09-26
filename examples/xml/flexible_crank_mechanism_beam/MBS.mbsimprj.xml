@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="E" unit="-">2e11</scalarParameter>
+      <scalarParameter name="nu" unit="-">0.3</scalarParameter>
+      <scalarParameter name="m1" unit="-">0.36</scalarParameter>
+      <scalarParameter name="J1" unit="-">0.002727</scalarParameter>
+      <scalarParameter name="m2" unit="-">0.151104</scalarParameter>
+      <scalarParameter name="J2" unit="-">0.0045339259</scalarParameter>
+      <scalarParameter name="m3" unit="-">0.075552</scalarParameter>
+      <scalarParameter name="rho" unit="-">7870</scalarParameter>
+      <scalarParameter name="l1" unit="-">0.15</scalarParameter>
+      <scalarParameter name="l2" unit="-">0.3</scalarParameter>
+      <scalarParameter name="d2" unit="-">0.008</scalarParameter>
+      <scalarParameter name="h2" unit="-">0.008</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <RigidBody name="RigidBody1">
+          <plotFeature feature="+stateDerivative"/>
+          <frameForKinematics ref="Frame[K]"/>
+          <mass unit="kg">m1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>J1</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <frameForInertiaTensor ref="Frame[K]"/>
+          <stateDependentRotation>
+            <RotationAboutZAxis/>
+          </stateDependentRotation>
+          <frames>
+            <FixedRelativeFrame name="K">
+              <enableOpenMBV>
+                <?OPENMBV_ID 6?>
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-l1/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+            <FixedRelativeFrame name="Q">
+              <enableOpenMBV>
+                <?OPENMBV_ID 7?>
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>l1/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+          </frames>
+          <contours/>
+          <openMBVRigidBody>
+            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
+              <?OPENMBV_ID 2?>
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.333333</ele>
+                  <ele>1</ele>
+                  <ele>1</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <length unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>l1</ele>
+                  <ele>h2</ele>
+                  <ele>d2</ele>
+                </xmlVector>
+              </length>
+            </Cuboid>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <?OPENMBV_ID 3?>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+        <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
+          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+stateDerivative"/>
+          <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
+          <mass unit="kg">m2</mass>
+          <positionIntegral unit="-">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>m2*l2/2</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </positionIntegral>
+          <positionPositionIntegral unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>J2</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </positionPositionIntegral>
+          <shapeFunctionIntegral unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>2/3*rho*d2*h2*l2</ele>
+                <ele>1/6*rho*d2*h2*l2</ele>
+              </row>
+              <row>
+                <ele>2/pi*rho*d2*h2*l2</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </shapeFunctionIntegral>
+          <positionShapeFunctionIntegral>
+            <ele unit="-">
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>1/3*rho*d2*h2*l2^2</ele>
+                  <ele>1/6*rho*d2*h2*l2^2</ele>
+                </row>
+                <row>
+                  <ele>1/pi*rho*d2*h2*l2^2</ele>
+                  <ele>-1/2/pi*rho*d2*h2*l2^2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+              </xmlMatrix>
+            </ele>
+            <ele unit="-">
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+              </xmlMatrix>
+            </ele>
+            <ele unit="-">
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+              </xmlMatrix>
+            </ele>
+          </positionShapeFunctionIntegral>
+          <shapeFunctionShapeFunctionIntegral>
+            <row>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>1/24*(h2*pi/l2)^2*rho*d2*h2*l2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>1/6*(h2*pi/l2)^2*rho*d2*h2*l2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>8/15*rho*d2*h2*l2</ele>
+                    <ele>1/15*rho*d2*h2*l2</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>1/15*rho*d2*h2*l2</ele>
+                    <ele>2/15*rho*d2*h2*l2</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>16/pi^3*rho*d2*h2*l2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>(1/pi-8/pi^3)*rho*d2*h2*l2</ele>
+                    <ele>-1/2/pi*rho*d2*h2*l2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+            </row>
+            <row>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>16/pi^3*rho*d2*h2*l2</ele>
+                    <ele>(1/pi-8/pi^3)*rho*d2*h2*l2</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>-1/2/pi*rho*d2*h2*l2</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>1/2*rho*d2*h2*l2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>1/2*rho*d2*h2*l2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+            </row>
+            <row>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+              <ele unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </ele>
+            </row>
+          </shapeFunctionShapeFunctionIntegral>
+          <stiffnessMatrix unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>1/24*pi^4*(h2/l2)^2*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>2/3*pi^4*(h2/l2)^2*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>16/3*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>-8/3*E/(1-nu^2)*d2*h2/l2</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>-8/3*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>7/3*E/(1-nu^2)*d2*h2/l2</ele>
+              </row>
+            </xmlMatrix>
+          </stiffnessMatrix>
+          <stateDependentRotation>
+            <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
+          </stateDependentRotation>
+          <frames>
+            <FixedNodalFrame name="Q">
+              <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+globalPosition"/>
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <?OPENMBV_ID 14?>
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>2*l2/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+              <shapeMatrixOfTranslation unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>1</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </shapeMatrixOfTranslation>
+              <shapeMatrixOfRotation unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>-pi/l2</ele>
+                    <ele>2*pi/l2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </shapeMatrixOfRotation>
+              <stressMatrix unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>-2.9304e12</ele>
+                    <ele>2.1978e12</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele> -8.79121e11</ele>
+                    <ele>6.59341e11</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </stressMatrix>
+            </FixedNodalFrame>
+          </frames>
+          <contours/>
+          <enableOpenMBVFrameK>
+            <?OPENMBV_ID 11?>
+            <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
+          </enableOpenMBVFrameK>
+        </FlexibleBodyFFR>
+        <RigidBody name="RigidBody3">
+          <plotFeature feature="+stateDerivative"/>
+          <initialGeneralizedPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>l1+l2</ele>
+            </xmlVector>
+          </initialGeneralizedPosition>
+          <mass unit="kg">m3</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>J1</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongXAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
+              <?OPENMBV_ID 17?>
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.166667</ele>
+                  <ele>1</ele>
+                  <ele>1</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <length unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>l2/8</ele>
+                  <ele>h2*4</ele>
+                  <ele>d2*4</ele>
+                </xmlVector>
+              </length>
+            </Cuboid>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <?OPENMBV_ID 18?>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+      </objects>
+      <links>
+        <Joint name="Joint1">
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>1</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>1</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceLaw>
+            <BilateralConstraint/>
+          </forceLaw>
+          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleBodyFFR2]/Frame[Q]"/>
+        </Joint>
+      </links>
+      <enableOpenMBVFrameI>
+        <?OPENMBV_ID 1?>
+        <size unit="cm">1</size>
+      </enableOpenMBVFrameI>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-3</plotStepSize>
+    <absoluteToleranceScalar>1e-10</absoluteToleranceScalar>
+    <relativeToleranceScalar unit="-">1e-10</relativeToleranceScalar>
+    <initialStepSize unit="s">0</initialStepSize>
+    <maximalStepSize unit="s">0</maximalStepSize>
+    <minimalStepSize unit="s">0</minimalStepSize>
+    <numberOfMaximalSteps>0</numberOfMaximalSteps>
+  </LSODEIntegrator>
+
+</MBSimProject>
