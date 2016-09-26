@@ -51,7 +51,7 @@
           <frames>
             <FixedRelativeFrame name="K">
               <enableOpenMBV>
-                <?OPENMBV_ID 6?>
+                <?OPENMBV_ID 19?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -64,7 +64,7 @@
             </FixedRelativeFrame>
             <FixedRelativeFrame name="Q">
               <enableOpenMBV>
-                <?OPENMBV_ID 7?>
+                <?OPENMBV_ID 20?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -79,8 +79,8 @@
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 2?>
-              <diffuseColor>
+              <?OPENMBV_ID 15?>
+              <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.333333</ele>
                   <ele>1</ele>
@@ -113,7 +113,7 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 3?>
+            <?OPENMBV_ID 16?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -121,7 +121,7 @@
           <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+stateDerivative"/>
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
           <mass unit="kg">m2</mass>
-          <positionIntegral unit="-">
+          <positionIntegral>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>m2*l2/2</ele>
               <ele>0</ele>
@@ -147,7 +147,7 @@
               </row>
             </xmlMatrix>
           </positionPositionIntegral>
-          <shapeFunctionIntegral unit="-">
+          <shapeFunctionIntegral>
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
                 <ele>0</ele>
@@ -170,7 +170,7 @@
             </xmlMatrix>
           </shapeFunctionIntegral>
           <positionShapeFunctionIntegral>
-            <ele unit="-">
+            <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
                   <ele>0</ele>
@@ -192,7 +192,7 @@
                 </row>
               </xmlMatrix>
             </ele>
-            <ele unit="-">
+            <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
                   <ele>0</ele>
@@ -214,7 +214,7 @@
                 </row>
               </xmlMatrix>
             </ele>
-            <ele unit="-">
+            <ele>
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <row>
                   <ele>0</ele>
@@ -239,7 +239,7 @@
           </positionShapeFunctionIntegral>
           <shapeFunctionShapeFunctionIntegral>
             <row>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>1/24*(h2*pi/l2)^2*rho*d2*h2*l2</ele>
@@ -267,7 +267,7 @@
                   </row>
                 </xmlMatrix>
               </ele>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>0</ele>
@@ -295,7 +295,7 @@
                   </row>
                 </xmlMatrix>
               </ele>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>0</ele>
@@ -325,7 +325,7 @@
               </ele>
             </row>
             <row>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>0</ele>
@@ -353,7 +353,7 @@
                   </row>
                 </xmlMatrix>
               </ele>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>1/2*rho*d2*h2*l2</ele>
@@ -381,7 +381,7 @@
                   </row>
                 </xmlMatrix>
               </ele>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>0</ele>
@@ -411,7 +411,7 @@
               </ele>
             </row>
             <row>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>0</ele>
@@ -439,7 +439,7 @@
                   </row>
                 </xmlMatrix>
               </ele>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>0</ele>
@@ -467,7 +467,7 @@
                   </row>
                 </xmlMatrix>
               </ele>
-              <ele unit="-">
+              <ele>
                 <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <row>
                     <ele>0</ele>
@@ -497,7 +497,7 @@
               </ele>
             </row>
           </shapeFunctionShapeFunctionIntegral>
-          <stiffnessMatrix unit="-">
+          <stiffnessMatrix>
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
                 <ele>1/24*pi^4*(h2/l2)^2*E/(1-nu^2)*d2*h2/l2</ele>
@@ -532,7 +532,7 @@
             <FixedNodalFrame name="Q">
               <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+globalPosition"/>
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                <?OPENMBV_ID 14?>
+                <?OPENMBV_ID 27?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -629,8 +629,43 @@
             </FixedNodalFrame>
           </frames>
           <contours/>
+          <openMBVRigidBody>
+            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
+              <?OPENMBV_ID 23?>
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.666667</ele>
+                  <ele>1</ele>
+                  <ele>1</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>l2/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <length unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>l2</ele>
+                  <ele>h2</ele>
+                  <ele>d2</ele>
+                </xmlVector>
+              </length>
+            </Cuboid>
+          </openMBVRigidBody>
           <enableOpenMBVFrameK>
-            <?OPENMBV_ID 11?>
+            <?OPENMBV_ID 24?>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
           </enableOpenMBVFrameK>
         </FlexibleBodyFFR>
@@ -668,8 +703,8 @@
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 17?>
-              <diffuseColor>
+              <?OPENMBV_ID 30?>
+              <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.166667</ele>
                   <ele>1</ele>
@@ -702,7 +737,7 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 18?>
+            <?OPENMBV_ID 31?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -732,7 +767,7 @@
         </Joint>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 1?>
+        <?OPENMBV_ID 14?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>

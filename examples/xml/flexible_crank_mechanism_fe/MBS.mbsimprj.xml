@@ -15,7 +15,7 @@
       <scalarParameter name="l2" unit="-">0.3</scalarParameter>
       <scalarParameter name="d2" unit="-">0.008</scalarParameter>
       <scalarParameter name="h2" unit="-">0.008</scalarParameter>
-      <scalarParameter name="nFE">8</scalarParameter>
+      <scalarParameter name="nFE" unit="-">8</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -52,7 +52,7 @@
           <frames>
             <FixedRelativeFrame name="K">
               <enableOpenMBV>
-                <?OPENMBV_ID 64?>
+                <?OPENMBV_ID 8?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -65,7 +65,7 @@
             </FixedRelativeFrame>
             <FixedRelativeFrame name="Q">
               <enableOpenMBV>
-                <?OPENMBV_ID 65?>
+                <?OPENMBV_ID 9?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -80,8 +80,8 @@
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 60?>
-              <diffuseColor>
+              <?OPENMBV_ID 4?>
+              <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.333333</ele>
                   <ele>1</ele>
@@ -114,14 +114,14 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 61?>
+            <?OPENMBV_ID 5?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
-            <scalarParameter name="n">nFE</scalarParameter>
-            <scalarParameter name="integrals">%id = fopen('data.asc')
+            <scalarParameter name="n" unit="-">nFE</scalarParameter>
+            <scalarParameter name="integrals" unit="-">%id = fopen('data.asc')
 %if(id==-1)
 D = l2/n;
 m = m2;
@@ -281,7 +281,7 @@ ret = 0;
               <FixedNodalFrame name="Q">
                 <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+globalPosition"/>
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                  <?OPENMBV_ID 72?>
+                  <?OPENMBV_ID 16?>
                   <size unit="cm">1</size>
                 </enableOpenMBV>
                 <relativePosition unit="m">
@@ -291,12 +291,47 @@ ret = 0;
                     <ele>0</ele>
                   </xmlVector>
                 </relativePosition>
-                <shapeMatrixOfTranslation>zeros(3,2*n)</shapeMatrixOfTranslation>
+                <shapeMatrixOfTranslation unit="-">zeros(3,2*n)</shapeMatrixOfTranslation>
               </FixedNodalFrame>
             </frames>
             <contours/>
+            <openMBVRigidBody>
+              <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
+                <?OPENMBV_ID 12?>
+                <diffuseColor>
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>0.666667</ele>
+                    <ele>1</ele>
+                    <ele>1</ele>
+                  </xmlVector>
+                </diffuseColor>
+                <transparency unit="-">0.3</transparency>
+                <initialTranslation unit="m">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>l2/2</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </xmlVector>
+                </initialTranslation>
+                <initialRotation unit="rad">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </xmlVector>
+                </initialRotation>
+                <scaleFactor unit="-">1</scaleFactor>
+                <length unit="m">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>l2</ele>
+                    <ele>h2</ele>
+                    <ele>d2</ele>
+                  </xmlVector>
+                </length>
+              </Cuboid>
+            </openMBVRigidBody>
             <enableOpenMBVFrameK>
-              <?OPENMBV_ID 69?>
+              <?OPENMBV_ID 13?>
               <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
             </enableOpenMBVFrameK>
           </FlexibleBodyFFR>
@@ -335,8 +370,8 @@ ret = 0;
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 73?>
-              <diffuseColor>
+              <?OPENMBV_ID 19?>
+              <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.166667</ele>
                   <ele>1</ele>
@@ -369,7 +404,7 @@ ret = 0;
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 74?>
+            <?OPENMBV_ID 20?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -399,7 +434,7 @@ ret = 0;
         </Joint>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 59?>
+        <?OPENMBV_ID 3?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>
