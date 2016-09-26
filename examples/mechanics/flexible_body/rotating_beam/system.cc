@@ -121,7 +121,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   body->setStiffnessMatrix(Ke);
 
   if(stiffening==1) {
-    std::vector<SqrMatV> K0om(6);
+    std::vector<SqrMatV> K0om(3);
     for(unsigned int i=0; i<K0om.size(); i++)
       K0om[i].resize(2);
     K0om[2](1,1) = rho*0.00242247;
