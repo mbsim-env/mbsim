@@ -708,6 +708,31 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="openMBVRigidBody">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:RigidBody"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVFrameOfReference" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Definiert das MBSim KOS, mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt.<br/>
+                  Wird dieses Element nicht angegeben, so wird das KOS "C" verwendet.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:attribute name="ref" type="mbsim:CurrentFrameReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
           <xs:element name="enableOpenMBVFrameK" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
