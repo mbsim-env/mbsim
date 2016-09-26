@@ -41,7 +41,7 @@ class Angle : public MBSim::Function<double(double)> {
       if(t<=T0)
         return Om/T0*(1-cos(2*M_PI*t/T0));
       else 
-        return Om;
+        return 0;
     }
 };
 
