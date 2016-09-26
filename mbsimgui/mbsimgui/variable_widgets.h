@@ -460,8 +460,8 @@ namespace MBSimGUI {
   class ScalarWidgetFactory : public WidgetFactory {
     public:
       ScalarWidgetFactory(const QString &value);
+      ScalarWidgetFactory(const QString &value, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
       ScalarWidgetFactory(const QString &value, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      ScalarWidgetFactory(const QString &value, const std::vector<QStringList> &unit);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }

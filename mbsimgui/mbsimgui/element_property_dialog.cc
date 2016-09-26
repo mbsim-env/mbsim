@@ -614,7 +614,7 @@ namespace MBSimGUI {
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
     addToTab("Kinematics",K);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits())),QBoxLayout::RightToLeft));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
     addToTab("General",mass);
 
     inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
@@ -727,7 +727,7 @@ namespace MBSimGUI {
   FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
     addTab("Visualisation",3);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits())),QBoxLayout::RightToLeft));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
     addToTab("General",mass);
 
     pdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft));
@@ -1416,7 +1416,7 @@ namespace MBSimGUI {
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", function);
 
-    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft));
+    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
     body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);

@@ -420,13 +420,13 @@ namespace MBSimGUI {
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true);
     addToTab("General",task);
 
-    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
+    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,4)),QBoxLayout::RightToLeft),true);
     addToTab("General",amplitude);
 
-    mode = new ExtWidget("Mode",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
+    mode = new ExtWidget("Mode",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft),true);
     addToTab("General",mode);
 
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft),true);
     addToTab("General",determineEquilibriumState);
   }
 

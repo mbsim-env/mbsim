@@ -170,7 +170,8 @@ namespace MBSimGUI {
   class RotationPropertyFactory4 : public PropertyFactory {
     public:
       RotationPropertyFactory4(Element *parent_);
-      PropertyInterface* createProperty(int i=0);
+      RotationPropertyFactory4(Element *parent_, std::vector<MBXMLUtils::FQN> name_);
+     PropertyInterface* createProperty(int i=0);
       MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
