@@ -815,7 +815,7 @@ namespace MBSimGUI {
     if(Knl1->isActive())
       static_cast<OneDimMatArrayWidget*>(Knl1->getWidget())->resize_(size,size,size);
     if(Knl2->isActive())
-      static_cast<OneDimMatArrayWidget*>(Knl2->getWidget())->resize_(size,size,size);
+      static_cast<TwoDimMatArrayWidget*>(Knl2->getWidget())->resize_(size,size,size);
     ksigma0->resize_(size,1);
     ksigma1->resize_(size,size);
     if(K0t->isActive())
