@@ -51,7 +51,6 @@ namespace MBSimInterface {
       void integrate(MBSim::DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       virtual std::string getType() const { return "InterfaceIntegrator"; }
 

@@ -80,15 +80,6 @@ namespace MBSimInterface {
     mbsimServer->initializeUsingXML(ee);
   }
 
-  xercesc::DOMElement* InterfaceIntegrator::writeXMLFile(xercesc::DOMNode *parent) {
-    xercesc::DOMElement *ele0 = Integrator::writeXMLFile(parent);
-    /* TODO
-       addElementText(ele0,MBSIMINTERFACENS"IP",IP);
-       addElementText(ele0,MBSIMINTERFACENS"port",port);
-       */
-    return ele0;
-  }
-
   void InterfaceIntegrator::integrate(MBSim::DynamicSystemSolver& system_) {
     system = &system_;
 
