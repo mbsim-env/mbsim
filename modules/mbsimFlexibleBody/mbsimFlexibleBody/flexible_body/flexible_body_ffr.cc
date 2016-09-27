@@ -963,11 +963,14 @@ namespace MBSimFlexibleBody {
       MArrow=ombv.createOpenMBV(e);
     }
 #endif
-  }
 
-  DOMElement* FlexibleBodyFFR::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Body::writeXMLFile(parent);
-    return ele0;
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotFeatureFrameK");
+    while(e and E(e)->getTagName()==MBSIMFLEX%"plotFeatureFrameK") {
+      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
+      PlotFeature feature = initializePlotFeatureUsingXML(e);
+      K->setPlotFeature(feature, status);
+      e=e->getNextElementSibling();
+    }
   }
 
 }

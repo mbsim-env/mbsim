@@ -45,7 +45,6 @@ namespace MBSimFlexibleBody {
       void updateGyroscopicAccelerations();
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
       /*!

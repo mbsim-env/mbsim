@@ -78,7 +78,6 @@ namespace MBSimFlexibleBody {
       virtual void plot();
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
       MBSim::Frame *R;

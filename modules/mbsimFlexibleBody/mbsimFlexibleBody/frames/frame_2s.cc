@@ -60,10 +60,4 @@ namespace MBSimFlexibleBody {
     setParameters(getVec(e));
   }
 
-  DOMElement* Frame2s::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-    addElementText(ele0, MBSIMFLEX%"parameters", getParameters());
-    return ele0;
-  }
-
 }

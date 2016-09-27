@@ -759,6 +759,16 @@
               <xs:group ref="mbsim:OpenMBVArrowParameters"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="plotFeatureFrameK" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Plotfeatures des Schwerpunktskoordinatensystems "C" dieses Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="feature" type="mbsim:PlotFeatureType" use="required"/>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

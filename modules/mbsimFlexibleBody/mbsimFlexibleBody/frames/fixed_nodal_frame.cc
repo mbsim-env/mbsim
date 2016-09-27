@@ -182,9 +182,4 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  DOMElement* FixedNodalFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-   return ele0;
-  }
-
 }
