@@ -45,7 +45,6 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a1");
         a1=Element::getDouble(e);
       }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
       void seta0(double a0_) { a0 = a0_; }
       void seta1(double a1_) { a1 = a1_; }
   };

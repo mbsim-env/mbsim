@@ -40,7 +40,6 @@ namespace MBSim {
       void setXi(double xi) { zeta(1) = xi; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
       /*!

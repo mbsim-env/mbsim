@@ -157,7 +157,7 @@ namespace MBSim {
     e=e->getNextElementSibling();
 
     // constraints
-    if (e && MBXMLUtils::E(e)->getTagName()==MBSIM%"constraints") {
+    if(e && MBXMLUtils::E(e)->getTagName()==MBSIM%"constraints") {
       E=e->getFirstElementChild();
       Constraint *crt;
       while(E) {
@@ -169,7 +169,7 @@ namespace MBSim {
     }
 
     // observers
-    if (e && MBXMLUtils::E(e)->getTagName()==MBSIM%"observers") {
+    if(e && MBXMLUtils::E(e)->getTagName()==MBSIM%"observers") {
       E=e->getFirstElementChild();
       Observer *obsrv;
       while(E) {
@@ -178,64 +178,22 @@ namespace MBSim {
         E=E->getNextElementSibling();
       }
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     if(e) {
       OpenMBVFrame ombv;
       I->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
 #endif
-  }
 
-  DOMElement* Group::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = DynamicSystem::writeXMLFile(parent);
-
-//    DOMElement *ele1;
-//
-//    if(getFrameOfReference()) {
-//      ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//      ele1->SetAttribute("ref", R->getXMLPath(this,true));
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    addElementText(ele0,MBSIM%"position",getPosition());
-//    addElementText(ele0,MBSIM%"orientation", getOrientation());
-//
-//    ele1 = new DOMElement( MBSIM%"frames" );
-//    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//    ele1 = new DOMElement( MBSIM%"contours" );
-//    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//    ele1 = new DOMElement( MBSIM%"groups" );
-//    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//    ele1 = new DOMElement( MBSIM%"objects" );
-//    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//    ele1 = new DOMElement( MBSIM%"links" );
-//    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//    if(I->getOpenMBVFrame()) {
-//      ele1 = new DOMElement( MBSIM%"enableOpenMBVFrameI" );
-//      addElementText(ele1,MBSIM%"size",I->getOpenMBVFrame()->getSize());
-//      addElementText(ele1,MBSIM%"offset",I->getOpenMBVFrame()->getOffset());
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-    return ele0;
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameI");
+    while(e and MBXMLUtils::E(e)->getTagName()==MBSIM%"plotFeatureFrameI") {
+      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
+      PlotFeature feature = initializePlotFeatureUsingXML(e);
+      I->setPlotFeature(feature, status);
+      e=e->getNextElementSibling();
+    }
   }
 
 }
-

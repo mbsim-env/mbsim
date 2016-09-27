@@ -70,11 +70,4 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* LineSegment::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIM%"length",length);
-    return ele0;
-  }
-
 }
-

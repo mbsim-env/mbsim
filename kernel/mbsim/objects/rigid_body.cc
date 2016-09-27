@@ -692,95 +692,27 @@ namespace MBSim {
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
-    if (e) {
+    if(e) {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
-    if (e) {
+    if(e) {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }
 #endif
-  }
 
-  DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Body::writeXMLFile(parent);
-
-    //    DOMElement * ele1 = new DOMElement( MBSIM%"frameForKinematics" );
-    //    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
-    //    ele1->SetAttribute("ref", str);
-    //    ele0->LinkEndChild(ele1);
-    //
-    //    addElementText(ele0,MBSIM%"mass",getMass());
-    //    if(frameForInertiaTensor)
-    //      THROW_MBSIMERROR("Inertia tensor with respect to frame " + frameForInertiaTensor->getPath() + " not supported in XML. Provide inertia tensor with respect to frame C.");
-    //    addElementText(ele0,MBSIM%"inertiaTensor",getInertiaTensor());
-    //
-    //    ele1 = new DOMElement( MBSIM%"translation" );
-    //    if(getTranslation())
-    //      getTranslation()->writeXMLFile(ele1);
-    //    ele0->LinkEndChild(ele1);
-    //
-    //    ele1 = new DOMElement( MBSIM%"rotation" );
-    //    if(getRotation())
-    //      getRotation()->writeXMLFile(ele1);
-    //    ele0->LinkEndChild(ele1);
-    //
-    //    ele1 = new DOMElement( MBSIM%"frames" );
-    //    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i)
-    //      (*i)->writeXMLFile(ele1);
-    //    ele0->LinkEndChild( ele1 );
-    //
-    //    ele1 = new DOMElement( MBSIM%"contours" );
-    //    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
-    //      (*i)->writeXMLFile(ele1);
-    //    ele0->LinkEndChild( ele1 );
-    //
-    //#ifdef HAVE_OPENMBVCPPINTERFACE
-    //    if(getOpenMBVBody()) {
-    //      ele1 = new DOMElement( MBSIM%"openMBVRigidBody" );
-    //      getOpenMBVBody()->writeXMLFile(ele1);
-    //
-    //      if(getOpenMBVFrameOfReference()) {
-    //        DOMElement * ele2 = new DOMElement( MBSIM%"frameOfReference" );
-    //        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
-    //        ele2->SetAttribute("ref", str);
-    //        ele1->LinkEndChild(ele2);
-    //      }
-    //      ele0->LinkEndChild(ele1);
-    //    }
-    //
-    //    if(C->getOpenMBVFrame()) {
-    //      ele1 = new DOMElement( MBSIM%"enableOpenMBVFrameC" );
-    //      addElementText(ele1,MBSIM%"size",C->getOpenMBVFrame()->getSize());
-    //      addElementText(ele1,MBSIM%"offset",C->getOpenMBVFrame()->getOffset());
-    //      ele0->LinkEndChild(ele1);
-    //    }
-    //
-    //    if(FWeight) {
-    //      ele1 = new DOMElement( MBSIM%"openMBVWeightArrow" );
-    //      FWeight->writeXMLFile(ele1);
-    //      ele0->LinkEndChild(ele1);
-    //    }
-    //
-    //    if(FArrow) {
-    //      ele1 = new DOMElement( MBSIM%"openMBVJointForceArrow" );
-    //      FArrow->writeXMLFile(ele1);
-    //      ele0->LinkEndChild(ele1);
-    //    }
-    //
-    //    if(MArrow) {
-    //      ele1 = new DOMElement( MBSIM%"openMBVJointMomentArrow" );
-    //      MArrow->writeXMLFile(ele1);
-    //      ele0->LinkEndChild(ele1);
-    //    }
-    //#endif
-
-    return ele0;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameC");
+    while(e and E(e)->getTagName()==MBSIM%"plotFeatureFrameC") {
+      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
+      PlotFeature feature = initializePlotFeatureUsingXML(e);
+      C->setPlotFeature(feature, status);
+      e=e->getNextElementSibling();
+    }
   }
 
   void RigidBody::addDependency(Constraint *constraint_) {

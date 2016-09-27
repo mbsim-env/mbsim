@@ -27,16 +27,4 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  DOMElement* FrictionForceLaw::writeXMLFile(DOMNode *parent) { 
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(MBSIM%getType());
-    //if(frictionForceFunc) {
-    //  DOMElement *ele1 = new DOMElement( MBSIM%"frictionForceFunction" );
-    //  frictionForceFunc->writeXMLFile(ele1);
-    //  ele0->LinkEndChild(ele1);
-    //}
-    parent->insertBefore(ele0, NULL);
-    return ele0;
-  }
-
 }

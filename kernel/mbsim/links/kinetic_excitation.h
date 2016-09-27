@@ -86,7 +86,6 @@ namespace MBSim {
       void connect(MBSim::Frame *frame_) { frame[1] = frame_; }
 
       void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       virtual std::string getType() const { return "KineticExcitation"; }
 

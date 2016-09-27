@@ -56,7 +56,6 @@ namespace MBSim {
       void updateGyroscopicAccelerations();
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
       Frame *R;
@@ -68,4 +67,3 @@ namespace MBSim {
 }
 
 #endif
-

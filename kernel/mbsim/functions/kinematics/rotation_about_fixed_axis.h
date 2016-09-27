@@ -63,7 +63,6 @@ namespace MBSim {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfRotation");
         a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
       }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
   };
 
   template<>

@@ -40,13 +40,4 @@ namespace MBSim {
     setAccelerationOfGravity(Element::getVec3(e));
   }
 
-  DOMElement* MBSimEnvironment::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(MBSIM%"MBSimEnvironment");
-//    addElementText(ele0,MBSIM%"accelerationOfGravity",getAccelerationOfGravity());
-    parent->insertBefore(ele0, NULL);
-    return ele0;
-  }
-
 }
-

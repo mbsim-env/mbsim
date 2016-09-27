@@ -78,7 +78,6 @@ namespace MBSim {
       ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::RigidBody>& getOpenMBVRigidBody() { return openMBVRigidBody; }

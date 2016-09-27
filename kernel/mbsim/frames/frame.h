@@ -116,7 +116,6 @@ namespace MBSim {
       const fmatvec::Vec3& evalGyroscopicAccelerationOfRotation() { if(updGA) updateGyroscopicAccelerations(); return WjR; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {

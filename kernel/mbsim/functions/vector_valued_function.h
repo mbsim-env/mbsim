@@ -107,7 +107,7 @@ namespace MBSim {
         typename B::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++) {
           auto row=component[i]->parDer(x);
-          for (unsigned int j=0; j<x.size(); j++)
+          for (int j=0; j<x.size(); j++)
             y(i,j)=row(j);
         }
         return y;

@@ -45,34 +45,12 @@ namespace MBSimIntegrator {
     if(e) setInitialState(Element::getVec(e));
   }
 
-  DOMElement* Integrator::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(MBSIMINT%getType());
-    parent->insertBefore(ele0, NULL);
-
-    addElementText(ele0,MBSIMINT%"startTime",getStartTime());
-    addElementText(ele0,MBSIMINT%"endTime",getEndTime());
-    addElementText(ele0,MBSIMINT%"plotStepSize",getPlotStepSize());
-    if(getInitialState().size())
-      addElementText(ele0,MBSIMINT%"initialState",getInitialState());
-
-    return ele0;
-  }
-
   Integrator* Integrator::readXMLFile(const string &filename) {
     shared_ptr<DOMParser> parser=DOMParser::create(false);
     shared_ptr<DOMDocument> doc=parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     Integrator *integrator=ObjectFactory::createAndInit<Integrator>(e);
     return integrator;
-  }
-
-  void Integrator::writeXMLFile(const string &name) {
-//    shared_ptr<DOMDocument> doc=MainWindow::parser->createDocument();
-//    writeXMLFile(&doc);
-//    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
-//    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-//    doc.SaveFile((name.length()>13 && name.substr(name.length()-13,13)==".mbsimint.xml")?name:name+".mbsimint.xml");
   }
 
   // This function is called first by each implementation of Integrator::integrate.

@@ -431,11 +431,8 @@ namespace MBSim {
       void readz0(std::string fileName);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       static DynamicSystemSolver* readXMLFile(const std::string &filename);
-      void writeXMLFile(const std::string &name);
-      void writeXMLFile() { writeXMLFile(getName()); }
 
       /**
        * \brief set tolerance for projection of generalized position

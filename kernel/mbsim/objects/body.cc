@@ -206,17 +206,6 @@ namespace MBSim {
     if(e) saved_frameOfReference=E(e)->getAttribute("ref");
   }
 
-  DOMElement* Body::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Object::writeXMLFile(parent);
-//    if(q0.size()) addElementText(ele0,MBSIM%"initialGeneralizedPosition",q0);
-//    if(u0.size()) addElementText(ele0,MBSIM%"initialGeneralizedVelocity",u0);
-//    DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//    // ele1->SetAttribute("ref", getFrameOfReference()->getXMLPath()); // absolute path
-//    ele1->SetAttribute("ref", R->getXMLPath(this,true)); // relative path
-//    ele0->LinkEndChild(ele1);
-    return ele0;
-  }
-
   Element * Body::getChildByContainerAndName(const std::string &container, const std::string &name) const {
     if (container=="Frame")
       return getFrame(name);

@@ -156,21 +156,6 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* Frame::writeXMLFile(DOMNode *parent) {
-
-    DOMElement *ele0 = Element::writeXMLFile(parent);
-
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(openMBVFrame) {
-//      DOMElement *ele1 = new DOMElement( MBSIM%"enableOpenMBV" );
-//      addElementText(ele1,MBSIM%"size",openMBVFrame->getSize());
-//      addElementText(ele1,MBSIM%"offset",openMBVFrame->getOffset());
-//      ele0->LinkEndChild(ele1);
-//    }
-//#endif
-    return ele0;
-  }
-
   void Frame::resetUpToDate() { 
     updJac[0] = true;
     updJac[1] = true;

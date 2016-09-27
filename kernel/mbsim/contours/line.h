@@ -58,9 +58,7 @@ namespace MBSim {
 #endif
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
   };      
 }
 
 #endif /* _LINE_H_ */
-

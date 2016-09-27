@@ -75,9 +75,6 @@ namespace MBSim {
         fn->init(stage);
         fp->init(stage);
       }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
-        return 0;
-      }
     private:
       Function<Ret(Arg)> *fn, *fp;
   };

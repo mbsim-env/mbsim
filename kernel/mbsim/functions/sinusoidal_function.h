@@ -58,14 +58,6 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
         if(e) y0=Element::getDouble(e);
       }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
-        xercesc::DOMElement *ele0 = Function<Ret(Arg)>::writeXMLFile(parent);
-        addElementText(ele0,MBSIM%"amplitude",A);
-        addElementText(ele0,MBSIM%"frequency",f);
-        addElementText(ele0,MBSIM%"phase",phi0);
-        addElementText(ele0,MBSIM%"offset",y0);
-        return ele0;
-      }
   };
 
 }

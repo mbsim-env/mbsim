@@ -90,11 +90,8 @@ namespace MBSimIntegrator {
        * \param XML description
        */
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       static Integrator* readXMLFile(const std::string &filename);
-      void writeXMLFile(const std::string &name);
-      void writeXMLFile() { writeXMLFile(getType()); }
 
       /***************************************************/
 

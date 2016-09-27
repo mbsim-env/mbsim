@@ -241,7 +241,6 @@ namespace MBSim {
       Contour* getContour(int i, int j=0) { return contour[i][j]; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       void setSearchAllContactPoints(bool searchAllCP_) { searchAllCP = searchAllCP_; }
       void setInitialGuess(const fmatvec::VecV &zeta0_) { zeta0 = zeta0_; }

@@ -78,10 +78,4 @@ namespace MBSim {
     setFrictionCoefficient(Element::getDouble(e));
   }
 
-  DOMElement* SpatialCoulombFriction::writeXMLFile(DOMNode *parent) { 
-    DOMElement *ele0 = FrictionForceLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIM%"frictionCoefficient",mu);
-    return ele0;
-  }
-
 }
