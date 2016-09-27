@@ -99,7 +99,7 @@ namespace MBSimGUI {
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
-    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget);
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(static_cast<PlotFeatureStatusProperty*>(element->plotFeature.getProperty())->getTypes()));
     addToTab("Plot", plotFeature);
   }
 

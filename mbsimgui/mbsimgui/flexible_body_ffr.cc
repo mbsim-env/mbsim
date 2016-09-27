@@ -39,7 +39,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), jointForceArrow(0,false), jointMomentArrow(0,false) {
-    Frame *K = new Frame("K",this);
+    Frame *K = new Frame("K",this,true,vector<FQN>(1,MBSIMFLEX%"plotFeatureFrameK"));
     addFrame(K);
 
     mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"mass",vector<string>(2,"kg")),"",4));
@@ -182,6 +182,8 @@ namespace MBSimGUI {
     jointForceArrow.initializeUsingXML(element);
     jointMomentArrow.initializeUsingXML(element);
 
+    getFrame(0)->initializeUsingXML3(element);
+
     return element;
   }
 
@@ -234,6 +236,8 @@ namespace MBSimGUI {
 
     jointForceArrow.writeXMLFile(ele0);
     jointMomentArrow.writeXMLFile(ele0);
+
+    K->writeXMLFile3(ele0);
 
     return ele0;
   }

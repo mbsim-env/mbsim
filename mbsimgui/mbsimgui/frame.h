@@ -30,7 +30,7 @@ namespace MBSimGUI {
   class Frame : public Element {
     friend class FramePropertyDialog;
     public:
-    Frame(const std::string &str, Element *parent, bool grey=true);
+    Frame(const std::string &str, Element *parent, bool grey=true, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
     ~Frame() { }
     virtual PropertyInterface* clone() const {return new Frame(*this);}
     std::string getType() const { return "Frame"; }
@@ -39,6 +39,8 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initializeUsingXML2(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
+    virtual void initializeUsingXML3(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile3(xercesc::DOMNode *element);
     bool openMBVFrame() const {return visu.isActive();}
     void setOpenMBVFrame(bool flag) {visu.setActive(flag);}
     ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}

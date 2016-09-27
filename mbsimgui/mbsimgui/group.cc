@@ -47,7 +47,7 @@ namespace MBSimGUI {
 
   Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
-    Frame *I = new Frame("I",this);
+    Frame *I = new Frame("I",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameI"));
     addFrame(I);
 
     if(parent) {
@@ -410,6 +410,8 @@ namespace MBSimGUI {
     else
       getFrame(0)->setOpenMBVFrame(false);
 
+    getFrame(0)->initializeUsingXML3(element);
+
     return element;
   }
 
@@ -471,6 +473,8 @@ namespace MBSimGUI {
       I->writeXMLFile2(ele1);
       ele0->insertBefore(ele1, NULL);
     }
+
+    I->writeXMLFile3(ele0);
 
     return ele0;
   }
