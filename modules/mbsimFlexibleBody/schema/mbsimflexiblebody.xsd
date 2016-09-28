@@ -306,7 +306,7 @@
 
   <xs:element name="FixedNodalFrame" substitutionGroup="mbsim:Frame" type="FixedNodalFrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Klasse zur Beschreibung von Koordinatensystemen.
+      Koordinatensystem für elastische Körper mit einer Frame Of Reference Formulierung (siehe <a class="link" href="FlexibleBodyFFR">&lt;FlexibleBodyFFR&gt;</a>).
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="FixedNodalFrameType">
@@ -316,42 +316,42 @@
           <xs:element name="relativePosition" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Relative Lage des Koordinatensystems.<br/>
+                Relative Lage des Koordinatensystems bzgl. des Frame Of Reference.<br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="relativeOrientation" type="pv:rotationMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Relative Orientierung des Koordinatensystems.<br/>
+                Relative Orientierung des Koordinatensystems bzgl. des Frame Of Reference.<br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shapeMatrixOfTranslation" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Matrix der Verschiebungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shapeMatrixOfRotation" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Matrix der Verdrehungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="stressMatrix" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Spannungsmatrix.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="nonlinearStressMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+               nx1-dimensionales Feld aus Matrizen zur Berücksichtigung von Spannungen aufgrund nichtlinearer Verzerrungen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -363,14 +363,14 @@
           <xs:element name="initialStress" type="pv:pressureVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Vektor der Vorspannungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="geometricStiffnessMatrixDueToForce" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Kräften.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -382,7 +382,7 @@
           <xs:element name="geometricStiffnessMatrixDueToMoment" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Momenten.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -489,7 +489,7 @@
           <xs:element name="nonlinearStiffnessMatrixOfFirstOrder" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                nx1-dimensionales Feld aus Matrizen zur Berücksichtigung nichtlinearer Verzerrungen erster Ordnung.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -501,7 +501,7 @@
           <xs:element name="nonlinearStiffnessMatrixOfSecondOrder" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                nxn-dimensionales Feld aus Matrizen zur Berücksichtigung nichtlinearer Verzerrungen zweiter Ordnung.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -519,21 +519,21 @@
           <xs:element name="initialStressIntegral" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Vektor der generalisierte Kräfte infolge von Vorspannungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="nonlinearInitialStressIntegral" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Matrix zur Berücksichtigung der generalisierte Kräfte infolge von Vorspannungen bei nichtlinearen Verzerrungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="geometricStiffnessMatrixDueToAcceleration" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Beschleunigungen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -545,7 +545,7 @@
           <xs:element name="geometricStiffnessMatrixDueToAngularAcceleration" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Winkelbeschleunigungen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -557,7 +557,7 @@
           <xs:element name="geometricStiffnessMatrixDueToAngularVelocity" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Winkelgeschwindigkeiten.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
