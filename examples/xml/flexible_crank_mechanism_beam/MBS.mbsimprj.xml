@@ -591,14 +591,14 @@
                   <row>
                     <ele>0</ele>
                     <ele>0</ele>
-                    <ele>-2.9304e12</ele>
-                    <ele>2.1978e12</ele>
+                    <ele>-E/(1-nu^2)*4/l2</ele>
+                    <ele>E/(1-nu^2)*3/l2</ele>
                   </row>
                   <row>
                     <ele>0</ele>
                     <ele>0</ele>
-                    <ele> -8.79121e11</ele>
-                    <ele>6.59341e11</ele>
+                    <ele> -E/(1-nu^2)*nu*4/l2</ele>
+                    <ele>E/(1-nu^2)*nu*3/l2</ele>
                   </row>
                   <row>
                     <ele>0</ele>
