@@ -417,28 +417,28 @@
           <xs:element name="positionIntegral" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Integral des Ortsvektors über die Masse, <object class="inlineeqn">\int \boldsymbol{r}\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="positionPositionIntegral" type="pv:inertiaMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Integral des Produkts aus dem Ortsvektor mit der Transponierten des Ortsvektors über die Masse, <object class="inlineeqn">\int \boldsymbol{r}\,\boldsymbol{r}^T\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shapeFunctionIntegral" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Integral der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int \boldsymbol{\Phi}\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="positionShapeFunctionIntegral">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Integralen des Produkts aus den Elementen des Ortsvektors mit der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int r_i\,\boldsymbol{\Phi}\,\mathrm{d}m,\ i=1,2,3</object>.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -450,7 +450,7 @@
           <xs:element name="shapeFunctionShapeFunctionIntegral">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x3-dimensionales Feld aus Integralen des Produkts aus den Spalten der Matrix der Ansatzfunktionen mit den Transponierten der Spalten der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int \boldsymbol{\Phi}_i\,\boldsymbol{\Phi}^T_j\,\mathrm{d}m,\ i,j=1,2,3</object>.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -468,21 +468,21 @@
           <xs:element name="stiffnessMatrix" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Steifigkeistmatrix.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dampingMatrix" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Dämpfungsmatrix.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
