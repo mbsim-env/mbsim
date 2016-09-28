@@ -94,7 +94,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
             CALLPY(PyList_Append, pyPath, pyCurPath);
           }
           // load python module
-          PyO pyModule=CALLPY(PyImport_ImportModule, moduleName);
+          CALLPY(PyImport_ImportModule, moduleName);
 #else
           fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
             "Python MBSim module found in "+it->path().string()+" '"+moduleName+"'\n"<<

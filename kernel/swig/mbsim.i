@@ -207,6 +207,7 @@ _moduleData={}
 
 # internal helper function to extend a Python class
 def _extendClass(className):
+  import xml.etree.cElementTree as ET
   # add initializeUsingXML method if not exist of convert arguments if it exists
   import types
   if not 'initializeUsingXML' in className.__dict__:
@@ -222,10 +223,9 @@ def _extendClass(className):
     # save user defined initializeUsingXML and replace by implicit one (which convert com DOMElement to pyxml
     userInitializeUsingXML=className.initializeUsingXML
     def wrapperInitializeUsingXML(self, e_xerces):
-      import xml.etree.ElementTree
       filename=_getDocumentFileNameOf(e_xerces)
       xpath=_getXPathOf(e_xerces)
-      root = xml.etree.ElementTree.parse(filename).getroot()
+      root = ET.parse(filename).getroot()
       e_py=root.find(xpath)
       userInitializeUsingXML(self, e_py, e_xerces)
     className.initializeUsingXML=types.MethodType(wrapperInitializeUsingXML, None, className)
@@ -236,28 +236,24 @@ def _extendClass(className):
   if len(baseClassName)!=1:
     raise RuntimeError('Can only handle classed with one base class.')
   if not hasattr(className, 'getSchema'):
-    xsdpart='''
-      <xs:sequence>
-        <xs:element name="pyinit.%s" type="xs:string" minOccurs="0"/>
-      </xs:sequence> 
-''' % (className.__name__)
+    xsdpart=ET.Element(XS+"sequence")
+    xsdpart.append(ET.Element(XS+"element", {'name': 'pyinit.'+className.__name__, 'type': ET.QName(XS+'string'), 'minOccurs': '0'}))
   else:
     xsdpart=className.getSchema()
-  xsd='''
-<xs:element name="%s" substitutionGroup="%s" type="%sType"/>
-<xs:complexType name="%sType">
-  <xs:complexContent>
-    <xs:extension base="%sType">
-%s
-    </xs:extension>
-  </xs:complexContent>
-</xs:complexType>
-''' % (className.__name__, baseClassName[0].__module__+":"+baseClassName[0].__name__, className.__name__,
-       className.__name__, baseClassName[0].__module__+":"+baseClassName[0].__name__, xsdpart)
+  xsd1=ET.Element(XS+"element", {"name": ET.QName(_getNSOf(className.__module__), className.__name__),
+                                 "substitutionGroup": ET.QName(_getNSOf(baseClassName[0].__module__), baseClassName[0].__name__),
+                                 "type": ET.QName(_getNSOf(className.__module__), className.__name__+"Type")})
+  xsd2=ET.Element(XS+"complexType", {"name": ET.QName(_getNSOf(className.__module__), className.__name__+"Type")})
+  cc=ET.Element(XS+"complexContent")
+  xsd2.append(cc)
+  ext=ET.Element(XS+"extension", {'base': ET.QName(_getNSOf(baseClassName[0].__module__), baseClassName[0].__name__+'Type')})
+  cc.append(ext)
+  ext.append(xsdpart)
+  xsd=[xsd1, xsd2]
   global _moduleData
   if not className.__module__ in _moduleData:
-    _moduleData[className.__module__]={'xsdElements': "", 'requiredModules': set()}
-  _moduleData[className.__module__]['xsdElements']+=xsd
+    _moduleData[className.__module__]={'xsdElements': [], 'requiredModules': set()}
+  _moduleData[className.__module__]['xsdElements'].extend(xsd)
   _moduleData[className.__module__]['requiredModules'].add(baseClassName[0].__module__)
 
 
@@ -282,36 +278,29 @@ def registerXMLNameAsSingleton(className):
 # create the xsd for this module.
 def generateXMLSchemaFile(moduleName):
   import os.path
+  import xml.etree.cElementTree as ET
   global _moduleData
 
-  # generated the namespace prefix definition and the namespace import defintion of the xsd file (for all required modules)
-  nsPrefixDef=""
-  nsImportDef=""
+  # register namespace/prefix mappings
+  ET.register_namespace("pv", PV[1:-1])
+  ET.register_namespace("xs", XS[1:-1])
+  ET.register_namespace("", "http://mypytest")
   for module in _moduleData[moduleName]['requiredModules']:
-    nsPrefixDef+='xmlns:%s="%s"\n' % (module, _getNSOf(module))
-    nsImportDef+='<xs:import namespace="%s"/>\n' % (_getNSOf(module))
-
+    ET.register_namespace(module, _getNSOf(module))
   # create xsd file
-  xsd='''<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="%s"
-  elementFormDefault="qualified"
-  attributeFormDefault="unqualified"
-  xmlns="%s"
-  %s
-  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
-
-  %s
-
-  %s
-
-</xs:schema>
-''' % (_getNSOf(moduleName), _getNSOf(moduleName), nsPrefixDef, nsImportDef, _moduleData[moduleName]['xsdElements'])
+  xsd=ET.Element(XS+"schema", {"targetNamespace": _getNSOf(moduleName),
+                               "elementFormDefault": "qualified",
+                               "attributeFormDefault": "unqualified"})
+  xsd.append(ET.Element(XS+"import", {"namespace": PV[1:-1]}))
+  for module in _moduleData[moduleName]['requiredModules']:
+    xsd.append(ET.Element(XS+"import", {'namespace': _getNSOf(module)}))
+  xsd.extend(_moduleData[moduleName]['xsdElements'])
   return xsd
 
 # XML namespace of this module (prefixed with { and postfixed with })
 NS="{http://www.mbsim-env.de/MBSim}"
+
+XS="{http://www.w3.org/2001/XMLSchema}"
+PV="{http://www.mbsim-env.de/MBXMLUtils}"
 
 %}

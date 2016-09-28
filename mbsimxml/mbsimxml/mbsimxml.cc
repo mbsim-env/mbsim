@@ -79,12 +79,14 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
           PyO pyModule=CALLPY(PyImport_ImportModule, moduleName);
           // get python function and call it
           PyO pyGenerateXMLSchemaFile=CALLPY(PyObject_GetAttrString, pyModule, "generateXMLSchemaFile");
-          PyO pySchemaStr=CALLPY(PyObject_CallObject, pyGenerateXMLSchemaFile, nullptr);
-          // get string return value and write it to file
-          string schemaStr=CALLPY(PyUnicode_AsUTF8, pySchemaStr);
+          PyO pySchema=CALLPY(PyObject_CallObject, pyGenerateXMLSchemaFile, nullptr);
+          // write to file
+          PyO pyET=CALLPY(PyImport_ImportModule, "xml.etree.cElementTree");
+          PyO pyET_=CALLPY(PyObject_GetAttrString, pyET, "ElementTree");
+          PyO pyTree=CALLPY(PyObject_CallObject, pyET_, Py_BuildValue("(O)", pySchema.get()));
+          PyO pyWrite=CALLPY(PyObject_GetAttrString, pyTree, "write");
           xsdFile=bfs::current_path()/(".mbsimmodule.python."+moduleName+".xsd");
-          bfs::ofstream file(xsdFile);
-          file.write(schemaStr.c_str(), schemaStr.size());
+          CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
 #else
           fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
             "Python MBSim module found in "+path+" '"+moduleName+"'\n"<<

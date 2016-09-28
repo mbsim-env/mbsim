@@ -39,10 +39,11 @@ class PyO2(mbsim.Object):
 
   @staticmethod
   def getSchema():
-    return '''<xs:sequence>
-                <xs:element name="data1" type="pv:massScalar"/>
-                <xs:element name="data2" type="pv:massScalar"/>
-              </xs:sequence>'''
+    import xml.etree.cElementTree as ET
+    xsd=ET.Element(mbsim.XS+'sequence')
+    xsd.append(ET.Element(mbsim.XS+'element', {'name': ET.QName(NS+'data1'), 'type': ET.QName(mbsim.PV+'massScalar')}))
+    xsd.append(ET.Element(mbsim.XS+'element', {'name': ET.QName(NS+'data2'), 'type': ET.QName(mbsim.PV+'massScalar')}))
+    return xsd
 
 
 

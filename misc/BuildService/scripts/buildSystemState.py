@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from __future__ import print_function # to enable the print function for backward compatiblity with python2
-import xml.etree.ElementTree
+import xml.etree.cElementTree as ET
 import datetime
 import fcntl
 import hashlib
@@ -18,12 +18,12 @@ def update(buildType, title, content, link, nrFailed, nrRun):
   if nrFailed>0:
     NS_="http://www.w3.org/2005/Atom"
     NS="{"+NS_+"}"
-    xml.etree.ElementTree.register_namespace("", NS_)
+    ET.register_namespace("", NS_)
 
     # read feed
     fd=open(stateDir+'/.failures.atom.xml.lock', 'w') # open/create lockfile
     fcntl.lockf(fd, fcntl.LOCK_EX) # lock lockfile
-    tree=xml.etree.ElementTree.parse(stateDir+'/failures.atom.xml') # read feed
+    tree=ET.parse(stateDir+'/failures.atom.xml') # read feed
     elefeed=tree.getroot() # get root element
 
     curtime=datetime.datetime.utcnow()
@@ -38,32 +38,32 @@ def update(buildType, title, content, link, nrFailed, nrRun):
     elefeed.find(NS+"updated").text=curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # add new entry
-    eleentry=xml.etree.ElementTree.Element(NS+"entry")
+    eleentry=ET.Element(NS+"entry")
     elefeed.insert(5, eleentry)
-    eleid=xml.etree.ElementTree.Element(NS+"id")
+    eleid=ET.Element(NS+"id")
     eleentry.append(eleid)
     eleid.text="http://www.mbsim-env.de/atom/mbsim-env-build-system/"+curtime.strftime("%s")
-    elecategory=xml.etree.ElementTree.Element(NS+"category", term=buildType)
+    elecategory=ET.Element(NS+"category", term=buildType)
     eleentry.append(elecategory)
-    elelink=xml.etree.ElementTree.Element(NS+"link", rel="alternate", href=link)
+    elelink=ET.Element(NS+"link", rel="alternate", href=link)
     eleentry.append(elelink)
-    eletitle=xml.etree.ElementTree.Element(NS+"title")
+    eletitle=ET.Element(NS+"title")
     eleentry.append(eletitle)
     # some feed reader use the title as id -> make the title a id by appending a hash
     eletitle.text=title+" ("+base64.b64encode(hashlib.sha1(curtime.strftime("%s")).digest())[0:4]+")"
-    elecontent=xml.etree.ElementTree.Element(NS+"content")
+    elecontent=ET.Element(NS+"content")
     eleentry.append(elecontent)
     # some feed reader use the content as id -> make the content a id by appending a hash
     elecontent.text=content+" ("+base64.b64encode(hashlib.sha1(curtime.strftime("%s")).digest())[0:4]+")"
-    eleupdated=xml.etree.ElementTree.Element(NS+"updated")
+    eleupdated=ET.Element(NS+"updated")
     eleentry.append(eleupdated)
     eleupdated.text=curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
-    elepublished=xml.etree.ElementTree.Element(NS+"published")
+    elepublished=ET.Element(NS+"published")
     eleentry.append(elepublished)
     elepublished.text=curtime.strftime("%Y-%m-%dT%H:%M:%SZ")
-    eleauthor=xml.etree.ElementTree.Element(NS+"author")
+    eleauthor=ET.Element(NS+"author")
     eleentry.append(eleauthor)
-    elename=xml.etree.ElementTree.Element(NS+"name")
+    elename=ET.Element(NS+"name")
     eleauthor.append(elename)
     elename.text="MBSim-Env Build System"
 
