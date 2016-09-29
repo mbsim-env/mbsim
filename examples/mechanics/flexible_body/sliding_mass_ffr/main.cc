@@ -11,6 +11,8 @@ int main(int argc, char* argv[]) {
 
   sw.start();
   SlidingMass *sys = new SlidingMass("MBS");
+  sys->setLaTol(1e-5);
+  sys->setgdTol(1e-5);
 
 //  sys->setStopIfNoConvergence(true, true);
   sys->initialize();
