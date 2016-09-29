@@ -50,7 +50,6 @@ willFail=set([
   pj("mechanics", "basics", "slider_crank"),
   # timeout -> too long execution time at least for -O0 builds (>30min)
   pj("mechanics", "flexible_body", "sliding_mass_ffr"),
-  pj("mechanics", "flexible_body", "flexible_crank_mechanism_fe"),
   pj("xml", "flexible_crank_mechanism_fe"),
   # examples not yet reworked
   pj("mechanics", "initial_value_problem"),
