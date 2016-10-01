@@ -48,8 +48,6 @@ directories=list() # a list of all examples sorted in descending order (filled r
 willFail=set([
   # dimension missmatch in HETS2 integrator
   pj("mechanics", "basics", "slider_crank"),
-  # timeout -> too long execution time at least for -O0 builds (>30min)
-  pj("xml", "flexible_crank_mechanism_fe"),
   # examples not yet reworked
   pj("mechanics", "initial_value_problem"),
 ])
