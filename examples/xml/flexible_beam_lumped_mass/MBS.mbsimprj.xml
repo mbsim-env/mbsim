@@ -3,7 +3,7 @@
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="modes">1</scalarParameter>
+      <scalarParameter name="modes">2</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -64,7 +64,7 @@ end
 m = sum(mij);
 
 Ke = V'*K*V;
-Ke = tril(Ke,-1)'+tril(Ke,0);
+Ke = triu(Ke,1)'+triu(Ke,0);
 
 Pdm = Pdm(:,I);
 Ke = Ke(I,I);
@@ -124,7 +124,7 @@ end
                 <Parameter/>
                 <FixedNodalFrame xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="P{n}">
                   <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                    <?OPENMBV_ID 8?>
+                    <?OPENMBV_ID 6?>
                   </enableOpenMBV>
                   <relativePosition unit="m">u0(n,:)'</relativePosition>
                   <shapeMatrixOfTranslation unit="-">V(3*(n-1)+1:3*(n-1)+3,1:modes)</shapeMatrixOfTranslation>
@@ -133,7 +133,7 @@ end
             </frames>
             <contours/>
             <enableOpenMBVFrameK>
-              <?OPENMBV_ID 5?>
+              <?OPENMBV_ID 3?>
             </enableOpenMBVFrameK>
           </FlexibleBodyFFR>
         </Embed>
@@ -160,16 +160,16 @@ end
           </forceFunction>
           <connect ref="../Object[Body]/Frame[P{138}]"/>
           <enableOpenMBVForce>
-            <?OPENMBV_ID 9?>
+            <?OPENMBV_ID 7?>
             <scaleLength unit="-">1e-6</scaleLength>
           </enableOpenMBVForce>
           <enableOpenMBVMoment>
-            <?OPENMBV_ID 9?>
+            <?OPENMBV_ID 7?>
           </enableOpenMBVMoment>
         </KineticExcitation>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 3?>
+        <?OPENMBV_ID 1?>
       </enableOpenMBVFrameI>
       <environments>
         <MBSimEnvironment>
@@ -185,14 +185,13 @@ end
     </DynamicSystemSolver>
   </Embed>
 
-  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
+  <Eigenanalyser xmlns="http://www.mbsim-env.de/MBSimAnalyser">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
-    <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
-    <initialStepSize unit="s">0</initialStepSize>
-    <maximalStepSize unit="s">0</maximalStepSize>
-  </DOPRI5Integrator>
+    <task>"eigenmode"</task>
+    <amplitude>10</amplitude>
+    <mode>2</mode>
+  </Eigenanalyser>
 
 </MBSimProject>
