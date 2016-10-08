@@ -10,12 +10,6 @@
 #include "mbsim/links/frame_link.h"
 %}
 
-// wrap the following classes
-%include "mbsim/element.h"
-%rename(_lambda) MBSim::Link::lambda; // lambda is a python keyword -> rename it to _lambda
-%include "mbsim/links/link.h"
-%include "mbsim/links/frame_link.h"
-
 // wrap some std::vector<...> types used by the above wrapped classes
 %include "std_vector.i"
 %template() std::vector<MBSim::Element*>;
@@ -24,9 +18,14 @@
 %template() std::vector<fmatvec::Mat>;
 %template() std::vector<fmatvec::Vec>;
 %template() std::vector<MBSim::Frame*>;
-//MFMF wrap ostream
 //MFMF wrap Frame
 //MFMF wrap DSS
+
+// wrap the following classes
+%include "mbsim/element.h"
+%rename(_lambda) MBSim::Link::lambda; // lambda is a python keyword -> rename it to _lambda
+%include "mbsim/links/link.h"
+%include "mbsim/links/frame_link.h"
 
 
 

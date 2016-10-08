@@ -80,6 +80,9 @@ template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
   _import_array();
 %}
 
+// use natural vars for every member
+%naturalvar;
+
 %import "std_string.i"
 
 // use SWIG_exception to throw a target language exception
@@ -486,34 +489,47 @@ template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
 %template() fmatvec::SquareMatrix<fmatvec::Fixed<16>, double>;
 %template() fmatvec::SquareMatrix<fmatvec::Fixed<17>, double>;
 
-// wrap fmatvec::Atom
-%feature("director") fmatvec::Atom;
-namespace fmatvec {
-  %extend Atom {
-    void msg(MsgType type, const std::string &msg) {
-      $self->msg(type)<<msg<<std::endl;
-    }
-    static void msgStatic(MsgType type, const std::string &msg) {
-      fmatvec::Atom::msgStatic(type)<<msg<<std::endl;
-    }
-  };
+%typemap(out) fmatvec::Vector,
+              const fmatvec::Vector,
+              fmatvec::RowVector,
+              const fmatvec::RowVector {
+  try {
+    npy_intp dims[1];
+    dims[0]=$1.size();
+    $result=PyArray_SimpleNew(1, dims, numPyType<$1_basetype::AtomicType>());
+    if(!$result)
+      throw std::runtime_error("Cannot create ndarray");
+    std::copy(&$1(0), &$1(0)+$1.size(),
+              static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>($result), 0)));
+  }
+  FMATVEC_CATCHARG
 }
-%ignore fmatvec::Atom::setCurrentMessageStream;
-%ignore fmatvec::Atom::setMessageStreamActive;
-%ignore fmatvec::Atom::getMessageStream;
-%ignore fmatvec::Atom::adoptMessageStreams;
-%ignore fmatvec::Atom::msg;
-%ignore fmatvec::Atom::msgStatic;
-%include <fmatvec/atom.h>
 
-// wrap output (member of function return value) as a numpy.ndarray which uses the date memory from the c++ member
-%typemap(out) fmatvec::Vector*,
-              fmatvec::Vector&,
-              fmatvec::Vector*,
-              fmatvec::Vector&,
-              fmatvec::RowVector*,
-              fmatvec::RowVector&,
-              fmatvec::RowVector*,
+%typemap(out) const fmatvec::Vector&,
+              const fmatvec::RowVector& {
+  try {
+    std::string symname("$symname");
+    if(symname.substr(symname.size()-4)=="_get") {//MISSING is not working if a function ends with "_get"
+      npy_intp dims[1];
+      dims[0]=$1->size();
+      $result=PyArray_SimpleNewFromData(1, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0));
+      if(!$result)
+        throw std::runtime_error("Cannot create ndarray");
+    }
+    else {
+      npy_intp dims[1];
+      dims[0]=$1->size();
+      $result=PyArray_SimpleNew(1, dims, numPyType<$1_basetype::AtomicType>());
+      if(!$result)
+        throw std::runtime_error("Cannot create ndarray");
+      std::copy(&(*$1)(0), &(*$1)(0)+$1->size(),
+                static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>($result), 0)));
+    }
+  }
+  FMATVEC_CATCHARG
+}
+
+%typemap(out) fmatvec::Vector&,
               fmatvec::RowVector& {
   try {
     npy_intp dims[1];
@@ -525,72 +541,25 @@ namespace fmatvec {
   FMATVEC_CATCHARG
 }
 
-// wrap output (function return value) as a numpy.ndarray with its own data memory
-%typemap(out) fmatvec::Vector,
-              const fmatvec::Vector&,
-              fmatvec::Vector,
-              const fmatvec::Vector&,
-              fmatvec::RowVector,
-              const fmatvec::RowVector&,
-              fmatvec::RowVector,
-              const fmatvec::RowVector& {
-  try {
-    npy_intp dims[1];
-    dims[0]=derefIfPointer($1).size();
-    $result=PyArray_SimpleNew(1, dims, numPyType<$1_basetype::AtomicType>());
-    if(!$result)
-      throw std::runtime_error("Cannot create ndarray");
-    std::copy(&derefIfPointer($1)(0), &derefIfPointer($1)(0)+derefIfPointer($1).size(),
-              static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>($result), 0)));
-  }
-  FMATVEC_CATCHARG
+%typemap(arginit, noblock=1) fmatvec::Vector,
+                             const fmatvec::Vector,
+                             fmatvec::Vector&,
+                             const fmatvec::Vector&,
+                             fmatvec::RowVector,
+                             const fmatvec::RowVector,
+                             fmatvec::RowVector&,
+                             const fmatvec::RowVector& {
+  $1_basetype localVar$argnum;
 }
 
-// add a local variable
-// (we cannot use the SWIG syntax "typemap(...) TYPE (LocalVarType localVar)" here since LocalVarType depends on the template type)
-%typemap(arginit) fmatvec::Vector*,
-                  fmatvec::Vector&,
-                  const fmatvec::Vector&,
-                  fmatvec::Vector,
-                  const fmatvec::Vector,
-                  fmatvec::Vector*,
-                  fmatvec::Vector&,
-                  const fmatvec::Vector&,
-                  fmatvec::Vector,
-                  const fmatvec::Vector,
-                  fmatvec::RowVector*,
-                  fmatvec::RowVector&,
-                  const fmatvec::RowVector&,
-                  fmatvec::RowVector,
-                  const fmatvec::RowVector,
-                  fmatvec::RowVector*,
-                  fmatvec::RowVector&,
-                  const fmatvec::RowVector&,
-                  fmatvec::RowVector,
-                  const fmatvec::RowVector
-"$1_basetype localVar$argnum;"
-
-// wrap input (member or function parameter) as a numpy.ndarray with its own data memory
-%typemap(in) fmatvec::Vector*,
+%typemap(in) fmatvec::Vector,
+             const fmatvec::Vector,
              fmatvec::Vector&,
              const fmatvec::Vector&,
-             fmatvec::Vector,
-             const fmatvec::Vector,
-             fmatvec::Vector*,
-             fmatvec::Vector&,
-             const fmatvec::Vector&,
-             fmatvec::Vector,
-             const fmatvec::Vector,
-             fmatvec::RowVector*,
-             fmatvec::RowVector&,
-             const fmatvec::RowVector&,
              fmatvec::RowVector,
              const fmatvec::RowVector,
-             fmatvec::RowVector*,
              fmatvec::RowVector&,
-             const fmatvec::RowVector&,
-             fmatvec::RowVector,
-             const fmatvec::RowVector {
+             const fmatvec::RowVector& {
   try {
     void *inputp;
     int res=SWIG_ConvertPtr($input, &inputp, $1_descriptor, 0);
@@ -602,8 +571,8 @@ namespace fmatvec {
         throw std::runtime_error("Must have 1 dimension.");
       int type=PyArray_TYPE(input);
       checkNumPyType<$1_basetype::AtomicType>(type);
-      assignIfPointer($1, localVar$argnum);
       npy_intp *dims=PyArray_SHAPE(input);
+      assignIfPointer($1, localVar$argnum);
       derefIfPointer($1).resize(dims[0]);
       for(int i=0; i<dims[0]; ++i)
         derefIfPointer($1)(i)=arrayGet<$1_basetype::AtomicType>(input, type, i);
@@ -614,17 +583,15 @@ namespace fmatvec {
   FMATVEC_CATCHARG
 }
 
-// wrap output function parameter -> do nothing for const references (no output)
-%typemap(argout) const fmatvec::Vector&,
+%typemap(argout) fmatvec::Vector,
+                 const fmatvec::Vector,
                  const fmatvec::Vector&,
-                 const fmatvec::RowVector&,
+                 fmatvec::RowVector,
+                 const fmatvec::RowVector,
                  const fmatvec::RowVector& {
 }
 
-// wrap output function parameter -> copy result back to input function parameter
 %typemap(argout) fmatvec::Vector&,
-                 fmatvec::Vector&,
-                 fmatvec::RowVector&,
                  fmatvec::RowVector& {
   try {
     PyArrayObject *input=reinterpret_cast<PyArrayObject*>($input);
@@ -637,40 +604,10 @@ namespace fmatvec {
   FMATVEC_CATCHARG
 }
 
-
-
-// wrap output (member of function return value) as a numpy.ndarray which uses the date memory from the c++ member
-%typemap(out) fmatvec::Matrix*,
-              fmatvec::Matrix&,
-              fmatvec::Matrix*,
-              fmatvec::Matrix&,
-              fmatvec::SquareMatrix*,
-              fmatvec::SquareMatrix&,
-              fmatvec::SquareMatrix*,
-              fmatvec::SquareMatrix& {
-  try {
-    npy_intp dims[2];
-    dims[0]=$1->rows();
-    dims[1]=$1->cols();
-    $result=PyArray_SimpleNewFromData(2, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0, 0));
-    if(!$result)
-      throw std::runtime_error("Cannot create ndarray");
-    npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>($result));
-    strides[$1->transposed() ? 1 : 0]=sizeof($1_basetype::AtomicType)*1;
-    strides[$1->transposed() ? 0 : 1]=sizeof($1_basetype::AtomicType)*$1->ldim();
-  }
-  FMATVEC_CATCHARG
-}
-
-// wrap output (function return value) as a numpy.ndarray with its own data memory
 %typemap(out) fmatvec::Matrix,
-              const fmatvec::Matrix&,
-              fmatvec::Matrix,
-              const fmatvec::Matrix&,
+              const fmatvec::Matrix,
               fmatvec::SquareMatrix,
-              const fmatvec::SquareMatrix&,
-              fmatvec::SquareMatrix,
-              const fmatvec::SquareMatrix& {
+              const fmatvec::SquareMatrix {
   try {
     npy_intp dims[2];
     dims[0]=derefIfPointer($1).rows();
@@ -687,51 +624,73 @@ namespace fmatvec {
   FMATVEC_CATCHARG
 }
 
-// add a local variable
-// (we cannot use the SWIG syntax "typemap(...) TYPE (LocalVarType localVar)" here since LocalVarType depends on the template type)
-%typemap(arginit) fmatvec::Matrix*,
-                  fmatvec::Matrix&,
-                  const fmatvec::Matrix&,
-                  fmatvec::Matrix,
-                  const fmatvec::Matrix,
-                  fmatvec::Matrix*,
-                  fmatvec::Matrix&,
-                  const fmatvec::Matrix&,
-                  fmatvec::Matrix,
-                  const fmatvec::Matrix,
-                  fmatvec::SquareMatrix*,
-                  fmatvec::SquareMatrix&,
-                  const fmatvec::SquareMatrix&,
-                  fmatvec::SquareMatrix,
-                  const fmatvec::SquareMatrix,
-                  fmatvec::SquareMatrix*,
-                  fmatvec::SquareMatrix&,
-                  const fmatvec::SquareMatrix&,
-                  fmatvec::SquareMatrix,
-                  const fmatvec::SquareMatrix
-"$1_basetype localVar$argnum;"
+%typemap(out) const fmatvec::Matrix&,
+              const fmatvec::SquareMatrix& {
+  try {
+    std::string symname("$symname");
+    if(symname.substr(symname.size()-4)=="_get") {//MISSING is not working if a function ends with "_get"
+      npy_intp dims[2];
+      dims[0]=$1->rows();
+      dims[1]=$1->cols();
+      $result=PyArray_SimpleNewFromData(2, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0, 0));
+      if(!$result)
+        throw std::runtime_error("Cannot create ndarray");
+      npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>($result));
+      strides[$1->transposed() ? 1 : 0]=sizeof($1_basetype::AtomicType)*1;
+      strides[$1->transposed() ? 0 : 1]=sizeof($1_basetype::AtomicType)*$1->ldim();
+    }
+    else {
+      npy_intp dims[2];
+      dims[0]=$1->rows();
+      dims[1]=$1->cols();
+      $result=PyArray_SimpleNew(2, dims, numPyType<$1_basetype::AtomicType>());
+      if(!$result)
+        throw std::runtime_error("Cannot create ndarray");
+      PyArrayObject *input=reinterpret_cast<PyArrayObject*>($result);
+      for(int r=0; r<dims[0]; r++)
+        for(int c=0; c<dims[1]; c++)
+          *static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR2(input, r, c))=
+            (*$1)(r, c);
+    }
+  }
+  FMATVEC_CATCHARG
+}
 
-// wrap input (member or function parameter) as a numpy.ndarray with its own data memory
-%typemap(in) fmatvec::Matrix*,
+%typemap(out) fmatvec::Matrix&,
+              fmatvec::SquareMatrix& {
+  try {
+    npy_intp dims[2];
+    dims[0]=$1->rows();
+    dims[1]=$1->cols();
+    $result=PyArray_SimpleNewFromData(2, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0, 0));
+    if(!$result)
+      throw std::runtime_error("Cannot create ndarray");
+    npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>($result));
+    strides[$1->transposed() ? 1 : 0]=sizeof($1_basetype::AtomicType)*1;
+    strides[$1->transposed() ? 0 : 1]=sizeof($1_basetype::AtomicType)*$1->ldim();
+  }
+  FMATVEC_CATCHARG
+}
+
+%typemap(arginit, noblock=1) fmatvec::Matrix,
+                             const fmatvec::Matrix,
+                             fmatvec::Matrix&,
+                             const fmatvec::Matrix&,
+                             fmatvec::SquareMatrix,
+                             const fmatvec::SquareMatrix,
+                             fmatvec::SquareMatrix&,
+                             const fmatvec::SquareMatrix& {
+  $1_basetype localVar$argnum;
+}
+
+%typemap(in) fmatvec::Matrix,
+             const fmatvec::Matrix,
              fmatvec::Matrix&,
              const fmatvec::Matrix&,
-             fmatvec::Matrix,
-             const fmatvec::Matrix,
-             fmatvec::Matrix*,
-             fmatvec::Matrix&,
-             const fmatvec::Matrix&,
-             fmatvec::Matrix,
-             const fmatvec::Matrix,
-             fmatvec::SquareMatrix*,
-             fmatvec::SquareMatrix&,
-             const fmatvec::SquareMatrix&,
              fmatvec::SquareMatrix,
              const fmatvec::SquareMatrix,
-             fmatvec::SquareMatrix*,
              fmatvec::SquareMatrix&,
-             const fmatvec::SquareMatrix&,
-             fmatvec::SquareMatrix,
-             const fmatvec::SquareMatrix {
+             const fmatvec::SquareMatrix& {
   try {
     void *inputp;
     int res=SWIG_ConvertPtr($input, &inputp, $1_descriptor, 0);
@@ -756,17 +715,15 @@ namespace fmatvec {
   FMATVEC_CATCHARG
 }
 
-// wrap output function parameter -> do nothing for const references (no output)
-%typemap(argout) const fmatvec::Matrix&,
+%typemap(argout) fmatvec::Matrix,
+                 const fmatvec::Matrix,
                  const fmatvec::Matrix&,
-                 const fmatvec::SquareMatrix&,
+                 fmatvec::SquareMatrix,
+                 const fmatvec::SquareMatrix,
                  const fmatvec::SquareMatrix& {
 }
 
-// wrap output function parameter -> copy result back to input function parameter
 %typemap(argout) fmatvec::Matrix&,
-                 fmatvec::Matrix&,
-                 fmatvec::SquareMatrix&,
                  fmatvec::SquareMatrix& {
   try {
     PyArrayObject *input=reinterpret_cast<PyArrayObject*>($input);
@@ -780,3 +737,23 @@ namespace fmatvec {
   }
   FMATVEC_CATCHARG
 }
+
+// wrap fmatvec::Atom
+%feature("director") fmatvec::Atom;
+namespace fmatvec {
+  %extend Atom {
+    void msg(MsgType type, const std::string &msg) {
+      $self->msg(type)<<msg<<std::endl;
+    }
+    static void msgStatic(MsgType type, const std::string &msg) {
+      fmatvec::Atom::msgStatic(type)<<msg<<std::endl;
+    }
+  };
+}
+%ignore fmatvec::Atom::setCurrentMessageStream;
+%ignore fmatvec::Atom::setMessageStreamActive;
+%ignore fmatvec::Atom::getMessageStream;
+%ignore fmatvec::Atom::adoptMessageStreams;
+%ignore fmatvec::Atom::msg;
+%ignore fmatvec::Atom::msgStatic;
+%include <fmatvec/atom.h>

@@ -22,7 +22,7 @@ class PySpringDamper(mbsim.FrameLink):
     if self.warnCount==0:
       self.msg(self.Warn, "Test warning from python")
       self.warnCount=self.warnCount+1
-    self.lambdaF[0]=-100*self.evalGeneralizedRelativePosition()[0]-0.2*self.evalGeneralizedRelativeVelocity()[0];
+    self.lambdaF[0]=-100*self.evalGeneralizedRelativePosition()[0]-0.2*self.evalGeneralizedRelativeVelocity()[0]
     self.updlaF = False
 
   def isActive(self):
