@@ -692,7 +692,7 @@ namespace MBSimGUI {
     }
   }
  
-  PlotFeatureStatusWidget::PlotFeatureStatusWidget() {
+  PlotFeatureStatusWidget::PlotFeatureStatusWidget(const vector<MBXMLUtils::FQN> &types) {
     QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -730,9 +730,13 @@ namespace MBSimGUI {
     value_.push_back("-debug");
 
     QStringList type_;
-    type_ << "plotFeature";
-    type_ << "plotFeatureForChildren";
-    type_ << "plotFeatureRecursive";
+    for(unsigned int i=0; i<types.size(); i++)
+      type_ << QString::fromStdString(types[i].second);
+    if(type_.isEmpty()) {
+      type_ << "plotFeature";
+      type_ << "plotFeatureForChildren";
+      type_ << "plotFeatureRecursive";
+    }
 
     tree = new QTreeWidget;
     QStringList labels;

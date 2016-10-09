@@ -220,8 +220,9 @@ namespace MBSim {
        */
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature pf) { return plotFeatureForChildren[pf]; }
 
+      PlotFeatureStatus initializePlotFeatureStatusUsingXML(xercesc::DOMElement *e);
+      PlotFeature initializePlotFeatureUsingXML(xercesc::DOMElement *e);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
 

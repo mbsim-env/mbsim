@@ -38,7 +38,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
-    Frame *C = new Frame("C",this);
+    Frame *C = new Frame("C",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
     addFrame(C);
 
     K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForKinematics"));
@@ -150,6 +150,8 @@ namespace MBSimGUI {
     jointForceArrow.initializeUsingXML(element);
     jointMomentArrow.initializeUsingXML(element);
 
+    getFrame(0)->initializeUsingXML3(element);
+
     return element;
   }
 
@@ -193,6 +195,8 @@ namespace MBSimGUI {
 
     jointForceArrow.writeXMLFile(ele0);
     jointMomentArrow.writeXMLFile(ele0);
+
+    C->writeXMLFile3(ele0);
 
     return ele0;
   }

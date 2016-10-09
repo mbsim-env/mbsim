@@ -373,54 +373,6 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* JointConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Constraint::writeXMLFile(parent);
-//    if(q0.size()) 
-//      addElementText(ele0,MBSIM%"initialGeneralizedPosition",q0);
-//    DOMElement *ele1 = new DOMElement( MBSIM%"dependentRigidBodiesFirstSide" );
-//    for(unsigned int i=0; i<bd1.size(); i++) {
-//      DOMElement *ele2 = new DOMElement( MBSIM%"dependentRigidBody" );
-//      ele2->SetAttribute("ref", bd1[i]->getXMLPath(this,true)); // relative path
-//      ele1->LinkEndChild(ele2);
-//    }
-//    ele0->LinkEndChild(ele1);
-//    ele1 = new DOMElement( MBSIM%"dependentRigidBodiesSecondSide" );
-//    for(unsigned int i=0; i<bd2.size(); i++) {
-//      DOMElement *ele2 = new DOMElement( MBSIM%"dependentRigidBody" );
-//      ele2->SetAttribute("ref", bd2[i]->getXMLPath(this,true)); // relative path
-//      ele1->LinkEndChild(ele2);
-//    }
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new DOMElement( MBSIM%"independentRigidBody" );
-//    ele1->SetAttribute("ref", bi->getXMLPath(this,true)); // relative path
-//    ele0->LinkEndChild(ele1);
-//
-//    if(dT.cols())
-//      addElementText(ele0, MBSIM%"forceDirection", dT);
-//    if(dR.cols())
-//      addElementText(ele0, MBSIM%"momentDirection", dR);
-//
-//    ele1 = new DOMElement(MBSIM%"connect");
-//    ele1->SetAttribute("ref1", frame1->getXMLPath(this,true)); // relative path
-//    ele1->SetAttribute("ref2", frame2->getXMLPath(this,true)); // relative path
-//    ele0->LinkEndChild(ele1);
-//
-//    if(FArrow) {
-//      ele1 = new DOMElement( MBSIM%"openMBVJointForceArrow" );
-//      FArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(MArrow) {
-//      ele1 = new DOMElement( MBSIM%"openMBVJointMomentArrow" );
-//      MArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-
-    return ele0;
-  }
-
   void JointConstraint::setForceDirection(const Mat3xV &fd) {
 
     forceDir = fd;

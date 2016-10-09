@@ -77,9 +77,6 @@ namespace MBSim {
         fo->init(stage);
         fi->init(stage);
       }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
-        return 0;
-      }
     private:
       Function<Ret(Argo)> *fo;
       Function<Argo(double)> *fi;
@@ -132,9 +129,6 @@ namespace MBSim {
         Function<Ret(Argi)>::init(stage);
         fo->init(stage);
         fi->init(stage);
-      }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) {
-        return 0;
       }
     private:
       Function<Ret(Argo)> *fo;

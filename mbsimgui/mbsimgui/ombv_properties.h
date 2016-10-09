@@ -25,7 +25,7 @@
 
 namespace MBSimGUI {
 
-  class RigidBody;
+  class Body;
 
   class OMBVBodyPropertyFactory: public PropertyFactory {
     public:
@@ -310,7 +310,7 @@ namespace MBSimGUI {
   class OMBVBodySelectionProperty : public Property {
     public:
 
-      OMBVBodySelectionProperty(RigidBody* body);
+      OMBVBodySelectionProperty(Body* body, const MBXMLUtils::NamespaceURI &uri=MBSIM);
       virtual PropertyInterface* clone() const {return new OMBVBodySelectionProperty(*this);}
 
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

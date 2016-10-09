@@ -70,18 +70,4 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* Plane::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(openMBVRigidBody) {
-//      DOMElement *ele1 = new DOMElement(MBSIM%"enableOpenMBV");
-//      addElementText(ele1,MBSIM%"size",static_pointer_cast<OpenMBV::Grid>(openMBVRigidBody)->getXSize());
-//      addElementText(ele1,MBSIM%"numberOfLines",static_pointer_cast<OpenMBV::Grid>(openMBVRigidBody)->getXNumber());
-//      ele0->LinkEndChild(ele1);
-//    }
-//#endif
-    return ele0;
-  }
-
 }
-

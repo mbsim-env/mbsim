@@ -27,17 +27,4 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  DOMElement* GeneralizedForceLaw::writeXMLFile(DOMNode *parent) { 
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(MBSIM%getType());
-//    if(forceFunc) {
-//      DOMElement *ele1 = new DOMElement( MBSIM%"forceFunction" );
-//      forceFunc->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-    parent->insertBefore(ele0, NULL);
-    return ele0;
-  }
-
 }
-

@@ -546,6 +546,16 @@
               <xs:group ref="OpenMBVFrameParameters"/>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="plotFeatureFrameI" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Plotfeatures des Koordinatensystems "I" dieser Gruppe.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1039,6 +1049,16 @@
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType> 
+          </xs:element>
+          <xs:element name="plotFeatureFrameC" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Plotfeatures des Schwerpunktskoordinatensystems "C" dieses Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>

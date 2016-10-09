@@ -72,18 +72,4 @@ namespace MBSim {
     checkInput();
   }
 
-  DOMElement* PlaneWithFrustum::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-//    addElementText(ele0,MBSIM%"baseRadius",rFrustumOnPlane);
-//    addElementText(ele0,MBSIM%"topRadius",rFrustumOnTop);
-//    addElementText(ele0,MBSIM%"height",hFrustum);
-//    addElementText(ele0,MBSIM%"roundingRadius",rho);
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(openMBVRigidBody)
-//      ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
-//#endif
-    return ele0;
-  }
-
 }
-

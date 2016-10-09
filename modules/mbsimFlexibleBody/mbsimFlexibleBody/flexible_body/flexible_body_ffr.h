@@ -225,7 +225,6 @@ namespace MBSimFlexibleBody {
 #endif
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
       fmatvec::Vec& getuRel(bool check=true) { assert((not check) or (not updGC)); return uRel; }

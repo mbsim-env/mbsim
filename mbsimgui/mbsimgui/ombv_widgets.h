@@ -30,7 +30,7 @@ class QComboBox;
 namespace MBSimGUI {
 
   class ExtWidget;
-  class RigidBody;
+  class Body;
 
   class OMBVBodyWidgetFactory : public WidgetFactory {
     public:
@@ -245,7 +245,7 @@ namespace MBSimGUI {
 
     public:
 
-    OMBVBodySelectionWidget(RigidBody* body);
+    OMBVBodySelectionWidget(Body* body);
 
     virtual void updateWidget() {ref->updateWidget();}
 

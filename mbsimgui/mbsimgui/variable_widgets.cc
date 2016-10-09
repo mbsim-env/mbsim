@@ -931,7 +931,7 @@ namespace MBSimGUI {
     name[1] = "Editor";
   }
 
-  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_) : value(value_), name(2), unit(unit_), defaultUnit(2,0) {
+  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(2), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Scalar";
     name[1] = "Editor";
   }

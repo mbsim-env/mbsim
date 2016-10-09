@@ -99,7 +99,7 @@ namespace MBSimGUI {
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
-    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget);
+    plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(static_cast<PlotFeatureStatusProperty*>(element->plotFeature.getProperty())->getTypes()));
     addToTab("Plot", plotFeature);
   }
 
@@ -614,7 +614,7 @@ namespace MBSimGUI {
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
     addToTab("Kinematics",K);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits())),QBoxLayout::RightToLeft));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
     addToTab("General",mass);
 
     inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
@@ -727,7 +727,7 @@ namespace MBSimGUI {
   FlexibleBodyFFRPropertyDialog::FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
     addTab("Visualisation",3);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits())),QBoxLayout::RightToLeft));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
     addToTab("General",mass);
 
     pdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft));
@@ -792,8 +792,8 @@ namespace MBSimGUI {
     coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true);
     addToTab("Kinematics", coordinateTransformationForRotation);
 
-//    ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
-//    addToTab("Visualisation", ombvEditor);
+    ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
+    addToTab("Visualisation", ombvEditor);
 
     jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
     addToTab("Visualisation",jointForceArrow);
@@ -815,7 +815,7 @@ namespace MBSimGUI {
     if(Knl1->isActive())
       static_cast<OneDimMatArrayWidget*>(Knl1->getWidget())->resize_(size,size,size);
     if(Knl2->isActive())
-      static_cast<OneDimMatArrayWidget*>(Knl2->getWidget())->resize_(size,size,size);
+      static_cast<TwoDimMatArrayWidget*>(Knl2->getWidget())->resize_(size,size,size);
     ksigma0->resize_(size,1);
     ksigma1->resize_(size,size);
     if(K0t->isActive())
@@ -848,7 +848,7 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->rotation.toWidget(rotation);
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
     static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
-//    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.toWidget(ombvEditor);
+    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.toWidget(ombvEditor);
     static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.toWidget(jointForceArrow);
     static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
   }
@@ -875,7 +875,7 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->rotation.fromWidget(rotation);
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
     static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
-//    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.fromWidget(ombvEditor);
+    static_cast<FlexibleBodyFFR*>(element)->ombvEditor.fromWidget(ombvEditor);
     static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.fromWidget(jointForceArrow);
     static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
   }
@@ -1416,7 +1416,7 @@ namespace MBSimGUI {
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", function);
 
-    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft));
+    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
     body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(springDamper,0),true);

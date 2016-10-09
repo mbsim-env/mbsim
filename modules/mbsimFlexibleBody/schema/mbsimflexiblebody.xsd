@@ -303,7 +303,7 @@
 
   <xs:element name="FixedNodalFrame" substitutionGroup="mbsim:Frame" type="FixedNodalFrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Klasse zur Beschreibung von Koordinatensystemen.
+      Koordinatensystem für elastische Körper mit einer Frame Of Reference Formulierung (siehe <a class="link" href="FlexibleBodyFFR">&lt;FlexibleBodyFFR&gt;</a>).
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="FixedNodalFrameType">
@@ -313,42 +313,42 @@
           <xs:element name="relativePosition" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Relative Lage des Koordinatensystems.<br/>
+                Relative Lage des Koordinatensystems bzgl. des Frame Of Reference.<br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="relativeOrientation" type="pv:rotationMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Relative Orientierung des Koordinatensystems.<br/>
+                Relative Orientierung des Koordinatensystems bzgl. des Frame Of Reference.<br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shapeMatrixOfTranslation" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Matrix der Verschiebungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shapeMatrixOfRotation" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Matrix der Verdrehungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="stressMatrix" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Spannungsmatrix.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="nonlinearStressMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+               nx1-dimensionales Feld aus Matrizen zur Berücksichtigung von Spannungen aufgrund nichtlinearer Verzerrungen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -360,14 +360,14 @@
           <xs:element name="initialStress" type="pv:pressureVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Vektor der Vorspannungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="geometricStiffnessMatrixDueToForce" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Kräften.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -379,7 +379,7 @@
           <xs:element name="geometricStiffnessMatrixDueToMoment" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Momenten.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -414,28 +414,28 @@
           <xs:element name="positionIntegral" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Integral des Ortsvektors über die Masse, <object class="inlineeqn">\int \boldsymbol{r}\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="positionPositionIntegral" type="pv:inertiaMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Integral des Produkts aus dem Ortsvektor mit der Transponierten des Ortsvektors über die Masse, <object class="inlineeqn">\int \boldsymbol{r}\,\boldsymbol{r}^T\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="shapeFunctionIntegral" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Integral der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int \boldsymbol{\Phi}\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="positionShapeFunctionIntegral">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Integralen des Produkts aus den Elementen des Ortsvektors mit der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int r_i\,\boldsymbol{\Phi}\,\mathrm{d}m,\ i=1,2,3</object>.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -447,7 +447,7 @@
           <xs:element name="shapeFunctionShapeFunctionIntegral">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x3-dimensionales Feld aus Integralen des Produkts aus den Spalten der Matrix der Ansatzfunktionen mit den Transponierten der Spalten der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int \boldsymbol{\Phi}_i\,\boldsymbol{\Phi}^T_j\,\mathrm{d}m,\ i,j=1,2,3</object>.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -465,28 +465,28 @@
           <xs:element name="stiffnessMatrix" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Steifigkeistmatrix.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dampingMatrix" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Dämpfungsmatrix.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="nonlinearStiffnessMatrixOfFirstOrder" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                nx1-dimensionales Feld aus Matrizen zur Berücksichtigung nichtlinearer Verzerrungen erster Ordnung.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -498,7 +498,7 @@
           <xs:element name="nonlinearStiffnessMatrixOfSecondOrder" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                nxn-dimensionales Feld aus Matrizen zur Berücksichtigung nichtlinearer Verzerrungen zweiter Ordnung.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -516,21 +516,21 @@
           <xs:element name="initialStressIntegral" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Vektor der generalisierte Kräfte infolge von Vorspannungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="nonlinearInitialStressIntegral" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Matrix zur Berücksichtigung der generalisierte Kräfte infolge von Vorspannungen bei nichtlinearen Verzerrungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="geometricStiffnessMatrixDueToAcceleration" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Beschleunigungen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -542,7 +542,7 @@
           <xs:element name="geometricStiffnessMatrixDueToAngularAcceleration" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Winkelbeschleunigungen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -554,7 +554,7 @@
           <xs:element name="geometricStiffnessMatrixDueToAngularVelocity" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Winkelgeschwindigkeiten.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -705,6 +705,31 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:sequence minOccurs="0">
+            <xs:element name="openMBVRigidBody">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:RigidBody"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="openMBVFrameOfReference" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Definiert das MBSim KOS, mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt.<br/>
+                  Wird dieses Element nicht angegeben, so wird das KOS "C" verwendet.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:attribute name="ref" type="mbsim:CurrentFrameReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
           <xs:element name="enableOpenMBVFrameK" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -729,6 +754,16 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="plotFeatureFrameK" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Plotfeatures des Schwerpunktskoordinatensystems "C" dieses Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="feature" type="mbsim:PlotFeatureType" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

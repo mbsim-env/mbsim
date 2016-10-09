@@ -280,10 +280,4 @@ namespace MBSim {
     }
   }
 
-  DOMElement* MaxwellContact::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contact::writeXMLFile(parent);
-    return ele0;
-  }
-
 }
-

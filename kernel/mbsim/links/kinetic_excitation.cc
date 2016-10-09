@@ -114,31 +114,4 @@ namespace MBSim {
     if(E(e)->hasAttribute("ref")) saved_ref=E(e)->getAttribute("ref");
   }
 
-  DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
-//    if(refFrame) {
-//      DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//      ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path
-//      ele0->LinkEndChild(ele1);
-//    }
-//    if(forceDir.cols()) {
-//      addElementText(ele0,MBSIM%"forceDirection",forceDir);
-//      DOMElement *ele1 = new DOMElement(MBSIM%"forceFunction");
-//      F->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    if(momentDir.cols()) {
-//      addElementText(ele0,MBSIM%"momentDirection",momentDir);
-//      DOMElement *ele1 = new DOMElement(MBSIM%"momentFunction");
-//      M->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    DOMElement *ele1 = new DOMElement(MBSIM%"connect");
-//    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
-//    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this,true)); // relative path
-//    ele0->LinkEndChild(ele1);
-    return ele0;
-  }
-
 }
-

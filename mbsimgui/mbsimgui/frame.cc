@@ -34,15 +34,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
-
-    // properties->addTab("Plotting");
-    // plotFeature.push_back(new ExtWidget("Plot global position", new PlotFeature("globalPosition"),true));
-    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
-    // plotFeature.push_back(new ExtWidget("Plot global velocity", new PlotFeature("globalVelocity"),true));
-    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
-    // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
-    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+  Frame::Frame(const string &str, Element *parent, bool grey, const vector<FQN> &plotFeatureTypes) : Element(str,parent,plotFeatureTypes), visu(0,true) {
 
     visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
   }
@@ -75,8 +67,17 @@ namespace MBSimGUI {
     visu.initializeUsingXML(element);
   }
 
+  void Frame::initializeUsingXML3(DOMElement *element) {
+    static_cast<PlotFeatureStatusProperty*>(plotFeature.getProperty())->initializeUsingXML2(element);
+  }
+
   DOMElement* Frame::writeXMLFile2(DOMNode *parent) {
     visu.writeXMLFile(parent);
+    return 0;
+  }
+
+  DOMElement* Frame::writeXMLFile3(DOMNode *parent) {
+    static_cast<PlotFeatureStatusProperty*>(plotFeature.getProperty())->writeXMLFile2(parent);
     return 0;
   }
 

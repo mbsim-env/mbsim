@@ -311,36 +311,36 @@ namespace MBSimGUI {
     return name;
   }
 
-  TranslationPropertyFactory4::TranslationPropertyFactory4(Element *parent_) : parent(parent_) {
-    name.push_back(MBSIM%"stateDependentTranslation");
-    name.push_back(MBSIM%"timeDependentTranslation");
-    name.push_back(MBSIM%"generalTranslation");
+  TranslationPropertyFactory4::TranslationPropertyFactory4(Element *parent_, const NamespaceURI &uri) : parent(parent_) {
+    name.push_back(uri%"stateDependentTranslation");
+    name.push_back(uri%"timeDependentTranslation");
+    name.push_back(uri%"generalTranslation");
   }
 
   PropertyInterface* TranslationPropertyFactory4::createProperty(int i) {
     if(i==0)
-      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory2(parent),MBSIM%"stateDependentTranslation"));
+      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory2(parent),name[i]));
     if(i==1)
-      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory3(parent),MBSIM%"timeDependentTranslation"));
+      return new ExtProperty(new ChoiceProperty2(new TranslationPropertyFactory3(parent),name[i]));
     if(i==2) {
       vector<string> var;
       var.push_back("q");
       var.push_back("t");
-      return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(parent,"VVS",var),MBSIM%"generalTranslation"));
+      return new ExtProperty(new ChoiceProperty2(new SymbolicFunctionPropertyFactory2(parent,"VVS",var),name[i]));
     }
     return NULL;
   }
 
-  RotationPropertyFactory4::RotationPropertyFactory4(Element *parent_) : parent(parent_) {
-    name.push_back(MBSIM%"stateDependentRotation");
-    name.push_back(MBSIM%"timeDependentRotation");
+  RotationPropertyFactory4::RotationPropertyFactory4(Element *parent_, const NamespaceURI &uri) : parent(parent_) {
+    name.push_back(uri%"stateDependentRotation");
+    name.push_back(uri%"timeDependentRotation");
   }
 
   PropertyInterface* RotationPropertyFactory4::createProperty(int i) {
     if(i==0)
-      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory2(parent),MBSIM%"stateDependentRotation"));
+      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory2(parent),name[i]));
     if(i==1)
-      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory3(parent),MBSIM%"timeDependentRotation"));
+      return new ExtProperty(new ChoiceProperty2(new RotationPropertyFactory3(parent),name[i]));
     return NULL;
   }
 

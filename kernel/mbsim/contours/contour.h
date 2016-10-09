@@ -223,7 +223,6 @@ namespace MBSim {
       virtual void updateGyroscopicAccelerations(ContourFrame *frame);
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       void setThickness(double thickness_) { thickness = thickness_; }
       double getThickness() const { return thickness; }

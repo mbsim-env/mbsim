@@ -41,9 +41,4 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* Line::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-    return ele0;
-  }
-
 }

@@ -933,6 +933,15 @@ namespace MBSimFlexibleBody {
     if(e) coordinateTransformation = getBool(e);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVRigidBody");
+    if(e) {
+      shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
+      setOpenMBVRigidBody(rb);
+      rb->initializeUsingXML(e->getFirstElementChild());
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVFrameOfReference");
+    if(e) setOpenMBVFrameOfReference(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
+
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(e) {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
@@ -954,11 +963,14 @@ namespace MBSimFlexibleBody {
       MArrow=ombv.createOpenMBV(e);
     }
 #endif
-  }
 
-  DOMElement* FlexibleBodyFFR::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Body::writeXMLFile(parent);
-    return ele0;
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotFeatureFrameK");
+    while(e and E(e)->getTagName()==MBSIMFLEX%"plotFeatureFrameK") {
+      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
+      PlotFeature feature = initializePlotFeatureUsingXML(e);
+      K->setPlotFeature(feature, status);
+      e=e->getNextElementSibling();
+    }
   }
 
 }

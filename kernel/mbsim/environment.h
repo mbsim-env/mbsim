@@ -40,7 +40,6 @@ namespace MBSim {
        * \param XML element
        */
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent)=0;
       /***************************************************/
     
     protected:
@@ -64,7 +63,6 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */

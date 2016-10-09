@@ -64,7 +64,6 @@ namespace MBSim {
 #endif
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_; }
@@ -81,4 +80,3 @@ namespace MBSim {
 }
 
 #endif /* _LINE_SEGMENT_H_ */
-

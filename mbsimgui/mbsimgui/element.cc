@@ -42,10 +42,10 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
+  Element::Element(const string &name_, Element *parent_, const vector<FQN> &plotFeatureTypes) : parent(parent_), embed(0,false) {
     name.setProperty(new TextProperty(name_,""));
     embed.setProperty(new EmbedProperty(std::bind(&Element::getName, this)));
-    plotFeature.setProperty(new PlotFeatureStatusProperty);
+    plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));
     ID=toStr(IDcounter++);
   }
 

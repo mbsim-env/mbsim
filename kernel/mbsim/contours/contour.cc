@@ -238,10 +238,4 @@ namespace MBSim {
     if(e) setThickness(getDouble(e));
   }
 
-  DOMElement* Contour::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Element::writeXMLFile(parent);
-    addElementText(ele0,MBSIM%"thickness",thickness);
-    return ele0;
-  }
-
 }

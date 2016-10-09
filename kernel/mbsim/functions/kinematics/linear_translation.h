@@ -47,7 +47,6 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
         b=e?FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()):zeros(A);
       }
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent) { return 0; } 
       void setSlope(const typename B::DRetDArg &A_) { A = A_; }
       void setIntercept(const fmatvec::Vec3 &b_) { b = b_; }
   };

@@ -21,7 +21,7 @@
 #include "ombv_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#include "rigid_body.h"
+#include "body.h"
 #include "frame.h"
 #include <QtGui>
 
@@ -334,7 +334,7 @@ namespace MBSimGUI {
     windingRule = new ExtWidget("Winding rule",new TextChoiceWidget(list,0));
     layout->addWidget(windingRule);
 
-    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits())),QBoxLayout::RightToLeft));
+    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft));
     layout->addWidget(height);
 
     contour = new ExtWidget("Contour",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,3,"1","0"),vector<QStringList>(3,lengthUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
@@ -362,7 +362,7 @@ namespace MBSimGUI {
     layout->addWidget(bodies);
   }
 
-  OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {
+  OMBVBodySelectionWidget::OMBVBodySelectionWidget(Body *body) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

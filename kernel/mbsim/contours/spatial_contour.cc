@@ -167,16 +167,4 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* SpatialContour::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = RigidContour::writeXMLFile(parent);
-//    addElementText(ele0,MBSIM%"alphaStart",as);
-//    addElementText(ele0,MBSIM%"alphaEnd",ae);
-//    addElementText(ele0,MBSIM%"nodes",nodes);
-//    addElementText(ele0,MBSIM%"diameter",diameter);
-//    DOMElement *ele1 = new DOMElement(MBSIM%"contourFunction");
-//    funcCrPC->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-    return ele0;
-  }
-
 }

@@ -84,10 +84,4 @@ namespace MBSim {
     setFrictionCoefficient(Element::getDouble(e));
   }
 
-  DOMElement* PlanarCoulombImpact::writeXMLFile(DOMNode *parent) { 
-    DOMElement *ele0 = FrictionImpactLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIM%"frictionCoefficient",mu);
-    return ele0;
-  }
-
 }
