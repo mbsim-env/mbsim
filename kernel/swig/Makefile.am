@@ -16,6 +16,9 @@ _mbsim_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 _mbsim_la_CPPFLAGS = $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS) -I$(top_srcdir)
 _mbsim_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
 
+mbsimdir = $(datadir)/mbsim
+mbsim_DATA = mbsim_modules.i
+
 install-exec-hook: mbsim.py
 	$(MKDIR_P) $(swigdir)
 	$(INSTALL_DATA) mbsim.py $(swigdir)/mbsim.py
