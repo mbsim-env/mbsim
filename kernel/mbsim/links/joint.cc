@@ -504,31 +504,6 @@ namespace MBSim {
     if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
   }
 
-  DOMElement* Joint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
-//    if (forceDir.cols()) {
-//      addElementText(ele0, MBSIM%"forceDirection", forceDir);
-//      DOMElement *ele1 = new DOMElement(MBSIM%"forceLaw");
-//      if (ffl)
-//        ffl->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    if (momentDir.cols()) {
-//      addElementText(ele0, MBSIM%"momentDirection", momentDir);
-//      DOMElement *ele1 = new DOMElement(MBSIM%"momentLaw");
-//      if (fml)
-//        fml->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    DOMElement *ele1 = new DOMElement(MBSIM%"connect");
-//    //ele1->SetAttribute("ref1", frame[0]->getXMLPath(frame[0])); // absolute path
-//    //ele1->SetAttribute("ref2", frame[1]->getXMLPath(frame[1])); // absolute path
-//    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this, true)); // relative path
-//    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this, true)); // relative path
-//    ele0->LinkEndChild(ele1);
-    return ele0;
-  }
-
   InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(0) {
   }
 

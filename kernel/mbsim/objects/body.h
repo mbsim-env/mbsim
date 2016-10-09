@@ -137,7 +137,6 @@ namespace MBSim {
       int contourIndex(const Contour *contour_) const;
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       virtual Element * getChildByContainerAndName(const std::string &container, const std::string &name) const;
 

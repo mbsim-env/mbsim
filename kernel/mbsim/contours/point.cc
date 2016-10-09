@@ -25,7 +25,6 @@
 #include <openmbvcppinterface/grid.h>
 #endif
 
-
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
@@ -98,11 +97,6 @@ namespace MBSim {
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
 #endif
-  }
-
-  DOMElement* Point::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-    return ele0;
   }
 
 }

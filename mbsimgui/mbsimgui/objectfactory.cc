@@ -23,7 +23,8 @@
 #include "contour.h"
 #include "dynamic_system_solver.h"
 #include "group.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
+#include "flexible_body_ffr.h"
 #include "constraint.h"
 #include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
@@ -83,6 +84,8 @@ namespace MBSimGUI {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"FixedRelativeFrame")
       return new FixedRelativeFrame(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIMFLEX%"FixedNodalFrame")
+      return new FixedNodalFrame(E(element)->getAttribute("name"),parent);
     return 0;
   }
 
@@ -141,6 +144,8 @@ namespace MBSimGUI {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"RigidBody")
       return new RigidBody(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIMFLEX%"FlexibleBodyFFR")
+      return new FlexibleBodyFFR(E(element)->getAttribute("name"),parent);
     return 0;
   }
 

@@ -279,10 +279,6 @@ namespace MBSim {
     Element::initializeUsingXML(element);
   }
 
-  DOMElement* Object::writeXMLFile(DOMNode *parent) {
-    return Element::writeXMLFile(parent);
-  }
-
   const Mat& Object::evalT() {
     if(ds->getUpdateT()) ds->updateT();
     return T;

@@ -741,11 +741,12 @@ namespace MBSimGUI {
     }
     catch(const std::exception &error) {
       message = string("An exception occurred in updateParameters: ") + error.what();
+      cout << message << endl;
     }
     catch(...) {
       message = "An unknown exception occurred in updateParameters.";
+      cout << message << endl;
     }
-    cout << message << endl;
   }
 
   void MainWindow::saveDataAs() {
@@ -977,8 +978,7 @@ namespace MBSimGUI {
       helpDialog->resize(700,500);
     }
     if(url.empty())
-      helpViewer->load(QUrl((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc"/
-        "http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string().c_str()));
+      helpViewer->load(QUrl(((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string()+"/http___www_mbsim-env_de_MBSim/index.html").c_str()));
     else
       helpViewer->load(QUrl(url.c_str()));
     helpDialog->show();

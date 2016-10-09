@@ -52,7 +52,6 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       virtual std::string getType() const { return "SpatialCoulombFriction"; }
       /***************************************************/
 

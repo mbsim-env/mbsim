@@ -900,51 +900,6 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* Contact::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
-//    DOMElement *ele1;
-//    ele1 = new DOMElement(MBSIM%"normalForceLaw");
-//    if (fcl)
-//      fcl->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//    if (fnil) {
-//      ele1 = new DOMElement(MBSIM%"normalImpactLaw");
-//      fnil->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    if (fdf) {
-//      ele1 = new DOMElement(MBSIM%"tangentialForceLaw");
-//      fdf->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    if (ftil) {
-//      ele1 = new DOMElement(MBSIM%"tangentialImpactLaw");
-//      ftil->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    ele1 = new DOMElement(MBSIM%"connect");
-//    //for(unsigned int i=0; i<saved_ref.size(); i++) {
-//    ele1->SetAttribute("ref1", contour[0]->getXMLPath(this, true)); // relative path
-//    ele1->SetAttribute("ref2", contour[1]->getXMLPath(this, true)); // relative path
-//    //}
-//    ele0->LinkEndChild(ele1);
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-////    if(openMBVContactFrameSize>0)
-////      addElementText(ele0,MBSIM%"enableOpenMBVContactPoints",openMBVContactFrameSize);
-//    if (contactArrow) {
-//      ele1 = new DOMElement(MBSIM%"openMBVNormalForceArrow");
-//      contactArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//    if (frictionArrow) {
-//      ele1 = new DOMElement(MBSIM%"openMBVTangentialForceArrow");
-//      frictionArrow->writeXMLFile(ele1);
-//      ele0->LinkEndChild(ele1);
-//    }
-//#endif
-    return ele0;
-  }
-
   void Contact::updatecorrRef(const Vec& corrParent) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)

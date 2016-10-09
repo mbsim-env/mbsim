@@ -21,7 +21,7 @@
 #include "basic_properties.h"
 #include "frame.h"
 #include "contour.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "signal_.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
@@ -816,7 +816,7 @@ namespace MBSimGUI {
     static_cast<ColorWidget*>(widget)->updateWidget();
   }
 
-  PlotFeatureStatusProperty::PlotFeatureStatusProperty() {
+  PlotFeatureStatusProperty::PlotFeatureStatusProperty(const vector<FQN> &plotFeatureTypes) : types(plotFeatureTypes) {
   }
 
   DOMElement* PlotFeatureStatusProperty::initializeUsingXML(DOMElement *parent) {
@@ -832,10 +832,31 @@ namespace MBSimGUI {
     return e;
   }
 
+  DOMElement* PlotFeatureStatusProperty::initializeUsingXML2(DOMElement *parent) {
+    DOMElement *e=E(parent)->getFirstElementChildNamed(types[0]);
+    while(e && (E(e)->getTagName()==types[0])) {
+      string feature = E(e)->getAttribute("feature");
+      type.push_back(E(e)->getTagName().second);
+      value.push_back(feature);
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
   DOMElement* PlotFeatureStatusProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<type.size(); i++) {
       DOMElement *ele = D(doc)->createElement(MBSIM%type[i]);
+      E(ele)->setAttribute("feature",value[i]);
+      parent->insertBefore(ele, NULL);
+    }
+    return 0;
+  }
+
+  DOMElement* PlotFeatureStatusProperty::writeXMLFile2(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(size_t i=0; i<type.size(); i++) {
+      DOMElement *ele = D(doc)->createElement(FQN(types[0].first,type[i]));
       E(ele)->setAttribute("feature",value[i]);
       parent->insertBefore(ele, NULL);
     }

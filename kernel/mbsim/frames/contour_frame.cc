@@ -14,11 +14,4 @@ namespace MBSim {
     setZeta(getVec(e));
   }
 
-  DOMElement* ContourFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-//    addElementText(ele0, MBSIMFLEX%"zeta",
-//    int(getZeta()));
-    return ele0;
-  }
-
 }

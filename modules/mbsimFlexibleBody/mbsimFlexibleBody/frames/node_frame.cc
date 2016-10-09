@@ -60,10 +60,4 @@ namespace MBSimFlexibleBody {
     setNodeNumber(getInt(e));
   }
 
-  DOMElement* NodeFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-    addElementText(ele0, MBSIMFLEX%"nodeNumber", getNodeNumber());
-    return ele0;
-  }
-
 }

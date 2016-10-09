@@ -22,7 +22,7 @@
 #include "variable_properties.h"
 #include "extended_properties.h"
 #include "ombv_widgets.h"
-#include "rigidbody.h"
+#include "body.h"
 #include "frame.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
@@ -855,9 +855,9 @@ namespace MBSimGUI {
     bodies.toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->bodies);
   }
 
-  OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ombv(0,true), ref(0,false) {
-    ombv.setProperty(new ChoiceProperty2(new OMBVBodyPropertyFactory(body->getID()),MBSIM%"openMBVRigidBody"));
-    ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,MBSIM%"openMBVFrameOfReference")); 
+  OMBVBodySelectionProperty::OMBVBodySelectionProperty(Body *body, const NamespaceURI &uri) : ombv(0,true), ref(0,false) {
+    ombv.setProperty(new ChoiceProperty2(new OMBVBodyPropertyFactory(body->getID()),uri%"openMBVRigidBody"));
+    ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,uri%"openMBVFrameOfReference"));
   }
 
   DOMElement* OMBVBodySelectionProperty::initializeUsingXML(DOMElement *element) {

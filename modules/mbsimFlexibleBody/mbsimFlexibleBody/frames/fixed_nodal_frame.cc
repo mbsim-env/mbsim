@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "fixed_nodal_frame.h"
-#include "mbsim/utils/utils.h"
+#include "mbsimFlexibleBody/namespace.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,14 +29,7 @@ using namespace xercesc;
 namespace MBSimFlexibleBody {
 
   void FixedNodalFrame::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getByPath<FixedNodalFrame>(saved_frameOfReference));
-      FrameFFR::init(stage);
-    }
-    else if(stage==resize) {
-      WJD[0].resize(nq,hSize[0]);
-      WJD[1].resize(nq,hSize[1]);
+    if(stage==resize) {
       if(not(Phi.cols()))
         Phi.resize(nq);
       if(not(Psi.cols()))
@@ -44,7 +37,13 @@ namespace MBSimFlexibleBody {
       q.resize(nq);
       qd.resize(nq);
       qdd.resize(nq);
-      FrameFFR::init(stage);
+      WJD[0].resize(nq,hSize[0]);
+      WJD[1].resize(nq,hSize[1]);
+      for(int i=0; i<nq; i++) {
+        WJD[0](i,hSize[0]-nq+i) = 1;
+        WJD[1](i,hSize[1]-nq+i) = 1;
+      }
+      Frame::init(stage);
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -54,11 +53,11 @@ namespace MBSimFlexibleBody {
           for(int i=0; i<6; i++)
             plotColumns.push_back("sigma("+MBSim::numtostr(i)+")");
         }
-        FrameFFR::init(stage);
+        Frame::init(stage);
       }
     }
     else
-      FrameFFR::init(stage);
+      Frame::init(stage);
   }
       
   const Vec3& FixedNodalFrame::evalGlobalRelativePosition() {
@@ -113,9 +112,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FixedNodalFrame::updateJacobians(int j) {
-    setJacobianOfDeformation(R->evalJacobianOfDeformation(j),j);
-    setJacobianOfRotation(R->getJacobianOfRotation(j) + evalGlobalPsi()*R->getJacobianOfDeformation(j),j);
-    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j) + getGlobalPhi()*R->getJacobianOfDeformation(j),j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j) + evalGlobalPsi()*WJD[j],j);
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j) + getGlobalPhi()*WJD[j],j);
     updJac[j] = false;
   }
 
@@ -144,27 +142,44 @@ namespace MBSimFlexibleBody {
 
   void FixedNodalFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
-//    DOMElement *ec=element->getFirstElementChild();
-//    ec=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
-//    if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
-//    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativePosition");
-//    if(ec) setRelativePosition(getVec3(ec));
-//    ec=E(element)->getFirstElementChildNamed(MBSIM%"relativeOrientation");
-//    if(ec) setRelativeOrientation(getSqrMat3(ec));
-  }
-
-  DOMElement* FixedNodalFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-//     if(getFrameOfReference()) {
-//        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-//        ele1->SetAttribute("ref", str);
-//        ele0->LinkEndChild(ele1);
-//      }
-//     addElementText(ele0,MBSIM%"relativePosition",getRelativePosition());
-//     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
-   return ele0;
+    DOMElement *ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativePosition");
+    if(ec) setRelativePosition(getVec3(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeOrientation");
+    if(ec) setRelativeOrientation(getSqrMat3(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfTranslation");
+    setShapeMatrixOfTranslation(getMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfRotation");
+    if(ec) setShapeMatrixOfRotation(getMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stressMatrix");
+    if(ec) setStressMatrix(getMat(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStressMatrix");
+    if(ec) {
+      ec=ec->getFirstElementChild();
+      while(ec) {
+        sigmahen.push_back(getMat(ec));
+        ec=ec->getNextElementSibling();
+      }
+    }
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"initialStress");
+    if(ec) setInitialStress(getVec(ec));
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToForce");
+    if(ec) {
+      K0F = vector<SqrMatV>(3);
+      ec=ec->getFirstElementChild();
+      for(int i=0; i<3; i++) {
+        K0F[i].resize() = getSqrMat(ec);
+        ec=ec->getNextElementSibling();
+      }
+    }
+    ec=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToMoment");
+    if(ec) {
+      K0M = vector<SqrMatV>(3);
+      ec=ec->getFirstElementChild();
+      for(int i=0; i<3; i++) {
+        K0M[i].resize() = getSqrMat(ec);
+        ec=ec->getNextElementSibling();
+      }
+    }
   }
 
 }
-

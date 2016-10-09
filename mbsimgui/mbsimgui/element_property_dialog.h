@@ -27,6 +27,7 @@ namespace MBSimGUI {
   class Element;
   class Frame;
   class FixedRelativeFrame;
+  class FixedNodalFrame;
   class Contour;
   class RigidContour;
   class Point;
@@ -43,6 +44,7 @@ namespace MBSimGUI {
   class Object;
   class Body;
   class RigidBody;
+  class FlexibleBodyFFR;
   class Constraint;
   class GearConstraint;
   class KinematicConstraint;
@@ -122,6 +124,19 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *refFrame, *position, *orientation;
+  };
+
+  class FixedNodalFramePropertyDialog : public FramePropertyDialog {
+    Q_OBJECT
+
+    public:
+      FixedNodalFramePropertyDialog(FixedNodalFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *position, *orientation, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M;
+    protected slots:
+      void resizeVariables();
   };
 
   class ContourPropertyDialog : public ElementPropertyDialog {
@@ -293,6 +308,24 @@ namespace MBSimGUI {
       RigidBody *body;
   };
 
+  class FlexibleBodyFFRPropertyDialog : public BodyPropertyDialog {
+    Q_OBJECT
+
+    public:
+      FlexibleBodyFFRPropertyDialog(FlexibleBodyFFR *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+      void resizeGeneralizedPosition();
+      void resizeGeneralizedVelocity();
+      int getqRelSize() const;
+      int getuRelSize() const;
+    protected:
+      ExtWidget *mass, *pdm, *ppdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *jointForceArrow, *jointMomentArrow;
+      FlexibleBodyFFR *body;
+    protected slots:
+      void resizeVariables();
+  };
+
   class ConstraintPropertyDialog : public ElementPropertyDialog {
 
     public:
@@ -328,8 +361,8 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *constraintFunction;
-      protected slots:
-        void resizeVariables();
+    protected slots:
+      void resizeVariables();
   };
 
   class GeneralizedVelocityConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
@@ -342,8 +375,8 @@ namespace MBSimGUI {
     protected:
       ExtWidget *constraintFunction, *x0;
       VecWidget *x0_;
-      protected slots:
-        void resizeVariables();
+    protected slots:
+      void resizeVariables();
   };
 
   class GeneralizedAccelerationConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
@@ -356,8 +389,8 @@ namespace MBSimGUI {
     protected:
       ExtWidget *constraintFunction, *x0;
       VecWidget *x0_;
-      protected slots:
-        void resizeVariables();
+    protected slots:
+      void resizeVariables();
   };
 
   class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
@@ -370,9 +403,9 @@ namespace MBSimGUI {
     protected:
       ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *jointForceArrow, *jointMomentArrow, *q0;
       VecWidget *q0_;
-      protected slots:
-        void resizeVariables();
-  };
+    protected slots:
+      void resizeVariables();
+};
 
   class LinkPropertyDialog : public ElementPropertyDialog {
 
@@ -402,8 +435,8 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *refFrameID, *forceDirection, *forceFunction, *momentDirection, *momentFunction, *connections, *forceArrow, *momentArrow;
-      protected slots:
-        void resizeVariables();
+    protected slots:
+      void resizeVariables();
   };
 
   class SpringDamperPropertyDialog : public LinkPropertyDialog {

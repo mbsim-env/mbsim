@@ -19,10 +19,12 @@
 
 #include <config.h>
 #include "frame.h"
+#include "special_properties.h"
 #include "ombv_properties.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
+#include "flexible_body_ffr.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -32,20 +34,9 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
-
-    // properties->addTab("Plotting");
-    // plotFeature.push_back(new ExtWidget("Plot global position", new PlotFeature("globalPosition"),true));
-    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
-    // plotFeature.push_back(new ExtWidget("Plot global velocity", new PlotFeature("globalVelocity"),true));
-    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
-    // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
-    // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+  Frame::Frame(const string &str, Element *parent, bool grey, const vector<FQN> &plotFeatureTypes) : Element(str,parent,plotFeatureTypes), visu(0,true) {
 
     visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
-  }
-
-  Frame::~Frame() {
   }
 
   Frame* Frame::readXMLFile(const string &filename, Element *parent) {
@@ -76,8 +67,17 @@ namespace MBSimGUI {
     visu.initializeUsingXML(element);
   }
 
+  void Frame::initializeUsingXML3(DOMElement *element) {
+    static_cast<PlotFeatureStatusProperty*>(plotFeature.getProperty())->initializeUsingXML2(element);
+  }
+
   DOMElement* Frame::writeXMLFile2(DOMNode *parent) {
     visu.writeXMLFile(parent);
+    return 0;
+  }
+
+  DOMElement* Frame::writeXMLFile3(DOMNode *parent) {
+    static_cast<PlotFeatureStatusProperty*>(plotFeature.getProperty())->writeXMLFile2(parent);
     return 0;
   }
 
@@ -88,9 +88,6 @@ namespace MBSimGUI {
     orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIM%"relativeOrientation"),"",4));
 
     refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
-  }
-
-  FixedRelativeFrame::~FixedRelativeFrame() {
   }
 
   void FixedRelativeFrame::initialize() {
@@ -112,6 +109,58 @@ namespace MBSimGUI {
     refFrame.writeXMLFile(ele0);
     position.writeXMLFile(ele0);
     orientation.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  FixedNodalFrame::FixedNodalFrame(const string &str, Element *parent) : Frame(str,parent,false), position(0,false), orientation(0,false), Psi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false) {
+
+    position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMFLEX%"relativePosition"),"",4));
+
+    orientation.setProperty(new ChoiceProperty2(new RotMatPropertyFactory(MBSIMFLEX%"relativeOrientation"),"",4));
+
+    int size = static_cast<FlexibleBodyFFR*>(parent)->getqElSize();
+
+    Phi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,size,"0"),MBSIMFLEX%"shapeMatrixOfTranslation",vector<string>(3,"")),"",4));
+
+    Psi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,size,"0"),MBSIMFLEX%"shapeMatrixOfRotation",vector<string>(3,"")),"",4));
+
+    sigmahel.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,size,"0"),MBSIMFLEX%"stressMatrix",vector<string>(3,"")),"",4));
+
+    sigmahen.setProperty(new OneDimMatArrayProperty(size,6,size,MBSIMFLEX%"nonlinearStressMatrix",true));
+
+    sigma0.setProperty(new ChoiceProperty2(new VecPropertyFactory(6,MBSIMFLEX%"initialStress",vector<string>(3,"")),"",4));
+
+    K0F.setProperty(new OneDimMatArrayProperty(3,size,size,MBSIMFLEX%"geometricStiffnessMatrixDueToForce"));
+
+    K0M.setProperty(new OneDimMatArrayProperty(3,size,size,MBSIMFLEX%"geometricStiffnessMatrixDueToMoment"));
+  }
+
+  DOMElement* FixedNodalFrame::initializeUsingXML(DOMElement *element) {
+    Frame::initializeUsingXML(element);
+    position.initializeUsingXML(element);
+    orientation.initializeUsingXML(element);
+    Phi.initializeUsingXML(element);
+    Psi.initializeUsingXML(element);
+    sigmahel.initializeUsingXML(element);
+    sigmahen.initializeUsingXML(element);
+    sigma0.initializeUsingXML(element);
+    K0F.initializeUsingXML(element);
+    K0M.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FixedNodalFrame::writeXMLFile(DOMNode *parent) {
+
+    DOMElement *ele0 = Frame::writeXMLFile(parent);
+    position.writeXMLFile(ele0);
+    orientation.writeXMLFile(ele0);
+    Phi.writeXMLFile(ele0);
+    Psi.writeXMLFile(ele0);
+    sigmahel.writeXMLFile(ele0);
+    sigmahen.writeXMLFile(ele0);
+    sigma0.writeXMLFile(ele0);
+    K0F.writeXMLFile(ele0);
+    K0M.writeXMLFile(ele0);
     return ele0;
   }
 

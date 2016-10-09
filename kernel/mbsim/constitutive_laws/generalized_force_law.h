@@ -91,7 +91,6 @@ namespace MBSim {
        * \param XML element
        */
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       /**
        * \return std::string representation

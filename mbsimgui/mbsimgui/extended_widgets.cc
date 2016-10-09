@@ -124,6 +124,7 @@ namespace MBSimGUI {
     layout->addWidget(widget);
     updateWidget();
     emit Widget::resize_();
+    emit widgetChanged();
     connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
   }
 

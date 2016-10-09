@@ -190,17 +190,7 @@ namespace MBSim {
     }
   }
 
-  void Element::initializeUsingXML(DOMElement *element) {
-    // set the XML location stack of this element which can be used, later, by exceptions.
-    DOMEvalException::generateLocationStack(element, locationStack);
-
-    if(E(element)->hasAttribute("name")) // their are element with no name e.g. Function's
-      setName(E(element)->getAttribute("name"));
-    DOMElement *e;
-    e=element->getFirstElementChild();
-    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
-                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
-                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+  Element::PlotFeatureStatus Element::initializePlotFeatureStatusUsingXML(DOMElement *e) {
       PlotFeatureStatus status;
       if(E(e)->getAttribute("feature")[0]=='+') status=enabled;
       else if(E(e)->getAttribute("feature")[0]=='-') status=disabled;
@@ -209,6 +199,10 @@ namespace MBSim {
         str<<"Plot feature must start with '+' or '-' but is "<<E(e)->getAttribute("feature");
         throw DOMEvalException(str.str(), e, e->getAttributeNode(X()%"feature"));
       }
+      return status;
+  }
+
+  Element::PlotFeature Element::initializePlotFeatureUsingXML(DOMElement *e) {
       PlotFeature feature=plotRecursive;
       if     (E(e)->getAttribute("feature").substr(1)=="plotRecursive") feature=plotRecursive;
       else if(E(e)->getAttribute("feature").substr(1)=="separateFilePerGroup") feature=separateFilePerGroup;
@@ -230,19 +224,27 @@ namespace MBSim {
         str<<"Unknown plot feature: "<<E(e)->getAttribute("feature");
         throw DOMEvalException(str.str(), e, e->getAttributeNode(X()%"feature"));
       }
+      return feature;
+  }
+
+  void Element::initializeUsingXML(DOMElement *element) {
+    // set the XML location stack of this element which can be used, later, by exceptions.
+    DOMEvalException::generateLocationStack(element, locationStack);
+
+    if(E(element)->hasAttribute("name")) // their are element with no name e.g. Function's
+      setName(E(element)->getAttribute("name"));
+    DOMElement *e;
+    e=element->getFirstElementChild();
+    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+      PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
+      PlotFeature feature = initializePlotFeatureUsingXML(e);
       if(E(e)->getTagName()==MBSIM%"plotFeature") setPlotFeature(feature, status);
       else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
       else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
       e=e->getNextElementSibling();
     }
-  }
-
-  DOMElement* Element::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(MBSIM%getType());
-    parent->insertBefore(ele0, NULL);
-    E(ele0)->setAttribute("name", getName());
-    return ele0;
   }
 
   // some convenience function for XML

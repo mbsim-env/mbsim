@@ -69,7 +69,6 @@ namespace MBSim {
       virtual void init(InitStage stage);
       virtual void initializeContourCouplings();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       /**
        * \brief add a function that represents the coupling between two contours

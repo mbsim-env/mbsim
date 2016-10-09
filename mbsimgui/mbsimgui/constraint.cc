@@ -20,7 +20,7 @@
 #include <config.h>
 #include "constraint.h"
 #include "frame.h"
-#include "rigidbody.h"
+#include "rigid_body.h"
 #include "basic_properties.h"
 #include "kinetics_properties.h"
 #include "function_properties.h"

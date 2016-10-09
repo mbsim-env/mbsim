@@ -30,8 +30,8 @@ namespace MBSimGUI {
   class Frame : public Element {
     friend class FramePropertyDialog;
     public:
-    Frame(const std::string &str, Element *parent, bool grey=true);
-    ~Frame();
+    Frame(const std::string &str, Element *parent, bool grey=true, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
+    ~Frame() { }
     virtual PropertyInterface* clone() const {return new Frame(*this);}
     std::string getType() const { return "Frame"; }
     static Frame* readXMLFile(const std::string &filename, Element *parent);    
@@ -39,6 +39,8 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initializeUsingXML2(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
+    virtual void initializeUsingXML3(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile3(xercesc::DOMNode *element);
     bool openMBVFrame() const {return visu.isActive();}
     void setOpenMBVFrame(bool flag) {visu.setActive(flag);}
     ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
@@ -52,7 +54,7 @@ namespace MBSimGUI {
     friend class FixedRelativeFramePropertyDialog;
     public:
     FixedRelativeFrame(const std::string &str, Element *parent);
-    ~FixedRelativeFrame();
+    ~FixedRelativeFrame() { }
     virtual PropertyInterface* clone() const {return new FixedRelativeFrame(*this);}
     std::string getType() const { return "FixedRelativeFrame"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -63,6 +65,23 @@ namespace MBSimGUI {
     QMenu* createContextMenu() {return new FixedRelativeFrameContextMenu(this);}
     protected:
     ExtProperty refFrame, position, orientation;
+  };
+
+  class FixedNodalFrame : public Frame {
+    friend class FixedNodalFramePropertyDialog;
+    public:
+    FixedNodalFrame(const std::string &str, Element *parent);
+    ~FixedNodalFrame() { }
+    virtual PropertyInterface* clone() const {return new FixedNodalFrame(*this);}
+    std::string getType() const { return "FixedNodalFrame"; }
+    MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new FixedNodalFramePropertyDialog(this);}
+    EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
+    QMenu* createContextMenu() {return new FixedNodalFrameContextMenu(this);}
+    protected:
+    ExtProperty position, orientation, Phi, Psi, sigmahel, sigmahen, sigma0, K0F, K0M;
   };
 
 }

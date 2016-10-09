@@ -53,7 +53,6 @@ namespace MBSim {
       virtual double solve(double G, double gdn, double gda);
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       virtual std::string getType() const { return "UnilateralNewtonImpact"; }
       /***************************************************/
 

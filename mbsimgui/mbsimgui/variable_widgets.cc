@@ -170,11 +170,16 @@ namespace MBSimGUI {
     setValue(str);
   }
 
-  QWidget* ExpressionWidget::getValidatedWidget() const {
+  vector<vector<QString> > ExpressionWidget::getMat() const {
+    if(getValue().isEmpty())
+      return vector<vector<QString> >();
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
     str = removeWhiteSpace(str);
-    vector<vector<QString> > A = strToMat(str);
-    return new MatWidget(A);
+    return strToMat(str);
+  }
+
+  QWidget* ExpressionWidget::getValidatedWidget() const {
+    return new MatWidget(getMat());
   }
 
   ScalarWidget::ScalarWidget(const QString &d) {
@@ -198,6 +203,13 @@ namespace MBSimGUI {
 
   QWidget* ScalarWidget::getValidatedWidget() const {
     return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
+  }
+
+  QWidget* BasicVecWidget::getValidatedWidget() const {
+    vector<QString> x = getVec();
+    for(size_t i=0; i<x.size(); i++)
+      x[i] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString())));
+    return new VecWidget(x);
   }
 
   VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
@@ -266,6 +278,63 @@ namespace MBSimGUI {
     if(A.size() && A[0].size()!=1)
       return false;
     return true;
+  }
+
+  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, bool transpose) : minSize(minSize_), maxSize(maxSize_) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    QWidget *box = new QWidget;
+    QHBoxLayout *hbox = new QHBoxLayout;
+    box->setLayout(hbox);
+    hbox->setMargin(0);
+    layout->addWidget(box);
+    sizeCombo = new CustomSpinBox;
+    sizeCombo->setRange(minSize,maxSize);
+    hbox->addWidget(sizeCombo);
+    //  hbox->addWidget(new QLabel("x"));
+    //  hbox->addWidget(new QLabel("1"));
+    sizeCombo->setValue(size);
+    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    hbox->addStretch(2);
+    widget = new VecWidget(size, transpose);
+    layout->addWidget(widget);
+    setLayout(layout);
+  }
+
+  void VecSizeVarWidget::setVec(const vector<QString> &x) {
+    sizeCombo->blockSignals(true);
+    sizeCombo->setValue(x.size());
+    sizeCombo->blockSignals(false);
+    widget->setVec(x);
+  }
+
+  void VecSizeVarWidget::resize_(int size) {
+    widget->resize_(size);
+    sizeCombo->blockSignals(true);
+    sizeCombo->setValue(size);
+    sizeCombo->blockSignals(false);
+  }
+
+  void VecSizeVarWidget::currentIndexChanged(int size) {
+    widget->resize_(size);
+    emit sizeChanged(size);
+  }
+
+  bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
+    if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
+      return false;
+    if(A.size() && A[0].size()!=1)
+      return false;
+    return true;
+  }
+
+  QWidget* BasicMatWidget::getValidatedWidget() const {
+    vector<vector<QString> > A = getMat();
+    for(size_t i=0; i<A.size(); i++)
+      for(size_t j=0; j<A[i].size(); j++)
+        A[i][j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(A[i][j].toStdString())));
+    return new MatWidget(A);
   }
 
   MatWidget::MatWidget(int rows, int cols) {
@@ -347,142 +416,6 @@ namespace MBSimGUI {
     return true;
   }
 
-  SymMatWidget::SymMatWidget(int rows) {
-
-    QGridLayout *layout = new QGridLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    resize_(rows);
-  }
-
-  SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
-
-    QGridLayout *layout = new QGridLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    setMat(A);
-  }
-
-  void SymMatWidget::resize_(int rows) {
-    if(static_cast<int>(box.size())!=rows) {
-      vector<vector<QString> > buf(box.size());
-      for(unsigned int i=0; i<box.size(); i++) {
-        for(unsigned int j=0; j<box[i].size(); j++) {
-          layout()->removeWidget(box[i][j]);
-          buf[i][j] = box[i][j]->text();
-          delete box[i][j];
-        }
-      }
-      box.resize(rows);
-      for(int i=0; i<rows; i++) {
-        box[i].resize(rows);
-        for(int j=0; j<rows; j++) {
-          box[i][j] = new QLineEdit(this);
-          box[i][j]->setPlaceholderText("0");
-          static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
-        }
-      }
-      for(unsigned int i=0; i<box.size(); i++)
-        for(unsigned int j=0; j<box.size(); j++)
-          if(i!=j) 
-            connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
-      for(int i=0; i<min((int)buf.size(),rows); i++)
-        for(int j=0; j<min((int)buf[i].size(),rows); j++)
-          box[i][j]->setText(buf[i][j]);
-    }
-  }
-
-  vector<vector<QString> > SymMatWidget::getMat() const {
-    vector<vector<QString> > A(box.size());
-    for(unsigned int i=0; i<box.size(); i++) {
-      A[i].resize(box.size());
-      for(unsigned int j=0; j<box[i].size(); j++) {
-        QString tmp = box[i][j]->text();
-        A[i][j] = tmp.isEmpty()?"0":tmp;
-      }
-    }
-    return A;
-  }
-
-  void SymMatWidget::setMat(const vector<vector<QString> > &A) {
-    if(A.size() == 0 || A.size() != A[0].size())
-      return resize_(0);
-    if(A.size() != box.size())
-      resize_(A.size());
-    for(unsigned int i=0; i<box.size(); i++) 
-      for(unsigned int j=0; j<box.size(); j++) 
-        box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
-  }
-
-  void SymMatWidget::setReadOnly(bool flag) {
-    for(unsigned int i=0; i<box.size(); i++) {
-      for(unsigned int j=0; j<box[i].size(); j++) {
-        box[i][j]->setReadOnly(flag);
-      }
-    }
-  }
-
-  bool SymMatWidget::validate(const vector<vector<QString> > &A) const {
-    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
-      return false;
-    for(int i=0; i<rows(); i++) {
-      for(int j=0; j<i; j++) {
-        if(fabs(A[i][j].toDouble() - A[j][i].toDouble())>1e-8)
-          return false;
-      }
-    }
-    return true;
-  }
-
-  VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    QWidget *box = new QWidget;
-    QHBoxLayout *hbox = new QHBoxLayout;
-    box->setLayout(hbox);
-    hbox->setMargin(0);
-    layout->addWidget(box);
-    sizeCombo = new QSpinBox;
-    sizeCombo->setRange(minSize,maxSize);
-    hbox->addWidget(sizeCombo);
-    //  hbox->addWidget(new QLabel("x"));
-    //  hbox->addWidget(new QLabel("1"));
-    sizeCombo->setValue(size);
-    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
-    hbox->addStretch(2);
-    widget = new VecWidget(size);
-    layout->addWidget(widget);
-    setLayout(layout);
-  }
-
-  void VecSizeVarWidget::setVec(const vector<QString> &x) {
-    sizeCombo->blockSignals(true);
-    sizeCombo->setValue(x.size());
-    sizeCombo->blockSignals(false);
-    widget->setVec(x);
-  }
-
-  void VecSizeVarWidget::resize_(int size) {
-    widget->resize_(size);
-    sizeCombo->blockSignals(true);
-    sizeCombo->setValue(size);
-    sizeCombo->blockSignals(false);
-  }
-
-  void VecSizeVarWidget::currentIndexChanged(int size) {
-    widget->resize_(size);
-    emit sizeChanged(size);
-  }
-
-  bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
-    if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
-      return false;
-    if(A.size() && A[0].size()!=1)
-      return false;
-    return true;
-  }
-
   MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -495,7 +428,7 @@ namespace MBSimGUI {
     rowsLabel = new QLabel(QString::number(rows));
     hbox->addWidget(rowsLabel);
     hbox->addWidget(new QLabel("x"));
-    colsCombo = new QSpinBox;
+    colsCombo = new CustomSpinBox;
     colsCombo->setRange(minCols,maxCols);
     colsCombo->setValue(cols);
     QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
@@ -525,6 +458,7 @@ namespace MBSimGUI {
   void MatColsVarWidget::currentIndexChanged(int cols) {
     widget->resize_(widget->rows(),cols);
     emit sizeChanged(cols);
+    emit Widget::resize_();
   }
 
   bool MatColsVarWidget::validate(const vector<vector<QString> > &A) const {
@@ -544,7 +478,7 @@ namespace MBSimGUI {
     box->setLayout(hbox);
     hbox->setMargin(0);
     layout->addWidget(box);
-    rowsCombo = new QSpinBox;
+    rowsCombo = new CustomSpinBox;
     rowsCombo->setRange(minRows,maxRows);
     rowsCombo->setValue(rows);
     QObject::connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
@@ -596,10 +530,10 @@ namespace MBSimGUI {
     box->setLayout(hbox);
     hbox->setMargin(0);
     layout->addWidget(box);
-    rowsCombo = new QSpinBox;
+    rowsCombo = new CustomSpinBox;
     rowsCombo->setRange(minRows,maxRows);
     rowsCombo->setValue(rows);
-    colsCombo = new QSpinBox;
+    colsCombo = new CustomSpinBox;
     colsCombo->setRange(minCols,maxCols);
     colsCombo->setValue(cols);
     QObject::connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentRowIndexChanged(int)));
@@ -647,6 +581,188 @@ namespace MBSimGUI {
     if(static_cast<int>(A.size())<minRows || static_cast<int>(A.size())>maxRows)
       return false;
     if(static_cast<int>(A[0].size())<minCols || static_cast<int>(A[0].size())>maxCols)
+      return false;
+    return true;
+  }
+
+  SqrMatSizeVarWidget::SqrMatSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    QWidget *box = new QWidget;
+    QHBoxLayout *hbox = new QHBoxLayout;
+    box->setLayout(hbox);
+    hbox->setMargin(0);
+    layout->addWidget(box);
+    sizeCombo = new CustomSpinBox;
+    sizeCombo->setRange(minSize,maxSize);
+    sizeCombo->setValue(size);
+    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    hbox->addWidget(sizeCombo);
+    hbox->addStretch(2);
+    widget = new MatWidget(size,size);
+    layout->addWidget(widget);
+    setLayout(layout);
+  }
+
+  void SqrMatSizeVarWidget::setMat(const vector<vector<QString> > &A) {
+    sizeCombo->blockSignals(true);
+    sizeCombo->setValue(A.size());
+    sizeCombo->blockSignals(false);
+    widget->setMat(A);
+  }
+
+  void SqrMatSizeVarWidget::resize_(int rows, int cols) {
+    widget->resize_(rows,cols);
+    sizeCombo->blockSignals(true);
+    sizeCombo->setValue(rows);
+    sizeCombo->blockSignals(false);
+  }
+
+  void SqrMatSizeVarWidget::currentIndexChanged(int rows) {
+    widget->resize_(rows,rows);
+    emit sizeChanged(rows);
+  }
+
+  bool SqrMatSizeVarWidget::validate(const vector<vector<QString> > &A) const {
+    if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
+      return false;
+    if(static_cast<int>(A[0].size())<minSize || static_cast<int>(A[0].size())>maxSize)
+      return false;
+    return true;
+  }
+
+  SymMatWidget::SymMatWidget(int rows) {
+
+    QGridLayout *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    resize_(rows);
+  }
+
+  SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
+
+    QGridLayout *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    setMat(A);
+  }
+
+  void SymMatWidget::resize_(int rows) {
+    if(static_cast<int>(box.size())!=rows) {
+      vector<vector<QString> > buf(box.size());
+      for(unsigned int i=0; i<box.size(); i++) {
+        buf[i].resize(box[i].size());
+        for(unsigned int j=0; j<box[i].size(); j++) {
+          layout()->removeWidget(box[i][j]);
+          buf[i][j] = box[i][j]->text();
+          delete box[i][j];
+        }
+      }
+      box.resize(rows);
+      for(int i=0; i<rows; i++) {
+        box[i].resize(rows);
+        for(int j=0; j<rows; j++) {
+          box[i][j] = new QLineEdit(this);
+          box[i][j]->setPlaceholderText("0");
+          static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
+        }
+      }
+      for(unsigned int i=0; i<box.size(); i++)
+        for(unsigned int j=0; j<box.size(); j++)
+          if(i!=j)
+            connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
+      for(int i=0; i<min((int)buf.size(),rows); i++)
+        for(int j=0; j<min((int)buf[i].size(),rows); j++)
+          box[i][j]->setText(buf[i][j]);
+    }
+  }
+
+  vector<vector<QString> > SymMatWidget::getMat() const {
+    vector<vector<QString> > A(box.size());
+    for(unsigned int i=0; i<box.size(); i++) {
+      A[i].resize(box.size());
+      for(unsigned int j=0; j<box[i].size(); j++) {
+        QString tmp = box[i][j]->text();
+        A[i][j] = tmp.isEmpty()?"0":tmp;
+      }
+    }
+    return A;
+  }
+
+  void SymMatWidget::setMat(const vector<vector<QString> > &A) {
+    if(A.size() == 0 || A.size() != A[0].size())
+      return resize_(0);
+    if(A.size() != box.size())
+      resize_(A.size());
+    for(unsigned int i=0; i<box.size(); i++)
+      for(unsigned int j=0; j<box.size(); j++)
+        box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
+  }
+
+  void SymMatWidget::setReadOnly(bool flag) {
+    for(unsigned int i=0; i<box.size(); i++) {
+      for(unsigned int j=0; j<box[i].size(); j++) {
+        box[i][j]->setReadOnly(flag);
+      }
+    }
+  }
+
+  bool SymMatWidget::validate(const vector<vector<QString> > &A) const {
+    if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
+      return false;
+    for(int i=0; i<rows(); i++) {
+      for(int j=0; j<i; j++) {
+        if(fabs(A[i][j].toDouble() - A[j][i].toDouble())>1e-8)
+          return false;
+      }
+    }
+    return true;
+  }
+
+  SymMatSizeVarWidget::SymMatSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    QWidget *box = new QWidget;
+    QHBoxLayout *hbox = new QHBoxLayout;
+    box->setLayout(hbox);
+    hbox->setMargin(0);
+    layout->addWidget(box);
+    sizeCombo = new CustomSpinBox;
+    sizeCombo->setRange(minSize,maxSize);
+    sizeCombo->setValue(size);
+    QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    hbox->addWidget(sizeCombo);
+    hbox->addStretch(2);
+    widget = new SymMatWidget(size);
+    layout->addWidget(widget);
+    setLayout(layout);
+  }
+
+  void SymMatSizeVarWidget::setMat(const vector<vector<QString> > &A) {
+    sizeCombo->blockSignals(true);
+    sizeCombo->setValue(A.size());
+    sizeCombo->blockSignals(false);
+    widget->setMat(A);
+  }
+
+  void SymMatSizeVarWidget::resize_(int rows, int cols) {
+    widget->resize_(rows);
+    sizeCombo->blockSignals(true);
+    sizeCombo->setValue(rows);
+    sizeCombo->blockSignals(false);
+  }
+
+  void SymMatSizeVarWidget::currentIndexChanged(int rows) {
+    widget->resize_(rows);
+    emit sizeChanged(rows);
+  }
+
+  bool SymMatSizeVarWidget::validate(const vector<vector<QString> > &A) const {
+    if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
+      return false;
+    if(static_cast<int>(A[0].size())<minSize || static_cast<int>(A[0].size())>maxSize)
       return false;
     return true;
   }
@@ -748,6 +864,8 @@ namespace MBSimGUI {
     QPushButton *evalButton = new QPushButton("Eval");
     connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
     layout->addWidget(evalButton);
+
+    connect(widget_,SIGNAL(resize_()),this,SIGNAL(resize_()));
   }
 
   void PhysicalVariableWidget::openEvalDialog() {
@@ -813,7 +931,7 @@ namespace MBSimGUI {
     name[1] = "Editor";
   }
 
-  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_) : value(value_), name(2), unit(unit_), defaultUnit(2,0) {
+  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(2), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Scalar";
     name[1] = "Editor";
   }
@@ -829,31 +947,24 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  QWidget* BasicVecWidget::getValidatedWidget() const {
-    vector<QString> x = getVec();
-    for(size_t i=0; i<x.size(); i++)
-      x[i] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString())));
-    return new VecWidget(x);
-  }
-
-  VecWidgetFactory::VecWidgetFactory(int m_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4) {
+  VecWidgetFactory::VecWidgetFactory(int m_, bool transpose_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecWidgetFactory::VecWidgetFactory(int m_, const vector<QStringList> &unit_) : m(m_), name(3), unit(unit_), defaultUnit(3,0) {
+  VecWidgetFactory::VecWidgetFactory(int m_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,0), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
   }
 
   QWidget* VecWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecWidget(m), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new VecWidget(m,transpose), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
@@ -861,24 +972,24 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, bool transpose_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_) : m(m_), name(3), unit(unit_), defaultUnit(3,0) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,0), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  VecSizeVarWidgetFactory::VecSizeVarWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
   }
 
   QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new VecSizeVarWidget(m,1,100,transpose), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
@@ -886,15 +997,13 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  QWidget* BasicMatWidget::getValidatedWidget() const {
-    vector<vector<QString> > A = getMat();
-    for(size_t i=0; i<A.size(); i++)
-      for(size_t j=0; j<A[i].size(); j++)
-        A[i][j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(A[i][j].toStdString())));
-    return new MatWidget(A);
+  MatWidgetFactory::MatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
   }
 
-  MatWidgetFactory::MatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+  MatWidgetFactory::MatWidgetFactory(int m, int n, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(getMat<QString>(m,n,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -944,6 +1053,31 @@ namespace MBSimGUI {
     return NULL;
   }
 
+  MatColsVarWidgetFactory::MatColsVarWidgetFactory() : m(1), n(1), name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  MatColsVarWidgetFactory::MatColsVarWidgetFactory(int m_, int n_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  }
+
+  QWidget* MatColsVarWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PhysicalVariableWidget(new MatColsVarWidget(m,n,1,100), unit[0], defaultUnit[0]);
+    if(i==1)
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+    if(i==2)
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
+  }
+
   MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n) : A(getScalars<QString>(m,n,"0")), name(3), unit(3,QStringList()), defaultUnit(3,1) {
     name[0] = "Matrix";
     name[1] = "File";
@@ -953,6 +1087,81 @@ namespace MBSimGUI {
   QWidget* MatRowsColsVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new MatRowsColsVarWidget(2,2,1,100,1,100), unit[0], defaultUnit[0]);
+    if(i==1)
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+    if(i==2)
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
+  }
+
+  SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory(int m_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  SqrMatSizeVarWidgetFactory::SqrMatSizeVarWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  }
+
+  QWidget* SqrMatSizeVarWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PhysicalVariableWidget(new SqrMatSizeVarWidget(m,1,100), unit[0], defaultUnit[0]);
+    if(i==1)
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+    if(i==2)
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
+  }
+
+  SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  }
+
+  QWidget* SymMatWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0]);
+    if(i==1)
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+    if(i==2)
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+    return NULL;
+  }
+
+  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
+  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  }
+
+  QWidget* SymMatSizeVarWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PhysicalVariableWidget(new SymMatSizeVarWidget(2,1,100), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
@@ -983,31 +1192,6 @@ namespace MBSimGUI {
       return new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),unit[0],defaultUnit[0]);
     if(i==3)
       return new PhysicalVariableWidget(new ExpressionWidget,unit[2],defaultUnit[2]);
-    return NULL;
-  }
-
-  SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
-  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
-  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
-  }
-
-  QWidget* SymMatWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0]);
-    if(i==1)
-      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
-    if(i==2)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 

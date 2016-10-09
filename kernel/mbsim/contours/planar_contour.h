@@ -78,7 +78,6 @@ namespace MBSim {
 #endif
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 

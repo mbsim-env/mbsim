@@ -64,7 +64,6 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       /**
        * \return std::string representation

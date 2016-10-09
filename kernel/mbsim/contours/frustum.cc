@@ -97,15 +97,4 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* Frustum::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
- //   addElementText(ele0,MBSIM%"baseRadius",r(0));
- //   addElementText(ele0,MBSIM%"topRadius",r(1));
- //   addElementText(ele0,MBSIM%"height",h);
- //   addElementText(ele0,MBSIM%"solid",outCont);
- //   if(openMBVRigidBody)
- //     ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
-    return ele0;
-  }
-
 }

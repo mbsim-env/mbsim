@@ -49,7 +49,6 @@ namespace MBSim {
         return -c*g - d*gd;
       }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
 
       virtual std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
       /***************************************************/

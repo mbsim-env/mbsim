@@ -97,10 +97,4 @@ namespace MBSim {
     epsilon = Element::getDouble(e);
   }
 
-  DOMElement* UnilateralNewtonImpact::writeXMLFile(DOMNode *parent) { 
-    DOMElement *ele0 = GeneralizedImpactLaw::writeXMLFile(parent);
-    addElementText(ele0,MBSIM%"restitutionCoefficient",epsilon);
-    return ele0;
-  }
-
 }

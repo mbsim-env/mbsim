@@ -1474,81 +1474,12 @@ namespace MBSim {
       setUseConstraintSolverForPlot(Element::getBool(e));
   }
 
-  DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Group::writeXMLFile(parent);
-
-//    DOMElement *ele1 = new DOMElement(MBSIM%"environments");
-//    MBSimEnvironment::getInstance()->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new DOMElement(MBSIM%"solverParameters");
-//    if (contactSolver != FixedPointSingle) {
-//      DOMElement *ele2 = new DOMElement(MBSIM%"constraintSolver");
-//      if (contactSolver == FixedPointTotal)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointTotal"));
-//      else if (contactSolver == FixedPointSingle)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointSingle"));
-//      else if (contactSolver == GaussSeidel)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"GaussSeidel"));
-//      else if (contactSolver == LinearEquations)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"LinearEquations"));
-//      else if (contactSolver == RootFinding)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"RootFinding"));
-//      ele1->LinkEndChild(ele2);
-//    }
-//    if (impactSolver != FixedPointSingle) {
-//      DOMElement *ele2 = new DOMElement(MBSIM%"impactSolver");
-//      if (impactSolver == FixedPointTotal)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointTotal"));
-//      else if (impactSolver == FixedPointSingle)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"FixedPointSingle"));
-//      else if (impactSolver == GaussSeidel)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"GaussSeidel"));
-//      else if (impactSolver == LinearEquations)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"LinearEquations"));
-//      else if (impactSolver == RootFinding)
-//        ele2->LinkEndChild(new DOMElement(MBSIM%"RootFinding"));
-//      ele1->LinkEndChild(ele2);
-//    }
-//    if (maxIter != 10000)
-//      addElementText(ele1, MBSIM%"numberOfMaximalIterations", maxIter);
-//    DOMElement *ele2 = new DOMElement(MBSIM%"tolerances");
-//    if (tolProj > 1e-15)
-//      addElementText(ele2, MBSIM%"projection", tolProj);
-//    if (gTol > 1e-8)
-//      addElementText(ele2, MBSIM%"g", gTol);
-//    if (gdTol > 1e-10)
-//      addElementText(ele2, MBSIM%"gd", gdTol);
-//    if (gddTol > 1e-12)
-//      addElementText(ele2, MBSIM%"gdd", gddTol);
-//    if (laTol > 1e-12)
-//      addElementText(ele2, MBSIM%"la", laTol);
-//    if (LaTol > 1e-10)
-//      addElementText(ele2, MBSIM%"La", LaTol);
-//    ele1->LinkEndChild(ele2);
-//    ele0->LinkEndChild(ele1);
-//    if (inverseKinetics)
-//      addElementText(ele0, MBSIM%"inverseKinetics", inverseKinetics);
-//
-    return ele0;
-  }
-
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
     shared_ptr<DOMParser> parser=DOMParser::create(false);
     shared_ptr<DOMDocument> doc=parser->parse(filename);
     DOMElement *e = doc->getDocumentElement();
     DynamicSystemSolver *dss = dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createAndInit<Group>(e));
     return dss;
-  }
-
-  void DynamicSystemSolver::writeXMLFile(const string &name) {
-//    TiXmlDocument doc;
-//    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0", "UTF-8", "");
-//    doc.LinkEndChild(decl);
-//    writeXMLFile(&doc);
-//    map<string, string> nsprefix = XMLNamespaceMapping::getNamespacePrefixMapping();
-//    unIncorporateNamespace(doc.getFirstElementChild(), nsprefix);
-//    doc.SaveFile((name.length() > 10 && name.substr(name.length() - 10, 10) == ".mbsim.xml") ? name : name + ".mbsim.xml");
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {

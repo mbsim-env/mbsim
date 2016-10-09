@@ -170,20 +170,4 @@ namespace MBSimIntegrator {
       
   }
 
-  DOMElement* LSODEIntegrator::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Integrator::writeXMLFile(parent);
-//    if(aTol.size() > 1) 
-//      addElementText(ele0,MBSIMINT%"absoluteTolerance",aTol);
-//    else
-//      addElementText(ele0,MBSIMINT%"absoluteToleranceScalar",aTol(0));
-//    addElementText(ele0,MBSIMINT%"relativeToleranceScalar",rTol);
-//    addElementText(ele0,MBSIMINT%"initialStepSize",dt0);
-//    addElementText(ele0,MBSIMINT%"maximalStepSize",dtMax);
-//    addElementText(ele0,MBSIMINT%"minimalStepSize",dtMin);
-//    if(maxSteps != 2000000000)
-//      addElementText(ele0,MBSIMINT%"numberOfMaximalSteps",maxSteps);
-//    addElementText(ele0,MBSIMINT%"stiffModus",stiff);
-    return ele0;
-  }
-
 }

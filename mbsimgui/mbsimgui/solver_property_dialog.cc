@@ -420,17 +420,14 @@ namespace MBSimGUI {
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true);
     addToTab("General",task);
 
-    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
+    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,4)),QBoxLayout::RightToLeft),true);
     addToTab("General",amplitude);
 
-    mode = new ExtWidget("Mode",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
+    mode = new ExtWidget("Mode",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft),true);
     addToTab("General",mode);
 
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft),true);
     addToTab("General",determineEquilibriumState);
-
-    autoUpdate = new ExtWidget("Auto update",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft),true);
-    addToTab("General",autoUpdate);
   }
 
   void EigenanalyserPropertyDialog::toWidget(Solver *solver) {
@@ -443,7 +440,6 @@ namespace MBSimGUI {
     static_cast<Eigenanalyser*>(solver)->amplitude.toWidget(amplitude);
     static_cast<Eigenanalyser*>(solver)->mode.toWidget(mode);
     static_cast<Eigenanalyser*>(solver)->determineEquilibriumState.toWidget(determineEquilibriumState);
-    static_cast<Eigenanalyser*>(solver)->autoUpdate.toWidget(autoUpdate);
   }
 
   void EigenanalyserPropertyDialog::fromWidget(Solver *solver) {
@@ -456,7 +452,6 @@ namespace MBSimGUI {
     static_cast<Eigenanalyser*>(solver)->amplitude.fromWidget(amplitude);
     static_cast<Eigenanalyser*>(solver)->mode.fromWidget(mode);
     static_cast<Eigenanalyser*>(solver)->determineEquilibriumState.fromWidget(determineEquilibriumState);
-    static_cast<Eigenanalyser*>(solver)->autoUpdate.fromWidget(autoUpdate);
   }
 
 }

@@ -185,21 +185,4 @@ namespace MBSimIntegrator {
     if (e) setMaxStepNumber(Element::getInt(e));
   }
 
-  DOMElement* DOPRI5Integrator::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Integrator::writeXMLFile(parent);
-//    if(getAbsoluteTolerance().size() > 1) 
-//      addElementText(ele0,MBSIMINT%"absoluteTolerance",getAbsoluteTolerance());
-//    else
-//      addElementText(ele0,MBSIMINT%"absoluteToleranceScalar",getAbsoluteTolerance()(0));
-//    if(getRelativeTolerance().size() > 1) 
-//      addElementText(ele0,MBSIMINT%"relativeTolerance",getRelativeTolerance());
-//    else
-//      addElementText(ele0,MBSIMINT%"relativeToleranceScalar",getRelativeTolerance()(0));
-//    addElementText(ele0,MBSIMINT%"initialStepSize",getInitialStepSize());
-//    addElementText(ele0,MBSIMINT%"maximalStepSize",getMaximalStepSize());
-//    if(getMaxStepNumber() != 2000000000)
-//      addElementText(ele0,MBSIMINT%"maximalNumberOfSteps",getMaxStepNumber());
-    return ele0;
-  }
-
 }

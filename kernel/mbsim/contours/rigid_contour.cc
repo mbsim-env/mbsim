@@ -135,9 +135,4 @@ namespace MBSim {
     if(ec) setFrameOfReference(E(ec)->getAttribute("ref"));
   }
 
-  DOMElement* RigidContour::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-    return ele0;
-  }
-
 }

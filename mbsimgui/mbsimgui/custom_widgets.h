@@ -21,6 +21,7 @@
 #define _CUSTOM_WIDGETS_H_
 
 #include <QComboBox>
+#include <QSpinBox>
 
 namespace MBSimGUI {
 
@@ -33,6 +34,18 @@ namespace MBSimGUI {
       void wheelEvent(QWheelEvent *e) {
         if(hasFocus())
           QComboBox::wheelEvent(e);
+      }
+  };
+
+  class CustomSpinBox :public QSpinBox {
+    public:
+      CustomSpinBox(QWidget* parent = 0) : QSpinBox(parent) {
+        setFocusPolicy(Qt::StrongFocus);
+      }
+
+      void wheelEvent(QWheelEvent *e) {
+        if(hasFocus())
+          QSpinBox::wheelEvent(e);
       }
   };
 

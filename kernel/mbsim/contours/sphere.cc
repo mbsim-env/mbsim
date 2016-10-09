@@ -150,16 +150,4 @@ namespace MBSim {
 #endif
   }
 
-  DOMElement* Sphere::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Contour::writeXMLFile(parent);
-//    addElementText(ele0,MBSIM%"radius",r);
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(openMBVRigidBody)
-//      ele0->LinkEndChild(new DOMElement(MBSIM%"enableOpenMBV"));
-//#endif
-    return ele0;
-  }
-
-
 }
-

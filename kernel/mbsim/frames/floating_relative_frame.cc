@@ -48,19 +48,6 @@ namespace MBSim {
     if(ec) setRelativeOrientation(getSqrMat3(ec));
   }
 
-  DOMElement* FloatingRelativeFrame::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Frame::writeXMLFile(parent);
-//     if(getFrameOfReference()) {
-//        DOMElement *ele1 = new DOMElement( MBSIM%"frameOfReference" );
-//        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
-//        ele1->SetAttribute("ref", str);
-//        ele0->LinkEndChild(ele1);
-//      }
-//     addElementText(ele0,MBSIM%"relativePosition",getGeneralizedRelativePosition());
-//     addElementText(ele0,MBSIM%"relativeOrientation",getRelativeOrientation());
-   return ele0;
-  }
-
   void FloatingRelativeFrame::updatePositions() {
     parent->updatePositions(this);
     WrRP = getPosition(false) - R->evalPosition();

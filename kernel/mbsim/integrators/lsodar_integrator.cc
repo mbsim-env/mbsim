@@ -81,22 +81,6 @@ namespace MBSimIntegrator {
     if(e) setToleranceForVelocityConstraints(Element::getDouble(e));
   }
 
-  DOMElement* LSODARIntegrator::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Integrator::writeXMLFile(parent);
-//    if(aTol.size()==0)
-//      addElementText(ele0,MBSIMINT%"absoluteToleranceScalar",1e-6);
-//    else if(aTol.size()==1)
-//      addElementText(ele0,MBSIMINT%"absoluteToleranceScalar",aTol(0));
-//    else
-//      addElementText(ele0,MBSIMINT%"absoluteTolerance",aTol);
-//    addElementText(ele0,MBSIMINT%"relativeToleranceScalar",rTol);
-//    addElementText(ele0,MBSIMINT%"initialStepSize",dt0);
-//    addElementText(ele0,MBSIMINT%"minimalStepSize",dtMin);
-//    addElementText(ele0,MBSIMINT%"maximalStepSize",dtMax);
-//    addElementText(ele0,MBSIMINT%"plotOnRoot",plotOnRoot);
-    return ele0;
-  }
-
   void LSODARIntegrator::integrate(DynamicSystemSolver& system) {
     debugInit();
     preIntegrate(system);

@@ -234,7 +234,6 @@ namespace MBSim {
 #endif
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
       fmatvec::Mat& getJRel(int i=0, bool check=true) { assert((not check) or (not updGJ)); return JRel[i]; }
       fmatvec::Vec& getjRel(bool check=true) { assert((not check) or (not updGJ)); return jRel; }

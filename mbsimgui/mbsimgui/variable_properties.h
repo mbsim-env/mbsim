@@ -40,6 +40,8 @@ namespace MBSimGUI {
       virtual void setValue(const std::string &str) = 0;
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
+      virtual int rows() const { return 1; }
+      virtual int cols() const { return 1; }
   };
 
   class ExpressionProperty : public VariableProperty {
@@ -50,6 +52,9 @@ namespace MBSimGUI {
       void setValue(const std::string &str) { value = str; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      std::vector<std::vector<std::string> > getMat() const;
+      int rows() const { return getMat().size(); }
+      int cols() const { return getMat().size()?getMat()[0].size():0; }
 
     private:
       std::string value;
@@ -75,7 +80,7 @@ namespace MBSimGUI {
       VecProperty(const std::vector<std::string> &x) : value(x) {}
       ~VecProperty();
       virtual PropertyInterface* clone() const {return new VecProperty(*this);}
-      std::vector<std::string> getVec() const {return value;}
+      const std::vector<std::string>& getVec() const {return value;}
       void setVec(const std::vector<std::string> &x) {value = x;}
       std::string getValue() const {return toStr(getVec());}
       void setValue(const std::string &str) {setVec(strToVec(str));}
@@ -94,7 +99,7 @@ namespace MBSimGUI {
       MatProperty(int rows, int cols);
       MatProperty(const std::vector<std::vector<std::string> > &A) : value(A) {}
       virtual PropertyInterface* clone() const {return new MatProperty(*this);}
-      std::vector<std::vector<std::string> > getMat() const {return value;}
+      const std::vector<std::vector<std::string> >& getMat() const {return value;}
       void setMat(const std::vector<std::vector<std::string> > &A) {value = A;}
       std::string getValue() const {return toStr(getMat());}
       void setValue(const std::string &str) {setMat(strToMat(str));}
@@ -115,7 +120,7 @@ namespace MBSimGUI {
       CardanProperty();
       ~CardanProperty();
       virtual PropertyInterface* clone() const {return new CardanProperty(*this);}
-      std::vector<std::string> getAngles() const {return angles;}
+      const std::vector<std::string>& getAngles() const {return angles;}
       void setAngles(const std::vector<std::string> &x) {angles = x;}
       std::string getValue() const {return toStr(getAngles());}
       void setValue(const std::string &str) {setAngles(strToVec(str));}
@@ -165,6 +170,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
+      int rows() const { return value->rows(); }
+      int cols() const { return value->cols(); }
   };
 
   //class VecFromFileProperty : public VariableProperty {

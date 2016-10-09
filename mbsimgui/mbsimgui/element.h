@@ -56,7 +56,7 @@ namespace MBSimGUI {
     ExtProperty name, embed, plotFeature;
     Parameters parameters;
     public:
-    Element(const std::string &name, Element *parent);
+    Element(const std::string &name, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
     virtual ~Element() { parameters.removeParameters(); }
     virtual PropertyInterface* clone() const {return 0;}
     virtual std::string getPath();
@@ -111,6 +111,7 @@ namespace MBSimGUI {
     virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
     virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
     virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
+    virtual QMenu* createFrameContextMenu() {return NULL;}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }

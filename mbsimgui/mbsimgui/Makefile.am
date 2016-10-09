@@ -21,7 +21,8 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   dynamic_system_solver.cc \
 		   object.cc \
 		   body.cc \
-		   rigidbody.cc \
+		   rigid_body.cc \
+		   flexible_body_ffr.cc \
 		   constraint.cc \
 		   link.cc \
 		   kinetic_excitation.cc \
@@ -50,6 +51,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   function_property_factory.cc \
 		   ombv_properties.cc \
 		   extended_properties.cc \
+		   special_properties.cc \
 		   basic_widgets.cc \
 		   variable_widgets.cc \
 		   function_widgets.cc \
@@ -58,6 +60,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   kinetics_widgets.cc \
 		   ombv_widgets.cc \
 		   extended_widgets.cc \
+		   special_widgets.cc \
 		   property_dialog.cc \
 		   element_property_dialog.cc \
 		   solver_property_dialog.cc \
@@ -89,6 +92,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   kinetics_widgets.moc.cc \
 		   ombv_widgets.moc.cc \
 		   extended_widgets.moc.cc \
+		   special_widgets.moc.cc \
 		   property_dialog.moc.cc  \
 		   element_property_dialog.moc.cc \
 		   solver_property_dialog.moc.cc \

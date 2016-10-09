@@ -68,9 +68,6 @@ namespace MBSimIntegrator {
       void integrate(MBSim::DynamicSystemSolver& system);
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-
-      using Integrator::writeXMLFile;
 
       virtual std::string getType() const { return "LSODEIntegrator"; }
   };

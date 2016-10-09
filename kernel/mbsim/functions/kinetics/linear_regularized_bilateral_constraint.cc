@@ -38,11 +38,4 @@ namespace MBSim {
     d = Element::getDouble(e);
   }
 
-  DOMElement* LinearRegularizedBilateralConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Function<double(double,double)>::writeXMLFile(parent);
-//    addElementText(ele0, MBSIM%"stiffnessCoefficient", c);
-//    addElementText(ele0, MBSIM%"dampingCoefficient", d);
-    return ele0;
-  }
-
 }

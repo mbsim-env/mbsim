@@ -24,6 +24,7 @@
 #include "custom_widgets.h"
 #include <QLineEdit>
 #include <QSpinBox>
+#include <mbxmlutilshelper/dom.h>
 
 class QPushButton;
 class QComboBox;
@@ -453,7 +454,7 @@ namespace MBSimGUI {
       QTreeWidget *tree;
 
     public:
-      PlotFeatureStatusWidget();
+      PlotFeatureStatusWidget(const std::vector<MBXMLUtils::FQN> &types);
 
     protected slots:
       void addFeature();

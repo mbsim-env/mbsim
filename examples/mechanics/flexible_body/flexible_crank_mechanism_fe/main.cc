@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
   sys->initialize();
 
   LSODEIntegrator integrator;
-  integrator.setEndTime(1);
+  integrator.setEndTime(0.1);
   integrator.setAbsoluteTolerance(1e-10);
   integrator.setRelativeTolerance(1e-10);
   integrator.setPlotStepSize(1e-3);
