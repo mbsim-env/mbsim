@@ -1,150 +1,79 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-    <frames>
-      <FixedRelativeFrame name="P1">
-        <enableOpenMBV>
-          <?OPENMBV_ID 4?>
-        </enableOpenMBV>
-        <relativeOrientation>
-          <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutZ>
-        </relativeOrientation>
-      </FixedRelativeFrame>
-    </frames>
-    <contours>
-      <Plane name="Plane1">
-        <frameOfReference ref="../Frame[P1]"/>
-        <enableOpenMBV>
-          <?OPENMBV_ID 5?>
-        </enableOpenMBV>
-      </Plane>
-    </contours>
+    <frames/>
+    <contours/>
     <groups/>
     <objects>
-      <RigidBody name="RigidBody1">
-        <initialGeneralizedPosition>[0;0.2]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0.5;0]</initialGeneralizedVelocity>
+      <RigidBody name="Box1">
+        <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass unit="kg">1</mass>
-        <inertiaTensor unit="kg*m^2">
-          <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-            <row>
-              <ele>0.01</ele>
-              <ele>0</ele>
-              <ele>0</ele>
-            </row>
-            <row>
-              <ele>0</ele>
-              <ele>0.01</ele>
-              <ele>0</ele>
-            </row>
-            <row>
-              <ele>0</ele>
-              <ele>0</ele>
-              <ele>0.01</ele>
-            </row>
-          </xmlMatrix>
-        </inertiaTensor>
+        <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
         <stateDependentTranslation>
-          <TranslationAlongAxesXY/>
+          <TranslationAlongZAxis/>
         </stateDependentTranslation>
-        <frames>
-          <FixedRelativeFrame name="P1">
-            <enableOpenMBV>
-              <?OPENMBV_ID 8?>
-            </enableOpenMBV>
-            <relativePosition unit="m">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>0</ele>
-                <ele>-0.1</ele>
-                <ele>0</ele>
-              </xmlVector>
-            </relativePosition>
-          </FixedRelativeFrame>
-        </frames>
-        <contours>
-          <Point name="Point1">
-            <frameOfReference ref="../Frame[P1]"/>
-            <enableOpenMBV>
-              <?OPENMBV_ID 9?>
-            </enableOpenMBV>
-          </Point>
-        </contours>
+        <frames/>
+        <contours/>
         <openMBVRigidBody>
-          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-            <?OPENMBV_ID 6?>
+          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
             <transparency unit="-">0.3</transparency>
-            <initialTranslation unit="m">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>0</ele>
-                <ele>0</ele>
-                <ele>0</ele>
-              </xmlVector>
-            </initialTranslation>
-            <initialRotation unit="rad">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>0</ele>
-                <ele>0</ele>
-                <ele>0</ele>
-              </xmlVector>
-            </initialRotation>
+            <initialTranslation>[0;0;0]</initialTranslation>
+            <initialRotation>[0;0;0]</initialRotation>
             <scaleFactor unit="-">1</scaleFactor>
             <radius unit="m">0.1</radius>
           </Sphere>
         </openMBVRigidBody>
-        <enableOpenMBVFrameC>
-          <?OPENMBV_ID 7?>
-        </enableOpenMBVFrameC>
+        <enableOpenMBVFrameC/>
       </RigidBody>
-      <mypytest:PyO1 name="mypytestObject1" xmlns:mypytest="http://mypytest">
-        <plotFeature feature="+separateFilePerGroup"/>
-        <mypytest:pyinit.PyO1>
-          self.setData(99)
-        </mypytest:pyinit.PyO1>
-      </mypytest:PyO1>
-      <PyO2 name="mypytestObject2" xmlns="http://mypytest" xmlns:mbsim="http://www.mbsim-env.de/MBSim">
-        <mbsim:plotFeature feature="+separateFilePerGroup"/>
-        <data1>6</data1>
-        <data2>3+3</data2>
-      </PyO2>
+      <RigidBody name="Box2">
+        <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+        <frameOfReference ref="../Frame[I]"/>
+        <frameForKinematics ref="Frame[C]"/>
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+        <stateDependentTranslation>
+          <TranslationAlongZAxis/>
+        </stateDependentTranslation>
+        <frames/>
+        <contours/>
+        <openMBVRigidBody>
+          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+            <transparency unit="-">0.3</transparency>
+            <initialTranslation>[0.5;0;0]</initialTranslation>
+            <initialRotation>[0;0;0]</initialRotation>
+            <scaleFactor unit="-">1</scaleFactor>
+            <radius unit="m">0.1</radius>
+          </Sphere>
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC/>
+      </RigidBody>
     </objects>
     <links>
-      <Contact name="Contact1">
-        <normalForceLaw>
-          <UnilateralConstraint/>
-        </normalForceLaw>
-        <normalImpactLaw>
-          <UnilateralNewtonImpact>
-            <restitutionCoefficient unit="-">0.5</restitutionCoefficient>
-          </UnilateralNewtonImpact>
-        </normalImpactLaw>
-        <tangentialForceLaw>
-          <PlanarCoulombFriction>
-            <frictionCoefficient unit="-">0.1</frictionCoefficient>
-          </PlanarCoulombFriction>
-        </tangentialForceLaw>
-        <tangentialImpactLaw>
-          <PlanarCoulombImpact>
-            <frictionCoefficient unit="-">0.1</frictionCoefficient>
-          </PlanarCoulombImpact>
-        </tangentialImpactLaw>
-        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
-      </Contact>
+      <SpringDamper name="Spring1">
+        <forceFunction>
+          <LinearSpringDamperForce>
+            <stiffnessCoefficient>100</stiffnessCoefficient>
+            <dampingCoefficient>0.2</dampingCoefficient>
+          </LinearSpringDamperForce>
+        </forceFunction>
+        <unloadedLength>0</unloadedLength>
+        <connect ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]"/>
+        <enableOpenMBVCoilSpring>
+          <numberOfCoils>5</numberOfCoils>
+          <springRadius>.003</springRadius>
+          <crossSectionRadius>.0002</crossSectionRadius>
+        </enableOpenMBVCoilSpring>
+      </SpringDamper>
+      <PySpringDamper name="Spring2" xmlns="http://mypytest"/>
     </links>
-    <enableOpenMBVFrameI>
-      <?OPENMBV_ID 3?>
-    </enableOpenMBVFrameI>
+    <enableOpenMBVFrameI/>
     <environments>
       <MBSimEnvironment>
-        <accelerationOfGravity unit="m/s^2">
-          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-            <ele>0</ele>
-            <ele>-9.81</ele>
-            <ele>0</ele>
-          </xmlVector>
-        </accelerationOfGravity>
+        <accelerationOfGravity unit="m/s^2">[0;0;-9.81]</accelerationOfGravity>
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>

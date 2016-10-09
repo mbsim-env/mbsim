@@ -1,10 +1,9 @@
 // wrap MBSim with directors (and all protected class data)
 %module(directors="1", allprotected="1") mbsim
 
+%include "fmatvec.i"
 
 
-// wrap std::string
-%include "std_string.i"
 
 // wrap python error to c++ exception
 %feature("director:except") {
@@ -49,6 +48,8 @@
 %feature("director") fmatvec::Atom;
 %feature("director") MBSim::Element;
 %feature("director") MBSim::Object;
+%feature("director") MBSim::Link;
+%feature("director") MBSim::FrameLink;
 
 // forward declarations needed in the generated swig c++ code
 namespace MBSim {
@@ -61,10 +62,70 @@ namespace MBSim {
 #include <config.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "mbxmlutils/py2py3cppwrapper.h"
+#define PY_ARRAY_UNIQUE_SYMBOL mbxmlutils_pyeval_ARRAY_API
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include "mbsim/objectfactory_part.h"
 #include "mbsim/objects/object.h"
+#include "mbsim/links/frame_link.h"
+#include "mbsim/frames/frame.h"
+
+void checkNumPyDoubleType(int type) {
+  if(type!=NPY_SHORT    && type!=NPY_USHORT    &&
+     type!=NPY_INT      && type!=NPY_UINT      &&
+     type!=NPY_LONG     && type!=NPY_ULONG     &&
+     type!=NPY_LONGLONG && type!=NPY_ULONGLONG &&
+     type!=NPY_FLOAT    && type!=NPY_DOUBLE    && type!=NPY_LONGDOUBLE)
+    throw std::runtime_error("Value is not of type double.");
+}
+
+double arrayGetDouble(PyArrayObject *a, int type, int r, int c=-1) {
+  switch(type) {
+    case NPY_SHORT:      return *static_cast<npy_short*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_USHORT:     return *static_cast<npy_ushort*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_INT:        return *static_cast<npy_int*>       (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_UINT:       return *static_cast<npy_uint*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONG:       return *static_cast<npy_long*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_ULONG:      return *static_cast<npy_ulong*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONGLONG:   return *static_cast<npy_longlong*>  (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_ULONGLONG:  return *static_cast<npy_ulonglong*> (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_FLOAT:      return *static_cast<npy_float*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_DOUBLE:     return *static_cast<npy_double*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONGDOUBLE: return *static_cast<npy_longdouble*>(c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+  }
+  throw std::runtime_error("Value is not of type double (wrong element type).");
+}
+
+%}
+
+// wrap std::string and std::vector
+%include "std_string.i"
+%include "std_vector.i"
+%template(VectorFrameP) std::vector<MBSim::Frame*>;
+
+%typemap(in) fmatvec::VecV %{
+  if(PyArray_Check($input)) {
+    PyArrayObject *a=reinterpret_cast<PyArrayObject*>($input);
+    if(PyArray_NDIM(a)!=1)
+      throw std::runtime_error("Value is not of type vector (wrong dimension).");
+    int type=PyArray_TYPE(a);
+    checkNumPyDoubleType(type);
+    npy_intp *dims=PyArray_SHAPE(a);
+    $1.resize(dims[0]);
+    for(int i=0; i<dims[0]; ++i)
+      $1(i)=arrayGetDouble(a, type, i);
+  }
+  else
+    throw std::runtime_error("Value is not of type vector (wrong type).");
+%}
+
+%typemap(out) fmatvec::VecV %{
+  npy_intp dims[1];
+  dims[0]=$1.size();
+  $result=PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+  std::copy(&$1(0), &$1(0)+$1.size(), static_cast<npy_double*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>($result), 0)));
 %}
 
 // wrap the following headers
@@ -72,6 +133,10 @@ namespace MBSim {
 %include "fmatvec/atom.h"
 %include "mbsim/element.h"
 %include "mbsim/objects/object.h"
+%rename(_lambda) MBSim::Link::lambda; // lambda is a python keyword -> rename it to _lambda
+%include "mbsim/links/link.h"
+%include "mbsim/links/frame_link.h"
+%include "mbsim/frames/frame.h"
 
 
 

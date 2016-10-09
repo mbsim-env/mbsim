@@ -144,7 +144,7 @@ namespace MBSim {
 
       bool updPos, updVel, updFD, updF, updRMV, updlaF, updlaM;
 
-    private:
+    protected:
       std::string saved_ref1, saved_ref2;
   };
 }

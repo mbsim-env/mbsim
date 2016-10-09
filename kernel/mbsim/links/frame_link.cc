@@ -236,8 +236,10 @@ namespace MBSim {
   void FrameLink::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref1=E(e)->getAttribute("ref1");
-    saved_ref2=E(e)->getAttribute("ref2");
+    if(e) {
+      saved_ref1=E(e)->getAttribute("ref1");
+      saved_ref2=E(e)->getAttribute("ref2");
+    }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);

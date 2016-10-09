@@ -1,3 +1,5 @@
+SUBDIRS = . check
+
 # Note: wee install the resulting python file in $prefix/bin since this is the only place where Windows searches dependent libraries
 swigdir = $(bindir)
 swig_LTLIBRARIES = _mbsim.la
@@ -11,7 +13,7 @@ mbsim.py: mbsim_swig_pyhton.cc
 
 _mbsim_la_SOURCES = mbsim_swig_pyhton.cc
 _mbsim_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
-_mbsim_la_CPPFLAGS = $(PYTHON_CFLAGS) $(DEPS_CFLAGS) -I$(top_srcdir)
+_mbsim_la_CPPFLAGS = $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS) -I$(top_srcdir)
 _mbsim_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
 
 install-exec-hook: mbsim.py
