@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export PYTHONPATH=.:@abs_builddir@/.libs
+@XC_EXEC_PREFIX@ @PYTHON_BIN@ @srcdir@/fmatvec_main.py
