@@ -4,7 +4,7 @@ import sys
 
 exList=[]
 
-for className in ['FooVecV', 'FooRowVec3']:
+for className in ['FooVecV', 'FooRowVec3', 'FooVec']:
   print('START--------------'+className)
 
   print('1--------------')

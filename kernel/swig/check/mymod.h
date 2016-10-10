@@ -37,6 +37,31 @@ class FooRowVec3 {
     const fmatvec::RowVec3& funcret_rc() { return v; }
 };
 
+class FooVec {
+  public:
+    // 0 1 2 3 4 5
+    // x x o o o x
+    FooVec(double x) : vBase(6), v(vBase(2,4)) {
+      for(int i=0; i<5; ++i)
+        vBase(i)=i;
+      if(v(0)!=2)
+        throw std::runtime_error("wrong submatrix definition.");
+    }
+
+    fmatvec::Vec vBase;
+    fmatvec::Vec v;
+
+    void func_v(fmatvec::Vec vv) { v=vv; }
+    void func_vc(const fmatvec::Vec vv) { v=vv; }
+    void func_r(fmatvec::Vec &vv) { v=vv; vv(0)*=2; }
+    void func_rc(const fmatvec::Vec &vv) { v=vv; }
+
+    fmatvec::Vec funcret_v() { return v; }
+    const fmatvec::Vec funcret_vc() { return v; }
+    fmatvec::Vec& funcret_r() { return v; }
+    const fmatvec::Vec& funcret_rc() { return v; }
+};
+
 class FooMat {
   public:
 //      0 1 2 3
