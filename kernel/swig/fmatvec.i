@@ -14,6 +14,7 @@
 // helper define to convert c++ exceptions in typemaps to target language exceptions
 %define FMATVEC_CATCHARG
   catch(const std::exception &ex) {
+    Py_XDECREF($result);
     SWIG_exception(SWIG_RuntimeError, (std::string("In function $symname, argument $argnum: ")+ex.what()).c_str());
   }
 %enddef

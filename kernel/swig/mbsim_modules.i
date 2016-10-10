@@ -6,6 +6,13 @@
 // include fmatvec wrapping
 %include "fmatvec.i"
 
+// create directors for everything
+%feature("director");
+
+%{
+#include "mbxmlutils/py2py3cppwrapper.h"
+%}
+
 // wrap python error to c++ exception
 %feature("director:except") {
   if($error) {

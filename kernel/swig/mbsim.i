@@ -4,51 +4,49 @@
 // include the general mbsim SWIG configuration (used by all MBSim modules)
 %include "mbsim_modules.i"
 
-
-
-// create directors for ...
-%feature("director") MBSim::AllocateBase;
-%feature("director") MBSim::DeallocateBase;
-%feature("director") fmatvec::Atom;
-%feature("director") MBSim::Element;
-%feature("director") MBSim::Object;
-%feature("director") MBSim::Link;
-%feature("director") MBSim::FrameLink;
-
-// forward declarations needed in the generated swig c++ code
-namespace MBSim {
-  class FixedRelativeFrame;
-  class RigidContour;
-}
-
 // includes needed in the generated swig c++ code
 %{
-#include <config.h>
-#include "mbxmlutils/py2py3cppwrapper.h"
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include "mbsim/objectfactory_part.h"
-#include "mbsim/objects/object.h"
+#include <config.h> // to use consistent preprocessor defines
 #include "mbsim/links/frame_link.h"
-#include "mbsim/frames/frame.h"
 %}
 
-// wrap and std::vector
-%include "std_vector.i"
-%template(VectorFrameP) std::vector<MBSim::Frame*>;
-
-// wrap the following headers
-%include "mbsim/objectfactory_part.h"
+// wrap the following classes
 %include "fmatvec/atom.h"
 %include "mbsim/element.h"
-%include "mbsim/objects/object.h"
 %rename(_lambda) MBSim::Link::lambda; // lambda is a python keyword -> rename it to _lambda
 %include "mbsim/links/link.h"
 %include "mbsim/links/frame_link.h"
-%include "mbsim/frames/frame.h"
+
+// wrap some std::vector<...> types used by the above wrapped classes
+%include "std_vector.i"
+%template() std::vector<MBSim::Element*>;
+%template() std::vector<double>;
+%template() std::vector<std::string>;
+%template() std::vector<fmatvec::Mat>;
+%template() std::vector<fmatvec::Vec>;
+%template() std::vector<MBSim::Frame*>;
 
 
 
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The following code is special to MBSim kernel this is not required by any .i file for a MBSim module //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// includes needed in the generated swig c++ code
+%{
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/join.hpp>
+%}
+
+
+
+// wrap part of the MBSim object factory
+%include "mbsim/objectfactory_part.h"
 
 
 
