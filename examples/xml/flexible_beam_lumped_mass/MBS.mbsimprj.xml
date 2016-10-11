@@ -4,7 +4,7 @@
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="modes">2</scalarParameter>
-      <scalarParameter name="updateIntegrals">0</scalarParameter>
+      <scalarParameter name="updateIntegrals">1</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
