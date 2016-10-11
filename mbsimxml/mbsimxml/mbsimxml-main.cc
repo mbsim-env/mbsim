@@ -119,7 +119,8 @@ int main(int argc, char *argv[]) {
           <<"--autoreload         Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
           <<"                     a input file is newer than the output file"<<endl
           <<"--onlyListSchemas    List all XML schema files including MBSim modules"<<endl
-          <<"--modulePath <dir>   Search path for MBSim modules"<<endl
+          <<"--modulePath <dir>   Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
+          <<"                     module dir and the current dir is always included."<<endl
           <<"<mbsimprjfile>       Use <mbsimprjfile> as mbsim xml project file"<<endl;
       return 0;
     }

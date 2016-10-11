@@ -19,6 +19,10 @@
   }
 %enddef
 
+// wrap the following
+//MFMF missing %include <fmatvec/range.h>
+//MFMF and add all %template...
+
 // fmatvec typedefs and template instantiations
 %include <fmatvec/fmatvec.h>
 

@@ -52,6 +52,10 @@ namespace MBSim {
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
 #if MBSIMXML_COND_PYTHON
   initializePython((getInstallPath()/"bin"/"mbsimflatxml").string());
+  PyO pyPath=CALLPYB(PySys_GetObject, const_cast<char*>("path"));
+  // add bin to pyhton search path
+  PyO pyBinPath=CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string());
+  CALLPY(PyList_Append, pyPath, pyBinPath);
 #endif
 
   static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
@@ -61,49 +65,51 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
 
   set<boost::filesystem::path> moduleLibFile;
 
-  // read MBSim module libraries
   set<boost::filesystem::path> allSearchDirs=searchDirs;
   allSearchDirs.insert(installDir/"share"/"mbsimmodules");
   allSearchDirs.insert(boost::filesystem::current_path());
-  for(auto &dir: allSearchDirs)
-    for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
-        it!=boost::filesystem::directory_iterator(); it++) {
-      if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
-      std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
-      for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
-          getFirstElementChild();
-          e!=NULL; e=e->getNextElementSibling()) {
-        if(E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
-          string location=E(e)->getAttribute("location");
-          boost::algorithm::replace_all(location, "@MBSIMLIBDIR@", installDir.string()+"/"+libDir);
-          moduleLibFile.insert(canonical(boost::filesystem::path(location)/fullLibName(E(e)->getAttribute("basename"))));
-        }
-        if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
-          string moduleName=E(e)->getAttribute("moduleName");
-#if MBSIMXML_COND_PYTHON
-          boost::filesystem::path location=E(e)->getAttribute("location");
-          if(!it->path().is_absolute())
-            location=it->path().parent_path()/location;
 
-          // add python path
-          PyO pyPath=CALLPYB(PySys_GetObject, const_cast<char*>("path"));
-          PyO pyBinPath=CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string());
-          CALLPY(PyList_Append, pyPath, pyBinPath);
-          for(auto &dir: allSearchDirs) {
-            PyO pyCurPath=CALLPY(PyUnicode_FromString, dir.string());
-            CALLPY(PyList_Append, pyPath, pyCurPath);
+
+  // read MBSim module libraries
+  enum Stage { SearchPath, Loading }; // we load in two stages: first just add all search path then to the real load
+  for(auto stage: {SearchPath, Loading})
+    for(auto &dir: allSearchDirs)
+      for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
+          it!=boost::filesystem::directory_iterator(); it++) {
+        if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
+        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+        for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
+            getFirstElementChild();
+            e!=NULL; e=e->getNextElementSibling()) {
+          if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
+            string location=E(e)->getAttribute("location");
+            if(location.substr(0, 13)=="@MBSIMLIBDIR@")
+              moduleLibFile.insert(installDir/libDir/location.substr(13)/fullLibName(E(e)->getAttribute("basename")));
+            else
+              moduleLibFile.insert(E(e)->convertPath(location)/fullLibName(E(e)->getAttribute("basename")));
           }
-          // load python module
-          CALLPY(PyImport_ImportModule, moduleName);
+          if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
+            string moduleName=E(e)->getAttribute("moduleName");
+#if MBSIMXML_COND_PYTHON
+            boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
+            if(stage==SearchPath) {
+              // add python path
+              PyO pyBinPath=CALLPY(PyUnicode_FromString, location.string());
+              CALLPY(PyList_Append, pyPath, pyBinPath);
+            }
+            if(stage==Loading)
+              // load python module
+              CALLPY(PyImport_ImportModule, moduleName);
 #else
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
-            "Python MBSim module found in "+it->path().string()+" '"+moduleName+"'\n"<<
-            "but MBSim is not build with Python support. Skipping this module.\n";
-          continue;
+            if(stage==SearchPath)
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
+                "Python MBSim module found in "+it->path().string()+" '"+moduleName+"'\n"<<
+                "but MBSim is not build with Python support. Skipping this module.\n";
+            continue;
 #endif
+          }
         }
       }
-    }
 
   // load MBSim modules which are not already loaded
   for(set<boost::filesystem::path>::iterator it=moduleLibFile.begin(); it!=moduleLibFile.end(); it++)
@@ -148,7 +154,8 @@ int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& s
     cout<<"--stopafterfirststep           Stop after outputting the first step (usually at t=0)"<<endl;
     cout<<"                               This generates a HDF5 output file with only one time serie"<<endl;
     cout<<"--savefinalstatevector         Save the state vector to the file \"statevector.asc\" after integration"<<endl;
-    cout<<"--modulePath <dir>             Add <dir> to MBSim module serach path"<<endl;
+    cout<<"--modulePath <dir>             Add <dir> to MBSim module serach path. The central MBSim installation"<<endl;
+    cout<<"                               module dir and the current dir is always included."<<endl;
     cout<<"<mbsimprjfile>                 The preprocessed mbsim project xml file"<<endl;
     return 1;
   }

@@ -25,6 +25,9 @@
 %template() std::vector<fmatvec::Mat>;
 %template() std::vector<fmatvec::Vec>;
 %template() std::vector<MBSim::Frame*>;
+//MFMF wrap ostream
+//MFMF wrap Frame
+//MFMF wrap DSS
 
 
 
