@@ -43,15 +43,24 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   double     R =  r + spiel/2.;
   double hoehe = R/2.;
 
+  RigidBody *stange = new RigidBody("Stange");
+  this->addObject(stange);
+
   Line *lL = new Line("LineL");
   Line *lR = new Line("LineR");
 
-  this->addFrame(new FixedRelativeFrame("LineL", r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(0)));
-  this->addFrame(new FixedRelativeFrame("LineR",-r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(M_PI)));
-  lL->setFrameOfReference(this->getFrame("LineL"));
-  lR->setFrameOfReference(this->getFrame("LineR"));
-  this->addContour(lL);
-  this->addContour(lR);
+  Vec3 rS;
+  rS(0)=r/2;
+  rS(1)=0.5;
+  stange->addFrame(new FixedRelativeFrame("LineL", rS, BasicRotAKIz(0)));
+  rS(0)=-r/2;
+  stange->addFrame(new FixedRelativeFrame("LineR", rS, BasicRotAKIz(M_PI)));
+  lL->setFrameOfReference(stange->getFrame("LineL"));
+  lR->setFrameOfReference(stange->getFrame("LineR"));
+  lL->enableOpenMBV(1);
+  lR->enableOpenMBV(1);
+  stange->addContour(lL);
+  stange->addContour(lR);
 
   SymMat Theta(3);
   Vec WrOS(3);
@@ -90,22 +99,23 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
     stringstream name;
     name << "PM" << i;
     Point* pMuffe = new Point(name.str());
+    pMuffe->enableOpenMBV();
     name.clear();
     name << "KontaktMB" << i; 
     Contact *contact = new Contact(name.str());
     Vec KrSPMuffe(3);
 
     switch(i){
-      case 0: contact->connect(pMuffe,this->getContour("LineL"));
+      case 0: contact->connect(pMuffe,stange->getContour("LineL"));
               KrSPMuffe(0) =  R/2;   KrSPMuffe(1) =  hoehe/2.;
               break;
-      case 1: contact->connect(pMuffe,this->getContour("LineL"));
+      case 1: contact->connect(pMuffe,stange->getContour("LineL"));
               KrSPMuffe(0) =  R/2;   KrSPMuffe(1) = -hoehe/2.;
               break;
-      case 2: contact->connect(pMuffe,this->getContour("LineR"));
+      case 2: contact->connect(pMuffe,stange->getContour("LineR"));
               KrSPMuffe(0) = -R/2;   KrSPMuffe(1) =  hoehe/2.;
               break;
-      case 3: contact->connect(pMuffe,this->getContour("LineR"));
+      case 3: contact->connect(pMuffe,stange->getContour("LineR"));
               KrSPMuffe(0) = -R/2;   KrSPMuffe(1) = -hoehe/2.;
               break;
     }
@@ -148,6 +158,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInertiaTensor(Theta);
 
   Point* schnabel = new Point("Schabel");
+  schnabel->enableOpenMBV();
   specht->addFrame(new FixedRelativeFrame("Schabel",SrSchabelspitze,SqrMat(3,EYE)));
   schnabel->setFrameOfReference(specht->getFrame("Schabel"));
   specht->addContour(schnabel);
@@ -164,7 +175,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   PlanarCoulombImpact   *coulImptact  = new PlanarCoulombImpact(mu);
 
   Contact *contact = new Contact("SchnabelKontakt");
-  contact->connect(schnabel,this->getContour("LineL"));
+  contact->connect(schnabel,stange->getContour("LineL"));
   contact->setNormalForceLaw  (cntForceLaw );
   contact->setNormalImpactLaw (impForceLaw );
   contact->setTangentialForceLaw (coulFriction);
@@ -175,10 +186,23 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  std::shared_ptr<OpenMBV::IvBody> muffeMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
-  muffeMBV->setIvFileName("objects/muffe.wrl");
-  muffeMBV->setInitialRotation( 0, 0, M_PI/2. );
-  muffeMBV->setScaleFactor(R);
+  std::shared_ptr<OpenMBV::Frustum> stangeMBV = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  stangeMBV->setHeight(1);
+  stangeMBV->setTopRadius(r/2);
+  stangeMBV->setBaseRadius(r/2);
+  stangeMBV->setDiffuseColor(0.,0.,170./255);
+  stangeMBV->setInitialRotation(M_PI/2,0,0);
+  stange->setOpenMBVRigidBody(stangeMBV);
+
+  std::shared_ptr<OpenMBV::Frustum> muffeMBV = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
+  muffeMBV->setHeight(hoehe);
+  muffeMBV->setTopRadius(1.2*R/2);
+  muffeMBV->setBaseRadius(1.2*R/2);
+  muffeMBV->setInnerTopRadius(R/2);
+  muffeMBV->setInnerBaseRadius(R/2);
+  muffeMBV->setDiffuseColor(100./255,1.,1.);
+  muffeMBV->setInitialTranslation(0,-hoehe/2,0);
+  muffeMBV->setInitialRotation(M_PI/2,0,0);
   muffe->setOpenMBVRigidBody(muffeMBV); 
 
   std::shared_ptr<OpenMBV::IvBody> spechtMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
