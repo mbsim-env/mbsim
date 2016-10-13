@@ -3,10 +3,84 @@
   #error "Only Pyhton as target language is supported."
 #endif
 
+// add code to the generated code
+%{
+
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+
+#include <typeinfo>
+#include <fmatvec/atom.h>
+
+template<typename AT> void checkNumPyType(int type);
+template<> void checkNumPyType<int>(int type) {
+  if(type!=NPY_SHORT    && type!=NPY_USHORT    &&
+     type!=NPY_INT      && type!=NPY_UINT      &&
+     type!=NPY_LONG     && type!=NPY_ULONG     &&
+     type!=NPY_LONGLONG && type!=NPY_ULONGLONG)
+    throw std::runtime_error("Value is not of type integer.");
+}
+template<> void checkNumPyType<double>(int type) {
+  if(type!=NPY_SHORT    && type!=NPY_USHORT    &&
+     type!=NPY_INT      && type!=NPY_UINT      &&
+     type!=NPY_LONG     && type!=NPY_ULONG     &&
+     type!=NPY_LONGLONG && type!=NPY_ULONGLONG &&
+     type!=NPY_FLOAT    && type!=NPY_DOUBLE    && type!=NPY_LONGDOUBLE)
+    throw std::runtime_error("Value is not of type floating point.");
+}
+
+template<typename AT> AT arrayGet(PyArrayObject *a, int type, int r, int c=-1);
+template<> int arrayGet<int>(PyArrayObject *a, int type, int r, int c) {
+  switch(type) {
+    case NPY_SHORT:      return *static_cast<npy_short*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_USHORT:     return *static_cast<npy_ushort*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_INT:        return *static_cast<npy_int*>       (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_UINT:       return *static_cast<npy_uint*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONG:       return *static_cast<npy_long*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_ULONG:      return *static_cast<npy_ulong*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONGLONG:   return *static_cast<npy_longlong*>  (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_ULONGLONG:  return *static_cast<npy_ulonglong*> (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+  }
+  throw std::runtime_error("Value is not of type floating point (wrong element type).");
+}
+template<> double arrayGet<double>(PyArrayObject *a, int type, int r, int c) {
+  switch(type) {
+    case NPY_SHORT:      return *static_cast<npy_short*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_USHORT:     return *static_cast<npy_ushort*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_INT:        return *static_cast<npy_int*>       (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_UINT:       return *static_cast<npy_uint*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONG:       return *static_cast<npy_long*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_ULONG:      return *static_cast<npy_ulong*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONGLONG:   return *static_cast<npy_longlong*>  (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_ULONGLONG:  return *static_cast<npy_ulonglong*> (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_FLOAT:      return *static_cast<npy_float*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_DOUBLE:     return *static_cast<npy_double*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+    case NPY_LONGDOUBLE: return *static_cast<npy_longdouble*>(c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
+  }
+  throw std::runtime_error("Value is not of type floating point (wrong element type).");
+}
+
+template<class T> inline T& derefIfPointer(T & t) { return  t; }
+template<class T> inline T& derefIfPointer(T*& t) { return *t; }
+
+template<class T> inline void assignIfPointer(T & d, T& s) {}
+template<class T> inline void assignIfPointer(T*& d, T& s) { d=&s; }
+
+template<class T> inline void assignOrCopy(T & d, T* s) { d=*s; }
+template<class T> inline void assignOrCopy(T*& d, T* s) { d= s; }
+
+template<typename AT> constexpr int numPyType();
+template<> constexpr int numPyType<int>() { return NPY_LONG; }
+template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
+
+%}
+
 // init numpy
 %init %{
   _import_array();
 %}
+
+%import "std_string.i"
 
 // use SWIG_exception to throw a target language exception
 %include exception.i
@@ -412,6 +486,26 @@
 %template() fmatvec::SquareMatrix<fmatvec::Fixed<16>, double>;
 %template() fmatvec::SquareMatrix<fmatvec::Fixed<17>, double>;
 
+// wrap fmatvec::Atom
+%feature("director") fmatvec::Atom;
+namespace fmatvec {
+  %extend Atom {
+    void msg(MsgType type, const std::string &msg) {
+      $self->msg(type)<<msg<<std::endl;
+    }
+    static void msgStatic(MsgType type, const std::string &msg) {
+      fmatvec::Atom::msgStatic(type)<<msg<<std::endl;
+    }
+  };
+}
+%ignore fmatvec::Atom::setCurrentMessageStream;
+%ignore fmatvec::Atom::setMessageStreamActive;
+%ignore fmatvec::Atom::getMessageStream;
+%ignore fmatvec::Atom::adoptMessageStreams;
+%ignore fmatvec::Atom::msg;
+%ignore fmatvec::Atom::msgStatic;
+%include <fmatvec/atom.h>
+
 // wrap output (member of function return value) as a numpy.ndarray which uses the date memory from the c++ member
 %typemap(out) fmatvec::Vector*,
               fmatvec::Vector&,
@@ -686,74 +780,3 @@
   }
   FMATVEC_CATCHARG
 }
-
-// add code to generated file (helper functions and includes)
-%{
-
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <numpy/arrayobject.h>
-
-#include <typeinfo>
-
-template<typename AT> void checkNumPyType(int type);
-template<> void checkNumPyType<int>(int type) {
-  if(type!=NPY_SHORT    && type!=NPY_USHORT    &&
-     type!=NPY_INT      && type!=NPY_UINT      &&
-     type!=NPY_LONG     && type!=NPY_ULONG     &&
-     type!=NPY_LONGLONG && type!=NPY_ULONGLONG)
-    throw std::runtime_error("Value is not of type integer.");
-}
-template<> void checkNumPyType<double>(int type) {
-  if(type!=NPY_SHORT    && type!=NPY_USHORT    &&
-     type!=NPY_INT      && type!=NPY_UINT      &&
-     type!=NPY_LONG     && type!=NPY_ULONG     &&
-     type!=NPY_LONGLONG && type!=NPY_ULONGLONG &&
-     type!=NPY_FLOAT    && type!=NPY_DOUBLE    && type!=NPY_LONGDOUBLE)
-    throw std::runtime_error("Value is not of type floating point.");
-}
-
-template<typename AT> AT arrayGet(PyArrayObject *a, int type, int r, int c=-1);
-template<> int arrayGet<int>(PyArrayObject *a, int type, int r, int c) {
-  switch(type) {
-    case NPY_SHORT:      return *static_cast<npy_short*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_USHORT:     return *static_cast<npy_ushort*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_INT:        return *static_cast<npy_int*>       (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_UINT:       return *static_cast<npy_uint*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_LONG:       return *static_cast<npy_long*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_ULONG:      return *static_cast<npy_ulong*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_LONGLONG:   return *static_cast<npy_longlong*>  (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_ULONGLONG:  return *static_cast<npy_ulonglong*> (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-  }
-  throw std::runtime_error("Value is not of type floating point (wrong element type).");
-}
-template<> double arrayGet<double>(PyArrayObject *a, int type, int r, int c) {
-  switch(type) {
-    case NPY_SHORT:      return *static_cast<npy_short*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_USHORT:     return *static_cast<npy_ushort*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_INT:        return *static_cast<npy_int*>       (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_UINT:       return *static_cast<npy_uint*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_LONG:       return *static_cast<npy_long*>      (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_ULONG:      return *static_cast<npy_ulong*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_LONGLONG:   return *static_cast<npy_longlong*>  (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_ULONGLONG:  return *static_cast<npy_ulonglong*> (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_FLOAT:      return *static_cast<npy_float*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_DOUBLE:     return *static_cast<npy_double*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-    case NPY_LONGDOUBLE: return *static_cast<npy_longdouble*>(c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
-  }
-  throw std::runtime_error("Value is not of type floating point (wrong element type).");
-}
-
-template<class T> inline T& derefIfPointer(T & t) { return  t; }
-template<class T> inline T& derefIfPointer(T*& t) { return *t; }
-
-template<class T> inline void assignIfPointer(T & d, T& s) {}
-template<class T> inline void assignIfPointer(T*& d, T& s) { d=&s; }
-
-template<class T> inline void assignOrCopy(T & d, T* s) { d=*s; }
-template<class T> inline void assignOrCopy(T*& d, T* s) { d= s; }
-
-template<typename AT> constexpr int numPyType();
-template<> constexpr int numPyType<int>() { return NPY_LONG; }
-template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
-
-%}

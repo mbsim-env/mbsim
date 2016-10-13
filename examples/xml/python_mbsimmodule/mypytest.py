@@ -16,8 +16,12 @@ class PySpringDamper(mbsim.FrameLink):
     super(PySpringDamper, self).__init__("")
     self.saved_ref1="../Frame[I]"
     self.saved_ref2="../Object[Box2]/Frame[C]"
+    self.warnCount=0
 
   def updatelaF(self):
+    if self.warnCount==0:
+      self.msg(self.Warn, "Test warning from python")
+      self.warnCount=self.warnCount+1
     self.lambdaF[0]=-100*self.evalGeneralizedRelativePosition()[0]-0.2*self.evalGeneralizedRelativeVelocity()[0];
     self.updlaF = False
 

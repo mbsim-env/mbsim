@@ -3,15 +3,16 @@
   #error "Only Pyhton as target language is supported."
 #endif
 
+// add code to the generated code
+%{
+#include "mbxmlutils/py2py3cppwrapper.h"
+%}
+
 // include fmatvec wrapping
 %include "fmatvec.i"
 
 // create directors for everything
 %feature("director");
-
-%{
-#include "mbxmlutils/py2py3cppwrapper.h"
-%}
 
 // wrap python error to c++ exception
 %feature("director:except") {
@@ -49,6 +50,3 @@
     SWIG_fail;
   }
 }
-
-// wrap std::string
-%include "std_string.i"

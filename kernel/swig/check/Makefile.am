@@ -11,7 +11,7 @@ mymod.py: mymod_swig_pyhton.cc
 _mymod_la_SOURCES = mymod_swig_pyhton.cc
 _mymod_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 _mymod_la_CPPFLAGS = $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS)
-_mymod_la_LIBADD = $(PYTHON_LIBS)
+_mymod_la_LIBADD = $(PYTHON_LIBS) $(DEPS_LIBS)
 
 
 

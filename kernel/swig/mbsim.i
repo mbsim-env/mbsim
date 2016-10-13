@@ -11,7 +11,6 @@
 %}
 
 // wrap the following classes
-%include "fmatvec/atom.h"
 %include "mbsim/element.h"
 %rename(_lambda) MBSim::Link::lambda; // lambda is a python keyword -> rename it to _lambda
 %include "mbsim/links/link.h"
