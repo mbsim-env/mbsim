@@ -6,7 +6,7 @@ swig_LTLIBRARIES = _mbsim.la
 
 CLEANFILES=mbsim_swig_pyhton.cc mbsim.py mbsim_swig_pyhton.d
 mbsim_swig_pyhton.cc: $(srcdir)/mbsim.i $(top_srcdir)/mbsim/objects/*.h
-	$(swig) -python -MD -Werror -c++ -w473 -o mbsim_swig_pyhton.cc -I$(top_srcdir) $(DEPS_CFLAGS) $(srcdir)/mbsim.i || (rm -f mbsim_swig_pyhton.cc; exit 1) # mfmf remove -w473 if possible
+	$(swig) -python -MD -Werror -c++ -o mbsim_swig_pyhton.cc -I$(top_srcdir) $(DEPS_CFLAGS) $(srcdir)/mbsim.i || (rm -f mbsim_swig_pyhton.cc; exit 1)
 -include mbsim_swig_pyhton.d
 mbsim.py: mbsim_swig_pyhton.cc
 	test ! -f $@ && (rm -f mbsim_swig_pyhton.cc && $(MAKE) $(AM_MAKEFLAGS) mbsim_swig_pyhton.cc) || :

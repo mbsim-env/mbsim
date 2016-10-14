@@ -3,6 +3,9 @@
   #error "Only Pyhton as target language is supported."
 #endif
 
+// disable warning 473
+#pragma SWIG nowarn=SWIGWARN_TYPEMAP_DIRECTOROUT_PTR
+
 // add code to the generated code
 %{
 #include "mbxmlutils/py2py3cppwrapper.h"
