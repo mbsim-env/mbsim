@@ -6,23 +6,18 @@
 // disable warning 473
 #pragma SWIG nowarn=SWIGWARN_TYPEMAP_DIRECTOROUT_PTR
 
+
+
 // add code to the generated code
 %{
+
 #include "mbxmlutils/py2py3cppwrapper.h"
-%}
 
-// include fmatvec wrapping
-%include "fmatvec.i"
-
-// create directors for everything
-%feature("director");
-
-// wrap python error to c++ exception
-%feature("director:except") {
-  if($error) {
-    // MISSING we absue PyExc_MemoryError here instead of definding our own exception class
+void _directorExcept(PyObject *error) {
+  if(error) {
+    // MISSING we abuse PyExc_MemoryError here instead of definding our own exception class
     // which indicates a "pass throught" exception
-    if(PyErr_GivenExceptionMatches($error, PyExc_MemoryError)) {
+    if(PyErr_GivenExceptionMatches(error, PyExc_MemoryError)) {
       // pass throught a c++ exception
       PyObject *ptype, *pvalue, *ptraceback;
       PyErr_Fetch(&ptype, &pvalue, &ptraceback);
@@ -39,8 +34,23 @@
       throw PythonCpp::PythonException("", 0);
   }
 }
+
+%}
+
+
+
+// include fmatvec wrapping
+%include "fmatvec.i"
+
+// create directors for everything
+%feature("director");
+
+// wrap python error to c++ exception
+%feature("director:except") %{
+  _directorExcept($error);
+%}
 // wrap c++ exception to python error
-%exception {
+%exception %{
   try {
     $action
   }
@@ -52,4 +62,4 @@
     PyErr_SetString(PyExc_MemoryError, "Unknown c++ exception");
     SWIG_fail;
   }
-}
+%}

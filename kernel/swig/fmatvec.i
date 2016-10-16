@@ -13,15 +13,15 @@
 #include <fmatvec/atom.h>
 #include <fmatvec/range.h>
 
-template<typename AT> void checkNumPyType(int type);
-template<> void checkNumPyType<int>(int type) {
+template<typename AT> void _checkNumPyType(int type);
+template<> void _checkNumPyType<int>(int type) {
   if(type!=NPY_SHORT    && type!=NPY_USHORT    &&
      type!=NPY_INT      && type!=NPY_UINT      &&
      type!=NPY_LONG     && type!=NPY_ULONG     &&
      type!=NPY_LONGLONG && type!=NPY_ULONGLONG)
     throw std::runtime_error("Value is not of type integer.");
 }
-template<> void checkNumPyType<double>(int type) {
+template<> void _checkNumPyType<double>(int type) {
   if(type!=NPY_SHORT    && type!=NPY_USHORT    &&
      type!=NPY_INT      && type!=NPY_UINT      &&
      type!=NPY_LONG     && type!=NPY_ULONG     &&
@@ -30,8 +30,8 @@ template<> void checkNumPyType<double>(int type) {
     throw std::runtime_error("Value is not of type floating point.");
 }
 
-template<typename AT> AT arrayGet(PyArrayObject *a, int type, int r, int c=-1);
-template<> int arrayGet<int>(PyArrayObject *a, int type, int r, int c) {
+template<typename AT> AT _arrayGet(PyArrayObject *a, int type, int r, int c=-1);
+template<> int _arrayGet<int>(PyArrayObject *a, int type, int r, int c) {
   switch(type) {
     case NPY_SHORT:      return *static_cast<npy_short*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
     case NPY_USHORT:     return *static_cast<npy_ushort*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
@@ -44,7 +44,7 @@ template<> int arrayGet<int>(PyArrayObject *a, int type, int r, int c) {
   }
   throw std::runtime_error("Value is not of type floating point (wrong element type).");
 }
-template<> double arrayGet<double>(PyArrayObject *a, int type, int r, int c) {
+template<> double _arrayGet<double>(PyArrayObject *a, int type, int r, int c) {
   switch(type) {
     case NPY_SHORT:      return *static_cast<npy_short*>     (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
     case NPY_USHORT:     return *static_cast<npy_ushort*>    (c==-1 ? PyArray_GETPTR1(a, r) : PyArray_GETPTR2(a, r, c));
@@ -61,18 +61,183 @@ template<> double arrayGet<double>(PyArrayObject *a, int type, int r, int c) {
   throw std::runtime_error("Value is not of type floating point (wrong element type).");
 }
 
-template<class T> inline T& derefIfPointer(T & t) { return  t; }
-template<class T> inline T& derefIfPointer(T*& t) { return *t; }
+template<class T> inline T& _derefIfPointer(T & t) { return  t; }
+template<class T> inline T& _derefIfPointer(T*& t) { return *t; }
 
-template<class T> inline void assignIfPointer(T & d, T& s) {}
-template<class T> inline void assignIfPointer(T*& d, T& s) { d=&s; }
+template<class T> inline void _assignIfPointer(T & d, T& s) {}
+template<class T> inline void _assignIfPointer(T*& d, T& s) { d=&s; }
 
-template<class T> inline void assignOrCopy(T & d, T* s) { d=*s; }
-template<class T> inline void assignOrCopy(T*& d, T* s) { d= s; }
+template<class T> inline void _assignOrCopy(T & d, T* s) { d=*s; }
+template<class T> inline void _assignOrCopy(T*& d, T* s) { d= s; }
 
-template<typename AT> constexpr int numPyType();
-template<> constexpr int numPyType<int>() { return NPY_LONG; }
-template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
+template<typename AT> constexpr int _numPyType();
+template<> constexpr int _numPyType<int>() { return NPY_LONG; }
+template<> constexpr int _numPyType<double>() { return NPY_DOUBLE; }
+
+template<typename Vec>
+void _typemapOutVec(const Vec &_1, PyObject *&_result) {
+  npy_intp dims[1];
+  dims[0]=_1.size();
+  _result=PyArray_SimpleNew(1, dims, _numPyType<typename Vec::AtomicType>());
+  if(!_result)
+    throw std::runtime_error("Cannot create ndarray");
+  std::copy(&_1(0), &_1(0)+_1.size(),
+            static_cast<typename Vec::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>(_result), 0)));
+}
+
+template<typename Vec>
+void _typemapOutVecCR(Vec *_1, PyObject *&_result, const std::string &symname) {
+  if(symname.substr(symname.size()-4)=="_get") {//MISSING is not working if a function ends with "_get"
+    npy_intp dims[1];
+    dims[0]=_1->size();
+    _result=PyArray_SimpleNewFromData(1, dims, _numPyType<typename Vec::AtomicType>(), &(*_1)(0));
+    if(!_result)
+      throw std::runtime_error("Cannot create ndarray");
+  }
+  else {
+    npy_intp dims[1];
+    dims[0]=_1->size();
+    _result=PyArray_SimpleNew(1, dims, _numPyType<typename Vec::AtomicType>());
+    if(!_result)
+      throw std::runtime_error("Cannot create ndarray");
+    std::copy(&(*_1)(0), &(*_1)(0)+_1->size(),
+              static_cast<typename Vec::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>(_result), 0)));
+  }
+}
+
+template<typename Vec>
+void _typemapOutVecR(Vec *_1, PyObject *&_result) {
+  npy_intp dims[1];
+  dims[0]=_1->size();
+  _result=PyArray_SimpleNewFromData(1, dims, _numPyType<typename Vec::AtomicType>(), &(*_1)(0));
+  if(!_result)
+    throw std::runtime_error("Cannot create ndarray");
+}
+
+template<typename Vec>
+void _typemapInVecA(Vec &_1, PyObject *_input, typename std::remove_pointer<Vec>::type& localVar, swig_type_info *_1_descriptor) {
+  typedef typename std::remove_pointer<Vec>::type VecBT;
+  void *inputp;
+  int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
+  if(SWIG_IsOK(res))
+    _assignOrCopy(_1, reinterpret_cast<VecBT*>(inputp));
+  else if(PyArray_Check(_input)) {
+    PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+    if(PyArray_NDIM(input)!=1)
+      throw std::runtime_error("Must have 1 dimension.");
+    int type=PyArray_TYPE(input);
+    _checkNumPyType<typename VecBT::AtomicType>(type);
+    npy_intp *dims=PyArray_SHAPE(input);
+    _assignIfPointer(_1, localVar);
+    _derefIfPointer(_1).resize(dims[0]);
+    for(int i=0; i<dims[0]; ++i)
+      _derefIfPointer(_1)(i)=_arrayGet<typename VecBT::AtomicType>(input, type, i);
+  }
+  else
+    throw std::runtime_error("Wrong type.");
+}
+
+template<typename Vec>
+void _typemapArgoutVecR(Vec *_1, PyObject *_input) {
+  PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+  int type=PyArray_TYPE(input);
+  if(type!=_numPyType<typename Vec::AtomicType>())
+    throw std::runtime_error(std::string("Must have atomic type ")+typeid(typename Vec::AtomicType).name());
+  std::copy(&(*_1)(0), &(*_1)(0)+_1->size(),
+            static_cast<typename Vec::AtomicType*>(PyArray_GETPTR1(input, 0)));
+}
+
+template<typename Mat>
+void _typemapOutMat(const Mat &_1, PyObject *&_result) {
+  npy_intp dims[2];
+  dims[0]=_derefIfPointer(_1).rows();
+  dims[1]=_derefIfPointer(_1).cols();
+  _result=PyArray_SimpleNew(2, dims, _numPyType<typename Mat::AtomicType>());
+  if(!_result)
+    throw std::runtime_error("Cannot create ndarray");
+  PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_result);
+  for(int r=0; r<dims[0]; r++)
+    for(int c=0; c<dims[1]; c++)
+      *static_cast<typename Mat::AtomicType*>(PyArray_GETPTR2(input, r, c))=
+        _derefIfPointer(_1)(r, c);
+}
+
+template<typename Mat>
+void _typemapOutMatCR(Mat *_1, PyObject *&_result, const std::string &symname) {
+  if(symname.substr(symname.size()-4)=="_get") {//MISSING is not working if a function ends with "_get"
+    npy_intp dims[2];
+    dims[0]=_1->rows();
+    dims[1]=_1->cols();
+    _result=PyArray_SimpleNewFromData(2, dims, _numPyType<typename Mat::AtomicType>(), &(*_1)(0, 0));
+    if(!_result)
+      throw std::runtime_error("Cannot create ndarray");
+    npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>(_result));
+    strides[_1->transposed() ? 1 : 0]=sizeof(typename Mat::AtomicType)*1;
+    strides[_1->transposed() ? 0 : 1]=sizeof(typename Mat::AtomicType)*_1->ldim();
+  }
+  else {
+    npy_intp dims[2];
+    dims[0]=_1->rows();
+    dims[1]=_1->cols();
+    _result=PyArray_SimpleNew(2, dims, _numPyType<typename Mat::AtomicType>());
+    if(!_result)
+      throw std::runtime_error("Cannot create ndarray");
+    PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_result);
+    for(int r=0; r<dims[0]; r++)
+      for(int c=0; c<dims[1]; c++)
+        *static_cast<typename Mat::AtomicType*>(PyArray_GETPTR2(input, r, c))=
+          (*_1)(r, c);
+  }
+}
+
+template<typename Mat>
+void _typemapOutMatR(Mat *_1, PyObject *&_result) {
+  npy_intp dims[2];
+  dims[0]=_1->rows();
+  dims[1]=_1->cols();
+  _result=PyArray_SimpleNewFromData(2, dims, _numPyType<typename Mat::AtomicType>(), &(*_1)(0, 0));
+  if(!_result)
+    throw std::runtime_error("Cannot create ndarray");
+  npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>(_result));
+  strides[_1->transposed() ? 1 : 0]=sizeof(typename Mat::AtomicType)*1;
+  strides[_1->transposed() ? 0 : 1]=sizeof(typename Mat::AtomicType)*_1->ldim();
+}
+
+template<typename Mat>
+void _typemapInMatA(Mat &_1, PyObject *_input, typename std::remove_pointer<Mat>::type& localVar, swig_type_info *_1_descriptor) {
+  typedef typename std::remove_pointer<Mat>::type MatBT;
+  void *inputp;
+  int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
+  if(SWIG_IsOK(res))
+    _assignOrCopy(_1, reinterpret_cast<MatBT*>(inputp));
+  else if(PyArray_Check(_input)) {
+    PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+    if(PyArray_NDIM(input)!=2)
+      throw std::runtime_error("Must have 2 dimension.");
+    int type=PyArray_TYPE(input);
+    _checkNumPyType<typename MatBT::AtomicType>(type);
+    _assignIfPointer(_1, localVar);
+    npy_intp *dims=PyArray_SHAPE(input);
+    _derefIfPointer(_1).resize(dims[0], dims[1]);
+    for(int r=0; r<dims[0]; ++r)
+      for(int c=0; c<dims[1]; ++c)
+        _derefIfPointer(_1)(r, c)=_arrayGet<typename MatBT::AtomicType>(input, type, r, c);
+  }
+  else
+    throw std::runtime_error("Wrong type.");
+}
+
+template<typename Mat>
+void _typemapArgoutMatR(Mat *_1, PyObject *_input) {
+  PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+  int type=PyArray_TYPE(input);
+  if(type!=_numPyType<typename Mat::AtomicType>())
+    throw std::runtime_error(std::string("Must have atomic type ")+typeid(typename Mat::AtomicType).name());
+  for(int r=0; r<_1->rows(); ++r)
+    for(int c=0; c<_1->cols(); ++c)
+      *static_cast<typename Mat::AtomicType*>(PyArray_GETPTR2(input, r, c))=
+        (*_1)(r, c);
+}
 
 %}
 
@@ -490,54 +655,28 @@ template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
 %include <fmatvec/range.h>
 %template(Index) fmatvec::Range<fmatvec::Var,fmatvec::Var>;
 
-%typemap(out) fmatvec::Vector,
-              const fmatvec::Vector,
-              fmatvec::RowVector,
-              const fmatvec::RowVector {
+%typemap(out, noblock=1) fmatvec::Vector,
+                         const fmatvec::Vector,
+                         fmatvec::RowVector,
+                         const fmatvec::RowVector {
   try {
-    npy_intp dims[1];
-    dims[0]=$1.size();
-    $result=PyArray_SimpleNew(1, dims, numPyType<$1_basetype::AtomicType>());
-    if(!$result)
-      throw std::runtime_error("Cannot create ndarray");
-    std::copy(&$1(0), &$1(0)+$1.size(),
-              static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>($result), 0)));
+    _typemapOutVec($1, $result);
   }
   FMATVEC_CATCHARG
 }
 
-%typemap(out) const fmatvec::Vector&,
-              const fmatvec::RowVector& {
+%typemap(out, noblock=1) const fmatvec::Vector&,
+                         const fmatvec::RowVector& {
   try {
-    std::string symname("$symname");
-    if(symname.substr(symname.size()-4)=="_get") {//MISSING is not working if a function ends with "_get"
-      npy_intp dims[1];
-      dims[0]=$1->size();
-      $result=PyArray_SimpleNewFromData(1, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0));
-      if(!$result)
-        throw std::runtime_error("Cannot create ndarray");
-    }
-    else {
-      npy_intp dims[1];
-      dims[0]=$1->size();
-      $result=PyArray_SimpleNew(1, dims, numPyType<$1_basetype::AtomicType>());
-      if(!$result)
-        throw std::runtime_error("Cannot create ndarray");
-      std::copy(&(*$1)(0), &(*$1)(0)+$1->size(),
-                static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>($result), 0)));
-    }
+    _typemapOutVecCR($1, $result, "$symname");
   }
   FMATVEC_CATCHARG
 }
 
-%typemap(out) fmatvec::Vector&,
-              fmatvec::RowVector& {
+%typemap(out, noblock=1) fmatvec::Vector&,
+                         fmatvec::RowVector& {
   try {
-    npy_intp dims[1];
-    dims[0]=$1->size();
-    $result=PyArray_SimpleNewFromData(1, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0));
-    if(!$result)
-      throw std::runtime_error("Cannot create ndarray");
+    _typemapOutVecR($1, $result);
   }
   FMATVEC_CATCHARG
 }
@@ -553,122 +692,58 @@ template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
   $1_basetype localVar$argnum;
 }
 
-%typemap(in) fmatvec::Vector,
-             const fmatvec::Vector,
-             fmatvec::Vector&,
-             const fmatvec::Vector&,
-             fmatvec::RowVector,
-             const fmatvec::RowVector,
-             fmatvec::RowVector&,
-             const fmatvec::RowVector& {
+%typemap(in, noblock=1) fmatvec::Vector,
+                        const fmatvec::Vector,
+                        fmatvec::Vector&,
+                        const fmatvec::Vector&,
+                        fmatvec::RowVector,
+                        const fmatvec::RowVector,
+                        fmatvec::RowVector&,
+                        const fmatvec::RowVector& {
   try {
-    void *inputp;
-    int res=SWIG_ConvertPtr($input, &inputp, $1_descriptor, 0);
-    if(SWIG_IsOK(res))
-      assignOrCopy($1, reinterpret_cast<$1_basetype*>(inputp));
-    else if(PyArray_Check($input)) {
-      PyArrayObject *input=reinterpret_cast<PyArrayObject*>($input);
-      if(PyArray_NDIM(input)!=1)
-        throw std::runtime_error("Must have 1 dimension.");
-      int type=PyArray_TYPE(input);
-      checkNumPyType<$1_basetype::AtomicType>(type);
-      npy_intp *dims=PyArray_SHAPE(input);
-      assignIfPointer($1, localVar$argnum);
-      derefIfPointer($1).resize(dims[0]);
-      for(int i=0; i<dims[0]; ++i)
-        derefIfPointer($1)(i)=arrayGet<$1_basetype::AtomicType>(input, type, i);
-    }
-    else
-      throw std::runtime_error("Wrong type.");
+    _typemapInVecA($1, $input, localVar$argnum, $1_descriptor);
   }
   FMATVEC_CATCHARG
 }
 
-%typemap(argout) fmatvec::Vector,
-                 const fmatvec::Vector,
-                 const fmatvec::Vector&,
-                 fmatvec::RowVector,
-                 const fmatvec::RowVector,
-                 const fmatvec::RowVector& {
+%typemap(argout, noblock=1) fmatvec::Vector,
+                            const fmatvec::Vector,
+                            const fmatvec::Vector&,
+                            fmatvec::RowVector,
+                            const fmatvec::RowVector,
+                            const fmatvec::RowVector& {
 }
 
-%typemap(argout) fmatvec::Vector&,
-                 fmatvec::RowVector& {
+%typemap(argout, noblock=1) fmatvec::Vector&,
+                            fmatvec::RowVector& {
   try {
-    PyArrayObject *input=reinterpret_cast<PyArrayObject*>($input);
-    int type=PyArray_TYPE(input);
-    if(type!=numPyType<$1_basetype::AtomicType>())
-      throw std::runtime_error(std::string("Must have atomic type ")+typeid($1_basetype::AtomicType).name());
-    std::copy(&localVar$argnum(0), &localVar$argnum(0)+localVar$argnum.size(),
-              static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR1(input, 0)));
+    _typemapArgoutVecR($1, $input);
   }
   FMATVEC_CATCHARG
 }
 
-%typemap(out) fmatvec::Matrix,
-              const fmatvec::Matrix,
-              fmatvec::SquareMatrix,
-              const fmatvec::SquareMatrix {
+%typemap(out, noblock=1) fmatvec::Matrix,
+                         const fmatvec::Matrix,
+                         fmatvec::SquareMatrix,
+                         const fmatvec::SquareMatrix {
   try {
-    npy_intp dims[2];
-    dims[0]=derefIfPointer($1).rows();
-    dims[1]=derefIfPointer($1).cols();
-    $result=PyArray_SimpleNew(2, dims, numPyType<$1_basetype::AtomicType>());
-    if(!$result)
-      throw std::runtime_error("Cannot create ndarray");
-    PyArrayObject *input=reinterpret_cast<PyArrayObject*>($result);
-    for(int r=0; r<dims[0]; r++)
-      for(int c=0; c<dims[1]; c++)
-        *static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR2(input, r, c))=
-          derefIfPointer($1)(r, c);
+    _typemapOutMat($1, $result);
   }
   FMATVEC_CATCHARG
 }
 
-%typemap(out) const fmatvec::Matrix&,
-              const fmatvec::SquareMatrix& {
+%typemap(out, noblock=1) const fmatvec::Matrix&,
+                         const fmatvec::SquareMatrix& {
   try {
-    std::string symname("$symname");
-    if(symname.substr(symname.size()-4)=="_get") {//MISSING is not working if a function ends with "_get"
-      npy_intp dims[2];
-      dims[0]=$1->rows();
-      dims[1]=$1->cols();
-      $result=PyArray_SimpleNewFromData(2, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0, 0));
-      if(!$result)
-        throw std::runtime_error("Cannot create ndarray");
-      npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>($result));
-      strides[$1->transposed() ? 1 : 0]=sizeof($1_basetype::AtomicType)*1;
-      strides[$1->transposed() ? 0 : 1]=sizeof($1_basetype::AtomicType)*$1->ldim();
-    }
-    else {
-      npy_intp dims[2];
-      dims[0]=$1->rows();
-      dims[1]=$1->cols();
-      $result=PyArray_SimpleNew(2, dims, numPyType<$1_basetype::AtomicType>());
-      if(!$result)
-        throw std::runtime_error("Cannot create ndarray");
-      PyArrayObject *input=reinterpret_cast<PyArrayObject*>($result);
-      for(int r=0; r<dims[0]; r++)
-        for(int c=0; c<dims[1]; c++)
-          *static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR2(input, r, c))=
-            (*$1)(r, c);
-    }
+    _typemapOutMatCR($1, $result, "$symname");
   }
   FMATVEC_CATCHARG
 }
 
-%typemap(out) fmatvec::Matrix&,
-              fmatvec::SquareMatrix& {
+%typemap(out, noblock=1) fmatvec::Matrix&,
+                         fmatvec::SquareMatrix& {
   try {
-    npy_intp dims[2];
-    dims[0]=$1->rows();
-    dims[1]=$1->cols();
-    $result=PyArray_SimpleNewFromData(2, dims, numPyType<$1_basetype::AtomicType>(), &(*$1)(0, 0));
-    if(!$result)
-      throw std::runtime_error("Cannot create ndarray");
-    npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>($result));
-    strides[$1->transposed() ? 1 : 0]=sizeof($1_basetype::AtomicType)*1;
-    strides[$1->transposed() ? 0 : 1]=sizeof($1_basetype::AtomicType)*$1->ldim();
+    _typemapOutMatR($1, $result);
   }
   FMATVEC_CATCHARG
 }
@@ -684,57 +759,32 @@ template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
   $1_basetype localVar$argnum;
 }
 
-%typemap(in) fmatvec::Matrix,
-             const fmatvec::Matrix,
-             fmatvec::Matrix&,
-             const fmatvec::Matrix&,
-             fmatvec::SquareMatrix,
-             const fmatvec::SquareMatrix,
-             fmatvec::SquareMatrix&,
-             const fmatvec::SquareMatrix& {
+%typemap(in, noblock=1) fmatvec::Matrix,
+                        const fmatvec::Matrix,
+                        fmatvec::Matrix&,
+                        const fmatvec::Matrix&,
+                        fmatvec::SquareMatrix,
+                        const fmatvec::SquareMatrix,
+                        fmatvec::SquareMatrix&,
+                        const fmatvec::SquareMatrix& {
   try {
-    void *inputp;
-    int res=SWIG_ConvertPtr($input, &inputp, $1_descriptor, 0);
-    if(SWIG_IsOK(res))
-      assignOrCopy($1, reinterpret_cast<$1_basetype*>(inputp));
-    else if(PyArray_Check($input)) {
-      PyArrayObject *input=reinterpret_cast<PyArrayObject*>($input);
-      if(PyArray_NDIM(input)!=2)
-        throw std::runtime_error("Must have 2 dimension.");
-      int type=PyArray_TYPE(input);
-      checkNumPyType<$1_basetype::AtomicType>(type);
-      assignIfPointer($1, localVar$argnum);
-      npy_intp *dims=PyArray_SHAPE(input);
-      derefIfPointer($1).resize(dims[0], dims[1]);
-      for(int r=0; r<dims[0]; ++r)
-        for(int c=0; c<dims[1]; ++c)
-          derefIfPointer($1)(r, c)=arrayGet<$1_basetype::AtomicType>(input, type, r, c);
-    }
-    else
-      throw std::runtime_error("Wrong type.");
+    _typemapInMatA($1, $input, localVar$argnum, $1_descriptor);
   }
   FMATVEC_CATCHARG
 }
 
-%typemap(argout) fmatvec::Matrix,
-                 const fmatvec::Matrix,
-                 const fmatvec::Matrix&,
-                 fmatvec::SquareMatrix,
-                 const fmatvec::SquareMatrix,
-                 const fmatvec::SquareMatrix& {
+%typemap(argout, noblock=1) fmatvec::Matrix,
+                            const fmatvec::Matrix,
+                            const fmatvec::Matrix&,
+                            fmatvec::SquareMatrix,
+                            const fmatvec::SquareMatrix,
+                            const fmatvec::SquareMatrix& {
 }
 
-%typemap(argout) fmatvec::Matrix&,
-                 fmatvec::SquareMatrix& {
+%typemap(argout, noblock=1) fmatvec::Matrix&,
+                            fmatvec::SquareMatrix& {
   try {
-    PyArrayObject *input=reinterpret_cast<PyArrayObject*>($input);
-    int type=PyArray_TYPE(input);
-    if(type!=numPyType<$1_basetype::AtomicType>())
-      throw std::runtime_error(std::string("Must have atomic type ")+typeid($1_basetype::AtomicType).name());
-    for(int r=0; r<localVar$argnum.rows(); ++r)
-      for(int c=0; c<localVar$argnum.cols(); ++c)
-        *static_cast<$1_basetype::AtomicType*>(PyArray_GETPTR2(input, r, c))=
-          localVar$argnum(r, c);
+    _typemapArgoutMatR($1, $input);
   }
   FMATVEC_CATCHARG
 }
