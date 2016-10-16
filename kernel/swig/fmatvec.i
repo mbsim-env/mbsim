@@ -11,6 +11,7 @@
 
 #include <typeinfo>
 #include <fmatvec/atom.h>
+#include <fmatvec/range.h>
 
 template<typename AT> void checkNumPyType(int type);
 template<> void checkNumPyType<int>(int type) {
@@ -95,10 +96,6 @@ template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
     SWIG_exception(SWIG_RuntimeError, (std::string("In function $symname, argument $argnum: ")+ex.what()).c_str());
   }
 %enddef
-
-// wrap the following
-//MFMF missing %include <fmatvec/range.h>
-//MFMF and add all %template...
 
 // fmatvec typedefs and template instantiations
 %include <fmatvec/fmatvec.h>
@@ -488,6 +485,10 @@ template<> constexpr int numPyType<double>() { return NPY_DOUBLE; }
 %template() fmatvec::SquareMatrix<fmatvec::Fixed<15>, double>;
 %template() fmatvec::SquareMatrix<fmatvec::Fixed<16>, double>;
 %template() fmatvec::SquareMatrix<fmatvec::Fixed<17>, double>;
+
+// wrap the following
+%include <fmatvec/range.h>
+%template(Index) fmatvec::Range<fmatvec::Var,fmatvec::Var>;
 
 %typemap(out) fmatvec::Vector,
               const fmatvec::Vector,
