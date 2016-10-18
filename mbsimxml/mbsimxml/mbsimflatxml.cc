@@ -52,9 +52,9 @@ namespace MBSim {
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
 #if MBSIMXML_COND_PYTHON
   initializePython((getInstallPath()/"bin"/"mbsimflatxml").string());
-  PyO pyPath=CALLPYB(PySys_GetObject, const_cast<char*>("path"));
+  PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
   // add bin to pyhton search path
-  PyO pyBinPath=CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string());
+  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
   CALLPY(PyList_Append, pyPath, pyBinPath);
 #endif
 
@@ -94,7 +94,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
               // add python path
-              PyO pyBinPath=CALLPY(PyUnicode_FromString, location.string());
+              PyO pyBinPath(CALLPY(PyUnicode_FromString, location.string()));
               CALLPY(PyList_Append, pyPath, pyBinPath);
             }
             if(stage==Loading)

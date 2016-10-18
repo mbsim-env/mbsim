@@ -37,19 +37,19 @@ void _directorExcept(PyObject *error) {
   }
 }
 
-// swig spezializes std::less<PyObject*> after it is instantiated here -> we use another comp to avoid a compiler error
-auto pyObjectComp=[](const PyObject *a, const PyObject *b) { return a < b; };
-static std::map<PyObject*, xercesc::DOMElement*, decltype(pyObjectComp)> domElementMap(pyObjectComp);
+static std::map<PythonCpp::PyO, std::pair<std::shared_ptr<MBXMLUtils::DOMParser>, xercesc::DOMElement*>> domElementMap;
 
 void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObject &_input) {
   using namespace MBXMLUtils;
   using namespace PythonCpp;
+  xercesc::DOMDocument *doc=_1->getOwnerDocument();
+
   // get the uri
-  std::string uri=X()%_1->getOwnerDocument()->getDocumentURI();
+  std::string uri=X()%doc->getDocumentURI();
   uri=uri.substr(7); // remove the "file://" part from the uri
 
   // get the XPath of e
-  xercesc::DOMElement *r=_1->getOwnerDocument()->getDocumentElement();
+  xercesc::DOMElement *r=doc->getDocumentElement();
   std::string xpath;
   for(xercesc::DOMElement *ee=_1; ee!=r; ee=static_cast<xercesc::DOMElement*>(ee->getParentNode())) {
     // get element name
@@ -67,27 +67,26 @@ void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObjec
   // create pythone ElementTree and return corresponding element
   // root = ET.parse(uri).getroot()
   // return root.find(xpath)
-  PyO et=CALLPY(PyImport_ImportModule, "xml.etree.cElementTree");
-  PyO parse=CALLPY(PyObject_GetAttrString, et, "parse");
-  PyO uristr=CALLPY(PyString_FromString, uri);
-  PyO uriarg(PyTuple_Pack(1, uristr.get()), &Py_DecRef);
-  PyO tree=CALLPY(PyObject_CallObject, parse, uriarg);
-  PyO getroot=CALLPY(PyObject_GetAttrString, tree, "getroot");
-  PyO root=CALLPY(PyObject_CallObject, getroot, nullptr);
-  PyO find=CALLPY(PyObject_GetAttrString, root, "find");
-  PyO xpathstr=CALLPY(PyString_FromString, xpath);
-  PyO xpatharg(PyTuple_Pack(1, xpathstr.get()), &Py_DecRef);
-  PyO pye=CALLPY(PyObject_CallObject, find, xpatharg);
-  PyIncRef(pye);
-  domElementMap[pye.get()]=_1;
+  PyO et(CALLPY(PyImport_ImportModule, "xml.etree.cElementTree"));
+  PyO parse(CALLPY(PyObject_GetAttrString, et, "parse"));
+  PyO uristr(CALLPY(PyString_FromString, uri));
+  PyO uriarg(PyTuple_Pack(1, uristr.get()));
+  PyO tree(CALLPY(PyObject_CallObject, parse, uriarg));
+  PyO getroot(CALLPY(PyObject_GetAttrString, tree, "getroot"));
+  PyO root(CALLPY(PyObject_CallObject, getroot, nullptr));
+  PyO find(CALLPY(PyObject_GetAttrString, root, "find"));
+  PyO xpathstr(CALLPY(PyString_FromString, xpath));
+  PyO xpatharg(PyTuple_Pack(1, xpathstr.get()));
+  PyO pye(CALLPY(PyObject_CallObject, find, xpatharg));
+  domElementMap[pye]=std::make_pair(D(doc)->getParser(), _1);
   _input=swig::SwigVar_PyObject(pye.get());
 }
 
 void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
-  auto it=domElementMap.find(_input);
+  auto it=domElementMap.find(PythonCpp::PyO(_input));
   if(it==domElementMap.end())
     throw std::runtime_error("No mapping from Python ElementTree to xercesc found (Wrong call sequence!?)");
-  _1=it->second;
+  _1=it->second.second;
 }
 
 %}

@@ -23,9 +23,9 @@ namespace MBSim {
 set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
 #if MBSIMXML_COND_PYTHON
   initializePython((getInstallPath()/"bin"/"mbsimxml").string());
-  PyO pyPath=CALLPYB(PySys_GetObject, const_cast<char*>("path"));
+  PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
   // add bin to pyhton search path
-  PyO pyBinPath=CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string());
+  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
   CALLPY(PyList_Append, pyPath, pyBinPath);
 #endif
 
@@ -73,20 +73,20 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
               // add python path
-              PyO pyBinPath=CALLPY(PyUnicode_FromString, location.string());
+              PyO pyBinPath(CALLPY(PyUnicode_FromString, location.string()));
               CALLPY(PyList_Append, pyPath, pyBinPath);
             }
             if(stage==Loading) {
               // load python module
-              PyO pyModule=CALLPY(PyImport_ImportModule, moduleName);
+              PyO pyModule(CALLPY(PyImport_ImportModule, moduleName));
               // get python function and call it
-              PyO pyGenerateXMLSchemaFile=CALLPY(PyObject_GetAttrString, pyModule, "generateXMLSchemaFile");
-              PyO pySchema=CALLPY(PyObject_CallObject, pyGenerateXMLSchemaFile, nullptr);
+              PyO pyGenerateXMLSchemaFile(CALLPY(PyObject_GetAttrString, pyModule, "generateXMLSchemaFile"));
+              PyO pySchema(CALLPY(PyObject_CallObject, pyGenerateXMLSchemaFile, nullptr));
               // write to file
-              PyO pyET=CALLPY(PyImport_ImportModule, "xml.etree.cElementTree");
-              PyO pyET_=CALLPY(PyObject_GetAttrString, pyET, "ElementTree");
-              PyO pyTree=CALLPY(PyObject_CallObject, pyET_, Py_BuildValue("(O)", pySchema.get()));
-              PyO pyWrite=CALLPY(PyObject_GetAttrString, pyTree, "write");
+              PyO pyET(CALLPY(PyImport_ImportModule, "xml.etree.cElementTree"));
+              PyO pyET_(CALLPY(PyObject_GetAttrString, pyET, "ElementTree"));
+              PyO pyTree(CALLPY(PyObject_CallObject, pyET_, Py_BuildValue("(O)", pySchema.get())));
+              PyO pyWrite(CALLPY(PyObject_GetAttrString, pyTree, "write"));
               bfs::path xsdFile=bfs::current_path()/(".mbsimmodule.python."+moduleName+".xsd");
               CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
               schemas.insert(xsdFile);
