@@ -5,7 +5,7 @@
     <contours/>
     <groups/>
     <objects>
-      <RigidBody name="Box1">
+      <RigidBody name="Box0">
         <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
         <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
         <frameOfReference ref="../Frame[I]"/>
@@ -28,7 +28,7 @@
         </openMBVRigidBody>
         <enableOpenMBVFrameC/>
       </RigidBody>
-      <RigidBody name="Box2">
+      <RigidBody name="Box1">
         <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
         <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
         <frameOfReference ref="../Frame[I]"/>
@@ -51,9 +51,32 @@
         </openMBVRigidBody>
         <enableOpenMBVFrameC/>
       </RigidBody>
+      <RigidBody name="Box2">
+        <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+        <frameOfReference ref="../Frame[I]"/>
+        <frameForKinematics ref="Frame[C]"/>
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+        <stateDependentTranslation>
+          <TranslationAlongZAxis/>
+        </stateDependentTranslation>
+        <frames/>
+        <contours/>
+        <openMBVRigidBody>
+          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+            <transparency unit="-">0.3</transparency>
+            <initialTranslation>[1;0;0]</initialTranslation>
+            <initialRotation>[0;0;0]</initialRotation>
+            <scaleFactor unit="-">1</scaleFactor>
+            <radius unit="m">0.1</radius>
+          </Sphere>
+        </openMBVRigidBody>
+        <enableOpenMBVFrameC/>
+      </RigidBody>
     </objects>
     <links>
-      <SpringDamper name="Spring1">
+      <SpringDamper name="Spring0">
         <forceFunction>
           <LinearSpringDamperForce>
             <stiffnessCoefficient>100</stiffnessCoefficient>
@@ -61,14 +84,21 @@
           </LinearSpringDamperForce>
         </forceFunction>
         <unloadedLength>0</unloadedLength>
-        <connect ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]"/>
+        <connect ref1="../Frame[I]" ref2="../Object[Box0]/Frame[C]"/>
         <enableOpenMBVCoilSpring>
           <numberOfCoils>5</numberOfCoils>
           <springRadius>.003</springRadius>
           <crossSectionRadius>.0002</crossSectionRadius>
         </enableOpenMBVCoilSpring>
       </SpringDamper>
-      <PySpringDamper name="Spring2" xmlns="http://mypytest"/>
+      <PySpringDamper1 name="Spring1" xmlns="http://mypytest">
+        <stiffness>100</stiffness>
+      </PySpringDamper1>
+      <PySpringDamper2 name="Spring2" xmlns="http://mypytest">
+        <pyinit>
+self.c=100
+        </pyinit>
+      </PySpringDamper2>
     </links>
     <enableOpenMBVFrameI/>
     <environments>

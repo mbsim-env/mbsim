@@ -23,7 +23,7 @@
 
 // wrap the following classes
 %include "mbsim/element.h"
-%rename(_lambda) MBSim::Link::lambda; // lambda is a python keyword -> rename it to _lambda
+%rename(lambda_) MBSim::Link::lambda; // lambda is a python keyword -> rename it to lambda_
 %include "mbsim/links/link.h"
 %include "mbsim/links/frame_link.h"
 
@@ -65,59 +65,6 @@ PyObject* _dynamic_cast_Director(const MBSim::AllocateBase *x) {
   PyObject* ret=d ? d->swig_get_self() : Py_None;
   Py_INCREF(ret);
   return ret;
-}
-
-// internal helper function to get the text from a DOMElement. This text is python code for
-// all Python MBSim objects.
-std::string _getObjectInitCode(xercesc::DOMElement *e, const MBXMLUtils::FQN &name) {
-  // return empty string if name does not exist
-  xercesc::DOMElement *i=MBXMLUtils::E(e)->getFirstElementChildNamed(name);
-  if(!i)
-    return "";
-  // get code as string
-  std::string str=MBXMLUtils::X()%MBXMLUtils::E(i)->getFirstTextChild()->getData();
-
-  // fix python indentation
-  std::vector<std::string> lines;
-  boost::split(lines, str, boost::is_any_of("\n")); // split to a vector of lines
-  size_t indent=std::string::npos;
-  size_t lineNr=0;
-  for(std::vector<std::string>::iterator it=lines.begin(); it!=lines.end(); ++it, ++lineNr) {
-    size_t pos=it->find_first_not_of(' '); // get first none space character
-    if(pos==std::string::npos) continue; // not found -> pure empty line -> do not modify
-    if(pos!=std::string::npos && (*it)[pos]=='#') continue; // found and first char is '#' -> pure comment line -> do not modify
-    // now we have a line with a python statement
-    if(indent==std::string::npos) indent=pos; // at the first python statement line use the current indent as indent for all others
-    if(it->substr(0, indent)!=std::string(indent, ' ')) // check if line starts with at least indent spaces ...
-      // ... if not its an indentation error
-      throw MBXMLUtils::DOMEvalException("Unexpected indentation at line "+std::to_string(lineNr)+": "+str, e);
-    *it=it->substr(indent); // remove the first indent spaces from the line
-  }
-  return boost::join(lines, "\n"); // join the lines to a single string
-}
-
-// internal helper function to get the filename of e
-std::string _getDocumentFileNameOf(xercesc::DOMElement *e) {
-  std::string uri=MBXMLUtils::X()%e->getOwnerDocument()->getDocumentURI();
-  return uri.substr(7); // remove the "file://" part from the uri
-}
-
-// internal helper function to get the XPath of e
-std::string _getXPathOf(xercesc::DOMElement *e) {
-  xercesc::DOMElement *r=e->getOwnerDocument()->getDocumentElement();
-  std::string xpath;
-  for(xercesc::DOMElement *ee=e; ee!=r; ee=static_cast<xercesc::DOMElement*>(ee->getParentNode())) {
-    // get element name
-    MBXMLUtils::FQN eleName=MBXMLUtils::E(ee)->getTagName();
-    // count same elements on this level before this
-    int count=1;
-    for(xercesc::DOMElement *pre=ee->getPreviousElementSibling(); pre; pre=pre->getPreviousElementSibling())
-      if(MBXMLUtils::E(pre)->getTagName()==eleName)
-        count++;
-    // construct xpath
-    xpath="{"+eleName.first+"}"+eleName.second+"["+std::to_string(count)+"]/"+xpath;
-  }
-  return xpath.substr(0, xpath.size()-1);
 }
 
 %}
@@ -181,28 +128,6 @@ _moduleData={}
 # internal helper function to extend a Python class
 def _extendClass(className):
   import xml.etree.cElementTree as ET
-  # add initializeUsingXML method if not exist of convert arguments if it exists
-  import types
-  if not 'initializeUsingXML' in className.__dict__:
-    # add initializeUsingXML method which runs the XML text child element as python code
-    # where the variable 'self' represents this object
-    def implicitInitializeUsingXML(self, e):
-      super(className, self).initializeUsingXML(e)
-      code=_getObjectInitCode(e, _FQN(_getNSOf(className.__module__), "pyinit."+className.__name__))
-      if code!="":
-        exec(code, {'self': self})
-    className.initializeUsingXML=types.MethodType(implicitInitializeUsingXML, None, className)
-  else:
-    # save user defined initializeUsingXML and replace by implicit one (which convert com DOMElement to pyxml
-    userInitializeUsingXML=className.initializeUsingXML
-    def wrapperInitializeUsingXML(self, e_xerces):
-      filename=_getDocumentFileNameOf(e_xerces)
-      xpath=_getXPathOf(e_xerces)
-      root = ET.parse(filename).getroot()
-      e_py=root.find(xpath)
-      userInitializeUsingXML(self, e_py, e_xerces)
-    className.initializeUsingXML=types.MethodType(wrapperInitializeUsingXML, None, className)
-
   # create XML schema element and store it in _moduleData
   # store also all required modules in _moduleData
   baseClassName=className.__bases__
@@ -210,7 +135,7 @@ def _extendClass(className):
     raise RuntimeError('Can only handle classed with one base class.')
   if not hasattr(className, 'getSchema'):
     xsdpart=ET.Element(XS+"sequence")
-    xsdpart.append(ET.Element(XS+"element", {'name': 'pyinit.'+className.__name__, 'type': ET.QName(XS+'string'), 'minOccurs': '0'}))
+    xsdpart.append(ET.Element(XS+"element", {'name': 'pyinit', 'type': ET.QName(XS+'string'), 'minOccurs': '0'}))
   else:
     xsdpart=className.getSchema()
   xsd1=ET.Element(XS+"element", {"name": ET.QName(_getNSOf(className.__module__), className.__name__),
@@ -269,6 +194,33 @@ def generateXMLSchemaFile(moduleName):
     xsd.append(ET.Element(XS+"import", {'namespace': _getNSOf(module)}))
   xsd.extend(_moduleData[moduleName]['xsdElements'])
   return xsd
+
+# default initializeUsingXML member
+def initializeUsingPythonCode(self, e, className):
+  import xml.etree.cElementTree as ET
+  super(className, self).initializeUsingXML(e)
+  codeele=e.find("{"+_getNSOf(className.__module__)+"}"+"pyinit")
+  if codeele==None:
+    return
+  code=codeele.text
+#mfmf  // fix python indentation
+#mfmf  std::vector<std::string> lines;
+#mfmf  boost::split(lines, code, boost::is_any_of("\n")); // split to a vector of lines
+#mfmf  size_t indent=std::string::npos;
+#mfmf  size_t lineNr=0;
+#mfmf  for(std::vector<std::string>::iterator it=lines.begin(); it!=lines.end(); ++it, ++lineNr) {
+#mfmf    size_t pos=it->find_first_not_of(' '); // get first none space character
+#mfmf    if(pos==std::string::npos) continue; // not found -> pure empty line -> do not modify
+#mfmf    if(pos!=std::string::npos && (*it)[pos]=='#') continue; // found and first char is '#' -> pure comment line -> do not modify
+#mfmf    // now we have a line with a python statement
+#mfmf    if(indent==std::string::npos) indent=pos; // at the first python statement line use the current indent as indent for all others
+#mfmf    if(it->substr(0, indent)!=std::string(indent, ' ')) // check if line starts with at least indent spaces ...
+#mfmf      // ... if not its an indentation error
+#mfmf      throw MBXMLUtils::DOMEvalException("Unexpected indentation at line "+std::to_string(lineNr)+": "+str, e);
+#mfmf    *it=it->substr(indent); // remove the first indent spaces from the line
+#mfmf  }
+#mfmf  code=boost::join(lines, "\n"); // join the lines to a single string
+  exec(code, {'self': self})
 
 # XML namespace of this module (prefixed with { and postfixed with })
 NS="{http://www.mbsim-env.de/MBSim}"

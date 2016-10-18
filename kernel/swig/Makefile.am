@@ -6,14 +6,14 @@ swig_LTLIBRARIES = _mbsim.la
 
 CLEANFILES=mbsim_swig_pyhton.cc mbsim.py mbsim_swig_pyhton.d
 mbsim_swig_pyhton.cc: $(srcdir)/mbsim.i $(top_srcdir)/mbsim/objects/*.h
-	$(swig) -python -MD -Werror -c++ -o mbsim_swig_pyhton.cc -I$(top_srcdir) $(DEPS_CFLAGS) $(srcdir)/mbsim.i || (rm -f mbsim_swig_pyhton.cc; exit 1)
+	$(swig) -python -MD -Werror -builtin -c++ -o mbsim_swig_pyhton.cc -I$(top_srcdir) $(DEPS_CFLAGS) $(srcdir)/mbsim.i || (rm -f mbsim_swig_pyhton.cc; exit 1)
 -include mbsim_swig_pyhton.d
 mbsim.py: mbsim_swig_pyhton.cc
 	test ! -f $@ && (rm -f mbsim_swig_pyhton.cc && $(MAKE) $(AM_MAKEFLAGS) mbsim_swig_pyhton.cc) || :
 
 _mbsim_la_SOURCES = mbsim_swig_pyhton.cc
 _mbsim_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
-_mbsim_la_CPPFLAGS = $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS) -I$(top_srcdir)
+_mbsim_la_CPPFLAGS = $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label
 _mbsim_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
 
 mbsimdir = $(datadir)/mbsim
