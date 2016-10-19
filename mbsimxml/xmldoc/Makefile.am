@@ -33,7 +33,7 @@ combindedSchema.xsd: $(srcdir)/genCombindedSchema.xsl files.xml
 # generate the documentation
 .DELETE_ON_ERROR: mbsimxml.html
 mbsimxml.html: $(srcdir)/genContent.xsl combindedSchema.xsd
-	@XALAN@ -o mbsimxml.html -p DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" -p MBSIMXMLVERSION "'@VERSION@'" -p ABS_BUILDDIR "'$(abs_builddir)'" combindedSchema.xsd $(srcdir)/genContent.xsl | exit 1; \
+	@XALAN@ -o mbsimxml.html -p DATETIME "'$$(date "+%a %b %d %Y %H:%M:%S")'" -p MBSIMXMLVERSION "'@VERSION@'" -p ABS_BUILDDIR "'$(abs_builddir)'" combindedSchema.xsd $(srcdir)/genContent.xsl || exit 1; \
 	sed -re "s/ xmlns:[^ ]+ *= *\"[^\"]+\"//g" mbsimxml.html > mbsimxml.html_ || exit 1; \
 	mv -f mbsimxml.html_ mbsimxml.html || exit 1
 # above line: Remove all namespace declaration from the html output using sed (maybe a bug in Xalan)
