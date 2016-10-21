@@ -93,7 +93,7 @@ class _DeallocatePython(DeallocateBase):
   def __init__(self):
     super(_DeallocatePython, self).__init__() 
   def __call__(self, e):
-    Atom.__swig_destroy__(e)
+    del e
 
 # internal helper class to register a director class in the MBSim::ObjectFactory
 class _GetSingletonPython(AllocateBase):

@@ -23,8 +23,8 @@ void _directorExcept(PyObject *error) {
       // pass throught a c++ exception
       PyObject *ptype, *pvalue, *ptraceback;
       PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-      Py_DECREF(ptype);
-      Py_DECREF(ptraceback);
+      Py_XDECREF(ptype);
+      Py_XDECREF(ptraceback);
       PyObject *msg=PyObject_Str(pvalue);
       Py_DECREF(pvalue);
       std::string msgStr=PyUnicode_AsUTF8(msg);
@@ -37,9 +37,26 @@ void _directorExcept(PyObject *error) {
   }
 }
 
-static std::map<PythonCpp::PyO, std::pair<std::shared_ptr<MBXMLUtils::DOMParser>, xercesc::DOMElement*>> domElementMap;
+// Map from Python ElementTree to Xerces DOMElement.
+// Only one map at a time can be active. This map is accessible by the static variables global.
+// This is defined in _typemapInDOMElement and read in _typemapDirectorinDOMElement
+class MapPyXercesDOMElement : public std::pair<PythonCpp::PyO, xercesc::DOMElement*> {
+  public:
+    MapPyXercesDOMElement() {
+      if(global)
+        throw std::runtime_error("Global Python ElementTree to xercesc map is already used (Wrong call sequence!?)");
+      global=this;
+    }
+    ~MapPyXercesDOMElement() {
+      global=nullptr;
+    }
+    static const MapPyXercesDOMElement* getGlobal() { return global; }
+  private:
+    static MapPyXercesDOMElement* global;
+};
+MapPyXercesDOMElement* MapPyXercesDOMElement::global=nullptr;
 
-void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObject &_input) {
+void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObject &_input, MapPyXercesDOMElement &map) {
   using namespace MBXMLUtils;
   using namespace PythonCpp;
   xercesc::DOMDocument *doc=_1->getOwnerDocument();
@@ -78,15 +95,19 @@ void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObjec
   PyO xpathstr(CALLPY(PyString_FromString, xpath));
   PyO xpatharg(PyTuple_Pack(1, xpathstr.get()));
   PyO pye(CALLPY(PyObject_CallObject, find, xpatharg));
-  domElementMap[pye]=std::make_pair(D(doc)->getParser(), _1);
+  // set mapping
+  map.first=pye;
+  map.second=_1;
+  // set Python input
   _input=swig::SwigVar_PyObject(pye.get());
 }
 
 void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
-  auto it=domElementMap.find(PythonCpp::PyO(_input));
-  if(it==domElementMap.end())
-    throw std::runtime_error("No mapping from Python ElementTree to xercesc found (Wrong call sequence!?)");
-  _1=it->second.second;
+  // check mapping
+  if(!MapPyXercesDOMElement::getGlobal() || MapPyXercesDOMElement::getGlobal()->first!=PythonCpp::PyO(_input))
+    throw std::runtime_error("Global map from Python ElementTree to xercesc is not defined or wrong (Wrong call sequence!?)");
+  // return mapped xerces DOMElement
+  _1=MapPyXercesDOMElement::getGlobal()->second;
 }
 
 %}
@@ -119,7 +140,8 @@ void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
 %}
 
 %typemap(directorin) xercesc::DOMElement* %{
-  _typemapDirectorinDOMElement($1, $input);
+  MapPyXercesDOMElement mapPyXercesDOMElement$argnum;
+  _typemapDirectorinDOMElement($1, $input, mapPyXercesDOMElement$argnum);
 %}
 
 %typemap(in) xercesc::DOMElement* {
