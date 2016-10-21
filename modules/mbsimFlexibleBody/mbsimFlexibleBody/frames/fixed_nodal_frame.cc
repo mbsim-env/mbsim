@@ -37,12 +37,6 @@ namespace MBSimFlexibleBody {
       q.resize(nq);
       qd.resize(nq);
       qdd.resize(nq);
-      WJD[0].resize(nq,hSize[0]);
-      WJD[1].resize(nq,hSize[1]);
-      for(int i=0; i<nq; i++) {
-        WJD[0](i,hSize[0]-nq+i) = 1;
-        WJD[1](i,hSize[1]-nq+i) = 1;
-      }
       Frame::init(stage);
     }
     else if(stage==plotting) {
@@ -50,6 +44,8 @@ namespace MBSimFlexibleBody {
   
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(globalPosition)==enabled) {
+          for(int i=0; i<3; i++)
+            plotColumns.push_back("displ("+MBSim::numtostr(i)+")");
           for(int i=0; i<6; i++)
             plotColumns.push_back("sigma("+MBSim::numtostr(i)+")");
         }
@@ -112,8 +108,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FixedNodalFrame::updateJacobians(int j) {
-    setJacobianOfRotation(R->getJacobianOfRotation(j) + evalGlobalPsi()*WJD[j],j);
-    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j) + getGlobalPhi()*WJD[j],j);
+    setJacobianOfRotation(R->getJacobianOfRotation(j));
+    getJacobianOfRotation(j,false).add(Index(0,2),Index(gethSize(j)-nq,gethSize(j)-1),evalGlobalPsi());
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j));
+    getJacobianOfTranslation(j,false).add(Index(0,2),Index(gethSize(j)-nq,gethSize(j)-1),evalGlobalPhi());
     updJac[j] = false;
   }
 
@@ -125,7 +123,16 @@ namespace MBSimFlexibleBody {
 
   void FixedNodalFrame::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-//      if(getPlotFeature(stresses)==enabled) {
+      if(getPlotFeature(globalPosition)==enabled) {
+      Vec3 u = Phi*q;
+      if(K0F.size()) {
+        MatVx3 PhigeoT(nq,NONINIT);
+        for(int i=0; i<3; i++)
+          PhigeoT.set(i,K0F[i]*q);
+        u += PhigeoT*q;
+      }
+      for(int i=0; i<3; i++)
+        plotVector.push_back(u(i));
       Vector<Fixed<6>,double> sigma = sigma0;
       if(sigmahel.cols()) {
         fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahe = sigmahel;
@@ -135,7 +142,7 @@ namespace MBSimFlexibleBody {
       }
       for(int i=0; i<6; i++)
         plotVector.push_back(sigma(i));
-//      }
+      }
       Frame::plot();
     }
   }
