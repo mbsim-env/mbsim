@@ -1,112 +1,141 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-    <frames/>
-    <contours/>
-    <groups/>
-    <objects>
-      <RigidBody name="Box0">
-        <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
-        <frameOfReference ref="../Frame[I]"/>
-        <frameForKinematics ref="Frame[C]"/>
-        <mass unit="kg">1</mass>
-        <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
-        <stateDependentTranslation>
-          <TranslationAlongZAxis/>
-        </stateDependentTranslation>
-        <frames/>
-        <contours/>
-        <openMBVRigidBody>
-          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
-            <transparency unit="-">0.3</transparency>
-            <initialTranslation>[0;0;0]</initialTranslation>
-            <initialRotation>[0;0;0]</initialRotation>
-            <scaleFactor unit="-">1</scaleFactor>
-            <radius unit="m">0.1</radius>
-          </Sphere>
-        </openMBVRigidBody>
-        <enableOpenMBVFrameC/>
-      </RigidBody>
-      <RigidBody name="Box1">
-        <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
-        <frameOfReference ref="../Frame[I]"/>
-        <frameForKinematics ref="Frame[C]"/>
-        <mass unit="kg">1</mass>
-        <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
-        <stateDependentTranslation>
-          <TranslationAlongZAxis/>
-        </stateDependentTranslation>
-        <frames/>
-        <contours/>
-        <openMBVRigidBody>
-          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
-            <transparency unit="-">0.3</transparency>
-            <initialTranslation>[0.5;0;0]</initialTranslation>
-            <initialRotation>[0;0;0]</initialRotation>
-            <scaleFactor unit="-">1</scaleFactor>
-            <radius unit="m">0.1</radius>
-          </Sphere>
-        </openMBVRigidBody>
-        <enableOpenMBVFrameC/>
-      </RigidBody>
-      <RigidBody name="Box2">
-        <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
-        <frameOfReference ref="../Frame[I]"/>
-        <frameForKinematics ref="Frame[C]"/>
-        <mass unit="kg">1</mass>
-        <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
-        <stateDependentTranslation>
-          <TranslationAlongZAxis/>
-        </stateDependentTranslation>
-        <frames/>
-        <contours/>
-        <openMBVRigidBody>
-          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
-            <transparency unit="-">0.3</transparency>
-            <initialTranslation>[1;0;0]</initialTranslation>
-            <initialRotation>[0;0;0]</initialRotation>
-            <scaleFactor unit="-">1</scaleFactor>
-            <radius unit="m">0.1</radius>
-          </Sphere>
-        </openMBVRigidBody>
-        <enableOpenMBVFrameC/>
-      </RigidBody>
-    </objects>
-    <links>
-      <SpringDamper name="Spring0">
-        <forceFunction>
-          <LinearSpringDamperForce>
-            <stiffnessCoefficient>100</stiffnessCoefficient>
-            <dampingCoefficient>0.2</dampingCoefficient>
-          </LinearSpringDamperForce>
-        </forceFunction>
-        <unloadedLength>0</unloadedLength>
-        <connect ref1="../Frame[I]" ref2="../Object[Box0]/Frame[C]"/>
-        <enableOpenMBVCoilSpring>
-          <numberOfCoils>5</numberOfCoils>
-          <springRadius>.003</springRadius>
-          <crossSectionRadius>.0002</crossSectionRadius>
-        </enableOpenMBVCoilSpring>
-      </SpringDamper>
-      <PySpringDamper1 name="Spring1" xmlns="http://mypytest">
-        <stiffness>100</stiffness>
-      </PySpringDamper1>
-      <PySpringDamper2 name="Spring2" xmlns="http://mypytest">
-        <pyinit>
-self.c=100
-        </pyinit>
-      </PySpringDamper2>
-    </links>
-    <enableOpenMBVFrameI/>
-    <environments>
-      <MBSimEnvironment>
-        <accelerationOfGravity unit="m/s^2">[0;0;-9.81]</accelerationOfGravity>
-      </MBSimEnvironment>
-    </environments>
-  </DynamicSystemSolver>
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="c">50*2</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <RigidBody name="Box0">
+          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <frameOfReference ref="../Frame[I]"/>
+          <frameForKinematics ref="Frame[C]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongZAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[0;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="Box1">
+          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <frameOfReference ref="../Frame[I]"/>
+          <frameForKinematics ref="Frame[C]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongZAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[0.5;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="Box2">
+          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <frameOfReference ref="../Frame[I]"/>
+          <frameForKinematics ref="Frame[C]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongZAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[1;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="Box3">
+          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <frameOfReference ref="../Frame[I]"/>
+          <frameForKinematics ref="Frame[C]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongZAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[1.5;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+      </objects>
+      <links>
+        <SpringDamper name="Spring0">
+          <forceFunction>
+            <LinearSpringDamperForce>
+              <stiffnessCoefficient>c</stiffnessCoefficient>
+              <dampingCoefficient>0.2</dampingCoefficient>
+            </LinearSpringDamperForce>
+          </forceFunction>
+          <unloadedLength>0</unloadedLength>
+          <connect ref1="../Frame[I]" ref2="../Object[Box0]/Frame[C]"/>
+          <enableOpenMBVCoilSpring>
+            <numberOfCoils>5</numberOfCoils>
+            <springRadius>.003</springRadius>
+            <crossSectionRadius>.0002</crossSectionRadius>
+          </enableOpenMBVCoilSpring>
+        </SpringDamper>
+        <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
+          <stiffness>c</stiffness>
+        </PySpringDamperXMLInit>
+        <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
+          <pyScript>
+            self.c=100 # mfmf replace 100 by c
+          </pyScript>
+        </PySpringDamperPyScriptInit>
+        <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest"/>
+      </links>
+      <enableOpenMBVFrameI/>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">[0;0;-9.81]</accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
 
   <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>

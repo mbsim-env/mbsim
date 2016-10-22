@@ -134,9 +134,10 @@ def _extendClass(className):
   if len(baseClassName)!=1:
     raise RuntimeError('Can only handle classed with one base class.')
   if not hasattr(className, 'getSchema'):
-    xsdpart=ET.Element(XS+"sequence")
-    xsdpart.append(ET.Element(XS+"element", {'name': 'pyinit', 'type': ET.QName(XS+'string'), 'minOccurs': '0'}))
+    # no getSchema method -> empty XML
+    xsdpart=None
   else:
+    # getSchema method defined -> use the returned Schema part
     xsdpart=className.getSchema()
   xsd1=ET.Element(XS+"element", {"name": ET.QName(_getNSOf(className.__module__), className.__name__),
                                  "substitutionGroup": ET.QName(_getNSOf(baseClassName[0].__module__), baseClassName[0].__name__),
@@ -146,7 +147,8 @@ def _extendClass(className):
   xsd2.append(cc)
   ext=ET.Element(XS+"extension", {'base': ET.QName(_getNSOf(baseClassName[0].__module__), baseClassName[0].__name__+'Type')})
   cc.append(ext)
-  ext.append(xsdpart)
+  if xsdpart!=None:
+    ext.append(xsdpart)
   xsd=[xsd1, xsd2]
   global _moduleData
   if not className.__module__ in _moduleData:
@@ -195,32 +197,39 @@ def generateXMLSchemaFile(moduleName):
   xsd.extend(_moduleData[moduleName]['xsdElements'])
   return xsd
 
-# default initializeUsingXML member
-def initializeUsingPythonCode(self, e, className):
+# create XML schema for a pyScript element
+def pyScriptSchema():
   import xml.etree.cElementTree as ET
+  xsdpart=ET.Element(XS+"sequence")
+  xsdpart.append(ET.Element(XS+"element", {'name': 'pyScript', 'type': ET.QName(XS+'string')}))#mfmf replace xs:string by pv:script
+  return xsdpart
+
+# initializeUsingXML for a pyScript element
+def pyScriptInitializeUsingXML(self, e, className):
+  import xml.etree.cElementTree as ET
+  import re
   super(className, self).initializeUsingXML(e)
-  codeele=e.find("{"+_getNSOf(className.__module__)+"}"+"pyinit")
-  if codeele==None:
-    return
-  code=codeele.text
-#mfmf  // fix python indentation
-#mfmf  std::vector<std::string> lines;
-#mfmf  boost::split(lines, code, boost::is_any_of("\n")); // split to a vector of lines
-#mfmf  size_t indent=std::string::npos;
-#mfmf  size_t lineNr=0;
-#mfmf  for(std::vector<std::string>::iterator it=lines.begin(); it!=lines.end(); ++it, ++lineNr) {
-#mfmf    size_t pos=it->find_first_not_of(' '); // get first none space character
-#mfmf    if(pos==std::string::npos) continue; // not found -> pure empty line -> do not modify
-#mfmf    if(pos!=std::string::npos && (*it)[pos]=='#') continue; // found and first char is '#' -> pure comment line -> do not modify
-#mfmf    // now we have a line with a python statement
-#mfmf    if(indent==std::string::npos) indent=pos; // at the first python statement line use the current indent as indent for all others
-#mfmf    if(it->substr(0, indent)!=std::string(indent, ' ')) // check if line starts with at least indent spaces ...
-#mfmf      // ... if not its an indentation error
-#mfmf      throw MBXMLUtils::DOMEvalException("Unexpected indentation at line "+std::to_string(lineNr)+": "+str, e);
-#mfmf    *it=it->substr(indent); // remove the first indent spaces from the line
-#mfmf  }
-#mfmf  code=boost::join(lines, "\n"); // join the lines to a single string
-  exec(code, {'self': self})
+  code=e.find("{"+_getNSOf(className.__module__)+"}"+"pyScript").text
+  # fix python indentation
+  lines=code.split("\n") # split to a vector of lines
+  indent=-1
+  for lineNr, l in enumerate(lines):
+    m=re.search(r'[^ ]', l) # get first none space character
+    if m==None: continue # not found -> pure empty line -> do not modify
+    pos=m.start()
+    if l[pos]=='#': continue # found and first char is '#' -> pure comment line -> do not modify
+    # now we have a line with a python statement
+    if indent==-1: indent=pos # at the first python statement line use the current indent as indent for all others
+    if l[0:indent]!=' '*indent: # check if line starts with at least indent spaces ...
+      # ... if not its an indentation error
+      raise RuntimeError("Unexpected indentation at line "+str(lineNr)+": "+code);
+    lines[lineNr]=l[indent:] # remove the first indent spaces from the line
+  code="\n".join(lines) # join the lines to a single string
+  # read the processing instruction with the parameters mfmf
+  globals={}
+  # execute the python script using all variables of the preprocessor
+  globals['self']=self # add self to list of variables
+  exec(code, globals)
 
 # XML namespace of this module (prefixed with { and postfixed with })
 NS="{http://www.mbsim-env.de/MBSim}"
