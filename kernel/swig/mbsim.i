@@ -1,6 +1,14 @@
 // wrap MBSim with directors (and all protected class data)
 %module(directors="1", allprotected="1") mbsim
 
+// The following part is only used to generate a list of unwrapped classes.
+// When this is enabled swig will fail but output all classes with are unwrapped.
+%include "showUnwrappedClasses.i" 
+#ifdef SHOW_UNWRAPPED_CLASSES
+  // list here classes with should not be wrapped (these are remove from the list of unwrapped classes)
+  WRAPPED_CLASS(MBXMLUtils::FQN)
+#endif
+
 // include the general mbsim SWIG configuration (used by all MBSim modules)
 %include "mbsim_modules.i"
 
