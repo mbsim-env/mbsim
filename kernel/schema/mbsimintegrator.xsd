@@ -200,7 +200,7 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="stiffModus" minOccurs="0">
+          <xs:element name="stiffModus" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob steifes oder nicht-steifes Problem vorliegt.
             </xs:documentation></xs:annotation>

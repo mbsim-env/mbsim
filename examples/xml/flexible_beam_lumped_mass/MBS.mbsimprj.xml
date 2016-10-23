@@ -4,6 +4,7 @@
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="modes">2</scalarParameter>
+      <scalarParameter name="updateIntegrals">1</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -12,21 +13,22 @@
       <objects>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
-            <matrixParameter name="u0" unit="-">
+            <matrixParameter name="u0">
               <fromFile href="u0.dat"/>
             </matrixParameter>
-            <matrixParameter name="V" unit="-">
+            <matrixParameter name="V">
               <fromFile href="modeShapeMatrix.dat"/>
             </matrixParameter>
-            <matrixParameter name="Kmat" unit="-">
+            <matrixParameter name="Kmat">
               <fromFile href="stiffnessMatrix.dat"/>
             </matrixParameter>
-            <matrixParameter name="mij" unit="-">
+            <matrixParameter name="mij">
               <fromFile href="mij.dat"/>
             </matrixParameter>
-            <scalarParameter name="nf" unit="-">size(u0,1)</scalarParameter>
-            <scalarParameter name="integrals" unit="-">id = fopen('data.asc')
-if(id==-1)
+            <scalarParameter name="nf">size(u0,1)</scalarParameter>
+            <scalarParameter name="integrals">if(updateIntegrals)
+
+id = fopen('data.asc')
 
 nn = size(mij,1);
 nm = size(V,2);
@@ -83,12 +85,9 @@ save -append -text 'data.asc' rPdm
 save -append -text 'data.asc' PPdm
 save -append -text 'data.asc' Ke
 
-ret = 1;
-else
 fclose(id)
-ret = 0;
 end
-</scalarParameter>
+ret = 0;</scalarParameter>
           </Parameter>
           <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Body">
             <mass unit="kg">load('data.asc','m').m</mass>

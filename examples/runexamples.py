@@ -1012,7 +1012,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
   executeFD.flush()
-  ret1=[abs(subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/5))]
+  ret1=[abs(subprocessCall(prefixSimulation(example, 'fmucre')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/2))]
   outFiles1=getOutFilesAndAdaptRet(example, ret1)
 
   ### run using fmuChecker
@@ -1072,7 +1072,7 @@ def executeFMIExample(executeFD, example, fmiInputFile):
   comm=exePrefix()+[pj(mbsimBinDir, "mbsimTestFMU"+args.exeExt), "tmp_mbsimTestFMU"]
   list(map(lambda x: print(x, end=" ", file=executeFD), comm))
   print("\n", file=executeFD)
-  ret3=[abs(subprocessCall(prefixSimulation(example, 'fmutst')+comm, executeFD, maxExecutionTime=args.maxExecutionTime))]
+  ret3=[abs(subprocessCall(prefixSimulation(example, 'fmutst')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/3))]
   outFiles3=getOutFilesAndAdaptRet(example, ret3)
 
   # return

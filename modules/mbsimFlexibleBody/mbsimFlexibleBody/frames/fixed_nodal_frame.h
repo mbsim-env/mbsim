@@ -88,7 +88,6 @@ namespace MBSimFlexibleBody {
       fmatvec::Vector<fmatvec::Fixed<6>, double > sigma0;
       fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahel;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahen;
-      fmatvec::MatV WJD[2];
       fmatvec::Vec q, qd, qdd;
       int nq;
   };
