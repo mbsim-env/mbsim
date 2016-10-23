@@ -184,7 +184,7 @@ def generateXMLSchemaFile(moduleName):
   # register namespace/prefix mappings
   ET.register_namespace("pv", PV[1:-1])
   ET.register_namespace("xs", XS[1:-1])
-  ET.register_namespace("", "http://mypytest")
+  ET.register_namespace("", _getNSOf(moduleName))
   for module in _moduleData[moduleName]['requiredModules']:
     ET.register_namespace(module, _getNSOf(module))
   # create xsd file
@@ -201,7 +201,8 @@ def generateXMLSchemaFile(moduleName):
 def pyScriptSchema():
   import xml.etree.cElementTree as ET
   xsdpart=ET.Element(XS+"sequence")
-  xsdpart.append(ET.Element(XS+"element", {'name': 'pyScript', 'type': ET.QName(XS+'string')}))#mfmf replace xs:string by pv:script
+  xsdpart.append(ET.Element(XS+"element", {'name': 'pyScript', 'minOccurs': '0',
+                                           'type': ET.QName(XS+'string')}))#mfmf replace xs:string by pv:script
   return xsdpart
 
 # initializeUsingXML for a pyScript element
