@@ -1253,6 +1253,21 @@ namespace MBSimGUI {
     ElementPropertyDialog::fromWidget(element);
   }
 
+  RigidBodyLinkPropertyDialog::RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(link,parent,f) {
+    support = new ExtWidget("Support frame",new FrameOfReferenceWidget(link,0),true);
+    addToTab("General",support);
+  }
+
+  void RigidBodyLinkPropertyDialog::toWidget(Element *element) {
+    LinkPropertyDialog::toWidget(element);
+    static_cast<RigidBodyLink*>(element)->support.toWidget(support);
+  }
+
+  void RigidBodyLinkPropertyDialog::fromWidget(Element *element) {
+    LinkPropertyDialog::fromWidget(element);
+    static_cast<RigidBodyLink*>(element)->support.fromWidget(support);
+  }
+
   KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget *parent, Qt::WindowFlags wf) : LinkPropertyDialog(kineticExcitation,parent,wf) {
 
     addTab("Kinetics",1);
@@ -1411,7 +1426,7 @@ namespace MBSimGUI {
     static_cast<DirectionalSpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
   }
 
-  GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(Link *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+  GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(RigidBodyLink *springDamper, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(springDamper,parent,f) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
@@ -1438,7 +1453,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedSpringDamperPropertyDialog::toWidget(Element *element) {
-    LinkPropertyDialog::toWidget(element);
+    RigidBodyLinkPropertyDialog::toWidget(element);
     static_cast<GeneralizedSpringDamper*>(element)->function.toWidget(function);
     static_cast<GeneralizedSpringDamper*>(element)->unloadedLength.toWidget(unloadedLength);
     static_cast<GeneralizedSpringDamper*>(element)->body1.toWidget(body1);
@@ -1449,7 +1464,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedSpringDamperPropertyDialog::fromWidget(Element *element) {
-    LinkPropertyDialog::fromWidget(element);
+    RigidBodyLinkPropertyDialog::fromWidget(element);
     static_cast<GeneralizedSpringDamper*>(element)->function.fromWidget(function);
     static_cast<GeneralizedSpringDamper*>(element)->unloadedLength.fromWidget(unloadedLength);
     static_cast<GeneralizedSpringDamper*>(element)->body1.fromWidget(body1);
@@ -1459,7 +1474,7 @@ namespace MBSimGUI {
     static_cast<GeneralizedSpringDamper*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
-  GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(Link *friction, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(friction,parent,f) {
+  GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(RigidBodyLink *friction, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(friction,parent,f) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
@@ -1483,7 +1498,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedFrictionPropertyDialog::toWidget(Element *element) {
-    LinkPropertyDialog::toWidget(element);
+    RigidBodyLinkPropertyDialog::toWidget(element);
     static_cast<GeneralizedFriction*>(element)->function.toWidget(function);
     static_cast<GeneralizedFriction*>(element)->normalForce.toWidget(normalForce);
     static_cast<GeneralizedFriction*>(element)->body1.toWidget(body1);
@@ -1493,7 +1508,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedFrictionPropertyDialog::fromWidget(Element *element) {
-    LinkPropertyDialog::fromWidget(element);
+    RigidBodyLinkPropertyDialog::fromWidget(element);
     static_cast<GeneralizedFriction*>(element)->function.fromWidget(function);
     static_cast<GeneralizedFriction*>(element)->normalForce.fromWidget(normalForce);
     static_cast<GeneralizedFriction*>(element)->body1.fromWidget(body1);
@@ -1502,7 +1517,7 @@ namespace MBSimGUI {
     static_cast<GeneralizedFriction*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
-  GearPropertyDialog::GearPropertyDialog(Link *constraint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(constraint,parent,f) {
+  GearPropertyDialog::GearPropertyDialog(RigidBodyLink *constraint, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(constraint,parent,f) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
@@ -1529,7 +1544,7 @@ namespace MBSimGUI {
   }
 
   void GearPropertyDialog::toWidget(Element *element) {
-    LinkPropertyDialog::toWidget(element);
+    RigidBodyLinkPropertyDialog::toWidget(element);
     static_cast<Gear*>(element)->function.toWidget(function);
     static_cast<Gear*>(element)->dependentBody.toWidget(dependentBody);
     static_cast<Gear*>(element)->independentBodies.toWidget(independentBodies);
@@ -1538,7 +1553,7 @@ namespace MBSimGUI {
   }
 
   void GearPropertyDialog::fromWidget(Element *element) {
-    LinkPropertyDialog::fromWidget(element);
+    RigidBodyLinkPropertyDialog::fromWidget(element);
     static_cast<Gear*>(element)->function.fromWidget(function);
     static_cast<Gear*>(element)->dependentBody.fromWidget(dependentBody);
     static_cast<Gear*>(element)->independentBodies.fromWidget(independentBodies);

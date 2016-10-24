@@ -26,11 +26,21 @@ namespace MBSimGUI {
 
   class Link : public Element {
     public:
-      Link(const std::string &str, Element *parent);
-      ~Link();
+      Link(const std::string &str, Element *parent) : Element(str,parent) { }
       static Link* readXMLFile(const std::string &filename, Element *parent);
       virtual int getxSize() {return 0;}
   };
+
+  class RigidBodyLink : public Link {
+    friend class RigidBodyLinkPropertyDialog;
+    public:
+      RigidBodyLink(const std::string &str, Element *parent);
+      void initialize();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    protected:
+      ExtProperty support;
+ };
 
 }
 

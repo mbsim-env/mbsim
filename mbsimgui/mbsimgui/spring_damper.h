@@ -53,7 +53,7 @@ namespace MBSimGUI {
     ExtProperty forceDirection, unloadedLength, forceFunction, connections, coilSpring, forceArrow;
   };
 
-  class GeneralizedSpringDamper : public Link {
+  class GeneralizedSpringDamper : public RigidBodyLink {
     friend class GeneralizedSpringDamperPropertyDialog;
     public:
     GeneralizedSpringDamper(const std::string &str, Element *element);

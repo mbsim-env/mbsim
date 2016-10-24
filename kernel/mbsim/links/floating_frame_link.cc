@@ -40,7 +40,7 @@ namespace MBSim {
     C.setParent(this);
   }
 
-  void FloatingFrameLink::resetUpToDate() { 
+  void FloatingFrameLink::resetUpToDate() {
     Link::resetUpToDate(); 
     updPos = true; 
     updVel = true; 

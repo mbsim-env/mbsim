@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Gear::Gear(const string &str, Element *parent) : Link(str, parent), function(0,false), gearForceArrow(0,false), gearMomentArrow(0,false) {
+  Gear::Gear(const string &str, Element *parent) : RigidBodyLink(str, parent), function(0,false), gearForceArrow(0,false), gearMomentArrow(0,false) {
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
 
@@ -50,13 +50,13 @@ namespace MBSimGUI {
   }
 
   void Gear::initialize() {
-    Link::initialize();
+    RigidBodyLink::initialize();
     dependentBody.initialize();
     independentBodies.initialize();
   }
 
   DOMElement* Gear::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    RigidBodyLink::initializeUsingXML(element);
     function.initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);
     independentBodies.initializeUsingXML(element);
@@ -66,7 +66,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* Gear::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
+    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
     function.writeXMLFile(ele0);
     dependentBody.writeXMLFile(ele0);
     independentBodies.writeXMLFile(ele0);

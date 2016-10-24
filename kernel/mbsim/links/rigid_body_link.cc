@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true) {
+  RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), support(NULL) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow.resize(1);
     MArrow.resize(1);
@@ -167,8 +167,16 @@ namespace MBSim {
   }
 
   void RigidBodyLink::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==resolveXMLPath) {
+      if(saved_supportFrame!="")
+        setSupportFrame(getByPath<Frame>(saved_supportFrame));
       Link::init(stage);
+    }
+    else if(stage==resize) {
+      Link::init(stage);
+
+      if(!support)
+        support = body[0]->getFrameOfReference();
 
       F.resize(body.size());
       M.resize(body.size());
@@ -194,12 +202,12 @@ namespace MBSim {
         stringstream s;
         s << "F" << i;
         C.push_back(FloatingRelativeFrame(s.str()));
-        C[i].getJacobianOfTranslation(0,false).resize(body[i]->getFrameOfReference()->gethSize());
-        C[i].getJacobianOfRotation(0,false).resize(body[i]->getFrameOfReference()->gethSize());
-        C[i].getJacobianOfTranslation(1,false).resize(body[i]->getFrameOfReference()->gethSize(1));
-        C[i].getJacobianOfRotation(1,false).resize(body[i]->getFrameOfReference()->gethSize(1));
+        C[i].getJacobianOfTranslation(0,false).resize(support->gethSize());
+        C[i].getJacobianOfRotation(0,false).resize(support->gethSize());
+        C[i].getJacobianOfTranslation(1,false).resize(support->gethSize(1));
+        C[i].getJacobianOfRotation(1,false).resize(support->gethSize(1));
         C[i].setParent(this);
-        C[i].setFrameOfReference(body[i]->getFrameOfReference());
+        C[i].setFrameOfReference(support);
       }
       for(unsigned int i=0; i<body.size(); i++) {
         h[0].push_back(Vec(body[i]->getFrameOfReference()->gethSize()));
@@ -297,8 +305,10 @@ namespace MBSim {
 
   void RigidBodyLink::initializeUsingXML(DOMElement* element) {
     Link::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
+    if(e) saved_supportFrame=E(e)->getAttribute("ref");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       RigidBodyLink::setOpenMBVForce(ombv.createOpenMBV(e));

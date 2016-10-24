@@ -123,7 +123,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : Link(str, parent), body1(0,false), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : RigidBodyLink(str, parent), body1(0,false), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
 
@@ -146,11 +146,11 @@ namespace MBSimGUI {
   }
 
   void GeneralizedSpringDamper::initialize() {
-    Link::initialize();
+    RigidBodyLink::initialize();
   }
 
   DOMElement* GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    RigidBodyLink::initializeUsingXML(element);
     function.initializeUsingXML(element);
     unloadedLength.initializeUsingXML(element);
     body1.initializeUsingXML(element);
@@ -162,7 +162,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedSpringDamper::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
+    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
     function.writeXMLFile(ele0);
     unloadedLength.writeXMLFile(ele0);
     body1.writeXMLFile(ele0);

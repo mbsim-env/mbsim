@@ -1519,7 +1519,20 @@
   </xs:element>
   <xs:complexType name="RigidBodyLinkType">
     <xs:complexContent>
-      <xs:extension base="LinkType"/>
+      <xs:extension base="LinkType">
+        <xs:sequence>
+          <xs:element name="supportFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert das KOS an dem die Stützkraft und das Stützmoment eingeleitet werden. Wird kein KOS angegeben, wird das Referenzsystem des ersten Körpers verwendet.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

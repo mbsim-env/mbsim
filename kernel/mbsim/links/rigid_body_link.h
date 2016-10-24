@@ -42,6 +42,8 @@ namespace MBSim {
       std::vector<fmatvec::Vec3> F, M;
       std::vector<fmatvec::Mat3xV> RF, RM;
       fmatvec::Index iF, iM;
+      Frame *support;
+
     public:
       RigidBodyLink(const std::string &name="");
 
@@ -83,6 +85,8 @@ namespace MBSim {
 
       void resetUpToDate(); 
 
+      virtual void setSupportFrame(Frame *frame) { support = frame; }
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
      /** \brief Visualize a force arrow */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
@@ -105,6 +109,8 @@ namespace MBSim {
       std::vector<std::shared_ptr<OpenMBV::Arrow> > FArrow, MArrow;
 #endif
 
+    private:
+      std::string saved_supportFrame;
   };
 
 }

@@ -25,7 +25,7 @@
 
 namespace MBSimGUI {
 
-  class GeneralizedFriction : public Link {
+  class GeneralizedFriction : public RigidBodyLink {
     friend class GeneralizedFrictionPropertyDialog;
     public:
     GeneralizedFriction(const std::string &str, Element *element);

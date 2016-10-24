@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "link.h"
+#include "frame.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
@@ -30,12 +31,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
-
-  Link::Link(const string &str, Element *parent) : Element(str, parent) {
-  }
-
-  Link::~Link() {
-  }
 
   Link* Link::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
@@ -49,10 +44,24 @@ namespace MBSimGUI {
     return link;
   }
 
-  //void Link::initializeUsingXML(DOMElement *element) {
-  //}
+  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent) {
+    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
+  }
 
-  //DOMElement* Link::writeXMLFile(DOMNode *parent) {    
-  //}
+  void RigidBodyLink::initialize() {
+    support.initialize();
+  }
+
+  DOMElement* RigidBodyLink::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    support.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* RigidBodyLink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    support.writeXMLFile(ele0);
+    return ele0;
+  }
 
 }
