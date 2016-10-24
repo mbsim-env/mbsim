@@ -172,13 +172,6 @@ namespace MBSimGUI {
     ExtWidget *a;
   };
 
-  class TCardanAnglesWidget : public FunctionWidget {
-
-    public:
-      TCardanAnglesWidget() { }
-      int getArg1Size() const {return 3;}
-  };
-
 }
 
 #endif

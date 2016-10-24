@@ -304,7 +304,7 @@ namespace MBSimGUI {
       int getqRelSize() const; 
       int getuRelSize() const; 
     protected:
-      ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
+      ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *bodyFixedRepresentationOfAngularVelocity, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
       RigidBody *body;
   };
 

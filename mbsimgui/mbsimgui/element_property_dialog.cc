@@ -631,14 +631,14 @@ namespace MBSimGUI {
     addToTab("Kinematics", rotation);
     connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true); 
+    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", translationDependentRotation);
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true); 
+
+    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", coordinateTransformationForRotation);
+
+    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
 
     ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
     addToTab("Visualisation", ombvEditor);
@@ -664,6 +664,7 @@ namespace MBSimGUI {
     static_cast<RigidBody*>(element)->rotation.toWidget(rotation);
     static_cast<RigidBody*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
     static_cast<RigidBody*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
+    static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.toWidget(bodyFixedRepresentationOfAngularVelocity);
     static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
     static_cast<RigidBody*>(element)->weightArrow.toWidget(weightArrow);
     static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
@@ -680,6 +681,7 @@ namespace MBSimGUI {
     static_cast<RigidBody*>(element)->rotation.fromWidget(rotation);
     static_cast<RigidBody*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
     static_cast<RigidBody*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
+    static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.fromWidget(bodyFixedRepresentationOfAngularVelocity);
     static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
     static_cast<RigidBody*>(element)->weightArrow.fromWidget(weightArrow);
     static_cast<RigidBody*>(element)->jointForceArrow.fromWidget(jointForceArrow);

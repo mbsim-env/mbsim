@@ -148,6 +148,7 @@ namespace MBSimFlexibleBody {
 
       void setTranslationDependentRotation(bool dep) { translationDependentRotation = dep; }
       void setCoordinateTransformationForRotation(bool ct) { coordinateTransformation = ct; }
+      void setBodyFixedRepresentationOfAngularVelocity(bool bf) { bodyFixedRepresentationOfAngularVelocity = bf; }
 
       /*!
        * \brief get Kinematic for translational motion
@@ -376,6 +377,8 @@ namespace MBSimFlexibleBody {
 
       void determineSID();
       void prefillMassMatrix();
+
+      bool bodyFixedRepresentationOfAngularVelocity;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

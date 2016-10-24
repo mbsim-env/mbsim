@@ -47,6 +47,5 @@ kinematicsinclude_HEADERS = kinematics.h\
 			    rotation_about_axes_xyz_mapping.h\
 			    rotation_about_axes_zxz_mapping.h\
 			    rotation_about_axes_zyx_mapping.h\
-			    rotation_about_axes_xyz_transformed.h\
 			    rotation_about_axes_xyz_transformed_mapping.h\
 			    rotation_about_axes_zxz_transformed_mapping.h

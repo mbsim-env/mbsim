@@ -670,7 +670,12 @@
           </xs:element>
           <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert, ob für für die Beschreibung der Rotation eine Koordinatentransformation durchgeführt werden soll (standardmäßig an). Mit Koordinatentransformation werden für die generalisierten Koordinaten der Rotation kartesische Winkelgeschwindigkeiten verwendet. Ohne Koordinatentransformation werden die Ableitungen der Winkelkoordinaten verwendet.
+              Definiert, ob für die Beschreibung der Rotation eine Koordinatentransformation durchgeführt werden soll (standardmäßig an). Mit Koordinatentransformation werden für die generalisierten Koordinaten der Rotation kartesische Winkelgeschwindigkeiten verwendet. Ohne Koordinatentransformation werden die Ableitungen der Winkelkoordinaten verwendet.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="bodyFixedRepresentationOfAngularVelocity" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert, ob bei aktivierter Koordinatentransformation für die Rotation eine Darstellung der Winkelgeschwindigkeiten bzgl. des körperfesten Koordinatensystems verwendet werden soll (standardmäßig aus). Bei absoluten räumlichen Drehungen hat dies den Vorteil einer konstante Massenmatrix. Standarmäßig wird eine Darstellung bzgl. des Referenzsystems verwendet.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="frames">

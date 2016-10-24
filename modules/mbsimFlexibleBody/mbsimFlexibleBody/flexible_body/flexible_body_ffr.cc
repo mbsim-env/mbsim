@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEX%"FlexibleBodyFFR")
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true), bodyFixedRepresentationOfAngularVelocity(false) {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -323,26 +323,17 @@ namespace MBSimFlexibleBody {
       K->getJacobianOfTranslation(1,false) = PJT[1];
       K->getJacobianOfRotation(1,false) = PJR[1];
 
-      bool cb = false;
       StateDependentFunction<RotMat3> *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesXYZ<VecV>*>(Atmp->getFunction())) {
-        fTR = new RotationAboutAxesXYZMapping<VecV>;
+        if(bodyFixedRepresentationOfAngularVelocity)
+          fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
+        else
+          fTR = new RotationAboutAxesXYZMapping<VecV>;
         fTR->setParent(this);
         constJR = true;
         constjR = true;
         PJRR = SqrMat3(EYE);
         PJR[0].set(i02,iuR,PJRR);
-      }
-      else if(Atmp and dynamic_cast<RotationAboutAxesXYZTransformed<VecV>*>(Atmp->getFunction())) {
-        cb = true;
-        if(coordinateTransformation) {
-          fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
-          fTR->setParent(this);
-          constJR = true;
-          constjR = true;
-          PJRR = SqrMat3(EYE);
-          PJR[0].set(i02,iuR,PJRR);
-        }
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZXZ<VecV>*>(Atmp->getFunction())) {
         fTR = new RotationAboutAxesZXZMapping<VecV>;
@@ -384,7 +375,7 @@ namespace MBSimFlexibleBody {
         }
       }
 
-      if(cb) {
+      if(bodyFixedRepresentationOfAngularVelocity) {
         frameForJacobianOfRotation = K;
         // TODO: do not invert generalized mass matrix in case of special
         // parametrisation
@@ -931,6 +922,8 @@ namespace MBSimFlexibleBody {
     if(e) translationDependentRotation = getBool(e);
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"coordinateTransformationForRotation");
     if(e) coordinateTransformation = getBool(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
+    if(e) bodyFixedRepresentationOfAngularVelocity = getBool(e);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVRigidBody");
