@@ -44,7 +44,7 @@ namespace MBSimGUI {
     return link;
   }
 
-  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent) {
+  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent), support(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
   }
 
