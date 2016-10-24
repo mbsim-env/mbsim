@@ -51,7 +51,8 @@ namespace MBSim {
 
   void GeneralizedFriction::updateGeneralizedForces() {
     // TODO Consider set-valued friction
-    lambda = (*func)(evalGeneralizedRelativeVelocity(),(*laN)(getTime()));
+    for(int i=0; i<lambda.size(); i++)
+      lambda(i) = (*func)(evalGeneralizedRelativeVelocity()(Index(i,i)),(*laN)(getTime()))(i);
     updla = false;
   }
 
@@ -72,13 +73,6 @@ namespace MBSim {
       ratio.resize(RigidBodyLink::body.size());
       ratio[0] = -1;
       ratio[ratio.size()-1] = 1;
-    }
-    else if(stage==unknownStage) {
-      if(body[0] and body[0]->getuRelSize()!=1)
-        THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
-      if(body[1]->getuRelSize()!=1)
-        THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
-      RigidBodyLink::init(stage);
     }
     else
       RigidBodyLink::init(stage);
