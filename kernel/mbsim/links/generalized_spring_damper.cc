@@ -45,8 +45,7 @@ namespace MBSim {
   }
 
   void GeneralizedSpringDamper::updateGeneralizedForces() {
-    for(int i=0; i<lambda.size(); i++)
-      lambda(i) = -(*func)(evalGeneralizedRelativePosition()(i)-l0,evalGeneralizedRelativeVelocity()(i));
+    lambda(0) = -(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
     updla = false;
   }
 
@@ -79,6 +78,13 @@ namespace MBSim {
   #endif
         RigidBodyLink::init(stage);
       }
+    }
+    else if(stage==unknownStage) {
+      if(body[0] and body[0]->getuRelSize()!=1)
+        THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
+      if(body[1]->getuRelSize()!=1)
+        THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
+      RigidBodyLink::init(stage);
     }
     else
       RigidBodyLink::init(stage);

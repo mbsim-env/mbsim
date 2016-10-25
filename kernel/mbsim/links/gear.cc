@@ -42,8 +42,7 @@ namespace MBSim {
 
   void Gear::updateGeneralizedForces() {
     if(func)
-      for(int i=0; i<lambda.size(); i++)
-        lambda(i) = -(*func)(evalGeneralizedRelativePosition()(i),evalGeneralizedRelativeVelocity()(i));
+      lambda(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
     else
       lambda = la;
     updla = false;
@@ -56,6 +55,13 @@ namespace MBSim {
       if (saved_IndependentBody.size()>0) {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           body.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
+      }
+      RigidBodyLink::init(stage);
+    }
+    else if(stage==unknownStage) {
+      for(int i=0; i<body.size(); i++) {
+        if(body[i] and body[i]->getuRelSize()!=1)
+          THROW_MBSIMERROR("rigid bodies must have of 1 dof!");
       }
       RigidBodyLink::init(stage);
     }
