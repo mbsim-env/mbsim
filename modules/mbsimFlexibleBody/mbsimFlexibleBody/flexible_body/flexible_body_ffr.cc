@@ -32,8 +32,8 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zyx_mapping.h"
-#include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 #include "mbsimFlexibleBody/namespace.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
@@ -336,7 +336,10 @@ namespace MBSimFlexibleBody {
         PJR[0].set(i02,iuR,PJRR);
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZXZ<VecV>*>(Atmp->getFunction())) {
-        fTR = new RotationAboutAxesZXZMapping<VecV>;
+        if(bodyFixedRepresentationOfAngularVelocity)
+          fTR = new RotationAboutAxesZXZTransformedMapping<VecV>;
+        else
+          fTR = new RotationAboutAxesZXZMapping<VecV>;
         fTR->setParent(this);
         constJR = true;
         constjR = true;
@@ -344,7 +347,10 @@ namespace MBSimFlexibleBody {
         PJR[0].set(i02,iuR,PJRR);
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
-        fTR = new RotationAboutAxesZYXMapping<VecV>;
+        if(bodyFixedRepresentationOfAngularVelocity)
+          THROW_MBSIMERROR("(FlexibleBodyFFR::init): coordinate transformation not yet available for zyx-rotation");
+        else
+          fTR = new RotationAboutAxesZYXMapping<VecV>;
         fTR->setParent(this);
         constJR = true;
         constjR = true;
