@@ -117,8 +117,8 @@
           <connect ref1="../Frame[I]" ref2="../Object[Box0]/Frame[C]"/>
           <enableOpenMBVCoilSpring>
             <numberOfCoils>5</numberOfCoils>
-            <springRadius>.003</springRadius>
-            <crossSectionRadius>.0002</crossSectionRadius>
+            <springRadius>.03</springRadius>
+            <crossSectionRadius>.01</crossSectionRadius>
           </enableOpenMBVCoilSpring>
         </SpringDamper>
         <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
