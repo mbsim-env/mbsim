@@ -35,6 +35,7 @@
 #include "group.h"
 #include "friction.h"
 #include "gear.h"
+#include "connection.h"
 #include <QFileDialog>
 
 namespace MBSimGUI {
@@ -387,6 +388,9 @@ namespace MBSimGUI {
     action = new QAction("Add gear", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGear()));
     addAction(action);
+    action = new QAction("Add generalized linear elastic connection", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedLinearElasticConnection()));
+    addAction(action);
   }
 
   void LinkContextContextMenu::addKineticExcitation() {
@@ -428,6 +432,10 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addGear() {
     mw->addLink(new Gear("Gear",element));
+  }
+
+  void LinkContextContextMenu::addGeneralizedLinearElasticConnection() {
+    mw->addLink(new GeneralizedLinearElasticConnection("GeneralizedLinearElasticConnection",element));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

@@ -185,6 +185,7 @@ namespace MBSimGUI {
       void addLinearTransferSystem();
       void addGeneralizedFriction();
       void addGear();
+      void addGeneralizedLinearElasticConnection();
 
     protected:
       Element *element;
@@ -257,8 +258,8 @@ namespace MBSimGUI {
     public:
       SensorContextContextMenu(Element *sensor, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addGeneralizedPositionSensor();
+    protected slots:
+      void addGeneralizedPositionSensor();
       void addGeneralizedVelocitySensor();
       void addAbsolutePositionSensor();
       void addAbsoluteVelocitySensor();

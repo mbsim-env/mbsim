@@ -60,6 +60,7 @@ namespace MBSimGUI {
   class SpringDamper;
   class DirectionalSpringDamper;
   class GeneralizedSpringDamper;
+  class GeneralizedLinearElasticConnection;
   class Joint;
   class Contact;
   class Observer;
@@ -477,7 +478,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *function, *unloadedLength, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
+      ExtWidget *function, *unloadedLength, *body1, *body2, *coilSpring, *forceArrow, *momentArrow;
   };
 
   class GeneralizedFrictionPropertyDialog : public RigidBodyLinkPropertyDialog {
@@ -487,7 +488,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *function, *normalForce, *body1, *body2, *connections, *forceArrow, *momentArrow;
+      ExtWidget *function, *normalForce, *body1, *body2, *forceArrow, *momentArrow;
   };
 
   class GearPropertyDialog : public RigidBodyLinkPropertyDialog {
@@ -498,6 +499,19 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *function, *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
+  };
+
+  class GeneralizedLinearElasticConnectionPropertyDialog : public RigidBodyLinkPropertyDialog {
+    Q_OBJECT
+
+    public:
+      GeneralizedLinearElasticConnectionPropertyDialog(RigidBodyLink *connection, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *stiffnessMatrix, *dampingMatrix, *body1, *body2, *forceArrow, *momentArrow;
+    protected slots:
+      void resizeVariables();
   };
 
   class JointPropertyDialog : public LinkPropertyDialog {

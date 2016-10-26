@@ -47,6 +47,7 @@
 #include "function_widget_factory.h"
 #include "friction.h"
 #include "gear.h"
+#include "connection.h"
 #include <QPushButton>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "mainwindow.h"
@@ -1561,6 +1562,62 @@ namespace MBSimGUI {
     static_cast<Gear*>(element)->gearMomentArrow.fromWidget(gearMomentArrow);
   }
 
+  GeneralizedLinearElasticConnectionPropertyDialog::GeneralizedLinearElasticConnectionPropertyDialog(RigidBodyLink *connection, QWidget *parent, Qt::WindowFlags f) : RigidBodyLinkPropertyDialog(connection,parent,f) {
+    addTab("Kinetics",1);
+    addTab("Visualisation",2);
+
+    stiffnessMatrix = new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    addToTab("Kinetics",stiffnessMatrix);
+
+    dampingMatrix = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft),true);
+    addToTab("Kinetics",dampingMatrix);
+
+    body1 = new ExtWidget("Rigid body first side",new RigidBodyOfReferenceWidget(connection,0),true);
+    addToTab("General", body1);
+
+    body2 = new ExtWidget("Rigid body second side",new RigidBodyOfReferenceWidget(connection,0));
+    addToTab("General", body2);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation", momentArrow);
+
+    connect(stiffnessMatrix,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(dampingMatrix,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+    connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(resizeVariables()));
+    connect(body2->getWidget(),SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  }
+
+  void GeneralizedLinearElasticConnectionPropertyDialog::resizeVariables() {
+    RigidBodyOfReferenceWidget* widget = static_cast<RigidBodyOfReferenceWidget*>(body2->getWidget());
+    if(not widget->getBody().isEmpty()) {
+      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
+      stiffnessMatrix->resize_(size,size);
+      dampingMatrix->resize_(size,size);
+    }
+  }
+
+  void GeneralizedLinearElasticConnectionPropertyDialog::toWidget(Element *element) {
+    RigidBodyLinkPropertyDialog::toWidget(element);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->stiffnessMatrix.toWidget(stiffnessMatrix);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->dampingMatrix.toWidget(dampingMatrix);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->body1.toWidget(body1);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->body2.toWidget(body2);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->momentArrow.toWidget(momentArrow);
+  }
+
+  void GeneralizedLinearElasticConnectionPropertyDialog::fromWidget(Element *element) {
+    RigidBodyLinkPropertyDialog::fromWidget(element);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->stiffnessMatrix.fromWidget(stiffnessMatrix);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->dampingMatrix.fromWidget(dampingMatrix);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->body1.fromWidget(body1);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->body2.fromWidget(body2);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<GeneralizedLinearElasticConnection*>(element)->momentArrow.fromWidget(momentArrow);
+  }
 
   JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
     addTab("Kinetics",1);
