@@ -41,7 +41,7 @@ namespace MBSim {
 
       void init(InitStage stage);
 
-      void setDependentBody(RigidBody* body_) {bd=body_; }
+      void setDependentRigidBody(RigidBody* body_) {bd=body_; }
 
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);

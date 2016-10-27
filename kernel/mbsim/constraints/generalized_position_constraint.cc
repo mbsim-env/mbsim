@@ -59,7 +59,7 @@ namespace MBSim {
   void GeneralizedPositionConstraint::setUpInverseKinetics() {
     GeneralizedPositionExcitation *ke = new GeneralizedPositionExcitation(string("GeneralizedPositionExcitation")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
-    ke->setDependentBody(bd);
+    ke->setDependentRigidBody(bd);
     ke->setExcitationFunction(f);
     if(FArrow)
       ke->setOpenMBVForce(FArrow);

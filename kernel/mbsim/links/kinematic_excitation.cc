@@ -53,7 +53,7 @@ namespace MBSim {
   void KinematicExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
-        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       RigidBodyLink::init(stage);
     } else
       RigidBodyLink::init(stage);

@@ -48,10 +48,10 @@ namespace MBSim {
       void resetUpToDate();
 
       void connect(Frame* frame1, Frame* frame2);
-      void setDependentBodiesFirstSide(std::vector<RigidBody*> bd);
-      void setDependentBodiesSecondSide(std::vector<RigidBody*> bd);
-      void setIndependentBody(RigidBody* bi);
-      void setSecondIndependentBody(RigidBody* bi2);
+      void setDependentRigidBodiesFirstSide(std::vector<RigidBody*> bd);
+      void setDependentRigidBodiesSecondSide(std::vector<RigidBody*> bd);
+      void setIndependentRigidBody(RigidBody* bi);
+      void setSecondIndependentRigidBody(RigidBody* bi2);
 
       virtual void setUpInverseKinetics();
       void setForceDirection(const fmatvec::Mat3xV& d_);

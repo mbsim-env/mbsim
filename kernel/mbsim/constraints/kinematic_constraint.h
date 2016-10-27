@@ -35,7 +35,7 @@ namespace MBSim {
     public:
       KinematicConstraint(const std::string &name="");
 
-      void setDependentBody(RigidBody* body) {bd=body; }
+      void setDependentRigidBody(RigidBody* body) {bd=body; }
 
       void init(InitStage stage);
 

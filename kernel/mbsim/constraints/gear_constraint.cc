@@ -41,7 +41,7 @@ namespace MBSim {
   void GearConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
-        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       if (saved_IndependentBody.size()>0) {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
@@ -112,7 +112,7 @@ namespace MBSim {
   void GearConstraint::setUpInverseKinetics() {
     Gear *gear = new Gear(string("Gear")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
-    gear->setDependentBody(bd);
+    gear->setDependentRigidBody(bd);
     for(unsigned int i=0; i<bi.size(); i++)
       gear->addTransmission(Transmission(bi[i],ratio[i]));
     if(FArrow)

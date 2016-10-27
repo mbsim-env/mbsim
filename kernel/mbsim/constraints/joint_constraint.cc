@@ -78,19 +78,19 @@ namespace MBSim {
     frame2 = frame2_;
   }
 
-  void JointConstraint::setDependentBodiesFirstSide(vector<RigidBody*> bd) {    
+  void JointConstraint::setDependentRigidBodiesFirstSide(vector<RigidBody*> bd) {
     bd1 = bd;
   }
 
-  void JointConstraint::setDependentBodiesSecondSide(vector<RigidBody*> bd) {
+  void JointConstraint::setDependentRigidBodiesSecondSide(vector<RigidBody*> bd) {
     bd2 = bd;
   }
 
-  void JointConstraint::setIndependentBody(RigidBody *bi_) {
+  void JointConstraint::setIndependentRigidBody(RigidBody *bi_) {
     bi = bi_;
   }
 
-  void JointConstraint::setSecondIndependentBody(RigidBody *bi2_) {
+  void JointConstraint::setSecondIndependentRigidBody(RigidBody *bi2_) {
     bi2 = bi2_;
   }
 
@@ -102,19 +102,19 @@ namespace MBSim {
       if (saved_RigidBodyFirstSide.size()>0) {
         for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
           rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
-        setDependentBodiesFirstSide(rigidBodies);
+        setDependentRigidBodiesFirstSide(rigidBodies);
       }
       rigidBodies.clear();
       if (saved_RigidBodySecondSide.size()>0) {
         for (unsigned int i=0; i<saved_RigidBodySecondSide.size(); i++)
           rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodySecondSide[i]));
-        setDependentBodiesSecondSide(rigidBodies);
+        setDependentRigidBodiesSecondSide(rigidBodies);
       }
       rigidBodies.clear();
       if (saved_IndependentBody!="")
-        setIndependentBody(getByPath<RigidBody>(saved_IndependentBody));
+        setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
       if (saved_IndependentBody2!="")
-        setIndependentBody(getByPath<RigidBody>(saved_IndependentBody2));
+        setSecondIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody2));
       if(bd1.size()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());

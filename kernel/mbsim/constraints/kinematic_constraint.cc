@@ -37,7 +37,7 @@ namespace MBSim {
   void KinematicConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
-        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       Constraint::init(stage);
     }
     else if(stage==preInit) {

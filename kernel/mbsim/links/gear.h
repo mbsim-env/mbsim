@@ -39,7 +39,7 @@ namespace MBSim {
     public:
       Gear(const std::string &name="");
       void updateGeneralizedForces();
-      void setDependentBody(RigidBody* body_) {body[0] = body_;}
+      void setDependentRigidBody(RigidBody* body_) {body[0] = body_;}
       void addTransmission(const Transmission &transmission);
 
       bool isActive() const { return true; }

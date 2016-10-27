@@ -51,7 +51,7 @@ namespace MBSim {
  void Gear::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
-        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       if (saved_IndependentBody.size()>0) {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           body.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
@@ -59,7 +59,7 @@ namespace MBSim {
       RigidBodyLink::init(stage);
     }
     else if(stage==unknownStage) {
-      for(int i=0; i<body.size(); i++) {
+      for(unsigned int i=0; i<body.size(); i++) {
         if(body[i] and body[i]->getuRelSize()!=1)
           THROW_MBSIMERROR("rigid bodies must have of 1 dof!");
       }
