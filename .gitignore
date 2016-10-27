@@ -1,4 +1,5 @@
 kernel/INSTALL
+kernel/compile
 kernel/Makefile.in
 kernel/aclocal.m4
 kernel/autom4te.cache/
@@ -38,6 +39,7 @@ kernel/missing
 kernel/schema/Makefile.in
 kernel/xmldoc/Makefile.in
 mbsimfmi/3rdparty/Makefile.in
+mbsimfmi/compile
 mbsimfmi/INSTALL
 mbsimfmi/Makefile.in
 mbsimfmi/aclocal.m4
@@ -55,6 +57,7 @@ mbsimfmi/mbsimfmi/Makefile.in
 mbsimfmi/test/Makefile.in
 mbsimfmi/missing
 mbsimgui/INSTALL
+mbsimgui/compile
 mbsimgui/Makefile.in
 mbsimgui/aclocal.m4
 mbsimgui/autom4te.cache/
@@ -68,6 +71,7 @@ mbsimgui/ltmain.sh
 mbsimgui/mbsimgui/Makefile.in
 mbsimgui/missing
 mbsimxml/INSTALL
+mbsimxml/compile
 mbsimxml/Makefile.in
 mbsimxml/aclocal.m4
 mbsimxml/autom4te.cache/
@@ -185,6 +189,12 @@ modules/mbsimPowertrain/mbsimPowertrain/Makefile.in
 modules/mbsimPowertrain/missing
 modules/mbsimPowertrain/schema/Makefile.in
 modules/mbsimPowertrain/xmldoc/Makefile.in
+modules/mbsimControl/compile
+modules/mbsimElectronics/compile
+modules/mbsimFlexibleBody/compile
+modules/mbsimHydraulics/compile
+modules/mbsimInterface/compile
+modules/mbsimPowertrain/compile
 thirdparty/nurbs++/INSTALL
 thirdparty/nurbs++/Makefile.in
 thirdparty/nurbs++/aclocal.m4
@@ -217,3 +227,4 @@ thirdparty/nurbs++/test-driver
 thirdparty/nurbs++/tests/Makefile.in
 thirdparty/nurbs++/tests/matrix/Makefile.in
 thirdparty/nurbs++/tests/nurbs/Makefile.in
+thirdparty/nurbs++/compile
