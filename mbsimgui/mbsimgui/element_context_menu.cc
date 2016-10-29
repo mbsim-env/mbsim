@@ -388,8 +388,8 @@ namespace MBSimGUI {
     action = new QAction("Add gear", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGear()));
     addAction(action);
-    action = new QAction("Add generalized linear elastic connection", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedLinearElasticConnection()));
+    action = new QAction("Add generalized elastic connection", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
     addAction(action);
   }
 
@@ -434,8 +434,8 @@ namespace MBSimGUI {
     mw->addLink(new Gear("Gear",element));
   }
 
-  void LinkContextContextMenu::addGeneralizedLinearElasticConnection() {
-    mw->addLink(new GeneralizedLinearElasticConnection("GeneralizedLinearElasticConnection",element));
+  void LinkContextContextMenu::addGeneralizedElasticConnection() {
+    mw->addLink(new GeneralizedElasticConnection("GeneralizedElasticConnection",element));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

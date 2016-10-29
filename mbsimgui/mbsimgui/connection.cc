@@ -21,6 +21,7 @@
 #include "connection.h"
 #include "basic_properties.h"
 #include "ombv_properties.h"
+#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -28,11 +29,9 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedLinearElasticConnection::GeneralizedLinearElasticConnection(const string &str, Element *parent) : RigidBodyLink(str, parent), dampingMatrix(0,false), body1(0,false), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedElasticConnection::GeneralizedElasticConnection(const string &str, Element *parent) : RigidBodyLink(str, parent), body1(0,false), forceArrow(0,false), momentArrow(0,false) {
 
-    stiffnessMatrix.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0","0"),MBSIM%"generalizedStiffnessMatrix",vector<string>(3,"")),"",4));
-
-    dampingMatrix.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0","0"),MBSIM%"generalizedDampingMatrix",vector<string>(3,"")),"",4));
+    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this,"VVV"),MBSIM%"generalizedForceFunction"));
 
     body1.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodyFirstSide"));
     body2.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodySecondSide"));
@@ -44,10 +43,9 @@ namespace MBSimGUI {
     momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
-  DOMElement* GeneralizedLinearElasticConnection::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedElasticConnection::initializeUsingXML(DOMElement *element) {
     RigidBodyLink::initializeUsingXML(element);
-    stiffnessMatrix.initializeUsingXML(element);
-    dampingMatrix.initializeUsingXML(element);
+    function.initializeUsingXML(element);
     body1.initializeUsingXML(element);
     body2.initializeUsingXML(element);
     forceArrow.initializeUsingXML(element);
@@ -55,10 +53,9 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* GeneralizedLinearElasticConnection::writeXMLFile(DOMNode *parent) {
+  DOMElement* GeneralizedElasticConnection::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
-    stiffnessMatrix.writeXMLFile(ele0);
-    dampingMatrix.writeXMLFile(ele0);
+    function.writeXMLFile(ele0);
     body1.writeXMLFile(ele0);
     body2.writeXMLFile(ele0);
     forceArrow.writeXMLFile(ele0);

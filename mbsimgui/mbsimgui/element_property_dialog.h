@@ -501,15 +501,15 @@ namespace MBSimGUI {
       ExtWidget *function, *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
   };
 
-  class GeneralizedLinearElasticConnectionPropertyDialog : public RigidBodyLinkPropertyDialog {
+  class GeneralizedElasticConnectionPropertyDialog : public RigidBodyLinkPropertyDialog {
     Q_OBJECT
 
     public:
-      GeneralizedLinearElasticConnectionPropertyDialog(RigidBodyLink *connection, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      GeneralizedElasticConnectionPropertyDialog(RigidBodyLink *connection, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *stiffnessMatrix, *dampingMatrix, *body1, *body2, *forceArrow, *momentArrow;
+      ExtWidget *function, *body1, *body2, *forceArrow, *momentArrow;
     protected slots:
       void resizeVariables();
   };

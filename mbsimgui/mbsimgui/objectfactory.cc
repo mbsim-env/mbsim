@@ -174,8 +174,8 @@ namespace MBSimGUI {
       return new Joint(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Contact")
       return new Contact(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIM%"GeneralizedLinearElasticConnection")
-      return new GeneralizedLinearElasticConnection(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")
+      return new GeneralizedElasticConnection(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
       return new GeneralizedPositionSensor(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")

@@ -1963,29 +1963,25 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedLinearElasticConnection" substitutionGroup="RigidBodyLink" type="GeneralizedLinearElasticConnectionType">
+  <xs:element name="GeneralizedElasticConnection" substitutionGroup="RigidBodyLink" type="GeneralizedElasticConnectionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="GeneralizedLinearElasticConnectionType">
+  <xs:complexType name="GeneralizedElasticConnectionType">
     <xs:complexContent>
       <xs:extension base="RigidBodyLinkType">
         <xs:sequence>
-          <xs:element name="generalizedStiffnessMatrix" type="pv:unknownMatrix">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Generalisierte Steifigkeitsmatrix.
-              </xs:documentation>
-            </xs:annotation>
-         </xs:element>
-          <xs:element name="generalizedDampingMatrix" type="pv:unknownMatrix" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Generalisierte Dämpfungsmatrix.
-              </xs:documentation>
-            </xs:annotation>
-         </xs:element>
+          <xs:element name="generalizedForceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
          <xs:element name="rigidBodyFirstSide" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
@@ -4573,6 +4569,36 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="LinearElasticFunction" substitutionGroup="Function" type="LinearElasticFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinearElasticFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="stiffnessMatrix" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Steifigkeitsmatrix.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="dampingMatrix" type="pv:unknownMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Dämpfungsmatrix.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="Function" type="LinearRegularizedUnilateralConstraintType">
     <xs:annotation>

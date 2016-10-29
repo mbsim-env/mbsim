@@ -411,6 +411,7 @@ namespace MBSimGUI {
     name.push_back("Linear spring damper force");
     name.push_back("Nonlinear spring damper force");
     name.push_back("Symbolic function");
+    name.push_back("Linear elastic function");
   }
 
   QWidget* SpringDamperWidgetFactory::createWidget(int i) {
@@ -423,6 +424,8 @@ namespace MBSimGUI {
       var << "g" << "gd";
       return new SymbolicFunctionWidget(var,1,3);
     }
+    if(i==3)
+      return new LinearElasticFunctionWidget;
     return NULL;
   }
 

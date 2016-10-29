@@ -185,7 +185,7 @@ namespace MBSimGUI {
       void addLinearTransferSystem();
       void addGeneralizedFriction();
       void addGear();
-      void addGeneralizedLinearElasticConnection();
+      void addGeneralizedElasticConnection();
 
     protected:
       Element *element;

@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/links/generalized_linear_elastic_connection.h"
+#include "mbsim/links/generalized_elastic_connection.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/objects/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -33,19 +33,23 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedLinearElasticConnection, MBSIM%"GeneralizedLinearElasticConnection")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedElasticConnection, MBSIM%"GeneralizedElasticConnection")
 
-  GeneralizedLinearElasticConnection::GeneralizedLinearElasticConnection(const string &name) : RigidBodyLink(name) {
+  GeneralizedElasticConnection::GeneralizedElasticConnection(const string &name) : RigidBodyLink(name), func(NULL) {
     body[0] = NULL;
     body[1] = NULL;
   }
 
-  void GeneralizedLinearElasticConnection::updateGeneralizedForces() {
-    lambda = -(K*evalGeneralizedRelativePosition() + D*evalGeneralizedRelativeVelocity());
+  GeneralizedElasticConnection::~GeneralizedElasticConnection() {
+    delete func;
+  }
+
+  void GeneralizedElasticConnection::updateGeneralizedForces() {
+    lambda = -(*func)(evalGeneralizedRelativePosition(),evalGeneralizedRelativeVelocity());
     updla = false;
   }
 
-  void GeneralizedLinearElasticConnection::init(InitStage stage) {
+  void GeneralizedElasticConnection::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_body1!="")
         setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
@@ -62,8 +66,6 @@ namespace MBSim {
       ratio.resize(RigidBodyLink::body.size());
       ratio[0] = -1;
       ratio[ratio.size()-1] = 1;
-      if(not K.size()) K.resize(RigidBodyLink::body[0]->getuRelSize());
-      if(not D.size()) D.resize(RigidBodyLink::body[0]->getuRelSize());
     }
     else if(stage==unknownStage) {
       if(body[0] and body[0]->getuRelSize()!=body[1]->getuRelSize())
@@ -72,20 +74,20 @@ namespace MBSim {
     }
     else
       RigidBodyLink::init(stage);
+    func->init(stage);
   }
 
-  void GeneralizedLinearElasticConnection::plot() {
+  void GeneralizedElasticConnection::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       RigidBodyLink::plot();
     }
   }
 
-  void GeneralizedLinearElasticConnection::initializeUsingXML(DOMElement *element) {
+  void GeneralizedElasticConnection::initializeUsingXML(DOMElement *element) {
     RigidBodyLink::initializeUsingXML(element);
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedStiffnessMatrix");
-    K = Element::getSymMat(e);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedDampingMatrix");
-    if(e) D = Element::getSymMat(e);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
+    Function<VecV(VecV,VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
+    setGeneralizedForceFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
     if(e) saved_body1=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
