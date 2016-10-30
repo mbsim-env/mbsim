@@ -16,9 +16,11 @@
 %{
 #include <config.h> // to use consistent preprocessor defines
 #include "mbsim/links/frame_link.h"
+#include "mbsim/frames/frame.h"
 %}
 
 // wrap some std::vector<...> types used by the above wrapped classes
+%ignore swigignore;
 %include "std_vector.i"
 %template(VectorElement) std::vector<MBSim::Element*>;
 %template(VectorDouble)  std::vector<double>;
@@ -26,14 +28,14 @@
 //MFMF%template(VectorMat)     std::vector<fmatvec::Mat>;
 //MFMF%template(VectorVec)     std::vector<fmatvec::Vec>;
 %template(VectorFrame)   std::vector<MBSim::Frame*>;
-//MFMF wrap Frame
-//MFMF wrap DSS
 
 // wrap the following classes
 %include "mbsim/element.h"
 %rename(lambda_) MBSim::Link::lambda; // lambda is a python keyword -> rename it to lambda_
 %include "mbsim/links/link.h"
 %include "mbsim/links/frame_link.h"
+%include "mbsim/frames/frame.h"
+//MFMF wrap DSS
 
 
 
