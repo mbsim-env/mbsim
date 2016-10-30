@@ -930,10 +930,6 @@ namespace MBSimGUI {
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", dependentBody);
 
-    //  independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
-    //  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
-    //  addToTab("General", independentBodies);
-
     independentBodies = new ExtWidget("Transmissions",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Transmission"));
     addToTab("General",independentBodies);
 
@@ -1226,6 +1222,46 @@ namespace MBSimGUI {
         body->setConstrained(true);
     }
     static_cast<JointConstraint*>(element)->q0.fromWidget(q0);
+  }
+
+  GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
+    addTab("Visualisation",1);
+
+    dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
+    addToTab("General", dependentBody);
+
+    independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
+    addToTab("General", independentBody);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",momentArrow);
+
+    connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+  }
+
+  void GeneralizedConnectionConstraintPropertyDialog::toWidget(Element *element) {
+    ConstraintPropertyDialog::toWidget(element);
+    static_cast<GeneralizedConnectionConstraint*>(element)->dependentBody.toWidget(dependentBody);
+    static_cast<GeneralizedConnectionConstraint*>(element)->independentBody.toWidget(independentBody);
+    static_cast<GeneralizedConnectionConstraint*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<GeneralizedConnectionConstraint*>(element)->momentArrow.toWidget(momentArrow);
+  }
+
+  void GeneralizedConnectionConstraintPropertyDialog::fromWidget(Element *element) {
+    ConstraintPropertyDialog::fromWidget(element);
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GeneralizedConnectionConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
+    if(body)
+      body->setConstrained(false);
+    static_cast<GeneralizedConnectionConstraint*>(element)->dependentBody.fromWidget(dependentBody);
+    static_cast<GeneralizedConnectionConstraint*>(element)->independentBody.fromWidget(independentBody);
+    static_cast<GeneralizedConnectionConstraint*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<GeneralizedConnectionConstraint*>(element)->momentArrow.fromWidget(momentArrow);
+    body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GeneralizedConnectionConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
+    if(body)
+      body->setConstrained(true);
   }
 
   SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(sps,parent,f) {

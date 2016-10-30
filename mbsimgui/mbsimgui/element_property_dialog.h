@@ -52,6 +52,7 @@ namespace MBSimGUI {
   class GeneralizedVelocityConstraint;
   class GeneralizedAccelerationConstraint;
   class JointConstraint;
+  class GeneralizedConnectionConstraint;
   class SignalProcessingSystem;
   class LinearTransferSystem;
   class Link;
@@ -407,7 +408,17 @@ namespace MBSimGUI {
       VecWidget *q0_;
     protected slots:
       void resizeVariables();
-};
+  };
+
+  class GeneralizedConnectionConstraintPropertyDialog : public ConstraintPropertyDialog {
+
+    public:
+      GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *dependentBody, *independentBody, *forceArrow, *momentArrow;
+  };
 
   class LinkPropertyDialog : public ElementPropertyDialog {
 

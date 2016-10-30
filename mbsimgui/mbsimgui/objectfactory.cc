@@ -225,6 +225,8 @@ namespace MBSimGUI {
       return new GeneralizedAccelerationConstraint(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"JointConstraint")
       return new JointConstraint(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"GeneralizedConnectionConstraint")
+      return new GeneralizedConnectionConstraint(E(element)->getAttribute("name"),parent);
     return 0;
   }
 

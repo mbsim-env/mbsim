@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2012-2016 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -332,6 +332,53 @@ namespace MBSimGUI {
     jointForceArrow.writeXMLFile(ele0);
     jointMomentArrow.writeXMLFile(ele0);
 
+    return ele0;
+  }
+
+  GeneralizedConnectionConstraint::GeneralizedConnectionConstraint(const string &str, Element *parent) : Constraint(str, parent), forceArrow(0,false), momentArrow(0,false) {
+
+    dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
+
+    independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"independentRigidBody"));
+
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+  }
+
+  void GeneralizedConnectionConstraint::initialize() {
+    Constraint::initialize();
+    dependentBody.initialize();
+    independentBody.initialize();
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
+    if(body)
+      body->setConstrained(true);
+  }
+
+  void GeneralizedConnectionConstraint::deinitialize() {
+    Constraint::deinitialize();
+    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
+    if(body)
+      body->setConstrained(false);
+  }
+
+  DOMElement* GeneralizedConnectionConstraint::initializeUsingXML(DOMElement *element) {
+    Constraint::initializeUsingXML(element);
+    dependentBody.initializeUsingXML(element);
+    independentBody.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* GeneralizedConnectionConstraint::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Constraint::writeXMLFile(parent);
+    dependentBody.writeXMLFile(ele0);
+    independentBody.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

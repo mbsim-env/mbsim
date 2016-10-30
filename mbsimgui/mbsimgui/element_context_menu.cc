@@ -336,6 +336,9 @@ namespace MBSimGUI {
     action = new QAction("Add joint constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
     addAction(action);
+    action = new QAction("Add generalized connection constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
+    addAction(action);
   }
 
   void ConstraintContextContextMenu::addGearConstraint() {
@@ -356,6 +359,10 @@ namespace MBSimGUI {
 
   void ConstraintContextContextMenu::addJointConstraint() {
     mw->addConstraint(new JointConstraint("JointConstraint",element));
+  }
+
+  void ConstraintContextContextMenu::addGeneralizedConnectionConstraint() {
+    mw->addConstraint(new GeneralizedConnectionConstraint("GeneralizedConnectionConstraint",element));
   }
 
   LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {

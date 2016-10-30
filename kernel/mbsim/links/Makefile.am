@@ -21,6 +21,7 @@ liblink_la_SOURCES = link.cc\
 		     generalized_position_excitation.cc\
 		     generalized_velocity_excitation.cc\
 		     generalized_acceleration_excitation.cc\
+		     generalized_connection.cc\
 		     generalized_elastic_connection.cc
 
 liblink_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
@@ -47,4 +48,5 @@ linkinclude_HEADERS = link.h\
 		      generalized_position_excitation.h\
 		      generalized_velocity_excitation.h\
 		      generalized_acceleration_excitation.h\
+		      generalized_connection.h\
 		      generalized_elastic_connection.h
