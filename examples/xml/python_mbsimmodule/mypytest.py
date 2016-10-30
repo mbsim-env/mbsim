@@ -1,5 +1,7 @@
 #!/usr/bin/python2
 
+import math
+
 # import mbsim module
 import mbsim
 
@@ -67,6 +69,20 @@ class PySpringDamperPyScriptInit(mbsim.FrameLink):
 
   def isSingleValued(self):
     return True
+
+  def init(self, stage):
+    if stage==self.plotting:
+      self.updatePlotFeatures()
+      if self.getPlotFeature(self.plotRecursive)==self.enabled:
+        self.plotColumns.push_back("sin")
+        super(PySpringDamperPyScriptInit, self).init(stage)
+    else:
+      super(PySpringDamperPyScriptInit, self).init(stage)
+
+  def plot(self):
+    if self.getPlotFeature(self.plotRecursive)==self.enabled:
+      self.plotVector.push_back(math.sin(10*self.getTime()))
+      super(PySpringDamperPyScriptInit, self).plot()
 
   @staticmethod
   def getSchema():
