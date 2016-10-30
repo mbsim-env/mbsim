@@ -1,6 +1,7 @@
 #!/usr/bin/python2
 
 import math
+import OpenMBV
 
 # import mbsim module
 import mbsim
@@ -53,6 +54,7 @@ class PySpringDamperPyScriptInit(mbsim.FrameLink):
     self.saved_ref1="../Frame[I]"
     self.saved_ref2="../Object[Box2]/Frame[C]"
     self.warnCount=0
+    self.coilspringOpenMBV=OpenMBV.ObjectFactory.create_CoilSpring()
 
   def updatelaF(self):
     if self.warnCount==0:
@@ -75,6 +77,9 @@ class PySpringDamperPyScriptInit(mbsim.FrameLink):
       self.updatePlotFeatures()
       if self.getPlotFeature(self.plotRecursive)==self.enabled:
         self.plotColumns.push_back("sin")
+        if self.getPlotFeature(self.openMBV)==self.enabled:
+          self.coilspringOpenMBV.setName(self.name)
+          self.parent.getOpenMBVGrp().addObject(self.coilspringOpenMBV)
         super(PySpringDamperPyScriptInit, self).init(stage)
     else:
       super(PySpringDamperPyScriptInit, self).init(stage)
@@ -82,6 +87,19 @@ class PySpringDamperPyScriptInit(mbsim.FrameLink):
   def plot(self):
     if self.getPlotFeature(self.plotRecursive)==self.enabled:
       self.plotVector.push_back(math.sin(10*self.getTime()))
+      if self.getPlotFeature(self.openMBV)==self.enabled:
+        WrOFromPoint=self.frame[0].evalPosition()
+        WrOToPoint  =self.frame[1].evalPosition()
+        data=[]
+        data.append(self.getTime());
+        data.append(WrOFromPoint[0]+1);
+        data.append(WrOFromPoint[1]);
+        data.append(WrOFromPoint[2]);
+        data.append(WrOToPoint[0]+1);
+        data.append(WrOToPoint[1]);
+        data.append(WrOToPoint[2]);
+        data.append(0.5)
+        self.coilspringOpenMBV.append(data)
       super(PySpringDamperPyScriptInit, self).plot()
 
   @staticmethod

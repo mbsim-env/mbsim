@@ -127,6 +127,9 @@
         <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
           <pyScript>
             self.c=3*c
+            self.coilspringOpenMBV.setNumberOfCoils(5)
+            self.coilspringOpenMBV.setSpringRadius(0.03)
+            self.coilspringOpenMBV.setCrossSectionRadius(0.01)
           </pyScript>
         </PySpringDamperPyScriptInit>
         <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest"/>
