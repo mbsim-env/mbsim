@@ -6,6 +6,7 @@ liblink_la_SOURCES = link.cc\
 		     maxwell_contact.cc\
 		     single_contact.cc\
 		     joint.cc\
+		     elastic_joint.cc\
 		     gear.cc\
 		     spring_damper.cc\
 		     directional_spring_damper.cc\
@@ -33,6 +34,7 @@ linkinclude_HEADERS = link.h\
 		      maxwell_contact.h\
 		      single_contact.h\
 		      joint.h\
+		      elastic_joint.h\
 		      gear.h\
 		      spring_damper.h\
 		      directional_spring_damper.h\

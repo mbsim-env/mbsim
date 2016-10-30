@@ -172,6 +172,8 @@ namespace MBSimGUI {
       return new Gear(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
+      return new ElasticJoint(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Contact")
       return new Contact(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")

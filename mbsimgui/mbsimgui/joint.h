@@ -29,7 +29,6 @@ namespace MBSimGUI {
     friend class JointPropertyDialog;
     public:
     Joint(const std::string &str, Element *parent);
-    ~Joint();
     std::string getType() const { return "Joint"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -37,6 +36,19 @@ namespace MBSimGUI {
     ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
     protected:
     ExtProperty refFrameID, forceDirection, forceLaw, momentDirection, momentLaw, connections, forceArrow, momentArrow;
+  };
+
+  class ElasticJoint : public Link {
+    friend class ElasticJointPropertyDialog;
+    public:
+    ElasticJoint(const std::string &str, Element *parent);
+    std::string getType() const { return "ElasticJoint"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new ElasticJointPropertyDialog(this);}
+    protected:
+    ExtProperty refFrameID, forceDirection, momentDirection, function, connections, forceArrow, momentArrow;
   };
 
 }

@@ -225,6 +225,12 @@ namespace MBSim {
       }
   };
 
+  /**
+   * \return perpendicular vector
+   * \param input vector
+   */
+  fmatvec::Vec3 computeTangential(const fmatvec::Vec3 &n);
+
 }
 
 #endif

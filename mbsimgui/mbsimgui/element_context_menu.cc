@@ -381,6 +381,9 @@ namespace MBSimGUI {
     action = new QAction("Add joint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
     addAction(action);
+    action = new QAction("Add elastic joint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addElasticJoint()));
+    addAction(action);
     action = new QAction("Add contact", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
     addAction(action);
@@ -418,6 +421,10 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addJoint() {
     mw->addLink(new Joint("Joint",element));
+  }
+
+  void LinkContextContextMenu::addElasticJoint() {
+    mw->addLink(new ElasticJoint("ElasticJoint",element));
   }
 
   void LinkContextContextMenu::addContact() {

@@ -63,6 +63,7 @@ namespace MBSimGUI {
   class GeneralizedSpringDamper;
   class GeneralizedLinearElasticConnection;
   class Joint;
+  class ElasticJoint;
   class Contact;
   class Observer;
   class CoordinatesObserver;
@@ -533,6 +534,16 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *refFrameID, *forceDirection, *forceLaw, *momentDirection, *momentLaw, *connections, *forceArrow, *momentArrow;
+  };
+
+  class ElasticJointPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *refFrameID, *forceDirection, *momentDirection, *function, *connections, *forceArrow, *momentArrow;
   };
 
   class ContactPropertyDialog : public LinkPropertyDialog {

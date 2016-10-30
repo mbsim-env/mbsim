@@ -48,7 +48,7 @@ namespace MBSim {
       void setGeneralizedForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
         func=func_;
         func->setParent(this);
-        func->setName("Force");
+        func->setName("GeneralizedForce");
       }
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }

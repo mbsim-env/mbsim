@@ -103,4 +103,23 @@ namespace MBSim {
     return newMat;
   }
 
+  Vec3 computeTangential(const Vec3 &n) {
+    Vec3 t(NONINIT);
+    if(fabs(n(0))+fabs(n(1)) > 1e-12) {
+      t(2)=0;
+      double buf = pow(n(0),2)+pow(n(1),2);
+      buf = 1.0/sqrt(buf);
+      t(0) = n(1)*buf;
+      t(1) = -n(0)*buf;
+    }
+    else {
+      t(0)=0;
+      double buf = pow(n(1),2)+pow(n(2),2);
+      buf = 1.0/sqrt(buf);
+      t(1) = n(2)*buf;
+      t(2) = -n(1)*buf;
+    }
+    return t;
+  }
+
 }

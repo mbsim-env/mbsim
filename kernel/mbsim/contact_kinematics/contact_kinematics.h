@@ -29,12 +29,6 @@ namespace MBSim {
   class ContourFrame;
   class Contour;
 
-  /**
-   * \return perpendicular vector
-   * \param input vector 
-   */	
-  fmatvec::Vec3 computeTangential(const fmatvec::Vec3 &n);
-
   /** 
    * \brief basic class for contact kinematical calculations
    * \author Martin Foerg
@@ -106,4 +100,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_H_ */
-

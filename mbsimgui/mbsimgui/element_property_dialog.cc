@@ -1705,6 +1705,58 @@ namespace MBSimGUI {
     static_cast<Joint*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
+  ElasticJointPropertyDialog::ElasticJointPropertyDialog(ElasticJoint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
+    addTab("Kinetics",1);
+    addTab("Visualisation",2);
+
+    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(0,0,1),true);
+    addToTab("Kinetics", refFrameID);
+
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+    forceDirection = new ExtWidget("Force direction",new ExtPhysicalVarWidget(input),true);
+    addToTab("Kinetics", forceDirection);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+    momentDirection = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
+    addToTab("Kinetics", momentDirection);
+
+    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint)));
+    addToTab("Kinetics", function);
+
+    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,joint));
+    addToTab("Kinetics", connections);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",momentArrow);
+  }
+
+  void ElasticJointPropertyDialog::toWidget(Element *element) {
+    LinkPropertyDialog::toWidget(element);
+    static_cast<ElasticJoint*>(element)->refFrameID.toWidget(refFrameID);
+    static_cast<ElasticJoint*>(element)->forceDirection.toWidget(forceDirection);
+    static_cast<ElasticJoint*>(element)->momentDirection.toWidget(momentDirection);
+    static_cast<ElasticJoint*>(element)->function.toWidget(function);
+    static_cast<ElasticJoint*>(element)->connections.toWidget(connections);
+    static_cast<ElasticJoint*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<ElasticJoint*>(element)->momentArrow.toWidget(momentArrow);
+  }
+
+  void ElasticJointPropertyDialog::fromWidget(Element *element) {
+    LinkPropertyDialog::fromWidget(element);
+    static_cast<ElasticJoint*>(element)->refFrameID.fromWidget(refFrameID);
+    static_cast<ElasticJoint*>(element)->forceDirection.fromWidget(forceDirection);
+    static_cast<ElasticJoint*>(element)->momentDirection.fromWidget(momentDirection);
+    static_cast<ElasticJoint*>(element)->function.fromWidget(function);
+    static_cast<ElasticJoint*>(element)->connections.fromWidget(connections);
+    static_cast<ElasticJoint*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<ElasticJoint*>(element)->momentArrow.fromWidget(momentArrow);
+  }
+
   ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(contact,parent,f) {
 
     addTab("Kinetics",1);

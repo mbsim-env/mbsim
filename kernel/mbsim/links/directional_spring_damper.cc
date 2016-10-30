@@ -44,7 +44,7 @@ namespace MBSim {
   }
 
   void DirectionalSpringDamper::updatePositions(Frame *frame_) {
-    frame_->setPosition(frame[1]->getPosition() - evalGlobalForceDirection()*(evalGlobalForceDirection().T()*evalGlobalRelativePosition()));
+    frame_->setPosition(frame[1]->evalPosition() - evalGlobalForceDirection()*(evalGlobalForceDirection().T()*evalGlobalRelativePosition()));
     frame_->setOrientation(frame[0]->getOrientation());
   }
 

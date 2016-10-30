@@ -181,6 +181,7 @@ namespace MBSimGUI {
       void addGeneralizedSpringDamper();
       void addKineticExcitation();
       void addJoint();
+      void addElasticJoint();
       void addContact();
       void addSignal();
       void addLinearTransferSystem();

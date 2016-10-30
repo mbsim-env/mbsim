@@ -2249,6 +2249,70 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="ElasticJoint" substitutionGroup="FloatingFrameLink" type="ElasticJointType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert ein Gelenk als elastische Verbindung zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="ElasticJointType">
+    <xs:complexContent>
+      <xs:extension base="FloatingFrameLinkType">
+        <xs:sequence>
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="generalizedForceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Bindet zwei Koordinatensysteme an ein Gelenk.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SingleContact" substitutionGroup="ContourLink" type="SingleContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
