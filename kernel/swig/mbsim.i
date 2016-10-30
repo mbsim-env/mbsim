@@ -20,12 +20,12 @@
 
 // wrap some std::vector<...> types used by the above wrapped classes
 %include "std_vector.i"
-%template() std::vector<MBSim::Element*>;
-%template() std::vector<double>;
-%template() std::vector<std::string>;
-%template() std::vector<fmatvec::Mat>;
-%template() std::vector<fmatvec::Vec>;
-%template() std::vector<MBSim::Frame*>;
+%template(VectorElement) std::vector<MBSim::Element*>;
+%template(VectorDouble)  std::vector<double>;
+%template(VectorString)  std::vector<std::string>;
+//MFMF%template(VectorMat)     std::vector<fmatvec::Mat>;
+//MFMF%template(VectorVec)     std::vector<fmatvec::Vec>;
+%template(VectorFrame)   std::vector<MBSim::Frame*>;
 //MFMF wrap Frame
 //MFMF wrap DSS
 
