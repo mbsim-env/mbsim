@@ -23,7 +23,6 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
 #include <mbsim/constitutive_laws/generalized_force_law.h>
-#include <mbsim/constitutive_laws/generalized_impact_law.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objects/rigid_body.h>
 

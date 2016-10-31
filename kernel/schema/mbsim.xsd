@@ -1960,13 +1960,13 @@
     <xs:complexContent>
       <xs:extension base="RigidBodyLinkType">
         <xs:sequence>
-          <xs:element name="generalizedForceFunction" minOccurs="0">
+          <xs:element name="generalizedForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function"/>
+                <xs:element ref="GeneralizedForceLaw"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -2020,13 +2020,13 @@
     <xs:complexContent>
       <xs:extension base="RigidBodyLinkType">
         <xs:sequence>
-          <xs:element name="generalizedForceFunction">
+          <xs:element name="generalizedForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function"/>
+                <xs:element ref="GeneralizedForceLaw"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

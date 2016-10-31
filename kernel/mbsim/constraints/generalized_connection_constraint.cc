@@ -19,6 +19,7 @@
 #include <config.h>
 #include "mbsim/constraints/generalized_connection_constraint.h"
 #include "mbsim/links/generalized_connection.h"
+#include <mbsim/constitutive_laws/bilateral_constraint.h>
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/objectfactory.h"
@@ -98,6 +99,7 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(connection);
     connection->setRigidBodyFirstSide(bi);
     connection->setRigidBodySecondSide(bd);
+    connection->setGeneralizedForceLaw(new BilateralConstraint);
     if(FArrow)
       connection->setOpenMBVForce(FArrow);
     if(MArrow)

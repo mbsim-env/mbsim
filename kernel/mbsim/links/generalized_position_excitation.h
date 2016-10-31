@@ -21,6 +21,7 @@
 #define _GENERALIZED_POSITION_EXCITATION_H_
 
 #include "mbsim/links/kinematic_excitation.h"
+#include "mbsim/functions/function.h"
 
 namespace MBSim {
 

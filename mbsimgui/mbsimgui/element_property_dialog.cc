@@ -1558,15 +1558,11 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(constraint)),true);
+    function = new ExtWidget("Generalized force law",new GeneralizedForceLawChoiceWidget);
     addToTab("Kinetics", function);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
     addToTab("General", dependentBody);
-
-    //  independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
-    //  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
-    //  addToTab("General", independentBodies);
 
     independentBodies = new ExtWidget("Transmissions",new ListWidget(new GearConstraintWidgetFactory(constraint,0),"Transmission"));
     addToTab("General",independentBodies);

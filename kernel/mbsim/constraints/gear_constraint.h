@@ -20,7 +20,6 @@
 #define _GEAR_CONSTRAINT_H
 
 #include "mbsim/constraints/constraint.h"
-#include "mbsim/links/gear.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -31,6 +30,7 @@ namespace MBSim {
 
   class RigidBody;
   class Frame;
+  class Transmission;
 
   class GearConstraint : public Constraint {
 

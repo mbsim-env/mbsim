@@ -33,9 +33,9 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Gear::Gear(const string &str, Element *parent) : RigidBodyLink(str, parent), function(0,false), gearForceArrow(0,false), gearMomentArrow(0,false) {
+  Gear::Gear(const string &str, Element *parent) : RigidBodyLink(str, parent), gearForceArrow(0,false), gearMomentArrow(0,false) {
 
-    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
+    function.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"generalizedForceLaw"));
 
     dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 

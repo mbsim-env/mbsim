@@ -19,8 +19,9 @@
 
 #include <config.h>
 #include "mbsim/links/generalized_connection.h"
+#include <mbsim/constitutive_laws/generalized_force_law.h>
+#include <mbsim/constitutive_laws/bilateral_impact.h>
 #include "mbsim/objects/rigid_body.h"
-#include <openmbvcppinterface/group.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -31,20 +32,30 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedConnection, MBSIM%"GeneralizedConnection")
 
-  GeneralizedConnection::GeneralizedConnection(const string &name) : RigidBodyLink(name), func(0) {
+  GeneralizedConnection::GeneralizedConnection(const string &name) : RigidBodyLink(name), fl(NULL), il(NULL) {
     body[0] = NULL;
     body[1] = NULL;
   }
 
   GeneralizedConnection::~GeneralizedConnection() {
-    if(func) delete func;
+    delete fl;
+    if(il) delete il;
+  }
+
+  bool GeneralizedConnection::isSetValued() const {
+    return fl->isSetValued();
+  }
+
+  void GeneralizedConnection::setGeneralizedForceLaw(GeneralizedForceLaw * fl_) {
+    fl=fl_;
+    fl->setParent(this);
   }
 
   void GeneralizedConnection::updateGeneralizedForces() {
-    if(func)
-      lambda(0) = -(*func)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
-    else
+    if(isSetValued())
       lambda = la;
+    else
+      lambda(0) = (*fl)(evalGeneralizedRelativePosition()(0),evalGeneralizedRelativeVelocity()(0));
     updla = false;
   }
 
@@ -70,17 +81,24 @@ namespace MBSim {
       ratio[ratio.size()-1] = 1;
       RigidBodyLink::init(stage);
     }
+    else if(stage==unknownStage) {
+      if(fl->isSetValued()) {
+        il = new BilateralImpact;
+        il->setParent(this);
+      }
+      RigidBodyLink::init(stage);
+    }
     else {
       RigidBodyLink::init(stage);
     }
-    if(func) func->init(stage);
+    if(fl) fl->init(stage);
+    if(il) il->init(stage);
   }
 
   void GeneralizedConnection::initializeUsingXML(DOMElement* element) {
     RigidBodyLink::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
-    setGeneralizedForceFunction(f);
+    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceLaw");
+    setGeneralizedForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
     if(e) saved_body1=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");

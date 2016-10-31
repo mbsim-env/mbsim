@@ -21,9 +21,11 @@
 #define _GEAR_H_
 
 #include "mbsim/links/rigid_body_link.h"
-#include "mbsim/functions/function.h"
 
 namespace MBSim {
+
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
 
   struct Transmission {
     Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
@@ -33,11 +35,13 @@ namespace MBSim {
 
   class Gear : public RigidBodyLink {
     protected:
-      Function<double(double,double)> *func;
+      GeneralizedForceLaw *fl;
+      GeneralizedImpactLaw *il;
       std::string saved_DependentBody;
       std::vector<std::string> saved_IndependentBody;
     public:
       Gear(const std::string &name="");
+      ~Gear();
       void updateGeneralizedForces();
       void setDependentRigidBody(RigidBody* body_) {body[0] = body_;}
       void addTransmission(const Transmission &transmission);
@@ -46,14 +50,10 @@ namespace MBSim {
       bool gActiveChanged() { return false; }
       std::string getType() const { return "Gear"; }
       void init(InitStage stage);
-      bool isSetValued() const { return func?false:true; }
+      bool isSetValued() const;
       bool isSingleValued() const { return not(isSetValued()); }
 
-      void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
-        func=func_;
-        func->setParent(this);
-        func->setName("GeneralizedForce");
-      }
+      void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
 
       void initializeUsingXML(xercesc::DOMElement * element);
   };

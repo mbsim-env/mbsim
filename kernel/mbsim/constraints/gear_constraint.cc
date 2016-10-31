@@ -18,6 +18,8 @@
 
 #include <config.h>
 #include "mbsim/constraints/gear_constraint.h"
+#include "mbsim/links/gear.h"
+#include <mbsim/constitutive_laws/bilateral_constraint.h>
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/objectfactory.h"
@@ -115,6 +117,7 @@ namespace MBSim {
     gear->setDependentRigidBody(bd);
     for(unsigned int i=0; i<bi.size(); i++)
       gear->addTransmission(Transmission(bi[i],ratio[i]));
+    gear->setGeneralizedForceLaw(new BilateralConstraint);
     if(FArrow)
       gear->setOpenMBVForce(FArrow);
     if(MArrow)

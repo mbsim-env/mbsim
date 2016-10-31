@@ -21,13 +21,16 @@
 #define _GENERALIZED_CONNECTION_H_
 
 #include "mbsim/links/rigid_body_link.h"
-#include "mbsim/functions/function.h"
 
 namespace MBSim {
 
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
+
   class GeneralizedConnection : public RigidBodyLink {
     protected:
-      Function<double(double,double)> *func;
+      GeneralizedForceLaw *fl;
+      GeneralizedImpactLaw *il;
       RigidBody *body[2];
     public:
       GeneralizedConnection(const std::string &name="");
@@ -38,14 +41,10 @@ namespace MBSim {
       bool gActiveChanged() { return false; }
       std::string getType() const { return "GeneralizedConnection"; }
       void init(InitStage stage);
-      bool isSetValued() const { return func?false:true; }
+      bool isSetValued() const;
       bool isSingleValued() const { return not(isSetValued()); }
 
-      void setGeneralizedForceFunction(Function<double(double,double)> *func_) {
-        func=func_;
-        func->setParent(this);
-        func->setName("GeneralizedForce");
-      }
+      void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
 
       void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
       void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
