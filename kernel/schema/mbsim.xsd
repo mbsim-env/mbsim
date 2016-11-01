@@ -1085,7 +1085,33 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="KinematicConstraint" substitutionGroup="Constraint" type="KinematicConstraintType">
+  <xs:element name="GeneralizedConstraint" abstract="true" substitutionGroup="Constraint" type="GeneralizedConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kinematische Zwangsbedingungen für generalisierte Koordinaten.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedConstraintType">
+    <xs:complexContent>
+      <xs:extension base="ConstraintType">
+        <xs:sequence>
+          <xs:element name="supportFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert das KOS an dem die Stützkraft und das Stützmoment eingeleitet werden.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="KinematicConstraint" substitutionGroup="GeneralizedConstraint" type="KinematicConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1095,7 +1121,7 @@
   </xs:element>
   <xs:complexType name="KinematicConstraintType">
     <xs:complexContent>
-      <xs:extension base="ConstraintType">
+      <xs:extension base="GeneralizedConstraintType">
         <xs:sequence>
           <xs:element name="dependentRigidBody">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1289,7 +1315,7 @@
     </xs:sequence>
   </xs:complexType> 
 
-  <xs:element name="GearConstraint" substitutionGroup="Constraint" type="GearConstraintType">
+  <xs:element name="GearConstraint" substitutionGroup="GeneralizedConstraint" type="GearConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1299,7 +1325,7 @@
   </xs:element>
   <xs:complexType name="GearConstraintType">
     <xs:complexContent>
-      <xs:extension base="ConstraintType">
+      <xs:extension base="GeneralizedConstraintType">
         <xs:sequence>
           <xs:element name="dependentRigidBody">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1468,7 +1494,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="GeneralizedConnectionConstraint" substitutionGroup="Constraint" type="GeneralizedConnectionConstraintType">
+  <xs:element name="GeneralizedConnectionConstraint" substitutionGroup="GeneralizedConstraint" type="GeneralizedConnectionConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
       tbd
@@ -1477,7 +1503,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedConnectionConstraintType">
     <xs:complexContent>
-      <xs:extension base="ConstraintType">
+      <xs:extension base="GeneralizedConstraintType">
         <xs:sequence>
           <xs:element name="dependentRigidBody">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">

@@ -924,7 +924,23 @@ namespace MBSimGUI {
   ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(constraint,parent,f) {
   }
 
-  GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
+  GeneralizedConstraintPropertyDialog::GeneralizedConstraintPropertyDialog(GeneralizedConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
+
+    support = new ExtWidget("Support frame",new FrameOfReferenceWidget(constraint,0),true);
+    addToTab("General",support);
+  }
+
+  void GeneralizedConstraintPropertyDialog::toWidget(Element *element) {
+    ConstraintPropertyDialog::toWidget(element);
+    static_cast<GeneralizedConstraint*>(element)->support.toWidget(support);
+  }
+
+  void GeneralizedConstraintPropertyDialog::fromWidget(Element *element) {
+    ConstraintPropertyDialog::fromWidget(element);
+    static_cast<GeneralizedConstraint*>(element)->support.fromWidget(support);
+  }
+
+  GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedConstraintPropertyDialog(constraint,parent,f) {
     addTab("Visualisation",1);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
@@ -943,7 +959,7 @@ namespace MBSimGUI {
   }
 
   void GearConstraintPropertyDialog::toWidget(Element *element) {
-    ConstraintPropertyDialog::toWidget(element);
+    GeneralizedConstraintPropertyDialog::toWidget(element);
     static_cast<GearConstraint*>(element)->dependentBody.toWidget(dependentBody);
     static_cast<GearConstraint*>(element)->independentBodies.toWidget(independentBodies);
     static_cast<GearConstraint*>(element)->gearForceArrow.toWidget(gearForceArrow);
@@ -951,7 +967,7 @@ namespace MBSimGUI {
   }
 
   void GearConstraintPropertyDialog::fromWidget(Element *element) {
-    ConstraintPropertyDialog::fromWidget(element);
+    GeneralizedConstraintPropertyDialog::fromWidget(element);
     RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GearConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
     if(body)
       body->setConstrained(false);
@@ -964,7 +980,7 @@ namespace MBSimGUI {
       body->setConstrained(true);
   }
 
-  KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
+  KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedConstraintPropertyDialog(constraint,parent,f) {
     addTab("Visualisation",1);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
@@ -978,7 +994,7 @@ namespace MBSimGUI {
   }
 
   void KinematicConstraintPropertyDialog::toWidget(Element *element) {
-    ConstraintPropertyDialog::toWidget(element);
+    GeneralizedConstraintPropertyDialog::toWidget(element);
     dependentBody->getWidget()->blockSignals(true);
     static_cast<KinematicConstraint*>(element)->dependentBody.toWidget(dependentBody);
     dependentBody->getWidget()->blockSignals(false);
@@ -987,7 +1003,7 @@ namespace MBSimGUI {
   }
 
   void KinematicConstraintPropertyDialog::fromWidget(Element *element) {
-    ConstraintPropertyDialog::fromWidget(element);
+    GeneralizedConstraintPropertyDialog::fromWidget(element);
     RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<KinematicConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
     if(body)
       body->setConstrained(false);
@@ -1224,7 +1240,7 @@ namespace MBSimGUI {
     static_cast<JointConstraint*>(element)->q0.fromWidget(q0);
   }
 
-  GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
+  GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : GeneralizedConstraintPropertyDialog(constraint,parent,f) {
     addTab("Visualisation",1);
 
     dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
@@ -1243,7 +1259,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedConnectionConstraintPropertyDialog::toWidget(Element *element) {
-    ConstraintPropertyDialog::toWidget(element);
+    GeneralizedConstraintPropertyDialog::toWidget(element);
     static_cast<GeneralizedConnectionConstraint*>(element)->dependentBody.toWidget(dependentBody);
     static_cast<GeneralizedConnectionConstraint*>(element)->independentBody.toWidget(independentBody);
     static_cast<GeneralizedConnectionConstraint*>(element)->forceArrow.toWidget(forceArrow);
@@ -1251,7 +1267,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedConnectionConstraintPropertyDialog::fromWidget(Element *element) {
-    ConstraintPropertyDialog::fromWidget(element);
+    GeneralizedConstraintPropertyDialog::fromWidget(element);
     RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GeneralizedConnectionConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
     if(body)
       body->setConstrained(false);

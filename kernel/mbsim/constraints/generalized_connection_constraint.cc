@@ -37,7 +37,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedConnectionConstraint, MBSIM%"GeneralizedConnectionConstraint")
 
-  GeneralizedConnectionConstraint::GeneralizedConnectionConstraint(const std::string &name) : Constraint(name), bi(NULL), bd(NULL) {
+  GeneralizedConnectionConstraint::GeneralizedConnectionConstraint(const std::string &name) : GeneralizedConstraint(name), bi(NULL), bd(NULL) {
   }
 
   void GeneralizedConnectionConstraint::init(InitStage stage) {
@@ -46,15 +46,15 @@ namespace MBSim {
         setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
       if (saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
       bd->addDependency(this);
       addDependency(bi);
     }
     else
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
   }
 
   void GeneralizedConnectionConstraint::updateGeneralizedCoordinates() {
@@ -72,7 +72,7 @@ namespace MBSim {
   }
 
   void GeneralizedConnectionConstraint::initializeUsingXML(DOMElement* element) {
-    Constraint::initializeUsingXML(element);
+    GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");
@@ -100,6 +100,7 @@ namespace MBSim {
     connection->setRigidBodyFirstSide(bi);
     connection->setRigidBodySecondSide(bd);
     connection->setGeneralizedForceLaw(new BilateralConstraint);
+    connection->setSupportFrame(support);
     if(FArrow)
       connection->setOpenMBVForce(FArrow);
     if(MArrow)

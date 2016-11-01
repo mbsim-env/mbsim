@@ -36,7 +36,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
 
-  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL) {
+  GearConstraint::GearConstraint(const std::string &name) : GeneralizedConstraint(name), bd(NULL) {
   }
 
   void GearConstraint::init(InitStage stage) {
@@ -47,16 +47,16 @@ namespace MBSim {
         for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
           bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
       }
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
       bd->addDependency(this);
       for(unsigned int i=0; i<bi.size(); i++)
         addDependency(bi[i]);
     }
     else
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
   }
 
   void GearConstraint::addTransmission(const Transmission &transmission) {
@@ -83,7 +83,7 @@ namespace MBSim {
   }
 
   void GearConstraint::initializeUsingXML(DOMElement* element) {
-    Constraint::initializeUsingXML(element);
+    GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e, *ee;
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");
@@ -117,6 +117,7 @@ namespace MBSim {
     for(unsigned int i=0; i<bi.size(); i++)
       gear->addTransmission(Transmission(bi[i],ratio[i]));
     gear->setGeneralizedForceLaw(new BilateralConstraint);
+    gear->setSupportFrame(support);
     if(FArrow)
       gear->setOpenMBVForce(FArrow);
     if(MArrow)

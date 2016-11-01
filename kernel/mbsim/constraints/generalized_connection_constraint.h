@@ -19,7 +19,7 @@
 #ifndef _GENERALIZED_CONNECTION_CONSTRAINT_H
 #define _GENERALIZED_CONNECTION_CONSTRAINT_H
 
-#include "mbsim/constraints/constraint.h"
+#include "mbsim/constraints/generalized_constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -31,7 +31,7 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class GeneralizedConnectionConstraint : public Constraint {
+  class GeneralizedConnectionConstraint : public GeneralizedConstraint {
 
     public:
       GeneralizedConnectionConstraint(const std::string &name="");

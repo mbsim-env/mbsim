@@ -61,6 +61,7 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     ke->setDependentRigidBody(bd);
     ke->setExcitationFunction(f);
+    ke->setSupportFrame(support);
     if(FArrow)
       ke->setOpenMBVForce(FArrow);
     if(MArrow)

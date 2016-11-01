@@ -46,6 +46,7 @@ namespace MBSimGUI {
   class RigidBody;
   class FlexibleBodyFFR;
   class Constraint;
+  class GeneralizedConstraint;
   class GearConstraint;
   class KinematicConstraint;
   class GeneralizedPositionConstraint;
@@ -336,7 +337,17 @@ namespace MBSimGUI {
       ConstraintPropertyDialog(Constraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
+  class GeneralizedConstraintPropertyDialog : public ConstraintPropertyDialog {
+
+    public:
+      GeneralizedConstraintPropertyDialog(GeneralizedConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *support;
+  };
+
+  class GearConstraintPropertyDialog : public GeneralizedConstraintPropertyDialog {
 
     public:
       GearConstraintPropertyDialog(GearConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -346,7 +357,7 @@ namespace MBSimGUI {
       ExtWidget *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
   };
 
-  class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
+  class KinematicConstraintPropertyDialog : public GeneralizedConstraintPropertyDialog {
 
     public:
       KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -411,7 +422,7 @@ namespace MBSimGUI {
       void resizeVariables();
   };
 
-  class GeneralizedConnectionConstraintPropertyDialog : public ConstraintPropertyDialog {
+  class GeneralizedConnectionConstraintPropertyDialog : public GeneralizedConstraintPropertyDialog {
 
     public:
       GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
