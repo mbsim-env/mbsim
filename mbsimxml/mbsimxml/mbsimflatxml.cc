@@ -53,7 +53,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
 #if MBSIMXML_COND_PYTHON
   initializePython((getInstallPath()/"bin"/"mbsimflatxml").string());
   PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
-  // add bin to pyhton search path
+  // add bin to python search path
   PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
   CALLPY(PyList_Append, pyPath, pyBinPath);
 #endif

@@ -37,7 +37,7 @@
                 <xs:complexType>
                   <xs:attribute name="moduleName" type="xs:string" use="required">
                     <xs:annotation><xs:documentation xml:lang="en" xmlns="">
-                      Name of the Pyhton module
+                      Name of the Python module
                     </xs:documentation></xs:annotation>
                   </xs:attribute>
                   <xs:attribute name="location" type="xs:anyURI" use="required">

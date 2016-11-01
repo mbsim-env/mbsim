@@ -2,7 +2,7 @@
 
 // check target language
 #ifndef SWIGPYTHON
-  #error "Only Pyhton as target language is supported."
+  #error "Only Python as target language is supported."
 #endif
 
 %{
