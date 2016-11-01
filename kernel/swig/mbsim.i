@@ -276,7 +276,8 @@ def pyScriptInitializeUsingXML(self, e, className):
   import re
   import numpy
   super(className, self).initializeUsingXML(e)
-  code=e.find("{"+_getNSOf(className.__module__)+"}"+"pyScript").text
+  pys=e.find("{"+_getNSOf(className.__module__)+"}"+"pyScript")
+  code=pys.text
   # fix python indentation
   lines=code.split("\n") # split to a vector of lines
   indent=-1
@@ -330,7 +331,7 @@ def pyScriptInitializeUsingXML(self, e, className):
     # add parameter to dict globas
     globals[m.group(1)]=value
   # execute the python script using all variables of the preprocessor
-  globals['self']=self # add self to list of variables
+  globals[pys.attrib['objName']]=self # add self to list of variables (under the name ob the objName attribute)
   exec(code, globals)
 
 # XML namespace of this module (prefixed with { and postfixed with })

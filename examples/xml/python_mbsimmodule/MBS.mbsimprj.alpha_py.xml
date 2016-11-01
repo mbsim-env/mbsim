@@ -125,11 +125,11 @@
           <stiffness>3*c</stiffness>
         </PySpringDamperXMLInit>
         <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
-          <pyScript>
-            self.c=3*c
-            self.coilspringOpenMBV.setNumberOfCoils(5)
-            self.coilspringOpenMBV.setSpringRadius(0.03)
-            self.coilspringOpenMBV.setCrossSectionRadius(0.01)
+          <pyScript objName="self_x">
+            self_x.c=3*c
+            self_x.coilspringOpenMBV.setNumberOfCoils(5)
+            self_x.coilspringOpenMBV.setSpringRadius(0.03)
+            self_x.coilspringOpenMBV.setCrossSectionRadius(0.01)
           </pyScript>
         </PySpringDamperPyScriptInit>
         <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest"/>
