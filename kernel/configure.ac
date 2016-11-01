@@ -24,7 +24,8 @@ CXXFLAGS="$CXXFLAGS -std=c++11 -D_USE_MATH_DEFINES"
 AC_C_CONST
 
 requires="fmatvec hdf5serie mbxmlutilshelper"
-PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilshelper)
+PKG_CHECK_MODULES(FMATVEC, fmatvec >= 1.0.1) # only fmatvec
+PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilshelper) # all deps
 
 AC_SUBST([requires])
 

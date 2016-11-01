@@ -1,10 +1,8 @@
 %module(directors="1", allprotected="1") mymod
 
 // include fmatvec conversions
-%include fmatvec.i
-
-// use SWIG_exception to throw a target language exception
-%include exception.i
+%include fmatvec_include.i
+%import fmatvec.i
 
 // convert c++ exceptions in function calls to target language exceptions
 %exception {

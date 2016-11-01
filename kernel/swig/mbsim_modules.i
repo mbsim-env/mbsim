@@ -115,7 +115,8 @@ void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
 
 
 // include fmatvec wrapping
-%include "fmatvec.i"
+%include "fmatvec_include.i"
+%import fmatvec.i
 
 // create directors for everything
 %feature("director");
