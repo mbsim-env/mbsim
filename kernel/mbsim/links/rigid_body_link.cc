@@ -214,6 +214,8 @@ namespace MBSim {
         h[1].push_back(Vec(6));
         W[0].push_back(Mat(support->gethSize(),laSize));
         W[1].push_back(Mat(6,laSize));
+        V[0].push_back(Mat(support->gethSize(),laSize));
+        V[1].push_back(Mat(6,laSize));
       }
     }
     else if(stage==plotting) {
