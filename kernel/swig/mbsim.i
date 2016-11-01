@@ -9,8 +9,29 @@
   WRAPPED_CLASS(MBXMLUtils::FQN)
 #endif
 
+
+// BEGIN: The following code block is special to MBSim kernel this is not required by any .i file for a MBSim module
+
 // include the general mbsim SWIG configuration (used by all MBSim modules)
-%include "mbsim_modules.i"
+%include "mbsim_include.i"
+%import fmatvec.i
+
+%typemap(directorin) xercesc::DOMElement* %{
+  MapPyXercesDOMElement mapPyXercesDOMElement$argnum;
+  _typemapDirectorinDOMElement($1, $input, mapPyXercesDOMElement$argnum);
+%}
+
+%typemap(in) xercesc::DOMElement* {
+  try {
+    _typemapInDOMElement($1, $input);
+  }
+  FMATVEC_CATCHARG
+}
+
+// create directors for everything
+%feature("director");
+
+// END: The following code block is special to MBSim kernel this is not required by any .i file for a MBSim module
 
 // includes needed in the generated swig c++ code
 %{
@@ -21,9 +42,7 @@
 
 // wrap some std::vector<...> types used by the above wrapped classes
 %ignore swigignore;
-%include "std_vector.i"
 %template(VectorElement) std::vector<MBSim::Element*>;
-%template(VectorDouble)  std::vector<double>;
 %template(VectorString)  std::vector<std::string>;
 //MFMF%template(VectorMat)     std::vector<fmatvec::Mat>;
 //MFMF%template(VectorVec)     std::vector<fmatvec::Vec>;
@@ -35,7 +54,6 @@
 %include "mbsim/links/link.h"
 %include "mbsim/links/frame_link.h"
 %include "mbsim/frames/frame.h"
-//MFMF wrap DSS
 
 
 
@@ -46,7 +64,31 @@
 // The following code is special to MBSim kernel this is not required by any .i file for a MBSim module //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// disable warning 473
+#pragma SWIG nowarn=SWIGWARN_TYPEMAP_DIRECTOROUT_PTR
 
+%import openmbvcppinterface/OpenMBV.i
+
+
+// wrap python error to c++ exception
+%feature("director:except") %{
+  _directorExcept($error);
+%}
+
+// wrap c++ exception to python error
+%exception %{
+  try {
+    $action
+  }
+  catch(const std::exception &e) {
+    PyErr_SetString(PyExc_MemoryError, e.what());
+    SWIG_fail;
+  }
+  catch(...) {
+    PyErr_SetString(PyExc_MemoryError, "Unknown c++ exception");
+    SWIG_fail;
+  }
+%}
 
 // includes needed in the generated swig c++ code
 %{

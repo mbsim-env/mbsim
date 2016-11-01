@@ -3,9 +3,7 @@
   #error "Only Python as target language is supported."
 #endif
 
-// disable warning 473
-#pragma SWIG nowarn=SWIGWARN_TYPEMAP_DIRECTOROUT_PTR
-
+%include openmbvcppinterface/OpenMBV_include.i
 
 
 // add code to the generated code
@@ -116,38 +114,3 @@ void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
 
 // include fmatvec wrapping
 %include "fmatvec_include.i"
-%import fmatvec.i
-
-// create directors for everything
-%feature("director");
-
-// wrap python error to c++ exception
-%feature("director:except") %{
-  _directorExcept($error);
-%}
-// wrap c++ exception to python error
-%exception %{
-  try {
-    $action
-  }
-  catch(const std::exception &e) {
-    PyErr_SetString(PyExc_MemoryError, e.what());
-    SWIG_fail;
-  }
-  catch(...) {
-    PyErr_SetString(PyExc_MemoryError, "Unknown c++ exception");
-    SWIG_fail;
-  }
-%}
-
-%typemap(directorin) xercesc::DOMElement* %{
-  MapPyXercesDOMElement mapPyXercesDOMElement$argnum;
-  _typemapDirectorinDOMElement($1, $input, mapPyXercesDOMElement$argnum);
-%}
-
-%typemap(in) xercesc::DOMElement* {
-  try {
-    _typemapInDOMElement($1, $input);
-  }
-  FMATVEC_CATCHARG
-}

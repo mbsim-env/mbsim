@@ -15,10 +15,10 @@ fmatvec_swig_python.cc: $(srcdir)/fmatvec.i
 	$(swig) -python -MD -Werror -builtin -c++ -o fmatvec_swig_python.cc $(FMATVEC_CFLAGS) $(srcdir)/fmatvec.i || (rm -f fmatvec_swig_python.cc; exit 1)
 
 mbsim_swig_python.cc: $(srcdir)/mbsim.i $(top_srcdir)/mbsim/objects/*.h
-	$(swig) -Dprotected=public $(DEFINES) $(openmbv_compilerflag) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MD -Werror -builtin -c++ -o mbsim_swig_python.cc -I$(top_srcdir) $(DEPS_CFLAGS) $(srcdir)/mbsim.i > swig.stdout || (rm -f mbsim_swig_python.cc; exit 1)
+	$(swig) -Dprotected=public $(DEFINES) $(openmbv_compilerflag) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MD -Werror -builtin -c++ -o mbsim_swig_python.cc -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/mbsim.i > swig.stdout || (rm -f mbsim_swig_python.cc; exit 1)
 	@echo BEGIN: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
 	@sed -nre "3,\$$s/(.*)/WRAPPED_CLASS(\1)/p" swig.stdout | sed -re "s/<\(/</g;s/\)>/>/g;s/<p\./</g" | grep -v ".*(.*(" > swig.wrapped_classes || (echo ERROR; exit 0)
-	@$(swig) -Dprotected=public $(DEFINES) $(openmbv_compilerflag) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -DSHOW_UNWRAPPED_CLASSES=swig.wrapped_classes -python -MD -Werror -builtin -c++ -o dummy.cpp -I$(top_srcdir) $(DEPS_CFLAGS) $(srcdir)/mbsim.i 2>&1 | sed -nre "s/.*: Warning 901: //p" | sort | uniq || (echo ERROR; exit 0)
+	@$(swig) -Dprotected=public $(DEFINES) $(openmbv_compilerflag) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -DSHOW_UNWRAPPED_CLASSES=swig.wrapped_classes -python -MD -Werror -builtin -c++ -o dummy.cpp -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/mbsim.i 2>&1 | sed -nre "s/.*: Warning 901: //p" | sort | uniq || (echo ERROR; exit 0)
 	@echo END: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
 
 -include fmatvec_swig_python.d
@@ -41,7 +41,7 @@ _mbsim_la_CPPFLAGS = -Dprotected=public $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEP
 _mbsim_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
 
 swigdir = $(datadir)/mbsim
-swig_DATA = fmatvec.i fmatvec_include.i mbsim.i mbsim_modules.i showUnwrappedClasses.i
+swig_DATA = fmatvec.i fmatvec_include.i mbsim.i mbsim_include.i showUnwrappedClasses.i
 
 install-exec-hook: fmatvec.py mbsim.py
 	$(MKDIR_P) $(swigdir)
