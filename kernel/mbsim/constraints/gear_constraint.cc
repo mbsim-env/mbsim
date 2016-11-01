@@ -18,7 +18,6 @@
 
 #include <config.h>
 #include "mbsim/constraints/gear_constraint.h"
-#include "mbsim/links/gear.h"
 #include <mbsim/constitutive_laws/bilateral_constraint.h>
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/dynamic_system.h"
@@ -37,7 +36,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
 
-  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
+  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL) {
   }
 
   void GearConstraint::init(InitStage stage) {
