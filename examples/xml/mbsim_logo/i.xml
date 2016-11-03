@@ -97,6 +97,7 @@
   </objects>
   <links>
     <Joint name="Joint0" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../../Object[Carrier]/Frame[Fi]" ref2="../Object[S1]/Frame[F1]"/>
       <momentDirection>[0; 0; 1]</momentDirection>
       <momentLaw>
         <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
@@ -108,7 +109,6 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
-      <connect ref1="../../Object[Carrier]/Frame[Fi]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
     <Contact name="Contact" xmlns="http://www.mbsim-env.de/MBSim">
       <normalForceLaw>

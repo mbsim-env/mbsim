@@ -1571,7 +1571,43 @@
   </xs:element>
   <xs:complexType name="FloatingFrameLinkType">
     <xs:complexContent>
-      <xs:extension base="LinkType"/>
+      <xs:extension base="LinkType">
+        <xs:sequence>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+                Bei inneren Kräften und Momenten können alternativ die KOS beider Schnittufer angegeben werden.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" default="../Frame[I]"/>
+              <xs:attribute name="ref2" type="FrameReferenceType"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Gibt an, in welchem Koordinatensystem der Kraft- und Momentvektor dargestellt ist. 0 definiert den unter ref1 und 1 den unter
+              ref2 angegebenen Frame.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
@@ -1619,13 +1655,6 @@
     <xs:complexContent>
       <xs:extension base="FloatingFrameLinkType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn zwei Angriffspunkte angegeben sind definiert 0 den unter ref1 angegebenen Frame und 1 den unter
-              ref2 angegebenen Frame. Wenn nur ein Angriffspunkt angegeben ist definiert 0 das global Referenzsystem /Frame[I]
-              und 1 den unter ref angegebenen Frame.
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:sequence minOccurs="0">
             <xs:element name="forceDirection" type="pv:nounitMatrix">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1666,34 +1695,6 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
-                muss dabei ein KOS des entsprechenden Körpers angegeben werden. 
-                Bei inneren Kräften und Momenten können alternativ die KOS beider Schnittufer angegeben werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType"/>
-              <xs:attribute name="ref1" type="FrameReferenceType"/>
-              <xs:attribute name="ref2" type="FrameReferenceType"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1806,30 +1807,12 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
-                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
           <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVCoilSpringParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence>
@@ -2206,11 +2189,6 @@
     <xs:complexContent>
       <xs:extension base="FloatingFrameLinkType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-               tbd
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:sequence minOccurs="0">
             <xs:element name="forceDirection" type="pv:nounitMatrix">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2245,31 +2223,6 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Bindet zwei Koordinatensysteme an ein Gelenk. 
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2284,11 +2237,6 @@
     <xs:complexContent>
       <xs:extension base="FloatingFrameLinkType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-               tbd
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
@@ -2307,31 +2255,6 @@
               <xs:sequence>
                 <xs:element ref="Function"/>
               </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Bindet zwei Koordinatensysteme an ein Gelenk.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

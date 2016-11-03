@@ -51,6 +51,7 @@
       <c:direction>[0;1;0]</c:direction>
     </c:AbsoluteVelocitySensor>
     <Joint name="Sensor">
+      <connect ref1="../Group[ChainTensioner]/Object[Piston]/Frame[Top]" ref2="../Object[KinematicExcitation]/Frame[C]"/>
       <forceDirection>[0;1;0]</forceDirection>
       <forceLaw>
         <RegularizedBilateralConstraint>
@@ -62,7 +63,6 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </forceLaw>
-      <connect ref1="../Group[ChainTensioner]/Object[Piston]/Frame[Top]" ref2="../Object[KinematicExcitation]/Frame[C]"/>
     </Joint>
   </links>
   <environments>

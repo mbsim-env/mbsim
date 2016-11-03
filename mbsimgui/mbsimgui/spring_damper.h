@@ -29,7 +29,6 @@ namespace MBSimGUI {
     friend class SpringDamperPropertyDialog;
     public:
     SpringDamper(const std::string &str, Element *element);
-    ~SpringDamper();
     std::string getType() const { return "SpringDamper"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -39,29 +38,25 @@ namespace MBSimGUI {
     ExtProperty forceFunction, unloadedLength, connections, coilSpring, forceArrow;
   };
 
-  class DirectionalSpringDamper : public Link {
+  class DirectionalSpringDamper : public FloatingFrameLink {
     friend class DirectionalSpringDamperPropertyDialog;
     public:
     DirectionalSpringDamper(const std::string &str, Element *element);
-    ~DirectionalSpringDamper();
     std::string getType() const { return "DirectionalSpringDamper"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new DirectionalSpringDamperPropertyDialog(this);}
     protected:
-    ExtProperty forceDirection, unloadedLength, forceFunction, connections, coilSpring, forceArrow;
+    ExtProperty forceDirection, unloadedLength, forceFunction, coilSpring;
   };
 
   class GeneralizedSpringDamper : public RigidBodyLink {
     friend class GeneralizedSpringDamperPropertyDialog;
     public:
     GeneralizedSpringDamper(const std::string &str, Element *element);
-    ~GeneralizedSpringDamper();
     std::string getType() const { return "GeneralizedSpringDamper"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
     protected:
     ExtProperty function, unloadedLength, body1, body2, coilSpring, forceArrow, momentArrow;

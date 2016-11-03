@@ -245,14 +245,15 @@
   <links>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <Joint name="Constraint{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+        <connect ref1="../Object[S{[9,10](nr)}]/Frame[F2]" ref2="../Object[S{[6,8](nr)}]/Frame[F2]"/>
         <forceDirection>[1, 0; 0, 1; 0, 0]</forceDirection>
         <forceLaw>
           <BilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
         </forceLaw>
-        <connect ref1="../Object[S{[9,10](nr)}]/Frame[F2]" ref2="../Object[S{[6,8](nr)}]/Frame[F2]"/>
       </Joint>
     </Embed>
     <Joint name="Joint0" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../../Object[Carrier]/Frame[FB]" ref2="../Object[S1]/Frame[F1]"/>
       <momentDirection>[0; 0; 1]</momentDirection>
       <momentLaw>
         <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
@@ -264,10 +265,10 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
-      <connect ref1="../../Object[Carrier]/Frame[FB]" ref2="../Object[S1]/Frame[F1]"/>
     </Joint>
     <Embed count="11" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <Joint name="Joint{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+        <connect ref1="../Object[S{[1,1,1,2,3,3,4,5,6,7,8](nr)}]/Frame[F{[1,2,3,2,2,2,2,2,2,2,2](nr)}]" ref2="../Object[S{[2,3,4,5,6,7,8,9,9,10,10](nr)}]/Frame[F{[1,1,1,1,1,1,1,1,2,1,2](nr)}]"/>
         <momentDirection>[0; 0; 1]</momentDirection>
         <momentLaw>
           <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
@@ -279,7 +280,6 @@
             </forceFunction>
           </RegularizedBilateralConstraint>
         </momentLaw>
-        <connect ref1="../Object[S{[1,1,1,2,3,3,4,5,6,7,8](nr)}]/Frame[F{[1,2,3,2,2,2,2,2,2,2,2](nr)}]" ref2="../Object[S{[2,3,4,5,6,7,8,9,9,10,10](nr)}]/Frame[F{[1,1,1,1,1,1,1,1,2,1,2](nr)}]"/>
       </Joint>
     </Embed>
   </links>

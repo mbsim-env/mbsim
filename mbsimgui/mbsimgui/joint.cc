@@ -20,7 +20,6 @@
 #include <config.h>
 #include "joint.h"
 #include "kinetics_properties.h"
-#include "ombv_properties.h"
 #include "function_property_factory.h"
 
 using namespace std;
@@ -29,9 +28,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Joint::Joint(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false), forceArrow(0,false), momentArrow(0,false) {
-
-    refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
+  Joint::Joint(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), forceLaw(0,false), momentDirection(0,false), momentLaw(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
@@ -44,50 +41,27 @@ namespace MBSimGUI {
     momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
     momentLaw.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"momentLaw"));
-
-    connections.setProperty(new ConnectFramesProperty(2,this));
-
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
-  }
-
-  void Joint::initialize() {
-    Link::initialize();
-    connections.initialize();
   }
 
   DOMElement* Joint::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
-    refFrameID.initializeUsingXML(element);
+    FloatingFrameLink::initializeUsingXML(element);
     forceDirection.initializeUsingXML(element);
     forceLaw.initializeUsingXML(element);
     momentDirection.initializeUsingXML(element);
     momentLaw.initializeUsingXML(element);
-    connections.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* Joint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
-    refFrameID.writeXMLFile(ele0);
+    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
     forceDirection.writeXMLFile(ele0);
     forceLaw.writeXMLFile(ele0);
     momentDirection.writeXMLFile(ele0);
     momentLaw.writeXMLFile(ele0);
-    connections.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 
-  ElasticJoint::ElasticJoint(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), momentDirection(0,false), forceArrow(0,false), momentArrow(0,false) {
-
-    refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
+  ElasticJoint::ElasticJoint(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), momentDirection(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"forceDirection"));
@@ -98,42 +72,21 @@ namespace MBSimGUI {
     momentDirection.setProperty(new ExtPhysicalVarProperty(input));
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this,"VVV"),MBSIM%"generalizedForceFunction"));
-
-    connections.setProperty(new ConnectFramesProperty(2,this));
-
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
-  }
-
-  void ElasticJoint::initialize() {
-    Link::initialize();
-    connections.initialize();
   }
 
   DOMElement* ElasticJoint::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
-    refFrameID.initializeUsingXML(element);
+    FloatingFrameLink::initializeUsingXML(element);
     forceDirection.initializeUsingXML(element);
     momentDirection.initializeUsingXML(element);
     function.initializeUsingXML(element);
-    connections.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* ElasticJoint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
-    refFrameID.writeXMLFile(ele0);
+    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
     forceDirection.writeXMLFile(ele0);
     momentDirection.writeXMLFile(ele0);
     function.writeXMLFile(ele0);
-    connections.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

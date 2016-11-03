@@ -245,6 +245,11 @@
   </objects>
   <links>
     <KineticExcitation xmlns="http://www.mbsim-env.de/MBSim" name="MotorTorque">
+      <connect ref2="../Object[Motor]/Frame[C]"/>
+      <enableOpenMBVMoment>
+          <scaleLength>.1</scaleLength>
+          <diffuseColor>[0.6666;1;0]</diffuseColor>
+      </enableOpenMBVMoment>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentFunction>
         <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -252,31 +257,13 @@
           <y>[0 .2 .1 .1]'</y>
         </TabularFunction>
       </momentFunction>
-      <connect ref="../Object[Motor]/Frame[C]"/>
-      <enableOpenMBVMoment>
-          <scaleLength>.1</scaleLength>
-          <diffuseColor>[0.6666;1;0]</diffuseColor>
-      </enableOpenMBVMoment>
     </KineticExcitation>
     <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Crank_Rocker">
-      <momentDirection>[0 0 1]'</momentDirection>
-      <momentLaw>
-        <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
-          <forceFunction>
-            <LinearRegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
-              <stiffnessCoefficient>0</stiffnessCoefficient>
-              <dampingCoefficient>.1</dampingCoefficient>
-            </LinearRegularizedBilateralConstraint>
-          </forceFunction>
-        </RegularizedBilateralConstraint>
-      </momentLaw>
       <connect ref1="../Object[Crank]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fCrank]"/>
       <enableOpenMBVMoment>
         <scaleLength>.1</scaleLength>
         <diffuseColor>[0.6666;1;0]</diffuseColor>
       </enableOpenMBVMoment>
-    </Joint>
-    <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Rocker_Piston">
       <momentDirection>[0 0 1]'</momentDirection>
       <momentLaw>
         <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
@@ -288,11 +275,24 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
+    </Joint>
+    <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Rocker_Piston">
       <connect ref1="../Object[Piston]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fPiston]"/>
       <enableOpenMBVMoment>
         <scaleLength>.1</scaleLength>
         <diffuseColor>[0.6666;1;0]</diffuseColor>
       </enableOpenMBVMoment>
+      <momentDirection>[0 0 1]'</momentDirection>
+      <momentLaw>
+        <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
+              <stiffnessCoefficient>0</stiffnessCoefficient>
+              <dampingCoefficient>.1</dampingCoefficient>
+            </LinearRegularizedBilateralConstraint>
+          </forceFunction>
+        </RegularizedBilateralConstraint>
+      </momentLaw>
     </Joint>
   </links>
   <constraints>

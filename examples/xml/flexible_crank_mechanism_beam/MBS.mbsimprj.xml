@@ -744,6 +744,7 @@
       </objects>
       <links>
         <Joint name="Joint1">
+          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleBodyFFR2]/Frame[Q]"/>
           <forceDirection unit="-">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
@@ -763,7 +764,6 @@
           <forceLaw>
             <BilateralConstraint/>
           </forceLaw>
-          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleBodyFFR2]/Frame[Q]"/>
         </Joint>
       </links>
       <enableOpenMBVFrameI>

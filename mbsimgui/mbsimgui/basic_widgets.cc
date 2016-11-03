@@ -180,12 +180,13 @@ namespace MBSimGUI {
     return frame->currentText();
   }
 
-  FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
+  FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_, const QString &def_) : element(element_), selectedFrame(selectedFrame_), def(def_) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     frame = new QLineEdit;
+    frame->setPlaceholderText(def);
     if(selectedFrame)
       frame->setText(QString::fromStdString(selectedFrame->getXMLPath(element,true)));
     frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
@@ -213,12 +214,14 @@ namespace MBSimGUI {
   }
 
   void FrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
+    if(str!=def) {
     selectedFrame = framePtr; 
     frame->setText(str);
+    }
   }
 
   QString FrameOfReferenceWidget::getFrame() const {
-    return frame->text();
+    return frame->text().isEmpty()?def:frame->text();
   }
 
   ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
@@ -508,7 +511,7 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
-  ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {
+  ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_, const QString &def) : element(element_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -520,7 +523,7 @@ namespace MBSimGUI {
         subname += QString::number(i+1);
         //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
       }
-      widget.push_back(new FrameOfReferenceWidget(element,0));
+      widget.push_back(new FrameOfReferenceWidget(element,0,i==0?def:""));
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
     }

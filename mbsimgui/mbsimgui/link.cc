@@ -23,6 +23,7 @@
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
+#include "ombv_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -35,13 +36,45 @@ namespace MBSimGUI {
   Link* Link::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-//    Link *link=ObjectFactory::getInstance()->createLink(e, parent);
     Link *link=Embed<Link>::createAndInit(e,parent);
-    if(link) {
-//      link->initializeUsingXML(e);
-      link->initialize();
-    }
+    if(link) link->initialize();
     return link;
+  }
+
+  FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceArrow(0,false), momentArrow(0,false) {
+
+    connections.setProperty(new ConnectFramesProperty(2,this,"../Frame[I]"));
+
+    refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
+
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+  }
+
+  void FloatingFrameLink::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
+
+  DOMElement* FloatingFrameLink::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    refFrameID.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FloatingFrameLink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    connections.writeXMLFile(ele0);
+    refFrameID.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
   }
 
   RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent), support(0,false) {
@@ -49,6 +82,7 @@ namespace MBSimGUI {
   }
 
   void RigidBodyLink::initialize() {
+    Link::initialize();
     support.initialize();
   }
 

@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "kinetic_excitation.h"
-#include "ombv_properties.h"
 #include "function_properties.h"
 #include "function_property_factory.h"
 
@@ -29,9 +28,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), forceArrow(0,true), momentArrow(0,true) {
-
-    refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
+  KineticExcitation::KineticExcitation(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false) {
 
     forceDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"forceDirection",vector<string>(3,"-")),"",4));
 
@@ -40,45 +37,28 @@ namespace MBSimGUI {
     momentDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"momentDirection",vector<string>(3,"-")),"",4));
 
     momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
-
-    connections.setProperty(new ChoiceProperty2(new ConnectFramesPropertyFactory(this),"",4)); 
-
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
-  void KineticExcitation::initialize() {
-    Link::initialize();
-    forceFunction.initialize();
-    connections.initialize();
-  }
+//  void KineticExcitation::initialize() {
+//    FloatingFrameLink::initialize();
+//    forceFunction.initialize();
+//  }
 
   DOMElement* KineticExcitation::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
-    refFrameID.initializeUsingXML(element);
+    FloatingFrameLink::initializeUsingXML(element);
     forceDirection.initializeUsingXML(element);
     forceFunction.initializeUsingXML(element);
     momentDirection.initializeUsingXML(element);
     momentFunction.initializeUsingXML(element);
-    connections.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
-    refFrameID.writeXMLFile(ele0);
+    DOMElement *ele0 = FloatingFrameLink::writeXMLFile(parent);
     forceDirection.writeXMLFile(ele0);
     forceFunction.writeXMLFile(ele0);
     momentDirection.writeXMLFile(ele0);
     momentFunction.writeXMLFile(ele0);
-    connections.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

@@ -239,7 +239,7 @@ namespace MBSimGUI {
   class ConnectFramesProperty : public Property {
 
     public:
-      ConnectFramesProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
+      ConnectFramesProperty(int n, Element* element, const std::string &def="", const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
       virtual PropertyInterface* clone() const {return new ConnectFramesProperty(*this);}
 
       void initialize();
@@ -250,6 +250,7 @@ namespace MBSimGUI {
 
     protected:
       std::vector<FrameOfReferenceProperty> frame;
+      std::string def;
       MBXMLUtils::FQN xmlName;
   };
 

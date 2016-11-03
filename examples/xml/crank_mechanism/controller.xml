@@ -38,13 +38,13 @@
       </function>
     </BinarySignalOperation>
     <KineticExcitation name="motor" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Frame[I]" ref2="../../Object[Crank]/Frame[B2]"/>
       <momentDirection>[0 0 1]'</momentDirection> <!-- optional -->
       <momentFunction>
         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
           <returnSignal ref="../../Link[pidController]"/>
         </SignalFunction>
       </momentFunction>
-      <connect ref1="../Frame[I]" ref2="../../Object[Crank]/Frame[B2]"/>
     </KineticExcitation>
   </links>
 </Group>

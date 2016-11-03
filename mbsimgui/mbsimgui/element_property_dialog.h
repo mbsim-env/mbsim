@@ -57,6 +57,7 @@ namespace MBSimGUI {
   class SignalProcessingSystem;
   class LinearTransferSystem;
   class Link;
+  class FloatingFrameLink;
   class RigidBodyLink;
   class KineticExcitation;
   class SpringDamper;
@@ -441,6 +442,16 @@ namespace MBSimGUI {
     protected:
   };
 
+  class FloatingFrameLinkPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *connections, *refFrameID, *forceArrow, *momentArrow;
+  };
+
   class RigidBodyLinkPropertyDialog : public LinkPropertyDialog {
 
     public:
@@ -461,7 +472,7 @@ namespace MBSimGUI {
       ExtWidget *signalRef;
   };
 
-  class KineticExcitationPropertyDialog : public LinkPropertyDialog {
+  class KineticExcitationPropertyDialog : public FloatingFrameLinkPropertyDialog {
     Q_OBJECT
 
     public:
@@ -469,7 +480,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *refFrameID, *forceDirection, *forceFunction, *momentDirection, *momentFunction, *connections, *forceArrow, *momentArrow;
+      ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction;
     protected slots:
       void resizeVariables();
   };
@@ -484,14 +495,14 @@ namespace MBSimGUI {
       ExtWidget *forceFunction, *unloadedLength, *connections, *coilSpring, *forceArrow;
   };
 
-  class DirectionalSpringDamperPropertyDialog : public LinkPropertyDialog {
+  class DirectionalSpringDamperPropertyDialog : public FloatingFrameLinkPropertyDialog {
 
     public:
       DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *forceDirection, *unloadedLength, *forceFunction, *connections, *coilSpring, *forceArrow;
+      ExtWidget *forceDirection, *unloadedLength, *forceFunction, *coilSpring;
   };
 
   class GeneralizedSpringDamperPropertyDialog : public RigidBodyLinkPropertyDialog {
@@ -537,24 +548,24 @@ namespace MBSimGUI {
       void resizeVariables();
   };
 
-  class JointPropertyDialog : public LinkPropertyDialog {
+  class JointPropertyDialog : public FloatingFrameLinkPropertyDialog {
 
     public:
       JointPropertyDialog(Joint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *refFrameID, *forceDirection, *forceLaw, *momentDirection, *momentLaw, *connections, *forceArrow, *momentArrow;
+      ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw;
   };
 
-  class ElasticJointPropertyDialog : public LinkPropertyDialog {
+  class ElasticJointPropertyDialog : public FloatingFrameLinkPropertyDialog {
 
     public:
       ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *refFrameID, *forceDirection, *momentDirection, *function, *connections, *forceArrow, *momentArrow;
+      ExtWidget *forceDirection, *momentDirection, *function;
   };
 
   class ContactPropertyDialog : public LinkPropertyDialog {
