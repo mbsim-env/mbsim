@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "mbsim/constraints/generalized_acceleration_constraint.h"
+#include <mbsim/constitutive_laws/bilateral_constraint.h>
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/generalized_acceleration_excitation.h"
 #include "mbsim/dynamic_system.h"
@@ -88,6 +89,7 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     ke->setDependentRigidBody(bd);
     ke->setExcitationFunction(f);
+    ke->setGeneralizedForceLaw(new BilateralConstraint);
     ke->setSupportFrame(support);
     if(FArrow)
       ke->setOpenMBVForce(FArrow);
