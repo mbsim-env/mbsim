@@ -1310,7 +1310,7 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
 
-    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,link,"../Frame[I]"));
+    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,link));
     addToTab("Kinetics", connections);
 
     QStringList names;
@@ -1358,6 +1358,8 @@ namespace MBSimGUI {
   }
 
   KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget *parent, Qt::WindowFlags wf) : FloatingFrameLinkPropertyDialog(kineticExcitation,parent,wf) {
+
+    static_cast<ConnectFramesWidget*>(connections->getWidget())->setDefaultFrame("../Frame[I]");
 
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft),true);
     addToTab("Kinetics",forceDirection);

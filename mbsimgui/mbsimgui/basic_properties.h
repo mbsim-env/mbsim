@@ -239,10 +239,11 @@ namespace MBSimGUI {
   class ConnectFramesProperty : public Property {
 
     public:
-      ConnectFramesProperty(int n, Element* element, const std::string &def="", const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
+      ConnectFramesProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
       virtual PropertyInterface* clone() const {return new ConnectFramesProperty(*this);}
 
       void initialize();
+      void setDefaultFrame(const std::string &def_) { def = def_; }
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);

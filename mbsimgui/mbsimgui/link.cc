@@ -43,7 +43,7 @@ namespace MBSimGUI {
 
   FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceArrow(0,false), momentArrow(0,false) {
 
-    connections.setProperty(new ConnectFramesProperty(2,this,"../Frame[I]"));
+    connections.setProperty(new ConnectFramesProperty(2,this));
 
     refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
 

@@ -180,13 +180,12 @@ namespace MBSimGUI {
     return frame->currentText();
   }
 
-  FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_, const QString &def_) : element(element_), selectedFrame(selectedFrame_), def(def_) {
+  FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     frame = new QLineEdit;
-    frame->setPlaceholderText(def);
     if(selectedFrame)
       frame->setText(QString::fromStdString(selectedFrame->getXMLPath(element,true)));
     frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
@@ -196,6 +195,11 @@ namespace MBSimGUI {
     connect(button,SIGNAL(clicked(bool)),frameBrowser,SLOT(show()));
     layout->addWidget(button);
     updateWidget();
+  }
+
+  void FrameOfReferenceWidget::setDefaultFrame(const QString &def_) {
+    def = def_;
+    frame->setPlaceholderText(def);
   }
 
   void FrameOfReferenceWidget::updateWidget() {
@@ -215,8 +219,8 @@ namespace MBSimGUI {
 
   void FrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
     if(str!=def) {
-    selectedFrame = framePtr; 
-    frame->setText(str);
+      selectedFrame = framePtr;
+      frame->setText(str);
     }
   }
 
@@ -511,7 +515,7 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
-  ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_, const QString &def) : element(element_) {
+  ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -523,7 +527,7 @@ namespace MBSimGUI {
         subname += QString::number(i+1);
         //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
       }
-      widget.push_back(new FrameOfReferenceWidget(element,0,i==0?def:""));
+      widget.push_back(new FrameOfReferenceWidget(element,0));
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
     }

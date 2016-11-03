@@ -458,12 +458,12 @@ namespace MBSimGUI {
     static_cast<BasicTextWidget*>(widget)->setText(QString::fromStdString(text));
   }
 
-  ConnectFramesProperty::ConnectFramesProperty(int n, Element *element, const string &def_, const FQN &xmlName_) : def(def_), xmlName(xmlName_)  {
+  ConnectFramesProperty::ConnectFramesProperty(int n, Element *element, const FQN &xmlName_) : xmlName(xmlName_)  {
 
     for(int i=0; i<2; i++) {
       FQN xmlName = MBSIM%"ref";
       xmlName.second += toStr(i+1);
-      frame.push_back(FrameOfReferenceProperty(i==0?def:"",element,xmlName));
+      frame.push_back(FrameOfReferenceProperty("",element,xmlName));
     }
   }
 

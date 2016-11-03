@@ -30,6 +30,8 @@ namespace MBSimGUI {
 
   KineticExcitation::KineticExcitation(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false) {
 
+    static_cast<ConnectFramesProperty*>(connections.getProperty())->setDefaultFrame("../Frame[I]");
+
     forceDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"forceDirection",vector<string>(3,"-")),"",4));
 
     forceFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"forceFunction",0));

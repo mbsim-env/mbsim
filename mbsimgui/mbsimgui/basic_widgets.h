@@ -119,10 +119,11 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      FrameOfReferenceWidget(Element* element, Frame* selectedFrame, const QString &def="");
+      FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
       void updateWidget();
       void setFrame(const QString &str, Frame *framePtr);
+      void setDefaultFrame(const QString &def);
       QString getFrame() const;
 
     protected:
@@ -349,8 +350,9 @@ namespace MBSimGUI {
     friend class ConnectFramesProperty;
 
     public:
-    ConnectFramesWidget(int n, Element* element, const QString &def="");
+    ConnectFramesWidget(int n, Element* element);
 
+    void setDefaultFrame(const QString &def) { widget[0]->setDefaultFrame(def); }
     void updateWidget();
 
     protected:
