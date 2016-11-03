@@ -31,43 +31,29 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false) {
+  SpringDamper::SpringDamper(const string &str, Element *parent) : FrameLink(str, parent), coilSpring(0,true) {
 
     forceFunction.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"forceFunction"));
 
     unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"unloadedLength",vector<string>(2,"m")),"",4));
 
-    connections.setProperty(new ConnectFramesProperty(2,this));
-
     coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
     coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
-
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-  }
-
-  void SpringDamper::initialize() {
-    Link::initialize();
-    connections.initialize();
   }
 
   DOMElement* SpringDamper::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    FrameLink::initializeUsingXML(element);
     forceFunction.initializeUsingXML(element);
     unloadedLength.initializeUsingXML(element);
-    connections.initializeUsingXML(element);
     coilSpring.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* SpringDamper::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
+    DOMElement *ele0 = FrameLink::writeXMLFile(parent);
     forceFunction.writeXMLFile(ele0);
     unloadedLength.writeXMLFile(ele0);
-    connections.writeXMLFile(ele0);
     coilSpring.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
     return ele0;
   }
 

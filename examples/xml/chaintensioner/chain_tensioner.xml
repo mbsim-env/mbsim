@@ -195,6 +195,7 @@
   <links>
     <SpringDamper name="PistonSpring">
       <plotFeature feature="+linkKinematics"/>
+      <connect ref1="../Object[Housing]/Frame[PistonSpringMount]" ref2="../Object[Piston]/Frame[PistonSpringMount]"/>
       <forceFunction>
         <LinearSpringDamperForce>
           <stiffnessCoefficient>3500</stiffnessCoefficient>
@@ -202,7 +203,6 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <unloadedLength unit="cm">6</unloadedLength>
-      <connect ref1="../Object[Housing]/Frame[PistonSpringMount]" ref2="../Object[Piston]/Frame[PistonSpringMount]"/>
       <enableOpenMBVCoilSpring>
 <!--        <minimalColorValue>-88</minimalColorValue>
         <maximalColorValue>-92</maximalColorValue> -->

@@ -57,6 +57,7 @@ namespace MBSimGUI {
   class SignalProcessingSystem;
   class LinearTransferSystem;
   class Link;
+  class FrameLink;
   class FloatingFrameLink;
   class RigidBodyLink;
   class KineticExcitation;
@@ -442,6 +443,16 @@ namespace MBSimGUI {
     protected:
   };
 
+  class FrameLinkPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      FrameLinkPropertyDialog(FrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *connections, *forceArrow;
+  };
+
   class FloatingFrameLinkPropertyDialog : public LinkPropertyDialog {
 
     public:
@@ -485,14 +496,14 @@ namespace MBSimGUI {
       void resizeVariables();
   };
 
-  class SpringDamperPropertyDialog : public LinkPropertyDialog {
+  class SpringDamperPropertyDialog : public FrameLinkPropertyDialog {
 
     public:
       SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *forceFunction, *unloadedLength, *connections, *coilSpring, *forceArrow;
+      ExtWidget *forceFunction, *unloadedLength, *coilSpring;
   };
 
   class DirectionalSpringDamperPropertyDialog : public FloatingFrameLinkPropertyDialog {

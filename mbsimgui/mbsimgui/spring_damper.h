@@ -25,17 +25,16 @@
 
 namespace MBSimGUI {
 
-  class SpringDamper : public Link {
+  class SpringDamper : public FrameLink {
     friend class SpringDamperPropertyDialog;
     public:
     SpringDamper(const std::string &str, Element *element);
     std::string getType() const { return "SpringDamper"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
     protected:
-    ExtProperty forceFunction, unloadedLength, connections, coilSpring, forceArrow;
+    ExtProperty forceFunction, unloadedLength, coilSpring;
   };
 
   class DirectionalSpringDamper : public FloatingFrameLink {

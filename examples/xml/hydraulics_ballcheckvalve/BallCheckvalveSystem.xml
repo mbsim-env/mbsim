@@ -177,6 +177,7 @@
   </objects>
   <links>
     <SpringDamper name="PistonSpring">
+      <connect ref1="../Frame[I]" ref2="../Object[Piston]/Frame[CheckvalveF]"/>
       <forceFunction>
         <LinearSpringDamperForce>
           <stiffnessCoefficient>pistonSpringStiffness</stiffnessCoefficient>
@@ -184,7 +185,6 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <unloadedLength>hpcInitialHeight-pistonSpringF0/pistonSpringStiffness</unloadedLength>
-      <connect ref1="../Frame[I]" ref2="../Object[Piston]/Frame[CheckvalveF]"/>
       <enableOpenMBVCoilSpring>
         <!--<minimalColorValue>-10</minimalColorValue>
         <maximalColorValue>10</maximalColorValue>-->

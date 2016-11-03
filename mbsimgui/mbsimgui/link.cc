@@ -41,6 +41,33 @@ namespace MBSimGUI {
     return link;
   }
 
+  FrameLink::FrameLink(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false) {
+
+    connections.setProperty(new ConnectFramesProperty(2,this));
+
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+  }
+
+  void FrameLink::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
+
+  DOMElement* FrameLink::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FrameLink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    connections.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
   FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceArrow(0,false), momentArrow(0,false) {
 
     connections.setProperty(new ConnectFramesProperty(2,this));

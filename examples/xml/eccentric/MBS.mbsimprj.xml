@@ -290,6 +290,7 @@
       </objects>
       <links>
         <SpringDamper name="SpringDamper1">
+          <connect ref1="../Frame[I]" ref2="../Object[Mass]/Frame[P1]"/>
           <forceFunction>
             <LinearSpringDamperForce>
               <stiffnessCoefficient unit="N/m">c1</stiffnessCoefficient>
@@ -297,7 +298,6 @@
             </LinearSpringDamperForce>
           </forceFunction>
           <unloadedLength unit="m">l01</unloadedLength>
-          <connect ref1="../Frame[I]" ref2="../Object[Mass]/Frame[P1]"/>
           <enableOpenMBVCoilSpring>
             <?OPENMBV_ID 16?>
             <numberOfCoils unit="-">5</numberOfCoils>
@@ -305,6 +305,7 @@
           </enableOpenMBVCoilSpring>
         </SpringDamper>
         <SpringDamper name="SpringDamper2">
+          <connect ref1="../Object[Mass]/Frame[P2]" ref2="../Object[RigidBody]/Frame[C]"/>
           <forceFunction>
             <LinearSpringDamperForce>
               <stiffnessCoefficient unit="N/m">c2</stiffnessCoefficient>
@@ -312,7 +313,6 @@
             </LinearSpringDamperForce>
           </forceFunction>
           <unloadedLength unit="m">l02</unloadedLength>
-          <connect ref1="../Object[Mass]/Frame[P2]" ref2="../Object[RigidBody]/Frame[C]"/>
           <enableOpenMBVCoilSpring>
             <?OPENMBV_ID 17?>
             <numberOfCoils unit="-">5</numberOfCoils>

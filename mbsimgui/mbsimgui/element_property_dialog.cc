@@ -1306,6 +1306,29 @@ namespace MBSimGUI {
     ElementPropertyDialog::fromWidget(element);
   }
 
+  FrameLinkPropertyDialog::FrameLinkPropertyDialog(FrameLink *link, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(link,parent,f) {
+    addTab("Kinetics",1);
+    addTab("Visualisation",2);
+
+    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,link));
+    addToTab("Kinetics", connections);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    addToTab("Visualisation",forceArrow);
+  }
+
+  void FrameLinkPropertyDialog::toWidget(Element *element) {
+    LinkPropertyDialog::toWidget(element);
+    static_cast<FrameLink*>(element)->connections.toWidget(connections);
+    static_cast<FrameLink*>(element)->forceArrow.toWidget(forceArrow);
+  }
+
+  void FrameLinkPropertyDialog::fromWidget(Element *element) {
+    LinkPropertyDialog::fromWidget(element);
+    static_cast<FrameLink*>(element)->connections.fromWidget(connections);
+    static_cast<FrameLink*>(element)->forceArrow.fromWidget(forceArrow);
+  }
+
   FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(link,parent,f) {
     addTab("Kinetics",1);
     addTab("Visualisation",2);
@@ -1328,18 +1351,18 @@ namespace MBSimGUI {
 
   void FloatingFrameLinkPropertyDialog::toWidget(Element *element) {
     LinkPropertyDialog::toWidget(element);
-    static_cast<Joint*>(element)->connections.toWidget(connections);
-    static_cast<Joint*>(element)->refFrameID.toWidget(refFrameID);
-    static_cast<Joint*>(element)->forceArrow.toWidget(forceArrow);
-    static_cast<Joint*>(element)->momentArrow.toWidget(momentArrow);
+    static_cast<FloatingFrameLink*>(element)->connections.toWidget(connections);
+    static_cast<FloatingFrameLink*>(element)->refFrameID.toWidget(refFrameID);
+    static_cast<FloatingFrameLink*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<FloatingFrameLink*>(element)->momentArrow.toWidget(momentArrow);
   }
 
   void FloatingFrameLinkPropertyDialog::fromWidget(Element *element) {
     LinkPropertyDialog::fromWidget(element);
-    static_cast<Joint*>(element)->connections.fromWidget(connections);
-    static_cast<Joint*>(element)->refFrameID.fromWidget(refFrameID);
-    static_cast<Joint*>(element)->forceArrow.fromWidget(forceArrow);
-    static_cast<Joint*>(element)->momentArrow.fromWidget(momentArrow);
+    static_cast<FloatingFrameLink*>(element)->connections.fromWidget(connections);
+    static_cast<FloatingFrameLink*>(element)->refFrameID.fromWidget(refFrameID);
+    static_cast<FloatingFrameLink*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<FloatingFrameLink*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
   RigidBodyLinkPropertyDialog::RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(link,parent,f) {
@@ -1409,9 +1432,7 @@ namespace MBSimGUI {
     static_cast<KineticExcitation*>(element)->momentFunction.fromWidget(momentFunction);
   }
 
-  SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
-    addTab("Kinetics",1);
-    addTab("Visualisation",2);
+  SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : FrameLinkPropertyDialog(springDamper,parent,f) {
 
     forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", forceFunction);
@@ -1419,32 +1440,22 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
-    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
-    addToTab("Kinetics", connections);
-
     coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
     addToTab("Visualisation", coilSpring);
-
-    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
-    addToTab("Visualisation", forceArrow);
   }
 
   void SpringDamperPropertyDialog::toWidget(Element *element) {
-    LinkPropertyDialog::toWidget(element);
+    FrameLinkPropertyDialog::toWidget(element);
     static_cast<SpringDamper*>(element)->forceFunction.toWidget(forceFunction);
     static_cast<SpringDamper*>(element)->unloadedLength.toWidget(unloadedLength);
-    static_cast<SpringDamper*>(element)->connections.toWidget(connections);
     static_cast<SpringDamper*>(element)->coilSpring.toWidget(coilSpring);
-    static_cast<SpringDamper*>(element)->forceArrow.toWidget(forceArrow);
   }
 
   void SpringDamperPropertyDialog::fromWidget(Element *element) {
-    LinkPropertyDialog::fromWidget(element);
+    FrameLinkPropertyDialog::fromWidget(element);
     static_cast<SpringDamper*>(element)->forceFunction.fromWidget(forceFunction);
     static_cast<SpringDamper*>(element)->unloadedLength.fromWidget(unloadedLength);
-    static_cast<SpringDamper*>(element)->connections.fromWidget(connections);
     static_cast<SpringDamper*>(element)->coilSpring.fromWidget(coilSpring);
-    static_cast<SpringDamper*>(element)->forceArrow.fromWidget(forceArrow);
   }
 
   DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : FloatingFrameLinkPropertyDialog(springDamper,parent,f) {
