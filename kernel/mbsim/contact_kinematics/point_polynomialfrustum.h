@@ -28,6 +28,7 @@
 
 namespace MBSim {
 
+#ifndef SWIG
   /*!
    * \brief function that is zero for a height-coordinate of the polynomial frustum on which the normal on that point points towards the given outer point
    */
@@ -87,6 +88,7 @@ namespace MBSim {
        */
       double phi;
   };
+#endif
 
 
   /*!

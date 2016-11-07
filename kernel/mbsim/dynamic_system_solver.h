@@ -201,7 +201,7 @@ namespace MBSim {
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
       double& getTime() { return t; }
-      double getTime() const { return t; }
+      const double& getTime() const { return t; }
       void setTime(double t_) { t = t_; }
 
       double getStepSize() const { return dt; }

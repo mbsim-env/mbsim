@@ -349,7 +349,9 @@ namespace MBSim {
        */
       void updateLLMNotConst() { Object::updateLLM(); }
 
+#ifndef SWIG
       void (RigidBody::*updateJacobians_[3])(Frame *frame);
+#endif
 
       /** a pointer to Frame "C" */
       FixedRelativeFrame *C;

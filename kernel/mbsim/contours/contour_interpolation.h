@@ -84,8 +84,8 @@ namespace MBSim {
        /**
         * \brief compute all weights for nodes
         */
-       fmatvec::VecV computePointWeights(const fmatvec::Vec2 &zeta);
-
+//       fmatvec::VecV computePointWeights(const fmatvec::Vec2 &zeta);
+//
 //       fmatvec::Vec3 getWrOC(const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return getWrOC(cp);};
 //       fmatvec::Vec3 computeWvC (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
 //       fmatvec::Mat3xV computeWt  (const fmatvec::Vec2& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};

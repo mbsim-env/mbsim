@@ -172,14 +172,14 @@ namespace MBSim {
        */
       fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta);
 
-      /*!
-       * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
-       * \param x_0: starting point of the polynomial domain
-       * \param x_end: end point of the polynomial domain
-       * \param P: the given point
-       * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
-       */
-      fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
+//      /*!
+//       * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
+//       * \param x_0: starting point of the polynomial domain
+//       * \param x_end: end point of the polynomial domain
+//       * \param P: the given point
+//       * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
+//       */
+//      fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
 
       fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta);
@@ -242,6 +242,7 @@ namespace MBSim {
    * \param para: coefficient vector of the left side
    */
 
+#ifndef SWIG // Function is not wrapped (currently)
   class ContactPolyfun : public Function<double(double)> {
     public:
       /*!
@@ -260,6 +261,7 @@ namespace MBSim {
       const PolynomialFrustum * frustum;
 
   };
+#endif
 
 }
 

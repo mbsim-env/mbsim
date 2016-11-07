@@ -290,7 +290,7 @@ namespace MBSim {
 
       virtual void resetUpToDate() {}
 
-      double getTime() const;
+      const double& getTime() const;
       double getStepSize() const;
 
     protected:

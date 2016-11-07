@@ -64,10 +64,12 @@ namespace MBSim {
       /* INHERITED INTERFACE OF SUBSYSTEM */
       void updateLLM();
 
+#ifndef SWIG
       void (Graph::*calcuSize_[2])(); 
       void (Graph::*sethSize_[2])(int h); 
       void (Graph::*setuInd_[2])(int uInd); 
       void (Graph::*sethInd_[2])(int hInd); 
+#endif
       void calcuSize0();
       void calcuSize1();
       void sethSize0(int h);

@@ -28,6 +28,7 @@
 
 namespace MBSim {
 
+#ifndef SWIG
   class PolyFurstumSphereContact : public Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       PolyFurstumSphereContact(const PolynomialFrustum * frustum) : sphereCenter(fmatvec::Vec3()), rS(0.), frustum(frustum) {
@@ -91,6 +92,7 @@ namespace MBSim {
        */
       const PolynomialFrustum * frustum;
   };
+#endif
 
   /*!
    * \brief class for contact kinematics between convex frustum and a sphere

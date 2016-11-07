@@ -62,7 +62,6 @@ namespace MBSim {
        */
       void setFrameOfReferenceID(int ID) { refFrameID=ID; }
 
-      fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updatePositions(Frame *frame_);
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
