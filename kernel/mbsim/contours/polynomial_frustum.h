@@ -242,7 +242,6 @@ namespace MBSim {
    * \param para: coefficient vector of the left side
    */
 
-#ifndef SWIG // Function is not wrapped (currently)
   class ContactPolyfun : public Function<double(double)> {
     public:
       /*!
@@ -261,7 +260,6 @@ namespace MBSim {
       const PolynomialFrustum * frustum;
 
   };
-#endif
 
 }
 

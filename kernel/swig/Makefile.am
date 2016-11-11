@@ -37,7 +37,7 @@ _fmatvec_la_LIBADD = $(PYTHON_LIBS) $(FMATVEC_LIBS)
 
 _mbsim_la_SOURCES = mbsim_swig_python.cc
 _mbsim_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
-_mbsim_la_CPPFLAGS = -Dprotected=public $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label
+_mbsim_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label
 _mbsim_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
 
 swigdir = $(datadir)/mbsim

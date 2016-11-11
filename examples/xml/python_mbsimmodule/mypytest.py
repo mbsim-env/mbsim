@@ -133,12 +133,19 @@ class PySpringDamperEmpty(mbsim.FrameLink):
   def isSingleValued(self):
     return True
 
+class PyLinearSpringDamper_100_0_2(mbsim.Function_d_d_d):
+  def __init__(self):
+    super(PyLinearSpringDamper_100_0_2, self).__init__()
+  def __call__(self, s, sd):
+    return 100*s + 0.2*sd
+
 
 
 # register the classes as a XML name
 mbsim.registerXMLName(PySpringDamperXMLInit)
 mbsim.registerXMLName(PySpringDamperPyScriptInit)
 mbsim.registerXMLName(PySpringDamperEmpty)
+mbsim.registerXMLName(PyLinearSpringDamper_100_0_2, 'Function')
 
 
 

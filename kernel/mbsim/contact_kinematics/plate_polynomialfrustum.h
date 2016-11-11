@@ -29,7 +29,6 @@
 
 namespace MBSim {
 
-#ifndef SWIG
   /*!
    * \brief Function describing the scalar product between normal of frustum point and difference between frustum point and point on line defined by one parameter t
    */
@@ -142,7 +141,6 @@ namespace MBSim {
        */
       double dx;
   };
-#endif
 
   /*!
    * \brief class for contact kinematics between convex frustum and an plate

@@ -8,7 +8,11 @@
       <stringParameter name="s">'mystring'</stringParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <frames/>
+      <frames>
+        <FixedRelativeFrame name="I4">
+          <relativePosition>[2;0;0]</relativePosition>
+        </FixedRelativeFrame>
+      </frames>
       <contours/>
       <groups/>
       <objects>
@@ -104,6 +108,29 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC/>
         </RigidBody>
+        <RigidBody name="Box4">
+          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
+          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <frameOfReference ref="../Frame[I4]"/>
+          <frameForKinematics ref="Frame[C]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongZAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[0;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
       </objects>
       <links>
         <SpringDamper name="Spring0">
@@ -119,6 +146,7 @@
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
             <crossSectionRadius>.01</crossSectionRadius>
+            <type>'polyline'</type>
           </enableOpenMBVCoilSpring>
         </SpringDamper>
         <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
@@ -126,13 +154,28 @@
         </PySpringDamperXMLInit>
         <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
           <pyScript objName="self_x">
+            import OpenMBV
             self_x.c=3*c
             self_x.coilspringOpenMBV.setNumberOfCoils(5)
             self_x.coilspringOpenMBV.setSpringRadius(0.03)
             self_x.coilspringOpenMBV.setCrossSectionRadius(0.01)
+            self_x.coilspringOpenMBV.setType(OpenMBV.CoilSpring.polyline)
           </pyScript>
         </PySpringDamperPyScriptInit>
         <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest"/>
+        <SpringDamper name="Spring4">
+          <forceFunction>
+            <PyLinearSpringDamper_100_0_2 xmlns="http://mypytest"/>
+          </forceFunction>
+          <unloadedLength>0</unloadedLength>
+          <connect ref1="../Frame[I4]" ref2="../Object[Box4]/Frame[C]"/>
+          <enableOpenMBVCoilSpring>
+            <numberOfCoils>5</numberOfCoils>
+            <springRadius>.03</springRadius>
+            <crossSectionRadius>.01</crossSectionRadius>
+            <type>'polyline'</type>
+          </enableOpenMBVCoilSpring>
+        </SpringDamper>
       </links>
       <enableOpenMBVFrameI/>
       <environments>

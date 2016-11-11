@@ -152,6 +152,7 @@
 #include "mbsim/contact_kinematics/sphere_polynomialfrustum.h"
 #include "mbsim/contact_kinematics/sphere_sphere.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
+using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
 
 // wrap some std::vector<...> types used by the above wrapped classes
@@ -162,8 +163,111 @@ using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fix
 //MFMF%template(VectorVec)     std::vector<fmatvec::Vec>;
 %template(VectorFrame)   std::vector<MBSim::Frame*>;
 
+
+
 // wrap the following classes
 %include "mbsim/element.h"
+
+
+
+// Wrap MBSim::Function<Sig>
+// SWIG cannot handle template partial specializations of the form MBSim::Function<double(int)>.
+// Hence, we need to wrap it specially:
+
+// wrap function.h -> this only wraps MBSim::FunctionBase (all others are templates)
+%include "mbsim/functions/function.h"
+
+// Define a SWIG macro for MBSim::Function<Ret(Arg)> with also renames it to allowed SWIG name.
+// This definition must be keept in sync with the definition in mbsim/functions/function.h
+%define FUNCTION1(Ret, Arg, namePostfix)
+%rename(Function_##namePostfix) MBSim::Function<Ret(Arg)>;
+class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fmatvec::Atom {
+  public:
+    typedef typename Der<Ret, Arg>::type DRetDArg;
+    typedef typename Der<DRetDArg, Arg>::type DDRetDDArg;
+    enum { retSize1 = StaticSize<Ret>::size1, retSize2 = StaticSize<Ret>::size2 };
+    static constexpr int argSize = StaticSize<Arg>::size1;
+    virtual std::pair<int, int> getRetSize() const;
+    virtual int getArgSize() const;
+    virtual Ret operator()(const Arg &arg)=0;
+    virtual DRetDArg parDer(const Arg &arg);
+    virtual Ret dirDer(const Arg &argDir, const Arg &arg);
+    virtual DDRetDDArg parDerParDer(const Arg &arg);
+    virtual DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg);
+    virtual Ret dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg);
+    virtual bool constParDer() const;
+};
+%enddef
+
+// instantiate MBSim::Function<Ret(Arg)> for different types
+FUNCTION1(double          , double       ,   d_d)
+FUNCTION1(double          , int          ,   d_int)
+FUNCTION1(fmatvec::MatV   , fmatvec::VecV,   MatV_VecV)
+FUNCTION1(fmatvec::RotMat3, double       ,   RotMat3_d)
+FUNCTION1(fmatvec::RotMat3, fmatvec::VecV,   RotMat3_VecV)
+FUNCTION1(fmatvec::SqrMat , fmatvec::Vec ,   SqrMat_Vec)
+FUNCTION1(fmatvec::SqrMatV, double       ,   SqrMatV_d)
+FUNCTION1(fmatvec::SymMatV, double       ,   SymMatV_d)
+FUNCTION1(fmatvec::Vec1   , double       ,   Vec1_d)
+FUNCTION1(fmatvec::Vec2   , double       ,   Vec2_d)
+FUNCTION1(fmatvec::Vec3   , double       ,   Vec3_d)
+FUNCTION1(fmatvec::Vec3   , fmatvec::Vec2,   Vec3_Vec2)
+FUNCTION1(fmatvec::Vec3   , fmatvec::VecV,   Vec3_VecV)
+FUNCTION1(fmatvec::Vec    , fmatvec::Vec ,   Vec_Vec)
+FUNCTION1(fmatvec::VecV   , double       ,   VecV_d)
+FUNCTION1(fmatvec::VecV   , fmatvec::VecV,   VecV_VecV)
+FUNCTION1(int             , fmatvec::Vec ,   int_Vec)
+FUNCTION1(fmatvec::Vec    , double       ,   Vec_d)
+
+// Define a SWIG macro for MBSim::Function<Ret(Arg1,Arg2)> with also renames it to allowed SWIG name.
+// This definition must be keept in sync with the definition in mbsim/functions/function.h
+%define FUNCTION2(Ret, Arg1, Arg2, namePostfix)
+%rename(Function_##namePostfix) MBSim::Function<Ret(Arg1,Arg2)>;
+class MBSim::Function<Ret(Arg1, Arg2)> : public MBSim::FunctionBase, virtual public fmatvec::Atom {
+  public:
+    typedef typename Der<Ret, Arg1>::type DRetDArg1;
+    typedef typename Der<Ret, Arg2>::type DRetDArg2;
+    typedef typename Der<DRetDArg1, Arg1>::type DDRetDDArg1;
+    typedef typename Der<DRetDArg2, Arg2>::type DDRetDDArg2;
+    typedef typename Der<DRetDArg1, Arg2>::type DDRetDArg1DArg2;
+    enum { retSize1 = StaticSize<Ret>::size1, retSize2 = StaticSize<Ret>::size2 };
+    static constexpr int arg1Size = StaticSize<Arg1>::size1;
+    static constexpr int arg2Size = StaticSize<Arg2>::size1;
+    virtual std::pair<int, int> getRetSize() const;
+    virtual int getArg1Size() const;
+    virtual int getArg2Size() const;
+    virtual Ret operator()(const Arg1 &arg1, const Arg2 &arg2)=0;
+    virtual DRetDArg1 parDer1(const Arg1 &arg1, const Arg2 &arg2);
+    virtual Ret dirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDArg2 parDer2(const Arg1 &arg1, const Arg2 &arg2);
+    virtual Ret dirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DDRetDDArg1 parDer1ParDer1(const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDArg1 parDer1DirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual Ret dirDer1DirDer1(const Arg1 &arg1Dir_1, const Arg1 &arg1Dir_2, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DDRetDDArg2 parDer2ParDer2(const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDArg2 parDer2DirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual Ret dirDer2DirDer2(const Arg2 &arg2Dir_1, const Arg2 &arg2Dir_2, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDArg1 parDer1DirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual Ret dirDer2DirDer1(const Arg2 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDArg2 parDer2DirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual bool constParDer1() const;
+    virtual bool constParDer2() const;
+};
+%enddef
+
+// instantiate MBSim::Function<Ret(Arg1,Arg2)> for different types
+FUNCTION2(double          , double       , double       ,   d_d_d)
+FUNCTION2(double          , fmatvec::Vec , fmatvec::Vec ,   d_Vec_Vec)
+FUNCTION2(fmatvec::RotMat3, fmatvec::VecV, double       ,   RotMat3_VecV_d)
+FUNCTION2(fmatvec::Vec3   , fmatvec::VecV, double       ,   Vec3_VecV_d)
+FUNCTION2(fmatvec::Vec    , fmatvec::Vec , double       ,   Vec_Vec_d)
+FUNCTION2(fmatvec::VecV   , fmatvec::VecV, double       ,   VecV_VecV_d)
+FUNCTION2(fmatvec::VecV   , fmatvec::VecV, fmatvec::VecV,   VecV_VecV_VecV)
+
+
+
+// wrap the following classes
 %rename(lambda_) MBSim::Link::lambda; // lambda is a python keyword -> rename it to lambda_
 %include "mbsim/links/link.h"
 %include "mbsim/links/frame_link.h"
@@ -271,6 +375,7 @@ using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fix
 %include "mbsim/contact_kinematics/compoundcontour_contour.h"
 %include "mbsim/contact_kinematics/edge_edge.h"
 %include "mbsim/contact_kinematics/line_planarcontour.h"
+%include "mbsim/numerics/functions/criteria_functions.h"
 %include "mbsim/contact_kinematics/plate_polynomialfrustum.h"
 %include "mbsim/contact_kinematics/point_circle.h"
 %include "mbsim/contact_kinematics/point_contourinterpolation.h"
@@ -282,6 +387,7 @@ using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fix
 %include "mbsim/contact_kinematics/point_plane.h"
 %include "mbsim/contact_kinematics/point_planewithfrustum.h"
 %include "mbsim/contact_kinematics/point_plate.h"
+%include "mbsim/numerics/functions/newton_method_jacobian_functions.h"
 %include "mbsim/contact_kinematics/point_polynomialfrustum.h"
 %include "mbsim/contact_kinematics/point_spatialcontour.h"
 %include "mbsim/contact_kinematics/point_sphere.h"
@@ -424,26 +530,31 @@ def _getNSOf(moduleName):
 _moduleData={}
 
 # internal helper function to extend a Python class
-def _extendClass(className):
+def _extendClass(className, baseClassLocalNameStr_):
   import xml.etree.cElementTree as ET
   # create XML schema element and store it in _moduleData
   # store also all required modules in _moduleData
-  baseClassName=className.__bases__
-  if len(baseClassName)!=1:
+  allBaseClassName=className.__bases__
+  if len(allBaseClassName)!=1:
     raise RuntimeError('Can only handle classed with one base class.')
+  baseClassName=allBaseClassName[0]
   if not hasattr(className, 'getSchema'):
     # no getSchema method -> empty XML
     xsdpart=None
   else:
     # getSchema method defined -> use the returned Schema part
     xsdpart=className.getSchema()
+  if baseClassLocalNameStr_==None:
+    baseClassLocalNameStr=baseClassName.__name__
+  else:
+    baseClassLocalNameStr=baseClassLocalNameStr_
   xsd1=ET.Element(XS+"element", {"name": ET.QName(_getNSOf(className.__module__), className.__name__),
-                                 "substitutionGroup": ET.QName(_getNSOf(baseClassName[0].__module__), baseClassName[0].__name__),
+                                 "substitutionGroup": ET.QName(_getNSOf(baseClassName.__module__), baseClassLocalNameStr),
                                  "type": ET.QName(_getNSOf(className.__module__), className.__name__+"Type")})
   xsd2=ET.Element(XS+"complexType", {"name": ET.QName(_getNSOf(className.__module__), className.__name__+"Type")})
   cc=ET.Element(XS+"complexContent")
   xsd2.append(cc)
-  ext=ET.Element(XS+"extension", {'base': ET.QName(_getNSOf(baseClassName[0].__module__), baseClassName[0].__name__+'Type')})
+  ext=ET.Element(XS+"extension", {'base': ET.QName(_getNSOf(baseClassName.__module__), baseClassLocalNameStr+'Type')})
   cc.append(ext)
   if xsdpart!=None:
     ext.append(xsdpart)
@@ -452,7 +563,7 @@ def _extendClass(className):
   if not className.__module__ in _moduleData:
     _moduleData[className.__module__]={'xsdElements': [], 'requiredModules': set()}
   _moduleData[className.__module__]['xsdElements'].extend(xsd)
-  _moduleData[className.__module__]['requiredModules'].add(baseClassName[0].__module__)
+  _moduleData[className.__module__]['requiredModules'].add(baseClassName.__module__)
 
 
 
@@ -461,15 +572,15 @@ def _extendClass(className):
 
 # register class in the MBSim::ObjectFactory.
 # This also extents className with some special members.
-def registerXMLName(className):
-  _extendClass(className)
+def registerXMLName(className, baseClassLocalNameStr_=None):
+  _extendClass(className, baseClassLocalNameStr_)
   registerXMLName_internal(_FQN(_getNSOf(className.__module__), className.__name__),
     _AllocatePython(className).__disown__(), _DeallocatePython().__disown__())
 
 # register singelton class in the MBSim::ObjectFactory
 # This also extents className with some special members.
-def registerXMLNameAsSingleton(className):
-  _extendClass(className)
+def registerXMLNameAsSingleton(className, baseClassLocalNameStr_=None):
+  _extendClass(className, baseClassLocalNameStr_)
   registerXMLName_internal(_FQN(_getNSOf(className.__module__), className.__name__),
     _GetSingletonPython(className).__disown__(), _DeallocateSingletonPython().__disown__())
 
