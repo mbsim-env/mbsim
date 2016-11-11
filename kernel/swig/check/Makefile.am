@@ -3,7 +3,7 @@ dummy_LTLIBRARIES = _mymod.la
 
 CLEANFILES=mymod_swig_python.cc mymod.py mymod_swig_python.d
 mymod_swig_python.cc: $(srcdir)/mymod.i
-	$(swig) -python -MD -Werror -c++ -o mymod_swig_python.cc $(DEPS_CFLAGS) -I$(srcdir)/.. $(srcdir)/mymod.i || (rm -f mymod_swig_python.cc; exit 1)
+	$(swig) -python -MP -MD -Werror -c++ -o mymod_swig_python.cc $(DEPS_CFLAGS) -I$(srcdir)/.. $(srcdir)/mymod.i || (rm -f mymod_swig_python.cc; exit 1)
 -include mymod_swig_python.d
 mymod.py: mymod_swig_python.cc
 	test ! -f $@ && (rm -f mymod_swig_python.cc && $(MAKE) $(AM_MAKEFLAGS) mymod_swig_python.cc) || :
