@@ -171,22 +171,13 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="FlexibleBody1s33RCMCantilever" substitutionGroup="FlexibleBody" type="FlexibleBody1s33RCMType">
+  <xs:element name="FlexibleBody1s33RCM" substitutionGroup="FlexibleBody" type="FlexibleBody1s33RCMType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Definition des flexiblen 1-dimensional erstreckten Körpers FlexibleBody1s33RCM als Kragbalken.
+        Definition des flexiblen 1-dimensional erstreckten Körpers FlexibleBody1s33RCM.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  
-  <xs:element name="FlexibleBody1s33RCMRing" substitutionGroup="FlexibleBody" type="FlexibleBody1s33RCMType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Definition des flexiblen 1-dimensional erstreckten Körpers FlexibleBody1s33RCM als Ring.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-
   <xs:complexType name="FlexibleBody1s33RCMType">
     <xs:complexContent>
       <xs:extension base="FlexibleBodyType">

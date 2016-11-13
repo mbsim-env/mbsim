@@ -67,7 +67,7 @@ namespace MBSim {
     return res;
   } 
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(JointConstraint, MBSIM%"JointConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, JointConstraint)
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), bi2(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
     C.setParent(this);

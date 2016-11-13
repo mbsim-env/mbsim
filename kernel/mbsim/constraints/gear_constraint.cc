@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GearConstraint)
 
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
   }

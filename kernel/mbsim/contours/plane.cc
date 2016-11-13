@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Plane, MBSIM%"Plane")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Plane)
 
   Vec3 Plane::evalWu(const Vec2 &zeta) {
     return evalWs(zeta);

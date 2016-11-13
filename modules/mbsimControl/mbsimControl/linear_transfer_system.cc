@@ -36,7 +36,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearTransferSystem, MBSIMCONTROL%"LinearTransferSystem")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, LinearTransferSystem)
 
   LinearTransferSystem::LinearTransferSystem(const string& name) : Signal(name), inputSignal(NULL), R1(.002), R2(1.), c(1.) {
   }

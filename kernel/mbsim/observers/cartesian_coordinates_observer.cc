@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CartesianCoordinatesObserver, MBSIM%"CartesianCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, CartesianCoordinatesObserver)
 
   CartesianCoordinatesObserver::CartesianCoordinatesObserver(const std::string &name) : CoordinatesObserver(name), A(EYE) {
   }

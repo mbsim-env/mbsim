@@ -27,8 +27,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<VecV(double)>, MBSIM%"VectorValuedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<Vec3(double)>, MBSIM%"VectorValuedFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(VectorValuedFunction<VecV(VecV)>, MBSIM%"VectorValuedFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, VectorValuedFunction<VecV(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, VectorValuedFunction<Vec3(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, VectorValuedFunction<VecV(VecV)>)
 
 }

@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnilateralNewtonImpact, MBSIM%"UnilateralNewtonImpact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, UnilateralNewtonImpact)
 
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
     if (gda <= -gd_limit) {       // 2 Aenderungen :

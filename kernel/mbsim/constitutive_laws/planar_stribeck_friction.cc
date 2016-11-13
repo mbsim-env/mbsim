@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarStribeckFriction, MBSIM%"PlanarStribeckFriction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarStribeckFriction)
 
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), (*fmu)(0) * fabs(laN)));

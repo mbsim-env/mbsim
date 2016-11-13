@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedBilateralConstraint, MBSIM%"LinearRegularizedBilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LinearRegularizedBilateralConstraint)
 
   void LinearRegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);

@@ -34,7 +34,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NaturalCoordinatesObserver, MBSIM%"NaturalCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, NaturalCoordinatesObserver)
 
   NaturalCoordinatesObserver::NaturalCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
   }

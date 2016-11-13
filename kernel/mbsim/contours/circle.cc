@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Circle, MBSIM%"Circle")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Circle)
 
   Vec3 Circle::evalKs(const fmatvec::Vec2 &zeta) {
     Vec3 Ks(NONINIT);

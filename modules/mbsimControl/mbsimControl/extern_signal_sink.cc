@@ -25,7 +25,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ExternSignalSink, MBSIMCONTROL%"ExternSignalSink")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, ExternSignalSink)
 
   void ExternSignalSink::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);

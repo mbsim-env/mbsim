@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Sphere, MBSIM%"Sphere")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Sphere)
 
   void Sphere::init(InitStage stage) {
     if(stage==plotting) {

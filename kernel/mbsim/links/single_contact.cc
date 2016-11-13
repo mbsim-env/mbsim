@@ -46,7 +46,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SingleContact, MBSIM%"SingleContact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
   SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), updlaN(true), updlaT(true)
 #ifdef HAVE_OPENMBVCPPINTERFACE

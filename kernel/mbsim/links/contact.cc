@@ -44,7 +44,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Contact, MBSIM%"Contact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Contact)
 
   Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), saved_ref(0) {
   }

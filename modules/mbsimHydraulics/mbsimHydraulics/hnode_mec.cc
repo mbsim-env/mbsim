@@ -460,7 +460,7 @@ namespace MBSimHydraulics {
 #endif
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNodeMec, MBSIMHYDRAULICS%"ConstrainedNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedNodeMec)
 
   void ConstrainedNodeMec::init(InitStage stage) {
     if(stage==preInit) {
@@ -488,7 +488,7 @@ namespace MBSimHydraulics {
     setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild())); 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EnvironmentNodeMec, MBSIMHYDRAULICS%"EnvironmentNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, EnvironmentNodeMec)
 
   void EnvironmentNodeMec::init(InitStage stage) {
     if (stage==unknownStage) {
@@ -499,7 +499,7 @@ namespace MBSimHydraulics {
       HNodeMec::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticNodeMec, MBSIMHYDRAULICS%"ElasticNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ElasticNodeMec)
 
   ElasticNodeMec::~ElasticNodeMec() {
     delete bulkModulus;
@@ -569,7 +569,7 @@ namespace MBSimHydraulics {
     fracAir=getDouble(e);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidNodeMec, MBSIMHYDRAULICS%"RigidNodeMec")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, RigidNodeMec)
 
   RigidNodeMec::RigidNodeMec(const string &name) : HNodeMec(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
     gfl->setParent(this);

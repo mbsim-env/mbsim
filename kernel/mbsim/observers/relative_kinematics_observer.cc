@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RelativeKinematicsObserver, MBSIM%"RelativeKinematicsObserver")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RelativeKinematicsObserver)
 
   RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : KinematicsObserver(name) {
     refFrame = 0;

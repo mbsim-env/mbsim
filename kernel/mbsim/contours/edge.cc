@@ -27,7 +27,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Edge, MBSIM%"Edge")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Edge)
 
   void Edge::init(InitStage stage) {
     if (stage == plotting) {

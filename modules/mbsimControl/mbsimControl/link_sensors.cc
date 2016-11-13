@@ -47,14 +47,14 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkDistanceSensor, MBSIMCONTROL%"GeneralizedRelativePositionSensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, LinkDistanceSensor)
 
   void LinkDistanceSensor::updateSignal() {
     s = link->evalGeneralizedRelativePosition();
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinkVelocitySensor, MBSIMCONTROL%"GeneralizedRelativeVelocitySensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, LinkVelocitySensor)
 
   void LinkVelocitySensor::updateSignal() {
     s = link->evalGeneralizedRelativeVelocity();

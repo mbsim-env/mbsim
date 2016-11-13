@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialStribeckImpact, MBSIM%"SpatialStribeckImpact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialStribeckImpact)
 
   Vec SpatialStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la - r * gdn, (*fmu)(nrm2(gdn)) * fabs(laN));

@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BilateralConstraint, MBSIM%"BilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, BilateralConstraint)
 
   double BilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return la - r * gdn;

@@ -30,7 +30,7 @@ namespace MBSim {
   class ConstantInfluenceFunction : public InfluenceFunction {
     public:
       ConstantInfluenceFunction() : couplingValue(0) {
-    }
+      }
       ConstantInfluenceFunction(const double & couplingValue_) :
           couplingValue(couplingValue_) {
       }

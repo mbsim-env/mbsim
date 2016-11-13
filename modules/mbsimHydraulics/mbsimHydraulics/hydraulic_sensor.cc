@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlowSensor, MBSIMHYDRAULICS%"FlowSensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, FlowSensor)
 
   void FlowSensor::updateSignal() {
     s = line->evalQIn();
@@ -55,7 +55,7 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PressureSensor, MBSIMHYDRAULICS%"PressureSensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, PressureSensor)
 
   void PressureSensor::updateSignal() {
     s = node->evalGeneralizedForce();
@@ -83,7 +83,7 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TemperatureSensor, MBSIMHYDRAULICS%"TemperatureSensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, TemperatureSensor)
   
   void TemperatureSensor::init(InitStage stage) {
     if (stage==preInit) {
@@ -94,7 +94,7 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KinematicViscositySensor, MBSIMHYDRAULICS%"KinematicViscositySensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, KinematicViscositySensor)
   
   void KinematicViscositySensor::init(InitStage stage) {
     if (stage==preInit) {

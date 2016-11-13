@@ -35,7 +35,7 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticLineVariational,  MBSIMHYDRAULICS%"ElasticLineVariational")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ElasticLineVariational)
 
   ElasticLineVariational::ElasticLineVariational(const string &name) : HLine(name), p0(0), fracAir(0), r(0), l(0), relPlotPoints(0), window_function_type(BlackmanHarris), n(9), wO(0), wI(0), hq(0), hu(0), hp0(0), cu(0), Tlocal(0,0), relPlot(0,0), Mlocal(0) {
   }

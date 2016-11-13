@@ -34,7 +34,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CylinderCoordinatesObserver, MBSIM%"CylinderCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, CylinderCoordinatesObserver)
 
   CylinderCoordinatesObserver::CylinderCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
     ez(2) = 1;

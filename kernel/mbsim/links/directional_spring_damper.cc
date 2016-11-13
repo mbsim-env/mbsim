@@ -34,7 +34,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(DirectionalSpringDamper, MBSIM%"DirectionalSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DirectionalSpringDamper)
 
   DirectionalSpringDamper::DirectionalSpringDamper(const string &name) : FloatingFrameLink(name), func(NULL), l0(0) {
   }

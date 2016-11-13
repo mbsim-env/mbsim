@@ -165,7 +165,7 @@
         <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest"/>
         <SpringDamper name="Spring4">
           <forceFunction>
-            <PyLinearSpringDamper_100_0_2 xmlns="http://mypytest"/>
+            <PyLinearSpringDamper xmlns="http://mypytest"/>
           </forceFunction>
           <unloadedLength>0</unloadedLength>
           <connect ref1="../Frame[I4]" ref2="../Object[Box4]/Frame[C]"/>

@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Gear, MBSIM%"Gear")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Gear)
 
   Gear::Gear(const string &name) : RigidBodyLink(name), func(0) {
     connect(NULL, -1);

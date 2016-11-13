@@ -29,7 +29,7 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ExternSignalSource, MBSIMCONTROL%"ExternSignalSource")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, ExternSignalSource)
 
   void Signal::init(InitStage stage) {
     if (stage==plotting) {

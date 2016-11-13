@@ -42,7 +42,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Group, MBSIM%"Group")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Group)
 
   Group::Group(const string &name) : DynamicSystem(name) {}
 

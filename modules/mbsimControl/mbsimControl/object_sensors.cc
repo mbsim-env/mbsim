@@ -51,7 +51,7 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionSensor, MBSIMCONTROL%"GeneralizedPositionSensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedPositionSensor)
 
   void GeneralizedPositionSensor::updateSignal() {
     if (object->getq().size()==0)
@@ -61,7 +61,7 @@ namespace MBSimControl {
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocitySensor, MBSIMCONTROL%"GeneralizedVelocitySensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedVelocitySensor)
 
   void GeneralizedVelocitySensor::updateSignal() {
     if (object->getu().size()==0)

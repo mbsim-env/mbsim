@@ -45,8 +45,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s33RCM, MBSIMFLEX%"FlexibleBody1s33RCMCantilever")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s33RCM, MBSIMFLEX%"FlexibleBody1s33RCMRing")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBody1s33RCM)
 
   FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), angle(new RevCardan()), Elements(0), l0(0.), E(0.), G(0.), A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), epstD(0.), k0D(0.), epstL(0.), k0L(0.), initialised(false), nGauss(3) {
   }

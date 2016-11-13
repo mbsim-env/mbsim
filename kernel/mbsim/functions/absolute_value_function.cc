@@ -26,8 +26,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(AbsoluteValueFunction<double(double)>, MBSIM%"AbsoluteValueFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(AbsoluteValueFunction<VecV(double)>, MBSIM%"AbsoluteValueFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(AbsoluteValueFunction<VecV(VecV)>, MBSIM%"AbsoluteValueFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, AbsoluteValueFunction<double(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, AbsoluteValueFunction<VecV(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, AbsoluteValueFunction<VecV(VecV)>)
 
 }

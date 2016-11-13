@@ -277,7 +277,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedNode, MBSIMHYDRAULICS%"ConstrainedNode")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedNode)
 
   void ConstrainedNode::init(InitStage stage) {
     if(stage==preInit) {
@@ -304,7 +304,7 @@ namespace MBSimHydraulics {
     setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild())); 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(EnvironmentNode, MBSIMHYDRAULICS%"EnvironmentNode")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, EnvironmentNode)
 
   void EnvironmentNode::init(InitStage stage) {
     if (stage==unknownStage) {
@@ -315,7 +315,7 @@ namespace MBSimHydraulics {
       HNode::init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticNode, MBSIMHYDRAULICS%"ElasticNode")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ElasticNode)
 
   ElasticNode::~ElasticNode() {
     delete bulkModulus;
@@ -379,7 +379,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidNode, MBSIMHYDRAULICS%"RigidNode")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, RigidNode)
 
   RigidNode::RigidNode(const string &name) : HNode(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
     gfl->setParent(this);
@@ -596,7 +596,7 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidCavitationNode, MBSIMHYDRAULICS%"RigidCavitationNode")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, RigidCavitationNode)
 
   RigidCavitationNode::RigidCavitationNode(const string &name) : HNode(name), pCav(0), active(false), active0(false), gdn(0), gdd(0), gfl(new UnilateralConstraint), gil(new UnilateralNewtonImpact) {
   }
@@ -892,7 +892,7 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PressurePump, MBSIMHYDRAULICS%"PressurePump")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, PressurePump)
 
   void PressurePump::initializeUsingXML(DOMElement * element) {
     HNode::initializeUsingXML(element);

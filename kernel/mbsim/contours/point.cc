@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Point, MBSIM%"Point")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Point)
 
   Vec3 Point::evalParDer1Ku(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Ku(NONINIT);

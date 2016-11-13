@@ -114,7 +114,7 @@ namespace MBSimHydraulics {
     if (e) setGapLengthFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneLeakage0DOF,  MBSIMHYDRAULICS%"PlaneLeakage0DOF")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, PlaneLeakage0DOF)
 
   void PlaneLeakage0DOF::setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl) {
     lpl=plpl;
@@ -133,7 +133,7 @@ namespace MBSimHydraulics {
     setPlaneLeakagePressureLoss(p);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CircularLeakage0DOF,  MBSIMHYDRAULICS%"CircularLeakage0DOF")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, CircularLeakage0DOF)
 
   void CircularLeakage0DOF::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
     lpl=clpl;

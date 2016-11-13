@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpringDamper, MBSIM%"SpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpringDamper)
 
   SpringDamper::SpringDamper(const string &name) : FrameLink(name), func(NULL), l0(0) {
   }

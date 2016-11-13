@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RADAU5Integrator, MBSIMINT%"RADAU5Integrator")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, RADAU5Integrator)
 
   RADAU5Integrator::RADAU5Integrator() : dt0(0), maxSteps(0), dtMax(0) {
   }

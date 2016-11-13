@@ -27,6 +27,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(AbsoluteKinematicsObserver, MBSIM%"AbsoluteKinematicsObserver")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, AbsoluteKinematicsObserver)
 
 }

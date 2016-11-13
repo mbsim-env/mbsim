@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearSpringDamperForce, MBSIM%"LinearSpringDamperForce")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LinearSpringDamperForce)
 
   void LinearSpringDamperForce::initializeUsingXML(DOMElement *element) {
     Function<double(double,double)>::initializeUsingXML(element);

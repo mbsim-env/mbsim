@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearRegularizedCoulombFriction, MBSIM%"LinearRegularizedCoulombFriction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LinearRegularizedCoulombFriction)
 
   Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN) {
     int nFric = gd.size();

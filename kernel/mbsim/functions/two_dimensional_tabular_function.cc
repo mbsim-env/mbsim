@@ -26,9 +26,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<double(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<VecV(double,double)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<VecV(VecV,VecV)>, MBSIM%"TwoDimensionalTabularFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(TwoDimensionalTabularFunction<Vec(Vec,Vec)>, MBSIM%"TwoDimensionalTabularFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, TwoDimensionalTabularFunction<double(double,double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, TwoDimensionalTabularFunction<VecV(double,double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, TwoDimensionalTabularFunction<VecV(VecV,VecV)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, TwoDimensionalTabularFunction<Vec(Vec,Vec)>)
 
 }

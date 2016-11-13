@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialContour, MBSIM%"SpatialContour")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialContour)
 
   SpatialContour::~SpatialContour() {
      if (funcCrPC) 

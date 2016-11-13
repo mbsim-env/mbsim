@@ -26,9 +26,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SinusoidalFunction<double(double)>, MBSIM%"SinusoidalFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SinusoidalFunction<VecV(double)>, MBSIM%"SinusoidalFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SinusoidalFunction<Vec3(double)>, MBSIM%"SinusoidalFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(SinusoidalFunction<VecV(VecV)>, MBSIM%"SinusoidalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SinusoidalFunction<double(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SinusoidalFunction<VecV(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SinusoidalFunction<Vec3(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SinusoidalFunction<VecV(VecV)>)
 
 }

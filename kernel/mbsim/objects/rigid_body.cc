@@ -52,7 +52,7 @@ namespace MBSim {
 
   Range<Var,Var> i02(0,2);
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBody)
 
   RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z") {
     

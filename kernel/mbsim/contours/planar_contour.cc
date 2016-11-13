@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarContour, MBSIM%"PlanarContour")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarContour)
 
   PlanarContour::~PlanarContour() {
      if (funcCrPC) 

@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BilateralImpact, MBSIM%"BilateralImpact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, BilateralImpact)
 
   double BilateralImpact::project(double la, double gdn, double gda, double r, double laMin) {
     return la - r * gdn;

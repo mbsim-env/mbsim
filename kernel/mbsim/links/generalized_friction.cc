@@ -37,7 +37,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedFriction, MBSIM%"GeneralizedFriction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedFriction)
 
   GeneralizedFriction::GeneralizedFriction(const string &name) : RigidBodyLink(name), func(NULL), laN(0) {
     body[0] = NULL;

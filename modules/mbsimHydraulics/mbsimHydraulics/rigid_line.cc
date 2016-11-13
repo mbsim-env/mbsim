@@ -37,7 +37,7 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidLine,  MBSIMHYDRAULICS%"RigidLine")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, RigidLine)
 
   RigidLine::~RigidLine() { 
     delete pL; 
@@ -90,7 +90,7 @@ namespace MBSimHydraulics {
     setLinePressureLoss(p);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ClosableRigidLine,  MBSIMHYDRAULICS%"ClosableRigidLine")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ClosableRigidLine)
 
   ClosableRigidLine::~ClosableRigidLine() {
     delete cpL;
@@ -141,7 +141,7 @@ namespace MBSimHydraulics {
       setBilateral(true);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnidirectionalRigidLine,  MBSIMHYDRAULICS%"UnidirectionalRigidLine")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, UnidirectionalRigidLine)
 
   void UnidirectionalRigidLine::init(InitStage stage) {
     if (stage==modelBuildup) {

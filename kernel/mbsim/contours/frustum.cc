@@ -34,7 +34,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Frustum, MBSIM%"Frustum")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Frustum)
 
   void Frustum::init(InitStage stage) {
     if(stage==plotting) {

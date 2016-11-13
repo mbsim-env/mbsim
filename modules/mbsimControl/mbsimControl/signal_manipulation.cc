@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalMux, MBSIMCONTROL%"SignalMux")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalMux)
 
   void SignalMux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -65,7 +65,7 @@ namespace MBSimControl {
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalDemux, MBSIMCONTROL%"SignalDemux")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalDemux)
 
   void SignalDemux::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -95,7 +95,7 @@ namespace MBSimControl {
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SignalTimeDiscretization, MBSIMCONTROL%"SignalTimeDiscretization")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, SignalTimeDiscretization)
 
   void SignalTimeDiscretization::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -125,7 +125,7 @@ namespace MBSimControl {
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PIDController, MBSIMCONTROL%"PIDController")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, PIDController)
 
   void PIDController::initializeUsingXML(DOMElement * element) {
     Signal::initializeUsingXML(element);
@@ -194,7 +194,7 @@ namespace MBSimControl {
     P = PP; I = II; D = DD;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnarySignalOperation, MBSIMCONTROL%"UnarySignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, UnarySignalOperation)
 
   void UnarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
@@ -224,7 +224,7 @@ namespace MBSimControl {
     upds = false;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BinarySignalOperation, MBSIMCONTROL%"BinarySignalOperation")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, BinarySignalOperation)
 
   void BinarySignalOperation::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);

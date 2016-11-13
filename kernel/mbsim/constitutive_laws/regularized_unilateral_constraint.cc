@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedUnilateralConstraint, MBSIM%"RegularizedUnilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RegularizedUnilateralConstraint)
 
   void RegularizedUnilateralConstraint::initializeUsingXML(DOMElement *element) {
     GeneralizedForceLaw::initializeUsingXML(element);

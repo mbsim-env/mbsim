@@ -183,6 +183,8 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %rename(Function_##namePostfix) MBSim::Function<Ret(Arg)>;
 class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fmatvec::Atom {
   public:
+    Function();
+    void initializeUsingXML(xercesc::DOMElement *element);
     typedef typename Der<Ret, Arg>::type DRetDArg;
     typedef typename Der<DRetDArg, Arg>::type DDRetDDArg;
     enum { retSize1 = StaticSize<Ret>::size1, retSize2 = StaticSize<Ret>::size2 };
@@ -225,6 +227,8 @@ FUNCTION1(fmatvec::Vec    , double       ,   Vec_d)
 %rename(Function_##namePostfix) MBSim::Function<Ret(Arg1,Arg2)>;
 class MBSim::Function<Ret(Arg1, Arg2)> : public MBSim::FunctionBase, virtual public fmatvec::Atom {
   public:
+    Function();
+    void initializeUsingXML(xercesc::DOMElement *element);
     typedef typename Der<Ret, Arg1>::type DRetDArg1;
     typedef typename Der<Ret, Arg2>::type DRetDArg2;
     typedef typename Der<DRetDArg1, Arg1>::type DDRetDDArg1;
@@ -510,7 +514,7 @@ class _GetSingletonPython(AllocateBase):
     otherDirector=_dynamic_cast_Director(other)
     if otherDirector==None:
       return False
-    if type(otherDirector)==_AllocatePython and otherDirector.className==self.className:
+    if type(otherDirector)==_GetSingletonPython and otherDirector.className==self.className:
       return True
     return False;
 
@@ -529,8 +533,15 @@ def _getNSOf(moduleName):
 
 _moduleData={}
 
+# fix local xml name (remove template)
+def _fixXMLLocalName(name):
+  c=name.find("_")
+  if c>0:
+    return name[0:c]
+  return name
+
 # internal helper function to extend a Python class
-def _extendClass(className, baseClassLocalNameStr_):
+def _extendClass(className):
   import xml.etree.cElementTree as ET
   # create XML schema element and store it in _moduleData
   # store also all required modules in _moduleData
@@ -544,17 +555,15 @@ def _extendClass(className, baseClassLocalNameStr_):
   else:
     # getSchema method defined -> use the returned Schema part
     xsdpart=className.getSchema()
-  if baseClassLocalNameStr_==None:
-    baseClassLocalNameStr=baseClassName.__name__
-  else:
-    baseClassLocalNameStr=baseClassLocalNameStr_
   xsd1=ET.Element(XS+"element", {"name": ET.QName(_getNSOf(className.__module__), className.__name__),
-                                 "substitutionGroup": ET.QName(_getNSOf(baseClassName.__module__), baseClassLocalNameStr),
+                                 "substitutionGroup": ET.QName(_getNSOf(baseClassName.__module__),
+                                                               _fixXMLLocalName(baseClassName.__name__)),
                                  "type": ET.QName(_getNSOf(className.__module__), className.__name__+"Type")})
   xsd2=ET.Element(XS+"complexType", {"name": ET.QName(_getNSOf(className.__module__), className.__name__+"Type")})
   cc=ET.Element(XS+"complexContent")
   xsd2.append(cc)
-  ext=ET.Element(XS+"extension", {'base': ET.QName(_getNSOf(baseClassName.__module__), baseClassLocalNameStr+'Type')})
+  ext=ET.Element(XS+"extension", {'base': ET.QName(_getNSOf(baseClassName.__module__),
+                                                   _fixXMLLocalName(baseClassName.__name__)+'Type')})
   cc.append(ext)
   if xsdpart!=None:
     ext.append(xsdpart)
@@ -572,16 +581,16 @@ def _extendClass(className, baseClassLocalNameStr_):
 
 # register class in the MBSim::ObjectFactory.
 # This also extents className with some special members.
-def registerXMLName(className, baseClassLocalNameStr_=None):
-  _extendClass(className, baseClassLocalNameStr_)
-  registerXMLName_internal(_FQN(_getNSOf(className.__module__), className.__name__),
+def registerClass(className):
+  _extendClass(className)
+  registerClass_internal(_FQN(_getNSOf(className.__module__), _fixXMLLocalName(className.__name__)),
     _AllocatePython(className).__disown__(), _DeallocatePython().__disown__())
 
 # register singelton class in the MBSim::ObjectFactory
 # This also extents className with some special members.
-def registerXMLNameAsSingleton(className, baseClassLocalNameStr_=None):
-  _extendClass(className, baseClassLocalNameStr_)
-  registerXMLName_internal(_FQN(_getNSOf(className.__module__), className.__name__),
+def registerClassAsSingleton(className):
+  _extendClass(className)
+  registerClass_internal(_FQN(_getNSOf(className.__module__), _fixXMLLocalName(className.__name__)),
     _GetSingletonPython(className).__disown__(), _DeallocateSingletonPython().__disown__())
 
 # create the xsd for this module.

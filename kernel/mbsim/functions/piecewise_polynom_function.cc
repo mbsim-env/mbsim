@@ -29,10 +29,10 @@ using namespace std;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewisePolynomFunction<VecV(double)>, MBSIM%"PiecewisePolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewisePolynomFunction<Vec3(double)>, MBSIM%"PiecewisePolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewisePolynomFunction<double(double)>, MBSIM%"PiecewisePolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewisePolynomFunction<VecV(VecV)>, MBSIM%"PiecewisePolynomFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(PiecewisePolynomFunction<Vec3(VecV)>, MBSIM%"PiecewisePolynomFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, PiecewisePolynomFunction<VecV(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, PiecewisePolynomFunction<Vec3(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, PiecewisePolynomFunction<double(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, PiecewisePolynomFunction<VecV(VecV)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, PiecewisePolynomFunction<Vec3(VecV)>)
 
 }

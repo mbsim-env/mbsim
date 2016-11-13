@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialCoulombFriction, MBSIM%"SpatialCoulombFriction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialCoulombFriction)
 
   Vec SpatialCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return proxCT3D(la - r * gdn, mu * fabs(laN));

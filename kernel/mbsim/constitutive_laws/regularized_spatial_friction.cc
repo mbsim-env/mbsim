@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedSpatialFriction, MBSIM%"RegularizedSpatialFriction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RegularizedSpatialFriction)
 
   void RegularizedSpatialFriction::initializeUsingXML(DOMElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
