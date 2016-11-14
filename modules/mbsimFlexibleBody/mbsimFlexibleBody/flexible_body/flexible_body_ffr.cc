@@ -35,11 +35,13 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 #include "mbsimFlexibleBody/namespace.h"
+#include "mbsimFlexibleBody/utils/openmbv_utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/dynamicindexedfaceset.h>
 #endif
 
 using namespace std;
@@ -54,7 +56,7 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBodyFFR, MBSIMFLEX%"FlexibleBodyFFR")
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true), bodyFixedRepresentationOfAngularVelocity(false) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), Id(Eye()), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true), updNodalPos(true), updNodalStress(true), bodyFixedRepresentationOfAngularVelocity(false) {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -310,6 +312,17 @@ namespace MBSimFlexibleBody {
       WJTrel.resize(nu[0]);
       WJRrel.resize(nu[0]);
 
+      WrOP.resize(KrKP.size());
+      disp.resize(KrKP.size());
+      if(not ARP.size())
+        ARP.resize(KrKP.size(),SqrMat3(Eye()));
+      AWK.resize(ARP.size());
+      if(not Psi.size())
+        Psi.resize(Phi.size(),Mat3xV(ne));
+      if(not sigma0.size())
+        sigma0.resize(sigmahel.size());
+      sigma.resize(sigma0.size());
+
       updateM_ = &FlexibleBodyFFR::updateMNotConst;
       updateLLM_ = &FlexibleBodyFFR::updateLLMNotConst;
     }
@@ -415,6 +428,16 @@ namespace MBSimFlexibleBody {
           for(int i=0; i<nu[0]; i++)
             plotColumns.push_back("uRel("+numtostr(i)+")");
         }
+        if(getPlotFeature(globalPosition)==enabled) {
+          for(unsigned int i=0; i<WrOP.size(); i++)
+            for(int j=0; j<3; j++)
+              plotColumns.push_back("WrOP["+numtostr(int(i))+"]("+numtostr(j)+")");
+        }
+        if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+          std::dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
+          if(ombvIndices.size())
+            std::dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
+        }
         Body::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
@@ -462,6 +485,12 @@ namespace MBSimFlexibleBody {
           plotVector.push_back(uRel.e(i));
       }
 
+      if(getPlotFeature(globalPosition)==enabled) {
+        if(updNodalPos) updateNodalPositions();
+        for(unsigned int i=0; i<WrOP.size(); i++)
+          for(int j=0; j<3; j++)
+            plotVector.push_back(WrOP[i](j));
+      }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(FWeight) {
@@ -478,19 +507,18 @@ namespace MBSimFlexibleBody {
           data.push_back(1.0);
           FWeight->append(data);
         }
-        if(openMBVBody) {
+        if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
           vector<double> data;
           data.push_back(getTime());
-          Vec3 WrOS=openMBVFrame->evalPosition();
-          Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation());
-          data.push_back(WrOS(0));
-          data.push_back(WrOS(1));
-          data.push_back(WrOS(2));
-          data.push_back(cardan(0));
-          data.push_back(cardan(1));
-          data.push_back(cardan(2));
-          data.push_back(0);
-          std::dynamic_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
+          if(updNodalPos) updateNodalPositions();
+          if(updNodalStress) updateNodalStresses();
+          for(unsigned int i=0; i<ombvNodes.size(); i++) {
+              for(int j=0; j<3; j++)
+                data.push_back(WrOP[ombvNodes[i]](j));
+              //data.push_back(nrm2(disp[ombvNodes[i]]));
+              data.push_back(fabs(sigma[ombvNodes[i]](0)));
+          }
+          dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
         }
       }
 #endif
@@ -693,6 +721,40 @@ namespace MBSimFlexibleBody {
     updKJ[1] = false;
   }
 
+  void FlexibleBodyFFR::updateNodalPositions() {
+    for(unsigned int j=0; j<KrKP.size(); j++) {
+      AWK[j] = K->evalOrientation()*ARP[j]*(Id+tilde(Psi[j]*q(iqE)));
+//      if(K0F.size()) {
+//        MatVx3 PhigeoT(nq,NONINIT);
+//        for(int i=0; i<3; i++)
+//          PhigeoT.set(i,K0F[i]*q);
+//        Phis = Phi + PhigeoT.T();
+//      }
+//      if(K0M.size()) {
+//        MatVx3 PsigeoT(nq,NONINIT);
+//        for(int i=0; i<3; i++)
+//          PsigeoT.set(i,K0M[i]*q);
+//        Psis = Psi + PsigeoT.T();
+//      }
+      disp[j] = Phi[j]*q(iqE);
+      WrOP[j] = K->getPosition() + K->getOrientation()*(KrKP[j] + disp[j]);
+    }
+    updNodalPos = false;
+  }
+
+  void FlexibleBodyFFR::updateNodalStresses() {
+    for(unsigned int j=0; j<sigmahel.size(); j++) {
+      sigma[j] = sigma0[j];
+      if(sigmahel[j].cols()) {
+        fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahe = sigmahel[j];
+        for(unsigned int i=0; i<sigmahen.size(); i++)
+          sigmahe += sigmahen[j][i]*q(iqE)(i);
+        sigma[j] += sigmahe*q(iqE);
+      }
+    }
+    updNodalStress = false;
+  }
+
   void FlexibleBodyFFR::updatePositions(Frame *frame) {
     frame->setPosition(R->getPosition() + evalGlobalRelativePosition());
     frame->setOrientation(R->getOrientation()*APK); // APK already update to date
@@ -730,6 +792,8 @@ namespace MBSimFlexibleBody {
     updMb = true;
     updKJ[0] = true;
     updKJ[1] = true;
+    updNodalPos = true;
+    updNodalStress = true;
   }
 
 //  void FlexibleBodyFFR::updateJacobiansForRemainingFramesAndContours1() {
@@ -753,6 +817,59 @@ namespace MBSimFlexibleBody {
     Body::updateudRef(ref);
     for(unsigned int i=1; i<frame.size(); i++)
       static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud(nu[0]-ne,nu[0]-1));
+  }
+
+  void FlexibleBodyFFR::setRelativeNodalPosition(const fmatvec::VecV &r) {
+    KrKP.resize(r.size()/3);
+    for(unsigned int i=0; i<KrKP.size(); i++)
+      KrKP[i] = r(Index(3*i,3*i+2));
+  }
+
+  void FlexibleBodyFFR::setRelativeNodalOrientation(const fmatvec::MatVx3 &A) {
+    ARP.resize(A.rows()/3);
+    for(unsigned int i=0; i<ARP.size(); i++)
+      ARP[i] = A(Index(3*i,3*i+2),Index(0,2));
+  }
+
+  void FlexibleBodyFFR::setShapeMatrixOfTranslation(const fmatvec::MatV &Phi_) {
+    Phi.resize(Phi_.rows()/3);
+    for(unsigned int i=0; i<Phi.size(); i++)
+      Phi[i] = Phi_(Index(3*i,3*i+2),Index(0,Phi_.cols()-1));
+  }
+
+  void FlexibleBodyFFR::setShapeMatrixOfRotation(const fmatvec::MatV &Psi_) {
+    Psi.resize(Psi_.rows()/3);
+    for(unsigned int i=0; i<Psi.size(); i++)
+      Psi[i] = Psi_(Index(3*i,3*i+2),Index(0,Psi_.cols()-1));
+  }
+
+  void FlexibleBodyFFR::setStressMatrix(const fmatvec::MatV &sigmahel_) {
+    sigmahel.resize(sigmahel_.rows()/6);
+    for(unsigned int i=0; i<sigmahel.size(); i++)
+      sigmahel[i] = sigmahel_(Index(6*i,6*i+5),Index(0,sigmahel_.cols()-1));
+  }
+
+  void FlexibleBodyFFR::setNonlinearStressMatrix(const std::vector<fmatvec::MatV> &sigmahen_) {
+    sigmahen.resize(sigmahen_.size());
+    for(unsigned int i=0; i<sigmahen.size(); i++) {
+      sigmahen[i].resize(sigmahen_[i].rows()/6);
+      for(unsigned int j=0; j<sigmahen[i].size(); j++)
+        sigmahen[i][j] = sigmahen_[i](Index(6*i,6*i+5),Index(0,sigmahen_[i].cols()-1));
+    }
+  }
+
+  void FlexibleBodyFFR::setInitialStress(const fmatvec::VecV &sigma0_) {
+    sigma0.resize(sigma0_.rows()/6);
+    for(unsigned int i=0; i<sigma0.size(); i++)
+      sigma0[i] = sigma0_(Index(6*i,6*i+5));
+  }
+
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToForce(const std::vector<fmatvec::SqrMatV> &K0F_) {
+//    K0F = K0F_;
+  }
+
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToMoment(const std::vector<fmatvec::SqrMatV> &K0M_) {
+//    K0M = K0M_;
   }
 
   void FlexibleBodyFFR::addFrame(FixedNodalFrame *frame_) {
@@ -894,6 +1011,21 @@ namespace MBSimFlexibleBody {
       }
     }
 
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeNodalPosition");
+    if(e) setRelativeNodalPosition(getVec(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeNodalOrientation");
+    if(e) setRelativeNodalOrientation(getMat(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfTranslation");
+    if(e) setShapeMatrixOfTranslation(getMat(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfRotation");
+    if(e) setShapeMatrixOfRotation(getMat(e));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stressMatrix");
+    if(e) setStressMatrix(getMat(e));
+
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e && e->getFirstElementChild()) {
       MBSim::Function<Vec3(VecV,double)> *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV,double)> >(e->getFirstElementChild());
@@ -932,6 +1064,19 @@ namespace MBSimFlexibleBody {
     if(e) bodyFixedRepresentationOfAngularVelocity = getBool(e);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
+    if(e) {
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
+      if(ee) ombvNodes=getVec(ee);
+      ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"indices");
+      Vec indices;
+      if(ee) indices=getVec(ee);
+      ombvIndices.resize(indices.size());
+      for(int i=0; i<indices.size(); i++)
+        ombvIndices[i] = indices(i);
+      OpenMBVDynamicIndexedFaceSet ombv;
+      openMBVBody=ombv.createOpenMBV(e);
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVRigidBody");
     if(e) {
       shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());

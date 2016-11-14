@@ -566,6 +566,41 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="relativeNodalPosition" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="relativeNodalOrientation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="shapeMatrixOfTranslation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="shapeMatrixOfRotation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="stressMatrix" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:choice minOccurs="0">
             <xs:element name="generalTranslation">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -710,6 +745,21 @@
                 <xs:element ref="mbsim:Contour"/>
                 <xs:element ref="pv:Embed"/>
               </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung des Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="indices" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
+                <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

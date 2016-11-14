@@ -85,7 +85,7 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat3 ARP, APK, E;
       fmatvec::Mat3xV WPhi, WPsi, Phi, Psi;
       std::vector<fmatvec::SqrMatV> K0F, K0M;
-      fmatvec::Vector<fmatvec::Fixed<6>, double > sigma0;
+      fmatvec::Vector<fmatvec::Fixed<6>, double> sigma0;
       fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahel;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahen;
       fmatvec::Vec q, qd, qdd;

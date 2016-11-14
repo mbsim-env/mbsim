@@ -61,6 +61,8 @@ namespace MBSimFlexibleBody {
       void updateAccelerations();
       void updateJacobians();
       void updateGyroscopicAccelerations();
+      void updateNodalPositions();
+      void updateNodalStresses();
       void updatePositions(MBSim::Frame *frame);
       void updateVelocities(MBSim::Frame *frame);
       void updateAccelerations(MBSim::Frame *frame);
@@ -197,6 +199,16 @@ namespace MBSimFlexibleBody {
       void setGeometricStiffnessMatrixDueToAngularVelocity(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
       // End of interface
 
+      void setRelativeNodalPosition(const fmatvec::VecV &r);
+      void setRelativeNodalOrientation(const fmatvec::MatVx3 &A);
+      void setShapeMatrixOfTranslation(const fmatvec::MatV &Phi_);
+      void setShapeMatrixOfRotation(const fmatvec::MatV &Psi_);
+      void setStressMatrix(const fmatvec::MatV &sigmahel_);
+      void setNonlinearStressMatrix(const std::vector<fmatvec::MatV> &sigmahen_);
+      void setInitialStress(const fmatvec::VecV &sigma0_);
+      void setGeometricStiffnessMatrixDueToForce(const std::vector<fmatvec::SqrMatV> &K0F_);
+      void setGeometricStiffnessMatrixDueToMoment(const std::vector<fmatvec::SqrMatV> &K0M_);
+
       void addFrame(FixedNodalFrame *frame); 
 
       using Body::addContour;
@@ -205,6 +217,12 @@ namespace MBSimFlexibleBody {
       void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &body);
       void setOpenMBVFrameOfReference(MBSim::Frame * frame) {openMBVFrame=frame; }
       const MBSim::Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
+
+//      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<std::vector<double> >&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+////        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency);
+////        openMBVRigidBody=ombv.createOpenMBV();
+//        ombvNodes = nodes;
+//      }
 
       /** \brief Visualize the weight */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
@@ -275,6 +293,23 @@ namespace MBSimFlexibleBody {
       fmatvec::SymMatV Me, Ke0, De0;
       std::vector<fmatvec::SqrMat3> Gr0;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe0;
+
+      fmatvec::SqrMat3 Id;
+      std::vector<fmatvec::Vec3> KrKP, WrOP, disp;
+      std::vector<fmatvec::SqrMat3> ARP, AWK;
+      std::vector<fmatvec::Mat3xV> Phi, Psi;
+      std::vector<std::vector<fmatvec::SqrMatV> > K0F, K0M;
+      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma0, sigma;
+      std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahel;
+      std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > sigmahen;
+
+//      fmatvec::VecV RrRPi, WrRPi;
+//      fmatvec::SqrMatV ARPi, APKi, Ei;
+//      fmatvec::MatV WPhi, WPsi, Phi, Psi;
+//      std::vector<fmatvec::SqrMatV> K0F, K0M;
+//      fmatvec::VecV sigma0;
+//      fmatvec::MatV sigmahel;
+//      std::vector<fmatvec::MatV> sigmahen;
 
       // Number of mode shapes 
       int ne;
@@ -368,7 +403,7 @@ namespace MBSimFlexibleBody {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updPjb, updGC, updT, updMb, updKJ[2];
+      bool updPjb, updGC, updT, updMb, updKJ[2], updNodalPos, updNodalStress;
 
       fmatvec::SymMatV M_;
       fmatvec::VecV h_;
@@ -387,6 +422,8 @@ namespace MBSimFlexibleBody {
        */
       MBSim::Frame * openMBVFrame;
       std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
+      std::vector<double> ombvNodes;
+      std::vector<int> ombvIndices;
 #endif
   };
 
