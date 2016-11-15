@@ -65,6 +65,7 @@
   </objects>
   <links>
     <Contact name="contactMetronome" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Object[Body]/Contour[cTop]" ref2="../../Group[Metronome{i}]/Object[Base]/Contour[cBottom]"/>
       <normalForceLaw>
         <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
       </normalForceLaw>
@@ -83,7 +84,6 @@
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombImpact>
       </tangentialImpactLaw>
-      <connect ref1="../Object[Body]/Contour[cTop]" ref2="../../Group[Metronome{i}]/Object[Base]/Contour[cBottom]"/>
     </Contact>
   </links>
 </Group>

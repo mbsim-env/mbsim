@@ -123,6 +123,7 @@
       </objects>
       <links>
         <Contact name="Contact1">
+          <connect ref1="../Contour[PlanarContour1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
@@ -131,7 +132,6 @@
               <restitutionCoefficient unit="-">0</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
-          <connect ref1="../Contour[PlanarContour1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
           <searchAllContactPoints>1</searchAllContactPoints>
         </Contact>
       </links>

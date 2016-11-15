@@ -1639,7 +1639,35 @@
   </xs:element>
   <xs:complexType name="ContourLinkType">
     <xs:complexContent>
-      <xs:extension base="LinkType"/>
+      <xs:extension base="LinkType">
+        <xs:sequence>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Bindet zwei Konturen an einen Kontakt.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
@@ -2322,15 +2350,6 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Bindet zwei Konturen an einen Kontakt. 
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
           <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
@@ -2377,6 +2396,18 @@
     <xs:complexContent>
       <xs:extension base="LinkType">
         <xs:sequence>
+          <xs:element name="connect" maxOccurs="unbounded">
+           <xs:annotation>
+             <xs:documentation xml:lang="de" xmlns="">
+               Bindet zwei Konturen an einen Kontakt.
+             </xs:documentation>
+           </xs:annotation>
+             <xs:complexType>
+               <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
+               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
+               <xs:attribute name="name" type="pv:stringPartialEval" use="optional"/>
+             </xs:complexType>
+          </xs:element>
           <xs:element name="normalForceLaw" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
@@ -2419,18 +2450,6 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="connect" maxOccurs="unbounded">
-           <xs:annotation>
-             <xs:documentation xml:lang="de" xmlns="">
-               Bindet zwei Konturen an einen Kontakt. 
-             </xs:documentation>
-           </xs:annotation>
-             <xs:complexType>  
-               <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
-               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
-               <xs:attribute name="name" type="pv:stringPartialEval" use="optional"/>
-             </xs:complexType>
-          </xs:element>
           <xs:element name="searchAllContactPoints" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.

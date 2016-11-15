@@ -104,6 +104,8 @@ namespace MBSim {
       const fmatvec::Vec3& evalForce() { if(updF) updateForce(); return F; }
       const fmatvec::Vec3& evalMoment() { if(updM) updateMoment(); return M; }
 
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
       void setOpenMBVMoment(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowM = arrow; }
@@ -137,7 +139,11 @@ namespace MBSim {
 #endif
 
       bool updPos, updVel, updFD, updF, updM, updR;
+
+    private:
+      std::string saved_ref1, saved_ref2;
   };
+
 }
 
 #endif

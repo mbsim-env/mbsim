@@ -159,6 +159,7 @@
       </momentLaw>
     </Joint>
     <Contact name="contactSwing" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>
       <normalForceLaw>
         <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
       </normalForceLaw>
@@ -177,7 +178,6 @@
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombImpact>
       </tangentialImpactLaw>
-      <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>
     </Contact>
     <KineticExcitation name="KineticExcitation" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref2="../Object[Sphere]/Frame[C]"/>

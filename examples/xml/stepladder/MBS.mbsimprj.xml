@@ -230,6 +230,7 @@
       </objects>
       <links>
         <Contact name="Contact1">
+          <connect ref1="../Contour[Line1]" ref2="../Object[Stepladder]/Contour[Point1]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
@@ -248,7 +249,6 @@
               <frictionCoefficient unit="-">mu</frictionCoefficient>
             </PlanarCoulombImpact>
           </tangentialImpactLaw>
-          <connect ref1="../Contour[Line1]" ref2="../Object[Stepladder]/Contour[Point1]"/>
           <enableOpenMBVNormalForce>
             <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
@@ -259,6 +259,7 @@
           </enableOpenMBVTangentialForce>
         </Contact>
         <Contact name="Contact2">
+          <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point2]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
@@ -277,7 +278,6 @@
               <frictionCoefficient unit="-">mu</frictionCoefficient>
             </PlanarCoulombImpact>
           </tangentialImpactLaw>
-          <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point2]"/>
           <enableOpenMBVNormalForce>
             <?OPENMBV_ID 148?>
             <scaleLength unit="-">0.1</scaleLength>
@@ -288,6 +288,7 @@
           </enableOpenMBVTangentialForce>
         </Contact>
         <Contact name="Contact3">
+          <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point1]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
@@ -306,7 +307,6 @@
               <frictionCoefficient unit="-">mu</frictionCoefficient>
             </PlanarCoulombImpact>
           </tangentialImpactLaw>
-          <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point1]"/>
           <enableOpenMBVNormalForce>
             <?OPENMBV_ID 157?>
             <scaleLength unit="-">0.1</scaleLength>

@@ -144,6 +144,7 @@
       </objects>
       <links>
         <Contact name="Contact1">
+          <connect ref1="../Object[Cam]/Contour[PlanarContour]" ref2="../Object[Roll]/Contour[Circle1]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
@@ -152,7 +153,6 @@
               <restitutionCoefficient unit="-">0</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
-          <connect ref1="../Object[Cam]/Contour[PlanarContour]" ref2="../Object[Roll]/Contour[Circle1]"/>
           <searchAllContactPoints>1</searchAllContactPoints>
           <enableOpenMBVContactPoints>
             <?OPENMBV_ID 25?>

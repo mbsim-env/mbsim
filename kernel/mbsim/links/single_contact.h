@@ -55,11 +55,6 @@ namespace MBSim {
        */      
       SingleContact(const std::string &name="");
 
-      /**
-       * \brief destructor
-       */
-      virtual ~SingleContact();
-
       void resetUpToDate();
 
       const double& evalGeneralizedNormalForce() { if(updlaN) updateGeneralizedNormalForce(); return lambdaN; }
@@ -343,13 +338,8 @@ namespace MBSim {
        * 3 = open-close transition, i.e., impact
        */
       int rootID;
-
-    private:
-      std::string saved_ref1, saved_ref2;
   };
 
 }
 
-
 #endif /* _SINGLE_CONTACT_H_ */
-

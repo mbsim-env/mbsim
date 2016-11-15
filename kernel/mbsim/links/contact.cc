@@ -822,6 +822,28 @@ namespace MBSim {
     Link::initializeUsingXML(element);
     DOMElement *e;
 
+    /*Read all contour pairings*/
+    //Get all contours, that should be connected
+    e = E(element)->getFirstElementChildNamed(MBSIM%"connect"); //TODO: all connects must be in a row (is that okay?)
+    while (e) { //As long as there are siblings read them and save them
+      if (E(e)->getTagName() == MBSIM%"connect") {
+        saved_references ref;
+        ref.name1 = E(e)->getAttribute("ref1");
+        ref.name2 = E(e)->getAttribute("ref2");
+        if (E(e)->hasAttribute("name"))
+          ref.contourPairingName = E(e)->getAttribute("name");
+        else
+          ref.contourPairingName = "";
+        //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
+
+        saved_ref.push_back(ref);
+        e = e->getNextElementSibling();
+      }
+      else {
+        break;
+      }
+    }
+
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");
     if(e) {
@@ -848,28 +870,6 @@ namespace MBSim {
     if (e) {
       FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
-    }
-
-    /*Read all contour pairings*/
-    //Get all contours, that should be connected
-    e = E(element)->getFirstElementChildNamed(MBSIM%"connect"); //TODO: all connects must be in a row (is that okay?)
-    while (e) { //As long as there are siblings read them and save them
-      if (E(e)->getTagName() == MBSIM%"connect") {
-        saved_references ref;
-        ref.name1 = E(e)->getAttribute("ref1");
-        ref.name2 = E(e)->getAttribute("ref2");
-        if (E(e)->hasAttribute("name"))
-          ref.contourPairingName = E(e)->getAttribute("name");
-        else
-          ref.contourPairingName = "";
-        //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
-
-        saved_ref.push_back(ref);
-        e = e->getNextElementSibling();
-      }
-      else {
-        break;
-      }
     }
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"searchAllContactPoints");
@@ -945,4 +945,3 @@ namespace MBSim {
   }
 
 }
-
