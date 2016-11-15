@@ -84,25 +84,23 @@ void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObjec
   // return root.find(xpath)
   PyO et(CALLPY(PyImport_ImportModule, "xml.etree.cElementTree"));
   PyO parse(CALLPY(PyObject_GetAttrString, et, "parse"));
-  PyO uristr(CALLPY(PyString_FromString, uri));
-  PyO uriarg(PyTuple_Pack(1, uristr.get()));
+  PyO uriarg(Py_BuildValue("(s)", uri.c_str()));
   PyO tree(CALLPY(PyObject_CallObject, parse, uriarg));
   PyO getroot(CALLPY(PyObject_GetAttrString, tree, "getroot"));
   PyO root(CALLPY(PyObject_CallObject, getroot, nullptr));
   PyO find(CALLPY(PyObject_GetAttrString, root, "find"));
-  PyO xpathstr(CALLPY(PyString_FromString, xpath));
-  PyO xpatharg(PyTuple_Pack(1, xpathstr.get()));
+  PyO xpatharg(Py_BuildValue("(s)", xpath.c_str()));
   PyO pye(CALLPY(PyObject_CallObject, find, xpatharg));
   // set mapping
   map.first=pye;
   map.second=_1;
   // set Python input
-  _input=swig::SwigVar_PyObject(pye.get());
+  _input=pye.incRef().get(); // SwigVar_PyObject steals a reference
 }
 
 void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
   // check mapping
-  if(!MapPyXercesDOMElement::getGlobal() || MapPyXercesDOMElement::getGlobal()->first!=PythonCpp::PyO(_input))
+  if(!MapPyXercesDOMElement::getGlobal() || MapPyXercesDOMElement::getGlobal()->first!=PythonCpp::PyO(_input, true))
     throw std::runtime_error("Global map from Python ElementTree to xercesc is not defined or wrong (Wrong call sequence!?)");
   // return mapped xerces DOMElement
   _1=MapPyXercesDOMElement::getGlobal()->second;

@@ -464,7 +464,7 @@ PyObject* _dynamic_cast_Director(const MBSim::AllocateBase *x) {
 }
 
 // Internal helper function to get the processing instruction of a pyScript element.
-// This is required since xml.etree.ElementTree skip all comments and processing instruction when parsing!
+// This is required since xml.etree.cElementTree skip all comments and processing instruction when parsing!
 std::string _getPyScriptProcessingInstruction(xercesc::DOMElement *e, const std::string &ns) {
   xercesc::DOMElement *pys=MBXMLUtils::E(e)->getFirstElementChildNamed(MBXMLUtils::FQN(ns, "pyScript"));
   if(!pys)
