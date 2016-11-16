@@ -37,6 +37,7 @@
   </objects>
   <links>
     <Contact name="Contact">
+      <connect ref1="../Contour[Plane]" ref2="../Object[Ball]/Contour[Ball]"/>
       <normalForceLaw>
         <UnilateralConstraint/>
       </normalForceLaw>
@@ -45,7 +46,6 @@
           <restitutionCoefficient>0.9</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </normalImpactLaw>
-      <connect ref1="../Contour[Plane]" ref2="../Object[Ball]/Contour[Ball]"/>
       <enableOpenMBVContactPoints/>
       <enableOpenMBVNormalForce>
         <scaleLength>0.3</scaleLength>
