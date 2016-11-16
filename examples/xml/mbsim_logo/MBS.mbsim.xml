@@ -134,6 +134,7 @@
     </Joint>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <Contact name="ContactBS{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+        <connect ref1="../Group[B]/Object[S10]/Contour[CSide]" ref2="../Group[S]/Object[S7]/Contour[C{nr}]"/>
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
             <forceFunction>
@@ -144,7 +145,6 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <connect ref1="../Group[B]/Object[S10]/Contour[CSide]" ref2="../Group[S]/Object[S7]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
         </enableOpenMBVContactPoints> 
@@ -152,6 +152,7 @@
     </Embed>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <Contact name="ContactMB{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+        <connect ref1="../Group[B]/Object[S1]/Contour[CSide]" ref2="../Group[M]/Object[S4]/Contour[C{nr}]"/>
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
             <forceFunction>
@@ -162,13 +163,13 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <connect ref1="../Group[B]/Object[S1]/Contour[CSide]" ref2="../Group[M]/Object[S4]/Contour[C{nr}]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
         </enableOpenMBVContactPoints> 
       </Contact>
     </Embed>
       <Contact name="ContactSi" xmlns="http://www.mbsim-env.de/MBSim">
+        <connect ref1="../Group[S]/Object[S9]/Contour[CTop]" ref2="../Group[i]/Object[S2]/Contour[CCircle]"/>
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
             <forceFunction>
@@ -179,7 +180,6 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <connect ref1="../Group[S]/Object[S9]/Contour[CTop]" ref2="../Group[i]/Object[S2]/Contour[CCircle]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
         </enableOpenMBVContactPoints> 

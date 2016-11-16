@@ -320,13 +320,13 @@
           </enableOpenMBVCoilSpring>
         </SpringDamper>
         <Contact name="Contact">
+          <connect ref1="../Object[RigidBody]/Contour[Line3]" ref2="../Object[Eccentric]/Contour[Circle3]"/>
           <normalForceLaw>
             <BilateralConstraint/>
           </normalForceLaw>
           <normalImpactLaw>
             <BilateralImpact/>
           </normalImpactLaw>
-          <connect ref1="../Object[RigidBody]/Contour[Line3]" ref2="../Object[Eccentric]/Contour[Circle3]"/>
         </Contact>
       </links>
       <enableOpenMBVFrameI>

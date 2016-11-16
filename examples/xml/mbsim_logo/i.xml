@@ -111,6 +111,7 @@
       </momentLaw>
     </Joint>
     <Contact name="Contact" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Object[S1]/Contour[CTop]" ref2="../Object[S2]/Contour[CCircle]"/>
       <normalForceLaw>
         <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
           <forceFunction>
@@ -121,7 +122,6 @@
           </forceFunction>
         </RegularizedUnilateralConstraint>
       </normalForceLaw>
-      <connect ref1="../Object[S1]/Contour[CTop]" ref2="../Object[S2]/Contour[CCircle]"/>
     </Contact>
   </links>
 </Group>

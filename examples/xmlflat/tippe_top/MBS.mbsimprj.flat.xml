@@ -69,6 +69,7 @@
     </objects>
     <links>
       <Contact name="Contact1">
+        <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
         <normalForceLaw>
           <UnilateralConstraint/>
         </normalForceLaw>
@@ -87,7 +88,6 @@
             <frictionCoefficient>0.2</frictionCoefficient>
           </SpatialCoulombImpact>
         </tangentialImpactLaw>
-        <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
         <enableOpenMBVContactPoints>
           <size>0.0025</size>
         </enableOpenMBVContactPoints>
@@ -99,6 +99,7 @@
         </enableOpenMBVTangentialForce>
       </Contact>
       <Contact name="Contact2">
+        <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
         <normalForceLaw>
           <UnilateralConstraint/>
         </normalForceLaw>
@@ -117,7 +118,6 @@
             <frictionCoefficient>0.2</frictionCoefficient>
           </SpatialCoulombImpact>
         </tangentialImpactLaw>
-        <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
         <enableOpenMBVContactPoints>
           <size>0.0025</size>
         </enableOpenMBVContactPoints>

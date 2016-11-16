@@ -193,6 +193,7 @@
   </objects>
   <links>
     <Contact name="jointContact" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Object[Coupler]/Contour[couplerBushing]" ref2="../Object[Crank]/Contour[crankBolt]"/>
       <normalForceLaw>
         <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"></UnilateralConstraint>
       </normalForceLaw>
@@ -211,7 +212,6 @@
           <frictionCoefficient>mu</frictionCoefficient>
         </PlanarCoulombImpact>
       </tangentialImpactLaw>
-      <connect ref1="../Object[Coupler]/Contour[couplerBushing]" ref2="../Object[Crank]/Contour[crankBolt]"/>
       <enableOpenMBVContactPoints>
         <size>fSize/4.</size>
       </enableOpenMBVContactPoints> <!-- optional -->

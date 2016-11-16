@@ -22,15 +22,16 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/contour.h"
-#include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/arrow.h>
 #endif
 
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -48,6 +49,36 @@ namespace MBSim {
 
   void ContourLink::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(openMBVArrowF) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=cFrame[1]->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WF = evalForce();
+        data.push_back(WF(0));
+        data.push_back(WF(1));
+        data.push_back(WF(2));
+        data.push_back(nrm2(WF));
+        openMBVArrowF->append(data);
+      }
+      if(openMBVArrowM) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=cFrame[1]->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WM = evalMoment();
+        data.push_back(WM(0));
+        data.push_back(WM(1));
+        data.push_back(WM(2));
+        data.push_back(nrm2(WM));
+        openMBVArrowM->append(data);
+      }
+#endif
       Link::plot();
     }
   }
@@ -141,7 +172,12 @@ namespace MBSim {
 //  }
 
   void ContourLink::init(InitStage stage) {
-    if(stage==preInit) {
+    if (stage == resolveXMLPath) {
+      if (saved_ref1 != "" && saved_ref2 != "")
+        connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
+      ContourLink::init(stage);
+    }
+    else if(stage==preInit) {
       Link::init(stage);
 
       cFrame[0] = contour[0]->createContourFrame("P0");
@@ -159,6 +195,9 @@ namespace MBSim {
      }
     else if(stage==unknownStage) {
       Link::init(stage);
+
+      if(contour[0]==NULL or contour[1]==NULL)
+        THROW_MBSIMERROR("Not all connections are given!");
 
       for(unsigned int i=0; i<2; i++) {
         W[0].push_back(Mat(0,0,NONINIT));
@@ -206,6 +245,29 @@ namespace MBSim {
     updR = true;
     cFrame[0]->resetUpToDate();
     cFrame[1]->resetUpToDate();
+  }
+
+  void ContourLink::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    DOMElement *e;
+    //Save contour names for initialization
+    e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1 = E(e)->getAttribute("ref1");
+    saved_ref2 = E(e)->getAttribute("ref2");
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
+      setOpenMBVForce(ombv.createOpenMBV(e));
+    }
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toDoubleHead, OpenMBV::Arrow::toPoint, 1, 1);
+      setOpenMBVMoment(ombv.createOpenMBV(e));
+    }
+#endif
   }
 
 }
