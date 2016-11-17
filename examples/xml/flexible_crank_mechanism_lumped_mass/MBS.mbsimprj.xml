@@ -130,8 +130,6 @@
             <matrixParameter name="sigh" unit="-">
               <fromFile href="sigh.dat"/>
             </matrixParameter>
-            <vectorParameter name="nodes" unit="-">%[1:10:nf]'
-find(abs(u0(:,3))&gt;=0.004 &amp; abs(u0(:,2))&gt;=0.004)</vectorParameter>
           </Parameter>
           <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
             <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+stateDerivative"/>
@@ -167,27 +165,16 @@ find(abs(u0(:,3))&gt;=0.004 &amp; abs(u0(:,2))&gt;=0.004)</vectorParameter>
             <proportionalDamping unit="-">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0</ele>
-                <ele>0.01</ele>
+                <ele>0.0001</ele>
               </xmlVector>
             </proportionalDamping>
+            <relativeNodalPosition unit="-">u0'(:)</relativeNodalPosition>
+            <shapeMatrixOfTranslation unit="-">V</shapeMatrixOfTranslation>
+            <stressMatrix unit="-">sigh</stressMatrix>
             <stateDependentRotation>
               <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
             </stateDependentRotation>
             <frames>
-              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="length(nodes)" counterName="n">
-                <Parameter>
-                  <scalarParameter name="ni" unit="-">nodes(n)</scalarParameter>
-                </Parameter>
-                <FixedNodalFrame xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="P{ni}">
-                  <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                    <?OPENMBV_ID 14?>
-                    <size unit="mm">2</size>
-                  </enableOpenMBV>
-                  <relativePosition unit="m">u0(ni,:)'</relativePosition>
-                  <shapeMatrixOfTranslation unit="-">V(3*(ni-1)+1:3*(ni-1)+3,:)</shapeMatrixOfTranslation>
-                  <stressMatrix unit="-">sigh(6*(ni-1)+1:6*(ni-1)+6,:)</stressMatrix>
-                </FixedNodalFrame>
-              </Embed>
               <FixedNodalFrame name="P">
                 <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+globalPosition"/>
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
@@ -216,6 +203,16 @@ P(3*(n-1)+1:3*(n-1)+3,:)</shapeMatrixOfRotation>
               </FixedNodalFrame>
             </frames>
             <contours/>
+            <enableOpenMBV>
+              <nodes>
+                <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.dat"/>
+              </nodes>
+              <indices>
+                <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="indices.dat"/>
+              </indices>
+              <minimalColorValue>1e4</minimalColorValue>
+              <maximalColorValue>1e6</maximalColorValue>
+            </enableOpenMBV>
             <enableOpenMBVFrameK>
               <?OPENMBV_ID 11?>
               <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>

@@ -724,18 +724,6 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::updateNodalPositions() {
     for(unsigned int j=0; j<KrKP.size(); j++) {
       AWK[j] = K->evalOrientation()*ARP[j]*(Id+tilde(Psi[j]*q(iqE)));
-//      if(K0F.size()) {
-//        MatVx3 PhigeoT(nq,NONINIT);
-//        for(int i=0; i<3; i++)
-//          PhigeoT.set(i,K0F[i]*q);
-//        Phis = Phi + PhigeoT.T();
-//      }
-//      if(K0M.size()) {
-//        MatVx3 PsigeoT(nq,NONINIT);
-//        for(int i=0; i<3; i++)
-//          PsigeoT.set(i,K0M[i]*q);
-//        Psis = Psi + PsigeoT.T();
-//      }
       disp[j] = Phi[j]*q(iqE);
       WrOP[j] = K->getPosition() + K->getOrientation()*(KrKP[j] + disp[j]);
     }
@@ -875,12 +863,6 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::addFrame(FixedNodalFrame *frame_) {
     Body::addFrame(frame_);
   }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void FlexibleBodyFFR::setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &body) {
-    openMBVBody=body;
-  }
-#endif
 
   void FlexibleBodyFFR::updateMConst() {
     M += Mbuf;
@@ -1077,32 +1059,24 @@ namespace MBSimFlexibleBody {
       OpenMBVDynamicIndexedFaceSet ombv;
       openMBVBody=ombv.createOpenMBV(e);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVRigidBody");
-    if(e) {
-      shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
-      setOpenMBVRigidBody(rb);
-      rb->initializeUsingXML(e->getFirstElementChild());
-    }
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVFrameOfReference");
-    if(e) setOpenMBVFrameOfReference(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
+//      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
       K->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVJointForce");
     if (e) {
-      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
+//      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       FArrow=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVJointMoment");
     if (e) {
-      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
+//      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }

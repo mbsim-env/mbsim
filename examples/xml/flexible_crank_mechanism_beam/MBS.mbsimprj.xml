@@ -629,41 +629,6 @@
             </FixedNodalFrame>
           </frames>
           <contours/>
-          <openMBVRigidBody>
-            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 23?>
-              <diffuseColor>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0.666667</ele>
-                  <ele>1</ele>
-                  <ele>1</ele>
-                </xmlVector>
-              </diffuseColor>
-              <transparency unit="-">0.3</transparency>
-              <initialTranslation unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l2/2</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialTranslation>
-              <initialRotation unit="rad">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
-              <scaleFactor unit="-">1</scaleFactor>
-              <length unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l2</ele>
-                  <ele>h2</ele>
-                  <ele>d2</ele>
-                </xmlVector>
-              </length>
-            </Cuboid>
-          </openMBVRigidBody>
           <enableOpenMBVFrameK>
             <?OPENMBV_ID 24?>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>

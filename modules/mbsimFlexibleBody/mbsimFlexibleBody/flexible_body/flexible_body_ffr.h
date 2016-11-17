@@ -26,11 +26,14 @@
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
+#include "mbsimFlexibleBody/utils/openmbv_utils.h"
 #endif
 
 namespace MBSim {
   class Frame;
+  BOOST_PARAMETER_NAME(indices)
+  BOOST_PARAMETER_NAME(minimalColorValue)
+  BOOST_PARAMETER_NAME(maximalColorValue)
 }
 
 namespace MBSimFlexibleBody {
@@ -214,15 +217,13 @@ namespace MBSimFlexibleBody {
       using Body::addContour;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &body);
-      void setOpenMBVFrameOfReference(MBSim::Frame * frame) {openMBVFrame=frame; }
-      const MBSim::Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 
-//      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<std::vector<double> >&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-////        OpenMBVIndexedFaceSet ombv(diffuseColor,transparency);
-////        openMBVRigidBody=ombv.createOpenMBV();
-//        ombvNodes = nodes;
-//      }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(indices,(const std::vector<int>&),std::vector<int>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
+        OpenMBVDynamicIndexedFaceSet ombv;
+        openMBVBody=ombv.createOpenMBV();
+        ombvNodes = nodes;
+        ombvIndices = indices;
+      }
 
       /** \brief Visualize the weight */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 

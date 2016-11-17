@@ -36,7 +36,6 @@ namespace MBSim {
   class OpenMBVBody {
     public:
       OpenMBVBody() { }
-      void initializeDynamicColoredBody(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object) { }
       void initializeObject(const std::shared_ptr<OpenMBV::Body> &object) { }
       void initializeUsingXML(xercesc::DOMElement *element) { }
   };
@@ -48,7 +47,6 @@ namespace MBSim {
       std::string id;
     public:
       OpenMBVDynamicColoredBody(const fmatvec::Vec3 &dc_="[-1;1;1]", double tp_=0) : dc(dc_), tp(tp_) { }
-      void initializeDynamicColoredBody(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object);
       void initializeObject(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object);
       void initializeUsingXML(xercesc::DOMElement *element);
   };

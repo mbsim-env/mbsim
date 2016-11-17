@@ -257,16 +257,9 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   dummy->setDiffuseColor(90./360.,1,1);
   body1->setOpenMBVRigidBody(dummy);
   dummy = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
-  dummy->setLength(l2,h2,d2);
-  dummy->setDiffuseColor(180./360.,1,1);
-  dummy->setInitialTranslation(l2/2,0,0);
-  body2->setOpenMBVRigidBody(dummy);
-  dummy = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   dummy->setLength(l2/2,h2,d2);
   dummy->setDiffuseColor(240./360.,1,1);
   body3->setOpenMBVRigidBody(dummy);
 #endif
 
-
 }
-//
