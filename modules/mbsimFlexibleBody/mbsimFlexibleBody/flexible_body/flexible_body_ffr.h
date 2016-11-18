@@ -304,14 +304,6 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahel;
       std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > sigmahen;
 
-//      fmatvec::VecV RrRPi, WrRPi;
-//      fmatvec::SqrMatV ARPi, APKi, Ei;
-//      fmatvec::MatV WPhi, WPsi, Phi, Psi;
-//      std::vector<fmatvec::SqrMatV> K0F, K0M;
-//      fmatvec::VecV sigma0;
-//      fmatvec::MatV sigmahel;
-//      std::vector<fmatvec::MatV> sigmahen;
-
       // Number of mode shapes 
       int ne;
 

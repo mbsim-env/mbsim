@@ -1028,24 +1028,24 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
+  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory() : m(1), n(1), name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
+  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
+  MatRowsVarWidgetFactory::MatRowsVarWidgetFactory(int m_, int n_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : m(m_), n(n_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
   }
 
   QWidget* MatRowsVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new MatRowsVarWidget(2,2,1,100), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new MatRowsVarWidget(m,n,1,100), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)

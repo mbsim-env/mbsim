@@ -137,6 +137,8 @@ namespace MBSimGUI {
       void setVec(const std::vector<QString> &x);
       void resize_(int size);
       int size() const {return sizeCombo->value();}
+      int rows() const { return size(); }
+      int cols() const { return 1; }
       QString getValue() const {return toQStr(getVec());}
       void setValue(const QString &str) {setVec(strToVec(str));}
       void setReadOnly(bool flag) {widget->setReadOnly(flag);}
@@ -523,13 +525,14 @@ namespace MBSimGUI {
   class MatRowsVarWidgetFactory : public WidgetFactory {
     public:
       MatRowsVarWidgetFactory();
-      MatRowsVarWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      MatRowsVarWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+      MatRowsVarWidgetFactory(int m, int n, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+      MatRowsVarWidgetFactory(int m, int n, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
-      std::vector<std::vector<QString> > A;
+//      std::vector<std::vector<QString> > A;
+      int m, n;
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;

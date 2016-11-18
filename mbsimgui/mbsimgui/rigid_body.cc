@@ -62,7 +62,7 @@ namespace MBSimGUI {
 
     bodyFixedRepresentationOfAngularVelocity.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"bodyFixedRepresentationOfAngularVelocity",vector<string>(2,"")),"",4));
 
-    ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
+    ombvEditor.setProperty(new OMBVRigidBodySelectionProperty(this));
 
     weightArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
     weightArrow.setXMLName(MBSIM%"enableOpenMBVWeight",false);

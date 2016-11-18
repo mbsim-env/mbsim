@@ -32,9 +32,9 @@ namespace MBSimGUI {
   class ExtWidget;
   class Body;
 
-  class OMBVBodyWidgetFactory : public WidgetFactory {
+  class OMBVRigidBodyWidgetFactory : public WidgetFactory {
     public:
-      OMBVBodyWidgetFactory();
+      OMBVRigidBodyWidgetFactory();
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -152,23 +152,23 @@ namespace MBSimGUI {
     ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *diffuseColor, *transparency;
   };
 
-  class OMBVBodyWidget : public OMBVDynamicColoredObjectWidget {
+  class OMBVRigidBodyWidget : public OMBVDynamicColoredObjectWidget {
 
-    friend class OMBVBodyProperty;
+    friend class OMBVRigidBodyProperty;
 
     public:
-    OMBVBodyWidget(const QString &name="NOTSET");
+    OMBVRigidBodyWidget(const QString &name="NOTSET");
     protected:
     ExtWidget *trans, *rot, *scale;
   };
 
-  class InvisibleBodyWidget : public OMBVBodyWidget {
+  class InvisibleBodyWidget : public OMBVRigidBodyWidget {
 
     public:
-      InvisibleBodyWidget(const QString &name="NOTSET") : OMBVBodyWidget(name) {}
+      InvisibleBodyWidget(const QString &name="NOTSET") : OMBVRigidBodyWidget(name) {}
   };
 
-  class CubeWidget : public OMBVBodyWidget {
+  class CubeWidget : public OMBVRigidBodyWidget {
 
     friend class CubeProperty;
 
@@ -178,7 +178,7 @@ namespace MBSimGUI {
     ExtWidget *length;
   };
 
-  class CuboidWidget : public OMBVBodyWidget {
+  class CuboidWidget : public OMBVRigidBodyWidget {
 
     friend class CuboidProperty;
 
@@ -188,7 +188,7 @@ namespace MBSimGUI {
     ExtWidget *length;
   };
 
-  class SphereWidget : public OMBVBodyWidget {
+  class SphereWidget : public OMBVRigidBodyWidget {
 
     friend class SphereProperty;
 
@@ -198,7 +198,7 @@ namespace MBSimGUI {
     ExtWidget *radius;
   };
 
-  class FrustumWidget : public OMBVBodyWidget {
+  class FrustumWidget : public OMBVRigidBodyWidget {
 
     friend class FrustumProperty;
 
@@ -208,7 +208,7 @@ namespace MBSimGUI {
     ExtWidget *top, *base, *height, *innerBase, *innerTop;
   };
 
-  class ExtrusionWidget : public OMBVBodyWidget {
+  class ExtrusionWidget : public OMBVRigidBodyWidget {
 
     friend class ExtrusionProperty;
 
@@ -218,7 +218,7 @@ namespace MBSimGUI {
     ExtWidget *windingRule, *height, *contour;
   };
 
-  class IvBodyWidget : public OMBVBodyWidget {
+  class IvBodyWidget : public OMBVRigidBodyWidget {
 
     friend class IvBodyProperty;
 
@@ -227,9 +227,9 @@ namespace MBSimGUI {
     protected:
     ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
   };
-  class OMBVBodyChoiceWidget;
+  class OMBVRigidBodyChoiceWidget;
 
-  class CompoundRigidBodyWidget : public OMBVBodyWidget {
+  class CompoundRigidBodyWidget : public OMBVRigidBodyWidget {
 
     friend class CompoundRigidBodyProperty;
 
@@ -239,13 +239,13 @@ namespace MBSimGUI {
     ExtWidget *bodies; 
   };
 
-  class OMBVBodySelectionWidget : public Widget {
+  class OMBVRigidBodySelectionWidget : public Widget {
 
-    friend class OMBVBodySelectionProperty;
+    friend class OMBVRigidBodySelectionProperty;
 
     public:
 
-    OMBVBodySelectionWidget(Body* body);
+    OMBVRigidBodySelectionWidget(Body* body);
 
     virtual void updateWidget() {ref->updateWidget();}
 
@@ -253,22 +253,14 @@ namespace MBSimGUI {
     ExtWidget *ombv, *ref;
   };
 
-  class OMBVEmptyWidget : public OMBVObjectWidget {
+  class FlexibleBodyFFRMBSOMBVWidget : public MBSOMBVWidget {
+
+    friend class FlexibleBodyFFRMBSOMBVProperty;
 
     public:
-      OMBVEmptyWidget(const QString &name="Empty");
-
-  };
-
-  class OMBVPlaneWidget : public OMBVObjectWidget {
-
-    friend class OMBVPlaneProperty;
-
-    public:
-    OMBVPlaneWidget(const QString &name="Plane");
-
+    FlexibleBodyFFRMBSOMBVWidget(const QString &name="NOTSET");
     protected:
-    ExtWidget *size, *numberOfLines;
+    ExtWidget *minCol, *maxCol, *nodes, *indices;
   };
 
 }

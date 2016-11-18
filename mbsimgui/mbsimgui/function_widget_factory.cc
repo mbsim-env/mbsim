@@ -343,7 +343,7 @@ namespace MBSimGUI {
       return widgetContainer;
     }
     if(i==1) {
-      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,QStringList()),vector<int>(3,0))));
     }
     return NULL;
   }
@@ -380,7 +380,7 @@ namespace MBSimGUI {
       return widgetContainer;
     }
     if(i==1) {
-      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,QStringList()),vector<int>(3,0))));
     }
     return NULL;
   }

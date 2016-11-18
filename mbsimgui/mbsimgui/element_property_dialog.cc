@@ -641,7 +641,7 @@ namespace MBSimGUI {
     bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
     addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
 
-    ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
+    ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
     addToTab("Visualisation", ombvEditor);
 
     weightArrow = new ExtWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
@@ -778,6 +778,21 @@ namespace MBSimGUI {
     K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new OneDimMatArrayWidget(3,1,1),true);
     addToTab("General",K0om);
 
+    r = new ExtWidget("Relative nodal position",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
+    addToTab("General", r);
+
+    A = new ExtWidget("Relative nodal orientation",new ChoiceWidget2(new MatWidgetFactory(3,3,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    addToTab("General", A);
+
+    Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    addToTab("General", Phi);
+
+    Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    addToTab("General", Psi);
+
+    sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new MatWidgetFactory(6,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
+    addToTab("General", sigmahel);
+
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
     addToTab("Kinematics", translation);
     connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
@@ -795,7 +810,8 @@ namespace MBSimGUI {
     coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true);
     addToTab("Kinematics", coordinateTransformationForRotation);
 
-    ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
+//    ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
+    ombvEditor = new ExtWidget("OpenMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", ombvEditor);
 
     jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
@@ -827,6 +843,13 @@ namespace MBSimGUI {
       static_cast<OneDimMatArrayWidget*>(K0r->getWidget())->resize_(size,size);
     if(K0om->isActive())
       static_cast<OneDimMatArrayWidget*>(K0om->getWidget())->resize_(size,size);
+    if(r->isActive()) {
+      int rsize = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->rows();
+      A->resize_(rsize,3);
+      Phi->resize_(rsize,size);
+      Psi->resize_(rsize,size);
+      sigmahel->resize_(2*rsize,size);
+    }
   }
 
   void FlexibleBodyFFRPropertyDialog::toWidget(Element *element) {
@@ -847,6 +870,11 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->K0t.toWidget(K0t);
     static_cast<FlexibleBodyFFR*>(element)->K0r.toWidget(K0r);
     static_cast<FlexibleBodyFFR*>(element)->K0om.toWidget(K0om);
+    static_cast<FlexibleBodyFFR*>(element)->r.toWidget(r);
+    static_cast<FlexibleBodyFFR*>(element)->A.toWidget(A);
+    static_cast<FlexibleBodyFFR*>(element)->Phi.toWidget(Phi);
+    static_cast<FlexibleBodyFFR*>(element)->Psi.toWidget(Psi);
+    static_cast<FlexibleBodyFFR*>(element)->sigmahel.toWidget(sigmahel);
     static_cast<FlexibleBodyFFR*>(element)->translation.toWidget(translation);
     static_cast<FlexibleBodyFFR*>(element)->rotation.toWidget(rotation);
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
@@ -874,6 +902,11 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->K0t.fromWidget(K0t);
     static_cast<FlexibleBodyFFR*>(element)->K0r.fromWidget(K0r);
     static_cast<FlexibleBodyFFR*>(element)->K0om.fromWidget(K0om);
+    static_cast<FlexibleBodyFFR*>(element)->r.fromWidget(r);
+    static_cast<FlexibleBodyFFR*>(element)->A.fromWidget(A);
+    static_cast<FlexibleBodyFFR*>(element)->Phi.fromWidget(Phi);
+    static_cast<FlexibleBodyFFR*>(element)->Psi.fromWidget(Psi);
+    static_cast<FlexibleBodyFFR*>(element)->sigmahel.fromWidget(sigmahel);
     static_cast<FlexibleBodyFFR*>(element)->translation.fromWidget(translation);
     static_cast<FlexibleBodyFFR*>(element)->rotation.fromWidget(rotation);
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);

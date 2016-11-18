@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  OMBVBodyPropertyFactory::OMBVBodyPropertyFactory(const string &ID_) : ID(ID_), count(0) {
+  OMBVRigidBodyPropertyFactory::OMBVRigidBodyPropertyFactory(const string &ID_) : ID(ID_), count(0) {
     name.push_back(OPENMBV%"Cube");
     name.push_back(OPENMBV%"Cuboid");
     name.push_back(OPENMBV%"Frustum");
@@ -43,7 +43,7 @@ namespace MBSimGUI {
     name.push_back(OPENMBV%"InvisibleBody");
   }
 
-  Property* OMBVBodyPropertyFactory::createProperty(int i) {
+  Property* OMBVRigidBodyPropertyFactory::createProperty(int i) {
     if(i==0)
       return new CubeProperty("Body"+toStr(count++),ID);
     if(i==1)
@@ -552,7 +552,7 @@ namespace MBSimGUI {
     transparency.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->transparency);
   }
 
-  OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : OMBVDynamicColoredObjectProperty(name,ID) {
+  OMBVRigidBodyProperty::OMBVRigidBodyProperty(const string &name, const std::string &ID) : OMBVDynamicColoredObjectProperty(name,ID) {
 
     transparency.setActive(true);
 
@@ -565,7 +565,7 @@ namespace MBSimGUI {
     scale.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* OMBVBodyProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* OMBVRigidBodyProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
     if(e) {
       trans.initializeUsingXML(e);
@@ -575,7 +575,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  DOMElement* OMBVBodyProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* OMBVRigidBodyProperty::writeXMLFile(DOMNode *parent) {
     DOMElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
     trans.writeXMLFile(e);
     rot.writeXMLFile(e);
@@ -583,21 +583,21 @@ namespace MBSimGUI {
     return e;
   }
 
-  void OMBVBodyProperty::fromWidget(QWidget *widget) {
+  void OMBVRigidBodyProperty::fromWidget(QWidget *widget) {
     OMBVDynamicColoredObjectProperty::fromWidget(widget);
-    trans.fromWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
-    rot.fromWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
-    scale.fromWidget(static_cast<OMBVBodyWidget*>(widget)->scale);
+    trans.fromWidget(static_cast<OMBVRigidBodyWidget*>(widget)->trans);
+    rot.fromWidget(static_cast<OMBVRigidBodyWidget*>(widget)->rot);
+    scale.fromWidget(static_cast<OMBVRigidBodyWidget*>(widget)->scale);
   }
 
-  void OMBVBodyProperty::toWidget(QWidget *widget) {
+  void OMBVRigidBodyProperty::toWidget(QWidget *widget) {
     OMBVDynamicColoredObjectProperty::toWidget(widget);
-    trans.toWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
-    rot.toWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
-    scale.toWidget(static_cast<OMBVBodyWidget*>(widget)->scale);
+    trans.toWidget(static_cast<OMBVRigidBodyWidget*>(widget)->trans);
+    rot.toWidget(static_cast<OMBVRigidBodyWidget*>(widget)->rot);
+    scale.toWidget(static_cast<OMBVRigidBodyWidget*>(widget)->scale);
   }
 
-  CubeProperty::CubeProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  CubeProperty::CubeProperty(const string &name, const std::string &ID) : OMBVRigidBodyProperty(name,ID) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"length"));
@@ -605,28 +605,28 @@ namespace MBSimGUI {
   }
 
   DOMElement* CubeProperty::initializeUsingXML(DOMElement *element) {
-    OMBVBodyProperty::initializeUsingXML(element);
+    OMBVRigidBodyProperty::initializeUsingXML(element);
     length.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* CubeProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
+    DOMElement *e=OMBVRigidBodyProperty::writeXMLFile(parent);
     length.writeXMLFile(e);
     return e;
   }
 
   void CubeProperty::fromWidget(QWidget *widget) {
-    OMBVBodyProperty::fromWidget(widget);
+    OMBVRigidBodyProperty::fromWidget(widget);
     length.fromWidget(static_cast<CubeWidget*>(widget)->length);
   }
 
   void CubeProperty::toWidget(QWidget *widget) {
-    OMBVBodyProperty::toWidget(widget);
+    OMBVRigidBodyProperty::toWidget(widget);
     length.toWidget(static_cast<CubeWidget*>(widget)->length);
   }
 
-  CuboidProperty::CuboidProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  CuboidProperty::CuboidProperty(const string &name, const std::string &ID) : OMBVRigidBodyProperty(name,ID) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(3,"1")), "m", OPENMBV%"length"));
@@ -634,28 +634,28 @@ namespace MBSimGUI {
   }
 
   DOMElement* CuboidProperty::initializeUsingXML(DOMElement *element) {
-    OMBVBodyProperty::initializeUsingXML(element);
+    OMBVRigidBodyProperty::initializeUsingXML(element);
     length.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* CuboidProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
+    DOMElement *e=OMBVRigidBodyProperty::writeXMLFile(parent);
     length.writeXMLFile(e);
     return e;
   }
 
   void CuboidProperty::fromWidget(QWidget *widget) {
-    OMBVBodyProperty::fromWidget(widget);
+    OMBVRigidBodyProperty::fromWidget(widget);
     length.fromWidget(static_cast<CuboidWidget*>(widget)->length);
   }
 
   void CuboidProperty::toWidget(QWidget *widget) {
-    OMBVBodyProperty::toWidget(widget);
+    OMBVRigidBodyProperty::toWidget(widget);
     length.toWidget(static_cast<CuboidWidget*>(widget)->length);
   }
 
-  SphereProperty::SphereProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  SphereProperty::SphereProperty(const string &name, const std::string &ID) : OMBVRigidBodyProperty(name,ID) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"radius"));
@@ -663,28 +663,28 @@ namespace MBSimGUI {
   }
 
   DOMElement* SphereProperty::initializeUsingXML(DOMElement *element) {
-    OMBVBodyProperty::initializeUsingXML(element);
+    OMBVRigidBodyProperty::initializeUsingXML(element);
     radius.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* SphereProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
+    DOMElement *e=OMBVRigidBodyProperty::writeXMLFile(parent);
     radius.writeXMLFile(e);
     return e;
   }
 
   void SphereProperty::fromWidget(QWidget *widget) {
-    OMBVBodyProperty::fromWidget(widget);
+    OMBVRigidBodyProperty::fromWidget(widget);
     radius.fromWidget(static_cast<SphereWidget*>(widget)->radius);
   }
 
   void SphereProperty::toWidget(QWidget *widget) {
-    OMBVBodyProperty::toWidget(widget);
+    OMBVRigidBodyProperty::toWidget(widget);
     radius.toWidget(static_cast<SphereWidget*>(widget)->radius);
   }
 
-  FrustumProperty::FrustumProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  FrustumProperty::FrustumProperty(const string &name, const std::string &ID) : OMBVRigidBodyProperty(name,ID) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", OPENMBV%"topRadius"));
@@ -708,7 +708,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrustumProperty::initializeUsingXML(DOMElement *element) {
-    OMBVBodyProperty::initializeUsingXML(element);
+    OMBVRigidBodyProperty::initializeUsingXML(element);
     base.initializeUsingXML(element);
     top.initializeUsingXML(element);
     height.initializeUsingXML(element);
@@ -718,7 +718,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrustumProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
+    DOMElement *e=OMBVRigidBodyProperty::writeXMLFile(parent);
     base.writeXMLFile(e);
     top.writeXMLFile(e);
     height.writeXMLFile(e);
@@ -728,7 +728,7 @@ namespace MBSimGUI {
   }
 
   void FrustumProperty::fromWidget(QWidget *widget) {
-    OMBVBodyProperty::fromWidget(widget);
+    OMBVRigidBodyProperty::fromWidget(widget);
     base.fromWidget(static_cast<FrustumWidget*>(widget)->base);
     top.fromWidget(static_cast<FrustumWidget*>(widget)->top);
     height.fromWidget(static_cast<FrustumWidget*>(widget)->height);
@@ -737,7 +737,7 @@ namespace MBSimGUI {
   }
 
   void FrustumProperty::toWidget(QWidget *widget) {
-    OMBVBodyProperty::toWidget(widget);
+    OMBVRigidBodyProperty::toWidget(widget);
     base.toWidget(static_cast<FrustumWidget*>(widget)->base);
     top.toWidget(static_cast<FrustumWidget*>(widget)->top);
     height.toWidget(static_cast<FrustumWidget*>(widget)->height);
@@ -745,7 +745,7 @@ namespace MBSimGUI {
     innerTop.toWidget(static_cast<FrustumWidget*>(widget)->innerTop);
   }
 
-  ExtrusionProperty::ExtrusionProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  ExtrusionProperty::ExtrusionProperty(const string &name, const std::string &ID) : OMBVRigidBodyProperty(name,ID) {
 
     windingRule.setProperty(new TextProperty("odd", OPENMBV%"windingRule", true));
 
@@ -756,7 +756,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExtrusionProperty::initializeUsingXML(DOMElement *element) {
-    OMBVBodyProperty::initializeUsingXML(element);
+    OMBVRigidBodyProperty::initializeUsingXML(element);
     windingRule.initializeUsingXML(element);
     height.initializeUsingXML(element);
     contour.initializeUsingXML(element);
@@ -764,7 +764,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExtrusionProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
+    DOMElement *e=OMBVRigidBodyProperty::writeXMLFile(parent);
     windingRule.writeXMLFile(e);
     height.writeXMLFile(e);
     contour.writeXMLFile(e);
@@ -772,20 +772,20 @@ namespace MBSimGUI {
   }
 
   void ExtrusionProperty::fromWidget(QWidget *widget) {
-    OMBVBodyProperty::fromWidget(widget);
+    OMBVRigidBodyProperty::fromWidget(widget);
     windingRule.fromWidget(static_cast<ExtrusionWidget*>(widget)->windingRule);
     height.fromWidget(static_cast<ExtrusionWidget*>(widget)->height);
     contour.fromWidget(static_cast<ExtrusionWidget*>(widget)->contour);
   }
 
   void ExtrusionProperty::toWidget(QWidget *widget) {
-    OMBVBodyProperty::toWidget(widget);
+    OMBVRigidBodyProperty::toWidget(widget);
     windingRule.toWidget(static_cast<ExtrusionWidget*>(widget)->windingRule);
     height.toWidget(static_cast<ExtrusionWidget*>(widget)->height);
     contour.toWidget(static_cast<ExtrusionWidget*>(widget)->contour);
   }
 
-  IvBodyProperty::IvBodyProperty(const string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
+  IvBodyProperty::IvBodyProperty(const string &name, const std::string &ID) : OMBVRigidBodyProperty(name,ID) {
 
     ivFileName.setProperty(new FileProperty(OPENMBV%"ivFileName"));
 
@@ -799,7 +799,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* IvBodyProperty::initializeUsingXML(DOMElement *element) {
-    OMBVBodyProperty::initializeUsingXML(element);
+    OMBVRigidBodyProperty::initializeUsingXML(element);
     ivFileName.initializeUsingXML(element);
     creaseEdges.initializeUsingXML(element);
     boundaryEdges.initializeUsingXML(element);
@@ -807,7 +807,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* IvBodyProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *e=OMBVBodyProperty::writeXMLFile(parent);
+    DOMElement *e=OMBVRigidBodyProperty::writeXMLFile(parent);
     ivFileName.writeXMLFile(e);
     creaseEdges.writeXMLFile(e);
     boundaryEdges.writeXMLFile(e);
@@ -815,26 +815,26 @@ namespace MBSimGUI {
   }
 
   void IvBodyProperty::fromWidget(QWidget *widget) {
-    OMBVBodyProperty::fromWidget(widget);
+    OMBVRigidBodyProperty::fromWidget(widget);
     ivFileName.fromWidget(static_cast<IvBodyWidget*>(widget)->ivFileName);
     creaseEdges.fromWidget(static_cast<IvBodyWidget*>(widget)->creaseEdges);
     boundaryEdges.fromWidget(static_cast<IvBodyWidget*>(widget)->boundaryEdges);
   }
 
   void IvBodyProperty::toWidget(QWidget *widget) {
-    OMBVBodyProperty::toWidget(widget);
+    OMBVRigidBodyProperty::toWidget(widget);
     ivFileName.toWidget(static_cast<IvBodyWidget*>(widget)->ivFileName);
     creaseEdges.toWidget(static_cast<IvBodyWidget*>(widget)->creaseEdges);
     boundaryEdges.toWidget(static_cast<IvBodyWidget*>(widget)->boundaryEdges);
   }
 
-  CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, const std::string &ID) : OMBVBodyProperty(name,ID) {
-    bodies.setProperty(new ListProperty(new ChoicePropertyFactory(new OMBVBodyPropertyFactory(ID),"",1),"",0,1));
+  CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, const std::string &ID) : OMBVRigidBodyProperty(name,ID) {
+    bodies.setProperty(new ListProperty(new ChoicePropertyFactory(new OMBVRigidBodyPropertyFactory(ID),"",1),"",0,1));
     //bodies.setXMLName(MBSIM%"bodies");
   }
 
   DOMElement* CompoundRigidBodyProperty::initializeUsingXML(DOMElement *element) {
-    OMBVBodyProperty::initializeUsingXML(element);
+    OMBVRigidBodyProperty::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(OPENMBV%"scaleFactor");
     DOMElement *ee = e->getNextElementSibling();
     bodies.initializeUsingXML(ee);
@@ -842,7 +842,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* CompoundRigidBodyProperty::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = OMBVBodyProperty::writeXMLFile(parent);
+    DOMElement *ele0 = OMBVRigidBodyProperty::writeXMLFile(parent);
     bodies.writeXMLFile(ele0);
     return ele0;
   }
@@ -855,75 +855,75 @@ namespace MBSimGUI {
     bodies.toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->bodies);
   }
 
-  OMBVBodySelectionProperty::OMBVBodySelectionProperty(Body *body, const NamespaceURI &uri) : ombv(0,true), ref(0,false) {
-    ombv.setProperty(new ChoiceProperty2(new OMBVBodyPropertyFactory(body->getID()),uri%"openMBVRigidBody"));
+  OMBVRigidBodySelectionProperty::OMBVRigidBodySelectionProperty(Body *body, const NamespaceURI &uri) : ombv(0,true), ref(0,false) {
+    ombv.setProperty(new ChoiceProperty2(new OMBVRigidBodyPropertyFactory(body->getID()),uri%"openMBVRigidBody"));
     ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,uri%"openMBVFrameOfReference"));
   }
 
-  DOMElement* OMBVBodySelectionProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* OMBVRigidBodySelectionProperty::initializeUsingXML(DOMElement *element) {
     ombv.initializeUsingXML(element);
     ref.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* OMBVBodySelectionProperty::writeXMLFile(DOMNode *parent) {
+  DOMElement* OMBVRigidBodySelectionProperty::writeXMLFile(DOMNode *parent) {
     ombv.writeXMLFile(parent);
     ref.writeXMLFile(parent);
     return 0;
   }
 
-  void OMBVBodySelectionProperty::fromWidget(QWidget *widget) {
-    ref.fromWidget(static_cast<OMBVBodySelectionWidget*>(widget)->ref);
-    ombv.fromWidget(static_cast<OMBVBodySelectionWidget*>(widget)->ombv);
+  void OMBVRigidBodySelectionProperty::fromWidget(QWidget *widget) {
+    ref.fromWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ref);
+    ombv.fromWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ombv);
   }
 
-  void OMBVBodySelectionProperty::toWidget(QWidget *widget) {
-    ref.toWidget(static_cast<OMBVBodySelectionWidget*>(widget)->ref);
-    ombv.toWidget(static_cast<OMBVBodySelectionWidget*>(widget)->ombv);
+  void OMBVRigidBodySelectionProperty::toWidget(QWidget *widget) {
+    ref.toWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ref);
+    ombv.toWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ombv);
   }
 
-  DOMElement* OMBVEmptyProperty::initializeUsingXML(DOMElement *parent) {
-    return E(parent)->getFirstElementChildNamed(xmlName);
+  FlexibleBodyFFRMBSOMBVProperty::FlexibleBodyFFRMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), nodes(0,false), indices(0,false) {
+    nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(1,MBSIMFLEX%"nodes",vector<string>(3,"")),"",4));
+    indices.setProperty(new ChoiceProperty2(new VecPropertyFactory(1,MBSIMFLEX%"indices",vector<string>(3,"")),"",4));
+    minCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMFLEX%"minimalColorValue"),"",4));
+    maxCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"maximalColorValue"),"",4));
   }
 
-  DOMElement* OMBVEmptyProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele = D(doc)->createElement(xmlName);
-    writeXMLFileID(ele);
-    parent->insertBefore(ele, NULL);
-    return 0;
-  }
-
-  OMBVPlaneProperty::OMBVPlaneProperty(const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty("Plane",ID), xmlName(xmlName_) {
-
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new VecProperty(getScalars<string>(2,"1")), "m", MBSIM%"length"));
-    size.setProperty(new ExtPhysicalVarProperty(input));
-  }
-
-  DOMElement* OMBVPlaneProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+  DOMElement* FlexibleBodyFFRMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
     if(e) {
-      size.initializeUsingXML(e);
+      nodes.initializeUsingXML(e);
+      indices.initializeUsingXML(e);
+      minCol.initializeUsingXML(e);
+      maxCol.initializeUsingXML(e);
     }
     return e;
   }
 
-  DOMElement* OMBVPlaneProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *e=D(doc)->createElement(xmlName);
-    writeXMLFileID(e);
-    parent->insertBefore(e, NULL);
-    size.writeXMLFile(e);
+  DOMElement* FlexibleBodyFFRMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+    nodes.writeXMLFile(e);
+    indices.writeXMLFile(e);
+    minCol.writeXMLFile(e);
+    maxCol.writeXMLFile(e);
+    writeProperties(e);
     return e;
   }
 
-  void OMBVPlaneProperty::fromWidget(QWidget *widget) {
-    size.fromWidget(static_cast<OMBVPlaneWidget*>(widget)->size);
+  void FlexibleBodyFFRMBSOMBVProperty::fromWidget(QWidget *widget) {
+    MBSOMBVProperty::fromWidget(widget);
+    nodes.fromWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->nodes);
+    indices.fromWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->indices);
+    minCol.fromWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->minCol);
+    maxCol.fromWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->maxCol);
   }
 
-  void OMBVPlaneProperty::toWidget(QWidget *widget) {
-    size.toWidget(static_cast<OMBVPlaneWidget*>(widget)->size);
+  void FlexibleBodyFFRMBSOMBVProperty::toWidget(QWidget *widget) {
+    MBSOMBVProperty::toWidget(widget);
+    nodes.toWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->nodes);
+    indices.toWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->indices);
+    minCol.toWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->minCol);
+    maxCol.toWidget(static_cast<FlexibleBodyFFRMBSOMBVWidget*>(widget)->maxCol);
   }
 
 }
