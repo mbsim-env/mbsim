@@ -31,6 +31,16 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  void OpenMBVBody::initializeUsingXML(DOMElement *e) {
+    DOMProcessingInstruction *ID = E(e)->getFirstProcessingInstructionChildNamed("OPENMBV_ID");
+    if(ID)
+      id = X()%ID->getData();
+  }
+
+  void OpenMBVBody::initializeObject(const shared_ptr<OpenMBV::Body> &object) {
+    object->setID(id);
+  }
+
   void OpenMBVDynamicColoredBody::initializeUsingXML(DOMElement *e) {
     OpenMBVBody::initializeUsingXML(e);
     DOMElement *ee;
@@ -38,17 +48,12 @@ namespace MBSim {
     if(ee) dc = Element::getVec(ee, 3);
     ee=E(e)->getFirstElementChildNamed(MBSIM%"transparency");
     if(ee) tp = Element::getDouble(ee);
-
-    DOMProcessingInstruction *ID = E(e)->getFirstProcessingInstructionChildNamed("OPENMBV_ID");
-    if(ID)
-      id = X()%ID->getData();
   }
 
   void OpenMBVDynamicColoredBody::initializeObject(const shared_ptr<OpenMBV::DynamicColoredBody> &object) {
     OpenMBVBody::initializeObject(object);
     object->setDiffuseColor(dc(0),dc(1),dc(2));
     object->setTransparency(tp);
-    object->setID(id);
   }
 
   void OpenMBVArrow::initializeUsingXML(DOMElement *e) {
