@@ -23,10 +23,8 @@
 #include "mbsim/functions/function.h"
 #include "mbsim/frames/floating_relative_frame.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -71,7 +69,6 @@ namespace MBSim {
 
       void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
@@ -83,7 +80,6 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         MArrow=ombv.createOpenMBV();
       }
-#endif
 
     private:
       class Residuum : public Function<fmatvec::Vec(fmatvec::Vec)> {
@@ -122,9 +118,7 @@ namespace MBSim {
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
       std::string saved_IndependentBody, saved_IndependentBody2;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
-#endif
   };
 
 }

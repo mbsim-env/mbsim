@@ -15,11 +15,9 @@
 
 #include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/polygonpoint.h>
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -94,7 +92,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //---------------------------------------------------------------------------------------------------------------------------------------//
 
 	Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
-#ifdef HAVE_OPENMBVCPPINTERFACE
 	std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
 	cuboid->setNumberOfSpinePoints(elements*4+1);
         cuboid->setDiffuseColor(0.6666,1,1);
@@ -111,7 +108,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 	cuboid->setContour(rectangle);
 	rodCont->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
 //---------------------------------------------------------------------------------------------------------------------------------------//
 //--- BALLS ...........------------------------------------------------------------------------------------------------------------------//
@@ -149,12 +145,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 		balls[i]->addFrame(new FixedRelativeFrame("Plane",-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C")));
 		balls[i]->addContour(new Plane("Plane",balls[i]->getFrame("Plane")));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 		std::shared_ptr<OpenMBV::Cuboid> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
 		cube->setLength(d,b,b);
 		cube->setDiffuseColor(0.3333,0.6666,1);
 		balls[i]->setOpenMBVRigidBody(cube);
-#endif
 	}
 	//Set balls to correct position
 	FlexibleBody1s21Cosserat * rodInfo = new FlexibleBody1s21Cosserat("InfoRod", false);

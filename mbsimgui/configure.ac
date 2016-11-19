@@ -43,12 +43,35 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
 
-LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare -Wno-attributes"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
+
+dnl qwt >= 6
+AC_ARG_WITH(qwt_inc_prefix,
+  [  --with-qwt-inc-prefix=PFX  Prefix where qwt6 headers are installed],
+  [QWT_CFLAGS="-I$withval"],
+  [QWT_CFLAGS="-I$prefix/include"])
+AC_ARG_WITH(qwt_lib_name,
+  [  --with-qwt-lib-name=name  Qwt6 library name -l<name> (defaults to qwt)],
+  [QWT_LIBNAME="$withval"],
+  [QWT_LIBNAME="qwt"])
+AC_ARG_WITH(qwt_lib_prefix,
+  [  --with-qwt-lib-prefix=PFX  Prefix where qwt6 library is installed],
+  [QWT_LIBS="-L$withval -l$QWT_LIBNAME"],
+  [QWT_LIBS="-L$prefix/lib -l$QWT_LIBNAME"])
+CPPFLAGS="$CPPFLAGS $QWT_CFLAGS $QT_CFLAGS"
+LIBS="$LIBS $QWT_LIBS $QT_LIBS"
+AC_CHECK_HEADERS([qwt_wheel.h], [], [AC_MSG_ERROR([Can not find qwt_wheel.h!])])
+AC_TRY_LINK(
+  [#include <qwt_system_clock.h>],
+  [new QwtSystemClock;],
+  [],
+  [AC_MSG_ERROR([Can not link with qwt >= 6!])])
+
+LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 
 AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
 

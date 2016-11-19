@@ -3,9 +3,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -44,10 +42,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
   // Parameters
   double l = 0.3; 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   double h = 0.02;
   double d = 0.1;
-#endif
   double m = 0.7;
   SymMat Theta(3);
   Theta(1,1) = m*l*l/12.;
@@ -63,11 +59,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //body->setTranslation(new TranslationTeqI(new MyPos));
   body->setTranslation(new MyPos);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(l,h,d);
   body->setOpenMBVRigidBody(cuboid);
-#endif
 
   // Just to have somtething to integrate ;-)
   body = new RigidBody("Rod2");

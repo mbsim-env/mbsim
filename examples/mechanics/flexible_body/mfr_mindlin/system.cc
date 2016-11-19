@@ -15,10 +15,8 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"
 #include "openmbvcppinterface/cube.h"
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -122,12 +120,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[k]->setInertiaTensor(Theta);
     balls[k]->setTranslation(new TranslationAlongAxesXYZ<VecV>); // only translational dof because of point masses
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     sphere.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Sphere>());
     sphere[k]->setRadius(r);
     sphere[k]->setDiffuseColor((double)k/(double)nB,(double)k/(double)nB,(double)k/(double)nB);
     balls[k]->setOpenMBVRigidBody(sphere[k]);
-#endif
   }
 
   // contacts

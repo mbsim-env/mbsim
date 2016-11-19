@@ -21,10 +21,8 @@
 
 #include "mbsim/constraints/generalized_constraint.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -49,7 +47,6 @@ namespace MBSim {
 
       virtual std::string getType() const { return "GeneralizedConnectionConstraint"; }
     
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
@@ -61,16 +58,13 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         MArrow=ombv.createOpenMBV();
       }
-#endif
 
     private:
       RigidBody *bi, *bd;
 
       std::string saved_IndependentBody, saved_DependentBody;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
-#endif
   };
 
 }

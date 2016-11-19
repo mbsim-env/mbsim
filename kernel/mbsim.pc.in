@@ -6,8 +6,8 @@ bindir=${exec_prefix}/bin
 
 Name: mbsim
 Description: mbsim is a multi-body simulation library.
-Requires: @requires@
+Requires: fmatvec hdf5serie mbxmlutilshelper casadi openmbvcppinterface
 Version: @VERSION@
 Libs: -L${libdir} -lmbsim -l@BOOST_SYSTEM_LIB@
-Cflags: -I${includedir} @DEFINES@ @openmbv_compilerflag@
+Cflags: -I${includedir} @DEFINES@
 

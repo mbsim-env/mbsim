@@ -13,13 +13,11 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/sphere.h"
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/coilspring.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -274,7 +272,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("C")->enableOpenMBV(1.5*d);
   std::shared_ptr<OpenMBV::Frustum> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy->setBaseRadius(d);
@@ -316,6 +313,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   spring->enableOpenMBVCoilSpring(_springRadius=d/5.,_crossSectionRadius=d/50.,_numberOfCoils=5);
 
-  #endif
 }
 

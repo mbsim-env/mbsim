@@ -2,13 +2,11 @@
 
 #include <fmatvec/fmatvec.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/sphere.h>
-#endif
 
 #include <mbsim/environment.h>
 #include <mbsim/frames/fixed_relative_frame.h>
@@ -109,13 +107,11 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   BeamContour->setFrameOfReference(Beam->getFrame("Line"));
   Beam->addContour(BeamContour);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> openMBVBeam=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVBeam->setInitialTranslation(length/2,0,0);
   openMBVBeam->setLength(length,height,depth);
   openMBVBeam->setDrawMethod(OpenMBV::Body::DrawStyle(1));
   Beam->setOpenMBVRigidBody(openMBVBeam);
-#endif
 
   /*Add Balls to System*/
   vector<RigidBody*> balls;
@@ -163,7 +159,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     balls[ballIter]->addContour(ballsContours[ballIter]);
 
     /*Visualization of the balls*/
-#ifdef HAVE_OPENMBVCPPINTERFACE
     std::shared_ptr<OpenMBV::Sphere> openMBVSphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     openMBVSphere->setRadius(radius);
 
@@ -182,7 +177,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
         break;
     }
     balls[ballIter]->setOpenMBVRigidBody(openMBVSphere);
-#endif
 
     //Add flexibility(stiffness) of balls
 //    if (contactType == 0) {

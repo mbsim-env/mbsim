@@ -25,9 +25,7 @@
 #include <mbsim/utils/colors.h>
 #include <fmatvec/fmatvec.h>
 #include <mbsim/functions/function.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
-#endif
 
 namespace MBSim {
 
@@ -81,7 +79,6 @@ namespace MBSim {
        */
       double getHeight() const { return height; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief enable visualisation
        * \param enable           enable or disable openmbv
@@ -99,7 +96,6 @@ namespace MBSim {
        * \brief set transparency of body
        */
       void setTransparency(const double & transparency);
-#endif
 
       /*!
        * \brief get value at position of 0 derivative
@@ -207,7 +203,6 @@ namespace MBSim {
        */
       double sphereRadius;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief color values for the iv-body
        */
@@ -234,7 +229,6 @@ namespace MBSim {
       void createInventorFile();
 
       void enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints, int circularPoints);
-#endif
   };
 
   /*!

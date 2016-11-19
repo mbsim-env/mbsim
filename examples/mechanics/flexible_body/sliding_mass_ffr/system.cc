@@ -16,11 +16,9 @@
 
 #include "mbsim/contact_kinematics/point_planarcontour.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/polygonpoint.h>
 #include <openmbvcppinterface/sphere.h>
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -104,7 +102,6 @@ SlidingMass::SlidingMass(const string &projectName) :
       nodes(i) = double(i)/10.;
     ncc->setEtaNodes(nodes);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     {
       std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
       cuboid->setNumberOfSpinePoints(elements * 4 + 1); // resolution of visualisation
@@ -123,7 +120,6 @@ SlidingMass::SlidingMass(const string &projectName) :
       cuboid->setContour(rectangle);
       ncc->setOpenMBVSpineExtrusion(cuboid);
     }
-#endif
 
     Vec WrOS0B1(3, INIT, 0.);
     WrOS0B1(0) = l0 * 0.9 - l0 / 2.;
@@ -146,14 +142,12 @@ SlidingMass::SlidingMass(const string &projectName) :
     ball1->addContour(ballContour1);
     ballContour1->setFrameOfReference(ball1->getFrameC());
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     std::shared_ptr<OpenMBV::Sphere> sphere1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     sphere1->setRadius(r);
     sphere1->setDiffuseColor(0.5, 0.5, 1);
     sphere1->setTransparency(0.7);
     sphere1->setEnable(true);
     ball1->setOpenMBVRigidBody(sphere1);
-#endif
 
     Contact *contact1 = new Contact("FFR_Contact");
     contact1->setNormalForceLaw(new BilateralConstraint);
@@ -188,7 +182,6 @@ SlidingMass::SlidingMass(const string &projectName) :
     rod->setq0(q0);
     this->addObject(rod);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
     cuboid->setNumberOfSpinePoints(elements * 4 + 1); // resolution of visualisation
     cuboid->setDiffuseColor(56./360., 132./255., 166./255.); // color in (minimalColorValue, maximalColorValue)
@@ -205,7 +198,6 @@ SlidingMass::SlidingMass(const string &projectName) :
 
     cuboid->setContour(rectangle);
     rod->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
     Vec WrOS0B(3, INIT, 0.);
     WrOS0B(0) = l0 * 0.9;
@@ -227,14 +219,12 @@ SlidingMass::SlidingMass(const string &projectName) :
     ball2->addContour(ballContour);
     ballContour->setFrameOfReference(ball2->getFrameC());
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     sphere->setRadius(r);
     sphere->setDiffuseColor(0.5, 0.5, 1);
     sphere->setTransparency(0.7);
     sphere->setEnable(true);
     ball2->setOpenMBVRigidBody(sphere);
-#endif
 
     Contact *contact = new Contact("RCM_Contact");
     contact->setNormalForceLaw(new BilateralConstraint);
@@ -311,7 +301,6 @@ SlidingMass::SlidingMass(const string &projectName) :
 //
 //    beam->enableFramePlot(1e-3, ncc->getTransNodes());
 //
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //    {
 //      std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
 //      cuboid->setNumberOfSpinePoints(nf * 4 + 1); // resolution of visualisation
@@ -330,7 +319,6 @@ SlidingMass::SlidingMass(const string &projectName) :
 //      cuboid->setContour(rectangle);
 //      ncc->setOpenMBVSpineExtrusion(cuboid);
 //    }
-//#endif
 //
 //    Vec WrOS0B1(3, INIT, 0.);
 //    WrOS0B1(0) = l0 * 0.9 - l0 / 2.;
@@ -353,14 +341,12 @@ SlidingMass::SlidingMass(const string &projectName) :
 //    ball1->addContour(ballContour1);
 //    ballContour1->setFrameOfReference(ball1->getFrameC());
 //
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //    std::shared_ptr<OpenMBV::Sphere> sphere1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
 //    sphere1->setRadius(r);
 //    sphere1->setDiffuseColor(0.5, 0.5, 1);
 //    sphere1->setTransparency(0.7);
 //    sphere1->setEnable(true);
 //    ball1->setOpenMBVRigidBody(sphere1);
-//#endif
 //
 //    Contact *contact1 = new Contact("FFR_Contact");
 //    contact1->setContactForceLaw(new BilateralConstraint);

@@ -21,12 +21,10 @@
 #define _RIGID_BODY_OBSERVER_H__
 #include "mbsim/observers/observer.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/openmbv_utils.h>
 namespace OpenMBV {
   class Frame;
 }
-#endif
 
 namespace MBSim {
   class RigidBody;
@@ -35,10 +33,8 @@ namespace MBSim {
   class RigidBodyObserver: public Observer {
     private:
       RigidBody* body;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVAxisOfRotation;
-#endif
 
     public:
       RigidBodyObserver(const std::string &name);
@@ -47,9 +43,7 @@ namespace MBSim {
       void init(InitStage stage);
       virtual void plot();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 //      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAxisOfRotation, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(scaleLength,(double),1)(scaleSize,(double),1))) { openMBVAxisOfRotation=enableOpenMBVArrow(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize); }
-#endif
 
   };
 

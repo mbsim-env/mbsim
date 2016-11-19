@@ -7,10 +7,8 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematics/rotation_about_fixed_axis.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -47,9 +45,7 @@ namespace MBSimPowertrain {
     housing->setMass(1);
     Theta(2,2) = 1;
     housing->setInertiaTensor(Theta);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     housing->getFrame("C")->enableOpenMBV(0.3);
-#endif
 
     RigidBody* sun = new RigidBody("Sun");
     addObject(sun);
@@ -63,9 +59,7 @@ namespace MBSimPowertrain {
     sun->setInertiaTensor(Theta);
     Vec r(3);
     r(2) = lS/2;
-#ifdef HAVE_OPENMBVCPPINTERFACE
     sun->getFrame("C")->enableOpenMBV(0.3);
-#endif
 
     RigidBody* annulus = new RigidBody("Annulus");
     addObject(annulus);
@@ -77,9 +71,7 @@ namespace MBSimPowertrain {
     annulus->setFrameOfReference(housing->getFrame("Q"));
     annulus->setFrameForKinematics(annulus->getFrame("C"));
     annulus->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     annulus->getFrame("C")->enableOpenMBV(0.3);
-#endif
 
     annulus->setMass(mH);
     Theta(2,2) = JH;
@@ -94,9 +86,7 @@ namespace MBSimPowertrain {
     carrier->setFrameOfReference(housing->getFrame("R"));
     carrier->setFrameForKinematics(carrier->getFrame("C"));
     carrier->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     carrier->getFrame("C")->enableOpenMBV(0.3);
-#endif
 
     carrier->setMass(mT);
     Theta(2,2) = JT;
@@ -122,9 +112,7 @@ namespace MBSimPowertrain {
       planet[i]->setFrameOfReference(carrier->getFrame(str.str()));
       planet[i]->setFrameForKinematics(planet[i]->getFrame("C"));
       planet[i]->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-#ifdef HAVE_OPENMBVCPPINTERFACE
       planet[i]->getFrame("C")->enableOpenMBV(0.3);
-#endif
 
       planet[i]->setMass(mP);
       Theta(2,2) = JP;
@@ -194,7 +182,6 @@ namespace MBSimPowertrain {
       }
     }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 
     shared_ptr<OpenMBV::Frustum> cylinder;
 
@@ -256,7 +243,6 @@ namespace MBSimPowertrain {
       cylinder->setInitialTranslation(0,0,lP/2);
     }
 
-#endif
 
   }
 

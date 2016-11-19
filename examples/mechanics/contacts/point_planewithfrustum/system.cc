@@ -11,9 +11,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 #include <iostream>
 
@@ -49,7 +47,6 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   addFrame(new FixedRelativeFrame("I3", "[0; 0; 0]", BasicRotAIKz(M_PI/2.), getFrame("I2")));
   addContour(new PlaneWithFrustum("Plane", R, r, h, rho, getFrame("I3")));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   // nur fuer Visualisierung
   RigidBody * m = new RigidBody("PlaneContour");
   addObject(m);
@@ -74,7 +71,6 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   mVisu->setInitialRotation(-M_PI/2., 0, 0);
   mVisu->setInitialTranslation(0, h, 0);
   m->getFrame("C")->enableOpenMBV(2.*rBar, .9);
-#endif
 
   RigidBody * b = new RigidBody("Bar");
   b->setPlotFeature(plotRecursive, enabled);
@@ -106,7 +102,6 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     b->setInitialGeneralizedPosition("[[.01; -.14; -.02]");
     b->setInitialGeneralizedVelocity("[-1; 0; .5]");
   }
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> bVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   b->setOpenMBVRigidBody(bVisu);
   bVisu->setBaseRadius(rBar);
@@ -118,7 +113,6 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   b->getFrame("C")->enableOpenMBV(2.*rBar, .9);
   for (int i=0; i<5; i++)
     b->getFrame("Top"+numtostr(i))->enableOpenMBV(.2*rBar, .9);
-#endif
 
   for (int i=1; i<5; i++) {
     Contact * c = new Contact("ContactPointPlane"+numtostr(i));
@@ -134,9 +128,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
       c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
       c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
     c->enableOpenMBVContactPoints(.1*rBar);
-#endif
   }
 
 }

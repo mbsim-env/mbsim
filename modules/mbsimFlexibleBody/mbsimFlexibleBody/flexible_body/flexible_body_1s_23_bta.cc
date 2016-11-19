@@ -237,7 +237,6 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"massProportionalDamping");
     setMassProportionalDamping(getDouble(e));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
       std::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
@@ -245,7 +244,6 @@ namespace MBSimFlexibleBody {
       rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);
     }
-#endif
 
   }
 

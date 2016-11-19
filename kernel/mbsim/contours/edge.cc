@@ -34,12 +34,10 @@ namespace MBSim {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if (getPlotFeature(openMBV) == enabled && openMBVRigidBody) {
           if (openMBVRigidBody)
             static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0, length, 0);
         }
-#endif
         RigidContour::init(stage);
       }
     }

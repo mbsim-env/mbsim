@@ -14,12 +14,10 @@
 // End Contact
 #include "mbsim/environment.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h" // ball
 #include <openmbvcppinterface/polygonpoint.h>
 #include <openmbvcppinterface/arrow.h> // Contact
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -82,7 +80,6 @@ System::System(const string &projectName) :
 
   Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements * 4 + 1);
   cuboid->setDiffuseColor(0.8, 1, 1);
@@ -98,7 +95,6 @@ System::System(const string &projectName) :
   rectangle->push_back(corner4);
   cuboid->setContour(rectangle);
   rodCont->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
   FlexibleBand * top = new FlexibleBand("Top");
   Vec nodes(elements + 1);
@@ -148,12 +144,10 @@ System::System(const string &projectName) :
   ball->addContour(point);
   this->addObject(ball);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(r);
   sphere->setDiffuseColor(1/3.0, 1, 1);
   ball->setOpenMBVRigidBody(sphere);
-#endif
 
   Contact *contact = new Contact("Contact");
   contact->setNormalForceLaw(new UnilateralConstraint);

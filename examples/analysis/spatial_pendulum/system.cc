@@ -6,10 +6,8 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/coilspring.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;

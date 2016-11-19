@@ -20,11 +20,9 @@
 #include "mbsim/links/generalized_elastic_connection.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/objects/rigid_body.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include "openmbvcppinterface/group.h"
 #include "openmbvcppinterface/objectfactory.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;

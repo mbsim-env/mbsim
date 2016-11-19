@@ -3,11 +3,9 @@
 #include "mbsim/links/spring_damper.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frames/fixed_relative_frame.h"
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/coilspring.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -93,7 +91,6 @@ Group1::Group1(const string &name) : Group(name) {
   box1->setInitialGeneralizedPosition(Vec(1,INIT,l01 + h1/2 + 0.2));
   box2->setInitialGeneralizedPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> body1=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   body1->setLength(Vec(3,INIT,1)*h1);
   body1->setDiffuseColor(240./360.,1,1);
@@ -109,5 +106,4 @@ Group1::Group1(const string &name) : Group(name) {
   spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
   spring2->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
-#endif
 }

@@ -29,12 +29,10 @@
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 
-#ifdef HAVE_NURBS
 #include "nurbs++/nurbs.h"
 #include "nurbs++/vector.h"
 
 using namespace PLib;
-#endif
 
 using namespace fmatvec;
 using namespace std;
@@ -355,7 +353,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
-#ifdef HAVE_NURBS
 
     //    PlNurbsCurved curvePos;
     //    PlNurbsCurved curveVel;
@@ -417,13 +414,9 @@ namespace MBSimFlexibleBody {
     //        curveVel.write(filenameVel.c_str());
     //      }
     //    }
-#else
-    THROW_MBSIMERROR("No Nurbs-Library installed ...");
-#endif
   }
 
   void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-#ifdef HAVE_NURBS
 
     int DEBUGLEVEL = 0;
 
@@ -500,9 +493,6 @@ namespace MBSimFlexibleBody {
       string psfile = "test.ps";
       cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
     }
-#else
-    THROW_MBSIMERROR("No Nurbs-Library installed ...");
-#endif
   }
 
   void FlexibleBody1s21RCM::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {

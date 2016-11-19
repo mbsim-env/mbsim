@@ -55,9 +55,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   camContour->setFrameOfReference(cam->getFrame("Contour"));
   camContour->setNodes(searchpoints);
   cam->addContour(camContour);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   camContour->enableOpenMBV();
-#endif
 
   addFrame(new FixedRelativeFrame("I2", "[0.05; 0.09; 0.0]", SqrMat(3, EYE)));
 
@@ -74,9 +72,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   Circle * rollContour = new Circle("Contour");
   rollContour->setRadius(.01);
   roll->addContour(rollContour);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   rollContour->enableOpenMBV();
-#endif
 
   Contact * contactCamRoll = new Contact("Contact");
   if (rigid) {
@@ -90,9 +86,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     contactCamRoll->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(1.)));
   }
   contactCamRoll->connect(cam->getContour("Contour"), roll->getContour("Contour"));
-#ifdef HAVE_OPENMBVCPPINTERFACE
   contactCamRoll->enableOpenMBVContactPoints(.005);
-#endif
   addLink(contactCamRoll);
 
 }

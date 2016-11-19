@@ -23,10 +23,8 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/objectfactory.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -79,7 +77,6 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
     if(e) saved_IndependentBody=E(e)->getAttribute("ref");
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
@@ -91,7 +88,6 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }
-#endif
   }
 
   void GeneralizedConnectionConstraint::setUpInverseKinetics() {

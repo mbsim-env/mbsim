@@ -21,9 +21,7 @@
 #include "mbsim/contours/point.h"
 #include <fmatvec/fmatvec.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/grid.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -90,13 +88,11 @@ namespace MBSim {
 
   void Point::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVSphere ombv(0.001,"[-1;1;1]",0,"size");
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
 }

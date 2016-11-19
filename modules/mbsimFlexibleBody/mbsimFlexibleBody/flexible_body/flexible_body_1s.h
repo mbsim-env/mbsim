@@ -22,9 +22,7 @@
 
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
-#endif
 
 namespace MBSimFlexibleBody {
 
@@ -61,9 +59,7 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::SqrMat3 getOrientation(double s);
       virtual fmatvec::Vec3 getAngles(double s) { return fmatvec::Vec3(); }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(const std::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
-#endif
 
     protected:
       /**

@@ -272,9 +272,7 @@ namespace MBSimFlexibleBody {
     }
 
     else if (stage == plotting) {
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //      ((OpenMBV::SpineExtrusion*) openMBVBody.get())->setInitialRotation(AIK2Cardan(R->getOrientation()));
-//#endif
       FlexibleBody1sCosserat::init(stage);
     }
 

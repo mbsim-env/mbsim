@@ -3,9 +3,7 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace fmatvec;
 
@@ -45,7 +43,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0(0) = -phi1;
   stab1->setInitialGeneralizedPosition(q0);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
@@ -54,7 +51,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab1->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);
-#endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
   addObject(stab2);
@@ -71,7 +67,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0(0) = -phi2+phi1;
   stab2->setInitialGeneralizedPosition(q0);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
@@ -80,7 +75,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab2->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);
-#endif
 
 }
 

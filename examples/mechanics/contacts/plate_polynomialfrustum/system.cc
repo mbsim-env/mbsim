@@ -12,10 +12,8 @@
 #include <mbsim/utils/colors.h>
 #include <fmatvec/fmatvec.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
 #include "openmbvcppinterface/cube.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;

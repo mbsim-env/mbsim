@@ -30,12 +30,10 @@
 #include "mbsim/frames/frame.h"
 #include <mbsim/environment.h>
 
-#ifdef HAVE_NURBS
 #include "nurbs++/nurbs.h"
 #include "nurbs++/vector.h"
 
 using namespace PLib;
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -380,7 +378,6 @@ namespace MBSimFlexibleBody {
     double thetaKappa0=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"torsional"));
     setMaterialDamping(thetaEps, thetaKappa0);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
       std::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
@@ -388,11 +385,9 @@ namespace MBSimFlexibleBody {
       rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);
     }
-#endif
   }
 
   void FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
-//#ifdef HAVE_NURBS
 //
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -454,13 +449,9 @@ namespace MBSimFlexibleBody {
 //        curveVel.write(filenameVel.c_str());
 //      }
 //    }
-//#else
-//    THROW_MBSIMERROR("No Nurbs-Library installed ...");
-//#endif
   }
 
   void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-#ifdef HAVE_NURBS
 
     int DEBUGLEVEL = 0;
 
@@ -594,8 +585,5 @@ namespace MBSimFlexibleBody {
 //      cout << "];" << endl;
 //    }
 
-#else
-    THROW_MBSIMERROR("No Nurbs-Library installed ...");
-#endif
   }
 }

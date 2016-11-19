@@ -22,11 +22,9 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/mbsim_event.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -70,7 +68,6 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(WpsiP(i));
       }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
           if(updPos) updatePositions();
@@ -87,7 +84,6 @@ namespace MBSim {
           openMBVFrame->append(data);
         }
       }
-#endif
       Element::plot();
     }
   }
@@ -129,14 +125,12 @@ namespace MBSim {
             plotColumns.push_back("WpsiP("+numtostr(i)+")");
         }
   
-  #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVFrame) {
             openMBVFrame->setName(name);
             parent->getOpenMBVGrp()->addObject(openMBVFrame);
           }
         }
-  #endif
         Element::init(stage);
       }
     }
@@ -147,13 +141,11 @@ namespace MBSim {
   void Frame::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     DOMElement *ee=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ee) {
       OpenMBVFrame ombv;
       openMBVFrame=ombv.createOpenMBV(ee); 
     }
-#endif
   }
 
   void Frame::resetUpToDate() { 

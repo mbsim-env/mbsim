@@ -27,9 +27,7 @@
 #include "mbsim/observers/observer.h"
 #include "mbsim/objectfactory.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
-#endif
 
 //#ifdef _OPENMP
 //#include <omp.h>
@@ -179,13 +177,11 @@ namespace MBSim {
       }
     }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     if(e) {
       OpenMBVFrame ombv;
       I->setOpenMBVFrame(ombv.createOpenMBV(e));
     }
-#endif
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameI");
     while(e and MBXMLUtils::E(e)->getTagName()==MBSIM%"plotFeatureFrameI") {

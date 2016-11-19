@@ -25,11 +25,9 @@
 
 #include <cmath>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/coilspring.h"
 #include "openmbvcppinterface/cuboid.h"
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -409,7 +407,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Gelenk->setFrameOfReference(Crank->getFrame("P"));
 
   // Visualisierung mit openMBV
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> openMBVCrank=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(Laenge_Crank,Breite_Crank-0.03,Dicke_Crank-0.05);
   openMBVCrank->setInitialTranslation(0, 0, 0.05);
@@ -447,6 +444,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Block->setOpenMBVRigidBody(openMBVBlock);
 
   spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
-#endif
 
 }

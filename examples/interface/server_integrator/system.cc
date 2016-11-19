@@ -6,9 +6,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/coilspring.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -62,15 +60,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // contact
   Sphere *sphere1 = new Sphere("Sphere1");
   sphere1->setRadius(0.2);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere1->enableOpenMBV();
-#endif
   mass1->addContour(sphere1);
   Sphere *sphere2 = new Sphere("Sphere2");
   sphere2->setRadius(0.2);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere2->enableOpenMBV();
-#endif
   mass2->addContour(sphere2);
   Contact *contact = new Contact("Contact");
   contact->connect(sphere1,sphere2);
@@ -79,7 +73,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addLink(contact);
 
   // visualisation
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::CoilSpring> openMBVspring1=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>();
   openMBVspring1->setSpringRadius(0.1);
   openMBVspring1->setCrossSectionRadius(0.01);
@@ -91,7 +84,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVspring2->setCrossSectionRadius(0.01);
   openMBVspring2->setNumberOfCoils(5);
   spring2->setOpenMBVCoilSpring(openMBVspring2);
-#endif
 
   const int nBody=1;
   RigidBody* m[nBody];

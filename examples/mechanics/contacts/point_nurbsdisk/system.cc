@@ -15,10 +15,8 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"
 #include "openmbvcppinterface/cube.h"
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -118,12 +116,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[k]->setInertiaTensor(Theta);
     balls[k]->setTranslation(new TranslationAlongAxesXYZ<VecV>); // only translational dof because of point masses
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     sphere.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Sphere>());
     sphere[k]->setRadius(r);
     sphere[k]->setDiffuseColor((1-(double)k/nB)*2/3, 1, 1);
     balls[k]->setOpenMBVRigidBody(sphere[k]);
-#endif
   }
 
   // contacts
@@ -176,12 +172,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //  Vec u0_body(6,INIT,0.); u0_body(0)=-1.; u0_body(2)=-1.; u0_body(3)=50; u0_body(4)=30; u0_body(5)=20;
   //  body->setInitialGeneralizedVelocity(u0_body);
   //
-  //#ifdef HAVE_OPENMBVCPPINTERFACE
   //  std::shared_ptr<OpenMBV::Cube> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   //  cube->setLength(e);
   //  cube->setDiffuseColor(1/3.0, 1, 1);
   //  body->setOpenMBVRigidBody(cube);
-  //#endif
   //
   //  // contacts
   //  vector<Point*> points;

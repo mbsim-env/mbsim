@@ -5,10 +5,8 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_xy.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -111,7 +109,6 @@ namespace MBSimPowertrain {
     SrSP(2) = data.lengthOutputShaft/2;
     welle3->addFrame(new FixedRelativeFrame("Q",SrSP,SqrMat(3,EYE)));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     shared_ptr<OpenMBV::Frustum> cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     cylinder->setBaseRadius(data.radiusInputShaft);
     cylinder->setTopRadius(data.radiusInputShaft);
@@ -140,7 +137,6 @@ namespace MBSimPowertrain {
     cylinder -> setInitialRotation(0,0,0);
 
 
-#endif
 
   }
 

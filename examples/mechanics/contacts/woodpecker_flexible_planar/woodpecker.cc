@@ -16,9 +16,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
-#endif
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
@@ -217,7 +215,6 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInitialGeneralizedPosition(Vec(1,INIT, 0.0));
   specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   balken->getFrame("RJ")->enableOpenMBV(0.1);
 
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
@@ -248,6 +245,5 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   spechtMBV->setInitialRotation(M_PI/2., 0, 0);
   spechtMBV->setScaleFactor(0.05);
   specht->setOpenMBVRigidBody(spechtMBV); 
-#endif
 }
 

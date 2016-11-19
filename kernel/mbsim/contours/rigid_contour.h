@@ -22,11 +22,9 @@
 
 #include "mbsim/contours/contour.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class RigidBody;
 }
-#endif
 
 namespace MBSim {
 
@@ -79,11 +77,9 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::RigidBody>& getOpenMBVRigidBody() { return openMBVRigidBody; }
 
       void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &ombvBody) { openMBVRigidBody = ombvBody; }
-#endif
 
     protected:
       /**
@@ -91,9 +87,7 @@ namespace MBSim {
        */
       Frame *R;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
-#endif
 
     private:
       std::string saved_frameOfReference;

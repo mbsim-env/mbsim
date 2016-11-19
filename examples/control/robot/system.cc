@@ -15,9 +15,7 @@
 
 #include "tools/file_to_fmatvecstring.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -228,7 +226,6 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   motorSpitze->setForceFunction(new SignalFunction<VecV(double)>(sDis));
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/basis.wrl");
   obj->setScaleFactor(0.2);
@@ -249,5 +246,4 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   obj->setInitialTranslation(0,-0.3,0);
   obj->setInitialRotation(M_PI,0,0);
   spitze->setOpenMBVRigidBody(obj);
-#endif
 }

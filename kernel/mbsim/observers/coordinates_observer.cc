@@ -20,10 +20,8 @@
 #include <config.h>
 #include "mbsim/observers/coordinates_observer.h"
 #include "mbsim/frames/frame.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace xercesc;
@@ -49,7 +47,6 @@ namespace MBSim {
       if(openMBVAcceleration) plotColumns.push_back("Acceleration");
       Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
             openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
@@ -80,7 +77,6 @@ namespace MBSim {
             getOpenMBVGrp()->addObject(openMBVFrame);
           }
         }
-#endif
       }
     }
     else
@@ -89,7 +85,6 @@ namespace MBSim {
 
   void CoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         Vec3 r = frame->evalPosition();
         Vec3 v = frame->evalVelocity();
@@ -137,7 +132,6 @@ namespace MBSim {
           plotVector.push_back(nrm2(a));
         }
       }
-#endif
 
       Observer::plot();
     }

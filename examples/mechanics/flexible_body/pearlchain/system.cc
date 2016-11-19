@@ -11,11 +11,9 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/polygonpoint.h>
-#endif
 
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/stopwatch.h>
@@ -638,7 +636,6 @@ Perlchain::Perlchain(const string &projectName) :
   rod->initRelaxed(M_PI / 2.);
   this->addObject(rod);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements * 4); // resolution of visualisation
   cuboid->setDiffuseColor(1 / 3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
@@ -655,7 +652,6 @@ Perlchain::Perlchain(const string &projectName) :
 
   cuboid->setContour(rectangle);
   rod->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
   Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
   rod->addContour(neutral);
@@ -712,12 +708,10 @@ Perlchain::Perlchain(const string &projectName) :
     plane->setFrameOfReference(balls[i]->getFrame("Plane"));
     balls[i]->addContour(plane);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     std::shared_ptr<OpenMBV::Cuboid> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
     cube->setLength(d, b, b);
     cube->setDiffuseColor(0, 1, 1);
     balls[i]->setOpenMBVRigidBody(cube);
-#endif
   }
 
 //Set balls to correct position

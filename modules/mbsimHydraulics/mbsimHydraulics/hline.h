@@ -43,9 +43,7 @@ namespace MBSimHydraulics {
       void updateh(int j=0) { }
       void updateJacobians(int j=0) { }
       void updateInverseKineticsJacobians() { }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
-#endif
       /***************************************************/
 
       virtual void setFrameOfReference(MBSim::Frame *frame);

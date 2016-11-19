@@ -27,13 +27,9 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/mbsim_event.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#endif
 
-#ifdef HAVE_NURBS
 using namespace PLib;
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -42,27 +38,21 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   NurbsDisk2s::NurbsDisk2s(const string &name) : Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
-#ifndef HAVE_NURBS
-    THROW_MBSIMERROR("(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
-#else
     uvec=0;
     uVec=0;
     vvec=0;
     vVec=0;
     Surface = new PlNurbsSurfaced;
     SurfaceVelocities = new PlNurbsSurfaced;
-#endif
   }
 
   NurbsDisk2s::~NurbsDisk2s() {
-#ifdef HAVE_NURBS
     if(Surface) {delete Surface; Surface=0;}
     if(SurfaceVelocities) {delete SurfaceVelocities; SurfaceVelocities=0;}
     if(uvec) {delete uvec; uvec=0;}
     if(uVec) {delete uVec; uVec=0;}
     if(vvec) {delete vvec; vvec=0;}
     if(vVec) {delete vVec; vVec=0;}
-#endif
   }
 
   void NurbsDisk2s::init(InitStage stage) {
@@ -91,7 +81,6 @@ namespace MBSimFlexibleBody {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVNurbsDisk) {
             openMBVNurbsDisk->setName(name);
@@ -113,7 +102,6 @@ namespace MBSimFlexibleBody {
             parent->getOpenMBVGrp()->addObject(openMBVNurbsDisk);
           }
         }
-  #endif
         Contour2s::init(stage);
       }
     }
@@ -232,8 +220,6 @@ namespace MBSimFlexibleBody {
 
   void NurbsDisk2s::plot() {
     if(getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#ifdef HAVE_NURBS
       if(getPlotFeature(openMBV) == enabled && openMBVNurbsDisk) {
         vector<double> data;
         data.push_back(getTime()); //time
@@ -292,8 +278,6 @@ namespace MBSimFlexibleBody {
 
         openMBVNurbsDisk->append(data);
       }
-#endif
-#endif
     }
     Contour2s::plot();
   }
@@ -302,7 +286,6 @@ namespace MBSimFlexibleBody {
     return (static_cast<FlexibleBody2s13*>(parent))->transformCW(WrPoint);
   }
 
-#ifdef HAVE_NURBS
   Mat NurbsDisk2s::computeDirectionalDerivatives(const double &radius, const double &phi, const int &deg) {
     PLib::Matrix<Point3Dd> Derivates(deg+1,deg+1);  // matrix that contains the derivates of the surface
 
@@ -327,15 +310,11 @@ namespace MBSimFlexibleBody {
 
     return ReturnMatrix;
   }
-#endif
 
-#ifdef HAVE_NURBS
   Mat NurbsDisk2s::computeCurvatures(const double &radius, const double &phi) {
     return computeDirectionalDerivatives(radius, phi, 2);
   }
-#endif
 
-#ifdef HAVE_NURBS
   void NurbsDisk2s::computeUVector(const int NbPts) {
     delete uvec;
     uvec = new PLib::Vector<double>(NbPts);
@@ -354,9 +333,7 @@ namespace MBSimFlexibleBody {
       (*uVec)[i] = (*uVec)[i-1] + stepU;
     }
   }
-#endif
 
-#ifdef HAVE_NURBS
   void NurbsDisk2s::computeVVector(const int NbPts) {
     delete vvec;
     vvec = new PLib::Vector<double>(NbPts);
@@ -379,9 +356,7 @@ namespace MBSimFlexibleBody {
       (*vVec)[vVec->size()-i-1]= Ra;
     }
   }
-#endif
 
-#ifdef HAVE_NURBS 
   void NurbsDisk2s::computeSurface() {
     PLib::Matrix<HPoint3Dd> Nodelist(nj+degU,nr+1); // list of Cartesian node-coordinates for the nurbs interpolation (2*degU+1 is used for the 2 outline of the surface in azimuthal direction)
 
@@ -465,9 +440,7 @@ namespace MBSimFlexibleBody {
     */
 
   }
-#endif
 
-#ifdef HAVE_NURBS
   void NurbsDisk2s::computeSurfaceVelocities() {
     PLib::Matrix<HPoint3Dd> Nodelist(nj+degU,nr+1); // list of Cartesian node-velocities for the nurbs interpolation (2*degU+1 is used for the 2 outline of the surface in azimuthal direction)
 
@@ -485,9 +458,7 @@ namespace MBSimFlexibleBody {
 
     SurfaceVelocities->globalInterpClosedUH(Nodelist, *uVec, *vVec, *uvec, *vvec, degU, degV);
   }
-#endif
 
-#ifdef HAVE_NURBS
   void NurbsDisk2s::computeSurfaceJacobians() {
     PLib::Matrix<HPoint3Dd> NodelistTrans(nj+degU,nr+1); // list of node-data for the nurbs interpolation
     PLib::Matrix<HPoint3Dd> NodelistRot(nj+degU,nr+1);// list of node-data for the nurbs interpolation
@@ -526,9 +497,7 @@ namespace MBSimFlexibleBody {
       SurfaceJacobiansOfRotation[k].globalInterpClosedUH(NodelistRot, *uVec, *vVec, *uvec, *vvec, degU, degV);
     }
   }
-#endif
 
-#ifdef HAVE_NURBS 
   Vec NurbsDisk2s::getControlPoints(const int u, const int v) {
     Vec TmpVec(3);
 
@@ -538,9 +507,7 @@ namespace MBSimFlexibleBody {
 
     return TmpVec;
   }
-#endif
 
-#ifdef HAVE_NURBS 
   Vec NurbsDisk2s::getUVector() {
     Vec TmpUVec(Surface->knotU().rows());
 
@@ -549,9 +516,7 @@ namespace MBSimFlexibleBody {
 
     return TmpUVec;
   }
-#endif
 
-#ifdef HAVE_NURBS 
   Vec NurbsDisk2s::getVVector() {
     Vec TmpVVec(Surface->knotV().rows());
 
@@ -560,7 +525,6 @@ namespace MBSimFlexibleBody {
 
     return TmpVVec;
   }
-#endif
 
   int NurbsDisk2s::testInsideBounds(const Vec &s) {
     if ((s(0) < Ri) || (s(0) > Ra))

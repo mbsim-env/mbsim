@@ -28,13 +28,11 @@ namespace MBSim {
     private:
       Frame* refFrame;
       std::string saved_frameOfReference;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Arrow> openMBVrTrans, openMBVrRel;
       std::shared_ptr<OpenMBV::Arrow> openMBVvTrans, openMBVvRot, openMBVvRel, openMBVvF;
       std::shared_ptr<OpenMBV::Arrow> openMBVaTrans, openMBVaRot, openMBVaZp, openMBVaCor, openMBVaRel, openMBVaF;
       std::shared_ptr<OpenMBV::Arrow> openMBVomTrans, openMBVomRel;
       std::shared_ptr<OpenMBV::Arrow> openMBVpsiTrans, openMBVpsiRot, openMBVpsiRel;
-#endif
 
     public:
       RelativeKinematicsObserver(const std::string &name="");

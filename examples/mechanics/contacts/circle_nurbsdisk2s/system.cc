@@ -14,9 +14,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -192,7 +190,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addLink(contact);
 
   /* OpenMBV */
-#ifdef HAVE_OPENMBVCPPINTERFACE
   /* axis */
   std::shared_ptr<OpenMBV::Frustum> obj1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   obj1->setBaseRadius(r_axis);
@@ -212,7 +209,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obj2->setInitialTranslation(l_pole*0.5,0.,0.);
   pole->setOpenMBVRigidBody(obj2);
 
-#endif
 } 
 
 void System::init(InitStage stage) {

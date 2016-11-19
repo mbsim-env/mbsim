@@ -7,9 +7,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -103,7 +101,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint1->setForceLaw(new BilateralConstraint);
   joint2->setForceLaw(new BilateralConstraint);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
@@ -119,6 +116,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setInitialTranslation(0,-0.5,0);
   cylinder->setInitialRotation(1.5708,0,0);
   box2->setOpenMBVRigidBody(cylinder);
-#endif
 }
 

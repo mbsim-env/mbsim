@@ -1,9 +1,7 @@
 #include "pendulum.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -37,14 +35,12 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
-#if HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::IvBody> obj1=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj1->setIvFileName("wrl/pendel1.wrl");
   obj1->setScaleFactor(0.1*0.3);
   obj1->setInitialRotation(0,0,M_PI/2);
   stab1->setOpenMBVRigidBody(obj1);
   stab1->setOpenMBVFrameOfReference(stab1->getFrame("R"));
-#endif
 
   stab2 = new RigidBody("Stab2");
   WrOK(0) = lStab/2;
@@ -63,13 +59,11 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
-#if HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::IvBody> obj2=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj2->setIvFileName("wrl/pendel2.wrl");
   obj2->setScaleFactor(0.1*0.3);
   obj2->setInitialRotation(0,0,M_PI/2);
   stab2->setOpenMBVRigidBody(obj2);
   stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
-#endif
 }
 

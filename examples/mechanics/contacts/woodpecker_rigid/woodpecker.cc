@@ -13,9 +13,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
-#endif
 
 #include <iostream>
 
@@ -185,7 +183,6 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInitialGeneralizedPosition(Vec(1,INIT, 0.0));
   specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> stangeMBV = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   stangeMBV->setHeight(1);
   stangeMBV->setTopRadius(r/2);
@@ -211,6 +208,5 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   spechtMBV->setInitialRotation(M_PI/2., 0, 0);
   spechtMBV->setScaleFactor(0.05);
   specht->setOpenMBVRigidBody(spechtMBV); 
-#endif
 }
 

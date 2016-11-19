@@ -11,10 +11,8 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/arrow.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -68,10 +66,8 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   ground->setHeight(h);
   ground->setFrameOfReference(groundBase->getFrameC());
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   ground->enableOpenMBV();
   ground->getOpenMBVRigidBody()->setDrawMethod(OpenMBV::Body::lines);
-#endif
 
 
   groundBase->addContour(ground);
@@ -117,12 +113,10 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
     contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
-#ifdef HAVE_OPENMBVCPPINTERFACE
   //fancy stuff
   contact->enableOpenMBVContactPoints(0.01);
   contact->enableOpenMBVNormalForce(_scaleLength=0.001);
   contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
-#endif
 
   this->addLink(contact);
 

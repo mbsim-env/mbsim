@@ -12,12 +12,10 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
 #include <openmbvcppinterface/polygonpoint.h>
 #include <openmbvcppinterface/arrow.h>
-#endif
 
 #include <iostream>
 
@@ -86,7 +84,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   belt->setq0(q0);
   this->addObject(belt);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.6666,1,0.6666); 
@@ -105,7 +102,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   cuboid->setContour(rectangle);
   belt->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
   Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
   belt->addContour(neutral);
@@ -166,11 +162,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
     contact->connect(disk->getContour("cDisk"),belt->getContour("Top"));
     //contact->setPlotFeature(linkLagrangeParameters, enabled);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     contact->enableOpenMBVNormalForce(_scaleLength=0.01);
     contact->enableOpenMBVTangentialForce(_scaleLength=0.01);
     contact->enableOpenMBVContactPoints(0.001,true);
-#endif
     this->addLink(contact);
   }
 }

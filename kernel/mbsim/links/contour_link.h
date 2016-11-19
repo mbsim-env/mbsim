@@ -22,17 +22,13 @@
 
 #include "mbsim/links/link.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Group;
   class Arrow;
 }
-#endif
 
 namespace MBSim {
 
@@ -106,10 +102,8 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
       void setOpenMBVMoment(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowM = arrow; }
-#endif
 
     protected:
       /**
@@ -132,11 +126,9 @@ namespace MBSim {
 
       std::vector<ContourFrame*> cFrame;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVForceGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVArrowF;
       std::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
-#endif
 
       bool updPos, updVel, updFD, updF, updM, updR;
 

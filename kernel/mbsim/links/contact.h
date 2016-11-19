@@ -58,9 +58,7 @@ namespace MBSim {
        */
       virtual ~Contact();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
-#endif
       /********************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
@@ -140,11 +138,9 @@ namespace MBSim {
       virtual void checkRoot();
       virtual void updateGeneralizedNormalForce();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Frame>& getOpenMBVFrame() {return openMBVFrame;}
       std::shared_ptr<OpenMBV::Arrow>& getOpenMBVNormalForceArrow() {return contactArrow;}
       std::shared_ptr<OpenMBV::Arrow>& getOpenMBVTangentialForceArrow() {return frictionArrow;}
-#endif
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -157,7 +153,6 @@ namespace MBSim {
 
       void resetUpToDate();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /** 
        * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.
        * If the contact is closed, then the two contact points are the same on each contour.
@@ -190,7 +185,6 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         frictionArrow=ombv.createOpenMBV();
       }
-#endif
 
       /* GETTER / SETTER */
 
@@ -296,7 +290,6 @@ namespace MBSim {
 
       fmatvec::VecV zeta0;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief group for the plotting of the openMBV sub elements
        */
@@ -311,7 +304,6 @@ namespace MBSim {
        * \brief pointer to memory of normal and friction forces to draw
        */
       std::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
-#endif
 
     private:
       struct saved_references {

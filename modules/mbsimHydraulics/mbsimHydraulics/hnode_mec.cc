@@ -31,10 +31,8 @@
 #include "mbsim/constitutive_laws/bilateral_impact.h"
 #include "mbsim/constitutive_laws/unilateral_newton_impact.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -45,16 +43,12 @@ using namespace xercesc;
 namespace MBSimHydraulics {
 
   HNodeMec::HNodeMec(const string &name) : HNode(name), QMecTrans(0), QMecRot(0), QMec(0), V0(0), nTrans(0), nRot(0), updQMec(true)
-#ifdef HAVE_OPENMBVCPPINTERFACE
                                            , openMBVArrowSize(0)
-#endif
                                            {
                                            }
 
   HNodeMec::~HNodeMec() {
-#ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVArrows.clear();
-#endif
   }
 
   unsigned int HNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
@@ -155,7 +149,6 @@ namespace MBSimHydraulics {
           for (unsigned int i=0; i<nRot; i++)
             plotColumns.push_back("interface force on area " + numtostr(int(i)));
         }
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
           if (openMBVArrowSize>0) {
             for (int i=0; i<int(nTrans+nRot); i++) {
@@ -183,7 +176,6 @@ namespace MBSimHydraulics {
             }
           }
         }
-#endif
         HNode::init(stage);
       }
     }
@@ -373,7 +365,6 @@ namespace MBSimHydraulics {
         for (unsigned int i=0; i<nRot; i++)
           plotVector.push_back(connectedRotFrames[i].area*evalGeneralizedForce()(0));
       }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
         WrON.init(0);
         for (unsigned int i=0; i<nTrans; i++)
@@ -420,7 +411,6 @@ namespace MBSimHydraulics {
           }
         }
       }
-#endif
       HNode::plot();
     }
   }
@@ -453,11 +443,9 @@ namespace MBSimHydraulics {
       }
       e=e->getNextElementSibling();
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVArrows");
     if (e)
       enableOpenMBVArrows(getDouble(E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"size")));
-#endif
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedNodeMec)

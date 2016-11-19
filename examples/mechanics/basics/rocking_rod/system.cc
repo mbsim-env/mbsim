@@ -9,10 +9,8 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 //#include "openmbvcppinterface/ivbody.h"
 #include "openmbvcppinterface/cuboid.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -100,13 +98,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cr2S->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   // Visualisation with OpenMBV
   //std::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   std::shared_ptr<OpenMBV::Cuboid> obj=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   obj->setLength(l,h,l/5.);
   obj->setInitialRotation(0,0,M_PI/2);
   body->setOpenMBVRigidBody(obj);
-#endif
 }
 

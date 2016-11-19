@@ -26,17 +26,13 @@
 using namespace std;
 using namespace fmatvec;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
-#endif
 
 namespace MBSim {
 
   PolynomialFrustum::PolynomialFrustum(const std::string & name, const Vec & param_) :
       RigidContour(name), parameters(param_), height(0.), sphereRadius(0.)
-#ifdef HAVE_OPENMBVCPPINTERFACE
           , color(LIGHTGRAY), transparency(0.), polynomialPoints(0), circularPoints(25)
-#endif
   {
 
   }
@@ -51,7 +47,6 @@ namespace MBSim {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if (openMBVRigidBody) {
           static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setIvFileName((getPath(NULL, ".").substr(1) + ".iv").c_str());
           static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setBoundaryEdges(true);
@@ -60,7 +55,6 @@ namespace MBSim {
 
           createInventorFile();
         }
-#endif
         RigidContour::init(stage);
       }
     }
@@ -79,7 +73,6 @@ namespace MBSim {
 
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   void PolynomialFrustum::enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints_, int circularPoints_) {
     openMBVRigidBody = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
     openMBVRigidBody->setDiffuseColor(dc(0),dc(1),dc(2));
@@ -104,7 +97,6 @@ namespace MBSim {
   void PolynomialFrustum::setTransparency(const double & transparency_) {
     transparency = transparency_;
   }
-#endif
 
   double PolynomialFrustum::evalValue(const double & x) {
     double val = 0;
@@ -250,7 +242,6 @@ namespace MBSim {
     return R->evalOrientation() * evalKv(zeta);
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   void PolynomialFrustum::createInventorFile() {
 
     //TODO: Use IndexedTriangleSet instead of IndexedFaceSet (should be faster)
@@ -382,6 +373,5 @@ namespace MBSim {
     const double d1 = frustum->evalValueD1(x);
     return d1 * d1 - rhs;
   }
-#endif
 
 }

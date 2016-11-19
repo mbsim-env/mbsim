@@ -9,10 +9,8 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include <mbsimFlexibleBody/discretization_interface.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/objectfactory.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;

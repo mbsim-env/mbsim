@@ -11,10 +11,8 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/constant_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/coilspring.h"
-#endif
 
 #include <iostream>
 
@@ -128,7 +126,6 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   a->setForceFunction(new ConstantFunction<VecV(double)>(-10));
   a->connect(k3->getFrame("fTop"));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> k1Visu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   k1Visu->setBaseRadius(dDisk/2.);
   k1Visu->setTopRadius(dDisk/2.);
@@ -167,7 +164,6 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   sp12->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
 
   sp23->enableOpenMBVCoilSpring(_springRadius=.75*.5*dDisk,_crossSectionRadius=.1*.25*dDisk,_numberOfCoils=5);
-#endif
 
   if(type==1) 
     setPosition(1.5*dDisk*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]"));

@@ -36,13 +36,11 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 #include "mbsimFlexibleBody/namespace.h"
 #include "mbsimFlexibleBody/utils/openmbv_utils.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/dynamicindexedfaceset.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -63,9 +61,7 @@ namespace MBSimFlexibleBody {
 
     K=new Frame("K");
     Body::addFrame(K);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=K;
-#endif
 
     updateJacobians_[0] = &FlexibleBodyFFR::updateJacobians0;
     updateJacobians_[1] = &FlexibleBodyFFR::updateJacobians1;
@@ -439,14 +435,12 @@ namespace MBSimFlexibleBody {
             std::dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
         }
         Body::init(stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(getPlotFeature(openMBV)==enabled && FWeight) {
             FWeight->setName("Weight");
             openMBVGrp->addObject(FWeight);
           }
         }
-#endif
       }
     }
     else
@@ -491,7 +485,6 @@ namespace MBSimFlexibleBody {
           for(int j=0; j<3; j++)
             plotVector.push_back(WrOP[i](j));
       }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(FWeight) {
           vector<double> data;
@@ -521,7 +514,6 @@ namespace MBSimFlexibleBody {
           dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
         }
       }
-#endif
       Body::plot();
     }
   }
@@ -1045,7 +1037,6 @@ namespace MBSimFlexibleBody {
     e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
     if(e) bodyFixedRepresentationOfAngularVelocity = getBool(e);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
@@ -1080,7 +1071,6 @@ namespace MBSimFlexibleBody {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }
-#endif
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotFeatureFrameK");
     while(e and E(e)->getTagName()==MBSIMFLEX%"plotFeatureFrameK") {

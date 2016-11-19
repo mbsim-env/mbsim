@@ -29,10 +29,8 @@
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpleattribute.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #include <openmbvcppinterface/frame.h>
-#endif
 
 //#ifdef _OPENMP
 //#include <omp.h>
@@ -222,11 +220,9 @@ namespace MBSim {
 //    return (this == sys) ? 0 : qInd + parent->getqInd(sys);
 //  }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   shared_ptr<OpenMBV::Group> DynamicSystem::getOpenMBVGrp() {
     return openMBVGrp;
   }
-#endif
 
   void DynamicSystem::updatewb() {
 
@@ -452,7 +448,6 @@ namespace MBSim {
         plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write("Object of class: " + getType());
         plotVectorSerie = NULL;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
         openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name);
         //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
@@ -460,7 +455,6 @@ namespace MBSim {
           parent->getOpenMBVGrp()->addObject(openMBVGrp);
         if (getPlotFeature(separateFilePerGroup) == enabled)
           openMBVGrp->setSeparateFile(true);
-#endif
 
         H5::File *file=dynamic_cast<H5::File*>(plotGroup);
         if(file)

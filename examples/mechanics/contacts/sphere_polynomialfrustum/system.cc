@@ -11,11 +11,9 @@
 #include <mbsim/utils/colors.h>
 #include <fmatvec/fmatvec.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
 #include "openmbvcppinterface/cube.h"
 #include <openmbvcppinterface/arrow.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -97,11 +95,9 @@ System::System(const string &projectName) :
     contact->connect(polyfrustumcontour, sphere);
 
     contact->setPlotFeature(openMBV, enabled);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     contact->enableOpenMBVContactPoints();
     contact->enableOpenMBVNormalForce();
     contact->enableOpenMBVTangentialForce();
-#endif
 
     //Set contact law
     contact->setNormalForceLaw(new UnilateralConstraint);

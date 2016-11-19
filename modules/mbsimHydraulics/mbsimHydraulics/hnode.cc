@@ -30,10 +30,8 @@
 #include "mbsimControl/signal_.h"
 #include "mbsim/objectfactory.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #include "openmbvcppinterface/sphere.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -46,7 +44,6 @@ namespace MBSimHydraulics {
   HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0), updQHyd(true) {
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   void HNode::enableOpenMBV(double size, double pMin, double pMax, const Vec3 &WrON_) {
     openMBVSphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     openMBVSphere->setRadius(size);
@@ -54,7 +51,6 @@ namespace MBSimHydraulics {
     openMBVSphere->setMaximalColorValue(pMax);
     WrON=WrON_;
   }
-#endif
 
 
   void HNode::initializeUsingXML(DOMElement *element) {
@@ -70,7 +66,6 @@ namespace MBSimHydraulics {
       refOutflowString.push_back(E(e)->getAttribute("ref"));
       e=e->getNextElementSibling();
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVSphere");
     if (e) {
       DOMElement * ee;
@@ -86,7 +81,6 @@ namespace MBSimHydraulics {
       if (ee) localWrON=Element::getVec(ee, 3);
       enableOpenMBVSphere(size, pMin, pMax, localWrON);
     }
-#endif
   }
 
   void HNode::addInFlow(HLine * in) {
@@ -154,7 +148,6 @@ namespace MBSimHydraulics {
           plotColumns.push_back("Volume flow into and out the node [l/min]");
           plotColumns.push_back("Mass flow into and out the node [kg/min]");
         }
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
           if (openMBVGrp) {
             openMBVSphere->setName("Node");
@@ -165,7 +158,6 @@ namespace MBSimHydraulics {
             parent->getOpenMBVGrp()->addObject(openMBVSphere);
           }
         }
-#endif
         Link::init(stage);
       }
     }
@@ -259,7 +251,6 @@ namespace MBSimHydraulics {
         plotVector.push_back(evalQHyd()*6e4);
         plotVector.push_back(QHyd*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
         vector<double> data;
         data.push_back(getTime());
@@ -272,7 +263,6 @@ namespace MBSimHydraulics {
         data.push_back(evalGeneralizedForce()(0));
         openMBVSphere->append(data);
       }
-#endif
       Link::plot();
     }
   }

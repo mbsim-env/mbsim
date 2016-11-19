@@ -18,14 +18,10 @@
  */
 
 #include <config.h>
-#ifdef HAVE_CASADI
 #include <mbsim/functions/symbolic_function.h>
 using namespace fmatvec;
-#endif
 
 namespace MBSim {
-
-#ifdef HAVE_CASADI
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SymbolicFunction<double(double)>)
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SymbolicFunction<Vec3(double)>)
@@ -51,7 +47,5 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SymbolicFunction<Vec(Vec,double)>)
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SymbolicFunction<VecV(VecV,VecV)>)
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, SymbolicFunction<Vec(Vec,Vec)>)
-
-#endif
 
 }

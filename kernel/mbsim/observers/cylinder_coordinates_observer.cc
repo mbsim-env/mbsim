@@ -22,10 +22,8 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/eps.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace xercesc;
@@ -60,7 +58,6 @@ namespace MBSim {
       }
       CoordinatesObserver::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
             openMBVRadialPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
@@ -93,7 +90,6 @@ namespace MBSim {
             openMBVAccGrp->addObject(openMBVZAcceleration);
           }
         }
-#endif
       }
     }
     else
@@ -102,7 +98,6 @@ namespace MBSim {
 
   void CylinderCoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         Vec3 r = frame->evalPosition();
         Vec3 v = frame->evalVelocity();
@@ -248,7 +243,6 @@ namespace MBSim {
           openMBVFrame->append(data);
         }
       }
-#endif
 
       CoordinatesObserver::plot();
     }

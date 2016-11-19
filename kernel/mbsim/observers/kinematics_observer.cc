@@ -48,7 +48,6 @@ namespace MBSim {
         if(openMBVAcceleration) plotColumns.push_back("AbsoluteAcceleration");
         if(openMBVAngularAcceleration) plotColumns.push_back("AbsoluteAngularAcceleration");
         Observer::init(stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
             openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
@@ -91,7 +90,6 @@ namespace MBSim {
             openMBVAngAccGrp->addObject(openMBVAngularAcceleration);
           }
         }
-#endif
       }
     }
     else
@@ -100,7 +98,6 @@ namespace MBSim {
 
   void KinematicsObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVPosition&& !openMBVPosition->isHDF5Link()) {
           vector<double> data;
@@ -177,7 +174,6 @@ namespace MBSim {
           plotVector.push_back(nrm2(psi));
         }
       }
-#endif
 
       Observer::plot();
     }

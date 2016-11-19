@@ -112,9 +112,7 @@ namespace MBSimFlexibleBody {
        */
       void readFEMData(std::string inFilePath, const bool millimeterUnits, bool output = false);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       void enableFramePlot(double size = 1e-3, fmatvec::VecInt numbers = fmatvec::VecInt(0));
-#endif
 
       void resetUpToDate();
       const fmatvec::SqrMat3& evalA() { if(updAG) updateAGbarGbardot(); return A; }

@@ -73,7 +73,6 @@ namespace MBSim {
       }
       KinematicsObserver::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
             openMBVrTrans = OpenMBV::ObjectFactory::create(openMBVPosition);
@@ -137,7 +136,6 @@ namespace MBSim {
             openMBVAngAccGrp->addObject(openMBVpsiRel);
           }
         }
-#endif
       }
     }
     else
@@ -172,7 +170,6 @@ namespace MBSim {
       Vec3 psiRot = crossProduct(omB, omBK);
       Vec3 psiRel = psiBK - psiRot;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVPosition&& !openMBVPosition->isHDF5Link()) {
           vector<double> data;
@@ -372,7 +369,6 @@ namespace MBSim {
           plotVector.push_back(nrm2(psiRel));
         }
       }
-#endif
 
       KinematicsObserver::plot();
     }

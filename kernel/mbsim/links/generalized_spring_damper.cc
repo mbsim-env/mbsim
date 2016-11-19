@@ -20,11 +20,9 @@
 #include "mbsim/links/generalized_spring_damper.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/objects/rigid_body.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include "openmbvcppinterface/group.h"
 #include "openmbvcppinterface/objectfactory.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -70,12 +68,10 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
         if(coilspringOpenMBV) {
           coilspringOpenMBV->setName(name);
           parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
         }
-  #endif
         RigidBodyLink::init(stage);
       }
     }
@@ -93,7 +89,6 @@ namespace MBSim {
 
   void GeneralizedSpringDamper::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if (coilspringOpenMBV) {
         Vec WrOToPoint;
         Vec WrOFromPoint;
@@ -111,7 +106,6 @@ namespace MBSim {
         data.push_back(fabs(evalGeneralizedForce()(0)));
         coilspringOpenMBV->append(data);
       }
-#endif
       RigidBodyLink::plot();
     }
   }
@@ -127,13 +121,11 @@ namespace MBSim {
     if(e) saved_body1=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
     saved_body2=E(e)->getAttribute("ref");
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-#endif
   }
 
 }

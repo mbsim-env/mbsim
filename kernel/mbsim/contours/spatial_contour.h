@@ -22,10 +22,8 @@
 
 #include "mbsim/contours/rigid_contour.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
-#endif
 
 namespace MBSim {
 
@@ -72,14 +70,12 @@ namespace MBSim {
       Function<fmatvec::Vec3(fmatvec::Vec2)>* getContourFunction() { return funcCrPC; }
       /***************************************************/
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (etaNodes,(const std::vector<double>&),std::vector<double>())(xiNodes,(const std::vector<double>&),std::vector<double>())(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVIndexedFaceSet ombv(diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV();
         ombvEtaNodes = etaNodes;
         ombvXiNodes = xiNodes;
       }
-#endif
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -93,10 +89,8 @@ namespace MBSim {
       Function<fmatvec::Vec3(fmatvec::Vec2)> * funcCrPC;
       bool open;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<double> ombvEtaNodes;
       std::vector<double> ombvXiNodes;
-#endif
   };
 
 }

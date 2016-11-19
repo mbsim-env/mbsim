@@ -40,12 +40,10 @@
 #include "mbsim/constitutive_laws/unilateral_newton_impact.h"
 #include "mbsim/utils/boost_parameters.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/sphere.h>
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/arrow.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -56,7 +54,6 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   class colorLink : public Link {
     public:
       colorLink(const std::string &name, const shared_ptr<OpenMBV::DynamicColoredBody> &body_, ClosableRigidLine * l_) : Link(name), body(body_), l(l_) {}
@@ -78,14 +75,11 @@ namespace MBSimHydraulics {
       shared_ptr<OpenMBV::DynamicColoredBody> body;
       ClosableRigidLine * l;
   };
-#endif
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, Checkvalve)
 
   Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new DirectionalSpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
-#ifdef HAVE_OPENMBVCPPINTERFACE
                                                , openMBVBodies(false), openMBVArrows(false), openMBVFrames(false)
-#endif
                                                {
                                                  addObject(line);
                                                  addObject(ballSeat);
@@ -153,7 +147,6 @@ namespace MBSimHydraulics {
       xOpen->setObject(ball);
       xOpen->setIndex(0);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if (openMBVBodies) {
         shared_ptr<OpenMBV::Frustum> ballSeatVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
         ballSeatVisu->setInnerBaseRadius(rLine);
@@ -183,7 +176,6 @@ namespace MBSimHydraulics {
         ballSeat->getFrame("SpringMount")->enableOpenMBV(.5*rBall, 1.);
         ball->getFrame("C")->enableOpenMBV(.5*rBall, 1.);
       }
-#endif
       Group::init(stage);
     }
     else if (stage==resolveXMLPath) {
@@ -269,11 +261,9 @@ namespace MBSimHydraulics {
     if (gilM) {
       setMaximalContactImpactLaw(gilM);
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
     if(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVBodies")) enableOpenMBVBodies();
     if(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVFrames")) enableOpenMBVFrames();
     if(E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"enableOpenMBVArrows")) enableOpenMBVArrows();
-#endif
   }
 }
 

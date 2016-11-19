@@ -24,11 +24,9 @@
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 #include "mbsim/utils/eps.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
-#endif
 
 #include <list>
 
@@ -87,12 +85,10 @@ namespace MBSimFlexibleBody {
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (numberOfSpinePoints,(int),10)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         openMBVSpineExtrusion = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
         openMBVSpineExtrusion->setNumberOfSpinePoints(numberOfSpinePoints);
       }
-#endif
 
       void resetUpToDate();
 
@@ -109,9 +105,7 @@ namespace MBSimFlexibleBody {
 
       double sOld;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
-#endif
   };
 
 }

@@ -1,11 +1,8 @@
-if COND_XML
-  MAYBE_SCHEMA = schema
-endif
 if COND_PYTHON
   MAYBE_SWIG = swig
 endif
 
-SUBDIRS = mbsim $(MAYBE_SCHEMA) $(MAYBE_SWIG)
+SUBDIRS = mbsim schema $(MAYBE_SWIG)
 
 DIST_SUBDIRS = mbsim doc schema
 EXTRA_DIST = doc/macros.sty

@@ -21,10 +21,8 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include "openmbvcppinterface/group.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -54,14 +52,12 @@ namespace MBSim {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Deflection");
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(coilspringOpenMBV) {
             coilspringOpenMBV->setName(name);
             parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
           }
         }
-#endif
         FrameLink::init(stage);
       }
     }
@@ -72,7 +68,6 @@ namespace MBSim {
 
   void SpringDamper::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       plotVector.push_back(evalGeneralizedRelativePosition()(0)-l0);
       if(getPlotFeature(openMBV)==enabled) {
         if (coilspringOpenMBV) {
@@ -93,7 +88,6 @@ namespace MBSim {
           coilspringOpenMBV->append(data);
         }
       }
-#endif
       FrameLink::plot();
     }
   }
@@ -105,13 +99,11 @@ namespace MBSim {
     setForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
     l0 = Element::getDouble(e);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);
     }
-#endif
   }
 
 }

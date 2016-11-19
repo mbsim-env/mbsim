@@ -25,9 +25,7 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -328,10 +326,8 @@ namespace MBSim {
     }
     else if (stage == plotting) {
       RigidContour::init(stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
-#endif
     }
     else
       CompoundContour::init(stage);
@@ -345,7 +341,6 @@ namespace MBSim {
     CompoundContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"length");
     setLength(getVec3(e));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       DOMElement *d, *t;
@@ -356,7 +351,6 @@ namespace MBSim {
       if( d && !t) enableOpenMBV(_diffuseColor=getVec3(d)                            );
       if(!d && !t) enableOpenMBV(                                                    );
     }
-#endif
   }
 
 }

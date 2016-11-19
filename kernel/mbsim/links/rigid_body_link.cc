@@ -32,10 +32,8 @@ using namespace xercesc;
 namespace MBSim {
 
   RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), support(NULL) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow.resize(1);
     MArrow.resize(1);
-#endif
   }
 
   void RigidBodyLink::updatehRef(const Vec &hParent, int j) {
@@ -223,7 +221,6 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
         for(int i=0; i<(int)body.size(); i++)
           plotColumns.push_back("la("+numtostr(i)+")*ratio("+numtostr(i)+")");
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVForceGrp->setExpand(false);
@@ -252,7 +249,6 @@ namespace MBSim {
             }
           }
         }
-#endif
         Link::init(stage);
       }
     }
@@ -265,7 +261,6 @@ namespace MBSim {
       for(unsigned int i=0; i<body.size(); i++) {
         plotVector.push_back(ratio[i]*evalGeneralizedForce()(0));
       }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(FArrow[0]) {
           for(unsigned i=0; i<body.size(); i++) {
@@ -300,7 +295,6 @@ namespace MBSim {
           }
         }
       }
-#endif
       Link::plot();
     }
   }
@@ -309,7 +303,6 @@ namespace MBSim {
     Link::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
     if(e) saved_supportFrame=E(e)->getAttribute("ref");
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
@@ -320,7 +313,6 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       RigidBodyLink::setOpenMBVMoment(ombv.createOpenMBV(e));
     }
-#endif
   }
 
   void RigidBodyLink::resetUpToDate() {

@@ -1,8 +1,4 @@
-if COND_XML
-  MAYBE_SCHEMA = schema
-endif
-
-SUBDIRS = mbsimFlexibleBody $(MAYBE_SCHEMA)
+SUBDIRS = mbsimFlexibleBody schema
 
 DIST_SUBDIRS = mbsimFlexibleBody schema
 

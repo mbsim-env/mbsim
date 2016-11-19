@@ -56,11 +56,9 @@ namespace MBSimHydraulics {
       ~HNodeMec();
       virtual std::string getType() const { return "HNodeMec"; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVArrows, tag, (optional (size,(double),1))) { 
         openMBVArrowSize=(size>.0)?size:.0;
       }
-#endif
 
       void setInitialVolume(double V0_) {V0=V0_; }
       unsigned int addTransMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, bool considerVolumeChange=true);
@@ -106,10 +104,8 @@ namespace MBSimHydraulics {
       double V0;
       unsigned int nTrans, nRot;
       bool updQMec;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<std::shared_ptr<OpenMBV::Arrow> > openMBVArrows;
       double openMBVArrowSize;
-#endif
 
     private:
       std::vector<std::string> saved_translatorial_frameOfReference, saved_rotatorial_frameOfReference, saved_rotatorial_frameOfRotationCenter;

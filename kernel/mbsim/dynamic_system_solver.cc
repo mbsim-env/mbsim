@@ -40,9 +40,7 @@
 #  include <signal.h>
 #endif
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
-#endif
 
 //#ifdef _OPENMP
 //#include <omp.h>
@@ -436,10 +434,8 @@ namespace MBSim {
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if (getPlotFeature(plotRecursive) == enabled)
         openMBVGrp->write(true, truncateSimulationFiles);
-#endif
       H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
     }

@@ -21,14 +21,12 @@
 
 #include "mbsim/links/kinetic_excitation.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h" // ball
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/polygonpoint.h>
 #include <openmbvcppinterface/arrow.h> // Contact
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -187,13 +185,11 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   inertia_piston(2, 2) = 2.7e-6; // J3
   piston->setInertiaTensor(inertia_piston);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> openMBVPiston = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVPiston->setLength(width_piston, thickness_piston, length_piston);
   openMBVPiston->setDiffuseColor(1, 0, 0);
   openMBVPiston->setTransparency(0.5);
   piston->setOpenMBVRigidBody(openMBVPiston);
-#endif
 
   // LINKS
   /* Excitation of the crank */
@@ -227,7 +223,6 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   crank->addContour(cylinderContour);
   cylinderContour->setFrameOfReference(cylinderRef);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> frustum = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   frustum->setHeight(thicknessRod);
   frustum->setBaseRadius(innerRadius);
@@ -236,7 +231,6 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   frustum->setTransparency(0.7);
   frustum->setDiffuseColor(0.36, 1, 0.4);
   cylinderContour->setOpenMBVRigidBody(frustum);
-#endif
 
   Vec3 pointRelPos;
   int numberOfPoints = 10;
@@ -248,12 +242,10 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     FixedRelativeFrame * pointRef = new FixedRelativeFrame(pointName + "Ref", pointRelPos, SqrMat3(EYE), cylinderRef);
     crank->addFrame(pointRef);
     MBSim::Point * pnt = new MBSim::Point("CrankCylinder" + pointName);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
     sphere->setRadius(1e-4);
     sphere->setDiffuseColor(1, 0, 0);
     pnt->setOpenMBVRigidBody(sphere);
-#endif
     pnt->setFrameOfReference(pointRef);
     crank->addContour(pnt);
 
@@ -282,13 +274,11 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   }
 
   // visualisation
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank, width_crank, thickness_crank);
   openMBVCrank->setDiffuseColor(0.5, 0, 0);
   openMBVCrank->setTransparency(0.5);
   crank->setOpenMBVRigidBody(openMBVCrank);
-#endif
 
 }
 

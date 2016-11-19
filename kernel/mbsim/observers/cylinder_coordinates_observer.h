@@ -27,9 +27,7 @@ namespace MBSim {
   class CylinderCoordinatesObserver : public CoordinatesObserver {
     private:
       fmatvec::Vec3 ez;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Arrow> openMBVRadialPosition, openMBVZPosition, openMBVRadialVelocity, openMBVCircularVelocity, openMBVZVelocity, openMBVRadialAcceleration, openMBVCircularAcceleration, openMBVZAcceleration; 
-#endif
 
     public:
       CylinderCoordinatesObserver(const std::string &name="");

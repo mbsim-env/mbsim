@@ -143,7 +143,6 @@ namespace MBSim {
       virtual void closePlot();
       /***************************************************/
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /** 
        * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.
        * If the contact is closed, then the two contact points are the same on each contour.
@@ -182,7 +181,6 @@ namespace MBSim {
         frictionArrow=ombv.createOpenMBV(); 
       }
       void setOpenMBVTangentialForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { frictionArrow=arrow; }
-#endif
 
       /* GETTER / SETTER */
       void setNormalForceLaw(GeneralizedForceLaw *fcl_);
@@ -313,7 +311,6 @@ namespace MBSim {
 
       bool updlaN, updlaT;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief contact group to draw
        */
@@ -328,7 +325,6 @@ namespace MBSim {
        * \brief pointer to memory of normal and friction forces to draw
        */
       std::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
-#endif
 
       /**
        * \brief type of detected root

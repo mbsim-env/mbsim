@@ -9,11 +9,9 @@
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/nested_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/polygonpoint.h>
-#endif
 
 #include <mbsim/utils/eps.h>
 
@@ -98,7 +96,6 @@ BlockCompression::BlockCompression(const string &projectName) :
     rod->setFrameOfReference(getFrameI());
     rod->setNumberElements(elements);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
     cuboid->setNumberOfSpinePoints(elements * 4); // resolution of visualisation
     cuboid->setDiffuseColor(1 / 3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
@@ -115,7 +112,6 @@ BlockCompression::BlockCompression(const string &projectName) :
 
     cuboid->setContour(rectangle);
     rod->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
     double ringPrestressing = 10.; // Force initially acting on the rings
     double epstL = 100; // Leht Damping in elongation direction

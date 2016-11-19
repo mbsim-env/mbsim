@@ -20,13 +20,11 @@
 
 #include "beltDriveFunctions.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
 #include <openmbvcppinterface/polygonpoint.h>
 #include <openmbvcppinterface/arrow.h>
 #include "openmbvcppinterface/coilspring.h"
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -316,7 +314,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   belt->setElementPlotList(elementPlotList);
   this->addObject(belt);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(5*elements+1); // resolution of visualisation
   cuboid->setDiffuseColor(2/3.0, 1, 1); // color in (minimalColorValue, maximalColorValue)
@@ -335,7 +332,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   cuboid->setContour(rectangle);
   belt->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
   Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
   belt->addContour(neutral);
@@ -419,12 +415,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cDisk->enableOpenMBV();
     this->addObject(disk);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 //    std::shared_ptr<OpenMBV::Sphere> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
 //    cylinder->setRadius(radiiDisks(i));
 //    cylinder->setDiffuseColor(1/3.0, 1, 1);
 //    disk->setOpenMBVRigidBody(cylinder);
-#endif
 
     //  ContactKinematicsSolidCircleFlexibleBand *ck = new ContactKinematicsSolidCircleFlexibleBand();
     name.clear();
@@ -456,13 +450,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //    else
     contact->connect(disk->getContour("cDisk"),band[i]);
 //    contact->setPlotFeature(linkLagrangeParameters, enabled);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     contact->enableOpenMBVNormalForce(_scaleLength=0.0002);
     if(mu>0)
       contact->enableOpenMBVTangentialForce(_scaleLength=0.0002);
     if(enableContactPoints)
       contact->enableOpenMBVContactPoints(0.0075);
-#endif
     this->addLink(contact);
 
     if(i==1) {
@@ -496,9 +488,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        spring->setForceFunction(new LinearSpringDamperForce(cSpring,dSpring));
        spring->setUnloadedLength(l0Spring);
        spring->connect(disk->getFrame("C"),this->getFrame("BS"));
-#ifdef HAVE_OPENMBVCPPINTERFACE
        spring->enableOpenMBVCoilSpring(_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);
-#endif
     }
   }
 }

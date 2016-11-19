@@ -23,11 +23,9 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/arrow.h>
 #include "openmbvcppinterface/objectfactory.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -56,7 +54,6 @@ namespace MBSim {
 
   void FrameLink::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVArrowF) {
         vector<double> data;
         data.push_back(getTime());
@@ -71,7 +68,6 @@ namespace MBSim {
         data.push_back(nrm2(WF));
         openMBVArrowF->append(data);
       }
-#endif
       Link::plot();
     }
   }
@@ -212,7 +208,6 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVForceGrp->setExpand(false);
         openMBVForceGrp->setName(name+"_ArrowGroup");
@@ -225,7 +220,6 @@ namespace MBSim {
           openMBVArrowM->setName("Moment");
           openMBVForceGrp->addObject(openMBVArrowM);
         }
-#endif
         Link::init(stage);
       }
     }

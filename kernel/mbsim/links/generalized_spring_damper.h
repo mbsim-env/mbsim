@@ -22,10 +22,8 @@
 #include "mbsim/links/rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -34,9 +32,7 @@ namespace MBSim {
       Function<double(double,double)> *func;
       double l0;
       RigidBody *body[2];
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
-#endif
     public:
       GeneralizedSpringDamper(const std::string &name="");
       ~GeneralizedSpringDamper();
@@ -65,12 +61,10 @@ namespace MBSim {
       void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency);
         coilspringOpenMBV=ombv.createOpenMBV();
       }
-#endif
     private:
       std::string saved_body1, saved_body2;
   };

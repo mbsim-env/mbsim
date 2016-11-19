@@ -22,10 +22,8 @@
 
 #include "mbsim/contours/compound_contour.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
-#endif
 
 namespace MBSim {
 
@@ -57,12 +55,10 @@ namespace MBSim {
 
       virtual void plot();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
-#endif
 
     private:
       /**

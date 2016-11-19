@@ -22,10 +22,8 @@
 
 #include "mbsim/observers/observer.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
-#endif
 
 namespace MBSim {
   class Frame;
@@ -33,11 +31,9 @@ namespace MBSim {
   class CoordinatesObserver : public Observer {
     protected:
       Frame* frame;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAccGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration;
       std::shared_ptr<OpenMBV::Frame> openMBVFrame;
-#endif
 
     public:
       CoordinatesObserver(const std::string &name="");
@@ -47,7 +43,6 @@ namespace MBSim {
       virtual void plot();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         openMBVPosition=ombv.createOpenMBV(); 
@@ -64,7 +59,6 @@ namespace MBSim {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
         openMBVFrame=ombv.createOpenMBV(); 
       }
-#endif
 
     private:
       std::string saved_frame;

@@ -9,9 +9,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
-#endif
 
 using namespace std;
 using namespace MBSim;
@@ -55,9 +53,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   // contour
   Sphere *sp = new Sphere("Sphere");
   sp->setRadius(D/2.);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   sp->enableOpenMBV();
-#endif
   ball->addContour(sp);
 
   // obstacles
@@ -73,10 +69,8 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   cr->setTangentialForceLaw(new SpatialStribeckFriction(new Friction(mu0,mu1,mu2,kP)));
   cr->setTangentialImpactLaw(new SpatialStribeckImpact(new Friction(mu0,mu1,mu2,kP)));
   cr->connect(pl,ball->getContour("Sphere"));
-#ifdef HAVE_OPENMBVCPPINTERFACE
   cr->enableOpenMBVNormalForce();
   cr->enableOpenMBVTangentialForce();
-#endif
   this->addLink(cr);
 }
 

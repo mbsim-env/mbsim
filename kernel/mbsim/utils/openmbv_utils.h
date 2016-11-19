@@ -20,7 +20,6 @@
 #ifndef _OPENMBV_UTILS_H_
 #define _OPENMBV_UTILS_H_
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <fmatvec/fmatvec.h>
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
@@ -164,6 +163,5 @@ namespace MBSim {
 
 }
 
-#endif
 
 #endif

@@ -25,10 +25,8 @@
 #include "mbsim/functions/time_dependent_function.h"
 #include "mbsim/functions/state_dependent_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -210,7 +208,6 @@ namespace MBSim {
 
       void setFrameForInertiaTensor(Frame *frame);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &body);
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
       const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
@@ -232,7 +229,6 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         MArrow=ombv.createOpenMBV();
       }
-#endif
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -382,13 +378,11 @@ namespace MBSim {
       bool bodyFixedRepresentationOfAngularVelocity;
 
     private:
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief Frame of reference for drawing openMBVBody
        */
       Frame * openMBVFrame;
       std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
-#endif
   };
 
 }

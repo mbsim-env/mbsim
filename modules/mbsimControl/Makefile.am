@@ -1,8 +1,4 @@
-if COND_XML
-  MAYBE_SCHEMA = schema
-endif
-
-SUBDIRS = mbsimControl $(MAYBE_SCHEMA)
+SUBDIRS = mbsimControl schema
 
 DIST_SUBDIRS = mbsimControl doc schema
 

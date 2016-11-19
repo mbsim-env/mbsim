@@ -8,10 +8,8 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -81,9 +79,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Kr(2) = 0;
   body2->addFrame(new FixedRelativeFrame("P",-Kr,SqrMat(3,EYE)));
   body2->addFrame(new FixedRelativeFrame("Q", Kr,SqrMat(3,EYE)));
-#ifdef HAVE_OPENMBVCPPINTERFACE
   body2->getFrame("Q")->enableOpenMBV(0.3);
-#endif
   body2->setFrameOfReference(body1->getFrame("Q"));
   body2->setFrameForKinematics(body2->getFrame("P"));
   body2->setMass(m2);
@@ -117,7 +113,6 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   load->setMomentFunction(new Moment);
   load->connect(body1->getFrame("C"));
 
-#if HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> dummy = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy->setBaseRadius(r);
   dummy->setTopRadius(r);
@@ -132,7 +127,6 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   dummy2->setLength(c,c/2,0.02);
   dummy2->setDiffuseColor(240./360.,1,1);
   body3->setOpenMBVRigidBody(dummy2);
-#endif
 
 
 }

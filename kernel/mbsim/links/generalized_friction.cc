@@ -23,12 +23,10 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include <mbsim/constitutive_laws/friction_force_law.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/arrow.h>
 #include "openmbvcppinterface/group.h"
 #include "openmbvcppinterface/objectfactory.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;

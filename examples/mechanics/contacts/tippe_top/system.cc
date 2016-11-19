@@ -9,10 +9,8 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/environment.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/sphere.h"
 #include "openmbvcppinterface/invisiblebody.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -67,19 +65,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sphere->setRadius(r1);
   Vec rSM(3);
   rSM(1) = a1;
-#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere->enableOpenMBV();
-#endif
   body->addFrame(new FixedRelativeFrame("Sphere1",rSM,SqrMat(3,EYE)));
   sphere->setFrameOfReference(body->getFrame("Sphere1"));
   body->addContour(sphere);
   sphere = new Sphere("Sphere2");
   sphere->setRadius(r2);
   rSM(1) = a2;
-#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere->enableOpenMBV();
   body->getFrame("C")->enableOpenMBV(2*1.2*r1,0);
-#endif
   body->addFrame(new FixedRelativeFrame("Sphere2",rSM,SqrMat(3,EYE)));
   sphere->setFrameOfReference(body->getFrame("Sphere2"));
   body->addContour(sphere);
@@ -111,10 +105,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cnf2->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::InvisibleBody> obj1=OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>();
   body->setOpenMBVRigidBody(obj1);
-#endif
 
 }
 

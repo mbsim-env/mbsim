@@ -21,13 +21,11 @@
 #include "mbsim/environment.h"
 #include "mbsim/contact_kinematics/point_spatialcontour.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h" // ball
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/polygonpoint.h>
 #include <openmbvcppinterface/arrow.h> // Contact
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -106,7 +104,6 @@ System::System(const string &projectName) :
 //
 //  beam->addContour(top);
 
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //  std::shared_ptr<OpenMBV::SpineExtrusion> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
 //  cuboid->setNumberOfSpinePoints(elements * 4 + 1);
 //  cuboid->setStaticColor(0.5);
@@ -122,7 +119,6 @@ System::System(const string &projectName) :
 ////  rectangle->push_back(corner4);
 //  cuboid->setContour(rectangle);
 //  top->setOpenMBVSpineExtrusion(cuboid, ncc);
-//#endif
 
 // Beginning Contact ---------------------------------------------------
 // for exciting the beam : ball mass 500; position(90, 200, 10), velocity(-100)
@@ -160,12 +156,10 @@ System::System(const string &projectName) :
   ball->addContour(point);
   this->addObject(ball);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(r);
   sphere->setDiffuseColor(0.5, 1, 0);
   ball->setOpenMBVRigidBody(sphere);
-#endif
 
   Contact *contact = new Contact("Contact");
   if (0) {

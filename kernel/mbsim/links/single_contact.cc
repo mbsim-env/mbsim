@@ -30,11 +30,9 @@
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/rotarymatrices.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -48,9 +46,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
   SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), updlaN(true), updlaT(true)
-#ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
-#endif
           , rootID(0) {
   }
 
@@ -581,7 +577,6 @@ namespace MBSim {
     else if (stage == plotting) {
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
           openMBVContactGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVContactGrp->setName(name + "_ContactGroup");
@@ -605,7 +600,6 @@ namespace MBSim {
             openMBVContactGrp->addObject(frictionArrow);
           }
         }
-#endif
         ContourLink::init(stage);
       }
 
@@ -678,7 +672,6 @@ namespace MBSim {
 
   void SingleContact::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
         // frames
         if (openMBVContactFrame[0]) {
@@ -728,7 +721,6 @@ namespace MBSim {
           frictionArrow->append(data);
         }
       }
-#endif
       ContourLink::plot();
     }
   }
@@ -1341,7 +1333,6 @@ namespace MBSim {
       setTangentialImpactLaw(fil);
     }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     //Contact points
     if (E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints")) {
       OpenMBVFrame ombv;
@@ -1360,7 +1351,6 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       frictionArrow=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
   void SingleContact::updatecorr(int j) {

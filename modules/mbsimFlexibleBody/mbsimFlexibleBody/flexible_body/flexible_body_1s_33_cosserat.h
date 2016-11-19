@@ -143,14 +143,12 @@ namespace MBSimFlexibleBody {
 
       /**
        * \brief detect current finite element (t
-       #ifdef HAVE_OPENMBVCPPINTERFACE
        void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* spineExtrusion) {
        openMBVSpineExtrusion = spineExtrusion;
        }
        OpenMBV::Body* getOpenMBVSpineExtrusion() {
        return openMBVSpineExtrusion;
        }
-       #endifranslation)
        * \param global parametrisation
        * \param local parametrisation
        * \param finite element number

@@ -22,9 +22,7 @@
 
 #include "mbsim/contours/contour.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
-#endif
 
 namespace MBSimFlexibleBody {
 
@@ -50,19 +48,15 @@ namespace MBSimFlexibleBody {
 
       virtual fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(const std::shared_ptr<OpenMBV::SpineExtrusion> &spineExtrusion) { openMBVSpineExtrusion = spineExtrusion; }
       std::shared_ptr<OpenMBV::SpineExtrusion>& getOpenMBVSpineExtrusion() { return openMBVSpineExtrusion; }
-#endif
 
     protected:
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief body for the spine extrusion for visualisation of the 1s-body
        */
       std::shared_ptr<OpenMBV::SpineExtrusion> openMBVSpineExtrusion;
 
-#endif
 
   };
 

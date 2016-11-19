@@ -32,13 +32,11 @@ namespace MBSim {
 
   void Line::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVLine ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
 }

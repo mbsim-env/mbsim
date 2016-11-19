@@ -10,10 +10,8 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -145,9 +143,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   PlanarFrustum* frustumcontour = new PlanarFrustum("Frustum");
   frustumcontour->setRadii(radii);
   frustumcontour->setHeight(5*d);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   frustumcontour->enableOpenMBV();
-#endif
   cup->addContour(frustumcontour);
 
 
@@ -288,7 +284,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   body1->getFrame("C")->enableOpenMBV(1.5*d);
   std::shared_ptr<OpenMBV::Frustum> dummy1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   dummy1->setBaseRadius(2*d);
@@ -333,6 +328,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy3->setDiffuseColor(0.6666,1,0.6666);
   body4->setOpenMBVRigidBody(dummy4);
 
-#endif
 }
 

@@ -23,7 +23,6 @@
 #include "mbsim/links/link.h"
 #include "mbsim/frames/floating_relative_frame.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
 
@@ -31,7 +30,6 @@ namespace OpenMBV {
   class Group;
   class Arrow;
 }
-#endif
 
 namespace H5 {
   class Group;
@@ -124,7 +122,6 @@ namespace MBSim {
       const fmatvec::VecV& evallaF() { if(updlaF) updatelaF(); return lambdaF; }
       const fmatvec::VecV& evallaM() { if(updlaM) updatelaM(); return lambdaM; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
@@ -137,7 +134,6 @@ namespace MBSim {
       }
       void setOpenMBVForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowF = arrow; }
       void setOpenMBVMoment(const std::shared_ptr<OpenMBV::Arrow> &arrow) { openMBVArrowM = arrow; }
-#endif
 
     protected:
       /**
@@ -168,11 +164,9 @@ namespace MBSim {
        */
       std::vector<Frame*> frame;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVForceGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVArrowF;
       std::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
-#endif
 
       bool updPos, updVel, updFD, updF, updM, updRMV, updlaF, updlaM;
 

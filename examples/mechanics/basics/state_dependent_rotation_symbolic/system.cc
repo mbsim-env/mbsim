@@ -6,10 +6,8 @@
 #include "mbsim/functions/nested_function.h"
 #include "mbsim/observers/absolute_kinematics_observer.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
 #include "openmbvcppinterface/cuboid.h"
-#endif
 
 using namespace MBSim;
 using namespace casadi;
@@ -78,7 +76,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  arrow->setDiffuseColor(0.4, 1, 1);
   o->enableOpenMBVAngularVelocity();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
   std::shared_ptr<OpenMBV::Cuboid> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(l,h,d);
@@ -87,6 +84,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   getFrame("I")->enableOpenMBV();
 
-#endif
 
 }
