@@ -13,6 +13,7 @@ kernel/install-sh
 kernel/ltmain.sh
 kernel/test-driver
 kernel/swig/Makefile.in
+kernel/swig/.swig_prepare/Makefile.in
 kernel/swig/check/Makefile.in
 kernel/mbsim/Makefile.in
 kernel/mbsim/analysers/Makefile.in
