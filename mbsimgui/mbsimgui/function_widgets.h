@@ -329,6 +329,17 @@ namespace MBSimGUI {
     ExtWidget *s, *sd;
   };
 
+  class LinearElasticFunctionWidget : public FunctionWidget {
+
+    friend class LinearElasticFunction;
+
+    public:
+      LinearElasticFunctionWidget();
+      void resize_(int m, int n);
+    protected:
+      ExtWidget *K, *D;
+  };
+
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
 
     friend class LinearRegularizedBilateralConstraint;

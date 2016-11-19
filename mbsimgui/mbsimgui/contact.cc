@@ -80,11 +80,11 @@ namespace MBSimGUI {
 
   DOMElement* Contact::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Link::writeXMLFile(parent);
+    connections.writeXMLFile(ele0);
     contactForceLaw.writeXMLFile(ele0);
     contactImpactLaw.writeXMLFile(ele0);
     frictionForceLaw.writeXMLFile(ele0);
     frictionImpactLaw.writeXMLFile(ele0);
-    connections.writeXMLFile(ele0);
     searchAllContactPoints.writeXMLFile(ele0);
     initialGuess.writeXMLFile(ele0);
     enableOpenMBVContactPoints.writeXMLFile(ele0);

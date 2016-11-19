@@ -21,34 +21,35 @@
 #define _KINEMATIC_EXCITATION_H_
 
 #include "mbsim/links/rigid_body_link.h"
-#include "mbsim/functions/function.h"
 
 namespace MBSim {
 
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
   class RigidBody;
 
   class KinematicExcitation : public RigidBodyLink {
     protected:
-      Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
+      GeneralizedForceLaw *fl;
+      GeneralizedImpactLaw *il;
       std::string saved_DependentBody;
     public:
       KinematicExcitation(const std::string &name);
+      ~KinematicExcitation();
+
       void updateGeneralizedForces();
-      void setDependentBody(RigidBody* body_) { body[0] = body_; }
+      void setDependentRigidBody(RigidBody* body_) { body[0] = body_; }
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       void init(InitStage stage);
-      bool isSetValued() const { return func?false:true; }
       void calclaSize(int j);
       void calcgSize(int j);
       void calcgdSize(int j);
+      bool isSetValued() const;
+      bool isSingleValued() const { return not(isSetValued()); }
 
-      void setForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) {
-        func=func_;
-        func->setParent(this);
-        func->setName("Force");
-      }
+      void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
   };
 
 }

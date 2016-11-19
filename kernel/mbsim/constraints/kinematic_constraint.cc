@@ -31,25 +31,25 @@ using namespace xercesc;
 
 namespace MBSim {
  
-  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
+  KinematicConstraint::KinematicConstraint(const std::string &name) : GeneralizedConstraint(name), bd(0), saved_DependentBody("") {
   }
 
   void KinematicConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
-        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
-      Constraint::init(stage);
+        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
+      GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
       bd->addDependency(this);
     }
     else
-      Constraint::init(stage);
+      GeneralizedConstraint::init(stage);
   }
 
   void KinematicConstraint::initializeUsingXML(DOMElement* element) {
-    Constraint::initializeUsingXML(element);
+    GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");
 

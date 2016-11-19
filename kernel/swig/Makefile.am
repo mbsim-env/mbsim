@@ -50,7 +50,7 @@ swigdatadir = $(datadir)/mbsim
 swigdata_DATA = fmatvec.i fmatvec_include.i mbsim.i mbsim_include.i showUnwrappedClasses.i
 
 install-exec-hook: fmatvec.py mbsim.py
-	$(MKDIR_P) $(swigdir)
-	$(INSTALL_DATA) fmatvec.py $(swigdir)/fmatvec.py mbsim.py $(swigdir)/mbsim.py
+	$(MKDIR_P) $(swigbindir)
+	$(INSTALL_DATA) fmatvec.py $(swigbindir)/fmatvec.py mbsim.py $(swigbindir)/mbsim.py
 uninstall-local:
-	rm -f $(swigdir)/fmatvec.py $(swigdir)/mbsim.py
+	rm -f $(swigbindir)/fmatvec.py $(swigbindir)/mbsim.py

@@ -343,7 +343,7 @@ namespace MBSimGUI {
       return widgetContainer;
     }
     if(i==1) {
-      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"1","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,QStringList()),vector<int>(3,0))));
     }
     return NULL;
   }
@@ -380,7 +380,7 @@ namespace MBSimGUI {
       return widgetContainer;
     }
     if(i==1) {
-      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(getEye<QString>(3,2,"0","0"),vector<QStringList>(3,QStringList()),vector<int>(3,0))));
+      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,QStringList()),vector<int>(3,0))));
     }
     return NULL;
   }
@@ -411,6 +411,7 @@ namespace MBSimGUI {
     name.push_back("Linear spring damper force");
     name.push_back("Nonlinear spring damper force");
     name.push_back("Symbolic function");
+    name.push_back("Linear elastic function");
   }
 
   QWidget* SpringDamperWidgetFactory::createWidget(int i) {
@@ -423,6 +424,8 @@ namespace MBSimGUI {
       var << "g" << "gd";
       return new SymbolicFunctionWidget(var,1,3);
     }
+    if(i==3)
+      return new LinearElasticFunctionWidget;
     return NULL;
   }
 

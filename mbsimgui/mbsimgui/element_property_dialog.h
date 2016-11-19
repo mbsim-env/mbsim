@@ -46,20 +46,27 @@ namespace MBSimGUI {
   class RigidBody;
   class FlexibleBodyFFR;
   class Constraint;
+  class GeneralizedConstraint;
   class GearConstraint;
   class KinematicConstraint;
   class GeneralizedPositionConstraint;
   class GeneralizedVelocityConstraint;
   class GeneralizedAccelerationConstraint;
   class JointConstraint;
+  class GeneralizedConnectionConstraint;
   class SignalProcessingSystem;
   class LinearTransferSystem;
   class Link;
+  class FrameLink;
+  class FloatingFrameLink;
+  class RigidBodyLink;
   class KineticExcitation;
   class SpringDamper;
   class DirectionalSpringDamper;
   class GeneralizedSpringDamper;
+  class GeneralizedLinearElasticConnection;
   class Joint;
+  class ElasticJoint;
   class Contact;
   class Observer;
   class CoordinatesObserver;
@@ -304,7 +311,7 @@ namespace MBSimGUI {
       int getqRelSize() const; 
       int getuRelSize() const; 
     protected:
-      ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
+      ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *bodyFixedRepresentationOfAngularVelocity, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
       RigidBody *body;
   };
 
@@ -320,7 +327,7 @@ namespace MBSimGUI {
       int getqRelSize() const;
       int getuRelSize() const;
     protected:
-      ExtWidget *mass, *pdm, *ppdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *jointForceArrow, *jointMomentArrow;
+      ExtWidget *mass, *pdm, *ppdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *ombvEditor, *jointForceArrow, *jointMomentArrow;
       FlexibleBodyFFR *body;
     protected slots:
       void resizeVariables();
@@ -332,7 +339,17 @@ namespace MBSimGUI {
       ConstraintPropertyDialog(Constraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
+  class GeneralizedConstraintPropertyDialog : public ConstraintPropertyDialog {
+
+    public:
+      GeneralizedConstraintPropertyDialog(GeneralizedConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *support;
+  };
+
+  class GearConstraintPropertyDialog : public GeneralizedConstraintPropertyDialog {
 
     public:
       GearConstraintPropertyDialog(GearConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -342,7 +359,7 @@ namespace MBSimGUI {
       ExtWidget *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
   };
 
-  class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
+  class KinematicConstraintPropertyDialog : public GeneralizedConstraintPropertyDialog {
 
     public:
       KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -405,7 +422,17 @@ namespace MBSimGUI {
       VecWidget *q0_;
     protected slots:
       void resizeVariables();
-};
+  };
+
+  class GeneralizedConnectionConstraintPropertyDialog : public GeneralizedConstraintPropertyDialog {
+
+    public:
+      GeneralizedConnectionConstraintPropertyDialog(GeneralizedConnectionConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *dependentBody, *independentBody, *forceArrow, *momentArrow;
+  };
 
   class LinkPropertyDialog : public ElementPropertyDialog {
 
@@ -414,6 +441,36 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
+  };
+
+  class FrameLinkPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      FrameLinkPropertyDialog(FrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *connections, *forceArrow;
+  };
+
+  class FloatingFrameLinkPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *connections, *refFrameID, *forceArrow, *momentArrow;
+  };
+
+  class RigidBodyLinkPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *support;
   };
 
   class SignalProcessingSystemPropertyDialog : public LinkPropertyDialog {
@@ -426,7 +483,7 @@ namespace MBSimGUI {
       ExtWidget *signalRef;
   };
 
-  class KineticExcitationPropertyDialog : public LinkPropertyDialog {
+  class KineticExcitationPropertyDialog : public FloatingFrameLinkPropertyDialog {
     Q_OBJECT
 
     public:
@@ -434,69 +491,92 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *refFrameID, *forceDirection, *forceFunction, *momentDirection, *momentFunction, *connections, *forceArrow, *momentArrow;
+      ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction;
     protected slots:
       void resizeVariables();
   };
 
-  class SpringDamperPropertyDialog : public LinkPropertyDialog {
+  class SpringDamperPropertyDialog : public FrameLinkPropertyDialog {
 
     public:
       SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *forceFunction, *unloadedLength, *connections, *coilSpring, *forceArrow;
+      ExtWidget *forceFunction, *unloadedLength, *coilSpring;
   };
 
-  class DirectionalSpringDamperPropertyDialog : public LinkPropertyDialog {
+  class DirectionalSpringDamperPropertyDialog : public FloatingFrameLinkPropertyDialog {
 
     public:
       DirectionalSpringDamperPropertyDialog(DirectionalSpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *forceDirection, *unloadedLength, *forceFunction, *connections, *coilSpring, *forceArrow;
+      ExtWidget *forceDirection, *unloadedLength, *forceFunction, *coilSpring;
   };
 
-  class GeneralizedSpringDamperPropertyDialog : public LinkPropertyDialog {
+  class GeneralizedSpringDamperPropertyDialog : public RigidBodyLinkPropertyDialog {
 
     public:
-      GeneralizedSpringDamperPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      GeneralizedSpringDamperPropertyDialog(RigidBodyLink *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *function, *unloadedLength, *body1, *body2, *connections, *coilSpring, *forceArrow, *momentArrow;
+      ExtWidget *function, *unloadedLength, *body1, *body2, *coilSpring, *forceArrow, *momentArrow;
   };
 
-  class GeneralizedFrictionPropertyDialog : public LinkPropertyDialog {
+  class GeneralizedFrictionPropertyDialog : public RigidBodyLinkPropertyDialog {
 
     public:
-      GeneralizedFrictionPropertyDialog(Link *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      GeneralizedFrictionPropertyDialog(RigidBodyLink *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *function, *normalForce, *body1, *body2, *connections, *forceArrow, *momentArrow;
+      ExtWidget *function, *normalForce, *body1, *body2, *forceArrow, *momentArrow;
   };
 
-  class GearPropertyDialog : public LinkPropertyDialog {
+  class GearPropertyDialog : public RigidBodyLinkPropertyDialog {
 
     public:
-      GearPropertyDialog(Link *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      GearPropertyDialog(RigidBodyLink *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
       ExtWidget *function, *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
   };
 
-  class JointPropertyDialog : public LinkPropertyDialog {
+  class GeneralizedElasticConnectionPropertyDialog : public RigidBodyLinkPropertyDialog {
+    Q_OBJECT
+
+    public:
+      GeneralizedElasticConnectionPropertyDialog(RigidBodyLink *connection, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *function, *body1, *body2, *forceArrow, *momentArrow;
+    protected slots:
+      void resizeVariables();
+  };
+
+  class JointPropertyDialog : public FloatingFrameLinkPropertyDialog {
 
     public:
       JointPropertyDialog(Joint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *refFrameID, *forceDirection, *forceLaw, *momentDirection, *momentLaw, *connections, *forceArrow, *momentArrow;
+      ExtWidget *forceDirection, *forceLaw, *momentDirection, *momentLaw;
+  };
+
+  class ElasticJointPropertyDialog : public FloatingFrameLinkPropertyDialog {
+
+    public:
+      ElasticJointPropertyDialog(ElasticJoint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *forceDirection, *momentDirection, *function;
   };
 
   class ContactPropertyDialog : public LinkPropertyDialog {

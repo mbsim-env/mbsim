@@ -422,8 +422,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       bd2.push_back(psR->getIntermediateShaft());
       bd2.push_back(psR->getOutputShaft());
       JointConstraint* jointconstraint = new JointConstraint("CR");
-      jointconstraint->setDependentBodiesSecondSide(bd2);
-      jointconstraint->setIndependentBody(hr);
+      jointconstraint->setDependentRigidBodiesSecondSide(bd2);
+      jointconstraint->setIndependentRigidBody(hr);
       jointconstraint->connect(hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
       addConstraint(jointconstraint);
       jointconstraint->setForceDirection(Mat(3,3,EYE));
@@ -438,8 +438,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       bd2.push_back(psL->getIntermediateShaft());
       bd2.push_back(psL->getOutputShaft());
       JointConstraint* jointconstraint = new JointConstraint("CL");
-      jointconstraint->setDependentBodiesSecondSide(bd2);
-      jointconstraint->setIndependentBody(hl);
+      jointconstraint->setDependentRigidBodiesSecondSide(bd2);
+      jointconstraint->setIndependentRigidBody(hl);
       jointconstraint->connect(hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
       addConstraint(jointconstraint);
       jointconstraint->setForceDirection(Mat(3,3,EYE));
@@ -475,7 +475,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   GearConstraint *constraint = new GearConstraint("C0");
   addConstraint(constraint);
-  constraint->setDependentBody(shaft1);
+  constraint->setDependentRigidBody(shaft1);
   constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1));
 
   //actuator = new Actuator("Fahrwiderstand");

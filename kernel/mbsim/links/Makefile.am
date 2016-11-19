@@ -6,6 +6,7 @@ liblink_la_SOURCES = link.cc\
 		     maxwell_contact.cc\
 		     single_contact.cc\
 		     joint.cc\
+		     elastic_joint.cc\
 		     gear.cc\
 		     spring_damper.cc\
 		     directional_spring_damper.cc\
@@ -20,7 +21,9 @@ liblink_la_SOURCES = link.cc\
 		     kinematic_excitation.cc\
 		     generalized_position_excitation.cc\
 		     generalized_velocity_excitation.cc\
-		     generalized_acceleration_excitation.cc
+		     generalized_acceleration_excitation.cc\
+		     generalized_connection.cc\
+		     generalized_elastic_connection.cc
 
 liblink_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 liblink_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -31,6 +34,7 @@ linkinclude_HEADERS = link.h\
 		      maxwell_contact.h\
 		      single_contact.h\
 		      joint.h\
+		      elastic_joint.h\
 		      gear.h\
 		      spring_damper.h\
 		      directional_spring_damper.h\
@@ -45,4 +49,6 @@ linkinclude_HEADERS = link.h\
 		      kinematic_excitation.h\
 		      generalized_position_excitation.h\
 		      generalized_velocity_excitation.h\
-		      generalized_acceleration_excitation.h
+		      generalized_acceleration_excitation.h\
+		      generalized_connection.h\
+		      generalized_elastic_connection.h

@@ -1,6 +1,6 @@
 /*
    MBSimGUI - A fronted for MBSim.
-   Copyright (C) 2012 Martin Förg
+   Copyright (C) 2012-2016 Martin Förg
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,10 +18,8 @@
    */
 
 #include <config.h>
-#include "torsional_stiffness.h"
+#include "connection.h"
 #include "basic_properties.h"
-#include "function_properties.h"
-#include "kinetics_properties.h"
 #include "ombv_properties.h"
 #include "function_property_factory.h"
 
@@ -31,47 +29,35 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  TorsionalStiffness::TorsionalStiffness(const string &str, Element *parent) : Link(str, parent), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedElasticConnection::GeneralizedElasticConnection(const string &str, Element *parent) : RigidBodyLink(str, parent), body1(0,false), forceArrow(0,false), momentArrow(0,false) {
 
-    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory,MBSIMPOWERTRAIN%"generalizedForceFunction"));
+    function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this,"VVV"),MBSIM%"generalizedForceFunction"));
 
-    body1.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMPOWERTRAIN%"rigidBodyFirstSide"));
-    body2.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMPOWERTRAIN%"rigidBodySecondSide"));
-
-    coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
-    coilSpring.setXMLName(MBSIMPOWERTRAIN%"enableOpenMBVCoilSpring",false);
+    body1.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodyFirstSide"));
+    body2.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodySecondSide"));
 
     forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIMPOWERTRAIN%"enableOpenMBVForce",false);
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
     momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    momentArrow.setXMLName(MBSIMPOWERTRAIN%"enableOpenMBVMoment",false);
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
-  TorsionalStiffness::~TorsionalStiffness() {
-  }
-
-  void TorsionalStiffness::initialize() {
-    Link::initialize();
-  }
-
-  void TorsionalStiffness::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
-    Link::initializeUsingXML(element);
+  DOMElement* GeneralizedElasticConnection::initializeUsingXML(DOMElement *element) {
+    RigidBodyLink::initializeUsingXML(element);
     function.initializeUsingXML(element);
     body1.initializeUsingXML(element);
     body2.initializeUsingXML(element);
-    coilSpring.initializeUsingXML(element);
     forceArrow.initializeUsingXML(element);
     momentArrow.initializeUsingXML(element);
+    return element;
   }
 
-  DOMElement* TorsionalStiffness::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
+  DOMElement* GeneralizedElasticConnection::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
     function.writeXMLFile(ele0);
     body1.writeXMLFile(ele0);
     body2.writeXMLFile(ele0);
-    coilSpring.writeXMLFile(ele0);
     forceArrow.writeXMLFile(ele0);
     momentArrow.writeXMLFile(ele0);
     return ele0;

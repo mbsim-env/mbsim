@@ -314,6 +314,7 @@ FUNCTION2(fmatvec::VecV   , fmatvec::VecV, fmatvec::VecV,   VecV_VecV_VecV)
 %include "mbsim/links/generalized_position_excitation.h"
 %include "mbsim/links/generalized_velocity_excitation.h"
 %include "mbsim/constraints/constraint.h"
+%include "mbsim/constraints/generalized_constraint.h"
 %include "mbsim/constraints/gear_constraint.h"
 %include "mbsim/constraints/joint_constraint.h"
 %include "mbsim/constraints/kinematic_constraint.h"

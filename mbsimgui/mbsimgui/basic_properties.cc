@@ -460,10 +460,9 @@ namespace MBSimGUI {
 
   ConnectFramesProperty::ConnectFramesProperty(int n, Element *element, const FQN &xmlName_) : xmlName(xmlName_)  {
 
-    for(int i=0; i<n; i++) {
+    for(int i=0; i<2; i++) {
       FQN xmlName = MBSIM%"ref";
-      if(n>1)
-        xmlName.second += toStr(i+1);
+      xmlName.second += toStr(i+1);
       frame.push_back(FrameOfReferenceProperty("",element,xmlName));
     }
   }
@@ -495,7 +494,8 @@ namespace MBSimGUI {
       string xmlName = "ref";
       if(frame.size()>1)
         xmlName += toStr(int(i+1));
-      E(ele)->setAttribute(xmlName, frame[i].getFrame()); 
+      if(i>0 or frame[i].getFrame()!=def)
+        E(ele)->setAttribute(xmlName, frame[i].getFrame());
     }
     parent->insertBefore(ele, NULL);
     return ele;

@@ -30,7 +30,7 @@ namespace MBSim {
       fmatvec::MatV T;
     public:
       RotationAboutAxesZXZTransformedMapping() : T(3,3,fmatvec::Eye()) { }
-      typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
+      int getArgSize() const { return 3; }
       fmatvec::MatV operator()(const Arg &q) {
         double theta = q.e(1);
         double phi = q.e(2);

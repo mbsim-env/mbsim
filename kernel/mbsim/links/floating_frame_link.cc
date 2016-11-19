@@ -40,7 +40,7 @@ namespace MBSim {
     C.setParent(this);
   }
 
-  void FloatingFrameLink::resetUpToDate() { 
+  void FloatingFrameLink::resetUpToDate() {
     Link::resetUpToDate(); 
     updPos = true; 
     updVel = true; 
@@ -315,12 +315,11 @@ namespace MBSim {
 
   void FloatingFrameLink::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if (e)
-      refFrameID = getInt(e);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1 = E(e)->getAttribute("ref1");
     saved_ref2 = E(e)->getAttribute("ref2");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
+    if (e) refFrameID = getInt(e);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {

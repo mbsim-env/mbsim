@@ -349,6 +349,20 @@ namespace MBSimGUI {
       ExtProperty s, sd;
   };
 
+  class LinearElasticFunction : public Function {
+    public:
+      LinearElasticFunction(const std::string &name, Element *parent);
+      virtual PropertyInterface* clone() const {return new LinearElasticFunction(*this);}
+      inline std::string getType() const { return "LinearElasticFunction"; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      ExtProperty K, D;
+  };
+
   class LinearRegularizedBilateralConstraint: public Function {
     public:
       LinearRegularizedBilateralConstraint(const std::string &name, Element *parent);

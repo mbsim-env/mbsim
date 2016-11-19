@@ -783,6 +783,36 @@ namespace MBSimGUI {
     sd.toWidget(static_cast<NonlinearSpringDamperForceWidget*>(widget)->sd);
   }
 
+  LinearElasticFunction::LinearElasticFunction(const string &name, Element *parent) : Function(name,parent), D(0,false) {
+
+    K.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0","0"),MBSIM%"stiffnessMatrix",vector<string>(3,"")),"",4));
+
+    D.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0","0"),MBSIM%"dampingMatrix",vector<string>(3,"")),"",4));
+  }
+
+  DOMElement* LinearElasticFunction::initializeUsingXML(DOMElement *element) {
+    K.initializeUsingXML(element);
+    D.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearElasticFunction::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Function::writeXMLFile(parent);
+    K.writeXMLFile(ele0);
+    D.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  void LinearElasticFunction::fromWidget(QWidget *widget) {
+    K.fromWidget(static_cast<LinearElasticFunctionWidget*>(widget)->K);
+    D.fromWidget(static_cast<LinearElasticFunctionWidget*>(widget)->D);
+  }
+
+  void LinearElasticFunction::toWidget(QWidget *widget) {
+    K.toWidget(static_cast<LinearElasticFunctionWidget*>(widget)->K);
+    D.toWidget(static_cast<LinearElasticFunctionWidget*>(widget)->D);
+  }
+
   LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint(const string &name, Element *parent) : Function(name,parent) {
 
     vector<PhysicalVariableProperty> input;

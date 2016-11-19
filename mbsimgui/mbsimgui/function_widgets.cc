@@ -554,6 +554,23 @@ namespace MBSimGUI {
     layout->addWidget(sd);
   }
 
+  LinearElasticFunctionWidget::LinearElasticFunctionWidget() {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    K = new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    layout->addWidget(K);
+
+    D = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft),true);
+    layout->addWidget(D);
+  }
+
+  void LinearElasticFunctionWidget::resize_(int m, int n) {
+    K->resize_(m,n);
+    D->resize_(m,n);
+  }
+
   LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraintWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

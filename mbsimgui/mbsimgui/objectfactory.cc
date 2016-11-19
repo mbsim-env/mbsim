@@ -39,6 +39,7 @@
 #include "analyser.h"
 #include "friction.h"
 #include "gear.h"
+#include "connection.h"
 #include <string>
 
 using namespace std;
@@ -171,8 +172,12 @@ namespace MBSimGUI {
       return new Gear(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"ElasticJoint")
+      return new ElasticJoint(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Contact")
       return new Contact(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"GeneralizedElasticConnection")
+      return new GeneralizedElasticConnection(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedPositionSensor")
       return new GeneralizedPositionSensor(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
@@ -222,6 +227,8 @@ namespace MBSimGUI {
       return new GeneralizedAccelerationConstraint(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"JointConstraint")
       return new JointConstraint(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"GeneralizedConnectionConstraint")
+      return new GeneralizedConnectionConstraint(E(element)->getAttribute("name"),parent);
     return 0;
   }
 

@@ -19,7 +19,7 @@
 #ifndef _GEAR_CONSTRAINT_H
 #define _GEAR_CONSTRAINT_H
 
-#include "mbsim/constraints/constraint.h"
+#include "mbsim/constraints/generalized_constraint.h"
 #include "mbsim/links/gear.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -32,7 +32,7 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class GearConstraint : public Constraint {
+  class GearConstraint : public GeneralizedConstraint {
 
     public:
       GearConstraint(const std::string &name="");
@@ -41,7 +41,7 @@ namespace MBSim {
 
       void init(InitStage stage);
 
-      void setDependentBody(RigidBody* body_) {bd=body_; }
+      void setDependentRigidBody(RigidBody* body_) {bd=body_; }
 
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
@@ -50,16 +50,16 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement * element);
 
       virtual std::string getType() const { return "GearConstraint"; }
-    
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         FArrow=ombv.createOpenMBV();
       }
 
       /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         MArrow=ombv.createOpenMBV();
       }

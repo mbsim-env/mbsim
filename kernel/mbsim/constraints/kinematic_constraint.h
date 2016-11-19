@@ -19,7 +19,7 @@
 #ifndef _KINEMATIC_CONSTRAINT_H
 #define _KINEMATIC_CONSTRAINT_H
 
-#include "mbsim/constraints/constraint.h"
+#include "mbsim/constraints/generalized_constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
@@ -30,12 +30,12 @@ namespace MBSim {
 
   class RigidBody;
 
-  class KinematicConstraint : public Constraint {
+  class KinematicConstraint : public GeneralizedConstraint {
 
     public:
       KinematicConstraint(const std::string &name="");
 
-      void setDependentBody(RigidBody* body) {bd=body; }
+      void setDependentRigidBody(RigidBody* body) {bd=body; }
 
       void init(InitStage stage);
 

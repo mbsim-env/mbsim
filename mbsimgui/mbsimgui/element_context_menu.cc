@@ -35,6 +35,7 @@
 #include "group.h"
 #include "friction.h"
 #include "gear.h"
+#include "connection.h"
 #include <QFileDialog>
 
 namespace MBSimGUI {
@@ -335,6 +336,9 @@ namespace MBSimGUI {
     action = new QAction("Add joint constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
     addAction(action);
+    action = new QAction("Add generalized connection constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
+    addAction(action);
   }
 
   void ConstraintContextContextMenu::addGearConstraint() {
@@ -357,6 +361,10 @@ namespace MBSimGUI {
     mw->addConstraint(new JointConstraint("JointConstraint",element));
   }
 
+  void ConstraintContextContextMenu::addGeneralizedConnectionConstraint() {
+    mw->addConstraint(new GeneralizedConnectionConstraint("GeneralizedConnectionConstraint",element));
+  }
+
   LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {
     QAction *action = new QAction("Add kinetic excitation", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
@@ -373,6 +381,9 @@ namespace MBSimGUI {
     action = new QAction("Add joint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
     addAction(action);
+    action = new QAction("Add elastic joint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addElasticJoint()));
+    addAction(action);
     action = new QAction("Add contact", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
     addAction(action);
@@ -386,6 +397,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add gear", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGear()));
+    addAction(action);
+    action = new QAction("Add generalized elastic connection", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
     addAction(action);
   }
 
@@ -409,6 +423,10 @@ namespace MBSimGUI {
     mw->addLink(new Joint("Joint",element));
   }
 
+  void LinkContextContextMenu::addElasticJoint() {
+    mw->addLink(new ElasticJoint("ElasticJoint",element));
+  }
+
   void LinkContextContextMenu::addContact() {
     mw->addLink(new Contact("Contact",element));
   }
@@ -428,6 +446,10 @@ namespace MBSimGUI {
 
   void LinkContextContextMenu::addGear() {
     mw->addLink(new Gear("Gear",element));
+  }
+
+  void LinkContextContextMenu::addGeneralizedElasticConnection() {
+    mw->addLink(new GeneralizedElasticConnection("GeneralizedElasticConnection",element));
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

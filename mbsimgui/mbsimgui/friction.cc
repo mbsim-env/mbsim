@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedFriction::GeneralizedFriction(const string &str, Element *parent) : Link(str, parent), body1(0,false), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedFriction::GeneralizedFriction(const string &str, Element *parent) : RigidBodyLink(str, parent), body1(0,false), forceArrow(0,false), momentArrow(0,false) {
 
     function.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"generalizedFrictionForceLaw"));
 
@@ -51,11 +51,11 @@ namespace MBSimGUI {
   }
 
   void GeneralizedFriction::initialize() {
-    Link::initialize();
+    RigidBodyLink::initialize();
   }
 
   DOMElement* GeneralizedFriction::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    RigidBodyLink::initializeUsingXML(element);
     function.initializeUsingXML(element);
     normalForce.initializeUsingXML(element);
     body1.initializeUsingXML(element);
@@ -66,7 +66,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedFriction::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
+    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
     function.writeXMLFile(ele0);
     normalForce.writeXMLFile(ele0);
     body1.writeXMLFile(ele0);

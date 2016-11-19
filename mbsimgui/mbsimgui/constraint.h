@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2012-2016 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,11 +46,22 @@ namespace MBSimGUI {
 
   class Constraint : public Element {
     public:
-      Constraint(const std::string &str, Element *parent);
+      Constraint(const std::string &str, Element *parent) : Element(str, parent) { }
       static Constraint* readXMLFile(const std::string &filename, Element *parent);
   };
 
-  class GearConstraint : public Constraint {
+  class GeneralizedConstraint : public Constraint {
+    friend class GeneralizedConstraintPropertyDialog;
+    public:
+      GeneralizedConstraint(const std::string &str, Element *parent);
+      void initialize();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    protected:
+      ExtProperty support;
+  };
+
+  class GearConstraint : public GeneralizedConstraint {
     friend class GearConstraintPropertyDialog;
     public:
     GearConstraint(const std::string &str, Element *parent);
@@ -65,7 +76,7 @@ namespace MBSimGUI {
     ExtProperty dependentBody, independentBodies, gearForceArrow, gearMomentArrow;
   };
 
-  class KinematicConstraint : public Constraint {
+  class KinematicConstraint : public GeneralizedConstraint {
     friend class KinematicConstraintPropertyDialog;
     public:
     KinematicConstraint(const std::string &str, Element *parent);
@@ -132,6 +143,21 @@ namespace MBSimGUI {
     protected:
     ExtProperty independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, refFrameID, force, moment, connections, jointForceArrow, jointMomentArrow, q0;
 
+  };
+
+  class GeneralizedConnectionConstraint : public GeneralizedConstraint {
+    friend class GeneralizedConnectionConstraintPropertyDialog;
+    public:
+    GeneralizedConnectionConstraint(const std::string &str, Element *parent);
+    virtual PropertyInterface* clone() const {return new GeneralizedConnectionConstraint(*this);}
+    std::string getType() const { return "GeneralizedConnectionConstraint"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    void deinitialize();
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedConnectionConstraintPropertyDialog(this);}
+    protected:
+    ExtProperty dependentBody, independentBody, forceArrow, momentArrow;
   };
 
 }

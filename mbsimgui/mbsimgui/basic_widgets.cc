@@ -197,6 +197,11 @@ namespace MBSimGUI {
     updateWidget();
   }
 
+  void FrameOfReferenceWidget::setDefaultFrame(const QString &def_) {
+    def = def_;
+    frame->setPlaceholderText(def);
+  }
+
   void FrameOfReferenceWidget::updateWidget() {
     frameBrowser->updateWidget(selectedFrame);
     if(selectedFrame) {
@@ -213,12 +218,14 @@ namespace MBSimGUI {
   }
 
   void FrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
-    selectedFrame = framePtr; 
-    frame->setText(str);
+    if(str!=def) {
+      selectedFrame = framePtr;
+      frame->setText(str);
+    }
   }
 
   QString FrameOfReferenceWidget::getFrame() const {
-    return frame->text();
+    return frame->text().isEmpty()?def:frame->text();
   }
 
   ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {

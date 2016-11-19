@@ -157,12 +157,13 @@ namespace MBSimGUI {
     public:
       ConstraintContextContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addGearConstraint();
+    protected slots:
+      void addGearConstraint();
       void addGeneralizedPositionConstraint();
       void addGeneralizedVelocityConstraint();
       void addGeneralizedAccelerationConstraint();
       void addJointConstraint();
+      void addGeneralizedConnectionConstraint();
 
     protected:
       Element *element;
@@ -180,11 +181,13 @@ namespace MBSimGUI {
       void addGeneralizedSpringDamper();
       void addKineticExcitation();
       void addJoint();
+      void addElasticJoint();
       void addContact();
       void addSignal();
       void addLinearTransferSystem();
       void addGeneralizedFriction();
       void addGear();
+      void addGeneralizedElasticConnection();
 
     protected:
       Element *element;
@@ -257,8 +260,8 @@ namespace MBSimGUI {
     public:
       SensorContextContextMenu(Element *sensor, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addGeneralizedPositionSensor();
+    protected slots:
+      void addGeneralizedPositionSensor();
       void addGeneralizedVelocitySensor();
       void addAbsolutePositionSensor();
       void addAbsoluteVelocitySensor();

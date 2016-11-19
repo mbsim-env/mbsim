@@ -243,6 +243,7 @@ namespace MBSimGUI {
       virtual PropertyInterface* clone() const {return new ConnectFramesProperty(*this);}
 
       void initialize();
+      void setDefaultFrame(const std::string &def_) { def = def_; }
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -250,6 +251,7 @@ namespace MBSimGUI {
 
     protected:
       std::vector<FrameOfReferenceProperty> frame;
+      std::string def;
       MBXMLUtils::FQN xmlName;
   };
 

@@ -432,10 +432,11 @@ namespace MBSimGUI {
     return new ConnectFramesProperty(i+1,parent);
   }
 
-  SpringDamperPropertyFactory::SpringDamperPropertyFactory(Element *parent_) : parent(parent_) {
+  SpringDamperPropertyFactory::SpringDamperPropertyFactory(Element *parent_, const std::string &ext_) : parent(parent_), ext(ext_) {
     name.push_back(MBSIM%"LinearSpringDamperForce");
     name.push_back(MBSIM%"NonlinearSpringDamperForce");
     name.push_back(MBSIM%"SymbolicFunction");
+    name.push_back(MBSIM%"LinearElasticFunction");
   }
 
   PropertyInterface* SpringDamperPropertyFactory::createProperty(int i) {
@@ -445,10 +446,12 @@ namespace MBSimGUI {
       return new NonlinearSpringDamperForce("NoName",parent);
     if(i==2) {
       vector<string> var;
-      var.push_back("gd");
       var.push_back("g");
-      return new SymbolicFunction("NoName",parent,"SSS",var,1);
+      var.push_back("gd");
+      return new SymbolicFunction("NoName",parent,ext,var,1);
     }
+    if(i==3)
+      return new LinearElasticFunction("NoName",parent);
     return NULL;
   }
 

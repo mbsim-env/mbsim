@@ -128,6 +128,7 @@ ret = [eta;xi]</SymbolicFunction>
       </objects>
       <links>
         <Contact name="Contact1">
+          <connect ref1="../Object[RigidBody2]/Contour[SpatialContour3]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
           </normalForceLaw>
@@ -136,7 +137,6 @@ ret = [eta;xi]</SymbolicFunction>
               <restitutionCoefficient unit="-">0</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
-          <connect ref1="../Object[RigidBody2]/Contour[SpatialContour3]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
           <initialGuess>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>pi/2</ele>

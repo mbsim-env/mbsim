@@ -19,9 +19,11 @@
 
 #include <config.h>
 #include "link.h"
+#include "frame.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
+#include "ombv_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -31,28 +33,96 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Link::Link(const string &str, Element *parent) : Element(str, parent) {
-  }
-
-  Link::~Link() {
-  }
-
   Link* Link::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-//    Link *link=ObjectFactory::getInstance()->createLink(e, parent);
     Link *link=Embed<Link>::createAndInit(e,parent);
-    if(link) {
-//      link->initializeUsingXML(e);
-      link->initialize();
-    }
+    if(link) link->initialize();
     return link;
   }
 
-  //void Link::initializeUsingXML(DOMElement *element) {
-  //}
+  FrameLink::FrameLink(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false) {
 
-  //DOMElement* Link::writeXMLFile(DOMNode *parent) {    
-  //}
+    connections.setProperty(new ConnectFramesProperty(2,this));
+
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+  }
+
+  void FrameLink::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
+
+  DOMElement* FrameLink::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FrameLink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    connections.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceArrow(0,false), momentArrow(0,false) {
+
+    connections.setProperty(new ConnectFramesProperty(2,this));
+
+    refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
+
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+  }
+
+  void FloatingFrameLink::initialize() {
+    Link::initialize();
+    connections.initialize();
+  }
+
+  DOMElement* FloatingFrameLink::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    refFrameID.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FloatingFrameLink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    connections.writeXMLFile(ele0);
+    refFrameID.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent), support(0,false) {
+    support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
+  }
+
+  void RigidBodyLink::initialize() {
+    Link::initialize();
+    support.initialize();
+  }
+
+  DOMElement* RigidBodyLink::initializeUsingXML(DOMElement *element) {
+    Link::initializeUsingXML(element);
+    support.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* RigidBodyLink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Link::writeXMLFile(parent);
+    support.writeXMLFile(ele0);
+    return ele0;
+  }
 
 }

@@ -26,7 +26,7 @@
 
 namespace MBSimGUI {
 
-  class Gear : public Link {
+  class Gear : public RigidBodyLink {
     friend class GearPropertyDialog;
     public:
     Gear(const std::string &str, Element *parent);

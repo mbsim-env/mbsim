@@ -44,7 +44,7 @@ namespace MBSimGUI {
       QMenu* createContextMenu() {return new FlexibleBodyFFRContextMenu(this);}
       QMenu* createFrameContextMenu() {return new FixedNodalFrameContextContextMenu(this);}
     protected:
-      ExtProperty mass, pdm, ppdm, Pdm, rPdm, PPdm, Ke, De, beta, Knl1, Knl2, ksigma0, ksigma1, K0t, K0r, K0om, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, ombvEditor, jointForceArrow, jointMomentArrow;
+      ExtProperty mass, pdm, ppdm, Pdm, rPdm, PPdm, Ke, De, beta, Knl1, Knl2, ksigma0, ksigma1, K0t, K0r, K0om, r, A, Phi, Psi, sigmahel, sigmahen, sigma0, K0F, K0M, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, ombvEditor, jointForceArrow, jointMomentArrow;
   };
 
 }

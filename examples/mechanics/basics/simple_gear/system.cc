@@ -84,12 +84,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   GearConstraint *constraint = new GearConstraint("C1");
   addConstraint(constraint);
-  constraint->setDependentBody(shaft2);
+  constraint->setDependentRigidBody(shaft2);
   constraint->addTransmission(Transmission(shaft1,-R1/R2a));
 
   constraint = new GearConstraint("C2");
   addConstraint(constraint);
-  constraint->setDependentBody(shaft3);
+  constraint->setDependentRigidBody(shaft3);
   constraint->addTransmission(Transmission(shaft2,-R2b/R3));
 
   KineticExcitation* ke;

@@ -25,18 +25,18 @@
 
 namespace MBSimGUI {
 
-  class KineticExcitation : public Link {
+  class KineticExcitation : public FloatingFrameLink {
     friend class KineticExcitationPropertyDialog;
     public:
     KineticExcitation(const std::string &str, Element *parent);
     virtual PropertyInterface* clone() const {return new KineticExcitation(*this);}
     std::string getType() const { return "KineticExcitation"; }
+//    void initialize();
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
     protected:
-    ExtProperty refFrameID, forceDirection, forceFunction, momentDirection, momentFunction, connections, forceArrow, momentArrow;
+    ExtProperty forceDirection, forceFunction, momentDirection, momentFunction;
   };
 
 }

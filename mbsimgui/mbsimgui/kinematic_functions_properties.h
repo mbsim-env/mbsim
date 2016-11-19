@@ -195,14 +195,6 @@ namespace MBSimGUI {
       ExtProperty a;
   };
 
-  class TCardanAngles : public Function {
-    public:
-      TCardanAngles(const std::string &name, Element *parent) : Function(name,parent) { }
-      virtual PropertyInterface* clone() const {return new TCardanAngles(*this);}
-      int getArg1Size() const {return 3;}
-      inline std::string getType() const { return "TCardanAngles"; }
-  };
-
 }
 
 #endif

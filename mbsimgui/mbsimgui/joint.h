@@ -25,18 +25,28 @@
 
 namespace MBSimGUI {
 
-  class Joint : public Link {
+  class Joint : public FloatingFrameLink {
     friend class JointPropertyDialog;
     public:
     Joint(const std::string &str, Element *parent);
-    ~Joint();
     std::string getType() const { return "Joint"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
     protected:
-    ExtProperty refFrameID, forceDirection, forceLaw, momentDirection, momentLaw, connections, forceArrow, momentArrow;
+    ExtProperty forceDirection, forceLaw, momentDirection, momentLaw;
+  };
+
+  class ElasticJoint : public FloatingFrameLink {
+    friend class ElasticJointPropertyDialog;
+    public:
+    ElasticJoint(const std::string &str, Element *parent);
+    std::string getType() const { return "ElasticJoint"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new ElasticJointPropertyDialog(this);}
+    protected:
+    ExtProperty forceDirection, momentDirection, function;
   };
 
 }

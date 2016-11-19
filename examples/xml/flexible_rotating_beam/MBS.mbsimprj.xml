@@ -345,41 +345,6 @@
             </FixedNodalFrame>
           </frames>
           <contours/>
-          <openMBVRigidBody>
-            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body2">
-              <?OPENMBV_ID 4?>
-              <diffuseColor>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0.666667</ele>
-                  <ele>1</ele>
-                  <ele>1</ele>
-                </xmlVector>
-              </diffuseColor>
-              <transparency unit="-">0.3</transparency>
-              <initialTranslation unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l/2</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialTranslation>
-              <initialRotation unit="rad">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
-              <scaleFactor unit="-">1</scaleFactor>
-              <length unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l</ele>
-                  <ele>h</ele>
-                  <ele>d</ele>
-                </xmlVector>
-              </length>
-            </Cuboid>
-          </openMBVRigidBody>
           <enableOpenMBVFrameK>
             <?OPENMBV_ID 5?>
           </enableOpenMBVFrameK>
@@ -723,41 +688,6 @@
             </FixedNodalFrame>
           </frames>
           <contours/>
-          <openMBVRigidBody>
-            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 21?>
-              <diffuseColor>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0.333333</ele>
-                  <ele>1</ele>
-                  <ele>1</ele>
-                </xmlVector>
-              </diffuseColor>
-              <transparency unit="-">0.3</transparency>
-              <initialTranslation unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l/2</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialTranslation>
-              <initialRotation unit="rad">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
-              <scaleFactor unit="-">1</scaleFactor>
-              <length unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l</ele>
-                  <ele>h</ele>
-                  <ele>d</ele>
-                </xmlVector>
-              </length>
-            </Cuboid>
-          </openMBVRigidBody>
           <enableOpenMBVFrameK>
             <?OPENMBV_ID 22?>
           </enableOpenMBVFrameK>
@@ -1143,41 +1073,6 @@
             </FixedNodalFrame>
           </frames>
           <contours/>
-          <openMBVRigidBody>
-            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 38?>
-              <diffuseColor>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0.166667</ele>
-                  <ele>1</ele>
-                  <ele>1</ele>
-                </xmlVector>
-              </diffuseColor>
-              <transparency unit="-">0.3</transparency>
-              <initialTranslation unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l/2</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialTranslation>
-              <initialRotation unit="rad">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
-              <scaleFactor unit="-">1</scaleFactor>
-              <length unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l</ele>
-                  <ele>h</ele>
-                  <ele>d</ele>
-                </xmlVector>
-              </length>
-            </Cuboid>
-          </openMBVRigidBody>
           <enableOpenMBVFrameK>
             <?OPENMBV_ID 39?>
           </enableOpenMBVFrameK>

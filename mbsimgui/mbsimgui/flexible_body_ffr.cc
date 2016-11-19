@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), jointForceArrow(0,false), jointMomentArrow(0,false) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), jointForceArrow(0,false), jointMomentArrow(0,false) {
     Frame *K = new Frame("K",this,true,vector<FQN>(1,MBSIMFLEX%"plotFeatureFrameK"));
     addFrame(K);
 
@@ -54,9 +54,9 @@ namespace MBSimGUI {
 
     PPdm.setProperty(new TwoDimMatArrayProperty(3,1,1,MBSIMFLEX%"shapeFunctionShapeFunctionIntegral"));
 
-    Ke.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(1,1,"0","0"),MBSIMFLEX%"stiffnessMatrix",vector<string>(3,"")),"",4));
+    Ke.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(1,1,"0"),MBSIMFLEX%"stiffnessMatrix",vector<string>(3,"")),"",4));
 
-    De.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(1,1,"0","0"),MBSIMFLEX%"dampingMatrix",vector<string>(3,"")),"",4));
+    De.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(1,1,"0"),MBSIMFLEX%"dampingMatrix",vector<string>(3,"")),"",4));
 
     beta.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIMFLEX%"proportionalDamping",vector<string>(3,"")),"",4));
 
@@ -74,6 +74,16 @@ namespace MBSimGUI {
 
     K0om.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"));
 
+    r.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMFLEX%"relativeNodalPosition",vector<string>(3,"")),"",4));
+
+    A.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"1","0"),MBSIMFLEX%"relativeNodalOrientation",vector<string>(3,"")),"",4));
+
+    Phi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfTranslation",vector<string>(3,"")),"",4));
+
+    Psi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfRotation",vector<string>(3,"")),"",4));
+
+    sigmahel.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,1,"0"),MBSIMFLEX%"stressMatrix",vector<string>(3,"")),"",4));
+
     translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this,MBSIMFLEX),"",3));
 
     rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4(this,MBSIMFLEX),"",3));
@@ -85,7 +95,7 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMFLEX%"coordinateTransformationForRotation"));
     coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
-    ombvEditor.setProperty(new OMBVBodySelectionProperty(this,MBSIMFLEX));
+    ombvEditor.setProperty(new FlexibleBodyFFRMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBV",getID()));
 
     jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
     jointForceArrow.setXMLName(MBSIMFLEX%"enableOpenMBVJointForce",false);
@@ -165,6 +175,11 @@ namespace MBSimGUI {
     K0t.initializeUsingXML(element);
     K0r.initializeUsingXML(element);
     K0om.initializeUsingXML(element);
+    r.initializeUsingXML(element);
+    A.initializeUsingXML(element);
+    Phi.initializeUsingXML(element);
+    Psi.initializeUsingXML(element);
+    sigmahel.initializeUsingXML(element);
 
     translation.initializeUsingXML(element);
     rotation.initializeUsingXML(element);
@@ -208,6 +223,11 @@ namespace MBSimGUI {
     K0t.writeXMLFile(ele0);
     K0r.writeXMLFile(ele0);
     K0om.writeXMLFile(ele0);
+    r.writeXMLFile(ele0);
+    A.writeXMLFile(ele0);
+    Phi.writeXMLFile(ele0);
+    Psi.writeXMLFile(ele0);
+    sigmahel.writeXMLFile(ele0);
 
     translation.writeXMLFile(ele0);
     rotation.writeXMLFile(ele0);

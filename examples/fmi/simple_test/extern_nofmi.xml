@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SpringDamper name="EXTERN" xmlns="http://www.mbsim-env.de/MBSim">
+  <connect ref1="../Frame[SpringMount]" ref2="../Object[Ball]/Frame[C]"/>
   <forceFunction>
     <LinearSpringDamperForce>
       <stiffnessCoefficient>3</stiffnessCoefficient>
@@ -7,7 +8,6 @@
     </LinearSpringDamperForce>
   </forceFunction>
   <unloadedLength>0</unloadedLength>
-  <connect ref1="../Frame[SpringMount]" ref2="../Object[Ball]/Frame[C]"/>
   <enableOpenMBVCoilSpring>
     <numberOfCoils>20</numberOfCoils>
     <springRadius>0.03</springRadius>

@@ -110,8 +110,6 @@ namespace MBSim {
     if(e) setMomentDirection(getMat(e,3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    if(E(e)->hasAttribute("ref")) saved_ref=E(e)->getAttribute("ref");
   }
 
 }

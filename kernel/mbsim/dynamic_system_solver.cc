@@ -163,7 +163,7 @@ namespace MBSim {
         addConstraint(crtList[i]);
       }
       for (unsigned int i = 0; i < iKlnkList.size(); i++) {
-        iKlnkList[i]->setName("InverseKinematic_"+to_string(i)); // just a unique local name
+        iKlnkList[i]->setName("InverseKinetic_"+to_string(i)); // just a unique local name
         addInverseKineticsLink(iKlnkList[i]);
       }
       for (unsigned int i = 0; i < obsrvList.size(); i++) {

@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "mbsim/links/kinematic_excitation.h"
+#include <mbsim/constitutive_laws/generalized_force_law.h>
+#include <mbsim/constitutive_laws/bilateral_impact.h>
 #include "mbsim/objects/rigid_body.h"
 
 using namespace std;
@@ -26,10 +28,24 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  KinematicExcitation::KinematicExcitation(const string &name) : RigidBodyLink(name), func(0) {
+  KinematicExcitation::KinematicExcitation(const string &name) : RigidBodyLink(name), fl(NULL), il(NULL) {
     body.resize(1);
     ratio.resize(1);
     ratio[0] = 1;
+  }
+
+  KinematicExcitation::~KinematicExcitation() {
+    delete fl;
+    if(il) delete il;
+  }
+
+  bool KinematicExcitation::isSetValued() const {
+    return fl->isSetValued();
+  }
+
+  void KinematicExcitation::setGeneralizedForceLaw(GeneralizedForceLaw * fl_) {
+    fl=fl_;
+    fl->setParent(this);
   }
 
   void KinematicExcitation::calclaSize(int j) {
@@ -43,21 +59,31 @@ namespace MBSim {
   }
 
   void KinematicExcitation::updateGeneralizedForces() {
-    if(func)
-      lambda = (*func)(evalGeneralizedRelativePosition(),evalGeneralizedRelativeVelocity());
-    else
+    if(isSetValued())
       lambda = la;
+    else
+      for(int i=0; i<lambda.size(); i++)
+        lambda(i) = (*fl)(evalGeneralizedRelativePosition()(i),evalGeneralizedRelativeVelocity()(i));
     updla = false;
   }
 
   void KinematicExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
-        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
+        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       RigidBodyLink::init(stage);
-    } else
+    }
+    else if(stage==unknownStage) {
+      if(fl->isSetValued()) {
+        il = new BilateralImpact;
+        il->setParent(this);
+      }
       RigidBodyLink::init(stage);
-    if(func) func->init(stage);
+    }
+    else
+      RigidBodyLink::init(stage);
+    if(fl) fl->init(stage);
+    if(il) il->init(stage);
   }
 
 }

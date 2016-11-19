@@ -554,6 +554,41 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="relativeNodalPosition" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="relativeNodalOrientation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="shapeMatrixOfTranslation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="shapeMatrixOfRotation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="stressMatrix" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:choice minOccurs="0">
             <xs:element name="generalTranslation">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -658,7 +693,12 @@
           </xs:element>
           <xs:element name="coordinateTransformationForRotation" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert, ob für für die Beschreibung der Rotation eine Koordinatentransformation durchgeführt werden soll (standardmäßig an). Mit Koordinatentransformation werden für die generalisierten Koordinaten der Rotation kartesische Winkelgeschwindigkeiten verwendet. Ohne Koordinatentransformation werden die Ableitungen der Winkelkoordinaten verwendet.
+              Definiert, ob für die Beschreibung der Rotation eine Koordinatentransformation durchgeführt werden soll (standardmäßig an). Mit Koordinatentransformation werden für die generalisierten Koordinaten der Rotation kartesische Winkelgeschwindigkeiten verwendet. Ohne Koordinatentransformation werden die Ableitungen der Winkelkoordinaten verwendet.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="bodyFixedRepresentationOfAngularVelocity" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert, ob bei aktivierter Koordinatentransformation für die Rotation eine Darstellung der Winkelgeschwindigkeiten bzgl. des körperfesten Koordinatensystems verwendet werden soll (standardmäßig aus). Bei absoluten räumlichen Drehungen hat dies den Vorteil einer konstante Massenmatrix. Standarmäßig wird eine Darstellung bzgl. des Referenzsystems verwendet.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="frames">
@@ -696,31 +736,21 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:sequence minOccurs="0">
-            <xs:element name="openMBVRigidBody">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
-                </xs:documentation>
-              </xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element ref="ombv:RigidBody"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="openMBVFrameOfReference" minOccurs="0">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  Definiert das MBSim KOS, mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt.<br/>
-                  Wird dieses Element nicht angegeben, so wird das KOS "C" verwendet.
-                </xs:documentation>
-              </xs:annotation>
-              <xs:complexType>
-                <xs:attribute name="ref" type="mbsim:CurrentFrameReferenceType" use="required"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung des Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="indices" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
+                <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVFrameK" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

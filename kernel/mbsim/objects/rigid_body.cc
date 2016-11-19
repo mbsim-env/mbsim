@@ -34,8 +34,8 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zyx_mapping.h"
-#include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
@@ -54,7 +54,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBody)
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z") {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z"), bodyFixedRepresentationOfAngularVelocity(false) {
     
     Z.setParent(this);
 
@@ -217,29 +217,23 @@ namespace MBSim {
       Z.getJacobianOfTranslation(1,false) = PJT[1];
       Z.getJacobianOfRotation(1,false) = PJR[1];
 
-      bool cb = false;
       StateDependentFunction<RotMat3> *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesXYZ<VecV>*>(Atmp->getFunction())) {
-        fTR = new RotationAboutAxesXYZMapping<VecV>;
+        if(bodyFixedRepresentationOfAngularVelocity)
+          fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
+        else
+          fTR = new RotationAboutAxesXYZMapping<VecV>;
         fTR->setParent(this);
         constJR = true;
         constjR = true;
         PJRR = SqrMat3(EYE);
         PJR[0].set(i02,iuR,PJRR);
       }
-      else if(Atmp and dynamic_cast<RotationAboutAxesXYZTransformed<VecV>*>(Atmp->getFunction())) {
-        cb = true;
-        if(coordinateTransformation) {
-          fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
-          fTR->setParent(this);
-          constJR = true;
-          constjR = true;
-          PJRR = SqrMat3(EYE);
-          PJR[0].set(i02,iuR,PJRR);
-        }
-      }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZXZ<VecV>*>(Atmp->getFunction())) {
-        fTR = new RotationAboutAxesZXZMapping<VecV>;
+        if(bodyFixedRepresentationOfAngularVelocity)
+          fTR = new RotationAboutAxesZXZTransformedMapping<VecV>;
+        else
+          fTR = new RotationAboutAxesZXZMapping<VecV>;
         fTR->setParent(this);
         constJR = true;
         constjR = true;
@@ -247,7 +241,10 @@ namespace MBSim {
         PJR[0].set(i02,iuR,PJRR);
       }
       else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
-        fTR = new RotationAboutAxesZYXMapping<VecV>;
+        if(bodyFixedRepresentationOfAngularVelocity)
+          THROW_MBSIMERROR("(RigidBody::init): coordinate transformation not yet available for zyx-rotation");
+        else
+          fTR = new RotationAboutAxesZYXMapping<VecV>;
         fTR->setParent(this);
         constJR = true;
         constjR = true;
@@ -278,7 +275,7 @@ namespace MBSim {
         }
       }
 
-      if(cb) {
+      if(bodyFixedRepresentationOfAngularVelocity) {
         frameForJacobianOfRotation = K;
         // TODO: do not invert generalized mass matrix in case of special
         // parametrisation
@@ -666,6 +663,8 @@ namespace MBSim {
     if(e) translationDependentRotation = getBool(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"coordinateTransformationForRotation");
     if(e) coordinateTransformation = getBool(e);
+    e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
+    if(e) bodyFixedRepresentationOfAngularVelocity = getBool(e);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");

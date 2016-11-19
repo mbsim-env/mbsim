@@ -1,5 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
- *
+/* Copyright (C) 2004-2016 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -18,30 +17,33 @@
  */
 
 #include <config.h>
-#include "contact_kinematics.h"
+#include "mbsim/constraints/generalized_constraint.h"
+#include "mbsim/frames/frame.h"
 
+using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  Vec3 computeTangential(const Vec3 &n) {
-    Vec3 t(NONINIT);
-    if(fabs(n(0))+fabs(n(1)) > 1e-12) {
-      t(2)=0;
-      double buf = pow(n(0),2)+pow(n(1),2);
-      buf = 1.0/sqrt(buf);
-      t(0) = n(1)*buf;
-      t(1) = -n(0)*buf;
-    } 
-    else {
-      t(0)=0;
-      double buf = pow(n(1),2)+pow(n(2),2);
-      buf = 1.0/sqrt(buf);
-      t(1) = n(2)*buf;
-      t(2) = -n(1)*buf;
+  GeneralizedConstraint::GeneralizedConstraint(const std::string &name) : Constraint(name), support(NULL) {
+  }
+
+  void GeneralizedConstraint::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if(saved_supportFrame!="")
+        setSupportFrame(getByPath<Frame>(saved_supportFrame));
+      Constraint::init(stage);
     }
-    return t;
+    else
+      Constraint::init(stage);
+  }
+
+  void GeneralizedConstraint::initializeUsingXML(DOMElement* element) {
+    Constraint::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
+    if(e) saved_supportFrame=E(e)->getAttribute("ref");
   }
 
 }
-

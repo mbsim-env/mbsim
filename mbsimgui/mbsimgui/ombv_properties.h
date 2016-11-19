@@ -27,9 +27,9 @@ namespace MBSimGUI {
 
   class Body;
 
-  class OMBVBodyPropertyFactory: public PropertyFactory {
+  class OMBVRigidBodyPropertyFactory: public PropertyFactory {
     public:
-      OMBVBodyPropertyFactory(const std::string &ID);
+      OMBVRigidBodyPropertyFactory(const std::string &ID);
       Property* createProperty(int i=0);
       MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -191,10 +191,10 @@ namespace MBSimGUI {
       MBXMLUtils::FQN xmlName;
   };
 
-  class OMBVBodyProperty : public OMBVDynamicColoredObjectProperty {
+  class OMBVRigidBodyProperty : public OMBVDynamicColoredObjectProperty {
 
     public:
-      OMBVBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+      OMBVRigidBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       virtual std::string getType() const = 0;
@@ -204,15 +204,15 @@ namespace MBSimGUI {
       ExtProperty trans, rot, scale;
   };
 
-  class InvisibleBodyProperty : public OMBVBodyProperty {
+  class InvisibleBodyProperty : public OMBVRigidBodyProperty {
 
     public:
-      InvisibleBodyProperty(const std::string &name="NOTSET", const std::string &ID=0) : OMBVBodyProperty(name,ID) {}
+      InvisibleBodyProperty(const std::string &name="NOTSET", const std::string &ID=0) : OMBVRigidBodyProperty(name,ID) {}
       virtual PropertyInterface* clone() const {return new InvisibleBodyProperty(*this);}
       virtual std::string getType() const { return "InvisibleBody"; }
   };
 
-  class CubeProperty : public OMBVBodyProperty {
+  class CubeProperty : public OMBVRigidBodyProperty {
 
     public:
       CubeProperty(const std::string &name="NOTSET", const std::string &ID_=0);
@@ -226,7 +226,7 @@ namespace MBSimGUI {
       ExtProperty length;
   };
 
-  class CuboidProperty : public OMBVBodyProperty {
+  class CuboidProperty : public OMBVRigidBodyProperty {
 
     public:
       CuboidProperty(const std::string &name="NOTSET", const std::string &ID_=0);
@@ -240,7 +240,7 @@ namespace MBSimGUI {
       ExtProperty length;
   };
 
-  class SphereProperty : public OMBVBodyProperty {
+  class SphereProperty : public OMBVRigidBodyProperty {
 
     public:
       SphereProperty(const std::string &name="NOTSET", const std::string &ID_=0);
@@ -254,7 +254,7 @@ namespace MBSimGUI {
       ExtProperty radius;
   };
 
-  class FrustumProperty : public OMBVBodyProperty {
+  class FrustumProperty : public OMBVRigidBodyProperty {
     public:
       FrustumProperty(const std::string &name="NOTSET", const std::string &ID_=0);
       virtual PropertyInterface* clone() const {return new FrustumProperty(*this);}
@@ -267,7 +267,7 @@ namespace MBSimGUI {
       ExtProperty top, base, height, innerBase, innerTop;
   };
 
-  class ExtrusionProperty : public OMBVBodyProperty {
+  class ExtrusionProperty : public OMBVRigidBodyProperty {
     public:
       ExtrusionProperty(const std::string &name="NOTSET", const std::string &ID_=0);
       virtual PropertyInterface* clone() const {return new ExtrusionProperty(*this);}
@@ -280,7 +280,7 @@ namespace MBSimGUI {
       ExtProperty windingRule, height, contour;
   };
 
-  class IvBodyProperty : public OMBVBodyProperty {
+  class IvBodyProperty : public OMBVRigidBodyProperty {
     public:
       IvBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
       virtual PropertyInterface* clone() const {return new IvBodyProperty(*this);}
@@ -293,7 +293,7 @@ namespace MBSimGUI {
       ExtProperty ivFileName, creaseEdges, boundaryEdges;
   };
 
-  class CompoundRigidBodyProperty : public OMBVBodyProperty {
+  class CompoundRigidBodyProperty : public OMBVRigidBodyProperty {
 
     public:
       CompoundRigidBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
@@ -307,11 +307,11 @@ namespace MBSimGUI {
       ExtProperty bodies;
   };
 
-  class OMBVBodySelectionProperty : public Property {
+  class OMBVRigidBodySelectionProperty : public Property {
     public:
 
-      OMBVBodySelectionProperty(Body* body, const MBXMLUtils::NamespaceURI &uri=MBSIM);
-      virtual PropertyInterface* clone() const {return new OMBVBodySelectionProperty(*this);}
+      OMBVRigidBodySelectionProperty(Body* body, const MBXMLUtils::NamespaceURI &uri=MBSIM);
+      virtual PropertyInterface* clone() const {return new OMBVRigidBodySelectionProperty(*this);}
 
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -322,36 +322,17 @@ namespace MBSimGUI {
       ExtProperty ombv, ref;
   };
 
-  class OMBVEmptyProperty : public OMBVObjectProperty {
+  class FlexibleBodyFFRMBSOMBVProperty : public MBSOMBVProperty {
 
     public:
-      OMBVEmptyProperty(const MBXMLUtils::FQN &xmlName_, const std::string &ID=0) : OMBVObjectProperty("Empty",ID), xmlName(xmlName_) {}
-      virtual PropertyInterface* clone() const {return new OMBVEmptyProperty(*this);}
-
+      FlexibleBodyFFRMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID);
+      virtual PropertyInterface* clone() const {return new FlexibleBodyFFRMBSOMBVProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-      void fromWidget(QWidget *widget) {}
-      void toWidget(QWidget *widget) {}
-      virtual std::string getType() const { return "Empty"; }
-
-    protected:
-      MBXMLUtils::FQN xmlName;
-  };
-
-  class OMBVPlaneProperty : public OMBVObjectProperty {
-
-    public:
-      OMBVPlaneProperty(const MBXMLUtils::FQN &xmlName, const std::string &ID_=0);
-      virtual PropertyInterface* clone() const {return new OMBVPlaneProperty(*this);}
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
-      virtual std::string getType() const { return "Plane"; }
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
-
     protected:
-      ExtProperty size, numberOfLines;
-      MBXMLUtils::FQN xmlName;
+      ExtProperty minCol, maxCol, nodes, indices;
   };
 
 }

@@ -145,6 +145,7 @@
   </objects>
   <links>
     <Joint name="Spring" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Object[Base]/Frame[fTop]" ref2="../Object[Pendulum]/Frame[fBottom]"/>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentLaw>
         <RegularizedBilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
@@ -156,9 +157,9 @@
           </forceFunction>
         </RegularizedBilateralConstraint>
       </momentLaw>
-      <connect ref1="../Object[Base]/Frame[fTop]" ref2="../Object[Pendulum]/Frame[fBottom]"/>
     </Joint>
     <Contact name="contactSwing" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>
       <normalForceLaw>
         <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
       </normalForceLaw>
@@ -177,9 +178,12 @@
           <frictionCoefficient>1e3</frictionCoefficient>
         </PlanarCoulombImpact>
       </tangentialImpactLaw>
-      <connect ref1="../Object[Base]/Contour[cBottom]" ref2="../../Group[Swing]/Object[Swing]/Contour[cTop]"/>
     </Contact>
     <KineticExcitation name="KineticExcitation" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref2="../Object[Sphere]/Frame[C]"/>
+      <enableOpenMBVForce>
+        <scaleLength>1.</scaleLength>
+      </enableOpenMBVForce>
       <forceDirection>[0 1 0]'</forceDirection>
       <forceFunction>
         <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -187,10 +191,6 @@
           <y>[0      0  .05  0  0]'</y>
         </TabularFunction>
       </forceFunction>
-      <connect ref="../Object[Sphere]/Frame[C]"/>
-      <enableOpenMBVForce>
-        <scaleLength>1.</scaleLength>
-      </enableOpenMBVForce>
     </KineticExcitation>
 
     <GeneralizedPositionSensor name="AngularSensor" xmlns="http://www.mbsim-env.de/MBSimControl">
@@ -236,13 +236,13 @@
       </function>
     </BinarySignalOperation>
     <KineticExcitation name="Actuator" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Object[Pendulum]/Frame[fBottom]" ref2="../Object[Base]/Frame[fTop]"/>
       <momentDirection>[0 0 -1]'</momentDirection>
       <momentFunction>
         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
           <returnSignal ref="../../Link[Excitation]"/>
         </SignalFunction>
       </momentFunction>
-      <connect ref1="../Object[Pendulum]/Frame[fBottom]" ref2="../Object[Base]/Frame[fTop]"/>
     </KineticExcitation>
   </links>
 </Group>

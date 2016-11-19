@@ -101,6 +101,7 @@
     </objects>
     <links>
       <Contact name="Contact1">
+        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
         <normalForceLaw>
           <UnilateralConstraint/>
         </normalForceLaw>
@@ -119,7 +120,6 @@
             <frictionCoefficient unit="-">0.1</frictionCoefficient>
           </PlanarCoulombImpact>
         </tangentialImpactLaw>
-        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
       </Contact>
     </links>
     <enableOpenMBVFrameI>

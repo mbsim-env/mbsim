@@ -49,7 +49,7 @@ const Vector<Ref, double> fromComplex(const Vector<Ref, complex<double> > &x) {
 
 namespace MBSimAnalyser {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Eigenanalyser)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMANALYSER, Eigenanalyser)
 
   Eigenanalyser::Residuum::Residuum(DynamicSystemSolver *sys_, double t_) : sys(sys_), t(t_) {}
 

@@ -162,6 +162,7 @@ namespace MBSim {
 
       void setTranslationDependentRotation(bool dep) { translationDependentRotation = dep; }
       void setCoordinateTransformationForRotation(bool ct) { coordinateTransformation = ct; }
+      void setBodyFixedRepresentationOfAngularVelocity(bool bf) { bodyFixedRepresentationOfAngularVelocity = bf; }
 
       /*!
        * \brief get Kinematic for translational motion
@@ -377,6 +378,8 @@ namespace MBSim {
       bool updPjb, updGC, updGJ, updWTS, updT, updateByReference;
 
       Frame Z;
+
+      bool bodyFixedRepresentationOfAngularVelocity;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

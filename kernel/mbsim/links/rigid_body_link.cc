@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true) {
+  RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), support(NULL) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     FArrow.resize(1);
     MArrow.resize(1);
@@ -42,7 +42,7 @@ namespace MBSim {
     for(unsigned i=0; i<body.size(); i++) {
       Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
       h[j][i]>>hParent(I);
-      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->gethSize(j)-1);
+      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       h[j][body.size()+i]>>hParent(I);
     }
   } 
@@ -51,7 +51,7 @@ namespace MBSim {
     for(unsigned i=0; i<body.size(); i++) {
       Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
       r[j][i]>>rParent(I);
-      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->gethSize(j)-1);
+      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       r[j][body.size()+i]>>rParent(I);
     }
   } 
@@ -62,7 +62,7 @@ namespace MBSim {
       Index I = Index(body[i]->getFrameForKinematics()->gethInd(j),body[i]->getFrameForKinematics()->gethInd(j)+body[i]->getFrameForKinematics()->gethSize(j)-1);
 
       W[j][i]>>WParent(I,J);
-      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->gethSize(j)-1);
+      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       W[j][body.size()+i]>>WParent(I,J);
     }
   } 
@@ -73,7 +73,7 @@ namespace MBSim {
       Index I = Index(body[i]->getFrameForKinematics()->gethInd(j),body[i]->getFrameForKinematics()->gethInd(j)+body[i]->getFrameForKinematics()->gethSize(j)-1);
 
       V[j][i]>>VParent(I,J);
-      I = Index(body[i]->getFrameOfReference()->gethInd(j),body[i]->getFrameOfReference()->gethInd(j)+body[i]->getFrameOfReference()->gethSize(j)-1);
+      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       V[j][body.size()+i]>>VParent(I,J);
     }
   } 
@@ -81,7 +81,7 @@ namespace MBSim {
   void RigidBodyLink::updatePositions() {
     for(unsigned i=0; i<body.size(); i++) {
       C[i].setPosition(body[i]->getFrameForKinematics()->evalPosition());
-      C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());
+      C[i].setOrientation(support->getOrientation());
     }
     updPos = false;
   }
@@ -102,8 +102,8 @@ namespace MBSim {
 
   void RigidBodyLink::updateForceDirections() {
     for(unsigned i=0; i<body.size(); i++) {
-      DF[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->evalPJT();
-      DM[i] = body[i]->getFrameOfReference()->evalOrientation()*body[i]->evalPJR();
+      DF[i] = support->evalOrientation()*body[i]->evalPJT();
+      DM[i] = support->evalOrientation()*body[i]->evalPJR();
     }
     updFD = false;
   }
@@ -167,8 +167,16 @@ namespace MBSim {
   }
 
   void RigidBodyLink::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==resolveXMLPath) {
+      if(saved_supportFrame!="")
+        setSupportFrame(getByPath<Frame>(saved_supportFrame));
       Link::init(stage);
+    }
+    else if(stage==resize) {
+      Link::init(stage);
+
+      if(!support)
+        support = body[0]->getFrameOfReference();
 
       F.resize(body.size());
       M.resize(body.size());
@@ -194,18 +202,20 @@ namespace MBSim {
         stringstream s;
         s << "F" << i;
         C.push_back(FloatingRelativeFrame(s.str()));
-        C[i].getJacobianOfTranslation(0,false).resize(body[i]->getFrameOfReference()->gethSize());
-        C[i].getJacobianOfRotation(0,false).resize(body[i]->getFrameOfReference()->gethSize());
-        C[i].getJacobianOfTranslation(1,false).resize(body[i]->getFrameOfReference()->gethSize(1));
-        C[i].getJacobianOfRotation(1,false).resize(body[i]->getFrameOfReference()->gethSize(1));
+        C[i].getJacobianOfTranslation(0,false).resize(support->gethSize());
+        C[i].getJacobianOfRotation(0,false).resize(support->gethSize());
+        C[i].getJacobianOfTranslation(1,false).resize(support->gethSize(1));
+        C[i].getJacobianOfRotation(1,false).resize(support->gethSize(1));
         C[i].setParent(this);
-        C[i].setFrameOfReference(body[i]->getFrameOfReference());
+        C[i].setFrameOfReference(support);
       }
       for(unsigned int i=0; i<body.size(); i++) {
-        h[0].push_back(Vec(body[i]->getFrameOfReference()->gethSize()));
+        h[0].push_back(Vec(support->gethSize()));
         h[1].push_back(Vec(6));
-        W[0].push_back(Mat(body[i]->getFrameOfReference()->gethSize(),laSize));
+        W[0].push_back(Mat(support->gethSize(),laSize));
         W[1].push_back(Mat(6,laSize));
+        V[0].push_back(Mat(support->gethSize(),laSize));
+        V[1].push_back(Mat(6,laSize));
       }
     }
     else if(stage==plotting) {
@@ -297,8 +307,10 @@ namespace MBSim {
 
   void RigidBodyLink::initializeUsingXML(DOMElement* element) {
     Link::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
+    if(e) saved_supportFrame=E(e)->getAttribute("ref");
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
       RigidBodyLink::setOpenMBVForce(ombv.createOpenMBV(e));

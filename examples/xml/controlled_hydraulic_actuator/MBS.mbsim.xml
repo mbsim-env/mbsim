@@ -31,11 +31,11 @@
   </objects>
   <links>
     <Joint name="JackJoint">
-        <forceDirection>[1,0;0,1;0,0]</forceDirection>
-        <forceLaw>
-          <BilateralConstraint/>
-        </forceLaw>
       <connect ref1="../Group[Rocker]/Object[LeftPin]/Frame[C]" ref2="../Group[HydraulicActor]/Object[Plunger]/Frame[Top]"/>
+      <forceDirection>[1,0;0,1;0,0]</forceDirection>
+      <forceLaw>
+        <BilateralConstraint/>
+      </forceLaw>
     </Joint>
   </links>
   <environments>

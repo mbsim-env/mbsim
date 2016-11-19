@@ -7,7 +7,8 @@ libkinetics_la_SOURCES = linear_spring_damper_force.cc\
 			 linear_regularized_stribeck_friction.cc\
 			 influence_function.cc\
 			 flexibility_influence_function.cc\
-			 constant_influence_function.cc
+			 constant_influence_function.cc\
+			 linear_elastic_function.cc
 
 kineticsincludedir = $(includedir)/mbsim/functions/kinetics
 
@@ -23,4 +24,5 @@ kineticsinclude_HEADERS = kinetics.h\
 			  linear_regularized_stribeck_friction.h\
 			  influence_function.h\
 			  flexibility_influence_function.h\
-			  constant_influence_function.h
+			  constant_influence_function.h\
+			  linear_elastic_function.h

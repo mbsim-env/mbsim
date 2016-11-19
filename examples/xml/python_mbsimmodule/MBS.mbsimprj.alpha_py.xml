@@ -134,6 +134,7 @@
       </objects>
       <links>
         <SpringDamper name="Spring0">
+          <connect ref1="../Frame[I]" ref2="../Object[Box0]/Frame[C]"/>
           <forceFunction>
             <LinearSpringDamperForce>
               <stiffnessCoefficient>3*c</stiffnessCoefficient>
@@ -141,7 +142,6 @@
             </LinearSpringDamperForce>
           </forceFunction>
           <unloadedLength>0</unloadedLength>
-          <connect ref1="../Frame[I]" ref2="../Object[Box0]/Frame[C]"/>
           <enableOpenMBVCoilSpring>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
@@ -150,9 +150,11 @@
           </enableOpenMBVCoilSpring>
         </SpringDamper>
         <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
+          <connect ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
           <stiffness>3*c</stiffness>
         </PySpringDamperXMLInit>
         <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
+          <connect ref1="../Frame[I]" ref2="../Object[Box2]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
           <pyScript objName="self_x">
             import OpenMBV
             self_x.c=3*c
@@ -162,13 +164,15 @@
             self_x.coilspringOpenMBV.setType(OpenMBV.CoilSpring.polyline)
           </pyScript>
         </PySpringDamperPyScriptInit>
-        <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest"/>
+        <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest">
+          <connect ref1="../Frame[I]" ref2="../Object[Box3]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
+        </PySpringDamperEmpty>
         <SpringDamper name="Spring4">
+          <connect ref1="../Frame[I4]" ref2="../Object[Box4]/Frame[C]"/>
           <forceFunction>
             <PyLinearSpringDamper xmlns="http://mypytest"/>
           </forceFunction>
           <unloadedLength>0</unloadedLength>
-          <connect ref1="../Frame[I4]" ref2="../Object[Box4]/Frame[C]"/>
           <enableOpenMBVCoilSpring>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>

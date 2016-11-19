@@ -123,6 +123,7 @@ namespace MBSimGUI {
 
       void updateWidget();
       void setFrame(const QString &str, Frame *framePtr);
+      void setDefaultFrame(const QString &def);
       QString getFrame() const;
 
     protected:
@@ -130,6 +131,7 @@ namespace MBSimGUI {
       Element* element;
       FrameBrowser *frameBrowser;
       Frame *selectedFrame;
+      QString def;
 
     public slots:
       void setFrame(); 
@@ -350,6 +352,7 @@ namespace MBSimGUI {
     public:
     ConnectFramesWidget(int n, Element* element);
 
+    void setDefaultFrame(const QString &def) { widget[0]->setDefaultFrame(def); }
     void updateWidget();
 
     protected:

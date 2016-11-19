@@ -235,12 +235,13 @@ namespace MBSimGUI {
 
   class SpringDamperPropertyFactory: public PropertyFactory {
     public:
-      SpringDamperPropertyFactory(Element *parent_);
+      SpringDamperPropertyFactory(Element *parent_, const std::string &ext="SSS");
       PropertyInterface* createProperty(int i=0);
       MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
       Element *parent;
+      std::string ext;
       std::vector<MBXMLUtils::FQN> name;
   };
 

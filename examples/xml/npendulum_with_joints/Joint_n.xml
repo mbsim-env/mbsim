@@ -1,8 +1,8 @@
 <Joint name="Gelenk{n+1}" xmlns="http://www.mbsim-env.de/MBSim"
   xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+  <connect ref1="../Object[Stab{n}]/Frame[U]" ref2="../Object[Stab{n+1}]/Frame[O]"/>
   <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
   <forceLaw>
     <BilateralConstraint/>
   </forceLaw>
-  <connect ref1="../Object[Stab{n}]/Frame[U]" ref2="../Object[Stab{n+1}]/Frame[O]"/>
 </Joint>

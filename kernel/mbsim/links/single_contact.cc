@@ -33,7 +33,6 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/objectfactory.h>
-#include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
 #endif
 
@@ -52,10 +51,8 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactFrame(2)
 #endif
-          , rootID(0), saved_ref1(""), saved_ref2("") {
+          , rootID(0) {
   }
-
-  SingleContact::~SingleContact() {}
 
   void SingleContact::updatewb() {
     if(gdActive[normal]) {
@@ -493,12 +490,7 @@ namespace MBSim {
   }
 
   void SingleContact::init(InitStage stage) {
-    if (stage == resolveXMLPath) {
-      if (saved_ref1 != "" && saved_ref2 != "")
-        connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
-      ContourLink::init(stage);
-    }
-    else if (stage == resize) {
+    if (stage == resize) {
       ContourLink::init(stage);
 
       RF.resize(1+getFrictionDirections());
@@ -527,9 +519,6 @@ namespace MBSim {
     }
     else if (stage == unknownStage) {
       ContourLink::init(stage);
-
-      if(contour[0]==NULL or contour[1]==NULL)
-        THROW_MBSIMERROR("Not all connections are given!");
 
       if (contactKinematics == 0) {
         contactKinematics = contour[0]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
@@ -696,9 +685,10 @@ namespace MBSim {
           for (unsigned int i = 0; i < 2; i++) {
             vector<double> data;
             data.push_back(getTime());
-            data.push_back(cFrame[i]->evalPosition()(0));
-            data.push_back(cFrame[i]->getPosition()(1));
-            data.push_back(cFrame[i]->getPosition()(2));
+            Vec3 toPoint = cFrame[i]->evalPosition();
+            data.push_back(toPoint(0));
+            data.push_back(toPoint(1));
+            data.push_back(toPoint(2));
             Vec3 cardan = AIK2Cardan(cFrame[i]->evalOrientation());
             data.push_back(cardan(0));
             data.push_back(cardan(1));
@@ -711,9 +701,10 @@ namespace MBSim {
         vector<double> data;
         if (contactArrow) {
           data.push_back(getTime());
-          data.push_back(cFrame[1]->evalPosition()(0));
-          data.push_back(cFrame[1]->getPosition()(1));
-          data.push_back(cFrame[1]->getPosition()(2));
+          Vec3 toPoint = cFrame[1]->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
           Vec3 F = evalGlobalForceDirection().col(0)*evalGeneralizedNormalForce();
           data.push_back(F(0));
           data.push_back(F(1));
@@ -724,9 +715,10 @@ namespace MBSim {
         if (frictionArrow && getFrictionDirections() > 0) { // friction force
           data.clear();
           data.push_back(getTime());
-          data.push_back(cFrame[1]->evalPosition()(0));
-          data.push_back(cFrame[1]->getPosition()(1));
-          data.push_back(cFrame[1]->getPosition()(2));
+          Vec3 toPoint = cFrame[1]->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
           Vec3 F = evalGlobalForceDirection()(Index(0,2),Index(1, getFrictionDirections()))*evalGeneralizedTangentialForce();
           data.push_back(F(0));
           data.push_back(F(1));
@@ -1348,11 +1340,6 @@ namespace MBSim {
       FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
-
-    //Save contour names for initialization
-    e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref1 = E(e)->getAttribute("ref1");
-    saved_ref2 = E(e)->getAttribute("ref2");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     //Contact points
