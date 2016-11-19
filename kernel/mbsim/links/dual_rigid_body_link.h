@@ -1,4 +1,5 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,33 +14,35 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: martin.o.foerg@googlemail.com
+ * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _KINEMATIC_CONSTRAINT_H
-#define _KINEMATIC_CONSTRAINT_H
+#ifndef _DUAL_RIGID_BODY_LINK_H_
+#define _DUAL_RIGID_BODY_LINK_H_
 
-#include "mbsim/constraints/generalized_constraint.h"
+#include "mbsim/links/rigid_body_link.h"
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
+#endif
 
 namespace MBSim {
 
-  class RigidBody;
-
-  class KinematicConstraint : public GeneralizedConstraint {
-
+  class DualRigidBodyLink : public RigidBodyLink {
     public:
-      KinematicConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(0), saved_DependentBody("") { }
+      DualRigidBodyLink(const std::string &name="") : RigidBodyLink(name) { }
 
-      void setDependentRigidBody(RigidBody* body) {bd=body; }
+      void connect(RigidBody *body);
+      void connect(RigidBody *body1, RigidBody *body2);
 
+      std::string getType() const { return "DualRigidBodyLink"; }
       void init(InitStage stage);
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
-    protected:
-      RigidBody *bd;
-
-      std::string saved_DependentBody;
+    private:
+      std::string saved_ref, saved_ref1, saved_ref2;
   };
 
 }

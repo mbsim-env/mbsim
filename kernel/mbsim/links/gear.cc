@@ -33,10 +33,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Gear, MBSIM%"Gear")
 
-  Gear::Gear(const string &name) : RigidBodyLink(name), fl(NULL), il(NULL) {
-    connect(NULL, -1);
-  }
-
   Gear::~Gear() {
     delete fl;
     if(il) delete il;
@@ -51,10 +47,6 @@ namespace MBSim {
     fl->setParent(this);
   }
 
-  void Gear::addTransmission(const Transmission &transmission) { 
-    connect(transmission.body, transmission.ratio);
-  }
-
   void Gear::updateGeneralizedForces() {
     if(isSetValued())
       lambda = la;
@@ -65,17 +57,17 @@ namespace MBSim {
 
  void Gear::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_DependentBody!="")
-        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      if (saved_IndependentBody.size()>0) {
-        for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
-          body.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
+      if (saved_gearOutput!="")
+        setGearOutput(getByPath<RigidBody>(saved_gearOutput));
+      if (saved_gearInput.size()>0) {
+        for (unsigned int i=0; i<saved_gearInput.size(); i++)
+          body.push_back(getByPath<RigidBody>(saved_gearInput[i]));
       }
       RigidBodyLink::init(stage);
     }
     else if(stage==unknownStage) {
       for(unsigned int i=0; i<body.size(); i++) {
-        if(body[i] and body[i]->getuRelSize()!=1)
+        if(body[i]->getuRelSize()!=1)
           THROW_MBSIMERROR("rigid bodies must have of 1 dof!");
       }
       if(fl->isSetValued()) {
@@ -93,17 +85,18 @@ namespace MBSim {
 
   void Gear::initializeUsingXML(DOMElement* element) {
     RigidBodyLink::initializeUsingXML(element);
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceLaw");
-    setGeneralizedForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
-    saved_DependentBody=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"transmissions");
-    DOMElement *ee=e->getFirstElementChild();
-    while(ee && E(ee)->getTagName()==MBSIM%"Transmission") {
-      saved_IndependentBody.push_back(E(E(ee)->getFirstElementChildNamed(MBSIM%"rigidBody"))->getAttribute("ref"));
-      ratio.push_back(getDouble(E(ee)->getFirstElementChildNamed(MBSIM%"ratio")));
-      ee=ee->getNextElementSibling();
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"gearOutput");
+    saved_gearOutput=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"gearOutput");
+    saved_gearOutput = E(e)->getAttribute("ref");
+    e=e->getNextElementSibling();
+    while(e && E(e)->getTagName()==MBSIM%"gearInput") {
+      saved_gearInput.push_back(E(e)->getAttribute("ref"));
+      ratio.push_back(stod(E(e)->getAttribute("ratio")));
+      e=e->getNextElementSibling();
     }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceLaw");
+    setGeneralizedForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
   }
 
 }

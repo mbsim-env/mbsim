@@ -22,26 +22,19 @@
 #include "mbsim/constraints/generalized_constraint.h"
 #include "mbsim/links/gear.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
-#endif
-
 namespace MBSim {
 
   class RigidBody;
-  class Frame;
 
   class GearConstraint : public GeneralizedConstraint {
 
     public:
-      GearConstraint(const std::string &name="");
-
-      void addTransmission(const Transmission &transmission);
+      GearConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(NULL) { }
 
       void init(InitStage stage);
 
-      void setDependentRigidBody(RigidBody* body_) {bd=body_; }
+      void setDependentRigidBody(RigidBody* body_) { bd=body_; }
+      void addIndependentRigidBody(RigidBody *body, double ratio);
 
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
@@ -51,20 +44,6 @@ namespace MBSim {
 
       virtual std::string getType() const { return "GearConstraint"; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      /** \brief Visualize a force arrow acting on frame2 */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        FArrow=ombv.createOpenMBV();
-      }
-
-      /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-        MArrow=ombv.createOpenMBV();
-      }
-#endif
-
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
@@ -72,10 +51,6 @@ namespace MBSim {
 
       std::string saved_DependentBody;
       std::vector<std::string> saved_IndependentBody;
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
-#endif
   };
 
 }

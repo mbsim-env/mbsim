@@ -17,6 +17,7 @@ liblink_la_SOURCES = link.cc\
 		     floating_frame_link.cc\
 		     contour_link.cc\
 		     rigid_body_link.cc\
+		     dual_rigid_body_link.cc\
 		     kinetic_excitation.cc\
 		     kinematic_excitation.cc\
 		     generalized_position_excitation.cc\
@@ -45,6 +46,7 @@ linkinclude_HEADERS = link.h\
 		      floating_frame_link.h\
 		      contour_link.h\
 		      rigid_body_link.h\
+		      dual_rigid_body_link.h\
 		      kinetic_excitation.h\
 		      kinematic_excitation.h\
 		      generalized_position_excitation.h\

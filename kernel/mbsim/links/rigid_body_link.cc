@@ -59,7 +59,7 @@ namespace MBSim {
   void RigidBodyLink::updateWRef(const Mat &WParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(body[i]->getFrameForKinematics()->gethInd(j),body[i]->getFrameForKinematics()->gethInd(j)+body[i]->getFrameForKinematics()->gethSize(j)-1);
+      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
 
       W[j][i]>>WParent(I,J);
       I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
@@ -70,7 +70,7 @@ namespace MBSim {
   void RigidBodyLink::updateVRef(const Mat &VParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(body[i]->getFrameForKinematics()->gethInd(j),body[i]->getFrameForKinematics()->gethInd(j)+body[i]->getFrameForKinematics()->gethSize(j)-1);
+      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
 
       V[j][i]>>VParent(I,J);
       I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
@@ -333,15 +333,6 @@ namespace MBSim {
     updRMV = true;
     for(unsigned int i=0; i<C.size(); i++)
       C[i].resetUpToDate();
-  }
-
-  void RigidBodyLink::connect(RigidBody *body_) {
-    body.push_back(body_);
-  }
-
-  void RigidBodyLink::connect(RigidBody *body_, double ratio_) {
-    body.push_back(body_);
-    ratio.push_back(ratio_);
   }
 
 }

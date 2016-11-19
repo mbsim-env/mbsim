@@ -20,20 +20,19 @@
 #ifndef _GENERALIZED_CONNECTION_H_
 #define _GENERALIZED_CONNECTION_H_
 
-#include "mbsim/links/rigid_body_link.h"
+#include "mbsim/links/dual_rigid_body_link.h"
 
 namespace MBSim {
 
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
 
-  class GeneralizedConnection : public RigidBodyLink {
+  class GeneralizedConnection : public DualRigidBodyLink {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
-      RigidBody *body[2];
     public:
-      GeneralizedConnection(const std::string &name="");
+      GeneralizedConnection(const std::string &name="") : DualRigidBodyLink(name), fl(NULL), il(NULL) { }
       ~GeneralizedConnection();
 
       void updateGeneralizedForces();
@@ -46,13 +45,7 @@ namespace MBSim {
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
 
-      void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
-      void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
-
       void initializeUsingXML(xercesc::DOMElement * element);
-
-    private:
-      std::string saved_body1, saved_body2;
   };
 
 }

@@ -298,12 +298,7 @@
   <constraints>
     <GearConstraint xmlns="http://www.mbsim-env.de/MBSim" name="Constraint_Motor_Crank">
       <dependentRigidBody ref="../Object[Crank]"/>
-      <transmissions>
-        <Transmission>
-          <rigidBody ref="../Object[Motor]"/>
-          <ratio>-motor_TransmissionRadius/crank_TransmissionRadius</ratio>
-        </Transmission>
-      </transmissions>
+      <independentRigidBody ref="../Object[Motor]" ratio="-motor_TransmissionRadius/crank_TransmissionRadius"/>
     </GearConstraint>
     <JointConstraint xmlns="http://www.mbsim-env.de/MBSim" name="Constraint_Rocker_Piston">
       <dependentRigidBodiesFirstSide>

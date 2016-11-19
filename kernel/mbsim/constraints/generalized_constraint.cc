@@ -27,9 +27,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  GeneralizedConstraint::GeneralizedConstraint(const std::string &name) : Constraint(name), support(NULL) {
-  }
-
   void GeneralizedConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_supportFrame!="")
@@ -44,6 +41,20 @@ namespace MBSim {
     Constraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
     if(e) saved_supportFrame=E(e)->getAttribute("ref");
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+      FArrow=ombv.createOpenMBV(e);
+    }
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if (e) {
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
+      MArrow=ombv.createOpenMBV(e);
+    }
+#endif
   }
 
 }

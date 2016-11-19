@@ -19,7 +19,7 @@
 #ifndef _GENERALIZED_FRICTION_H_
 #define _GENERALIZED_FRICTION_H_
 
-#include "mbsim/links/rigid_body_link.h"
+#include "mbsim/links/dual_rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 namespace MBSim {
@@ -27,13 +27,12 @@ namespace MBSim {
   class RigidBody;
   class FrictionForceLaw;
 
-  class GeneralizedFriction : public RigidBodyLink {
+  class GeneralizedFriction : public DualRigidBodyLink {
     protected:
       FrictionForceLaw *func;
       Function<double(double)> *laN;
-      RigidBody *body[2];
     public:
-      GeneralizedFriction(const std::string &name="");
+      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), func(NULL), laN(0) { }
       ~GeneralizedFriction();
       void updateGeneralizedForces();
 
@@ -49,13 +48,7 @@ namespace MBSim {
         laN->setParent(this);
       }
 
-      void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
-      void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
-
       void initializeUsingXML(xercesc::DOMElement *element);
-
-    private:
-      std::string saved_body1, saved_body2;
   };
 
 }

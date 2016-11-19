@@ -73,8 +73,6 @@ namespace MBSim {
       void updaterRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void updateVRef(const fmatvec::Mat &WParent, int j=0);
-      void connect(RigidBody *body);
-      void connect(RigidBody *body, double ratio);
 
       std::string getType() const { return "RigidBodyLink"; }
       void init(InitStage stage);

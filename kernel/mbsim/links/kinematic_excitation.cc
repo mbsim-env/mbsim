@@ -25,6 +25,8 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
@@ -69,8 +71,8 @@ namespace MBSim {
 
   void KinematicExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_DependentBody!="")
-        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
+      if (saved_ref!="")
+        connect(getByPath<RigidBody>(saved_ref));
       RigidBodyLink::init(stage);
     }
     else if(stage==unknownStage) {
@@ -84,6 +86,12 @@ namespace MBSim {
       RigidBodyLink::init(stage);
     if(fl) fl->init(stage);
     if(il) il->init(stage);
+  }
+
+  void KinematicExcitation::initializeUsingXML(DOMElement* element) {
+    RigidBodyLink::initializeUsingXML(element);
+    xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref=E(e)->getAttribute("ref");
   }
 
 }

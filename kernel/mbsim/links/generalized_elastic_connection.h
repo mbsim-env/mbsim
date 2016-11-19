@@ -19,7 +19,7 @@
 #ifndef _GENERALIZED_ELASTIC_CONNECTION_H_
 #define _GENERALIZED_ELASTIC_CONNECTION_H_
 
-#include "mbsim/links/rigid_body_link.h"
+#include "mbsim/links/dual_rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -29,12 +29,11 @@
 
 namespace MBSim {
 
-  class GeneralizedElasticConnection : public RigidBodyLink {
+  class GeneralizedElasticConnection : public DualRigidBodyLink {
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
-      RigidBody *body[2];
     public:
-      GeneralizedElasticConnection(const std::string &name="");
+      GeneralizedElasticConnection(const std::string &name="") : DualRigidBodyLink(name), func(NULL) { }
       ~GeneralizedElasticConnection();
 
       void updateGeneralizedForces();
@@ -51,10 +50,6 @@ namespace MBSim {
         func->setName("GeneralizedForce");
       }
 
-      void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
-      void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
-
-      void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 
     private:

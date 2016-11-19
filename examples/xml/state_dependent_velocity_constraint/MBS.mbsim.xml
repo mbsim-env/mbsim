@@ -86,13 +86,13 @@
     <links/>
     <constraints>
         <GeneralizedVelocityConstraint name="KinematicConstraint2">
-            <dependentRigidBody ref="../Object[RigidBody1]" />
             <enableOpenMBVForce>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVForce>
             <enableOpenMBVMoment>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVMoment>
+            <dependentRigidBody ref="../Object[RigidBody1]" />
             <initialState>
                 <pv:xmlVector>
                     <pv:ele>-l/2</pv:ele>

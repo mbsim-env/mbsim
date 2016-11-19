@@ -21,7 +21,6 @@
 #include "mbsim/links/generalized_connection.h"
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/bilateral_impact.h>
-#include "mbsim/objects/rigid_body.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -31,11 +30,6 @@ using namespace xercesc;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedConnection, MBSIM%"GeneralizedConnection")
-
-  GeneralizedConnection::GeneralizedConnection(const string &name) : RigidBodyLink(name), fl(NULL), il(NULL) {
-    body[0] = NULL;
-    body[1] = NULL;
-  }
 
   GeneralizedConnection::~GeneralizedConnection() {
     delete fl;
@@ -60,49 +54,24 @@ namespace MBSim {
   }
 
  void GeneralizedConnection::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_body1!="")
-        setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
-      if(saved_body2!="")
-        setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
-      if(body[1]==NULL)
-        THROW_MBSIMERROR("rigid body on second side must be given!");
-    }
-    else if(stage==resize) {
-      if(body[0]) {
-        RigidBodyLink::body.resize(2);
-        RigidBodyLink::body[0]=body[0];
-      }
-      else
-        RigidBodyLink::body.resize(1);
-      RigidBodyLink::body[1]=body[1];
-      ratio.resize(RigidBodyLink::body.size());
-      ratio[0] = -1;
-      ratio[ratio.size()-1] = 1;
-      RigidBodyLink::init(stage);
-    }
-    else if(stage==unknownStage) {
+    if(stage==unknownStage) {
       if(fl->isSetValued()) {
         il = new BilateralImpact;
         il->setParent(this);
       }
-      RigidBodyLink::init(stage);
+      DualRigidBodyLink::init(stage);
     }
     else {
-      RigidBodyLink::init(stage);
+      DualRigidBodyLink::init(stage);
     }
     if(fl) fl->init(stage);
     if(il) il->init(stage);
   }
 
   void GeneralizedConnection::initializeUsingXML(DOMElement* element) {
-    RigidBodyLink::initializeUsingXML(element);
+    DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceLaw");
     setGeneralizedForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
-    if(e) saved_body1=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
-    saved_body2=E(e)->getAttribute("ref");
   }
 
 }

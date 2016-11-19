@@ -32,13 +32,13 @@ namespace MBSim {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
-      std::string saved_DependentBody;
+      std::string saved_ref;
     public:
       KinematicExcitation(const std::string &name);
       ~KinematicExcitation();
 
       void updateGeneralizedForces();
-      void setDependentRigidBody(RigidBody* body_) { body[0] = body_; }
+      void connect(RigidBody* body_) { body[0] = body_; }
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
@@ -50,6 +50,8 @@ namespace MBSim {
       bool isSingleValued() const { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
+
+      void initializeUsingXML(xercesc::DOMElement * element);
   };
 
 }

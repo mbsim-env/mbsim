@@ -148,14 +148,14 @@ namespace MBSimPowertrain {
       GearConstraint *constraint = new GearConstraint("C1"); 	 
       addConstraint(constraint); 	 
       constraint->setDependentRigidBody(shaft4);
-      constraint->addTransmission(Transmission(shaft2,1));
-      constraint->addTransmission(Transmission(planet,data.radiusPlanet/data.radiusLeftOutputShaft));
+      constraint->addIndependentRigidBody(shaft2,1);
+      constraint->addIndependentRigidBody(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
 
       constraint = new GearConstraint("C2");
       addConstraint(constraint);
       constraint->setDependentRigidBody(shaft5);
-      constraint->addTransmission(Transmission(shaft2,1));
-      constraint->addTransmission(Transmission(planet,-data.radiusPlanet/data.radiusRightOutputShaft));
+      constraint->addIndependentRigidBody(shaft2,1);
+      constraint->addIndependentRigidBody(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
     }
     else {
       double c1 = data.radiusLeftOutputShaft + data.radiusRightOutputShaft;
@@ -163,14 +163,14 @@ namespace MBSimPowertrain {
       GearConstraint *constraint = new GearConstraint("C1");
       addConstraint(constraint);
       constraint->setDependentRigidBody(shaft2);
-      constraint->addTransmission(Transmission(shaft4,data.radiusLeftOutputShaft/c1));
-      constraint->addTransmission(Transmission(shaft5,data.radiusRightOutputShaft/c1));
+      constraint->addIndependentRigidBody(shaft4,data.radiusLeftOutputShaft/c1);
+      constraint->addIndependentRigidBody(shaft5,data.radiusRightOutputShaft/c1);
 
       constraint = new GearConstraint("C2");
       addConstraint(constraint);
       constraint->setDependentRigidBody(planet);
-      constraint->addTransmission(Transmission(shaft4,c2/(data.radiusPlanet*c1)));
-      constraint->addTransmission(Transmission(shaft5,-c2/(data.radiusPlanet*c1)));
+      constraint->addIndependentRigidBody(shaft4,c2/(data.radiusPlanet*c1));
+      constraint->addIndependentRigidBody(shaft5,-c2/(data.radiusPlanet*c1));
     }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

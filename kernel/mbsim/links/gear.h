@@ -27,24 +27,18 @@ namespace MBSim {
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
 
-  struct Transmission {
-    Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
-    RigidBody *body;
-    double ratio;
-  };
-
   class Gear : public RigidBodyLink {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
-      std::string saved_DependentBody;
-      std::vector<std::string> saved_IndependentBody;
+      std::string saved_gearOutput;
+      std::vector<std::string> saved_gearInput;
     public:
-      Gear(const std::string &name="");
+      Gear(const std::string &name="") : RigidBodyLink(name), fl(NULL), il(NULL) { body.resize(1); ratio.resize(1); }
       ~Gear();
       void updateGeneralizedForces();
-      void setDependentRigidBody(RigidBody* body_) {body[0] = body_;}
-      void addTransmission(const Transmission &transmission);
+      void setGearOutput(RigidBody* body_) { body[0] = body_; ratio[0] = -1; }
+      void addGearInput(RigidBody* body_, double ratio_) { body.push_back(body_); ratio.push_back(ratio_); }
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }

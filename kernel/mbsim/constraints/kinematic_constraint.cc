@@ -31,9 +31,6 @@ using namespace xercesc;
 
 namespace MBSim {
  
-  KinematicConstraint::KinematicConstraint(const std::string &name) : GeneralizedConstraint(name), bd(0), saved_DependentBody("") {
-  }
-
   void KinematicConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
@@ -52,20 +49,6 @@ namespace MBSim {
     GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
-    }
-#endif
   }
 
 }

@@ -476,7 +476,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   GearConstraint *constraint = new GearConstraint("C0");
   addConstraint(constraint);
   constraint->setDependentRigidBody(shaft1);
-  constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1));
+  constraint->addIndependentRigidBody(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1);
 
   //actuator = new Actuator("Fahrwiderstand");
   //addLink(load);
