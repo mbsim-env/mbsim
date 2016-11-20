@@ -17,7 +17,8 @@
  */
 
 #include <config.h>
-#include "mbsim/constraints/gear_constraint.h"
+#include "mbsim/constraints/generalized_gear_constraint.h"
+#include "mbsim/links/generalized_gear.h"
 #include <mbsim/constitutive_laws/bilateral_constraint.h>
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/dynamic_system.h"
@@ -30,9 +31,9 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GearConstraint, MBSIM%"GearConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedGearConstraint, MBSIM%"GeneralizedGearConstraint")
 
-  void GearConstraint::init(InitStage stage) {
+  void GeneralizedGearConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
@@ -50,12 +51,12 @@ namespace MBSim {
       GeneralizedConstraint::init(stage);
   }
 
-  void GearConstraint::addIndependentRigidBody(RigidBody *body, double ratio_) {
+  void GeneralizedGearConstraint::addIndependentRigidBody(RigidBody *body, double ratio_) {
     bi.push_back(body);
     ratio.push_back(ratio_);
   }
 
-  void GearConstraint::updateGeneralizedCoordinates() {
+  void GeneralizedGearConstraint::updateGeneralizedCoordinates() {
     bd->getqRel(false).init(0);
     bd->getuRel(false).init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
@@ -65,7 +66,7 @@ namespace MBSim {
     updGC = false;
   }
 
-  void GearConstraint::updateGeneralizedJacobians(int j) {
+  void GeneralizedGearConstraint::updateGeneralizedJacobians(int j) {
     bd->getJRel(0,false).init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
       bd->getJRel(0,false)(Range<Var,Var>(0,bi[i]->getuRelSize()-1),Range<Var,Var>(0,bi[i]->gethSize()-1)) += bi[i]->evalJRel()*ratio[i];
@@ -73,7 +74,7 @@ namespace MBSim {
     updGJ = false;
   }
 
-  void GearConstraint::initializeUsingXML(DOMElement* element) {
+  void GeneralizedGearConstraint::initializeUsingXML(DOMElement* element) {
     GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
@@ -86,8 +87,8 @@ namespace MBSim {
     }
   }
 
-  void GearConstraint::setUpInverseKinetics() {
-    Gear *gear = new Gear(string("Gear")+name);
+  void GeneralizedGearConstraint::setUpInverseKinetics() {
+    GeneralizedGear *gear = new GeneralizedGear(string("GeneralizedGear")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
     gear->setGearOutput(bd);
     for(unsigned int i=0; i<bi.size(); i++)

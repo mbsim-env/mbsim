@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/links/gear.h"
+#include "mbsim/links/generalized_gear.h"
 #include "mbsim/objects/rigid_body.h"
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/bilateral_impact.h>
@@ -31,23 +31,23 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Gear, MBSIM%"Gear")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedGear, MBSIM%"GeneralizedGear")
 
-  Gear::~Gear() {
+  GeneralizedGear::~GeneralizedGear() {
     delete fl;
     if(il) delete il;
   }
 
-  bool Gear::isSetValued() const {
+  bool GeneralizedGear::isSetValued() const {
     return fl->isSetValued();
   }
 
-  void Gear::setGeneralizedForceLaw(GeneralizedForceLaw * fl_) {
+  void GeneralizedGear::setGeneralizedForceLaw(GeneralizedForceLaw * fl_) {
     fl=fl_;
     fl->setParent(this);
   }
 
-  void Gear::updateGeneralizedForces() {
+  void GeneralizedGear::updateGeneralizedForces() {
     if(isSetValued())
       lambda = la;
     else
@@ -55,7 +55,7 @@ namespace MBSim {
     updla = false;
   }
 
- void Gear::init(InitStage stage) {
+ void GeneralizedGear::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_gearOutput!="")
         setGearOutput(getByPath<RigidBody>(saved_gearOutput));
@@ -83,7 +83,7 @@ namespace MBSim {
     if(il) il->init(stage);
   }
 
-  void Gear::initializeUsingXML(DOMElement* element) {
+  void GeneralizedGear::initializeUsingXML(DOMElement* element) {
     RigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"gearOutput");
     saved_gearOutput=E(e)->getAttribute("ref");

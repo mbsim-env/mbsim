@@ -1288,7 +1288,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GearConstraint" substitutionGroup="GeneralizedConstraint" type="GearConstraintType">
+  <xs:element name="GeneralizedGearConstraint" substitutionGroup="GeneralizedConstraint" type="GeneralizedGearConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1296,7 +1296,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="GearConstraintType">
+  <xs:complexType name="GeneralizedGearConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedConstraintType">
         <xs:sequence>
@@ -1964,7 +1964,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Gear" substitutionGroup="RigidBodyLink" type="GearType">
+  <xs:element name="GeneralizedGear" substitutionGroup="RigidBodyLink" type="GeneralizedGearType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1972,7 +1972,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="GearType">
+  <xs:complexType name="GeneralizedGearType">
     <xs:complexContent>
       <xs:extension base="RigidBodyLinkType">
         <xs:sequence>

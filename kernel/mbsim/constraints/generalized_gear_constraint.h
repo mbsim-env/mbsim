@@ -16,20 +16,19 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _GEAR_CONSTRAINT_H
-#define _GEAR_CONSTRAINT_H
+#ifndef _GENERALIZED_GEAR_CONSTRAINT_H
+#define _GENERALIZED_GEAR_CONSTRAINT_H
 
 #include "mbsim/constraints/generalized_constraint.h"
-#include "mbsim/links/gear.h"
 
 namespace MBSim {
 
   class RigidBody;
 
-  class GearConstraint : public GeneralizedConstraint {
+  class GeneralizedGearConstraint : public GeneralizedConstraint {
 
     public:
-      GearConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(NULL) { }
+      GeneralizedGearConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(NULL) { }
 
       void init(InitStage stage);
 
@@ -42,7 +41,7 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
-      virtual std::string getType() const { return "GearConstraint"; }
+      virtual std::string getType() const { return "GeneralizedGearConstraint"; }
 
     private:
       std::vector<RigidBody*> bi;

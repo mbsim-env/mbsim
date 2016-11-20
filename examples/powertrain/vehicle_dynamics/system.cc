@@ -10,7 +10,7 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/constraints/joint_constraint.h" 
-#include "mbsim/constraints/gear_constraint.h" 
+#include "mbsim/constraints/generalized_gear_constraint.h"
 #include "mbsim/links/spring_damper.h"
 #include "mbsimControl/signal_function.h"
 #include "mbsimPowertrain/differential_gear.h"
@@ -473,7 +473,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
 #endif
 
-  GearConstraint *constraint = new GearConstraint("C0");
+  GeneralizedGearConstraint *constraint = new GeneralizedGearConstraint("C0");
   addConstraint(constraint);
   constraint->setDependentRigidBody(shaft1);
   constraint->addIndependentRigidBody(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1);

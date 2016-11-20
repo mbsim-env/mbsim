@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _GEAR_H_
-#define _GEAR_H_
+#ifndef _GENERALIZED_GEAR_H_
+#define _GENERALIZED_GEAR_H_
 
 #include "mbsim/links/rigid_body_link.h"
 
@@ -27,22 +27,22 @@ namespace MBSim {
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
 
-  class Gear : public RigidBodyLink {
+  class GeneralizedGear : public RigidBodyLink {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
       std::string saved_gearOutput;
       std::vector<std::string> saved_gearInput;
     public:
-      Gear(const std::string &name="") : RigidBodyLink(name), fl(NULL), il(NULL) { body.resize(1); ratio.resize(1); }
-      ~Gear();
+      GeneralizedGear(const std::string &name="") : RigidBodyLink(name), fl(NULL), il(NULL) { body.resize(1); ratio.resize(1); }
+      ~GeneralizedGear();
       void updateGeneralizedForces();
       void setGearOutput(RigidBody* body_) { body[0] = body_; ratio[0] = -1; }
       void addGearInput(RigidBody* body_, double ratio_) { body.push_back(body_); ratio.push_back(ratio_); }
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
-      std::string getType() const { return "Gear"; }
+      std::string getType() const { return "GeneralizedGear"; }
       void init(InitStage stage);
       bool isSetValued() const;
       bool isSingleValued() const { return not(isSetValued()); }
