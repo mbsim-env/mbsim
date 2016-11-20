@@ -16,8 +16,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _KINEMATIC_CONSTRAINT_H
-#define _KINEMATIC_CONSTRAINT_H
+#ifndef _GENERALIZED_KINEMATIC_CONSTRAINT_H
+#define _GENERALIZED_KINEMATIC_CONSTRAINT_H
 
 #include "mbsim/constraints/generalized_constraint.h"
 
@@ -25,10 +25,10 @@ namespace MBSim {
 
   class RigidBody;
 
-  class KinematicConstraint : public GeneralizedConstraint {
+  class GeneralizedKinematicConstraint : public GeneralizedConstraint {
 
     public:
-      KinematicConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(0), saved_DependentBody("") { }
+      GeneralizedKinematicConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(0), saved_DependentBody("") { }
 
       void setDependentRigidBody(RigidBody* body) {bd=body; }
 

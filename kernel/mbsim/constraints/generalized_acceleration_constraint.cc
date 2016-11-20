@@ -35,10 +35,10 @@ namespace MBSim {
   void GeneralizedAccelerationConstraint::init(InitStage stage) {
     if(stage==resize) {
       x.resize(xSize);
-      KinematicConstraint::init(stage);
+      GeneralizedKinematicConstraint::init(stage);
     }
     else
-      KinematicConstraint::init(stage);
+      GeneralizedKinematicConstraint::init(stage);
     f->init(stage);
   }
 
@@ -63,7 +63,7 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement* element) {
-    KinematicConstraint::initializeUsingXML(element);
+    GeneralizedKinematicConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if(e)
       x0 = getVec(e);

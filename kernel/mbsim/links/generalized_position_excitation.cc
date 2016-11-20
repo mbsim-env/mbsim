@@ -31,7 +31,7 @@ namespace MBSim {
   }
 
   void GeneralizedPositionExcitation::init(InitStage stage) {
-    KinematicExcitation::init(stage);
+    GeneralizedKinematicExcitation::init(stage);
     f->init(stage);
   }
 

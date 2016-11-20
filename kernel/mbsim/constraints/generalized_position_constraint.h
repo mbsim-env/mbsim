@@ -19,15 +19,15 @@
 #ifndef _GENERALIZED_POSITION_CONSTRAINT_H
 #define _GENERALIZED_POSITION_CONSTRAINT_H
 
-#include "mbsim/constraints/kinematic_constraint.h"
+#include "mbsim/constraints/generalized_kinematic_constraint.h"
 #include "mbsim/functions/function.h"
 
 namespace MBSim {
 
-  class GeneralizedPositionConstraint : public KinematicConstraint {
+  class GeneralizedPositionConstraint : public GeneralizedKinematicConstraint {
 
     public:
-      GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
+      GeneralizedPositionConstraint(const std::string &name="") : GeneralizedKinematicConstraint(name), f(NULL) { }
       ~GeneralizedPositionConstraint() { delete f; }
 
       void init(Element::InitStage stage);

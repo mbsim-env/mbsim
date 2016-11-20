@@ -19,16 +19,16 @@
 #ifndef _GENERALIZED_VELOCITY_CONSTRAINT_H
 #define _GENERALIZED_VELOCITY_CONSTRAINT_H
 
-#include "mbsim/constraints/kinematic_constraint.h"
+#include "mbsim/constraints/generalized_kinematic_constraint.h"
 #include "mbsim/functions/time_dependent_function.h"
 #include "mbsim/functions/state_dependent_function.h"
 
 namespace MBSim {
 
-  class GeneralizedVelocityConstraint : public KinematicConstraint {
+  class GeneralizedVelocityConstraint : public GeneralizedKinematicConstraint {
 
     public:
-      GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name), f(NULL) {}
+      GeneralizedVelocityConstraint(const std::string &name="") : GeneralizedKinematicConstraint(name), f(NULL) { }
       ~GeneralizedVelocityConstraint() { delete f; }
 
       void init(InitStage stage);

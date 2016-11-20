@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/constraints/kinematic_constraint.h"
+#include "mbsim/constraints/generalized_kinematic_constraint.h"
 #include "mbsim/objects/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
  
-  void KinematicConstraint::init(InitStage stage) {
+  void GeneralizedKinematicConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
@@ -45,7 +45,7 @@ namespace MBSim {
       GeneralizedConstraint::init(stage);
   }
 
-  void KinematicConstraint::initializeUsingXML(DOMElement* element) {
+  void GeneralizedKinematicConstraint::initializeUsingXML(DOMElement* element) {
     GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");

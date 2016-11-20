@@ -20,17 +20,17 @@
 #ifndef _GENERALIZED_VELOCITY_EXCITATION_H_
 #define _GENERALIZED_VELOCITY_EXCITATION_H_
 
-#include "mbsim/links/kinematic_excitation.h"
+#include "mbsim/links/generalized_kinematic_excitation.h"
 #include "mbsim/functions/time_dependent_function.h"
 #include "mbsim/functions/state_dependent_function.h"
 
 namespace MBSim {
 
-  class GeneralizedVelocityExcitation : public KinematicExcitation {
+  class GeneralizedVelocityExcitation : public GeneralizedKinematicExcitation {
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
     public:
-      GeneralizedVelocityExcitation(const std::string &name) : KinematicExcitation(name) {}
+      GeneralizedVelocityExcitation(const std::string &name) : GeneralizedKinematicExcitation(name) { }
 
       void calcxSize();
       void init(InitStage stage);

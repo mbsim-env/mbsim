@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _KINEMATIC_EXCITATION_H_
-#define _KINEMATIC_EXCITATION_H_
+#ifndef _GENERALIZED_KINEMATIC_EXCITATION_H_
+#define _GENERALIZED_KINEMATIC_EXCITATION_H_
 
 #include "mbsim/links/rigid_body_link.h"
 
@@ -28,14 +28,14 @@ namespace MBSim {
   class GeneralizedImpactLaw;
   class RigidBody;
 
-  class KinematicExcitation : public RigidBodyLink {
+  class GeneralizedKinematicExcitation : public RigidBodyLink {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
       std::string saved_ref;
     public:
-      KinematicExcitation(const std::string &name);
-      ~KinematicExcitation();
+      GeneralizedKinematicExcitation(const std::string &name);
+      ~GeneralizedKinematicExcitation();
 
       void updateGeneralizedForces();
       void connect(RigidBody* body_) { body[0] = body_; }

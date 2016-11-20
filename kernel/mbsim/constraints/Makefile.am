@@ -4,7 +4,7 @@ noinst_LTLIBRARIES = libconstraint.la
 libconstraint_la_SOURCES = constraint.cc\
 			   generalized_constraint.cc\
 			   gear_constraint.cc\
-			   kinematic_constraint.cc\
+			   generalized_kinematic_constraint.cc\
 			   generalized_position_constraint.cc\
 			   generalized_velocitiy_constraint.cc\
 			   generalized_acceleration_constraint.cc\
@@ -18,7 +18,7 @@ constraintincludedir = $(includedir)/mbsim/constraints
 constraintinclude_HEADERS = constraint.h\
 			    generalized_constraint.h\
 			    gear_constraint.h\
-			    kinematic_constraint.h\
+			    generalized_kinematic_constraint.h\
 			    generalized_position_constraint.h\
 			    generalized_velocitiy_constraint.h\
 			    generalized_acceleration_constraint.h\

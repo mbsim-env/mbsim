@@ -33,7 +33,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
-    KinematicConstraint::init(stage);
+    GeneralizedKinematicConstraint::init(stage);
     f->init(stage);
   }
 
@@ -49,7 +49,7 @@ namespace MBSim {
   }
 
   void GeneralizedPositionConstraint::initializeUsingXML(DOMElement* element) {
-    KinematicConstraint::initializeUsingXML(element);
+    GeneralizedKinematicConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"constraintFunction");
     if(e) {
       Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());

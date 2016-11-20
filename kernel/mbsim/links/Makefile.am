@@ -19,7 +19,7 @@ liblink_la_SOURCES = link.cc\
 		     rigid_body_link.cc\
 		     dual_rigid_body_link.cc\
 		     kinetic_excitation.cc\
-		     kinematic_excitation.cc\
+		     generalized_kinematic_excitation.cc\
 		     generalized_position_excitation.cc\
 		     generalized_velocity_excitation.cc\
 		     generalized_acceleration_excitation.cc\
@@ -48,7 +48,7 @@ linkinclude_HEADERS = link.h\
 		      rigid_body_link.h\
 		      dual_rigid_body_link.h\
 		      kinetic_excitation.h\
-		      kinematic_excitation.h\
+		      generalized_kinematic_excitation.h\
 		      generalized_position_excitation.h\
 		      generalized_velocity_excitation.h\
 		      generalized_acceleration_excitation.h\

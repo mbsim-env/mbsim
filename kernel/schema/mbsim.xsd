@@ -1127,7 +1127,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="KinematicConstraint" substitutionGroup="GeneralizedConstraint" type="KinematicConstraintType">
+  <xs:element name="GeneralizedKinematicConstraint" substitutionGroup="GeneralizedConstraint" type="GeneralizedKinematicConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1135,7 +1135,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="KinematicConstraintType">
+  <xs:complexType name="GeneralizedKinematicConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedConstraintType">
         <xs:sequence>
@@ -1152,7 +1152,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedPositionConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedPositionConstraintType">
+  <xs:element name="GeneralizedPositionConstraint" substitutionGroup="GeneralizedKinematicConstraint" type="GeneralizedPositionConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1161,7 +1161,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedPositionConstraintType">
     <xs:complexContent>
-      <xs:extension base="KinematicConstraintType">
+      <xs:extension base="GeneralizedKinematicConstraintType">
         <xs:sequence>
           <xs:element name="constraintFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1178,7 +1178,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedVelocityConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedVelocityConstraintType">
+  <xs:element name="GeneralizedVelocityConstraint" substitutionGroup="GeneralizedKinematicConstraint" type="GeneralizedVelocityConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1187,7 +1187,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedVelocityConstraintType">
     <xs:complexContent>
-      <xs:extension base="KinematicConstraintType">
+      <xs:extension base="GeneralizedKinematicConstraintType">
         <xs:sequence>
           <xs:element name="initialState" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
@@ -1233,7 +1233,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedAccelerationConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedAccelerationConstraintType">
+  <xs:element name="GeneralizedAccelerationConstraint" substitutionGroup="GeneralizedKinematicConstraint" type="GeneralizedAccelerationConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1242,7 +1242,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedAccelerationConstraintType">
     <xs:complexContent>
-      <xs:extension base="KinematicConstraintType">
+      <xs:extension base="GeneralizedKinematicConstraintType">
         <xs:sequence>
           <xs:element name="initialState" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
@@ -1942,12 +1942,12 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="KinematicExcitation" substitutionGroup="RigidBodyLink" type="KinematicExcitationType">
+  <xs:element name="GeneralizedKinematicExcitation" substitutionGroup="RigidBodyLink" type="GeneralizedKinematicExcitationType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
       tbd
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="KinematicExcitationType">
+  <xs:complexType name="GeneralizedKinematicExcitationType">
     <xs:complexContent>
       <xs:extension base="RigidBodyLinkType">
         <xs:sequence>
