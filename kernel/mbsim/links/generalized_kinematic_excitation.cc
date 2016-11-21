@@ -18,47 +18,49 @@
  */
 
 #include <config.h>
-#include "mbsim/links/kinematic_excitation.h"
+#include "mbsim/links/generalized_kinematic_excitation.h"
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/bilateral_impact.h>
 #include "mbsim/objects/rigid_body.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSim {
 
-  KinematicExcitation::KinematicExcitation(const string &name) : RigidBodyLink(name), fl(NULL), il(NULL) {
+  GeneralizedKinematicExcitation::GeneralizedKinematicExcitation(const string &name) : DualRigidBodyLink(name), fl(NULL), il(NULL) {
     body.resize(1);
     ratio.resize(1);
     ratio[0] = 1;
   }
 
-  KinematicExcitation::~KinematicExcitation() {
+  GeneralizedKinematicExcitation::~GeneralizedKinematicExcitation() {
     delete fl;
     if(il) delete il;
   }
 
-  bool KinematicExcitation::isSetValued() const {
+  bool GeneralizedKinematicExcitation::isSetValued() const {
     return fl->isSetValued();
   }
 
-  void KinematicExcitation::setGeneralizedForceLaw(GeneralizedForceLaw * fl_) {
+  void GeneralizedKinematicExcitation::setGeneralizedForceLaw(GeneralizedForceLaw * fl_) {
     fl=fl_;
     fl->setParent(this);
   }
 
-  void KinematicExcitation::calclaSize(int j) {
+  void GeneralizedKinematicExcitation::calclaSize(int j) {
     laSize = body[0]->getuRelSize();
   }
-  void KinematicExcitation::calcgSize(int j) {
+  void GeneralizedKinematicExcitation::calcgSize(int j) {
     gSize = body[0]->getuRelSize();
   }
-  void KinematicExcitation::calcgdSize(int j) {
+  void GeneralizedKinematicExcitation::calcgdSize(int j) {
     gdSize = body[0]->getuRelSize();
   }
 
-  void KinematicExcitation::updateGeneralizedForces() {
+  void GeneralizedKinematicExcitation::updateGeneralizedForces() {
     if(isSetValued())
       lambda = la;
     else
@@ -67,13 +69,8 @@ namespace MBSim {
     updla = false;
   }
 
-  void KinematicExcitation::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if (saved_DependentBody!="")
-        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      RigidBodyLink::init(stage);
-    }
-    else if(stage==unknownStage) {
+  void GeneralizedKinematicExcitation::init(InitStage stage) {
+    if(stage==unknownStage) {
       if(fl->isSetValued()) {
         il = new BilateralImpact;
         il->setParent(this);

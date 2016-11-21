@@ -35,26 +35,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedConnectionConstraint)
 
-  GeneralizedConnectionConstraint::GeneralizedConnectionConstraint(const std::string &name) : GeneralizedConstraint(name), bi(NULL), bd(NULL) {
-  }
-
-  void GeneralizedConnectionConstraint::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if (saved_IndependentBody!="")
-        setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
-      if (saved_DependentBody!="")
-        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      GeneralizedConstraint::init(stage);
-    }
-    else if(stage==preInit) {
-      GeneralizedConstraint::init(stage);
-      bd->addDependency(this);
-      addDependency(bi);
-    }
-    else
-      GeneralizedConstraint::init(stage);
-  }
-
   void GeneralizedConnectionConstraint::updateGeneralizedCoordinates() {
     if(bi) {
       bd->getqRel(false) = bi->evalqRel();
@@ -69,38 +49,13 @@ namespace MBSim {
     updGJ = false;
   }
 
-  void GeneralizedConnectionConstraint::initializeUsingXML(DOMElement* element) {
-    GeneralizedConstraint::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
-    saved_DependentBody=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
-    if(e) saved_IndependentBody=E(e)->getAttribute("ref");
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
-    }
-  }
-
   void GeneralizedConnectionConstraint::setUpInverseKinetics() {
     GeneralizedConnection *connection = new GeneralizedConnection(string("GeneralizedConnection")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(connection);
-    connection->setRigidBodyFirstSide(bi);
-    connection->setRigidBodySecondSide(bd);
+    if(bi) connection->connect(bi,bd);
+    else connection->connect(bd);
     connection->setGeneralizedForceLaw(new BilateralConstraint);
     connection->setSupportFrame(support);
-    if(FArrow)
-      connection->setOpenMBVForce(FArrow);
-    if(MArrow)
-      connection->setOpenMBVMoment(MArrow);
   }
 
 }

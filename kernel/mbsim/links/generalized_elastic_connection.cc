@@ -19,10 +19,6 @@
 #include <config.h>
 #include "mbsim/links/generalized_elastic_connection.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/objects/rigid_body.h"
-#include <openmbvcppinterface/coilspring.h>
-#include "openmbvcppinterface/group.h"
-#include "openmbvcppinterface/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -32,11 +28,6 @@ using namespace xercesc;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedElasticConnection)
-
-  GeneralizedElasticConnection::GeneralizedElasticConnection(const string &name) : RigidBodyLink(name), func(NULL) {
-    body[0] = NULL;
-    body[1] = NULL;
-  }
 
   GeneralizedElasticConnection::~GeneralizedElasticConnection() {
     delete func;
@@ -48,48 +39,15 @@ namespace MBSim {
   }
 
   void GeneralizedElasticConnection::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_body1!="")
-        setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
-      if(saved_body2!="")
-        setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
-      if(body[1]==NULL)
-        THROW_MBSIMERROR("rigid body on second side must be given!");
-      if(body[0]) connect(body[0]);
-      connect(body[1]);
-      RigidBodyLink::init(stage);
-    }
-    else if(stage==resize) {
-      RigidBodyLink::init(stage);
-      ratio.resize(RigidBodyLink::body.size());
-      ratio[0] = -1;
-      ratio[ratio.size()-1] = 1;
-    }
-    else if(stage==unknownStage) {
-      if(body[0] and body[0]->getuRelSize()!=body[1]->getuRelSize())
-        THROW_MBSIMERROR("rigid bodies must have the same dof!");
-      RigidBodyLink::init(stage);
-    }
-    else
-      RigidBodyLink::init(stage);
+    DualRigidBodyLink::init(stage);
     func->init(stage);
   }
 
-  void GeneralizedElasticConnection::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      RigidBodyLink::plot();
-    }
-  }
-
   void GeneralizedElasticConnection::initializeUsingXML(DOMElement *element) {
-    RigidBodyLink::initializeUsingXML(element);
+    DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
     Function<VecV(VecV,VecV)> *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
-    if(e) saved_body1=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
-    saved_body2=E(e)->getAttribute("ref");
   }
 
 }

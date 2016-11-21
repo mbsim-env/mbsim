@@ -19,7 +19,7 @@
 #ifndef _GENERALIZED_SPRING_DAMPER_H_
 #define _GENERALIZED_SPRING_DAMPER_H_
 
-#include "mbsim/links/rigid_body_link.h"
+#include "mbsim/links/dual_rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
 #include "mbsim/utils/boost_parameters.h"
@@ -27,14 +27,12 @@
 
 namespace MBSim {
 
-  class GeneralizedSpringDamper : public RigidBodyLink {
+  class GeneralizedSpringDamper : public DualRigidBodyLink {
     protected:
       Function<double(double,double)> *func;
       double l0;
-      RigidBody *body[2];
-      std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
     public:
-      GeneralizedSpringDamper(const std::string &name="");
+      GeneralizedSpringDamper(const std::string &name="") : DualRigidBodyLink(name), func(NULL), l0(0) { }
       ~GeneralizedSpringDamper();
 
       void updateGeneralizedForces();
@@ -55,18 +53,7 @@ namespace MBSim {
       /** \brief Set unloaded generalized length. */
       void setUnloadedGeneralizedLength(double l0_) { l0 = l0_; }
 
-      void setRigidBodyFirstSide(RigidBody* body_) { body[0] = body_; }
-      void setRigidBodySecondSide(RigidBody* body_) { body[1] = body_; }
-
-      void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
-
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency);
-        coilspringOpenMBV=ombv.createOpenMBV();
-      }
-    private:
-      std::string saved_body1, saved_body2;
   };
 
 }

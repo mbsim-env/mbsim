@@ -31,22 +31,31 @@ namespace MBSim {
   }
 
   void GeneralizedPositionExcitation::init(InitStage stage) {
-    KinematicExcitation::init(stage);
+    GeneralizedKinematicExcitation::init(stage);
     f->init(stage);
   }
 
   void GeneralizedPositionExcitation::updateGeneralizedPositions() {
-    rrel=body[0]->evalqRel()-(*f)(getTime());
+    if(body.size()>1)
+      rrel=body[1]->evalqRel()-body[0]->evalqRel()-(*f)(getTime());
+    else
+      rrel=body[0]->evalqRel()-(*f)(getTime());
     updrrel = false;
   } 
 
   void GeneralizedPositionExcitation::updateGeneralizedVelocities() {
-    vrel=body[0]->evaluRel()-f->parDer(getTime());
+    if(body.size()>1)
+      vrel=body[1]->evaluRel()-body[0]->evaluRel()-f->parDer(getTime());
+    else
+      vrel=body[0]->evaluRel()-f->parDer(getTime());
     updvrel = false;
   }
 
   void GeneralizedPositionExcitation::updatewb() {
-    wb += body[0]->evaljRel()-f->parDerParDer(getTime());
+    if(body.size()>1)
+      wb += body[1]->evaljRel()-body[0]->evaljRel()-f->parDerParDer(getTime());
+    else
+      wb += body[0]->evaljRel()-f->parDerParDer(getTime());
   }
 
 }

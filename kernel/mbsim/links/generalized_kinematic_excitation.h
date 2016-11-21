@@ -17,45 +17,36 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _GEAR_H_
-#define _GEAR_H_
+#ifndef _GENERALIZED_KINEMATIC_EXCITATION_H_
+#define _GENERALIZED_KINEMATIC_EXCITATION_H_
 
-#include "mbsim/links/rigid_body_link.h"
+#include "mbsim/links/dual_rigid_body_link.h"
 
 namespace MBSim {
 
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
 
-  struct Transmission {
-    Transmission(RigidBody *body_, double ratio_) : body(body_), ratio(ratio_) { }
-    RigidBody *body;
-    double ratio;
-  };
-
-  class Gear : public RigidBodyLink {
+  class GeneralizedKinematicExcitation : public DualRigidBodyLink {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
-      std::string saved_DependentBody;
-      std::vector<std::string> saved_IndependentBody;
     public:
-      Gear(const std::string &name="");
-      ~Gear();
+      GeneralizedKinematicExcitation(const std::string &name);
+      ~GeneralizedKinematicExcitation();
+
       void updateGeneralizedForces();
-      void setDependentRigidBody(RigidBody* body_) {body[0] = body_;}
-      void addTransmission(const Transmission &transmission);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
-      std::string getType() const { return "Gear"; }
       void init(InitStage stage);
+      void calclaSize(int j);
+      void calcgSize(int j);
+      void calcgdSize(int j);
       bool isSetValued() const;
       bool isSingleValued() const { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
-
-      void initializeUsingXML(xercesc::DOMElement * element);
   };
 
 }

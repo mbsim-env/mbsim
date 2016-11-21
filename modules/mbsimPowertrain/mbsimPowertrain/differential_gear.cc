@@ -2,7 +2,7 @@
 #include "differential_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematics/rotation_about_fixed_axis.h"
-#include "mbsim/constraints/gear_constraint.h"
+#include "mbsim/constraints/generalized_gear_constraint.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "openmbvcppinterface/frustum.h"
@@ -139,32 +139,32 @@ namespace MBSimPowertrain {
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);
 
     if(planetIndependent) {
-      GearConstraint *constraint = new GearConstraint("C1"); 	 
+      GeneralizedGearConstraint *constraint = new GeneralizedGearConstraint("C1");
       addConstraint(constraint); 	 
       constraint->setDependentRigidBody(shaft4);
-      constraint->addTransmission(Transmission(shaft2,1));
-      constraint->addTransmission(Transmission(planet,data.radiusPlanet/data.radiusLeftOutputShaft));
+      constraint->addIndependentRigidBody(shaft2,1);
+      constraint->addIndependentRigidBody(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
 
-      constraint = new GearConstraint("C2");
+      constraint = new GeneralizedGearConstraint("C2");
       addConstraint(constraint);
       constraint->setDependentRigidBody(shaft5);
-      constraint->addTransmission(Transmission(shaft2,1));
-      constraint->addTransmission(Transmission(planet,-data.radiusPlanet/data.radiusRightOutputShaft));
+      constraint->addIndependentRigidBody(shaft2,1);
+      constraint->addIndependentRigidBody(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
     }
     else {
       double c1 = data.radiusLeftOutputShaft + data.radiusRightOutputShaft;
       double c2 = data.radiusLeftOutputShaft*data.radiusRightOutputShaft;
-      GearConstraint *constraint = new GearConstraint("C1");
+      GeneralizedGearConstraint *constraint = new GeneralizedGearConstraint("C1");
       addConstraint(constraint);
       constraint->setDependentRigidBody(shaft2);
-      constraint->addTransmission(Transmission(shaft4,data.radiusLeftOutputShaft/c1));
-      constraint->addTransmission(Transmission(shaft5,data.radiusRightOutputShaft/c1));
+      constraint->addIndependentRigidBody(shaft4,data.radiusLeftOutputShaft/c1);
+      constraint->addIndependentRigidBody(shaft5,data.radiusRightOutputShaft/c1);
 
-      constraint = new GearConstraint("C2");
+      constraint = new GeneralizedGearConstraint("C2");
       addConstraint(constraint);
       constraint->setDependentRigidBody(planet);
-      constraint->addTransmission(Transmission(shaft4,c2/(data.radiusPlanet*c1)));
-      constraint->addTransmission(Transmission(shaft5,-c2/(data.radiusPlanet*c1)));
+      constraint->addIndependentRigidBody(shaft4,c2/(data.radiusPlanet*c1));
+      constraint->addIndependentRigidBody(shaft5,-c2/(data.radiusPlanet*c1));
     }
 
     shared_ptr<OpenMBV::Cube> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();

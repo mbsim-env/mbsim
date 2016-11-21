@@ -16,39 +16,40 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _GENERALIZED_POSITION_CONSTRAINT_H
-#define _GENERALIZED_POSITION_CONSTRAINT_H
+#ifndef _GENERALIZED_GEAR_CONSTRAINT_H
+#define _GENERALIZED_GEAR_CONSTRAINT_H
 
-#include "mbsim/constraints/generalized_dual_constraint.h"
-#include "mbsim/functions/function.h"
+#include "mbsim/constraints/generalized_constraint.h"
 
 namespace MBSim {
 
-  class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
+  class RigidBody;
+
+  class GeneralizedGearConstraint : public GeneralizedConstraint {
 
     public:
-      GeneralizedPositionConstraint(const std::string &name="") : GeneralizedDualConstraint(name), f(NULL) { }
-      ~GeneralizedPositionConstraint() { delete f; }
+      GeneralizedGearConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(NULL) { }
 
-      void init(Element::InitStage stage);
+      void init(InitStage stage);
 
-      void setConstraintFunction(Function<fmatvec::VecV(double)>* f_) {
-        f = f_;
-        f->setParent(this);
-        f->setName("Constraint");
-      }
-
-      void setUpInverseKinetics();
+      void setDependentRigidBody(RigidBody* body_) { bd=body_; }
+      void addIndependentRigidBody(RigidBody *body, double ratio);
 
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
+      void setUpInverseKinetics();
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
-      virtual std::string getType() const { return "GeneralizedPositionConstraint"; }
+      virtual std::string getType() const { return "GeneralizedGearConstraint"; }
 
     private:
-      Function<fmatvec::VecV(double)> *f;
+      std::vector<RigidBody*> bi;
+      RigidBody *bd;
+      std::vector<double> ratio;
+
+      std::string saved_DependentBody;
+      std::vector<std::string> saved_IndependentBody;
   };
 
 }

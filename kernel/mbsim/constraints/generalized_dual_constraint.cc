@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2010 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -17,10 +17,8 @@
  */
 
 #include <config.h>
-#include "mbsim/constraints/kinematic_constraint.h"
+#include "mbsim/constraints/generalized_dual_constraint.h"
 #include "mbsim/objects/rigid_body.h"
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/frame.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -28,40 +26,30 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSim {
- 
-  KinematicConstraint::KinematicConstraint(const std::string &name) : GeneralizedConstraint(name), bd(0), saved_DependentBody("") {
-  }
 
-  void KinematicConstraint::init(InitStage stage) {
+  void GeneralizedDualConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_DependentBody!="")
+      if(saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
+      if(saved_IndependentBody!="")
+        setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
       GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
       GeneralizedConstraint::init(stage);
       bd->addDependency(this);
+      if(bi) addDependency(bi);
     }
     else
       GeneralizedConstraint::init(stage);
   }
 
-  void KinematicConstraint::initializeUsingXML(DOMElement* element) {
+  void GeneralizedDualConstraint::initializeUsingXML(DOMElement* element) {
     GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
-    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
+    if(e) saved_IndependentBody=E(e)->getAttribute("ref");
   }
 
 }

@@ -6,7 +6,7 @@
 #include "mbsim/functions/constant_function.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/constraints/gear_constraint.h"
+#include "mbsim/constraints/generalized_gear_constraint.h"
 
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
@@ -72,15 +72,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft3->setRotation(new RotationAboutZAxis<VecV>);
   shaft3->getFrame("C")->enableOpenMBV(0.2);
 
-  GearConstraint *constraint = new GearConstraint("C1");
+  GeneralizedGearConstraint *constraint = new GeneralizedGearConstraint("C1");
   addConstraint(constraint);
   constraint->setDependentRigidBody(shaft2);
-  constraint->addTransmission(Transmission(shaft1,-R1/R2a));
+  constraint->addIndependentRigidBody(shaft1,-R1/R2a);
 
-  constraint = new GearConstraint("C2");
+  constraint = new GeneralizedGearConstraint("C2");
   addConstraint(constraint);
   constraint->setDependentRigidBody(shaft3);
-  constraint->addTransmission(Transmission(shaft2,-R2b/R3));
+  constraint->addIndependentRigidBody(shaft2,-R2b/R3);
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MAn");

@@ -10,7 +10,7 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/constraints/joint_constraint.h" 
-#include "mbsim/constraints/gear_constraint.h" 
+#include "mbsim/constraints/generalized_gear_constraint.h"
 #include "mbsim/links/spring_damper.h"
 #include "mbsimControl/signal_function.h"
 #include "mbsimPowertrain/differential_gear.h"
@@ -407,14 +407,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   else {
     // Use minimal-form
     {
-      vector<RigidBody*> bd1; 
-      vector<RigidBody*> bd2; 
-      bd2.push_back(differentialGear->getRightOutputShaft());
-      bd2.push_back(psR->getInputShaft());
-      bd2.push_back(psR->getIntermediateShaft());
-      bd2.push_back(psR->getOutputShaft());
       JointConstraint* jointconstraint = new JointConstraint("CR");
-      jointconstraint->setDependentRigidBodiesSecondSide(bd2);
+      jointconstraint->addDependentRigidBodyOnSecondSide(differentialGear->getRightOutputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psR->getInputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psR->getIntermediateShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psR->getOutputShaft());
       jointconstraint->setIndependentRigidBody(hr);
       jointconstraint->connect(hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
       addConstraint(jointconstraint);
@@ -423,14 +420,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     }
 
     {
-      vector<RigidBody*> bd1; 
-      vector<RigidBody*> bd2; 
-      bd2.push_back(differentialGear->getLeftOutputShaft());
-      bd2.push_back(psL->getInputShaft());
-      bd2.push_back(psL->getIntermediateShaft());
-      bd2.push_back(psL->getOutputShaft());
       JointConstraint* jointconstraint = new JointConstraint("CL");
-      jointconstraint->setDependentRigidBodiesSecondSide(bd2);
+      jointconstraint->addDependentRigidBodyOnSecondSide(differentialGear->getLeftOutputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psL->getInputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psL->getIntermediateShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psL->getOutputShaft());
       jointconstraint->setIndependentRigidBody(hl);
       jointconstraint->connect(hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
       addConstraint(jointconstraint);
@@ -463,10 +457,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->addFrame(new FixedRelativeFrame("Q",rSD,SqrMat(3,EYE)));
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
 
-  GearConstraint *constraint = new GearConstraint("C0");
+  GeneralizedGearConstraint *constraint = new GeneralizedGearConstraint("C0");
   addConstraint(constraint);
   constraint->setDependentRigidBody(shaft1);
-  constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1));
+  constraint->addIndependentRigidBody(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1);
 
   //actuator = new Actuator("Fahrwiderstand");
   //addLink(load);

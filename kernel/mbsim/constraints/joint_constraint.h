@@ -45,11 +45,11 @@ namespace MBSim {
 
       void resetUpToDate();
 
-      void connect(Frame* frame1, Frame* frame2);
-      void setDependentRigidBodiesFirstSide(std::vector<RigidBody*> bd);
-      void setDependentRigidBodiesSecondSide(std::vector<RigidBody*> bd);
-      void setIndependentRigidBody(RigidBody* bi);
-      void setSecondIndependentRigidBody(RigidBody* bi2);
+      void connect(Frame* frame1_, Frame* frame2_) { frame1 = frame1_; frame2 = frame2_; }
+      void addDependentRigidBodyOnFirstSide(RigidBody* bd) { bd1.push_back(bd); }
+      void addDependentRigidBodyOnSecondSide(RigidBody* bd) { bd2.push_back(bd); }
+      void setIndependentRigidBody(RigidBody* bi_) { bi.resize(1); bi[0] = bi_; }
+      void addIndependentRigidBody(RigidBody* bi_) { bi.push_back(bi_); }
 
       virtual void setUpInverseKinetics();
       void setForceDirection(const fmatvec::Mat3xV& d_);
@@ -92,13 +92,10 @@ namespace MBSim {
           Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, Frame *frame1_, Frame *frame2_, Frame *refFrame, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
           fmatvec::Vec operator()(const fmatvec::Vec &x);
       };
-      std::vector<RigidBody*> bd1;
-      std::vector<RigidBody*> bd2;
-      RigidBody *bi, *bi2;
-      std::vector<Frame*> if1;
-      std::vector<Frame*> if2;
+      std::vector<RigidBody*> bd1, bd2, bi;
+      std::vector<Frame*> if1, if2;
 
-      Frame *frame1,*frame2;
+      Frame *frame1, *frame2;
 
       /**
        * \brief frame of reference the force is defined in
@@ -116,8 +113,7 @@ namespace MBSim {
       fmatvec::Mat JT, JR;
 
       std::string saved_ref1, saved_ref2;
-      std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
-      std::string saved_IndependentBody, saved_IndependentBody2;
+      std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide, saved_IndependentBody;
       std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
   };
 

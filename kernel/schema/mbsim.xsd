@@ -1104,20 +1104,35 @@
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Zwangskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird das Zwangsmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="KinematicConstraint" substitutionGroup="GeneralizedConstraint" type="KinematicConstraintType">
+  <xs:element name="GeneralizedDualConstraint" substitutionGroup="GeneralizedConstraint" type="GeneralizedDualConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
-        Kinematische Zwangsbedingung durch Angabe einer Funktion.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="KinematicConstraintType">
+  <xs:complexType name="GeneralizedDualConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedConstraintType">
         <xs:sequence>
@@ -1129,28 +1144,20 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
+          <xs:element name="independentRigidBody" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Zwangskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+              Starrkörper, dessen generalisierte Koordinaten durch eine Zeitfunktion bestimmt werden kann.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Zwangsmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedPositionConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedPositionConstraintType">
+  <xs:element name="GeneralizedPositionConstraint" substitutionGroup="GeneralizedDualConstraint" type="GeneralizedPositionConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1159,7 +1166,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedPositionConstraintType">
     <xs:complexContent>
-      <xs:extension base="KinematicConstraintType">
+      <xs:extension base="GeneralizedDualConstraintType">
         <xs:sequence>
           <xs:element name="constraintFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1176,7 +1183,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedVelocityConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedVelocityConstraintType">
+  <xs:element name="GeneralizedVelocityConstraint" substitutionGroup="GeneralizedDualConstraint" type="GeneralizedVelocityConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1185,7 +1192,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedVelocityConstraintType">
     <xs:complexContent>
-      <xs:extension base="KinematicConstraintType">
+      <xs:extension base="GeneralizedDualConstraintType">
         <xs:sequence>
           <xs:element name="initialState" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
@@ -1231,7 +1238,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedAccelerationConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedAccelerationConstraintType">
+  <xs:element name="GeneralizedAccelerationConstraint" substitutionGroup="GeneralizedDualConstraint" type="GeneralizedAccelerationConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1240,7 +1247,7 @@
   </xs:element>
   <xs:complexType name="GeneralizedAccelerationConstraintType">
     <xs:complexContent>
-      <xs:extension base="KinematicConstraintType">
+      <xs:extension base="GeneralizedDualConstraintType">
         <xs:sequence>
           <xs:element name="initialState" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
@@ -1286,34 +1293,7 @@
     </xs:complexContent>
   </xs:complexType>
 
- <xs:element name="Transmission" type="TransmissionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-    tbd
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TransmissionType">
-    <xs:sequence>
-      <xs:element name="rigidBody">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-          tbd
-          </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="ratio" type="pv:unknownScalar">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-          tbd
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType> 
-
-  <xs:element name="GearConstraint" substitutionGroup="GeneralizedConstraint" type="GearConstraintType">
+  <xs:element name="GeneralizedGearConstraint" substitutionGroup="GeneralizedConstraint" type="GeneralizedGearConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         TODO <br/>
@@ -1321,44 +1301,25 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="GearConstraintType">
+  <xs:complexType name="GeneralizedGearConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedConstraintType">
         <xs:sequence>
           <xs:element name="dependentRigidBody">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Starrkörper, dessen generalisierte Koordinaten von den generalisierten Koordinaten anderer Körper abhängig ist.
+              Getriebeausgang
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="transmissions">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Liste der Starrkörper, von deren generalisierten Koordinaten die generalisierten Koordinaten des abhängigen Körpers direkt bestimmt werden können.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence maxOccurs="unbounded">
-                <xs:element ref="Transmission"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
+          <xs:element name="independentRigidBody" minOccurs="1" maxOccurs="unbounded">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+              Getriebeeingang
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+              <xs:attribute name="ratio" type="pv:floatFullEval" use="required"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -1378,67 +1339,42 @@
     <xs:complexContent>
       <xs:extension base="ConstraintType">
         <xs:sequence>
-          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anfangswerte für Newton-Löser.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="dependentRigidBodiesFirstSide">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Liste der Körper auf Seite A des Lagers.
-              </xs:documentation>
-            </xs:annotation>
+          <xs:element name="dependentRigidBodyOnFirstSide" minOccurs="0" maxOccurs="unbounded">
             <xs:complexType>
-              <xs:sequence maxOccurs="unbounded">
-                <xs:element name="dependentRigidBody" minOccurs="0">
-                  <xs:complexType>
-                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
-                      <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                        Angabe des Körpers 
-                      </xs:documentation></xs:annotation>
-                    </xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Liste der Körper auf Seite A des Lagers.
+                </xs:documentation></xs:annotation>
+              </xs:attribute>
             </xs:complexType>
           </xs:element>
-          <xs:element name="dependentRigidBodiesSecondSide">
+          <xs:element name="dependentRigidBodyOnSecondSide" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Liste der Körper auf Seite B des Lagers.
+                </xs:documentation></xs:annotation>
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="independentRigidBody" minOccurs="1" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Angabe der Körper, deren Freiheitsgrade erhalten bleiben. Die Lagen und Geschwindigkeiten aller anderen Körper in der kinematischen Schleife können aus den generalisierten Koordinate dieser Körper bestimmt werden.
+                </xs:documentation></xs:annotation>
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Liste der Körper auf Seite B des Lagers.
+                Angabe der beiden Koordinatensysteme, welche in Übereinstimmung gebracht werden sollen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence maxOccurs="unbounded">
-                <xs:element name="dependentRigidBody" minOccurs="0">
-                  <xs:complexType>
-                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
-                      <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                        Angabe des Körpers 
-                      </xs:documentation></xs:annotation>
-                    </xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="independentRigidBody">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Angabe des Körpers, dessen Freiheitsgrad erhalten bleibt. Die Lagen und Geschwindigkeiten aller anderen Körper in der kinematischen Schleife können aus der generalisierten Koordinate dieses Körpers bestimmt werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="secondIndependentRigidBody" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Angabe eines zweiten Körpers, dessen Freiheitsgrad erhalten bleibt.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
@@ -1460,16 +1396,12 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="connect">
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Angabe der beiden Koordinatensysteme, welche in Übereinstimmung gebracht werden sollen.
+                Anfangswerte für Newton-Löser.
               </xs:documentation>
             </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1517,22 +1449,6 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1671,7 +1587,7 @@
 
   <xs:element name="RigidBodyLink" substitutionGroup="Link" type="RigidBodyLinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Starrkörpern.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="RigidBodyLinkType">
@@ -1686,6 +1602,46 @@
             </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DualRigidBodyLink" substitutionGroup="RigidBodyLink" type="DualRigidBodyLinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      tbd
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DualRigidBodyLinkType">
+    <xs:complexContent>
+      <xs:extension base="RigidBodyLinkType">
+        <xs:sequence>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType"/>
+              <xs:attribute name="ref1" type="FrameReferenceType"/>
+              <xs:attribute name="ref2" type="FrameReferenceType"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1849,14 +1805,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedSpringDamper" substitutionGroup="RigidBodyLink" type="GeneralizedSpringDamperType">
+  <xs:element name="GeneralizedSpringDamper" substitutionGroup="DualRigidBodyLink" type="GeneralizedSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedSpringDamperType">
     <xs:complexContent>
-      <xs:extension base="RigidBodyLinkType">
+      <xs:extension base="DualRigidBodyLinkType">
         <xs:sequence>
           <xs:element name="generalizedForceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1874,60 +1830,20 @@
                 Entspannte Federlänge <object class="inlineeqn">l_0</object>.
               </xs:documentation>
             </xs:annotation>
-         </xs:element>
-         <xs:element name="rigidBodyFirstSide" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="rigidBodySecondSide">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVCoilSpringParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
           </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedFriction" substitutionGroup="RigidBodyLink" type="GeneralizedFrictionType">
+  <xs:element name="GeneralizedFriction" substitutionGroup="DualRigidBodyLink" type="GeneralizedFrictionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedFrictionType">
     <xs:complexContent>
-      <xs:extension base="RigidBodyLinkType">
+      <xs:extension base="DualRigidBodyLinkType">
         <xs:sequence>
           <xs:element name="generalizedFrictionForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1949,114 +1865,19 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="rigidBodyFirstSide" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="rigidBodySecondSide">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Gear" substitutionGroup="RigidBodyLink" type="GearType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        TODO <br/>
-        Kinematische Zwangsbedingung durch Angabe eines Übersetzungsverhältnisses.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="GearType">
-    <xs:complexContent>
-      <xs:extension base="RigidBodyLinkType">
-        <xs:sequence>
-          <xs:element name="generalizedForceLaw">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="dependentRigidBody">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Starrkörper, dessen generalisierte Koordinaten von den generalisierten Koordinaten anderer Körper abhängig ist.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="transmissions">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Liste der Starrkörper, von deren generalisierten Koordinaten die generalisierten Koordinaten des abhängigen Körpers direkt bestimmt werden können.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence maxOccurs="unbounded">
-                <xs:element ref="Transmission"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="GeneralizedConnection" substitutionGroup="RigidBodyLink" type="GeneralizedConnectionType">
+  <xs:element name="GeneralizedConnection" substitutionGroup="DualRigidBodyLink" type="GeneralizedConnectionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedConnectionType">
     <xs:complexContent>
-      <xs:extension base="RigidBodyLinkType">
+      <xs:extension base="DualRigidBodyLinkType">
         <xs:sequence>
           <xs:element name="generalizedForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2068,51 +1889,19 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-         <xs:element name="rigidBodyFirstSide" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="rigidBodySecondSide">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedElasticConnection" substitutionGroup="RigidBodyLink" type="GeneralizedElasticConnectionType">
+  <xs:element name="GeneralizedElasticConnection" substitutionGroup="DualRigidBodyLink" type="GeneralizedElasticConnectionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedElasticConnectionType">
     <xs:complexContent>
-      <xs:extension base="RigidBodyLinkType">
+      <xs:extension base="DualRigidBodyLinkType">
         <xs:sequence>
           <xs:element name="generalizedForceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2124,36 +1913,48 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-         <xs:element name="rigidBodyFirstSide" minOccurs="0">
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedGear" substitutionGroup="RigidBodyLink" type="GeneralizedGearType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        TODO <br/>
+        Kinematische Zwangsbedingung durch Angabe eines Übersetzungsverhältnisses.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedGearType">
+    <xs:complexContent>
+      <xs:extension base="RigidBodyLinkType">
+        <xs:sequence>
+          <xs:element name="gearOutput">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            tbd
+              Getriebeausgang
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="rigidBodySecondSide">
+          <xs:element name="gearInput" minOccurs="1" maxOccurs="unbounded">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Getriebeeingang
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+              <xs:attribute name="ratio" type="pv:floatFullEval" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="generalizedForceLaw">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Momenten-Pfeile in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
+              <xs:sequence>
+                <xs:element ref="GeneralizedForceLaw"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

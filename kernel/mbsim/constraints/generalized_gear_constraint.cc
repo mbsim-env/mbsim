@@ -17,13 +17,12 @@
  */
 
 #include <config.h>
-#include "mbsim/constraints/gear_constraint.h"
+#include "mbsim/constraints/generalized_gear_constraint.h"
+#include "mbsim/links/generalized_gear.h"
 #include <mbsim/constitutive_laws/bilateral_constraint.h>
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/objectfactory.h"
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/frame.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -32,19 +31,14 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GearConstraint)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedGearConstraint)
 
-  GearConstraint::GearConstraint(const std::string &name) : GeneralizedConstraint(name), bd(NULL) {
-  }
-
-  void GearConstraint::init(InitStage stage) {
+  void GeneralizedGearConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      if (saved_IndependentBody.size()>0) {
-        for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
-          bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
-      }
+      for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
+        bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
       GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
@@ -57,12 +51,12 @@ namespace MBSim {
       GeneralizedConstraint::init(stage);
   }
 
-  void GearConstraint::addTransmission(const Transmission &transmission) {
-    bi.push_back(transmission.body); 
-    ratio.push_back(transmission.ratio);
+  void GeneralizedGearConstraint::addIndependentRigidBody(RigidBody *body, double ratio_) {
+    bi.push_back(body);
+    ratio.push_back(ratio_);
   }
 
-  void GearConstraint::updateGeneralizedCoordinates() {
+  void GeneralizedGearConstraint::updateGeneralizedCoordinates() {
     bd->getqRel(false).init(0);
     bd->getuRel(false).init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
@@ -72,7 +66,7 @@ namespace MBSim {
     updGC = false;
   }
 
-  void GearConstraint::updateGeneralizedJacobians(int j) {
+  void GeneralizedGearConstraint::updateGeneralizedJacobians(int j) {
     bd->getJRel(0,false).init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
       bd->getJRel(0,false)(Range<Var,Var>(0,bi[i]->getuRelSize()-1),Range<Var,Var>(0,bi[i]->gethSize()-1)) += bi[i]->evalJRel()*ratio[i];
@@ -80,38 +74,25 @@ namespace MBSim {
     updGJ = false;
   }
 
-  void GearConstraint::initializeUsingXML(DOMElement* element) {
+  void GeneralizedGearConstraint::initializeUsingXML(DOMElement* element) {
     GeneralizedConstraint::initializeUsingXML(element);
-    DOMElement *e, *ee;
+    DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"transmissions");
-    ee=e->getFirstElementChild();
-    while(ee && E(ee)->getTagName()==MBSIM%"Transmission") {
-      saved_IndependentBody.push_back(E(E(ee)->getFirstElementChildNamed(MBSIM%"rigidBody"))->getAttribute("ref"));
-      ratio.push_back(getDouble(E(ee)->getFirstElementChildNamed(MBSIM%"ratio")));
-      ee=ee->getNextElementSibling();
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
+    e=e->getNextElementSibling();
+    while(e && E(e)->getTagName()==MBSIM%"independentRigidBody") {
+      saved_IndependentBody.push_back(E(e)->getAttribute("ref"));
+      ratio.push_back(stod(E(e)->getAttribute("ratio")));
+      e=e->getNextElementSibling();
     }
   }
 
-  void GearConstraint::setUpInverseKinetics() {
-    Gear *gear = new Gear(string("Gear")+name);
+  void GeneralizedGearConstraint::setUpInverseKinetics() {
+    GeneralizedGear *gear = new GeneralizedGear(string("GeneralizedGear")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
-    gear->setDependentRigidBody(bd);
+    gear->setGearOutput(bd);
     for(unsigned int i=0; i<bi.size(); i++)
-      gear->addTransmission(Transmission(bi[i],ratio[i]));
+      gear->addGearInput(bi[i],ratio[i]);
     gear->setGeneralizedForceLaw(new BilateralConstraint);
     gear->setSupportFrame(support);
     if(FArrow)

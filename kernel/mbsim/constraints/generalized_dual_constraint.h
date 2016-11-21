@@ -1,5 +1,4 @@
 /* Copyright (C) 2004-2016 MBSim Development Team
- *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -14,38 +13,37 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: martin.o.foerg@gmail.com
+ * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _GENERALIZED_CONNECTION_H_
-#define _GENERALIZED_CONNECTION_H_
+#ifndef _GENERALIZED_DUAL_CONSTRAINT_H
+#define _GENERALIZED_DUAL_CONSTRAINT_H
 
-#include "mbsim/links/dual_rigid_body_link.h"
+#include "generalized_constraint.h"
 
 namespace MBSim {
 
-  class GeneralizedForceLaw;
-  class GeneralizedImpactLaw;
+  class RigidBody;
 
-  class GeneralizedConnection : public DualRigidBodyLink {
-    protected:
-      GeneralizedForceLaw *fl;
-      GeneralizedImpactLaw *il;
+  /** 
+   * \brief Class for dual generalized constraints
+   * \author Martin Foerg
+   */
+  class GeneralizedDualConstraint : public GeneralizedConstraint {
     public:
-      GeneralizedConnection(const std::string &name="") : DualRigidBodyLink(name), fl(NULL), il(NULL) { }
-      ~GeneralizedConnection();
+      GeneralizedDualConstraint(const std::string &name) : GeneralizedConstraint(name), bd(NULL), bi(NULL) { }
 
-      void updateGeneralizedForces();
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      std::string getType() const { return "GeneralizedConnection"; }
       void init(InitStage stage);
-      bool isSetValued() const;
-      bool isSingleValued() const { return not(isSetValued()); }
 
-      void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
+      void setDependentRigidBody(RigidBody* body_) { bd=body_; }
+      void setIndependentRigidBody(RigidBody* body_) { bi=body_; }
 
       void initializeUsingXML(xercesc::DOMElement * element);
+
+    protected:
+      RigidBody *bd, *bi;
+
+      std::string saved_IndependentBody, saved_DependentBody;
   };
 
 }

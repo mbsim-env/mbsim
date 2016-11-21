@@ -20,9 +20,6 @@
 #include "mbsim/links/generalized_spring_damper.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/objects/rigid_body.h"
-#include <openmbvcppinterface/coilspring.h>
-#include "openmbvcppinterface/group.h"
-#include "openmbvcppinterface/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -32,11 +29,6 @@ using namespace xercesc;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedSpringDamper)
-
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &name) : RigidBodyLink(name), func(NULL), l0(0) {
-    body[0] = NULL;
-    body[1] = NULL;
-  }
 
   GeneralizedSpringDamper::~GeneralizedSpringDamper() {
     delete func;
@@ -48,84 +40,23 @@ namespace MBSim {
   }
 
   void GeneralizedSpringDamper::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_body1!="")
-        setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
-      if(saved_body2!="")
-        setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
-      if(body[1]==NULL)
-        THROW_MBSIMERROR("rigid body on second side must be given!");
-      if(body[0]) connect(body[0]);
-      connect(body[1]);
-      RigidBodyLink::init(stage);
-    }
-    else if(stage==resize) {
-      RigidBodyLink::init(stage);
-      ratio.resize(RigidBodyLink::body.size());
-      ratio[0] = -1;
-      ratio[ratio.size()-1] = 1;
-    }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(coilspringOpenMBV) {
-          coilspringOpenMBV->setName(name);
-          parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
-        }
-        RigidBodyLink::init(stage);
-      }
-    }
-    else if(stage==unknownStage) {
-      if(body[0] and body[0]->getuRelSize()!=1)
-        THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
-      if(body[1]->getuRelSize()!=1)
-        THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
-      RigidBodyLink::init(stage);
+    if(stage==unknownStage) {
+      if(body[0]->getuRelSize()!=1)
+        THROW_MBSIMERROR("rigid bodies must have 1 dof!");
+      DualRigidBodyLink::init(stage);
     }
     else
-      RigidBodyLink::init(stage);
+      DualRigidBodyLink::init(stage);
     func->init(stage);
   }
 
-  void GeneralizedSpringDamper::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if (coilspringOpenMBV) {
-        Vec WrOToPoint;
-        Vec WrOFromPoint;
-
-        WrOFromPoint = body[0]?body[0]->getFrameForKinematics()->evalPosition():body[1]->getFrameOfReference()->evalPosition();
-        WrOToPoint   = body[1]->getFrameForKinematics()->evalPosition();
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(WrOFromPoint(0));
-        data.push_back(WrOFromPoint(1));
-        data.push_back(WrOFromPoint(2));
-        data.push_back(WrOToPoint(0));
-        data.push_back(WrOToPoint(1));
-        data.push_back(WrOToPoint(2));
-        data.push_back(fabs(evalGeneralizedForce()(0)));
-        coilspringOpenMBV->append(data);
-      }
-      RigidBodyLink::plot();
-    }
-  }
-
   void GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
-    RigidBodyLink::initializeUsingXML(element);
+    DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedGeneralizedLength");
     l0 = Element::getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
-    if(e) saved_body1=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
-    saved_body2=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
-    if(e) {
-      OpenMBVCoilSpring ombv;
-      coilspringOpenMBV=ombv.createOpenMBV(e);
-    }
   }
 
 }

@@ -147,6 +147,7 @@
     </objects>
     <links>
       <GeneralizedFriction name="GeneralizedFriction1">
+        <connect ref="../Object[RigidBody1]"/>
         <generalizedFrictionForceLaw>
           <RegularizedPlanarFriction>
             <frictionForceFunction>
@@ -163,9 +164,9 @@
             <a0>0.1</a0>
           </ConstantFunction>
         </generalizedNormalForceFunction>
-        <rigidBodySecondSide ref="../Object[RigidBody1]"/>
       </GeneralizedFriction>
       <GeneralizedFriction name="GeneralizedFriction2">
+        <connect ref1="../Object[RigidBody1]" ref2="../Object[RigidBody2]"/>
         <generalizedFrictionForceLaw>
           <RegularizedPlanarFriction>
             <frictionForceFunction>
@@ -182,10 +183,9 @@
             <a0>0.1</a0>
           </ConstantFunction>
         </generalizedNormalForceFunction>
-        <rigidBodyFirstSide ref="../Object[RigidBody1]"/>
-        <rigidBodySecondSide ref="../Object[RigidBody2]"/>
       </GeneralizedFriction>
       <GeneralizedSpringDamper name="GeneralizedSpringDamper3">
+        <connect ref="../Object[RigidBody1]"/>
         <generalizedForceFunction>
           <LinearSpringDamperForce>
             <stiffnessCoefficient unit="N/m">1</stiffnessCoefficient>
@@ -193,9 +193,9 @@
           </LinearSpringDamperForce>
         </generalizedForceFunction>
         <unloadedGeneralizedLength>0</unloadedGeneralizedLength>
-        <rigidBodySecondSide ref="../Object[RigidBody1]"/>
       </GeneralizedSpringDamper>
       <GeneralizedSpringDamper name="GeneralizedSpringDamper4">
+        <connect ref1="../Object[RigidBody1]" ref2="../Object[RigidBody2]"/>
         <generalizedForceFunction>
           <LinearSpringDamperForce>
             <stiffnessCoefficient unit="N/m">1</stiffnessCoefficient>
@@ -203,8 +203,6 @@
           </LinearSpringDamperForce>
         </generalizedForceFunction>
         <unloadedGeneralizedLength>0</unloadedGeneralizedLength>
-        <rigidBodyFirstSide ref="../Object[RigidBody1]"/>
-        <rigidBodySecondSide ref="../Object[RigidBody2]"/>
       </GeneralizedSpringDamper>
     </links>
     <enableOpenMBVFrameI>

@@ -35,10 +35,10 @@ namespace MBSim {
   void GeneralizedAccelerationConstraint::init(InitStage stage) {
     if(stage==resize) {
       x.resize(xSize);
-      KinematicConstraint::init(stage);
+      GeneralizedDualConstraint::init(stage);
     }
     else
-      KinematicConstraint::init(stage);
+      GeneralizedDualConstraint::init(stage);
     f->init(stage);
   }
 
@@ -47,23 +47,34 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updatexd() {
-    xd(0,bd->getqRelSize()-1) = bd->transformCoordinates()?bd->evalTRel()*bd->evaluRel():bd->evaluRel();
-    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = bd->evaljRel();
+    xd(0,bd->getqRelSize()-1) = x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1);
+    xd(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1) = (*f)(x,getTime());
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {
-    bd->setqRel(x(0,bd->getqRelSize()-1));
-    bd->setuRel(x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
+    if(bi) {
+      bd->setqRel(bi->getqRel()+x(0,bd->getqRelSize()-1));
+      bd->setuRel(bi->getuRel()+x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
+    }
+    else {
+      bd->setqRel(x(0,bd->getqRelSize()-1));
+      bd->setuRel(x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
+    }
     updGC = false;
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(int jj) {
-    bd->setjRel((*f)(x,getTime()));
+    if(bi) {
+      bd->getJRel(0,false)(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1)) = bi->evalJRel();
+      bd->setjRel((*f)(x,getTime()));
+    }
+    else
+      bd->setjRel((*f)(x,getTime()));
     updGJ = false;
   }
 
   void GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement* element) {
-    KinematicConstraint::initializeUsingXML(element);
+    GeneralizedDualConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if(e)
       x0 = getVec(e);
@@ -87,7 +98,7 @@ namespace MBSim {
   void GeneralizedAccelerationConstraint::setUpInverseKinetics() {
     GeneralizedAccelerationExcitation *ke = new GeneralizedAccelerationExcitation(string("GeneralizedAccelerationExcitation")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
-    ke->setDependentRigidBody(bd);
+    ke->connect(bd);
     ke->setExcitationFunction(f);
     ke->setGeneralizedForceLaw(new BilateralConstraint);
     ke->setSupportFrame(support);

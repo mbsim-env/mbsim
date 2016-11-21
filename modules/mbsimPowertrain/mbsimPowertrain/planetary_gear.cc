@@ -1,8 +1,8 @@
 #include <config.h>
 #include "planetary_gear.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/constraints/gear_constraint.h"
-#include "mbsim/links/gear.h"
+#include "mbsim/constraints/generalized_gear_constraint.h"
+#include "mbsim/links/generalized_gear.h"
 //#include "mbsim/links/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematics/rotation_about_fixed_axis.h"
@@ -121,18 +121,18 @@ namespace MBSimPowertrain {
     }
 
     if(model==1) {
-      GearConstraint* constraint = new GearConstraint("C1");
+      GeneralizedGearConstraint* constraint = new GeneralizedGearConstraint("C1");
       addConstraint(constraint);
       constraint->setDependentRigidBody(carrier);
-      constraint->addTransmission(Transmission(sun,0.5*rS/rT2));
-      constraint->addTransmission(Transmission(annulus,0.5*rH/rT2));
+      constraint->addIndependentRigidBody(sun,0.5*rS/rT2);
+      constraint->addIndependentRigidBody(annulus,0.5*rH/rT2);
     } else if(model==0) {
-      Gear *gear;
-      gear = new Gear("Gear1");
+      GeneralizedGear *gear;
+      gear = new GeneralizedGear("GeneralizedGear1");
       addLink(gear);
-      gear->setDependentRigidBody(carrier);
-      gear->addTransmission(Transmission(sun,0.5*rS/rT2));
-      gear->addTransmission(Transmission(annulus,0.5*rH/rT2));
+      gear->setGearOutput(carrier);
+      gear->addGearInput(sun,0.5*rS/rT2);
+      gear->addGearInput(annulus,0.5*rH/rT2);
       //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
      // gear->setDependentBody(sun);
@@ -149,18 +149,18 @@ namespace MBSimPowertrain {
       str << "P" << i;
       shaftName << "Planet" << i;
       if(model==1) {
-        GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str());
+        GeneralizedGearConstraint* constraint = new GeneralizedGearConstraint(string("C_")+shaftName.str());
         addConstraint(constraint);
         constraint->setDependentRigidBody(planet[i]);
-        constraint->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
-        constraint->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
+        constraint->addIndependentRigidBody(sun,-0.5*(rS/rP+rS/rT2));
+        constraint->addIndependentRigidBody(annulus,0.5*(rH/rP-rH/rT2));
       } else if (model==0) {
-        Gear *gear;
-        gear = new Gear(string("Gear_")+shaftName.str());
+        GeneralizedGear *gear;
+        gear = new GeneralizedGear(string("GeneralizedGear_")+shaftName.str());
         addLink(gear);
-        gear->setDependentRigidBody(planet[i]);
-        gear->addTransmission(Transmission(sun,-0.5*(rS/rP+rS/rT2)));
-        gear->addTransmission(Transmission(annulus,0.5*(rH/rP-rH/rT2)));
+        gear->setGearOutput(planet[i]);
+        gear->addGearInput(sun,-0.5*(rS/rP+rS/rT2));
+        gear->addGearInput(annulus,0.5*(rH/rP-rH/rT2));
         //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
         //gear->setDependentBody(annulus);

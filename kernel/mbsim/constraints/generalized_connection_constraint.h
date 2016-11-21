@@ -19,52 +19,20 @@
 #ifndef _GENERALIZED_CONNECTION_CONSTRAINT_H
 #define _GENERALIZED_CONNECTION_CONSTRAINT_H
 
-#include "mbsim/constraints/generalized_constraint.h"
-
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
+#include "mbsim/constraints/generalized_dual_constraint.h"
 
 namespace MBSim {
 
-  class RigidBody;
-  class Frame;
-
-  class GeneralizedConnectionConstraint : public GeneralizedConstraint {
+  class GeneralizedConnectionConstraint : public GeneralizedDualConstraint {
 
     public:
-      GeneralizedConnectionConstraint(const std::string &name="");
-
-      void init(InitStage stage);
-
-      void setIndependentRigidBody(RigidBody* body_) {bi=body_; }
-      void setDependentRigidBody(RigidBody* body_) {bd=body_; }
+      GeneralizedConnectionConstraint(const std::string &name="") : GeneralizedDualConstraint(name) { }
 
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
       void setUpInverseKinetics();
 
-      void initializeUsingXML(xercesc::DOMElement * element);
-
       virtual std::string getType() const { return "GeneralizedConnectionConstraint"; }
-    
-      /** \brief Visualize a force arrow acting on frame2 */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        FArrow=ombv.createOpenMBV();
-      }
-
-      /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-        MArrow=ombv.createOpenMBV();
-      }
-
-    private:
-      RigidBody *bi, *bd;
-
-      std::string saved_IndependentBody, saved_DependentBody;
-
-      std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
   };
 
 }

@@ -20,16 +20,16 @@
 #ifndef _GENERALIZED_POSITION_EXCITATION_H_
 #define _GENERALIZED_POSITION_EXCITATION_H_
 
-#include "mbsim/links/kinematic_excitation.h"
+#include "mbsim/links/generalized_kinematic_excitation.h"
 #include "mbsim/functions/function.h"
 
 namespace MBSim {
 
-  class GeneralizedPositionExcitation : public KinematicExcitation {
+  class GeneralizedPositionExcitation : public GeneralizedKinematicExcitation {
     protected:
       Function<fmatvec::VecV(double)> *f;
     public:
-      GeneralizedPositionExcitation(const std::string &name) : KinematicExcitation(name) {}
+      GeneralizedPositionExcitation(const std::string &name) : GeneralizedKinematicExcitation(name) { }
 
       void calcxSize();
       void init(InitStage stage);

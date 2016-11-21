@@ -18,15 +18,9 @@
 
 #include <config.h>
 #include "mbsim/links/generalized_friction.h"
-#include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include <mbsim/constitutive_laws/friction_force_law.h>
-#include <openmbvcppinterface/coilspring.h>
-#include <openmbvcppinterface/arrow.h>
-#include "openmbvcppinterface/group.h"
-#include "openmbvcppinterface/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -36,11 +30,6 @@ using namespace xercesc;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedFriction)
-
-  GeneralizedFriction::GeneralizedFriction(const string &name) : RigidBodyLink(name), func(NULL), laN(0) {
-    body[0] = NULL;
-    body[1] = NULL;
-  }
 
   GeneralizedFriction::~GeneralizedFriction() {
     delete func;
@@ -54,32 +43,13 @@ namespace MBSim {
   }
 
   void GeneralizedFriction::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_body1!="")
-        setRigidBodyFirstSide(getByPath<RigidBody>(saved_body1));
-      if(saved_body2!="")
-        setRigidBodySecondSide(getByPath<RigidBody>(saved_body2));
-      if(body[1]==NULL)
-        THROW_MBSIMERROR("rigid body on second side must be given!");
-      if(body[0]) connect(body[0]);
-      connect(body[1]);
-      RigidBodyLink::init(stage);
-    }
-    else if(stage==resize) {
-      RigidBodyLink::init(stage);
-      ratio.resize(RigidBodyLink::body.size());
-      ratio[0] = -1;
-      ratio[ratio.size()-1] = 1;
-    }
-    else if(stage==unknownStage) {
-      if(body[0] and body[0]->getuRelSize()!=1)
-        THROW_MBSIMERROR("rigid body on first side to must have of 1 dof!");
-      if(body[1]->getuRelSize()!=1)
-        THROW_MBSIMERROR("rigid body on second side must have 1 dof!");
-      RigidBodyLink::init(stage);
+    if(stage==unknownStage) {
+      if(body[0]->getuRelSize()!=1)
+        THROW_MBSIMERROR("rigid bodies must have 1 dof!");
+      DualRigidBodyLink::init(stage);
     }
     else
-      RigidBodyLink::init(stage);
+      DualRigidBodyLink::init(stage);
     func->init(stage);
   }
 
@@ -89,15 +59,11 @@ namespace MBSim {
   }
 
   void GeneralizedFriction::initializeUsingXML(DOMElement *element) {
-    RigidBodyLink::initializeUsingXML(element);
+    DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionForceLaw");
     setGeneralizedFrictionForceLaw(ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedNormalForceFunction");
     setGeneralizedNormalForceFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodyFirstSide");
-    if(e) saved_body1=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBodySecondSide");
-    saved_body2=E(e)->getAttribute("ref");
   }
 
 }

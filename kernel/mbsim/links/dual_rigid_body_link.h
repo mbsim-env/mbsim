@@ -17,35 +17,30 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _GENERALIZED_CONNECTION_H_
-#define _GENERALIZED_CONNECTION_H_
+#ifndef _DUAL_RIGID_BODY_LINK_H_
+#define _DUAL_RIGID_BODY_LINK_H_
 
-#include "mbsim/links/dual_rigid_body_link.h"
+#include "mbsim/links/rigid_body_link.h"
+
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
 
 namespace MBSim {
 
-  class GeneralizedForceLaw;
-  class GeneralizedImpactLaw;
-
-  class GeneralizedConnection : public DualRigidBodyLink {
-    protected:
-      GeneralizedForceLaw *fl;
-      GeneralizedImpactLaw *il;
+  class DualRigidBodyLink : public RigidBodyLink {
     public:
-      GeneralizedConnection(const std::string &name="") : DualRigidBodyLink(name), fl(NULL), il(NULL) { }
-      ~GeneralizedConnection();
+      DualRigidBodyLink(const std::string &name="") : RigidBodyLink(name) { }
 
-      void updateGeneralizedForces();
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
-      std::string getType() const { return "GeneralizedConnection"; }
+      void connect(RigidBody *body);
+      void connect(RigidBody *body1, RigidBody *body2);
+
+      std::string getType() const { return "DualRigidBodyLink"; }
       void init(InitStage stage);
-      bool isSetValued() const;
-      bool isSingleValued() const { return not(isSetValued()); }
-
-      void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
 
       void initializeUsingXML(xercesc::DOMElement * element);
+
+    private:
+      std::string saved_ref, saved_ref1, saved_ref2;
   };
 
 }

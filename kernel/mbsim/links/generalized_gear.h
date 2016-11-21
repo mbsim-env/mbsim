@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _KINEMATIC_EXCITATION_H_
-#define _KINEMATIC_EXCITATION_H_
+#ifndef _GENERALIZED_GEAR_H_
+#define _GENERALIZED_GEAR_H_
 
 #include "mbsim/links/rigid_body_link.h"
 
@@ -26,30 +26,30 @@ namespace MBSim {
 
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
-  class RigidBody;
 
-  class KinematicExcitation : public RigidBodyLink {
+  class GeneralizedGear : public RigidBodyLink {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
-      std::string saved_DependentBody;
+      std::string saved_gearOutput;
+      std::vector<std::string> saved_gearInput;
     public:
-      KinematicExcitation(const std::string &name);
-      ~KinematicExcitation();
-
+      GeneralizedGear(const std::string &name="") : RigidBodyLink(name), fl(NULL), il(NULL) { body.resize(1); ratio.resize(1); }
+      ~GeneralizedGear();
       void updateGeneralizedForces();
-      void setDependentRigidBody(RigidBody* body_) { body[0] = body_; }
+      void setGearOutput(RigidBody* body_) { body[0] = body_; ratio[0] = -1; }
+      void addGearInput(RigidBody* body_, double ratio_) { body.push_back(body_); ratio.push_back(ratio_); }
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
+      std::string getType() const { return "GeneralizedGear"; }
       void init(InitStage stage);
-      void calclaSize(int j);
-      void calcgSize(int j);
-      void calcgdSize(int j);
       bool isSetValued() const;
       bool isSingleValued() const { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
+
+      void initializeUsingXML(xercesc::DOMElement * element);
   };
 
 }

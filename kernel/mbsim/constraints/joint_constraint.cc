@@ -67,52 +67,20 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, JointConstraint)
 
-  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), bi2(NULL), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+  JointConstraint::JointConstraint(const string &name) : Constraint(name), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
     C.setParent(this);
-  }
-
-  void JointConstraint::connect(Frame* frame1_, Frame* frame2_) {
-    frame1 = frame1_;
-    frame2 = frame2_;
-  }
-
-  void JointConstraint::setDependentRigidBodiesFirstSide(vector<RigidBody*> bd) {
-    bd1 = bd;
-  }
-
-  void JointConstraint::setDependentRigidBodiesSecondSide(vector<RigidBody*> bd) {
-    bd2 = bd;
-  }
-
-  void JointConstraint::setIndependentRigidBody(RigidBody *bi_) {
-    bi = bi_;
-  }
-
-  void JointConstraint::setSecondIndependentRigidBody(RigidBody *bi2_) {
-    bi2 = bi2_;
   }
 
   void JointConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
+      for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
+        bd1.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
+      for (unsigned int i=0; i<saved_RigidBodySecondSide.size(); i++)
+        bd2.push_back(getByPath<RigidBody>(saved_RigidBodySecondSide[i]));
+      for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
+        bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      vector<RigidBody*> rigidBodies;
-      if (saved_RigidBodyFirstSide.size()>0) {
-        for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
-          rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
-        setDependentRigidBodiesFirstSide(rigidBodies);
-      }
-      rigidBodies.clear();
-      if (saved_RigidBodySecondSide.size()>0) {
-        for (unsigned int i=0; i<saved_RigidBodySecondSide.size(); i++)
-          rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodySecondSide[i]));
-        setDependentRigidBodiesSecondSide(rigidBodies);
-      }
-      rigidBodies.clear();
-      if (saved_IndependentBody!="")
-        setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
-      if (saved_IndependentBody2!="")
-        setSecondIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody2));
       if(bd1.size()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());
@@ -131,10 +99,8 @@ namespace MBSim {
         bd1[i]->addDependency(this);
       for(unsigned int i=0; i<bd2.size(); i++)
         bd2[i]->addDependency(this);
-      if(bi)
-        addDependency(bi);
-      if(bi2)
-        addDependency(bi2);
+      for(unsigned int i=0; i<bi.size(); i++)
+        addDependency(bi[i]);
       refFrame=refFrameID?frame2:frame1;
       C.setFrameOfReference(frame1);
     }
@@ -323,39 +289,34 @@ namespace MBSim {
   }
 
   void JointConstraint::initializeUsingXML(DOMElement *element) {
-    DOMElement *e, *ee;
+    DOMElement *e;
     Constraint::initializeUsingXML(element);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
-    if (e) setInitialGuess(getVec(e));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodiesFirstSide");
-    ee=e->getFirstElementChild();
-    while(ee) {
-      saved_RigidBodyFirstSide.push_back(E(ee)->getAttribute("ref"));
-      ee=ee->getNextElementSibling();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodyOnFirstSide");
+    while(e && E(e)->getTagName()==MBSIM%"dependentRigidBodyOnFirstSide") {
+      saved_RigidBodyFirstSide.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodiesSecondSide");
-    ee=e->getFirstElementChild();
-    while(ee) {
-      saved_RigidBodySecondSide.push_back(E(ee)->getAttribute("ref"));
-      ee=ee->getNextElementSibling();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodyOnSecondSide");
+    while(e && E(e)->getTagName()==MBSIM%"dependentRigidBodyOnSecondSide") {
+      saved_RigidBodySecondSide.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
-    saved_IndependentBody=E(e)->getAttribute("ref");
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"secondIndependentRigidBody");
-    if(e) saved_IndependentBody2=E(e)->getAttribute("ref");
-
+    while(e && E(e)->getTagName()==MBSIM%"independentRigidBody") {
+      saved_IndependentBody.push_back(E(e)->getAttribute("ref"));
+      e=e->getNextElementSibling();
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1=E(e)->getAttribute("ref1");
+    saved_ref2=E(e)->getAttribute("ref2");
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if(e) refFrameID=getInt(e);
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat3xV(e,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if(e) setMomentDirection(getMat3xV(e,3));
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref1=E(e)->getAttribute("ref1");
-    saved_ref2=E(e)->getAttribute("ref2");
-
+    e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
+    if (e) setInitialGuess(getVec(e));
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);

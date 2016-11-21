@@ -4,7 +4,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/constraints/gear_constraint.h"
+#include "mbsim/constraints/generalized_gear_constraint.h"
 #include "mbsimPowertrain/differential_gear.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/constant_function.h"
@@ -55,10 +55,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addGroup(differentialGear);
   double R2 = differentialGear->getRadiusInputShaft();
 
-  GearConstraint *constraint = new GearConstraint("C1");
+  GeneralizedGearConstraint *constraint = new GeneralizedGearConstraint("C1");
   addConstraint(constraint);
   constraint->setDependentRigidBody(shaft1);
-  constraint->addTransmission(Transmission(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1));
+  constraint->addIndependentRigidBody(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1);
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MAn");
