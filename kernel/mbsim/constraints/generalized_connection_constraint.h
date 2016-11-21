@@ -19,34 +19,20 @@
 #ifndef _GENERALIZED_CONNECTION_CONSTRAINT_H
 #define _GENERALIZED_CONNECTION_CONSTRAINT_H
 
-#include "mbsim/constraints/generalized_constraint.h"
+#include "mbsim/constraints/generalized_dual_constraint.h"
 
 namespace MBSim {
 
-  class RigidBody;
-
-  class GeneralizedConnectionConstraint : public GeneralizedConstraint {
+  class GeneralizedConnectionConstraint : public GeneralizedDualConstraint {
 
     public:
-      GeneralizedConnectionConstraint(const std::string &name="") : GeneralizedConstraint(name), bi(NULL), bd(NULL) { }
-
-      void init(InitStage stage);
-
-      void setIndependentRigidBody(RigidBody* body_) { bi=body_; }
-      void setDependentRigidBody(RigidBody* body_) { bd=body_; }
+      GeneralizedConnectionConstraint(const std::string &name="") : GeneralizedDualConstraint(name) { }
 
       void updateGeneralizedCoordinates();
       void updateGeneralizedJacobians(int j=0);
       void setUpInverseKinetics();
 
-      void initializeUsingXML(xercesc::DOMElement * element);
-
       virtual std::string getType() const { return "GeneralizedConnectionConstraint"; }
-    
-    private:
-      RigidBody *bi, *bd;
-
-      std::string saved_IndependentBody, saved_DependentBody;
   };
 
 }

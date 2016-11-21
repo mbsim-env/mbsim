@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -16,30 +16,34 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _GENERALIZED_KINEMATIC_CONSTRAINT_H
-#define _GENERALIZED_KINEMATIC_CONSTRAINT_H
+#ifndef _GENERALIZED_DUAL_CONSTRAINT_H
+#define _GENERALIZED_DUAL_CONSTRAINT_H
 
-#include "mbsim/constraints/generalized_constraint.h"
+#include "generalized_constraint.h"
 
 namespace MBSim {
 
   class RigidBody;
 
-  class GeneralizedKinematicConstraint : public GeneralizedConstraint {
-
+  /** 
+   * \brief Class for dual generalized constraints
+   * \author Martin Foerg
+   */
+  class GeneralizedDualConstraint : public GeneralizedConstraint {
     public:
-      GeneralizedKinematicConstraint(const std::string &name="") : GeneralizedConstraint(name), bd(0), saved_DependentBody("") { }
-
-      void setDependentRigidBody(RigidBody* body) {bd=body; }
+      GeneralizedDualConstraint(const std::string &name) : GeneralizedConstraint(name), bd(NULL), bi(NULL) { }
 
       void init(InitStage stage);
+
+      void setDependentRigidBody(RigidBody* body_) { bd=body_; }
+      void setIndependentRigidBody(RigidBody* body_) { bi=body_; }
 
       void initializeUsingXML(xercesc::DOMElement * element);
 
     protected:
-      RigidBody *bd;
+      RigidBody *bd, *bi;
 
-      std::string saved_DependentBody;
+      std::string saved_IndependentBody, saved_DependentBody;
   };
 
 }

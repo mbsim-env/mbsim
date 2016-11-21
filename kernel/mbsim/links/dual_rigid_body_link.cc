@@ -19,10 +19,7 @@
 
 #include <config.h>
 #include "mbsim/links/dual_rigid_body_link.h"
-//#include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-//#include <openmbvcppinterface/group.h>
-//#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;

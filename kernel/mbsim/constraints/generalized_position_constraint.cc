@@ -33,23 +33,34 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
-    GeneralizedKinematicConstraint::init(stage);
+    GeneralizedDualConstraint::init(stage);
     f->init(stage);
   }
 
   void GeneralizedPositionConstraint::updateGeneralizedCoordinates() {
-    bd->setqRel((*f)(getTime()));
-    bd->setuRel(f->parDer(getTime()));
+    if(bi) {
+      bd->setqRel(bi->getqRel()+(*f)(getTime()));
+      bd->setuRel(bi->getuRel()+f->parDer(getTime()));
+    }
+    else {
+      bd->setqRel((*f)(getTime()));
+      bd->setuRel(f->parDer(getTime()));
+    }
     updGC = false;
   }
 
   void GeneralizedPositionConstraint::updateGeneralizedJacobians(int jj) {
-    bd->setjRel(f->parDerParDer(getTime()));
+    if(bi) {
+      bd->getJRel(0,false)(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1)) = bi->evalJRel();
+      bd->setjRel(bi->getjRel() + f->parDerParDer(getTime()));
+    }
+    else
+      bd->setjRel(f->parDerParDer(getTime()));
     updGJ = false;
   }
 
   void GeneralizedPositionConstraint::initializeUsingXML(DOMElement* element) {
-    GeneralizedKinematicConstraint::initializeUsingXML(element);
+    GeneralizedDualConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"constraintFunction");
     if(e) {
       Function<VecV(double)> *f=ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild());

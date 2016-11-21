@@ -20,25 +20,22 @@
 #ifndef _GENERALIZED_KINEMATIC_EXCITATION_H_
 #define _GENERALIZED_KINEMATIC_EXCITATION_H_
 
-#include "mbsim/links/rigid_body_link.h"
+#include "mbsim/links/dual_rigid_body_link.h"
 
 namespace MBSim {
 
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
-  class RigidBody;
 
-  class GeneralizedKinematicExcitation : public RigidBodyLink {
+  class GeneralizedKinematicExcitation : public DualRigidBodyLink {
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;
-      std::string saved_ref;
     public:
       GeneralizedKinematicExcitation(const std::string &name);
       ~GeneralizedKinematicExcitation();
 
       void updateGeneralizedForces();
-      void connect(RigidBody* body_) { body[0] = body_; }
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
@@ -50,8 +47,6 @@ namespace MBSim {
       bool isSingleValued() const { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
-
-      void initializeUsingXML(xercesc::DOMElement * element);
   };
 
 }

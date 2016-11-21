@@ -3,7 +3,7 @@ SUBDIRS = .
 noinst_LTLIBRARIES = libconstraint.la
 libconstraint_la_SOURCES = constraint.cc\
 			   generalized_constraint.cc\
-			   generalized_kinematic_constraint.cc\
+			   generalized_dual_constraint.cc\
 			   generalized_position_constraint.cc\
 			   generalized_velocitiy_constraint.cc\
 			   generalized_acceleration_constraint.cc\
@@ -17,7 +17,7 @@ libconstraint_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 constraintincludedir = $(includedir)/mbsim/constraints
 constraintinclude_HEADERS = constraint.h\
 			    generalized_constraint.h\
-			    generalized_kinematic_constraint.h\
+			    generalized_dual_constraint.h\
 			    generalized_position_constraint.h\
 			    generalized_velocitiy_constraint.h\
 			    generalized_acceleration_constraint.h\

@@ -37,23 +37,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedConnectionConstraint, MBSIM%"GeneralizedConnectionConstraint")
 
-  void GeneralizedConnectionConstraint::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_DependentBody!="")
-        setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
-      if (saved_IndependentBody!="")
-        setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
-      GeneralizedConstraint::init(stage);
-    }
-    else if(stage==preInit) {
-      GeneralizedConstraint::init(stage);
-      bd->addDependency(this);
-      addDependency(bi);
-    }
-    else
-      GeneralizedConstraint::init(stage);
-  }
-
   void GeneralizedConnectionConstraint::updateGeneralizedCoordinates() {
     if(bi) {
       bd->getqRel(false) = bi->evalqRel();
@@ -66,15 +49,6 @@ namespace MBSim {
     if(bi)
       bd->getJRel(0,false)(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1)) = bi->evalJRel();
     updGJ = false;
-  }
-
-  void GeneralizedConnectionConstraint::initializeUsingXML(DOMElement* element) {
-    GeneralizedConstraint::initializeUsingXML(element);
-    DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
-    saved_DependentBody=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
-    if(e) saved_IndependentBody=E(e)->getAttribute("ref");
   }
 
   void GeneralizedConnectionConstraint::setUpInverseKinetics() {

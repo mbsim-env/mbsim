@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2010 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -17,12 +17,8 @@
  */
 
 #include <config.h>
-#include "mbsim/constraints/generalized_kinematic_constraint.h"
+#include "mbsim/constraints/generalized_dual_constraint.h"
 #include "mbsim/objects/rigid_body.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/frame.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -30,25 +26,30 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSim {
- 
-  void GeneralizedKinematicConstraint::init(InitStage stage) {
+
+  void GeneralizedDualConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_DependentBody!="")
+      if(saved_DependentBody!="")
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
+      if(saved_IndependentBody!="")
+        setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
       GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
       GeneralizedConstraint::init(stage);
       bd->addDependency(this);
+      if(bi) addDependency(bi);
     }
     else
       GeneralizedConstraint::init(stage);
   }
 
-  void GeneralizedKinematicConstraint::initializeUsingXML(DOMElement* element) {
+  void GeneralizedDualConstraint::initializeUsingXML(DOMElement* element) {
     GeneralizedConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBody");
     saved_DependentBody=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
+    if(e) saved_IndependentBody=E(e)->getAttribute("ref");
   }
 
 }

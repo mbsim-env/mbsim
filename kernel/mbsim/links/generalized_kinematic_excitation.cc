@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  GeneralizedKinematicExcitation::GeneralizedKinematicExcitation(const string &name) : RigidBodyLink(name), fl(NULL), il(NULL) {
+  GeneralizedKinematicExcitation::GeneralizedKinematicExcitation(const string &name) : DualRigidBodyLink(name), fl(NULL), il(NULL) {
     body.resize(1);
     ratio.resize(1);
     ratio[0] = 1;
@@ -70,12 +70,7 @@ namespace MBSim {
   }
 
   void GeneralizedKinematicExcitation::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if (saved_ref!="")
-        connect(getByPath<RigidBody>(saved_ref));
-      RigidBodyLink::init(stage);
-    }
-    else if(stage==unknownStage) {
+    if(stage==unknownStage) {
       if(fl->isSetValued()) {
         il = new BilateralImpact;
         il->setParent(this);
@@ -86,12 +81,6 @@ namespace MBSim {
       RigidBodyLink::init(stage);
     if(fl) fl->init(stage);
     if(il) il->init(stage);
-  }
-
-  void GeneralizedKinematicExcitation::initializeUsingXML(DOMElement* element) {
-    RigidBodyLink::initializeUsingXML(element);
-    xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref=E(e)->getAttribute("ref");
   }
 
 }

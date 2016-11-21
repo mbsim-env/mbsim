@@ -35,10 +35,10 @@ namespace MBSim {
   void GeneralizedVelocityConstraint::init(InitStage stage) {
     if(stage==resize) {
       x.resize(xSize);
-      GeneralizedKinematicConstraint::init(stage);
+      GeneralizedDualConstraint::init(stage);
     }
     else
-      GeneralizedKinematicConstraint::init(stage);
+      GeneralizedDualConstraint::init(stage);
     f->init(stage);
   }
 
@@ -47,26 +47,40 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityConstraint::updatexd() {
-    xd = bd->transformCoordinates()?bd->evalTRel()*bd->evaluRel():bd->evaluRel();
+    xd = (*f)(x,getTime());
   }
 
   void GeneralizedVelocityConstraint::updateGeneralizedCoordinates() {
-    bd->setqRel(x);
-    bd->setuRel((*f)(x,getTime()));
+    if(bi) {
+      bd->setqRel(bi->getqRel()+x);
+      bd->setuRel(bi->getuRel()+(*f)(x,getTime()));
+    }
+    else {
+      bd->setqRel(x);
+      bd->setuRel((*f)(x,getTime()));
+    }
     updGC = false;
   }
 
   void GeneralizedVelocityConstraint::updateGeneralizedJacobians(int jj) {
     MatV J = f->parDer1(x,getTime());
-    if(J.cols())
-      bd->setjRel(J*(bd->transformCoordinates()?bd->evalTRel()*bd->evaluRel():bd->evaluRel()) + f->parDer2(x,getTime()));
-    else
-      bd->setjRel(f->parDer2(x,getTime()));
+    if(bi) {
+      bd->getJRel(0,false)(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1)) = bi->evalJRel();
+      if(J.cols())
+        bd->setjRel(bi->getjRel()+J*(bd->evaluRel()) + f->parDer2(x,getTime()));
+      else
+        bd->setjRel(bi->getjRel()+f->parDer2(x,getTime()));
+    } else {
+      if(J.cols())
+        bd->setjRel(J*(bd->evaluRel())+f->parDer2(x,getTime()));
+      else
+        bd->setjRel(f->parDer2(x,getTime()));
+    }
     updGJ = false;
   }
 
   void GeneralizedVelocityConstraint::initializeUsingXML(DOMElement* element) {
-    GeneralizedKinematicConstraint::initializeUsingXML(element);
+    GeneralizedDualConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
     if(e)
       x0 = getVec(e);
