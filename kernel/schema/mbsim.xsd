@@ -1334,67 +1334,42 @@
     <xs:complexContent>
       <xs:extension base="ConstraintType">
         <xs:sequence>
-          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Anfangswerte für Newton-Löser.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="dependentRigidBodiesFirstSide">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Liste der Körper auf Seite A des Lagers.
-              </xs:documentation>
-            </xs:annotation>
+          <xs:element name="dependentRigidBodyOnFirstSide" minOccurs="0" maxOccurs="unbounded">
             <xs:complexType>
-              <xs:sequence maxOccurs="unbounded">
-                <xs:element name="dependentRigidBody" minOccurs="0">
-                  <xs:complexType>
-                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
-                      <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                        Angabe des Körpers 
-                      </xs:documentation></xs:annotation>
-                    </xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Liste der Körper auf Seite A des Lagers.
+                </xs:documentation></xs:annotation>
+              </xs:attribute>
             </xs:complexType>
           </xs:element>
-          <xs:element name="dependentRigidBodiesSecondSide">
+          <xs:element name="dependentRigidBodyOnSecondSide" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Liste der Körper auf Seite B des Lagers.
+                </xs:documentation></xs:annotation>
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="independentRigidBody" minOccurs="1" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                  Angabe der Körper, deren Freiheitsgrade erhalten bleiben. Die Lagen und Geschwindigkeiten aller anderen Körper in der kinematischen Schleife können aus den generalisierten Koordinate dieser Körper bestimmt werden.
+                </xs:documentation></xs:annotation>
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Liste der Körper auf Seite B des Lagers.
+                Angabe der beiden Koordinatensysteme, welche in Übereinstimmung gebracht werden sollen.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence maxOccurs="unbounded">
-                <xs:element name="dependentRigidBody" minOccurs="0">
-                  <xs:complexType>
-                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
-                      <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                        Angabe des Körpers 
-                      </xs:documentation></xs:annotation>
-                    </xs:attribute>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="independentRigidBody">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Angabe des Körpers, dessen Freiheitsgrad erhalten bleibt. Die Lagen und Geschwindigkeiten aller anderen Körper in der kinematischen Schleife können aus der generalisierten Koordinate dieses Körpers bestimmt werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="secondIndependentRigidBody" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Angabe eines zweiten Körpers, dessen Freiheitsgrad erhalten bleibt.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
@@ -1416,16 +1391,12 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="connect">
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Angabe der beiden Koordinatensysteme, welche in Übereinstimmung gebracht werden sollen.
+                Anfangswerte für Newton-Löser.
               </xs:documentation>
             </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">

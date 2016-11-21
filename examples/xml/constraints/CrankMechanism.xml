@@ -301,15 +301,11 @@
       <independentRigidBody ref="../Object[Motor]" ratio="-motor_TransmissionRadius/crank_TransmissionRadius"/>
     </GeneralizedGearConstraint>
     <JointConstraint xmlns="http://www.mbsim-env.de/MBSim" name="Constraint_Rocker_Piston">
-      <dependentRigidBodiesFirstSide>
-        <dependentRigidBody ref="../Object[Rocker]"/>
-      </dependentRigidBodiesFirstSide>
-      <dependentRigidBodiesSecondSide>
-        <dependentRigidBody ref="../Object[Piston]"/>
-      </dependentRigidBodiesSecondSide>
+      <dependentRigidBodyOnFirstSide ref="../Object[Rocker]"/>
+      <dependentRigidBodyOnSecondSide ref="../Object[Piston]"/>
       <independentRigidBody ref="../Object[Crank]"/>
-      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
       <connect ref1="../Object[Rocker]/Frame[fPiston]" ref2="../Object[Piston]/Frame[fRocker]"/>
+      <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
     </JointConstraint>
   </constraints>
 </Group>

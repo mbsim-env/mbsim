@@ -100,12 +100,10 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body3->setInertiaTensor(Theta);
   body3->setTranslation(new TranslationAlongXAxis<VecV>);
 
-  vector<RigidBody*> bd1; bd1.push_back(body2);
-  vector<RigidBody*> bd2; bd2.push_back(body3);
   //JointConstraint* constraint = new JointConstraint("C",bd1,bd2,body2->getFrame("Q"),body3->getFrame("C")); 
   JointConstraint* constraint = new JointConstraint("C");
-  constraint->setDependentRigidBodiesFirstSide(bd1);
-  constraint->setDependentRigidBodiesSecondSide(bd2);
+  constraint->addDependentRigidBodyOnFirstSide(body2);
+  constraint->addDependentRigidBodyOnSecondSide(body3);
   constraint->setIndependentRigidBody(body1);
   constraint->connect(body2->getFrame("Q"),body3->getFrame("C"));
   addConstraint(constraint);

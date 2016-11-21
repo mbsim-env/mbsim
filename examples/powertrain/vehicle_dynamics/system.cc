@@ -415,14 +415,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   else {
     // Use minimal-form
     {
-      vector<RigidBody*> bd1; 
-      vector<RigidBody*> bd2; 
-      bd2.push_back(differentialGear->getRightOutputShaft());
-      bd2.push_back(psR->getInputShaft());
-      bd2.push_back(psR->getIntermediateShaft());
-      bd2.push_back(psR->getOutputShaft());
       JointConstraint* jointconstraint = new JointConstraint("CR");
-      jointconstraint->setDependentRigidBodiesSecondSide(bd2);
+      jointconstraint->addDependentRigidBodyOnSecondSide(differentialGear->getRightOutputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psR->getInputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psR->getIntermediateShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psR->getOutputShaft());
       jointconstraint->setIndependentRigidBody(hr);
       jointconstraint->connect(hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
       addConstraint(jointconstraint);
@@ -431,14 +428,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     }
 
     {
-      vector<RigidBody*> bd1; 
-      vector<RigidBody*> bd2; 
-      bd2.push_back(differentialGear->getLeftOutputShaft());
-      bd2.push_back(psL->getInputShaft());
-      bd2.push_back(psL->getIntermediateShaft());
-      bd2.push_back(psL->getOutputShaft());
       JointConstraint* jointconstraint = new JointConstraint("CL");
-      jointconstraint->setDependentRigidBodiesSecondSide(bd2);
+      jointconstraint->addDependentRigidBodyOnSecondSide(differentialGear->getLeftOutputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psL->getInputShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psL->getIntermediateShaft());
+      jointconstraint->addDependentRigidBodyOnSecondSide(psL->getOutputShaft());
       jointconstraint->setIndependentRigidBody(hl);
       jointconstraint->connect(hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
       addConstraint(jointconstraint);
