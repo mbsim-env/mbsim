@@ -1,16 +1,12 @@
-if COND_XML
-  MAYBE_SCHEMA = schema
-endif
-
-SUBDIRS = mbsimControl $(MAYBE_SCHEMA)
+SUBDIRS = mbsimControl schema
 
 DIST_SUBDIRS = mbsimControl doc schema
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimControl.pc
 
-plugindir = $(datadir)/mbsimxml/plugins
-plugin_DATA = mbsimControl.plugin.xml
+mbsimmodulesdir = $(datadir)/mbsimmodules
+mbsimmodules_DATA = mbsimControl.mbsimmodule.xml
 
 # wrapper target for doxygen in dir doc
 .PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc install-xmldoc uninstall-xmldoc

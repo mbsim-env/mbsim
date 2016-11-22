@@ -19,9 +19,7 @@
 
 #include <config.h>
 #include "mbsim/observers/observer.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -37,14 +35,12 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVGrp->setName(name+"_Group");
           openMBVGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVGrp);
         }
-#endif
       }
       Element::init(stage);
     }

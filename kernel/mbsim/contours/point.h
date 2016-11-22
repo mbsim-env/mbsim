@@ -22,10 +22,8 @@
 
 #include "mbsim/contours/rigid_contour.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
-#endif
 
 namespace MBSim {
 
@@ -62,12 +60,10 @@ namespace MBSim {
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS) { return fmatvec::Vec2(fmatvec::INIT,0.); }
       /**********************************/
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),0.001)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVSphere ombv(size,diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
-#endif
       
       virtual void initializeUsingXML(xercesc::DOMElement *element);
   };

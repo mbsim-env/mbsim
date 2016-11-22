@@ -4,10 +4,8 @@
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/observers/absolute_kinematics_observer.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/arrow.h"
 #include "openmbvcppinterface/cube.h"
-#endif
 
 using namespace MBSim;
 using namespace casadi;
@@ -61,7 +59,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   o->setFrame(body1->getFrame("C"));
   o->enableOpenMBVVelocity();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
   std::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   cuboid->setLength(h1);
@@ -70,6 +67,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   getFrame("I")->enableOpenMBV();
 
-#endif
 
 }

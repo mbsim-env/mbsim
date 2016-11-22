@@ -25,9 +25,7 @@
 #include <mbsim/utils/colors.h>
 #include <fmatvec/fmatvec.h>
 #include <mbsim/functions/function.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
-#endif
 
 namespace MBSim {
 
@@ -81,7 +79,6 @@ namespace MBSim {
        */
       double getHeight() const { return height; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief enable visualisation
        * \param enable           enable or disable openmbv
@@ -99,7 +96,6 @@ namespace MBSim {
        * \brief set transparency of body
        */
       void setTransparency(const double & transparency);
-#endif
 
       /*!
        * \brief get value at position of 0 derivative
@@ -172,14 +168,14 @@ namespace MBSim {
        */
       fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta);
 
-      /*!
-       * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
-       * \param x_0: starting point of the polynomial domain
-       * \param x_end: end point of the polynomial domain
-       * \param P: the given point
-       * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
-       */
-      fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
+//      /*!
+//       * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
+//       * \param x_0: starting point of the polynomial domain
+//       * \param x_end: end point of the polynomial domain
+//       * \param P: the given point
+//       * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
+//       */
+//      fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
 
       fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta);
@@ -207,7 +203,6 @@ namespace MBSim {
        */
       double sphereRadius;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief color values for the iv-body
        */
@@ -234,7 +229,6 @@ namespace MBSim {
       void createInventorFile();
 
       void enableOpenMBV_(const fmatvec::Vec3 &dc, double tp, int polynomialPoints, int circularPoints);
-#endif
   };
 
   /*!

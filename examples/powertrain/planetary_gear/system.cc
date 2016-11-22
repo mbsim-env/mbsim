@@ -6,9 +6,7 @@
 #include "mbsimPowertrain/planetary_gear.h"
 #include "mbsim/functions/constant_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;

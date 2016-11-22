@@ -292,7 +292,7 @@ def main():
         pj('mbsim', 'kernel'),
         pj('openmbv', 'openmbvcppinterface'),
         pj('openmbv', 'mbxmlutils'),
-        # dependencies to mbsim modules (plugins) are only required for correct xmldoc generation 
+        # dependencies to mbsim modules are only required for correct xmldoc generation 
         pj('mbsim', 'modules', 'mbsimHydraulics'),
         pj('mbsim', 'modules', 'mbsimFlexibleBody'),
         pj('mbsim', 'modules', 'mbsimPowertrain'),

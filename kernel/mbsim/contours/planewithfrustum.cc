@@ -21,9 +21,7 @@
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/utils/utils.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -32,9 +30,8 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlaneWithFrustum, MBSIM%"PlaneWithFrustum")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlaneWithFrustum)
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   void PlaneWithFrustum::enableOpenMBV() {
     openMBVRigidBody=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
     if (hFrustum<0) {
@@ -51,7 +48,6 @@ namespace MBSim {
     static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(0, M_PI/2., 0);
     static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(hFrustum, 0, 0);
   }
-#endif
 
   void PlaneWithFrustum::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
@@ -65,10 +61,8 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"roundingRadius");
     rho=getDouble(e);
     e=e->getNextElementSibling();
-#ifdef HAVE_OPENMBVCPPINTERFACE
     if(E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV"))
       enableOpenMBV();
-#endif
     checkInput();
   }
 

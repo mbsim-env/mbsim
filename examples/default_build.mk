@@ -48,8 +48,7 @@ rpath: $(OBJECTS)
 
 # compile source with pkg-config options from PACKAGES (and generate dependency file)
 %.o: %.cc
-	@$(CXX) -MM $(PIC) $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $< > $@.d
-	@cat $@.d | sed -re "s/^[^:]+://;s/ *\\\\$$/:/;s/^ *//;s/ +/:\n/g;s/([^:])$$/\1:/" >> $@.d
+	@$(CXX) -MM -MP $(PIC) $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $< > $@.d
 	$(CXX) -c $(PIC) -o $@ $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $<
 
 # clean target: remove all generated files

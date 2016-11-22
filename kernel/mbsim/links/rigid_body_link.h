@@ -23,10 +23,8 @@
 #include "mbsim/links/link.h"
 #include "mbsim/frames/floating_relative_frame.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -85,7 +83,6 @@ namespace MBSim {
 
       virtual void setSupportFrame(Frame *frame) { support = frame; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
      /** \brief Visualize a force arrow */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
@@ -99,13 +96,10 @@ namespace MBSim {
         setOpenMBVMoment(ombv.createOpenMBV());
       }
       void setOpenMBVMoment(const std::shared_ptr<OpenMBV::Arrow> &arrow) { MArrow[0]=arrow; }
-#endif
 
     protected:
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVForceGrp;
       std::vector<std::shared_ptr<OpenMBV::Arrow> > FArrow, MArrow;
-#endif
 
     private:
       std::string saved_supportFrame;

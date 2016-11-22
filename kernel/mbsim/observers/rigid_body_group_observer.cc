@@ -23,10 +23,8 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -42,7 +40,6 @@ namespace MBSim {
 
       Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
             openMBVPosition->setName("Position");
@@ -85,7 +82,6 @@ namespace MBSim {
             getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
           }
         }
-#endif
       }
     }
     else

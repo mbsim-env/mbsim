@@ -22,10 +22,8 @@
 #include "mbsim/links/frame_link.h"
 #include "mbsim/functions/function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -37,9 +35,7 @@ namespace MBSim {
     protected:
       Function<double(double,double)> *func;
       double l0;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::CoilSpring> coilspringOpenMBV;
-#endif
     public:
       SpringDamper(const std::string &name="");
       ~SpringDamper();
@@ -70,13 +66,11 @@ namespace MBSim {
       void plot();
       void initializeUsingXML(xercesc::DOMElement *element);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCoilSpring, tag, (optional (numberOfCoils,(int),3)(springRadius,(double),1)(crossSectionRadius,(double),-1)(nominalLength,(double),-1)(type,(OpenMBV::CoilSpring::Type),OpenMBV::CoilSpring::tube)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVCoilSpring ombv(springRadius,crossSectionRadius,1,numberOfCoils,nominalLength,type,diffuseColor,transparency);
         coilspringOpenMBV=ombv.createOpenMBV();
       }
-#endif
   };
 
 }

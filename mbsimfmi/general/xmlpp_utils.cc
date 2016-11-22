@@ -37,8 +37,7 @@ void convertXPathParamSetToVariable(const std::shared_ptr<Preprocess::XPathParam
       }
       // add a string variable as it
       else if(eval->valueIsOfType(pIt->second, Eval::StringType)) {
-        string value=eval->cast<CodeString>(pIt->second);
-        value=value.substr(1, value.length()-2); // remove the leading and trailing '
+        string value=eval->cast<string>(pIt->second);
         fmiParam.push_back(std::make_shared<VariableStore<string> >(pIt->first, Parameter, value));
       }
     }

@@ -31,7 +31,7 @@ namespace MBSim {
 
   std::unique_ptr<MBSimEnvironment> MBSimEnvironment::instance(new MBSimEnvironment);
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(MBSimEnvironment, MBSIM%"MBSimEnvironment")
+  MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON(MBSIM, MBSimEnvironment)
 
   void MBSimEnvironment::initializeUsingXML(DOMElement *element) {
     Environment::initializeUsingXML(element);

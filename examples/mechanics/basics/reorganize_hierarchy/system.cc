@@ -5,9 +5,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -42,14 +40,12 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
-#if HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::IvBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel1.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab1->setOpenMBVRigidBody(obj);
   stab1->setOpenMBVFrameOfReference(stab1->getFrame("R"));
-#endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
   addObject(stab2);
@@ -66,14 +62,12 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
-#if HAVE_OPENMBVCPPINTERFACE
   obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab2->setOpenMBVRigidBody(obj);
   stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
-#endif
 
   RigidBody* stab3 = new RigidBody("Stab3");
   addObject(stab3);
@@ -90,14 +84,12 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab3->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab3->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
-#if HAVE_OPENMBVCPPINTERFACE
   obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab3->setOpenMBVRigidBody(obj);
   stab3->setOpenMBVFrameOfReference(stab3->getFrame("R"));
-#endif
 
   RigidBody* stab4 = new RigidBody("Stab4");
   addObject(stab4);
@@ -112,13 +104,11 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab4->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab4->setInitialGeneralizedVelocity(Vec("[-1.6]"));
 
-#if HAVE_OPENMBVCPPINTERFACE
   obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab4->setOpenMBVRigidBody(obj);
-#endif
 
   TestGroup *group = new TestGroup("PendelGruppe1"); 
   addGroup(group);

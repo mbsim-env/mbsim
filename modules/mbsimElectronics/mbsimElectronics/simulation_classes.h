@@ -30,9 +30,7 @@ namespace MBSimElectronics {
       void addBranch(Branch* branch_) {branch.push_back(branch_);}
       int getNumberOfBranches() {return branch.size();}
       Branch* getBranch(int i) {return branch[i];}
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
-#endif
   };
 
   class Branch : public MBSim::Object {
@@ -77,9 +75,7 @@ namespace MBSimElectronics {
       int getFlag() const { return flag; }
       void setPrecessor(Object* obj) {precessor = obj;}
       void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
-#endif
   };
 
   class ElectronicLink : public MBSim::Link, public ElectronicComponent {
@@ -196,9 +192,7 @@ namespace MBSimElectronics {
       virtual std::string getName() const {return Object::getName();}
       virtual void setName(std::string name) {Object::setName(name);}
       void resetUpToDate() { Object::resetUpToDate(); updQ = true; updI = true; }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
-#endif
   };
 
   class Inductor : public ElectronicObject {

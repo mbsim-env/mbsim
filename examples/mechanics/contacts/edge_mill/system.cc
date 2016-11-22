@@ -10,10 +10,8 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
 #include <openmbvcppinterface/frustum.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -182,13 +180,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setNormalImpactLaw(new UnilateralNewtonImpact);
   contact->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
   contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
-#ifdef HAVE_OPENMBVCPPINTERFACE
   contact->enableOpenMBVContactPoints();
-#endif
   this->addLink(contact);
 
   /* OpenMBV */
-#ifdef HAVE_OPENMBVCPPINTERFACE
   /* axis */
   std::shared_ptr<OpenMBV::Frustum> obj1 = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   obj1->setBaseRadius(r_axis);
@@ -300,7 +295,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
   groundBase->setOpenMBVRigidBody(frustumMBV);
-#endif
 }
 
 void System::initialize() {

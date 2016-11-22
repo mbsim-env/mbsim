@@ -9,9 +9,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/constant_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -48,10 +46,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   r.init(0);
   r(2) = l/2;
   shaft1->addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
-#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
   shaft1->getFrame("C")->enableOpenMBV(0.3);
-#endif
 
   setPlotFeatureForChildren(notMinimalState,enabled);
 
@@ -83,7 +79,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ke->setMomentDirection("[0;0;1]");
   ke->setMomentFunction(new ConstantFunction<VecV(double)>(1/100.));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(R1);
   cylinder->setBaseRadius(R1);
@@ -91,7 +86,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setDiffuseColor(0.1,1,1);
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
-#endif
 
 }
 

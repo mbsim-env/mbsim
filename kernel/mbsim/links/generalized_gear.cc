@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedGear, MBSIM%"GeneralizedGear")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedGear)
 
   GeneralizedGear::~GeneralizedGear() {
     delete fl;

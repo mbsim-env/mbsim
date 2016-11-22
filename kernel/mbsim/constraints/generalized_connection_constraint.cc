@@ -23,10 +23,8 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/objectfactory.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -35,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedConnectionConstraint, MBSIM%"GeneralizedConnectionConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedConnectionConstraint)
 
   void GeneralizedConnectionConstraint::updateGeneralizedCoordinates() {
     if(bi) {

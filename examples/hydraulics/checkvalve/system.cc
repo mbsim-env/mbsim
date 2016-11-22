@@ -18,9 +18,7 @@
 
 #include "mbsim/utils/rotarymatrices.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -83,7 +81,6 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   n2->setpFunction(new ConstantFunction<double(double)>(3e5));
   n2->addInFlow(lCV->getLine());
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   getFrame("I")->enableOpenMBV(.025, 1);
   getFrame("ref")->enableOpenMBV(.025, 1);
   b->getFrame("C")->enableOpenMBV(.025, 1);
@@ -93,5 +90,4 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   lCV->enableOpenMBVBodies();
   n1->enableOpenMBVArrows(.01);
   n2->enableOpenMBVArrows(.01);
-#endif
 }

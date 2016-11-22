@@ -24,10 +24,8 @@
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/eps.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -43,14 +41,12 @@ namespace MBSim {
 
       Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVAxisOfRotation) {
             openMBVAxisOfRotation->setName(name+"_AxisOfRotation");
             getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
           }
         }
-#endif
       }
     }
     else

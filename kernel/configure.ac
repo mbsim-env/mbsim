@@ -23,10 +23,8 @@ CXXFLAGS="$CXXFLAGS -std=c++11 -D_USE_MATH_DEFINES"
 
 AC_C_CONST
 
-requires="fmatvec hdf5serie mbxmlutilshelper"
-PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilshelper)
-
-AC_SUBST([requires])
+PKG_CHECK_MODULES(FMATVEC, fmatvec >= 1.0.1) # only fmatvec
+PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilshelper) # all deps
 
 dnl Enable debugging 
 AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
@@ -49,18 +47,10 @@ fi
 CPPFLAGS="$CPPFLAGS -Wno-error=sign-compare" # casadi headers use some wrong sign-compare
 
 dnl Check for casadi 
-PKG_CHECK_MODULES(CASADI, casadi >= 3.0.0, [casadi=yes; requires="$requires casadi"; CPPFLAGS="$CPPFLAGS -DHAVE_CASADI"; DEFINES="$DEFINES -DHAVE_CASADI"], [casadi=no])
-AM_CONDITIONAL([COND_CASADI], [test $casadi = yes])
-
-dnl check for numerics library
-dnl PKG_CHECK_MODULES(MBSIMNUMERICS, numerics ,[requires="$requires numerics"; numerics_compilerflag="-DHAVE_MBSIMNUMERICS";AC_DEFINE([HAVE_MBSIMNUMERICS],[1],[linking with MBSimNumerics-library])], [echo No numerics package is used. Consider to install it...])
-dnl AM_CONDITIONAL([COND_NUMERICS], [test _$numerics_compilerflag = _-DHAVE_MBSIMNUMERICS])
-dnl AC_SUBST([numerics_compilerflag])
+PKG_CHECK_MODULES(CASADI, casadi >= 3.0.0, [], [AC_MSG_ERROR([CasADi not found!])])
 
 dnl check for OpenMBV-Cpp-Interface
-PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[requires="$requires openmbvcppinterface";openmbv_compilerflag="-DHAVE_OPENMBVCPPINTERFACE";AC_DEFINE([HAVE_OPENMBVCPPINTERFACE],[1],[linking with OpenMBVCppInterface])],[echo "no"])
-AM_CONDITIONAL([COND_OPENMBVCPPINTERFACE], [test _$openmbv_compilerflag = _-DHAVE_OPENMBVCPPINTERFACE])
-AC_SUBST([openmbv_compilerflag])
+PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[],[AC_MSG_ERROR([OpenMBVC++Interface not found!])])
 
 dnl By autoscan
 AC_CHECK_FUNCS([mkdir])
@@ -110,16 +100,62 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
+if test "$cross_compiling" == "yes"; then
+  AC_SUBST([XC_EXEC_PREFIX],[wine])
+fi
+
+dnl Check for SWIG
+AC_ARG_WITH([swigpath], [  --with-swigpath=PATH  The path to the swig program.],
+  [swigpath="$withval"],[swigpath=""])
+
+dnl Check for python
+AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: 2.7).],
+  [pythonversion="$withval"],[pythonversion="2.7"])
+AC_ARG_ENABLE([python], [--enable-python  Enable MBSim moudles in python. This is ALPHA hence it must be enabled explicitly.])
+AM_CONDITIONAL([COND_PYTHON], [test "x$enable_python" == "xyes"])
+if test "x$enable_python" == "xyes"; then
+  PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
+  if test "$cross_compiling" == "yes"; then
+    pythonshext=".pyd"
+  else
+    pythonshext=".so"
+  fi
+  AC_SUBST([PYTHON_SHEXT], [$pythonshext])
+
+  NUMPY_INCDIR="$($PKG_CONFIG --variable=libdir python-$pythonversion)/python$($PKG_CONFIG --modversion python-$pythonversion)/site-packages/numpy/core/include"
+  if test ! -d $NUMPY_INCDIR; then
+    AC_MSG_ERROR([Numpy header not found in directory $NUMPY_INCDIR])
+    AC_SUBST([NUMPY_INCDIR])
+  fi
+
+  AC_PATH_PROG([swig],[swig],[no],[${swigpath:-$PATH}])
+  if test "_$swig" != "_no"; then
+    SWIGVERSION=$($swig -version | sed -rne "s/^SWIG Version (.*)$/\1/p")
+    AC_MSG_NOTICE([Using SWIG version $SWIGVERSION])
+    SWIGVERSION_=$[[$(echo $SWIGVERSION | sed -re "s/^([0-9]+)\.([0-9]+)\.([0-9]+)$/\1*1000000+\2*1000+\3/")]]
+    if test $SWIGVERSION_ -lt $[[3*1000000+0*1000+6]] -o $SWIGVERSION_ -eq $[[3*1000000+0*1000+9]] -o $SWIGVERSION_ -eq $[[3*1000000+0*1000+10]]; then
+      AC_MSG_ERROR([SWIG >= 3.0.6 needed, but SWIG = 3.0.9 and 3.0.10 has bugs])
+    fi
+  else
+    AC_MSG_ERROR([SWIG not found])
+  fi
+
+  PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
+  AC_SUBST([PYTHON_BIN])
+fi
+
 dnl XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
 AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
-AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/analysers/Makefile mbsim/constitutive_laws/Makefile mbsim/contact_kinematics/Makefile mbsim/frames/Makefile mbsim/contours/Makefile mbsim/objects/Makefile mbsim/links/Makefile mbsim/constraints/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/numerics/nurbs/Makefile mbsim/functions/Makefile mbsim/functions/kinematics/Makefile mbsim/functions/kinetics/Makefile mbsim/functions/contact/Makefile mbsim/observers/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile])
+AM_EXTRA_RECURSIVE_TARGETS([swig-unwrapped])
+
+AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/analysers/Makefile mbsim/constitutive_laws/Makefile mbsim/contact_kinematics/Makefile mbsim/frames/Makefile mbsim/contours/Makefile mbsim/objects/Makefile mbsim/links/Makefile mbsim/constraints/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/numerics/nurbs/Makefile mbsim/functions/Makefile mbsim/functions/kinematics/Makefile mbsim/functions/kinetics/Makefile mbsim/functions/contact/Makefile mbsim/observers/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile swig/Makefile swig/.swig_prepare/Makefile swig/check/Makefile])
+AC_CONFIG_FILES([swig/check/fmatvec_main.sh], [chmod +x swig/check/fmatvec_main.sh])
 
 AC_OUTPUT
 

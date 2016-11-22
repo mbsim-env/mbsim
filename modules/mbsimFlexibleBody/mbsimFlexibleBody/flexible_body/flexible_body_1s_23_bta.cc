@@ -32,7 +32,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s23BTA, MBSIMFLEX%"FlexibleBody1s23BTA")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBody1s23BTA)
 
   FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBody1s(name,true), l0(0.), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0) { 
 //    cylinderFlexible = new CylinderFlexible("CylinderFlexible");
@@ -237,7 +237,6 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"massProportionalDamping");
     setMassProportionalDamping(getDouble(e));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
       std::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
@@ -245,7 +244,6 @@ namespace MBSimFlexibleBody {
       rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);
     }
-#endif
 
   }
 

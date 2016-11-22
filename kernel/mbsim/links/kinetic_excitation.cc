@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(KineticExcitation, MBSIM%"KineticExcitation")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, KineticExcitation)
 
   KineticExcitation::KineticExcitation(const string &name) : FloatingFrameLink(name), F(NULL), M(NULL) {
     refFrameID = 1;

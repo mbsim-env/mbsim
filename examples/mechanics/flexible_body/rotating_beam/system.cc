@@ -10,10 +10,8 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/nested_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -74,10 +72,8 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   T(1,1) = 1;
   P(2,1) = 0.067808;
   body->addFrame(new FixedNodalFrame("Q", 2.*Kr, T, P));
-#ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("K")->enableOpenMBV(0.3);
   body->getFrame("Q")->enableOpenMBV(0.3);
-#endif
 
   SymMat rrdm(3);
   rrdm(0,0) = J;

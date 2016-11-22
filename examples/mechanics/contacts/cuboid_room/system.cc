@@ -6,10 +6,8 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/room.h"
 #include "mbsim/contours/cuboid.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
 #include <openmbvcppinterface/sphere.h>
-#endif
 #include "mbsim/environment.h"
 
 
@@ -26,9 +24,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   room->setYLength(.2); //Y
   room->setZLength(0.1); //Z
   room->setFrameOfReference(I);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   room->enableOpenMBV(_transparency=0.5);
-#endif
   roomBody->addContour(room);
 
 
@@ -62,11 +58,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  Point* point = new Point("Punkt");
 //  body->addContour(point, Vec3(), SqrMat3(EYE));
 //
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //  std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
 //  body->setOpenMBVRigidBody(sphere);
 //  sphere->setRadius(0.01);
-//#endif
 
   Cuboid *cuboid = new Cuboid("Wuerfel");
   cuboid->setXLength(l);
@@ -86,10 +80,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cnf->connect(roomBody->getContour("Raum"), body->getContour("Wuerfel"));
   addLink(cnf);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cube> obj = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   body->setOpenMBVRigidBody(obj);
   obj->setLength(l);
-#endif
 }
 

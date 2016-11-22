@@ -71,12 +71,13 @@ namespace MBSim {
       const fmatvec::Vec3& getAccelerationOfGravity() const { return grav; }
       /***************************************************/
     
-    protected:
+    private:
       /**
        * class pointer to ensure singleton status
        */
       static std::unique_ptr<MBSimEnvironment> instance;
       
+    protected:
       /**
        * \brief constructor
        */

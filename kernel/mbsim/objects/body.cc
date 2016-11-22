@@ -22,10 +22,8 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/dynamic_system.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #include <openmbvcppinterface/body.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -108,7 +106,6 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVGrp->setName(name+"_Group");
@@ -119,7 +116,6 @@ namespace MBSim {
             openMBVGrp->addObject(openMBVBody);
           }
         }
-#endif
         Object::init(stage);
       }
     }

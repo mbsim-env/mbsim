@@ -28,14 +28,11 @@
     </xs:documentation>
   </xs:annotation>
 
-  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"
-    schemaLocation="../http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
 
-  <xs:import namespace="http://www.mbsim-env.de/OpenMBV"
-    schemaLocation="../http___www_mbsim-env_de_OpenMBV/openmbv.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/OpenMBV"/>
 
-  <xs:import namespace="http://www.mbsim-env.de/MBSim"
-    schemaLocation="../http___www_mbsim-env_de_MBSim/mbsim.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
 
   <xs:simpleType name="SignalReferenceType">
     <xs:restriction base="pv:stringPartialEval">

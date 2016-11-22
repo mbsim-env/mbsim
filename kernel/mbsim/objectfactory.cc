@@ -105,7 +105,7 @@ ObjectFactory& ObjectFactory::instance() {
   return of;
 }
 
-void registerXMLName(const FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc) {
+void registerClass_internal(const FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc) {
   ObjectFactory::AllocDeallocVector &allocDealloc=ObjectFactory::instance().registeredType.insert(make_pair(name, ObjectFactory::AllocDeallocVector())).first->second;
   if(find_if(allocDealloc.begin(), allocDealloc.end(), [&alloc](const ObjectFactory::AllocDeallocPair &x){
     return *x.first == *alloc;
@@ -114,7 +114,7 @@ void registerXMLName(const FQN &name, const AllocateBase *alloc, const Deallocat
   allocDealloc.push_back(make_pair(alloc, dealloc));
 }
 
-void deregisterXMLName(const FQN &name, const AllocateBase *alloc) {
+void deregisterClass_internal(const FQN &name, const AllocateBase *alloc) {
   ObjectFactory::NameMapIt nameIt=ObjectFactory::instance().registeredType.find(name);
   if(nameIt==ObjectFactory::instance().registeredType.end())
     return;
@@ -129,6 +129,14 @@ void deregisterXMLName(const FQN &name, const AllocateBase *alloc) {
   if(nameIt->second.empty())
     ObjectFactory::instance().registeredType.erase(nameIt);
   delete alloc;
+}
+
+std::string fixXMLLocalName(std::string name) {
+  name=name.substr(0, name.find("<"));
+  size_t c=name.rfind(":");
+  if(c!=std::string::npos)
+    return name.substr(c+1);
+  return name;
 }
 
 }

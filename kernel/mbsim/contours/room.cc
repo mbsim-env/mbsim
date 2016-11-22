@@ -23,9 +23,7 @@
 #include <mbsim/frames/fixed_relative_frame.h>
 #include <mbsim/utils/rotarymatrices.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/compoundrigidbody.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -34,9 +32,7 @@ namespace MBSim {
 
   Room::Room(const string &name) :
       CompoundContour(name),
-#ifdef HAVE_OPENMBVCPPINTERFACE
           enable(false), gridSize(10)
-#endif
   {
   }
 
@@ -110,10 +106,8 @@ namespace MBSim {
     }
     else if (stage == plotting) {
       RigidContour::init(stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(l,d,h);
-#endif
     }
     else
       CompoundContour::init(stage);

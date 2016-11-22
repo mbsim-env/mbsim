@@ -206,7 +206,7 @@ namespace MBSimHydraulics {
     setLength(getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstrainedLine,  MBSIMHYDRAULICS%"ConstrainedLine")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedLine)
 
   void ConstrainedLine::updateQ() {
     QIn(0)=(*QFunction)(getTime());
@@ -233,7 +233,7 @@ namespace MBSimHydraulics {
     QFunction->init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FluidPump,  MBSIMHYDRAULICS%"FluidPump")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, FluidPump)
 
   void FluidPump::updateQ() {
     QIn(0) = (*QFunction)(getTime());
@@ -260,7 +260,7 @@ namespace MBSimHydraulics {
     QFunction->init(stage);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(StatelessOrifice,  MBSIMHYDRAULICS%"StatelessOrMBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Element, ")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, StatelessOrifice)
 
   void StatelessOrifice::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);

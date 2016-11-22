@@ -49,9 +49,7 @@ namespace MBSim {
         return "CompoundContour";
       }
       virtual void plot();
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGroup; }
-#endif
       /***************************************************/
 
       void init(InitStage stage);
@@ -81,9 +79,7 @@ namespace MBSim {
        */
       std::vector<fmatvec::SqrMat3> AIK;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVGroup;
-#endif
   };
 }
 

@@ -21,10 +21,8 @@
 #include "mbsim/observers/cartesian_coordinates_observer.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace xercesc;
@@ -33,7 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(CartesianCoordinatesObserver, MBSIM%"CartesianCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, CartesianCoordinatesObserver)
 
   CartesianCoordinatesObserver::CartesianCoordinatesObserver(const std::string &name) : CoordinatesObserver(name), A(EYE) {
   }
@@ -59,7 +57,6 @@ namespace MBSim {
       }
       CoordinatesObserver::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
 	ex = A.col(0);
 	ey = A.col(1);
 	ez = A.col(2);
@@ -98,7 +95,6 @@ namespace MBSim {
             openMBVAccGrp->addObject(openMBVZAcceleration);
           }
         }
-#endif
       }
     }
     else
@@ -107,7 +103,6 @@ namespace MBSim {
 
   void CartesianCoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         Vec3 r = frame->evalPosition();
         Vec3 v = frame->evalVelocity();
@@ -248,7 +243,6 @@ namespace MBSim {
           openMBVFrame->append(data);
         }
       }
-#endif
 
       CoordinatesObserver::plot();
     }

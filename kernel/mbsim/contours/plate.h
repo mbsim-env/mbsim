@@ -25,9 +25,7 @@
 #include "fmatvec/linear_algebra_double.h"
 #include "fmatvec/linear_algebra.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/openmbv_utils.h>
-#endif
 
 namespace MBSim {
 
@@ -118,12 +116,10 @@ namespace MBSim {
       bool Intersect_Circle(const double & radius, const fmatvec::Vec3& CenCir);
       /***************************************************/
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) { 
         OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
-#endif
 
     protected:
       double yLength, zLength;

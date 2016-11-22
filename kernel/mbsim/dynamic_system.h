@@ -101,9 +101,7 @@ namespace MBSim {
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
-#ifdef HAVE_OPENMBVCPPINTERFACE
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
-#endif
 
       virtual void updatewb();
       virtual void updateW(int j=0);
@@ -773,10 +771,12 @@ namespace MBSim {
 
       void resetUpToDate();
 
-    protected:
+    private:
+      friend class DynamicSystemSolver;
       void addFrame(Frame *frame);
 
       void addContour(Contour *contour);
+    protected:
 
       /**
        * \brief parent frame
@@ -956,9 +956,7 @@ namespace MBSim {
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVGrp;
-#endif
       std::shared_ptr<H5::File> hdf5File;
 
       /** A pointer to frame "I" */

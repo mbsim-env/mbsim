@@ -1,6 +1,10 @@
 #include "config.h"
+#if MBSIMXML_COND_PYTHON
+  #include <mbxmlutils/py2py3cppwrapper.h>
+#endif
 #include <stdlib.h>
 #include <iostream>
+#include <fmatvec/atom.h>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/dom.h>
@@ -16,6 +20,9 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
+#if MBSIMXML_COND_PYTHON
+  using namespace PythonCpp;
+#endif
 
 namespace {
 
@@ -39,38 +46,76 @@ boost::filesystem::path fullLibName(const string &base) {
 
 namespace MBSim {
 
-// load all MBSim module plugins:
-// If a module plugin (shared library) is already loaded but the file has a newer last write time than the
+// load all MBSim modules:
+// If a module (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
-set<boost::filesystem::path> MBSimXML::loadPlugins() {
-  static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
+set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
+#if MBSIMXML_COND_PYTHON
+  initializePython((getInstallPath()/"bin"/"mbsimflatxml").string());
+  PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
+  // add bin to python search path
+  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
+  CALLPY(PyList_Append, pyPath, pyBinPath);
+#endif
+
+  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   static const boost::filesystem::path installDir(getInstallPath());
-  // note: we not not validate the plugin xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
-  std::shared_ptr<DOMParser> parser=DOMParser::create(false);
+  // note: we do not validate the module xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
+  std::shared_ptr<DOMParser> parser=DOMParser::create();
 
-  set<boost::filesystem::path> pluginLibFile;
+  set<boost::filesystem::path> moduleLibFile;
 
-  // read plugin libraries
-  for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(installDir/"share"/"mbsimxml"/"plugins");
-      it!=boost::filesystem::directory_iterator(); it++) {
-    if(it->path().string().substr(it->path().string().length()-string(".plugin.xml").length())!=".plugin.xml") continue;
-    std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
-    for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"libraries")->
-        getFirstElementChild();
-        e!=NULL; e=e->getNextElementSibling()) {
-      if(E(e)->getTagName()==MBSIMPLUGIN%"CppLibrary") {
-        string location=E(e)->getAttribute("location");
-        boost::algorithm::replace_all(location, "@MBSIMLIBDIR@", installDir.string()+"/"+libDir);
-        pluginLibFile.insert(canonical(boost::filesystem::path(location)/fullLibName(E(e)->getAttribute("basename"))));
+  set<boost::filesystem::path> allSearchDirs=searchDirs;
+  allSearchDirs.insert(installDir/"share"/"mbsimmodules");
+  allSearchDirs.insert(boost::filesystem::current_path());
+
+
+  // read MBSim module libraries
+  enum Stage { SearchPath, Loading }; // we load in two stages: first just add all search path then to the real load
+  for(auto stage: {SearchPath, Loading})
+    for(auto &dir: allSearchDirs)
+      for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
+          it!=boost::filesystem::directory_iterator(); it++) {
+        if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
+        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+        for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
+            getFirstElementChild();
+            e!=NULL; e=e->getNextElementSibling()) {
+          if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
+            string location=E(e)->getAttribute("location");
+            if(location.substr(0, 13)=="@MBSIMLIBDIR@")
+              moduleLibFile.insert(installDir/libDir/location.substr(13)/fullLibName(E(e)->getAttribute("basename")));
+            else
+              moduleLibFile.insert(E(e)->convertPath(location)/fullLibName(E(e)->getAttribute("basename")));
+          }
+          if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
+            string moduleName=E(e)->getAttribute("moduleName");
+#if MBSIMXML_COND_PYTHON
+            boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
+            if(stage==SearchPath) {
+              // add python path
+              PyO pyBinPath(CALLPY(PyUnicode_FromString, location.string()));
+              CALLPY(PyList_Append, pyPath, pyBinPath);
+            }
+            if(stage==Loading)
+              // load python module
+              CALLPY(PyImport_ImportModule, moduleName);
+#else
+            if(stage==SearchPath)
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
+                "Python MBSim module found in "+it->path().string()+" '"+moduleName+"'\n"<<
+                "but MBSim is not build with Python support. Skipping this module.\n";
+            continue;
+#endif
+          }
+        }
       }
-    }
-  }
 
-  // load plugins which are not already loaded
-  for(set<boost::filesystem::path>::iterator it=pluginLibFile.begin(); it!=pluginLibFile.end(); it++)
+  // load MBSim modules which are not already loaded
+  for(set<boost::filesystem::path>::iterator it=moduleLibFile.begin(); it!=moduleLibFile.end(); it++)
     SharedLibrary::load(it->string());
 
-  return pluginLibFile;
+  return moduleLibFile;
 }
 
 int PrefixedStringBuf::sync() {
@@ -91,13 +136,13 @@ int PrefixedStringBuf::sync() {
   return 0;
 }
 
-int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*& solver) {
+int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& solver) {
 
   // help
-  if(argc<2 || argc>3) {
+  if(args.size()<1) {
     cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
+    cout<<"                    [--modulePath <dir> [--modulePath <dir> ...]]"<<endl;
     cout<<"                    <mbsimprjfile>"<<endl;
-    cout<<"   or: mbsimflatxml --printNamespacePrefixMapping"<<endl;
     cout<<endl;
     cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
     cout<<"This is free software; see the source for copying conditions. There is NO"<<endl;
@@ -109,15 +154,11 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
     cout<<"--stopafterfirststep           Stop after outputting the first step (usually at t=0)"<<endl;
     cout<<"                               This generates a HDF5 output file with only one time serie"<<endl;
     cout<<"--savefinalstatevector         Save the state vector to the file \"statevector.asc\" after integration"<<endl;
-    cout<<"--printNamespacePrefixMapping  Print the recommended mapping of XML namespaces to XML prefix"<<endl;
+    cout<<"--modulePath <dir>             Add <dir> to MBSim module serach path. The central MBSim installation"<<endl;
+    cout<<"                               module dir and the current dir is always included."<<endl;
     cout<<"<mbsimprjfile>                 The preprocessed mbsim project xml file"<<endl;
     return 1;
   }
-
-
-  int startArg=1;
-  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
-    startArg=2;
 
   // setup message streams
   static PrefixedStringBuf infoBuf("Info:    ", cout);
@@ -125,11 +166,24 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info, std::make_shared<bool>(true), std::make_shared<ostream>(&infoBuf));
   fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn, std::make_shared<bool>(true), std::make_shared<ostream>(&warnBuf));
 
-  loadPlugins();
+  set<boost::filesystem::path> searchDirs;
+  for(auto it=args.begin(); it!=args.end(); ++it) {
+    if(*it!="--modulePath") continue;
+    auto itn=it; itn++;
+    if(itn==args.end()) {
+      cout<<"Invalid argument"<<endl;
+      return 1;
+    }
+    searchDirs.insert(*itn);
+  }
+  loadModules(searchDirs);
 
   // load MBSim project XML document
-  shared_ptr<DOMParser> parser=DOMParser::create(false);
-  shared_ptr<xercesc::DOMDocument> doc=parser->parse(argv[startArg]);
+  auto fileIt=find_if(args.begin(), args.end(), [](const string &x){
+    return x.size()>0 ? x[0]!='-' : false;
+  });
+  shared_ptr<DOMParser> parser=DOMParser::create();
+  shared_ptr<xercesc::DOMDocument> doc=parser->parse(*fileIt);
   DOMElement *e=doc->getDocumentElement();
 
   // check root element
@@ -152,8 +206,8 @@ int MBSimXML::preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*
   return 0;
 }
 
-void MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
-  if(strcmp(argv[1],"--donotintegrate")==0)
+void MBSimXML::initDynamicSystemSolver(const vector<string> &args, DynamicSystemSolver*& dss) {
+  if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
     dss->setTruncateSimulationFiles(false);
 
   dss->initialize();
@@ -168,9 +222,8 @@ void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
   dss->plot();
 }
 
-void MBSimXML::postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss) {
-
-  if(strcmp(argv[1],"--savefinalstatevector")==0)
+void MBSimXML::postMain(const vector<string> &args, Solver *&solver, DynamicSystemSolver*& dss) {
+  if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
     dss->writez("statevector.asc", false);
   delete dss;
   delete solver;

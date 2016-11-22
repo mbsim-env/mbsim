@@ -15,14 +15,13 @@
     </xs:documentation>
   </xs:annotation>
 
-  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"
-    schemaLocation="../http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
 
-  <xs:import namespace="http://www.mbsim-env.de/MBSimIntegrator"
-    schemaLocation="../http___www_mbsim-env_de_MBSimIntegrator/mbsimintegrator.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
 
-  <xs:import namespace="http://www.mbsim-env.de/MBSimControl"
-    schemaLocation="../http___www_mbsim-env_de_MBSimControl/mbsimcontrol.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSimIntegrator"/>
+
+  <xs:import namespace="http://www.mbsim-env.de/MBSimControl"/>
 
   <!-- A reference to a Link somewhere in the hierarchy in absolute path-->
   <xs:simpleType name="AbsoluteSignalReferenceType">

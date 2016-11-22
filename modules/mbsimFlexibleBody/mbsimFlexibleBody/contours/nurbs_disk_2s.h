@@ -24,17 +24,13 @@
 #include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
-#endif
 
-#ifdef HAVE_NURBS
 #include "nurbs++/nurbs.h"
 #include "nurbs++/nurbsS.h"
 #include "nurbs++/vector.h"
-#endif
 
 namespace MBSim {
   class ContourFrame;
@@ -98,19 +94,15 @@ namespace MBSimFlexibleBody {
 
       virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) { return findContactPairingFlexible(type0.c_str(), type1.c_str()); }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         openMBVNurbsDisk = OpenMBV::ObjectFactory::create<OpenMBV::NurbsDisk>();
       }
-#endif
 
-//#ifdef HAVE_NURBS
 //      /**
 //       * \brief initialize NURBS disk
 //       * \param stage of initialisation
 //       */
 //      void initContourFromBody(InitStage stage);
-//#endif
 
       /*! 
        * \brief transformation cartesian to cylinder system
@@ -119,7 +111,6 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
 
-#ifdef HAVE_NURBS
       /*! 
        * \return derivates of the surface: (first column: deg-th derivative in radial direction / second column: deg-th derivative in azimuthal-direction)
        * \param radial location
@@ -127,76 +118,57 @@ namespace MBSimFlexibleBody {
        * \param order of derivative
        */
       fmatvec::Mat computeDirectionalDerivatives(const double &radius, const double &phi, const int &deg);
-#endif
 
-#ifdef HAVE_NURBS
       /*!
        * \return curvature on the surface: (first column: radial direction / second column: azimuthal-direction)
        * \param radial location
        * \param azimuthal location
        */
       fmatvec::Mat computeCurvatures(const double &radius, const double &phi);
-#endif
 
-#ifdef HAVE_NURBS
       /*! 
        * \brief computes the U vector of the surface for a closed interpolation
        * \param
        */
       void computeUVector(const int NbPts); 
-#endif
 
-#ifdef HAVE_NURBS
       /*! 
        * \brief computes the V-vector of the surface for an open interpolation
        * \param
        */
       void computeVVector(const int NbPts);
-#endif
 
-#ifdef HAVE_NURBS
       /*! 
        * \brief interpolates the surface with node-data from body
        */
       void computeSurface();
-#endif
 
-#ifdef HAVE_NURBS
       /*!
        * \brief interpolates the velocities of the surface with the node-data from the body
        */
       void computeSurfaceVelocities();
-#endif
 
-#ifdef HAVE_NURBS
       /*! 
        * \brief interpolates the Jacobians of translation of the surface with the node-data from the body
        */
       void computeSurfaceJacobians();
-#endif
 
-#ifdef HAVE_NURBS
       /*!
        * \return control point
        * \param u location
        * \param v location
        */
       fmatvec::Vec getControlPoints(const int u, const int v);
-#endif
 
-#ifdef HAVE_NURBS
       /*! 
        * return U-Vector of the surface (azimuthal direction)
        */
       fmatvec::Vec getUVector();
-#endif
 
-#ifdef HAVE_NURBS
       /*! 
        * return V-Vector of the surface (radial direction)
        */
       fmatvec::Vec getVVector();
-#endif
 
       /*! 
        * \return flag, whether the input radius is inside the bounds or the input angle is between 0 and 2 PI
@@ -232,12 +204,9 @@ namespace MBSimFlexibleBody {
        */
       double Ri, Ra;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::NurbsDisk> openMBVNurbsDisk;
       double drawDegree;
-#endif
 
-#ifdef HAVE_NURBS
       /** 
        * \brief interpolated surface of the contour
        */
@@ -265,7 +234,6 @@ namespace MBSimFlexibleBody {
       PLib::Vector<double> *uVec; // knot-vector for azimuthal direction 
       PLib::Vector<double> *vvec; // nurbs++ needs this vector
       PLib::Vector<double> *vVec; // knot-vector for radial direction
-#endif
   };
 
 }

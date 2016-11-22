@@ -12,11 +12,9 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
 #include <openmbvcppinterface/polygonpoint.h>
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -66,7 +64,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setq0(q0);
   this->addObject(rod);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
   cuboid->setDiffuseColor(0.26667, 1, 1); // color in (minimalColorValue, maximalColorValue)
@@ -83,7 +80,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   cuboid->setContour(rectangle);
   rod->setOpenMBVSpineExtrusion(cuboid);
-#endif
 
   Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
   rod->addContour(neutral);
@@ -122,12 +118,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->setInitialGeneralizedVelocity(Vec(3,INIT,0.));
   this->addObject(ball);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Sphere> sphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(r);
   sphere->setDiffuseColor(1/3., 1, 1);
   ball->setOpenMBVRigidBody(sphere);
-#endif
 
   // elastic impact
   Contact *contact = new Contact("Contact");

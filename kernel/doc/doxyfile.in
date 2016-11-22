@@ -1,5 +1,6 @@
 PROJECT_BRIEF          = "MBSim Kernel"
 INPUT                  = @top_srcdir@/mbsim
+RECURSIVE              = YES
 PROJECT_NAME           = @PACKAGE@
 PROJECT_NUMBER         = @VERSION@
 GENERATE_TAGFILE       = html/mbsim.tag

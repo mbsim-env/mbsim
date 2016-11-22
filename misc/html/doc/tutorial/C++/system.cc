@@ -6,9 +6,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/coilspring.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -72,7 +70,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addLink(contact);
 
   // visualisation
-#ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;
   openMBVspring1->setSpringRadius(0.1);
   openMBVspring1->setCrossSectionRadius(0.01);
@@ -84,6 +81,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVspring2->setCrossSectionRadius(0.01);
   openMBVspring2->setNumberOfCoils(5);
   spring2->setOpenMBVSpring(openMBVspring2);
-#endif
 }
 

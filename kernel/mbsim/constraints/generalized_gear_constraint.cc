@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedGearConstraint, MBSIM%"GeneralizedGearConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedGearConstraint)
 
   void GeneralizedGearConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {

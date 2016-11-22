@@ -47,32 +47,6 @@ namespace MBSimGUI {
     return ins.first->second;
   } 
 
-  // This routine is the same as MBSim::ObjectFactory::getNamespacePrefixMapping()
-  // However since MBSimGUI does not link to MBSim we can not call this function and therefore call
-  // "mbsimflatxml --printNamespacePrefixMapping" which print the content to console and reread it here.
-  map<string, string>& Utils::getMBSimNamespacePrefixMapping() {
-    static bool firstRun=true;
-    static map<string, string> nsprefix;
-    if(firstRun) {
-      vector<string> arg;
-      arg.push_back((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string());
-      arg.push_back("--printNamespacePrefixMapping");
-      FILE *f=popen((arg[0]+" "+arg[1]).c_str(), "r");
-      if(f==NULL) throw runtime_error("Unable to create piped process.");
-      char ns[1024], prefix[1024], line[2048];
-      while(1) {
-        if(fgets(line, 2048, f)==NULL) break;
-        int nrRead=sscanf(line, "%s %s", ns, prefix);
-        if(nrRead<2)
-          strcpy(prefix, "");
-        nsprefix[ns]=prefix;
-      }
-      pclose(f);
-      firstRun=false;
-    }
-    return nsprefix;
-  }
-
   vector<vector<double> > mult(const vector<vector<double> > &A, const vector<vector<double> > &B) {
     vector<vector<double> > C(A.size());
     for(size_t i=0; i<A.size(); i++) {

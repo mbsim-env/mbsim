@@ -24,10 +24,6 @@
 #include "mbsim/utils/eps.h"
 #include <mbsim/utils/rotarymatrices.h>
 
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//#include "openmbvcppinterface/nurbsdisk.h"
-//#endif
-
 #include <iostream>
 
 using namespace std;
@@ -116,13 +112,8 @@ namespace MBSimFlexibleBody {
   }
 
   FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) : FlexibleBody2s(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3, INIT, 0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(INIT, 0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3, EYE), G(3, EYE), DEBUGLEVEL(DEBUGLEVEL_), updExt(true), updAG(true) {
-#ifdef HAVE_NURBS
 //    contour = new NurbsDisk2s("SurfaceContour");
 //    addContour(contour);
-#else
-//    contour=0;
-    cerr << "WARNING (FlexibleBody2s13::FlexibleBody2s13): No NURBS library installed!" << endl;
-#endif
 
     // frame in axis
   //  Vec s(2, fmatvec::INIT, 0.);
@@ -146,8 +137,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13::plot() {
     if(getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#ifdef HAVE_NURBS
 //      if(getPlotFeature(openMBV) == enabled && openMBVBody) {
 //        vector<double> data;
 //        data.push_back(getTime()); //time
@@ -210,8 +199,6 @@ namespace MBSimFlexibleBody {
 //
 //        ((OpenMBV::NurbsDisk*) openMBVBody.get())->append(data);
 //      }
-#endif
-#endif
     }
     FlexibleBody2s::plot();
   }

@@ -8,10 +8,8 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/constraints/generalized_gear_constraint.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -19,10 +17,8 @@ using namespace MBSim;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double r1 = 0.02;
-#ifdef HAVE_OPENMBVCPPINTERFACE
   double r2 = 0.02;
   double r3 = 0.02;
-#endif
   double R1 = 0.02*2;
   double R2a = 0.04*2;
   double R2b = 0.02*2;
@@ -45,9 +41,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = J;
   shaft1->setInertiaTensor(Theta);
   shaft1->setRotation(new RotationAboutZAxis<VecV>);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("C")->enableOpenMBV(0.2);
-#endif
   //shaft1->setInitialGeneralizedVelocity("[1]");
 
   Vec r(3);
@@ -63,9 +57,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = J;
   shaft2->setInertiaTensor(Theta);
   shaft2->setRotation(new RotationAboutZAxis<VecV>);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft2->getFrame("C")->enableOpenMBV(0.2);
-#endif
 
   r(1) = R1+R2a-R2b-R3;
   r(2) = 2*l;
@@ -78,9 +70,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = J;
   shaft3->setInertiaTensor(Theta);
   shaft3->setRotation(new RotationAboutZAxis<VecV>);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft3->getFrame("C")->enableOpenMBV(0.2);
-#endif
 
   GeneralizedGearConstraint *constraint = new GeneralizedGearConstraint("C1");
   addConstraint(constraint);
@@ -105,7 +95,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ke->setMomentDirection("[0;0;1]");
   ke->setMomentFunction(new ConstantFunction<VecV(double)>(-4.0/100.));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> c1=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   c1->setTopRadius(r1);
   c1->setBaseRadius(r1);
@@ -174,6 +163,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   c->addRigidBody(c2);
   c->setDiffuseColor(0.1111,1,1);
   shaft3->setOpenMBVRigidBody(c);
-#endif
 }
 

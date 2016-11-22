@@ -28,13 +28,13 @@ namespace MBSim {
 
   class MBSimXML {
     public:
-      static int preInit(int argc, char *argv[], DynamicSystemSolver*& dss, Solver*& solver);
-      static void initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
+      static int preInit(std::vector<std::string> args, DynamicSystemSolver*& dss, Solver*& solver);
+      static void initDynamicSystemSolver(const std::vector<std::string> &args, DynamicSystemSolver*& dss);
       static void plotInitialState(Solver*& solver, DynamicSystemSolver*& dss);
-      static void postMain(int argc, char *argv[], Solver *&solver, DynamicSystemSolver*& dss);
+      static void postMain(const std::vector<std::string> &args, Solver *&solver, DynamicSystemSolver*& dss);
 
-      //! Load all plugins and return a list of all loaded plugin libraries.
-      static std::set<boost::filesystem::path> loadPlugins();
+      //! Load all MBSim modules and return a list of all loaded module libraries.
+      static std::set<boost::filesystem::path> loadModules(const std::set<boost::filesystem::path> &searchDirs={});//MISSING remove ={} if mbsimfmi supports searchDirs
   };
 
 }

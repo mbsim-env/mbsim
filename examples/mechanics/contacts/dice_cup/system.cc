@@ -8,10 +8,8 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
 #include "openmbvcppinterface/cube.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -107,12 +105,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
   // Dice-Visualisation
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cube> diceAMV = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   diceAMV->setLength(length);
   diceAMV->setDiffuseColor(1/3.0, 1, 1);
   dice->setOpenMBVRigidBody(diceAMV);
-#endif
   // ************************************************************************
 
   // Frustum-Reference
@@ -211,14 +207,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   frustumVRML.close();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::IvBody> frustumMBV = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   frustumMBV->setIvFileName("frustum.iv");
   frustumMBV->setDiffuseColor(0.6666,1,1);
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
   frustumRef->setOpenMBVRigidBody(frustumMBV); 
-#endif
   // ************************************************************************
 
   // Contact
@@ -232,9 +226,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact.push_back(new Contact(nameContact.str()));
     contact[i]->setNormalForceLaw(new UnilateralConstraint());
     contact[i]->setNormalImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     contact[i]->enableOpenMBVContactPoints(.05);
-#endif
     contact[i]->connect(frustumRef->getContour("Frustum"),dice->getContour(nameContour.str()));
     this->addLink(contact[i]);
   } 	

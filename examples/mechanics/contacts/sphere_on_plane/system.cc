@@ -9,9 +9,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -64,9 +62,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setInertiaTensor(Theta);
   Sphere *sphere = new Sphere("Sphere");
   sphere->setRadius(r);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere->enableOpenMBV();
-#endif
   body->addContour(sphere);
 
   Contact *cnf = new Contact("Contact");
@@ -81,10 +77,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //cnf->setPlotLevel(2);
   addLink(cnf);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::InvisibleBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>();
   body->setOpenMBVRigidBody(obj);
   body->getFrame("C")->enableOpenMBV(2*r*1.2,0);
-#endif
 }
 

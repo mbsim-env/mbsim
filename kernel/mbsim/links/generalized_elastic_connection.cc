@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedElasticConnection, MBSIM%"GeneralizedElasticConnection")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedElasticConnection)
 
   GeneralizedElasticConnection::~GeneralizedElasticConnection() {
     delete func;

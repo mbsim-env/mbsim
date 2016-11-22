@@ -1,4 +1,7 @@
 #include "config.h"
+#if MBSIMXML_COND_PYTHON
+  #include <mbxmlutils/py2py3cppwrapper.h>
+#endif
 #include <mbsimxml.h>
 #include <vector>
 #include <mbxmlutilshelper/dom.h>
@@ -11,55 +14,95 @@ namespace bfs=boost::filesystem;
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
+#if MBSIMXML_COND_PYTHON
+  using namespace PythonCpp;
+#endif
 
 namespace MBSim {
 
-void generateMBSimXMLSchema(const bfs::path &mbsimxml_xsd, const bfs::path &MBXMLUTILSSCHEMA) {
-  vector<pair<string, bfs::path> > schema; // pair<namespace, schemaLocation>
+set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
+#if MBSIMXML_COND_PYTHON
+  initializePython((getInstallPath()/"bin"/"mbsimxml").string());
+  PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
+  // add bin to python search path
+  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
+  CALLPY(PyList_Append, pyPath, pyBinPath);
+#endif
 
-  static const NamespaceURI MBSIMPLUGIN("http://www.mbsim-env.de/MBSimPlugin");
+  bfs::path MBXMLUTILSSCHEMA=getInstallPath()/"share"/"mbxmlutils"/"schema";
+  set<bfs::path> schemas {
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_OpenMBV"/"openmbv.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSim"/"mbsim.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimIntegrator"/"mbsimintegrator.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimAnalyser"/"mbsimanalyser.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils"/"physicalvariable.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils_CasADi"/"casadi.xsd"
+  };
+
+  // create parser for mbsimmodule.xml files
+  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   std::shared_ptr<DOMParser> parser;
-  parser=DOMParser::create(true);
-  parser->loadGrammar(getInstallPath()/"share"/"mbxmlutils"/"schema"/"http___www_mbsim-env_de_MBSimPlugin"/"plugin.xsd");
+  parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimModule"/"mbsimmodule.xsd"});
 
-  // read plugin schemas
-  for(auto it=bfs::directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins"); it!=bfs::directory_iterator(); it++) {
-    string path=it->path().string();
-    if(path.length()<=string(".plugin.xml").length() || path.substr(path.length()-string(".plugin.xml").length())!=".plugin.xml")
-      continue;
-    std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
-    for(xercesc::DOMElement *e=E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMPLUGIN%"schemas"))->
-        getFirstElementChildNamed(MBSIMPLUGIN%"Schema");
-        e!=NULL; e=e->getNextElementSibling()) {
-      bfs::path xsdFile;
-      xercesc::DOMElement *c=e->getFirstElementChild();
-      if(E(c)->getTagName()==MBSIMPLUGIN%"file") {
-        string location=E(c)->getAttribute("location");
-        boost::algorithm::replace_all(location, "@MBSIMSCHEMADIR@", MBXMLUTILSSCHEMA.string());
-        xsdFile=location;
+  set<bfs::path> allSearchDirs=searchDirs;
+  allSearchDirs.insert(getInstallPath()/"share"/"mbsimmodules");
+  allSearchDirs.insert(bfs::current_path());
+
+  // read MBSim module schemas
+  enum Stage { SearchPath, Loading }; // we load in two stages: first just add all search path then to the real load
+  for(auto stage: {SearchPath, Loading})
+    for(auto &dir: allSearchDirs)
+      for(auto it=bfs::directory_iterator(dir); it!=bfs::directory_iterator(); it++) {
+        string path=it->path().string();
+        if(path.length()<=string(".mbsimmodule.xml").length() || path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml")
+          continue;
+        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it);
+        for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"schemas")->getFirstElementChild();
+            e!=NULL; e=e->getNextElementSibling()) {
+          if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"File") {
+            string location=E(e)->getAttribute("location");
+            if(location.substr(0, 17)=="@MBSIMSCHEMADIR@/")
+              schemas.insert(MBXMLUTILSSCHEMA/location.substr(17));
+            else
+              schemas.insert(E(e)->convertPath(location));
+          }
+          if(E(e)->getTagName()==MBSIMMODULE%"PythonGenerated") {
+            string moduleName=E(e)->getAttribute("moduleName");
+#if MBSIMXML_COND_PYTHON
+            boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
+            if(stage==SearchPath) {
+              // add python path
+              PyO pyBinPath(CALLPY(PyUnicode_FromString, location.string()));
+              CALLPY(PyList_Append, pyPath, pyBinPath);
+            }
+            if(stage==Loading) {
+              // load python module
+              PyO pyModule(CALLPY(PyImport_ImportModule, moduleName));
+              // get python function and call it
+              PyO pyGenerateXMLSchemaFile(CALLPY(PyObject_GetAttrString, pyModule, "generateXMLSchemaFile"));
+              PyO pySchema(CALLPY(PyObject_CallObject, pyGenerateXMLSchemaFile, nullptr));
+              // write to file
+              PyO pyET(CALLPY(PyImport_ImportModule, "xml.etree.cElementTree"));
+              PyO pyET_(CALLPY(PyObject_GetAttrString, pyET, "ElementTree"));
+              PyO pyTree(CALLPY(PyObject_CallObject, pyET_, Py_BuildValue("(O)", pySchema.get())));
+              PyO pyWrite(CALLPY(PyObject_GetAttrString, pyTree, "write"));
+              bfs::path xsdFile=bfs::current_path()/(".mbsimmodule.python."+moduleName+".xsd");
+              CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
+              schemas.insert(xsdFile);
+            }
+#else
+            if(stage==SearchPath)
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
+                "Python MBSim module found in "+path+" '"+moduleName+"'\n"<<
+                "but MBSim is not build with Python support. Skipping this module.\n";
+            continue;
+#endif
+          }
+        }
       }
-      schema.push_back(make_pair(E(e)->getAttribute("namespace"), xsdFile));
-    }
-  }
 
-  // write MBSimXML schema
-  bfs::ofstream file(mbsimxml_xsd);
-  file<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"<<endl;
-  file<<"<xs:schema targetNamespace=\"http://www.mbsim-env.de/MBSimXML\""<<endl;
-  file<<"  elementFormDefault=\"qualified\""<<endl;
-  file<<"  attributeFormDefault=\"unqualified\""<<endl;
-  file<<"  xmlns=\"http://www.mbsim-env.de/MBSimXML\""<<endl;
-  file<<"  xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"<<endl;
-  file<<endl;
-  // include the schema for MBSimProject (this imports the MBSim and MBSimIntegrator schemas)
-  file<<"  <xs:include schemaLocation=\""<<MBXMLUTILSSCHEMA.generic_string()<<"/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd\"/>"<<endl;
-  file<<endl;
-  // import all schemas from mbsim modules (plugins)
-  for(auto it=schema.begin(); it!=schema.end(); it++) {
-    file<<"  <xs:import namespace=\""<<it->first<<"\""<<endl;
-    file<<"             schemaLocation=\""<<it->second.string()<<"\"/>"<<endl;
-  }
-  file<<"</xs:schema>"<<endl;
+  return schemas;
 }
 
 }

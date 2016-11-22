@@ -23,10 +23,8 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/contact_utils.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/rigidbody.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -45,12 +43,10 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           openMBVRigidBody->setName(name);
           parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
-#endif
         Contour::init(stage);
       }
     }
@@ -106,7 +102,6 @@ namespace MBSim {
 
   void RigidContour::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
         vector<double> data;
         data.push_back(getTime());
@@ -120,7 +115,6 @@ namespace MBSim {
         data.push_back(0);
         openMBVRigidBody->append(data);
       }
-#endif
       Contour::plot();
     }
   }

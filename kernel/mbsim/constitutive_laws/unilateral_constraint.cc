@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(UnilateralConstraint, MBSIM%"UnilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, UnilateralConstraint)
 
   double UnilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return proxCN(la - r * gdn, laMin);

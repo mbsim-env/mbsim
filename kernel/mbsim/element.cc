@@ -376,7 +376,7 @@ namespace MBSim {
     return lOld;
   }
 
-  double Element::getTime() const {
+  const double& Element::getTime() const {
     return ds->getTime();
   }
 

@@ -478,7 +478,6 @@ namespace MBSimFlexibleBody {
         discretization.push_back(new FiniteElement2s13MFRMindlin(E, nu, rho, d(0), d(1), d(2), ElementalNodes[i]));
       }
 
-//#ifdef HAVE_NURBS
 //      // borders of contour parametrisation
 //      // beginning
 //      Vec alphaS(2);
@@ -492,7 +491,6 @@ namespace MBSimFlexibleBody {
 //
 //      contour->setAlphaStart(alphaS);
 //      contour->setAlphaEnd(alphaE);
-//#endif
 
 
       FlexibleBody2s13::init(stage);

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimModule xmlns="http://www.mbsim-env.de/MBSimModule">
+  <schemas>
+    <PythonGenerated moduleName="mypytest" location="."/>
+  </schemas>
+  <libraries>
+    <PythonModule moduleName="mypytest" location="."/>
+  </libraries>
+</MBSimModule>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimModule xmlns="http://www.mbsim-env.de/MBSimModule">
+  <schemas>
+    <File location="@MBSIMSCHEMADIR@/http___www_mbsim-env_de_MBSimControl/mbsimcontrol.xsd"/>
+  </schemas>
+  <libraries>
+    <CppLibrary basename="mbsimControl" location="@MBSIMLIBDIR@"/>
+  </libraries>
+</MBSimModule>

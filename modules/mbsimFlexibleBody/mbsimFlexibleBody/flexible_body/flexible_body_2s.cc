@@ -31,9 +31,7 @@ namespace MBSimFlexibleBody {
 
  void FlexibleBody2s::init(InitStage stage) {
     if(stage==plotting) {
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->evalOrientation()));
-//#endif
       FlexibleBodyContinuum<Vec2>::init(stage);
     }
     else
@@ -42,7 +40,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
 //        vector<double> data;
 //        data.push_back(getTime());
@@ -56,7 +53,6 @@ namespace MBSimFlexibleBody {
 //        }
 //        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
 //      }
-//#endif
     }
     FlexibleBodyContinuum<Vec2>::plot();
   }

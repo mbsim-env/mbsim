@@ -6,10 +6,8 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/coilspring.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -149,7 +147,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // define initial generalized position of box2 (directly)
   box2->setInitialGeneralizedPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualization in OpenMBV --------------------
   std::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   cuboid->setLength(h1);
@@ -166,7 +163,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
   spring2->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
-#endif
 
 }
 

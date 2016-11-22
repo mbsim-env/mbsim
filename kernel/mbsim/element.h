@@ -29,11 +29,9 @@
 
 #include "mbsim_event.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Group;
 }
-#endif
 
 namespace H5 {
   class Group;
@@ -44,7 +42,9 @@ namespace H5 {
  */
 namespace MBSim {
 
+#ifndef SWIG
   const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
+#endif
 
   class DynamicSystemSolver;
   class Frame;
@@ -257,9 +257,7 @@ namespace MBSim {
       static fmatvec::SymMat3 getSymMat3(xercesc::DOMElement *e);
       static fmatvec::SymMat getSymMat(xercesc::DOMElement *e, int size=0);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
-#endif
 
       virtual Element* getParent() {return parent;}
       virtual const Element* getParent() const {return parent;}
@@ -288,7 +286,7 @@ namespace MBSim {
 
       virtual void resetUpToDate() {}
 
-      double getTime() const;
+      const double& getTime() const;
       double getStepSize() const;
 
     protected:

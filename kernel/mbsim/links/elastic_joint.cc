@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ElasticJoint, MBSIM%"ElasticJoint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ElasticJoint)
 
   ElasticJoint::ElasticJoint(const string &name) : FloatingFrameLink(name), func(NULL) {
   }

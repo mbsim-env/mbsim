@@ -21,9 +21,7 @@
 #define _FLEXIBLE_BODY_2S_H_
 
 #include "mbsimFlexibleBody/flexible_body.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
-#endif
 
 namespace MBSim {
   class ContourFrame;
@@ -60,9 +58,7 @@ namespace MBSimFlexibleBody {
       virtual void updateJacobians(Frame2s* frame, int j=0);
       virtual void updateGyroscopicAccelerations(Frame2s* frame);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(const std::shared_ptr<OpenMBV::SpineExtrusion> &body) { openMBVBody=body; }
-#endif
 
     protected:
 //      /**

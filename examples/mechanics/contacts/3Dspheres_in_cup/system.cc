@@ -10,11 +10,9 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/sphere.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -150,9 +148,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Frustum* frustumcontour = new Frustum("Frustum");
   frustumcontour->setRadii(radii);
   frustumcontour->setHeight(5*d);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   frustumcontour->enableOpenMBV();
-#endif
   cup->addContour(frustumcontour);
 
 //  // Contour of Frustum 2
@@ -285,7 +281,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //    rc1f2->setTangentialForceLaw(new LinearRegularizedCoulombFriction(mu));}
 
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   body1->getFrame("C")->enableOpenMBV(1.5*d);
   std::shared_ptr<OpenMBV::Sphere> dummy1 = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   dummy1->setRadius(2*d);
@@ -326,6 +321,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy5->setInitialTranslation(0,10*d,0);
 //  cup2->setOpenMBVRigidBody(dummy5);
 
-#endif
 }
 

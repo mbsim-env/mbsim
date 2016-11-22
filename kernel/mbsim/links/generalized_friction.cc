@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedFriction, MBSIM%"GeneralizedFriction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedFriction)
 
   GeneralizedFriction::~GeneralizedFriction() {
     delete func;

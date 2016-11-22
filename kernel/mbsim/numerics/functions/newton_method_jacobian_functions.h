@@ -75,49 +75,49 @@ namespace MBSim {
       virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x);
   };
 
-  /*!
-   * \brief class to compute a Jacobian matrix once at the beginning and then uses it over and over again
-   *
-   * \todo: implement
-   */
-  class ConstantNewtonJacobianFunction : public NewtonJacobianFunction {
-    public:
-      /**
-       * \brief constructor
-       */
-      ConstantNewtonJacobianFunction();
+//  /*!
+//   * \brief class to compute a Jacobian matrix once at the beginning and then uses it over and over again
+//   *
+//   * \todo: implement
+//   */
+//  class ConstantNewtonJacobianFunction : public NewtonJacobianFunction {
+//    public:
+//      /**
+//       * \brief constructor
+//       */
+//      ConstantNewtonJacobianFunction();
+//
+//      /*
+//       * \brief destructor
+//       */
+//      virtual ~ConstantNewtonJacobianFunction() {
+//      }
+//
+//      /*INHERITED INTERFACE*/
+//      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x, Function<fmatvec::Vec(fmatvec::Vec)> *function);
+//
+//  };
 
-      /*
-       * \brief destructor
-       */
-      virtual ~ConstantNewtonJacobianFunction() {
-      }
-
-      /*INHERITED INTERFACE*/
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x, Function<fmatvec::Vec(fmatvec::Vec)> *function);
-
-  };
-
-  /*!
-   * \brief class use the identity matrix as Jacobian matrix in the newton method yields a fixpoint iteration
-   *
-   * \todo: implement
-   */
-  class FixpointNewtonJacobianFunction : public NewtonJacobianFunction {
-    public:
-      /**
-       * \brief constructor
-       */
-      FixpointNewtonJacobianFunction();
-
-      /*
-       * \brief destructor
-       */
-      virtual ~FixpointNewtonJacobianFunction() {
-      }
-
-      /*INHERITED INTERFACE*/
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x, Function<fmatvec::Vec(fmatvec::Vec)> *function);
-  };
+//  /*!
+//   * \brief class use the identity matrix as Jacobian matrix in the newton method yields a fixpoint iteration
+//   *
+//   * \todo: implement
+//   */
+//  class FixpointNewtonJacobianFunction : public NewtonJacobianFunction {
+//    public:
+//      /**
+//       * \brief constructor
+//       */
+//      FixpointNewtonJacobianFunction();
+//
+//      /*
+//       * \brief destructor
+//       */
+//      virtual ~FixpointNewtonJacobianFunction() {
+//      }
+//
+//      /*INHERITED INTERFACE*/
+//      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x, Function<fmatvec::Vec(fmatvec::Vec)> *function);
+//  };
 }
 #endif // NUMERICSNEWTONMEHTODFUNCTION_H_

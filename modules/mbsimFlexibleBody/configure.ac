@@ -26,7 +26,6 @@ AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.3.1)
-requires="mbsim"
 
 dnl Enable debugging 
 AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
@@ -43,38 +42,7 @@ else
 fi
 
 dnl check for optional module nurbs
-PKG_CHECK_MODULES([NURBS], [nurbs++ >= 3.0.13], 
-                  [requires="$requires nurbs++"; nurbs_compilerflag="-DHAVE_NURBS"; AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])], 
-                  [nurbsPKGCONF="No"; AC_MSG_RESULT([No Nurbs-library found. Some flexible contours not possible.])])
-AM_CONDITIONAL([COND_NURBS], [test _$nurbs_compilerflag = _-DHAVE_NURBS])
-AC_SUBST([nurbs_compilerflag])
-
-
-dnl Old - check NURBS Package
-if (test "_$nurbsPKGCONF" = "_No"); then
-  AC_ARG_WITH(nurbs-inc-prefix,[  --with-nurbs-inc-prefix=PFX  Prefix where nurbs includes are installed], [nurbs_inc_prefix="$withval"], [nurbs_inc_prefix="$prefix/include"])
-  
-  AC_ARG_WITH(nurbs-lib-prefix,[  --with-nurbs-lib-prefix=PFX  Prefix where nurbs libraries are installed], [nurbs_lib_prefix="$withval"], [nurbs_lib_prefix="$prefix/lib"])
-  
-  AC_MSG_CHECKING([for library nurbs without pkg-config support])
-  CPPFLAGS_OLD="$CPPFLAGS"
-  LDFLAGS_OLD="$LDFLAGS"
-  LIBS_OLD="$LIBS"
-  
-  CPPFLAGS="$CPPFLAGS -I$nurbs_inc_prefix/nurbs++"
-  LDFLAGS="$LDFLAGS -L$nurbs_lib_prefix"
-  LIBS="$LIBS -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix"
-  
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([#include "nurbs.h"],[PlNurbsCurvef var1; PlNurbsCurved var2;])],[AC_MSG_RESULT([yes]); nurbs="yes"],[AC_MSG_RESULT([no]); nurbs="no"])
-  
-  if (test "$nurbs" = "yes"); then
-    AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])
-  else
-    CPPFLAGS="$CPPFLAGS_OLD"
-    LDFLAGS="$LDFLAGS_OLD"
-    LIBS="$LIBS_OLD"
-  fi
-fi
+PKG_CHECK_MODULES([NURBS], [nurbs++ >= 3.0.13], [], [AC_MSG_ERROR([No Nurbs-library found!])])
 
 CPPFLAGS="$CPPFLAGS"
 if test "_$host_os" != "_mingw32"; then
@@ -85,7 +53,6 @@ dnl needed for XML
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
 AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
 AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
@@ -98,8 +65,6 @@ AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
   AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
-
-AC_SUBST([requires])
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"

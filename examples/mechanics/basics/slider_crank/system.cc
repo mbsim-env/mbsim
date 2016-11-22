@@ -8,9 +8,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -210,7 +208,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //---------------------------------------------------------------------------
 
   // visualisation
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank,width_crank,thickness_crank);
   openMBVCrank->setDiffuseColor(180./360.,1,1);
@@ -225,7 +222,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVPiston->setLength(length_piston,width_piston,thickness_piston);
   openMBVPiston->setDiffuseColor(240./360.,1,1);
   piston->setOpenMBVRigidBody(openMBVPiston);
-#endif
 
 }
 

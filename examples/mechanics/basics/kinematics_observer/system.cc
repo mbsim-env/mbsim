@@ -8,9 +8,7 @@
 #include "mbsim/observers/absolute_kinematics_observer.h"
 #include "mbsim/environment.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -116,7 +114,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addObserver(obs);
   obs->setFrame(box2->getFrame("C"));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Frustum> cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
@@ -138,6 +135,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obs->enableOpenMBVPosition(_diffuseColor="[0.6;0.3;0.6]");
   obs->enableOpenMBVVelocity(_scaleSize=0.1,_scaleLength=0.1);
   obs->enableOpenMBVAngularVelocity(_scaleLength=0.1);
-#endif
 }
 

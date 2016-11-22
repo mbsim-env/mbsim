@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(LinearElasticFunction, MBSIM%"LinearElasticFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LinearElasticFunction)
 
   void LinearElasticFunction::init(InitStage stage) {
     if(stage==resize) {

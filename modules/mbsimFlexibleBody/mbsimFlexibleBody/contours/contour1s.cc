@@ -23,9 +23,7 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -36,14 +34,12 @@ namespace MBSimFlexibleBody {
 
     if (stage == plotting) {
       updatePlotFeatures();
-#ifdef HAVE_OPENMBVCPPINTERFACE
 
       if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
         openMBVSpineExtrusion->setName(name);
         parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
 //        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
       }
-#endif
       Contour::init(stage);
     }
     Contour::init(stage);
@@ -55,7 +51,6 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1s::plot() {
-#ifdef HAVE_OPENMBVCPPINTERFACE
     if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
 
       vector<double> data;
@@ -89,7 +84,6 @@ namespace MBSimFlexibleBody {
 
       openMBVSpineExtrusion->append(data);
     }
-#endif
   }
 
 }

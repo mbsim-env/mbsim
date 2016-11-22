@@ -4,12 +4,10 @@
 #include "mbsim/functions/kinematics/rotation_about_fixed_axis.h"
 #include "mbsim/constraints/generalized_gear_constraint.h"
 #include "mbsim/objects/rigid_body.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -119,9 +117,7 @@ namespace MBSimPowertrain {
     shaft4->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
     r(2) = -data.lengthLeftOutputShaft/2;
     shaft4->addFrame(new FixedRelativeFrame("Q",r,BasicRotAKIy(M_PI)));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     shaft4->getFrame("Q")->enableOpenMBV(0.3);
-#endif
 
     shaft4->setMass(data.massLeftOutputShaft);
     shaft4->setInertiaTensor(data.inertiaTensorLeftOutputShaft);
@@ -137,9 +133,7 @@ namespace MBSimPowertrain {
     shaft5->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
     r(2) = data.lengthRightOutputShaft/2;
     shaft5->addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     shaft5->getFrame("Q")->enableOpenMBV(0.3);
-#endif
 
     shaft5->setMass(data.massRightOutputShaft);
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);
@@ -173,7 +167,6 @@ namespace MBSimPowertrain {
       constraint->addIndependentRigidBody(shaft5,-c2/(data.radiusPlanet*c1));
     }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     shared_ptr<OpenMBV::Cube> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
     cube->setLength(0.01);
     cube->setDiffuseColor(0.1,1,1);
@@ -212,7 +205,6 @@ namespace MBSimPowertrain {
     cylinder->setDiffuseColor(0.7,1,1);
     shaft5->setOpenMBVRigidBody(cylinder);
     cylinder->setInitialTranslation(0,0,data.lengthRightOutputShaft/2);
-#endif
 
   }
 

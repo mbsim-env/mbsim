@@ -9,10 +9,8 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
 #include "openmbvcppinterface/frustum.h"
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -79,30 +77,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Contour of InnerCylinder
   Circle *circlecontour=new Circle("Circle",d);
   body->addContour(circlecontour);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour->enableOpenMBV();
-#endif
 
   // Contour of ObstacleCylinder
   Circle *circlecontour2=new Circle("Circle2",d);
   body2->addContour(circlecontour2);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour2->enableOpenMBV();
-#endif
 
   // Contour of HollowCylinder (outward)
   Circle *circlecontour3=new Circle("Circle3",2.5*d,false);
   body3->addContour(circlecontour3);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour3->enableOpenMBV();
-#endif
 
   // Contour of SolidCylinder (inward)
   Circle *circlecontour4=new Circle("Circle4",3*d);
   body3->addContour(circlecontour4);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   circlecontour4->enableOpenMBV();
-#endif
 
   // Contour of ground plane
   double phi = M_PI*0.6; 
@@ -161,7 +151,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("C")->enableOpenMBV(1.5*d);
   body->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
@@ -171,6 +160,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->getFrame("C")->enableOpenMBV(1.5*d);
   body3->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
-#endif
 }
 

@@ -8,8 +8,8 @@
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"
-    schemaLocation="../http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
 
   <xs:element name="Integrator" abstract="true" substitutionGroup="mbsim:Solver" type="IntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">

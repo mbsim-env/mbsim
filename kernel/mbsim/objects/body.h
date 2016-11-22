@@ -21,11 +21,9 @@
 #define _BODY_H_
 
 #include <mbsim/objects/object.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Body;
 }
-#endif
 
 namespace MBSim {
 
@@ -118,10 +116,8 @@ namespace MBSim {
       /* GETTER / SETTER */
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
       std::shared_ptr<OpenMBV::Body>& getOpenMBVBody() { return openMBVBody; }
-#endif
       /*******************************************************/ 
 
       /**
@@ -184,10 +180,8 @@ namespace MBSim {
 
       bool updPos, updVel, updPJ;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Body> openMBVBody;
       std::shared_ptr<OpenMBV::Group> openMBVGrp;
-#endif
 
     private:
       std::string saved_frameOfReference;

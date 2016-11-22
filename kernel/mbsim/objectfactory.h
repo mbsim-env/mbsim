@@ -75,42 +75,10 @@ class DOMEvalExceptionWrongType : public MBXMLUtils::DOMEvalException {
  */
 class ObjectFactory {
 
-  friend void registerXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc);
-  friend void deregisterXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
+  friend void registerClass_internal(const MBXMLUtils::FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc);
+  friend void deregisterClass_internal(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
 
   public:
-
-    /** Register the class CreateType which the XML element name name by the object factory.
-     * You should not use this function directly but
-     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
-    template<class CreateType>
-    static void registerXMLName(const MBXMLUtils::FQN &name) {
-      MBSim::registerXMLName(name, new Allocate<CreateType>(), new Deallocate());
-    }
-
-    /** Register the class CreateType which the XML element name name by the object factory.
-     * You should not use this function directly but
-     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
-    template<class CreateType>
-    static void registerXMLNameAsSingleton(const MBXMLUtils::FQN &name) {
-      MBSim::registerXMLName(name, new GetSingleton<CreateType>(), new DeallocateSingleton());
-    }
-
-    /** Deregister the class CreateType.
-     * You should not use this function directly but
-     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
-    template<class CreateType>
-    static void deregisterXMLName(const MBXMLUtils::FQN &name) {
-      MBSim::deregisterXMLName(name, new Allocate<CreateType>());
-    }
-
-    /** Deregister the class CreateType.
-     * You should not use this function directly but
-     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
-    template<class CreateType>
-    static void deregisterXMLNameAsSingleton(const MBXMLUtils::FQN &name) {
-      MBSim::deregisterXMLName(name, new GetSingleton<CreateType>());
-    }
 
     /** Create and initialize an object corresponding to the XML element element and return a pointer of type ContainerType.
      * Throws if the created object is not of type ContainerType or no object can be create without errors.
@@ -185,72 +153,71 @@ class ObjectFactory {
 
     // a vector of all registered types
     NameMap registeredType;
+};
 
-    // a wrapper to allocate an object of type CreateType
-    template<class CreateType>
-    struct Allocate : public AllocateBase {
-      // create a new object of type CreateType using new
-      fmatvec::Atom* operator()() const override {
-        return new CreateType;
-      }
-      // check if this Allocator allocates the same object as other.
-      // This is the case if the type of this template class matches
-      // the type of other.
-      bool operator==(const AllocateBase& other) const override {
-        return typeid(*this)==typeid(other);
-      }
-    };
+// a wrapper to allocate an object of type CreateType
+template<class CreateType>
+struct Allocate : public AllocateBase {
+  // create a new object of type CreateType using new
+  fmatvec::Atom* operator()() const override {
+    return new CreateType;
+  }
+  // check if this Allocator allocates the same object as other.
+  // This is the case if the type of this template class matches
+  // the type of other.
+  bool operator==(const AllocateBase& other) const override {
+    return typeid(*this)==typeid(other);
+  }
+};
 
-    // a wrapper to deallocate an object created by allocate
-    struct Deallocate : public DeallocateBase {
-      // deallocate a object using delete
-      void operator()(fmatvec::Atom *obj) const override {
-        delete obj;
-      }
-    };
+// a wrapper to deallocate an object created by allocate
+struct Deallocate : public DeallocateBase {
+  // deallocate a object using delete
+  void operator()(fmatvec::Atom *obj) const override {
+    delete obj;
+  }
+};
 
-    // a wrapper to get an singleton object of type CreateType (Must have the same signature as allocate()
-    template<class CreateType>
-    struct GetSingleton : public AllocateBase {
-      // create a new singelton object of type CreateType using CreateType::getInstance
-      fmatvec::Atom* operator()() const override {
-        return CreateType::getInstance();
-      }
-      // check if this Allocator returns the same object as other.
-      // This is the case if the type of this template class matches
-      // the type of other.
-      bool operator==(const AllocateBase& other) const override {
-        return typeid(*this)==typeid(other);
-      }
-    };
+// a wrapper to get an singleton object of type CreateType (Must have the same signature as allocate()
+template<class CreateType>
+struct GetSingleton : public AllocateBase {
+  // create a new singelton object of type CreateType using CreateType::getInstance
+  fmatvec::Atom* operator()() const override {
+    return CreateType::getInstance();
+  }
+  // check if this Allocator returns the same object as other.
+  // This is the case if the type of this template class matches
+  // the type of other.
+  bool operator==(const AllocateBase& other) const override {
+    return typeid(*this)==typeid(other);
+  }
+};
 
-    // a wrapper to "deallocate" an singleton object (Must have the same signature as deallocate()
-    struct DeallocateSingleton : public DeallocateBase {
-      // deallocate a singleton object -> just do nothing
-      void operator()(fmatvec::Atom *obj) const override {
-        // just do nothing for singletons
-      }
-    };
-
+// a wrapper to "deallocate" an singleton object (Must have the same signature as deallocate()
+struct DeallocateSingleton : public DeallocateBase {
+  // deallocate a singleton object -> just do nothing
+  void operator()(fmatvec::Atom *obj) const override {
+    // just do nothing for singletons
+  }
 };
 
 /** Helper function for automatic class registration for ObjectFactory.
  * You should not use this class directly but
  * use the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY. */
 template<class CreateType>
-class ObjectFactoryRegisterXMLNameHelper {
+class ObjectFactoryRegisterClassHelper {
 
   public:
 
     /** ctor registring the new type */
-    ObjectFactoryRegisterXMLNameHelper(const MBXMLUtils::FQN &name_) : name(name_) {
-      ObjectFactory::template registerXMLName<CreateType>(name);
-    };
+    ObjectFactoryRegisterClassHelper(const MBXMLUtils::FQN &name_) : name(name_) {
+      MBSim::registerClass_internal(name, new Allocate<CreateType>(), new Deallocate());
+    }
 
     /** dtor deregistring the type */
-    ~ObjectFactoryRegisterXMLNameHelper() {
-      ObjectFactory::template deregisterXMLName<CreateType>(name);
-    };
+    ~ObjectFactoryRegisterClassHelper() {
+      MBSim::deregisterClass_internal(name, new Allocate<CreateType>());
+    }
 
   private:
     MBXMLUtils::FQN name;
@@ -261,24 +228,27 @@ class ObjectFactoryRegisterXMLNameHelper {
  * You should not use this class directly but
  * use the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORYASSINGLETON. */
 template<class CreateType>
-class ObjectFactoryRegisterXMLNameHelperAsSingleton {
+class ObjectFactoryRegisterClassHelperAsSingleton {
 
   public:
 
     /** ctor registring the new type */
-    ObjectFactoryRegisterXMLNameHelperAsSingleton(const MBXMLUtils::FQN &name_) : name(name_) {
-      ObjectFactory::template registerXMLNameAsSingleton<CreateType>(name);
-    };
+    ObjectFactoryRegisterClassHelperAsSingleton(const MBXMLUtils::FQN &name_) : name(name_) {
+      MBSim::registerClass_internal(name, new GetSingleton<CreateType>(), new DeallocateSingleton());
+    }
 
     /** dtor deregistring the type */
-    ~ObjectFactoryRegisterXMLNameHelperAsSingleton() {
-      ObjectFactory::template deregisterXMLNameAsSingleton<CreateType>(name);
-    };
+    ~ObjectFactoryRegisterClassHelperAsSingleton() {
+      MBSim::deregisterClass_internal(name, new GetSingleton<CreateType>());
+    }
 
   private:
     MBXMLUtils::FQN name;
 
 };
+
+// fix local xml name (remove template and namespace)
+std::string fixXMLLocalName(std::string name);
 
 }
 
@@ -286,32 +256,32 @@ class ObjectFactoryRegisterXMLNameHelperAsSingleton {
 #define MBSIM_OBJECTFACTORY_CONCAT(X, Y) MBSIM_OBJECTFACTORY_CONCAT1(X, Y)
 #define MBSIM_OBJECTFACTORY_APPENDLINE(X) MBSIM_OBJECTFACTORY_CONCAT(X, __LINE__)
 
-/** Use this macro somewhere at the class definition of ThisType to register it by the ObjectFactory.
- * fmatvec::Atom is the base of ThisType and also the template parameter of ObjectFactory.
- * ThisType must have a public default ctor and a public dtor. */
-#define MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ThisType, name) \
-  static MBSim::ObjectFactoryRegisterXMLNameHelper<ThisType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(name);
+/** Use this macro somewhere at the class definition of Class to register it by the ObjectFactory.
+ * fmatvec::Atom is the base of Class and also the template parameter of ObjectFactory.
+ * Class must have a public default ctor and a public dtor and a getXMLFQN() static member function. */
+#define MBSIM_OBJECTFACTORY_REGISTERCLASS(NS, Class) \
+  static MBSim::ObjectFactoryRegisterClassHelper<Class> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
 
-/** Use this macro somewhere at the class definition of ThisType to register it by the ObjectFactory (as a singleton).
- * fmatvec::Atom is the base of ThisType and also the template parameter of ObjectFactory.
- * ThisType must have a public ThisType* getInstance() function and should not have a public dtor. */
-#define MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(ThisType, name) \
-  static MBSim::ObjectFactoryRegisterXMLNameHelperAsSingleton<ThisType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(name);
+/** Use this macro somewhere at the class definition of Class to register it by the ObjectFactory (as a singleton).
+ * fmatvec::Atom is the base of Class and also the template parameter of ObjectFactory.
+ * Class must have a public Class* getInstance() function and should not have a public dtor and a getXMLFQN() static member function. */
+#define MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON(NS, Class) \
+  static MBSim::ObjectFactoryRegisterClassHelperAsSingleton<Class> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(NS%MBSim::fixXMLLocalName(#Class));
 
-/** Same as MBSIM_OBJECTFACTORY_REGISTERXMLNAME but also explicitly instantiates the template class ThisType.
- * Please note that template member functions of ThisType must be explicitly instantated by hand. */
-#define MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(ThisType, name) \
-  template class ThisType; \
-  static MBSim::ObjectFactoryRegisterXMLNameHelper<ThisType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(name);
+/** Same as MBSIM_OBJECTFACTORY_REGISTERCLASS but also explicitly instantiates the template class Class.
+ * Please note that template member functions of Class must be explicitly instantated by hand. */
+#define MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(NS, Class) \
+  template class Class; \
+  static MBSim::ObjectFactoryRegisterClassHelper<Class> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(NS%MBSim::fixXMLLocalName(#Class));
 
-/** Same as MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON but also explicitly instantiates the template class ThisType.
- * Please note that template member functions of ThisType must be explicitly instantated by hand. */
-#define MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON_AND_INSTANTIATE(ThisType, name) \
-  template class ThisType; \
-  static MBSim::ObjectFactoryRegisterXMLNameHelperAsSingleton<ThisType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(name);
+/** Same as MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON but also explicitly instantiates the template class Class.
+ * Please note that template member functions of Class must be explicitly instantated by hand. */
+#define MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON_AND_INSTANTIATE(NS, Class) \
+  template class Class; \
+  static MBSim::ObjectFactoryRegisterClassHelperAsSingleton<Class> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(NS%MBSim::fixXMLLocalName(#Class));
 
 #endif

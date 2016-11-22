@@ -30,12 +30,10 @@
 #include "mbsim/frames/frame.h"
 #include <mbsim/environment.h>
 
-#ifdef HAVE_NURBS
 #include "nurbs++/nurbs.h"
 #include "nurbs++/vector.h"
 
 using namespace PLib;
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -45,8 +43,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s33RCM, MBSIMFLEX%"FlexibleBody1s33RCMCantilever")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody1s33RCM, MBSIMFLEX%"FlexibleBody1s33RCMRing")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBody1s33RCM)
 
   FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), angle(new RevCardan()), Elements(0), l0(0.), E(0.), G(0.), A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), epstD(0.), k0D(0.), epstL(0.), k0L(0.), initialised(false), nGauss(3) {
   }
@@ -381,7 +378,6 @@ namespace MBSimFlexibleBody {
     double thetaKappa0=getDouble(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"torsional"));
     setMaterialDamping(thetaEps, thetaKappa0);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
     if(e) {
       std::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
@@ -389,11 +385,9 @@ namespace MBSimFlexibleBody {
       rb->initializeUsingXML(e->getFirstElementChild());
       rb->setNumberOfSpinePoints(4*Elements+1);
     }
-#endif
   }
 
   void FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
-//#ifdef HAVE_NURBS
 //
 //    PlNurbsCurved curvePos;
 //    PlNurbsCurved curveVel;
@@ -455,13 +449,9 @@ namespace MBSimFlexibleBody {
 //        curveVel.write(filenameVel.c_str());
 //      }
 //    }
-//#else
-//    THROW_MBSIMERROR("No Nurbs-Library installed ...");
-//#endif
   }
 
   void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
-#ifdef HAVE_NURBS
 
     int DEBUGLEVEL = 0;
 
@@ -595,8 +585,5 @@ namespace MBSimFlexibleBody {
 //      cout << "];" << endl;
 //    }
 
-#else
-    THROW_MBSIMERROR("No Nurbs-Library installed ...");
-#endif
   }
 }

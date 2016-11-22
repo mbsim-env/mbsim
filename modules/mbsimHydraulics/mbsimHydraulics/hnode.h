@@ -23,14 +23,12 @@
 #include "mbsim/links/link.h"
 #include <mbsim/functions/function.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
 namespace OpenMBV {
   class Group;
   class Sphere;
 }
-#endif
 
 namespace MBSim {
   class GeneralizedForceLaw;
@@ -61,12 +59,10 @@ namespace MBSimHydraulics {
       ~HNode() {};
       virtual std::string getType() const { return "HNode"; }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVSphere, tag, (optional (size,(double),1)(minimalPressure,(double),0e5)(maximalPressure,(double),10e5)(position,(const fmatvec::Vec3&),fmatvec::Vec3()))) { 
         enableOpenMBV(size,minimalPressure,maximalPressure,position);
       }
       virtual void enableOpenMBV(double size, double pMin, double pMax, const fmatvec::Vec3 &WrON);
-#endif
 
       void addInFlow(HLine * in);
       void addOutFlow(HLine * out);
@@ -107,11 +103,9 @@ namespace MBSimHydraulics {
       double QHyd;
       unsigned int nLines;
       bool updQHyd;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Group> openMBVGrp;
       std::shared_ptr<OpenMBV::Sphere> openMBVSphere;
       fmatvec::Vec3 WrON;
-#endif
   };
 
 

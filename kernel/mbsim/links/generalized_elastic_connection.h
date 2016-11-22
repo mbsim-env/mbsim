@@ -22,10 +22,8 @@
 #include "mbsim/links/dual_rigid_body_link.h"
 #include "mbsim/functions/function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 

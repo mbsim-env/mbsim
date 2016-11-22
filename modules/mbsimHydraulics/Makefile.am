@@ -1,16 +1,12 @@
-if COND_XML
-  MAYBE_SCHEMA = schema
-endif
-
-SUBDIRS = mbsimHydraulics $(MAYBE_SCHEMA)
+SUBDIRS = mbsimHydraulics schema
 
 DIST_SUBDIRS = mbsimHydraulics schema
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimHydraulics.pc
 
-plugindir = $(datadir)/mbsimxml/plugins
-plugin_DATA = mbsimHydraulics.plugin.xml
+mbsimmodulesdir = $(datadir)/mbsimmodules
+mbsimmodules_DATA = mbsimHydraulics.mbsimmodule.xml
 
 # wrapper target for doxygen in dir doc
 .PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc install-xmldoc uninstall-xmldoc

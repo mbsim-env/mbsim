@@ -40,7 +40,7 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(TimeSteppingIntegrator, MBSIMINT%"TimeSteppingIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, TimeSteppingIntegrator)
 
   TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), tPlot(0.), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 

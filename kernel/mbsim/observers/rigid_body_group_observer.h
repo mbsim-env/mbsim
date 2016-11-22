@@ -21,14 +21,12 @@
 #define _RIGID_BODY_GROUP_OBSERVER_H__
 #include "mbsim/observers/observer.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
 
 namespace OpenMBV {
   class Frame;
 }
-#endif
 
 namespace MBSim {
   class RigidBody;
@@ -38,9 +36,7 @@ namespace MBSim {
     private:
       std::vector<RigidBody*> body;
       Frame* ref;
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration, openMBVAngularVelocity, openMBVAngularAcceleration, openMBVWeight, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
-#endif
 
     public:
       RigidBodyGroupObserver(const std::string &name);
@@ -50,7 +46,6 @@ namespace MBSim {
       void init(InitStage stage);
       virtual void plot();
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         openMBVWeight=ombv.createOpenMBV(); 
@@ -75,7 +70,6 @@ namespace MBSim {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
         openMBVDerivativeOfAngularMomentum=ombv.createOpenMBV(); 
       }
-#endif
 
   };
 

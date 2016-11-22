@@ -5,8 +5,8 @@ includedir=@includedir@
 
 Name: mbsimFlexibleBody
 Description: mbsimFlexibleBody is an add-on for flexible bodies to the mbsim-kernel
-Requires: @requires@
+Requires: mbsim nurbs++
 Version: @VERSION@
 Libs: -L${libdir} -lmbsimFlexibleBody @LIBS@
-Cflags: -I${includedir} @nurbs_compilerflag@
+Cflags: -I${includedir}
 

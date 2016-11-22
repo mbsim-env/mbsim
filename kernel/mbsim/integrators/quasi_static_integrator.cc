@@ -42,7 +42,7 @@ using namespace xercesc;
 
 namespace MBSimIntegrator {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(QuasiStaticIntegrator, MBSIMINT % "QuasiStaticIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINT, QuasiStaticIntegrator)
 
   QuasiStaticIntegrator::QuasiStaticIntegrator() :
       dt(1e-3), t(0.), tPlot(0.), gTol(1e-10), hTol(1e-10), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), maxExtraPolate(0), extraPolateAfter(2), updateJacobianEvery(1), s0(0.), time(0.), stepPlot(0) {

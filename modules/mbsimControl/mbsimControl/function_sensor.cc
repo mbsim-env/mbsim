@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionSensor, MBSIMCONTROL%"FunctionSensor")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, FunctionSensor)
       
   FunctionSensor::FunctionSensor(const std::string &name, MBSim::Function<VecV(double)>* function_) : Sensor(name), function(function_) {
     function->setParent(this);

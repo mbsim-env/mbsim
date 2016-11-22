@@ -39,7 +39,6 @@ namespace MBSimFlexibleBody {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVSpineExtrusion) {
           openMBVSpineExtrusion->setName(name);
           openMBVSpineExtrusion->setShilouetteEdge(true);
@@ -53,7 +52,6 @@ namespace MBSimFlexibleBody {
           openMBVSpineExtrusion->setContour(rectangle);
           parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
         }
-  #endif
         Contour1s::init(stage);
       }
     }
@@ -95,7 +93,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBand::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSpineExtrusion) {
         vector<double> data;
         data.push_back(getTime());
@@ -110,7 +107,6 @@ namespace MBSimFlexibleBody {
         }
         openMBVSpineExtrusion->append(data);
       }
-#endif
     }
     Contour1s::plot();
   }

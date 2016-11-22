@@ -51,9 +51,9 @@ struct DeallocateBase {
   virtual void operator()(fmatvec::Atom *obj) const = 0;
 };
 
-void registerXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc);
+void registerClass_internal(const MBXMLUtils::FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc);
 
-void deregisterXMLName(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
+void deregisterClass_internal(const MBXMLUtils::FQN &name, const AllocateBase *alloc);
 
 }
 

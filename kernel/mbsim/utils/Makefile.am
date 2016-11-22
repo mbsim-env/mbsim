@@ -31,10 +31,7 @@ utilsinclude_HEADERS = colors.h\
 		       planar_contact_search.h\
 		       spatial_contact_search.h
 
-if COND_CASADI
-  MAYBE_CPPCASADITOXML = cppCasADiToXML
-endif
-noinst_PROGRAMS = $(MAYBE_CPPCASADITOXML)
+noinst_PROGRAMS = cppCasADiToXML
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc
 cppCasADiToXML_LDADD = libutils.la 
 cppCasADiToXML_LDFLAGS = -Wl,--no-as-needed $(CASADI_LIBS)

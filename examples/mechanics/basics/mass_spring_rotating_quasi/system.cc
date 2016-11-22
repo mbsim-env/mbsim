@@ -13,10 +13,8 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/nested_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/coilspring.h"
 #include <openmbvcppinterface/cuboid.h>
-#endif
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -103,13 +101,11 @@ System::System(const string &projectName) :
   crank->setInertiaTensor(inertia_crank);
 
   // visualisation
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> openMBVCrank = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   openMBVCrank->setLength(length_crank, 0.05, 0.05);
   openMBVCrank->setDiffuseColor(0.5, 0, 0);
   openMBVCrank->setTransparency(0.5);
   crank->setOpenMBVRigidBody(openMBVCrank);
-#endif
 
 //  Vec3 pos;
 //  pos(0) = length_spring + 0.5 * length_crank;
@@ -142,14 +138,10 @@ System::System(const string &projectName) :
   // contour
   Sphere *sphere1 = new Sphere("Sphere1");
   sphere1->setRadius(radius_mass);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere1->enableOpenMBV();
-#endif
   mass1->addContour(sphere1);
 
   // visualisation
-#ifdef HAVE_OPENMBVCPPINTERFACE
   spring1->enableOpenMBVCoilSpring(_springRadius = 0.002, _crossSectionRadius = 0.01, _numberOfCoils = 5);
-#endif
 }
 

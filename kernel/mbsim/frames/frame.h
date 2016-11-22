@@ -22,10 +22,8 @@
 
 #include "mbsim/element.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
 
@@ -117,14 +115,12 @@ namespace MBSim {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {
         OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
         openMBVFrame=ombv.createOpenMBV();
       }
       void setOpenMBVFrame(const std::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
       std::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
-#endif
 
       void resetUpToDate();
       virtual void resetPositionsUpToDate();
@@ -173,9 +169,7 @@ namespace MBSim {
        */
       fmatvec::Vec3 WaP, WpsiP;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       std::shared_ptr<OpenMBV::Frame> openMBVFrame;
-#endif
 
       bool updJac[3], updGA, updPos, updVel, updAcc;
   };

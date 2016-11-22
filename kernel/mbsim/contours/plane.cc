@@ -22,9 +22,7 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/utils.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/grid.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -33,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Plane, MBSIM%"Plane")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Plane)
 
   Vec3 Plane::evalWu(const Vec2 &zeta) {
     return evalWs(zeta);
@@ -61,13 +59,11 @@ namespace MBSim {
 
  void Plane::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
-#ifdef HAVE_OPENMBVCPPINTERFACE
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVPlane ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
 }

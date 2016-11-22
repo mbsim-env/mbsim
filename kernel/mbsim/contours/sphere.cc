@@ -22,9 +22,7 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/utils.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/sphere.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -33,18 +31,16 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Sphere, MBSIM%"Sphere")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Sphere)
 
   void Sphere::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           if(openMBVRigidBody) static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
         }
-#endif
         RigidContour::init(stage);
       }
     }
@@ -141,13 +137,11 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
     setRadius(getDouble(e));
     e=e->getNextElementSibling();
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVSphere ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
 }

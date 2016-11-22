@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PolarContourFunction, MBSIM%"PolarContourFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PolarContourFunction)
 
   PolarContourFunction::PolarContourFunction() : r(0), alphaSave(-1e12), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
   }

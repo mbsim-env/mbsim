@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibilityInfluenceFunction, MBSIM%"FlexibilityInfluenceFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FlexibilityInfluenceFunction)
 
   void FlexibilityInfluenceFunction::initializeUsingXML(DOMElement *element) {
     InfluenceFunction::initializeUsingXML(element);

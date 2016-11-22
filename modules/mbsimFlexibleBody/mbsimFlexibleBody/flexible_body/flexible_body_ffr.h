@@ -24,10 +24,8 @@
 #include "mbsim/functions/time_dependent_function.h"
 #include "mbsim/functions/state_dependent_function.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsimFlexibleBody/utils/openmbv_utils.h"
-#endif
 
 namespace MBSim {
   class Frame;
@@ -216,7 +214,6 @@ namespace MBSimFlexibleBody {
 
       using Body::addContour;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(indices,(const std::vector<int>&),std::vector<int>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
         OpenMBVDynamicIndexedFaceSet ombv;
@@ -242,7 +239,6 @@ namespace MBSimFlexibleBody {
         MBSim::OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
         MArrow=ombv.createOpenMBV();
       }
-#endif
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -409,7 +405,6 @@ namespace MBSimFlexibleBody {
       bool bodyFixedRepresentationOfAngularVelocity;
 
     private:
-#ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief Frame of reference for drawing openMBVBody
        */
@@ -417,7 +412,6 @@ namespace MBSimFlexibleBody {
       std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
       std::vector<double> ombvNodes;
       std::vector<int> ombvIndices;
-#endif
   };
 
 }

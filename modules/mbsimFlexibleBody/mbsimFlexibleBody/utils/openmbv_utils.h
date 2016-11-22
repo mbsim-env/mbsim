@@ -20,7 +20,6 @@
 #ifndef _MBSIMFLEX_OPENMBV_UTILS_H_
 #define _MBSIMFLEX_OPENMBV_UTILS_H_
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <mbsim/utils/openmbv_utils.h>
 #include <openmbvcppinterface/dynamicindexedfaceset.h>
 
@@ -38,6 +37,5 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif
 
 #endif

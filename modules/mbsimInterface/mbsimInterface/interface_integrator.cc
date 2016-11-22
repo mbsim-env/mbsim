@@ -47,7 +47,7 @@ enum IPCmethods {
 
 namespace MBSimInterface {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(InterfaceIntegrator, MBSIMINTERFACE%"InterfaceIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMINTERFACE, InterfaceIntegrator)
 
     InterfaceIntegrator::InterfaceIntegrator(): MBSimIntegrator::Integrator(), zSize(0), svSize(0), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
     }

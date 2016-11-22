@@ -87,16 +87,22 @@ namespace MBSimGUI {
 
     mbsim = new Process(this);
 
-    mbsimThread = new MBSimThread(this);
-    parser=DOMParser::create(true);
-    mbsimThread->setParser(parser);
-    connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(preprocessFinished(int)));
-
     QString program = (MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str();
     QStringList arguments;
-    arguments << "--onlyGenerateSchema" << (uniqueTempDir/"mbsimxml.xsd").string().c_str();
-    mbsim->getProcess()->execute(program,arguments);
-    parser->loadGrammar(arguments[1].toStdString());
+    arguments << "--onlyListSchemas";
+    QProcess process;
+    process.start(program,arguments);
+    process.waitForFinished(-1);
+    QStringList line=QString(process.readAllStandardOutput().data()).split("\n");
+    set<bfs::path> schemas;
+    for(int i=0; i<line.size(); ++i)
+      if(!line.at(i).isEmpty())
+        schemas.insert(line.at(i).toStdString());
+
+    mbsimThread = new MBSimThread(this);
+    parser=DOMParser::create(schemas);
+    mbsimThread->setParser(parser);
+    connect(mbsimThread, SIGNAL(resultReady(int)), this, SLOT(preprocessFinished(int)));
 
     elementList = new ElementView;
 
@@ -528,7 +534,7 @@ namespace MBSimGUI {
       if(not(message.empty())) {
         QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"), QString("Model file not valid: ")+QString::fromStdString(message), QMessageBox::Ignore | QMessageBox::Cancel);
         if(ret == QMessageBox::Ignore) {
-          shared_ptr<DOMParser> parser=DOMParser::create(false);
+          shared_ptr<DOMParser> parser=DOMParser::create();
           doc=parser->parse(file.toStdString());
         }
         else {

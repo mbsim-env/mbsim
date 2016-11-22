@@ -6,9 +6,7 @@
 #include "mbsim/links/contact.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/cuboid.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
-#endif
 #include "mbsim/environment.h"
 
 
@@ -29,9 +27,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,1) = cos(phi);
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
-#ifdef HAVE_OPENMBVCPPINTERFACE
   wall->enableOpenMBV(1, 0.5);
-#endif
   addFrame(new FixedRelativeFrame("WandUnten",Vec(3),AWK));
   wall->setFrameOfReference(getFrame("WandUnten"));
   addContour(wall);
@@ -83,10 +79,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cnf->connect(getContour("WandUnten"), body->getContour("Wuerfel"));
   addLink(cnf);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cube> obj = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   body->setOpenMBVRigidBody(obj);
   obj->setLength(l);
-#endif
 }
 

@@ -26,10 +26,8 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/constitutive_laws/bilateral_constraint.h"
 #include "mbsim/objectfactory.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -67,7 +65,7 @@ namespace MBSim {
     return res;
   } 
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(JointConstraint, MBSIM%"JointConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, JointConstraint)
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
     C.setParent(this);
@@ -319,7 +317,6 @@ namespace MBSim {
     if(e) setMomentDirection(getMat3xV(e,3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if (e) setInitialGuess(getVec(e));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
@@ -331,7 +328,6 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }
-#endif
   }
 
   void JointConstraint::setForceDirection(const Mat3xV &fd) {

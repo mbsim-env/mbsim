@@ -55,7 +55,7 @@ namespace MBSimHydraulics {
       std::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
   };
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Controlvalve43, MBSIMHYDRAULICS%"Controlvalve43")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, Controlvalve43)
 
   Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), checkSizeFunctionPA(NULL), checkSizeFunctionPB(NULL), checkSizeFunctionAT(NULL), checkSizeFunctionBT(NULL), pRACC(false) {
     addObject(lPA);

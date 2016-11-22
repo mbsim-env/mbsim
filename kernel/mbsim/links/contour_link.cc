@@ -23,10 +23,8 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/utils/utils.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/arrow.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -49,7 +47,6 @@ namespace MBSim {
 
   void ContourLink::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(openMBVArrowF) {
         vector<double> data;
         data.push_back(getTime());
@@ -78,7 +75,6 @@ namespace MBSim {
         data.push_back(nrm2(WM));
         openMBVArrowM->append(data);
       }
-#endif
       Link::plot();
     }
   }
@@ -214,7 +210,6 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVForceGrp->setExpand(false);
         openMBVForceGrp->setName(name+"_ArrowGroup");
@@ -227,7 +222,6 @@ namespace MBSim {
           openMBVArrowM->setName("Moment");
           openMBVForceGrp->addObject(openMBVArrowM);
         }
-#endif
         Link::init(stage);
       }
     }
@@ -255,7 +249,6 @@ namespace MBSim {
     saved_ref1 = E(e)->getAttribute("ref1");
     saved_ref2 = E(e)->getAttribute("ref2");
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if (e) {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
@@ -267,7 +260,6 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toDoubleHead, OpenMBV::Arrow::toPoint, 1, 1);
       setOpenMBVMoment(ombv.createOpenMBV(e));
     }
-#endif
   }
 
 }

@@ -85,14 +85,12 @@ int main(int argc, char *argv[]) {
     // create FMU zip file
     CreateZip fmuFile("mbsim.fmu", compress);
 
-    // load all plugins
-    cout<<"Load MBSim plugins."<<endl;
-    set<path> pluginLibs=MBSimXML::loadPlugins();
+    // load all MBSim modules
+    cout<<"Load MBSim modules."<<endl;
+    set<path> moduleLibs=MBSimXML::loadModules();
 
-    // create parser (a validating parser for XML input and a none validating parser for shared library input)
-    std::shared_ptr<DOMParser> parser=DOMParser::create(xmlFile);
     // create parser (none validating parser for use in copyShLibToFMU)
-    std::shared_ptr<DOMParser> parserNoneVali=DOMParser::create(false);
+    std::shared_ptr<DOMParser> parserNoneVali=DOMParser::create();
 
     // note: the order of these variable definitions is importend for proper deallocation
     std::shared_ptr<DynamicSystemSolver> dss;
@@ -113,9 +111,12 @@ int main(int argc, char *argv[]) {
     // Create dss from XML file
     if(xmlFile) {
       // init the validating parser with the mbsimxml schema file
-      cout<<"Create MBSimXML XML schema including all plugins."<<endl;
-      generateMBSimXMLSchema(".mbsimxml.xsd", getInstallPath()/"share"/"mbxmlutils"/"schema");
-      parser->loadGrammar(".mbsimxml.xsd");
+      cout<<"Create MBSimXML XML schema including all modules."<<endl;
+      set<path> schemas=getMBSimXMLSchemas();
+
+      // create parser (a validating parser for XML input and a none validating parser for shared library input)
+      cout<<"Create validating XML parser."<<endl;
+      std::shared_ptr<DOMParser> parser=DOMParser::create(schemas);
 
       // load MBSim project XML document
       cout<<"Load MBSim model from XML project file."<<endl;
@@ -234,7 +235,7 @@ int main(int argc, char *argv[]) {
     addModelInputOutputs(var, dss.get());
 
     // create DOM of modelDescription.xml
-    std::shared_ptr<xercesc::DOMDocument> modelDescDoc(parser->createDocument());
+    std::shared_ptr<xercesc::DOMDocument> modelDescDoc(parserNoneVali->createDocument());
 
     // root element fmiModelDescription and its attributes
     cout<<"Create the modelDescription.xml file."<<endl;
@@ -401,15 +402,15 @@ int main(int argc, char *argv[]) {
         cout<<endl;
       }
 
-      cout<<"Copy MBSim plugin files to FMU."<<endl;
-      for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimxml"/"plugins");
+      cout<<"Copy MBSim module files to FMU."<<endl;
+      for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimmodules");
         srcIt!=directory_iterator(); ++srcIt) {
         cout<<"."<<flush;
-        fmuFile.add(path("resources")/"local"/"share"/"mbsimxml"/"plugins"/srcIt->path().filename(), srcIt->path());
+        fmuFile.add(path("resources")/"local"/"share"/"mbsimmodules"/srcIt->path().filename(), srcIt->path());
       }
       cout<<endl;
-      for(set<path>::iterator it=pluginLibs.begin(); it!=pluginLibs.end(); ++it) {
-        cout<<"Copy MBSim plugin module "<<it->filename()<<" and dependencies to FMU."<<endl;
+      for(set<path>::iterator it=moduleLibs.begin(); it!=moduleLibs.end(); ++it) {
+        cout<<"Copy MBSim module "<<it->filename()<<" and dependencies to FMU."<<endl;
         copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/it->filename(), path("resources")/"local"/LIBDIR,
                        *it);
         cout<<endl;

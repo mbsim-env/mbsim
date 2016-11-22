@@ -28,7 +28,6 @@ using namespace fmatvec;
 using namespace MBSim;
 using namespace xercesc;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 
 namespace MBSimFlexibleBody {
 
@@ -56,4 +55,3 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif

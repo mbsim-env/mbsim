@@ -19,12 +19,10 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/sphere.h"
 #include "openmbvcppinterface/ivbody.h"
-#endif
 
 using namespace std;
 using namespace MBSim;
@@ -87,7 +85,6 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     lowerTable->setFrameOfReference(table->getFrameC());
     table->addContour(lowerTable);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 
     std::shared_ptr<OpenMBV::IvBody> v_table = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
     v_table->setIvFileName("objects/tisch.wrl");
@@ -98,7 +95,6 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     v_table->setInitialTranslation(0.,-0.1,0);
 
     table->setOpenMBVRigidBody(v_table);
-#endif
 
     /*Prepare Contact*/
     Contact* ballOben = new Contact("Ball_Boden");

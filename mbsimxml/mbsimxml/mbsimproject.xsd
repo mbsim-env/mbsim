@@ -8,14 +8,10 @@
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://www.mbsim-env.de/MBSim"
-    schemaLocation="../http___www_mbsim-env_de_MBSim/mbsim.xsd"/>
-  <xs:import namespace="http://www.mbsim-env.de/MBSimIntegrator"
-    schemaLocation="../http___www_mbsim-env_de_MBSimIntegrator/mbsimintegrator.xsd"/>
-  <xs:import namespace="http://www.mbsim-env.de/MBSimAnalyser"
-    schemaLocation="../http___www_mbsim-env_de_MBSimAnalyser/mbsimanalyser.xsd"/>
-  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"
-    schemaLocation="../http___www_mbsim-env_de_MBXMLUtils/physicalvariable.xsd"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSimIntegrator"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBSimAnalyser"/>
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
 
   <xs:element name="MBSimProject" type="MBSimProjectType">
     <xs:annotation>

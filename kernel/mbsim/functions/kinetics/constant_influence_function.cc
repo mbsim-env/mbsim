@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(ConstantInfluenceFunction, MBSIM%"ConstantInfluenceFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ConstantInfluenceFunction)
 
   void ConstantInfluenceFunction::initializeUsingXML(DOMElement *element) {
     InfluenceFunction::initializeUsingXML(element);

@@ -8,9 +8,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
-#endif
 
 using namespace std;
 using namespace MBSim;
@@ -54,12 +52,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   v0Stab(0) = -4.;
   stab->setInitialGeneralizedVelocity(v0Stab);
   
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(lStab,hStab,0.1);
   cuboid->setDiffuseColor(0.3333,1,0.3333);
   stab->setOpenMBVRigidBody(cuboid);
-#endif
 
   // Contouren 
   Vec rSP(3);

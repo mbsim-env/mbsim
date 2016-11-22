@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Joint, MBSIM%"Joint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Joint)
 
   Joint::Joint(const string &name) : FloatingFrameLink(name), ffl(0), fml(0), fifl(0), fiml(0) {
   }

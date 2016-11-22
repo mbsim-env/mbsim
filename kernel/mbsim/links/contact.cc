@@ -28,11 +28,9 @@
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
-#endif
 #include <algorithm>
 
 using namespace std;
@@ -44,7 +42,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Contact, MBSIM%"Contact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Contact)
 
   Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), saved_ref(0) {
   }
@@ -68,11 +66,9 @@ namespace MBSim {
     }
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   shared_ptr<OpenMBV::Group> Contact::getOpenMBVGrp() {
     return openMBVGrp;
   }
-#endif
 
   void Contact::updatewb() {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
@@ -387,7 +383,6 @@ namespace MBSim {
           jter->setTangentialForceLaw(fdf);
           jter->setTangentialImpactLaw(ftil);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
           //Set OpenMBV-Properties to single contacts
           if (openMBVFrame)
             jter->setOpenMBVContactPoints((iter==contacts.begin() and jter==iter->begin())?openMBVFrame:OpenMBV::ObjectFactory::create(openMBVFrame));
@@ -395,7 +390,6 @@ namespace MBSim {
             jter->setOpenMBVNormalForce((iter==contacts.begin() and jter==iter->begin())?contactArrow:OpenMBV::ObjectFactory::create(contactArrow));
           if (frictionArrow)
             jter->setOpenMBVTangentialForce((iter==contacts.begin() and jter==iter->begin())?frictionArrow:OpenMBV::ObjectFactory::create(frictionArrow));
-#endif
           jter->init(stage);
         }
       }
@@ -413,12 +407,10 @@ namespace MBSim {
       Element::init(stage);
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name + "_ContactGroup");
         openMBVGrp->setExpand(false);
         parent->getOpenMBVGrp()->addObject(openMBVGrp);
-#endif
         for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
           for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
             jter->init(stage);
@@ -878,7 +870,6 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if (e) setInitialGuess(getVec(e));
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     //Get all drawing thingies
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
     if (e) {
@@ -897,7 +888,6 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
       frictionArrow = ombv.createOpenMBV(e);
     }
-#endif
   }
 
   void Contact::updatecorrRef(const Vec& corrParent) {

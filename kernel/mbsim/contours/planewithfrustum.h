@@ -59,9 +59,7 @@ namespace MBSim {
       double getRoundingRadius() {return rho; }
       /***************************************************/
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       void enableOpenMBV();
-#endif
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 

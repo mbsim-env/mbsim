@@ -46,7 +46,7 @@ namespace MBSimIntegrator {
   }
 
   Integrator* Integrator::readXMLFile(const string &filename) {
-    shared_ptr<DOMParser> parser=DOMParser::create(false);
+    shared_ptr<DOMParser> parser=DOMParser::create();
     shared_ptr<DOMDocument> doc=parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
     Integrator *integrator=ObjectFactory::createAndInit<Integrator>(e);

@@ -28,9 +28,7 @@
 #include <mbsim/frames/fixed_relative_frame.h>
 #include "mbsim/mbsim_event.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -259,7 +257,6 @@ namespace MBSimFlexibleBody {
 
   }
   
-#ifdef HAVE_OPENMBVCPPINTERFACE
   void FlexibleBodyLinearExternalFFR::enableFramePlot(double size, VecInt numbers) {
     if (numbers.size() == 0) { //take all nodes
       numbers.resize(nNodes, NONINIT);
@@ -275,7 +272,6 @@ namespace MBSimFlexibleBody {
       refFrame->enableOpenMBV(size);
     }
   }
-#endif
 
   void FlexibleBodyLinearExternalFFR::initM() {
     // allocate memeory for M and Qv

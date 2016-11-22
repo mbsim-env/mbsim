@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RegularizedBilateralConstraint, MBSIM%"RegularizedBilateralConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RegularizedBilateralConstraint)
 
   void RegularizedBilateralConstraint::initializeUsingXML(DOMElement *element) {
     GeneralizedForceLaw::initializeUsingXML(element);

@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedPositionConstraint, MBSIM%"GeneralizedPositionConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedPositionConstraint)
 
   void GeneralizedPositionConstraint::init(InitStage stage) {
     GeneralizedDualConstraint::init(stage);

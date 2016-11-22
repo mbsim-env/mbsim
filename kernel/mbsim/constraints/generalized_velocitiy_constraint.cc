@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedVelocityConstraint, MBSIM%"GeneralizedVelocityConstraint")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedVelocityConstraint)
 
   void GeneralizedVelocityConstraint::init(InitStage stage) {
     if(stage==resize) {

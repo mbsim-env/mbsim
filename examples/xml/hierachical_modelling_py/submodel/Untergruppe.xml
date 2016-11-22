@@ -121,6 +121,10 @@
   </objects>
   <links>
     <SpringDamper name="Feder1">
+      <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
+      <enableOpenMBVForce>
+        <scaleLength>0.005</scaleLength>
+      </enableOpenMBVForce>
       <forceFunction>
         <LinearSpringDamperForce>
           <stiffnessCoefficient>c1</stiffnessCoefficient>
@@ -128,12 +132,9 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <unloadedLength>l01</unloadedLength>
-      <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
-      <enableOpenMBVForce>
-        <scaleLength>0.005</scaleLength>
-      </enableOpenMBVForce>
     </SpringDamper>
     <SpringDamper name="Feder2">
+      <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
       <forceFunction>
         <LinearSpringDamperForce>
           <stiffnessCoefficient>c2</stiffnessCoefficient>
@@ -141,7 +142,6 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <unloadedLength>l02</unloadedLength>
-      <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
       <enableOpenMBVCoilSpring>
           <numberOfCoils>5</numberOfCoils>
           <springRadius>0.1</springRadius>

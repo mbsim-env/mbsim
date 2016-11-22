@@ -2,9 +2,7 @@
 #include "group1.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -15,9 +13,7 @@ Group2::Group2(const string &name) : Group(name) {
   double m1 = 5;
   SymMat Theta1(3,EYE);
   SymMat Theta2(3,EYE);
-#ifdef HAVE_OPENMBVCPPINTERFACE
   double h1 = 0.5;
-#endif
 
   // ----------------------- Definition des 1. Körpers --------------------  
   RigidBody *box1 = new RigidBody("Box1");
@@ -50,12 +46,10 @@ Group2::Group2(const string &name) : Group(name) {
   addGroup(group);
 
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::Cuboid> body1=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   body1->setLength(Vec(3,INIT,1)*h1);
   box1->setOpenMBVRigidBody(body1);
   box1->getFrame("C")->enableOpenMBV();
-#endif
 
 
 }

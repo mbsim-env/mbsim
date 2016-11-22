@@ -172,7 +172,6 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   addLink(new initLink("InitialValueSearch", rocker, contactCamRocker));
 
-#if HAVE_OPENMBVCPPINTERFACE
   camContour->enableOpenMBV();
   getFrame("I2")->enableOpenMBV(.1*l1);
   cam->getFrame("C")->enableOpenMBV(.1*l1);
@@ -180,6 +179,5 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rocker->getFrame("Joint")->enableOpenMBV(.1*l1);
   contactCamRocker->enableOpenMBVContactPoints(.005);
   rockerContour->enableOpenMBV();
-#endif
 
 }

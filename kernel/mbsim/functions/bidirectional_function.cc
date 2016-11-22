@@ -27,8 +27,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(BidirectionalFunction<double(double)>, MBSIM%"BidirectionalFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(BidirectionalFunction<VecV(double)>, MBSIM%"BidirectionalFunction")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME_AND_INSTANTIATE(BidirectionalFunction<Vec3(double)>, MBSIM%"BidirectionalFunction")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, BidirectionalFunction<double(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, BidirectionalFunction<VecV(double)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, BidirectionalFunction<Vec3(double)>)
 
 }

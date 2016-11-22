@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedSpringDamper, MBSIM%"GeneralizedSpringDamper")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedSpringDamper)
 
   GeneralizedSpringDamper::~GeneralizedSpringDamper() {
     delete func;

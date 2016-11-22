@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedConnection, MBSIM%"GeneralizedConnection")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedConnection)
 
   GeneralizedConnection::~GeneralizedConnection() {
     delete fl;

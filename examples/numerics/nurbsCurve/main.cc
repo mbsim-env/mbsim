@@ -2,10 +2,8 @@
 #include <mbsim/utils/eps.h>
 #include <mbsim/numerics/nurbs/nurbs_curve.h>
 
-#ifdef HAVE_NURBS
 #include <nurbs++/nurbs.h>
 using namespace PLib;
-#endif
 
 #include <iostream>
 
@@ -17,7 +15,6 @@ int main(int argc, char* argv[]) {
 
 
 
-//#ifdef HAVE_NURBS
 
   cout << setprecision(3) << fixed << scientific;
 
@@ -238,9 +235,6 @@ int main(int argc, char* argv[]) {
     << fabs(mbsimcurve.normal(u, Vec3("[0;0;1]"))(2) - plcurve.normal(u,Point3Dd(0,0,1)).z()) << endl;
   }
   }
-//#else
-//  cout << "This examples only works with a installed nurbs-library..." << endl;
-//#endif
 
   return 0;
 

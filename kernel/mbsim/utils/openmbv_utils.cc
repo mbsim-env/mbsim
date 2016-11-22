@@ -27,7 +27,6 @@ using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace xercesc;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 
 namespace MBSim {
 
@@ -296,4 +295,3 @@ namespace MBSim {
 
 }
 
-#endif

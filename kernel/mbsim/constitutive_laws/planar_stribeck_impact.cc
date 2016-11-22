@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarStribeckImpact, MBSIM%"PlanarStribeckImpact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarStribeckImpact)
 
   Vec PlanarStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), (*fmu)(fabs(gdn(0))) * fabs(laN)));

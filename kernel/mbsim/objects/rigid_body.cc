@@ -36,12 +36,10 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_zyx_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -52,7 +50,7 @@ namespace MBSim {
 
   Range<Var,Var> i02(0,2);
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(RigidBody, MBSIM%"RigidBody")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBody)
 
   RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z"), bodyFixedRepresentationOfAngularVelocity(false) {
     
@@ -62,9 +60,7 @@ namespace MBSim {
     //C->setUpdateByParent(1);
     Body::addFrame(C);
     K = C;
-#ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=C;
-#endif
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
     updateJacobians_[1] = &RigidBody::updateJacobians1;
@@ -313,14 +309,12 @@ namespace MBSim {
             plotColumns.push_back("uRel("+numtostr(i)+")");
         }
         Body::init(stage);
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(getPlotFeature(openMBV)==enabled && FWeight) {
             FWeight->setName("Weight");
             openMBVGrp->addObject(FWeight);
           }
         }
-#endif
       }
     }
     else
@@ -364,7 +358,6 @@ namespace MBSim {
           plotVector.push_back(evaluRel()(i));
       }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if(FWeight) {
           vector<double> data;
@@ -395,7 +388,6 @@ namespace MBSim {
           static_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
         }
       }
-#endif
       Body::plot();
     }
   }
@@ -586,11 +578,9 @@ namespace MBSim {
     Body::addContour(contour);
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
   void RigidBody::setOpenMBVRigidBody(const shared_ptr<OpenMBV::RigidBody> &body) {
     openMBVBody=body;
   }
-#endif
 
   void RigidBody::updateMConst() {
     M += Mbuf;
@@ -666,7 +656,6 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
     if(e) bodyFixedRepresentationOfAngularVelocity = getBool(e);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(e) {
       shared_ptr<OpenMBV::RigidBody> rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
@@ -703,7 +692,6 @@ namespace MBSim {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
     }
-#endif
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameC");
     while(e and E(e)->getTagName()==MBSIM%"plotFeatureFrameC") {

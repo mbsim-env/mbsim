@@ -27,11 +27,9 @@
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
-#endif
 
 #include <algorithm>
 
@@ -44,7 +42,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MaxwellContact, MBSIM%"MaxwellContact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MaxwellContact)
 
   MaxwellContact::MaxwellContact(const string &name) : Contact(name), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
   }

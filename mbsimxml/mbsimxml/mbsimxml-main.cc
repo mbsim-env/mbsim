@@ -94,9 +94,7 @@ int main(int argc, char *argv[]) {
     for(int i=1; i<argc; i++)
       arg.push_back(argv[i]);
 
-    string ONLYGENERATESCHEMA;
-    if((i=std::find(arg.begin(), arg.end(), "--onlyGenerateSchema"))!=arg.end())
-      ONLYGENERATESCHEMA=*++i;
+    bool ONLYLISTSCHEMAS=std::find(arg.begin(), arg.end(), "--onlyListSchemas")!=arg.end();
   
     // help
     if(arg.size()<1 ||
@@ -104,7 +102,8 @@ int main(int argc, char *argv[]) {
        std::find(arg.begin(), arg.end(), "--help")!=arg.end() ||
        std::find(arg.begin(), arg.end(), "-?")!=arg.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
-          <<"                 --autoreload|--onlyGenerateSchema <file>]"<<endl
+          <<"                 --autoreload|--onlyListSchemas]"<<endl
+          <<"                [--modulesPath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                <mbsimprjfile>"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
@@ -119,8 +118,9 @@ int main(int argc, char *argv[]) {
           <<"                     This generates a HDF5 output file with only one time serie"<<endl
           <<"--autoreload         Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
           <<"                     a input file is newer than the output file"<<endl
-          <<"--onlyGenerateSchema Generate .mbsimxml.xsd (including imports of all modules)"<<endl
-          <<"                     and exit"<<endl
+          <<"--onlyListSchemas    List all XML schema files including MBSim modules"<<endl
+          <<"--modulePath <dir>   Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
+          <<"                     module dir and the current dir is always included."<<endl
           <<"<mbsimprjfile>       Use <mbsimprjfile> as mbsim xml project file"<<endl;
       return 0;
     }
@@ -139,14 +139,19 @@ int main(int argc, char *argv[]) {
     // parse parameters
 
     // generate mbsimxml.xsd
-    bfs::path mbsimxml_xsd;
-    if(ONLYGENERATESCHEMA.empty())
-      mbsimxml_xsd=".mbsimxml.xsd";
-    else
-      mbsimxml_xsd=ONLYGENERATESCHEMA;
-    MBSim::generateMBSimXMLSchema(mbsimxml_xsd, MBXMLUTILSSCHEMA);
-    if(!ONLYGENERATESCHEMA.empty())
+    set<bfs::path> searchDirs;
+    while((i=find(arg.begin(), arg.end(), "--modulePath"))!=arg.end()) {
+      i2=i; i2++;
+      searchDirs.insert(*i2);
+      arg.erase(i);
+      arg.erase(i2);
+    }
+    set<bfs::path> schemas=MBSim::getMBSimXMLSchemas(searchDirs);
+    if(ONLYLISTSCHEMAS) {
+      for(auto &schema: schemas)
+        cout<<schema.string()<<endl;
       return 0;
+    }
   
     bool ONLYPP=false;
     if((i=std::find(arg.begin(), arg.end(), "--onlypreprocess"))!=arg.end()) {
@@ -205,9 +210,9 @@ int main(int argc, char *argv[]) {
       vector<string> command;
       command.push_back((MBXMLUTILSBIN/(string("mbxmlutilspp")+EXEEXT)).string());
       command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
-      command.push_back("none");
+      for(auto &schema: schemas)
+        command.push_back(schema.string());
       command.push_back(MBSIMPRJ);
-      command.push_back(mbsimxml_xsd.generic_string());
       ret=runProgram(command);
   
       if(!ONLYPP && ret==0) {

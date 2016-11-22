@@ -9,11 +9,9 @@
 
 #include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/polygonpoint.h>
-#endif
 
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
@@ -103,7 +101,6 @@ System::System(const string &projectName) :
   addObject(rod);
 
   Contour1sNeutralFactory * rodCont = rod->createNeutralPhase();
-#ifdef HAVE_OPENMBVCPPINTERFACE
   std::shared_ptr<OpenMBV::SpineExtrusion> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>();
   cuboid->setNumberOfSpinePoints(elements*4); // resolution of visualisation
   cuboid->setDiffuseColor(1/3.0, 1, 1);// color in (minimalColorValue, maximalColorValue)
@@ -120,7 +117,6 @@ System::System(const string &projectName) :
 
   cuboid->setContour(rectangle);
   rodCont->setOpenMBVSpineExtrusion(cuboid);
-#endif
 }
 
 void System::reduce(const string & h5file) {

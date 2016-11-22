@@ -23,11 +23,9 @@
 #include "mbsim/frames/frame.h"
 #include <mbsim/functions/function.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class CoilSpring;
 }
-#endif
 
 namespace MBSim {
 

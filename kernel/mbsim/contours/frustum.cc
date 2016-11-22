@@ -22,9 +22,7 @@
 #include "mbsim/frames/frame.h"
 #include <mbsim/utils/utils.h>
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
-#endif
 
 
 using namespace std;
@@ -34,14 +32,13 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Frustum, MBSIM%"Frustum")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Frustum)
 
   void Frustum::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
           static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
@@ -49,7 +46,6 @@ namespace MBSim {
           static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r(1));
           static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
         }
-  #endif
         RigidContour::init(stage);
       }
     }
@@ -88,13 +84,11 @@ namespace MBSim {
       outCont=true;
     else
       outCont=false;
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVFrustum ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
 }

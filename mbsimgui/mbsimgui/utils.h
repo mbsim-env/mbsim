@@ -56,9 +56,6 @@ namespace MBSimGUI {
       //    /** Convenienc function to convert a rotation matrix to cardan angles */
       //    static SbVec3f rotation2Cardan(const SbRotation& r);
 
-      static std::map<std::string, std::string>& getMBSimNamespacePrefixMapping();
-
-
     private:
       // INITIALIZATION
       static bool initialized;

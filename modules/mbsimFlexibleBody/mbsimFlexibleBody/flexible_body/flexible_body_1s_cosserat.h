@@ -27,10 +27,7 @@
 //#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
 //#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_translation.h"
 //#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_cosserat_rotation.h"
-//#ifdef HAVE_OPENMBVCPPINTERFACE
 //#include <openmbvcppinterface/spineextrusion.h>
-//
-//#endif
 //
 //#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 

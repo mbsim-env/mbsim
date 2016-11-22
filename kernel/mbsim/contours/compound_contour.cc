@@ -21,9 +21,7 @@
 #include "mbsim/contours/compound_contour.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -65,7 +63,6 @@ namespace MBSim {
         element[i]->sethSize(hSize[0]);
     }
     else if (stage == plotting) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if (parent)
         updatePlotFeatures();
 
@@ -79,7 +76,6 @@ namespace MBSim {
           if (getPlotFeature(separateFilePerGroup) == enabled)
             openMBVGroup->setSeparateFile(true);
         }
-#endif
       }
     }
     Contour::init(stage);

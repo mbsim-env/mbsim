@@ -21,9 +21,7 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/contours/circle.h"
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -32,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Circle, MBSIM%"Circle")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Circle)
 
   Vec3 Circle::evalKs(const fmatvec::Vec2 &zeta) {
     Vec3 Ks(NONINIT);
@@ -82,13 +80,11 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r);
           static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r);
           static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(0);
         }
-#endif
         RigidContour::init(stage);
       }
     }
@@ -103,13 +99,11 @@ namespace MBSim {
     setRadius(getDouble(e));
     e=E(element)->getFirstElementChildNamed(MBSIM%"solid");
     if(e) setSolid(getBool(e));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCircle ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
 }

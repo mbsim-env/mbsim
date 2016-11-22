@@ -13,19 +13,22 @@ using namespace MBSim;
 
 int main(int argc, char *argv[]) {
   try {
+    vector<string> args;
+    for(int i=1; i<argc; ++i)
+      args.push_back(argv[i]);
 
     Solver *solver;
     DynamicSystemSolver *dss;
   
     bool doNotIntegrate=false;
-    if(argc>=2 && strcmp(argv[1],"--donotintegrate")==0)
+    if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
       doNotIntegrate=true;
     bool stopAfterFirstStep=false;
-    if(argc>=2 && strcmp(argv[1],"--stopafterfirststep")==0)
+    if(find(args.begin(), args.end(), "--stopafterfirststep")!=args.end())
       stopAfterFirstStep=true;
   
-    if(MBSimXML::preInit(argc, argv, dss, solver)!=0) return 0; 
-    MBSimXML::initDynamicSystemSolver(argc, argv, dss);
+    if(MBSimXML::preInit(args, dss, solver)!=0) return 0; 
+    MBSimXML::initDynamicSystemSolver(args, dss);
   
     if(doNotIntegrate==false) {
       if(stopAfterFirstStep)
@@ -48,7 +51,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    MBSimXML::postMain(argc, argv, solver, dss);
+    MBSimXML::postMain(args, solver, dss);
   }
   catch(const exception &e) {
     cerr<<"Exception:"<<endl

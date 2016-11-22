@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(SpatialContour, MBSIM%"SpatialContour")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialContour)
 
   SpatialContour::~SpatialContour() {
      if (funcCrPC) 
@@ -81,7 +81,6 @@ namespace MBSim {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           if(not(ombvEtaNodes.size())) {
             ombvEtaNodes.resize(51);
@@ -121,7 +120,6 @@ namespace MBSim {
           static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setVertexPositions(vp);
           static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
         }
-  #endif
         RigidContour::init(stage);
       }
     }
@@ -154,7 +152,6 @@ namespace MBSim {
     setContourFunction(ObjectFactory::createAndInit<Function<Vec3(Vec2)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
     if(e) setOpen(Element::getBool(e));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"etaNodes");
@@ -164,7 +161,6 @@ namespace MBSim {
       OpenMBVIndexedFaceSet ombv;
       openMBVRigidBody=ombv.createOpenMBV(e);
     }
-#endif
   }
 
 }

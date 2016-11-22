@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarCoulombImpact, MBSIM%"PlanarCoulombImpact")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarCoulombImpact)
 
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));

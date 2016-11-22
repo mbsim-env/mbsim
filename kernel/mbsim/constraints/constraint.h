@@ -52,9 +52,7 @@ namespace MBSim {
       virtual void plot();
       virtual void closePlot();
       virtual void setUpInverseKinetics() { }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
-#endif
       bool getUpdateGeneralizedCoordinates() const { return updGC; }
       bool getUpdateGeneralizedJacobians() const { return updGJ; }
       void resetUpToDate() { updGC = true; updGJ = true; }

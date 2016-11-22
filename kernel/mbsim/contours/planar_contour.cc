@@ -29,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(PlanarContour, MBSIM%"PlanarContour")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarContour)
 
   PlanarContour::~PlanarContour() {
      if (funcCrPC) 
@@ -64,7 +64,6 @@ namespace MBSim {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
           if(not(ombvNodes.size())) {
@@ -79,7 +78,6 @@ namespace MBSim {
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
         }
-  #endif
         RigidContour::init(stage);
       }
     }
@@ -109,7 +107,6 @@ namespace MBSim {
     setContourFunction(ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
     if(e) setOpen(Element::getBool(e));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
@@ -117,7 +114,6 @@ namespace MBSim {
       OpenMBVExtrusion ombv;
       openMBVRigidBody=ombv.createOpenMBV(e); 
     }
-#endif
   }
 
 }

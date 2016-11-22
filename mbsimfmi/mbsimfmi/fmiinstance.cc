@@ -82,7 +82,7 @@ namespace MBSimFMI {
       throw runtime_error("GUID provided by caller and internal GUID does not match.");
 
     // load modelDescription XML file
-    parser=DOMParser::create(false);
+    parser=DOMParser::create();
     msg(Debug)<<"Read modelDescription file."<<endl;
     path modelDescriptionXMLFile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path().parent_path()/
       "modelDescription.xml";

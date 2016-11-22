@@ -22,10 +22,8 @@
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/eps.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
-#endif
 
 using namespace std;
 using namespace xercesc;
@@ -34,7 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(NaturalCoordinatesObserver, MBSIM%"NaturalCoordinatesObserver")
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, NaturalCoordinatesObserver)
 
   NaturalCoordinatesObserver::NaturalCoordinatesObserver(const std::string &name) : CoordinatesObserver(name) {
   }
@@ -49,7 +47,6 @@ namespace MBSim {
       }
       CoordinatesObserver::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVAcceleration) {
             openMBVTangentialAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
@@ -60,7 +57,6 @@ namespace MBSim {
             openMBVAccGrp->addObject(openMBVNormalAcceleration);
           }
         }
-#endif
       }
     }
     else
@@ -69,7 +65,6 @@ namespace MBSim {
 
   void NaturalCoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         Vec3 r = frame->evalPosition();
         Vec3 v = frame->evalVelocity();
@@ -143,7 +138,6 @@ namespace MBSim {
           openMBVFrame->append(data);
         }
       }
-#endif
 
       CoordinatesObserver::plot();
     }
