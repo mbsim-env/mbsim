@@ -398,13 +398,13 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  ConnectFramesWidgetFactory::ConnectFramesWidgetFactory(Element *parent_) : parent(parent_) {
-    name.push_back("1 frame");
-    name.push_back("2 frames");
+  ConnectRigidBodiesWidgetFactory::ConnectRigidBodiesWidgetFactory(Element *parent_) : parent(parent_) {
+    name.push_back("1 rigid body");
+    name.push_back("2 rigid bodies");
   }
 
-  QWidget* ConnectFramesWidgetFactory::createWidget(int i) {
-    return new ConnectFramesWidget(i+1,parent);
+  QWidget* ConnectRigidBodiesWidgetFactory::createWidget(int i) {
+    return new ConnectRigidBodiesWidget(i+1,parent);
   }
 
   SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *parent_) : parent(parent_){

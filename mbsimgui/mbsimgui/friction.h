@@ -25,18 +25,16 @@
 
 namespace MBSimGUI {
 
-  class GeneralizedFriction : public RigidBodyLink {
+  class GeneralizedFriction : public DualRigidBodyLink {
     friend class GeneralizedFrictionPropertyDialog;
     public:
     GeneralizedFriction(const std::string &str, Element *element);
-    ~GeneralizedFriction();
     std::string getType() const { return "GeneralizedFriction"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedFrictionPropertyDialog(this);}
     protected:
-    ExtProperty function, normalForce, body1, body2, connections, forceArrow, momentArrow;
+    ExtProperty function, normalForce;
   };
 
 }

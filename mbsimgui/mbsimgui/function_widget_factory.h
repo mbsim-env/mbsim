@@ -187,9 +187,9 @@ namespace MBSimGUI {
       std::vector<QString> name;
   };
 
-  class ConnectFramesWidgetFactory : public WidgetFactory {
+  class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
-      ConnectFramesWidgetFactory(Element *parent);
+      ConnectRigidBodiesWidgetFactory(Element *parent);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }

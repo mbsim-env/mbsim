@@ -25,7 +25,7 @@
 
 namespace MBSimGUI {
 
-  class GeneralizedElasticConnection : public RigidBodyLink {
+  class GeneralizedElasticConnection : public DualRigidBodyLink {
     friend class GeneralizedElasticConnectionPropertyDialog;
     public:
     GeneralizedElasticConnection(const std::string &str, Element *element);
@@ -34,7 +34,7 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedElasticConnectionPropertyDialog(this);}
     protected:
-    ExtProperty function, body1, body2, forceArrow, momentArrow;
+    ExtProperty function;
   };
 
 }

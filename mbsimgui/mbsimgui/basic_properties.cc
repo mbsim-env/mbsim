@@ -238,6 +238,57 @@ namespace MBSimGUI {
     static_cast<RigidBodyOfReferenceWidget*>(widget)->updateWidget();
   }
 
+  GearInputReferenceProperty::GearInputReferenceProperty(const std::string &body_, Element *element_, const FQN &xmlName_) : body(body_), bodyPtr(element_->getByPath<RigidBody>(body)), element(element_), xmlName(xmlName_) {
+  }
+
+  void GearInputReferenceProperty::initialize() {
+    bodyPtr=element->getByPath<RigidBody>(body);
+  }
+
+  void GearInputReferenceProperty::setBody(const std::string &str) {
+    body = str;
+    bodyPtr=element->getByPath<RigidBody>(body);
+  }
+
+  std::string GearInputReferenceProperty::getBody() const {
+    return bodyPtr?bodyPtr->getXMLPath(element,true):body;
+  }
+
+  DOMElement* GearInputReferenceProperty::initializeUsingXML(DOMElement *parent) {
+    DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      body=E(e)->getAttribute("ref");
+      ratio=E(e)->getAttribute("ratio");
+    }
+    return e;
+  }
+
+  DOMElement* GearInputReferenceProperty::writeXMLFile(DOMNode *parent) {
+    if(xmlName==FQN()) {
+      E(static_cast<DOMElement*>(parent))->setAttribute("ratio", ratio);
+      E(static_cast<DOMElement*>(parent))->setAttribute("ref", getBody());
+    }
+    else {
+      DOMDocument *doc=parent->getOwnerDocument();
+      DOMElement *ele = D(doc)->createElement(xmlName);
+      E(ele)->setAttribute("ratio", ratio);
+      E(ele)->setAttribute("ref", getBody());
+      parent->insertBefore(ele, NULL);
+    }
+    return 0;
+  }
+
+  void GearInputReferenceProperty::fromWidget(QWidget *widget) {
+    setBody(static_cast<GearInputReferenceWidget*>(widget)->getBody().toStdString());
+    setRatio(static_cast<GearInputReferenceWidget*>(widget)->getRatio().toStdString());
+  }
+
+  void GearInputReferenceProperty::toWidget(QWidget *widget) {
+    static_cast<GearInputReferenceWidget*>(widget)->setBody(QString::fromStdString(body),bodyPtr);
+    static_cast<GearInputReferenceWidget*>(widget)->setRatio(QString::fromStdString(getRatio()));
+    static_cast<GearInputReferenceWidget*>(widget)->updateWidget();
+  }
+
   ObjectOfReferenceProperty::ObjectOfReferenceProperty(const std::string &object_, Element *element_, const FQN &xmlName_) : object(object_), objectPtr(element_->getByPath<Object>(object)), element(element_), xmlName(xmlName_) {
   }
 
@@ -564,6 +615,60 @@ namespace MBSimGUI {
     for(unsigned int i=0; i<contour.size(); i++)
       contour[i].toWidget(static_cast<ConnectContoursWidget*>(widget)->widget[i]);
     static_cast<ConnectContoursWidget*>(widget)->update();
+  }
+
+  ConnectRigidBodiesProperty::ConnectRigidBodiesProperty(int n, Element *element, const FQN &xmlName_) : xmlName(xmlName_)  {
+
+    for(int i=0; i<n; i++) {
+      FQN xmlName = MBSIM%"ref";
+      if(n>1)
+        xmlName.second += toStr(i+1);
+      body.push_back(RigidBodyOfReferenceProperty("",element,xmlName));
+    }
+  }
+
+  void ConnectRigidBodiesProperty::initialize() {
+    for(unsigned int i=0; i<body.size(); i++)
+      body[i].initialize();
+  }
+
+  DOMElement* ConnectRigidBodiesProperty::initializeUsingXML(DOMElement *element) {
+    DOMElement *e = E(element)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      for(unsigned int i=0; i<body.size(); i++) {
+        string xmlName = "ref";
+        if(body.size()>1)
+          xmlName += toStr(int(i+1));
+        if(!E(e)->hasAttribute(xmlName))
+          return 0;
+        body[i].setBody(E(e)->getAttribute(xmlName.c_str()));
+      }
+    }
+    return e;
+  }
+
+  DOMElement* ConnectRigidBodiesProperty::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(xmlName);
+    for(unsigned int i=0; i<body.size(); i++) {
+      string xmlName = "ref";
+      if(body.size()>1)
+        xmlName += toStr(int(i+1));
+      E(ele)->setAttribute(xmlName, body[i].getBody());
+    }
+    parent->insertBefore(ele, NULL);
+    return ele;
+  }
+
+  void ConnectRigidBodiesProperty::fromWidget(QWidget *widget) {
+    for(unsigned int i=0; i<body.size(); i++)
+      body[i].fromWidget(static_cast<ConnectRigidBodiesWidget*>(widget)->widget[i]);
+  }
+
+  void ConnectRigidBodiesProperty::toWidget(QWidget *widget) {
+    for(unsigned int i=0; i<body.size(); i++)
+      body[i].toWidget(static_cast<ConnectRigidBodiesWidget*>(widget)->widget[i]);
+    static_cast<ConnectRigidBodiesWidget*>(widget)->update();
   }
 
   DynamicSystemSolverTolerancesProperty::DynamicSystemSolverTolerancesProperty() : projection(0,false), g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {

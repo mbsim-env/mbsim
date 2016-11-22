@@ -310,6 +310,53 @@ namespace MBSimGUI {
     return body->text();
   }
 
+  GearInputReferenceWidget::GearInputReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    body = new QLineEdit;
+    if(selectedBody)
+      body->setText(QString::fromStdString(selectedBody->getXMLPath(element,true)));
+    bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
+    connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
+    layout->addWidget(body);
+    QPushButton *button = new QPushButton(tr("Browse"));
+    connect(button,SIGNAL(clicked(bool)),bodyBrowser,SLOT(show()));
+    layout->addWidget(button);
+
+    QLabel *label = new QLabel("Ratio");
+    layout->addWidget(label);
+    ratio = new QLineEdit;
+    layout->addWidget(ratio);
+  }
+
+  void GearInputReferenceWidget::updateWidget() {
+    bodyBrowser->updateWidget(selectedBody);
+    if(selectedBody) {
+      setBody();
+    }
+  }
+
+  void GearInputReferenceWidget::setBody() {
+    if(bodyBrowser->getRigidBodyList()->currentItem())
+      selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
+    else
+      selectedBody = 0;
+    body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath(element,true)):"");
+    emit bodyChanged();
+  }
+
+  void GearInputReferenceWidget::setBody(const QString &str, RigidBody *bodyPtr) {
+    selectedBody = bodyPtr;
+    body->setText(str);
+    emit bodyChanged();
+  }
+
+  QString GearInputReferenceWidget::getBody() const {
+    return body->text();
+  }
+
   ObjectOfReferenceWidget::ObjectOfReferenceWidget(Element *element_, Object* selectedObject_) : element(element_), selectedObject(selectedObject_) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
@@ -557,6 +604,29 @@ namespace MBSimGUI {
   }
 
   void ConnectContoursWidget::updateWidget() {
+    for(unsigned int i=0; i<widget.size(); i++)
+      widget[i]->updateWidget();
+  }
+
+  ConnectRigidBodiesWidget::ConnectRigidBodiesWidget(int n, Element *element_) : element(element_) {
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    for(int i=0; i<n; i++) {
+      QString subname = "Frame";
+      if(n>1) {
+        subname += QString::number(i+1);
+        //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
+      }
+      widget.push_back(new RigidBodyOfReferenceWidget(element,0));
+      QWidget *subwidget = new ExtWidget(subname,widget[i]);
+      layout->addWidget(subwidget);
+    }
+  }
+
+  void ConnectRigidBodiesWidget::updateWidget() {
     for(unsigned int i=0; i<widget.size(); i++)
       widget[i]->updateWidget();
   }

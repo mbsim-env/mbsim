@@ -222,9 +222,9 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> name;
   };
 
-  class ConnectFramesPropertyFactory : public PropertyFactory {
+  class ConnectRigidBodiesPropertyFactory : public PropertyFactory {
     public:
-      ConnectFramesPropertyFactory(Element *parent_);
+      ConnectRigidBodiesPropertyFactory(Element *parent_);
       PropertyInterface* createProperty(int i=0);
       MBXMLUtils::FQN getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }

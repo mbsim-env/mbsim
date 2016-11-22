@@ -31,48 +31,24 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  GeneralizedFriction::GeneralizedFriction(const string &str, Element *parent) : RigidBodyLink(str, parent), body1(0,false), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedFriction::GeneralizedFriction(const string &str, Element *parent) : DualRigidBodyLink(str, parent) {
 
     function.setProperty(new FrictionForceLawChoiceProperty(this,MBSIM%"generalizedFrictionForceLaw"));
 
     normalForce.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"generalizedNormalForceFunction",0));
-
-    body1.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodyFirstSide"));
-    body2.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodySecondSide"));
-
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
-  }
-
-  GeneralizedFriction::~GeneralizedFriction() {
-  }
-
-  void GeneralizedFriction::initialize() {
-    RigidBodyLink::initialize();
   }
 
   DOMElement* GeneralizedFriction::initializeUsingXML(DOMElement *element) {
-    RigidBodyLink::initializeUsingXML(element);
+    DualRigidBodyLink::initializeUsingXML(element);
     function.initializeUsingXML(element);
     normalForce.initializeUsingXML(element);
-    body1.initializeUsingXML(element);
-    body2.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedFriction::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
+    DOMElement *ele0 = DualRigidBodyLink::writeXMLFile(parent);
     function.writeXMLFile(ele0);
     normalForce.writeXMLFile(ele0);
-    body1.writeXMLFile(ele0);
-    body2.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

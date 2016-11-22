@@ -425,11 +425,11 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  ConnectFramesPropertyFactory::ConnectFramesPropertyFactory(Element *parent_) : parent(parent_), name(2) {
+  ConnectRigidBodiesPropertyFactory::ConnectRigidBodiesPropertyFactory(Element *parent_) : parent(parent_), name(2) {
   }
 
-  PropertyInterface* ConnectFramesPropertyFactory::createProperty(int i) {
-    return new ConnectFramesProperty(i+1,parent);
+  PropertyInterface* ConnectRigidBodiesPropertyFactory::createProperty(int i) {
+    return new ConnectRigidBodiesProperty(i+1,parent);
   }
 
   SpringDamperPropertyFactory::SpringDamperPropertyFactory(Element *parent_, const std::string &ext_) : parent(parent_), ext(ext_) {

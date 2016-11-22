@@ -168,8 +168,8 @@ namespace MBSimGUI {
       return new GeneralizedSpringDamper(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
       return new GeneralizedFriction(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIM%"Gear")
-      return new Gear(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
+      return new GeneralizedGear(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"Joint")
       return new Joint(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"ElasticJoint")
@@ -217,8 +217,8 @@ namespace MBSimGUI {
   }
   Constraint* MBSimObjectFactory::createConstraint(DOMElement *element, Element *parent) {
     if(element==0) return 0;
-    else if(E(element)->getTagName()==MBSIM%"GearConstraint")
-      return new GearConstraint(E(element)->getAttribute("name"),parent);
+    else if(E(element)->getTagName()==MBSIM%"GeneralizedGearConstraint")
+      return new GeneralizedGearConstraint(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"GeneralizedPositionConstraint")
       return new GeneralizedPositionConstraint(E(element)->getAttribute("name"),parent);
     else if(E(element)->getTagName()==MBSIM%"GeneralizedVelocityConstraint")

@@ -130,6 +130,27 @@ namespace MBSimGUI {
       RigidBody* getBodyPtr() const {return bodyPtr;}
   };
 
+  class GearInputReferenceProperty : public Property {
+    protected:
+      std::string body, ratio;
+      RigidBody *bodyPtr;
+      Element* element;
+      MBXMLUtils::FQN xmlName;
+    public:
+      GearInputReferenceProperty(const std::string &body_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_="");
+      virtual PropertyInterface* clone() const {return new GearInputReferenceProperty(*this);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void initialize();
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+      void setBody(const std::string &str);
+      std::string getBody() const;
+      RigidBody* getBodyPtr() const {return bodyPtr;}
+      void setRatio(const std::string &str) { ratio = str; }
+      std::string getRatio() const { return ratio; }
+  };
+
   class ObjectOfReferenceProperty : public Property {
     protected:
       std::string object;
@@ -269,6 +290,25 @@ namespace MBSimGUI {
 
     protected:
       std::vector<ContourOfReferenceProperty> contour;
+      MBXMLUtils::FQN xmlName;
+  };
+
+  class ConnectRigidBodiesProperty : public Property {
+
+    public:
+      ConnectRigidBodiesProperty(int n, Element* element, const MBXMLUtils::FQN &xmlName_=MBSIM%"connect");
+      virtual PropertyInterface* clone() const {return new ConnectRigidBodiesProperty(*this);}
+
+      void initialize();
+//      void setDefaultRigidBody(const std::string &def_) { def = def_; }
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+
+    protected:
+      std::vector<RigidBodyOfReferenceProperty> body;
+      std::string def;
       MBXMLUtils::FQN xmlName;
   };
 

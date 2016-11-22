@@ -61,7 +61,18 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
-      ExtProperty support;
+      ExtProperty support, forceArrow, momentArrow;
+ };
+
+  class DualRigidBodyLink : public RigidBodyLink {
+    friend class DualRigidBodyLinkPropertyDialog;
+    public:
+      DualRigidBodyLink(const std::string &str, Element *parent);
+      void initialize();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    protected:
+      ExtProperty connections;
  };
 
 }

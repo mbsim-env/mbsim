@@ -33,45 +33,34 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Gear::Gear(const string &str, Element *parent) : RigidBodyLink(str, parent), gearForceArrow(0,false), gearMomentArrow(0,false) {
+  GeneralizedGear::GeneralizedGear(const string &str, Element *parent) : RigidBodyLink(str, parent) {
+
+    gearOutput.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"gearOutput"));
+
+    gearInput.setProperty(new ListProperty(new GeneralizedGearConstraintPropertyFactory(this),MBSIM%"gearInput"));
 
     function.setProperty(new GeneralizedForceLawChoiceProperty(this,MBSIM%"generalizedForceLaw"));
-
-    dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
-
-    independentBodies.setProperty(new ListProperty(new GearConstraintPropertyFactory(this),MBSIM%"Transmission"));
-    independentBodies.setXMLName(MBSIM%"transmissions");
-
-    gearForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    gearForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    gearMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    gearMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
-  void Gear::initialize() {
+  void GeneralizedGear::initialize() {
     RigidBodyLink::initialize();
-    dependentBody.initialize();
-    independentBodies.initialize();
+    gearOutput.initialize();
+    gearInput.initialize();
   }
 
-  DOMElement* Gear::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedGear::initializeUsingXML(DOMElement *element) {
     RigidBodyLink::initializeUsingXML(element);
+    gearOutput.initializeUsingXML(element);
+    gearInput.initializeUsingXML(element);
     function.initializeUsingXML(element);
-    dependentBody.initializeUsingXML(element);
-    independentBodies.initializeUsingXML(element);
-    gearForceArrow.initializeUsingXML(element);
-    gearMomentArrow.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* Gear::writeXMLFile(DOMNode *parent) {
+  DOMElement* GeneralizedGear::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
+    gearOutput.writeXMLFile(ele0);
+    gearInput.writeXMLFile(ele0);
     function.writeXMLFile(ele0);
-    dependentBody.writeXMLFile(ele0);
-    independentBodies.writeXMLFile(ele0);
-    gearForceArrow.writeXMLFile(ele0);
-    gearMomentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

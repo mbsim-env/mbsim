@@ -26,18 +26,18 @@
 
 namespace MBSimGUI {
 
-  class Gear : public RigidBodyLink {
-    friend class GearPropertyDialog;
+  class GeneralizedGear : public RigidBodyLink {
+    friend class GeneralizedGearPropertyDialog;
     public:
-    Gear(const std::string &str, Element *parent);
-    virtual PropertyInterface* clone() const {return new Gear(*this);}
-    std::string getType() const { return "Gear"; }
+    GeneralizedGear(const std::string &str, Element *parent);
+    virtual PropertyInterface* clone() const {return new GeneralizedGear(*this);}
+    std::string getType() const { return "GeneralizedGear"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new GearPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedGearPropertyDialog(this);}
     protected:
-    ExtProperty function, dependentBody, independentBodies, gearForceArrow, gearMomentArrow;
+    ExtProperty function, gearOutput, gearInput;
   };
 
 }

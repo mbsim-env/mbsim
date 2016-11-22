@@ -181,6 +181,32 @@ namespace MBSimGUI {
       void bodyChanged();
   };
 
+  class GearInputReferenceWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      GearInputReferenceWidget(Element* element, RigidBody* selectedBody);
+
+      void updateWidget();
+      void setBody(const QString &str, RigidBody *bodyPtr);
+      QString getBody() const;
+      RigidBody* getSelectedBody() {return selectedBody;}
+      QString getRatio() const {return ratio->text().isEmpty()?"0":ratio->text();}
+      void setRatio(const QString &str) {ratio->setText(str=="0"?"":str);}
+
+    protected:
+      QLineEdit* body, *ratio;
+      Element* element;
+      RigidBodyBrowser* bodyBrowser;
+      RigidBody* selectedBody;
+
+    public slots:
+      void setBody();
+
+    signals:
+      void bodyChanged();
+  };
+
   class ObjectOfReferenceWidget : public Widget {
     Q_OBJECT
 
@@ -371,6 +397,21 @@ namespace MBSimGUI {
 
     protected:
     std::vector<ContourOfReferenceWidget*> widget;
+    Element* element;
+  };
+
+  class ConnectRigidBodiesWidget : public Widget {
+
+    friend class ConnectRigidBodiesProperty;
+
+    public:
+    ConnectRigidBodiesWidget(int n, Element* element);
+
+//    void setDefaultRigidBody(const QString &def) { widget[0]->setDefaultRigidBody(def); }
+    void updateWidget();
+
+    protected:
+    std::vector<RigidBodyOfReferenceWidget*> widget;
     Element* element;
   };
 

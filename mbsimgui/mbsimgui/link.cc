@@ -24,6 +24,7 @@
 #include "mainwindow.h"
 #include "embed.h"
 #include "ombv_properties.h"
+#include "function_property_factory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -104,8 +105,14 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent), support(0,false) {
+  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent), support(0,false), forceArrow(0,false), momentArrow(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
+
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
   void RigidBodyLink::initialize() {
@@ -116,12 +123,37 @@ namespace MBSimGUI {
   DOMElement* RigidBodyLink::initializeUsingXML(DOMElement *element) {
     Link::initializeUsingXML(element);
     support.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* RigidBodyLink::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Link::writeXMLFile(parent);
     support.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  DualRigidBodyLink::DualRigidBodyLink(const string &str, Element *parent) : RigidBodyLink(str, parent) {
+    connections.setProperty(new ChoiceProperty2(new ConnectRigidBodiesPropertyFactory(this),"",4));
+  }
+
+  void DualRigidBodyLink::initialize() {
+    RigidBodyLink::initialize();
+    connections.initialize();
+  }
+
+  DOMElement* DualRigidBodyLink::initializeUsingXML(DOMElement *element) {
+    RigidBodyLink::initializeUsingXML(element);
+    connections.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* DualRigidBodyLink::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
+    connections.writeXMLFile(ele0);
     return ele0;
   }
 

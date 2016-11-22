@@ -89,46 +89,24 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : RigidBodyLink(str, parent), body1(0,false), coilSpring(0,true), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedSpringDamper::GeneralizedSpringDamper(const string &str, Element *parent) : DualRigidBodyLink(str, parent) {
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
 
     unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"unloadedGeneralizedLength",vector<string>(2)),"",4));
-
-    body1.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodyFirstSide"));
-    body2.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBodySecondSide"));
-
-    coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
-    coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
-
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
   DOMElement* GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {
-    RigidBodyLink::initializeUsingXML(element);
+    DualRigidBodyLink::initializeUsingXML(element);
     function.initializeUsingXML(element);
     unloadedLength.initializeUsingXML(element);
-    body1.initializeUsingXML(element);
-    body2.initializeUsingXML(element);
-    coilSpring.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedSpringDamper::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = RigidBodyLink::writeXMLFile(parent);
+    DOMElement *ele0 = DualRigidBodyLink::writeXMLFile(parent);
     function.writeXMLFile(ele0);
     unloadedLength.writeXMLFile(ele0);
-    body1.writeXMLFile(ele0);
-    body2.writeXMLFile(ele0);
-    coilSpring.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

@@ -158,7 +158,7 @@ namespace MBSimGUI {
       ConstraintContextContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
 
     protected slots:
-      void addGearConstraint();
+      void addGeneralizedGearConstraint();
       void addGeneralizedPositionConstraint();
       void addGeneralizedVelocityConstraint();
       void addGeneralizedAccelerationConstraint();
@@ -186,7 +186,7 @@ namespace MBSimGUI {
       void addSignal();
       void addLinearTransferSystem();
       void addGeneralizedFriction();
-      void addGear();
+      void addGeneralizedGear();
       void addGeneralizedElasticConnection();
 
     protected:

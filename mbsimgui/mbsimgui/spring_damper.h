@@ -49,7 +49,7 @@ namespace MBSimGUI {
     ExtProperty forceDirection, unloadedLength, forceFunction, coilSpring;
   };
 
-  class GeneralizedSpringDamper : public RigidBodyLink {
+  class GeneralizedSpringDamper : public DualRigidBodyLink {
     friend class GeneralizedSpringDamperPropertyDialog;
     public:
     GeneralizedSpringDamper(const std::string &str, Element *element);
@@ -58,7 +58,7 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedSpringDamperPropertyDialog(this);}
     protected:
-    ExtProperty function, unloadedLength, body1, body2, coilSpring, forceArrow, momentArrow;
+    ExtProperty function, unloadedLength;
   };
 
 }

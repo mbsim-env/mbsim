@@ -41,13 +41,8 @@ namespace MBSimGUI {
     return new RigidBodyOfReferenceProperty("",element,xmlName);
   }
 
-  Property* GearConstraintPropertyFactory::createProperty(int i) {
-    ContainerProperty *property = new ContainerProperty;
-    property->addProperty(new RigidBodyOfReferenceProperty("",element, MBSIM%"rigidBody"));
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIM%"ratio"));
-    property->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
-    return property;
+  Property* GeneralizedGearConstraintPropertyFactory::createProperty(int i) {
+    return new GearInputReferenceProperty("",element,xmlName);
   }
 
   Constraint* Constraint::readXMLFile(const string &filename, Element *parent) {
@@ -58,8 +53,14 @@ namespace MBSimGUI {
     return constraint;
   }
 
-  GeneralizedConstraint::GeneralizedConstraint(const string &str, Element *parent) : Constraint(str, parent), support(0,false) {
+  GeneralizedConstraint::GeneralizedConstraint(const string &str, Element *parent) : Constraint(str, parent), support(0,false), forceArrow(0,false), momentArrow(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
+
+    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
+
+    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
   void GeneralizedConstraint::initialize() {
@@ -69,30 +70,27 @@ namespace MBSimGUI {
   DOMElement* GeneralizedConstraint::initializeUsingXML(DOMElement *element) {
     Constraint::initializeUsingXML(element);
     support.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedConstraint::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Constraint::writeXMLFile(parent);
     support.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 
-  GearConstraint::GearConstraint(const string &str, Element *parent) : GeneralizedConstraint(str, parent), gearForceArrow(0,false), gearMomentArrow(0,false) {
+  GeneralizedGearConstraint::GeneralizedGearConstraint(const string &str, Element *parent) : GeneralizedConstraint(str, parent) {
 
     dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 
-    independentBodies.setProperty(new ListProperty(new GearConstraintPropertyFactory(this),MBSIM%"Transmission"));
-    independentBodies.setXMLName(MBSIM%"transmissions");
-
-    gearForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    gearForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    gearMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    gearMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+    independentBodies.setProperty(new ListProperty(new GeneralizedGearConstraintPropertyFactory(this),MBSIM%"independentRigidBody"));
   }
 
-  void GearConstraint::initialize() {
+  void GeneralizedGearConstraint::initialize() {
     GeneralizedConstraint::initialize();
     dependentBody.initialize();
     independentBodies.initialize();
@@ -101,95 +99,84 @@ namespace MBSimGUI {
       body->setConstrained(true);
   }
 
-  void GearConstraint::deinitialize() {
+  void GeneralizedGearConstraint::deinitialize() {
     GeneralizedConstraint::deinitialize();
     RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }
 
-  DOMElement* GearConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedGearConstraint::initializeUsingXML(DOMElement *element) {
     GeneralizedConstraint::initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);
     independentBodies.initializeUsingXML(element);
-    gearForceArrow.initializeUsingXML(element);
-    gearMomentArrow.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* GearConstraint::writeXMLFile(DOMNode *parent) {
+  DOMElement* GeneralizedGearConstraint::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = GeneralizedConstraint::writeXMLFile(parent);
     dependentBody.writeXMLFile(ele0);
     independentBodies.writeXMLFile(ele0);
-    gearForceArrow.writeXMLFile(ele0);
-    gearMomentArrow.writeXMLFile(ele0);
     return ele0;
   }
 
-  KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : GeneralizedConstraint(str, parent), constraintForceArrow(0,false), constraintMomentArrow(0,false) {
+  GeneralizedDualConstraint::GeneralizedDualConstraint(const string &str, Element *parent) : GeneralizedConstraint(str, parent), independentBody(0,false) {
 
     dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
 
-    constraintForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    constraintForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    constraintMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    constraintMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
+    independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"independentRigidBody"));
   }
 
-  void KinematicConstraint::initialize() {
+  void GeneralizedDualConstraint::initialize() {
     GeneralizedConstraint::initialize();
     dependentBody.initialize();
+    independentBody.initialize();
     RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
     if(body)
       body->setConstrained(true);
   }
 
-  void KinematicConstraint::deinitialize() {
+  void GeneralizedDualConstraint::deinitialize() {
     GeneralizedConstraint::deinitialize();
     RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
     if(body)
       body->setConstrained(false);
   }
 
-  DOMElement* KinematicConstraint::initializeUsingXML(DOMElement *element) {
+  DOMElement* GeneralizedDualConstraint::initializeUsingXML(DOMElement *element) {
     GeneralizedConstraint::initializeUsingXML(element);
     dependentBody.initializeUsingXML(element);
-    constraintForceArrow.initializeUsingXML(element);
-    constraintMomentArrow.initializeUsingXML(element);
+    independentBody.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* KinematicConstraint::writeXMLFile(DOMNode *parent) {
+  DOMElement* GeneralizedDualConstraint::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = GeneralizedConstraint::writeXMLFile(parent);
-
     dependentBody.writeXMLFile(ele0);
-    constraintForceArrow.writeXMLFile(ele0);
-    constraintMomentArrow.writeXMLFile(ele0);
-
+    independentBody.writeXMLFile(ele0);
     return ele0;
   }
 
-  GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
+  GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str, Element *parent) : GeneralizedDualConstraint(str, parent), constraintFunction(0,false) {
 
     constraintFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"constraintFunction"));
   }
 
   DOMElement* GeneralizedPositionConstraint::initializeUsingXML(DOMElement *element) {
-    KinematicConstraint::initializeUsingXML(element);
+    GeneralizedDualConstraint::initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedPositionConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = KinematicConstraint::writeXMLFile(parent);
+    DOMElement *ele0 = GeneralizedDualConstraint::writeXMLFile(parent);
 
     constraintFunction.writeXMLFile(ele0);
 
     return ele0;
   }
 
-  GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
+  GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : GeneralizedDualConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
     constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3)); 
 
@@ -199,14 +186,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedVelocityConstraint::initializeUsingXML(DOMElement *element) {
-    KinematicConstraint::initializeUsingXML(element);
+    GeneralizedDualConstraint::initializeUsingXML(element);
     x0.initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedVelocityConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = KinematicConstraint::writeXMLFile(parent);
+    DOMElement *ele0 = GeneralizedDualConstraint::writeXMLFile(parent);
 
     x0.writeXMLFile(ele0);
     constraintFunction.writeXMLFile(ele0);
@@ -214,7 +201,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
+  GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : GeneralizedDualConstraint(str, parent), constraintFunction(0,false), x0(0,false) {
 
     constraintFunction.setProperty(new ChoiceProperty2(new ConstraintPropertyFactory(this),"",3)); 
 
@@ -224,14 +211,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedAccelerationConstraint::initializeUsingXML(DOMElement *element) {
-    KinematicConstraint::initializeUsingXML(element);
+    GeneralizedDualConstraint::initializeUsingXML(element);
     x0.initializeUsingXML(element);
     constraintFunction.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedAccelerationConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = KinematicConstraint::writeXMLFile(parent);
+    DOMElement *ele0 = GeneralizedDualConstraint::writeXMLFile(parent);
 
     x0.writeXMLFile(ele0);
     constraintFunction.writeXMLFile(ele0);
@@ -241,13 +228,13 @@ namespace MBSimGUI {
 
   JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), refFrameID(0,false), force(0,false), moment(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), q0(0,false) {
 
+    dependentBodiesFirstSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIM%"dependentRigidBodyOnFirstSide"));
+
+    dependentBodiesSecondSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIM%"dependentRigidBodyOnSecondSide"));
+
     independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"independentRigidBody"));
 
-    dependentBodiesFirstSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIM%"dependentRigidBody"));
-    dependentBodiesFirstSide.setXMLName(MBSIM%"dependentRigidBodiesFirstSide");
-
-    dependentBodiesSecondSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIM%"dependentRigidBody"));
-    dependentBodiesSecondSide.setXMLName(MBSIM%"dependentRigidBodiesSecondSide");
+    connections.setProperty(new ConnectFramesProperty(2,this));
 
     refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
 
@@ -259,24 +246,22 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIM%"momentDirection"));
     moment.setProperty(new ExtPhysicalVarProperty(input));
 
-    connections.setProperty(new ConnectFramesProperty(2,this));
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIM%"initialGuess"));
+    q0.setProperty(new ExtPhysicalVarProperty(input));
 
     jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
     jointForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
     jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
     jointMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIM%"initialGuess"));
-    q0.setProperty(new ExtPhysicalVarProperty(input));
   }
 
   void JointConstraint::initialize() {
     Constraint::initialize();
-    independentBody.initialize();
     dependentBodiesFirstSide.initialize();
     dependentBodiesSecondSide.initialize();
+    independentBody.initialize();
     connections.initialize();
     ListProperty *list = static_cast<ListProperty*>(dependentBodiesFirstSide.getProperty());
     for(int i=0; i<list->getSize(); i++) {
@@ -311,18 +296,19 @@ namespace MBSimGUI {
   DOMElement* JointConstraint::initializeUsingXML(DOMElement *element) {
     Constraint::initializeUsingXML(element);
 
-    q0.initializeUsingXML(element);
-
     dependentBodiesFirstSide.initializeUsingXML(element);
     dependentBodiesSecondSide.initializeUsingXML(element);
 
     independentBody.initializeUsingXML(element);
 
+    connections.initializeUsingXML(element);
+
     refFrameID.initializeUsingXML(element);
+
     force.initializeUsingXML(element);
     moment.initializeUsingXML(element);
 
-    connections.initializeUsingXML(element);
+    q0.initializeUsingXML(element);
 
     jointForceArrow.initializeUsingXML(element);
     jointMomentArrow.initializeUsingXML(element);
@@ -333,69 +319,23 @@ namespace MBSimGUI {
   DOMElement* JointConstraint::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Constraint::writeXMLFile(parent);
 
-    q0.writeXMLFile(ele0);
-
     dependentBodiesFirstSide.writeXMLFile(ele0);
     dependentBodiesSecondSide.writeXMLFile(ele0);
 
     independentBody.writeXMLFile(ele0);
 
+    connections.writeXMLFile(ele0);
+
     refFrameID.writeXMLFile(ele0);
+
     force.writeXMLFile(ele0);
     moment.writeXMLFile(ele0);
 
-    connections.writeXMLFile(ele0);
+    q0.writeXMLFile(ele0);
 
     jointForceArrow.writeXMLFile(ele0);
     jointMomentArrow.writeXMLFile(ele0);
 
-    return ele0;
-  }
-
-  GeneralizedConnectionConstraint::GeneralizedConnectionConstraint(const string &str, Element *parent) : GeneralizedConstraint(str, parent), forceArrow(0,false), momentArrow(0,false) {
-
-    dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"dependentRigidBody"));
-
-    independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"independentRigidBody"));
-
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
-
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
-  }
-
-  void GeneralizedConnectionConstraint::initialize() {
-    GeneralizedConstraint::initialize();
-    dependentBody.initialize();
-    independentBody.initialize();
-    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
-    if(body)
-      body->setConstrained(true);
-  }
-
-  void GeneralizedConnectionConstraint::deinitialize() {
-    GeneralizedConstraint::deinitialize();
-    RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
-    if(body)
-      body->setConstrained(false);
-  }
-
-  DOMElement* GeneralizedConnectionConstraint::initializeUsingXML(DOMElement *element) {
-    GeneralizedConstraint::initializeUsingXML(element);
-    dependentBody.initializeUsingXML(element);
-    independentBody.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* GeneralizedConnectionConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = GeneralizedConstraint::writeXMLFile(parent);
-    dependentBody.writeXMLFile(ele0);
-    independentBody.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

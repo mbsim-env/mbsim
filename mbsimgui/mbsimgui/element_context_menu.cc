@@ -331,7 +331,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationConstraint()));
     addAction(action);
     action = new QAction("Add gear constraint", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGearConstraint()));
     addAction(action);
     action = new QAction("Add joint constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
@@ -341,8 +341,8 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  void ConstraintContextContextMenu::addGearConstraint() {
-    mw->addConstraint(new GearConstraint("GearConstraint",element));
+  void ConstraintContextContextMenu::addGeneralizedGearConstraint() {
+    mw->addConstraint(new GeneralizedGearConstraint("GeneralizedGearConstraint",element));
   }
 
   void ConstraintContextContextMenu::addGeneralizedPositionConstraint() {
@@ -396,7 +396,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
     addAction(action);
     action = new QAction("Add gear", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGear()));
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGear()));
     addAction(action);
     action = new QAction("Add generalized elastic connection", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
@@ -444,8 +444,8 @@ namespace MBSimGUI {
     mw->addLink(new GeneralizedFriction("GeneralizedFriction",element));
   }
 
-  void LinkContextContextMenu::addGear() {
-    mw->addLink(new Gear("Gear",element));
+  void LinkContextContextMenu::addGeneralizedGear() {
+    mw->addLink(new GeneralizedGear("GeneralizedGear",element));
   }
 
   void LinkContextContextMenu::addGeneralizedElasticConnection() {
