@@ -19,7 +19,7 @@
 
 
 #include <config.h>
-#include "mbsim/functions/binary_nested_function.h"
+#include "mbsim/functions/binary_composite_function.h"
 
 using namespace std;
 using namespace MBXMLUtils;

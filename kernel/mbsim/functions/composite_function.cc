@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/nested_function.h"
+#include "mbsim/functions/composite_function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
