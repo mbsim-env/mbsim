@@ -26,15 +26,12 @@ namespace MBSimControl {
 
   /** Signal which value if given by a external resource. E.g. Cosimulation */
   class ExternSignalSource : public Signal {
-    protected:
-      fmatvec::VecV source;
-      int sourceSize;
     public:
-      ExternSignalSource(const std::string &name="") : Signal(name), sourceSize(0) {}
-      void setSourceSize(int size) { sourceSize=size; source.resize(sourceSize); }
+      ExternSignalSource(const std::string &name="") : Signal(name) {}
+      void setSourceSize(int size) { s.resize(size); }
       std::string getType() const { return "ExternSignalSource"; }
-      void updateSignal() { s = source; upds = false; }
-      void setSignal(const fmatvec::VecV& s) { assert(s.size()==source.size()); source=s; }
+      void updateSignal() { upds = false; }
+      void setSignal(const fmatvec::VecV& input) { assert(s.size()==input.size()); s=input; }
       void initializeUsingXML(xercesc::DOMElement *element) {
         Signal::initializeUsingXML(element);
         setSourceSize(getInt(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"sourceSize")));
