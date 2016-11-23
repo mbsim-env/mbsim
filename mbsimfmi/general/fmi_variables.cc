@@ -14,7 +14,7 @@ void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
                              PredefinedParameterStruct &predefinedParameterStruct,
                              bool setToDefaultValue) {
   // output directory
-  var.push_back(std::make_shared<PredefinedParameter<std::string> >("Output directory",
+  var.push_back(std::make_shared<PredefinedParameter<std::string> >("'Output directory'",
     "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", std::ref(predefinedParameterStruct.outputDir)));
   // default value: current dir
   if(setToDefaultValue)
@@ -40,28 +40,28 @@ void addPredefinedParameters(std::vector<std::shared_ptr<Variable> > &var,
     (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));
 
   // plot at each n-th integrator step
-  var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.each n-th step",
+  var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.'each n-th step'",
     "... n-th completed integrator step", std::ref(predefinedParameterStruct.plotEachNStep)));
   // default value: every 5-th step
   if(setToDefaultValue)
     (*--var.end())->setValue(int(5));
 
   // plot every dt
-  var.push_back(std::make_shared<PredefinedParameter<double> >("Plot.sample time",
+  var.push_back(std::make_shared<PredefinedParameter<double> >("Plot.'sample time'",
     "... sample point with this sample time", std::ref(predefinedParameterStruct.plotStepSize)));
   // default value: every 1ms
   if(setToDefaultValue)
     (*--var.end())->setValue(double(0.001));
 
   // gMax
-  var.push_back(std::make_shared<PredefinedParameter<double> >("Constraint tolerance.position",
+  var.push_back(std::make_shared<PredefinedParameter<double> >("'Constraint tolerance'.position",
     "Tolerance for position constraints", std::ref(predefinedParameterStruct.gMax)));
   // default value: 1e-5
   if(setToDefaultValue)
     (*--var.end())->setValue(double(1e-5));
 
   // gdMax
-  var.push_back(std::make_shared<PredefinedParameter<double> >("Constraint tolerance.velocity",
+  var.push_back(std::make_shared<PredefinedParameter<double> >("'Constraint tolerance'.velocity",
     "Tolerance for velocity constraints", std::ref(predefinedParameterStruct.gdMax)));
   // default value: 1e-5
   if(setToDefaultValue)

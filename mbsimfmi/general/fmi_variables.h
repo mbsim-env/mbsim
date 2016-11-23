@@ -18,9 +18,13 @@ namespace MBSim {
 // local helper functions
 namespace {
   //! convert a MBSim path to a FMI structured variable name
-  std::string mbsimPathToFMIName(std::string path) {
+  std::string mbsimToFMIName(std::string path, int idx, int size) {
+    boost::replace_all(path, "\\", "\\\\"); // escape "\" by "\\"
+    boost::replace_all(path, "'", "\'"); // escape "'" by "\'"
     boost::replace_all(path, "/", "."); // replace the MBSim separator / by the FMI seperator .
-    return path.substr(1); // skip the starting spearotor character
+    boost::replace_all(path, "[", "s.'"); // replace "[" with "s.'"; start of container with container plural + FMI seperator + quote
+    boost::replace_all(path, "]", "'"); // replace "]" with "'"; end of container with quote
+    return path.substr(1)+(size<=1 ? "" : "["+std::to_string(idx)+"]"); // skip the starting spearotor character
   }
 
   // some platform dependent file suffixes, directory names, ...
@@ -175,45 +179,11 @@ class PredefinedParameter : public Variable {
     Datatype &value;
 };
 
-////! FMI input variable for the force of MBSim::ExternGeneralizedIO
-//class ExternGeneralizedIOForceInput : public Variable {
-//  public:
-//    ExternGeneralizedIOForceInput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
-//      "ExternGeneralizedIO force", Input, 'r'), io(io_) {}
-//    std::string getValueAsString() { return std::to_string(getValue(double())); }
-//    void setValue(const double &v) { io->setGeneralizedForce(v); }
-//    const double& getValue(const double&) { return io->getla()(0); }
-//  protected:
-//    MBSim::ExternGeneralizedIO *io;
-//};
-//
-////! FMI output variable for position of MBSim::ExternGeneralizedIO
-//class ExternGeneralizedIOPositionOutput : public Variable {
-//  public:
-//    ExternGeneralizedIOPositionOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
-//      "ExternGeneralizedIO position", Output, 'r'), io(io_) {}
-//    std::string getValueAsString() { return std::to_string(getValue(double())); }
-//    const double& getValue(const double&) { return io->getGeneralizedPosition(); }
-//  protected:
-//    MBSim::ExternGeneralizedIO *io;
-//};
-
-//! FMI output variable for velocity of MBSim::ExternGeneralizedIO
-//class ExternGeneralizedIOVelocityOutput : public Variable {
-//  public:
-//    ExternGeneralizedIOVelocityOutput(MBSim::ExternGeneralizedIO *io_) : Variable(mbsimPathToFMIName(io_->getPath()),
-//      "ExternGeneralizedIO velocity", Output, 'r'), io(io_) {}
-//    std::string getValueAsString() { return std::to_string(getValue(double())); }
-//    const double& getValue(const double&) { return io->getGeneralizedVelocity(); }
-//  protected:
-//    MBSim::ExternGeneralizedIO *io;
-//};
-
 //! FMI input variable for MBSim::ExternSignalSource
 class ExternSignalSourceInput : public Variable {
   public:
     ExternSignalSourceInput(MBSimControl::ExternSignalSource *sig_, int idx_) :
-      Variable(mbsimPathToFMIName(sig_->getPath())+"["+std::to_string(idx_)+"]",
+      Variable(mbsimToFMIName(sig_->getPath(), idx_, sig_->getSignalSize()),
         "ExternSignalSource", Input, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return std::to_string(getValue(double())); }
     void setValue(const double &v) {
@@ -233,7 +203,7 @@ class ExternSignalSourceInput : public Variable {
 class ExternSignalSinkOutput : public Variable {
   public:
     ExternSignalSinkOutput(MBSimControl::ExternSignalSink *sig_, int idx_) :
-      Variable(mbsimPathToFMIName(sig_->getPath())+"["+std::to_string(idx_)+"]",
+      Variable(mbsimToFMIName(sig_->getPath(), idx_, sig_->getSignalSize()),
         "ExternSignalSink", Output, 'r'), sig(sig_), idx(idx_) {}
     std::string getValueAsString() { return std::to_string(getValue(double())); }
     const double& getValue(const double &) {
