@@ -409,6 +409,7 @@ namespace MBSimGUI {
 
 //    void setDefaultRigidBody(const QString &def) { widget[0]->setDefaultRigidBody(def); }
     void updateWidget();
+    RigidBodyOfReferenceWidget* getWidget(int i) { return widget[i]; }
 
     protected:
     std::vector<RigidBodyOfReferenceWidget*> widget;

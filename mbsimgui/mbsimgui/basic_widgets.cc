@@ -298,12 +298,14 @@ namespace MBSimGUI {
       selectedBody = 0;
     body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath(element,true)):"");
     emit bodyChanged();
+    emit Widget::resize_();
   }
 
   void RigidBodyOfReferenceWidget::setBody(const QString &str, RigidBody *bodyPtr) {
     selectedBody = bodyPtr;
     body->setText(str);
     emit bodyChanged();
+    emit Widget::resize_();
   }
 
   QString RigidBodyOfReferenceWidget::getBody() const {
@@ -623,6 +625,7 @@ namespace MBSimGUI {
       widget.push_back(new RigidBodyOfReferenceWidget(element,0));
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
+      connect(widget[widget.size()-1],SIGNAL(resize_()),this,SIGNAL(resize_()));
     }
   }
 

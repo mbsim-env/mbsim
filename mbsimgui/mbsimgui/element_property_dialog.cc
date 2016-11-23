@@ -1580,15 +1580,15 @@ namespace MBSimGUI {
 
     connect(function,SIGNAL(resize_()),this,SLOT(resizeVariables()));
     connect(buttonResize,SIGNAL(clicked(bool)),this,SLOT(resizeVariables()));
-    connect(connections->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
+    connect(connections->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
   }
 
   void GeneralizedElasticConnectionPropertyDialog::resizeVariables() {
-//    RigidBodyOfReferenceWidget* widget = static_cast<RigidBodyOfReferenceWidget*>(body2->getWidget());
-//    if(not widget->getBody().isEmpty()) {
-//      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
-//      function->resize_(size,size);
-//    }
+    RigidBodyOfReferenceWidget* widget = static_cast<ConnectRigidBodiesWidget*>(static_cast<ChoiceWidget2*>(connections->getWidget())->getWidget())->getWidget(0);
+    if(not widget->getBody().isEmpty()) {
+      int size = element->getByPath<RigidBody>(widget->getBody().toStdString())->getuRelSize();
+      function->resize_(size,size);
+    }
   }
 
   void GeneralizedElasticConnectionPropertyDialog::toWidget(Element *element) {

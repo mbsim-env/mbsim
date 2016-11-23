@@ -256,7 +256,7 @@ namespace MBSimGUI {
       if(i>0)
         widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-      //    connect(dynamic_cast<WidgetInterface*>(stackedWidget->widget(i)),SIGNAL(resize_()),this,SIGNAL(resize_()));
+      connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
     }
 
     if(i==0)
