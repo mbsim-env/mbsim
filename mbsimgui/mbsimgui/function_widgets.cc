@@ -239,7 +239,7 @@ namespace MBSimGUI {
     static_cast<ListWidget*>(functions->getWidget())->setSize(m);
   }
 
-  NestedFunctionWidget::NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi) {
+  CompositeFunctionWidget::CompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -251,22 +251,22 @@ namespace MBSimGUI {
     layout->addWidget(fi);
   }
 
-  int NestedFunctionWidget::getArg1Size() const {
+  int CompositeFunctionWidget::getArg1Size() const {
     return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi->getWidget())->getWidget())->getArg1Size();
   }
 
-  void NestedFunctionWidget::resizeVariables() {
-    cout << "NestedFunctionWidget::resizeVariables() not yet implemented" << endl;
+  void CompositeFunctionWidget::resizeVariables() {
+    cout << "CompositeFunctionWidget::resizeVariables() not yet implemented" << endl;
     // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
     // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
   }
 
-  void NestedFunctionWidget::resize_(int m, int n) {
+  void CompositeFunctionWidget::resize_(int m, int n) {
     static_cast<ChoiceWidget2*>(fo->getWidget())->resize_(m,n);
     static_cast<ChoiceWidget2*>(fi->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
   }
 
-  BinaryNestedFunctionWidget::BinaryNestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi1, WidgetFactory *factoryi2) {
+  BinaryCompositeFunctionWidget::BinaryCompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi1, WidgetFactory *factoryi2) {
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -280,21 +280,21 @@ namespace MBSimGUI {
     layout->addWidget(fi2);
   }
 
-  int BinaryNestedFunctionWidget::getArg1Size() const {
+  int BinaryCompositeFunctionWidget::getArg1Size() const {
     return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi1->getWidget())->getWidget())->getArg1Size();
   }
 
-  int BinaryNestedFunctionWidget::getArg2Size() const {
+  int BinaryCompositeFunctionWidget::getArg2Size() const {
     return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi2->getWidget())->getWidget())->getArg1Size();
   }
 
-  void BinaryNestedFunctionWidget::resizeVariables() {
-    cout << "BinaryNestedFunctionWidget::resizeVariables() not yet implemented" << endl;
+  void BinaryCompositeFunctionWidget::resizeVariables() {
+    cout << "BinaryCompositeFunctionWidget::resizeVariables() not yet implemented" << endl;
     // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
     // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
   }
 
-  void BinaryNestedFunctionWidget::resize_(int m, int n) {
+  void BinaryCompositeFunctionWidget::resize_(int m, int n) {
     static_cast<ChoiceWidget2*>(fo->getWidget())->resize_(m,n);
     static_cast<ChoiceWidget2*>(fi1->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
     static_cast<ChoiceWidget2*>(fi2->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);

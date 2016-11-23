@@ -29,33 +29,33 @@ namespace MBSim {
   // The following functions are created using ...create<Function<Vec3(VecV)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<Vec3   (double(VecV  ))>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<Vec3   (VecV  (VecV  ))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<Vec3   (double(VecV  ))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<Vec3   (VecV  (VecV  ))>)
   // The following functions are created using ...create<Function<Vec3(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<Vec3   (double(double))>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<Vec3   (VecV  (double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<Vec3   (double(double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<Vec3   (VecV  (double))>)
   // The following functions are created using ...create<Function<RotMat3(VecV)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<RotMat3(double(VecV  ))>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<RotMat3(VecV  (VecV  ))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<RotMat3(double(VecV  ))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<RotMat3(VecV  (VecV  ))>)
   // The following functions are created using ...create<Function<RotMat3(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<RotMat3(double(double))>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<RotMat3(VecV  (double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<RotMat3(double(double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<RotMat3(VecV  (double))>)
   // The following functions are created using ...create<Function<double(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<double (double(double))>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<double (VecV  (double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<double (double(double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<double (VecV  (double))>)
   // The following functions are created using ...create<Function<VecV(double)> >(...). Hence the "second"
   // template argument is undefined! Hence we define first the one with the less general form (but being the fastest).
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<VecV   (double(double))>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<VecV   (VecV  (double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<VecV   (double(double))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<VecV   (VecV  (double))>)
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, NestedFunction<Vec3   (Vec2(Vec2  ))>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<Vec3   (Vec2(Vec2  ))>)
 }

@@ -29,7 +29,7 @@
               <SymbolicFunction arg1="s" arg1Dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction>
             </stateDependentTranslation>
             <stateDependentRotation>
-              <NestedFunction>
+              <CompositeFunction>
                 <outerFunction>
                   <RotationAboutFixedAxis>
                     <axisOfRotation unit="-">
@@ -44,7 +44,7 @@
                 <innerFunction>
                   <SymbolicFunction arg1="s" arg1Dim="1">pi/2+s/R</SymbolicFunction>
                 </innerFunction>
-              </NestedFunction>
+              </CompositeFunction>
             </stateDependentRotation>
             <translationDependentRotation>true</translationDependentRotation>
             <frames />

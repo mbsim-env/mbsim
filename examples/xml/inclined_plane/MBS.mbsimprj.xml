@@ -139,7 +139,7 @@
             </xmlMatrix>
           </inertiaTensor>
           <timeDependentRotation>
-            <NestedFunction>
+            <CompositeFunction>
               <outerFunction>
                 <RotationAboutZAxis/>
               </outerFunction>
@@ -150,7 +150,7 @@
                   </xmlVector>
                 </SymbolicFunction>
               </innerFunction>
-            </NestedFunction>
+            </CompositeFunction>
           </timeDependentRotation>
           <frames>
             <FixedRelativeFrame name="P1">

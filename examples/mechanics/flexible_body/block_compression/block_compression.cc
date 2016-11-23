@@ -7,7 +7,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/symbolic_function.h"
-#include "mbsim/functions/nested_function.h"
+#include "mbsim/functions/composite_function.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
@@ -359,7 +359,7 @@ void BlockCompression::addBoundaryConditions() {
   SX fexp2 = startPos + velocity * t;
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
-  compressionBody->setTranslation(new NestedFunction<Vec3(double(double))>(new TranslationAlongXAxis<double>(), f2));
+  compressionBody->setTranslation(new CompositeFunction<Vec3(double(double))>(new TranslationAlongXAxis<double>(), f2));
 
   compressionBody->setMass(1e-6);
   compressionBody->setInertiaTensor(1e-6 * SymMat(3, EYE));

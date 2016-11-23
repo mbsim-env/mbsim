@@ -10,7 +10,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#include "mbsim/functions/nested_function.h"
+#include "mbsim/functions/composite_function.h"
 
 #include "openmbvcppinterface/ivbody.h"
 #include "openmbvcppinterface/cube.h"
@@ -72,7 +72,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rB(2) = 0.6;
 
   RigidBody* cup = new RigidBody("Cup");
-  cup->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), new Angle));
+  cup->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), new Angle));
   SymMat Theta(3);
   Theta(1,1) = 0.5*0.1*0.2*0.2;
   addFrame(new FixedRelativeFrame("Is",rB,SqrMat(3,EYE)));

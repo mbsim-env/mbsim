@@ -16,7 +16,7 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
-#include "mbsim/functions/nested_function.h"
+#include "mbsim/functions/composite_function.h"
 
 #include "beltDriveFunctions.h"
 
@@ -385,7 +385,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     if(i==0)
     {
       SinusExcitedOnConstVelocity *excitation = new SinusExcitedOnConstVelocity(JR, 0.0        , omega0, 0.0*omega0,3*omega0);
-      disk->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>(JR),excitation));
+      disk->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>(JR),excitation));
 //      disk->setGuidingVelocityOfRotation             (&(excitation->getVelocityFunction()    ))  ;
 //      disk->setDerivativeOfGuidingVelocityOfRotation (&(excitation->getAccelerationFunction()))  ;
       diskHasRotationalDOFs = false;

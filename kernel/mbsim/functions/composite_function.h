@@ -24,20 +24,20 @@
 
 namespace MBSim {
 
-  template<typename Sig> class NestedFunction; 
+  template<typename Sig> class CompositeFunction; 
 
-  // NestedFunction with a double as inner argument (including 2nd derivative)
+  // CompositeFunction with a double as inner argument (including 2nd derivative)
   template<typename Ret, typename Argo> 
-  class NestedFunction<Ret(Argo(double))> : public Function<Ret(double)> {
+  class CompositeFunction<Ret(Argo(double))> : public Function<Ret(double)> {
     using B = Function<Ret(double)>; 
     public:
-      NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) {
+      CompositeFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) {
         if(fo)
           fo->setParent(this);
         if(fi)
           fi->setParent(this);
       }
-      ~NestedFunction() {
+      ~CompositeFunction() {
         delete fo;
         delete fi;
       }
@@ -84,16 +84,16 @@ namespace MBSim {
 
   // VectorValuedFunction with a vector as inner argument (no 2nd derivative defined)
   template<typename Ret, typename Argo, typename Argi> 
-  class NestedFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
+  class CompositeFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
     using B = Function<Ret(Argi)>; 
     public:
-      NestedFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) {
+      CompositeFunction(Function<Ret(Argo)> *fo_=0, Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) {
         if(fo)
           fo->setParent(this);
         if(fi)
           fi->setParent(this);
       }
-      ~NestedFunction() {
+      ~CompositeFunction() {
         delete fo;
         delete fi;
       }

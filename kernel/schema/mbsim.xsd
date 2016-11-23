@@ -3962,8 +3962,8 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="NestedFunction" substitutionGroup="Function" type="NestedFunctionType"/>
-  <xs:complexType name="NestedFunctionType">
+  <xs:element name="CompositeFunction" substitutionGroup="Function" type="CompositeFunctionType"/>
+  <xs:complexType name="CompositeFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>
@@ -3992,8 +3992,8 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="BinaryNestedFunction" substitutionGroup="Function" type="BinaryNestedFunctionType"/>
-  <xs:complexType name="BinaryNestedFunctionType">
+  <xs:element name="BinaryCompositeFunction" substitutionGroup="Function" type="BinaryCompositeFunctionType"/>
+  <xs:complexType name="BinaryCompositeFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
         <xs:sequence>

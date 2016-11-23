@@ -48,11 +48,11 @@ namespace MBSimGUI {
     if(i==7)
       return new PiecewiseDefinedFunctionWidget(parent);
     if(i==8)
-      return new NestedFunctionWidget(new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+      return new CompositeFunctionWidget(new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==9) {
       QStringList var;
       var << "x" << "y";
-      return new BinaryNestedFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+      return new BinaryCompositeFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     }
     if(i==10)
       return new SymbolicFunctionWidget(QStringList("x"),1,3);
@@ -87,8 +87,8 @@ namespace MBSimGUI {
     name.push_back("Absolute value function");
     name.push_back("Vector valued function");
     name.push_back("Piecewise defined function");
-    name.push_back("Nested function");
-    name.push_back("Binary nested function");
+    name.push_back("Composite function");
+    name.push_back("Binary composite function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
     name.push_back("Piecewise polynom function");
@@ -124,7 +124,7 @@ namespace MBSimGUI {
     if(i==9)
       return new SymbolicFunctionWidget(QStringList("q"),3,3);
     if(i==10)
-      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
+      return new CompositeFunctionWidget(new TranslationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
     if(i==11)
       return new PiecewisePolynomFunctionWidget(3);
     if(i==12)
@@ -144,7 +144,7 @@ namespace MBSimGUI {
     name.push_back("Translation along fixed axis");
     name.push_back("Linear translation");
     name.push_back("Symbolic function");
-    name.push_back("Nested function");
+    name.push_back("Composite function");
     name.push_back("Piecewise polynom function");
     name.push_back("Piecewise defined function");
     return name;
@@ -154,11 +154,11 @@ namespace MBSimGUI {
     if(i==0)
       return new VectorValuedFunctionWidget(parent,1,true);
     if(i==1)
-      return new NestedFunctionWidget(new TranslationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+      return new CompositeFunctionWidget(new TranslationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==2) {
       QStringList var;
       var << "x" << "y";
-      return new BinaryNestedFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+      return new BinaryCompositeFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     }
     if(i==3)
       return new SymbolicFunctionWidget(QStringList("t"),3,3);
@@ -174,8 +174,8 @@ namespace MBSimGUI {
   vector<QString> TranslationWidgetFactory3::getNames() {
     vector<QString> name;
     name.push_back("Vector valued function");
-    name.push_back("Nested function");
-    name.push_back("Binary nested function");
+    name.push_back("Composite function");
+    name.push_back("Binary composite function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
     name.push_back("Piecewise defined function");
@@ -206,7 +206,7 @@ namespace MBSimGUI {
     if(i==9)
       return new RotationAboutFixedAxisWidget;
     if(i==10)
-      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
+      return new CompositeFunctionWidget(new RotationWidgetFactory2(parent), new SymbolicFunctionWidgetFactory1(QStringList("q"),parent));
     if(i==11)
       return new SymbolicFunctionWidget(QStringList("q"),1,3);
     return NULL;
@@ -224,14 +224,14 @@ namespace MBSimGUI {
     name.push_back("Rotation about axes z,x and z");
     name.push_back("Rotation about axes z,y and x");
     name.push_back("Rotation about fixed axis");
-    name.push_back("Nested function");
+    name.push_back("Composite function");
     name.push_back("Symbolic function");
     return name;
   }
 
   QWidget* RotationWidgetFactory3::createWidget(int i) {
     if(i==0)
-      return new NestedFunctionWidget(new RotationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
+      return new CompositeFunctionWidget(new RotationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),1,3);
     return NULL;
@@ -239,7 +239,7 @@ namespace MBSimGUI {
 
   vector<QString> RotationWidgetFactory3::getNames() {
     vector<QString> name;
-    name.push_back("Nested function");
+    name.push_back("Composite function");
     name.push_back("Symbolic function");
     return name;
   }
@@ -435,7 +435,7 @@ namespace MBSimGUI {
     name.push_back("Continued function");
     name.push_back("Piecewise polynom function");
     name.push_back("Piecewise defined function");
-    name.push_back("Nested function");
+    name.push_back("Composite function");
   }
 
   QWidget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
@@ -450,14 +450,14 @@ namespace MBSimGUI {
     if(i==4)
       return new PiecewiseDefinedFunctionWidget(parent);
     if(i==5)
-      return new NestedFunctionWidget(new PlanarContourFunctionWidgetFactory(parent), new FunctionWidgetFactory2(parent));
+      return new CompositeFunctionWidget(new PlanarContourFunctionWidgetFactory(parent), new FunctionWidgetFactory2(parent));
     return NULL;
   }
 
   SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *parent_) : parent(parent_){
     name.push_back("Symbolic function");
     name.push_back("Continued function");
-    name.push_back("Nested function");
+    name.push_back("Composite function");
   }
 
   QWidget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
@@ -466,7 +466,7 @@ namespace MBSimGUI {
     if(i==1)
       return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
     if(i==2)
-      return new NestedFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
+      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(parent), new SymbolicFunctionWidgetFactory3(QStringList("x")));
     return NULL;
   }
 

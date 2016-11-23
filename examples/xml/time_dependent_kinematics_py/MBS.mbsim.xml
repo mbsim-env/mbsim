@@ -22,7 +22,7 @@ ret[2]=0
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
-              <NestedFunction>
+              <CompositeFunction>
                 <outerFunction>
                   <RotationAboutFixedAxis>
                     <axisOfRotation>[0,0,1]</axisOfRotation>
@@ -33,7 +33,7 @@ ret[2]=0
                     5*casadi.sin(freq2*t)
                   </SymbolicFunction>
                 </innerFunction>
-              </NestedFunction>
+              </CompositeFunction>
             </timeDependentRotation>
             <frames />
             <contours />
@@ -57,7 +57,7 @@ ret[2]=0
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
-              <NestedFunction>
+              <CompositeFunction>
                 <outerFunction>
                   <RotationAboutAxesXY/>
                 </outerFunction>
@@ -66,7 +66,7 @@ ret[2]=0
                     ret=casadi.SX(2,1);ret[0]=t;ret[1]=2*t
                   </SymbolicFunction>
                 </innerFunction>
-              </NestedFunction>
+              </CompositeFunction>
             </timeDependentRotation>
             <frames />
             <contours />

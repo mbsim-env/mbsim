@@ -12,8 +12,8 @@ libfunction_la_SOURCES = identity_function.cc\
 			 modulo_function.cc\
 			 signum_function.cc\
 			 bounded_function.cc\
-			 nested_function.cc\
-			 binary_nested_function.cc\
+			 composite_function.cc\
+			 binary_composite_function.cc\
 			 vector_valued_function.cc\
 			 piecewise_defined_function.cc\
 			 tabular_function.cc\
@@ -45,8 +45,8 @@ functioninclude_HEADERS = function.h\
 			  modulo_function.h\
 			  signum_function.h\
 			  bounded_function.h\
-			  nested_function.h\
-			  binary_nested_function.h\
+			  composite_function.h\
+			  binary_composite_function.h\
 			  vector_valued_function.h\
 			  piecewise_defined_function.h\
 			  tabular_function.h\

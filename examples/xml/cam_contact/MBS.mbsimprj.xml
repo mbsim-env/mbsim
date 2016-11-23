@@ -35,7 +35,7 @@
             </xmlMatrix>
           </inertiaTensor>
           <timeDependentRotation>
-            <NestedFunction>
+            <CompositeFunction>
               <outerFunction>
                 <RotationAboutZAxis/>
               </outerFunction>
@@ -44,7 +44,7 @@
                   <a1>om</a1>
                 </LinearFunction>
               </innerFunction>
-            </NestedFunction>
+            </CompositeFunction>
           </timeDependentRotation>
           <frames>
             <FixedRelativeFrame name="P1">

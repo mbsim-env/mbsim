@@ -157,13 +157,13 @@ namespace MBSimGUI {
     ExtWidget *functions;
   };
 
-  class NestedFunctionWidget : public FunctionWidget {
+  class CompositeFunctionWidget : public FunctionWidget {
     Q_OBJECT
 
-    friend class NestedFunction;
+    friend class CompositeFunction;
 
     public:
-    NestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
+    CompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi);
     int getArg1Size() const;
     void resize_(int m, int n);
     protected:
@@ -173,13 +173,13 @@ namespace MBSimGUI {
     void resizeVariables();
   };
 
-  class BinaryNestedFunctionWidget : public FunctionWidget {
+  class BinaryCompositeFunctionWidget : public FunctionWidget {
     Q_OBJECT
 
-    friend class BinaryNestedFunction;
+    friend class BinaryCompositeFunction;
 
     public:
-    BinaryNestedFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi1, WidgetFactory *factoryi2);
+    BinaryCompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi1, WidgetFactory *factoryi2);
     int getArg1Size() const;
     int getArg2Size() const;
     void resize_(int m, int n);

@@ -8,7 +8,7 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
-#include "mbsim/functions/nested_function.h"
+#include "mbsim/functions/composite_function.h"
 
 #include "openmbvcppinterface/cuboid.h"
 #include "openmbvcppinterface/frustum.h"
@@ -142,7 +142,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
     body->setNonlinearStiffnessMatrixOfSecondOrder(Kn2);
   }
 
-  body->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), new Angle));
+  body->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), new Angle));
   body->getFrame("K")->setPlotFeature(globalPosition,enabled);
   body->getFrame("K")->setPlotFeature(globalVelocity,enabled);
   body->getFrame("K")->setPlotFeature(globalAcceleration,enabled);

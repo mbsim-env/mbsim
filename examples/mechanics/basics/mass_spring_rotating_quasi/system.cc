@@ -11,7 +11,7 @@
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
-#include "mbsim/functions/nested_function.h"
+#include "mbsim/functions/composite_function.h"
 
 #include "openmbvcppinterface/coilspring.h"
 #include <openmbvcppinterface/cuboid.h>
@@ -85,7 +85,7 @@ System::System(const string &projectName) :
   SX fexp2 = log(cosh(t));
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
-  crank->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), f2));
+  crank->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), f2));
   crank->setTranslation(new TranslationAlongAxesXYZ<VecV>());
   Joint * fix = new Joint("Fix");
   fix->connect(getFrameI(), kinematicsFrameCrank);

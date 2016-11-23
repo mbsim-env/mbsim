@@ -59,12 +59,12 @@ namespace MBSimGUI {
     if(i==7)
       return new PiecewiseDefinedFunction("NoName",parent);
     if(i==8)
-      return new NestedFunction("NoName",parent,new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
+      return new CompositeFunction("NoName",parent,new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     if(i==9) {
       vector<string> var;
       var.push_back("x");
       var.push_back("y");
-      return new BinaryNestedFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
+      return new BinaryCompositeFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     }
     if(i==10)
       return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"x"),1);
@@ -99,8 +99,8 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"AbsoluteValueFunction");
     name.push_back(MBSIM%"VectorValuedFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
-    name.push_back(MBSIM%"NestedFunction");
-    name.push_back(MBSIM%"BinaryNestedFunction");
+    name.push_back(MBSIM%"CompositeFunction");
+    name.push_back(MBSIM%"BinaryCompositeFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TabularFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
@@ -136,7 +136,7 @@ namespace MBSimGUI {
     if(i==9)
       return new SymbolicFunction("NoName",parent,"VV",vector<string>(1,"q"),3);
     if(i==10)
-      return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory1(parent,"VV",vector<string>(1,"q")));
+      return new CompositeFunction("NoName",parent,new TranslationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory1(parent,"VV",vector<string>(1,"q")));
     if(i==11)
       return new PiecewisePolynomFunction("NoName",parent);
     if(i==12)
@@ -156,7 +156,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"TranslationAlongFixedAxis");
     name.push_back(MBSIM%"LinearTranslation");
     name.push_back(MBSIM%"SymbolicFunction");
-    name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"CompositeFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
     return name;
@@ -166,12 +166,12 @@ namespace MBSimGUI {
     if(i==0)
       return new VectorValuedFunction("NoName",parent);
     if(i==1)
-      return new NestedFunction("NoName",parent,new TranslationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
+      return new CompositeFunction("NoName",parent,new TranslationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     if(i==2) {
       vector<string> var;
       var.push_back("x");
       var.push_back("y");
-      return new BinaryNestedFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
+      return new BinaryCompositeFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     }
     if(i==3)
       return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"t"),3);
@@ -187,8 +187,8 @@ namespace MBSimGUI {
   vector<FQN> TranslationPropertyFactory3::getNames() {
     vector<FQN> name;
     name.push_back(MBSIM%"VectorValuedFunction");
-    name.push_back(MBSIM%"NestedFunction");
-    name.push_back(MBSIM%"BinaryNestedFunction");
+    name.push_back(MBSIM%"CompositeFunction");
+    name.push_back(MBSIM%"BinaryCompositeFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TabularFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
@@ -219,7 +219,7 @@ namespace MBSimGUI {
     if(i==9)
       return new RotationAboutFixedAxis("NoName",parent);
     if(i==10)
-      return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory1(parent,"MV",vector<string>(1,"q")));
+      return new CompositeFunction("NoName",parent,new RotationPropertyFactory2(parent),new SymbolicFunctionPropertyFactory1(parent,"MV",vector<string>(1,"q")));
     if(i==11)
       return new SymbolicFunction("NoName",parent,"MV",vector<string>(1,"q"),1);
     return NULL;
@@ -237,14 +237,14 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"RotationAboutAxesZXZ");
     name.push_back(MBSIM%"RotationAboutAxesZYX");
     name.push_back(MBSIM%"RotationAboutFixedAxis");
-    name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"CompositeFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     return name;
   }
 
   PropertyInterface* RotationPropertyFactory3::createProperty(int i) {
     if(i==0)
-      return new NestedFunction("NoName",parent,new RotationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
+      return new CompositeFunction("NoName",parent,new RotationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     if(i==1)
       return new SymbolicFunction("NoName",parent,"MS",vector<string>(1,"t"),1);
     return NULL;
@@ -252,7 +252,7 @@ namespace MBSimGUI {
 
   vector<FQN> RotationPropertyFactory3::getNames() {
     vector<FQN> name;
-    name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"CompositeFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     return name;
   }
@@ -461,7 +461,7 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"ContinuedFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
-    name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"CompositeFunction");
   }
 
   PropertyInterface* PlanarContourFunctionPropertyFactory::createProperty(int i) {
@@ -476,14 +476,14 @@ namespace MBSimGUI {
     if(i==4)
       return new PiecewiseDefinedFunction("NoName",parent);
     if(i==5)
-      return new NestedFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent),new FunctionPropertyFactory2(parent));
+      return new CompositeFunction("NoName",parent,new PlanarContourFunctionPropertyFactory(parent),new FunctionPropertyFactory2(parent));
     return NULL;
   }
 
   SpatialContourFunctionPropertyFactory::SpatialContourFunctionPropertyFactory(Element *parent_) : parent(parent_) {
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"ContinuedFunction");
-    name.push_back(MBSIM%"NestedFunction");
+    name.push_back(MBSIM%"CompositeFunction");
   }
 
   PropertyInterface* SpatialContourFunctionPropertyFactory::createProperty(int i) {
@@ -492,7 +492,7 @@ namespace MBSimGUI {
     if(i==1)
       return new ContinuedFunction("NoName",parent,new SpatialContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"VV",vector<string>(2,"x")));
     if(i==2)
-      return new NestedFunction("NoName",parent,new SpatialContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"VV",vector<string>(2,"x")));
+      return new CompositeFunction("NoName",parent,new SpatialContourFunctionPropertyFactory(parent),new SymbolicFunctionPropertyFactory3(parent,"VV",vector<string>(2,"x")));
     return NULL;
   }
 

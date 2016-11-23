@@ -3,7 +3,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-#include "mbsim/functions/nested_function.h"
+#include "mbsim/functions/composite_function.h"
 #include "mbsim/observers/absolute_kinematics_observer.h"
 
 #include "openmbvcppinterface/arrow.h"
@@ -50,7 +50,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SX fexp2 = 5*sin(freq2*t);
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
-  body1->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2));
+  body1->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2));
   body1->setTranslationDependentRotation(true);
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);

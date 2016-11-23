@@ -345,63 +345,63 @@ namespace MBSimGUI {
     functions.toWidget(static_cast<VectorValuedFunctionWidget*>(widget)->functions);
   }
 
-  NestedFunction::NestedFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi) : Function(name,parent) {
+  CompositeFunction::CompositeFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi) : Function(name,parent) {
     fo.setProperty(new ChoiceProperty2(factoryo,MBSIM%"outerFunction",0));
     fi.setProperty(new ChoiceProperty2(factoryi,MBSIM%"innerFunction",0));
   }
 
-  int NestedFunction::getArg1Size() const {
+  int CompositeFunction::getArg1Size() const {
     //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi.getProperty())->getProperty())->getArg1Size();
     return 0;
   }
 
-  DOMElement* NestedFunction::initializeUsingXML(DOMElement *element) {
+  DOMElement* CompositeFunction::initializeUsingXML(DOMElement *element) {
     fo.initializeUsingXML(element);
     fi.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* NestedFunction::writeXMLFile(DOMNode *parent) {
+  DOMElement* CompositeFunction::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Function::writeXMLFile(parent);
     fo.writeXMLFile(ele0);
     fi.writeXMLFile(ele0);
     return ele0;
   } 
 
-  void NestedFunction::fromWidget(QWidget *widget) {
-    fo.fromWidget(static_cast<NestedFunctionWidget*>(widget)->fo);
-    fi.fromWidget(static_cast<NestedFunctionWidget*>(widget)->fi);
+  void CompositeFunction::fromWidget(QWidget *widget) {
+    fo.fromWidget(static_cast<CompositeFunctionWidget*>(widget)->fo);
+    fi.fromWidget(static_cast<CompositeFunctionWidget*>(widget)->fi);
   }
 
-  void NestedFunction::toWidget(QWidget *widget) {
-    fo.toWidget(static_cast<NestedFunctionWidget*>(widget)->fo);
-    fi.toWidget(static_cast<NestedFunctionWidget*>(widget)->fi);
+  void CompositeFunction::toWidget(QWidget *widget) {
+    fo.toWidget(static_cast<CompositeFunctionWidget*>(widget)->fo);
+    fi.toWidget(static_cast<CompositeFunctionWidget*>(widget)->fi);
   }
 
-  BinaryNestedFunction::BinaryNestedFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi1, PropertyFactory *factoryi2) : Function(name,parent) {
+  BinaryCompositeFunction::BinaryCompositeFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi1, PropertyFactory *factoryi2) : Function(name,parent) {
     fo.setProperty(new ChoiceProperty2(factoryo,MBSIM%"outerFunction",0));
     fi1.setProperty(new ChoiceProperty2(factoryi1,MBSIM%"firstInnerFunction",0));
     fi2.setProperty(new ChoiceProperty2(factoryi2,MBSIM%"secondInnerFunction",0));
   }
 
-  int BinaryNestedFunction::getArg1Size() const {
+  int BinaryCompositeFunction::getArg1Size() const {
     //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi1.getProperty())->getProperty())->getArg1Size();
     return 0;
   }
 
-  int BinaryNestedFunction::getArg2Size() const {
+  int BinaryCompositeFunction::getArg2Size() const {
     //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi2.getProperty())->getProperty())->getArg1Size();
     return 0;
   }
 
-  DOMElement* BinaryNestedFunction::initializeUsingXML(DOMElement *element) {
+  DOMElement* BinaryCompositeFunction::initializeUsingXML(DOMElement *element) {
     fo.initializeUsingXML(element);
     fi1.initializeUsingXML(element);
     fi2.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* BinaryNestedFunction::writeXMLFile(DOMNode *parent) {
+  DOMElement* BinaryCompositeFunction::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Function::writeXMLFile(parent);
     fo.writeXMLFile(ele0);
     fi1.writeXMLFile(ele0);
@@ -409,16 +409,16 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  void BinaryNestedFunction::fromWidget(QWidget *widget) {
-    fo.fromWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fo);
-    fi1.fromWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi1);
-    fi2.fromWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi2);
+  void BinaryCompositeFunction::fromWidget(QWidget *widget) {
+    fo.fromWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fo);
+    fi1.fromWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi1);
+    fi2.fromWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi2);
   }
 
-  void BinaryNestedFunction::toWidget(QWidget *widget) {
-    fo.toWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fo);
-    fi1.toWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi1);
-    fi2.toWidget(static_cast<BinaryNestedFunctionWidget*>(widget)->fi2);
+  void BinaryCompositeFunction::toWidget(QWidget *widget) {
+    fo.toWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fo);
+    fi1.toWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi1);
+    fi2.toWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi2);
   }
 
   PiecewiseDefinedFunction::PiecewiseDefinedFunction(const string &name, Element *parent) : Function(name,parent) {

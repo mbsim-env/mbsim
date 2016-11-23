@@ -20,7 +20,7 @@
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
-              <NestedFunction>
+              <CompositeFunction>
                 <outerFunction>
                   <RotationAboutFixedAxis>
                     <axisOfRotation>[0;0;1]</axisOfRotation>
@@ -31,7 +31,7 @@
                     5*sin(freq2*t)
                   </SymbolicFunction>
                 </innerFunction>
-              </NestedFunction>
+              </CompositeFunction>
             </timeDependentRotation>
             <frames />
             <contours />
@@ -55,7 +55,7 @@
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
-              <NestedFunction>
+              <CompositeFunction>
                 <outerFunction>
                   <RotationAboutAxesXY/>
                 </outerFunction>
@@ -64,7 +64,7 @@
                     [t;2*t]
                   </SymbolicFunction>
                 </innerFunction>
-              </NestedFunction>
+              </CompositeFunction>
             </timeDependentRotation>
             <frames />
             <contours />

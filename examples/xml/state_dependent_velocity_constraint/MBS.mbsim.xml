@@ -29,7 +29,7 @@
               <SymbolicFunction arg1="x" arg1Dim="1">[x;-c*x^2;0]</SymbolicFunction>
             </stateDependentTranslation>
             <stateDependentRotation>
-              <NestedFunction>
+              <CompositeFunction>
                 <outerFunction>
                   <RotationAboutFixedAxis>
                       <axisOfRotation unit="-">
@@ -44,7 +44,7 @@
                 <innerFunction>
                   <SymbolicFunction arg1="x" arg1Dim="1">atan(-c*2*x)</SymbolicFunction>
                 </innerFunction>
-              </NestedFunction>
+              </CompositeFunction>
             </stateDependentRotation>
             <translationDependentRotation>true</translationDependentRotation>
             <frames />

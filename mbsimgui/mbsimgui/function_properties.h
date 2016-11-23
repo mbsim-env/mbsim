@@ -161,12 +161,12 @@ namespace MBSimGUI {
       ExtProperty functions;
   };
 
-  class NestedFunction : public Function {
+  class CompositeFunction : public Function {
     public:
-      NestedFunction(const std::string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi);
-      virtual PropertyInterface* clone() const {return new NestedFunction(*this);}
+      CompositeFunction(const std::string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi);
+      virtual PropertyInterface* clone() const {return new CompositeFunction(*this);}
       int getArg1Size() const;
-      inline std::string getType() const { return "NestedFunction"; }
+      inline std::string getType() const { return "CompositeFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);
@@ -176,13 +176,13 @@ namespace MBSimGUI {
       ExtProperty fo, fi;
   };
 
-  class BinaryNestedFunction : public Function {
+  class BinaryCompositeFunction : public Function {
     public:
-      BinaryNestedFunction(const std::string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi1, PropertyFactory *factoryi2);
-      virtual PropertyInterface* clone() const {return new BinaryNestedFunction(*this);}
+      BinaryCompositeFunction(const std::string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi1, PropertyFactory *factoryi2);
+      virtual PropertyInterface* clone() const {return new BinaryCompositeFunction(*this);}
       int getArg1Size() const;
       int getArg2Size() const;
-      inline std::string getType() const { return "BinaryNestedFunction"; }
+      inline std::string getType() const { return "BinaryCompositeFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void fromWidget(QWidget *widget);

@@ -24,14 +24,14 @@
 
 namespace MBSim {
 
-  template<typename Sig> class BinaryNestedFunction; 
+  template<typename Sig> class BinaryCompositeFunction; 
 
-  // BinaryNestedFunction with a double as inner argument (2nd derivative defined)
+  // BinaryCompositeFunction with a double as inner argument (2nd derivative defined)
   template<typename Ret, typename Argo1, typename Argo2>
-  class BinaryNestedFunction<Ret(Argo1(double),Argo2(double))> : public Function<Ret(double)> {
+  class BinaryCompositeFunction<Ret(Argo1(double),Argo2(double))> : public Function<Ret(double)> {
     using B = fmatvec::Function<Ret(double)>; 
     public:
-      BinaryNestedFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(double)> *fi1_=0, Function<Argo2(double)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
+      BinaryCompositeFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(double)> *fi1_=0, Function<Argo2(double)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
         if(fo)
           fo->setParent(this);
         if(fi1)
@@ -39,7 +39,7 @@ namespace MBSim {
         if(fi2)
           fi2->setParent(this);
       }
-      ~BinaryNestedFunction() {
+      ~BinaryCompositeFunction() {
         delete fo;
         delete fi1;
         delete fi2;
@@ -96,12 +96,12 @@ namespace MBSim {
       Function<Argo2(double)> *fi2;
   };
 
-  // BinaryNestedFunction with a vector as inner argument (no 2nd derivative defined)
+  // BinaryCompositeFunction with a vector as inner argument (no 2nd derivative defined)
   template<typename Ret, typename Argo1, typename Argo2, typename Argi>
-  class BinaryNestedFunction<Ret(Argo1(Argi),Argo2(Argi))> : public Function<Ret(Argi)> {
+  class BinaryCompositeFunction<Ret(Argo1(Argi),Argo2(Argi))> : public Function<Ret(Argi)> {
     using B = fmatvec::Function<Ret(Argi)>; 
     public:
-      BinaryNestedFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(Argi)> *fi1_=0, Function<Argo2(Argi)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
+      BinaryCompositeFunction(Function<Ret(Argo1,Argo2)> *fo_=0, Function<Argo1(Argi)> *fi1_=0, Function<Argo2(Argi)> *fi2_=0) : fo(fo_), fi1(fi1_), fi2(fi2_) {
         if(fo)
           fo->setParent(this);
         if(fi1)
@@ -109,7 +109,7 @@ namespace MBSim {
         if(fi2)
           fi2->setParent(this);
       }
-      ~BinaryNestedFunction() {
+      ~BinaryCompositeFunction() {
         delete fo;
         delete fi1;
         delete fi2;

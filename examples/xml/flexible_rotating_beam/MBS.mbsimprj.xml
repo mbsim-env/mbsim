@@ -268,7 +268,7 @@
             </xmlMatrix>
           </stiffnessMatrix>
           <timeDependentRotation>
-            <NestedFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
               <outerFunction>
                 <RotationAboutZAxis/>
               </outerFunction>
@@ -296,7 +296,7 @@
                   </limitedFunctions>
                 </PiecewiseDefinedFunction>
               </innerFunction>
-            </NestedFunction>
+            </CompositeFunction>
           </timeDependentRotation>
           <frames>
             <FixedNodalFrame name="P1">
@@ -611,7 +611,7 @@
             </ele>
           </geometricStiffnessMatrixDueToAngularVelocity>
           <timeDependentRotation>
-            <NestedFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
               <outerFunction>
                 <RotationAboutZAxis/>
               </outerFunction>
@@ -639,7 +639,7 @@
                   </limitedFunctions>
                 </PiecewiseDefinedFunction>
               </innerFunction>
-            </NestedFunction>
+            </CompositeFunction>
           </timeDependentRotation>
           <frames>
             <FixedNodalFrame name="P1">
@@ -996,7 +996,7 @@
             </row>
           </nonlinearStiffnessMatrixOfSecondOrder>
           <timeDependentRotation>
-            <NestedFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <CompositeFunction xmlns="http://www.mbsim-env.de/MBSim">
               <outerFunction>
                 <RotationAboutZAxis/>
               </outerFunction>
@@ -1024,7 +1024,7 @@
                   </limitedFunctions>
                 </PiecewiseDefinedFunction>
               </innerFunction>
-            </NestedFunction>
+            </CompositeFunction>
           </timeDependentRotation>
           <frames>
             <FixedNodalFrame name="P1">

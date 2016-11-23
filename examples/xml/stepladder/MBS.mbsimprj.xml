@@ -183,7 +183,7 @@
             </xmlMatrix>
           </inertiaTensor>
           <timeDependentTranslation>
-            <NestedFunction>
+            <CompositeFunction>
               <outerFunction>
                 <TranslationAlongXAxis/>
               </outerFunction>
@@ -192,7 +192,7 @@
                   <a1>-0.1</a1>
                 </LinearFunction>
               </innerFunction>
-            </NestedFunction>
+            </CompositeFunction>
           </timeDependentTranslation>
           <frames/>
           <contours/>
