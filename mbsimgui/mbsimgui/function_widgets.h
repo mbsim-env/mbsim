@@ -173,23 +173,6 @@ namespace MBSimGUI {
     void resizeVariables();
   };
 
-  class BinaryCompositeFunctionWidget : public FunctionWidget {
-    Q_OBJECT
-
-    friend class BinaryCompositeFunction;
-
-    public:
-    BinaryCompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi1, WidgetFactory *factoryi2);
-    int getArg1Size() const;
-    int getArg2Size() const;
-    void resize_(int m, int n);
-    protected:
-    QString ext;
-    ExtWidget *fo, *fi1, *fi2;
-    public slots:
-    void resizeVariables();
-  };
-
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
     friend class PiecewiseDefinedFunction;

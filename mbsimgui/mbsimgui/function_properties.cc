@@ -378,49 +378,6 @@ namespace MBSimGUI {
     fi.toWidget(static_cast<CompositeFunctionWidget*>(widget)->fi);
   }
 
-  BinaryCompositeFunction::BinaryCompositeFunction(const string &name, Element *parent, PropertyFactory *factoryo, PropertyFactory *factoryi1, PropertyFactory *factoryi2) : Function(name,parent) {
-    fo.setProperty(new ChoiceProperty2(factoryo,MBSIM%"outerFunction",0));
-    fi1.setProperty(new ChoiceProperty2(factoryi1,MBSIM%"firstInnerFunction",0));
-    fi2.setProperty(new ChoiceProperty2(factoryi2,MBSIM%"secondInnerFunction",0));
-  }
-
-  int BinaryCompositeFunction::getArg1Size() const {
-    //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi1.getProperty())->getProperty())->getArg1Size();
-    return 0;
-  }
-
-  int BinaryCompositeFunction::getArg2Size() const {
-    //return static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi2.getProperty())->getProperty())->getArg1Size();
-    return 0;
-  }
-
-  DOMElement* BinaryCompositeFunction::initializeUsingXML(DOMElement *element) {
-    fo.initializeUsingXML(element);
-    fi1.initializeUsingXML(element);
-    fi2.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* BinaryCompositeFunction::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Function::writeXMLFile(parent);
-    fo.writeXMLFile(ele0);
-    fi1.writeXMLFile(ele0);
-    fi2.writeXMLFile(ele0);
-    return ele0;
-  }
-
-  void BinaryCompositeFunction::fromWidget(QWidget *widget) {
-    fo.fromWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fo);
-    fi1.fromWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi1);
-    fi2.fromWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi2);
-  }
-
-  void BinaryCompositeFunction::toWidget(QWidget *widget) {
-    fo.toWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fo);
-    fi1.toWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi1);
-    fi2.toWidget(static_cast<BinaryCompositeFunctionWidget*>(widget)->fi2);
-  }
-
   PiecewiseDefinedFunction::PiecewiseDefinedFunction(const string &name, Element *parent) : Function(name,parent) {
     //  functions.setProperty(new ListProperty(new LimitedFunctionFunctionPropertyFactory(1),""));
     //  functions.setXMLName(MBSIM%"limitedFunctions");

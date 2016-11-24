@@ -49,30 +49,25 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunctionWidget(parent);
     if(i==8)
       return new CompositeFunctionWidget(new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
-    if(i==9) {
-      QStringList var;
-      var << "x" << "y";
-      return new BinaryCompositeFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
-    }
-    if(i==10)
+    if(i==9)
       return new SymbolicFunctionWidget(QStringList("x"),1,3);
-    if(i==11)
+    if(i==10)
       return new TabularFunctionWidget(1);
-    if(i==12)
+    if(i==11)
       return new PiecewisePolynomFunctionWidget(1);
-    if(i==13)
+    if(i==12)
       return new SignumFunctionWidget(1);
-    if(i==14)
+    if(i==13)
       return new ModuloFunctionWidget(1);
-    if(i==15)
+    if(i==14)
       return new FourierFunctionWidget(1);
-    if(i==16)
+    if(i==15)
       return new SignalFunctionWidget(parent);
-    if(i==17)
+    if(i==16)
       return new IdentityFunctionWidget(1);
-    if(i==18)
+    if(i==17)
       return new BidirectionalFunctionWidget();
-    if(i==19)
+    if(i==18)
       return new ContinuedFunctionWidget(new FunctionWidgetFactory2(parent),new FunctionWidgetFactory2(parent));
     return NULL;
   }
@@ -88,7 +83,6 @@ namespace MBSimGUI {
     name.push_back("Vector valued function");
     name.push_back("Piecewise defined function");
     name.push_back("Composite function");
-    name.push_back("Binary composite function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
     name.push_back("Piecewise polynom function");
@@ -155,18 +149,13 @@ namespace MBSimGUI {
       return new VectorValuedFunctionWidget(parent,1,true);
     if(i==1)
       return new CompositeFunctionWidget(new TranslationWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
-    if(i==2) {
-      QStringList var;
-      var << "x" << "y";
-      return new BinaryCompositeFunctionWidget(new SymbolicFunctionWidgetFactory2(var,parent), new FunctionWidgetFactory2(parent), new FunctionWidgetFactory2(parent));
-    }
-    if(i==3)
+    if(i==2)
       return new SymbolicFunctionWidget(QStringList("t"),3,3);
-    if(i==4)
+    if(i==3)
       return new TabularFunctionWidget(1);
-    if(i==5)
+    if(i==4)
       return new PiecewiseDefinedFunctionWidget(parent);
-    if(i==6)
+    if(i==5)
       return new PiecewisePolynomFunctionWidget(1);
     return NULL;
   }
@@ -175,7 +164,6 @@ namespace MBSimGUI {
     vector<QString> name;
     name.push_back("Vector valued function");
     name.push_back("Composite function");
-    name.push_back("Binary composite function");
     name.push_back("Symbolic function");
     name.push_back("Tabular function");
     name.push_back("Piecewise defined function");

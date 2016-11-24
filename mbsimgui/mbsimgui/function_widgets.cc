@@ -266,40 +266,6 @@ namespace MBSimGUI {
     static_cast<ChoiceWidget2*>(fi->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
   }
 
-  BinaryCompositeFunctionWidget::BinaryCompositeFunctionWidget(WidgetFactory *factoryo, WidgetFactory *factoryi1, WidgetFactory *factoryi2) {
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    fo = new ExtWidget("Outer function",new ChoiceWidget2(factoryo));
-    layout->addWidget(fo);
-    fi1 = new ExtWidget("First inner function",new ChoiceWidget2(factoryi1));
-    layout->addWidget(fi1);
-    fi2 = new ExtWidget("Second inner function",new ChoiceWidget2(factoryi2));
-    layout->addWidget(fi2);
-  }
-
-  int BinaryCompositeFunctionWidget::getArg1Size() const {
-    return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi1->getWidget())->getWidget())->getArg1Size();
-  }
-
-  int BinaryCompositeFunctionWidget::getArg2Size() const {
-    return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fi2->getWidget())->getWidget())->getArg1Size();
-  }
-
-  void BinaryCompositeFunctionWidget::resizeVariables() {
-    cout << "BinaryCompositeFunctionWidget::resizeVariables() not yet implemented" << endl;
-    // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
-    // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
-  }
-
-  void BinaryCompositeFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget2*>(fo->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget2*>(fi1->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
-    static_cast<ChoiceWidget2*>(fi2->getWidget())->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
-  }
-
   PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *parent, int n) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

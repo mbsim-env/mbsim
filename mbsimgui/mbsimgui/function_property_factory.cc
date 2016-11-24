@@ -60,31 +60,25 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunction("NoName",parent);
     if(i==8)
       return new CompositeFunction("NoName",parent,new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
-    if(i==9) {
-      vector<string> var;
-      var.push_back("x");
-      var.push_back("y");
-      return new BinaryCompositeFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
-    }
+    if(i==9)
+      return new SymbolicFunction("NoName",parent,"VV",vector<string>(1,"x"),1);
     if(i==10)
-      return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"x"),1);
-    if(i==11)
       return new TabularFunction("NoName",parent);
-    if(i==12)
+    if(i==11)
       return new PiecewisePolynomFunction("NoName",parent);
-    if(i==13)
+    if(i==12)
       return new SignumFunction("NoName",parent);
-    if(i==14)
+    if(i==13)
       return new ModuloFunction("NoName",parent);
-    if(i==15)
+    if(i==14)
       return new FourierFunction("NoName",parent);
-    if(i==16)
+    if(i==15)
       return new SignalFunction("NoName",parent);
-    if(i==17)
+    if(i==16)
       return new IdentityFunction("NoName",parent);
-    if(i==18)
+    if(i==17)
       return new BidirectionalFunction("NoName",parent);
-    if(i==19)
+    if(i==18)
       return new ContinuedFunction("NoName",parent,new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
     return NULL;
   }
@@ -100,7 +94,6 @@ namespace MBSimGUI {
     name.push_back(MBSIM%"VectorValuedFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
     name.push_back(MBSIM%"CompositeFunction");
-    name.push_back(MBSIM%"BinaryCompositeFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TabularFunction");
     name.push_back(MBSIM%"PiecewisePolynomFunction");
@@ -167,19 +160,13 @@ namespace MBSimGUI {
       return new VectorValuedFunction("NoName",parent);
     if(i==1)
       return new CompositeFunction("NoName",parent,new TranslationPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
-    if(i==2) {
-      vector<string> var;
-      var.push_back("x");
-      var.push_back("y");
-      return new BinaryCompositeFunction("NoName",parent,new SymbolicFunctionPropertyFactory2(parent,"VVV",var),new FunctionPropertyFactory2(parent),new FunctionPropertyFactory2(parent));
-    }
-    if(i==3)
+    if(i==2)
       return new SymbolicFunction("NoName",parent,"VS",vector<string>(1,"t"),3);
-    if(i==4)
+    if(i==3)
       return new TabularFunction("NoName",parent);
-    if(i==5)
+    if(i==4)
       return new PiecewiseDefinedFunction("NoName",parent);
-    if(i==6)
+    if(i==5)
       return new PiecewisePolynomFunction("NoName",parent);
     return NULL;
   }
@@ -188,7 +175,6 @@ namespace MBSimGUI {
     vector<FQN> name;
     name.push_back(MBSIM%"VectorValuedFunction");
     name.push_back(MBSIM%"CompositeFunction");
-    name.push_back(MBSIM%"BinaryCompositeFunction");
     name.push_back(MBSIM%"SymbolicFunction");
     name.push_back(MBSIM%"TabularFunction");
     name.push_back(MBSIM%"PiecewiseDefinedFunction");
