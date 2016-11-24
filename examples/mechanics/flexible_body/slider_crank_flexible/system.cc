@@ -93,7 +93,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   kinematicsFrameCrank->enableOpenMBV(0.5e-1);
   crank->getFrameC()->enableOpenMBV(0.7e-1);
   crank->setRotation(new RotationAboutZAxis<VecV>());
-  crank->setInitialGeneralizedVelocity(0.);
+  crank->setGeneralizedInitialVelocity(0.);
 
   double mass_crank = 2; //0.038; // m1
   crank->setMass(mass_crank);

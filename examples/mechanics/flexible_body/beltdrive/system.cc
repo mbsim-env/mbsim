@@ -399,11 +399,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        disk->setTranslation(new LinearTranslation<VecV>(JtransSpring));
        Vec vInit(2,INIT,0.);
        vInit(1) = -v0*sideInOut( i )/radiiDisks(i);
-       disk->setInitialGeneralizedVelocity(vInit);
+       disk->setGeneralizedInitialVelocity(vInit);
     } else if(diskHasRotationalDOFs) {
        Vec vInit(1,INIT,0.);
        vInit(0) = -v0*sideInOut( i )/radiiDisks(i);
-       disk->setInitialGeneralizedVelocity(vInit);
+       disk->setGeneralizedInitialVelocity(vInit);
     }
 
     Circle *cDisk = new Circle("cDisk");

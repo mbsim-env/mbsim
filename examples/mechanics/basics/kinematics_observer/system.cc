@@ -53,7 +53,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0(3);
   q0(0) = a1;
   q0(2) = -phi1;
-  box1->setInitialGeneralizedPosition(q0);
+  box1->setGeneralizedInitialPosition(q0);
 
   KrSP(1) = -b1;
   box1->addFrame(new FixedRelativeFrame("PunktU",KrSP,E));
@@ -85,7 +85,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rOP(1) = -a1-b1;
   q0 = A1*rOP + A2*(-KrSP);
   q0(2) = -phi2;
-  box2->setInitialGeneralizedPosition(q0);
+  box2->setGeneralizedInitialPosition(q0);
 
   addFrame(new FixedRelativeFrame("Os","[0;0;0.04]",E));
   box2->setFrameOfReference(getFrame("Os"));

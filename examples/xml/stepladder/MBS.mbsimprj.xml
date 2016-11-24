@@ -51,13 +51,13 @@
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter/>
           <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Stepladder">
-            <initialGeneralizedPosition>
+            <generalizedInitialPosition>
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>q0(1)</ele>
                 <ele>q0(2)</ele>
                 <ele>q0(3)</ele>
               </xmlVector>
-            </initialGeneralizedPosition>
+            </generalizedInitialPosition>
             <mass unit="kg">0</mass>
             <inertiaTensor unit="kg*m^2">
               <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">

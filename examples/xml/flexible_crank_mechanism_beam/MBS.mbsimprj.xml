@@ -636,11 +636,11 @@
         </FlexibleBodyFFR>
         <RigidBody name="RigidBody3">
           <plotFeature feature="+stateDerivative"/>
-          <initialGeneralizedPosition>
+          <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>l1+l2</ele>
             </xmlVector>
-          </initialGeneralizedPosition>
+          </generalizedInitialPosition>
           <mass unit="kg">m3</mass>
           <inertiaTensor unit="kg*m^2">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">

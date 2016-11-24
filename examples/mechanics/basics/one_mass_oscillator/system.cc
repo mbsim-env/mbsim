@@ -39,7 +39,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   mass2->setTranslation(new LinearTranslation<VecV>("[0.58; 0.58; 0.58]"));
   mass2->setFrameOfReference(mass1->getFrame("C")); 
   mass2->setFrameForKinematics(mass2->getFrame("C"));
-  mass2->setInitialGeneralizedPosition(-nrm2(Vec(3,INIT,1)));
+  mass2->setGeneralizedInitialPosition(-nrm2(Vec(3,INIT,1)));
 
   // add body to dynamical system
   this->addObject(mass1);	

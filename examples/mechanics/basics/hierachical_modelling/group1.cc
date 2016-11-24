@@ -88,8 +88,8 @@ Group1::Group1(const string &name) : Group(name) {
   spring2->connect(box1->getFrame("P2"),box2->getFrame("P1"));
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  
-  box1->setInitialGeneralizedPosition(Vec(1,INIT,l01 + h1/2 + 0.2));
-  box2->setInitialGeneralizedPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
+  box1->setGeneralizedInitialPosition(Vec(1,INIT,l01 + h1/2 + 0.2));
+  box2->setGeneralizedInitialPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
   std::shared_ptr<OpenMBV::Cuboid> body1=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   body1->setLength(Vec(3,INIT,1)*h1);

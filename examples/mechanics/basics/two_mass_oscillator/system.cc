@@ -142,10 +142,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q01(0) = l01 + h1/2 + 0.02;
 
   // set the position
-  box1->setInitialGeneralizedPosition(q01);
+  box1->setGeneralizedInitialPosition(q01);
 
   // define initial generalized position of box2 (directly)
-  box2->setInitialGeneralizedPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
+  box2->setGeneralizedInitialPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
   // ----------------------- Visualization in OpenMBV --------------------
   std::shared_ptr<OpenMBV::Cube> cuboid=OpenMBV::ObjectFactory::create<OpenMBV::Cube>();

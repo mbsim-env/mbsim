@@ -15,8 +15,8 @@
     <groups/>
     <objects>
       <RigidBody name="Stab1">
-        <initialGeneralizedPosition>[0.2;0;1.57079632679490]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
+        <generalizedInitialPosition>[0.2;0;1.57079632679490]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>0.5</mass>
@@ -56,8 +56,8 @@
         </openMBVRigidBody>
       </RigidBody>
       <RigidBody name="Stab2">
-        <initialGeneralizedPosition>[0.791421356237310;-0.141421356237310;0.785398163397448]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
+        <generalizedInitialPosition>[0.791421356237310;-0.141421356237310;0.785398163397448]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
         <frameOfReference ref="../Frame[Os]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>0.5</mass>

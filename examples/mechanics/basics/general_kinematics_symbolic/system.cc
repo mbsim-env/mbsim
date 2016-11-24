@@ -48,7 +48,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SymbolicFunction<Vec3(VecV,double)> *position = new SymbolicFunction<Vec3(VecV,double)>(pos, sq, st);
   body1->setTranslation(position);
   
-  body1->setInitialGeneralizedVelocity("[0;1]");
+  body1->setGeneralizedInitialVelocity("[0;1]");
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);

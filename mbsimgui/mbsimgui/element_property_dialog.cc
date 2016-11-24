@@ -574,10 +574,10 @@ namespace MBSimGUI {
     addTab("Kinematics",1);
     addTab("Initial conditions",2);
 
-    q0 = new ExtWidget("Initial generalized position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", q0);
 
-    u0 = new ExtWidget("Initial generalized velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
+    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList()))),true);
     addToTab("Initial conditions", u0);
 
     connect(q0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
@@ -1506,7 +1506,7 @@ namespace MBSimGUI {
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper)));
     addToTab("Kinetics", function);
 
-    unloadedLength = new ExtWidget("Unloaded generalized length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft));
+    unloadedLength = new ExtWidget("Generalized unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(3,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
   }
 

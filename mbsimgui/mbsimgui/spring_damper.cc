@@ -93,7 +93,7 @@ namespace MBSimGUI {
 
     function.setProperty(new ChoiceProperty2(new SpringDamperPropertyFactory(this),MBSIM%"generalizedForceFunction"));
 
-    unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"unloadedGeneralizedLength",vector<string>(2)),"",4));
+    unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"generalizedUnloadedLength",vector<string>(2)),"",4));
   }
 
   DOMElement* GeneralizedSpringDamper::initializeUsingXML(DOMElement *element) {

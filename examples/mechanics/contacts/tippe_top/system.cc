@@ -53,8 +53,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0(1) = 1.2015e-2;
   q0(2) = 0;
   q0(3) = 0.1;
-  body->setInitialGeneralizedPosition(q0);
-  body->setInitialGeneralizedVelocity("[0;0;0;0;180;0]");
+  body->setGeneralizedInitialPosition(q0);
+  body->setGeneralizedInitialVelocity("[0;0;0;0;180;0]");
   body->setMass(m);
   SymMat Theta(3);
   Theta(0,0) =  8e-7;

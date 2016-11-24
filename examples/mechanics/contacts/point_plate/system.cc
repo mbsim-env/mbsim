@@ -74,7 +74,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     else
       u0(2) = -1;
 
-    balls[k]->setInitialGeneralizedVelocity(u0);
+    balls[k]->setGeneralizedInitialVelocity(u0);
 
     sphere.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Sphere>());
     sphere[k]->setRadius(r);
@@ -128,9 +128,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //  body->setRotation(new CardanAngles());
   //
   //  Vec q0_body(6,INIT,0.); q0_body(4)=-M_PI*0.25; q0_body(5)=-M_PI*0.25;
-  //  body->setInitialGeneralizedPosition(q0_body);
+  //  body->setGeneralizedInitialPosition(q0_body);
   //  Vec u0_body(6,INIT,0.); u0_body(0)=-1.; u0_body(2)=-1.; u0_body(3)=50; u0_body(4)=30; u0_body(5)=20;
-  //  body->setInitialGeneralizedVelocity(u0_body);
+  //  body->setGeneralizedInitialVelocity(u0_body);
   //
   //  std::shared_ptr<OpenMBV::Cube> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   //  cube->setLength(e);

@@ -67,7 +67,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Theta(2,2)=J1;
   body1->setInertiaTensor(Theta);
   body1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  body1->setInitialGeneralizedPosition(Vec(1,INIT,phi1)); 
+  body1->setGeneralizedInitialPosition(Vec(1,INIT,phi1));
 
   Kr(0) = d;
   Kr(2) = 0.02;

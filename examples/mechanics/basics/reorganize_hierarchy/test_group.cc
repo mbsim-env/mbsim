@@ -60,7 +60,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
   stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
+  stab2->setGeneralizedInitialPosition(Vec("[-1.6]"));
 
   std::shared_ptr<OpenMBV::IvBody> obj2=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj2->setIvFileName("objects/pendel2.wrl");

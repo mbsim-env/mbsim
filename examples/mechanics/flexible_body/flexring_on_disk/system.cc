@@ -145,7 +145,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Circle *cDisk = new Circle("cDisk");
     cDisk->setRadius(radiiDisks(i));
     disk->addContour(cDisk);
-    disk->setInitialGeneralizedVelocity(-Vec("[1.0]")*v0*double(sideInOut(i))/radiiDisks(i));
+    disk->setGeneralizedInitialVelocity(-Vec("[1.0]")*v0*double(sideInOut(i))/radiiDisks(i));
     cDisk->enableOpenMBV();
     this->addObject(disk);
 

@@ -32,8 +32,8 @@
   </groups>
   <objects>
     <RigidBody name="Swing" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>suspensionL*[sin(phi0); 1-cos(phi0)]</initialGeneralizedPosition>
-      <initialGeneralizedVelocity>suspensionL*omega0*[cos(phi0); sin(phi0)]</initialGeneralizedVelocity>
+      <generalizedInitialPosition>suspensionL*[sin(phi0); 1-cos(phi0)]</generalizedInitialPosition>
+      <generalizedInitialVelocity>suspensionL*omega0*[cos(phi0); sin(phi0)]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>swingMass</mass>
@@ -100,8 +100,8 @@
          -->
     </RigidBody>
     <RigidBody name="SuspensionLeft" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>phi0</initialGeneralizedPosition>
-      <initialGeneralizedVelocity>omega0</initialGeneralizedVelocity>
+      <generalizedInitialPosition>phi0</generalizedInitialPosition>
+      <generalizedInitialVelocity>omega0</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[fMountLeft]"/>
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>
@@ -153,8 +153,8 @@
          -->
     </RigidBody>
     <RigidBody name="SuspensionRight" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>phi0</initialGeneralizedPosition>
-      <initialGeneralizedVelocity>omega0</initialGeneralizedVelocity>
+      <generalizedInitialPosition>phi0</generalizedInitialPosition>
+      <generalizedInitialVelocity>omega0</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[fMountRight]"/>
       <frameForKinematics ref="Frame[fMountLeft]"/>
       <mass>suspensionMass</mass>

@@ -1,7 +1,7 @@
     <RigidBody name="Stab1" xmlns="http://www.mbsim-env.de/MBSim"
       xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-      <initialGeneralizedPosition>[lO;0;pi/2]</initialGeneralizedPosition>
-      <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
+      <generalizedInitialPosition>[lO;0;pi/2]</generalizedInitialPosition>
+      <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>0.5</mass>

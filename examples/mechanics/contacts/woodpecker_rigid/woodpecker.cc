@@ -83,8 +83,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   muffe->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  muffe->setRotation(new RotationAboutZAxis());
 
-  muffe->setInitialGeneralizedPosition(spiel*Vec("[0.2;0.0;0.0]"));
-  muffe->setInitialGeneralizedVelocity(      Vec("[0.0;0.0;0.0]"));
+  muffe->setGeneralizedInitialPosition(spiel*Vec("[0.2;0.0;0.0]"));
+  muffe->setGeneralizedInitialVelocity(      Vec("[0.0;0.0;0.0]"));
 
   double mu = 0.2;
 
@@ -180,8 +180,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   contact->setTangentialImpactLaw(coulImptact );
   addLink(contact);
 
-  specht->setInitialGeneralizedPosition(Vec(1,INIT, 0.0));
-  specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
+  specht->setGeneralizedInitialPosition(Vec(1,INIT, 0.0));
+  specht->setGeneralizedInitialVelocity(Vec(1,INIT,-5.0));
 
   std::shared_ptr<OpenMBV::Frustum> stangeMBV = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   stangeMBV->setHeight(1);

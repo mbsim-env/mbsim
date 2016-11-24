@@ -20,11 +20,11 @@
     <groups/>
     <objects>
       <RigidBody name="RigidBody1">
-        <initialGeneralizedPosition>
+        <generalizedInitialPosition>
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>1</ele>
           </xmlVector>
-        </initialGeneralizedPosition>
+        </generalizedInitialPosition>
         <mass unit="kg">1</mass>
         <inertiaTensor unit="kg*m^2">
           <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -192,7 +192,7 @@
             <dampingCoefficient unit="N*s/m">0.01</dampingCoefficient>
           </LinearSpringDamperForce>
         </generalizedForceFunction>
-        <unloadedGeneralizedLength>0</unloadedGeneralizedLength>
+        <generalizedUnloadedLength>0</generalizedUnloadedLength>
       </GeneralizedSpringDamper>
       <GeneralizedSpringDamper name="GeneralizedSpringDamper4">
         <connect ref1="../Object[RigidBody1]" ref2="../Object[RigidBody2]"/>
@@ -202,7 +202,7 @@
             <dampingCoefficient unit="N*s/m">0.01</dampingCoefficient>
           </LinearSpringDamperForce>
         </generalizedForceFunction>
-        <unloadedGeneralizedLength>0</unloadedGeneralizedLength>
+        <generalizedUnloadedLength>0</generalizedUnloadedLength>
       </GeneralizedSpringDamper>
     </links>
     <enableOpenMBVFrameI>

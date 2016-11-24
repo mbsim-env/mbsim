@@ -55,7 +55,7 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedGeneralizedLength");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedUnloadedLength");
     l0 = Element::getDouble(e);
   }
 

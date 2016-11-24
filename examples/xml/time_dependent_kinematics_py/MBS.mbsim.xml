@@ -101,7 +101,7 @@ ret[2]=0
             </openMBVRigidBody>
         </RigidBody>
         <RigidBody name="Box3">
-            <initialGeneralizedVelocity>[0,1]</initialGeneralizedVelocity>
+            <generalizedInitialVelocity>[0,1]</generalizedInitialVelocity>
             <frameOfReference ref="../Frame[I]" />
             <frameForKinematics ref="Frame[C]" />
             <mass>3</mass>

@@ -123,8 +123,8 @@ System::System(const string &projectName) :
   mass1->setInertiaTensor(SymMat(3, EYE));
   mass1->setTranslation(new TranslationAlongXAxis<VecV>());
   mass1->setFrameOfReference(crankToSpring);
-  mass1->setInitialGeneralizedPosition(length_spring);
-//  mass1->setInitialGeneralizedVelocity(Vec("[0; 1]"));
+  mass1->setGeneralizedInitialPosition(length_spring);
+//  mass1->setGeneralizedInitialVelocity(Vec("[0; 1]"));
 
   // spring
   SpringDamper *spring1 = new SpringDamper("Spring1");

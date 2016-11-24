@@ -15,8 +15,8 @@
   <groups/>
   <objects>
     <RigidBody name="Box1">
-      <initialGeneralizedPosition>[l01 + h1/2 + 0.2]</initialGeneralizedPosition>
-      <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+      <generalizedInitialPosition>[l01 + h1/2 + 0.2]</generalizedInitialPosition>
+      <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>
@@ -78,8 +78,8 @@
     </RigidBody>
     <RigidBody name="Box2">
       <plotFeature feature="-stateDerivative"/>
-      <initialGeneralizedPosition>[l01 + l02 + h1 + h2/2]</initialGeneralizedPosition>
-      <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+      <generalizedInitialPosition>[l01 + l02 + h1 + h2/2]</generalizedInitialPosition>
+      <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>m2</mass>

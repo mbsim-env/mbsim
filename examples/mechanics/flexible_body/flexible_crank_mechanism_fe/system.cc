@@ -229,7 +229,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   body3->setMass(m3);
   body3->setInertiaTensor(Theta);
   body3->setTranslation(new TranslationAlongXAxis<VecV>);
-  body3->setInitialGeneralizedPosition(VecV(1,INIT,l1+l2));
+  body3->setGeneralizedInitialPosition(VecV(1,INIT,l1+l2));
 
   body1->setPlotFeature(stateDerivative,enabled);
   body2->setPlotFeature(stateDerivative,enabled);

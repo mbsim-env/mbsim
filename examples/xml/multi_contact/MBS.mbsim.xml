@@ -16,7 +16,7 @@
   <groups/>
   <objects>
     <RigidBody name="Ball1">
-      <initialGeneralizedPosition>[0.01;0.1;0]</initialGeneralizedPosition>
+      <generalizedInitialPosition>[0.01;0.1;0]</generalizedInitialPosition>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>1.</mass>
@@ -38,7 +38,7 @@
     </RigidBody>
     
     <RigidBody name="Ball2">
-      <initialGeneralizedPosition>[0.01;0;0]</initialGeneralizedPosition>
+      <generalizedInitialPosition>[0.01;0;0]</generalizedInitialPosition>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>1.</mass>

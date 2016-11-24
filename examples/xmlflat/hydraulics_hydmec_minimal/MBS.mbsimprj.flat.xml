@@ -9,8 +9,8 @@
     <groups/>
     <objects>
       <RigidBody name="Body">
-        <initialGeneralizedPosition>[0]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+        <generalizedInitialPosition>[0]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>2</mass>

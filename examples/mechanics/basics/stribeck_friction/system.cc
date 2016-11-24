@@ -46,7 +46,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   Vec u0(6,INIT,0.);
   u0(0) = 5.0;
   u0(3) = 20.0;
-  ball->setInitialGeneralizedVelocity(u0);
+  ball->setGeneralizedInitialVelocity(u0);
   this->addFrame(new FixedRelativeFrame("R",Vec("[0;0.15;0]"),SqrMat(3,EYE)));
   ball->setFrameOfReference(this->getFrame("R"));
 

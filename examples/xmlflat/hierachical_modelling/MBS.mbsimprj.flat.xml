@@ -18,8 +18,8 @@
             <groups/>
             <objects>
               <RigidBody name="Box1">
-                <initialGeneralizedPosition>[0.95]</initialGeneralizedPosition>
-                <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+                <generalizedInitialPosition>[0.95]</generalizedInitialPosition>
+                <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
                 <frameOfReference ref="/Group[Hauptgruppe1]/Group[Untergruppe]/Frame[I]"/>
                 <frameForKinematics ref="Frame[C]"/>
                 <mass>5</mass>
@@ -56,8 +56,8 @@
               </RigidBody>
               <RigidBody name="Box2">
                 <plotFeature feature="-stateDerivative"/>
-                <initialGeneralizedPosition>[1.75]</initialGeneralizedPosition>
-                <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+                <generalizedInitialPosition>[1.75]</generalizedInitialPosition>
+                <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
                 <frameOfReference ref="../Frame[I]"/>
                 <frameForKinematics ref="Frame[C]"/>
                 <mass>2</mass>
@@ -125,8 +125,8 @@
         <objects>
           <RigidBody name="Box1">
             <plotFeature feature="+globalPosition"/>
-            <initialGeneralizedPosition>[0]</initialGeneralizedPosition>
-            <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
+            <generalizedInitialPosition>[0]</generalizedInitialPosition>
+            <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
             <frameOfReference ref="../Frame[I]"/>
             <frameForKinematics ref="Frame[C]"/>
             <mass>5</mass>
@@ -170,8 +170,8 @@
             <groups/>
             <objects>
               <RigidBody name="Box1">
-                <initialGeneralizedPosition>[0.95]</initialGeneralizedPosition>
-                <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+                <generalizedInitialPosition>[0.95]</generalizedInitialPosition>
+                <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
                 <frameOfReference ref="../Frame[I]"/>
                 <frameForKinematics ref="Frame[C]"/>
                 <mass>5</mass>
@@ -207,8 +207,8 @@
               </RigidBody>
               <RigidBody name="Box2">
                 <plotFeature feature="-stateDerivative"/>
-                <initialGeneralizedPosition>[1.75]</initialGeneralizedPosition>
-                <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+                <generalizedInitialPosition>[1.75]</generalizedInitialPosition>
+                <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
                 <frameOfReference ref="../Frame[I]"/>
                 <frameForKinematics ref="Frame[C]"/>
                 <mass>2</mass>
@@ -276,8 +276,8 @@
         <objects>
           <RigidBody name="Box1">
             <plotFeature feature="+globalPosition"/>
-            <initialGeneralizedPosition>[0]</initialGeneralizedPosition>
-            <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
+            <generalizedInitialPosition>[0]</generalizedInitialPosition>
+            <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
             <frameOfReference ref="../Frame[I]"/>
             <frameForKinematics ref="Frame[C]"/>
             <mass>5</mass>

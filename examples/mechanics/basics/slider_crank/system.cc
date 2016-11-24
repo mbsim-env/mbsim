@@ -81,8 +81,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   crank->addFrame(new FixedRelativeFrame("P2",crank_KrCP2,SqrMat(3,EYE)));
   crank->setMass(mass_crank);
   crank->setInertiaTensor(inertia_crank);
-  crank->setInitialGeneralizedPosition(q_crank);
-  crank->setInitialGeneralizedVelocity(v_crank);
+  crank->setGeneralizedInitialPosition(q_crank);
+  crank->setGeneralizedInitialVelocity(v_crank);
   this->addObject(crank);	
 
   RigidBody *rod = new RigidBody("Rod");
@@ -97,8 +97,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->addFrame(new FixedRelativeFrame("P2",rod_KrCP2,SqrMat(3,EYE)));
   rod->setMass(mass_rod);
   rod->setInertiaTensor(inertia_rod);
-  rod->setInitialGeneralizedPosition(q_rod);
-  rod->setInitialGeneralizedVelocity(v_rod);
+  rod->setGeneralizedInitialPosition(q_rod);
+  rod->setGeneralizedInitialVelocity(v_rod);
   this->addObject(rod);
 
   RigidBody *piston = new RigidBody("Piston");
@@ -107,8 +107,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   piston->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   piston->setMass(mass_piston);
   piston->setInertiaTensor(inertia_piston);
-  piston->setInitialGeneralizedPosition(q_piston);
-  piston->setInitialGeneralizedVelocity(v_piston);
+  piston->setGeneralizedInitialPosition(q_piston);
+  piston->setGeneralizedInitialVelocity(v_piston);
   this->addObject(piston);
   //------------------------------------------------------------------------------
 

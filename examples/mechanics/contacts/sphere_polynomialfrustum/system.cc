@@ -40,8 +40,8 @@ System::System(const string &projectName) :
   polyfrustum->setFrameOfReference(rotPoly);
 
   //Give degrees of freedom
-  polyfrustum->setInitialGeneralizedPosition(Vec("[0]"));  //set position of the frustum,1 degree of freedom
-  polyfrustum->setInitialGeneralizedVelocity(Vec("[10]"));  //change from(0,0,0,0,0,0), now we have rotating velocity,1 degree of freedom
+  polyfrustum->setGeneralizedInitialPosition(Vec("[0]"));  //set position of the frustum,1 degree of freedom
+  polyfrustum->setGeneralizedInitialVelocity(Vec("[10]"));  //change from(0,0,0,0,0,0), now we have rotating velocity,1 degree of freedom
 
   this->addObject(polyfrustum);
 
@@ -80,8 +80,8 @@ System::System(const string &projectName) :
     double phi = (double) i / numSphere * 2 * M_PI;
     q0(0) = -1.5 * cos(phi);
     q0(2) = -1.5 * sin(phi);
-    sphereBody->setInitialGeneralizedPosition(q0);
-    sphereBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    sphereBody->setGeneralizedInitialPosition(q0);
+    sphereBody->setGeneralizedInitialVelocity(Vec("[0;0;0;0;0;0]"));
 
     this->addObject(sphereBody);
 

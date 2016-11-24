@@ -37,7 +37,7 @@ class initLink : public Link {
           public:
             CamRockerDistance(RigidBody * rocker_, Contact * contactCamRocker_) : rocker(rocker_), contactCamRocker(contactCamRocker_) {}
             double operator()(const double &phi) {
-              rocker->setInitialGeneralizedPosition(Vec(1, INIT, phi));
+              rocker->setGeneralizedInitialPosition(Vec(1, INIT, phi));
               rocker->initz();
               rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
               ((ContactKinematicsSolidCircleContour1s*)(contactCamRocker->getContactKinematics()))->setSearchAllCP(true);
@@ -52,7 +52,7 @@ class initLink : public Link {
         RegulaFalsi gCamRockerSolver(&gCamRocker);
         gCamRockerSolver.setTolerance(2.*epsroot()*epsroot());
         const double phi0Rocker=gCamRockerSolver.solve(-M_PI/2., M_PI/20.);
-        rocker->setInitialGeneralizedPosition(phi0Rocker);
+        rocker->setGeneralizedInitialPosition(phi0Rocker);
         rocker->initz();
         rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
         contactCamRocker->updateStateDependentVariables(0);
@@ -60,7 +60,7 @@ class initLink : public Link {
         int nltol=0;
         while (!((contactCamRocker->getg()(0))<0)) {
           const double phi0RockerNew = phi0Rocker+nltol*epsroot();
-          rocker->setInitialGeneralizedPosition(phi0RockerNew);
+          rocker->setGeneralizedInitialPosition(phi0RockerNew);
           rocker->initz();
           rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
           contactCamRocker->updateStateDependentVariables(0);
@@ -70,7 +70,7 @@ class initLink : public Link {
           public:
             CamRockerVelocity(RigidBody * rocker_, Contact * contactCamRocker_) : rocker(rocker_), contactCamRocker(contactCamRocker_) {}
             double operator()(const double &omega) {
-              rocker->setInitialGeneralizedVelocity(omega);
+              rocker->setGeneralizedInitialVelocity(omega);
               rocker->initz();
               rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
               contactCamRocker->updateStateDependentVariables(0);
@@ -88,8 +88,8 @@ class initLink : public Link {
         gdCamRockerSolver.setTolerance(2.*epsroot()*epsroot());
         const double omega0Rocker=gdCamRockerSolver.solve(-1e3, 1e3);
 
-        rocker->setInitialGeneralizedPosition(phi0Rocker);
-        rocker->setInitialGeneralizedVelocity(omega0Rocker);
+        rocker->setGeneralizedInitialPosition(phi0Rocker);
+        rocker->setGeneralizedInitialVelocity(omega0Rocker);
         rocker->initz();
         rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
         contactCamRocker->updateStateDependentVariables(0);
@@ -134,8 +134,8 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   cam->setMass(m1);
   cam->setInertiaTensor(10000.*Theta);
   cam->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
-  cam->setInitialGeneralizedPosition(.5*M_PI);
-  cam->setInitialGeneralizedVelocity(100.*M_PI/30.);
+  cam->setGeneralizedInitialPosition(.5*M_PI);
+  cam->setGeneralizedInitialVelocity(100.*M_PI/30.);
   this->addObject(cam);
 
   PlanarContour * camContour = new PlanarContour("Contour");

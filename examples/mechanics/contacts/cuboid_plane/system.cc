@@ -50,8 +50,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   h = 0.1;
   Vec q0(6);
   q0(1) = 0.6;
-  body->setInitialGeneralizedPosition(q0);
-  body->setInitialGeneralizedVelocity("[2;0;1;3;2;-1]");
+  body->setGeneralizedInitialPosition(q0);
+  body->setGeneralizedInitialVelocity("[2;0;1;3;2;-1]");
   body->setMass(m);
   SymMat Theta(3);
   double A=m/12.*(b*b+h*h);

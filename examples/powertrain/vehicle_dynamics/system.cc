@@ -328,10 +328,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec q0(6);
   q0(1)= h+0.00;
-  karosserie->setInitialGeneralizedPosition(q0);
+  karosserie->setGeneralizedInitialPosition(q0);
   Vec u0(6);
   u0(0)= 0;
-  karosserie->setInitialGeneralizedVelocity(u0);
+  karosserie->setGeneralizedInitialVelocity(u0);
 
   KineticExcitation *actuator;
 

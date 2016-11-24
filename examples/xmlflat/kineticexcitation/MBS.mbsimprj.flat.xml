@@ -27,8 +27,8 @@
     <groups/>
     <objects>
       <RigidBody name="Box1">
-        <initialGeneralizedPosition>[0;0;0]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
+        <generalizedInitialPosition>[0;0;0]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>1</mass>

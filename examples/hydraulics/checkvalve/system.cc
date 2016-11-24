@@ -37,7 +37,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   b->addFrame(new FixedRelativeFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(-2.)*BasicRotAIKz(-1.)));
   b->setFrameForKinematics(b->getFrame("C"));
   b->setTranslation(new TranslationAlongXAxis<VecV>);
-  b->setInitialGeneralizedVelocity(.1);
+  b->setGeneralizedInitialVelocity(.1);
 
   Checkvalve * lCV = new Checkvalve("lCV");
   addGroup(lCV);

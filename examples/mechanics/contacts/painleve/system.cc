@@ -46,11 +46,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   
   Vec q0Stab(3);
   q0Stab(2) = alpha0;
-  stab->setInitialGeneralizedPosition(q0Stab);
+  stab->setGeneralizedInitialPosition(q0Stab);
   
   Vec v0Stab(3);
   v0Stab(0) = -4.;
-  stab->setInitialGeneralizedVelocity(v0Stab);
+  stab->setGeneralizedInitialVelocity(v0Stab);
   
   std::shared_ptr<OpenMBV::Cuboid> cuboid = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
   cuboid->setLength(lStab,hStab,0.1);

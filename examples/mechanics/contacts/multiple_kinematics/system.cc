@@ -144,7 +144,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
 
     Vec u0(3,INIT,0);
     u0(1) = -1;
-    balls[k]->setInitialGeneralizedVelocity(u0);
+    balls[k]->setGeneralizedInitialVelocity(u0);
 
     stringstream spherename;
     spherename << "sphere_" << k;

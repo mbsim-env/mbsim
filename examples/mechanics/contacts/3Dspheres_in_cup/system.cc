@@ -103,9 +103,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0_3(1)=0.4;
   q0_3(2)=0.2;
 
-  body1->setInitialGeneralizedPosition(q0_1);
-  body2->setInitialGeneralizedPosition(q0_2);
-  body3->setInitialGeneralizedPosition(q0_3);
+  body1->setGeneralizedInitialPosition(q0_1);
+  body2->setGeneralizedInitialPosition(q0_2);
+  body3->setGeneralizedInitialPosition(q0_3);
   
   Vec u0_1(6), u0_2(6), u0_3(6);
 
@@ -118,9 +118,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   u0_3(4) = -M_PI*2;
   u0_3(5) = M_PI*20;
 
-  body1->setInitialGeneralizedVelocity(u0_1);
-  body2->setInitialGeneralizedVelocity(u0_2);
-  body3->setInitialGeneralizedVelocity(u0_3);
+  body1->setGeneralizedInitialVelocity(u0_1);
+  body2->setGeneralizedInitialVelocity(u0_2);
+  body3->setGeneralizedInitialVelocity(u0_3);
  
   // Contour of Body1
   Sphere *spherecontour1 = new Sphere("Sphere1",2*d);

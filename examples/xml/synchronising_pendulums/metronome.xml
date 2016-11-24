@@ -8,7 +8,7 @@
   </groups>
   <objects>
     <RigidBody name="Base" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>[0; eps]</initialGeneralizedPosition>
+      <generalizedInitialPosition>[0; eps]</generalizedInitialPosition>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[fBottom]"/>
       <mass>baseMass</mass>

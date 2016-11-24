@@ -99,11 +99,11 @@
           </enableOpenMBVFrameC>
         </RigidBody>
         <RigidBody name="Roll">
-          <initialGeneralizedPosition>
+          <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0.05</ele>
             </xmlVector>
-          </initialGeneralizedPosition>
+          </generalizedInitialPosition>
           <mass unit="kg">m</mass>
           <inertiaTensor unit="kg*m^2">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">

@@ -762,7 +762,7 @@
     <xs:complexContent>
       <xs:extension base="ObjectType">
         <xs:sequence>
-          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:unknownVector">
+          <xs:element name="generalizedInitialPosition" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Inertiale Lage in den generalisierten Freiheitsgraden.
@@ -770,11 +770,11 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="initialGeneralizedVelocity" minOccurs="0" type="pv:unknownVector">
+          <xs:element name="generalizedInitialVelocity" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
-                <p>vgl. <i>initialGeneralizedPosition</i> für die Zuordnung.</p>
+                <p>vgl. <i>generalizedInitialPosition</i> für die Zuordnung.</p>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1824,7 +1824,7 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="unloadedGeneralizedLength" type="pv:unknownScalar">
+          <xs:element name="generalizedUnloadedLength" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Entspannte Federlänge <object class="inlineeqn">l_0</object>.

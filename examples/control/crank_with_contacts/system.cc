@@ -163,24 +163,24 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Anfangsbedingungen für Körper Crank:
   double Crank_q0 = 0;
   double Crank_u0 = 0;
-  Crank->setInitialGeneralizedPosition(Crank_q0);
-  Crank->setInitialGeneralizedVelocity(Crank_u0);
+  Crank->setGeneralizedInitialPosition(Crank_q0);
+  Crank->setGeneralizedInitialVelocity(Crank_u0);
 
   //Anfangsbedingunen für Körper Rod:
   double Rod_q0 = 0;
   double Rod_u0 = 0;
-  Rod->setInitialGeneralizedPosition(Rod_q0);
-  Rod->setInitialGeneralizedVelocity(Rod_u0);
+  Rod->setGeneralizedInitialPosition(Rod_q0);
+  Rod->setGeneralizedInitialVelocity(Rod_u0);
 
   //Anfangsbedingunen für Körper Piston:
   Vec Piston_q0(2,INIT,0.);
   Piston_q0(0) = Laenge_Crank+Laenge_Rod;
-  Piston->setInitialGeneralizedPosition(Piston_q0);
+  Piston->setGeneralizedInitialPosition(Piston_q0);
 
   //Anfangsbedingunen für Körper Block:
   Vec Block_q0(2,INIT,0.);
   Block_q0(0) = Laenge_Crank+Laenge_Rod+0.25*Laenge_Piston;
-  Block->setInitialGeneralizedPosition(Block_q0);
+  Block->setGeneralizedInitialPosition(Block_q0);
 
 
   //------------------------------------------------------------------------------

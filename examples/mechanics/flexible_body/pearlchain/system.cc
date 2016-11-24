@@ -736,7 +736,7 @@ Perlchain::Perlchain(const string &projectName) :
     SqrMat3 A = rodInfo->getOrientation(xL);
      cout <<  fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI) << endl;
     q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
-    balls[i]->setInitialGeneralizedPosition(q0);
+    balls[i]->setGeneralizedInitialPosition(q0);
   }
 
   delete rodInfo;

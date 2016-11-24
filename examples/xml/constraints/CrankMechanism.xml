@@ -63,7 +63,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Motor">
-      <initialGeneralizedPosition>153.874/180*pi</initialGeneralizedPosition>
+      <generalizedInitialPosition>153.874/180*pi</generalizedInitialPosition>
       <frameOfReference ref="../Object[Carrier]/Frame[fMotor]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>motor_Mass</mass>

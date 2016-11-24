@@ -89,25 +89,25 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0(3), q1(1);
   q0(0) = 0.2;
   q0(1) = 1.7;
-  body1->setInitialGeneralizedPosition(q0);
+  body1->setGeneralizedInitialPosition(q0);
   q0(1) = .6;
   Vec u0(3);
   u0(1) = -2.;
   u0(2) = M_PI*20;
-  body1->setInitialGeneralizedVelocity(u0);
+  body1->setGeneralizedInitialVelocity(u0);
   u0(2) = M_PI*20;
-  body2->setInitialGeneralizedVelocity(u0);
+  body2->setGeneralizedInitialVelocity(u0);
   u0(2) = -M_PI*20;
-  body3->setInitialGeneralizedVelocity(u0);
+  body3->setGeneralizedInitialVelocity(u0);
   q0(0) = 1.0;
-  body2->setInitialGeneralizedPosition(q0);
+  body2->setGeneralizedInitialPosition(q0);
   q0(0) = -1.0;
-  body3->setInitialGeneralizedPosition(q0);
+  body3->setGeneralizedInitialPosition(q0);
   q0(0) = 0.6;
   q0(1) = 0.1;
-  body4->setInitialGeneralizedPosition(q0);
+  body4->setGeneralizedInitialPosition(q0);
   u0(2) = M_PI*40;
-  body4->setInitialGeneralizedVelocity(u0);
+  body4->setGeneralizedInitialVelocity(u0);
 
 
   // Contour of Body1

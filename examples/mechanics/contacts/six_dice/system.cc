@@ -158,7 +158,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     AWK02(0,0) = 1;
     q0(3) = a;
     q0(5) = a;
-    body[i]->setInitialGeneralizedPosition(q0);
+    body[i]->setGeneralizedInitialPosition(q0);
 
     Cuboid *cuboid = new Cuboid("Cuboid");
     cuboid->setFrameOfReference(body[i]->getFrame("C"));

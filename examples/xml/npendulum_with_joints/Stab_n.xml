@@ -2,8 +2,8 @@
 <RigidBody name="Stab{n_pendel+1}" xmlns="http://www.mbsim-env.de/MBSim"
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
   xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <initialGeneralizedPosition>[lO+lU;-lO-(lU+lO)*(n_pendel-1);0]</initialGeneralizedPosition>
-  <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
+  <generalizedInitialPosition>[lO+lU;-lO-(lU+lO)*(n_pendel-1);0]</generalizedInitialPosition>
+  <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
   <frameOfReference ref="../Frame[Os]"/>
   <frameForKinematics ref="Frame[C]"/>
   <mass>5000000</mass>

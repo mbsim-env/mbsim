@@ -42,7 +42,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->setInertiaTensor(Theta);
   shaft1->setRotation(new RotationAboutZAxis<VecV>);
   shaft1->getFrame("C")->enableOpenMBV(0.2);
-  //shaft1->setInitialGeneralizedVelocity("[1]");
+  //shaft1->setGeneralizedInitialVelocity("[1]");
 
   Vec r(3);
   r(1) = R1+R2a;

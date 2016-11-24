@@ -192,12 +192,12 @@ namespace MBSim {
 
   void Body::initializeUsingXML(DOMElement *element) {
     Object::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialGeneralizedPosition");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedInitialPosition");
     if (e)
-      setInitialGeneralizedPosition(getVec(e));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"initialGeneralizedVelocity");
+      setGeneralizedInitialPosition(getVec(e));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedInitialVelocity");
     if (e)
-      setInitialGeneralizedVelocity(getVec(e));
+      setGeneralizedInitialVelocity(getVec(e));
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
     if(e) saved_frameOfReference=E(e)->getAttribute("ref");
   }

@@ -117,8 +117,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   muffe->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  muffe->setRotation(new RotationAboutZAxis());
 
-  muffe->setInitialGeneralizedPosition(spiel*Vec("[0.4;0.0;0.0]"));
-  muffe->setInitialGeneralizedVelocity(      Vec("[0.0;0.0;0.0]"));
+  muffe->setGeneralizedInitialPosition(spiel*Vec("[0.4;0.0;0.0]"));
+  muffe->setGeneralizedInitialVelocity(      Vec("[0.0;0.0;0.0]"));
 
   UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
   UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
@@ -212,8 +212,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   contact->setTangentialImpactLaw(coulImptact );
   addLink(contact);
 
-  specht->setInitialGeneralizedPosition(Vec(1,INIT, 0.0));
-  specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
+  specht->setGeneralizedInitialPosition(Vec(1,INIT, 0.0));
+  specht->setGeneralizedInitialVelocity(Vec(1,INIT,-5.0));
 
   balken->getFrame("RJ")->enableOpenMBV(0.1);
 

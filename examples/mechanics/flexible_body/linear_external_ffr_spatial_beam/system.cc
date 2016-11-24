@@ -144,7 +144,7 @@ System::System(const string &projectName) :
 
   Vec3 u0Ball;
   u0Ball(1) = -50;
-  ball->setInitialGeneralizedVelocity(u0Ball);
+  ball->setGeneralizedInitialVelocity(u0Ball);
 
   Vec BR(3, INIT, 0.);
   BR(1) = -r;

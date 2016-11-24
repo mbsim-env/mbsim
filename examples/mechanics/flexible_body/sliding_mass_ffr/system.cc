@@ -136,7 +136,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     ball1->setTranslation(new TranslationAlongAxesXYZ<VecV>());
     Vec u0Ball1(3, INIT, 0.);
     u0Ball1(1) = u0;
-    ball1->setInitialGeneralizedVelocity(u0Ball1);
+    ball1->setGeneralizedInitialVelocity(u0Ball1);
 
     MBSim::Point * ballContour1 = new MBSim::Point("FFR_Mass");
     ball1->addContour(ballContour1);
@@ -213,7 +213,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     ball2->setTranslation(new TranslationAlongAxesXYZ<VecV>());
     Vec u0Ball(3, INIT, 0.);
     u0Ball(1) = u0;
-    ball2->setInitialGeneralizedVelocity(u0Ball);
+    ball2->setGeneralizedInitialVelocity(u0Ball);
 
     MBSim::Point * ballContour = new MBSim::Point("RCM_Mass");
     ball2->addContour(ballContour);
@@ -335,7 +335,7 @@ SlidingMass::SlidingMass(const string &projectName) :
 //    ball1->setTranslation(new LinearTranslation(Mat3x3(EYE)));
 //    Vec u0Ball1(3, INIT, 0.);
 //    u0Ball1(1) = u0;
-//    ball1->setInitialGeneralizedVelocity(u0Ball1);
+//    ball1->setGeneralizedInitialVelocity(u0Ball1);
 //
 //    MBSim::Point * ballContour1 = new MBSim::Point("FFR_Mass");
 //    ball1->addContour(ballContour1);

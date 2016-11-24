@@ -60,7 +60,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
   stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
+  stab2->setGeneralizedInitialPosition(Vec("[-1.6]"));
 
   obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
@@ -82,7 +82,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab3->setInertiaTensor(Theta);
   stab3->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  stab3->setInitialGeneralizedPosition(Vec("[-1.6]"));
+  stab3->setGeneralizedInitialPosition(Vec("[-1.6]"));
 
   obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");
@@ -102,7 +102,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab4->setInertiaTensor(Theta);
   stab4->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  stab4->setInitialGeneralizedVelocity(Vec("[-1.6]"));
+  stab4->setGeneralizedInitialVelocity(Vec("[-1.6]"));
 
   obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("objects/pendel2.wrl");

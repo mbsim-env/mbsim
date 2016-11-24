@@ -51,7 +51,7 @@ namespace MBSim {
       }
 
       /** \brief Set unloaded generalized length. */
-      void setUnloadedGeneralizedLength(double l0_) { l0 = l0_; }
+      void setGeneralizedUnloadedLength(double l0_) { l0 = l0_; }
 
       void initializeUsingXML(xercesc::DOMElement *element);
   };

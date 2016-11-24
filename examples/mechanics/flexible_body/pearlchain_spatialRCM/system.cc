@@ -169,7 +169,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     SqrMat3 A = rodInfo->getOrientation(xL);
     q0(2) = fmod(AIK2Cardan(A)(2)+M_PI,2*M_PI);
-    balls[i]->setInitialGeneralizedPosition(q0);
+    balls[i]->setGeneralizedInitialPosition(q0);
   }
 
   delete rodInfo;

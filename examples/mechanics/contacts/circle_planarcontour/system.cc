@@ -45,7 +45,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   cam->setMass(m1);
   cam->setInertiaTensor(1000.*Theta);
   cam->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
-  cam->setInitialGeneralizedVelocity(4.*M_PI);
+  cam->setGeneralizedInitialVelocity(4.*M_PI);
   this->addObject(cam);
 
   //cam->addFrame(new FixedRelativeFrame("Contour", "[.003; .01; 0]", Cardan2AIK(-M_PI/2., 0, -M_PI/2. )));
@@ -66,7 +66,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   roll->setInertiaTensor(Theta);
   roll->setRotation(new RotationAboutZAxis<VecV>);
   roll->setTranslation(new TranslationAlongYAxis<VecV>);
-  roll->setInitialGeneralizedVelocity("[0;1.0]");
+  roll->setGeneralizedInitialVelocity("[0;1.0]");
   this->addObject(roll);
 
   Circle * rollContour = new Circle("Contour");

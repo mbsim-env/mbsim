@@ -188,7 +188,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     q0(1) = radius + elements * distance;
     q0(2) = -R;
     q0(4) = -M_PI_2;
-    balls[0]->setInitialGeneralizedPosition(q0);
+    balls[0]->setGeneralizedInitialPosition(q0);
 
     //initialize circle
     double ang1 = createAngle(0);
@@ -205,7 +205,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
         ang1 = -ang1;
         ang2 = -ang2;
       }
-      balls[ele]->setInitialGeneralizedPosition(abc);
+      balls[ele]->setGeneralizedInitialPosition(abc);
     }
   }
 }

@@ -55,7 +55,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   axis->setRotation(new RotationAboutFixedAxis<VecV>(JR_axis));
   axis->setMass(m_axis);
   axis->setInertiaTensor(Theta);
-  axis->setInitialGeneralizedVelocity(Vec(1,INIT,2.));
+  axis->setGeneralizedInitialVelocity(Vec(1,INIT,2.));
   this->addObject(axis);
 
   /* pole */

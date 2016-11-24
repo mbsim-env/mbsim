@@ -48,7 +48,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0(3);
   q0(1) = .5;
   q0(2) = alpha-M_PI/2;
-  body->setInitialGeneralizedPosition(q0);
+  body->setGeneralizedInitialPosition(q0);
 
   // Contour definition
   Line *line = new Line("Line");

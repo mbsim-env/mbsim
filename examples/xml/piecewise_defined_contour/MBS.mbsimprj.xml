@@ -72,18 +72,18 @@
       <groups/>
       <objects>
         <RigidBody name="RigidBody1">
-          <initialGeneralizedPosition>
+          <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
               <ele>y0</ele>
             </xmlVector>
-          </initialGeneralizedPosition>
-          <initialGeneralizedVelocity>
+          </generalizedInitialPosition>
+          <generalizedInitialVelocity>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>v0</ele>
               <ele>0</ele>
             </xmlVector>
-          </initialGeneralizedVelocity>
+          </generalizedInitialVelocity>
           <mass unit="kg">1</mass>
           <inertiaTensor unit="kg*m^2">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">

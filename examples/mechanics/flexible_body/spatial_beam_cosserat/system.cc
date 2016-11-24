@@ -135,7 +135,7 @@ System::System(const string &projectName) :
 
   Vec3 u0;
   u0(1) = -10;
-  ball->setInitialGeneralizedVelocity(u0);
+  ball->setGeneralizedInitialVelocity(u0);
 
   MBSim::Point *point = new MBSim::Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;

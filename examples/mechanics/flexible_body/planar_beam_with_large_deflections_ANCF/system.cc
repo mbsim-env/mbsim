@@ -111,7 +111,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->addFrame(new FixedRelativeFrame("Point",BR,SqrMat(3,EYE),ball->getFrame("C")));
   point->setFrameOfReference(ball->getFrame("Point"));
   ball->addContour(point);
-  ball->setInitialGeneralizedVelocity(Vec(2,INIT,0.));
+  ball->setGeneralizedInitialVelocity(Vec(2,INIT,0.));
   this->addObject(ball);
 
   std::shared_ptr<OpenMBV::Sphere> sphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();

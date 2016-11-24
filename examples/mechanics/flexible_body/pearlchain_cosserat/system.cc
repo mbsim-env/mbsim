@@ -168,7 +168,7 @@ System::System(const string &projectName) :
 
     SqrMat3 A = P.evalOrientation();
     q0(2) = -AIK2Cardan(A)(2) + 0.5 * M_PI;
-    balls[i]->setInitialGeneralizedPosition(q0);
+    balls[i]->setGeneralizedInitialPosition(q0);
   }
 
   delete rodInfo;

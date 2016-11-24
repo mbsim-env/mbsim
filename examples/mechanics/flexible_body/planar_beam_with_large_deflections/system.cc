@@ -107,7 +107,7 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
   point->setFrameOfReference(ball->getFrame("Point"));
   ball->addContour(point);
-  ball->setInitialGeneralizedVelocity(-0.5);
+  ball->setGeneralizedInitialVelocity(-0.5);
   this->addObject(ball);
 
   std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();

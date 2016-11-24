@@ -7,7 +7,7 @@
   </groups>
   <objects>
     <RigidBody name="S1" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>pi/2</initialGeneralizedPosition>
+      <generalizedInitialPosition>pi/2</generalizedInitialPosition>
       <frameOfReference ref="../../Object[Carrier]/Frame[Fi]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*y*rho</mass>
@@ -62,7 +62,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="S2" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>y/2</initialGeneralizedPosition>
+      <generalizedInitialPosition>y/2</generalizedInitialPosition>
       <frameOfReference ref="../Object[S1]/Frame[F2]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>4/3*pi*(2*r)^3*rho</mass>

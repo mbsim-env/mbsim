@@ -127,12 +127,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Initial translation
   Vec q0(3);
   q0(1) = d;
-  body->setInitialGeneralizedPosition(q0);
-  body2->setInitialGeneralizedPosition(q0);
-  body3->setInitialGeneralizedPosition(q0);
+  body->setGeneralizedInitialPosition(q0);
+  body2->setGeneralizedInitialPosition(q0);
+  body3->setGeneralizedInitialPosition(q0);
   Vec q04(2);
   q04(0) = -d;
-  body4->setInitialGeneralizedPosition(q04);
+  body4->setGeneralizedInitialPosition(q04);
 
 
   // Contour of Cylinder

@@ -29,7 +29,7 @@ Group2::Group2(const string &name) : Group(name) {
   box1->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
   box1->setFrameOfReference(getFrame("I"));
   box1->setFrameForKinematics(box1->getFrame("C"));
-  box1->setInitialGeneralizedVelocity("[0.1]");
+  box1->setGeneralizedInitialVelocity("[0.1]");
 
   Group1 *group = new Group1("Untergruppe");
   Vec r(3);

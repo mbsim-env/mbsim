@@ -76,7 +76,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traeger->setInertiaTensor(0.001*SymMat(3, EYE));
   traeger->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   traeger->setRotation(new RotationAboutAxesXYZ<VecV>);
-  traeger->setInitialGeneralizedVelocity(Vec("[0.; -0.; 0.; -30; 30; 30]"));
+  traeger->setGeneralizedInitialVelocity(Vec("[0.; -0.; 0.; -30; 30; 30]"));
   std::shared_ptr<OpenMBV::Frustum> traegerVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   traegerVisu->setBaseRadius(dI/2.);
   traegerVisu->setTopRadius(dI/2.);

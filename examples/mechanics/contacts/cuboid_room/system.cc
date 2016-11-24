@@ -43,8 +43,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   b = 0.01;
   h = 0.01;
   Vec q0(6);
-  body->setInitialGeneralizedPosition(q0);
-  body->setInitialGeneralizedVelocity("[2;3;1;3;2;-1]");
+  body->setGeneralizedInitialPosition(q0);
+  body->setGeneralizedInitialVelocity("[2;3;1;3;2;-1]");
   body->setMass(m);
   SymMat Theta(3);
   double A=m/12.*(b*b+h*h);

@@ -85,8 +85,8 @@ namespace MBSimFlexibleBody {
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
       virtual void setFrameOfReference(MBSim::Frame *frame);
-      virtual void setq0(fmatvec::Vec q0_) { if(q0_.size()) MBSim::Body::setInitialGeneralizedPosition(q0_); q<<q0; }
-      virtual void setu0(fmatvec::Vec u0_) { if(u0_.size()) MBSim::Body::setInitialGeneralizedVelocity(u0_); u<<u0; }
+      virtual void setq0(fmatvec::Vec q0_) { if(q0_.size()) MBSim::Body::setGeneralizedInitialPosition(q0_); q<<q0; }
+      virtual void setu0(fmatvec::Vec u0_) { if(u0_.size()) MBSim::Body::setGeneralizedInitialVelocity(u0_); u<<u0; }
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */

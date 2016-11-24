@@ -40,8 +40,8 @@ System::System(const string &projectName) :
   polyfrustum->setFrameOfReference(rotPoly);
 
   //Give degrees of freedom
-  polyfrustum->setInitialGeneralizedPosition(Vec("[0]"));  //set position of the frustum,1 degree of freedom
-  polyfrustum->setInitialGeneralizedVelocity(Vec("[0]"));  //change from(0,0,0,0,0,0), now we have rotating velocity,1 degree of freedom
+  polyfrustum->setGeneralizedInitialPosition(Vec("[0]"));  //set position of the frustum,1 degree of freedom
+  polyfrustum->setGeneralizedInitialVelocity(Vec("[0]"));  //change from(0,0,0,0,0,0), now we have rotating velocity,1 degree of freedom
 
   this->addObject(polyfrustum);
 
@@ -75,8 +75,8 @@ System::System(const string &projectName) :
     plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
-    plateBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
-    plateBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    plateBody->setGeneralizedInitialPosition(Vec("[-1.5;0.5;0;0;0;0]"));
+    plateBody->setGeneralizedInitialVelocity(Vec("[0;0;0;0;0;0]"));
 
     this->addObject(plateBody);
 
@@ -118,8 +118,8 @@ System::System(const string &projectName) :
     plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
-    plateBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
-    plateBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    plateBody->setGeneralizedInitialPosition(Vec("[1.5;0.8;0;0;0;0]"));
+    plateBody->setGeneralizedInitialVelocity(Vec("[0;0;0;0;0;0]"));
 
     this->addObject(plateBody);
 
@@ -162,8 +162,8 @@ System::System(const string &projectName) :
     plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     //give degrees of freedom
-    plateBody->setInitialGeneralizedPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
-    plateBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    plateBody->setGeneralizedInitialPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
+    plateBody->setGeneralizedInitialVelocity(Vec("[0;0;0;0;0;0]"));
 
     this->addObject(plateBody);
 

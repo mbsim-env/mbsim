@@ -17,8 +17,8 @@
       <groups/>
       <objects>
         <RigidBody name="Box0">
-          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <generalizedInitialPosition>[0.2]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
           <frameOfReference ref="../Frame[I]"/>
           <frameForKinematics ref="Frame[C]"/>
           <mass unit="kg">1</mass>
@@ -40,8 +40,8 @@
           <enableOpenMBVFrameC/>
         </RigidBody>
         <RigidBody name="Box1">
-          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <generalizedInitialPosition>[0.2]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
           <frameOfReference ref="../Frame[I]"/>
           <frameForKinematics ref="Frame[C]"/>
           <mass unit="kg">1</mass>
@@ -63,8 +63,8 @@
           <enableOpenMBVFrameC/>
         </RigidBody>
         <RigidBody name="Box2">
-          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <generalizedInitialPosition>[0.2]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
           <frameOfReference ref="../Frame[I]"/>
           <frameForKinematics ref="Frame[C]"/>
           <mass unit="kg">1</mass>
@@ -86,8 +86,8 @@
           <enableOpenMBVFrameC/>
         </RigidBody>
         <RigidBody name="Box3">
-          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <generalizedInitialPosition>[0.2]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
           <frameOfReference ref="../Frame[I]"/>
           <frameForKinematics ref="Frame[C]"/>
           <mass unit="kg">1</mass>
@@ -109,8 +109,8 @@
           <enableOpenMBVFrameC/>
         </RigidBody>
         <RigidBody name="Box4">
-          <initialGeneralizedPosition>[0.2]</initialGeneralizedPosition>
-          <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+          <generalizedInitialPosition>[0.2]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
           <frameOfReference ref="../Frame[I4]"/>
           <frameForKinematics ref="Frame[C]"/>
           <mass unit="kg">1</mass>

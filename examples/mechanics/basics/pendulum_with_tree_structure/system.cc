@@ -59,7 +59,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
   stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
+  stab2->setGeneralizedInitialPosition(Vec("[-1.6]"));
 
   obj=OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
   obj->setIvFileName("wrl/pendel2.wrl");

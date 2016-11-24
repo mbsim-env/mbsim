@@ -7,7 +7,7 @@
   </groups>
   <objects>
     <RigidBody name="S1" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>pi/2</initialGeneralizedPosition>
+      <generalizedInitialPosition>pi/2</generalizedInitialPosition>
       <frameOfReference ref="../../Object[Carrier]/Frame[FM]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*y*rho</mass>
@@ -58,7 +58,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="S2" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>pi+asin((x/2)/(c*y))</initialGeneralizedPosition>
+      <generalizedInitialPosition>pi+asin((x/2)/(c*y))</generalizedInitialPosition>
       <frameOfReference ref="../Object[S1]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*c*y*rho</mass>
@@ -109,7 +109,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="S3" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>pi-2*asin((x/2)/(c*y))</initialGeneralizedPosition>
+      <generalizedInitialPosition>pi-2*asin((x/2)/(c*y))</generalizedInitialPosition>
       <frameOfReference ref="../Object[S2]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*c*y*rho</mass>
@@ -160,7 +160,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="S4" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>pi+asin((x/2)/(c*y))</initialGeneralizedPosition>
+      <generalizedInitialPosition>pi+asin((x/2)/(c*y))</generalizedInitialPosition>
       <frameOfReference ref="../Object[S3]/Frame[F2]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*y*rho</mass>

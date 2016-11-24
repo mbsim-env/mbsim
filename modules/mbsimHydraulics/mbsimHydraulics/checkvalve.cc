@@ -99,7 +99,7 @@ namespace MBSimHydraulics {
   void Checkvalve::setLineMinimalXOpen(double x) {line->setMinimalValue(x); }
   void Checkvalve::setLineSetValued(bool setValued) {line->setBilateral(setValued); }
   void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
-  void Checkvalve::setBallInitialPosition(double x0) {ball->setInitialGeneralizedPosition(x0); }
+  void Checkvalve::setBallInitialPosition(double x0) {ball->setGeneralizedInitialPosition(x0); }
   void Checkvalve::setSpringForceFunction(MBSim::Function<double(double,double)> *func) {spring->setForceFunction(func); }
   void Checkvalve::setSpringUnloadedLength(double l0) {spring->setUnloadedLength(l0); }
   void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setNormalImpactLaw(GIL); }

@@ -7,7 +7,7 @@
   </groups>
   <objects>
     <RigidBody name="S1" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>pi/2</initialGeneralizedPosition>
+      <generalizedInitialPosition>pi/2</generalizedInitialPosition>
       <frameOfReference ref="../../Object[Carrier]/Frame[Fm]"/>
       <frameForKinematics ref="Frame[F1]"/>
       <mass>pi*r^2*(y/2-hx)*rho</mass>
@@ -60,7 +60,7 @@
     </RigidBody>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <RigidBody name="S{nr+1}" xmlns="http://www.mbsim-env.de/MBSim">
-        <initialGeneralizedPosition>-pi/2+atan(hy/hx)</initialGeneralizedPosition>
+        <generalizedInitialPosition>-pi/2+atan(hy/hx)</generalizedInitialPosition>
         <frameOfReference ref="../Object[S{[6;9](nr)}]/Frame[F2]"/>
         <frameForKinematics ref="Frame[F1]"/>
         <mass>pi*r^2*(y/2-hx)*rho</mass>
@@ -114,7 +114,7 @@
     </Embed>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <RigidBody name="S{[4,7](nr)}" xmlns="http://www.mbsim-env.de/MBSim">
-        <initialGeneralizedPosition>[-pi/2+atan(hy/hx), 2*atan(hy/hx)](nr)</initialGeneralizedPosition>
+        <generalizedInitialPosition>[-pi/2+atan(hy/hx), 2*atan(hy/hx)](nr)</generalizedInitialPosition>
         <frameOfReference ref="../Object[S{[1,6](nr)}]/Frame[F2]"/>
         <frameForKinematics ref="Frame[F1]"/>
         <mass>pi*r^2*h*rho</mass>
@@ -168,7 +168,7 @@
     </Embed>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <RigidBody name="S{[5;8](nr)}" xmlns="http://www.mbsim-env.de/MBSim">
-        <initialGeneralizedPosition>[-atan(hy/hx),-atan(hy/hx)](nr)</initialGeneralizedPosition>
+        <generalizedInitialPosition>[-atan(hy/hx),-atan(hy/hx)](nr)</generalizedInitialPosition>
         <frameOfReference ref="../Object[S{[4;7](nr)}]/Frame[F2]"/>
         <frameForKinematics ref="Frame[F1]"/>
         <mass>pi*r^2*(c*y/4)*rho</mass>
@@ -222,7 +222,7 @@
     </Embed>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <RigidBody name="S{[6,9](nr)}" xmlns="http://www.mbsim-env.de/MBSim">
-        <initialGeneralizedPosition>[-atan(hy/hx), -atan(hy/hx)](nr)</initialGeneralizedPosition>
+        <generalizedInitialPosition>[-atan(hy/hx), -atan(hy/hx)](nr)</generalizedInitialPosition>
         <frameOfReference ref="../Object[S{[5,8](nr)}]/Frame[F2]"/>
         <frameForKinematics ref="Frame[F1]"/>
         <mass>pi*r^2*h*rho</mass>

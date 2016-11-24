@@ -23,8 +23,8 @@
     <groups/>
     <objects>
       <RigidBody name="Body">
-        <initialGeneralizedPosition>[0;1.2015e-2;0;0.1;0;0]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity>[0;0;0;0;180;0]</initialGeneralizedVelocity>
+        <generalizedInitialPosition>[0;1.2015e-2;0;0.1;0;0]</generalizedInitialPosition>
+        <generalizedInitialVelocity>[0;0;0;0;180;0]</generalizedInitialVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>6e-3</mass>

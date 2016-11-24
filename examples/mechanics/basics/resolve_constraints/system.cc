@@ -41,7 +41,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   Vec q0(1);
   q0(0) = -phi1;
-  stab1->setInitialGeneralizedPosition(q0);
+  stab1->setGeneralizedInitialPosition(q0);
 
   std::shared_ptr<OpenMBV::Frustum> cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
@@ -65,7 +65,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab2->setInertiaTensor(Theta);
   stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   q0(0) = -phi2+phi1;
-  stab2->setInitialGeneralizedPosition(q0);
+  stab2->setGeneralizedInitialPosition(q0);
 
   cylinder = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);

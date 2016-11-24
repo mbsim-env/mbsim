@@ -24,8 +24,8 @@
     <groups><?LineNr 23?></groups>
     <objects><?LineNr 24?>
       <RigidBody name="RigidBody1"><?LineNr 25?>
-        <initialGeneralizedPosition><?LineNr 26?>[0 ; 0.2]</initialGeneralizedPosition>
-        <initialGeneralizedVelocity><?LineNr 27?>[0.5 ; 0]</initialGeneralizedVelocity>
+        <generalizedInitialPosition><?LineNr 26?>[0 ; 0.2]</generalizedInitialPosition>
+        <generalizedInitialVelocity><?LineNr 27?>[0.5 ; 0]</generalizedInitialVelocity>
         <frameOfReference ref="../Frame[I]"><?LineNr 28?></frameOfReference>
         <frameForKinematics ref="Frame[C]"><?LineNr 29?></frameForKinematics>
         <mass unit="kg"><?LineNr 30?>1</mass>

@@ -95,12 +95,12 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   for (int i=0; i<5; i++)
     b->addContour(new Point("Point"+numtostr(i), b->getFrame("Top"+numtostr(i))));
   if (considerRotation) {
-    b->setInitialGeneralizedPosition("[.01; -.14; -.02; 0; 0; 0]");
-    b->setInitialGeneralizedVelocity("[-1; 0; .5; 0; 2; 1]");
+    b->setGeneralizedInitialPosition("[.01; -.14; -.02; 0; 0; 0]");
+    b->setGeneralizedInitialVelocity("[-1; 0; .5; 0; 2; 1]");
   }
   else {
-    b->setInitialGeneralizedPosition("[[.01; -.14; -.02]");
-    b->setInitialGeneralizedVelocity("[-1; 0; .5]");
+    b->setGeneralizedInitialPosition("[[.01; -.14; -.02]");
+    b->setGeneralizedInitialVelocity("[-1; 0; .5]");
   }
   std::shared_ptr<OpenMBV::Frustum> bVisu = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   b->setOpenMBVRigidBody(bVisu);

@@ -62,7 +62,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     Vec q0(6);
     if(i==0) {
       q0(2) = l*1.1;
-      body[i]->setInitialGeneralizedPosition(q0);
+      body[i]->setGeneralizedInitialPosition(q0);
     }
     else if(i==1) {
       q0(0) = -0.02; 
@@ -71,7 +71,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
       q0(3) = 0.1;
       q0(4) = 0.2;
       q0(5) = -0.1;
-      body[i]->setInitialGeneralizedPosition(q0);
+      body[i]->setGeneralizedInitialPosition(q0);
     }
     Cuboid *cuboid = new Cuboid("Cuboid");
     cuboid->setFrameOfReference(body[i]->getFrame("C"));

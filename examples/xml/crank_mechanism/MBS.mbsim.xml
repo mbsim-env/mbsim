@@ -20,8 +20,8 @@
   </groups>
   <objects>
     <RigidBody name="Crank" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>phi2InitPos</initialGeneralizedPosition> <!-- optional -->
-      <initialGeneralizedVelocity>phi2InitVel</initialGeneralizedVelocity> <!-- optional -->
+      <generalizedInitialPosition>phi2InitPos</generalizedInitialPosition> <!-- optional -->
+      <generalizedInitialVelocity>phi2InitVel</generalizedInitialVelocity> <!-- optional -->
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[B2]"/>
       <mass>m2</mass>
@@ -83,8 +83,8 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="Rocker" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>phi4InitPos</initialGeneralizedPosition> <!-- optional -->
-      <initialGeneralizedVelocity>phi4InitVel</initialGeneralizedVelocity> <!-- optional -->
+      <generalizedInitialPosition>phi4InitPos</generalizedInitialPosition> <!-- optional -->
+      <generalizedInitialVelocity>phi4InitVel</generalizedInitialVelocity> <!-- optional -->
       <frameOfReference ref="../Frame[I2]"/>
       <frameForKinematics ref="Frame[B4]"/>
       <mass>m4</mass>
@@ -128,8 +128,8 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="Coupler" xmlns="http://www.mbsim-env.de/MBSim">
-      <initialGeneralizedPosition>phi43InitPos</initialGeneralizedPosition> <!-- optional -->
-      <initialGeneralizedVelocity>phi43InitVel</initialGeneralizedVelocity> <!-- optional -->
+      <generalizedInitialPosition>phi43InitPos</generalizedInitialPosition> <!-- optional -->
+      <generalizedInitialVelocity>phi43InitVel</generalizedInitialVelocity> <!-- optional -->
       <frameOfReference ref="../Object[Rocker]/Frame[T4]"/>
       <frameForKinematics ref="Frame[B3]"/>
       <mass>m3</mass>
