@@ -120,7 +120,7 @@ namespace MBSimGUI {
       void newProject(bool ask=true);
       void loadProject();
       bool saveProjectAs();
-      bool saveProject(const QString &filename="");
+      bool saveProject(const QString &filename="", bool modifyStatus=true);
       void selectIntegrator();
       void selectDOPRI5Integrator();
       void selectRADAU5Integrator();

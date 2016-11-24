@@ -305,7 +305,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.MBS.mbsimprj.xml");
+    saveProject("./.MBS.mbsimprj.xml",false);
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -653,8 +653,8 @@ namespace MBSimGUI {
     return 0;
   }
 
-  bool MainWindow::saveProject(const QString &fileName) {
-    setProjectChanged(false);
+  bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
+    if(modifyStatus) setProjectChanged(false);
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=writeProject(doc);
     if(ele0) {
