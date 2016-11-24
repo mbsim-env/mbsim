@@ -10,9 +10,9 @@ URL="http://www.mbsim-env.de/mbsim/linux64-dailyrelease"
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 
 
-os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3-local-linux64/lib/pkgconfig:"+ \
+os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig:"+ \
   "/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig"
-os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3-local-linux64/lib"
+os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
 os.environ["CXXFLAGS"]="-g -O2"
 os.environ["CFLAGS"]="-g -O2"
 os.environ["FFLAGS"]="-g -O2"
