@@ -855,7 +855,7 @@ namespace MBSimGUI {
     QString sTask = QString::number(task); 
     string saveName=dss->getName();
     dss->setName("out"+sTask.toStdString());
-    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.xml";
+    QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";
 
     currentTask = task;
 
@@ -878,7 +878,7 @@ namespace MBSimGUI {
   void MainWindow::preprocessFinished(int result) {
     if(result==0) {
       QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-      QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
+      QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.flat.xml";
       QStringList arg;
       if(currentTask==1)
         arg.append("--stopafterfirststep");
@@ -888,8 +888,20 @@ namespace MBSimGUI {
       mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
       mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string().c_str(), arg);
     }
-    else
+    else {
       mbsim->preprocessFailed(mbsimThread->getErrorText());
+      QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Error message"), tr("Model file not valid. Restart in debug mode?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
+      if(ret == QMessageBox::Ok) {
+        QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+        QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
+        saveProject(projectFile);
+        QStringList arg;
+        arg.append("--stopafterfirststep");
+        arg.append(projectFile);
+        mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
+        mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
+      }
+    }
   }
 
   void MainWindow::refresh() {
