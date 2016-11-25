@@ -23,9 +23,9 @@ env=os.environ.copy()
 env['CXXFLAGS']='-O0 -g'
 env['CFLAGS']='-O0 -g'
 env['FFLAGS']='-O0 -g'
-env['PKG_CONFIG_PATH']=SRCDIR+'/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3-local-linux64/lib/pkgconfig:'+\
+env['PKG_CONFIG_PATH']=SRCDIR+'/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig:'+\
                        '/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig'
-env['LD_LIBRARY_PATH']='/home/mbsim/3rdparty/casadi3-local-linux64/lib'
+env['LD_LIBRARY_PATH']='/home/mbsim/3rdparty/casadi3py-local-linux64/lib'
 
 # config files
 configFilename="/home/mbsim/BuildServiceConfig/mbsimBuildService.conf"
