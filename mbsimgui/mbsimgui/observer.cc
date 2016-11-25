@@ -52,13 +52,13 @@ namespace MBSimGUI {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
-    position.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    position.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     position.setXMLName(MBSIM%"enableOpenMBVPosition",false);
 
-    velocity.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     velocity.setXMLName(MBSIM%"enableOpenMBVVelocity",false);
 
-    acceleration.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     acceleration.setXMLName(MBSIM%"enableOpenMBVAcceleration",false);
 
     ombvFrame.setProperty(new OMBVFrameProperty("NOTSET","",getID()));
@@ -94,19 +94,19 @@ namespace MBSimGUI {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
-    position.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    position.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     position.setXMLName(MBSIM%"enableOpenMBVPosition",false);
 
-    velocity.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     velocity.setXMLName(MBSIM%"enableOpenMBVVelocity",false);
 
-    angularVelocity.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    angularVelocity.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     angularVelocity.setXMLName(MBSIM%"enableOpenMBVAngularVelocity",false);
 
-    acceleration.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     acceleration.setXMLName(MBSIM%"enableOpenMBVAcceleration",false);
 
-    angularAcceleration.setProperty(new OMBVArrowProperty("NOTSET","",getID(),true));
+    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
     angularAcceleration.setXMLName(MBSIM%"enableOpenMBVAngularAcceleration",false);
   }
 

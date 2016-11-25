@@ -132,6 +132,35 @@ namespace MBSimGUI {
     layout()->addWidget(xiNodes);
   }
 
+  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const QString &name, bool fromPoint) : MBSOMBVWidget(name) {
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
+    scaleLength = new ExtWidget("Scale length",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(scaleLength);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
+    scaleSize = new ExtWidget("Scale size",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(scaleSize);
+
+    vector<QString> list;
+    list.push_back("toPoint");
+    list.push_back("fromPoint");
+    list.push_back("midPoint");
+    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0),true);
+    if(fromPoint)
+      referencePoint->setChecked(true);
+    layout()->addWidget(referencePoint);
+
+    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+    layout()->addWidget(diffuseColor);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+    transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(transparency);
+  }
+
   OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -169,39 +198,6 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
     maximalColorValue = new ExtWidget("Maximal color value",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(maximalColorValue);
-
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
-    layout->addWidget(diffuseColor);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
-    transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(transparency);
-  }
-
-  OMBVArrowWidget::OMBVArrowWidget(const QString &name, bool fromPoint) : OMBVObjectWidget(name) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-    scaleLength = new ExtWidget("Scale length",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(scaleLength);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-    scaleSize = new ExtWidget("Scale size",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(scaleSize);
-
-    vector<QString> list;
-    list.push_back("toPoint");
-    list.push_back("fromPoint");
-    list.push_back("midPoint");
-    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0),true);
-    if(fromPoint)
-      referencePoint->setChecked(true);
-    layout->addWidget(referencePoint);
 
     diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
     layout->addWidget(diffuseColor);

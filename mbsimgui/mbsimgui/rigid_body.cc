@@ -64,13 +64,13 @@ namespace MBSimGUI {
 
     ombvEditor.setProperty(new OMBVRigidBodySelectionProperty(this));
 
-    weightArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    weightArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     weightArrow.setXMLName(MBSIM%"enableOpenMBVWeight",false);
 
-    jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     jointForceArrow.setXMLName(MBSIM%"enableOpenMBVJointForce",false);
 
-    jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     jointMomentArrow.setXMLName(MBSIM%"enableOpenMBVJointMoment",false);
 
   }

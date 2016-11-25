@@ -279,6 +279,62 @@ namespace MBSimGUI {
     xiNodes.toWidget(static_cast<SpatialContourMBSOMBVWidget*>(widget)->xiNodes);
   }
 
+  ArrowMBSOMBVProperty::ArrowMBSOMBVProperty(const string &name, const FQN &xmlName, const string &ID, bool fromPoint) : MBSOMBVProperty(name,xmlName,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false), diffuseColor(0,false), transparency(0,false) {
+
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleLength"));
+    scaleLength.setProperty(new ExtPhysicalVarProperty(input));
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleSize"));
+    scaleSize.setProperty(new ExtPhysicalVarProperty(input));
+
+    referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", MBSIM%"referencePoint", true));
+    if(fromPoint)
+      referencePoint.setActive(true);
+  }
+
+  DOMElement* ArrowMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
+    if(e) {
+      scaleLength.initializeUsingXML(e);
+      scaleSize.initializeUsingXML(e);
+      referencePoint.initializeUsingXML(e);
+      diffuseColor.initializeUsingXML(e);
+      transparency.initializeUsingXML(e);
+    }
+    return e;
+  }
+
+  DOMElement* ArrowMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+    scaleLength.writeXMLFile(e);
+    scaleSize.writeXMLFile(e);
+    referencePoint.writeXMLFile(e);
+    diffuseColor.writeXMLFile(e);
+    transparency.writeXMLFile(e);
+    writeProperties(e);
+    return e;
+  }
+
+  void ArrowMBSOMBVProperty::fromWidget(QWidget *widget) {
+    MBSOMBVProperty::fromWidget(widget);
+    scaleLength.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleLength);
+    scaleSize.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleSize);
+    referencePoint.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->referencePoint);
+    diffuseColor.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->diffuseColor);
+    transparency.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->transparency);
+  }
+
+  void ArrowMBSOMBVProperty::toWidget(QWidget *widget) {
+    MBSOMBVProperty::toWidget(widget);
+    scaleLength.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleLength);
+    scaleSize.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleSize);
+    referencePoint.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->referencePoint);
+    diffuseColor.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->diffuseColor);
+    transparency.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->transparency);
+  }
+
   OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), transparency(0,false), xmlName(xmlName_) {
 
     vector<PhysicalVariableProperty> input;
@@ -389,79 +445,6 @@ namespace MBSimGUI {
     maximalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
     diffuseColor.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
     transparency.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
-  }
-
-  OMBVArrowProperty::OMBVArrowProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID, bool fromPoint) : OMBVObjectProperty(name,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false), diffuseColor(0,false), transparency(0,false), xmlName(xmlName_) {
-
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleLength"));
-    scaleLength.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleSize"));
-    scaleSize.setProperty(new ExtPhysicalVarProperty(input));
-
-    referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", MBSIM%"referencePoint", true));
-    if(fromPoint)
-      referencePoint.setActive(true);
-
-    diffuseColor.setProperty(new ColorProperty(MBSIM%"diffuseColor"));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", MBSIM%"transparency"));
-    transparency.setProperty(new ExtPhysicalVarProperty(input));
-  }
-
-  DOMElement* OMBVArrowProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
-    if(e) {
-      scaleLength.initializeUsingXML(e);
-      scaleSize.initializeUsingXML(e);
-      referencePoint.initializeUsingXML(e);
-      diffuseColor.initializeUsingXML(e);
-      transparency.initializeUsingXML(e);
-    }
-    return e;
-  }
-
-  DOMElement* OMBVArrowProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    if(xmlName!=FQN()) {
-      DOMElement *e=D(doc)->createElement(xmlName);
-      writeXMLFileID(e);
-      parent->insertBefore(e, NULL);
-      scaleLength.writeXMLFile(e);
-      scaleSize.writeXMLFile(e);
-      referencePoint.writeXMLFile(e);
-      diffuseColor.writeXMLFile(e);
-      transparency.writeXMLFile(e);
-      return e;
-    }
-    else {
-      writeXMLFileID(parent);
-      scaleLength.writeXMLFile(parent);
-      scaleSize.writeXMLFile(parent);
-      referencePoint.writeXMLFile(parent);
-      diffuseColor.writeXMLFile(parent);
-      transparency.writeXMLFile(parent);
-      return 0;
-    }
-  }
-
-  void OMBVArrowProperty::fromWidget(QWidget *widget) {
-    scaleLength.fromWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
-    scaleSize.fromWidget(static_cast<OMBVArrowWidget*>(widget)->scaleSize);
-    referencePoint.fromWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
-    diffuseColor.fromWidget(static_cast<OMBVArrowWidget*>(widget)->diffuseColor);
-    transparency.fromWidget(static_cast<OMBVArrowWidget*>(widget)->transparency);
-  }
-
-  void OMBVArrowProperty::toWidget(QWidget *widget) {
-    scaleLength.toWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
-    scaleSize.toWidget(static_cast<OMBVArrowWidget*>(widget)->scaleSize);
-    referencePoint.toWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
-    diffuseColor.toWidget(static_cast<OMBVArrowWidget*>(widget)->diffuseColor);
-    transparency.toWidget(static_cast<OMBVArrowWidget*>(widget)->transparency);
   }
 
   OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), type(0,false), numberOfCoils(0,false), springRadius(0,false), crossSectionRadius(0,false), nominalLength(0,false), diffuseColor(0,false), transparency(0,false), xmlName(xmlName_) {

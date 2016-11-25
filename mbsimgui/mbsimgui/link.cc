@@ -46,7 +46,7 @@ namespace MBSimGUI {
 
     connections.setProperty(new ConnectFramesProperty(2,this));
 
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
   }
 
@@ -75,10 +75,10 @@ namespace MBSimGUI {
 
     refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
 
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
@@ -108,10 +108,10 @@ namespace MBSimGUI {
   RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent), support(0,false), forceArrow(0,false), momentArrow(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
 
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 

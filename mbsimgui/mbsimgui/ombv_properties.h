@@ -133,6 +133,19 @@ namespace MBSimGUI {
       ExtProperty etaNodes, xiNodes;
   };
 
+  class ArrowMBSOMBVProperty : public MBSOMBVProperty {
+
+    public:
+      ArrowMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID, bool fromPoint=false);
+      virtual PropertyInterface* clone() const {return new ArrowMBSOMBVProperty(*this);}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty scaleLength, scaleSize, referencePoint, diffuseColor, transparency;
+  };
+
   class OMBVFrameProperty : public OMBVObjectProperty {
 
     public:
@@ -159,21 +172,6 @@ namespace MBSimGUI {
     protected:
       ExtProperty minimalColorValue, maximalColorValue, diffuseColor, transparency;
       bool readXMLType;
-  };
-
-  class OMBVArrowProperty : public OMBVObjectProperty {
-
-    public:
-      OMBVArrowProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID, bool fromPoint=false);
-      virtual PropertyInterface* clone() const {return new OMBVArrowProperty(*this);}
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
-      virtual std::string getType() const { return "Arrow"; }
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-    protected:
-      ExtProperty scaleLength, scaleSize, referencePoint, diffuseColor, transparency;
-      MBXMLUtils::FQN xmlName;
   };
 
   class OMBVCoilSpringProperty : public OMBVObjectProperty {

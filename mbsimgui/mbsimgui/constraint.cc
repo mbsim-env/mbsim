@@ -56,10 +56,10 @@ namespace MBSimGUI {
   GeneralizedConstraint::GeneralizedConstraint(const string &str, Element *parent) : Constraint(str, parent), support(0,false), forceArrow(0,false), momentArrow(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
 
-    forceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     forceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-    momentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     momentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 
@@ -250,10 +250,10 @@ namespace MBSimGUI {
     input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIM%"initialGuess"));
     q0.setProperty(new ExtPhysicalVarProperty(input));
 
-    jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     jointForceArrow.setXMLName(MBSIM%"enableOpenMBVForce",false);
 
-    jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     jointMomentArrow.setXMLName(MBSIM%"enableOpenMBVMoment",false);
   }
 

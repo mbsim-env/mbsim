@@ -48,10 +48,10 @@ namespace MBSimGUI {
 
     enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
-    normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     normalForceArrow.setXMLName(MBSIM%"enableOpenMBVNormalForce",false);
 
-    frictionArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
+    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
     frictionArrow.setXMLName(MBSIM%"enableOpenMBVTangentialForce",false);
   }
 

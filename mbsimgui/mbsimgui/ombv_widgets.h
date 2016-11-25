@@ -111,6 +111,17 @@ namespace MBSimGUI {
     ExtWidget *etaNodes, *xiNodes;
   };
 
+  class ArrowMBSOMBVWidget : public MBSOMBVWidget {
+
+    friend class ArrowMBSOMBVProperty;
+
+    public:
+    ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false);
+    protected:
+    ExtWidget *scaleLength, *scaleSize, *referencePoint, *diffuseColor, *transparency;
+  };
+
+
   class OMBVFrameWidget : public OMBVObjectWidget {
 
     friend class OMBVFrameProperty;
@@ -130,16 +141,6 @@ namespace MBSimGUI {
     protected:
     QVBoxLayout *layout;
     ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
-  };
-
-  class OMBVArrowWidget : public OMBVObjectWidget {
-
-    friend class OMBVArrowProperty;
-
-    public:
-    OMBVArrowWidget(const QString &name="NOTSET", bool fromPoint=false);
-    protected:
-    ExtWidget *scaleLength, *scaleSize, *referencePoint, *diffuseColor, *transparency;
   };
 
   class OMBVCoilSpringWidget : public OMBVObjectWidget {
