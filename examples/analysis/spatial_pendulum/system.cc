@@ -50,8 +50,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0(2), u0(2);
   q0(1) = theta0/180*M_PI;
   u0(0) = psid;
-  body->setInitialGeneralizedPosition(q0);
-  body->setInitialGeneralizedVelocity(u0);
+  body->setGeneralizedInitialPosition(q0);
+  body->setGeneralizedInitialVelocity(u0);
 
   std::shared_ptr<OpenMBV::Sphere> sphere=OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
   sphere->setRadius(0.1);
