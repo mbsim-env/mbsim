@@ -91,12 +91,6 @@ namespace MBSim {
       "unknownStage",
     };
 
-#ifdef HAVE_ANSICSIGNAL
-    signal(SIGINT, sigInterruptHandler);
-    signal(SIGTERM, sigInterruptHandler);
-    signal(SIGABRT, sigAbortHandler);
-    signal(SIGSEGV, sigSegfaultHandler);
-#endif
     for (int stage = 0; stage < LASTINITSTAGE; stage++) {
       msg(Info) << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
       init((InitStage) stage);
@@ -1277,6 +1271,15 @@ namespace MBSim {
     contactDrop << "Lagrange multipliers la" << endl << la << endl << endl;
     contactDrop << "Lagrange multipliers La" << endl << La << endl << endl;
     contactDrop.close();
+  }
+
+  void DynamicSystemSolver::installSignalHandler() {
+#ifdef HAVE_ANSICSIGNAL
+    signal(SIGINT, sigInterruptHandler);
+    signal(SIGTERM, sigInterruptHandler);
+    signal(SIGABRT, sigAbortHandler);
+    signal(SIGSEGV, sigSegfaultHandler);
+#endif
   }
 
   void DynamicSystemSolver::sigInterruptHandler(int) {
