@@ -52,17 +52,13 @@ namespace MBSimGUI {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
-    position.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    position.setXMLName(MBSIM%"enableOpenMBVPosition",false);
+    position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
 
-    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    velocity.setXMLName(MBSIM%"enableOpenMBVVelocity",false);
+    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVVelocity",getID(),true));
 
-    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    acceleration.setXMLName(MBSIM%"enableOpenMBVAcceleration",false);
+    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
 
-    ombvFrame.setProperty(new OMBVFrameProperty("NOTSET","",getID()));
-    ombvFrame.setXMLName(MBSIM%"enableOpenMBVFrame",false);
+    ombvFrame.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVFrame",getID()));
   }
 
   void CoordinatesObserver::initialize() {
@@ -94,20 +90,15 @@ namespace MBSimGUI {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
 
-    position.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    position.setXMLName(MBSIM%"enableOpenMBVPosition",false);
+    position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
 
-    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    velocity.setXMLName(MBSIM%"enableOpenMBVVelocity",false);
+    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVVelocity",getID(),true));
 
-    angularVelocity.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    angularVelocity.setXMLName(MBSIM%"enableOpenMBVAngularVelocity",false);
+    angularVelocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularVelocity",getID(),true));
 
-    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    acceleration.setXMLName(MBSIM%"enableOpenMBVAcceleration",false);
+    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
 
-    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID(),true));
-    angularAcceleration.setXMLName(MBSIM%"enableOpenMBVAngularAcceleration",false);
+    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
   }
 
   void KinematicsObserver::initialize() {

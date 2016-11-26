@@ -151,14 +151,6 @@ namespace MBSimGUI {
     if(fromPoint)
       referencePoint->setChecked(true);
     layout()->addWidget(referencePoint);
-
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
-    layout()->addWidget(diffuseColor);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
-    transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
-    layout()->addWidget(transparency);
   }
 
   OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {

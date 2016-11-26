@@ -143,7 +143,7 @@ namespace MBSimGUI {
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
     protected:
-      ExtProperty scaleLength, scaleSize, referencePoint, diffuseColor, transparency;
+      ExtProperty scaleLength, scaleSize, referencePoint;
   };
 
   class OMBVFrameProperty : public OMBVObjectProperty {

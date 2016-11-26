@@ -118,7 +118,7 @@ namespace MBSimGUI {
     public:
     ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false);
     protected:
-    ExtWidget *scaleLength, *scaleSize, *referencePoint, *diffuseColor, *transparency;
+    ExtWidget *scaleLength, *scaleSize, *referencePoint;
   };
 
 
