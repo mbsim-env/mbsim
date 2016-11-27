@@ -77,6 +77,12 @@
                       </dl>
                     </xs:documentation></xs:annotation>
                   </xs:attribute>
+                  <xs:attribute name="global" type="xs:boolean" use="optional" default="false">
+                    <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+                      If set to true the library is loaded, on Linux, with the RTDL_GLOBAL flag.
+                      On Windows this has no effect.
+                    </xs:documentation></xs:annotation>
+                  </xs:attribute>
                 </xs:complexType> 
               </xs:element>
               <xs:element name="PythonModule">
