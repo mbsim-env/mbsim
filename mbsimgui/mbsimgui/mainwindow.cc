@@ -309,27 +309,45 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    if(currentTask==1) {
-      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
-      QModelIndex index = elementList->selectionModel()->currentIndex();
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
+    static bool debug = true;
+    QMessageBox::StandardButton ret = QMessageBox::Cancel;
+    if(debug and (exitStatus!=QProcess::NormalExit or exitCode!=0)) {
+      ret = QMessageBox::warning(this, tr("Error message"), tr("Model file not valid. Restart in debug mode?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
     }
-    else if(autoExport) {
-      saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
-      saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
-      saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
-      if(saveFinalStateVector)
-        saveStateVector(autoExportDir+"/statevector.asc");
+    if(ret == QMessageBox::Ok) {
+      QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+      QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
+      saveProject(projectFile);
+      QStringList arg;
+      arg.append("--stopafterfirststep");
+      arg.append(projectFile);
+      mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
+      debug = false;
+      mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
+    } else {
+      if(currentTask==1) {
+        debug = true;
+        inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+        QModelIndex index = elementList->selectionModel()->currentIndex();
+        ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+        Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+        if(element)
+          highlightObject(element->getID());
+      }
+      else if(autoExport) {
+        saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
+        saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
+        saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
+        if(saveFinalStateVector)
+          saveStateVector(autoExportDir+"/statevector.asc");
+      }
+      actionSimulate->setDisabled(false);
+      actionOpenMBV->setDisabled(false);
+      actionH5plotserie->setDisabled(false);
+      actionEigenanalysis->setDisabled(false);
+      actionRefresh->setDisabled(false);
+      statusBar()->showMessage(tr("Ready"));
     }
-    actionSimulate->setDisabled(false);
-    actionOpenMBV->setDisabled(false);
-    actionH5plotserie->setDisabled(false);
-    actionEigenanalysis->setDisabled(false);
-    actionRefresh->setDisabled(false);
-    statusBar()->showMessage(tr("Ready"));
   }
 
   void MainWindow::initInlineOpenMBV() {
