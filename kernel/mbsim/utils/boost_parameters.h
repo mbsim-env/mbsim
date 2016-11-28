@@ -51,6 +51,8 @@ namespace MBSim {
   BOOST_PARAMETER_NAME(nodes)
   BOOST_PARAMETER_NAME(etaNodes)
   BOOST_PARAMETER_NAME(xiNodes)
+  BOOST_PARAMETER_NAME(minimalColorValue)
+  BOOST_PARAMETER_NAME(maximalColorValue)
 
 }
 

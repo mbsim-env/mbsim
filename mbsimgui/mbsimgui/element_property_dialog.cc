@@ -1450,7 +1450,7 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+    coilSpring = new ExtWidget("OpenMBV coil spring",new CoilSpringMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", coilSpring);
   }
 
@@ -1481,7 +1481,7 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+    coilSpring = new ExtWidget("OpenMBV coil spring",new CoilSpringMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", coilSpring);
   }
 

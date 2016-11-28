@@ -30,8 +30,6 @@
 namespace MBSim {
   class Frame;
   BOOST_PARAMETER_NAME(indices)
-  BOOST_PARAMETER_NAME(minimalColorValue)
-  BOOST_PARAMETER_NAME(maximalColorValue)
 }
 
 namespace MBSimFlexibleBody {

@@ -55,9 +55,9 @@ namespace MBSim {
     protected:
       OpenMBV::Arrow::Type type;
       OpenMBV::Arrow::ReferencePoint refPoint;
-      double sL, sS;
+      double sL, sS, minCol, maxCol;
     public:
-      OpenMBVArrow(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, double sL_=1, double sS_=1) : OpenMBVDynamicColoredBody(dc,tp), type(type_), refPoint(refPoint_), sL(sL_), sS(sS_) { }
+      OpenMBVArrow(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, double sL_=1, double sS_=1, double minCol_=0, double maxCol_=1) : OpenMBVDynamicColoredBody(dc,tp), type(type_), refPoint(refPoint_), sL(sL_), sS(sS_), minCol(minCol_), maxCol(maxCol_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       void initializeObject(const std::shared_ptr<OpenMBV::Arrow> &object);
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV(xercesc::DOMElement* e=0);
@@ -146,10 +146,10 @@ namespace MBSim {
 
   class OpenMBVCoilSpring : public OpenMBVDynamicColoredBody {
     protected:
-      double r, cr, sf, n, l;
+      double r, cr, sf, n, l, minCol, maxCol;
       OpenMBV::CoilSpring::Type type;
     public:
-      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0) : OpenMBVDynamicColoredBody(dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) { }
+      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBV::CoilSpring::Type type_=OpenMBV::CoilSpring::tube, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double minCol_=0, double maxCol_=1) : OpenMBVDynamicColoredBody(dc,tp), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), minCol(minCol_), maxCol(maxCol_), type(type_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       void initializeObject(const std::shared_ptr<OpenMBV::CoilSpring> &object);
       std::shared_ptr<OpenMBV::CoilSpring> createOpenMBV(xercesc::DOMElement* e=0);
@@ -162,6 +162,5 @@ namespace MBSim {
   };
 
 }
-
 
 #endif

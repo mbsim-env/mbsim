@@ -279,7 +279,7 @@ namespace MBSimGUI {
     xiNodes.toWidget(static_cast<SpatialContourMBSOMBVWidget*>(widget)->xiNodes);
   }
 
-  ArrowMBSOMBVProperty::ArrowMBSOMBVProperty(const string &name, const FQN &xmlName, const string &ID, bool fromPoint) : MBSOMBVProperty(name,xmlName,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false) {
+  ArrowMBSOMBVProperty::ArrowMBSOMBVProperty(const string &name, const FQN &xmlName, const string &ID, bool fromPoint) : MBSOMBVProperty(name,xmlName,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false), minCol(0,false), maxCol(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleLength"));
@@ -292,6 +292,9 @@ namespace MBSimGUI {
     referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", MBSIM%"referencePoint", true));
     if(fromPoint)
       referencePoint.setActive(true);
+
+    minCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"minimalColorValue",vector<string>(2,"-")),"",4));
+    maxCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"maximalColorValue",vector<string>(2,"-")),"",4));
   }
 
   DOMElement* ArrowMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
@@ -300,6 +303,8 @@ namespace MBSimGUI {
       scaleLength.initializeUsingXML(e);
       scaleSize.initializeUsingXML(e);
       referencePoint.initializeUsingXML(e);
+      minCol.initializeUsingXML(e);
+      maxCol.initializeUsingXML(e);
     }
     return e;
   }
@@ -309,6 +314,8 @@ namespace MBSimGUI {
     scaleLength.writeXMLFile(e);
     scaleSize.writeXMLFile(e);
     referencePoint.writeXMLFile(e);
+    minCol.writeXMLFile(e);
+    maxCol.writeXMLFile(e);
     writeProperties(e);
     return e;
   }
@@ -318,6 +325,8 @@ namespace MBSimGUI {
     scaleLength.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleLength);
     scaleSize.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleSize);
     referencePoint.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->referencePoint);
+    minCol.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->minCol);
+    maxCol.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->maxCol);
   }
 
   void ArrowMBSOMBVProperty::toWidget(QWidget *widget) {
@@ -325,6 +334,81 @@ namespace MBSimGUI {
     scaleLength.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleLength);
     scaleSize.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleSize);
     referencePoint.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->referencePoint);
+    minCol.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->minCol);
+    maxCol.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->maxCol);
+  }
+
+  CoilSpringMBSOMBVProperty::CoilSpringMBSOMBVProperty(const string &name, const FQN &xmlName, const string &ID) : MBSOMBVProperty(name,xmlName,ID), type(0,false), numberOfCoils(0,false), springRadius(0,false), crossSectionRadius(0,false), nominalLength(0,false), minCol(0,false), maxCol(0,false) {
+
+    vector<PhysicalVariableProperty> input;
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "", MBSIM%"numberOfCoils"));
+    numberOfCoils.setProperty(new ExtPhysicalVarProperty(input));
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"springRadius"));
+    springRadius.setProperty(new ExtPhysicalVarProperty(input));
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", MBSIM%"crossSectionRadius"));
+    crossSectionRadius.setProperty(new ExtPhysicalVarProperty(input));
+
+    input.clear();
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", MBSIM%"nominalLength"));
+    nominalLength.setProperty(new ExtPhysicalVarProperty(input));
+
+    type.setProperty(new TextProperty("tube", MBSIM%"type", true));
+
+    minCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"minimalColorValue",vector<string>(2,"-")),"",4));
+    maxCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"maximalColorValue",vector<string>(2,"-")),"",4));
+  }
+
+  DOMElement* CoilSpringMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVProperty::initializeUsingXML(element);
+    if(e) {
+      numberOfCoils.initializeUsingXML(e);
+      springRadius.initializeUsingXML(e);
+      crossSectionRadius.initializeUsingXML(e);
+      nominalLength.initializeUsingXML(e);
+      type.initializeUsingXML(e);
+      minCol.initializeUsingXML(e);
+      maxCol.initializeUsingXML(e);
+    }
+    return e;
+  }
+
+  DOMElement* CoilSpringMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
+    DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
+    numberOfCoils.writeXMLFile(e);
+    springRadius.writeXMLFile(e);
+    crossSectionRadius.writeXMLFile(e);
+    nominalLength.writeXMLFile(e);
+    type.writeXMLFile(e);
+    minCol.writeXMLFile(e);
+    maxCol.writeXMLFile(e);
+    writeProperties(e);
+    return e;
+  }
+
+  void CoilSpringMBSOMBVProperty::fromWidget(QWidget *widget) {
+    MBSOMBVProperty::fromWidget(widget);
+    type.fromWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->type);
+    numberOfCoils.fromWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->numberOfCoils);
+    springRadius.fromWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->springRadius);
+    crossSectionRadius.fromWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->crossSectionRadius);
+    nominalLength.fromWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->nominalLength);
+    minCol.fromWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->minCol);
+    maxCol.fromWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->maxCol);
+  }
+
+  void CoilSpringMBSOMBVProperty::toWidget(QWidget *widget) {
+    MBSOMBVProperty::toWidget(widget);
+    type.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->type);
+    numberOfCoils.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->numberOfCoils);
+    springRadius.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->springRadius);
+    crossSectionRadius.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->crossSectionRadius);
+    nominalLength.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->nominalLength);
+    minCol.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->minCol);
+    maxCol.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->maxCol);
   }
 
   OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), transparency(0,false), xmlName(xmlName_) {
@@ -437,94 +521,6 @@ namespace MBSimGUI {
     maximalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
     diffuseColor.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
     transparency.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
-  }
-
-  OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name, const MBXMLUtils::FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), type(0,false), numberOfCoils(0,false), springRadius(0,false), crossSectionRadius(0,false), nominalLength(0,false), diffuseColor(0,false), transparency(0,false), xmlName(xmlName_) {
-
-    vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("3"), "", MBSIM%"numberOfCoils"));
-    numberOfCoils.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"springRadius"));
-    springRadius.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", MBSIM%"crossSectionRadius"));
-    crossSectionRadius.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("-1"), "m", MBSIM%"nominalLength"));
-    nominalLength.setProperty(new ExtPhysicalVarProperty(input));
-
-    type.setProperty(new TextProperty("tube", MBSIM%"type", true));
-
-    diffuseColor.setProperty(new ColorProperty(MBSIM%"diffuseColor"));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", MBSIM%"transparency"));
-    transparency.setProperty(new ExtPhysicalVarProperty(input));
-  }
-
-  DOMElement* OMBVCoilSpringProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
-    if(e) {
-      numberOfCoils.initializeUsingXML(e);
-      springRadius.initializeUsingXML(e);
-      crossSectionRadius.initializeUsingXML(e);
-      nominalLength.initializeUsingXML(e);
-      type.initializeUsingXML(e);
-      diffuseColor.initializeUsingXML(e);
-      transparency.initializeUsingXML(e);
-    }
-    return e;
-  }
-
-  DOMElement* OMBVCoilSpringProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    if(xmlName!=FQN()) {
-      DOMElement *e=D(doc)->createElement(xmlName);
-      writeXMLFileID(e);
-      parent->insertBefore(e, NULL);
-      numberOfCoils.writeXMLFile(e);
-      springRadius.writeXMLFile(e);
-      crossSectionRadius.writeXMLFile(e);
-      nominalLength.writeXMLFile(e);
-      type.writeXMLFile(e);
-      diffuseColor.writeXMLFile(e);
-      transparency.writeXMLFile(e);
-      return e;
-    } else {
-      writeXMLFileID(parent);
-      numberOfCoils.writeXMLFile(parent);
-      springRadius.writeXMLFile(parent);
-      crossSectionRadius.writeXMLFile(parent);
-      nominalLength.writeXMLFile(parent);
-      type.writeXMLFile(parent);
-      diffuseColor.writeXMLFile(parent);
-      transparency.writeXMLFile(parent);
-      return 0;
-    }
-  }
-
-  void OMBVCoilSpringProperty::fromWidget(QWidget *widget) {
-    type.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->type);
-    numberOfCoils.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->numberOfCoils);
-    springRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
-    crossSectionRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
-    nominalLength.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
-    diffuseColor.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->diffuseColor);
-    transparency.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->transparency);
-  }
-
-  void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
-    type.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->type);
-    numberOfCoils.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->numberOfCoils);
-    springRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
-    crossSectionRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
-    nominalLength.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
-    diffuseColor.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->diffuseColor);
-    transparency.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->transparency);
   }
 
   OMBVRigidBodyProperty::OMBVRigidBodyProperty(const string &name, const std::string &ID) : OMBVDynamicColoredObjectProperty(name,ID) {
@@ -860,8 +856,8 @@ namespace MBSimGUI {
   FlexibleBodyFFRMBSOMBVProperty::FlexibleBodyFFRMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), nodes(0,false), indices(0,false) {
     nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(1,MBSIMFLEX%"nodes",vector<string>(3,"")),"",4));
     indices.setProperty(new ChoiceProperty2(new VecPropertyFactory(1,MBSIMFLEX%"indices",vector<string>(3,"")),"",4));
-    minCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMFLEX%"minimalColorValue"),"",4));
-    maxCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"maximalColorValue"),"",4));
+    minCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIMFLEX%"minimalColorValue",vector<string>(2,"-")),"",4));
+    maxCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"maximalColorValue",vector<string>(2,"-")),"",4));
   }
 
   DOMElement* FlexibleBodyFFRMBSOMBVProperty::initializeUsingXML(DOMElement *element) {

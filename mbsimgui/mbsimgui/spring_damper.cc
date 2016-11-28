@@ -37,8 +37,7 @@ namespace MBSimGUI {
 
     unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"unloadedLength",vector<string>(2,"m")),"",4));
 
-    coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
-    coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
+    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
   }
 
   DOMElement* SpringDamper::initializeUsingXML(DOMElement *element) {
@@ -67,8 +66,7 @@ namespace MBSimGUI {
 
     unloadedLength.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"unloadedLength",vector<string>(2,"m")),"",4));
 
-    coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET","",getID()));
-    coilSpring.setXMLName(MBSIM%"enableOpenMBVCoilSpring",false);
+    coilSpring.setProperty(new CoilSpringMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCoilSpring",getID()));
   }
 
   DOMElement* DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {

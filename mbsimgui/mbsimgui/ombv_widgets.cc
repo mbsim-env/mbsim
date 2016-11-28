@@ -151,6 +151,45 @@ namespace MBSimGUI {
     if(fromPoint)
       referencePoint->setChecked(true);
     layout()->addWidget(referencePoint);
+
+    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
+    layout()->addWidget(minCol);
+    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
+    layout()->addWidget(maxCol);
+  }
+
+  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("3"), QStringList(), 1));
+    numberOfCoils= new ExtWidget("Number of coils",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(numberOfCoils);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
+    springRadius= new ExtWidget("Spring radius",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(springRadius);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("-1"), lengthUnits(), 4));
+    crossSectionRadius = new ExtWidget("Cross section radius",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(crossSectionRadius);
+
+    input.clear();
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("-1"), lengthUnits(), 4));
+    nominalLength= new ExtWidget("Nominal length",new ExtPhysicalVarWidget(input),true);
+    layout()->addWidget(nominalLength);
+
+    vector<QString> list;
+    list.push_back("tube");
+    list.push_back("scaledTube");
+    list.push_back("polyline");
+    type = new ExtWidget("Type",new TextChoiceWidget(list,0),true);
+    layout()->addWidget(type);
+
+    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
+    layout()->addWidget(minCol);
+    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
+    layout()->addWidget(maxCol);
   }
 
   OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
@@ -190,47 +229,6 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
     maximalColorValue = new ExtWidget("Maximal color value",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(maximalColorValue);
-
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
-    layout->addWidget(diffuseColor);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
-    transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(transparency);
-  }
-
-  OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidget(name) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("3"), QStringList(), 1));
-    numberOfCoils= new ExtWidget("Number of coils",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(numberOfCoils);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    springRadius= new ExtWidget("Spring radius",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(springRadius);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("-1"), lengthUnits(), 4));
-    crossSectionRadius = new ExtWidget("Cross section radius",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(crossSectionRadius);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("-1"), lengthUnits(), 4));
-    nominalLength= new ExtWidget("Nominal length",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(nominalLength);
-
-    vector<QString> list;
-    list.push_back("tube");
-    list.push_back("scaledTube");
-    list.push_back("polyline");
-    type = new ExtWidget("Type",new TextChoiceWidget(list,0),true);
-    layout->addWidget(type);
 
     diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
     layout->addWidget(diffuseColor);
@@ -364,9 +362,9 @@ namespace MBSimGUI {
   }
 
   FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
     layout()->addWidget(minCol);
-    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
     layout()->addWidget(maxCol);
     nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
     layout()->addWidget(nodes);

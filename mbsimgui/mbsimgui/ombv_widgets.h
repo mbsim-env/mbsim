@@ -118,9 +118,18 @@ namespace MBSimGUI {
     public:
     ArrowMBSOMBVWidget(const QString &name="NOTSET", bool fromPoint=false);
     protected:
-    ExtWidget *scaleLength, *scaleSize, *referencePoint;
+    ExtWidget *scaleLength, *scaleSize, *referencePoint, *minCol, *maxCol;
   };
 
+  class CoilSpringMBSOMBVWidget : public MBSOMBVWidget {
+
+    friend class CoilSpringMBSOMBVProperty;
+
+    public:
+    CoilSpringMBSOMBVWidget(const QString &name="NOTSET");
+    protected:
+    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *minCol, *maxCol;
+  };
 
   class OMBVFrameWidget : public OMBVObjectWidget {
 
@@ -141,16 +150,6 @@ namespace MBSimGUI {
     protected:
     QVBoxLayout *layout;
     ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
-  };
-
-  class OMBVCoilSpringWidget : public OMBVObjectWidget {
-
-    friend class OMBVCoilSpringProperty;
-
-    public:
-    OMBVCoilSpringWidget(const QString &name="NOTSET");
-    protected:
-    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *diffuseColor, *transparency;
   };
 
   class OMBVRigidBodyWidget : public OMBVDynamicColoredObjectWidget {
