@@ -64,15 +64,11 @@ namespace MBSimGUI {
 
     ombvEditor.setProperty(new OMBVRigidBodySelectionProperty(this));
 
-    weightArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
-    weightArrow.setXMLName(MBSIM%"enableOpenMBVWeight",false);
+    weightArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVWeight",getID()));
 
-    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
-    jointForceArrow.setXMLName(MBSIM%"enableOpenMBVJointForce",false);
+    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointForce",getID()));
 
-    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET","",getID()));
-    jointMomentArrow.setXMLName(MBSIM%"enableOpenMBVJointMoment",false);
-
+    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointMoment",getID()));
   }
 
   int RigidBody::getqRelSize() const {
