@@ -71,7 +71,7 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), evalSelect(0,false) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true), evalSelect(0,false) {
     // use html output of MBXMLUtils
     putenv(const_cast<char*>("MBXMLUTILS_HTMLOUTPUT=1"));
 
@@ -309,7 +309,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    static bool debug = true;
     QMessageBox::StandardButton ret = QMessageBox::Cancel;
     if(debug and (exitStatus!=QProcess::NormalExit or exitCode!=0)) {
       ret = QMessageBox::warning(this, tr("Error message"), tr("Model file not valid. Restart in debug mode?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
@@ -326,7 +325,6 @@ namespace MBSimGUI {
       mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
     } else {
       if(currentTask==1) {
-        debug = true;
         inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
         QModelIndex index = elementList->selectionModel()->currentIndex();
         ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
@@ -863,6 +861,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
+    debug = true;
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
     DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
@@ -917,6 +916,7 @@ namespace MBSimGUI {
         arg.append("--stopafterfirststep");
         arg.append(projectFile);
         mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
+        debug = false;
         mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
       }
     }
