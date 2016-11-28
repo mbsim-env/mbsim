@@ -90,6 +90,7 @@ namespace MBSimFMI {
 
     // init state vector size (just to be usable before initialize is called)
     z.get().resize(boost::lexical_cast<size_t>(E(doc->getDocumentElement())->getAttribute("numberOfContinuousStates")));
+    svLast.resize(boost::lexical_cast<size_t>(E(doc->getDocumentElement())->getAttribute("numberOfEventIndicators")));
 
     // add all predefined parameters
     addPredefinedParameters(var, predefinedParameterStruct, true);
@@ -230,6 +231,8 @@ namespace MBSimFMI {
 
     // add model parmeters to varSim and create the DynamicSystemSolver (set the dss varaible)
     addModelParametersAndCreateDSS(varSim);
+    int zDim = z.get().size();
+    int svDim = svLast.size();
     dss->setTime(time);
     time=std::ref(dss->getTime());
     z=std::ref(dss->getState());
@@ -253,26 +256,40 @@ namespace MBSimFMI {
 
     // Till now (between fmiInstantiateModel and fmiInitialize) we have only used objects of type VariableStore's in var.
     // Now we copy all values from var to varSim (varSim is generated above).
+
+    /***** first check for interface changes (and copy variable values) *****/
+
+    if(zDim!=dss->getzSize())
+      throw runtime_error("The number of continuous states in modelDescription.xml and the current model differ: "+
+                          to_string(zDim)+", "+to_string(dss->getzSize())+". "+
+                          "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
+     
+    if(svDim!=dss->getsvSize())
+      throw runtime_error("The number of event indicators in modelDescription.xml and the current model differ: "+
+                          to_string(svDim)+", "+to_string(dss->getsvSize())+". "+
+                          "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
+
     if(var.size()!=varSim.size())
-      throw runtime_error("The number of parameters from modelDescription.xml and model differ: "
+      throw runtime_error("The number of parameters in modelDescription.xml and the current model differ: "
                           +to_string(var.size())+", "+to_string(varSim.size())+". "+
                           "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
+
     vector<shared_ptr<Variable> >::iterator varSimIt=varSim.begin();
     size_t vr=0;
     for(vector<shared_ptr<Variable> >::iterator varIt=var.begin(); varIt!=var.end(); ++varIt, ++varSimIt, ++vr) {
       try {
         // check for a change of the model topologie
         if((*varSimIt)->getName()!=(*varIt)->getName())
-          throw runtime_error("Variable names from modelDescription.xml and model does not match: "
+          throw runtime_error("Variable names in modelDescription.xml and the current model does not match: "
                               +(*varIt)->getName()+", "+(*varSimIt)->getName()+". "+
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getType()!=(*varIt)->getType())
-          throw runtime_error("Variable type (parameter, input, output) from modelDescription.xml and model does not match: "
+          throw runtime_error("Variable type (parameter, input, output) in modelDescription.xml and the current model does not match: "
                               +to_string((*varIt)->getType())+", "
                               +to_string((*varSimIt)->getType())+". "+
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         if((*varSimIt)->getDatatypeChar()!=(*varIt)->getDatatypeChar())
-          throw runtime_error(string("Variable datatype from modelDescription.xml and model does not match: ")
+          throw runtime_error(string("Variable datatype in modelDescription.xml and the current model does not match: ")
                               +(*varIt)->getDatatypeChar()+", "+(*varSimIt)->getDatatypeChar()+". "+
                               "Maybe the model topologie has changed due to a parameter change but this is not allowed.");
         // copy variable values
@@ -288,6 +305,9 @@ namespace MBSimFMI {
       }
       RETHROW_VR(vr)
     }
+
+    /***** now use the new variables *****/
+
     // var is now no longer needed since we use varSim now.
     var=varSim;
 
