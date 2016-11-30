@@ -68,10 +68,6 @@ namespace MBSim {
       if(rP=="fromPoint") refPoint=OpenMBV::Arrow::fromPoint;
       if(rP=="midPoint")  refPoint=OpenMBV::Arrow::midPoint;
     }
-    ee = E(e)->getFirstElementChildNamed(MBSIM%"minimalColorValue");
-    if(ee) minCol = Element::getDouble(ee);
-    ee = E(e)->getFirstElementChildNamed(MBSIM%"maximalColorValue");
-    if(ee) maxCol = Element::getDouble(ee);
   }
 
   shared_ptr<OpenMBV::Arrow> OpenMBVArrow::createOpenMBV(DOMElement *e) {
@@ -89,8 +85,6 @@ namespace MBSim {
     object->setType(type);
     object->setReferencePoint(refPoint);
     object->setScaleLength(sL);
-    object->setMinimalColorValue(minCol);
-    object->setMaximalColorValue(maxCol);
   }
 
   void OpenMBVFrame::initializeUsingXML(DOMElement *e) {
