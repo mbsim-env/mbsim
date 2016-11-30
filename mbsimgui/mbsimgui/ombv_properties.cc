@@ -279,7 +279,7 @@ namespace MBSimGUI {
     xiNodes.toWidget(static_cast<SpatialContourMBSOMBVWidget*>(widget)->xiNodes);
   }
 
-  ArrowMBSOMBVProperty::ArrowMBSOMBVProperty(const string &name, const FQN &xmlName, const string &ID, bool fromPoint) : MBSOMBVProperty(name,xmlName,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false), minCol(0,false), maxCol(0,false) {
+  ArrowMBSOMBVProperty::ArrowMBSOMBVProperty(const string &name, const FQN &xmlName, const string &ID, bool fromPoint) : MBSOMBVProperty(name,xmlName,ID), scaleLength(0,false), scaleSize(0,false), referencePoint(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"scaleLength"));
@@ -292,9 +292,6 @@ namespace MBSimGUI {
     referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", MBSIM%"referencePoint", true));
     if(fromPoint)
       referencePoint.setActive(true);
-
-    minCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"minimalColorValue",vector<string>(2,"-")),"",4));
-    maxCol.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"maximalColorValue",vector<string>(2,"-")),"",4));
   }
 
   DOMElement* ArrowMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
@@ -303,8 +300,6 @@ namespace MBSimGUI {
       scaleLength.initializeUsingXML(e);
       scaleSize.initializeUsingXML(e);
       referencePoint.initializeUsingXML(e);
-      minCol.initializeUsingXML(e);
-      maxCol.initializeUsingXML(e);
     }
     return e;
   }
@@ -314,8 +309,6 @@ namespace MBSimGUI {
     scaleLength.writeXMLFile(e);
     scaleSize.writeXMLFile(e);
     referencePoint.writeXMLFile(e);
-    minCol.writeXMLFile(e);
-    maxCol.writeXMLFile(e);
     writeProperties(e);
     return e;
   }
@@ -325,8 +318,6 @@ namespace MBSimGUI {
     scaleLength.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleLength);
     scaleSize.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleSize);
     referencePoint.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->referencePoint);
-    minCol.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->minCol);
-    maxCol.fromWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->maxCol);
   }
 
   void ArrowMBSOMBVProperty::toWidget(QWidget *widget) {
@@ -334,8 +325,6 @@ namespace MBSimGUI {
     scaleLength.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleLength);
     scaleSize.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->scaleSize);
     referencePoint.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->referencePoint);
-    minCol.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->minCol);
-    maxCol.toWidget(static_cast<ArrowMBSOMBVWidget*>(widget)->maxCol);
   }
 
   CoilSpringMBSOMBVProperty::CoilSpringMBSOMBVProperty(const string &name, const FQN &xmlName, const string &ID) : MBSOMBVProperty(name,xmlName,ID), type(0,false), numberOfCoils(0,false), springRadius(0,false), crossSectionRadius(0,false), nominalLength(0,false), minCol(0,false), maxCol(0,false) {
@@ -383,9 +372,9 @@ namespace MBSimGUI {
     crossSectionRadius.writeXMLFile(e);
     nominalLength.writeXMLFile(e);
     type.writeXMLFile(e);
+    writeProperties(e);
     minCol.writeXMLFile(e);
     maxCol.writeXMLFile(e);
-    writeProperties(e);
     return e;
   }
 
@@ -411,7 +400,7 @@ namespace MBSimGUI {
     maxCol.toWidget(static_cast<CoilSpringMBSOMBVWidget*>(widget)->maxCol);
   }
 
-  OMBVFrameProperty::OMBVFrameProperty(const string &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectProperty(name,ID), size(0,false), offset(0,false), transparency(0,false), xmlName(xmlName_) {
+  FrameMBSOMBVProperty::FrameMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), size(0,false), offset(0,false) {
 
     vector<PhysicalVariableProperty> input;
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIM%"size"));
@@ -420,13 +409,9 @@ namespace MBSimGUI {
     input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", MBSIM%"offset"));
     offset.setProperty(new ExtPhysicalVarProperty(input));
-
-    input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", MBSIM%"transparency"));
-    transparency.setProperty(new ExtPhysicalVarProperty(input));
   }
 
-  DOMElement* OMBVFrameProperty::initializeUsingXML(DOMElement *element) {
+  DOMElement* FrameMBSOMBVProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
     if(e) {
       size.initializeUsingXML(e);
@@ -436,12 +421,9 @@ namespace MBSimGUI {
     return e;
   }
 
-  DOMElement* OMBVFrameProperty::writeXMLFile(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
+  DOMElement* FrameMBSOMBVProperty::writeXMLFile(DOMNode *parent) {
     if(xmlName!=FQN()) {
-      DOMElement *e=D(doc)->createElement(xmlName);
-      writeXMLFileID(e);
-      parent->insertBefore(e, NULL);
+      DOMElement *e=MBSOMBVProperty::initXMLFile(parent);
       size.writeXMLFile(e);
       offset.writeXMLFile(e);
       transparency.writeXMLFile(e);
@@ -456,16 +438,16 @@ namespace MBSimGUI {
     }
   }
 
-  void OMBVFrameProperty::fromWidget(QWidget *widget) {
-    size.fromWidget(static_cast<OMBVFrameWidget*>(widget)->size);
-    offset.fromWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
-    transparency.fromWidget(static_cast<OMBVFrameWidget*>(widget)->transparency);
+  void FrameMBSOMBVProperty::fromWidget(QWidget *widget) {
+    size.fromWidget(static_cast<FrameMBSOMBVWidget*>(widget)->size);
+    offset.fromWidget(static_cast<FrameMBSOMBVWidget*>(widget)->offset);
+    transparency.fromWidget(static_cast<FrameMBSOMBVWidget*>(widget)->transparency);
   }
 
-  void OMBVFrameProperty::toWidget(QWidget *widget) {
-    size.toWidget(static_cast<OMBVFrameWidget*>(widget)->size);
-    offset.toWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
-    transparency.toWidget(static_cast<OMBVFrameWidget*>(widget)->transparency);
+  void FrameMBSOMBVProperty::toWidget(QWidget *widget) {
+    size.toWidget(static_cast<FrameMBSOMBVWidget*>(widget)->size);
+    offset.toWidget(static_cast<FrameMBSOMBVWidget*>(widget)->offset);
+    transparency.toWidget(static_cast<FrameMBSOMBVWidget*>(widget)->transparency);
   }
 
   OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID, bool readXMLType_) : OMBVObjectProperty(name,ID), minimalColorValue(0,false), maximalColorValue(0,false), diffuseColor(0,false), transparency(0,false), readXMLType(readXMLType_) {

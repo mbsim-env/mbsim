@@ -58,7 +58,7 @@ namespace MBSimGUI {
 
     acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
 
-    ombvFrame.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVFrame",getID()));
+    ombvFrame.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVFrame",getID()));
   }
 
   void CoordinatesObserver::initialize() {

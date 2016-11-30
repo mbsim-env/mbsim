@@ -64,8 +64,6 @@
       <xs:element name="referencePoint" minOccurs="0" type="pv:stringFullEval"/>
       <xs:element name="diffuseColor" type="pv:nounitVector" minOccurs="0"/>
       <xs:element name="transparency" type="pv:nounitScalar" minOccurs="0"/> 
-      <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
-      <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 

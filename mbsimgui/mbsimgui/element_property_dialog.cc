@@ -121,7 +121,7 @@ namespace MBSimGUI {
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
   }
@@ -1696,7 +1696,7 @@ namespace MBSimGUI {
     //  vector<PhysicalVariableWidget*> input;
     //  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
     //  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
-    enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new OMBVFrameWidget("NOTSET"),true,true);
+    enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,true);
     addToTab("Visualisation",enableOpenMBVContactPoints);
 
     normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
@@ -1753,7 +1753,7 @@ namespace MBSimGUI {
     acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",acceleration);
 
-    ombvFrame = new ExtWidget("OpenMBV Frame",new OMBVFrameWidget("NOTSET"),true,true);
+    ombvFrame = new ExtWidget("OpenMBV Frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
     addToTab("Visualisation",ombvFrame);
   }
 

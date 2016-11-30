@@ -46,7 +46,7 @@ namespace MBSimGUI {
 
     initialGuess.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGuess",vector<string>(3,"")),"",4));
 
-    enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
+    enableOpenMBVContactPoints.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
     normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVNormalForce",getID()));
 

@@ -151,11 +151,6 @@ namespace MBSimGUI {
     if(fromPoint)
       referencePoint->setChecked(true);
     layout()->addWidget(referencePoint);
-
-    minCol = new ExtWidget("Minimal color value",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
-    layout()->addWidget(minCol);
-    maxCol = new ExtWidget("Maximal color value",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true);
-    layout()->addWidget(maxCol);
   }
 
   CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
@@ -192,27 +187,18 @@ namespace MBSimGUI {
     layout()->addWidget(maxCol);
   }
 
-  OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
+  FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
     vector<PhysicalVariableWidget*> input;
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
     size = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
     size->setToolTip("Set the size of the frame");
-    layout->addWidget(size);
+    layout()->addWidget(size);
 
     input.clear();
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
     offset = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
     offset->setToolTip("Set the offset of the frame");
-    layout->addWidget(offset);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
-    transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(transparency);
+    layout()->addWidget(offset);
   }
 
   OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name) : OMBVObjectWidget(name) {

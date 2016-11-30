@@ -55,9 +55,9 @@ namespace MBSim {
     protected:
       OpenMBV::Arrow::Type type;
       OpenMBV::Arrow::ReferencePoint refPoint;
-      double sL, sS, minCol, maxCol;
+      double sL, sS;
     public:
-      OpenMBVArrow(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, double sL_=1, double sS_=1, double minCol_=0, double maxCol_=1) : OpenMBVDynamicColoredBody(dc,tp), type(type_), refPoint(refPoint_), sL(sL_), sS(sS_), minCol(minCol_), maxCol(maxCol_) { }
+      OpenMBVArrow(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, const OpenMBV::Arrow::Type &type_=OpenMBV::Arrow::toHead, const OpenMBV::Arrow::ReferencePoint &refPoint_=OpenMBV::Arrow::fromPoint, double sL_=1, double sS_=1, double minCol_=0, double maxCol_=1) : OpenMBVDynamicColoredBody(dc,tp), type(type_), refPoint(refPoint_), sL(sL_), sS(sS_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       void initializeObject(const std::shared_ptr<OpenMBV::Arrow> &object);
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV(xercesc::DOMElement* e=0);
