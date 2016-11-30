@@ -14,12 +14,12 @@ CLEANFILES=fmatvec_swig_python.cc fmatvec.py fmatvec_swig_python.d mbsim_swig_py
 # create a empty dummy fmatvec_swig_python.cc file if MBSIM_SWIG is not set (to avoid a long build time)
 fmatvec_swig_python.cc: $(srcdir)/fmatvec.i
 	rm -f fmatvec_swig_python.cc
-	test -z "$(MBSIM_SWIG)" && echo "" > $@ || $(swig) -python -MP -MD -Werror -builtin -c++ -o fmatvec_swig_python.cc $(FMATVEC_CFLAGS) $(srcdir)/fmatvec.i
+	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > fmatvec.py) || $(swig) -python -MP -MD -Werror -builtin -c++ -o fmatvec_swig_python.cc $(FMATVEC_CFLAGS) $(srcdir)/fmatvec.i
 
 # create a empty dummy mbsim_swig_python.cc file if MBSIM_SWIG is not set (to avoid a long build time)
 mbsim_swig_python.cc: $(srcdir)/mbsim.i $(top_srcdir)/mbsim/objects/*.h
 	rm -f mbsim_swig_python.cc
-	test -z "$(MBSIM_SWIG)" && echo "" > $@ || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o mbsim_swig_python.cc -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/mbsim.i > swig-mbsim.stdout
+	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > mbsim.py) || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o mbsim_swig_python.cc -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/mbsim.i > swig-mbsim.stdout
 
 swig-unwrapped-local: mbsim_swig_python.cc
 	@echo BEGIN: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
@@ -51,6 +51,7 @@ swigdata_DATA = fmatvec.i fmatvec_include.i mbsim.i mbsim_include.i showUnwrappe
 
 install-exec-hook: fmatvec.py mbsim.py
 	$(MKDIR_P) $(swigbindir)
-	$(INSTALL_DATA) fmatvec.py $(swigbindir)/fmatvec.py mbsim.py $(swigbindir)/mbsim.py
+	$(INSTALL_DATA) fmatvec.py $(swigbindir)/fmatvec.py
+	$(INSTALL_DATA) mbsim.py $(swigbindir)/mbsim.py
 uninstall-local:
 	rm -f $(swigbindir)/fmatvec.py $(swigbindir)/mbsim.py

@@ -64,6 +64,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
   std::shared_ptr<DOMParser> parser=DOMParser::create();
 
   set<boost::filesystem::path> moduleLibFile;
+  map<boost::filesystem::path, bool> moduleLibFlag;
 
   set<boost::filesystem::path> allSearchDirs=searchDirs;
   allSearchDirs.insert(installDir/"share"/"mbsimmodules");
@@ -83,10 +84,17 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
             e!=NULL; e=e->getNextElementSibling()) {
           if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
             string location=E(e)->getAttribute("location");
-            if(location.substr(0, 13)=="@MBSIMLIBDIR@")
+            bool global=false;
+            if(E(e)->hasAttribute("global") && (E(e)->getAttribute("global")=="true" || E(e)->getAttribute("global")=="1"))
+              global=true;
+            if(location.substr(0, 13)=="@MBSIMLIBDIR@") {
               moduleLibFile.insert(installDir/libDir/location.substr(13)/fullLibName(E(e)->getAttribute("basename")));
-            else
+              moduleLibFlag[installDir/libDir/location.substr(13)/fullLibName(E(e)->getAttribute("basename"))]=global;
+            }
+            else {
               moduleLibFile.insert(E(e)->convertPath(location)/fullLibName(E(e)->getAttribute("basename")));
+              moduleLibFlag[E(e)->convertPath(location)/fullLibName(E(e)->getAttribute("basename"))]=global;
+            }
           }
           if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
             string moduleName=E(e)->getAttribute("moduleName");
@@ -112,8 +120,8 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
       }
 
   // load MBSim modules which are not already loaded
-  for(set<boost::filesystem::path>::iterator it=moduleLibFile.begin(); it!=moduleLibFile.end(); it++)
-    SharedLibrary::load(it->string());
+  for(auto it=moduleLibFile.begin(); it!=moduleLibFile.end(); it++)
+    SharedLibrary::load(it->string(), moduleLibFlag[*it]);
 
   return moduleLibFile;
 }

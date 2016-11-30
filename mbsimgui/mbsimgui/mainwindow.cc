@@ -362,8 +362,10 @@ namespace MBSimGUI {
   MainWindow::~MainWindow() {
     delete mbsim;
     delete mbsimThread;
-    bfs::remove_all(uniqueTempDir);
-    bfs::remove("./.MBS.mbsimprj.xml");
+    // use nothrow boost::filesystem functions to avoid exceptions in this dtor
+    boost::system::error_code ec;
+    bfs::remove_all(uniqueTempDir, ec);
+    bfs::remove("./.MBS.mbsimprj.xml", ec);
   }
 
   void MainWindow::setProjectChanged(bool changed) { 

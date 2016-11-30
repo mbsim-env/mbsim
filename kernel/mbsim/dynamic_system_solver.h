@@ -400,6 +400,9 @@ namespace MBSim {
        */
       void dropContactMatrices();
 
+      // install the MBSim signal handler
+      static void installSignalHandler();
+
       /**
        * \brief handler for user interrupt signal
        */
