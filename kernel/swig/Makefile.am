@@ -23,7 +23,7 @@ mbsim_swig_python.cc: $(srcdir)/mbsim.i $(top_srcdir)/mbsim/objects/*.h
 
 swig-unwrapped-local: mbsim_swig_python.cc
 	@echo BEGIN: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
-	@sed -nre "3,\$$s/(.*)/WRAPPED_CLASS(\1)/p" swig-mbsim.stdout | sed -re "s/<\(/</g;s/\)>/>/g;s/<p\./</g" | grep -v ".*(.*(" > swig.wrapped_classes || (echo ERROR; exit 0)
+	@sed -nre "3,\$$s/(.*)/WRAPPED_CLASS(\1)/p" swig-mbsim.stdout | sed -re "s/<\(/</g;s/\)>/>/g;s/<p\./</g;s/,p\./,/g" | grep -v ".*(.*(" > swig.wrapped_classes || (echo ERROR; exit 0)
 	@$(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -DSHOW_UNWRAPPED_CLASSES=swig.wrapped_classes -python -MD -Werror -builtin -c++ -o dummy.cpp -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/mbsim.i 2>&1 | sed -nre "s/.*: Warning 901: //p" | sort | uniq || (echo ERROR; exit 0)
 	@echo END: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
 

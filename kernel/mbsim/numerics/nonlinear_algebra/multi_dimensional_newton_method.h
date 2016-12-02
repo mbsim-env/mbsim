@@ -67,7 +67,7 @@ namespace MBSim {
       void setJacobianFunction(NewtonJacobianFunction * jacobian_) {
         jacobian = jacobian_;
       }
-      void setDampingFunction(DampingFunction * damping_) {
+      void setDampingFunction(MBSim::DampingFunction * damping_) {
         damping = damping_;
       }
       void setCriteriaFunction(CriteriaFunction * criteria_) {

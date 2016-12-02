@@ -5,8 +5,83 @@
 // When this is enabled swig will fail but output all classes with are unwrapped.
 %include "showUnwrappedClasses.i" 
 #ifdef SHOW_UNWRAPPED_CLASSES
-  // list here classes with should not be wrapped (these are remove from the list of unwrapped classes)
+  // list here classes with should not be wrapped (these are remove from the list of unwrapped classes: make target "swig-unwrapped")
   WRAPPED_CLASS(MBXMLUtils::FQN)
+  WRAPPED_CLASS(MBSim::Function<double(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DDRetDArg1DArg2)
+  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DDRetDDArg1)
+  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DDRetDDArg2)
+  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DRetDArg1)
+  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DRetDArg2)
+  WRAPPED_CLASS(MBSim::Function<double(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDArg1DArg2)
+  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDDArg1)
+  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDDArg2)
+  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DRetDArg1)
+  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DRetDArg2)
+  WRAPPED_CLASS(MBSim::Function<double(int)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<double(int)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,double>(fmatvec::VecV)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,double>(fmatvec::VecV)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDArg1DArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Symmetric,fmatvec::Var,fmatvec::Var,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Symmetric,fmatvec::Var,fmatvec::Var,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Ref,double>(fmatvec::Vec)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Ref,double>(fmatvec::Vec)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Var,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Var,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<1>,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<1>,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<2>,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<2>,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::Vec2)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::Vec2)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDArg1DArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DDRetDArg1DArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DDRetDDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DDRetDDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DRetDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DRetDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(double)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(double)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DDRetDArg1DArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DDRetDDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DDRetDDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DRetDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DRetDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DDRetDArg1DArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DDRetDDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DDRetDDArg2)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DRetDArg1)
+  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DRetDArg2)
+  WRAPPED_CLASS(MBSim::Function<int(fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDDArg)
+  WRAPPED_CLASS(MBSim::Function<int(fmatvec::Vector<fmatvec::Ref,double>)>::DRetDArg)
+  WRAPPED_CLASS(MBSim::DistanceFunction<double(double)>)
+  WRAPPED_CLASS(H5::GroupBase)
+  WRAPPED_CLASS(H5::VectorSerie<double>)
+  WRAPPED_CLASS(std::ostream)
 #endif
 
 
@@ -147,9 +222,18 @@
 #include "mbsim/contact_kinematics/sphere_plate.h"
 #include "mbsim/contact_kinematics/sphere_polynomialfrustum.h"
 #include "mbsim/contact_kinematics/sphere_sphere.h"
+#include "mbsim/functions/contact/funcpair_planarcontour_point.h"
+#include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
+#include "mbsim/numerics/functions/newton_method_jacobian_functions.h"
+#include "mbsim/numerics/functions/damping_functions.h"
+#include "mbsim/modelling_interface.h"
+#include "mbsim/utils/colors.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
 using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
+
+%include "std_pair.i"
+%include "std_map.i"
 
 // wrap some std::vector<...> types used by the above wrapped classes
 %ignore swigignore;
@@ -396,6 +480,20 @@ FUNCTION2(fmatvec::VecV   , fmatvec::VecV, fmatvec::VecV,   VecV_VecV_VecV)
 %include "mbsim/contact_kinematics/sphere_plate.h"
 %include "mbsim/contact_kinematics/sphere_polynomialfrustum.h"
 %include "mbsim/contact_kinematics/sphere_sphere.h"
+// mbsim/functions/contact/distance_function.h: SWIG cannot handle template partial specializations of the form MBSim::Function<double(int)>.
+%rename(DistanceFunction_d_d) MBSim::DistanceFunction<double(double)>;
+%rename(nrm2) MBSim::DistanceFunction<double(double)>::operator[];
+class MBSim::DistanceFunction<double(double)> : public MBSim::Function<double(double)> {
+  public:
+    virtual double operator()(const double &x) = 0;
+    virtual double operator[](const double& x);
+    virtual fmatvec::Vec3 evalWrD(const double& x) = 0;
+};
+%include "mbsim/functions/contact/funcpair_planarcontour_point.h"
+%include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
+%include "mbsim/numerics/functions/damping_functions.h"
+%include "mbsim/modelling_interface.h"
+%include "mbsim/utils/colors.h"
 
 
 
