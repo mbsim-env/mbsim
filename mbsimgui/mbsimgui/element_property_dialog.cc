@@ -121,7 +121,7 @@ namespace MBSimGUI {
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
   }
@@ -637,13 +637,13 @@ namespace MBSimGUI {
     ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
     addToTab("Visualisation", ombvEditor);
 
-    weightArrow = new ExtWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
+    weightArrow = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",weightArrow);
 
-    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
+    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",jointForceArrow);
 
-    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",jointMomentArrow);
 
   }
@@ -807,10 +807,10 @@ namespace MBSimGUI {
     ombvEditor = new ExtWidget("OpenMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", ombvEditor);
 
-    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
+    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",jointForceArrow);
 
-    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",jointMomentArrow);
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
@@ -957,10 +957,10 @@ namespace MBSimGUI {
     support = new ExtWidget("Support frame",new FrameOfReferenceWidget(constraint,0),true);
     addToTab("General",support);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",momentArrow);
   }
 
@@ -1168,10 +1168,10 @@ namespace MBSimGUI {
     moment = new ExtWidget("Moment direction",new ExtPhysicalVarWidget(input),true);
     addToTab("Kinetics", moment);
 
-    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
+    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",jointForceArrow);
 
-    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",jointMomentArrow);
 
     input.clear();
@@ -1294,7 +1294,7 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,link));
     addToTab("Kinetics", connections);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",forceArrow);
   }
 
@@ -1323,10 +1323,10 @@ namespace MBSimGUI {
 //    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(0,0,1),true);
     addToTab("Kinetics", refFrameID);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",momentArrow);
   }
 
@@ -1352,10 +1352,10 @@ namespace MBSimGUI {
     support = new ExtWidget("Support frame",new FrameOfReferenceWidget(link,0),true);
     addToTab("General",support);
 
-    forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",forceArrow);
 
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",momentArrow);
   }
 
@@ -1450,7 +1450,7 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+    coilSpring = new ExtWidget("OpenMBV coil spring",new CoilSpringMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", coilSpring);
   }
 
@@ -1481,7 +1481,7 @@ namespace MBSimGUI {
     unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft));
     addToTab("General",unloadedLength);
 
-    coilSpring = new ExtWidget("OpenMBV coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+    coilSpring = new ExtWidget("OpenMBV coil spring",new CoilSpringMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", coilSpring);
   }
 
@@ -1696,13 +1696,13 @@ namespace MBSimGUI {
     //  vector<PhysicalVariableWidget*> input;
     //  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
     //  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
-    enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new OMBVFrameWidget("NOTSET"),true,true);
+    enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,true);
     addToTab("Visualisation",enableOpenMBVContactPoints);
 
-    normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);
+    normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",normalForceArrow);
 
-    frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new OMBVArrowWidget("NOTSET"),true);
+    frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",frictionArrow);
   }
 
@@ -1744,16 +1744,16 @@ namespace MBSimGUI {
     frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
     addToTab("General", frame);
 
-    position = new ExtWidget("OpenMBV position arrow",new OMBVArrowWidget("NOTSET",true),true);
+    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new OMBVArrowWidget("NOTSET",true),true);
+    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",velocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new OMBVArrowWidget("NOTSET",true),true);
+    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",acceleration);
 
-    ombvFrame = new ExtWidget("OpenMBV Frame",new OMBVFrameWidget("NOTSET"),true,true);
+    ombvFrame = new ExtWidget("OpenMBV Frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
     addToTab("Visualisation",ombvFrame);
   }
 
@@ -1791,19 +1791,19 @@ namespace MBSimGUI {
     frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
     addToTab("General", frame);
 
-    position = new ExtWidget("OpenMBV position arrow",new OMBVArrowWidget("NOTSET",true),true);
+    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",position);
 
-    velocity = new ExtWidget("OpenMBV velocity arrow",new OMBVArrowWidget("NOTSET",true),true);
+    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",velocity);
 
-    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new OMBVArrowWidget("NOTSET",true),true);
+    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",angularVelocity);
 
-    acceleration = new ExtWidget("OpenMBV acceleration arrow",new OMBVArrowWidget("NOTSET",true),true);
+    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",acceleration);
 
-    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new OMBVArrowWidget("NOTSET",true),true);
+    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",angularAcceleration);
   }
 

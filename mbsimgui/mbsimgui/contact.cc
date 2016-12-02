@@ -46,13 +46,11 @@ namespace MBSimGUI {
 
     initialGuess.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGuess",vector<string>(3,"")),"",4));
 
-    enableOpenMBVContactPoints.setProperty(new OMBVFrameProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
+    enableOpenMBVContactPoints.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
 
-    normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    normalForceArrow.setXMLName(MBSIM%"enableOpenMBVNormalForce",false);
+    normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVNormalForce",getID()));
 
-    frictionArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    frictionArrow.setXMLName(MBSIM%"enableOpenMBVTangentialForce",false);
+    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
   }
 
   Contact::~Contact() {

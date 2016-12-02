@@ -97,11 +97,9 @@ namespace MBSimGUI {
 
     ombvEditor.setProperty(new FlexibleBodyFFRMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBV",getID()));
 
-    jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    jointForceArrow.setXMLName(MBSIMFLEX%"enableOpenMBVJointForce",false);
+    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBVJointForce",getID()));
 
-    jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET","",getID()));
-    jointMomentArrow.setXMLName(MBSIMFLEX%"enableOpenMBVJointMoment",false);
+    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBVJointMoment",getID()));
   }
 
   int FlexibleBodyFFR::getqRelSize() const {

@@ -92,6 +92,7 @@ namespace MBSimGUI {
       QString autoExportDir;
       static QDialog *helpDialog;
       static QWebView *helpViewer;
+      bool debug;
 
     public:
       MainWindow(QStringList &arg);

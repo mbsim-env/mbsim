@@ -133,19 +133,43 @@ namespace MBSimGUI {
       ExtProperty etaNodes, xiNodes;
   };
 
-  class OMBVFrameProperty : public OMBVObjectProperty {
+  class ArrowMBSOMBVProperty : public MBSOMBVProperty {
 
     public:
-      OMBVFrameProperty(const std::string &name="NOTSET", const MBXMLUtils::FQN &xmlName="", const std::string &ID_=0);
-      virtual PropertyInterface* clone() const {return new OMBVFrameProperty(*this);}
+      ArrowMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID, bool fromPoint=false);
+      virtual PropertyInterface* clone() const {return new ArrowMBSOMBVProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
-      virtual std::string getType() const { return "Frame"; }
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget);
     protected:
-      ExtProperty size, offset, transparency;
-      MBXMLUtils::FQN xmlName;
+      ExtProperty scaleLength, scaleSize, referencePoint;
+  };
+
+  class CoilSpringMBSOMBVProperty : public MBSOMBVProperty {
+
+    public:
+      CoilSpringMBSOMBVProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID_);
+      virtual PropertyInterface* clone() const {return new CoilSpringMBSOMBVProperty(*this);}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength, minCol, maxCol;
+  };
+
+  class FrameMBSOMBVProperty : public MBSOMBVProperty {
+
+    public:
+      FrameMBSOMBVProperty(const std::string &name="NOTSET", const MBXMLUtils::FQN &xmlName="", const std::string &ID_=0);
+      virtual PropertyInterface* clone() const {return new FrameMBSOMBVProperty(*this);}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+    protected:
+      ExtProperty size, offset;
   };
 
   class OMBVDynamicColoredObjectProperty : public OMBVObjectProperty {
@@ -159,36 +183,6 @@ namespace MBSimGUI {
     protected:
       ExtProperty minimalColorValue, maximalColorValue, diffuseColor, transparency;
       bool readXMLType;
-  };
-
-  class OMBVArrowProperty : public OMBVObjectProperty {
-
-    public:
-      OMBVArrowProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID, bool fromPoint=false);
-      virtual PropertyInterface* clone() const {return new OMBVArrowProperty(*this);}
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
-      virtual std::string getType() const { return "Arrow"; }
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-    protected:
-      ExtProperty scaleLength, scaleSize, referencePoint, diffuseColor, transparency;
-      MBXMLUtils::FQN xmlName;
-  };
-
-  class OMBVCoilSpringProperty : public OMBVObjectProperty {
-
-    public:
-      OMBVCoilSpringProperty(const std::string &name, const MBXMLUtils::FQN &xmlName, const std::string &ID_);
-      virtual PropertyInterface* clone() const {return new OMBVCoilSpringProperty(*this);}
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
-      void fromWidget(QWidget *widget);
-      void toWidget(QWidget *widget);
-      virtual std::string getType() const { return "CoilSpring"; }
-    protected:
-      ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength, diffuseColor, transparency;
-      MBXMLUtils::FQN xmlName;
   };
 
   class OMBVRigidBodyProperty : public OMBVDynamicColoredObjectProperty {

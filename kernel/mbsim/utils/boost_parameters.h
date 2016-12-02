@@ -20,8 +20,8 @@
 #ifndef _BOOST_PARAMETERS_H_
 #define _BOOST_PARAMETERS_H_
 
-// set the maximal number or arguments (only boost libs use only 5 newer use already 8)
-#define BOOST_PARAMETER_MAX_ARITY 8
+// set the maximal number or arguments (old boost libs use only 5 newer use already 8)
+#define BOOST_PARAMETER_MAX_ARITY 10
 
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/keyword.hpp>
@@ -51,8 +51,9 @@ namespace MBSim {
   BOOST_PARAMETER_NAME(nodes)
   BOOST_PARAMETER_NAME(etaNodes)
   BOOST_PARAMETER_NAME(xiNodes)
+  BOOST_PARAMETER_NAME(minimalColorValue)
+  BOOST_PARAMETER_NAME(maximalColorValue)
 
 }
 
 #endif
-

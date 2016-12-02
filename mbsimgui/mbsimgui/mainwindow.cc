@@ -71,7 +71,7 @@ namespace MBSimGUI {
   QDialog *MainWindow::helpDialog = NULL;
   QWebView *MainWindow::helpViewer = NULL;
 
-  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), evalSelect(0,false) {
+  MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true), evalSelect(0,false) {
     // use html output of MBXMLUtils
     putenv(const_cast<char*>("MBXMLUTILS_HTMLOUTPUT=1"));
 
@@ -309,27 +309,43 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    if(currentTask==1) {
-      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
-      QModelIndex index = elementList->selectionModel()->currentIndex();
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
+    QMessageBox::StandardButton ret = QMessageBox::Cancel;
+    if(debug and (exitStatus!=QProcess::NormalExit or exitCode!=0)) {
+      ret = QMessageBox::warning(this, tr("Error message"), tr("Model file not valid. Restart in debug mode?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
     }
-    else if(autoExport) {
-      saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
-      saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
-      saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
-      if(saveFinalStateVector)
-        saveStateVector(autoExportDir+"/statevector.asc");
+    if(ret == QMessageBox::Ok) {
+      QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+      QString projectFile=uniqueTempDir_+"/in"+QString::number(currentTask)+".mbsimprj.xml";
+      saveProject(projectFile);
+      QStringList arg;
+      arg.append("--stopafterfirststep");
+      arg.append(projectFile);
+      mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
+      debug = false;
+      mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
+    } else {
+      if(currentTask==1) {
+        inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/out1.ombv.xml");
+        QModelIndex index = elementList->selectionModel()->currentIndex();
+        ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+        Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+        if(element)
+          highlightObject(element->getID());
+      }
+      else if(autoExport) {
+        saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
+        saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
+        saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
+        if(saveFinalStateVector)
+          saveStateVector(autoExportDir+"/statevector.asc");
+      }
+      actionSimulate->setDisabled(false);
+      actionOpenMBV->setDisabled(false);
+      actionH5plotserie->setDisabled(false);
+      actionEigenanalysis->setDisabled(false);
+      actionRefresh->setDisabled(false);
+      statusBar()->showMessage(tr("Ready"));
     }
-    actionSimulate->setDisabled(false);
-    actionOpenMBV->setDisabled(false);
-    actionH5plotserie->setDisabled(false);
-    actionEigenanalysis->setDisabled(false);
-    actionRefresh->setDisabled(false);
-    statusBar()->showMessage(tr("Ready"));
   }
 
   void MainWindow::initInlineOpenMBV() {
@@ -346,8 +362,10 @@ namespace MBSimGUI {
   MainWindow::~MainWindow() {
     delete mbsim;
     delete mbsimThread;
-    bfs::remove_all(uniqueTempDir);
-    bfs::remove("./.MBS.mbsimprj.xml");
+    // use nothrow boost::filesystem functions to avoid exceptions in this dtor
+    boost::system::error_code ec;
+    bfs::remove_all(uniqueTempDir, ec);
+    bfs::remove("./.MBS.mbsimprj.xml", ec);
   }
 
   void MainWindow::setProjectChanged(bool changed) { 
@@ -845,6 +863,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
+    debug = true;
     absolutePath = true;
     QModelIndex index = elementList->model()->index(0,0);
     DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
@@ -899,6 +918,7 @@ namespace MBSimGUI {
         arg.append("--stopafterfirststep");
         arg.append(projectFile);
         mbsim->getProcess()->setWorkingDirectory(uniqueTempDir_);
+        debug = false;
         mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string().c_str(), arg);
       }
     }
