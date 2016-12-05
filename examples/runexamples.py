@@ -96,10 +96,10 @@ mainOpts.add_argument("--filter", default="True", type=str,
           ppxml: is True if the directory is a preprocessing xml example;
           xml: is True if the directory is a flat or preprocessing xml example;
           fmi: is True if the directory is a FMI export example (source or XML);
-          mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
-                    mbsimXXX='''+str(mbsimModules)+''';
-          labels: a list of labels (defined by the 'labels' file, being a space separated list of labels);
-          Example: --filter "xml and not mbsimControl or 'basic' in labels": run xml examples not requiring mbsimControl or
+          labels: a list of labels (defined by the 'labels' file, being a space separated list of labels)
+                  the labels defined in the 'labels' file are extended automatically by the MBSim module
+                  labels: '''+str(mbsimModules)+''';
+          Example: --filter "xml and 'mbsimControl' not in labels or 'basic' in labels": run xml examples not requiring mbsimControl or
                    all examples having the label "basic"''')
 
 cfgOpts=argparser.add_argument_group('Configuration Options')
@@ -644,21 +644,19 @@ def addExamplesByFilter(baseDir, directoriesSet):
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
     fmi=(os.path.isfile(pj(root, "FMI.mbsimprj.xml")) or os.path.isfile(pj(root, "Makefile_FMI")))
-    labels=[]
-    if os.path.isfile(pj(root, "labels")):
-      labels=codecs.open(pj(root, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
     # skip none examples directires
     if(not ppxml and not flatxml and not src and not fmi):
       continue
     dirs=[]
-    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi, 'labels': labels}
-    for m in mbsimModules:
-      d[m]=False
+
+    labels=[]
+    if os.path.isfile(pj(root, "labels")):
+      labels=codecs.open(pj(root, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
     # check for MBSim modules in src examples
     if src:
       filecont=codecs.open(pj(root, "Makefile"), "r", encoding="utf-8").read()
       for m in mbsimModules:
-        if re.search("\\b"+m+"\\b", filecont): d[m]=True
+        if re.search("\\b"+m+"\\b", filecont): labels.append(m)
     # check for MBSim modules in xml and flatxml examples
     else:
       for filedir, _, filenames in os.walk(root):
@@ -666,10 +664,11 @@ def addExamplesByFilter(baseDir, directoriesSet):
           if filename[0:4]==".pp.": continue # skip generated .pp.* files
           filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
           for m in mbsimModules:
-            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): d[m]=True
+            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
     # evaluate filter
     try:
-      filterResult=eval(args.filter, d)
+      filterResult=eval(args.filter,
+        {'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi, 'labels': labels})
     except:
       print("Unable to evaluate the filter:\n"+args.filter)
       exit(1)
