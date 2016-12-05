@@ -38,12 +38,12 @@ mbsim.py: mbsim_swig_python.cc
 
 _fmatvec_la_SOURCES = fmatvec_swig_python.cc
 _fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
-_fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(NUMPY_INCDIR)
+_fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(PYTHON_LIBDIR)/python$(PYTHON_VERSION)/site-packages/numpy/core/include
 _fmatvec_la_LIBADD = $(PYTHON_LIBS) $(FMATVEC_LIBS)
 
 _mbsim_la_SOURCES = mbsim_swig_python.cc
 _mbsim_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
-_mbsim_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(NUMPY_INCDIR) $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label
+_mbsim_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/python$(PYTHON_VERSION)/site-packages/numpy/core/include $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label
 _mbsim_la_LIBADD = $(PYTHON_LIBS) ../mbsim/libmbsim.la
 
 swigdatadir = $(datadir)/mbsim

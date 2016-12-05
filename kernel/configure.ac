@@ -122,11 +122,12 @@ if test "x$enable_python" == "xyes"; then
   fi
   AC_SUBST([PYTHON_SHEXT], [$pythonshext])
 
-  NUMPY_INCDIR="$($PKG_CONFIG --variable=libdir python-$pythonversion)/python$($PKG_CONFIG --modversion python-$pythonversion)/site-packages/numpy/core/include"
-  if test ! -d $NUMPY_INCDIR; then
-    AC_MSG_ERROR([Numpy header not found in directory $NUMPY_INCDIR])
-    AC_SUBST([NUMPY_INCDIR])
+  PYTHON_LIBDIR="$($PKG_CONFIG --variable=libdir python-$pythonversion)"
+  if test ! -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
+    AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include])
   fi
+  AC_SUBST([PYTHON_VERSION],[$pythonversion])
+  AC_SUBST([PYTHON_LIBDIR])
 
   AC_PATH_PROG([swig],[swig],[no],[${swigpath:-$PATH}])
   if test "_$swig" != "_no"; then

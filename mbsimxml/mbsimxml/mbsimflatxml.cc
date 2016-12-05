@@ -51,7 +51,10 @@ namespace MBSim {
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
 #if MBSIMXML_COND_PYTHON
-  initializePython((getInstallPath()/"bin"/"mbsimflatxml").string());
+  boost::filesystem::path home;
+  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR))
+    home=getInstallPath();
+  initializePython((getInstallPath()/"bin"/"mbsimflatxml").string(), home.string());
   PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
   // add bin to python search path
   PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
