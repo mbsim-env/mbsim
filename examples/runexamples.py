@@ -98,7 +98,9 @@ mainOpts.add_argument("--filter", default="True", type=str,
           fmi: is True if the directory is a FMI export example (source or XML);
           mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
                     mbsimXXX='''+str(mbsimModules)+''';
-          Example: --filter "xml and not mbsimControl": run xml examples not requiring mbsimControl''')
+          labels: a list of labels (defined by the 'labels' file, being a space separated list of labels);
+          Example: --filter "xml and not mbsimControl or 'basic' in labels": run xml examples not requiring mbsimControl or
+                   all examples having the label "basic"''')
 
 cfgOpts=argparser.add_argument_group('Configuration Options')
 cfgOpts.add_argument("--atol", default=2e-5, type=float,
@@ -642,11 +644,14 @@ def addExamplesByFilter(baseDir, directoriesSet):
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
     fmi=(os.path.isfile(pj(root, "FMI.mbsimprj.xml")) or os.path.isfile(pj(root, "Makefile_FMI")))
+    labels=[]
+    if os.path.isfile(pj(root, "labels")):
+      labels=codecs.open(pj(root, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
     # skip none examples directires
     if(not ppxml and not flatxml and not src and not fmi):
       continue
     dirs=[]
-    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi}
+    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi, 'labels': labels}
     for m in mbsimModules:
       d[m]=False
     # check for MBSim modules in src examples
