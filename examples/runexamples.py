@@ -44,13 +44,6 @@ ombvSchema=None
 mbsimXMLSchemas=None
 timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by --directories)
-# the following examples will fail: do not report them in the Atom feed as errors
-willFail=set([
-  # dimension missmatch in HETS2 integrator
-  pj("mechanics", "basics", "slider_crank"),
-  # examples not yet reworked
-  pj("mechanics", "initial_value_problem"),
-])
 
 # MBSim Modules
 mbsimModules=["mbsimControl", "mbsimElectronics", "mbsimFlexibleBody",
@@ -98,7 +91,8 @@ mainOpts.add_argument("--filter", default="True", type=str,
           fmi: is True if the directory is a FMI export example (source or XML);
           labels: a list of labels (defined by the 'labels' file, being a space separated list of labels)
                   the labels defined in the 'labels' file are extended automatically by the MBSim module
-                  labels: '''+str(mbsimModules)+''';
+                  labels: '''+str(mbsimModules)+'''
+                  the special label 'willfail' defines examples which are not reported as errors if they fail;
           Example: --filter "xml and 'mbsimControl' not in labels or 'basic' in labels": run xml examples not requiring mbsimControl or
                    all examples having the label "basic"''')
 
@@ -494,7 +488,10 @@ def main():
   retAll=poolResult.get()
   # set global result and add failedExamples
   for index in range(len(retAll)):
-    if retAll[index]!=0 and not directories[index][0] in willFail:
+    willFail=False
+    if os.path.isfile(pj(directories[index][0], "labels")):
+      willFail='willfail' in codecs.open(pj(directories[index][0], "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
+    if retAll[index]!=0 and not willFail:
       mainRet=1
       failedExamples.append(directories[index][0])
 
@@ -717,7 +714,10 @@ def runExample(resultQueue, example):
     # get reference time
     refTime=example[1]
     # print result to resultStr
-    if not example[0] in willFail:
+    willFail=False
+    if os.path.isfile("labels"):
+      willFail='willfail' in codecs.open("labels", "r", encoding="utf-8").read().rstrip().split(' ')
+    if not willFail:
       resultStr+='<tr>'
     else:
       resultStr+='<tr class="text-muted">'
