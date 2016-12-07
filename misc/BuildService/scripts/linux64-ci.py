@@ -26,6 +26,7 @@ env['FFLAGS']='-O0 -g'
 env['PKG_CONFIG_PATH']=SRCDIR+'/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig:'+\
                        '/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig'
 env['LD_LIBRARY_PATH']='/home/mbsim/3rdparty/casadi3py-local-linux64/lib'
+env['MBSIM_SWIG']='1'
 
 # config files
 configFilename="/home/mbsim/BuildServiceConfig/mbsimBuildService.conf"
@@ -84,10 +85,8 @@ if subprocess.call([scriptdir+"/build.py", "--buildSystemRun", "--rotate", "30",
   "--hdf5serieBranch", hdf5serieBranch, "--openmbvBranch", openmbvBranch, "--mbsimBranch", mbsimBranch, "--enableCleanPrefix",
   "--disableConfigure", "--disableMakeClean", "--disableDoxygen", "--disableXMLDoc", "--sourceDir", SRCDIR,
   "--prefix", SRCDIR+"/local", "--reportOutDir", "/var/www/html/mbsim/linux64-ci/report",
-  "--url", "http://www.mbsim-env.de/mbsim/linux64-ci/report", "--buildType", "linux64-ci", "--passToConfigure", "--enable-debug",
+  "--url", "http://www.mbsim-env.de/mbsim/linux64-ci/report", "--buildType", "linux64-ci", "--passToConfigure", "--enable-python", "--enable-debug",
   "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
-  "--passToRunexamples", "--disableCompare", "--disableMakeClean", "xmlflat/hierachical_modelling", "xml/hierachical_modelling",
-  "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling", "fmi/sphere_on_plane",
-  "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"], env=env)!=0:
+  "--passToRunexamples", "--enableAlphaPy", "--disableCompare", "--disableMakeClean", "--filter", "'basic' in labels"], env=env)!=0:
   print("CI Build failed.")

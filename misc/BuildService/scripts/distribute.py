@@ -383,7 +383,7 @@ echo MBSIMGUI
 if ERRORLEVEL 1 set ERROR=%ERROR% MBSIMGUI
 echo DONE
 
-if %ERROR%=="" (
+if "%ERROR%"=="" (
   echo ALL TESTS PASSED
 ) else (
   echo THE FOLLOWING TESTS FAILED:

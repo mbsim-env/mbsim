@@ -29,6 +29,7 @@ args=None
 
 # pass these envvar to simplesandbox.call
 simplesandboxEnvvars=["PKG_CONFIG_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS", # general required envvars
+                      "MBSIM_SWIG", # MBSim required envvars
                       "LD_LIBRARY_PATH", # Linux specific required envvars
                       "WINEPATH", "PLATFORM", "CXX", "MOC", "UIC", "RCC"] # Windows specific required envvars
 

@@ -71,6 +71,10 @@ dnl MBXMLUtilsDOCDIR
 MBXMLUTILSDOCDIR=$(pkg-config mbxmlutils --variable DOCDIR)
 AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
+if test "$cross_compiling" == "yes"; then
+  XC_EXEC_PREFIX=wine
+fi
+
 dnl Check for python
 AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: 2.7).],
   [pythonversion="$withval"],[pythonversion="2.7"])
@@ -79,6 +83,11 @@ AM_CONDITIONAL([COND_PYTHON], [test "x$enable_python" == "xyes"])
 if test "x$enable_python" == "xyes"; then
   PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
   AC_DEFINE([MBSIMXML_COND_PYTHON],[1],[Enable Python])
+  if test "_$PYTHON_BIN" == "_"; then
+    PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
+  fi
+  PYTHON_SUBDIR=$($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])')
+  AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
 fi
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"

@@ -90,7 +90,7 @@ namespace MBSim {
       /*!
        * \brief set color of body
        */
-      void setColor(const RGBColor & color);
+      void setColor(const MBSim::RGBColor & color);
 
       /*!
        * \brief set transparency of body
@@ -206,7 +206,7 @@ namespace MBSim {
       /*!
        * \brief color values for the iv-body
        */
-      RGBColor color;
+      MBSim::RGBColor color;
 
       /*!
        * \brief transparency value for the body

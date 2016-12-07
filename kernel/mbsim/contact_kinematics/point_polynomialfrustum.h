@@ -136,17 +136,17 @@ namespace MBSim {
       /*!
        * \brief function for intersection point
        */
-      projectPointAlongNormal * funcProjectAlongNormal;
+      MBSim::projectPointAlongNormal * funcProjectAlongNormal;
 
       /*!
        * \brief newton method for solving the edge contact
        */
-      MultiDimensionalNewtonMethod newtonProjectAlongNormal;
+      MBSim::MultiDimensionalNewtonMethod newtonProjectAlongNormal;
 
       /*!
        * \brief Jacobian for newton method
        */
-      projectPointAlongNormalJacobian * jacobianProjectAlongNormal;
+      MBSim::projectPointAlongNormalJacobian * jacobianProjectAlongNormal;
 
       /*!
        * \brief criteria for newton method
@@ -156,7 +156,7 @@ namespace MBSim {
       /*!
        * \brief damping function for newton method
        */
-      StandardDampingFunction dampingProjectAlongNormal;
+      MBSim::StandardDampingFunction dampingProjectAlongNormal;
 
   };
 

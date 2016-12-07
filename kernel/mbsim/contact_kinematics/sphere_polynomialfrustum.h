@@ -134,7 +134,7 @@ namespace MBSim {
       /*!
        * \brief Newton solver for nonlinear problem
        */
-      MultiDimensionalNewtonMethod newton;
+      MBSim::MultiDimensionalNewtonMethod newton;
 
       /*
        * \brief function for contact search
@@ -154,7 +154,7 @@ namespace MBSim {
       /*!
        * \brief damping function for newton
        */
-      StandardDampingFunction* damping;
+      MBSim::StandardDampingFunction* damping;
 
       /*!
        * \brief solution vector of nonlinear system

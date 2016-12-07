@@ -44,13 +44,6 @@ ombvSchema=None
 mbsimXMLSchemas=None
 timeID=None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by --directories)
-# the following examples will fail: do not report them in the Atom feed as errors
-willFail=set([
-  # dimension missmatch in HETS2 integrator
-  pj("mechanics", "basics", "slider_crank"),
-  # examples not yet reworked
-  pj("mechanics", "initial_value_problem"),
-])
 
 # MBSim Modules
 mbsimModules=["mbsimControl", "mbsimElectronics", "mbsimFlexibleBody",
@@ -96,9 +89,12 @@ mainOpts.add_argument("--filter", default="True", type=str,
           ppxml: is True if the directory is a preprocessing xml example;
           xml: is True if the directory is a flat or preprocessing xml example;
           fmi: is True if the directory is a FMI export example (source or XML);
-          mbsimXXX: is True if the example in the directory uses the MBSim XXX module.
-                    mbsimXXX='''+str(mbsimModules)+''';
-          Example: --filter "xml and not mbsimControl": run xml examples not requiring mbsimControl''')
+          labels: a list of labels (defined by the 'labels' file, being a space separated list of labels)
+                  the labels defined in the 'labels' file are extended automatically by the MBSim module
+                  labels: '''+str(mbsimModules)+'''
+                  the special label 'willfail' defines examples which are not reported as errors if they fail;
+          Example: --filter "xml and 'mbsimControl' not in labels or 'basic' in labels": run xml examples not requiring mbsimControl or
+                   all examples having the label "basic"''')
 
 cfgOpts=argparser.add_argument_group('Configuration Options')
 cfgOpts.add_argument("--atol", default=2e-5, type=float,
@@ -492,7 +488,10 @@ def main():
   retAll=poolResult.get()
   # set global result and add failedExamples
   for index in range(len(retAll)):
-    if retAll[index]!=0 and not directories[index][0] in willFail:
+    willFail=False
+    if os.path.isfile(pj(directories[index][0], "labels")):
+      willFail='willfail' in codecs.open(pj(directories[index][0], "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
+    if retAll[index]!=0 and not willFail:
       mainRet=1
       failedExamples.append(directories[index][0])
 
@@ -646,14 +645,15 @@ def addExamplesByFilter(baseDir, directoriesSet):
     if(not ppxml and not flatxml and not src and not fmi):
       continue
     dirs=[]
-    d={'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi}
-    for m in mbsimModules:
-      d[m]=False
+
+    labels=[]
+    if os.path.isfile(pj(root, "labels")):
+      labels=codecs.open(pj(root, "labels"), "r", encoding="utf-8").read().rstrip().split(' ')
     # check for MBSim modules in src examples
     if src:
       filecont=codecs.open(pj(root, "Makefile"), "r", encoding="utf-8").read()
       for m in mbsimModules:
-        if re.search("\\b"+m+"\\b", filecont): d[m]=True
+        if re.search("\\b"+m+"\\b", filecont): labels.append(m)
     # check for MBSim modules in xml and flatxml examples
     else:
       for filedir, _, filenames in os.walk(root):
@@ -661,10 +661,11 @@ def addExamplesByFilter(baseDir, directoriesSet):
           if filename[0:4]==".pp.": continue # skip generated .pp.* files
           filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
           for m in mbsimModules:
-            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): d[m]=True
+            if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
     # evaluate filter
     try:
-      filterResult=eval(args.filter, d)
+      filterResult=eval(args.filter,
+        {'ppxml': ppxml, 'flatxml': flatxml, 'xml': xml, 'src': src, 'fmi': fmi, 'labels': labels})
     except:
       print("Unable to evaluate the filter:\n"+args.filter)
       exit(1)
@@ -713,7 +714,10 @@ def runExample(resultQueue, example):
     # get reference time
     refTime=example[1]
     # print result to resultStr
-    if not example[0] in willFail:
+    willFail=False
+    if os.path.isfile("labels"):
+      willFail='willfail' in codecs.open("labels", "r", encoding="utf-8").read().rstrip().split(' ')
+    if not willFail:
       resultStr+='<tr>'
     else:
       resultStr+='<tr class="text-muted">'

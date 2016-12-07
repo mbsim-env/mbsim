@@ -155,7 +155,7 @@ namespace MBSim {
       /*!
        * \brief NewtonSolver for reformulated system
        */
-      MultiDimensionalNewtonMethod * newtonSolver;
+      MBSim::MultiDimensionalNewtonMethod * newtonSolver;
 
       /*!
        * \brief reformulated LCP suited for a Newton Solver

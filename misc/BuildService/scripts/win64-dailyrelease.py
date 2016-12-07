@@ -40,7 +40,5 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribu
   "PYTHON_LIBS=-L/home/mbsim/3rdparty/python-win64 -lpython27",
   "PYTHON_BIN=/home/mbsim/3rdparty/python-win64/python.exe",
   "--passToRunexamples", "--disableCompare",
-  "--disableValidate", "--exeExt", ".exe", "xmlflat/hierachical_modelling", "xml/hierachical_modelling",
-  "xml/time_dependent_kinematics", "xml/hydraulics_ballcheckvalve", "fmi/simple_test", "fmi/hierachical_modelling",
-  "fmi/sphere_on_plane", "mechanics/basics/hierachical_modelling", "mechanics/basics/time_dependent_kinematics"])!=0:
+  "--disableValidate", "--exeExt", ".exe", "--filter", "'basic' in labels"])!=0:
   print("win64-dailyrelease failed.")

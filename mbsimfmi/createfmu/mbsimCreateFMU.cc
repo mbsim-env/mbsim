@@ -389,8 +389,11 @@ int main(int argc, char *argv[]) {
 
         map<path, pair<path, bool> > &files=eval->requiredFiles();
         cout<<"Copy files required by the evaluator and dependencies to FMU."<<endl;
-        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbxmlutils-eval-"+evalName+SHEXT),
-                       path("resources")/"local"/LIBDIR, getInstallPath()/LIBDIR/("libmbxmlutils-eval-"+evalName+SHEXT));
+        string evalFile="libmbxmlutils-eval-global-"+evalName+SHEXT;
+        if(!exists(getInstallPath()/LIBDIR/evalFile))
+          evalFile="libmbxmlutils-eval-"+evalName+SHEXT;
+        copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/evalFile,
+                       path("resources")/"local"/LIBDIR, getInstallPath()/LIBDIR/evalFile);
         for(map<path, pair<path, bool> >::iterator it=files.begin(); it!=files.end(); ++it) {
           cout<<"."<<flush;
           if(!it->second.second)
