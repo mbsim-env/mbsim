@@ -213,7 +213,7 @@ namespace MBSimFlexibleBody {
       using Body::addContour;
 
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<double>&),std::vector<double>())(indices,(const std::vector<int>&),std::vector<int>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<int>&),std::vector<int>())(indices,(const std::vector<int>&),std::vector<int>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
         OpenMBVDynamicIndexedFaceSet ombv(minimalColorValue,maximalColorValue);
         openMBVBody=ombv.createOpenMBV();
         ombvNodes = nodes;
@@ -408,8 +408,7 @@ namespace MBSimFlexibleBody {
        */
       MBSim::Frame * openMBVFrame;
       std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
-      std::vector<double> ombvNodes;
-      std::vector<int> ombvIndices;
+      std::vector<int> ombvNodes, ombvIndices;
   };
 
 }

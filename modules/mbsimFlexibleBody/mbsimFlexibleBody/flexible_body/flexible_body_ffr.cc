@@ -1040,7 +1040,11 @@ namespace MBSimFlexibleBody {
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
-      if(ee) ombvNodes=getVec(ee);
+      Vec nodes;
+      if(ee) nodes=getVec(ee);
+      ombvNodes.resize(nodes.size());
+      for(int i=0; i<nodes.size(); i++)
+        ombvNodes[i] = nodes(i);
       ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"indices");
       Vec indices;
       if(ee) indices=getVec(ee);
