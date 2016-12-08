@@ -94,8 +94,8 @@ namespace MBSim {
     int nM = (fml and fml->isSetValued())?momentDir.cols():0;
     Mat3xV RF(nF+nM);
     Mat3xV RM(RF.cols());
-    RF.set(Index(0,2), Index(0,nF-1), evalGlobalForceDirection()(Index(0,2),Index(0,nF-1)));
-    RM.set(Index(0,2), Index(nF,nF+nM-1), evalGlobalMomentDirection()(Index(0,2),Index(0,nM-1)));
+    RF.set(RangeV(0,2), RangeV(0,nF-1), evalGlobalForceDirection()(RangeV(0,2),RangeV(0,nF-1)));
+    RM.set(RangeV(0,2), RangeV(nF,nF+nM-1), evalGlobalMomentDirection()(RangeV(0,2),RangeV(0,nM-1)));
 
     W[j][0] -= C.evalJacobianOfTranslation(j).T() * RF + C.evalJacobianOfRotation(j).T() * RM;
     W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * RF + frame[1]->evalJacobianOfRotation(j).T() * RM;
@@ -509,8 +509,8 @@ namespace MBSim {
 
   void InverseKineticsJoint::updateb() {
     if(body) {
-      b(Index(0, bSize - 1), Index(0, 2)) = body->evalPJT().T();
-      b(Index(0, bSize - 1), Index(3, 5)) = body->evalPJR().T();
+      b(RangeV(0, bSize - 1), RangeV(0, 2)) = body->evalPJT().T();
+      b(RangeV(0, bSize - 1), RangeV(3, 5)) = body->evalPJR().T();
     }
   }
 

@@ -80,9 +80,9 @@ namespace MBSimFlexibleBody {
     /* M_ThetaF */
     Mat3xV qN(Dofs - RefDofs);
 
-    qN.set(Index(0, 0), Index(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[1][2]) - (*N_ij[2][1]))); //+ (*NR_ij[1][2])-(*NR_ij[2][1]);
-    qN.set(Index(1, 1), Index(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[2][0]) - (*N_ij[0][2]))); //+ (*NR_ij[2][0])-(*NR_ij[0][2]);
-    qN.set(Index(2, 2), Index(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[0][1]) - (*N_ij[1][0]))); //+ (*NR_ij[0][1])-(*NR_ij[1][0]);
+    qN.set(RangeV(0, 0), RangeV(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[1][2]) - (*N_ij[2][1]))); //+ (*NR_ij[1][2])-(*NR_ij[2][1]);
+    qN.set(RangeV(1, 1), RangeV(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[2][0]) - (*N_ij[0][2]))); //+ (*NR_ij[2][0])-(*NR_ij[0][2]);
+    qN.set(RangeV(2, 2), RangeV(0, Dofs - RefDofs - 1), qf.T() * ((*N_ij[0][1]) - (*N_ij[1][0]))); //+ (*NR_ij[0][1])-(*NR_ij[1][0]);
 
     Mat3xV M_ThetaF = G.T() * qN;
 
@@ -116,7 +116,7 @@ namespace MBSimFlexibleBody {
       stringstream filenameMpart;
       filenameMpart << "Mpart" << nr << "x" << nj << ".txt";
       ofstream file_Mpart(filenameMpart.str().c_str());
-      Index Ipart(3, 5);
+      RangeV Ipart(3, 5);
       file_Mpart << "M_TT" << endl << M(Ipart) << endl;
       file_Mpart << eigval(M(Ipart)) << endl;
       file_Mpart.close();
@@ -426,14 +426,14 @@ namespace MBSimFlexibleBody {
       // condensation
       switch (LType) {
         case innerring: // 0: innerring
-          ILocked = Index(RefDofs, RefDofs + NodeDofs * nj - 1);
+          ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
           Jext(0, 0, RefDofs - 1, RefDofs - 1) << DiagMat(RefDofs, INIT, 1.);
           Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) << DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
-          ILocked = Index(qSize, Dofs - 1);
+          ILocked = RangeV(qSize, Dofs - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
           Jext(0, 0, qSize - 1, qSize - 1) << DiagMat(qSize, INIT, 1.);
         break;
@@ -570,12 +570,12 @@ namespace MBSimFlexibleBody {
       SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getK();
 
       for (int node = 0; node < ElementNodes; node++) {
-        Index Ikges(RefDofs + ElementNodeList(element, node) * NodeDofs, RefDofs + (ElementNodeList(element, node) + 1) * NodeDofs - 1);
-        Index Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
+        RangeV Ikges(RefDofs + ElementNodeList(element, node) * NodeDofs, RefDofs + (ElementNodeList(element, node) + 1) * NodeDofs - 1);
+        RangeV Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
 
         Kext(Ikges) += ElK(Ikelement); // diagonal
         for (int n = node + 1; n < ElementNodes; n++) // secondary diagonals
-          Kext(Ikges, Index(RefDofs + ElementNodeList(element, n) * NodeDofs, RefDofs + (ElementNodeList(element, n) + 1) * NodeDofs - 1)) += ElK(Ikelement, Index(n * NodeDofs, (n + 1) * NodeDofs - 1));
+          Kext(Ikges, RangeV(RefDofs + ElementNodeList(element, n) * NodeDofs, RefDofs + (ElementNodeList(element, n) + 1) * NodeDofs - 1)) += ElK(Ikelement, RangeV(n * NodeDofs, (n + 1) * NodeDofs - 1));
       }
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeK();
     }
@@ -584,7 +584,7 @@ namespace MBSimFlexibleBody {
     K = condenseMatrix(Kext, ILocked);
 
     /* STATIC TEST */
-    //Index Iall(RefDofs,K.size()-1);
+    //RangeV Iall(RefDofs,K.size()-1);
     //// load
     //Vec F_test(K.size()-RefDofs,INIT,0.);
     //F_test((nr-1)*nj*3) = 1e10;
@@ -644,10 +644,10 @@ namespace MBSimFlexibleBody {
     for (int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
       Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
-      Index IRefTrans(0, 2);
+      RangeV IRefTrans(0, 2);
       for (int node = 0; node < ElementNodes; node++) {
-        Index Ikges(ElementNodeList(element, node) * NodeDofs, (ElementNodeList(element, node) + 1) * NodeDofs - 1);
-        Index Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
+        RangeV Ikges(ElementNodeList(element, node) * NodeDofs, (ElementNodeList(element, node) + 1) * NodeDofs - 1);
+        RangeV Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
         (*N_compl)(IRefTrans, Ikges) += ElN_compl(IRefTrans, Ikelement);
       }
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_compl();
@@ -663,12 +663,12 @@ namespace MBSimFlexibleBody {
           SqrMat ElN_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_ij(i, j);
 
           for (int node = 0; node < ElementNodes; node++) {
-            Index Ikges(ElementNodeList(element, node) * NodeDofs, (ElementNodeList(element, node) + 1) * NodeDofs - 1);
-            Index Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
+            RangeV Ikges(ElementNodeList(element, node) * NodeDofs, (ElementNodeList(element, node) + 1) * NodeDofs - 1);
+            RangeV Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
 
             (*(N_ij[i][j]))(Ikges) += ElN_ij(Ikelement); // diagonal
             for (int n = node + 1; n < ElementNodes; n++) // secondary diagonals
-              (*(N_ij[i][j]))(Ikges, Index(ElementNodeList(element, n) * NodeDofs, (ElementNodeList(element, n) + 1) * NodeDofs - 1)) += ElN_ij(Ikelement, Index(n * NodeDofs, (n + 1) * NodeDofs - 1));
+              (*(N_ij[i][j]))(Ikges, RangeV(ElementNodeList(element, n) * NodeDofs, (ElementNodeList(element, n) + 1) * NodeDofs - 1)) += ElN_ij(Ikelement, RangeV(n * NodeDofs, (n + 1) * NodeDofs - 1));
           }
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_ij(i, j);
         }
@@ -690,8 +690,8 @@ namespace MBSimFlexibleBody {
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i, j);
           RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i, j);
           for (int node = 0; node < ElementNodes; node++) {
-            Index Ikges(ElementNodeList(element, node) * NodeDofs, (ElementNodeList(element, node) + 1) * NodeDofs - 1);
-            Index Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
+            RangeV Ikges(ElementNodeList(element, node) * NodeDofs, (ElementNodeList(element, node) + 1) * NodeDofs - 1);
+            RangeV Ikelement(node * NodeDofs, (node + 1) * NodeDofs - 1);
             (*(NR_ij[i][j]))(Ikges) += ElNR_ij(Ikelement);
           }
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeNR_ij(i, j);

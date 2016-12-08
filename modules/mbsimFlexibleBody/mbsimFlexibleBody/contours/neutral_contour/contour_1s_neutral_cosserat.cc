@@ -123,12 +123,12 @@ namespace MBSimFlexibleBody {
       SqrMat Jacobian_trans_total(3, EYE);
       // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
       if (currentElementTrans == transNodes.size() - 1) { // the last translation element
-        Jacobian_trans.set(Index(0, 2), Index(6 * currentElementTrans, 6 * currentElementTrans + 2), weightLeft * Jacobian_trans_total);
-        Jacobian_trans.set(Index(0, 2), Index(0, 2), weightRight * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 2), RangeV(6 * currentElementTrans, 6 * currentElementTrans + 2), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 2), RangeV(0, 2), weightRight * Jacobian_trans_total);
       }
       else {
-        Jacobian_trans.set(Index(0, 2), Index(6 * currentElementTrans, 6 * currentElementTrans + 2), weightLeft * Jacobian_trans_total);
-        Jacobian_trans.set(Index(0, 2), Index(6 * currentElementTrans + 6, 6 * currentElementTrans + 8), weightRight * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 2), RangeV(6 * currentElementTrans, 6 * currentElementTrans + 2), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 2), RangeV(6 * currentElementTrans + 6, 6 * currentElementTrans + 8), weightRight * Jacobian_trans_total);
       }
     }
     else if (parent->getType() == "FlexibleBody1s21Cosserat") {
@@ -136,12 +136,12 @@ namespace MBSimFlexibleBody {
       SqrMat Jacobian_trans_total(2, EYE);
       // TODO: only for 1s closed structue, assuming numOfElements = numOfTransNodes
       if (currentElementTrans == transNodes.size() - 1) { // the last translation element
-        Jacobian_trans.set(Index(0, 1), Index(3 * currentElementTrans, 3 * currentElementTrans + 1), weightLeft * Jacobian_trans_total);
-        Jacobian_trans.set(Index(0, 1), Index(0, 1), weightRight * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 1), RangeV(3 * currentElementTrans, 3 * currentElementTrans + 1), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 1), RangeV(0, 1), weightRight * Jacobian_trans_total);
       }
       else {
-        Jacobian_trans.set(Index(0, 1), Index(3 * currentElementTrans, 3 * currentElementTrans + 1), weightLeft * Jacobian_trans_total);
-        Jacobian_trans.set(Index(0, 1), Index(3 * currentElementTrans + 3, 3 * currentElementTrans + 4), weightRight * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 1), RangeV(3 * currentElementTrans, 3 * currentElementTrans + 1), weightLeft * Jacobian_trans_total);
+        Jacobian_trans.set(RangeV(0, 1), RangeV(3 * currentElementTrans + 3, 3 * currentElementTrans + 4), weightRight * Jacobian_trans_total);
       }
     }
 
@@ -166,12 +166,12 @@ namespace MBSimFlexibleBody {
 //      cout << "angles: " << angles << endl;
 //      cout << "Jacobian_rot_total:  " << Jacobian_rot_total << endl << endl;
       if (currentElementRot == 0) { // the first rotational element
-        Jacobian_rot.set(Index(0, 2), Index(qSize - 3, qSize - 1), weightLeft * Jacobian_rot_total); //TODO:  all of these are different for 1D and 3D case, maybe we need diffenent stucutre for 1D and 3D;
-        Jacobian_rot.set(Index(0, 2), Index(6 * currentElementRot + 3, 6 * currentElementRot + 5), weightRight * Jacobian_rot_total);
+        Jacobian_rot.set(RangeV(0, 2), RangeV(qSize - 3, qSize - 1), weightLeft * Jacobian_rot_total); //TODO:  all of these are different for 1D and 3D case, maybe we need diffenent stucutre for 1D and 3D;
+        Jacobian_rot.set(RangeV(0, 2), RangeV(6 * currentElementRot + 3, 6 * currentElementRot + 5), weightRight * Jacobian_rot_total);
       }
       else {
-        Jacobian_rot.set(Index(0, 2), Index(6 * currentElementRot - 3, 6 * currentElementRot - 1), weightLeft * Jacobian_rot_total);  //TODO:  all of these are different for 1D and 3D case, maybe we need diffenent stucutre for 1D and 3D;
-        Jacobian_rot.set(Index(0, 2), Index(6 * currentElementRot + 3, 6 * currentElementRot + 5), weightRight * Jacobian_rot_total);
+        Jacobian_rot.set(RangeV(0, 2), RangeV(6 * currentElementRot - 3, 6 * currentElementRot - 1), weightLeft * Jacobian_rot_total);  //TODO:  all of these are different for 1D and 3D case, maybe we need diffenent stucutre for 1D and 3D;
+        Jacobian_rot.set(RangeV(0, 2), RangeV(6 * currentElementRot + 3, 6 * currentElementRot + 5), weightRight * Jacobian_rot_total);
       }
     }
     else if (parent->getType() == "FlexibleBody1s21Cosserat") {

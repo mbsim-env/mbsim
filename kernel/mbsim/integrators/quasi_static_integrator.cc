@@ -59,9 +59,9 @@ namespace MBSimIntegrator {
     int nx = system.getxSize();
     int n = nq + nu + nx;
 
-    Index Iq(0, nq - 1);
-    Index Iu(nq, nq + nu - 1);
-    Index Ix(nq + nu, n - 1);
+    RangeV Iq(0, nq - 1);
+    RangeV Iu(nq, nq + nu - 1);
+    RangeV Ix(nq + nu, n - 1);
     z.resize(n);
     q >> z(Iq);
     u >> z(Iu);
@@ -91,8 +91,8 @@ namespace MBSimIntegrator {
 
     VecV qla(q.size() + system.getla(false).size());
     VecV la(system.getla(false).size());
-    Index qInd = Index(0, q.size() - 1);
-    Index laInd = Index(q.size(), qla.size() - 1);
+    RangeV qInd = RangeV(0, q.size() - 1);
+    RangeV laInd = RangeV(q.size(), qla.size() - 1);
 
     VecV qlaStart(qla.size());
     VecV qlaOld(qla.size());
@@ -108,9 +108,9 @@ namespace MBSimIntegrator {
     /* use  MultiDimensionalNewtonMethod */
     NewtonJacobianFunction * jac = new NumericalNewtonJacobianFunction();
     MultiDimensionalNewtonMethod newton;
-    map<Index, double> tolerances;
-    tolerances.insert(pair<Index, double>(qInd, hTol));
-    tolerances.insert(pair<Index, double>(laInd, gTol));
+    map<RangeV, double> tolerances;
+    tolerances.insert(pair<RangeV, double>(qInd, hTol));
+    tolerances.insert(pair<RangeV, double>(laInd, gTol));
     LocalResidualCriteriaFunction cfunc(tolerances);
     GlobalResidualCriteriaFunction cfuncGlob(gTol);
     StandardDampingFunction dfunc(30, 0.2);

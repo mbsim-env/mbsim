@@ -236,7 +236,7 @@ namespace MBSimIntegrator {
       /** iteration counters */
       int iter_T1, iter_T2, iter_T3, step;
       
-      fmatvec::Index Iq, Iu, Ix;
+      fmatvec::RangeV Iq, Iu, Ix;
       
       /** Flag for Explicit or Implicit Integration */
       bool expInt;

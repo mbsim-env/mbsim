@@ -250,8 +250,8 @@ namespace MBSimIntegrator {
       system.calclaSize(3);
       system.calcrFactorSize(3);
 
-      system.updateWRef(system.getWParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
-      system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
+      system.updateWRef(system.getWParent()(RangeV(0,system.getuSize()-1),RangeV(0,system.getlaSize()-1)));
+      system.updateVRef(system.getVParent()(RangeV(0,system.getuSize()-1),RangeV(0,system.getlaSize()-1)));
       system.updatelaRef(system.getlaParent()(0,system.getlaSize()-1));
       system.updategdRef(system.getgdParent()(0,system.getgdSize()-1));
       if(system.getImpactSolver() == DynamicSystemSolver::RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
@@ -742,9 +742,9 @@ namespace MBSimIntegrator {
     xSize = sysT1->getxSize();
     zSize = qSize + uSize + xSize;
 
-    Iq = Index(0,qSize-1);
-    Iu = Index(qSize, qSize+uSize-1);
-    Ix = Index(qSize+uSize, zSize-1);
+    Iq = RangeV(0,qSize-1);
+    Iu = RangeV(qSize, qSize+uSize-1);
+    Ix = RangeV(qSize+uSize, zSize-1);
 
     zT1.resize(zSize);
     if (sysT1==sysT2) zT2.resize()>>zT1; else zT2.resize(zSize);

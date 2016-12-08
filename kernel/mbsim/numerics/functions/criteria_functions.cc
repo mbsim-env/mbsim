@@ -63,7 +63,7 @@ namespace MBSim {
     criteriaResults.clear();
   }
 
-  LocalCriteriaFunction::LocalCriteriaFunction(const map<Index, double> & tolerances_) :
+  LocalCriteriaFunction::LocalCriteriaFunction(const map<RangeV, double> & tolerances_) :
       CriteriaFunction(), tolerances(tolerances_), criteriaResults(0) {
   }
 
@@ -71,7 +71,7 @@ namespace MBSim {
     criteriaResults.push_back(computeResults(x));
 
     int i = 0;
-    for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+    for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
       //TODO: somehow add the -1 case ...
       if (criteriaResults.back()[i] > iter->second)
         return 1;
@@ -89,7 +89,7 @@ namespace MBSim {
     vector<double> currentResults = computeResults(x, fVal);
 
     int i = 0;
-    for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+    for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
       if ((currentResults[i] > lastResults[i]) and currentResults[i] > iter->second )
         return false;
       i++;
@@ -113,7 +113,7 @@ namespace MBSim {
     return nrmInf(functionValues);
   }
 
-  LocalResidualCriteriaFunction::LocalResidualCriteriaFunction(const map<Index, double> & tolerances_) :
+  LocalResidualCriteriaFunction::LocalResidualCriteriaFunction(const map<RangeV, double> & tolerances_) :
       LocalCriteriaFunction(tolerances_) {
   }
 
@@ -122,7 +122,7 @@ namespace MBSim {
     if(fVal.size() == 0)
       functionValues.resize() = (*function)(x);
     vector<double> results;
-    for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+    for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
       results.push_back(nrmInf(functionValues(iter->first)));
     }
 
@@ -148,7 +148,7 @@ namespace MBSim {
     return ret;
   }
 
-  LocalShiftCriteriaFunction::LocalShiftCriteriaFunction(const map<Index, double> & tolerances_) :
+  LocalShiftCriteriaFunction::LocalShiftCriteriaFunction(const map<RangeV, double> & tolerances_) :
       LocalCriteriaFunction(tolerances_), lastPoint(Vec(0, NONINIT)) {
   }
 
@@ -156,12 +156,12 @@ namespace MBSim {
     vector<double> results;
     if(lastPoint.size() == 0) {
       lastPoint << x;
-      for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+      for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
         results.push_back(1e30); //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
       }
     }
     else {
-      for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+      for (map<RangeV, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
         results.push_back(nrmInf((*function)(x)(iter->first) - (*function)(lastPoint)(iter->first)));
       }
       lastPoint = x.copy();

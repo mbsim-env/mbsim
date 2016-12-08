@@ -584,14 +584,14 @@ namespace MBSimFlexibleBody {
 
     VecV hom(6+ne), hg(6+ne), he(6+ne);
 
-    hom.set(Index(0,2),-crossProduct(om,crossProduct(om,mc))-2.*crossProduct(om,Ct_.T()*u(iuE)));
-    hom.set(Index(3,5),-(hom21*om) - crossProduct(om,I*om));
-    hom.set(Index(6,6+ne-1),-(Ge_*om) - Oe_*omq);
+    hom.set(RangeV(0,2),-crossProduct(om,crossProduct(om,mc))-2.*crossProduct(om,Ct_.T()*u(iuE)));
+    hom.set(RangeV(3,5),-(hom21*om) - crossProduct(om,I*om));
+    hom.set(RangeV(6,6+ne-1),-(Ge_*om) - Oe_*omq);
 
     Vec Kg = K->getOrientation().T()*(MBSimEnvironment::getInstance()->getAccelerationOfGravity());
-    hg.set(Index(0,2),m*Kg);
-    hg.set(Index(3,5),mtc*Kg);
-    hg.set(Index(6,hg.size()-1),Ct_*Kg);
+    hg.set(RangeV(0,2),m*Kg);
+    hg.set(RangeV(3,5),mtc*Kg);
+    hg.set(RangeV(6,hg.size()-1),Ct_*Kg);
 
     SqrMatV Ke_ = SqrMatV(Ke0);
     for(unsigned int i=0; i<Ke1.size(); i++) {
@@ -607,7 +607,7 @@ namespace MBSimFlexibleBody {
     if(ksigma1.size())
       ke += ksigma1*q(iqE);
 
-    he.set(Index(6,hg.size()-1),ke);
+    he.set(RangeV(6,hg.size()-1),ke);
 
     h_ = hom + hg - he;
 
@@ -700,16 +700,16 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::updateKJ0() {
-    KJ[0].set(Index(0,2),Index(0,KJ[0].cols()-1),K->evalOrientation().T()*K->evalJacobianOfTranslation());
-    KJ[0].set(Index(3,5),Index(0,KJ[0].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation());
-    Ki.set(Index(0,2),K->getOrientation().T()*K->evalGyroscopicAccelerationOfTranslation());
-    Ki.set(Index(3,5),K->getOrientation().T()*K->getGyroscopicAccelerationOfRotation());
+    KJ[0].set(RangeV(0,2),RangeV(0,KJ[0].cols()-1),K->evalOrientation().T()*K->evalJacobianOfTranslation());
+    KJ[0].set(RangeV(3,5),RangeV(0,KJ[0].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation());
+    Ki.set(RangeV(0,2),K->getOrientation().T()*K->evalGyroscopicAccelerationOfTranslation());
+    Ki.set(RangeV(3,5),K->getOrientation().T()*K->getGyroscopicAccelerationOfRotation());
     updKJ[0] = false;
   }
 
   void FlexibleBodyFFR::updateKJ1() {
-    KJ[1].set(Index(0,2),Index(0,KJ[1].cols()-1),K->evalOrientation().T()*K->evalJacobianOfTranslation(1));
-    KJ[1].set(Index(3,5),Index(0,KJ[1].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation(1));
+    KJ[1].set(RangeV(0,2),RangeV(0,KJ[1].cols()-1),K->evalOrientation().T()*K->evalJacobianOfTranslation(1));
+    KJ[1].set(RangeV(3,5),RangeV(0,KJ[1].cols()-1),K->getOrientation().T()*K->getJacobianOfRotation(1));
     updKJ[1] = false;
   }
 
@@ -753,10 +753,10 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::updateJacobians0(Frame *frame) {
     frame->getJacobianOfTranslation(0,false).init(0);
     frame->getJacobianOfRotation(0,false).init(0);
-    frame->getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->evalJacobianOfTranslation() - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation());
-    frame->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->evalJacobianOfRotation());
-    frame->getJacobianOfTranslation(0,false).add(i02,Index(gethSize(0)-getuSize(0),gethSize(0)-1), R->evalOrientation()*evalPJT());
-    frame->getJacobianOfRotation(0,false).add(i02,Index(gethSize(0)-getuSize(0),gethSize(0)-1), frameForJacobianOfRotation->evalOrientation()*PJR[0]);
+    frame->getJacobianOfTranslation(0,false).set(i02,RangeV(0,R->gethSize()-1), R->evalJacobianOfTranslation() - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation());
+    frame->getJacobianOfRotation(0,false).set(i02,RangeV(0,R->gethSize()-1), R->evalJacobianOfRotation());
+    frame->getJacobianOfTranslation(0,false).add(i02,RangeV(gethSize(0)-getuSize(0),gethSize(0)-1), R->evalOrientation()*evalPJT());
+    frame->getJacobianOfRotation(0,false).add(i02,RangeV(gethSize(0)-getuSize(0),gethSize(0)-1), frameForJacobianOfRotation->evalOrientation()*PJR[0]);
   }
 
   void FlexibleBodyFFR::updateGyroscopicAccelerations(Frame *frame) {
@@ -802,31 +802,31 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::setRelativeNodalPosition(const fmatvec::VecV &r) {
     KrKP.resize(r.size()/3);
     for(unsigned int i=0; i<KrKP.size(); i++)
-      KrKP[i] = r(Index(3*i,3*i+2));
+      KrKP[i] = r(RangeV(3*i,3*i+2));
   }
 
   void FlexibleBodyFFR::setRelativeNodalOrientation(const fmatvec::MatVx3 &A) {
     ARP.resize(A.rows()/3);
     for(unsigned int i=0; i<ARP.size(); i++)
-      ARP[i] = A(Index(3*i,3*i+2),Index(0,2));
+      ARP[i] = A(RangeV(3*i,3*i+2),RangeV(0,2));
   }
 
   void FlexibleBodyFFR::setShapeMatrixOfTranslation(const fmatvec::MatV &Phi_) {
     Phi.resize(Phi_.rows()/3);
     for(unsigned int i=0; i<Phi.size(); i++)
-      Phi[i] = Phi_(Index(3*i,3*i+2),Index(0,Phi_.cols()-1));
+      Phi[i] = Phi_(RangeV(3*i,3*i+2),RangeV(0,Phi_.cols()-1));
   }
 
   void FlexibleBodyFFR::setShapeMatrixOfRotation(const fmatvec::MatV &Psi_) {
     Psi.resize(Psi_.rows()/3);
     for(unsigned int i=0; i<Psi.size(); i++)
-      Psi[i] = Psi_(Index(3*i,3*i+2),Index(0,Psi_.cols()-1));
+      Psi[i] = Psi_(RangeV(3*i,3*i+2),RangeV(0,Psi_.cols()-1));
   }
 
   void FlexibleBodyFFR::setStressMatrix(const fmatvec::MatV &sigmahel_) {
     sigmahel.resize(sigmahel_.rows()/6);
     for(unsigned int i=0; i<sigmahel.size(); i++)
-      sigmahel[i] = sigmahel_(Index(6*i,6*i+5),Index(0,sigmahel_.cols()-1));
+      sigmahel[i] = sigmahel_(RangeV(6*i,6*i+5),RangeV(0,sigmahel_.cols()-1));
   }
 
   void FlexibleBodyFFR::setNonlinearStressMatrix(const std::vector<fmatvec::MatV> &sigmahen_) {
@@ -834,14 +834,14 @@ namespace MBSimFlexibleBody {
     for(unsigned int i=0; i<sigmahen.size(); i++) {
       sigmahen[i].resize(sigmahen_[i].rows()/6);
       for(unsigned int j=0; j<sigmahen[i].size(); j++)
-        sigmahen[i][j] = sigmahen_[i](Index(6*i,6*i+5),Index(0,sigmahen_[i].cols()-1));
+        sigmahen[i][j] = sigmahen_[i](RangeV(6*i,6*i+5),RangeV(0,sigmahen_[i].cols()-1));
     }
   }
 
   void FlexibleBodyFFR::setInitialStress(const fmatvec::VecV &sigma0_) {
     sigma0.resize(sigma0_.rows()/6);
     for(unsigned int i=0; i<sigma0.size(); i++)
-      sigma0[i] = sigma0_(Index(6*i,6*i+5));
+      sigma0[i] = sigma0_(RangeV(6*i,6*i+5));
   }
 
   void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToForce(const std::vector<fmatvec::SqrMatV> &K0F_) {

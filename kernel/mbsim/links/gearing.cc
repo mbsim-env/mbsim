@@ -79,22 +79,22 @@ namespace MBSim {
   }
 
   void Gearing::updateWRef(const Mat &WParent, int j) {
-    Index J = Index(laInd,laInd+laSize-1);
-    Index I0 = Index(P0->gethInd(j),P0->gethInd(j)+P0->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
+    Index J = RangeV(laInd,laInd+laSize-1);
+    Index I0 = RangeV(P0->gethInd(j),P0->gethInd(j)+P0->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
 
     W[j][0]>>WParent(I0,J);
 
-    Index I1 = Index(P1->gethInd(j),P1->gethInd(j)+P1->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
+    Index I1 = RangeV(P1->gethInd(j),P1->gethInd(j)+P1->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
 
     W[j][1]>>WParent(I1,J);
   } 
 
   void Gearing::updatehRef(const Vec &hParent, int j) {
-    Index I0 = Index(P0->gethInd(j),P0->gethInd(j)+P0->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
+    Index I0 = RangeV(P0->gethInd(j),P0->gethInd(j)+P0->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
 
     h[j][0]>>hParent(I0);
 
-    Index I1 = Index(P1->gethInd(j),P1->gethInd(j)+P1->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
+    Index I1 = RangeV(P1->gethInd(j),P1->gethInd(j)+P1->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
 
     h[j][1]>>hParent(I1);
   } 

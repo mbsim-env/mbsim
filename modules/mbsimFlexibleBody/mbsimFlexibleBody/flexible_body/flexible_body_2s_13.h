@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::Mat condenseMatrixRows(fmatvec::Mat A, fmatvec::Index I);
+  fmatvec::Mat condenseMatrixRows(fmatvec::Mat A, fmatvec::RangeV I);
 
   /*!
    * \brief condenses cols of matrix concerning index
@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::Mat condenseMatrixCols(fmatvec::Mat A, fmatvec::Index I);
+  fmatvec::Mat condenseMatrixCols(fmatvec::Mat A, fmatvec::RangeV I);
 
   /*!
    * \brief condenses symmetric matrix concerning index
@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::SymMat condenseMatrix(fmatvec::SymMat A,fmatvec::Index I);
+  fmatvec::SymMat condenseMatrix(fmatvec::SymMat A,fmatvec::RangeV I);
 
   /*!
    * \brief generates an output for a matrix for the input in maple - just for testing
@@ -279,7 +279,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief index of condensated dofs
        */
-      fmatvec::Index ILocked;
+      fmatvec::RangeV ILocked;
 
       /**
        * \brief position and velocity with respect to Dofs

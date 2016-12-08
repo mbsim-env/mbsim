@@ -133,7 +133,7 @@ namespace MBSim {
       /**
        * \brief Constructor
        */
-      LocalCriteriaFunction(const std::map<fmatvec::Index, double> & tolerances_);
+      LocalCriteriaFunction(const std::map<fmatvec::RangeV, double> & tolerances_);
 
       /**
        * \brief Destructor
@@ -146,7 +146,7 @@ namespace MBSim {
       virtual void clear();
       /*END - INHERITED INTERFACE*/
 
-      virtual void setTolerances(const std::map<fmatvec::Index, double> & tolerances_) {
+      virtual void setTolerances(const std::map<fmatvec::RangeV, double> & tolerances_) {
         tolerances = tolerances_;
       }
 
@@ -156,7 +156,7 @@ namespace MBSim {
       /*
        * \brief saves the tolerance for a specified index sets
        */
-      std::map<fmatvec::Index, double> tolerances;
+      std::map<fmatvec::RangeV, double> tolerances;
 
       /**
        * \brief saves the results of the criteria for each index set and each operator step
@@ -195,7 +195,7 @@ namespace MBSim {
       /**
        * \brief Constructor
        */
-      LocalResidualCriteriaFunction(const std::map<fmatvec::Index, double> & tolerances_);
+      LocalResidualCriteriaFunction(const std::map<fmatvec::RangeV, double> & tolerances_);
 
       /**
        * \brief Destructor
@@ -247,7 +247,7 @@ namespace MBSim {
       /**
        * \brief Constructor
        */
-      LocalShiftCriteriaFunction(const std::map<fmatvec::Index, double> & tolerances_);
+      LocalShiftCriteriaFunction(const std::map<fmatvec::RangeV, double> & tolerances_);
 
       /**
        * \brief Destructor

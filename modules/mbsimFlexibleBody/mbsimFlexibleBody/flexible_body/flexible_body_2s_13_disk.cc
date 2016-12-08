@@ -121,7 +121,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::updateJacobians(Frame2s *frame, int j) {
-    Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
+    RangeV Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
 
     Vec2 alpha = frame->getParameters();
@@ -137,11 +137,11 @@ namespace MBSimFlexibleBody {
       Mat Wtmp = static_cast<FiniteElement2s13Disk*>(discretization[currentElement])->JGeneralized(ElementalNodes[currentElement], alpha);
 
       /* Jacobian of disk */
-      Wext(Index(0, RefDofs - 1), Wwidth) = Wtmp(Index(0, RefDofs - 1), Wwidth);
-      Wext(Index(RefDofs + ElementNodeList(currentElement, 0) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 0) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
-      Wext(Index(RefDofs + ElementNodeList(currentElement, 1) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 1) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), Wwidth);
-      Wext(Index(RefDofs + ElementNodeList(currentElement, 2) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 2) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), Wwidth);
-      Wext(Index(RefDofs + ElementNodeList(currentElement, 3) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 3) + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), Wwidth);
+      Wext(RangeV(0, RefDofs - 1), Wwidth) = Wtmp(RangeV(0, RefDofs - 1), Wwidth);
+      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 0) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 0) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
+      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 1) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 1) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), Wwidth);
+      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 2) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 2) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), Wwidth);
+      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 3) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 3) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), Wwidth);
     }
 
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
@@ -225,7 +225,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13Disk::updateJacobians(NodeFrame *frame, int j) {
-    Index Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
+    RangeV Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
 
     int node = frame->getNodeNumber();
@@ -246,10 +246,10 @@ namespace MBSimFlexibleBody {
 
     /* Jacobian of disk */
     // reference
-    Wext(Index(0, RefDofs - 1), Wwidth) = Wtmp(Index(0, RefDofs - 1), Wwidth);
+    Wext(RangeV(0, RefDofs - 1), Wwidth) = Wtmp(RangeV(0, RefDofs - 1), Wwidth);
 
     // nodes
-    Wext(Index(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth) = Wtmp(Index(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
+    Wext(RangeV(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
 
     // condensation
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
@@ -271,14 +271,14 @@ namespace MBSimFlexibleBody {
       // condensation
       switch (LType) {
         case innerring: // 0: innerring
-          ILocked = Index(RefDofs, RefDofs + NodeDofs * nj - 1);
+          ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
           Jext(0, 0, RefDofs - 1, RefDofs - 1) << DiagMat(RefDofs, INIT, 1.);
           Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) << DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
-          ILocked = Index(qSize, Dofs - 1);
+          ILocked = RangeV(qSize, Dofs - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
           Jext(0, 0, qSize - 1, qSize - 1) << DiagMat(qSize, INIT, 1.);
         break;
@@ -362,7 +362,7 @@ namespace MBSimFlexibleBody {
       SymMat Mplatte = discretization[i]->getM();
       SymMat Kplatte = static_cast<FiniteElement2s13Disk*>(discretization[i])->getK();
 
-      Index IRef(0, RefDofs - 1);
+      RangeV IRef(0, RefDofs - 1);
 
       // reference components
       Mext(IRef) += Mplatte(IRef);
@@ -371,9 +371,9 @@ namespace MBSimFlexibleBody {
       // nodes sort
       for (int k = 0; k < 4; k++) {
         // position in global matrix
-        Index Ikges(RefDofs + ElementNodeList(i, k) * NodeDofs, RefDofs + (ElementNodeList(i, k) + 1) * NodeDofs - 1);
+        RangeV Ikges(RefDofs + ElementNodeList(i, k) * NodeDofs, RefDofs + (ElementNodeList(i, k) + 1) * NodeDofs - 1);
         // position in element matrix
-        Index Ikelement(RefDofs + k * NodeDofs, RefDofs + (k + 1) * NodeDofs - 1);
+        RangeV Ikelement(RefDofs + k * NodeDofs, RefDofs + (k + 1) * NodeDofs - 1);
 
         // four nodes
         // ref,0 and 0,Ref
@@ -384,8 +384,8 @@ namespace MBSimFlexibleBody {
         Mext(Ikges) += Mplatte(Ikelement); // diagonal
         Kext(Ikges) += Kplatte(Ikelement); // diagonal
         for (int n = k + 1; n < 4; n++) {
-          Mext(Ikges, Index(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1)) += Mplatte(Ikelement, Index(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1));
-          Kext(Ikges, Index(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1)) += Kplatte(Ikelement, Index(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1));
+          Mext(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1)) += Mplatte(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1));
+          Kext(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1)) += Kplatte(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1));
         }
       }
     }
@@ -395,7 +395,7 @@ namespace MBSimFlexibleBody {
     K = condenseMatrix(Kext, ILocked);
 
     /* STATIC TEST */
-    //Index Iall(RefDofs,K.size()-1);
+    //RangeV Iall(RefDofs,K.size()-1);
     //
     //// load
     //Vec F_test(K.size()-RefDofs,INIT,0.);

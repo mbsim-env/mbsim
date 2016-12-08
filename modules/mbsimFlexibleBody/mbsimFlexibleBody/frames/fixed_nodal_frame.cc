@@ -109,9 +109,9 @@ namespace MBSimFlexibleBody {
 
   void FixedNodalFrame::updateJacobians(int j) {
     setJacobianOfRotation(R->getJacobianOfRotation(j));
-    getJacobianOfRotation(j,false).add(Index(0,2),Index(gethSize(j)-nq,gethSize(j)-1),evalGlobalPsi());
+    getJacobianOfRotation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-nq,gethSize(j)-1),evalGlobalPsi());
     setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j));
-    getJacobianOfTranslation(j,false).add(Index(0,2),Index(gethSize(j)-nq,gethSize(j)-1),evalGlobalPhi());
+    getJacobianOfTranslation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-nq,gethSize(j)-1),evalGlobalPhi());
     updJac[j] = false;
   }
 

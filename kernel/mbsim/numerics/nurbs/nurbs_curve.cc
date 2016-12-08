@@ -155,7 +155,7 @@ namespace MBSim {
       update(Qnew);
     }
     else {
-      P.set(Index(0, P.rows() - 1), Index(0, 2), slvLU(A, Mat(Qnew)));
+      P.set(RangeV(0, P.rows() - 1), RangeV(0, 2), slvLU(A, Mat(Qnew)));
     }
   }
 
@@ -214,7 +214,7 @@ namespace MBSim {
       update(Q);
     }
     else {
-      P.set(Index(0, P.rows() - 1), Index(0, 2), slvLU(A, Mat(Q)));
+      P.set(RangeV(0, P.rows() - 1), RangeV(0, 2), slvLU(A, Mat(Q)));
     }
   }
 
@@ -248,7 +248,7 @@ namespace MBSim {
       update(Q);
     }
     else {
-      P.set(Index(0, P.rows() - d - 1), Index(0, 2), slvLU(A, Mat(Q)));
+      P.set(RangeV(0, P.rows() - d - 1), RangeV(0, 2), slvLU(A, Mat(Q)));
       // Wrap around of control points
       //Possible: wrapping around is just a reference ?
       for (int i = 0; i < deg; i++) {
@@ -375,7 +375,7 @@ namespace MBSim {
 
     if (P.rows() > Q.rows()) { //closed interpolation
 
-      P.set(Index(0, P.rows() - deg - 1), Index(0, 2), inverse * Q);
+      P.set(RangeV(0, P.rows() - deg - 1), RangeV(0, 2), inverse * Q);
       // Wrap around of control points
       //Possible: wrapping around is just a reference ?
       for (int i = 0; i < deg; i++) {
@@ -384,7 +384,7 @@ namespace MBSim {
       }
     }
     else {
-      P.set(Index(0, P.rows() - 1), Index(0, 2), inverse * Q);
+      P.set(RangeV(0, P.rows() - 1), RangeV(0, 2), inverse * Q);
     }
   }
 
@@ -392,7 +392,7 @@ namespace MBSim {
 
     if (P.rows() > Qw.rows()) { //closed interpolation
 
-      P.set(Index(0, P.rows() - deg - 1), Index(0, 3), inverse * Qw);
+      P.set(RangeV(0, P.rows() - deg - 1), RangeV(0, 3), inverse * Qw);
       // Wrap around of control points
       //Possible: wrapping around is just a reference ?
       for (int i = 0; i < deg; i++) {

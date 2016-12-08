@@ -110,13 +110,13 @@ namespace MBSimFlexibleBody {
     int j = 10 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(Index(j, j + 15), Index(j, j + 15)) += locMat;
+      gloMat(RangeV(j, j + 15), RangeV(j, j + 15)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j, j + 9), Index(j, j + 9)) += locMat(Index(0, 9), Index(0, 9));
-      gloMat(Index(j, j + 9), Index(0, 5)) += locMat(Index(0, 9), Index(10, 15));
-      gloMat(Index(0, 5), Index(j, j + 9)) += locMat(Index(10, 15), Index(0, 9));
-      gloMat(Index(0, 5), Index(0, 5)) += locMat(Index(10, 15), Index(10, 15));
+      gloMat(RangeV(j, j + 9), RangeV(j, j + 9)) += locMat(RangeV(0, 9), RangeV(0, 9));
+      gloMat(RangeV(j, j + 9), RangeV(0, 5)) += locMat(RangeV(0, 9), RangeV(10, 15));
+      gloMat(RangeV(0, 5), RangeV(j, j + 9)) += locMat(RangeV(10, 15), RangeV(0, 9));
+      gloMat(RangeV(0, 5), RangeV(0, 5)) += locMat(RangeV(10, 15), RangeV(10, 15));
     }
   }
 
@@ -124,12 +124,12 @@ namespace MBSimFlexibleBody {
     int j = 10 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(Index(j, j + 15)) += locMat;
+      gloMat(RangeV(j, j + 15)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j, j + 9)) += locMat(Index(0, 9));
-      gloMat(Index(j, j + 9), Index(0, 5)) += locMat(Index(0, 9), Index(10, 15));
-      gloMat(Index(0, 5)) += locMat(Index(10, 15));
+      gloMat(RangeV(j, j + 9)) += locMat(RangeV(0, 9));
+      gloMat(RangeV(j, j + 9), RangeV(0, 5)) += locMat(RangeV(0, 9), RangeV(10, 15));
+      gloMat(RangeV(0, 5)) += locMat(RangeV(10, 15));
     }
   }
 
@@ -153,7 +153,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateJacobians(Frame1s *frame, int j) {
-    Index All(0, 5);
+    RangeV All(0, 5);
     Mat Jacobian(qSize, 6, INIT, 0.);
 
     double sLocal;
@@ -162,15 +162,15 @@ namespace MBSimFlexibleBody {
     Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(getqElement(currentElement), sLocal); // this local ansatz yields continuous and finite wave propagation
 
     if (currentElement < Elements - 1 || openStructure) {
-      Jacobian(Index(10 * currentElement, 10 * currentElement + 15), All) = Jtmp;
+      Jacobian(RangeV(10 * currentElement, 10 * currentElement + 15), All) = Jtmp;
     }
     else { // last FE for closed structure
-      Jacobian(Index(10 * currentElement, 10 * currentElement + 9), All) = Jtmp(Index(0, 9), All);
-      Jacobian(Index(0, 5), All) = Jtmp(Index(10, 15), All);
+      Jacobian(RangeV(10 * currentElement, 10 * currentElement + 9), All) = Jtmp(RangeV(0, 9), All);
+      Jacobian(RangeV(0, 5), All) = Jtmp(RangeV(10, 15), All);
     }
 
-    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
-    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(Index(0, qSize - 1), Index(3, 5)).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(0, 2)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(3, 5)).T(),j);
   }
 
   void FlexibleBody1s33RCM::updateGyroscopicAccelerations(Frame1s *frame) {
@@ -201,8 +201,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33RCM::updateJacobians(NodeFrame *frame, int j) {
-    Index All(0, 5);
-    Index One(0, 2);
+    RangeV All(0, 5);
+    RangeV One(0, 2);
     Mat Jacobian(qSize, 6, INIT, 0.);
     int node = frame->getNodeNumber();
 
@@ -214,13 +214,13 @@ namespace MBSimFlexibleBody {
     SqrMat np = angle->computenq(p);
     SqrMat bp = angle->computebq(p);
 
-    Jacobian(Index(10 * node, 10 * node + 2), One) << SqrMat(3, EYE); // translation
-    Jacobian(Index(10 * node + 3, 10 * node + 5), 3) = t(1) * tp(2, 0, 2, 2).T() + n(1) * np(2, 0, 2, 2).T() + b(1) * bp(2, 0, 2, 2).T(); // rotation
-    Jacobian(Index(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(0, 0, 0, 2).T() + n(2) * np(0, 0, 0, 2).T() + b(2) * bp(0, 0, 0, 2).T();
-    Jacobian(Index(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();
+    Jacobian(RangeV(10 * node, 10 * node + 2), One) << SqrMat(3, EYE); // translation
+    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 3) = t(1) * tp(2, 0, 2, 2).T() + n(1) * np(2, 0, 2, 2).T() + b(1) * bp(2, 0, 2, 2).T(); // rotation
+    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(0, 0, 0, 2).T() + n(2) * np(0, 0, 0, 2).T() + b(2) * bp(0, 0, 0, 2).T();
+    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();
 
-    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(Index(0, qSize - 1), Index(0, 2)).T(),j);
-    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(Index(0, qSize - 1), Index(3, 5)).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(0, 2)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(3, 5)).T(),j);
   }
 
   void FlexibleBody1s33RCM::updateGyroscopicAccelerations(NodeFrame *frame) {

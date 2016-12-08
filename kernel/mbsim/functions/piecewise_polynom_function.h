@@ -134,7 +134,7 @@ namespace MBSim {
         if(xy.cols() <= 1)
           THROW_MBSIMERROR("Dimension missmatch in size of xy");
         x = xy.col(0);
-        y = xy(fmatvec::Index(0, xy.rows() - 1), fmatvec::Index(1, xy.cols() - 1));
+        y = xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1));
       }
 
       /*!

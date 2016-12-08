@@ -105,18 +105,18 @@ namespace MBSimElectronics {
   }
 
   void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, int j) {
-    fmatvec::Index I = fmatvec::Index(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
     h[j][0]>>hParent(I);
   } 
 
   void ElectronicLink::updaterRef(const Vec &rParent, int j) {
-    fmatvec::Index I = fmatvec::Index(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
     r[j][0]>>rParent(I);
   } 
 
   void ElectronicLink::updateWRef(const fmatvec::Mat& WParent, int j) {
-    Index J = Index(laInd,laInd+laSize-1);
-    Index I = Index(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    RangeV J = RangeV(laInd,laInd+laSize-1);
+    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
     W[j][0].resize()>>WParent(I,J);
   }
 

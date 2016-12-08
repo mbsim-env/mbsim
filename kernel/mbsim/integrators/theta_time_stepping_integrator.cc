@@ -52,8 +52,8 @@ namespace MBSimIntegrator {
       system.calclaSize(3); // IH
       system.calcrFactorSize(3); // IH
 
-      system.updateWRef(system.getWParent()(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
-      system.updateVRef(system.getVParent()(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
+      system.updateWRef(system.getWParent()(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
+      system.updateVRef(system.getVParent()(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
       system.updatelaRef(system.getlaParent()(0, system.getlaSize() - 1));
       system.updategdRef(system.getgdParent()(0, system.getgdSize() - 1));
       if (system.getImpactSolver() == DynamicSystemSolver::RootFinding)
@@ -74,9 +74,9 @@ namespace MBSimIntegrator {
     int nx = system.getxSize();
     int n = nq + nu + nx;
 
-    Index Iq(0, nq - 1);
-    Index Iu(nq, nq + nu - 1);
-    Index Ix(nq + nu, n - 1);
+    RangeV Iq(0, nq - 1);
+    RangeV Iu(nq, nq + nu - 1);
+    RangeV Ix(nq + nu, n - 1);
     z.resize(n);
     q >> z(Iq);
     u >> z(Iu);

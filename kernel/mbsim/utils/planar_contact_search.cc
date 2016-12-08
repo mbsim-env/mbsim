@@ -121,8 +121,8 @@ namespace MBSim {
     }
 
     Mat results(nRoots, 2);
-    results.col(0) = alphaC(Index(0, nRoots - 1));
-    results.col(1) = gbuf(Index(0, nRoots - 1));
+    results.col(0) = alphaC(RangeV(0, nRoots - 1));
+    results.col(1) = gbuf(RangeV(0, nRoots - 1));
 
     return results;
   }

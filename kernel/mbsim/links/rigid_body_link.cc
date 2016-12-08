@@ -38,40 +38,40 @@ namespace MBSim {
 
   void RigidBodyLink::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
-      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
+      RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
       h[j][i]>>hParent(I);
-      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
+      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       h[j][body.size()+i]>>hParent(I);
     }
   } 
 
   void RigidBodyLink::updaterRef(const Vec &rParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
-      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
+      RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
       r[j][i]>>rParent(I);
-      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
+      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       r[j][body.size()+i]>>rParent(I);
     }
   } 
 
   void RigidBodyLink::updateWRef(const Mat &WParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
+      RangeV J = RangeV(laInd,laInd+laSize-1);
+      RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
 
       W[j][i]>>WParent(I,J);
-      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
+      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       W[j][body.size()+i]>>WParent(I,J);
     }
   } 
 
   void RigidBodyLink::updateVRef(const Mat &VParent, int j) {
     for(unsigned i=0; i<body.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
+      RangeV J = RangeV(laInd,laInd+laSize-1);
+      RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
 
       V[j][i]>>VParent(I,J);
-      I = Index(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
+      I = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
       V[j][body.size()+i]>>VParent(I,J);
     }
   } 
@@ -120,8 +120,8 @@ namespace MBSim {
 
   void RigidBodyLink::updateR() {
     for(unsigned i=0; i<body.size(); i++) {
-      RF[i].set(Index(0,2), Index(iF), evalGlobalForceDirection(i));
-      RM[i].set(Index(0,2), Index(iM), evalGlobalMomentDirection(i));
+      RF[i].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection(i));
+      RM[i].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection(i));
     }
     updRMV = false;
   }
@@ -178,8 +178,8 @@ namespace MBSim {
 
       F.resize(body.size());
       M.resize(body.size());
-      iF = Index(0, body[0]->getPJT(0,false).cols()-1);
-      iM = Index(0, body[0]->getPJR(0,false).cols()-1);
+      iF = RangeV(0, body[0]->getPJT(0,false).cols()-1);
+      iM = RangeV(0, body[0]->getPJR(0,false).cols()-1);
       rrel.resize(body[0]->getqRelSize());
       vrel.resize(body[0]->getuRelSize());
       if(isSetValued()) {

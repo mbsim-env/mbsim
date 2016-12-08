@@ -30,7 +30,7 @@ using namespace std;
 using namespace std::placeholders;
 
 namespace fmatvec {
-  bool operator<(const Index & i1, const Index & i2) {
+  bool operator<(const RangeV & i1, const RangeV & i2) {
     if (i1.start() < i2.start())
       return true;
     else if (i1.start() > i2.start())

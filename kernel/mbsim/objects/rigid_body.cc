@@ -509,10 +509,10 @@ namespace MBSim {
   void RigidBody::updateJacobians0(Frame *frame) {
     frame->getJacobianOfTranslation(0,false).init(0);
     frame->getJacobianOfRotation(0,false).init(0);
-    frame->getJacobianOfTranslation(0,false).set(i02,Index(0,R->gethSize()-1), R->evalJacobianOfTranslation() - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation());
-    frame->getJacobianOfRotation(0,false).set(i02,Index(0,R->gethSize()-1), R->evalJacobianOfRotation());
-    frame->getJacobianOfTranslation(0,false).add(i02,Index(0,gethSize(0)-1), R->evalOrientation()*evalPJT()*evalJRel());
-    frame->getJacobianOfRotation(0,false).add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->evalOrientation()*PJR[0]*JRel[0]);
+    frame->getJacobianOfTranslation(0,false).set(i02,RangeV(0,R->gethSize()-1), R->evalJacobianOfTranslation() - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation());
+    frame->getJacobianOfRotation(0,false).set(i02,RangeV(0,R->gethSize()-1), R->evalJacobianOfRotation());
+    frame->getJacobianOfTranslation(0,false).add(i02,RangeV(0,gethSize(0)-1), R->evalOrientation()*evalPJT()*evalJRel());
+    frame->getJacobianOfRotation(0,false).add(i02,RangeV(0,gethSize(0)-1), frameForJacobianOfRotation->evalOrientation()*PJR[0]*JRel[0]);
   }
 
   void RigidBody::updateGyroscopicAccelerations(Frame *frame) {

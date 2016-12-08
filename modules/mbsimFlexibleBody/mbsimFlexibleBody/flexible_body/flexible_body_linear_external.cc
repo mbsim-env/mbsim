@@ -91,8 +91,8 @@ namespace MBSimFlexibleBody {
 //	  }
 	}
 
-    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T());// TODO dimensionen der internen Jacobis
-    cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T()); 
+    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(RangeV(0,2),RangeV(0,1))*Jacobian(RangeV(0,qSize-1),RangeV(0,1)).T());// TODO dimensionen der internen Jacobis
+    cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()(RangeV(0,2),RangeV(2,2))*Jacobian(RangeV(0,qSize-1),RangeV(2,2)).T());
     // S_.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // S_.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
@@ -254,8 +254,8 @@ namespace MBSimFlexibleBody {
 //  }
 
   void FlexibleBodyLinearExternal::updateJh_internal(double t) {
-//    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
-//    Jh(Index(0,uSize[0]-1),Index(    0,qSize         -1)) << -K;
-//    Jh(Index(0,uSize[0]-1),Index(qSize,qSize+uSize[0]-1)) << -D;
+//    Mat Jh = mbs->getJh()(Iu,RangeV(0,mbs->getzSize()-1));
+//    Jh(RangeV(0,uSize[0]-1),RangeV(    0,qSize         -1)) << -K;
+//    Jh(RangeV(0,uSize[0]-1),RangeV(qSize,qSize+uSize[0]-1)) << -D;
   }
 }

@@ -175,7 +175,7 @@ namespace MBSimHydraulics {
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getJacobian().cols()-1;
-      W[j][i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
+      W[j][i].resize()>>WParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
@@ -185,7 +185,7 @@ namespace MBSimHydraulics {
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getJacobian().cols()-1;
-      V[j][i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
+      V[j][i].resize()>>VParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
@@ -193,7 +193,7 @@ namespace MBSimHydraulics {
   void HNode::updatehRef(const Vec& hParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
-      const Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
+      const RangeV I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
       h[j][i].resize() >> hParent(I);
     }
   }
@@ -201,7 +201,7 @@ namespace MBSimHydraulics {
   void HNode::updaterRef(const Vec& rParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
-      const Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
+      const RangeV I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
       r[j][i].resize() >> rParent(I);
     }
   }
@@ -217,7 +217,7 @@ namespace MBSimHydraulics {
   void HNode::updatedhdtRef(const Vec& dhdtParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd = connectedLines[i].line->gethInd(j);
-      const Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
+      const RangeV I=RangeV(hInd, hInd+connectedLines[i].sign.size()-1);
       dhdt[i].resize()>>dhdtParent(I);
     }
   }
@@ -421,7 +421,7 @@ namespace MBSimHydraulics {
   void RigidNode::updateW(int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hJ=connectedLines[i].line->getJacobian().cols()-1;
-      W[j][i](Index(0,hJ), Index(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
+      W[j][i](RangeV(0,hJ), RangeV(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
     }
   }
 
@@ -686,7 +686,7 @@ namespace MBSimHydraulics {
   void RigidCavitationNode::updateW(int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hJ=connectedLines[i].sign.size()-1;
-      W[j][i](Index(0,hJ), Index(0, 0))=connectedLines[i].sign;
+      W[j][i](RangeV(0,hJ), RangeV(0, 0))=connectedLines[i].sign;
     }
   }
 

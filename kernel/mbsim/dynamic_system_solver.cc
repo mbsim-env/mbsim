@@ -873,10 +873,10 @@ namespace MBSim {
     checkActive(2);
     calclaSize(3);
     calcrFactorSize(3);
-    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)), 0);
-    updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)), 0);
-    updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
-    updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
+    updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)), 0);
+    updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)), 0);
+    updateWRef(WParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
+    updateVRef(VParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
     updatelaRef(laParent(0, laSize - 1));
     updatewbRef(wbParent(0, laSize - 1));
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
@@ -998,8 +998,8 @@ namespace MBSim {
       calclaSize(2); // contacts which stay closed
       calcrFactorSize(2); // contacts which stay closed
 
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+      updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
       updatelaRef(laParent(0, laSize - 1));
       updateLaRef(LaParent(0, laSize - 1));
       updategdRef(gdParent(0, gdSize - 1));
@@ -1079,7 +1079,7 @@ namespace MBSim {
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID);
-    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+    updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
     SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
     Mat T = evalT();
     int iter = 0;
@@ -1096,7 +1096,7 @@ namespace MBSim {
       if(fullUpdate) Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
    }
     calclaSize(3);
-    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+    updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
     calcgSize(0);
     updategRef(gParent(0, gSize - 1));
   }
@@ -1126,7 +1126,7 @@ namespace MBSim {
       updatecorr(corrID);
 
       calclaSize(gdID);
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
 
       if (laSize) {
         SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
@@ -1135,7 +1135,7 @@ namespace MBSim {
         resetUpToDate();
       }
       calclaSize(3);
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
       calcgdSize(1);
       updategdRef(gdParent(0, gdSize - 1));
     }
@@ -1513,8 +1513,8 @@ namespace MBSim {
       updategdRef(gdParent(0, gdSize - 1));
       calclaSize(1); // IG
       calcrFactorSize(1); // IG
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+      updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
       updatelaRef(laParent(0, laSize - 1));
       updateLaRef(LaParent(0, laSize - 1));
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
@@ -1537,8 +1537,8 @@ namespace MBSim {
 
         calclaSize(3); // IH
         calcrFactorSize(3); // IH
-        updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-        updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+        updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+        updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
         updatelaRef(laParent(0, laSize - 1));
         updatewbRef(wbParent(0, laSize - 1));
         updaterFactorRef(rFactorParent(0, rFactorSize - 1));
@@ -1554,8 +1554,8 @@ namespace MBSim {
 
       calclaSize(3); // IH
       calcrFactorSize(3); // IH
-      updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-      updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+      updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
       updatelaRef(laParent(0, laSize - 1));
       updatewbRef(wbParent(0, laSize - 1));
       updaterFactorRef(rFactorParent(0, rFactorSize - 1));
@@ -1576,8 +1576,8 @@ namespace MBSim {
     checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH
     calcrFactorSize(3); // IH
-    updateWRef(WParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
-    updateVRef(VParent[0](Index(0, getuSize() - 1), Index(0, getlaSize() - 1)));
+    updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
+    updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
     updatelaRef(laParent(0, laSize - 1));
     updatewbRef(wbParent(0, laSize - 1));
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
@@ -1588,15 +1588,15 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatelaInverseKinetics() {
-    updateWRef(WParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
-    updateVRef(VParent[1](Index(0, getuSize(1) - 1), Index(0, getlaSize() - 1)), 1);
+    updateWRef(WParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
+    updateVRef(VParent[1](RangeV(0, getuSize(1) - 1), RangeV(0, getlaSize() - 1)), 1);
     int n = evalWInverseKinetics().cols();
     int m1 = WInverseKinetics.rows();
     int m2 = evalbInverseKinetics().rows();
     Mat A(m1 + m2, n);
     Vec b(m1 + m2);
-    A(Index(0, m1 - 1), Index(0, n - 1)) = WInverseKinetics;
-    A(Index(m1, m1 + m2 - 1), Index(0, n - 1)) = bInverseKinetics;
+    A(RangeV(0, m1 - 1), RangeV(0, n - 1)) = WInverseKinetics;
+    A(RangeV(m1, m1 + m2 - 1), RangeV(0, n - 1)) = bInverseKinetics;
     b(0, m1 - 1) = -evalh(1) - evalr(1);
     laInverseKinetics = slvLL(JTJ(A), A.T() * b);
   }

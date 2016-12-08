@@ -47,7 +47,7 @@ void Line::updateJacobians(int k) {
       J=Mat(1,M.size());
       for(size_t i=0; i<dependency.size(); i++) {
         Mat Jdep=((Line*)dependency[i])->evalJ(k);
-        J(0,Index(0,Jdep.cols()-1))+=Jdep;
+        J(0,RangeV(0,Jdep.cols()-1))+=Jdep;
       }
     }
   }

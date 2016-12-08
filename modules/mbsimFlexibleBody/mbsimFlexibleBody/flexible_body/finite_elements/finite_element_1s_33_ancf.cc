@@ -251,8 +251,8 @@ namespace MBSimFlexibleBody {
 
   Vec FiniteElement1s33ANCF::LocateBalken(const Vec& qElement, double s) {
     Vec X(6);
-    X(Index(0,2)) = getPosition(qElement,s);
-    X(Index(3,5)) = AIK2Cardan(getOrientation(qElement,s));
+    X(RangeV(0,2)) = getPosition(qElement,s);
+    X(RangeV(3,5)) = AIK2Cardan(getOrientation(qElement,s));
 
     return X;
   }
@@ -261,9 +261,9 @@ namespace MBSimFlexibleBody {
     Mat J = (JGeneralized(qElement,s).T()).copy();
 
     Vec X(12);
-    X(Index(0,2)) = J(Index(0,2),Index(0,11))*qElement;
-    X(Index(3,5)) = AIK2Cardan(getOrientation(qElement,s));
-    X(Index(6,11)) = J*qpElement;
+    X(RangeV(0,2)) = J(RangeV(0,2),RangeV(0,11))*qElement;
+    X(RangeV(3,5)) = AIK2Cardan(getOrientation(qElement,s));
+    X(RangeV(6,11)) = J*qpElement;
 
     return X;
   }
@@ -281,7 +281,7 @@ namespace MBSimFlexibleBody {
 
     // Jacobian
     // first three colums, i.e. Jacobian of translation, correlate with matrix of global shape functions S
-    J(Index(0,11),Index(0,2)) = S(Index(0,11),Index(0,2));
+    J(RangeV(0,11),RangeV(0,2)) = S(RangeV(0,11),RangeV(0,2));
 
     // last three colums represent the Jacobian of rotation
     J(0,3) = 1.0/(l0*l0*l0*l0*l0*l0*l0*l0*l0)*s*pow(fabs(l0),6.0)*1.0/sqrt(pow(fabs(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0),2.0)+pow(fabs(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0),2.0))*(l0-s)*1.0/sqrt(1.0/(l0*l0*l0*l0*l0*l0)*pow(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0,2.0)+1.0/(l0*l0*l0*l0*l0*l0)*pow(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0,2.0))*1.0/sqrt(pow(fabs(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0),2.0)+pow(fabs(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0),2.0)+pow(fabs(dz1*(l0*l0*l0)+(s*s)*z1*6.0-(s*s)*z2*6.0+dz1*l0*(s*s)*3.0-dz1*(l0*l0)*s*4.0+dz2*l0*(s*s)*3.0-dz2*(l0*l0)*s*2.0-l0*s*z1*6.0+l0*s*z2*6.0),2.0))*(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0)*(dz1*(l0*l0*l0)+(s*s)*z1*6.0-(s*s)*z2*6.0+dz1*l0*(s*s)*3.0-dz1*(l0*l0)*s*4.0+dz2*l0*(s*s)*3.0-dz2*(l0*l0)*s*2.0-l0*s*z1*6.0+l0*s*z2*6.0)*6.0;
@@ -315,7 +315,7 @@ namespace MBSimFlexibleBody {
     J(9,5) = (1.0/(l0*l0*l0*l0*l0)*s*pow(fabs(l0),3.0)*1.0/sqrt(pow(fabs(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0),2.0)+pow(fabs(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0),2.0))*(l0*2.0-s*3.0)*(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0))/max(fabs(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0)*1.0/pow(fabs(l0),3.0),max(fabs(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0)*1.0/pow(fabs(l0),3.0),fabs(dz1*(l0*l0*l0)+(s*s)*z1*6.0-(s*s)*z2*6.0+dz1*l0*(s*s)*3.0-dz1*(l0*l0)*s*4.0+dz2*l0*(s*s)*3.0-dz2*(l0*l0)*s*2.0-l0*s*z1*6.0+l0*s*z2*6.0)*1.0/pow(fabs(l0),3.0)));
     J(10,5) = -(1.0/(l0*l0*l0*l0*l0)*s*pow(fabs(l0),3.0)*1.0/sqrt(pow(fabs(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0),2.0)+pow(fabs(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0),2.0))*(l0*2.0-s*3.0)*(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0))/max(fabs(dx1*(l0*l0*l0)+(s*s)*x1*6.0-(s*s)*x2*6.0+dx1*l0*(s*s)*3.0-dx1*(l0*l0)*s*4.0+dx2*l0*(s*s)*3.0-dx2*(l0*l0)*s*2.0-l0*s*x1*6.0+l0*s*x2*6.0)*1.0/pow(fabs(l0),3.0),max(fabs(dy1*(l0*l0*l0)+(s*s)*y1*6.0-(s*s)*y2*6.0+dy1*l0*(s*s)*3.0-dy1*(l0*l0)*s*4.0+dy2*l0*(s*s)*3.0-dy2*(l0*l0)*s*2.0-l0*s*y1*6.0+l0*s*y2*6.0)*1.0/pow(fabs(l0),3.0),fabs(dz1*(l0*l0*l0)+(s*s)*z1*6.0-(s*s)*z2*6.0+dz1*l0*(s*s)*3.0-dz1*(l0*l0)*s*4.0+dz2*l0*(s*s)*3.0-dz2*(l0*l0)*s*2.0-l0*s*z1*6.0+l0*s*z2*6.0)*1.0/pow(fabs(l0),3.0)));
     
-    J(Index(0,11),Index(3,5)) = J(Index(0,11),Index(3,5))*getOrientation(qElement,s).T();
+    J(RangeV(0,11),RangeV(3,5)) = J(RangeV(0,11),RangeV(3,5))*getOrientation(qElement,s).T();
 
     return J;
   }

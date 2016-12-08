@@ -41,7 +41,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s23BTA::BuildElements() {
     for(int i=0;i<Elements;i++) {
-      Index activeElement( discretization[i]->getuSize()/2*i , discretization[i]->getuSize()/2*(i+2) -1 );
+      RangeV activeElement( discretization[i]->getuSize()/2*i , discretization[i]->getuSize()/2*(i+2) -1 );
       qElement[i] = q(activeElement);
       uElement[i] = u(activeElement);
     }
@@ -49,17 +49,17 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s23BTA::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
-    Index activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
+    RangeV activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
     gloVec(activeElement) += locVec;
   }
 
   void FlexibleBody1s23BTA::GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
-    Index activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
+    RangeV activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
     gloMat(activeElement) += locMat;
   }
 
   void FlexibleBody1s23BTA::GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
-    Index activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
+    RangeV activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
     gloMat(activeElement) += locMat;
   }
 
@@ -81,18 +81,18 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s23BTA::updateJacobians(Frame1s *frame, int j) {
-    Index All(0,5-1);
+    RangeV All(0,5-1);
     Mat Jacobian(qSize, 5, INIT, 0); // boeser Kaefer, Initialisierung notwendig!!! M. Schneider
 
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(), sLocal, currentElement);
 
-    Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
+    RangeV activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
     Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
 
-    frame->setJacobianOfTranslation(R->evalOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
-    frame->setJacobianOfRotation(R->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
+    frame->setJacobianOfTranslation(R->evalOrientation()(RangeV(0,2),RangeV(1,2))*Jacobian(RangeV(0,qSize-1),RangeV(0,1)).T());
+    frame->setJacobianOfRotation(R->getOrientation()*Jacobian(RangeV(0,qSize-1),RangeV(2,4)).T());
   }
 
   void FlexibleBody1s23BTA::updateGyroscopicAccelerations(Frame1s *frame) {

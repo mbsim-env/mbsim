@@ -156,7 +156,7 @@ namespace MBSimFlexibleBody {
     M(13,13) = ((j1 - j2)*(r1 - r2)*(Power(d1,3)*(4*r1 + 3*r2) + 3*Power(d1,2)*d2*(3*r1 + 4*r2) + 6*d1*Power(d2,2)*(2*r1 + 5*r2) + 10*Power(d2,3)*(r1 + 6*r2))*rho)/15120.;
 
     // stiffness matrix
-    SymMat KEl = K(Index(2,13));
+    SymMat KEl = K(RangeV(2,13));
     KEl(0,0) = (alphaS*G*(dr*(d1*(-2*(3 + Power(j1 - j2,2))*Power(r1,2) + (21 + Power(j1 - j2,2))*r1*r2 + (-33 + Power(j1 - j2,2))*Power(r2,2)) - d2*((3 + Power(j1 - j2,2))*Power(r1,2) + (-15 + Power(j1 - j2,2))*r1*r2 - 2*(3 + Power(j1 - j2,2))*Power(r2,2))) + 18*Power(r2,2)*(d2*r1 - d1*r2)*log(r1/r2)))/(18.*dj*Power(dr,3));
     KEl(0,1) = -(alphaS*G*Power(j1 - j2,2)*Power(r1 - r2,2)*(d2*(r1 + r2) + d1*(3*r1 + r2)))/(36.*dj*Power(dr,2));
     KEl(0,2) = -(alphaS*(3*d1 + d2)*dr*G)/24.;
