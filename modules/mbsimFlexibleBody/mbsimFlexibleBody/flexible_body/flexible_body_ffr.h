@@ -23,8 +23,8 @@
 #include "mbsim/objects/body.h"
 #include "mbsim/functions/time_dependent_function.h"
 #include "mbsim/functions/state_dependent_function.h"
-
 #include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/index.h"
 #include "mbsimFlexibleBody/utils/openmbv_utils.h"
 
 namespace MBSim {
@@ -213,7 +213,7 @@ namespace MBSimFlexibleBody {
       using Body::addContour;
 
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<int>&),std::vector<int>())(indices,(const std::vector<int>&),std::vector<int>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(indices,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
         OpenMBVDynamicIndexedFaceSet ombv(minimalColorValue,maximalColorValue);
         openMBVBody=ombv.createOpenMBV();
         ombvNodes = nodes;
@@ -408,7 +408,7 @@ namespace MBSimFlexibleBody {
        */
       MBSim::Frame * openMBVFrame;
       std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
-      std::vector<int> ombvNodes, ombvIndices;
+      std::vector<MBSim::Index> ombvNodes, ombvIndices;
   };
 
 }

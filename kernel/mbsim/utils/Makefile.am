@@ -29,7 +29,8 @@ utilsinclude_HEADERS = colors.h\
 		       boost_parameters.h\
 		       openmbv_utils.h\
 		       planar_contact_search.h\
-		       spatial_contact_search.h
+		       spatial_contact_search.h\
+		       index.h
 
 noinst_PROGRAMS = cppCasADiToXML
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc
