@@ -1044,13 +1044,13 @@ namespace MBSimFlexibleBody {
       if(ee) nodes=getVec(ee);
       ombvNodes.resize(nodes.size());
       for(int i=0; i<nodes.size(); i++)
-        ombvNodes[i] = nodes(i);
+        ombvNodes[i] = nodes(i)-1;
       ee=E(e)->getFirstElementChildNamed(MBSIMFLEX%"indices");
       Vec indices;
       if(ee) indices=getVec(ee);
       ombvIndices.resize(indices.size());
       for(int i=0; i<indices.size(); i++)
-        ombvIndices[i] = indices(i);
+        ombvIndices[i] = indices(i)-1;
       OpenMBVDynamicIndexedFaceSet ombv;
       openMBVBody=ombv.createOpenMBV(e);
     }
