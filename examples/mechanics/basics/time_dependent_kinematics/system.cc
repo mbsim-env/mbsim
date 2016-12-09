@@ -41,9 +41,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SX t=SX::sym("t");
   SX fexp=SX::zeros(3);
-  fexp[0] = sin(freq1*t + M_PI/2);
-  fexp[1] = v0y*t; 
-  fexp[2] = 0; 
+  fexp(0) = sin(freq1*t + M_PI/2);
+  fexp(1) = v0y*t;
+  fexp(2) = 0;
 
   body1->setTranslation(new SymbolicFunction<Vec3(double)>(fexp, t));
 

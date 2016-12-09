@@ -41,9 +41,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SX st=SX::sym("t");
 
   SX pos=SX::zeros(3);
-  pos[0] = cos(SX(sq[0]));
-  pos[1] = sin(SX(sq[0]));
-  pos[2] = sq[1]; 
+  pos(0) = cos(SX(sq(0)));
+  pos(1) = sin(SX(sq(0)));
+  pos(2) = sq(1);
   
   SymbolicFunction<Vec3(VecV,double)> *position = new SymbolicFunction<Vec3(VecV,double)>(pos, sq, st);
   body1->setTranslation(position);

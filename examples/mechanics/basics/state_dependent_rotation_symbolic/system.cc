@@ -43,13 +43,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   SX sq=SX::sym("q");
 
   SX pos=SX::zeros(3);
-  pos[0] = -cos(sq[0]/R)*R;
-  pos[1] = -sin(sq[0]/R)*R;
-  pos[2] = 0;
+  pos(0) = -cos(sq(0)/R)*R;
+  pos(1) = -sin(sq(0)/R)*R;
+  pos(2) = 0;
 
   body->setTranslation(new SymbolicFunction<Vec3(VecV)>(pos, sq));
 
-  SX al=M_PI/2+sq[0]/R;
+  SX al=M_PI/2+sq(0)/R;
 
   SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(al, sq);
   body->setRotation(new CompositeFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
