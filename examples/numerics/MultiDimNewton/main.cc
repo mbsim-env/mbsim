@@ -48,9 +48,9 @@ int main (int argc, char* argv[]) {
   newton.setFunction(function);
   newton.setJacobianFunction(jac);
 
-  map<Index, double> tolerances;
-  tolerances.insert(pair<Index, double>(Index(0,dimension/2-1), 1e-10));
-  tolerances.insert(pair<Index, double>(Index(dimension/2,dimension-1), 1e-8));
+  map<RangeV, double> tolerances;
+  tolerances.insert(pair<RangeV, double>(RangeV(0,dimension/2-1), 1e-10));
+  tolerances.insert(pair<RangeV, double>(RangeV(dimension/2,dimension-1), 1e-8));
 
 
 
