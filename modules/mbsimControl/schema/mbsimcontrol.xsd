@@ -70,7 +70,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="sourceSize" type="pv:nounitScalar">
+          <xs:element name="sourceSize" type="pv:integerFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Gibt die Dimension der Signalquelle an.

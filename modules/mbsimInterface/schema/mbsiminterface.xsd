@@ -125,7 +125,7 @@
     <xs:complexContent>
       <xs:extension base="MBSimServerType">
         <xs:sequence>
-          <xs:element name="port" type="pv:nounitVector">
+          <xs:element name="port" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Port, auf dem der TCP-Server auf eingehende Verbindung wartet.
             </xs:documentation></xs:annotation>
