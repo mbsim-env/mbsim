@@ -39,7 +39,7 @@ namespace MBSim {
       std::vector<fmatvec::Mat3xV> DF, DM;
       std::vector<fmatvec::Vec3> F, M;
       std::vector<fmatvec::Mat3xV> RF, RM;
-      fmatvec::Index iF, iM;
+      fmatvec::RangeV iF, iM;
       Frame *support;
 
     public:

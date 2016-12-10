@@ -67,8 +67,8 @@ namespace MBSimIntegrator {
 //
 ////    if (qd() != zdParent()) updatezdRef(zdParent);
 //    system->setTime(t);
-//    system->updateWRef(system->getWParent(1)(Index(0, system->getuSize(1) - 1), Index(0, system->getlaSize() - 1)), 1);
-//    system->updateVRef(system->getVParent(1)(Index(0, system->getuSize(1) - 1), Index(0, system->getlaSize() - 1)), 1);
+//    system->updateWRef(system->getWParent(1)(RangeV(0, system->getuSize(1) - 1), Index(0, system->getlaSize() - 1)), 1);
+//    system->updateVRef(system->getVParent(1)(RangeV(0, system->getuSize(1) - 1), Index(0, system->getlaSize() - 1)), 1);
 ////    if (system->getlaSize()) {
 ////      if(useConstraintSolverForPlot) {
 ////        b << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();

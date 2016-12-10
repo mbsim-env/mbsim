@@ -268,8 +268,8 @@ namespace MBSimIntegrator {
       system.calclaSize(2); // contacts which stay closed
       system.calcrFactorSize(2); // contacts which stay closed
 
-      system.updateWRef(system.getWParent(0)(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
-      system.updateVRef(system.getVParent(0)(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
+      system.updateWRef(system.getWParent(0)(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
+      system.updateVRef(system.getVParent(0)(RangeV(0, system.getuSize() - 1), RangeV(0, system.getlaSize() - 1)));
       system.updatelaRef(system.getlaParent()(0, system.getlaSize() - 1));
       system.updateLaRef(system.getLaParent()(0, system.getlaSize() - 1));
       system.updategdRef(system.getgdParent()(0, system.getgdSize() - 1));

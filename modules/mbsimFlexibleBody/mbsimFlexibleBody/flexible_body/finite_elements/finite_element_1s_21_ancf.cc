@@ -294,15 +294,15 @@ namespace MBSimFlexibleBody {
   Vec FiniteElement1s21ANCF::StateBalken(const Vec& qElement, const Vec& qpElement, double s) {
     Mat J = JGeneralized(qElement,s).T();
     Vec X(6);
-    X(Index(0,2)) = J*qElement;
-    X(Index(3,5)) = J*qpElement;
+    X(RangeV(0,2)) = J*qElement;
+    X(RangeV(3,5)) = J*qpElement;
 
     Vec3 t = getTangent(qElement,s);
 
     X(2) = atan2(t(1),t(0));
     
     if(Euler) {      
-      X(Index(3,4)) += v0*GlobalShapeFunctions_1stDerivative(s).T()*qElement;
+      X(RangeV(3,4)) += v0*GlobalShapeFunctions_1stDerivative(s).T()*qElement;
 
       Vec3 ang = getAngularVelocity(qElement,qpElement,s);
       X(5) = ang(2);
@@ -321,7 +321,7 @@ namespace MBSimFlexibleBody {
 
     // Jacobian
     // first two colums, i.e. Jacobian of translation, correlate with matrix of global shape functions S
-    J(Index(0,7),Index(0,1)) = GlobalShapeFunctions(s)(Index(0,7),Index(0,1));
+    J(RangeV(0,7),RangeV(0,1)) = GlobalShapeFunctions(s)(RangeV(0,7),RangeV(0,1));
 
     // third column is the Jacobian of rotation
     J(0,2) = -(1.0/sqrt(pow(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0)+pow(fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),2.0))*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)*(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)))/max(fabs(x1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-x2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dx2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dx1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)),fabs(y1*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)-y2*(1.0/(l0*l0)*s*6.0-1.0/(l0*l0*l0)*(s*s)*6.0)+dy2*l0*(1.0/(l0*l0)*s*2.0-1.0/(l0*l0*l0)*(s*s)*3.0)-dy1*l0*(1.0/(l0*l0)*s*-4.0+1.0/l0+1.0/(l0*l0*l0)*(s*s)*3.0)));

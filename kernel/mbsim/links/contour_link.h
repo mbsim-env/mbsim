@@ -120,7 +120,7 @@ namespace MBSim {
       /**
        * \brief indices of forces and torques
        */
-      fmatvec::Index iF, iM;
+      fmatvec::RangeV iF, iM;
 
       std::vector<Contour*> contour;
 

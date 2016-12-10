@@ -124,13 +124,13 @@ namespace MBSimFlexibleBody {
     int j = 6 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(Index(j, j + 8), Index(j, j + 8)) += locMat;
+      gloMat(RangeV(j, j + 8), RangeV(j, j + 8)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j, j + 5), Index(j, j + 5)) += locMat(Index(0, 5), Index(0, 5));
-      gloMat(Index(j, j + 5), Index(0, 2)) += locMat(Index(0, 5), Index(6, 8));
-      gloMat(Index(0, 2), Index(j, j + 5)) += locMat(Index(6, 8), Index(0, 5));
-      gloMat(Index(0, 2), Index(0, 2)) += locMat(Index(6, 8), Index(6, 8));
+      gloMat(RangeV(j, j + 5), RangeV(j, j + 5)) += locMat(RangeV(0, 5), RangeV(0, 5));
+      gloMat(RangeV(j, j + 5), RangeV(0, 2)) += locMat(RangeV(0, 5), RangeV(6, 8));
+      gloMat(RangeV(0, 2), RangeV(j, j + 5)) += locMat(RangeV(6, 8), RangeV(0, 5));
+      gloMat(RangeV(0, 2), RangeV(0, 2)) += locMat(RangeV(6, 8), RangeV(6, 8));
     }
   }
 
@@ -138,12 +138,12 @@ namespace MBSimFlexibleBody {
     int j = 6 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(Index(j, j + 8)) += locMat;
+      gloMat(RangeV(j, j + 8)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j, j + 5)) += locMat(Index(0, 5));
-      gloMat(Index(j, j + 5), Index(0, 2)) += locMat(Index(0, 5), Index(6, 8));
-      gloMat(Index(0, 2)) += locMat(Index(6, 8));
+      gloMat(RangeV(j, j + 5)) += locMat(RangeV(0, 5));
+      gloMat(RangeV(j, j + 5), RangeV(0, 2)) += locMat(RangeV(0, 5), RangeV(6, 8));
+      gloMat(RangeV(0, 2)) += locMat(RangeV(6, 8));
     }
   }
 
@@ -201,7 +201,7 @@ namespace MBSimFlexibleBody {
     int node = frame->getNodeNumber();
     Mat3xV Jacobian_trans(qSize, INIT, 0.);
 
-    Jacobian_trans.set(Index(0, 2), Index(6 * node, 6 * node + 2), SqrMat(3, EYE)); // translation
+    Jacobian_trans.set(RangeV(0, 2), RangeV(6 * node, 6 * node + 2), SqrMat(3, EYE)); // translation
 
     frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian_trans, j);
 
@@ -210,7 +210,7 @@ namespace MBSimFlexibleBody {
     Mat3xV Jacobian_rot(qSize, INIT, 0.); // TODO open structure
     Vec p = q(6 * node + 3, 6 * node + 5);
 
-    Jacobian_rot.set(Index(0, 2), Index(6 * node + 3, 6 * node + 5), angle->computeT(p)); // rotation
+    Jacobian_rot.set(RangeV(0, 2), RangeV(6 * node + 3, 6 * node + 5), angle->computeT(p)); // rotation
 
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot, j);
   }
@@ -281,7 +281,7 @@ namespace MBSimFlexibleBody {
     evalM(); // be sure that M is update to date
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
-      LLM(Index(j + 3, j + 5)) = facLL(discretization[i]->getM()(Index(3, 5)));
+      LLM(RangeV(j + 3, j + 5)) = facLL(discretization[i]->getM()(RangeV(3, 5)));
     }
   }
 
@@ -330,8 +330,8 @@ namespace MBSimFlexibleBody {
     fmatvec::Vector<Fixed<6>, double> temp(NONINIT);
 //    ncc->updateKinematicsForFrame(cp, Frame::position);
 //    ncc->updateKinematicsForFrame(cp, Frame::angle);
-//    temp.set(Index(0, 2), cp.getFrameOfReference().getPosition());
-//    temp.set(Index(3, 5), cp.getFrameOfReference().getAnglesOfOrientation());
+//    temp.set(RangeV(0, 2), cp.getFrameOfReference().getPosition());
+//    temp.set(RangeV(3, 5), cp.getFrameOfReference().getAnglesOfOrientation());
     return temp;
   }
 
@@ -346,8 +346,8 @@ namespace MBSimFlexibleBody {
 //    ncc->updateKinematicsForFrame(cp, Frame::position);
 //    ncc->updateKinematicsForFrame(cp, Frame::angle);
 //    ncc->updateKinematicsForFrame(cp, Frame::velocities);
-//    temp.set(Index(6, 8), cp.getFrameOfReference().getVelocity());
-//    temp.set(Index(9, 11), cp.getFrameOfReference().getAngularVelocity());
+//    temp.set(RangeV(6, 8), cp.getFrameOfReference().getVelocity());
+//    temp.set(RangeV(9, 11), cp.getFrameOfReference().getAngularVelocity());
     return temp;
   }
 
@@ -433,9 +433,9 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getM(), M); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
-      LLM(Index(j, j + 2)) = facLL(M(Index(j, j + 2)));
+      LLM(RangeV(j, j + 2)) = facLL(M(RangeV(j, j + 2)));
       if (openStructure && i == (int) discretization.size() - 1)
-        LLM(Index(j + 6, j + 8)) = facLL(M(Index(j + 6, j + 8)));
+        LLM(RangeV(j + 6, j + 8)) = facLL(M(RangeV(j + 6, j + 8)));
     }
   }
 

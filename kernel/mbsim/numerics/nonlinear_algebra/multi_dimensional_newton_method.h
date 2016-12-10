@@ -29,7 +29,7 @@
 #include <mbsim/numerics/functions/damping_functions.h>
 
 namespace fmatvec {
-  bool operator<(const fmatvec::Index & i1, const fmatvec::Index & i2);
+  bool operator<(const fmatvec::RangeV & i1, const fmatvec::RangeV & i2);
 }
 
 namespace MBSim {

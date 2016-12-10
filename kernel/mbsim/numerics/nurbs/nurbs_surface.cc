@@ -100,7 +100,7 @@ namespace MBSim {
     int i, j;
     for (j = 0; j < Q.cols(); j++) {
       for (i = 0; i < Q.rows(); i++){
-        Pts.set(Index(i, i), Index(0, 2), trans(Q(i, j)));
+        Pts.set(RangeV(i, i), RangeV(0, 2), trans(Q(i, j)));
       }
 
       if (j == 0){
@@ -119,7 +119,7 @@ namespace MBSim {
 
     for (i = 0; i < Q.rows(); i++) {
       for (j = 0; j < Q.cols(); j++){
-        Pts.set(Index(j, j), Index(0, 3), trans(P(i, j)));
+        Pts.set(RangeV(j, j), RangeV(0, 3), trans(P(i, j)));
       }
 
       if (i == 0){
@@ -161,7 +161,7 @@ namespace MBSim {
     int i, j;
     for (j = 0; j < Q.cols(); j++) {
       for (i = 0; i < Q.rows(); i++){
-        Pts.set(Index(i, i), Index(0, 2), trans(Q(i, j)));
+        Pts.set(RangeV(i, i), RangeV(0, 2), trans(Q(i, j)));
       }
 
       if (j == 0){
@@ -180,7 +180,7 @@ namespace MBSim {
 
     for (i = 0; i < Q.rows(); i++) {
       for (j = 0; j < Q.cols(); j++){
-        Pts.set(Index(j, j), Index(0, 3), trans(P(i, j)));
+        Pts.set(RangeV(j, j), RangeV(0, 3), trans(P(i, j)));
       }
 
       if (i == 0){
@@ -224,7 +224,7 @@ namespace MBSim {
     int i, j;
     for (i = 0; i < Q.rows(); i++) {  // Q does not contains the repeated points in U direction
       for (j = 0; j < Q.cols(); j++)
-        Pts.set(Index(j, j), Index(0, 2), trans(Q(i, j)));
+        Pts.set(RangeV(j, j), RangeV(0, 2), trans(Q(i, j)));
 
       if (i == 0){
         surfMeshParamsClosedU(Q, uk, vk, DegU);  // numU = unrepeated points in U direction.  Q: numU * numV;   uk: (numU + degU) * 1; vk = numv * 1
@@ -242,7 +242,7 @@ namespace MBSim {
 
     for (j = 0; j < Q.cols(); j++) {
       for (i = 0; i < Q.rows(); i++)
-        Pts.set(Index(i, i), Index(0, 3), trans(P(i, j)));
+        Pts.set(RangeV(i, i), RangeV(0, 3), trans(P(i, j)));
 
 //      cout << "fmatvec_suface: control points for interpolating in U direction " << Pts << endl;
       if (j == 0){
@@ -291,7 +291,7 @@ namespace MBSim {
     int i, j;
     for (i = 0; i < Q.rows(); i++) {  // Q does not contains the repeated points in U direction
       for (j = 0; j < Q.cols(); j++)
-        Pts.set(Index(j, j), Index(0, 2), trans(Q(i, j)));
+        Pts.set(RangeV(j, j), RangeV(0, 2), trans(Q(i, j)));
 
       if (i == 0){
 //        surfMeshParamsClosedU(Q, uk, vk, DegU);  // numU = unrepeated points in U direction.  Q: numU * numV;   uk: (numU + degU) * 1; vk = numv * 1
@@ -309,7 +309,7 @@ namespace MBSim {
 
     for (j = 0; j < Q.cols(); j++) {
       for (i = 0; i < Q.rows(); i++)
-        Pts.set(Index(i, i), Index(0, 3), trans(P(i, j)));
+        Pts.set(RangeV(i, i), RangeV(0, 3), trans(P(i, j)));
 
 //      cout << "fmatvec_suface: control points for interpolating in U direction " << Pts << endl;
       if (j == 0){

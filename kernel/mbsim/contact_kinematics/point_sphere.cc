@@ -95,14 +95,14 @@ namespace MBSim {
     const Vec3 Om2 = cFrame[isphere]->evalAngularVelocity();
 
     SqrMat A(4,NONINIT);
-    A(Index(0,0),Index(0,1)).init(0);// = -u1.T()*R1;
-    A(Index(0,0),Index(2,3)) = u1.T()*R2;
-    A(Index(1,1),Index(0,1)).init(0);// = -v1.T()*R1;
-    A(Index(1,1),Index(2,3)) = v1.T()*R2;
-    A(Index(2,2),Index(0,1)) = u2.T()*N1;
-    A(Index(2,2),Index(2,3)) = n1.T()*U2;
-    A(Index(3,3),Index(0,1)) = v2.T()*N1;
-    A(Index(3,3),Index(2,3)) = n1.T()*V2;
+    A(RangeV(0,0),RangeV(0,1)).init(0);// = -u1.T()*R1;
+    A(RangeV(0,0),RangeV(2,3)) = u1.T()*R2;
+    A(RangeV(1,1),RangeV(0,1)).init(0);// = -v1.T()*R1;
+    A(RangeV(1,1),RangeV(2,3)) = v1.T()*R2;
+    A(RangeV(2,2),RangeV(0,1)) = u2.T()*N1;
+    A(RangeV(2,2),RangeV(2,3)) = n1.T()*U2;
+    A(RangeV(3,3),RangeV(0,1)) = v2.T()*N1;
+    A(RangeV(3,3),RangeV(2,3)) = n1.T()*V2;
 
     Vec b(4,NONINIT);
     b(0) = -u1.T()*(vC2-vC1);

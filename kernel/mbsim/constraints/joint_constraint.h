@@ -107,7 +107,7 @@ namespace MBSim {
 
       fmatvec::Mat3xV dT, dR, forceDir, momentDir;
 
-      std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
+      std::vector<fmatvec::RangeV> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
       int nq, nu, nh;
       fmatvec::Vec q, q0;
       fmatvec::Mat JT, JR;

@@ -114,13 +114,13 @@ namespace MBSimFlexibleBody {
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
     Mat3xV Jacobian_trans(qSize, INIT, 0.);
     // translational DOF
-    Jacobian_trans.set(Index(0, 2), Index(0, 2), SqrMat(3, EYE));
+    Jacobian_trans.set(RangeV(0, 2), RangeV(0, 2), SqrMat(3, EYE));
 
     // rotational DOF
     SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalA();
     SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalG_bar();
     Vec3 u_bar = NLP->evalLocalPosition(frame->getZeta());
-    Jacobian_trans.set(Index(0, 2), Index(3, 5), -A * tilde(u_bar) * G_bar);
+    Jacobian_trans.set(RangeV(0, 2), RangeV(3, 5), -A * tilde(u_bar) * G_bar);
 
     // elastic DOF
     Mat3xV modeShapeMatrix(qSize - 6, NONINIT);
@@ -131,14 +131,14 @@ namespace MBSimFlexibleBody {
       modeShapeMatrix.set(k, temp);
     }
 
-    Jacobian_trans.set(Index(0, 2), Index(6, qSize - 1), A * modeShapeMatrix);
+    Jacobian_trans.set(RangeV(0, 2), RangeV(6, qSize - 1), A * modeShapeMatrix);
 
     SqrMat3 wRA = (static_cast<FlexibleBodyLinearExternalFFR*>(parent))->getFrameOfReference()->evalOrientation();
     frame->setJacobianOfTranslation(wRA * Jacobian_trans,j);
 
     /******************************************************************  Jacobian of Rotation  *******************************************************************************/
     Mat3xV Jacobian_rot(qSize, INIT, 0.);
-    Jacobian_rot.set(Index(0, 2), Index(3, 5), A * G_bar);
+    Jacobian_rot.set(RangeV(0, 2), RangeV(3, 5), A * G_bar);
     frame->setJacobianOfRotation(wRA * Jacobian_rot,j);
   }
 

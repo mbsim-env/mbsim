@@ -115,7 +115,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
     Pdme(1,2) = 1./2;
     Pdme(1,3) = -1./12*D;
     Pdme*=rho*d2*h2*D;
-    Pdmg.add(Index(0,2),Index(i1,i2),Pdme);
+    Pdmg.add(RangeV(0,2),RangeV(i1,i2),Pdme);
 
     PPdme[0][0](0,0) = 6./5/D;
     PPdme[0][0](0,1) = 1./10;
@@ -154,9 +154,9 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
     rPdme[1](0,2) = rho*-1./12*d2*pow(h2,3);
 
     for(int j=0; j<3; j++) {
-      rPdmg[j].add(Index(0,2),Index(i1,i2),rPdme[j]);
+      rPdmg[j].add(RangeV(0,2),RangeV(i1,i2),rPdme[j]);
       for(int k=0; k<3; k++) {
-	PPdmg[j][k].add(Index(i1,i2),Index(i1,i2),PPdme[j][k]);
+	PPdmg[j][k].add(RangeV(i1,i2),RangeV(i1,i2),PPdme[j][k]);
       }
     }
 
@@ -171,7 +171,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
     Kee(2,3) = -6./pow(D,2);
     Kee(3,3) = 4./D;
     Kee*=E/(12*(1-pow(nu,2)))*d2*pow(h2,3);
-    Keg.add(Index(i1,i2),Index(i1,i2),Kee);
+    Keg.add(RangeV(i1,i2),RangeV(i1,i2),Kee);
   }
 
   int j=0;

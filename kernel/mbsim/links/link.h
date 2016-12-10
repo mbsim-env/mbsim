@@ -335,8 +335,8 @@ namespace MBSim {
       virtual void setrMax(double rMax_) { rMax = rMax_; }
       virtual void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
-      virtual void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); }
-      virtual void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::Index(gInd,gInd+gSize-1); }
+      virtual void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::RangeV(laInd,laInd+laSize-1); }
+      virtual void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::RangeV(gInd,gInd+gSize-1); }
       virtual void setgdInd(int gdInd_) { gdInd = gdInd_; }
       virtual void setrFactorInd(int rFactorInd_) { rFactorInd = rFactorInd_; }
       /**
@@ -526,7 +526,7 @@ namespace MBSim {
       /**
        * \brief local index of relative distances and contact force parameters
        */
-      fmatvec::Index Ig, Ila;
+      fmatvec::RangeV Ig, Ila;
       
       /**
        * \brief tolerance for relative velocity, relative acceleration, force and impact  

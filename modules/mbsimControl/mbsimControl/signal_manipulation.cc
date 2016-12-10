@@ -58,8 +58,8 @@ namespace MBSimControl {
       VecV s1=y;
       VecV s2=signals[i]->evalSignal();
       y.resize(s1.size()+s2.size());
-      y.set(Index(0, s1.size()-1),s1);
-      y.set(Index(s1.size(), y.size()-1),s2);
+      y.set(RangeV(0, s1.size()-1),s1);
+      y.set(RangeV(s1.size(), y.size()-1),s2);
     }
     s = y;
     upds = false;

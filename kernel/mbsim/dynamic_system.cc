@@ -747,7 +747,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateTRef(const Mat& TParent) {
-    T >> TParent(Index(qInd, qInd + qSize - 1), Index(uInd[0], uInd[0] + uSize[0] - 1));
+    T >> TParent(RangeV(qInd, qInd + qSize - 1), RangeV(uInd[0], uInd[0] + uSize[0] - 1));
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (*i)->updateTRef(TParent);
@@ -757,7 +757,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateMRef(const SymMat& MParent) {
-    M >> MParent(Index(hInd[0], hInd[0] + hSize[0] - 1));
+    M >> MParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (*i)->updateMRef(MParent);
@@ -767,7 +767,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateLLMRef(const SymMat& LLMParent) {
-    LLM >> LLMParent(Index(hInd[0], hInd[0] + hSize[0] - 1));
+    LLM >> LLMParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
 
     for (vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (*i)->updateLLMRef(LLMParent);
@@ -822,28 +822,28 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateWRef(const Mat &WParent, int j) {
-    W[j] >> WParent(Index(hInd[j], hInd[j] + hSize[j] - 1), Index(laInd, laInd + laSize - 1));
+    W[j] >> WParent(RangeV(hInd[j], hInd[j] + hSize[j] - 1), RangeV(laInd, laInd + laSize - 1));
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updateWRef(WParent, j);
   }
 
   void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent) {
-    WInverseKinetics >> WParent(Index(hInd[1], hInd[1] + hSize[1] - 1), Index(0, laInverseKineticsSize - 1));
+    WInverseKinetics >> WParent(RangeV(hInd[1], hInd[1] + hSize[1] - 1), RangeV(0, laInverseKineticsSize - 1));
 
     for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateWRef(WParent, 1);
   }
 
   void DynamicSystem::updatebInverseKineticsRef(const Mat &bParent) {
-    bInverseKinetics >> bParent(Index(0, bInverseKineticsSize - 1), Index(0, laInverseKineticsSize - 1));
+    bInverseKinetics >> bParent(RangeV(0, bInverseKineticsSize - 1), RangeV(0, laInverseKineticsSize - 1));
 
     for (vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updatebRef(bParent);
   }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
-    V[j] >> VParent(Index(hInd[j], hInd[j] + hSize[j] - 1), Index(laInd, laInd + laSize - 1));
+    V[j] >> VParent(RangeV(hInd[j], hInd[j] + hSize[j] - 1), RangeV(laInd, laInd + laSize - 1));
 
     for (vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (**i).updateVRef(VParent, j);

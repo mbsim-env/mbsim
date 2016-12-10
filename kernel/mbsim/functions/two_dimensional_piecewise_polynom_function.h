@@ -128,9 +128,9 @@ namespace MBSim {
       void setxyz(const fmatvec::MatV &xyz) {
         if(xyz.rows() <= 1 or xyz.cols() <= 1)
           THROW_MBSIMERROR("Dimension missmatch in size of xyz");
-        x = xyz.row(0)(fmatvec::Index(1,xyz.cols()-1)).T();
-        y = xyz.col(0)(fmatvec::Index(1,xyz.rows()-1));
-        z = xyz(fmatvec::Index(1,xyz.rows()-1),fmatvec::Index(1,xyz.cols()-1));
+        x = xyz.row(0)(fmatvec::RangeV(1,xyz.cols()-1)).T();
+        y = xyz.col(0)(fmatvec::RangeV(1,xyz.rows()-1));
+        z = xyz(fmatvec::RangeV(1,xyz.rows()-1),fmatvec::RangeV(1,xyz.cols()-1));
       }
 
       void setInterpolationMethodFirstDimension(InterpolationMethod method1_) { method1 = method1_; }

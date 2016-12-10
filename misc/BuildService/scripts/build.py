@@ -834,7 +834,7 @@ def check(tool, mainFD):
     run=1
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
-    if simplesandbox.call(["make", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
+    if simplesandbox.call(["make", "-k", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
                           stderr=subprocess.STDOUT, stdout=checkFD, buildSystemRun=args.buildSystemRun)==0:
       result="done"
     else:

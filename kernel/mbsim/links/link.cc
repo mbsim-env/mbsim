@@ -134,8 +134,8 @@ namespace MBSim {
   }
 
   void Link::updatebRef(const Mat &bParent) {
-    Index J = Index(laInd,laInd+laSize-1);
-    Index I = Index(bInd,bInd+bSize-1);
+    RangeV J = RangeV(laInd,laInd+laSize-1);
+    RangeV I = RangeV(bInd,bInd+bSize-1);
     b>>bParent(I,J);
   } 
 

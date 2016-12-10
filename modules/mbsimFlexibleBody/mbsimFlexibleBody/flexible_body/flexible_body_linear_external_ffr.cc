@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
       // create Elements and store them into discretization vector
       // the node index in abaqus strats from 1, but here starts from 0.
       for (int j = 0; j < nNodes; j++) {
-        discretization.push_back(new FiniteElementLinearExternalLumpedNode(mij(j), u0[j], phi(Index(3 * j, 3 * j + 2), Index(0, nf - 1))));
+        discretization.push_back(new FiniteElementLinearExternalLumpedNode(mij(j), u0[j], phi(RangeV(3 * j, 3 * j + 2), RangeV(0, nf - 1))));
       }
 
       // compute the inertia shape integrals
@@ -247,12 +247,12 @@ namespace MBSimFlexibleBody {
       cout << "u0[" << nNodes - 1 << "] = " << u0.back() << endl;
       cout << "u0.at(1)(2)" << u0.at(1)(2) << endl;
 
-      cout << "phi node0,1 = " << phiFull(Index(0, 0), Index(0, nfFull - 1)) << endl;
-      cout << "phi node0,2 = " << phiFull(Index(1, 1), Index(0, nfFull - 1)) << endl;
-      cout << "phi node0,3 = " << phiFull(Index(2, 2), Index(0, nfFull - 1)) << endl;
-      cout << "phi node" << nNodes << ",1 = " << phiFull(Index(3 * nNodes - 3, 3 * nNodes - 3), Index(0, nfFull - 1)) << endl;
-      cout << "phi node" << nNodes << ",2 = " << phiFull(Index(3 * nNodes - 2, 3 * nNodes - 2), Index(0, nfFull - 1)) << endl;
-      cout << "phi node" << nNodes << ",3 = " << phiFull(Index(3 * nNodes - 1, 3 * nNodes - 1), Index(0, nfFull - 1)) << endl;
+      cout << "phi node0,1 = " << phiFull(RangeV(0, 0), RangeV(0, nfFull - 1)) << endl;
+      cout << "phi node0,2 = " << phiFull(RangeV(1, 1), RangeV(0, nfFull - 1)) << endl;
+      cout << "phi node0,3 = " << phiFull(RangeV(2, 2), RangeV(0, nfFull - 1)) << endl;
+      cout << "phi node" << nNodes << ",1 = " << phiFull(RangeV(3 * nNodes - 3, 3 * nNodes - 3), RangeV(0, nfFull - 1)) << endl;
+      cout << "phi node" << nNodes << ",2 = " << phiFull(RangeV(3 * nNodes - 2, 3 * nNodes - 2), RangeV(0, nfFull - 1)) << endl;
+      cout << "phi node" << nNodes << ",3 = " << phiFull(RangeV(3 * nNodes - 1, 3 * nNodes - 1), RangeV(0, nfFull - 1)) << endl;
     }
 
   }
@@ -337,22 +337,22 @@ namespace MBSimFlexibleBody {
     // M_ThetaF: 3*nf
     I_ThetaF_bar.resize(3, nf, INIT, 0.);
     
-    I_ThetaF_bar(Index(0, 0), Index(0, nf - 1)) = qf.T() * (S_kl_bar[1][2] - S_kl_bar[2][1]) + (I_kl_bar[1][2] - I_kl_bar[2][1]);
-    I_ThetaF_bar(Index(1, 1), Index(0, nf - 1)) = qf.T() * (S_kl_bar[2][0] - S_kl_bar[0][2]) + (I_kl_bar[2][0] - I_kl_bar[0][2]);
-    I_ThetaF_bar(Index(2, 2), Index(0, nf - 1)) = qf.T() * (S_kl_bar[0][1] - S_kl_bar[1][0]) + (I_kl_bar[0][1] - I_kl_bar[1][0]);
+    I_ThetaF_bar(RangeV(0, 0), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[1][2] - S_kl_bar[2][1]) + (I_kl_bar[1][2] - I_kl_bar[2][1]);
+    I_ThetaF_bar(RangeV(1, 1), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[2][0] - S_kl_bar[0][2]) + (I_kl_bar[2][0] - I_kl_bar[0][2]);
+    I_ThetaF_bar(RangeV(2, 2), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[0][1] - S_kl_bar[1][0]) + (I_kl_bar[0][1] - I_kl_bar[1][0]);
     
     fmatvec::Mat M_ThetaF(G_bar.T() * I_ThetaF_bar);
     
     // update M by the submatrix M_RTheta, M_ThetaTheta, M_RF, M_ThetaF
-    M(Index(0, 2), Index(3, 5)) = M_RTheta;
-    M(Index(0, 2), Index(6, nf + 5)) = M_RF;
+    M(RangeV(0, 2), RangeV(3, 5)) = M_RTheta;
+    M(RangeV(0, 2), RangeV(6, nf + 5)) = M_RF;
 
     // copy M_ThetaTheta to M in this way as the limitation of the submatrix opertor for symmetric matrix.
     for (int i = 3; i < 6; i++)
       for (int j = i; j < 6; j++)
         M(i, j) = M_ThetaTheta(i - 3, j - 3);
 
-    M(Index(3, 5), Index(6, nf + 5)) = M_ThetaF;
+    M(RangeV(3, 5), RangeV(6, nf + 5)) = M_ThetaF;
     
     if (DEBUG) {
 
@@ -581,9 +581,9 @@ namespace MBSimFlexibleBody {
     Mat3xV Jactmp_trans(6 + nf, INIT, 0.);
     Mat3xV Jactmp_rot(6 + nf, INIT, 0.);
 
-    Jactmp_trans.set(Index(0, 2), Index(0, 2), Mat3x3(EYE));
+    Jactmp_trans.set(RangeV(0, 2), RangeV(0, 2), Mat3x3(EYE));
 
-    Jactmp_rot.set(Index(0, 2), Index(3, 5), evalA() * evalG_bar());
+    Jactmp_rot.set(RangeV(0, 2), RangeV(3, 5), evalA() * evalG_bar());
 
     frame->setJacobianOfTranslation(R->evalOrientation() * Jactmp_trans);
     frame->setJacobianOfRotation(R->getOrientation() * Jactmp_rot);
@@ -648,14 +648,14 @@ namespace MBSimFlexibleBody {
     Mat Jactmp_trans(3, 6 + nf, INIT, 0.), Jactmp_rot(3, 6 + nf, INIT, 0.); // initializing Ref + 1 Node
 
     // translational DOFs (d/dR)
-    Jactmp_trans(Index(0, 2), Index(0, 2)) = SqrMat(3, EYE); // ref
+    Jactmp_trans(RangeV(0, 2), RangeV(0, 2)) = SqrMat(3, EYE); // ref
     Vec3 u_bar = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape() * q(6, 5 + nf);
-    Jactmp_trans(Index(0, 2), Index(3, 5)) = -evalA() * tilde(u_bar) * evalG_bar();
-    Jactmp_rot(Index(0, 2), Index(3, 5)) = A * G_bar;
+    Jactmp_trans(RangeV(0, 2), RangeV(3, 5)) = -evalA() * tilde(u_bar) * evalG_bar();
+    Jactmp_rot(RangeV(0, 2), RangeV(3, 5)) = A * G_bar;
 
     // elastic DOFs
     // translation (A*phi)
-    Jactmp_trans(Index(0, 2), Index(6, 5 + nf)) = A * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape();
+    Jactmp_trans(RangeV(0, 2), RangeV(6, 5 + nf)) = A * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape();
 
     // rotation part for elastic DOFs is zero.
 

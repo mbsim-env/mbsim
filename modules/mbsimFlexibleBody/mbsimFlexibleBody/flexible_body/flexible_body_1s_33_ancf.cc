@@ -53,13 +53,13 @@ namespace MBSimFlexibleBody {
     int j = 6 * n;
 
     if(n < Elements - 1 || openStructure==true) {
-      gloMat(Index(j,j+11),Index(j,j+11)) += locMat;
+      gloMat(RangeV(j,j+11),RangeV(j,j+11)) += locMat;
     }
     else { // ring closure at finite element (end,1)
-      gloMat(Index(j,j+5),Index(j,j+5)) += locMat(Index(0,5),Index(0,5));
-      gloMat(Index(j,j+5),Index(0,5)) += locMat(Index(0,5),Index(6,11));
-      gloMat(Index(0,5),Index(j,j+5)) += locMat(Index(6,11),Index(0,5));
-      gloMat(Index(0,5),Index(0,5)) += locMat(Index(6,11),Index(6,11));
+      gloMat(RangeV(j,j+5),RangeV(j,j+5)) += locMat(RangeV(0,5),RangeV(0,5));
+      gloMat(RangeV(j,j+5),RangeV(0,5)) += locMat(RangeV(0,5),RangeV(6,11));
+      gloMat(RangeV(0,5),RangeV(j,j+5)) += locMat(RangeV(6,11),RangeV(0,5));
+      gloMat(RangeV(0,5),RangeV(0,5)) += locMat(RangeV(6,11),RangeV(6,11));
     }
   }
 
@@ -67,12 +67,12 @@ namespace MBSimFlexibleBody {
     int j = 6 * n;
 
     if(n < Elements - 1 || openStructure==true) {
-      gloMat(Index(j,j+11)) += locMat;
+      gloMat(RangeV(j,j+11)) += locMat;
     }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
-      gloMat(Index(j,j+5))            += locMat(Index(0,5));
-      gloMat(Index(j,j+5),Index(0,5)) += locMat(Index(0,5),Index(6,11));
-      gloMat(Index(0,5))              += locMat(Index(6,11));
+      gloMat(RangeV(j,j+5))            += locMat(RangeV(0,5));
+      gloMat(RangeV(j,j+5),RangeV(0,5)) += locMat(RangeV(0,5),RangeV(6,11));
+      gloMat(RangeV(0,5))              += locMat(RangeV(6,11));
     }
   }
 
@@ -97,21 +97,21 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateJacobians(Frame1s *frame, int j) {
-    Index All(0,6-1);
+    RangeV All(0,6-1);
     Mat Jacobian(qSize,6,INIT,0.);
     double sLocal;
     int currentElement;
     BuildElement(frame->getParameter(),sLocal,currentElement);
     Mat Jtmp = static_cast<FiniteElement1s33ANCF*>(discretization[currentElement])->JGeneralized(getqElement(currentElement),sLocal);
     if(currentElement<Elements-1 || openStructure) {
-      Jacobian(Index(6*currentElement,6*currentElement+11),All) = Jtmp;
+      Jacobian(RangeV(6*currentElement,6*currentElement+11),All) = Jtmp;
     }
     else { // ringstructure
-      Jacobian(Index(6*currentElement,6*currentElement+5),All) = Jtmp(Index(0,5),All);
-      Jacobian(Index(               0,                 5),All) = Jtmp(Index(6,11),All);
+      Jacobian(RangeV(6*currentElement,6*currentElement+5),All) = Jtmp(RangeV(0,5),All);
+      Jacobian(RangeV(               0,                 5),All) = Jtmp(RangeV(6,11),All);
     }
-    frame->setJacobianOfTranslation(R->evalOrientation()*Jacobian(Index(0,qSize-1),Index(0,2)).T(),j);
-    frame->setJacobianOfRotation(R->evalOrientation()*Jacobian(Index(0,qSize-1),Index(3,5)).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation()*Jacobian(RangeV(0,qSize-1),RangeV(0,2)).T(),j);
+    frame->setJacobianOfRotation(R->evalOrientation()*Jacobian(RangeV(0,qSize-1),RangeV(3,5)).T(),j);
   }
 
   void FlexibleBody1s33ANCF::updateGyroscopicAccelerations(Frame1s *frame) {
@@ -158,16 +158,16 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33ANCF::updateJacobians(NodeFrame *frame, int j) {
-    Index All(0,6-1);
+    RangeV All(0,6-1);
     Mat Jacobian(qSize,6,INIT,0.);
     int node = frame->getNodeNumber();
     Jacobian(6*node,0) = 1.;
     Jacobian(6*node+1,1) = 1.;
     Jacobian(6*node+2,2) = -q(4*node+3);
     Jacobian(6*node+3,2) = q(4*node+2);
-    Jacobian(Index(6*node+2,6*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
-    frame->setJacobianOfTranslation(R->evalOrientation()(Index(0, 2), Index(0, 1)) * Jacobian(Index(0, qSize - 1), Index(0, 1)).T(),j);
-    frame->setJacobianOfRotation(R->evalOrientation()(Index(0, 2), Index(2, 2)) * Jacobian(Index(0, qSize - 1), Index(2, 2)).T(),j);
+    Jacobian(RangeV(6*node+2,6*node+3),2) /= sqrt(q(4*node+2)*q(4*node+2)+q(4*node+3)*q(4*node+3));
+    frame->setJacobianOfTranslation(R->evalOrientation()(RangeV(0, 2), RangeV(0, 1)) * Jacobian(RangeV(0, qSize - 1), RangeV(0, 1)).T(),j);
+    frame->setJacobianOfRotation(R->evalOrientation()(RangeV(0, 2), RangeV(2, 2)) * Jacobian(RangeV(0, qSize - 1), RangeV(2, 2)).T(),j);
   }
 
   void FlexibleBody1s33ANCF::updateGyroscopicAccelerations(NodeFrame *frame) {
@@ -254,9 +254,9 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getM(), M); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
-      LLM(Index(j, j + 5)) = facLL(M(Index(j, j + 5)));
+      LLM(RangeV(j, j + 5)) = facLL(M(RangeV(j, j + 5)));
       if (openStructure && i == (int) discretization.size() - 1)
-        LLM(Index(j + 6, j + 11)) = facLL(M(Index(j + 6, j + 11)));
+        LLM(RangeV(j + 6, j + 11)) = facLL(M(RangeV(j + 6, j + 11)));
     }
   }
 

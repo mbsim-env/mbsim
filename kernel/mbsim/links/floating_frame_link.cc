@@ -182,23 +182,23 @@ namespace MBSim {
 
   void FloatingFrameLink::updateWRef(const Mat& WParent, int j) {
     for(unsigned i=0; i<2; i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
+      RangeV J = RangeV(laInd,laInd+laSize-1);
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
       W[j][i]>>WParent(I,J);
     }
   } 
 
   void FloatingFrameLink::updateVRef(const Mat& VParent, int j) {
     for(unsigned i=0; i<2; i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
+      RangeV J = RangeV(laInd,laInd+laSize-1);
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
       V[j][i]>>VParent(I,J);
     }
   } 
 
   void FloatingFrameLink::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<2; i++) {
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
       h[j][i]>>hParent(I);
     }
   } 
@@ -213,7 +213,7 @@ namespace MBSim {
 
   void FloatingFrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
       dhdt[i]>>dhdtParent(I);
     }
   }
@@ -221,14 +221,14 @@ namespace MBSim {
   void FloatingFrameLink::updaterRef(const Vec &rParent, int j) {
     for(unsigned i=0; i<2; i++) {
       int hInd =  frame[i]->gethInd(j);
-      Index I = Index(hInd,hInd+frame[i]->gethSize(j)-1);
+      RangeV I = RangeV(hInd,hInd+frame[i]->gethSize(j)-1);
       r[j][i]>>rParent(I);
     }
   } 
 
   void FloatingFrameLink::updateR() {
-    RF.set(Index(0,2), Index(iF), evalGlobalForceDirection());
-    RM.set(Index(0,2), Index(iM), evalGlobalMomentDirection());
+    RF.set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
+    RM.set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
     updRMV = false;
   }
 
@@ -251,8 +251,8 @@ namespace MBSim {
     else if(stage==resize) {
       Link::init(stage);
       int size = forceDir.cols() + momentDir.cols();
-      iF = Index(0, forceDir.cols() - 1);
-      iM = Index(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
+      iF = RangeV(0, forceDir.cols() - 1);
+      iM = RangeV(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
       rrel.resize(size);
       vrel.resize(size);
       if(isSetValued()) {

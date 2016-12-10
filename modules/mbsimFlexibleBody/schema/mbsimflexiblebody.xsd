@@ -91,7 +91,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="numberOfElements" type="pv:nounitScalar">
+          <xs:element name="numberOfElements" type="pv:integerFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Anzahl der Basiselemente des flexible Körpers.
@@ -194,7 +194,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="numberOfElements" type="pv:nounitScalar">
+          <xs:element name="numberOfElements" type="pv:integerFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Anzahl der Basiselemente des flexible Körpers.
@@ -744,8 +744,8 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="nodes" type="pv:nounitVector" minOccurs="0"/>
-                <xs:element name="indices" type="pv:nounitVector" minOccurs="0"/>
+                <xs:element name="nodes" type="pv:indexVector" minOccurs="0"/>
+                <xs:element name="indices" type="pv:indexVector" minOccurs="0"/>
                 <xs:element name="minimalColorValue" type="pv:nounitScalar" minOccurs="0"/>
                 <xs:element name="maximalColorValue" type="pv:nounitScalar" minOccurs="0"/>
               </xs:sequence>

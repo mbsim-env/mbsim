@@ -49,8 +49,8 @@ namespace MBSimIntegrator {
       system.calclaSize(3); // IH
       system.calcrFactorSize(3); // IH
 
-      system.updateWRef(system.getWParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
-      system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
+      system.updateWRef(system.getWParent()(RangeV(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
+      system.updateVRef(system.getVParent()(RangeV(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
       system.updatelaRef(system.getlaParent()(0,system.getlaSize()-1));
       system.updategdRef(system.getgdParent()(0,system.getgdSize()-1));
       if(system.getImpactSolver() == RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));

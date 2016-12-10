@@ -349,8 +349,8 @@ namespace MBSimFlexibleBody {
       Vec w2 = wt->computew(wt->getw2coef(),x); // position and velocity
 
       Vector<Fixed<6>, double> X(NONINIT);
-      X.set(Index(0,2),tf->getrS()+(1.+tf->getepstil())*x*tf->gettS()+wh1(0)*tf->getnS()+wh2(0)*tf->getbS()); /* pos */
-      X.set(Index(3,5),tf->getpS());
+      X.set(RangeV(0,2),tf->getrS()+(1.+tf->getepstil())*x*tf->gettS()+wh1(0)*tf->getnS()+wh2(0)*tf->getbS()); /* pos */
+      X.set(RangeV(3,5),tf->getpS());
       X(3) += sin((tf->getpS())(1))*w2(1)+tf->getk0()*x;	
       X(4) += w1(1);
       X(5) += w2(1);/* angles */
@@ -375,8 +375,8 @@ namespace MBSimFlexibleBody {
       Vec w2t = wt->computew(wt->getw2tcoef(),x); // only velocity
 
       Vector<Fixed<6>, double> X(NONINIT);
-      X.set(Index(0,2),tf->getrSt()+(tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt())*x+wh1t(0)*tf->getnS()+wh1(0)*tf->getnSt()+wh2t(0)*tf->getbS()+wh2(0)*tf->getbSt()); /* vel */
-      X.set(Index(3,5),tf->getpSt());
+      X.set(RangeV(0,2),tf->getrSt()+(tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt())*x+wh1t(0)*tf->getnS()+wh1(0)*tf->getnSt()+wh2t(0)*tf->getbS()+wh2(0)*tf->getbSt()); /* vel */
+      X.set(RangeV(3,5),tf->getpSt());
       X(3) += cos((tf->getpS())(1))*(tf->getpSt())(1)*w2(1)+sin((tf->getpS())(1))*w2t(1)+tf->getk0t()*x;
       X(4) += w1t(1);
       X(5) += w2t(1); /* time differentiated angles */

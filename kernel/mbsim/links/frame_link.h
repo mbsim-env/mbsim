@@ -125,7 +125,7 @@ namespace MBSim {
       /**
        * \brief indices of forces and torques
        */
-      fmatvec::Index iF;
+      fmatvec::RangeV iF;
 
       /**
        * \brief array in which all frames are listed, connecting bodies via a link

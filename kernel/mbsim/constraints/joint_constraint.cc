@@ -116,9 +116,9 @@ namespace MBSim {
         int dq = bd1[i]->getqRelSize();
         int du = bd1[i]->getuRelSize();
         int dh = bd1[i]->gethSize(0);
-        Iq1[i] = Index(nq,nq+dq-1);
-        Iu1[i] = Index(nu,nu+du-1);
-        Ih1[i] = Index(0,dh-1);
+        Iq1[i] = RangeV(nq,nq+dq-1);
+        Iu1[i] = RangeV(nu,nu+du-1);
+        Ih1[i] = RangeV(0,dh-1);
         nq += dq;
         nu += du;
         nh = max(nh,dh);
@@ -130,9 +130,9 @@ namespace MBSim {
         int dq = bd2[i]->getqRelSize();
         int du = bd2[i]->getuRelSize();
         int dh = bd2[i]->gethSize(0);
-        Iq2[i] = Index(nq,nq+dq-1);
-        Iu2[i] = Index(nu,nu+du-1);
-        Ih2[i] = Index(0,dh-1);
+        Iq2[i] = RangeV(nq,nq+dq-1);
+        Iu2[i] = RangeV(nu,nu+du-1);
+        Ih2[i] = RangeV(0,dh-1);
         nq += dq;
         nu += du;
         nh = max(nh,dh);
@@ -179,16 +179,16 @@ namespace MBSim {
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
-      JT(Index(0,2),Iu1[i]) = C.evalJacobianOfTranslation(2);
-      JR(Index(0,2),Iu1[i]) = C.evalJacobianOfRotation(2);
+      JT(RangeV(0,2),Iu1[i]) = C.evalJacobianOfTranslation(2);
+      JR(RangeV(0,2),Iu1[i]) = C.evalJacobianOfRotation(2);
       for(size_t j=i+1; j<bd1.size(); j++)
         bd1[j]->resetJacobiansUpToDate();
       bd1[i]->setUpdateByReference(true);
     }
     for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->setUpdateByReference(false);
-      JT(Index(0,2),Iu2[i]) = -frame2->evalJacobianOfTranslation(2);
-      JR(Index(0,2),Iu2[i]) = -frame2->evalJacobianOfRotation(2);
+      JT(RangeV(0,2),Iu2[i]) = -frame2->evalJacobianOfTranslation(2);
+      JR(RangeV(0,2),Iu2[i]) = -frame2->evalJacobianOfRotation(2);
       for(size_t j=i+1; j<bd2.size(); j++)
         bd2[j]->resetJacobiansUpToDate();
       bd2[i]->setUpdateByReference(true);
@@ -202,8 +202,8 @@ namespace MBSim {
       bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
     }
     SqrMat A(nu);
-    A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
-    A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
+    A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;
+    A(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nu-1)) = dR.T()*JR;
     Vec b(nu);
 
     b(0,dT.cols()-1) = -(dT.T()*(C.evalVelocity()-frame2->evalVelocity()));
@@ -233,21 +233,21 @@ namespace MBSim {
       }
 
       SqrMat A(nu);
-      A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
-      A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
+      A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;
+      A(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nu-1)) = dR.T()*JR;
       Mat B(nu,nh);
       Mat JT0(3,nh);
       Mat JR0(3,nh);
       if(frame1->getJacobianOfTranslation(0,false).cols()) {
-        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=C.evalJacobianOfTranslation();
-        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=C.evalJacobianOfRotation();
+        JT0(RangeV(0,2),RangeV(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=C.evalJacobianOfTranslation();
+        JR0(RangeV(0,2),RangeV(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=C.evalJacobianOfRotation();
       }
       if(frame2->getJacobianOfTranslation(0,false).cols()) {
-        JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->evalJacobianOfTranslation();
-        JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->evalJacobianOfRotation();
+        JT0(RangeV(0,2),RangeV(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->evalJacobianOfTranslation();
+        JR0(RangeV(0,2),RangeV(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->evalJacobianOfRotation();
       }
-      B(Index(0,dT.cols()-1),Index(0,nh-1)) = -(dT.T()*JT0);
-      B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -(dR.T()*JR0);
+      B(RangeV(0,dT.cols()-1),RangeV(0,nh-1)) = -(dT.T()*JT0);
+      B(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nh-1)) = -(dR.T()*JR0);
       Vec b(nu);
       b(0,dT.cols()-1) = -(dT.T()*(C.evalGyroscopicAccelerationOfTranslation()-frame2->evalGyroscopicAccelerationOfTranslation()));
       b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(C.evalGyroscopicAccelerationOfRotation()-frame2->evalGyroscopicAccelerationOfRotation()));

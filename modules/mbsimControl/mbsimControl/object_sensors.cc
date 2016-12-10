@@ -57,7 +57,7 @@ namespace MBSimControl {
     if (object->getq().size()==0)
       s = fmatvec::VecV(1, fmatvec::INIT, 0);
     else
-      s = ((object->getq()))(fmatvec::Index(index, index));
+      s = ((object->getq()))(RangeV(index, index));
     upds = false;
   }
 
@@ -67,7 +67,7 @@ namespace MBSimControl {
     if (object->getu().size()==0)
       s = fmatvec::VecV(1, fmatvec::INIT, 0);
     else
-      s = ((object->getu()))(fmatvec::Index(index, index));
+      s = ((object->getu()))(RangeV(index, index));
     upds = false;
   }
 

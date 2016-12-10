@@ -87,23 +87,23 @@ namespace MBSim {
 
   void ContourLink::updateWRef(const Mat& WParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
-      Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
-      Index J = Index(laInd, laInd + laSize - 1);
+      RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
+      RangeV J = RangeV(laInd, laInd + laSize - 1);
       W[j][i] >> WParent(I, J);
     }
   } 
 
   void ContourLink::updateVRef(const Mat& VParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
-      Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
-      Index J = Index(laInd, laInd + laSize - 1);
+      RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
+      RangeV J = RangeV(laInd, laInd + laSize - 1);
       V[j][i] >> VParent(I, J);
     }
   } 
 
   void ContourLink::updatehRef(const Vec &hParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
-      Index I = Index(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
+      RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       h[j][i] >> hParent(I);
     }
   } 
@@ -118,7 +118,7 @@ namespace MBSim {
 
   void ContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
+      RangeV I = RangeV(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
       dhdt[i]>>dhdtParent(I);
     }
   }
@@ -126,7 +126,7 @@ namespace MBSim {
   void ContourLink::updaterRef(const Vec &rParent, int j) {
     for(unsigned i=0; i<2; i++) {
       int hInd =  contour[i]->gethInd(j);
-      Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
+      RangeV I = RangeV(hInd,hInd+contour[i]->gethSize(j)-1);
       r[j][i]>>rParent(I);
     }
   } 
@@ -137,8 +137,8 @@ namespace MBSim {
   }
 
   void ContourLink::updateW(int j) {
-//    W[j][0] -= cpData[0].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(Index(0,2),Index(0,laSize-1));
-//    W[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(Index(0,2),Index(0,laSize-1));
+//    W[j][0] -= cpData[0].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(RangeV(0,2),RangeV(0,laSize-1));
+//    W[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(RangeV(0,2),RangeV(0,laSize-1));
   }
 
   void ContourLink::updateForceDirections() {
@@ -162,8 +162,8 @@ namespace MBSim {
   }
 
 //  void ContourLink::updateR() {
-//    RF.set(Index(0,2), Index(iF), evalGlobalForceDirection());
-//    RM.set(Index(0,2), Index(iM), evalGlobalMomentDirection());
+//    RF.set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
+//    RM.set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
 //    updR = false;
 //  }
 

@@ -32,36 +32,36 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Mat condenseMatrixRows(Mat C, Index I) {
+  Mat condenseMatrixRows(Mat C, RangeV I) {
     Mat B(C.rows() - (I.end() - I.start() + 1), C.cols());
-    Index upperPart(0, I.start() - 1);
-    Index lowerPartC(I.end() + 1, C.rows() - 1);
-    Index lowerPartB(I.start(), B.rows() - 1);
-    Index AllCols(0, C.cols() - 1);
+    RangeV upperPart(0, I.start() - 1);
+    RangeV lowerPartC(I.end() + 1, C.rows() - 1);
+    RangeV lowerPartB(I.start(), B.rows() - 1);
+    RangeV AllCols(0, C.cols() - 1);
 
     B(upperPart, AllCols) = C(upperPart, AllCols); // upper
     B(lowerPartB, AllCols) = C(lowerPartC, AllCols); // lower
     return B;
   }
 
-  Mat condenseMatrixCols(Mat C, Index I) {
+  Mat condenseMatrixCols(Mat C, RangeV I) {
     Mat B(C.rows(), C.cols() - (I.end() - I.start() + 1));
-    Index leftPart(0, I.start() - 1);
-    Index rightPartC(I.end() + 1, C.cols() - 1);
-    Index rightPartB(I.start(), B.cols() - 1);
-    Index AllRows(0, C.rows() - 1);
+    RangeV leftPart(0, I.start() - 1);
+    RangeV rightPartC(I.end() + 1, C.cols() - 1);
+    RangeV rightPartB(I.start(), B.cols() - 1);
+    RangeV AllRows(0, C.rows() - 1);
 
     B(AllRows, leftPart) = C(AllRows, leftPart); // left
     B(AllRows, rightPartB) = C(AllRows, rightPartC); // right
     return B;
   }
 
-  SymMat condenseMatrix(SymMat C, Index I) {
+  SymMat condenseMatrix(SymMat C, RangeV I) {
     // build size of result matrix
     SymMat B(C.size() - (I.end() - I.start() + 1));
-    Index upperPart(0, I.start() - 1);
-    Index lowerPartC(I.end() + 1, C.size() - 1);
-    Index lowerPartB(I.start(), B.size() - 1);
+    RangeV upperPart(0, I.start() - 1);
+    RangeV lowerPartC(I.end() + 1, C.size() - 1);
+    RangeV lowerPartB(I.start(), B.size() - 1);
 
     // assemble result matrix
     B(upperPart) << C(upperPart); // upper left

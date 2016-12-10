@@ -177,7 +177,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec wrapAngle(nDisks);
   for(int i=0;i<nDisks;i++){
     int nPre = (i-1+nDisks)%nDisks;
-    Vec theVec = end.col(nPre) - positionDisks.col(i)(Index(0,1));
+    Vec theVec = end.col(nPre) - positionDisks.col(i)(RangeV(0,1));
     Vec  Span1 = end.col(i)    - start.col(i);
     Vec  Span2 = end.col(nPre) - start.col(nPre) ;
 
@@ -224,16 +224,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 /********     cout << "      sLocal   = " << s << endl;    *****/
 /********     cout << "      phiLocal = " << phi << endl;  *****/
         pSpanWrap = 0;
-        Vec  r0 = end.col(nPre) - positionDisks.col(part)(Index(0,1));
+        Vec  r0 = end.col(nPre) - positionDisks.col(part)(RangeV(0,1));
 /********        cout << "      radius = " << nrm2(r0) << endl; ********/
         r0 *= 1.0+eps;
         Vec dir = (end.col(nPre) - start.col(nPre))/trackParts(1,nPre);
         SqrMat T(2); T(0,0) = cos(phi); T(0,1) = -sin(phi); T(1,0) = -T(0,1); T(1,1) = T(0,0);
-        q0(Index(5*i+0,5*i+1)) = positionDisks.col(part)(Index(0,1)) + T*r0;
-/********        cout << "      q0  " << q0(Index(5*i+0,5*i+1)) << endl; ********/
+        q0(RangeV(5*i+0,5*i+1)) = positionDisks.col(part)(RangeV(0,1)) + T*r0;
+/********        cout << "      q0  " << q0(RangeV(5*i+0,5*i+1)) << endl; ********/
         dir = T*dir;
         q0(      5*i+2)        = atan2( dir(1), dir(0) );
-        u0(Index(5*i+0,5*i+1)) =   v0*dir;
+        u0(RangeV(5*i+0,5*i+1)) =   v0*dir;
         u0(      5*i+2)        = - v0/radiiDisks(part) * sideInOut ( part );
         while(  i>0 && ( fabs(q0(5*i+2) - q0(5*(i-1)+2))>M_PI )   )
            if (q0(5*i+2) > q0(5*(i-1)+2))
@@ -253,9 +253,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
         pSpanWrap = 1;
         Vec dir = (end.col(part) - start.col(part))/trackParts(1,part);
 /********        cout << "      dir " << dir << endl; ************/
-        q0(Index(5*i+0,5*i+1)) = start.col(part) + dir * s;
-        u0(Index(5*i+0,5*i+1)) =                   dir * v0;
-/********        cout << "      q0  " << q0(Index(5*i+0,5*i+1)) << endl; ************/
+        q0(RangeV(5*i+0,5*i+1)) = start.col(part) + dir * s;
+        u0(RangeV(5*i+0,5*i+1)) =                   dir * v0;
+/********        cout << "      q0  " << q0(RangeV(5*i+0,5*i+1)) << endl; ************/
         q0(      5*i+2)        = atan2( dir(1), dir(0) );
         while(  i>0 && ( fabs(q0(5*i+2) - q0(5*(i-1)+2))>M_PI )   )
            if (q0(5*i+2) > q0(5*(i-1)+2))
@@ -476,7 +476,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     if(i==nDisks-1) {
        // const Vec f0 = (end.col(nDisks-2) - start.col(nDisks-2))/trackParts(1,nDisks-2);
        // const Vec f1 = (end.col(nDisks-1) - start.col(nDisks-1))/trackParts(1,nDisks-1);
-       // const double F0Spring = trans(JtransSpring(Index(0,1))) * ( f0 + f1 ) * F0;
+       // const double F0Spring = trans(JtransSpring(RangeV(0,1))) * ( f0 + f1 ) * F0;
        const double F0Spring = 2.3215000000E+02;
 
        Vec posSpring = positionDisks.col(nDisks-1) + (l0Spring - F0Spring/cSpring ) * JtransSpring;

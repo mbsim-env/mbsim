@@ -125,11 +125,11 @@ namespace MBSimFlexibleBody {
     int j = 3 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1) {
-      gloMat(Index(j, j + 4), Index(j, j + 4)) += locMat;
+      gloMat(RangeV(j, j + 4), RangeV(j, j + 4)) += locMat;
     }
     else { // last FE
-      gloMat(Index(j, j + 2), Index(j, j + 2)) += locMat(Index(0, 2), Index(0, 2));
-      gloMat(Index(0, 1), Index(0, 1)) += locMat(Index(3, 4), Index(3, 4));
+      gloMat(RangeV(j, j + 2), RangeV(j, j + 2)) += locMat(RangeV(0, 2), RangeV(0, 2));
+      gloMat(RangeV(0, 1), RangeV(0, 1)) += locMat(RangeV(3, 4), RangeV(3, 4));
     }
   }
 
@@ -137,11 +137,11 @@ namespace MBSimFlexibleBody {
     int j = 3 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1) {
-      gloMat(Index(j, j + 4)) += locMat;
+      gloMat(RangeV(j, j + 4)) += locMat;
     }
     else { // last FE
-      gloMat(Index(j, j + 2)) += locMat(Index(0, 2));
-      gloMat(Index(0, 1)) += locMat(Index(3, 4));
+      gloMat(RangeV(j, j + 2)) += locMat(RangeV(0, 2));
+      gloMat(RangeV(0, 1)) += locMat(RangeV(3, 4));
     }
   }
 
@@ -355,7 +355,7 @@ namespace MBSimFlexibleBody {
       POMSize = findPOMSize(POM, SVD);
     }
 
-    U.resize() << POM(Index(0, fullDOFs - 1), Index(0, POMSize - 1));
+    U.resize() << POM(RangeV(0, fullDOFs - 1), RangeV(0, POMSize - 1));
 
     PODreduced = true;
 
@@ -367,8 +367,8 @@ namespace MBSimFlexibleBody {
     zeta(0) = sGlobal;
     FixedContourFrame P("P",zeta);
 
-    temp.set(Index(0,2),P.evalPosition());
-    temp.set(Index(3,5),computeAngles(sGlobal, evalqFull()));
+    temp.set(RangeV(0,2),P.evalPosition());
+    temp.set(RangeV(3,5),computeAngles(sGlobal, evalqFull()));
 
 
     return temp;
@@ -380,8 +380,8 @@ namespace MBSimFlexibleBody {
     zeta(0) = sGlobal;
     FixedContourFrame P("P",zeta);
 
-    temp.set(Index(0,2),P.evalVelocity());
-    temp.set(Index(3,5),P.getAngularVelocity());
+    temp.set(RangeV(0,2),P.evalVelocity());
+    temp.set(RangeV(3,5),P.getAngularVelocity());
 
     return temp;
   }
@@ -473,9 +473,9 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getM(), MConst); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 3 * i;
-      LLMConst(Index(j, j + 2)) = facLL(MConst(Index(j, j + 2)));
+      LLMConst(RangeV(j, j + 2)) = facLL(MConst(RangeV(j, j + 2)));
       if (openStructure && i == (int) discretization.size() - 1)
-        LLMConst(Index(j + 3, j + 4)) = facLL(MConst(Index(j + 3, j + 4)));
+        LLMConst(RangeV(j + 3, j + 4)) = facLL(MConst(RangeV(j + 3, j + 4)));
     }
 
     if (PODreduced) {
@@ -685,7 +685,7 @@ namespace MBSimFlexibleBody {
 
     for (i = start; i < end; i++) {
       Vec tmp(data->getColumn(i));
-      X_(Index(0, tsize - 1), Index(i - start, i - start)) = tmp(Index(0, tsize - 1));
+      X_(RangeV(0, tsize - 1), RangeV(i - start, i - start)) = tmp(RangeV(0, tsize - 1));
     }
 
     return X_.T();
