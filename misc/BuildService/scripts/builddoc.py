@@ -10,7 +10,7 @@ import datetime
 
 scriptdir=os.path.dirname(os.path.realpath(__file__))
 
-os.chdir("/home/mbsim/linux64-dailydebug/mbsim/misc/html/doc")
+os.chdir("/home/mbsim/SCRIPTS/mbsim/misc/html/doc")
 curdir=os.getcwd()
 
 nrDocFailed=0
