@@ -106,6 +106,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   solver_view.moc.cc \
 		   dialogs.moc.cc  \
 		   mbsim_process.moc.cc
+BUILT_SOURCES = $(QT_BUILT_SOURCES)
 
 mbsimgui_HEADERS = 
 		   
