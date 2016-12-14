@@ -75,7 +75,7 @@ namespace MBSimGUI {
     // use html output of MBXMLUtils
     putenv(const_cast<char*>("MBXMLUTILS_HTMLOUTPUT=1"));
 
-    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", true));
+    evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", false));
     
     mw = this;
 
