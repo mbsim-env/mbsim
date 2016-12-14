@@ -1,7 +1,9 @@
 dummydir = $(abs_builddir)
 dummy_LTLIBRARIES = _mymod.la
 
-CLEANFILES=mymod_swig_python.cc mymod.py mymod_swig_python.d
+BUILT_SOURCES = mymod_swig_python.cc
+
+CLEANFILES = mymod_swig_python.cc mymod.py mymod_swig_python.d
 # create a empty dummy mymod_swig_python.cc file if MBSIM_SWIG is not set (to avoid a long build time)
 mymod_swig_python.cc: $(srcdir)/mymod.i
 	rm -f mymod_swig_python.cc

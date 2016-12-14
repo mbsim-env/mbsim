@@ -9,7 +9,9 @@ swigbin_LTLIBRARIES = _fmatvec.la _mbsim.la
 # As a workaround we define all protected members as public on swig processing and compilation.
 # (-Dprotected=public)
 
-CLEANFILES=fmatvec_swig_python.cc fmatvec.py fmatvec_swig_python.d mbsim_swig_python.cc mbsim.py mbsim_swig_python.d
+BUILT_SOURCES = fmatvec_swig_python.cc mbsim_swig_python.cc
+
+CLEANFILES = fmatvec_swig_python.cc fmatvec.py fmatvec_swig_python.d mbsim_swig_python.cc mbsim.py mbsim_swig_python.d
 
 # create a empty dummy fmatvec_swig_python.cc file if MBSIM_SWIG is not set (to avoid a long build time)
 fmatvec_swig_python.cc: $(srcdir)/fmatvec.i

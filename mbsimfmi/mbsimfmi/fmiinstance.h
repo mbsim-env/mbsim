@@ -16,7 +16,6 @@ extern "C" {
 
 namespace MBSim {
   class DynamicSystemSolver;
-  class ExternGeneralizedIO;
 }
 
 namespace MBSimControl {
