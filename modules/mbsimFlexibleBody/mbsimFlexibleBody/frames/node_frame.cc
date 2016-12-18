@@ -27,28 +27,30 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, NodeFrame)
+
   void NodeFrame::updatePositions() {
-    static_cast<FlexibleBody*>(parent)->updatePositions(this);
+    static_cast<NodeBasedBody*>(parent)->updatePositions(this);
     updPos = false;
   }
 
   void NodeFrame::updateVelocities() {
-    static_cast<FlexibleBody*>(parent)->updateVelocities(this);
+    static_cast<NodeBasedBody*>(parent)->updateVelocities(this);
     updVel = false;
   }
 
   void NodeFrame::updateAccelerations() {
-    static_cast<FlexibleBody*>(parent)->updateAccelerations(this);
+    static_cast<NodeBasedBody*>(parent)->updateAccelerations(this);
     updAcc = true;
   }
 
   void NodeFrame::updateJacobians(int j) {
-    static_cast<FlexibleBody*>(parent)->updateJacobians(this,j);
+    static_cast<NodeBasedBody*>(parent)->updateJacobians(this,j);
     updJac[j] = false;
   }
 
   void NodeFrame::updateGyroscopicAccelerations() {
-    static_cast<FlexibleBody*>(parent)->updateGyroscopicAccelerations(this);
+    static_cast<NodeBasedBody*>(parent)->updateGyroscopicAccelerations(this);
     updGA = false;
   }
 
@@ -57,7 +59,7 @@ namespace MBSimFlexibleBody {
 
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumber");
-    setNodeNumber(getInt(e));
+    setNodeNumber(getInt(e)-1);
   }
 
 }

@@ -99,6 +99,9 @@ namespace MBSimGUI {
   FixedRelativeFrameContextMenu::FixedRelativeFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
   }
 
+  NodeFrameContextMenu::NodeFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
+  }
+
   FixedNodalFrameContextMenu::FixedNodalFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
   }
 
@@ -190,12 +193,14 @@ namespace MBSimGUI {
   }
 
   FlexibleBodyFFRContextMenu::FlexibleBodyFFRContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
-    QAction *action;
-    action = new QAction("Add frame", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFixedNodalFrame()));
-    addAction(action);
-    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
+    QMenu *menu = new FixedNodalFrameContextContextMenu(element, "Add frame");
     addMenu(menu);
+    menu = new ContourContextContextMenu(element, "Add contour");
+    addMenu(menu);
+  }
+
+  void FlexibleBodyFFRContextMenu::addNodeFrame() {
+    mw->addFrame(new NodeFrame("P",element));
   }
 
   void FlexibleBodyFFRContextMenu::addFixedNodalFrame() {
@@ -213,9 +218,16 @@ namespace MBSimGUI {
   }
 
   FixedNodalFrameContextContextMenu::FixedNodalFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Add frame", this);
+    QAction *action = new QAction("Add node frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addNodeFrame()));
+    addAction(action);
+    action = new QAction("Add fixed nodal frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFixedNodalFrame()));
     addAction(action);
+  }
+
+  void FixedNodalFrameContextContextMenu::addNodeFrame() {
+    mw->addFrame(new NodeFrame("P",element));
   }
 
   void FixedNodalFrameContextContextMenu::addFixedNodalFrame() {

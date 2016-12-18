@@ -88,6 +88,7 @@ namespace MBSimGUI {
       FixedNodalFrameContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
 
       protected slots:
+        void addNodeFrame();
         void addFixedNodalFrame();
 
     protected:
@@ -292,6 +293,12 @@ namespace MBSimGUI {
       FixedRelativeFrameContextMenu(Element *frame, QWidget * parent = 0); 
   };
 
+  class NodeFrameContextMenu : public FrameContextMenu {
+
+    public:
+      NodeFrameContextMenu(Element *frame, QWidget * parent = 0);
+  };
+
   class FixedNodalFrameContextMenu : public FrameContextMenu {
 
     public:
@@ -321,6 +328,7 @@ namespace MBSimGUI {
       FlexibleBodyFFRContextMenu(Element *body, QWidget * parent = 0);
 
       protected slots:
+        void addNodeFrame();
         void addFixedNodalFrame();
   };
 

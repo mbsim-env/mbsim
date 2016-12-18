@@ -112,6 +112,24 @@ namespace MBSimGUI {
     return ele0;
   }
 
+  NodeFrame::NodeFrame(const string &str, Element *parent) : Frame(str,parent,false) {
+
+    nodeNumber.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"nodeNumber",vector<string>(2,"-")),"",4));
+  }
+
+  DOMElement* NodeFrame::initializeUsingXML(DOMElement *element) {
+    Frame::initializeUsingXML(element);
+    nodeNumber.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* NodeFrame::writeXMLFile(DOMNode *parent) {
+
+    DOMElement *ele0 = Frame::writeXMLFile(parent);
+    nodeNumber.writeXMLFile(ele0);
+    return ele0;
+  }
+
   FixedNodalFrame::FixedNodalFrame(const string &str, Element *parent) : Frame(str,parent,false), position(0,false), orientation(0,false), Psi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false) {
 
     position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMFLEX%"relativePosition"),"",4));

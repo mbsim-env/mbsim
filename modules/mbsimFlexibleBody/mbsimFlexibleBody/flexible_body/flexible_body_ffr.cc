@@ -20,6 +20,7 @@
 #include <config.h>
 #include "flexible_body_ffr.h"
 #include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/links/joint.h"
@@ -54,13 +55,13 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBodyFFR)
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : Body(name), m(0), Id(Eye()), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true), updNodalPos(true), updNodalStress(true), bodyFixedRepresentationOfAngularVelocity(false) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : NodeBasedBody(name), m(0), Id(Eye()), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true), bodyFixedRepresentationOfAngularVelocity(false) {
 
     updKJ[0] = true;
     updKJ[1] = true;
 
     K=new Frame("K");
-    Body::addFrame(K);
+    NodeBasedBody::addFrame(K);
     openMBVFrame=K;
 
     updateJacobians_[0] = &FlexibleBodyFFR::updateJacobians0;
@@ -80,12 +81,12 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::calcqSize() {
-    Body::calcqSize();
+    NodeBasedBody::calcqSize();
     qSize = nq;
   }
 
   void FlexibleBodyFFR::calcuSize(int j) {
-    Body::calcuSize(j);
+    NodeBasedBody::calcuSize(j);
     if(j==0)
       uSize[j] = nu[j];
     else
@@ -225,13 +226,17 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::init(InitStage stage) {
     if(stage==preInit) {
       for(unsigned int k=1; k<frame.size(); k++) {
-        if(not(static_cast<FixedNodalFrame*>(frame[k])->getFrameOfReference()))
-          static_cast<FixedNodalFrame*>(frame[k])->setFrameOfReference(K);
+        if(dynamic_cast<FixedNodalFrame*>(frame[k])) {
+          if(not(static_cast<FixedNodalFrame*>(frame[k])->getFrameOfReference()))
+            static_cast<FixedNodalFrame*>(frame[k])->setFrameOfReference(K);
+        }
       }
 
       ne = Pdm.cols();
       for(unsigned int i=1; i<frame.size(); i++)
-        static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
+        if(dynamic_cast<FixedNodalFrame*>(frame[i])) {
+          static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
+        }
 
       for(unsigned int k=0; k<contour.size(); k++) {
         RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
@@ -239,7 +244,7 @@ namespace MBSimFlexibleBody {
           contour_->setFrameOfReference(K);
       }
 
-      Body::init(stage);
+      NodeBasedBody::init(stage);
 
       int nqT=0, nqR=0, nuT=0, nuR=0;
       if(fPrPK) {
@@ -277,7 +282,7 @@ namespace MBSimFlexibleBody {
       nu[1] = 6 + ne;
     }
     else if(stage==resize) {
-      Body::init(stage);
+      NodeBasedBody::init(stage);
 
       KJ[0].resize(6+ne,hSize[0]);
       KJ[1].resize(6+ne,hSize[1]);
@@ -308,8 +313,14 @@ namespace MBSimFlexibleBody {
       WJTrel.resize(nu[0]);
       WJRrel.resize(nu[0]);
 
+      updNodalPos.resize(KrKP.size(),true);
+      updNodalVel.resize(KrKP.size(),true);
+      updNodalStress.resize(sigmahel.size(),true);
       WrOP.resize(KrKP.size());
+      WrRP.resize(KrKP.size());
       disp.resize(KrKP.size());
+      Womrel.resize(KrKP.size());
+      Wvrel.resize(KrKP.size());
       if(not ARP.size())
         ARP.resize(KrKP.size(),SqrMat3(Eye()));
       AWK.resize(ARP.size());
@@ -323,7 +334,7 @@ namespace MBSimFlexibleBody {
       updateLLM_ = &FlexibleBodyFFR::updateLLMNotConst;
     }
     else if(stage==unknownStage) {
-      Body::init(stage);
+      NodeBasedBody::init(stage);
 
       if(Me.size()==0)
         determineSID();
@@ -434,7 +445,7 @@ namespace MBSimFlexibleBody {
           if(ombvIndices.size())
             std::dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
         }
-        Body::init(stage);
+        NodeBasedBody::init(stage);
         if(getPlotFeature(openMBV)==enabled) {
           if(getPlotFeature(openMBV)==enabled && FWeight) {
             FWeight->setName("Weight");
@@ -444,7 +455,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else
-      Body::init(stage);
+      NodeBasedBody::init(stage);
     if(fTR) fTR->init(stage);
     if(fPrPK) fPrPK->init(stage);
     if(fAPK) fAPK->init(stage);
@@ -480,10 +491,11 @@ namespace MBSimFlexibleBody {
       }
 
       if(getPlotFeature(globalPosition)==enabled) {
-        if(updNodalPos) updateNodalPositions();
-        for(unsigned int i=0; i<WrOP.size(); i++)
+        for(unsigned int i=0; i<WrOP.size(); i++) {
+          Vec3 WrOP = evalNodalPosition(i);
           for(int j=0; j<3; j++)
-            plotVector.push_back(WrOP[i](j));
+            plotVector.push_back(WrOP(j));
+        }
       }
       if(getPlotFeature(openMBV)==enabled) {
         if(FWeight) {
@@ -503,18 +515,18 @@ namespace MBSimFlexibleBody {
         if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
           vector<double> data;
           data.push_back(getTime());
-          if(updNodalPos) updateNodalPositions();
-          if(updNodalStress) updateNodalStresses();
           for(unsigned int i=0; i<ombvNodes.size(); i++) {
+            Vec3 WrOP = evalNodalPosition(ombvNodes[i]);
+            Vec3 sigma = evalNodalStress(ombvNodes[i]);
               for(int j=0; j<3; j++)
-                data.push_back(WrOP[ombvNodes[i]](j));
+                data.push_back(WrOP(j));
               //data.push_back(nrm2(disp[ombvNodes[i]]));
-              data.push_back(fabs(sigma[ombvNodes[i]](0)));
+              data.push_back(fabs(sigma(0)));
           }
           dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
         }
       }
-      Body::plot();
+      NodeBasedBody::plot();
     }
   }
 
@@ -713,28 +725,6 @@ namespace MBSimFlexibleBody {
     updKJ[1] = false;
   }
 
-  void FlexibleBodyFFR::updateNodalPositions() {
-    for(unsigned int j=0; j<KrKP.size(); j++) {
-      AWK[j] = K->evalOrientation()*ARP[j]*(Id+tilde(Psi[j]*q(iqE)));
-      disp[j] = Phi[j]*q(iqE);
-      WrOP[j] = K->getPosition() + K->getOrientation()*(KrKP[j] + disp[j]);
-    }
-    updNodalPos = false;
-  }
-
-  void FlexibleBodyFFR::updateNodalStresses() {
-    for(unsigned int j=0; j<sigmahel.size(); j++) {
-      sigma[j] = sigma0[j];
-      if(sigmahel[j].cols()) {
-        fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahe = sigmahel[j];
-        for(unsigned int i=0; i<sigmahen.size(); i++)
-          sigmahe += sigmahen[j][i]*q(iqE)(i);
-        sigma[j] += sigmahe*q(iqE);
-      }
-    }
-    updNodalStress = false;
-  }
-
   void FlexibleBodyFFR::updatePositions(Frame *frame) {
     frame->setPosition(R->getPosition() + evalGlobalRelativePosition());
     frame->setOrientation(R->getOrientation()*APK); // APK already update to date
@@ -765,38 +755,44 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::resetUpToDate() {
-    Body::resetUpToDate();
+    NodeBasedBody::resetUpToDate();
     updPjb = true;
     updGC = true;
     updT = true;
     updMb = true;
     updKJ[0] = true;
     updKJ[1] = true;
-    updNodalPos = true;
-    updNodalStress = true;
+    for(unsigned int i=0; i<updNodalPos.size(); i++) {
+      updNodalPos[i] = true;
+      updNodalVel[i] = true;
+      updNodalStress[i] = true;
+    }
   }
 
 //  void FlexibleBodyFFR::updateJacobiansForRemainingFramesAndContours1() {
 //  }
 
   void FlexibleBodyFFR::updateqRef(const Vec& ref) {
-    Body::updateqRef(ref);
+    NodeBasedBody::updateqRef(ref);
     qRel>>q;
     for(unsigned int i=1; i<frame.size(); i++)
-      static_cast<FixedNodalFrame*>(frame[i])->updateqRef(q(nq-ne,nq-1));
+      if(dynamic_cast<FixedNodalFrame*>(frame[i]))
+        static_cast<FixedNodalFrame*>(frame[i])->updateqRef(q(nq-ne,nq-1));
   }
 
   void FlexibleBodyFFR::updateuRef(const Vec& ref) {
-    Body::updateuRef(ref);
+    NodeBasedBody::updateuRef(ref);
     uRel>>u;
     for(unsigned int i=1; i<frame.size(); i++)
-      static_cast<FixedNodalFrame*>(frame[i])->updateqdRef(u(nu[0]-ne,nu[0]-1));
+      if(dynamic_cast<FixedNodalFrame*>(frame[i]))
+        static_cast<FixedNodalFrame*>(frame[i])->updateqdRef(u(nu[0]-ne,nu[0]-1));
   }
 
   void FlexibleBodyFFR::updateudRef(const fmatvec::Vec& ref) {
-    Body::updateudRef(ref);
+    NodeBasedBody::updateudRef(ref);
     for(unsigned int i=1; i<frame.size(); i++)
-      static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud(nu[0]-ne,nu[0]-1));
+      if(dynamic_cast<FixedNodalFrame*>(frame[i]))
+        static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud(nu[0]-ne,nu[0]-1));
   }
 
   void FlexibleBodyFFR::setRelativeNodalPosition(const fmatvec::VecV &r) {
@@ -853,7 +849,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::addFrame(FixedNodalFrame *frame_) {
-    Body::addFrame(frame_);
+    NodeBasedBody::addFrame(frame_);
   }
 
   void FlexibleBodyFFR::updateMConst() {
@@ -866,14 +862,13 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
-    Body::initializeUsingXML(element);
+    NodeBasedBody::initializeUsingXML(element);
 
     // frames
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     while(e) {
-      FixedNodalFrame *f=new FixedNodalFrame(E(e)->getAttribute("name"));
+      Frame *f=ObjectFactory::createAndInit<Frame>(e);
       addFrame(f);
-      f->initializeUsingXML(e);
       e=e->getNextElementSibling();
     }
 
@@ -1083,6 +1078,77 @@ namespace MBSimFlexibleBody {
       K->setPlotFeature(feature, status);
       e=e->getNextElementSibling();
     }
+  }
+
+  void FlexibleBodyFFR::updateStresses(int j) {
+    sigma[j] = sigma0[j];
+    if(sigmahel[j].cols()) {
+      fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahe = sigmahel[j];
+      for(unsigned int i=0; i<sigmahen.size(); i++)
+        sigmahe += sigmahen[j][i]*q(iqE)(i);
+      sigma[j] += sigmahe*q(iqE);
+    }
+    updNodalStress[j] = false;
+  }
+
+  void FlexibleBodyFFR::updatePositions(int i) {
+    AWK[i] = K->evalOrientation()*ARP[i]*(Id+tilde(Psi[i]*q(iqE)));
+    disp[i] = Phi[i]*q(iqE);
+    WrRP[i] = K->getOrientation()*(KrKP[i]+disp[i]);
+    WrOP[i] = K->getPosition() + WrRP[i];
+    updNodalPos[i] = false;
+  }
+
+  void FlexibleBodyFFR::updateVelocities(int i) {
+    Womrel[i] = K->evalOrientation()*(Psi[i]*u(iqE));
+    Wvrel[i] = K->getOrientation()*(Phi[i]*u(iqE));
+    updNodalVel[i] = false;
+  }
+
+  void FlexibleBodyFFR::updatePositions(NodeFrame* frame) {
+    Index i = frame->getNodeNumber();
+    frame->setPosition(evalNodalPosition(i));
+    frame->setOrientation(AWK[i]);
+ }
+
+  void FlexibleBodyFFR::updateVelocities(NodeFrame* frame) {
+    Index i = frame->getNodeNumber();
+    frame->setAngularVelocity(K->evalAngularVelocity() + evalGlobalRelativeAngularVelocity(i));
+    frame->setVelocity(K->getVelocity() + crossProduct(K->getAngularVelocity(), evalGlobalRelativePosition(i)) + Wvrel[i]);
+  }
+
+  void FlexibleBodyFFR::updateAccelerations(NodeFrame* frame) {
+    Index i = frame->getNodeNumber();
+    frame->setAngularAcceleration(K->evalAngularAcceleration() +  crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i)) + K->evalOrientation()*(Psi[i]*ud(iqE)));
+    frame->setAcceleration(K->getAcceleration() + crossProduct(K->getAngularAcceleration(), evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(), crossProduct(K->getAngularVelocity(), evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(), Wvrel[i]) + K->getOrientation()*(Phi[i]*ud(iqE)));
+  }
+
+  void FlexibleBodyFFR::updateJacobians(NodeFrame* frame, int j) {
+    Index i = frame->getNodeNumber();
+    Mat3xV Phi_ = Phi[i];
+    if(K0F.size() and K0F[i].size()) {
+      MatVx3 PhigeoT(ne,NONINIT);
+      for(int k=0; k<3; k++)
+        PhigeoT.set(k,K0F[i][k]*q);
+      Phi_ += PhigeoT.T();
+    }
+    Mat3xV Psi_ = Psi[i];
+    if(K0M.size() and K0M[i].size()) {
+      MatVx3 PsigeoT(ne,NONINIT);
+      for(int k=0; k<3; k++)
+        PsigeoT.set(k,K0M[i][k]*q);
+      Psi_ += PsigeoT.T();
+    }
+    frame->setJacobianOfRotation(K->getJacobianOfRotation(j));
+    frame->getJacobianOfRotation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->evalOrientation()*Psi_);
+    frame->setJacobianOfTranslation(K->getJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition(i))*K->getJacobianOfRotation(j));
+    frame->getJacobianOfTranslation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-ne,gethSize(j)-1),K->getOrientation()*Phi_);
+  }
+
+  void FlexibleBodyFFR::updateGyroscopicAccelerations(NodeFrame* frame) {
+    Index i = frame->getNodeNumber();
+    frame->setGyroscopicAccelerationOfRotation(K->evalGyroscopicAccelerationOfRotation() + crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i)));
+    frame->setGyroscopicAccelerationOfTranslation(K->getGyroscopicAccelerationOfTranslation() + crossProduct(K->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(),crossProduct(K->getAngularVelocity(),evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(),Wvrel[i]));
   }
 
 }

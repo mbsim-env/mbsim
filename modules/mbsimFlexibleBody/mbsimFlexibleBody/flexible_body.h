@@ -21,8 +21,7 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
-#include "mbsim/objects/body.h"
-#include "namespace.h"
+#include "mbsimFlexibleBody/node_based_body.h"
 
 namespace MBSim {
   class FixedRelativeFrame;
@@ -32,7 +31,6 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   class DiscretizationInterface;
-  class NodeFrame;
 
   /**
    * \brief upmost class for flexible body implementation
@@ -49,7 +47,7 @@ namespace MBSimFlexibleBody {
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs TODO
    * \todo mass proportional damping should be distributed on discretization and is not at the correct place (dependence on M) TODO
    */
-  class FlexibleBody : public MBSim::Body {
+  class FlexibleBody : public NodeBasedBody {
     public:
       /**
        * \brief constructor
@@ -68,11 +66,6 @@ namespace MBSimFlexibleBody {
       virtual void updateh(int k=0);
       virtual void updateM();
       virtual void updatedhdz();
-      virtual void updatePositions(NodeFrame* frame);
-      virtual void updateVelocities(NodeFrame* frame);
-      virtual void updateAccelerations(NodeFrame* frame);
-      virtual void updateJacobians(NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot();
@@ -158,10 +151,7 @@ namespace MBSimFlexibleBody {
       void setMassProportionalDamping(const double d_) { d_massproportional = d_; }
       /***************************************************/
 
-      /**
-       * \param node frame
-       */
-      void addFrame(NodeFrame *frame);
+      using NodeBasedBody::addFrame;
 
       void addFrame(MBSim::ContourFrame *frame);
 

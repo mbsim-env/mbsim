@@ -20,7 +20,6 @@
 
 #include <config.h>
 #include <mbsimFlexibleBody/flexible_body.h>
-#include <mbsimFlexibleBody/frames/node_frame.h>
 #include <mbsim/frames/contour_frame.h>
 #include <mbsim/frames/fixed_relative_frame.h>
 #include <mbsim/contours/contour.h>
@@ -28,10 +27,6 @@
 #include <fmatvec/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsimFlexibleBody/discretization_interface.h>
-
-//#ifdef _OPENMP
-//#include <omp.h>
-//#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -41,7 +36,7 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.), updEle(true) { }
+  FlexibleBody::FlexibleBody(const string &name) : NodeBasedBody(name), d_massproportional(0.), updEle(true) { }
 
   FlexibleBody::~FlexibleBody() {
     for (unsigned int i = 0; i < discretization.size(); i++) {
@@ -80,46 +75,26 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
-  void FlexibleBody::updatePositions(NodeFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updatePositions): Not implemented.");
-  }
-
-  void FlexibleBody::updateVelocities(NodeFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updateVelocities): Not implemented.");
-  }
-
-  void FlexibleBody::updateAccelerations(NodeFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updateAccelerations): Not implemented.");
-  }
-
-  void FlexibleBody::updateJacobians(NodeFrame* frame, int j) {
-    THROW_MBSIMERROR("(FlexibleBody::updateJacobians): Not implemented.");
-  }
-
-  void FlexibleBody::updateGyroscopicAccelerations(NodeFrame* frame) {
-    THROW_MBSIMERROR("(FlexibleBody::updateGyroscopicAccelerations): Not implemented.");
-  }
-
   void FlexibleBody::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
-      Body::plot();
+      NodeBasedBody::plot();
     }
   }
 
   void FlexibleBody::init(InitStage stage) {
     if (stage == unknownStage) {
-      Body::init(stage);
+      NodeBasedBody::init(stage);
       T = SqrMat(qSize, EYE);
     }
     else if(stage==plotting) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {
-        Body::init(stage);
+        NodeBasedBody::init(stage);
       }
     }
     else
-      Body::init(stage);
+      NodeBasedBody::init(stage);
   }
 
   double FlexibleBody::computeKineticEnergy() {
@@ -145,24 +120,20 @@ namespace MBSimFlexibleBody {
       THROW_MBSIMERROR("(FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!");
   }
 
-  void FlexibleBody::addFrame(NodeFrame *frame) {
-    Body::addFrame(frame);
-  }
-
   void FlexibleBody::addFrame(ContourFrame *frame) {
-    Body::addFrame(frame);
+    NodeBasedBody::addFrame(frame);
   }
 
   void FlexibleBody::addFrame(FixedRelativeFrame *frame) {
-    Body::addFrame(frame);
+    NodeBasedBody::addFrame(frame);
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
-    Body::addContour(contour_);
+    NodeBasedBody::addContour(contour_);
   }
 
   void FlexibleBody::initializeUsingXML(DOMElement *element) {
-    Body::initializeUsingXML(element);
+    NodeBasedBody::initializeUsingXML(element);
     
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"massProportionalDamping");
@@ -170,7 +141,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::resetUpToDate() {
-    Body::resetUpToDate();
+    NodeBasedBody::resetUpToDate();
     updEle = true;
   }
 

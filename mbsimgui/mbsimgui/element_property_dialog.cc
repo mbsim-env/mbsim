@@ -163,6 +163,22 @@ namespace MBSimGUI {
     static_cast<FixedRelativeFrame*>(element)->refFrame.fromWidget(refFrame);
   }
 
+  NodeFramePropertyDialog::NodeFramePropertyDialog(NodeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
+
+    nodeNumber = new ExtWidget("Node number",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft));
+    addToTab("General", nodeNumber);
+  }
+
+  void NodeFramePropertyDialog::toWidget(Element *element) {
+    FramePropertyDialog::toWidget(element);
+    static_cast<NodeFrame*>(element)->nodeNumber.toWidget(nodeNumber);
+  }
+
+  void NodeFramePropertyDialog::fromWidget(Element *element) {
+    FramePropertyDialog::fromWidget(element);
+    static_cast<NodeFrame*>(element)->nodeNumber.fromWidget(nodeNumber);
+  }
+
   FixedNodalFramePropertyDialog::FixedNodalFramePropertyDialog(FixedNodalFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
     addTab("Kinematics",1);
 

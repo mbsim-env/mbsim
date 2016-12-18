@@ -20,7 +20,7 @@
 #ifndef _FLEXIBLE_BODY_FFR_H_
 #define _FLEXIBLE_BODY_FFR_H_
 
-#include "mbsim/objects/body.h"
+#include "mbsimFlexibleBody/node_based_body.h"
 #include "mbsim/functions/time_dependent_function.h"
 #include "mbsim/functions/state_dependent_function.h"
 #include "mbsim/utils/boost_parameters.h"
@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
    *  \brief Flexible body using a floating frame of reference formulation
    *
    * */
-  class FlexibleBodyFFR : public MBSim::Body {
+  class FlexibleBodyFFR : public NodeBasedBody {
     public:
 
       FlexibleBodyFFR(const std::string &name=""); 
@@ -60,8 +60,6 @@ namespace MBSimFlexibleBody {
       void updateAccelerations();
       void updateJacobians();
       void updateGyroscopicAccelerations();
-      void updateNodalPositions();
-      void updateNodalStresses();
       void updatePositions(MBSim::Frame *frame);
       void updateVelocities(MBSim::Frame *frame);
       void updateAccelerations(MBSim::Frame *frame);
@@ -210,8 +208,8 @@ namespace MBSimFlexibleBody {
 
       void addFrame(FixedNodalFrame *frame); 
 
-      using Body::addContour;
-
+      using NodeBasedBody::addFrame;
+      using NodeBasedBody::addContour;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (nodes,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(indices,(const std::vector<MBSim::Index>&),std::vector<MBSim::Index>())(minimalColorValue,(double),0)(maximalColorValue,(double),0))) {
         OpenMBVDynamicIndexedFaceSet ombv(minimalColorValue,maximalColorValue);
@@ -270,6 +268,21 @@ namespace MBSimFlexibleBody {
       const fmatvec::VecV& evalhb() { if(updMb) updateMb(); return h_; }
       const fmatvec::MatV& evalKJ(int j=0) { if(updKJ[j]) updateKJ(j); return KJ[j]; }
       const fmatvec::VecV& evalKi() { if(updKJ[0]) updateKJ(0); return Ki; }
+      const fmatvec::Vec3& evalGlobalRelativePosition(int i) { if(updNodalPos[i]) updatePositions(i); return WrRP[i]; }
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity(int i) { if(updNodalVel[i]) updateVelocities(i); return Womrel[i]; }
+      const fmatvec::Vector<fmatvec::Fixed<6>, double>& evalNodalStress(int i) { if(updNodalStress[i]) updateStresses(i); return sigma[i]; }
+      const fmatvec::Vec3& evalNodalDisp(int i) { if(updNodalPos[i]) updatePositions(i); return disp[i]; }
+      const fmatvec::Vec3& evalNodalPosition(int i) { if(updNodalPos[i]) updatePositions(i); return WrOP[i]; }
+
+      virtual void updateStresses(int i);
+      virtual void updatePositions(int i);
+      virtual void updateVelocities(int i);
+
+      virtual void updatePositions(NodeFrame* frame);
+      virtual void updateVelocities(NodeFrame* frame);
+      virtual void updateAccelerations(NodeFrame* frame);
+      virtual void updateJacobians(NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
 
     protected:
       double m;
@@ -290,7 +303,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe0;
 
       fmatvec::SqrMat3 Id;
-      std::vector<fmatvec::Vec3> KrKP, WrOP, disp;
+      std::vector<fmatvec::Vec3> KrKP, WrOP, WrRP, disp, Wvrel, Womrel;
       std::vector<fmatvec::SqrMat3> ARP, AWK;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<std::vector<fmatvec::SqrMatV> > K0F, K0M;
@@ -390,7 +403,8 @@ namespace MBSimFlexibleBody {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updPjb, updGC, updT, updMb, updKJ[2], updNodalPos, updNodalStress;
+      bool updPjb, updGC, updT, updMb, updKJ[2];
+      std::vector<bool> updNodalPos, updNodalVel, updNodalStress;
 
       fmatvec::SymMatV M_;
       fmatvec::VecV h_;

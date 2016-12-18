@@ -67,6 +67,23 @@ namespace MBSimGUI {
     ExtProperty refFrame, position, orientation;
   };
 
+  class NodeFrame : public Frame {
+    friend class NodeFramePropertyDialog;
+    public:
+    NodeFrame(const std::string &str, Element *parent);
+    ~NodeFrame() { }
+    virtual PropertyInterface* clone() const {return new NodeFrame(*this);}
+    std::string getType() const { return "NodeFrame"; }
+    MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new NodeFramePropertyDialog(this);}
+    EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
+    QMenu* createContextMenu() {return new NodeFrameContextMenu(this);}
+    protected:
+    ExtProperty nodeNumber;
+  };
+
   class FixedNodalFrame : public Frame {
     friend class FixedNodalFramePropertyDialog;
     public:

@@ -292,6 +292,27 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="NodeFrame" substitutionGroup="mbsim:Frame" type="NodeFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Koordinatensystem für knotenbasierte Körper.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="NodeFrameType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FrameType">
+        <xs:sequence>
+          <xs:element name="nodeNumber" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotennummer.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="FixedNodalFrame" substitutionGroup="mbsim:Frame" type="FixedNodalFrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
       Koordinatensystem für elastische Körper mit einer Frame Of Reference Formulierung (siehe <a class="link" href="FlexibleBodyFFR">&lt;FlexibleBodyFFR&gt;</a>).
@@ -713,7 +734,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="FixedNodalFrame"/>
+                  <xs:element ref="mbsim:Frame"/>
                   <xs:element ref="pv:Embed"/>
                 </xs:choice>
               </xs:sequence>

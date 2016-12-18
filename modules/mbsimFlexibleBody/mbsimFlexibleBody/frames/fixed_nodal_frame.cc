@@ -28,6 +28,8 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FixedNodalFrame)
+
   void FixedNodalFrame::init(InitStage stage) {
     if(stage==resize) {
       if(not(Phi.cols()))
@@ -61,63 +63,57 @@ namespace MBSimFlexibleBody {
     return WrRP;
   }
 
-  const Mat3xV& FixedNodalFrame::evalGlobalPhi() {
-    if(updPos) updatePositions();
-    return WPhi;
-  }
-
-  const Mat3xV& FixedNodalFrame::evalGlobalPsi() {
-    if(updPos) updatePositions();
-    return WPsi;
+  const fmatvec::Vec3& FixedNodalFrame::evalGlobalRelativeAngularVelocity() {
+    if(updVel) updateVelocities();
+    return Womrel;
   }
 
   void FixedNodalFrame::updatePositions() {
-    APK = E+tilde(Psi*q);
-    setOrientation(R->evalOrientation()*ARP*APK);
-    if(K0F.size()) {
-      MatVx3 PhigeoT(nq,NONINIT);
-      for(int i=0; i<3; i++)
-        PhigeoT.set(i,K0F[i]*q);
-      WPhi = R->getOrientation()*(Phi + PhigeoT.T()); 
-    }
-    else
-      WPhi = R->getOrientation()*Phi;
-    if(K0M.size()) {
-      MatVx3 PsigeoT(nq,NONINIT);
-      for(int i=0; i<3; i++)
-        PsigeoT.set(i,K0M[i]*q);
-      WPsi = R->getOrientation()*(Psi + PsigeoT.T()); 
-    }
-    else
-      WPsi = R->getOrientation()*Psi;
-    WrRP = R->getOrientation()*RrRP + WPhi*q;
+    setOrientation(R->evalOrientation()*ARP*(E + tilde(Psi*q)));
+    WrRP = R->getOrientation()*(RrRP + Phi*q);
     setPosition(R->getPosition() + WrRP);
     updPos = false;
   }
 
   void FixedNodalFrame::updateVelocities() {
-    setAngularVelocity(R->evalAngularVelocity() + evalGlobalPsi()*qd);
-    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), getGlobalRelativePosition()) + getGlobalPhi()*qd);
+    Womrel = R->evalOrientation()*(Psi*qd);
+    Wvrel = R->getOrientation()*(Phi*qd);
+    setAngularVelocity(R->evalAngularVelocity() + Womrel);
+    setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), evalGlobalRelativePosition()) + Wvrel);
     updVel = false;
   }
 
   void FixedNodalFrame::updateAccelerations() {
-    setAngularAcceleration(R->evalAngularAcceleration() +  crossProduct(R->evalAngularVelocity(),evalGlobalPsi()*qd) + evalGlobalPsi()*qdd);
-    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), getGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(), crossProduct(R->getAngularVelocity(), getGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd) + getGlobalPhi()*qdd);
+    setAngularAcceleration(R->evalAngularAcceleration() +  crossProduct(R->evalAngularVelocity(),evalGlobalRelativeAngularVelocity()) + R->evalOrientation()*(Psi*qdd));
+    setAcceleration(R->getAcceleration() + crossProduct(R->getAngularAcceleration(), evalGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(), crossProduct(R->getAngularVelocity(), evalGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(), Wvrel) +  R->getOrientation()*(Phi*qdd));
     updAcc = false;
   }
 
   void FixedNodalFrame::updateJacobians(int j) {
+    Mat3xV Phi_ = Phi;
+    if(K0F.size()) {
+      MatVx3 PhigeoT(nq,NONINIT);
+      for(int i=0; i<3; i++)
+        PhigeoT.set(i,K0F[i]*q);
+      Phi_ += PhigeoT.T();
+    }
+    Mat3xV Psi_ = Psi;
+    if(K0M.size()) {
+      MatVx3 PsigeoT(nq,NONINIT);
+      for(int i=0; i<3; i++)
+        PsigeoT.set(i,K0M[i]*q);
+      Psi_ += PsigeoT.T();
+    }
     setJacobianOfRotation(R->getJacobianOfRotation(j));
-    getJacobianOfRotation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-nq,gethSize(j)-1),evalGlobalPsi());
-    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(getGlobalRelativePosition())*R->getJacobianOfRotation(j));
-    getJacobianOfTranslation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-nq,gethSize(j)-1),evalGlobalPhi());
+    getJacobianOfRotation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-nq,gethSize(j)-1),R->evalOrientation()*Psi_);
+    setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition())*R->getJacobianOfRotation(j));
+    getJacobianOfTranslation(j,false).add(RangeV(0,2),RangeV(gethSize(j)-nq,gethSize(j)-1),R->getOrientation()*Phi_);
     updJac[j] = false;
   }
 
   void FixedNodalFrame::updateGyroscopicAccelerations() {
-    setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation() + crossProduct(R->evalAngularVelocity(),evalGlobalPsi()*qd));
-    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),getGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),getGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(),getGlobalPhi()*qd));
+    setGyroscopicAccelerationOfRotation(R->evalGyroscopicAccelerationOfRotation() + crossProduct(R->evalAngularVelocity(),evalGlobalRelativeAngularVelocity()));
+    setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() + crossProduct(R->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition()) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),evalGlobalRelativePosition())) + 2.*crossProduct(R->getAngularVelocity(),Wvrel));
     updGA = false;
   }
 

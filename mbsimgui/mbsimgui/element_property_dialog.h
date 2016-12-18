@@ -27,6 +27,7 @@ namespace MBSimGUI {
   class Element;
   class Frame;
   class FixedRelativeFrame;
+  class NodeFrame;
   class FixedNodalFrame;
   class Contour;
   class RigidContour;
@@ -132,6 +133,17 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *refFrame, *position, *orientation;
+  };
+
+  class NodeFramePropertyDialog : public FramePropertyDialog {
+    Q_OBJECT
+
+    public:
+      NodeFramePropertyDialog(NodeFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *nodeNumber;
   };
 
   class FixedNodalFramePropertyDialog : public FramePropertyDialog {

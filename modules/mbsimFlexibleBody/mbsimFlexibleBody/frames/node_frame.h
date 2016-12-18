@@ -21,6 +21,7 @@
 #define _NODE_FRAME_H__
 
 #include "mbsim/frames/frame.h"
+#include "mbsim/utils/index.h"
 
 namespace MBSimFlexibleBody {
 
@@ -31,12 +32,12 @@ namespace MBSimFlexibleBody {
   class NodeFrame : public MBSim::Frame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", int node_ = 0) : Frame(name), node(node_) { }
+      NodeFrame(const std::string &name = "dummy", MBSim::Index node_ = 0) : Frame(name), node(node_) { }
 
       std::string getType() const { return "NodeFrame"; }
 
-      void setNodeNumber(int node_) { node = node_; }
-      int getNodeNumber() const { return node; }
+      void setNodeNumber(MBSim::Index node_) { node = node_; }
+      MBSim::Index getNodeNumber() const { return node; }
 
       void updatePositions();
       void updateVelocities();
@@ -50,7 +51,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief node number of the frame
        */
-      int node;
+      MBSim::Index node;
   };
 
 }

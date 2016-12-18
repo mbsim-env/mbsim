@@ -67,8 +67,7 @@ namespace MBSimFlexibleBody {
       const fmatvec::Mat3xV& getGlobalPsi(bool check=true) const { assert((not check) or (not updPos)); return WPsi; }
 
       const fmatvec::Vec3& evalGlobalRelativePosition();
-      const fmatvec::Mat3xV& evalGlobalPhi();
-      const fmatvec::Mat3xV& evalGlobalPsi();
+      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity();
       void updatePositions();
       void updateVelocities();
       void updateAccelerations();
@@ -81,8 +80,8 @@ namespace MBSimFlexibleBody {
 
     protected:
       MBSim::Frame *R;
-      fmatvec::Vec3 RrRP, WrRP;
-      fmatvec::SqrMat3 ARP, APK, E;
+      fmatvec::Vec3 RrRP, WrRP, Wvrel, Womrel;
+      fmatvec::SqrMat3 ARP, E;
       fmatvec::Mat3xV WPhi, WPsi, Phi, Psi;
       std::vector<fmatvec::SqrMatV> K0F, K0M;
       fmatvec::Vector<fmatvec::Fixed<6>, double> sigma0;
