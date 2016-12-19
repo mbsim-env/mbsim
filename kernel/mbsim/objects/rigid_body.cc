@@ -707,26 +707,26 @@ namespace MBSim {
     constraint = constraint_;
   }
 
-  void RigidBody::setqRel(const fmatvec::Vec &q) { 
+  void RigidBody::setqRel(const Vec &q) {
     qRel = q;
     qTRel = qRel(iqT); 
     qRRel = qRel(iqR); 
     updGC = false; 
   }
 
-  void RigidBody::setuRel(const fmatvec::Vec &u) { 
+  void RigidBody::setuRel(const Vec &u) {
     uRel = u; 
     uTRel = uRel(iuT);
     uRRel = uRel(iuR);
     updGC = false; 
   }
 
-  void RigidBody::setJRel(const fmatvec::Mat &J) { 
+  void RigidBody::setJRel(const Mat &J) {
     JRel[0] = J; 
     updGJ = false; 
   }
 
-  void RigidBody::setjRel(const fmatvec::Vec &j) { 
+  void RigidBody::setjRel(const Vec &j) {
     jRel = j; 
     updGJ = false; 
   }

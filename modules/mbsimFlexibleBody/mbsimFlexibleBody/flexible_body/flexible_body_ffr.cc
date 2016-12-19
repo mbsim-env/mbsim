@@ -172,7 +172,7 @@ namespace MBSimFlexibleBody {
     for(unsigned int i=0; i<K0t.size(); i++)
       Ct1.push_back(K0t[i]);
 
-    std::vector<fmatvec::SqrMatV> Kr(3);
+    vector<SqrMatV> Kr(3);
     Kr[0].resize() = -PPdm[1][2] + PPdm[1][2].T();
     Kr[1].resize() = -PPdm[2][0] + PPdm[2][0].T();
     Kr[2].resize() = -PPdm[0][1] + PPdm[0][1].T();
@@ -441,9 +441,9 @@ namespace MBSimFlexibleBody {
               plotColumns.push_back("WrOP["+numtostr(int(i))+"]("+numtostr(j)+")");
         }
         if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
-          std::dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
+          dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
           if(ombvIndices.size())
-            std::dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
+            dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
         }
         NodeBasedBody::init(stage);
         if(getPlotFeature(openMBV)==enabled) {
@@ -568,21 +568,21 @@ namespace MBSimFlexibleBody {
           M_.e(i+6,j) = Ct_.e(i,j);
     }
 
-    fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe_(ne,NONINIT), Oe1_(ne,NONINIT);
+    Matrix<General,Var,Fixed<6>,double> Oe_(ne,NONINIT), Oe1_(ne,NONINIT);
     for(int i=0; i<6; i++)
       Oe1_.set(i,Oe1[i]*q(iqE));
 
     Oe_ = Oe0 + Oe1_;
 
-    std::vector<fmatvec::SqrMat3> Gr1_(ne);
-    fmatvec::SqrMat3 hom21;
+    vector<SqrMat3> Gr1_(ne);
+    SqrMat3 hom21;
     for(int i=0; i<ne; i++) {
       Gr1_[i].init(0);
       for(int j=0; j<ne; j++)
         Gr1_[i] += Gr1[j][i]*q(iqE).e(j);
       hom21 += (Gr0[i]+Gr1_[i])*u(iuE).e(i);
     }
-    fmatvec::MatVx3 Ge_(ne,NONINIT);
+    MatVx3 Ge_(ne,NONINIT);
     for(int i=0; i<3; i++)
       Ge_.set(i,Ge[i]*u(iuE));
 
@@ -788,44 +788,44 @@ namespace MBSimFlexibleBody {
         static_cast<FixedNodalFrame*>(frame[i])->updateqdRef(u(nu[0]-ne,nu[0]-1));
   }
 
-  void FlexibleBodyFFR::updateudRef(const fmatvec::Vec& ref) {
+  void FlexibleBodyFFR::updateudRef(const Vec& ref) {
     NodeBasedBody::updateudRef(ref);
     for(unsigned int i=1; i<frame.size(); i++)
       if(dynamic_cast<FixedNodalFrame*>(frame[i]))
         static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud(nu[0]-ne,nu[0]-1));
   }
 
-  void FlexibleBodyFFR::setRelativeNodalPosition(const fmatvec::VecV &r) {
+  void FlexibleBodyFFR::setRelativeNodalPosition(const VecV &r) {
     KrKP.resize(r.size()/3);
     for(unsigned int i=0; i<KrKP.size(); i++)
       KrKP[i] = r(RangeV(3*i,3*i+2));
   }
 
-  void FlexibleBodyFFR::setRelativeNodalOrientation(const fmatvec::MatVx3 &A) {
+  void FlexibleBodyFFR::setRelativeNodalOrientation(const MatVx3 &A) {
     ARP.resize(A.rows()/3);
     for(unsigned int i=0; i<ARP.size(); i++)
       ARP[i] = A(RangeV(3*i,3*i+2),RangeV(0,2));
   }
 
-  void FlexibleBodyFFR::setShapeMatrixOfTranslation(const fmatvec::MatV &Phi_) {
+  void FlexibleBodyFFR::setShapeMatrixOfTranslation(const MatV &Phi_) {
     Phi.resize(Phi_.rows()/3);
     for(unsigned int i=0; i<Phi.size(); i++)
       Phi[i] = Phi_(RangeV(3*i,3*i+2),RangeV(0,Phi_.cols()-1));
   }
 
-  void FlexibleBodyFFR::setShapeMatrixOfRotation(const fmatvec::MatV &Psi_) {
+  void FlexibleBodyFFR::setShapeMatrixOfRotation(const MatV &Psi_) {
     Psi.resize(Psi_.rows()/3);
     for(unsigned int i=0; i<Psi.size(); i++)
       Psi[i] = Psi_(RangeV(3*i,3*i+2),RangeV(0,Psi_.cols()-1));
   }
 
-  void FlexibleBodyFFR::setStressMatrix(const fmatvec::MatV &sigmahel_) {
+  void FlexibleBodyFFR::setStressMatrix(const MatV &sigmahel_) {
     sigmahel.resize(sigmahel_.rows()/6);
     for(unsigned int i=0; i<sigmahel.size(); i++)
       sigmahel[i] = sigmahel_(RangeV(6*i,6*i+5),RangeV(0,sigmahel_.cols()-1));
   }
 
-  void FlexibleBodyFFR::setNonlinearStressMatrix(const std::vector<fmatvec::MatV> &sigmahen_) {
+  void FlexibleBodyFFR::setNonlinearStressMatrix(const vector<MatV> &sigmahen_) {
     sigmahen.resize(sigmahen_.size());
     for(unsigned int i=0; i<sigmahen.size(); i++) {
       sigmahen[i].resize(sigmahen_[i].rows()/6);
@@ -834,17 +834,17 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBodyFFR::setInitialStress(const fmatvec::VecV &sigma0_) {
+  void FlexibleBodyFFR::setInitialStress(const VecV &sigma0_) {
     sigma0.resize(sigma0_.rows()/6);
     for(unsigned int i=0; i<sigma0.size(); i++)
       sigma0[i] = sigma0_(RangeV(6*i,6*i+5));
   }
 
-  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToForce(const std::vector<fmatvec::SqrMatV> &K0F_) {
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToForce(const vector<SqrMatV> &K0F_) {
 //    K0F = K0F_;
   }
 
-  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToMoment(const std::vector<fmatvec::SqrMatV> &K0M_) {
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToMoment(const vector<SqrMatV> &K0M_) {
 //    K0M = K0M_;
   }
 
@@ -1083,7 +1083,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::updateStresses(int j) {
     sigma[j] = sigma0[j];
     if(sigmahel[j].cols()) {
-      fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> sigmahe = sigmahel[j];
+      Matrix<General, Fixed<6>, Var, double> sigmahe = sigmahel[j];
       for(unsigned int i=0; i<sigmahen.size(); i++)
         sigmahe += sigmahen[j][i]*q(iqE)(i);
       sigma[j] += sigmahe*q(iqE);
