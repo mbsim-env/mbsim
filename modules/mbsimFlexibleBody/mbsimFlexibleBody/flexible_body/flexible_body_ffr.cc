@@ -517,7 +517,7 @@ namespace MBSimFlexibleBody {
           data.push_back(getTime());
           for(unsigned int i=0; i<ombvNodes.size(); i++) {
             Vec3 WrOP = evalNodalPosition(ombvNodes[i]);
-            Vec3 sigma = evalNodalStress(ombvNodes[i]);
+            Vector<Fixed<6>, double> sigma = evalNodalStress(ombvNodes[i]);
               for(int j=0; j<3; j++)
                 data.push_back(WrOP(j));
               //data.push_back(nrm2(disp[ombvNodes[i]]));
