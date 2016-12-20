@@ -278,12 +278,12 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
     shiftAbscissa = new ExtWidget("Shift abscissa",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(shiftAbscissa);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
     shiftOrdinate = new ExtWidget("Shift ordinate",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(shiftOrdinate);
   }

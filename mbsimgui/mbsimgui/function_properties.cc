@@ -385,10 +385,10 @@ namespace MBSimGUI {
     functions.setXMLName(MBSIM%"limitedFunctions");
     vector<PhysicalVariableProperty> input;
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"shiftAbscissa"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"shiftAbscissa"));
     shiftAbscissa.setProperty(new ExtPhysicalVarProperty(input));
     input.clear();
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIM%"shiftOrdinate"));
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIM%"shiftOrdinate"));
     shiftOrdinate.setProperty(new ExtPhysicalVarProperty(input));
   }
 
