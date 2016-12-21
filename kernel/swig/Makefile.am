@@ -43,6 +43,7 @@ _fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 _fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(PYTHON_LIBDIR)/python$(PYTHON_VERSION)/site-packages/numpy/core/include
 _fmatvec_la_LIBADD = $(PYTHON_LIBS) $(FMATVEC_LIBS)
 
+CXXFLAGS += -O0 # disable optimization: mbsim_swig_python.cc required a LOT of memory if -O1 or higher is enabled
 _mbsim_la_SOURCES = mbsim_swig_python.cc
 _mbsim_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
 _mbsim_la_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/python$(PYTHON_VERSION)/site-packages/numpy/core/include $(DEPS_CFLAGS) -I$(top_srcdir) -Wno-unused-label

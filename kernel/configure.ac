@@ -122,7 +122,7 @@ if test "x$enable_python" == "xyes"; then
   fi
   AC_SUBST([PYTHON_SHEXT], [$pythonshext])
 
-  PYTHON_LIBDIR="$($PKG_CONFIG --variable=libdir python-$pythonversion)"
+  PYTHON_LIBDIR="$(pkg-config --variable=libdir python-$pythonversion)"
   if test ! -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
     AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include])
   fi

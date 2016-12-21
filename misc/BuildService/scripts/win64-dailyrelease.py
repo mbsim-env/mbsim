@@ -26,10 +26,11 @@ os.environ["UIC"]="/usr/x86_64-w64-mingw32/bin/uic"
 os.environ["RCC"]="/usr/x86_64-w64-mingw32/bin/rcc"
 os.environ["PLATFORM"]="Windows" # required for source code examples
 os.environ["CXX"]="x86_64-w64-mingw32-g++" # required for source code examples
+os.environ['MBSIM_SWIG']='1'
 
 if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribution", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix",
   SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "win64-dailyrelease",
-  "--enableCleanPrefix", "--passToConfigure", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
+  "--enableCleanPrefix", "--passToConfigure", "--enable-python", "--enable-shared", "--disable-static", "--build=x86_64-redhat-linux", "--host=x86_64-w64-mingw32",
   "--with-javajniosdir="+SCRIPTDIR+"/buildPreparation/windows",
   "--with-mkoctfile=/home/mbsim/3rdparty/octave-local-win64/bin/mkoctfile.exe",
   "--with-hdf5-prefix=/home/mbsim/3rdparty/hdf5-local-win64", "--with-windres=x86_64-w64-mingw32-windres",
@@ -39,6 +40,6 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribu
   "PYTHON_CFLAGS=-I/home/mbsim/3rdparty/python-win64/include -DMS_WIN64",
   "PYTHON_LIBS=-L/home/mbsim/3rdparty/python-win64 -lpython27",
   "PYTHON_BIN=/home/mbsim/3rdparty/python-win64/python.exe",
-  "--passToRunexamples", "--disableCompare",
+  "--passToRunexamples", "--enableAlphaPy", "--disableCompare",
   "--disableValidate", "--exeExt", ".exe", "--filter", "'basic' in labels"])!=0:
   print("win64-dailyrelease failed.")

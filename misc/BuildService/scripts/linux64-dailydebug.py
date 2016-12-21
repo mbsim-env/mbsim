@@ -15,6 +15,7 @@ os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
 os.environ["CXXFLAGS"]="-O0 -g"
 os.environ["CFLAGS"]="-O0 -g"
 os.environ["FFLAGS"]="-O0 -g"
+os.environ['MBSIM_SWIG']='1'
 simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS"]
 
 # read config files
@@ -43,8 +44,9 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
   "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--reportOutDir",
   "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
-  "--passToConfigure", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
-  "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin"])!=0:
+  "--passToConfigure", "--enable-python", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
+  "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
+  "--passToRunexamples", "--enableAlphaPy"])!=0:
   print("build.py failed.")
 
 # update references for download
