@@ -12,6 +12,7 @@ import subprocess
 import time
 import re
 import shutil
+import tempfile
 if sys.version_info[0]==2: # to unify python 2 and python 3
   from StringIO import StringIO as myStringIO
 else:
@@ -34,7 +35,7 @@ def config():
   else:
     raise RuntimeError("Unknown platform")
 
-  # find "import delibs"
+  # find "import deplibs"
   sys.path.append(args.prefix+"/share/mbxmlutils/python")
 
   # enviroment variables
@@ -93,10 +94,8 @@ def addFileToDist(name, arcname, addDepLibs=True):
     if re.search('ELF [0-9]+-bit LSB', content)!=None or re.search('PE32\+? executable', content)!=None:
       # binary file
       # fix rpath (remove all absolute componentes from rpath)
-      tmpDir="/tmp/distribute_temp_dir"
-      if not os.path.isdir(tmpDir):
-        os.mkdir(tmpDir)
       basename=os.path.basename(name)
+      tmpDir=tempfile.mkdtemp()
       try:
         shutil.copy(name, tmpDir+"/"+basename+".rpath")
         fnull=open(os.devnull, 'w')
@@ -142,7 +141,7 @@ def addFileToDist(name, arcname, addDepLibs=True):
           if platform=="win":
             distArchive.write(tmpDir+"/"+basename+".rpath", arcname)
       finally:
-        if os.path.exists(tmpDir+"/"+basename+".rpath"): os.remove(tmpDir+"/"+basename+".rpath")
+        shutil.rmtree(tmpDir)
       # add also all dependent libs to the lib/bin dir
       if addDepLibs and addDepsFor(name):
         for deplib in deplibs.depLibs(name):
