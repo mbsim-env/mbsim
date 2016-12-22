@@ -41,6 +41,7 @@ else
   FFLAGS="$FFLAGS -g -O2"
 fi
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
+AC_SUBST([HOST_OS],[$host_os])
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi

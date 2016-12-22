@@ -5,5 +5,8 @@ if test -z "$MBSIM_SWIG"; then
   exit 77 # = test SKIPPED
 fi
 
-export PYTHONPATH=.:..:@abs_builddir@/.libs:@abs_builddir@/../.libs
+SEP=":"
+test "_@HOST_OS@" == "_mingw32" && SEP=";"
+
+export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs
 @XC_EXEC_PREFIX@ @PYTHON_BIN@ @srcdir@/fmatvec_main.py

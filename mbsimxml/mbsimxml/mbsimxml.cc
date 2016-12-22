@@ -23,7 +23,7 @@ namespace MBSim {
 set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
 #if MBSIMXML_COND_PYTHON
   boost::filesystem::path home;
-  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR))
+  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR/"site-packages"))
     home=getInstallPath();
   initializePython((getInstallPath()/"bin"/"mbsimxml").string(), home.string());
   PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));

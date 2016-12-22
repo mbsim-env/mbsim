@@ -1,12 +1,12 @@
 lib_LTLIBRARIES = libmbsimflatxml.la libmbsimxml.la
 libmbsimflatxml_la_SOURCES = mbsimflatxml.cc
-libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYTHON_CFLAGS)
+libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYTHON_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) $(PYTHON_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
 mbsimflatxmlincludedir = $(includedir)/mbsimxml
 mbsimflatxmlinclude_HEADERS = mbsimflatxml.h
 
 libmbsimxml_la_SOURCES = mbsimxml.cc
-libmbsimxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYTHON_CFLAGS)
+libmbsimxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYTHON_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 libmbsimxml_la_LIBADD = $(DEPS_LIBS) $(PYTHON_LIBS)
 mbsimxmlincludedir = $(includedir)/mbsimxml
 mbsimxmlinclude_HEADERS = mbsimxml.h
