@@ -880,7 +880,8 @@ def runExample(resultQueue, example):
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
-    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>'
+    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
+      %('<td>-</td>'*(5-sum([args.disableRun, args.disableCompare, args.disableValidate])))
     runExampleRet=1
   finally:
     os.chdir(savedDir)
