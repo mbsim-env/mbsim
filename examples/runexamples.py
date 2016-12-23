@@ -950,7 +950,7 @@ def executeSrcExample(executeFD, example):
   elif os.name=="nt":
     NAME="PATH"
     SUBDIR="bin"
-  mainEnv=os.environ
+  mainEnv=os.environ.copy()
   libDir=pj(mbsimBinDir, os.pardir, SUBDIR)
   if NAME in mainEnv:
     mainEnv[NAME]=mainEnv[NAME]+os.pathsep+libDir
