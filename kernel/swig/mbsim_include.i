@@ -61,7 +61,12 @@ void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObjec
 
   // get the uri
   std::string uri=X()%doc->getDocumentURI();
-  uri=uri.substr(7); // remove the "file://" part from the uri
+#ifdef _WIN32
+  int addChars = 1; // Windows uses e.g. file:///c:/path/to/file.txt -> file:/// must be removed
+#else
+  int addChars = 0; // Linux uses e.g. file:///path/to/file.txt -> file:// must be removed
+#endif
+  uri=uri.substr(7+addChars); // remove the "file://" part from the uri
 
   // get the XPath of e
   xercesc::DOMElement *r=doc->getDocumentElement();
