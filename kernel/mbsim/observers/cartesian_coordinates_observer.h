@@ -26,14 +26,16 @@ namespace MBSim {
 
   class CartesianCoordinatesObserver : public CoordinatesObserver {
     private:
-      fmatvec::Vec3 ex, ey, ez;
       fmatvec::SqrMat3 A;
       std::shared_ptr<OpenMBV::Arrow> openMBVXPosition, openMBVYPosition, openMBVZPosition, openMBVXVelocity, openMBVYVelocity, openMBVZVelocity, openMBVXAcceleration, openMBVYAcceleration, openMBVZAcceleration; 
 
     public:
       CartesianCoordinatesObserver(const std::string &name="");
 
+      void setOrientation(const fmatvec::SqrMat3 &A_) { A = A_; }
+
       void init(InitStage stage);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual void plot();
   };
 

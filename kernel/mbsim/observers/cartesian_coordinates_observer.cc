@@ -57,9 +57,6 @@ namespace MBSim {
       }
       CoordinatesObserver::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
-	ex = A.col(0);
-	ey = A.col(1);
-	ez = A.col(2);
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
             openMBVXPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
@@ -107,6 +104,9 @@ namespace MBSim {
         Vec3 r = frame->evalPosition();
         Vec3 v = frame->evalVelocity();
         Vec3 a = frame->evalAcceleration();
+	Vec3 ex = A.col(0);
+	Vec3 ey = A.col(1);
+	Vec3 ez = A.col(2);
 
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
@@ -246,6 +246,12 @@ namespace MBSim {
 
       CoordinatesObserver::plot();
     }
+  }
+
+  void CartesianCoordinatesObserver::initializeUsingXML(DOMElement *element) {
+    CoordinatesObserver::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"orientation");
+    if(e) setOrientation(getSqrMat3(e));
   }
 
 }
