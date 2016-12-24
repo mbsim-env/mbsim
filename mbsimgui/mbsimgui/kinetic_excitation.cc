@@ -39,6 +39,9 @@ namespace MBSimGUI {
     momentDirection.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIM%"momentDirection",vector<string>(3,"-")),"",4));
 
     momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
+
+    forceArrow.setActive(true);
+    momentArrow.setActive(true);
   }
 
 //  void KineticExcitation::initialize() {

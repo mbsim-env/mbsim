@@ -1312,54 +1312,44 @@ namespace MBSimGUI {
 
     forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation",forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation",momentArrow);
   }
 
   void FrameLinkPropertyDialog::toWidget(Element *element) {
     LinkPropertyDialog::toWidget(element);
     static_cast<FrameLink*>(element)->connections.toWidget(connections);
     static_cast<FrameLink*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<FrameLink*>(element)->momentArrow.toWidget(momentArrow);
   }
 
   void FrameLinkPropertyDialog::fromWidget(Element *element) {
     LinkPropertyDialog::fromWidget(element);
     static_cast<FrameLink*>(element)->connections.fromWidget(connections);
     static_cast<FrameLink*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<FrameLink*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
-  FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(link,parent,f) {
-    addTab("Kinetics",1);
-    addTab("Visualisation",2);
+  FixedFrameLinkPropertyDialog::FixedFrameLinkPropertyDialog(FixedFrameLink *link, QWidget *parent, Qt::WindowFlags f) : FrameLinkPropertyDialog(link,parent,f) {
+  }
 
-    connections = new ExtWidget("Connections",new ConnectFramesWidget(2,link));
-    addToTab("Kinetics", connections);
-
+  FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget *parent, Qt::WindowFlags f) : FrameLinkPropertyDialog(link,parent,f) {
     QStringList names;
     names << "Frame 1" << "Frame 2";
     refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
 //    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(0,0,1),true);
     addToTab("Kinetics", refFrameID);
-
-    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-    addToTab("Visualisation",forceArrow);
-
-    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-    addToTab("Visualisation",momentArrow);
   }
 
   void FloatingFrameLinkPropertyDialog::toWidget(Element *element) {
-    LinkPropertyDialog::toWidget(element);
-    static_cast<FloatingFrameLink*>(element)->connections.toWidget(connections);
+    FrameLinkPropertyDialog::toWidget(element);
     static_cast<FloatingFrameLink*>(element)->refFrameID.toWidget(refFrameID);
-    static_cast<FloatingFrameLink*>(element)->forceArrow.toWidget(forceArrow);
-    static_cast<FloatingFrameLink*>(element)->momentArrow.toWidget(momentArrow);
   }
 
   void FloatingFrameLinkPropertyDialog::fromWidget(Element *element) {
-    LinkPropertyDialog::fromWidget(element);
-    static_cast<FloatingFrameLink*>(element)->connections.fromWidget(connections);
+    FrameLinkPropertyDialog::fromWidget(element);
     static_cast<FloatingFrameLink*>(element)->refFrameID.fromWidget(refFrameID);
-    static_cast<FloatingFrameLink*>(element)->forceArrow.fromWidget(forceArrow);
-    static_cast<FloatingFrameLink*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
   RigidBodyLinkPropertyDialog::RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(link,parent,f) {

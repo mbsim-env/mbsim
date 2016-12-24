@@ -59,6 +59,7 @@ namespace MBSimGUI {
   class LinearTransferSystem;
   class Link;
   class FrameLink;
+  class FixedFrameLink;
   class FloatingFrameLink;
   class RigidBodyLink;
   class DualRigidBodyLink;
@@ -459,17 +460,23 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *connections, *forceArrow;
+      ExtWidget *connections, *forceArrow, *momentArrow;
   };
 
-  class FloatingFrameLinkPropertyDialog : public LinkPropertyDialog {
+  class FixedFrameLinkPropertyDialog : public FrameLinkPropertyDialog {
+
+    public:
+      FixedFrameLinkPropertyDialog(FixedFrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+  };
+
+  class FloatingFrameLinkPropertyDialog : public FrameLinkPropertyDialog {
 
     public:
       FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *connections, *refFrameID, *forceArrow, *momentArrow;
+      ExtWidget *refFrameID;
   };
 
   class RigidBodyLinkPropertyDialog : public LinkPropertyDialog {

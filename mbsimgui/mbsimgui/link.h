@@ -39,18 +39,23 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
-      ExtProperty connections, forceArrow;
+      ExtProperty connections, forceArrow, momentArrow;
  };
 
-  class FloatingFrameLink : public Link {
+  class FixedFrameLink : public FrameLink {
+    friend class FixedFrameLinkPropertyDialog;
+    public:
+      FixedFrameLink(const std::string &str, Element *parent) : FrameLink(str,parent) { }
+ };
+
+  class FloatingFrameLink : public FrameLink {
     friend class FloatingFrameLinkPropertyDialog;
     public:
       FloatingFrameLink(const std::string &str, Element *parent);
-      void initialize();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
-      ExtProperty connections, refFrameID, forceArrow, momentArrow;
+      ExtProperty refFrameID;
  };
 
   class RigidBodyLink : public Link {

@@ -42,11 +42,13 @@ namespace MBSimGUI {
     return link;
   }
 
-  FrameLink::FrameLink(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false) {
+  FrameLink::FrameLink(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false), momentArrow(0,false) {
 
     connections.setProperty(new ConnectFramesProperty(2,this));
 
     forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
+
+    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
   }
 
   void FrameLink::initialize() {
@@ -58,6 +60,7 @@ namespace MBSimGUI {
     Link::initializeUsingXML(element);
     connections.initializeUsingXML(element);
     forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
     return element;
   }
 
@@ -65,40 +68,24 @@ namespace MBSimGUI {
     DOMElement *ele0 = Link::writeXMLFile(parent);
     connections.writeXMLFile(ele0);
     forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 
-  FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : Link(str, parent), refFrameID(0,false), forceArrow(0,false), momentArrow(0,false) {
-
-    connections.setProperty(new ConnectFramesProperty(2,this));
+  FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : FrameLink(str, parent), refFrameID(0,false) {
 
     refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
-
-    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-
-    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
-  }
-
-  void FloatingFrameLink::initialize() {
-    Link::initialize();
-    connections.initialize();
   }
 
   DOMElement* FloatingFrameLink::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
-    connections.initializeUsingXML(element);
+    FrameLink::initializeUsingXML(element);
     refFrameID.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* FloatingFrameLink::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
-    connections.writeXMLFile(ele0);
+    DOMElement *ele0 = FrameLink::writeXMLFile(parent);
     refFrameID.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 
