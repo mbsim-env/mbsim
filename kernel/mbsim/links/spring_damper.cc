@@ -33,7 +33,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpringDamper)
 
-  SpringDamper::SpringDamper(const string &name) : FrameLink(name), func(NULL), l0(0) {
+  SpringDamper::SpringDamper(const string &name) : FixedFrameLink(name), func(NULL), l0(0) {
   }
 
   SpringDamper::~SpringDamper() {
@@ -58,11 +58,11 @@ namespace MBSim {
             parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
           }
         }
-        FrameLink::init(stage);
+        FixedFrameLink::init(stage);
       }
     }
     else
-      FrameLink::init(stage);
+      FixedFrameLink::init(stage);
     func->init(stage);
   }
 
@@ -88,12 +88,12 @@ namespace MBSim {
           coilspringOpenMBV->append(data);
         }
       }
-      FrameLink::plot();
+      FixedFrameLink::plot();
     }
   }
 
   void SpringDamper::initializeUsingXML(DOMElement *element) {
-    FrameLink::initializeUsingXML(element);
+    FixedFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
     Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
     setForceFunction(f);

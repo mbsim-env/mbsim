@@ -23,9 +23,6 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
-#include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/arrow.h>
-#include "openmbvcppinterface/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -34,90 +31,42 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FloatingFrameLink::FloatingFrameLink(const std::string &name) : Link(name), frame(2), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), updlaF(true), updlaM(true), refFrame(NULL), refFrameID(0), C("F") {
+  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(NULL), refFrameID(0), C("F") {
     C.setParent(this);
   }
 
   void FloatingFrameLink::resetUpToDate() {
-    Link::resetUpToDate(); 
-    updPos = true; 
-    updVel = true; 
-    updFD = true; 
-    updF = true; 
-    updM = true; 
-    updRMV = true; 
-    updlaF = true;
-    updlaM = true;
+    FrameLink::resetUpToDate();
     C.resetUpToDate();  
   }
 
   void FloatingFrameLink::calclaSize(int j) {
-    Link::calclaSize(j);
+    FrameLink::calclaSize(j);
     laSize = forceDir.cols() + momentDir.cols();
   }
 
   void FloatingFrameLink::calcgSize(int j) {
-    Link::calcgSize(j);
+    FrameLink::calcgSize(j);
     gSize = forceDir.cols() + momentDir.cols();
   }
 
   void FloatingFrameLink::calcgdSize(int j) {
-    Link::calcgdSize(j);
+    FrameLink::calcgdSize(j);
     gdSize = forceDir.cols() + momentDir.cols();
   }
 
   void FloatingFrameLink::calcrFactorSize(int j) {
-    Link::calcrFactorSize(j);
+    FrameLink::calcrFactorSize(j);
     rFactorSize = isSetValued() ? forceDir.cols() + momentDir.cols() : 0;
   }
 
   void FloatingFrameLink::calccorrSize(int j) {
-    Link::calccorrSize(j);
+    FrameLink::calccorrSize(j);
     corrSize = forceDir.cols() + momentDir.cols();
   }
 
   void FloatingFrameLink::updatedhdz() {
     THROW_MBSIMERROR("Internal error");
-  }
-
-  void FloatingFrameLink::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(openMBVArrowF) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=frame[1]->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WF = evalForce();
-        data.push_back(WF(0));
-        data.push_back(WF(1));
-        data.push_back(WF(2));
-        data.push_back(nrm2(WF));
-        openMBVArrowF->append(data);
-      }
-      if(openMBVArrowM) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=frame[1]->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WM = evalMoment();
-        data.push_back(WM(0));
-        data.push_back(WM(1));
-        data.push_back(WM(2));
-        data.push_back(nrm2(WM));
-        openMBVArrowM->append(data);
-      }
-      Link::plot();
-    }
-  }
-
-  void FloatingFrameLink::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Link::closePlot();
-    }
   }
 
   void FloatingFrameLink::updateW(int j) {
@@ -162,16 +111,6 @@ namespace MBSim {
     lambda.set(iF, evallaF());
     lambda.set(iM, evallaM());
     updla = false;
-  }
-
-  void FloatingFrameLink::updateForce() {
-    F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
-    updF = false;
-  }
-
-  void FloatingFrameLink::updateMoment() {
-    M = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
-    updM = false;
   }
 
   void FloatingFrameLink::updateForceDirections() {
@@ -243,13 +182,8 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      if(saved_ref1!="" && saved_ref2!="")
-        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      Link::init(stage);
-    }
-    else if(stage==resize) {
-      Link::init(stage);
+    if(stage==resize) {
+      FrameLink::init(stage);
       int size = forceDir.cols() + momentDir.cols();
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
@@ -273,10 +207,7 @@ namespace MBSim {
       }
     }
     else if(stage==unknownStage) {
-      Link::init(stage);
-
-      if(frame[0]==NULL or frame[1]==NULL)
-        THROW_MBSIMERROR("Not all connections are given!");
+      FrameLink::init(stage);
 
       if (forceDir.cols()) DF = forceDir;
       if (momentDir.cols()) DM = momentDir;
@@ -284,47 +215,14 @@ namespace MBSim {
       refFrame = refFrameID ? frame[1] : frame[0];
       C.setFrameOfReference(frame[0]);
     }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
-        openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVForceGrp->setExpand(false);
-        openMBVForceGrp->setName(name+"_ArrowGroup");
-        parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
-        if(openMBVArrowF) {
-          openMBVArrowF->setName("Force");
-          openMBVForceGrp->addObject(openMBVArrowF);
-        }
-        if(openMBVArrowM) {
-          openMBVArrowM->setName("Moment");
-          openMBVForceGrp->addObject(openMBVArrowM);
-        }
-        Link::init(stage);
-      }
-    }
     else
-      Link::init(stage);
+      FrameLink::init(stage);
   }
 
   void FloatingFrameLink::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
-    saved_ref1 = E(e)->getAttribute("ref1");
-    saved_ref2 = E(e)->getAttribute("ref2");
-    e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
+    FrameLink::initializeUsingXML(element);
+    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
     if (e) refFrameID = getInt(e);
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
-      setOpenMBVForce(ombv.createOpenMBV(e));
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toDoubleHead, OpenMBV::Arrow::toPoint, 1, 1);
-      setOpenMBVMoment(ombv.createOpenMBV(e));
-    }
   }
 
 }
