@@ -81,6 +81,52 @@ namespace MBSim {
       Link::init(stage);
   }
 
+  void FrameLink::updateWRef(const Mat& WParent, int j) {
+    for(unsigned i=0; i<2; i++) {
+      RangeV J = RangeV(laInd,laInd+laSize-1);
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
+      W[j][i]>>WParent(I,J);
+    }
+  }
+
+  void FrameLink::updateVRef(const Mat& VParent, int j) {
+    for(unsigned i=0; i<2; i++) {
+      RangeV J = RangeV(laInd,laInd+laSize-1);
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
+      V[j][i]>>VParent(I,J);
+    }
+  }
+
+  void FrameLink::updatehRef(const Vec &hParent, int j) {
+    for(unsigned i=0; i<2; i++) {
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
+      h[j][i]>>hParent(I);
+    }
+  }
+
+  void FrameLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+    THROW_MBSIMERROR("Internal error");
+  }
+
+  void FrameLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+    THROW_MBSIMERROR("Internal error");
+  }
+
+  void FrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+    for(unsigned i=0; i<2; i++) {
+      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
+      dhdt[i]>>dhdtParent(I);
+    }
+  }
+
+  void FrameLink::updaterRef(const Vec &rParent, int j) {
+    for(unsigned i=0; i<2; i++) {
+      int hInd =  frame[i]->gethInd(j);
+      RangeV I = RangeV(hInd,hInd+frame[i]->gethSize(j)-1);
+      r[j][i]>>rParent(I);
+    }
+  }
+
   void FrameLink::updateForce() {
     F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
     updF = false;

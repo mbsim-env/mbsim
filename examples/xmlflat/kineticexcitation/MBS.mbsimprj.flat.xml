@@ -62,13 +62,13 @@
     <links>
       <KineticExcitation name ="ex">
         <connect ref1="../Frame[Wrot]" ref2="../Object[Box1]/Frame[C]"/>
-        <frameOfReferenceID>0</frameOfReferenceID>
         <enableOpenMBVForce>
           <scaleLength>0.05</scaleLength>
         </enableOpenMBVForce>
         <enableOpenMBVMoment>
           <scaleLength>0.05</scaleLength>
         </enableOpenMBVMoment>
+        <frameOfReferenceID>0</frameOfReferenceID>
         <forceDirection>[1;0;0]</forceDirection>
         <forceFunction>
           <ConstantFunction>

@@ -22,15 +22,6 @@
 
 #include "mbsim/links/frame_link.h"
 
-namespace OpenMBV {
-  class Group;
-  class Arrow;
-}
-
-namespace H5 {
-  class Group;
-}
-
 namespace MBSim {
   /** 
    * \brief frame link
@@ -52,16 +43,6 @@ namespace MBSim {
 
       void updateh(int i=0);
       void updatedhdz();
-
-      /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0);
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
-      /***************************************************/
 
       void updatePositions();
       void updateVelocities();

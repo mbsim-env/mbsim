@@ -73,6 +73,16 @@ namespace MBSim {
       virtual void plot();
       virtual void closePlot();
 
+      /* INHERITED INTERFACE OF LINK */
+      virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0);
+      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
+      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
+      virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
+      /***************************************************/
+
       /** \brief Visualize a force arrow */
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);

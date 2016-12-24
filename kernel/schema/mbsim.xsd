@@ -1480,38 +1480,6 @@
         <xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
-                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="FloatingFrameLink" substitutionGroup="Link" type="FloatingFrameLinkType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="FloatingFrameLinkType">
-    <xs:complexContent>
-      <xs:extension base="LinkType">
-        <xs:sequence>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
                 muss dabei ein KOS des entsprechenden Körpers angegeben werden.
                 Bei inneren Kräften und Momenten können alternativ die KOS beider Schnittufer angegeben werden.
@@ -1520,12 +1488,6 @@
               <xs:attribute name="ref1" type="FrameReferenceType" default="../Frame[I]"/>
               <xs:attribute name="ref2" type="FrameReferenceType"/>
             </xs:complexType>
-          </xs:element>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Gibt an, in welchem Koordinatensystem der Kraft- und Momentvektor dargestellt ist. 0 definiert den unter ref1 und 1 den unter
-              ref2 angegebenen Frame.
-            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1542,6 +1504,37 @@
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FixedFrameLink" substitutionGroup="FrameLink" type="FixedFrameLinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FixedFrameLinkType">
+    <xs:complexContent>
+      <xs:extension base="FrameLinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FloatingFrameLink" substitutionGroup="FrameLink" type="FloatingFrameLinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FloatingFrameLinkType">
+    <xs:complexContent>
+      <xs:extension base="FrameLinkType">
+        <xs:sequence>
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Gibt an, in welchem Koordinatensystem der Kraft- und Momentvektor dargestellt ist. 0 definiert den unter ref1 und 1 den unter
+              ref2 angegebenen Frame.
+            </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>

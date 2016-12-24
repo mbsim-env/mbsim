@@ -20,9 +20,7 @@
 #include <config.h>
 #include "mbsim/links/fixed_frame_link.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -33,56 +31,6 @@ namespace MBSim {
 
   FixedFrameLink::FixedFrameLink(const std::string &name) : FrameLink(name) {
   }
-
-  void FixedFrameLink::updatedhdz() {
-    THROW_MBSIMERROR("Internal error");
-  }
-
-  void FixedFrameLink::updateWRef(const Mat& WParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      RangeV J = RangeV(laInd,laInd+laSize-1);
-      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
-      W[j][i]>>WParent(I,J);
-    }
-  } 
-
-  void FixedFrameLink::updateVRef(const Mat& VParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      RangeV J = RangeV(laInd,laInd+laSize-1);
-      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      V[j][i]>>VParent(I,J);
-    }
-  } 
-
-  void FixedFrameLink::updatehRef(const Vec &hParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      h[j][i]>>hParent(I);
-    }
-  } 
-
-  void FixedFrameLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
-    THROW_MBSIMERROR("Internal error");
-  }
-
-  void FixedFrameLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
-    THROW_MBSIMERROR("Internal error");
-  }
-
-  void FixedFrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      dhdt[i]>>dhdtParent(I);
-    }
-  }
-
-  void FixedFrameLink::updaterRef(const Vec &rParent, int j) {
-    for(unsigned i=0; i<2; i++) {
-      int hInd =  frame[i]->gethInd(j);
-      RangeV I = RangeV(hInd,hInd+frame[i]->gethSize(j)-1);
-      r[j][i]>>rParent(I);
-    }
-  } 
 
   void FixedFrameLink::updateGeneralizedForces() {
     lambda = evallaF();
