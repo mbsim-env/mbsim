@@ -19,18 +19,9 @@ fmatvec_swig_python.cc: $(srcdir)/fmatvec.i
 	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > fmatvec.py) || $(swig) -python -MP -MD -Werror -builtin -c++ -o fmatvec_swig_python.cc $(FMATVEC_CFLAGS) $(srcdir)/fmatvec.i
 
 # create a empty dummy mbsim_swig_python.cc file if MBSIM_SWIG is not set (to avoid a long build time)
-mbsim_swig_python.cc: $(srcdir)/mbsim.i $(top_srcdir)/mbsim/objects/*.h
-	rm -f mbsim_swig_python.cc
-	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > mbsim.py) || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o mbsim_swig_python.cc -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/mbsim.i > swig-mbsim.stdout
-_mbsim_part100_swig_python.cc: $(srcdir)/_mbsim_part100.i $(top_srcdir)/mbsim/objects/*.h
-	rm -f _mbsim_part100_swig_python.cc
-	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > _mbsim_part100.py) || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o _mbsim_part100_swig_python.cc -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/_mbsim_part100.i > swig-_mbsim_part100.stdout
-_mbsim_part200_swig_python.cc: $(srcdir)/_mbsim_part200.i $(top_srcdir)/mbsim/objects/*.h
-	rm -f _mbsim_part200_swig_python.cc
-	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > _mbsim_part200.py) || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o _mbsim_part200_swig_python.cc -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/_mbsim_part200.i > swig-_mbsim_part200.stdout
-_mbsim_part300_swig_python.cc: $(srcdir)/_mbsim_part300.i $(top_srcdir)/mbsim/objects/*.h
-	rm -f _mbsim_part300_swig_python.cc
-	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > _mbsim_part300.py) || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o _mbsim_part300_swig_python.cc -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/_mbsim_part300.i > swig-_mbsim_part300.stdout
+%_swig_python.cc: %.i
+	rm -f $@
+	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > $*.py) || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o $@ -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $< > swig-$*.stdout
 
 # mfmf handle _mbsim_part100
 swig-unwrapped-local: mbsim_swig_python.cc
@@ -45,17 +36,8 @@ swig-unwrapped-local: mbsim_swig_python.cc
 -include _mbsim_part200_swig_python.d
 -include _mbsim_part300_swig_python.d
 
-fmatvec.py: fmatvec_swig_python.cc
-	test ! -f $@ && (rm -f fmatvec_swig_python.cc && $(MAKE) $(AM_MAKEFLAGS) fmatvec_swig_python.cc) || :
-
-mbsim.py: mbsim_swig_python.cc
-	test ! -f $@ && (rm -f mbsim_swig_python.cc && $(MAKE) $(AM_MAKEFLAGS) mbsim_swig_python.cc) || :
-_mbsim_part100.py: _mbsim_part100_swig_python.cc
-	test ! -f $@ && (rm -f _mbsim_part100_swig_python.cc && $(MAKE) $(AM_MAKEFLAGS) _mbsim_part100_swig_python.cc) || :
-_mbsim_part200.py: _mbsim_part200_swig_python.cc
-	test ! -f $@ && (rm -f _mbsim_part200_swig_python.cc && $(MAKE) $(AM_MAKEFLAGS) _mbsim_part200_swig_python.cc) || :
-_mbsim_part300.py: _mbsim_part300_swig_python.cc
-	test ! -f $@ && (rm -f _mbsim_part300_swig_python.cc && $(MAKE) $(AM_MAKEFLAGS) _mbsim_part300_swig_python.cc) || :
+%.py: %_swig_python.cc
+	test ! -f $@ && (rm -f $< && $(MAKE) $(AM_MAKEFLAGS) $<) || :
 
 _fmatvec_la_SOURCES = fmatvec_swig_python.cc
 _fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
