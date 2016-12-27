@@ -34,7 +34,7 @@ fd.close()
 # update references of examples
 if len(checkedExamples)>0:
   os.chdir(SRCDIR+"/mbsim/examples")
-  if simplesandbox.call(["./runexamples.py", "--action", "copyToReference"]+checkedExamples,
+  if simplesandbox.call(["./runexamples.py", "--action", "copyToReference", "--enableAlphaPy"]+checkedExamples,
                     shareddir=["."], envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
     print("runexamples.py --action copyToReference ... failed.")
   os.chdir(CURDIR)
@@ -51,7 +51,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14",
 
 # update references for download
 os.chdir(SRCDIR+"/mbsim/examples")
-if simplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references"],
+if simplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references", "--enableAlphaPy"],
                    shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references"],
                    envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
   print("pushing references to download dir failed.")
@@ -62,7 +62,7 @@ os.chdir(SRCDIR+"/mbsim_valgrind/examples")
 if subprocess.call(["git", "pull"])!=0:
   print("git pull of mbsim_valgrind/examples failed.")
 os.environ["MBSIM_SET_MINIMAL_TEND"]="1"
-if simplesandbox.call(["./runexamples.py", "--rotate", "14", "-j", "2", "--reportOutDir",
+if simplesandbox.call(["./runexamples.py", "--rotate", "14", "-j", "2", "--enableAlphaPy", "--reportOutDir",
                     "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report", "--url",
                     "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
                     "--buildSystemRun", SCRIPTDIR,
