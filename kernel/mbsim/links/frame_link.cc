@@ -31,14 +31,13 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FrameLink::FrameLink(const std::string &name) : Link(name), frame(2), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), updlaF(true), updlaM(true) {
+  FrameLink::FrameLink(const std::string &name) : Link(name), frame(2), RF(2), RM(2), F(2), M(2), updPos(true), updVel(true), updF(true), updM(true), updRMV(true), updlaF(true), updlaM(true) {
   }
 
   void FrameLink::resetUpToDate() {
     Link::resetUpToDate(); 
     updPos = true;
     updVel = true;
-    updFD = true; 
     updF = true; 
     updM = true; 
     updRMV = true;
@@ -127,14 +126,10 @@ namespace MBSim {
     }
   }
 
-  void FrameLink::updateForce() {
-    F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
-    updF = false;
-  }
-
-  void FrameLink::updateMoment() {
-    M = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
-    updM = false;
+  void FrameLink::updateGeneralizedForces() {
+    lambda.set(iF, evallaF());
+    lambda.set(iM, evallaM());
+    updla = false;
   }
 
   void FrameLink::plot() {

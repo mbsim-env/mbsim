@@ -27,12 +27,13 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(NULL), refFrameID(0), C("F") {
+  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(NULL), refFrameID(0), C("F"), updDF(true) {
     C.setParent(this);
   }
 
   void FloatingFrameLink::resetUpToDate() {
     FrameLink::resetUpToDate();
+    updDF = true;
     C.resetUpToDate();  
   }
 
@@ -66,13 +67,13 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateW(int j) {
-    W[j][0] -= C.evalJacobianOfTranslation(j).T() * evalRF() + C.evalJacobianOfRotation(j).T() * evalRM();
-    W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalRF() + frame[1]->evalJacobianOfRotation(j).T() * evalRM();
+    W[j][0] += C.evalJacobianOfTranslation(j).T() * evalRF(0) + C.evalJacobianOfRotation(j).T() * evalRM(0);
+    W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalRF(1) + frame[1]->evalJacobianOfRotation(j).T() * evalRM(1);
   }
 
   void FloatingFrameLink::updateh(int j) {
-    h[j][0] -= C.evalJacobianOfTranslation(j).T() * evalForce() + C.evalJacobianOfRotation(j).T() * evalMoment();
-    h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalForce() + frame[1]->evalJacobianOfRotation(j).T() * evalMoment();
+    h[j][0] += C.evalJacobianOfTranslation(j).T() * evalForce(0) + C.evalJacobianOfRotation(j).T() * evalMoment(0);
+    h[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalForce(1) + frame[1]->evalJacobianOfRotation(j).T() * evalMoment(1);
   }
 
   void FloatingFrameLink::updatePositions() {
@@ -103,22 +104,30 @@ namespace MBSim {
     updvrel = false;
   }
 
-  void FloatingFrameLink::updateGeneralizedForces() {
-    lambda.set(iF, evallaF());
-    lambda.set(iM, evallaM());
-    updla = false;
+  void FloatingFrameLink::updateForce() {
+    F[1] = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
+    F[0] = -F[1];
+    updF = false;
+  }
+
+  void FloatingFrameLink::updateMoment() {
+    M[1] = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
+    M[0] = -M[1];
+    updM = false;
+  }
+
+  void FloatingFrameLink::updateR() {
+    RF[1].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
+    RM[1].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
+    RF[0] = -RF[1];
+    RM[0] = -RM[1];
+    updRMV = false;
   }
 
   void FloatingFrameLink::updateForceDirections() {
     DF = refFrame->evalOrientation() * forceDir;
     DM = refFrame->evalOrientation() * momentDir;
-    updFD = false;
-  }
-
-  void FloatingFrameLink::updateR() {
-    RF.set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
-    RM.set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
-    updRMV = false;
+    updDF = false;
   }
 
   void FloatingFrameLink::updateg() {
@@ -142,8 +151,10 @@ namespace MBSim {
       if(isSetValued()) {
         g.resize(size);
         gd.resize(size);
-        RF.resize(size);
-        RM.resize(size);
+        RF[0].resize(size);
+        RM[0].resize(size);
+        RF[1].resize(size);
+        RM[1].resize(size);
         la.resize(size);
       }
       lambda.resize(size);
@@ -159,8 +170,8 @@ namespace MBSim {
     else if(stage==unknownStage) {
       FrameLink::init(stage);
 
-      if (forceDir.cols()) DF = forceDir;
-      if (momentDir.cols()) DM = momentDir;
+//      if (forceDir.cols()) DF = forceDir;
+//      if (momentDir.cols()) DM = momentDir;
 
       refFrame = refFrameID ? frame[1] : frame[0];
       C.setFrameOfReference(frame[0]);

@@ -49,8 +49,8 @@ namespace MBSim {
     Mat3xV WJT = refFrame->evalOrientation() * JT;
     VecV sdT = WJT.T() * evalGlobalRelativeVelocity();
 
-    wb(0, DF.cols() - 1) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeVelocity() + WJT * sdT));
-    wb(DF.cols(), DM.cols() + DF.cols() - 1) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
+    wb(0, forceDir.cols() - 1) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeVelocity() + WJT * sdT));
+    wb(forceDir.cols(), momentDir.cols() + forceDir.cols() - 1) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
   }
 
   void Joint::updatelaFM() {

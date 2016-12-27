@@ -52,21 +52,20 @@ namespace MBSim {
 
       virtual void updatePositions() { }
       virtual void updateVelocities() { }
-      virtual void updateForce();
-      virtual void updateMoment();
+      virtual void updateGeneralizedForces();
+      virtual void updateForce() { }
+      virtual void updateMoment() { }
       virtual void updateForceDirections() { }
       virtual void updatelaF() { }
       virtual void updatelaM() { }
       virtual void updateR() { }
-      const fmatvec::Vec3& evalForce() { if(updF) updateForce(); return F; }
-      const fmatvec::Vec3& evalMoment() { if(updM) updateMoment(); return M; }
-      const fmatvec::Mat3xV& evalGlobalForceDirection() { if(updFD) updateForceDirections(); return DF; }
-      const fmatvec::Mat3xV& evalGlobalMomentDirection() { if(updFD) updateForceDirections(); return DM; }
+      const fmatvec::Vec3& evalForce(int i=1) { if(updF) updateForce(); return F[i]; }
+      const fmatvec::Vec3& evalMoment(int i=1) { if(updM) updateMoment(); return M[i]; }
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvP0P1; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomP0P1; }
-      const fmatvec::Mat3xV& evalRF() { if(updRMV) updateR(); return RF; }
-      const fmatvec::Mat3xV& evalRM() { if(updRMV) updateR(); return RM; }
+      const fmatvec::Mat3xV& evalRF(int i=1) { if(updRMV) updateR(); return RF[i]; }
+      const fmatvec::Mat3xV& evalRM(int i=1) { if(updRMV) updateR(); return RM[i]; }
       const fmatvec::VecV& evallaF() { if(updlaF) updatelaF(); return lambdaF; }
       const fmatvec::VecV& evallaM() { if(updlaM) updatelaM(); return lambdaM; }
 
@@ -107,13 +106,11 @@ namespace MBSim {
        */
       fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
 
-      fmatvec::Mat3xV RF, RM;
+      std::vector<fmatvec::Mat3xV> RF, RM;
 
       fmatvec::VecV lambdaF, lambdaM;
 
-      fmatvec::Vec3 F, M;
-
-      fmatvec::Mat3xV DF, DM;
+      std::vector<fmatvec::Vec3> F, M;
 
       /**
        * \brief indices of forces and torques
@@ -124,7 +121,7 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::Arrow> openMBVArrowF;
       std::shared_ptr<OpenMBV::Arrow> openMBVArrowM;
 
-      bool updPos, updVel, updFD, updF, updM, updRMV, updlaF, updlaM;
+      bool updPos, updVel, updF, updM, updRMV, updlaF, updlaM;
 
     private:
       std::string saved_ref1, saved_ref2;

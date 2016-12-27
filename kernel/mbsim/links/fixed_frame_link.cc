@@ -29,27 +29,14 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FixedFrameLink::FixedFrameLink(const std::string &name) : FrameLink(name) {
+  FixedFrameLink::FixedFrameLink(const std::string &name) : FrameLink(name), DF(1), updDF(true) {
   }
 
-  void FixedFrameLink::updateGeneralizedForces() {
-    lambda = evallaF();
-    updla = false;
+  void FixedFrameLink::resetUpToDate() {
+    FrameLink::resetUpToDate();
+    updDF = true;
   }
 
-  void FixedFrameLink::updateForceDirections() {
-    if(evalGeneralizedRelativePosition()(0)>epsroot())
-      DF=evalGlobalRelativePosition()/rrel(0);
-    else
-      DF.init(0);
-    updFD = false;
-  }
-
-  void FixedFrameLink::updateh(int j) {
-    h[j][0]-=frame[0]->evalJacobianOfTranslation(j).T()*evalForce();
-    h[j][1]+=frame[1]->evalJacobianOfTranslation(j).T()*evalForce();
-  }
-  
   void FixedFrameLink::updatePositions() {
     WrP0P1=frame[1]->evalPosition() - frame[0]->evalPosition();
     updPos = false;
@@ -70,21 +57,51 @@ namespace MBSim {
     updvrel = false;
   }
 
+  void FixedFrameLink::updateForce() {
+    F[1] = evalGlobalForceDirection(0)*evalGeneralizedForce()(iF);
+    F[0] = -F[1];
+    updF = false;
+  }
+
+  void FixedFrameLink::updateMoment() {
+ //   M[1] = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
+ //   M[0] = -M[1];
+    updM = false;
+  }
+
   void FixedFrameLink::updateR() {
-    RF.set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
+    RF[1].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
+//    RM[1].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
+    RF[0] = -RF[1];
+//    RM[0] = -RM[1];
     updRMV = false;
+  }
+
+  void FixedFrameLink::updateForceDirections() {
+    if(evalGeneralizedRelativePosition()(0)>epsroot())
+      DF=evalGlobalRelativePosition()/rrel(0);
+    else
+      DF.init(0);
+    updDF = false;
+  }
+
+  void FixedFrameLink::updateh(int j) {
+    for(unsigned int i=0; i<h[j].size(); i++)
+      h[j][i]+=frame[i]->evalJacobianOfTranslation(j).T()*evalForce(i);
   }
 
   void FixedFrameLink::init(InitStage stage) {
     if(stage==resize) {
       FrameLink::init(stage);
       iF = RangeV(0, 0);
+      iM = RangeV(0, -1);
       rrel.resize(1);
       vrel.resize(1);
       if(isSetValued()) {
         g.resize(1);
         gd.resize(1);
-        RF.resize(1);
+        RF[0].resize(1);
+        RF[1].resize(1);
         la.resize(1);
       }
       lambda.resize(1);
