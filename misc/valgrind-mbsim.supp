@@ -206,13 +206,13 @@
    fun:H5D__flush_real
 }
 # PYTHON possible memory leaks
-#{
-#   <insert_a_suppression_name_here>
-#   Memcheck:Leak
-#   match-leak-kinds: possible
-#   ...
-#   fun:Py_InitializeEx
-#}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:Py_InitializeEx
+}
 #{
 #   <insert_a_suppression_name_here>
 #   Memcheck:Leak
@@ -220,13 +220,13 @@
 #   ...
 #   fun:builtin___import__
 #}
-#{
-#   <insert_a_suppression_name_here>
-#   Memcheck:Leak
-#   match-leak-kinds: possible
-#   ...
-#   fun:PyObject_Call
-#}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyObject_CallObject
+}
 #{
 #   <insert_a_suppression_name_here>
 #   Memcheck:Leak
