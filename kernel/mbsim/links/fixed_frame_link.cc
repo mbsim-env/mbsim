@@ -64,16 +64,16 @@ namespace MBSim {
   }
 
   void FixedFrameLink::updateMoment() {
- //   M[1] = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
- //   M[0] = -M[1];
+    M[1] = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
+    M[0] = -M[1];
     updM = false;
   }
 
   void FixedFrameLink::updateR() {
     RF[1].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
-//    RM[1].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
+    RM[1].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
     RF[0] = -RF[1];
-//    RM[0] = -RM[1];
+    RM[0] = -RM[1];
     updRMV = false;
   }
 

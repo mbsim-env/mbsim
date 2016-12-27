@@ -108,20 +108,20 @@ namespace MBSim {
 
   void RigidBodyLink::updateForce() {
     for(unsigned i=0; i<body.size(); i++)
-      F[i] = evalGlobalForceDirection(i)*evalGeneralizedForce()(iF);
+      F[i] = evalGlobalForceDirection(i)*evalGeneralizedForce()(iF)*ratio[i];
     updF = false;
   }
 
   void RigidBodyLink::updateMoment() {
     for(unsigned i=0; i<body.size(); i++)
-      M[i] = evalGlobalMomentDirection(i)*evalGeneralizedForce()(iM);
+      M[i] = evalGlobalMomentDirection(i)*evalGeneralizedForce()(iM)*ratio[i];
     updM = false;
   }
 
   void RigidBodyLink::updateR() {
     for(unsigned i=0; i<body.size(); i++) {
-      RF[i].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection(i));
-      RM[i].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection(i));
+      RF[i].set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection(i)*ratio[i]);
+      RM[i].set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection(i)*ratio[i]);
     }
     updRMV = false;
   }
@@ -132,8 +132,8 @@ namespace MBSim {
         h[j][i]+=body[i]->evalJRel(j).T()*evalGeneralizedForce()*ratio[i];
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        h[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalForce(i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalMoment(i))*ratio[i];
-        h[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*evalForce(i) + C[i].evalJacobianOfRotation(j).T()*evalMoment(i))*ratio[i];
+        h[j][i]+=body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalForce(i)  + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalMoment(i);
+        h[j][body.size()+i]-=C[i].evalJacobianOfTranslation(j).T()*evalForce(i) + C[i].evalJacobianOfRotation(j).T()*evalMoment(i);
       }
     }
   }
@@ -145,8 +145,8 @@ namespace MBSim {
       }
     } else {
       for(unsigned i=0; i<body.size(); i++) {
-        W[j][i]+=(body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalRF(i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalRM(i))*ratio[i];
-        W[j][body.size()+i]-=(C[i].evalJacobianOfTranslation(j).T()*evalRF(i) + C[i].evalJacobianOfRotation(j).T()*evalRM(i))*ratio[i];
+        W[j][i]+=body[i]->getFrameForKinematics()->evalJacobianOfTranslation(j).T()*evalRF(i) + body[i]->getFrameForKinematics()->evalJacobianOfRotation(j).T()*evalRM(i);
+        W[j][body.size()+i]-=C[i].evalJacobianOfTranslation(j).T()*evalRF(i) + C[i].evalJacobianOfRotation(j).T()*evalRM(i);
       }
     }
   }

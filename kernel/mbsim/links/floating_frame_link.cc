@@ -169,10 +169,6 @@ namespace MBSim {
     }
     else if(stage==unknownStage) {
       FrameLink::init(stage);
-
-//      if (forceDir.cols()) DF = forceDir;
-//      if (momentDir.cols()) DM = momentDir;
-
       refFrame = refFrameID ? frame[1] : frame[0];
       C.setFrameOfReference(frame[0]);
     }
