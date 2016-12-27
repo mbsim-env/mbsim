@@ -88,10 +88,10 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
               // write to file
               PyO pyET(CALLPY(PyImport_ImportModule, "xml.etree.cElementTree"));
               PyO pyET_(CALLPY(PyObject_GetAttrString, pyET, "ElementTree"));
-              PyO pyTree(CALLPY(PyObject_CallObject, pyET_, Py_BuildValue("(O)", pySchema.get())));
+              PyO pyTree(CALLPY(PyObject_CallObject, pyET_, Py_BuildValue_("(O)", pySchema.get())));
               PyO pyWrite(CALLPY(PyObject_GetAttrString, pyTree, "write"));
               bfs::path xsdFile=bfs::current_path()/(".mbsimmodule.python."+moduleName+".xsd");
-              CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
+              CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue_("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
               schemas.insert(xsdFile);
             }
 #else
