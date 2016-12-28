@@ -239,27 +239,33 @@ def addMBSimEnvTestExampleLinux(ex):
 cd $INSTDIR/examples/%s
 ''' % (ex, ex)
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.flat.xml"):
-    text+=r'''$INSTDIR/bin/mbsimflatxml MBS.mbsimprj.flat.xml || ERROR="$ERROR %s"''' % (ex)
+    text+=r'''$INSTDIR/bin/mbsimflatxml MBS.mbsimprj.flat.xml || ERROR="$ERROR %s"''' % (ex) + '\n'
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.xml"):
-    text+=r'''$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR %s"''' % (ex)
+    text+=r'''$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR %s"''' % (ex) + '\n'
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.alpha_py.xml"):
+    text+=r'''$INSTDIR/bin/mbsimxml MBS.mbsimprj.alpha_py.xml || ERROR="$ERROR %s"''' % (ex) + '\n'
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/FMI.mbsimprj.xml"):
-    text+=r'''$INSTDIR/bin/mbsimCreateFMU --nocompress FMI.mbsimprj.xml || ERROR="$ERROR fmucre_%s"''' % (ex)
-    text+=r'''$INSTDIR/bin/fmuCheck.linux64 -f -l 5 -o fmuCheck.result.csv -z tmp_fmuCheck mbsim.fmu || ERROR="$ERROR fmuchk_%s"''' % (ex)
+    text+=r'''$INSTDIR/bin/mbsimCreateFMU --nocompress FMI.mbsimprj.xml || ERROR="$ERROR fmucre_%s"''' % (ex) + '\n'
+    text+=r'''$INSTDIR/bin/fmuCheck.linux64 -f -l 5 mbsim.fmu || ERROR="$ERROR fmuchk_%s"''' % (ex) + '\n'
   text+=r'''echo "DONE"
 '''
+  return text
 def addMBSimEnvTestExampleWin(ex):
   text=r'''echo %s
-cd %INSTDIR%\examples\%s
+cd "%%INSTDIR%%\examples\%s"
 ''' % (ex, ex)
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.flat.xml"):
-    text+=r'''"%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml\nif ERRORLEVEL 1 set ERROR=%ERROR% %s''' % (ex)
+    text+=r'''"%%INSTDIR%%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml\nif ERRORLEVEL 1 set ERROR=%%ERROR%% %s''' % (ex) + '\n'
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.xml"):
-    text+=r'''"%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml\nif ERRORLEVEL 1 set ERROR=%ERROR% %s''' % (ex)
+    text+=r'''"%%INSTDIR%%\bin\mbsimxml.exe" MBS.mbsimprj.xml\nif ERRORLEVEL 1 set ERROR=%%ERROR%% %s''' % (ex) + '\n'
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.alpha_py.xml"):
+    text+=r'''"%%INSTDIR%%\bin\mbsimxml.exe" MBS.mbsimprj.alpha_py.xml\nif ERRORLEVEL 1 set ERROR=%%ERROR%% %s''' % (ex) + '\n'
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/FMI.mbsimprj.xml"):
-    text+=r'''"%INSTDIR%\bin\mbsimCreateFMU.exe" --nocompress FMI.mbsimprj.xml\nif ERRORLEVEL 1 set ERROR=%ERROR% fmucre_%s''' % (ex)
-    text+=r'''"%INSTDIR%\bin\fmuCheck.win64.exe" -f -l 5 -o fmuCheck.result.csv -z tmp_fmuCheck mbsim.fmu\nif ERRORLEVEL 1 set ERROR=%ERROR% fmuch_%s''' % (ex)
+    text+=r'''"%%INSTDIR%%\bin\mbsimCreateFMU.exe" --nocompress FMI.mbsimprj.xml\nif ERRORLEVEL 1 set ERROR=%%ERROR%% fmucre_%s''' % (ex) + '\n'
+    text+=r'''"%%INSTDIR%%\bin\fmuCheck.win64.exe" -f -l 5 mbsim.fmu\nif ERRORLEVEL 1 set ERROR=%%ERROR%% fmuch_%s''' % (ex) + '\n'
   text+=r'''echo DONE
 '''
+  return text
 def addMBSimEnvTest():
   print("Add test script mbsim-env-test[.bat]")
 
@@ -306,72 +312,72 @@ echo "MBSIMGUI"
 $INSTDIR/bin/mbsimgui || ERROR="$ERROR MBSIMGUI"
 echo "DONE"
 
-if [ -z $ERROR ]; then
+if [ -z "$ERROR" ]; then
   echo "ALL TESTS PASSED"
 else
   echo "THE FOLLOWING TESTS FAILED:"
-  echo $ERROR
+  echo "$ERROR"
 fi''' % ('\n'.join(map(addMBSimEnvTestExampleLinux, basicExamples())))
 
   if platform=="win":
     text=r'''@echo off
 
-set PWD=%CD%
+set PWD=%%CD%%
 
-set INSTDIR=%~dp0..
+set INSTDIR=%%~dp0..
 
 set ERROR=
 
 %s
 
-set OPENMBVCPPINTERFACE_PREFIX=%INSTDIR%
+set OPENMBVCPPINTERFACE_PREFIX=%%INSTDIR%%
 
 echo OPENMBVCPPINTERFACE_SWIG_OCTAVE
-cd %INSTDIR%\share\openmbvcppinterface\examples\swig
-%INSTDIR%\bin\octave.exe octavetest.m
-if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_OCTAVE
+cd "%%INSTDIR%%\share\openmbvcppinterface\examples\swig"
+"%%INSTDIR%%\bin\octave.exe" octavetest.m
+if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_OCTAVE
 echo DONE
 
 echo OPENMBVCPPINTERFACE_SWIG_PYTHON
-cd %INSTDIR%\share\openmbvcppinterface\examples\swig
-%INSTDIR%\bin\python.exe pythontest.py
-if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_PYTHON
+cd "%%INSTDIR%%\share\openmbvcppinterface\examples\swig"
+"%%INSTDIR%%\bin\python.exe" pythontest.py
+if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_PYTHON
 echo DONE
 
-IF "%MBSIMENV_TEST_JAVA%"=="1" (
+IF "%%MBSIMENV_TEST_JAVA%%"=="1" (
   echo OPENMBVCPPINTERFACE_SWIG_JAVA
-  cd %INSTDIR%\share\openmbvcppinterface\examples\swig
-  java -classpath .;%INSTDIR%/bin/openmbv.jar javatest
-  if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_JAVA
+  cd "%%INSTDIR%%\share\openmbvcppinterface\examples\swig"
+  java -classpath .;%%INSTDIR%%/bin/openmbv.jar javatest
+  if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_JAVA
   echo DONE
 )
 
 
 echo H5PLOTSERIE
-cd %INSTDIR%\examples\xml\hierachical_modelling
-"%INSTDIR%\bin\h5plotserie.exe" TS.mbsim.h5
-if ERRORLEVEL 1 set ERROR=%ERROR% H5PLOTSERIE
+cd "%%INSTDIR%%\examples\xml\hierachical_modelling"
+"%%INSTDIR%%\bin\h5plotserie.exe" TS.mbsim.h5
+if ERRORLEVEL 1 set ERROR=%%ERROR%% H5PLOTSERIE
 echo DONE
 
 echo OPENMBV
-cd %INSTDIR%\examples\xml\hierachical_modelling
-"%INSTDIR%\bin\openmbv.exe" TS.ombv.xml
-if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBV
+cd "%%INSTDIR%%\examples\xml\hierachical_modelling"
+"%%INSTDIR%%\bin\openmbv.exe" TS.ombv.xml
+if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBV
 echo DONE
 
 echo MBSIMGUI
-"%INSTDIR%\bin\mbsimgui.exe"
-if ERRORLEVEL 1 set ERROR=%ERROR% MBSIMGUI
+"%%INSTDIR%%\bin\mbsimgui.exe"
+if ERRORLEVEL 1 set ERROR=%%ERROR%% MBSIMGUI
 echo DONE
 
-if "%ERROR%"=="" (
+if "%%ERROR%%"=="" (
   echo ALL TESTS PASSED
 ) else (
   echo THE FOLLOWING TESTS FAILED:
-  echo %ERROR%
+  echo %%ERROR%%
 )
 
-cd "%PWD%"''' % ('\n'.join(map(addMBSimEnvTestExampleWin, basicExamples())))
+cd "%%PWD%%"''' % ('\n'.join(map(addMBSimEnvTestExampleWin, basicExamples())))
 
   addStrToDist(text, 'mbsim-env/bin/mbsim-env-test'+('.bat' if platform=="win" else ""), True)
 
@@ -420,7 +426,9 @@ def addPython():
     pysrcdir="/home/mbsim/3rdparty/python-win64/"+subdir
   # everything in pysrcdir except some special dirs
   for d in os.listdir(pysrcdir):
-    if d=="site-packages":
+    if d=="site-packages": # some subdirs of site-packages are added later
+      continue
+    if d=="config": # not required and contains links not supported by addFileToDist
       continue
     addFileToDist(pysrcdir+"/"+d, "mbsim-env/"+subdir+"/"+d)
   # copy site-packages/numpy
@@ -440,7 +448,7 @@ def basicExamples():
   ret=[]
   for dirpath, dirnames, filenames in os.walk(args.prefix+"/../mbsim/examples"):
     if 'labels' in filenames:
-      if not os.path.isfile(dirpath+"/Makefile") and \
+      if not os.path.isfile(dirpath+"/Makefile") and not os.path.isfile(dirpath+"/Makefile_FMI") and \
         'basic' in codecs.open(dirpath+"/labels", "r", encoding="utf-8").read().rstrip().split(' '):
         ret.append(dirpath[len(args.prefix+"/../mbsim/examples")+1:])
   return ret
