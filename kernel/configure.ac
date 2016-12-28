@@ -68,6 +68,9 @@ AC_CHECK_TYPES([ptrdiff_t])
 AC_FUNC_ERROR_AT_LINE 
 AC_TYPE_SIZE_T 
 
+AC_ARG_WITH([lowram], [  --with-lowram  Disable parallel build for subdirs known to need mutch memory], [LOWRAM="1"], [LOWRAM="0"])
+AM_CONDITIONAL([COND_LOWRAM], [test "_$LOWRAM" == "_1"])
+
 dnl Check for optional boost type_trains and static_assert
 AC_CHECK_HEADERS([boost/core/demangle.hpp], [DEFINES="$DEFINES -DBOOST_CORE_DEMANGLE_HPP"])
 

@@ -1,5 +1,9 @@
 SUBDIRS = .swig_prepare . check
 
+if COND_LOWRAM
+.NOTPARALLEL:
+endif
+
 # Note: wee install the resulting python file in $prefix/bin since this is the only place where Windows searches dependent libraries
 swigbindir = $(bindir)
 swigbin_LTLIBRARIES = _fmatvec.la _mbsim.la __mbsim_part100.la __mbsim_part200.la __mbsim_part300.la
@@ -10,6 +14,7 @@ swigbin_LTLIBRARIES = _fmatvec.la _mbsim.la __mbsim_part100.la __mbsim_part200.l
 # (-Dprotected=public)
 
 BUILT_SOURCES = fmatvec_swig_python.cc mbsim_swig_python.cc _mbsim_part100_swig_python.cc _mbsim_part200_swig_python.cc _mbsim_part300_swig_python.cc
+AM_MAKEFLAGS=SWIGFILES="$(addprefix ../,$(BUILT_SOURCES))" # pass the SWIGFILES variable to .swig_prepare/Makefile
 
 CLEANFILES = fmatvec_swig_python.cc fmatvec.py fmatvec_swig_python.d mbsim_swig_python.cc mbsim.py mbsim_swig_python.d _mbsim_part100_swig_python.cc _mbsim_part100.py _mbsim_part100_swig_python.d _mbsim_part200_swig_python.cc _mbsim_part200.py _mbsim_part200_swig_python.d _mbsim_part300_swig_python.cc _mbsim_part300.py _mbsim_part300_swig_python.d
 
@@ -23,12 +28,14 @@ fmatvec_swig_python.cc: $(srcdir)/fmatvec.i
 	rm -f $@
 	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > $*.py) || $(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -debug-classes -python -MP -MD -Werror -builtin -c++ -o $@ -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $< > swig-$*.stdout
 
-# mfmf handle _mbsim_part100
-swig-unwrapped-local: mbsim_swig_python.cc
-	@echo BEGIN: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
-	@sed -nre "3,\$$s/(.*)/WRAPPED_CLASS(\1)/p" swig-mbsim.stdout | sed -re "s/<\(/</g;s/\)>/>/g;s/<p\./</g;s/,p\./,/g" | grep -v ".*(.*(" > swig.wrapped_classes || (echo ERROR; exit 0)
-	@$(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -DSHOW_UNWRAPPED_CLASSES=swig.wrapped_classes -python -MD -Werror -builtin -c++ -o dummy.cpp -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/mbsim.i 2>&1 | sed -nre "s/.*: Warning 901: //p" | sort | uniq || (echo ERROR; exit 0)
+# show unwrapped swig classes
+swig-unwrapped-local: swig-unwrapped-start mbsim_unwrapped _mbsim_part100_unwrapped _mbsim_part200_unwrapped _mbsim_part300_unwrapped
 	@echo END: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
+swig-unwrapped-start:
+	@echo BEGIN: THE FOLLOWING CLASSES ARE NOT WRAPPED BY SWIG
+%_unwrapped: %_swig_python.cc
+	@sed -nre "3,\$$s/(.*)/WRAPPED_CLASS(\1)/p" swig-$*.stdout | sed -re "s/<\(/</g;s/\)>/>/g;s/<p\./</g;s/,p\./,/g" | grep -v ".*(.*(" > swig.wrapped_classes || (echo ERROR; exit 0)
+	@$(swig) -Dprotected=public $(DEFINES) "-DBOOST_PARAMETER_MEMBER_FUNCTION(ret,a,b,c)=void swigignore()" -DSHOW_UNWRAPPED_CLASSES=swig.wrapped_classes -python -MD -Werror -builtin -c++ -o dummy.cpp -I$(top_srcdir) -I$(prefix)/share $(DEPS_CFLAGS) $(srcdir)/$*.i 2>&1 | sed -nre "s/.*: Warning 901: //p" | sort | uniq || (echo ERROR; exit 0)
 
 -include fmatvec_swig_python.d
 -include mbsim_swig_python.d
