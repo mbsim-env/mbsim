@@ -213,13 +213,13 @@
    ...
    fun:Py_InitializeEx
 }
-#{
-#   <insert_a_suppression_name_here>
-#   Memcheck:Leak
-#   match-leak-kinds: possible
-#   ...
-#   fun:builtin___import__
-#}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:builtin___import__
+}
 {
    <insert_a_suppression_name_here>
    Memcheck:Leak
@@ -227,50 +227,50 @@
    ...
    fun:PyObject_CallObject
 }
-#{
-#   <insert_a_suppression_name_here>
-#   Memcheck:Leak
-#   match-leak-kinds: definite
-#   ...
-#   fun:_import_array
-#}
-#{
-#   <insert_a_suppression_name_here>
-#   Memcheck:Leak
-#   match-leak-kinds: possible
-#   ...
-#   fun:PyRun_StringFlags
-#   fun:_ZN9PythonCpp6callPyIP7_objectIPKciS2_S2_P15PyCompilerFlagsEIRSsiRNS_3PyOES9_S6_EEENS_10MapRetTypeIT_E4typeES4_iPFSB_DpT0_EDpOT1_
-#}
-#{
-#   dummy
-#   Memcheck:Leak
-#   match-leak-kinds: possible
-#   ...
-#   fun:PyRun_StringFlags
-#   fun:_ZN9PythonCpp6callPyIP7_objectIPKciS2_S2_P15PyCompilerFlagsEIRKSsiRNS_3PyOESA_S6_EEENS_10MapRetTypeIT_E4typeES4_iPFSC_DpT0_EDpOT1_
-#}
-#{
-#   dummy
-#   Memcheck:Leak
-#   match-leak-kinds: possible
-#   ...
-#   fun:PyDict_New
-#   fun:_ZN9PythonCpp6callPyIP7_objectIEIEEENS_10MapRetTypeIT_E4typeEPKciPFS4_DpT0_EDpOT1_
-#}
-#{
-#   
-#   Memcheck:Leak
-#   match-leak-kinds: definite
-#   ...
-#   fun:SwigPyIterator_swigregister
-#   fun:PyImport_ImportModule
-#}
-#{
-#   
-#   Memcheck:Leak
-#   match-leak-kinds: possible
-#   ...
-#   fun:PyImport_ImportModule
-#   fun:_ZN9PythonCpp6callPyIP7_objectIPKcEIRA23_S3_EEENS_10MapRetTypeIT_E4typeES4_iPFS8_DpT0_EDpOT1_
-#}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:_import_array
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyRun_StringFlags
+   fun:_ZN9PythonCpp6callPyIP7_objectIPKciS2_S2_P15PyCompilerFlagsEIRSsiRNS_3PyOES9_S6_EEENS_10MapRetTypeIT_E4typeES4_iPFSB_DpT0_EDpOT1_
+}
+{
+   dummy
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyRun_StringFlags
+   fun:_ZN9PythonCpp6callPyIP7_objectIPKciS2_S2_P15PyCompilerFlagsEIRKSsiRNS_3PyOESA_S6_EEENS_10MapRetTypeIT_E4typeES4_iPFSC_DpT0_EDpOT1_
+}
+{
+   dummy
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyDict_New
+   fun:_ZN9PythonCpp6callPyIP7_objectIEIEEENS_10MapRetTypeIT_E4typeEPKciPFS4_DpT0_EDpOT1_
+}
+{
+   
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:SwigPyIterator_swigregister
+   fun:PyImport_ImportModule
+}
+{
+   
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyImport_ImportModule
+   fun:_ZN9PythonCpp6callPyIP7_objectIPKcEIRA23_S3_EEENS_10MapRetTypeIT_E4typeES4_iPFS8_DpT0_EDpOT1_
+}
