@@ -1469,26 +1469,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FrameLink" substitutionGroup="Link" type="FrameLinkType">
+  <xs:element name="MechanicalLink" abstract="true" substitutionGroup="Link" type="MechanicalLinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+        Abstrakte Oberklasse eines Verbindungselements zwischen Objekten.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="FrameLinkType">
+  <xs:complexType name="MechanicalLinkType">
     <xs:complexContent>
       <xs:extension base="LinkType">
         <xs:sequence>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
-                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
-                Bei inneren Kräften und Momenten können alternativ die KOS beider Schnittufer angegeben werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" default="../Frame[I]"/>
-              <xs:attribute name="ref2" type="FrameReferenceType"/>
-            </xs:complexType>
-          </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
@@ -1503,6 +1492,31 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FrameLink" substitutionGroup="MechanicalLink" type="FrameLinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FrameLinkType">
+    <xs:complexContent>
+      <xs:extension base="MechanicalLinkType">
+        <xs:sequence>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+                Bei inneren Kräften und Momenten können alternativ die KOS beider Schnittufer angegeben werden.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" default="../Frame[I]"/>
+              <xs:attribute name="ref2" type="FrameReferenceType"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

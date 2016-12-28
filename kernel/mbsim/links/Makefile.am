@@ -2,16 +2,7 @@ SUBDIRS = .
 
 noinst_LTLIBRARIES = liblink.la
 liblink_la_SOURCES = link.cc\
-		     contact.cc\
-		     maxwell_contact.cc\
-		     single_contact.cc\
-		     joint.cc\
-		     elastic_joint.cc\
-		     spring_damper.cc\
-		     directional_spring_damper.cc\
-		     generalized_spring_damper.cc\
-		     isotropic_rotational_spring_damper.cc\
-		     generalized_friction.cc\
+		     mechanical_link.cc\
 		     frame_link.cc\
 		     fixed_frame_link.cc\
 		     floating_frame_link.cc\
@@ -19,6 +10,16 @@ liblink_la_SOURCES = link.cc\
 		     rigid_body_link.cc\
 		     dual_rigid_body_link.cc\
 		     kinetic_excitation.cc\
+		     contact.cc\
+		     maxwell_contact.cc\
+		     single_contact.cc\
+		     joint.cc\
+		     elastic_joint.cc\
+		     spring_damper.cc\
+		     directional_spring_damper.cc\
+		     isotropic_rotational_spring_damper.cc\
+		     generalized_spring_damper.cc\
+		     generalized_friction.cc\
 		     generalized_kinematic_excitation.cc\
 		     generalized_position_excitation.cc\
 		     generalized_velocity_excitation.cc\
@@ -32,15 +33,7 @@ liblink_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 linkincludedir = $(includedir)/mbsim/links
 linkinclude_HEADERS = link.h\
-		      contact.h\
-		      maxwell_contact.h\
-		      single_contact.h\
-		      joint.h\
-		      elastic_joint.h\
-		      spring_damper.h\
-		      directional_spring_damper.h\
-		      generalized_spring_damper.h\
-		      isotropic_rotational_spring_damper.h\
+		      mechanical_link.h\
 		      generalized_friction.h\
 		      frame_link.h\
 		      fixed_frame_link.h\
@@ -49,6 +42,15 @@ linkinclude_HEADERS = link.h\
 		      rigid_body_link.h\
 		      dual_rigid_body_link.h\
 		      kinetic_excitation.h\
+		      contact.h\
+		      maxwell_contact.h\
+		      single_contact.h\
+		      joint.h\
+		      elastic_joint.h\
+		      spring_damper.h\
+		      directional_spring_damper.h\
+		      isotropic_rotational_spring_damper.h\
+		      generalized_spring_damper.h\
 		      generalized_kinematic_excitation.h\
 		      generalized_position_excitation.h\
 		      generalized_velocity_excitation.h\
