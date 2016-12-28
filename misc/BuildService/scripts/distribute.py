@@ -13,6 +13,7 @@ import time
 import re
 import shutil
 import tempfile
+import codecs
 if sys.version_info[0]==2: # to unify python 2 and python 3
   from StringIO import StringIO as myStringIO
 else:
@@ -233,36 +234,43 @@ Have fun!'''%(note, scriptExt)
 
 
 
+def addMBSimEnvTestExampleLinux(ex):
+  text=r'''echo "%s"
+cd $INSTDIR/examples/%s
+''' % (ex, ex)
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.flat.xml"):
+    text+=r'''$INSTDIR/bin/mbsimflatxml MBS.mbsimprj.flat.xml || ERROR="$ERROR %s"''' % (ex)
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.xml"):
+    text+=r'''$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR %s"''' % (ex)
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/FMI.mbsimprj.xml"):
+    text+=r'''$INSTDIR/bin/mbsimCreateFMU --nocompress FMI.mbsimprj.xml || ERROR="$ERROR fmucre_%s"''' % (ex)
+    text+=r'''$INSTDIR/bin/fmuCheck.linux64 -f -l 5 -o fmuCheck.result.csv -z tmp_fmuCheck mbsim.fmu || ERROR="$ERROR fmuchk_%s"''' % (ex)
+  text+=r'''echo "DONE"
+'''
+def addMBSimEnvTestExampleWin(ex):
+  text=r'''echo %s
+cd %INSTDIR%\examples\%s
+''' % (ex, ex)
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.flat.xml"):
+    text+=r'''"%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml\nif ERRORLEVEL 1 set ERROR=%ERROR% %s''' % (ex)
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.xml"):
+    text+=r'''"%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml\nif ERRORLEVEL 1 set ERROR=%ERROR% %s''' % (ex)
+  if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/FMI.mbsimprj.xml"):
+    text+=r'''"%INSTDIR%\bin\mbsimCreateFMU.exe" --nocompress FMI.mbsimprj.xml\nif ERRORLEVEL 1 set ERROR=%ERROR% fmucre_%s''' % (ex)
+    text+=r'''"%INSTDIR%\bin\fmuCheck.win64.exe" -f -l 5 -o fmuCheck.result.csv -z tmp_fmuCheck mbsim.fmu\nif ERRORLEVEL 1 set ERROR=%ERROR% fmuch_%s''' % (ex)
+  text+=r'''echo DONE
+'''
 def addMBSimEnvTest():
   print("Add test script mbsim-env-test[.bat]")
 
   if platform=="linux":
-    text='''#!/bin/sh
+    text=r'''#!/bin/sh
 
 INSTDIR="$(readlink -f $(dirname $0)/..)"
 
 ERROR=""
 
-echo "XMLFLAT_HIERACHICAL_MODELLING"
-cd $INSTDIR/examples/xmlflat/hierachical_modelling
-$INSTDIR/bin/mbsimflatxml MBS.mbsimprj.flat.xml || ERROR="$ERROR XMLFLAT_HIERACHICAL_MODELLING"
-echo "DONE"
-
-echo "XML_HIERACHICAL_MODELLING"
-cd $INSTDIR/examples/xml/hierachical_modelling
-$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR XML_HIERACHICAL_MODELLING"
-echo "DONE"
-
-echo "XML_TIME_DEPENDENT_KINEMATICS"
-cd $INSTDIR/examples/xml/time_dependent_kinematics
-$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR XML_TIME_DEPENDENT_KINEMATICS"
-echo "DONE"
-
-echo "XML_HYDRAULICS_BALLCHECKVALVE"
-cd $INSTDIR/examples/xml/hydraulics_ballcheckvalve
-$INSTDIR/bin/mbsimxml MBS.mbsimprj.xml || ERROR="$ERROR XML_HYDRAULICS_BALLCHECKVALVE"
-echo "DONE"
-
+%s
 
 export OPENMBVCPPINTERFACE_PREFIX="$INSTDIR"
 
@@ -271,12 +279,10 @@ cd $INSTDIR/share/openmbvcppinterface/examples/swig
 $INSTDIR/bin/octave octavetest.m || ERROR="$ERROR OPENMBVCPPINTERFACE_SWIG_OCTAVE"
 echo "DONE"
 
-if [ "_$MBSIMENV_TEST_PYTHON" == "_1" ]; then
-  echo "OPENMBVCPPINTERFACE_SWIG_PYTHON"
-  cd $INSTDIR/share/openmbvcppinterface/examples/swig
-  python pythontest.py || ERROR="$ERROR OPENMBVCPPINTERFACE_SWIG_PYTHON"
-  echo "DONE"
-fi
+echo "OPENMBVCPPINTERFACE_SWIG_PYTHON"
+cd $INSTDIR/share/openmbvcppinterface/examples/swig
+$INSTDIR/bin/python pythontest.py || ERROR="$ERROR OPENMBVCPPINTERFACE_SWIG_PYTHON"
+echo "DONE"
 
 if [ "_$MBSIMENV_TEST_JAVA" == "_1" ]; then
   echo "OPENMBVCPPINTERFACE_SWIG_JAVA"
@@ -305,7 +311,7 @@ if [ -z $ERROR ]; then
 else
   echo "THE FOLLOWING TESTS FAILED:"
   echo $ERROR
-fi'''
+fi''' % ('\n'.join(map(addMBSimEnvTestExampleLinux, basicExamples())))
 
   if platform=="win":
     text=r'''@echo off
@@ -316,30 +322,7 @@ set INSTDIR=%~dp0..
 
 set ERROR=
 
-echo XMLFLAT_HIERACHICAL_MODELLING
-cd %INSTDIR%\examples\xmlflat\hierachical_modelling
-"%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml
-if ERRORLEVEL 1 set ERROR=%ERROR% XMLFLAT_HIERACHICAL_MODELLING
-echo DONE
-
-echo XML_HIERACHICAL_MODELLING
-cd %INSTDIR%\examples\xml\hierachical_modelling
-"%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
-if ERRORLEVEL 1 set ERROR=%ERROR% XML_HIERACHICAL_MODELLING
-echo DONE
-
-echo XML_TIME_DEPENDENT_KINEMATICS
-cd %INSTDIR%\examples\xml\time_dependent_kinematics
-"%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
-if ERRORLEVEL 1 set ERROR=%ERROR% XML_TIME_DEPENDENT_KINEMATICS
-echo DONE
-
-echo XML_HYDRAULICS_BALLCHECKVALVE
-cd %INSTDIR%\examples\xml\hydraulics_ballcheckvalve
-"%INSTDIR%\bin\mbsimxml.exe" MBS.mbsimprj.xml
-if ERRORLEVEL 1 set ERROR=%ERROR% XML_HYDRAULICS_BALLCHECKVALVE
-echo DONE
-
+%s
 
 set OPENMBVCPPINTERFACE_PREFIX=%INSTDIR%
 
@@ -349,13 +332,11 @@ cd %INSTDIR%\share\openmbvcppinterface\examples\swig
 if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_OCTAVE
 echo DONE
 
-IF "%MBSIMENV_TEST_PYTHON%"=="1" (
-  echo OPENMBVCPPINTERFACE_SWIG_PYTHON
-  cd %INSTDIR%\share\openmbvcppinterface\examples\swig
-  python pythontest.py
-  if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_PYTHON
-  echo DONE
-)
+echo OPENMBVCPPINTERFACE_SWIG_PYTHON
+cd %INSTDIR%\share\openmbvcppinterface\examples\swig
+%INSTDIR%\bin\python.exe pythontest.py
+if ERRORLEVEL 1 set ERROR=%ERROR% OPENMBVCPPINTERFACE_SWIG_PYTHON
+echo DONE
 
 IF "%MBSIMENV_TEST_JAVA%"=="1" (
   echo OPENMBVCPPINTERFACE_SWIG_JAVA
@@ -390,7 +371,7 @@ if "%ERROR%"=="" (
   echo %ERROR%
 )
 
-cd "%PWD%"'''
+cd "%PWD%"''' % ('\n'.join(map(addMBSimEnvTestExampleWin, basicExamples())))
 
   addStrToDist(text, 'mbsim-env/bin/mbsim-env-test'+('.bat' if platform=="win" else ""), True)
 
@@ -421,15 +402,53 @@ $INSTDIR/bin/.octave-3.8.2.envvar "$@"
 
 
 
-def addExamples():
-  print("Add some examples")
+def addPython():
+  print("Add python casadi files")
 
-  for ex in [
-    "xmlflat/hierachical_modelling",
-    "xml/hierachical_modelling",
-    "xml/time_dependent_kinematics",
-    "xml/hydraulics_ballcheckvalve",
-  ]:
+  if platform=="linux":
+    addFileToDist("/home/mbsim/3rdparty/casadi3py-local-linux64/python2.7/site-packages/casadi", "mbsim-env/lib64/python2.7/site-packages/casadi")
+  if platform=="win":
+    addFileToDist("/home/mbsim/3rdparty/casadi3py-local-win64/python2.7/site-packages/casadi", "mbsim-env/Lib/site-packages/casadi")
+
+  print("Add python files")
+
+  if platform=="linux":
+    subdir="lib64/python2.7"
+    pysrcdir="/usr/"+subdir
+  if platform=="win":
+    subdir="Lib"
+    pysrcdir="/home/mbsim/3rdparty/python-win64/"+subdir
+  # everything in pysrcdir except some special dirs
+  for d in os.listdir(pysrcdir):
+    if d=="site-packages":
+      continue
+    addFileToDist(pysrcdir+"/"+d, "mbsim-env/"+subdir+"/"+d)
+  # copy site-packages/numpy
+  addFileToDist(pysrcdir+"/site-packages/numpy", "mbsim-env/"+subdir+"/site-packages/numpy")
+
+  # add python executable
+  if platform=="linux":
+    addFileToDist("/usr/bin/python2.7", "mbsim-env/bin/python")
+  if platform=="win":
+    addFileToDist("/home/mbsim/3rdparty/python-win64/python.exe", "mbsim-env/bin/python.exe")
+    addFileToDist("/home/mbsim/3rdparty/python-win64/pythonw.exe", "mbsim-env/bin/pythonw.exe")
+
+
+
+# return all basic examples except source examples
+def basicExamples():
+  ret=[]
+  for dirpath, dirnames, filenames in os.walk(args.prefix+"/../mbsim/examples"):
+    if 'labels' in filenames:
+      if not os.path.isfile(dirpath+"/Makefile") and \
+        'basic' in codecs.open(dirpath+"/labels", "r", encoding="utf-8").read().rstrip().split(' '):
+        ret.append(dirpath[len(args.prefix+"/../mbsim/examples")+1:])
+  return ret
+
+def addExamples():
+  print("Add some examples") # all examples with label "basic"
+
+  for ex in basicExamples():
     for file in subprocess.check_output(["git", "ls-files"], cwd=args.prefix+"/../mbsim/examples/"+ex).decode('utf-8').rstrip().splitlines():
       addFileToDist(args.prefix+"/../mbsim/examples/"+ex+"/"+file, "mbsim-env/examples/"+ex+"/"+file)
 
@@ -466,6 +485,8 @@ def main():
   addFileToDist(args.prefix, "mbsim-env")
   # add octave
   addOctave()
+  # add python
+  addPython()
 
   # add some examples
   addExamples()
