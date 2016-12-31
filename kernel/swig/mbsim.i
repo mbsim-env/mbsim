@@ -162,6 +162,9 @@ class MBSim::DistanceFunction<double(double)> : public MBSim::Function<double(do
 
 
 
+// dummy wrap MBXMLUtils::FQN (just to create proper memory management; for object creation _FQN is used)
+namespace MBXMLUtils { class FQN {}; }
+
 %inline %{
 
 // internal helper function create a MBXMLUtils::FQN (MBXMLUtils is not wrapped at all)

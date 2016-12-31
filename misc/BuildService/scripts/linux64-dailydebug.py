@@ -40,7 +40,7 @@ if len(checkedExamples)>0:
   os.chdir(CURDIR)
 
 # build and run all examples
-if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "14", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
+if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
   "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--reportOutDir",
   "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
@@ -62,7 +62,7 @@ os.chdir(SRCDIR+"/mbsim_valgrind/examples")
 if subprocess.call(["git", "pull"])!=0:
   print("git pull of mbsim_valgrind/examples failed.")
 os.environ["MBSIM_SET_MINIMAL_TEND"]="1"
-if simplesandbox.call(["./runexamples.py", "--rotate", "14", "-j", "2", "--enableAlphaPy", "--reportOutDir",
+if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--enableAlphaPy", "--reportOutDir",
                     "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report", "--url",
                     "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
                     "--buildSystemRun", SCRIPTDIR,
