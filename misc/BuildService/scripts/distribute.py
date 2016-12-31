@@ -48,7 +48,7 @@ def config():
       "/home/mbsim/win64-dailyrelease/local/bin;/home/mbsim/3rdparty/octave-local-win64/bin;"+ \
       "/home/mbsim/3rdparty/hdf5-local-win64/bin;/home/mbsim/3rdparty/libarchive-local-win64/bin;"+\
       "/home/mbsim/3rdparty/qwt-6.1.1/lib;/home/mbsim/3rdparty/coin-local-win64/bin;"+\
-      "/home/mbsim/3rdparty/python-win64"
+      "/home/mbsim/3rdparty/python-win64;/home/mbsim/3rdparty/python-win64/Lib/site-packages/numpy/core"
 
 
 
