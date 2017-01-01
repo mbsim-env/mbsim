@@ -126,7 +126,6 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
-debugOpts.add_argument("--enableAlphaPy", action="store_true", help="Also run MBS.mbsimprj.alpha_py.xml examples")
 debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to the scripts of the build system must be passed.")
 
 # parse command line options
@@ -636,7 +635,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
   # make baseDir a relative path
   baseDir=os.path.relpath(baseDir)
   for root, dirs, _ in os.walk(baseDir):
-    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml")) or (args.enableAlphaPy and os.path.isfile(pj(root, "MBS.mbsimprj.alpha_py.xml")))
+    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml")) 
     flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))

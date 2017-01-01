@@ -41,6 +41,6 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribu
   "PYTHON_CFLAGS=-I/home/mbsim/3rdparty/python-win64/include -DMS_WIN64",
   "PYTHON_LIBS=-L/home/mbsim/3rdparty/python-win64 -lpython27",
   "PYTHON_BIN=/home/mbsim/3rdparty/python-win64/python.exe",
-  "--passToRunexamples", "--enableAlphaPy", "--disableCompare",
+  "--passToRunexamples", "--disableCompare",
   "--disableValidate", "--exeExt", ".exe", "--filter", "'basic' in labels"])!=0:
   print("win64-dailyrelease failed.")

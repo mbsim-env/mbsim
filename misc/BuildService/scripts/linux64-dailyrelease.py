@@ -22,5 +22,5 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribu
   "--prefix", SRCDIR+"/local", "--reportOutDir", OUTDIR+"/report", "--url", URL+"/report", "--buildType", "linux64-dailyrelease",
   "--enableCleanPrefix", "--passToConfigure", "--with-lowram", "--enable-python", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin", "--with-qmake=qmake-qt4",
-  "--passToRunexamples", "--enableAlphaPy", "--disableCompare", "--disableValidate", "--filter", "'basic' in labels"])!=0:
+  "--passToRunexamples", "--disableCompare", "--disableValidate", "--filter", "'basic' in labels"])!=0:
   print("linux64-dailyrelease failed.")

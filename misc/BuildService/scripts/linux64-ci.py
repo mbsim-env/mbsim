@@ -88,5 +88,5 @@ if subprocess.call([scriptdir+"/build.py", "--buildSystemRun", "--rotate", "30",
   "--url", "http://www.mbsim-env.de/mbsim/linux64-ci/report", "--buildType", "linux64-ci", "--passToConfigure", "--enable-python", "--enable-debug",
   "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
-  "--passToRunexamples", "--enableAlphaPy", "--disableCompare", "--disableMakeClean", "--filter", "'basic' in labels"], env=env)!=0:
+  "--passToRunexamples", "--disableCompare", "--disableMakeClean", "--filter", "'basic' in labels"], env=env)!=0:
   print("CI Build failed.")
