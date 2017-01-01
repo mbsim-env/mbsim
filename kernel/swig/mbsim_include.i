@@ -154,14 +154,9 @@ void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObjec
   using namespace PythonCpp;
   xercesc::DOMDocument *doc=_1->getOwnerDocument();
 
-  // get the uri
-  std::string uri=X()%doc->getDocumentURI();
-#ifdef _WIN32
-  int addChars = 1; // Windows uses e.g. file:///c:/path/to/file.txt -> file:/// must be removed
-#else
-  int addChars = 0; // Linux uses e.g. file:///path/to/file.txt -> file:// must be removed
-#endif
-  uri=uri.substr(7+addChars); // remove the "file://" part from the uri
+  // serialize to memory
+  std::string xml;
+  DOMParser::serializeToString(doc, xml, false);
 
   // get the XPath of e
   xercesc::DOMElement *r=doc->getDocumentElement();
@@ -180,13 +175,11 @@ void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObjec
   xpath=xpath.substr(0, xpath.size()-1);
 
   // create pythone ElementTree and return corresponding element
-  // root = ET.parse(uri).getroot()
+  // root = ET.fromstring(xml)
   // return root.find(xpath)
   PyO et(CALLPY(PyImport_ImportModule, "xml.etree.cElementTree"));
-  PyO parse(CALLPY(PyObject_GetAttrString, et, "parse"));
-  PyO tree(CALLPY(PyObject_CallObject, parse, PythonCpp::Py_BuildValue_("(s)", uri.c_str())));
-  PyO getroot(CALLPY(PyObject_GetAttrString, tree, "getroot"));
-  PyO root(CALLPY(PyObject_CallObject, getroot, nullptr));
+  PyO fromstring(CALLPY(PyObject_GetAttrString, et, "fromstring"));
+  PyO root(CALLPY(PyObject_CallObject, fromstring, PythonCpp::Py_BuildValue_("(s)", xml)));
   PyO find(CALLPY(PyObject_GetAttrString, root, "find"));
   PyO pye(CALLPY(PyObject_CallObject, find, PythonCpp::Py_BuildValue_("(s)", xpath.c_str())));
   // set mapping
