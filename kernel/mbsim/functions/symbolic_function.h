@@ -31,12 +31,11 @@ namespace MBSim {
   //! This function handles all type f except fmatvec::RotMat3.
   template<typename Ret=void>
   casadi::SX parDerSX(const casadi::SX &f, const casadi::SX &arg) {
+    assert(arg.size2()==1);
     if(f.size2()>1) { // f is a matrix
       if(arg.size1()==1) { // arg is a scalar -> jac is a matrix but this cannot be handled by casadi directly
-        // reshape to column vector -> calcualte jacobian using casadi -> reshape back to original shape
-        casadi::SX fr=casadi::SX::reshape(f, f.size1()*f.size2(), 1);
-        casadi::SX frj=casadi::SX::jacobian(fr, arg);
-        return casadi::SX::reshape(frj, f.size1(), f.size2());
+        // calcualte jacobian using casadi -> reshape to matrix
+        return casadi::SX::reshape(casadi::SX::jacobian(f, arg), f.size1(), f.size2());
       }
       else { // arg is a vector -> not possible (would be a tensor of order 3 which cannot be handled by casadi and fmatvec)
         return casadi::SX::nan(); // return a scalar NaN -> will throw later if this is tried to evaluate
@@ -55,12 +54,12 @@ namespace MBSim {
     assert(arg.size2()==1);
     casadi::SX ret(3, arg.size1());
     for(int i=0; i<arg.size1(); ++i) {
-      // ssm = df/dargi * f
-      casadi::SX ssm=casadi::SX::mtimes(parDerSX(f, arg(i)), f);
-      // ret = tilde(ssm)
-      ret(0,i)=ssm(2,1);
-      ret(1,i)=ssm(0,2);
-      ret(2,i)=ssm(1,0);
+      // wtilde = df/dargi * f
+      casadi::SX wtilde=casadi::SX::mtimes(parDerSX(f, arg(i)), f.T());
+      // ret = tilde(wtilde)
+      ret(0,i)=wtilde(2,1);
+      ret(1,i)=wtilde(0,2);
+      ret(2,i)=wtilde(1,0);
     }
     return ret;
   }
@@ -69,7 +68,13 @@ namespace MBSim {
   //! This function handles all type f except fmatvec::RotMat3.
   template<typename Ret=void>
   casadi::SX dirDerSX(const casadi::SX &f, const casadi::SX &arg, const casadi::SX &argd) {
-    return jtimes(f, arg, argd);
+    assert(arg.size2()==1);
+    assert(argd.size2()==1);
+    assert(arg.size1()==argd.size1());
+    if(f.size2()==1)
+      return jtimes(f, arg, argd);
+    else
+      return casadi::SX::reshape(jtimes(casadi::SX::reshape(f, f.size1()*f.size2(), 1), arg, argd), f.size1(), f.size2());
   }
 
   //! A fmatvec like dirDer function for casadi SX.
