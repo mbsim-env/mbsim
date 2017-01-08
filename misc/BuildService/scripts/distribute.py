@@ -255,14 +255,14 @@ def addMBSimEnvTestExampleWin(ex):
 cd "%%INSTDIR%%\examples\%s"
 ''' % (ex, ex)
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.flat.xml"):
-    text+=r'''"%%INSTDIR%%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml ERRORLEVEL 1 set ERROR=%%ERROR%% %s''' % (ex) + '\n'
+    text+=r'''"%%INSTDIR%%\bin\mbsimflatxml.exe" MBS.mbsimprj.flat.xml || set ERROR=%%ERROR%% %s''' % (ex) + '\n'
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.xml"):
-    text+=r'''"%%INSTDIR%%\bin\mbsimxml.exe" MBS.mbsimprj.xml ERRORLEVEL 1 set ERROR=%%ERROR%% %s''' % (ex) + '\n'
+    text+=r'''"%%INSTDIR%%\bin\mbsimxml.exe" MBS.mbsimprj.xml || set ERROR=%%ERROR%% %s''' % (ex) + '\n'
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/MBS.mbsimprj.alpha_py.xml"):
-    text+=r'''"%%INSTDIR%%\bin\mbsimxml.exe" MBS.mbsimprj.alpha_py.xml ERRORLEVEL 1 set ERROR=%%ERROR%% %s''' % (ex) + '\n'
+    text+=r'''"%%INSTDIR%%\bin\mbsimxml.exe" MBS.mbsimprj.alpha_py.xml || set ERROR=%%ERROR%% %s''' % (ex) + '\n'
   if os.path.exists(args.prefix+"/../mbsim/examples/"+ex+"/FMI.mbsimprj.xml"):
-    text+=r'''"%%INSTDIR%%\bin\mbsimCreateFMU.exe" --nocompress FMI.mbsimprj.xml ERRORLEVEL 1 set ERROR=%%ERROR%% fmucre_%s''' % (ex) + '\n'
-    text+=r'''"%%INSTDIR%%\bin\fmuCheck.win64.exe" -f -l 5 mbsim.fmu ERRORLEVEL 1 set ERROR=%%ERROR%% fmuch_%s''' % (ex) + '\n'
+    text+=r'''"%%INSTDIR%%\bin\mbsimCreateFMU.exe" --nocompress FMI.mbsimprj.xml || set ERROR=%%ERROR%% fmucre_%s''' % (ex) + '\n'
+    text+=r'''"%%INSTDIR%%\bin\fmuCheck.win64.exe" -f -l 5 mbsim.fmu || set ERROR=%%ERROR%% fmuch_%s''' % (ex) + '\n'
   text+=r'''echo DONE
 '''
   return text
@@ -334,40 +334,34 @@ set OPENMBVCPPINTERFACE_PREFIX=%%INSTDIR%%
 
 echo OPENMBVCPPINTERFACE_SWIG_OCTAVE
 cd "%%INSTDIR%%\share\openmbvcppinterface\examples\swig"
-"%%INSTDIR%%\bin\octave.exe" octavetest.m
-if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_OCTAVE
+"%%INSTDIR%%\bin\octave.exe" octavetest.m || set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_OCTAVE
 echo DONE
 
 echo OPENMBVCPPINTERFACE_SWIG_PYTHON
 cd "%%INSTDIR%%\share\openmbvcppinterface\examples\swig"
-"%%INSTDIR%%\bin\python.exe" pythontest.py
-if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_PYTHON
+"%%INSTDIR%%\bin\python.exe" pythontest.py || set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_PYTHON
 echo DONE
 
 IF "%%MBSIMENV_TEST_JAVA%%"=="1" (
   echo OPENMBVCPPINTERFACE_SWIG_JAVA
   cd "%%INSTDIR%%\share\openmbvcppinterface\examples\swig"
-  java -classpath .;%%INSTDIR%%/bin/openmbv.jar javatest
-  if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_JAVA
+  java -classpath .;%%INSTDIR%%/bin/openmbv.jar javatest || set ERROR=%%ERROR%% OPENMBVCPPINTERFACE_SWIG_JAVA
   echo DONE
 )
 
 
 echo H5PLOTSERIE
 cd "%%INSTDIR%%\examples\xml\hierachical_modelling"
-"%%INSTDIR%%\bin\h5plotserie.exe" TS.mbsim.h5
-if ERRORLEVEL 1 set ERROR=%%ERROR%% H5PLOTSERIE
+"%%INSTDIR%%\bin\h5plotserie.exe" TS.mbsim.h5 || set ERROR=%%ERROR%% H5PLOTSERIE
 echo DONE
 
 echo OPENMBV
 cd "%%INSTDIR%%\examples\xml\hierachical_modelling"
-"%%INSTDIR%%\bin\openmbv.exe" TS.ombv.xml
-if ERRORLEVEL 1 set ERROR=%%ERROR%% OPENMBV
+"%%INSTDIR%%\bin\openmbv.exe" TS.ombv.xml || set ERROR=%%ERROR%% OPENMBV
 echo DONE
 
 echo MBSIMGUI
-"%%INSTDIR%%\bin\mbsimgui.exe"
-if ERRORLEVEL 1 set ERROR=%%ERROR%% MBSIMGUI
+"%%INSTDIR%%\bin\mbsimgui.exe" || set ERROR=%%ERROR%% MBSIMGUI
 echo DONE
 
 if "%%ERROR%%"=="" (
@@ -433,6 +427,11 @@ def addPython():
     addFileToDist(pysrcdir+"/"+d, "mbsim-env/"+subdir+"/"+d)
   # copy site-packages/numpy
   addFileToDist(pysrcdir+"/site-packages/numpy", "mbsim-env/"+subdir+"/site-packages/numpy")
+
+  # on Windows copy also the DLLs dir
+  if platform=="win":
+    for f in os.listdir(pysrcdir+"/../DLLs"):
+      addFileToDist(pysrcdir+"/../DLLs/"+f, "mbsim-env/DLLs/"+f)
 
   # add python executable
   if platform=="linux":
