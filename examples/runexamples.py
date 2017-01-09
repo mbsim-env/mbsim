@@ -656,6 +656,8 @@ def addExamplesByFilter(baseDir, directoriesSet):
     # check for MBSim modules in xml and flatxml examples
     else:
       for filedir, _, filenames in os.walk(root):
+        if "tmp_fmuCheck" in filedir.split('/') or "tmp_mbsimTestFMU" in filedir.split('/'): # skip temp fmu directories
+          continue
         for filename in fnmatch.filter(filenames, "*.xml"):
           if filename[0:4]==".pp.": continue # skip generated .pp.* files
           filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
