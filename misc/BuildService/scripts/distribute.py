@@ -116,8 +116,9 @@ def addFileToDist(name, arcname, addDepLibs=True):
           except subprocess.CalledProcessError as ex:
             pass
         # strip or not
-        if (re.search('ELF [0-9]+-bit LSB', content)!=None and re.search('not stripped', content)!=None) or \
-           (re.search('PE32\+? executable', content)!=None and re.search('stripped to external PDB', content)==None):
+        if ((re.search('ELF [0-9]+-bit LSB', content)!=None and re.search('not stripped', content)!=None) or \
+            (re.search('PE32\+? executable', content)!=None and re.search('stripped to external PDB', content)==None)) and \
+           not name.startswith("/home/mbsim/3rdparty/python-win64/") and not name.startswith("/usr/lib64/python2.7/"):# do not strip python files (these are not build with mingw)
           # not stripped binary file
           try:
             subprocess.check_call(["objcopy", "--only-keep-debug", tmpDir+"/"+basename+".rpath", tmpDir+"/"+basename+".debug"])

@@ -38,7 +38,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--enableDistribu
   "--with-qwt-inc-prefix=/home/mbsim/3rdparty/qwt-6.1.1/src", "--with-qwt-lib-prefix=/home/mbsim/3rdparty/qwt-6.1.1/lib",
   "--with-swigpath=/home/mbsim/3rdparty/swig-local-linux64/bin",
   "PYTHON_CFLAGS=-I/home/mbsim/3rdparty/python-win64/include -DMS_WIN64",
-  "PYTHON_LIBS=-L/home/mbsim/3rdparty/python-win64 -lpython27",
+  "PYTHON_LIBS=-L/home/mbsim/3rdparty/python-win64/libs -lpython27",
   "PYTHON_BIN=/home/mbsim/3rdparty/python-win64/python.exe",
   "--passToRunexamples", "--disableCompare",
   "--disableValidate", "--exeExt", ".exe", "--filter", "'basic' in labels"])!=0:
