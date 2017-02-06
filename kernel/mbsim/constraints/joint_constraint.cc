@@ -141,7 +141,22 @@ namespace MBSim {
       q.resize(nq);
       JT.resize(3,nu);
       JR.resize(3,nu);
-    } else
+    }
+    else if (stage == unknownStage) {
+      Constraint::init(stage);
+      Js.resize(3 - forceDir.cols());
+      if (forceDir.cols() == 2)
+        Js.set(0, crossProduct(forceDir.col(0), forceDir.col(1)));
+      else if (forceDir.cols() == 3)
+        ;
+      else if (forceDir.cols() == 0)
+        Js = SqrMat(3, EYE);
+      else { // define a coordinate system in the plane perpendicular to the force direction
+        Js.set(0, computeTangential(forceDir.col(0)));
+        Js.set(1, crossProduct(forceDir.col(0), Js.col(0)));
+      }
+    }
+    else
       Constraint::init(stage);
   }
 
@@ -183,6 +198,7 @@ namespace MBSim {
       JR(RangeV(0,2),Iu1[i]) = C.evalJacobianOfRotation(2);
       for(size_t j=i+1; j<bd1.size(); j++)
         bd1[j]->resetJacobiansUpToDate();
+      C.resetJacobiansUpToDate();
       bd1[i]->setUpdateByReference(true);
     }
     for(size_t i=0; i<bd2.size(); i++) {
@@ -217,6 +233,7 @@ namespace MBSim {
       bd2[i]->resetVelocitiesUpToDate();
       bd2[i]->setuRel(u(Iu2[i]));
     }
+    C.resetVelocitiesUpToDate();
     updGC = false;
   }
 
@@ -231,6 +248,10 @@ namespace MBSim {
         bd2[i]->setJRel(Mat(bd2[i]->getuRelSize(),bd2[i]->gethSize()));
         bd2[i]->setjRel(Vec(bd2[i]->getuRelSize()));
       }
+      Vec3 WvP0P1 = frame2->evalVelocity() - C.evalVelocity();
+      Vec3 WomP0P1 = frame2->evalAngularVelocity() - C.evalAngularVelocity();
+      Mat3xV WJs = refFrame->evalOrientation() * Js;
+      VecV sdT = WJs.T() * WvP0P1;
 
       SqrMat A(nu);
       A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;
@@ -249,8 +270,8 @@ namespace MBSim {
       B(RangeV(0,dT.cols()-1),RangeV(0,nh-1)) = -(dT.T()*JT0);
       B(RangeV(dT.cols(),dT.cols()+dR.cols()-1),RangeV(0,nh-1)) = -(dR.T()*JR0);
       Vec b(nu);
-      b(0,dT.cols()-1) = -(dT.T()*(C.evalGyroscopicAccelerationOfTranslation()-frame2->evalGyroscopicAccelerationOfTranslation()));
-      b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(C.evalGyroscopicAccelerationOfRotation()-frame2->evalGyroscopicAccelerationOfRotation()));
+      b(0,dT.cols()-1) = dT.T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), WvP0P1 + WJs * sdT));
+      b(dT.cols(),dT.cols()+dR.cols()-1) = dR.T()*(frame2->evalGyroscopicAccelerationOfRotation()-C.evalGyroscopicAccelerationOfRotation()-crossProduct(C.evalAngularVelocity(), WomP0P1));
 
       Mat J = slvLU(A,B);
       Vec j = slvLU(A,b);

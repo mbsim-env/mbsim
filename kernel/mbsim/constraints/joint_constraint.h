@@ -111,6 +111,7 @@ namespace MBSim {
       int nq, nu, nh;
       fmatvec::Vec q, q0;
       fmatvec::Mat JT, JR;
+      fmatvec::Mat3xV Js;
 
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide, saved_IndependentBody;
