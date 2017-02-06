@@ -127,6 +127,30 @@
    fun:_ZN6casadi9SubMatrixINS_6MatrixINS_9SXElementEEENS_5SliceES4_EaSERKS3_
    ...
 }
+{
+   dummy
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN6casadi6MatrixINS_6SXElemEEaSERKS2_
+   fun:_ZN10MBXMLUtils4Eval4evalEPKN11xercesc_3_110DOMElementE
+}
+{
+   dummy
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN6casadi13GenericMatrixINS_6MatrixINS_6SXElemEEEE3symERKSsii
+   fun:_ZN10MBXMLUtils4Eval4evalEPKN11xercesc_3_110DOMElementE
+}
+{
+   dummy
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN10MBXMLUtils1XrmEPKt
+   fun:_ZN10MBXMLUtils4Eval4evalEPKN11xercesc_3_110DOMElementE
+}
 
 # HDF5
 {
@@ -180,4 +204,28 @@
    fun:H5D__chunk_flush_entry
    fun:H5D__chunk_flush
    fun:H5D__flush_real
+}
+# PYTHON memory leaks
+{
+   numpy leak
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:_import_array
+}
+{
+   swig loading leak
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:SwigPyIterator_swigregister
+   ...
+   fun:builtin___import__
+}
+{
+   all python possible leaks
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   obj:*/libpython*.so*
 }

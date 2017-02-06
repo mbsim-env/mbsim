@@ -27,14 +27,15 @@
 
 namespace MBSim {
 
-  //! A fmatvec like jacobian using casadi
-  casadi::SX jac(const casadi::SX &f, const casadi::SX &arg) {
+  //! A fmatvec like parDer function for casadi SX.
+  //! This function handles all type f except fmatvec::RotMat3.
+  template<typename Ret=void>
+  casadi::SX parDerSX(const casadi::SX &f, const casadi::SX &arg) {
+    assert(arg.size2()==1);
     if(f.size2()>1) { // f is a matrix
       if(arg.size1()==1) { // arg is a scalar -> jac is a matrix but this cannot be handled by casadi directly
-        // reshape to column vector -> calcualte jacobian using casadi -> reshape back to original shape
-        casadi::SX fr=casadi::SX::reshape(f, f.size1()*f.size2(), 1);
-        casadi::SX frj=casadi::SX::jacobian(fr, arg);
-        return casadi::SX::reshape(frj, f.size1(), f.size2());
+        // calcualte jacobian using casadi -> reshape to matrix
+        return casadi::SX::reshape(casadi::SX::jacobian(f, arg), f.size1(), f.size2());
       }
       else { // arg is a vector -> not possible (would be a tensor of order 3 which cannot be handled by casadi and fmatvec)
         return casadi::SX::nan(); // return a scalar NaN -> will throw later if this is tried to evaluate
@@ -42,6 +43,50 @@ namespace MBSim {
     }
     else // f is a vector -> jac may get a matrix if arg is a vector (handled by casadi)
       return casadi::SX::jacobian(f, arg);
+  }
+
+  //! A fmatvec like parDer function for casadi SX.
+  //! This function handles only the f type fmatvec::RotMat3.
+  template<>
+  casadi::SX parDerSX<fmatvec::RotMat3>(const casadi::SX &f, const casadi::SX &arg) {
+    assert(f.size1()==3);
+    assert(f.size2()==3);
+    assert(arg.size2()==1);
+    casadi::SX ret(3, arg.size1());
+    for(int i=0; i<arg.size1(); ++i) {
+      // wtilde = df/dargi * f
+      casadi::SX wtilde=casadi::SX::mtimes(parDerSX(f, arg(i)), f.T());
+      // ret = tilde(wtilde)
+      ret(0,i)=wtilde(2,1);
+      ret(1,i)=wtilde(0,2);
+      ret(2,i)=wtilde(1,0);
+    }
+    return ret;
+  }
+
+  //! A fmatvec like dirDer function for casadi SX.
+  //! This function handles all type f except fmatvec::RotMat3.
+  template<typename Ret=void>
+  casadi::SX dirDerSX(const casadi::SX &f, const casadi::SX &arg, const casadi::SX &argd) {
+    assert(arg.size2()==1);
+    assert(argd.size2()==1);
+    assert(arg.size1()==argd.size1());
+    if(f.size2()==1)
+      return jtimes(f, arg, argd);
+    else
+      return casadi::SX::reshape(jtimes(casadi::SX::reshape(f, f.size1()*f.size2(), 1), arg, argd), f.size1(), f.size2());
+  }
+
+  //! A fmatvec like dirDer function for casadi SX.
+  //! This function handles only the f type fmatvec::RotMat3.
+  template<>
+  casadi::SX dirDerSX<fmatvec::RotMat3>(const casadi::SX &f, const casadi::SX &arg, const casadi::SX &argd) {
+    assert(f.size1()==3);
+    assert(f.size2()==3);
+    assert(arg.size2()==1);
+    assert(argd.size2()==1);
+    assert(arg.size1()==argd.size1());
+    return casadi::SX::mtimes(parDerSX<fmatvec::RotMat3>(f, arg), argd);
   }
 
   //! convert double to casadi::DM
@@ -101,6 +146,20 @@ namespace MBSim {
       }
   };
 
+  template<>
+  class FromCasadi<fmatvec::RotMat3> {
+    public:
+      static fmatvec::RotMat3 cast(const casadi::Matrix<double> &A) {
+        assert(A.size1()==3);
+        assert(A.size2()==3);
+        fmatvec::RotMat3 B(fmatvec::NONINIT);
+        for(int i=0; i<3; i++)
+          for(int j=0; j<3; j++)
+            B.e(i,j) = A(i,j).scalar();
+        return B;
+      }
+  };
+
   template <>
   class FromCasadi<double> {
     public:
@@ -137,11 +196,11 @@ namespace MBSim {
         casadi::SX argd=casadi::SX::sym("argd", getArgSize());
         casadi::SX argd_2=casadi::SX::sym("argd_2", getArgSize());
 
-        pd_ = jac(ret, arg);
-        casadi::SX dd_ = jtimes(ret, arg, argd);
-        pddd_ = jac(dd_, arg);
-        pdpd_ = jac(pd_, arg);
-        casadi::SX dddd_ = jtimes(dd_, arg, argd_2);
+        pd_ = parDerSX<Ret>(ret, arg);
+        casadi::SX dd_ = dirDerSX<Ret>(ret, arg, argd);
+        pddd_ = parDerSX(dd_, arg);
+        pdpd_ = parDerSX(pd_, arg);
+        casadi::SX dddd_ = dirDerSX(dd_, arg, argd_2);
 
         f = casadi::Function("noname", {arg}, {ret});
         pd = casadi::Function("noname", {arg}, {pd_});
@@ -162,7 +221,7 @@ namespace MBSim {
 
     bool constParDer() const override {
       if(pd_.is_empty(true))
-        pd_ = jac(ret, arg);
+        pd_ = parDerSX<Ret>(ret, arg);
       return pd_.is_constant();
     }
 
@@ -240,16 +299,16 @@ namespace MBSim {
         casadi::SX arg1d=casadi::SX::sym("arg1d", getArg1Size());
         casadi::SX arg2d=casadi::SX::sym("arg2d", getArg2Size());
 
-        pd1_ = jac(ret, arg1);
-        pd2_ = jac(ret, arg2);
-        casadi::SX dd1_ = jtimes(ret, arg1, arg1d);
-        casadi::SX dd2_ = jtimes(ret, arg2, arg2d);
-        pd1dd1_ = jac(dd1_, arg1);
-        pd1dd2_ = jac(dd2_, arg1);
-        pd1pd2_ = jac(pd1_, arg2);
-        pd2dd1_ = jac(dd1_, arg2);
-        pd2dd2_ = jac(dd2_, arg2);
-        pd2pd2_ = jac(pd2_, arg2);
+        pd1_ = parDerSX<Ret>(ret, arg1);
+        pd2_ = parDerSX<Ret>(ret, arg2);
+        casadi::SX dd1_ = dirDerSX<Ret>(ret, arg1, arg1d);
+        casadi::SX dd2_ = dirDerSX<Ret>(ret, arg2, arg2d);
+        pd1dd1_ = parDerSX(dd1_, arg1);
+        pd1dd2_ = parDerSX(dd2_, arg1);
+        pd1pd2_ = parDerSX(pd1_, arg2);
+        pd2dd1_ = parDerSX(dd1_, arg2);
+        pd2dd2_ = parDerSX(dd2_, arg2);
+        pd2pd2_ = parDerSX(pd2_, arg2);
 
         f = casadi::Function("noname", {arg1, arg2}, {ret});
         pd1 = casadi::Function("noname", {arg1, arg2}, {pd1_});
@@ -277,13 +336,13 @@ namespace MBSim {
 
     bool constParDer1() const override {
       if(pd1_.is_empty(true))
-        pd1_ = jac(ret, arg1);
+        pd1_ = parDerSX<Ret>(ret, arg1);
       return pd1_.is_constant();
     }
 
     bool constParDer2() const override {
       if(pd2_.is_empty(true))
-        pd2_ = jac(ret, arg2);
+        pd2_ = parDerSX<Ret>(ret, arg2);
       return pd2_.is_constant();
     }
 

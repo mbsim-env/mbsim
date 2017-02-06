@@ -41,6 +41,7 @@ else
   FFLAGS="$FFLAGS -g -O2"
 fi
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
+AC_SUBST([HOST_OS],[$host_os])
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
@@ -66,6 +67,9 @@ AC_CHECK_HEADERS([sys/time.h])
 AC_CHECK_TYPES([ptrdiff_t]) 
 AC_FUNC_ERROR_AT_LINE 
 AC_TYPE_SIZE_T 
+
+AC_ARG_WITH([lowram], [  --with-lowram  Disable parallel build for subdirs known to need mutch memory], [LOWRAM="1"], [LOWRAM="0"])
+AM_CONDITIONAL([COND_LOWRAM], [test "_$LOWRAM" == "_1"])
 
 dnl Check for optional boost type_trains and static_assert
 AC_CHECK_HEADERS([boost/core/demangle.hpp], [DEFINES="$DEFINES -DBOOST_CORE_DEMANGLE_HPP"])
@@ -122,11 +126,22 @@ if test "x$enable_python" == "xyes"; then
   fi
   AC_SUBST([PYTHON_SHEXT], [$pythonshext])
 
-  PYTHON_LIBDIR="$($PKG_CONFIG --variable=libdir python-$pythonversion)"
-  if test ! -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
-    AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include])
+  if test "_$PYTHON_BIN" == "_"; then
+    PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
   fi
-  AC_SUBST([PYTHON_VERSION],[$pythonversion])
+  AC_SUBST([PYTHON_BIN])
+
+  PYTHON_LIBDIR=$($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST"))' | dos2unix)
+  if test "$cross_compiling" == "yes"; then
+    PYTHON_LIBDIR=$(readlink -f $(winepath -u $PYTHON_LIBDIR))
+  fi
+  if test -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
+    PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
+  elif test -d $PYTHON_LIBDIR/site-packages/numpy/core/include; then
+    PYTHON_LIBDIR=$PYTHON_LIBDIR
+  else
+    AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include or $PYTHON_LIBDIR/site-packages/numpy/core/include])
+  fi
   AC_SUBST([PYTHON_LIBDIR])
 
   AC_PATH_PROG([swig],[swig],[no],[${swigpath:-$PATH}])
@@ -140,9 +155,6 @@ if test "x$enable_python" == "xyes"; then
   else
     AC_MSG_ERROR([SWIG not found])
   fi
-
-  PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
-  AC_SUBST([PYTHON_BIN])
 fi
 
 dnl XML

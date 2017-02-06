@@ -22,9 +22,9 @@ def killCrashedProcess(name, timedelta):
   except:
     pass
 
-killCrashedProcess("linux64-dailydebug.py", datetime.timedelta(hours=5))
-killCrashedProcess("linux64-dailyrelease.py", datetime.timedelta(hours=5))
-killCrashedProcess("win64-dailyrelease.sh", datetime.timedelta(hours=5))
+killCrashedProcess("linux64-dailydebug.py", datetime.timedelta(hours=9))
+killCrashedProcess("linux64-dailyrelease.py", datetime.timedelta(hours=3))
+killCrashedProcess("win64-dailyrelease.sh", datetime.timedelta(hours=3))
 
 killCrashedProcess("linux64-ci.py", datetime.timedelta(hours=2))
 

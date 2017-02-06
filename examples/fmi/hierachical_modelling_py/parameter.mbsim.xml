@@ -1,0 +1,34 @@
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <vectorParameter name="rHG">[0,2]</vectorParameter>
+  <import>import math</import>
+  <vectorParameter name="alphaHG">
+    <xmlVector>
+      <ele>0</ele>
+      <ele>math.pi/4</ele>
+    </xmlVector>
+  </vectorParameter>
+  <scalarParameter name="m1">5</scalarParameter>
+  <scalarParameter name="m">m1</scalarParameter>
+  <scalarParameter name="h">0.8</scalarParameter>
+  <import>from math import pi</import>
+  <scalarParameter name="alphaUG">pi/4</scalarParameter>
+  <scalarParameter name="m2">2</scalarParameter>
+  <scalarParameter name="c1">1e3</scalarParameter>
+  <scalarParameter name="c2">1e2</scalarParameter>
+  <scalarParameter name="d1">0</scalarParameter>
+  <scalarParameter name="d2">0</scalarParameter>
+  <scalarParameter name="l01">0.5</scalarParameter>
+  <scalarParameter name="l02">l01</scalarParameter>
+  <matrixParameter name="identHalf">
+    <xmlMatrix>
+      <row><ele>0.5</ele><ele>0</ele><ele>0</ele></row>
+      <row><ele>0</ele><ele>a=1;ret=a/2</ele><ele>0</ele></row>
+      <row><ele>0</ele><ele>0</ele><ele>m2/4</ele></row>
+    </xmlMatrix>
+  </matrixParameter>
+  <stringParameter name="grav">'gravity.txt'</stringParameter>
+  <stringParameter name="plotSubType">u'Derivative'</stringParameter>
+  <scalarParameter name="plotSubTypeEnabled">True</scalarParameter>
+  <stringParameter name="pathPrefix">'py'</stringParameter>
+  <stringParameter name="ivdir">'iv'</stringParameter>
+</Parameter>

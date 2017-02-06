@@ -13,6 +13,23 @@
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <timeDependentTranslation>
               <SymbolicFunction arg1="t">
+                % some dummy tests
+                x=tilde([1;2;3]);
+                x=tilde([0,2,3;-2,0,6;-3,-6,0]);
+                x=euler(0.1,0.2,0.3);
+                x=euler([0.1;0.2;0.3]);
+                x=cardan(0.1,0.2,0.3)
+                x=cardan([0.1;0.2;0.3]);
+                x=rotateAboutX(0.3);
+                % some dummy casadi tests
+                x=tilde(casadi.SX.sym('x',3,1));
+                x=tilde(casadi.SX.sym('T',3,3));
+                x=euler(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1));
+                x=euler(casadi.SX.sym('x',3,1));
+                x=cardan(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1));
+                x=cardan(casadi.SX.sym('x',3,1));
+                x=rotateAboutX(casadi.SX.sym('x',1,1));
+
                 % Test the access to the (locally) casadi object
                 half=casadi.DM.zeros(1, 1);
                 half(1)=2;

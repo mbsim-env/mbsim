@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <position>[0,0,0]</position><!-- dummy -->
+  <orientation>identHalf*2</orientation><!-- dummy -->
+  <frames/>
+  <contours/>
+  <groups>
+    <pv:Embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
+  </groups>
+  <objects/>
+  <links/>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity><pv:fromFile href="{grav}"/></accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>

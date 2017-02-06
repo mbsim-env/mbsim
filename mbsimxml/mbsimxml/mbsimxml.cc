@@ -18,20 +18,32 @@ using namespace xercesc;
   using namespace PythonCpp;
 #endif
 
-namespace MBSim {
+namespace {
 
-set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
 #if MBSIMXML_COND_PYTHON
+void initPython() {
+  static bool isInitialized=false;
+  if(isInitialized)
+    return;
+
   boost::filesystem::path home;
-  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR))
+  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR/"site-packages"))
     home=getInstallPath();
   initializePython((getInstallPath()/"bin"/"mbsimxml").string(), home.string());
   PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
   // add bin to python search path
   PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
   CALLPY(PyList_Append, pyPath, pyBinPath);
+  
+  isInitialized=true;
+}
 #endif
 
+}
+
+namespace MBSim {
+
+set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
   bfs::path MBXMLUTILSSCHEMA=getInstallPath()/"share"/"mbxmlutils"/"schema";
   set<bfs::path> schemas {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
@@ -73,9 +85,11 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
           if(E(e)->getTagName()==MBSIMMODULE%"PythonGenerated") {
             string moduleName=E(e)->getAttribute("moduleName");
 #if MBSIMXML_COND_PYTHON
+            initPython();
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
               // add python path
+              PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
               PyO pyBinPath(CALLPY(PyUnicode_FromString, location.string()));
               CALLPY(PyList_Append, pyPath, pyBinPath);
             }
@@ -88,10 +102,10 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
               // write to file
               PyO pyET(CALLPY(PyImport_ImportModule, "xml.etree.cElementTree"));
               PyO pyET_(CALLPY(PyObject_GetAttrString, pyET, "ElementTree"));
-              PyO pyTree(CALLPY(PyObject_CallObject, pyET_, Py_BuildValue("(O)", pySchema.get())));
+              PyO pyTree(CALLPY(PyObject_CallObject, pyET_, Py_BuildValue_("(O)", pySchema.get())));
               PyO pyWrite(CALLPY(PyObject_GetAttrString, pyTree, "write"));
               bfs::path xsdFile=bfs::current_path()/(".mbsimmodule.python."+moduleName+".xsd");
-              CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
+              CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue_("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
               schemas.insert(xsdFile);
             }
 #else
