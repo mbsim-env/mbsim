@@ -66,9 +66,9 @@ namespace MBSimGUI {
 
   DOMElement* FrameLink::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Link::writeXMLFile(parent);
-    connections.writeXMLFile(ele0);
     forceArrow.writeXMLFile(ele0);
     momentArrow.writeXMLFile(ele0);
+    connections.writeXMLFile(ele0);
     return ele0;
   }
 
