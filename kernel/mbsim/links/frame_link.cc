@@ -46,6 +46,8 @@ namespace MBSim {
     else if(stage==unknownStage) {
       MechanicalLink::init(stage);
 
+      K = frame[1];
+
       if(frame[0]==NULL or frame[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");
     }
@@ -109,7 +111,6 @@ namespace MBSim {
   void FrameLink::connect(Frame *frame0, Frame* frame1) {
     frame[0] = frame0;
     frame[1] = frame1;
-    K = frame1;
   }
 
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2016 MBSim Development Team
  * 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -33,56 +33,12 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  ContourLink::ContourLink(const std::string &name) : Link(name), contour(2), cFrame(2), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updR(true) {
+  ContourLink::ContourLink(const std::string &name) : MechanicalLink(name), contour(2), cFrame(2), updPos(true), updVel(true), updDF(true) {
   }
 
   ContourLink::~ContourLink() {
     delete cFrame[0];
     delete cFrame[1];
-  }
-
-  void ContourLink::updatedhdz() {
-    THROW_MBSIMERROR("Internal error");
-  }
-
-  void ContourLink::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(openMBVArrowF) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=cFrame[1]->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WF = evalForce();
-        data.push_back(WF(0));
-        data.push_back(WF(1));
-        data.push_back(WF(2));
-        data.push_back(nrm2(WF));
-        openMBVArrowF->append(data);
-      }
-      if(openMBVArrowM) {
-        vector<double> data;
-        data.push_back(getTime());
-        Vec3 toPoint=cFrame[1]->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
-        Vec3 WM = evalMoment();
-        data.push_back(WM(0));
-        data.push_back(WM(1));
-        data.push_back(WM(2));
-        data.push_back(nrm2(WM));
-        openMBVArrowM->append(data);
-      }
-      Link::plot();
-    }
-  }
-
-  void ContourLink::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Link::closePlot();
-    }
   }
 
   void ContourLink::updateWRef(const Mat& WParent, int j) {
@@ -131,16 +87,6 @@ namespace MBSim {
     }
   } 
 
-  void ContourLink::updateh(int j) {
-//    h[j][0] -= cpData[0].getFrameOfReference().evalJacobianOfTranslation(j).T() * getSingleValuedForce(t);
-//    h[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * getSingleValuedForce(t);
-  }
-
-  void ContourLink::updateW(int j) {
-//    W[j][0] -= cpData[0].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(RangeV(0,2),RangeV(0,laSize-1));
-//    W[j][1] += cpData[1].getFrameOfReference().evalJacobianOfTranslation(j).T() * evalRF()(RangeV(0,2),RangeV(0,laSize-1));
-  }
-
   void ContourLink::updateForceDirections() {
     DF.set(0,cFrame[0]->evalOrientation().col(0));
     if (DF.cols()>1) {
@@ -148,33 +94,29 @@ namespace MBSim {
       if (DF.cols()>2)
         DF.set(2, cFrame[0]->getOrientation().col(2));
     }
-    updFD = false;
+    updDF = false;
   }
 
   void ContourLink::updateForce() {
-    F = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
+    F[1] = evalGlobalForceDirection()*evalGeneralizedForce()(iF);
+    F[0] = -F[1];
     updF = false;
   }
 
   void ContourLink::updateMoment() {
-    M = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
+    M[1] = evalGlobalMomentDirection()*evalGeneralizedForce()(iM);
+    M[0] = -M[1];
     updM = false;
   }
 
-//  void ContourLink::updateR() {
-//    RF.set(RangeV(0,2), RangeV(iF), evalGlobalForceDirection());
-//    RM.set(RangeV(0,2), RangeV(iM), evalGlobalMomentDirection());
-//    updR = false;
-//  }
-
   void ContourLink::init(InitStage stage) {
-    if (stage == resolveXMLPath) {
-      if (saved_ref1 != "" && saved_ref2 != "")
+    if(stage == resolveXMLPath) {
+      if(saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
-      ContourLink::init(stage);
+      MechanicalLink::init(stage);
     }
     else if(stage==preInit) {
-      Link::init(stage);
+      MechanicalLink::init(stage);
 
       cFrame[0] = contour[0]->createContourFrame("P0");
       cFrame[1] = contour[1]->createContourFrame("P1");
@@ -182,7 +124,7 @@ namespace MBSim {
       cFrame[1]->setParent(this);
     }
     else if(stage==resize) {
-      Link::init(stage);
+      MechanicalLink::init(stage);
 
       cFrame[0]->sethSize(contour[0]->gethSize(0), 0);
       cFrame[0]->sethSize(contour[0]->gethSize(1), 1);
@@ -190,7 +132,9 @@ namespace MBSim {
       cFrame[1]->sethSize(contour[1]->gethSize(1), 1);
      }
     else if(stage==unknownStage) {
-      Link::init(stage);
+      MechanicalLink::init(stage);
+
+      K = cFrame[1];
 
       if(contour[0]==NULL or contour[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");
@@ -206,60 +150,31 @@ namespace MBSim {
         r[1].push_back(Vec(0,NONINIT));
       }
     }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
-        openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVForceGrp->setExpand(false);
-        openMBVForceGrp->setName(name+"_ArrowGroup");
-        parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
-        if(openMBVArrowF) {
-          openMBVArrowF->setName("Force");
-          openMBVForceGrp->addObject(openMBVArrowF);
-        }
-        if(openMBVArrowM) {
-          openMBVArrowM->setName("Moment");
-          openMBVForceGrp->addObject(openMBVArrowM);
-        }
-        Link::init(stage);
-      }
-    }
     else
-      Link::init(stage);
+      MechanicalLink::init(stage);
   }
 
   void ContourLink::resetUpToDate() {
-    Link::resetUpToDate();
+    MechanicalLink::resetUpToDate();
     updPos = true;
     updVel = true;
-    updFD = true;
-    updF = true;
-    updM = true;
-    updR = true;
+    updDF = true;
     cFrame[0]->resetUpToDate();
     cFrame[1]->resetUpToDate();
   }
 
   void ContourLink::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     DOMElement *e;
     //Save contour names for initialization
     e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1 = E(e)->getAttribute("ref1");
     saved_ref2 = E(e)->getAttribute("ref2");
+  }
 
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toHead, OpenMBV::Arrow::toPoint, 1, 1);
-      setOpenMBVForce(ombv.createOpenMBV(e));
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]", 0, OpenMBV::Arrow::toDoubleHead, OpenMBV::Arrow::toPoint, 1, 1);
-      setOpenMBVMoment(ombv.createOpenMBV(e));
-    }
+  void ContourLink::connect(Contour *contour0, Contour* contour1) {
+    contour[0] = contour0;
+    contour[1] = contour1;
   }
 
 }
