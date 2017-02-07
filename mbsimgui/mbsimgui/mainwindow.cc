@@ -48,9 +48,6 @@
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
-#ifdef WIN32
-# define putenv _putenv
-#endif
 #include "function_properties.h"
 
 using namespace std;
@@ -73,7 +70,8 @@ namespace MBSimGUI {
 
   MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0), autoSave(true), autoExport(false), saveFinalStateVector(false), autoSaveInterval(5), autoExportDir("./"), debug(true), evalSelect(0,false) {
     // use html output of MBXMLUtils
-    putenv(const_cast<char*>("MBXMLUTILS_HTMLOUTPUT=1"));
+    static string HTMLOUTPUT="MBXMLUTILS_HTMLOUTPUT=1";
+    putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
 
     evalSelect.setProperty(new TextProperty("octave", PV%"evaluator", false));
     

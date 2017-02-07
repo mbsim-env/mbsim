@@ -42,6 +42,25 @@ boost::filesystem::path fullLibName(const string &base) {
   const string libDir="bin";
 #endif
 
+#if MBSIMXML_COND_PYTHON
+void initPython() {
+  static bool isInitialized=false;
+  if(isInitialized)
+    return;
+
+  boost::filesystem::path home;
+  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR/"site-packages"))
+    home=getInstallPath();
+  initializePython((getInstallPath()/"bin"/"mbsimflatxml").string(), home.string());
+  PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
+  // add bin to python search path
+  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
+  CALLPY(PyList_Append, pyPath, pyBinPath);
+  
+  isInitialized=true;
+}
+#endif
+
 }
 
 namespace MBSim {
@@ -50,17 +69,6 @@ namespace MBSim {
 // If a module (shared library) is already loaded but the file has a newer last write time than the
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
-#if MBSIMXML_COND_PYTHON
-  boost::filesystem::path home;
-  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR))
-    home=getInstallPath();
-  initializePython((getInstallPath()/"bin"/"mbsimflatxml").string(), home.string());
-  PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
-  // add bin to python search path
-  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
-  CALLPY(PyList_Append, pyPath, pyBinPath);
-#endif
-
   static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   static const boost::filesystem::path installDir(getInstallPath());
   // note: we do not validate the module xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
@@ -102,9 +110,11 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
           if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
             string moduleName=E(e)->getAttribute("moduleName");
 #if MBSIMXML_COND_PYTHON
+            initPython();
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
               // add python path
+              PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
               PyO pyBinPath(CALLPY(PyUnicode_FromString, location.string()));
               CALLPY(PyList_Append, pyPath, pyBinPath);
             }

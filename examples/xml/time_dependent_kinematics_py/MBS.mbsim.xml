@@ -13,12 +13,36 @@
             <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
             <timeDependentTranslation>
               <SymbolicFunction arg1="t"># Test the access to the (locally) casadi object
-half=casadi.DM.zeros(1, 1)
-half[0]=2
-ret=casadi.SX(3,1)
-ret[0]=casadi.sin(freq1*t + pi/half)
-ret[1]=v0y*t
-ret[2]=0
+                import mbxmlutils
+                import numpy
+                # some dummy tests
+                x=mbxmlutils.tilde([1,2,3])
+                x=mbxmlutils.tilde([[0,2,3],[-2,0,6],[-3,-6,0]])
+                x=mbxmlutils.euler(0.1,0.2,0.3)
+                x=mbxmlutils.euler([0.1,0.2,0.3])
+                x=mbxmlutils.cardan(0.1,0.2,0.3)
+                x=mbxmlutils.cardan([0.1,0.2,0.3])
+                x=mbxmlutils.rotateAboutX(0.3)
+                # some dummy numpy tests
+                x=mbxmlutils.tilde(numpy.array([1,2,3]))
+                x=mbxmlutils.tilde(numpy.array([[0,2,3],[-2,0,6],[-3,-6,0]]))
+                x=mbxmlutils.euler(numpy.array([0.1,0.2,0.3]))
+                x=mbxmlutils.cardan(numpy.array([0.1,0.2,0.3]))
+                # some dummy casadi tests
+                x=mbxmlutils.tilde(casadi.SX.sym('x',3,1))
+                x=mbxmlutils.tilde(casadi.SX.sym('T',3,3))
+                x=mbxmlutils.euler(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1))
+                x=mbxmlutils.euler(casadi.SX.sym('x',3,1))
+                x=mbxmlutils.cardan(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1))
+                x=mbxmlutils.cardan(casadi.SX.sym('x',3,1))
+                x=mbxmlutils.rotateAboutX(casadi.SX.sym('x',1,1))
+
+                half=casadi.DM.zeros(1, 1)
+                half[0]=2
+                ret=casadi.SX(3,1)
+                ret[0]=casadi.sin(freq1*t + pi/half)
+                ret[1]=v0y*t
+                ret[2]=0
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>

@@ -5,5 +5,5 @@
 all-local:
 	@test -z "$(MBSIM_SWIG)" -a -z "$$(cat MBSIM_SWIG.last 2> /dev/null)" -o \
 	  -n "$(MBSIM_SWIG)" -a -n "$$(cat MBSIM_SWIG.last 2> /dev/null)" || \
-	  rm -f ../fmatvec_swig_python.cc ../mbsim_swig_python.cc ../check/mymod_swig_python.cc
+	  rm -f $(SWIGFILES) ../check/mymod_swig_python.cc
 	@echo "$(MBSIM_SWIG)" > MBSIM_SWIG.last

@@ -86,7 +86,7 @@ if test "x$enable_python" == "xyes"; then
   if test "_$PYTHON_BIN" == "_"; then
     PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
   fi
-  PYTHON_SUBDIR=$($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])')
+  PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
   AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
 fi
 

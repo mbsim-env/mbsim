@@ -1,242 +1,21 @@
 // wrap MBSim with directors (and all protected class data)
 %module(directors="1", allprotected="1") mbsim
 
-// The following part is only used to generate a list of unwrapped classes.
-// When this is enabled swig will fail but output all classes with are unwrapped.
-%include "showUnwrappedClasses.i" 
-#ifdef SHOW_UNWRAPPED_CLASSES
-  // list here classes with should not be wrapped (these are remove from the list of unwrapped classes: make target "swig-unwrapped")
-  WRAPPED_CLASS(MBXMLUtils::FQN)
-  WRAPPED_CLASS(MBSim::Function<double(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DDRetDArg1DArg2)
-  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DDRetDDArg1)
-  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DDRetDDArg2)
-  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DRetDArg1)
-  WRAPPED_CLASS(MBSim::Function<double(double,double)>::DRetDArg2)
-  WRAPPED_CLASS(MBSim::Function<double(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDArg1DArg2)
-  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDDArg1)
-  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDDArg2)
-  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DRetDArg1)
-  WRAPPED_CLASS(MBSim::Function<double(fmatvec::Vector<fmatvec::Ref,double>,fmatvec::Vector<fmatvec::Ref,double>)>::DRetDArg2)
-  WRAPPED_CLASS(MBSim::Function<double(int)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<double(int)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,double>(fmatvec::VecV)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,double>(fmatvec::VecV)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDArg1DArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Rotation,fmatvec::Fixed<3>,fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Symmetric,fmatvec::Var,fmatvec::Var,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Matrix<fmatvec::Symmetric,fmatvec::Var,fmatvec::Var,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Ref,double>(fmatvec::Vec)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Ref,double>(fmatvec::Vec)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Var,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::SquareMatrix<fmatvec::Var,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<1>,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<1>,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<2>,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<2>,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::Vec2)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::Vec2)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDArg1DArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DDRetDDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV,double)>::DRetDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Fixed<3>,double>(fmatvec::VecV)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DDRetDArg1DArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DDRetDDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DDRetDDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DRetDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec,double)>::DRetDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Ref,double>(fmatvec::Vec)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(double)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(double)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DDRetDArg1DArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DDRetDDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DDRetDDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DRetDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,double)>::DRetDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DDRetDArg1DArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DDRetDDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DDRetDDArg2)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DRetDArg1)
-  WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DRetDArg2)
-  WRAPPED_CLASS(MBSim::Function<int(fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDDArg)
-  WRAPPED_CLASS(MBSim::Function<int(fmatvec::Vector<fmatvec::Ref,double>)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::DistanceFunction<double(double)>)
-  WRAPPED_CLASS(H5::GroupBase)
-  WRAPPED_CLASS(H5::VectorSerie<double>)
-  WRAPPED_CLASS(std::ostream)
-#endif
-
-
-// BEGIN: The following code block is special to MBSim kernel this is not required by any .i file for a MBSim module
 
 // include the general mbsim SWIG configuration (used by all MBSim modules)
-%include "mbsim_include.i"
 %import fmatvec.i
-
-%typemap(directorin) xercesc::DOMElement* %{
-  MapPyXercesDOMElement mapPyXercesDOMElement$argnum;
-  _typemapDirectorinDOMElement($1, $input, mapPyXercesDOMElement$argnum);
-%}
-
-%typemap(in) xercesc::DOMElement* {
-  try {
-    _typemapInDOMElement($1, $input);
-  }
-  FMATVEC_CATCHARG
-}
-
-// create directors for everything
-%feature("director");
-
-// END: The following code block is special to MBSim kernel this is not required by any .i file for a MBSim module
+%include "mbsim_include.i"
 
 // includes needed in the generated swig c++ code
 %{
-#include <config.h> // to use consistent preprocessor defines
-#include "mbsim/links/frame_link.h"
-#include "mbsim/frames/frame.h"
-#include "mbsim/frames/contour_frame.h"
-#include "mbsim/frames/fixed_contour_frame.h"
-#include "mbsim/frames/floating_contour_frame.h"
-#include "mbsim/frames/floating_relative_contour_frame.h"
-#include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsim/frames/floating_relative_frame.h"
-#include "mbsim/environment.h"
-#include "mbsim/observers/cartesian_coordinates_observer.h"
-#include "mbsim/observers/cylinder_coordinates_observer.h"
-#include "mbsim/observers/natural_coordinates_observer.h"
-#include "mbsim/observers/absolute_kinematics_observer.h"
-#include "mbsim/observers/relative_kinematics_observer.h"
-#include "mbsim/observers/rigid_body_group_observer.h"
-#include "mbsim/objects/rigid_body.h"
-#include "mbsim/links/contact.h"
-#include "mbsim/links/contour_link.h"
-#include "mbsim/links/floating_frame_link.h"
-#include "mbsim/links/directional_spring_damper.h"
-#include "mbsim/links/isotropic_rotational_spring_damper.h"
-#include "mbsim/links/joint.h"
-#include "mbsim/links/kinetic_excitation.h"
-#include "mbsim/links/frame_link.h"
-#include "mbsim/links/spring_damper.h"
-#include "mbsim/links/rigid_body_link.h"
-#include "mbsim/links/generalized_friction.h"
-#include "mbsim/links/generalized_spring_damper.h"
-#include "mbsim/links/generalized_acceleration_excitation.h"
-#include "mbsim/links/generalized_position_excitation.h"
-#include "mbsim/links/generalized_velocity_excitation.h"
-#include "mbsim/constraints/joint_constraint.h"
-#include "mbsim/constraints/generalized_acceleration_constraint.h"
-#include "mbsim/constraints/generalized_position_constraint.h"
-#include "mbsim/constraints/generalized_velocitiy_constraint.h"
-#include "mbsim/contours/contour_interpolation.h"
-#include "mbsim/contours/contour_quad.h"
-#include "mbsim/contours/rigid_contour.h"
-#include "mbsim/contours/circle.h"
-#include "mbsim/contours/compound_contour.h"
-#include "mbsim/contours/cuboid.h"
-#include "mbsim/contours/room.h"
-#include "mbsim/contours/edge.h"
-#include "mbsim/contours/frustum.h"
-#include "mbsim/contours/line.h"
-#include "mbsim/contours/line_segment.h"
-#include "mbsim/contours/planar_contour.h"
-#include "mbsim/contours/planar_frustum.h"
-#include "mbsim/contours/plane.h"
-#include "mbsim/contours/plate.h"
-#include "mbsim/contours/planewithfrustum.h"
-#include "mbsim/contours/point.h"
-#include "mbsim/contours/polynomial_frustum.h"
-#include "mbsim/contours/spatial_contour.h"
-#include "mbsim/contours/sphere.h"
-#include "mbsim/dynamic_system.h"
-#include "mbsim/graph.h"
-#include "mbsim/group.h"
-#include "mbsim/dynamic_system_solver.h"
-#include "mbsim/constitutive_laws/friction_force_law.h"
-#include "mbsim/constitutive_laws/planar_coulomb_friction.h"
-#include "mbsim/constitutive_laws/planar_stribeck_friction.h"
-#include "mbsim/constitutive_laws/regularized_planar_friction.h"
-#include "mbsim/constitutive_laws/regularized_spatial_friction.h"
-#include "mbsim/constitutive_laws/spatial_coulomb_friction.h"
-#include "mbsim/constitutive_laws/spatial_stribeck_friction.h"
-#include "mbsim/constitutive_laws/friction_impact_law.h"
-#include "mbsim/constitutive_laws/planar_coulomb_impact.h"
-#include "mbsim/constitutive_laws/planar_stribeck_impact.h"
-#include "mbsim/constitutive_laws/spatial_coulomb_impact.h"
-#include "mbsim/constitutive_laws/spatial_stribeck_impact.h"
-#include "mbsim/constitutive_laws/generalized_force_law.h"
-#include "mbsim/constitutive_laws/bilateral_constraint.h"
-#include "mbsim/constitutive_laws/regularized_bilateral_constraint.h"
-#include "mbsim/constitutive_laws/regularized_unilateral_constraint.h"
-#include "mbsim/constitutive_laws/unilateral_constraint.h"
-#include "mbsim/constitutive_laws/generalized_impact_law.h"
-#include "mbsim/constitutive_laws/bilateral_impact.h"
-#include "mbsim/constitutive_laws/unilateral_newton_impact.h"
-#include "mbsim/contact_kinematics/contact_kinematics.h"
-#include "mbsim/contact_kinematics/circle_circle.h"
-#include "mbsim/contact_kinematics/circle_extrusion.h"
-#include "mbsim/contact_kinematics/circle_frustum.h"
-#include "mbsim/contact_kinematics/circle_line.h"
-#include "mbsim/contact_kinematics/circle_linesegment.h"
-#include "mbsim/contact_kinematics/circle_planarcontour.h"
-#include "mbsim/contact_kinematics/circle_planarfrustum.h"
-#include "mbsim/contact_kinematics/circle_plane.h"
-#include "mbsim/contact_kinematics/compoundcontour_compoundcontour.h"
-#include "mbsim/contact_kinematics/compoundcontour_contour.h"
-#include "mbsim/contact_kinematics/edge_edge.h"
-#include "mbsim/contact_kinematics/line_planarcontour.h"
-#include "mbsim/contact_kinematics/plate_polynomialfrustum.h"
-#include "mbsim/contact_kinematics/point_circle.h"
-#include "mbsim/contact_kinematics/point_contourinterpolation.h"
-#include "mbsim/contact_kinematics/point_extrusion.h"
-#include "mbsim/contact_kinematics/point_frustum.h"
-#include "mbsim/contact_kinematics/point_line.h"
-#include "mbsim/contact_kinematics/point_linesegment.h"
-#include "mbsim/contact_kinematics/point_planarcontour.h"
-#include "mbsim/contact_kinematics/point_plane.h"
-#include "mbsim/contact_kinematics/point_planewithfrustum.h"
-#include "mbsim/contact_kinematics/point_plate.h"
-#include "mbsim/contact_kinematics/point_polynomialfrustum.h"
-#include "mbsim/contact_kinematics/point_spatialcontour.h"
-#include "mbsim/contact_kinematics/point_sphere.h"
-#include "mbsim/contact_kinematics/sphere_frustum.h"
-#include "mbsim/contact_kinematics/sphere_plane.h"
-#include "mbsim/contact_kinematics/sphere_plate.h"
-#include "mbsim/contact_kinematics/sphere_polynomialfrustum.h"
-#include "mbsim/contact_kinematics/sphere_sphere.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_point.h"
-#include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
 #include "mbsim/numerics/functions/newton_method_jacobian_functions.h"
 #include "mbsim/numerics/functions/damping_functions.h"
-#include "mbsim/modelling_interface.h"
-#include "mbsim/utils/colors.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
 using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
 
-%include "std_pair.i"
-%include "std_map.i"
-
 // wrap some std::vector<...> types used by the above wrapped classes
-%ignore swigignore;
 %template(VectorElement) std::vector<MBSim::Element*>;
 %template(VectorString)  std::vector<std::string>;
 //MFMF%template(VectorMat)     std::vector<fmatvec::Mat>;
@@ -349,137 +128,9 @@ FUNCTION2(fmatvec::Vec    , fmatvec::Vec , double       ,   Vec_Vec_d)
 FUNCTION2(fmatvec::VecV   , fmatvec::VecV, double       ,   VecV_VecV_d)
 FUNCTION2(fmatvec::VecV   , fmatvec::VecV, fmatvec::VecV,   VecV_VecV_VecV)
 
-
-
 // wrap the following classes
-%rename(lambda_) MBSim::Link::lambda; // lambda is a python keyword -> rename it to lambda_
-%include "mbsim/links/link.h"
-%include "mbsim/links/frame_link.h"
-%include "mbsim/frames/frame.h"
-%include "mbsim/frames/contour_frame.h"
-%include "mbsim/frames/fixed_contour_frame.h"
-%include "mbsim/frames/floating_contour_frame.h"
-%include "mbsim/frames/floating_relative_contour_frame.h"
-%include "mbsim/frames/fixed_relative_frame.h"
-%include "mbsim/frames/floating_relative_frame.h"
-%include "mbsim/environment.h"
-%include "mbsim/observers/observer.h"
-%include "mbsim/observers/coordinates_observer.h"
-%include "mbsim/observers/cartesian_coordinates_observer.h"
-%include "mbsim/observers/cylinder_coordinates_observer.h"
-%include "mbsim/observers/natural_coordinates_observer.h"
-%include "mbsim/observers/kinematics_observer.h"
-%include "mbsim/observers/absolute_kinematics_observer.h"
-%include "mbsim/observers/relative_kinematics_observer.h"
-%include "mbsim/observers/rigid_body_group_observer.h"
-%include "mbsim/objects/object.h"
-%include "mbsim/objects/body.h"
-%include "mbsim/objects/rigid_body.h"
-%include "mbsim/links/link.h"
-%include "mbsim/links/contact.h"
-%include "mbsim/links/contour_link.h"
-%include "mbsim/links/floating_frame_link.h"
-%include "mbsim/links/directional_spring_damper.h"
-%include "mbsim/links/isotropic_rotational_spring_damper.h"
-%include "mbsim/links/joint.h"
-%include "mbsim/links/kinetic_excitation.h"
-%include "mbsim/links/frame_link.h"
-%include "mbsim/links/spring_damper.h"
-%include "mbsim/links/rigid_body_link.h"
-%include "mbsim/links/dual_rigid_body_link.h"
-%include "mbsim/links/generalized_friction.h"
-%include "mbsim/links/generalized_spring_damper.h"
-%include "mbsim/links/generalized_kinematic_excitation.h"
-%include "mbsim/links/generalized_acceleration_excitation.h"
-%include "mbsim/links/generalized_position_excitation.h"
-%include "mbsim/links/generalized_velocity_excitation.h"
-%include "mbsim/constraints/constraint.h"
-%include "mbsim/constraints/generalized_constraint.h"
-%include "mbsim/constraints/joint_constraint.h"
-%include "mbsim/constraints/generalized_dual_constraint.h"
-%include "mbsim/constraints/generalized_acceleration_constraint.h"
-%include "mbsim/constraints/generalized_position_constraint.h"
-%include "mbsim/constraints/generalized_velocitiy_constraint.h"
-%include "mbsim/contours/contour.h"
-%include "mbsim/contours/contour_interpolation.h"
-%include "mbsim/contours/contour_quad.h"
-%include "mbsim/contours/rigid_contour.h"
-%include "mbsim/contours/circle.h"
-%include "mbsim/contours/compound_contour.h"
-%include "mbsim/contours/cuboid.h"
-%include "mbsim/contours/room.h"
-%include "mbsim/contours/edge.h"
-%include "mbsim/contours/frustum.h"
-%include "mbsim/contours/line.h"
-%include "mbsim/contours/line_segment.h"
-%include "mbsim/contours/planar_contour.h"
-%include "mbsim/contours/planar_frustum.h"
-%include "mbsim/contours/plane.h"
-%include "mbsim/contours/plate.h"
-%include "mbsim/contours/planewithfrustum.h"
-%include "mbsim/contours/point.h"
-%include "mbsim/contours/polynomial_frustum.h"
-%include "mbsim/contours/spatial_contour.h"
-%include "mbsim/contours/sphere.h"
-%include "mbsim/dynamic_system.h"
-%include "mbsim/graph.h"
-%include "mbsim/group.h"
-%rename(global_) MBSim::DynamicSystemSolver::global; // global is a python keyword -> rename it to global_
-%include "mbsim/dynamic_system_solver.h"
-%include "mbsim/constitutive_laws/friction_force_law.h"
-%include "mbsim/constitutive_laws/planar_coulomb_friction.h"
-%include "mbsim/constitutive_laws/planar_stribeck_friction.h"
-%include "mbsim/constitutive_laws/regularized_planar_friction.h"
-%include "mbsim/constitutive_laws/regularized_spatial_friction.h"
-%include "mbsim/constitutive_laws/spatial_coulomb_friction.h"
-%include "mbsim/constitutive_laws/spatial_stribeck_friction.h"
-%include "mbsim/constitutive_laws/friction_impact_law.h"
-%include "mbsim/constitutive_laws/planar_coulomb_impact.h"
-%include "mbsim/constitutive_laws/planar_stribeck_impact.h"
-%include "mbsim/constitutive_laws/spatial_coulomb_impact.h"
-%include "mbsim/constitutive_laws/spatial_stribeck_impact.h"
-%include "mbsim/constitutive_laws/generalized_force_law.h"
-%include "mbsim/constitutive_laws/bilateral_constraint.h"
-%include "mbsim/constitutive_laws/regularized_bilateral_constraint.h"
-%include "mbsim/constitutive_laws/regularized_unilateral_constraint.h"
-%include "mbsim/constitutive_laws/unilateral_constraint.h"
-%include "mbsim/constitutive_laws/generalized_impact_law.h"
-%include "mbsim/constitutive_laws/bilateral_impact.h"
-%include "mbsim/constitutive_laws/unilateral_newton_impact.h"
-%include "mbsim/contact_kinematics/contact_kinematics.h"
-%include "mbsim/contact_kinematics/circle_circle.h"
-%include "mbsim/contact_kinematics/circle_extrusion.h"
-%include "mbsim/contact_kinematics/circle_frustum.h"
-%include "mbsim/contact_kinematics/circle_line.h"
-%include "mbsim/contact_kinematics/circle_linesegment.h"
-%include "mbsim/contact_kinematics/circle_planarcontour.h"
-%include "mbsim/contact_kinematics/circle_planarfrustum.h"
-%include "mbsim/contact_kinematics/circle_plane.h"
-%include "mbsim/contact_kinematics/compoundcontour_compoundcontour.h"
-%include "mbsim/contact_kinematics/compoundcontour_contour.h"
-%include "mbsim/contact_kinematics/edge_edge.h"
-%include "mbsim/contact_kinematics/line_planarcontour.h"
 %include "mbsim/numerics/functions/criteria_functions.h"
-%include "mbsim/contact_kinematics/plate_polynomialfrustum.h"
-%include "mbsim/contact_kinematics/point_circle.h"
-%include "mbsim/contact_kinematics/point_contourinterpolation.h"
-%include "mbsim/contact_kinematics/point_extrusion.h"
-%include "mbsim/contact_kinematics/point_frustum.h"
-%include "mbsim/contact_kinematics/point_line.h"
-%include "mbsim/contact_kinematics/point_linesegment.h"
-%include "mbsim/contact_kinematics/point_planarcontour.h"
-%include "mbsim/contact_kinematics/point_plane.h"
-%include "mbsim/contact_kinematics/point_planewithfrustum.h"
-%include "mbsim/contact_kinematics/point_plate.h"
 %include "mbsim/numerics/functions/newton_method_jacobian_functions.h"
-%include "mbsim/contact_kinematics/point_polynomialfrustum.h"
-%include "mbsim/contact_kinematics/point_spatialcontour.h"
-%include "mbsim/contact_kinematics/point_sphere.h"
-%include "mbsim/contact_kinematics/sphere_frustum.h"
-%include "mbsim/contact_kinematics/sphere_plane.h"
-%include "mbsim/contact_kinematics/sphere_plate.h"
-%include "mbsim/contact_kinematics/sphere_polynomialfrustum.h"
-%include "mbsim/contact_kinematics/sphere_sphere.h"
 // mbsim/functions/contact/distance_function.h: SWIG cannot handle template partial specializations of the form MBSim::Function<double(int)>.
 %rename(DistanceFunction_d_d) MBSim::DistanceFunction<double(double)>;
 %rename(nrm2) MBSim::DistanceFunction<double(double)>::operator[];
@@ -489,43 +140,13 @@ class MBSim::DistanceFunction<double(double)> : public MBSim::Function<double(do
     virtual double operator[](const double& x);
     virtual fmatvec::Vec3 evalWrD(const double& x) = 0;
 };
-%include "mbsim/functions/contact/funcpair_planarcontour_point.h"
-%include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
 %include "mbsim/numerics/functions/damping_functions.h"
-%include "mbsim/modelling_interface.h"
-%include "mbsim/utils/colors.h"
-
+%include "mbsim/functions/contact/funcpair_planarcontour_point.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // The following code is special to MBSim kernel this is not required by any .i file for a MBSim module //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// disable warning 473
-#pragma SWIG nowarn=SWIGWARN_TYPEMAP_DIRECTOROUT_PTR
-
-%import openmbvcppinterface/OpenMBV.i
-
-
-// wrap python error to c++ exception
-%feature("director:except") %{
-  _directorExcept($error);
-%}
-
-// wrap c++ exception to python error
-%exception %{
-  try {
-    $action
-  }
-  catch(const std::exception &e) {
-    PyErr_SetString(PyExc_MemoryError, e.what());
-    SWIG_fail;
-  }
-  catch(...) {
-    PyErr_SetString(PyExc_MemoryError, "Unknown c++ exception");
-    SWIG_fail;
-  }
-%}
 
 // includes needed in the generated swig c++ code
 %{
@@ -540,6 +161,9 @@ class MBSim::DistanceFunction<double(double)> : public MBSim::Function<double(do
 %include "mbsim/objectfactory_part.h"
 
 
+
+// dummy wrap MBXMLUtils::FQN (just to create proper memory management; for object creation _FQN is used)
+namespace MBXMLUtils { class FQN {}; }
 
 %inline %{
 
@@ -574,6 +198,11 @@ std::string _getPyScriptProcessingInstruction(xercesc::DOMElement *e, const std:
 
 
 %pythoncode %{
+
+# initialization
+from _mbsim_part100 import *
+from _mbsim_part200 import *
+from _mbsim_part300 import *
 
 # internal helper class to register a director class in the MBSim::ObjectFactory
 class _AllocatePython(AllocateBase):
@@ -619,10 +248,18 @@ class _DeallocateSingletonPython(DeallocateBase):
   def __call__(self, e):
     pass
 
+# fix module name: convert _<name>_part[0-9] to <name> (this enables splitting of large modules)
+def _fixModuleName(moduleName):
+  import re
+  m=re.compile(r'^_([a-zA-Z0-9_]+)_part[0-9]+$').search(moduleName)
+  if m!=None:
+    return m.group(1)
+  return moduleName
+
 # get namespace of moudle moudleName (sourounded with { and } for the python moudle moduleName
 def _getNSOf(moduleName):
   import sys
-  ns=sys.modules[moduleName].NS
+  ns=sys.modules[_fixModuleName(moduleName)].NS
   return ns[1:-1]
 
 _moduleData={}
@@ -663,10 +300,11 @@ def _extendClass(className):
     ext.append(xsdpart)
   xsd=[xsd1, xsd2]
   global _moduleData
-  if not className.__module__ in _moduleData:
-    _moduleData[className.__module__]={'xsdElements': [], 'requiredModules': set()}
-  _moduleData[className.__module__]['xsdElements'].extend(xsd)
-  _moduleData[className.__module__]['requiredModules'].add(baseClassName.__module__)
+  moduleName=_fixModuleName(className.__module__)
+  if not moduleName in _moduleData:
+    _moduleData[moduleName]={'xsdElements': [], 'requiredModules': set()}
+  _moduleData[moduleName]['xsdElements'].extend(xsd)
+  _moduleData[moduleName]['requiredModules'].add(_fixModuleName(baseClassName.__module__))
 
 
 

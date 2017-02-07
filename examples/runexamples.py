@@ -126,7 +126,6 @@ debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
   help="disable the -j option and run always in a single process/thread")
 debugOpts.add_argument("--currentID", default=0, type=int, help="Internal option used in combination with build.py")
 debugOpts.add_argument("--timeID", default="", type=str, help="Internal option used in combination with build.py")
-debugOpts.add_argument("--enableAlphaPy", action="store_true", help="Also run MBS.mbsimprj.alpha_py.xml examples")
 debugOpts.add_argument("--buildSystemRun", default=None, type=str, help="Run in build system mode: generate build system state; The dir to the scripts of the build system must be passed.")
 
 # parse command line options
@@ -636,7 +635,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
   # make baseDir a relative path
   baseDir=os.path.relpath(baseDir)
   for root, dirs, _ in os.walk(baseDir):
-    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml")) or (args.enableAlphaPy and os.path.isfile(pj(root, "MBS.mbsimprj.alpha_py.xml")))
+    ppxml=os.path.isfile(pj(root, "MBS.mbsimprj.xml")) 
     flatxml=os.path.isfile(pj(root, "MBS.mbsimprj.flat.xml"))
     xml=ppxml or flatxml
     src=os.path.isfile(pj(root, "Makefile"))
@@ -657,6 +656,8 @@ def addExamplesByFilter(baseDir, directoriesSet):
     # check for MBSim modules in xml and flatxml examples
     else:
       for filedir, _, filenames in os.walk(root):
+        if "tmp_fmuCheck" in filedir.split('/') or "tmp_mbsimTestFMU" in filedir.split('/'): # skip temp fmu directories
+          continue
         for filename in fnmatch.filter(filenames, "*.xml"):
           if filename[0:4]==".pp.": continue # skip generated .pp.* files
           filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
@@ -880,7 +881,8 @@ def runExample(resultQueue, example):
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
-    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>'
+    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
+      %('<td>-</td>'*(5-sum([args.disableRun, args.disableCompare, args.disableValidate])))
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -950,7 +952,7 @@ def executeSrcExample(executeFD, example):
   elif os.name=="nt":
     NAME="PATH"
     SUBDIR="bin"
-  mainEnv=os.environ
+  mainEnv=os.environ.copy()
   libDir=pj(mbsimBinDir, os.pardir, SUBDIR)
   if NAME in mainEnv:
     mainEnv[NAME]=mainEnv[NAME]+os.pathsep+libDir
