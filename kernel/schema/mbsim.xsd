@@ -2145,7 +2145,7 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="Contact" substitutionGroup="Link" type="ContactType">
+  <xs:element name="Contact" substitutionGroup="MechanicalLink" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
@@ -2158,7 +2158,7 @@
   </xs:element>
   <xs:complexType name="ContactType">
     <xs:complexContent>
-      <xs:extension base="LinkType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="connect" maxOccurs="unbounded">
            <xs:annotation>
