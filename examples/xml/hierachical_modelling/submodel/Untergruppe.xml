@@ -118,10 +118,10 @@
   </objects>
   <links>
     <SpringDamper name="Feder1">
-      <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
       <enableOpenMBVForce>
         <scaleLength>0.005</scaleLength>
       </enableOpenMBVForce>
+      <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
       <forceFunction>
         <LinearSpringDamperForce>
           <stiffnessCoefficient>c1</stiffnessCoefficient>

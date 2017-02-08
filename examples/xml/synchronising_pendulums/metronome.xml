@@ -180,10 +180,10 @@
       </tangentialImpactLaw>
     </Contact>
     <KineticExcitation name="KineticExcitation" xmlns="http://www.mbsim-env.de/MBSim">
-      <connect ref2="../Object[Sphere]/Frame[C]"/>
       <enableOpenMBVForce>
         <scaleLength>1.</scaleLength>
       </enableOpenMBVForce>
+      <connect ref2="../Object[Sphere]/Frame[C]"/>
       <forceDirection>[0 1 0]'</forceDirection>
       <forceFunction>
         <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">

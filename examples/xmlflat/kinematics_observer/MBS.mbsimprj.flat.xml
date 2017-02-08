@@ -99,20 +99,20 @@
     </objects>
     <links>
       <Joint name="Gelenk1">
-        <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[PunktO]"/>
         <enableOpenMBVForce>
           <scaleLength>0.02</scaleLength>
         </enableOpenMBVForce>
+        <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[PunktO]"/>
         <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
         <forceLaw>
           <BilateralConstraint/>
         </forceLaw>
       </Joint>
       <Joint name="Gelenk2">
-        <connect ref1="../Object[Stab1]/Frame[PunktU]" ref2="../Object[Stab2]/Frame[Punkt]"/>
         <enableOpenMBVForce>
           <scaleLength>0.02</scaleLength>
         </enableOpenMBVForce>
+        <connect ref1="../Object[Stab1]/Frame[PunktU]" ref2="../Object[Stab2]/Frame[Punkt]"/>
         <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
         <forceLaw>
           <BilateralConstraint/>
