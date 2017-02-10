@@ -20,17 +20,14 @@
 #ifndef _RIGID_BODY_LINK_H_
 #define _RIGID_BODY_LINK_H_
 
-#include "mbsim/links/link.h"
+#include "mbsim/links/mechanical_link.h"
 #include "mbsim/frames/floating_relative_frame.h"
-
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
 
 namespace MBSim {
 
   class RigidBody;
 
-  class RigidBodyLink : public Link {
+  class RigidBodyLink : public MechanicalLink {
     protected:
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
@@ -82,24 +79,6 @@ namespace MBSim {
       void resetUpToDate(); 
 
       virtual void setSupportFrame(Frame *frame) { support = frame; }
-
-     /** \brief Visualize a force arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        setOpenMBVForce(ombv.createOpenMBV());
-      }
-      void setOpenMBVForce(const std::shared_ptr<OpenMBV::Arrow> &arrow) { FArrow[0]=arrow; }
-
-      /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        setOpenMBVMoment(ombv.createOpenMBV());
-      }
-      void setOpenMBVMoment(const std::shared_ptr<OpenMBV::Arrow> &arrow) { MArrow[0]=arrow; }
-
-    protected:
-      std::shared_ptr<OpenMBV::Group> openMBVForceGrp;
-      std::vector<std::shared_ptr<OpenMBV::Arrow> > FArrow, MArrow;
 
     private:
       std::string saved_supportFrame;

@@ -1594,14 +1594,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RigidBodyLink" substitutionGroup="Link" type="RigidBodyLinkType">
+  <xs:element name="RigidBodyLink" substitutionGroup="MechanicalLink" type="RigidBodyLinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Starrkörpern.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="RigidBodyLinkType">
     <xs:complexContent>
-      <xs:extension base="LinkType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="supportFrame" minOccurs="0">
             <xs:annotation>
@@ -1611,22 +1611,6 @@
             </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

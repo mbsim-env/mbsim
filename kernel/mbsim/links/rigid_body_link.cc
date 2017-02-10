@@ -21,7 +21,6 @@
 #include "mbsim/links/rigid_body_link.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/objects/rigid_body.h"
-#include <openmbvcppinterface/group.h>
 #include "mbsim/utils/utils.h"
 
 using namespace std;
@@ -31,9 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  RigidBodyLink::RigidBodyLink(const string &name) : Link(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), support(NULL) {
-    FArrow.resize(1);
-    MArrow.resize(1);
+  RigidBodyLink::RigidBodyLink(const string &name) : MechanicalLink(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), support(NULL) {
   }
 
   void RigidBodyLink::updatehRef(const Vec &hParent, int j) {
@@ -168,10 +165,10 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_supportFrame!="")
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
-      Link::init(stage);
+      MechanicalLink::init(stage);
     }
     else if(stage==resize) {
-      Link::init(stage);
+      MechanicalLink::init(stage);
 
       if(!support)
         support = body[0]->getFrameOfReference();
@@ -221,39 +218,11 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
         for(int i=0; i<(int)body.size(); i++)
           plotColumns.push_back("la("+numtostr(i)+")*ratio("+numtostr(i)+")");
-        if(getPlotFeature(openMBV)==enabled) {
-          openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openMBVForceGrp->setExpand(false);
-          openMBVForceGrp->setName(name+"_ArrowGroup");
-          parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
-          if(FArrow[0]) {
-            FArrow[0]->setName("Force0");
-            openMBVForceGrp->addObject(FArrow[0]);
-            for(unsigned int i=1; i<body.size(); i++) {
-              stringstream s;
-              s << i;
-              FArrow.push_back(OpenMBV::ObjectFactory::create(FArrow[0]));
-              FArrow[i]->setName("Force"+s.str());
-              openMBVForceGrp->addObject(FArrow[i]);
-            }
-          }
-          if(MArrow[0]) {
-            MArrow[0]->setName("Moment0");
-            openMBVForceGrp->addObject(MArrow[0]);
-            for(unsigned int i=1; i<body.size(); i++) {
-              stringstream s;
-              s << i;
-              MArrow.push_back(OpenMBV::ObjectFactory::create(MArrow[0]));
-              MArrow[i]->setName("Moment"+s.str());
-              openMBVForceGrp->addObject(MArrow[i]);
-            }
-          }
-        }
-        Link::init(stage);
+        MechanicalLink::init(stage);
       }
     }
     else
-      Link::init(stage);
+      MechanicalLink::init(stage);
   }
 
   void RigidBodyLink::plot() {
@@ -261,62 +230,18 @@ namespace MBSim {
       for(unsigned int i=0; i<body.size(); i++) {
         plotVector.push_back(ratio[i]*evalGeneralizedForce()(0));
       }
-      if(getPlotFeature(openMBV)==enabled) {
-        if(FArrow[0]) {
-          for(unsigned i=0; i<body.size(); i++) {
-            vector<double> data;
-            data.push_back(getTime());
-            Vec3 WF = evalForce(i)*ratio[i];
-            Vec3 WrOS=body[i]->getFrameForKinematics()->evalPosition();
-            data.push_back(WrOS(0));
-            data.push_back(WrOS(1));
-            data.push_back(WrOS(2));
-            data.push_back(WF(0));
-            data.push_back(WF(1));
-            data.push_back(WF(2));
-            data.push_back(1.0);
-            FArrow[i]->append(data);
-          }
-        }
-        if(MArrow[0]) {
-          for(unsigned i=0; i<body.size(); i++) {
-            vector<double> data;
-            data.push_back(getTime());
-            Vec3 WM = evalMoment(i)*ratio[i];
-            Vec3 WrOS=body[i]->getFrameForKinematics()->evalPosition();
-            data.push_back(WrOS(0));
-            data.push_back(WrOS(1));
-            data.push_back(WrOS(2));
-            data.push_back(WM(0));
-            data.push_back(WM(1));
-            data.push_back(WM(2));
-            data.push_back(1.0);
-            MArrow[i]->append(data);
-          }
-        }
-      }
-      Link::plot();
+      MechanicalLink::plot();
     }
   }
 
   void RigidBodyLink::initializeUsingXML(DOMElement* element) {
-    Link::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
     if(e) saved_supportFrame=E(e)->getAttribute("ref");
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      RigidBodyLink::setOpenMBVForce(ombv.createOpenMBV(e));
-    }
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      RigidBodyLink::setOpenMBVMoment(ombv.createOpenMBV(e));
-    }
   }
 
   void RigidBodyLink::resetUpToDate() {
-    Link::resetUpToDate();
+    MechanicalLink::resetUpToDate();
     updPos = true;
     updVel = true;
     updFD = true;
