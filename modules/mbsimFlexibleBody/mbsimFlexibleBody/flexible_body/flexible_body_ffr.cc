@@ -446,12 +446,6 @@ namespace MBSimFlexibleBody {
             dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
         }
         NodeBasedBody::init(stage);
-        if(getPlotFeature(openMBV)==enabled) {
-          if(getPlotFeature(openMBV)==enabled && FWeight) {
-            FWeight->setName("Weight");
-            openMBVGrp->addObject(FWeight);
-          }
-        }
       }
     }
     else
@@ -475,10 +469,6 @@ namespace MBSimFlexibleBody {
     joint->setMomentDirection(Mat3xV(3,EYE));
     joint->connect(R,K);
     joint->setBody(this);
-    if(FArrow)
-      joint->setOpenMBVForce(FArrow);
-    if(MArrow)
-      joint->setOpenMBVMoment(MArrow);
   }
 
   void FlexibleBodyFFR::plot() {
@@ -498,20 +488,6 @@ namespace MBSimFlexibleBody {
         }
       }
       if(getPlotFeature(openMBV)==enabled) {
-        if(FWeight) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 WrOP=K->evalPosition();
-          Vec3 WG = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-          data.push_back(WrOP(0));
-          data.push_back(WrOP(1));
-          data.push_back(WrOP(2));
-          data.push_back(WG(0));
-          data.push_back(WG(1));
-          data.push_back(WG(2));
-          data.push_back(1.0);
-          FWeight->append(data);
-        }
         if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
           vector<double> data;
           data.push_back(getTime());
@@ -1055,20 +1031,6 @@ namespace MBSimFlexibleBody {
 //      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
       K->setOpenMBVFrame(ombv.createOpenMBV(e));
-    }
-
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVJointForce");
-    if (e) {
-//      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVJointMoment");
-    if (e) {
-//      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotFeatureFrameK");

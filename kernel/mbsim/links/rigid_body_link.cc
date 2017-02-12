@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  RigidBodyLink::RigidBodyLink(const string &name) : MechanicalLink(name), updPos(true), updVel(true), updFD(true), updF(true), updM(true), updRMV(true), support(NULL) {
+  RigidBodyLink::RigidBodyLink(const string &name) : MechanicalLink(name), updPos(true), updVel(true), updFD(true), support(NULL) {
   }
 
   void RigidBodyLink::updatehRef(const Vec &hParent, int j) {
@@ -173,23 +173,28 @@ namespace MBSim {
       if(!support)
         support = body[0]->getFrameOfReference();
 
-      F.resize(body.size());
-      M.resize(body.size());
       iF = RangeV(0, body[0]->getPJT(0,false).cols()-1);
       iM = RangeV(0, body[0]->getPJR(0,false).cols()-1);
       rrel.resize(body[0]->getqRelSize());
       vrel.resize(body[0]->getuRelSize());
+      F.resize(body.size());
+      M.resize(body.size());
+      DF.resize(body.size(),Mat3xV(iF.size()));
+      DM.resize(body.size(),Mat3xV(iM.size()));
+      RF.resize(body.size(),Mat3xV(vrel.size()));
+      RM.resize(body.size(),Mat3xV(vrel.size()));
       if(isSetValued()) {
         g.resize(rrel.size());
         gd.resize(vrel.size());
         la.resize(vrel.size());
       }
       lambda.resize(vrel.size());
+      C.resize(0);
+      h[0].resize(0);
+      h[1].resize(0);
+      W[0].resize(0);
+      W[1].resize(0);
       for(unsigned int i=0; i<body.size(); i++) {
-        DF.push_back(Mat3xV(iF.size()));
-        DM.push_back(Mat3xV(iM.size()));
-        RF.push_back(Mat3xV(vrel.size()));
-        RM.push_back(Mat3xV(vrel.size()));
         h[0].push_back(Vec(body[i]->getFrameForKinematics()->gethSize()));
         h[1].push_back(Vec(6));
         W[0].push_back(Mat(body[i]->getFrameForKinematics()->gethSize(),laSize));
@@ -212,6 +217,10 @@ namespace MBSim {
         V[0].push_back(Mat(support->gethSize(),laSize));
         V[1].push_back(Mat(6,laSize));
       }
+    }
+    else if(stage==unknownStage) {
+      MechanicalLink::init(stage);
+      K = body[0]->getFrameForKinematics();
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -245,9 +254,6 @@ namespace MBSim {
     updPos = true;
     updVel = true;
     updFD = true;
-    updF = true;
-    updM = true;
-    updRMV = true;
     for(unsigned int i=0; i<C.size(); i++)
       C[i].resetUpToDate();
   }

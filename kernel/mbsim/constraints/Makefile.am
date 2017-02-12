@@ -16,6 +16,7 @@ libconstraint_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 constraintincludedir = $(includedir)/mbsim/constraints
 constraintinclude_HEADERS = constraint.h\
+			    mechanical_constraint.h\
 			    generalized_constraint.h\
 			    generalized_dual_constraint.h\
 			    generalized_position_constraint.h\

@@ -21,6 +21,7 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
 #include <mbsim/dynamic_system.h>
+#include <openmbvcppinterface/group.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -50,6 +51,26 @@ namespace MBSim {
       FloatingFrameLink::init(stage);
       rrel.resize();
       vrel.resize();
+    }
+    else if(stage==plotting) {
+      updatePlotFeatures();
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(openMBV)==enabled) {
+          if(openMBVArrow) {
+            if(forceDir.cols()) {
+              openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow); 
+              openMBVForce->setName(name+"_Force");
+              parent->getOpenMBVGrp()->addObject(openMBVForce);
+            }
+            if(momentDir.cols()) {
+              openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow); 
+              openMBVMoment->setName(name+"_Moment");
+              parent->getOpenMBVGrp()->addObject(openMBVMoment);
+            }
+          }
+        }
+        FloatingFrameLink::init(stage);
+      }
     }
     else if(stage==unknownStage) {
       if(F  and ((*F)(0).size()!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
@@ -100,6 +121,42 @@ namespace MBSim {
     M->setName("Moment");
   }
 
+  void KineticExcitation::plot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(openMBV)==enabled) {
+        if(openMBVForce) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=K->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 WF = evalForce();
+          data.push_back(WF(0));
+          data.push_back(WF(1));
+          data.push_back(WF(2));
+          data.push_back(nrm2(WF));
+          openMBVForce->append(data);
+        }
+        if(openMBVMoment) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint=K->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 WM = evalMoment();
+          data.push_back(WM(0));
+          data.push_back(WM(1));
+          data.push_back(WM(2));
+          data.push_back(nrm2(WM));
+          openMBVMoment->append(data);
+        }
+      }
+      FloatingFrameLink::plot();
+    }
+  }
+
   void KineticExcitation::initializeUsingXML(DOMElement *element) {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
@@ -110,6 +167,11 @@ namespace MBSim {
     if(e) setMomentDirection(getMat(e,3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
     if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(e) {
+        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+        openMBVArrow=ombv.createOpenMBV(e); 
+    }
   }
 
 }

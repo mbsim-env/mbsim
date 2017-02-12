@@ -75,23 +75,18 @@
                 <size unit="m">1</size>
                 <offset unit="-">1</offset>
             </enableOpenMBVFrameC>
-            <enableOpenMBVWeight>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVWeight>
-            <enableOpenMBVJointForce>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVJointForce>
         </RigidBody>
     </objects>
     <links/>
     <constraints>
         <GeneralizedVelocityConstraint name="KinematicConstraint2">
-            <enableOpenMBVForce>
+            <!--<enableOpenMBVForce>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVForce>
             <enableOpenMBVMoment>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVMoment>
+            -->
             <dependentRigidBody ref="../Object[RigidBody1]" />
             <initialState>
                 <pv:xmlVector>
@@ -110,6 +105,21 @@
                <scaleLength unit="-">0.1</scaleLength>
             </enableOpenMBVVelocity>
         </AbsoluteKinematicsObserver>
+        <RigidBodyObserver name="RigidBodyObserver1">
+            <rigidBody ref="../Object[RigidBody1]" />
+            <enableOpenMBVWeight>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVWeight>
+            <enableOpenMBVJointForce>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointForce>
+        </RigidBodyObserver>
+        <MechanicalConstraintObserver name="MechanicalConstraintObserver1">
+            <mechanicalConstraint ref="../Constraint[KinematicConstraint2]" />
+            <enableOpenMBVForce>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVForce>
+        </MechanicalConstraintObserver>
     </observers>
     <enableOpenMBVFrameI>
         <?OPENMBV_ID 3?>

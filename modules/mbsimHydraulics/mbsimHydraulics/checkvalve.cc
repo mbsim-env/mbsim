@@ -39,6 +39,7 @@
 #include "mbsim/constitutive_laws/bilateral_impact.h"
 #include "mbsim/constitutive_laws/unilateral_newton_impact.h"
 #include "mbsim/utils/boost_parameters.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/sphere.h>
@@ -163,13 +164,19 @@ namespace MBSimHydraulics {
 
         addLink(new colorLink("BallColorLink", ballVisu, line));
 
-        spring->enableOpenMBVCoilSpring(_numberOfCoils=5, _springRadius=rBall/2., _crossSectionRadius=.05*hMax);
+        spring->enableOpenMBV(_numberOfCoils=5, _springRadius=rBall/2., _crossSectionRadius=.05*hMax);
         // MISSING: spring->init(...) must be called somewere!!!???
       }
       if (openMBVArrows) {
         ((Circle*)ball->getContour("ContourBall"))->enableOpenMBV(true);
-        seatContact->enableOpenMBVContactPoints(rBall/8.);
-        maxContact->enableOpenMBVContactPoints(rBall/8.);
+        ContactObserver *observer = new ContactObserver("MaxContactObserver");
+        observer->enableOpenMBVContactPoints(rBall/8.);
+        observer->setContact(maxContact);
+        addObserver(observer);
+        observer = new ContactObserver("SeatContactObserver");
+        observer->enableOpenMBVContactPoints(rBall/8.);
+        observer->setContact(maxContact);
+        addObserver(observer);
       }
       if (openMBVFrames) {
         ballSeat->getFrame("BallMount")->enableOpenMBV(.5*rBall, 1.);

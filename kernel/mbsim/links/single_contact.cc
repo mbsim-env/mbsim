@@ -30,8 +30,6 @@
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
-#include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/rotarymatrices.h>
 
 using namespace std;
@@ -45,9 +43,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SingleContact)
 
-  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), updlaN(true), updlaT(true)
-          , openMBVContactFrame(2)
-          , rootID(0) {
+  SingleContact::SingleContact(const string &name) : ContourLink(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), gActive(0), gActive0(0), updlaN(true), updlaT(true), rootID(0) {
   }
 
   void SingleContact::updatewb() {
@@ -63,6 +59,10 @@ namespace MBSim {
     ContourLink::resetUpToDate();
     updlaN = true;
     updlaT = true;
+  }
+
+  bool SingleContact::isSticking() const { 
+    return fdf->isSetValued() and laT.size();
   }
 
   const double& SingleContact::evallaN() {
@@ -574,36 +574,6 @@ namespace MBSim {
       else
         updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceS;
     }
-    else if (stage == plotting) {
-      updatePlotFeatures();
-      if (getPlotFeature(plotRecursive) == enabled) {
-        if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
-          openMBVContactGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openMBVContactGrp->setName(name + "_ContactGroup");
-          openMBVContactGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
-
-          if (openMBVContactFrame[0]) {
-            for (unsigned int i = 0; i < 2; i++) { // frames
-              string name = string((i == 0 ? "A" : "B")) + string("_") + string(contour[i]->getName());
-              openMBVContactFrame[i]->setName(name);
-              openMBVContactGrp->addObject(openMBVContactFrame[i]);
-            }
-          }
-          // arrows
-          if (contactArrow) {
-            contactArrow->setName("NormalForce_B");
-            openMBVContactGrp->addObject(contactArrow);
-          }
-          if (frictionArrow) { // friction force
-            frictionArrow->setName("FrictionForce_B");
-            openMBVContactGrp->addObject(frictionArrow);
-          }
-        }
-        ContourLink::init(stage);
-      }
-
-    }
     else if(stage == LASTINITSTAGE) {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
         throw MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
@@ -671,58 +641,7 @@ namespace MBSim {
   }
 
   void SingleContact::plot() {
-    if (getPlotFeature(plotRecursive) == enabled) {
-      if (getPlotFeature(openMBV) == enabled && (openMBVContactFrame[0] || contactArrow || frictionArrow)) {
-        // frames
-        if (openMBVContactFrame[0]) {
-          for (unsigned int i = 0; i < 2; i++) {
-            vector<double> data;
-            data.push_back(getTime());
-            Vec3 toPoint = cFrame[i]->evalPosition();
-            data.push_back(toPoint(0));
-            data.push_back(toPoint(1));
-            data.push_back(toPoint(2));
-            Vec3 cardan = AIK2Cardan(cFrame[i]->evalOrientation());
-            data.push_back(cardan(0));
-            data.push_back(cardan(1));
-            data.push_back(cardan(2));
-            data.push_back(0);
-            openMBVContactFrame[i]->append(data);
-          }
-        }
-        // arrows
-        vector<double> data;
-        if (contactArrow) {
-          data.push_back(getTime());
-          Vec3 toPoint = cFrame[1]->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 F = evalGlobalForceDirection().col(0)*evalGeneralizedNormalForce();
-          data.push_back(F(0));
-          data.push_back(F(1));
-          data.push_back(F(2));
-          data.push_back(nrm2(F));
-          contactArrow->append(data);
-        }
-        if (frictionArrow && getFrictionDirections() > 0) { // friction force
-          data.clear();
-          data.push_back(getTime());
-          Vec3 toPoint = cFrame[1]->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 F = evalGlobalForceDirection()(RangeV(0,2),RangeV(1, getFrictionDirections()))*evalGeneralizedTangentialForce();
-          data.push_back(F(0));
-          data.push_back(F(1));
-          data.push_back(F(2));
-          // TODO fdf->isSticking(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())), gdTol)
-          data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
-          frictionArrow->append(data);
-        }
-      }
-      ContourLink::plot();
-    }
+    ContourLink::plot();
   }
 
   void SingleContact::closePlot() {
@@ -1331,25 +1250,6 @@ namespace MBSim {
     if (e) {
       FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
-    }
-
-    //Contact points
-    if (E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints")) {
-      OpenMBVFrame ombv;
-      openMBVContactFrame[0]=ombv.createOpenMBV(e); 
-      openMBVContactFrame[1]=OpenMBV::ObjectFactory::create(openMBVContactFrame[0]);
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      contactArrow=ombv.createOpenMBV(e); 
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      frictionArrow=ombv.createOpenMBV(e); 
     }
   }
 

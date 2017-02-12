@@ -58,9 +58,6 @@ namespace MBSim {
        */
       virtual ~Contact();
 
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
-      /********************************/
-
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb();
       virtual void updateW(int i = 0);
@@ -137,10 +134,6 @@ namespace MBSim {
       virtual void setcorrInd(int corrInd_);
       virtual void checkRoot();
       virtual void updateGeneralizedNormalForce();
-
-      std::shared_ptr<OpenMBV::Frame>& getOpenMBVFrame() {return openMBVFrame;}
-      std::shared_ptr<OpenMBV::Arrow>& getOpenMBVNormalForceArrow() {return contactArrow;}
-      std::shared_ptr<OpenMBV::Arrow>& getOpenMBVTangentialForceArrow() {return frictionArrow;}
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -152,39 +145,6 @@ namespace MBSim {
       /***************************************************/
 
       void resetUpToDate();
-
-      /** 
-       * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.
-       * If the contact is closed, then the two contact points are the same on each contour.
-       * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
-       * The x-axis of this frames are orientated to the other frame origin (normal vector).
-       */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {
-        OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
-        openMBVFrame=ombv.createOpenMBV();
-      }
-
-      /** 
-       * \brief Sets the OpenMBV::Arrow to be used for drawing the normal force vector.
-       * This vector is the force which is applied on the second contour.
-       * The reactio (not drawn) is applied on the first contour.
-       */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVNormalForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        contactArrow=ombv.createOpenMBV();
-      }
-
-      /** 
-       * \brief Sets the OpenMBV::Arrow to be used for drawing the friction force vector.
-       * This vector is the friction which is applied on the second contour.
-       * The reactio (not drawn) is applied on the frist contour.
-       * If using a set-valued friction law, then the arrow is drawn in green if the contact
-       * is in slip and in red, if the contact is in stick.
-       */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        frictionArrow=ombv.createOpenMBV();
-      }
 
       /* GETTER / SETTER */
 
@@ -233,6 +193,8 @@ namespace MBSim {
       void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0, const std::string & name = "");
 
       Contour* getContour(int i, int j=0) { return contour[i][j]; }
+
+      SingleContact& getSingleContact(int i, int j=0) { return contacts[i][j]; }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
@@ -290,21 +252,6 @@ namespace MBSim {
 
       fmatvec::VecV zeta0;
 
-      /*!
-       * \brief group for the plotting of the openMBV sub elements
-       */
-      std::shared_ptr<OpenMBV::Group> openMBVGrp;
-
-      /**
-       * \brief Frame of ContactFrames to draw
-       */
-      std::shared_ptr<OpenMBV::Frame> openMBVFrame;
-
-      /**
-       * \brief pointer to memory of normal and friction forces to draw
-       */
-      std::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
-
     private:
       struct saved_references {
           std::string name1;
@@ -317,4 +264,3 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_H_ */
-

@@ -203,13 +203,13 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <unloadedLength unit="cm">6</unloadedLength>
-      <enableOpenMBVCoilSpring>
+      <enableOpenMBV>
 <!--        <minimalColorValue>-88</minimalColorValue>
         <maximalColorValue>-92</maximalColorValue> -->
         <numberOfCoils>11</numberOfCoils>
         <springRadius>.00525</springRadius>
         <crossSectionRadius>.0006</crossSectionRadius>
-      </enableOpenMBVCoilSpring>
+      </enableOpenMBV>
     </SpringDamper>
     <h:EnvironmentNodeMec name="EnvironmentPressure">
       <h:inflow ref="../Object[LeackageGap]"/>

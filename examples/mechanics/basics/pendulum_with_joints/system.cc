@@ -6,6 +6,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
+#include "mbsim/observers/mechanical_link_observer.h"
 
 #include <openmbvcppinterface/frustum.h>
 
@@ -116,5 +117,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setInitialTranslation(0,-0.5,0);
   cylinder->setInitialRotation(1.5708,0,0);
   box2->setOpenMBVRigidBody(cylinder);
+
+  MechanicalLinkObserver *observer = new MechanicalLinkObserver("Observer1");
+  addObserver(observer);
+  observer->setMechanicalLink(joint1);
+  observer->enableOpenMBVForce(0.02);
+
+  observer = new MechanicalLinkObserver("Observer2");
+  addObserver(observer);
+  observer->setMechanicalLink(joint2);
+  observer->enableOpenMBVForce(0.02);
 }
 

@@ -212,6 +212,11 @@
           <frictionCoefficient>mu</frictionCoefficient>
         </PlanarCoulombImpact>
       </tangentialImpactLaw>
+    </Contact>
+  </links>
+  <observers>
+    <ContactObserver name="Observer">
+      <contact ref="../Link[jointContact]"/>
       <enableOpenMBVContactPoints>
         <size>fSize/4.</size>
       </enableOpenMBVContactPoints> <!-- optional -->
@@ -221,8 +226,8 @@
       <enableOpenMBVTangentialForce> <!-- optional -->
         <scaleLength>.1</scaleLength>
       </enableOpenMBVTangentialForce>
-    </Contact>
-  </links>
+    </ContactObserver>
+  </observers>
   <environments>
     <MBSimEnvironment xmlns="http://www.mbsim-env.de/MBSim">
       <accelerationOfGravity>[0 0 g]'</accelerationOfGravity>

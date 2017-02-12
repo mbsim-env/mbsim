@@ -143,12 +143,17 @@ ret = [eta;xi]</SymbolicFunction>
               <ele>0</ele>
             </xmlVector>
           </initialGuess>
+        </Contact>
+      </links>
+      <observers>
+       <ContactObserver name="ContactObserver1">
+          <contact ref="../Link[Contact1]"/>
           <enableOpenMBVContactPoints>
             <?OPENMBV_ID 20?>
             <size unit="cm">1</size>
           </enableOpenMBVContactPoints>
-        </Contact>
-      </links>
+        </ContactObserver>
+      </observers>
       <enableOpenMBVFrameI>
         <?OPENMBV_ID 1?>
         <size unit="cm">1</size>

@@ -222,10 +222,6 @@
             <?OPENMBV_ID 130?>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC>
-          <enableOpenMBVWeight>
-            <?OPENMBV_ID 129?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVWeight>
         </RigidBody>
       </objects>
       <links>
@@ -249,14 +245,6 @@
               <frictionCoefficient unit="-">mu</frictionCoefficient>
             </PlanarCoulombImpact>
           </tangentialImpactLaw>
-          <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 139?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVNormalForce>
-          <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 139?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVTangentialForce>
         </Contact>
         <Contact name="Contact2">
           <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point2]"/>
@@ -278,14 +266,6 @@
               <frictionCoefficient unit="-">mu</frictionCoefficient>
             </PlanarCoulombImpact>
           </tangentialImpactLaw>
-          <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 148?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVNormalForce>
-          <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 148?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVTangentialForce>
         </Contact>
         <Contact name="Contact3">
           <connect ref1="../Contour[Line2]" ref2="../Object[Stepladder]/Contour[Point1]"/>
@@ -307,14 +287,6 @@
               <frictionCoefficient unit="-">mu</frictionCoefficient>
             </PlanarCoulombImpact>
           </tangentialImpactLaw>
-          <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 157?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVNormalForce>
-          <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 157?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVTangentialForce>
         </Contact>
       </links>
       <observers>
@@ -324,6 +296,46 @@
         <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver2">
           <frame ref="../Object[Stepladder]/Frame[P2]"/>
         </AbsoluteKinematicsObserver>
+        <RigidBodyObserver name="RigidBodyObserver1">
+          <rigidBody ref="../Object[Mass]"/>
+          <enableOpenMBVWeight>
+            <?OPENMBV_ID 129?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVWeight>
+        </RigidBodyObserver>
+        <ContactObserver name="ContactObserver1">
+          <contact ref="../Link[Contact1]"/>
+          <enableOpenMBVNormalForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver>
+        <ContactObserver name="ContactObserver2">
+          <contact ref="../Link[Contact2]"/>
+          <enableOpenMBVNormalForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver>
+        <ContactObserver name="ContactObserver3">
+          <contact ref="../Link[Contact3]"/>
+          <enableOpenMBVNormalForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <?OPENMBV_ID 139?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver>
       </observers>
       <enableOpenMBVFrameI>
         <?OPENMBV_ID 113?>

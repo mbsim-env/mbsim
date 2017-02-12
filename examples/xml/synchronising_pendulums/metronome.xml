@@ -180,9 +180,6 @@
       </tangentialImpactLaw>
     </Contact>
     <KineticExcitation name="KineticExcitation" xmlns="http://www.mbsim-env.de/MBSim">
-      <enableOpenMBVForce>
-        <scaleLength>1.</scaleLength>
-      </enableOpenMBVForce>
       <connect ref2="../Object[Sphere]/Frame[C]"/>
       <forceDirection>[0 1 0]'</forceDirection>
       <forceFunction>
@@ -191,6 +188,9 @@
           <y>[0      0  .05  0  0]'</y>
         </TabularFunction>
       </forceFunction>
+      <enableOpenMBV>
+        <scaleLength>1.</scaleLength>
+      </enableOpenMBV>
     </KineticExcitation>
 
     <GeneralizedPositionSensor name="AngularSensor" xmlns="http://www.mbsim-env.de/MBSimControl">

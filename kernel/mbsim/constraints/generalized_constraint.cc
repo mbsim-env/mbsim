@@ -31,28 +31,16 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_supportFrame!="")
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
-      Constraint::init(stage);
+      MechanicalConstraint::init(stage);
     }
     else
-      Constraint::init(stage);
+      MechanicalConstraint::init(stage);
   }
 
   void GeneralizedConstraint::initializeUsingXML(DOMElement* element) {
-    Constraint::initializeUsingXML(element);
+    MechanicalConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"supportFrame");
     if(e) saved_supportFrame=E(e)->getAttribute("ref");
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
-    }
   }
 
 }

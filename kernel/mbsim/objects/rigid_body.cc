@@ -309,12 +309,6 @@ namespace MBSim {
             plotColumns.push_back("uRel("+numtostr(i)+")");
         }
         Body::init(stage);
-        if(getPlotFeature(openMBV)==enabled) {
-          if(getPlotFeature(openMBV)==enabled && FWeight) {
-            FWeight->setName("Weight");
-            openMBVGrp->addObject(FWeight);
-          }
-        }
       }
     }
     else
@@ -335,7 +329,7 @@ namespace MBSim {
   }
 
   void RigidBody::setUpInverseKinetics() {
-    InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+R->getParent()->getName()+"_"+name);
+    joint = new InverseKineticsJoint(string("Joint_")+R->getParent()->getName()+"_"+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     joint->setForceDirection(Mat3xV(3,EYE));
     joint->setMomentDirection(Mat3xV(3,EYE));
@@ -343,10 +337,6 @@ namespace MBSim {
     joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,&Z);
     joint->setBody(this);
-    if(FArrow)
-      joint->setOpenMBVForce(FArrow);
-    if(MArrow)
-      joint->setOpenMBVMoment(MArrow);
   }
 
   void RigidBody::plot() {
@@ -359,20 +349,6 @@ namespace MBSim {
       }
 
       if(getPlotFeature(openMBV)==enabled) {
-        if(FWeight) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 WrOS=C->evalPosition();
-          Vec3 WG = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-          data.push_back(WrOS(0));
-          data.push_back(WrOS(1));
-          data.push_back(WrOS(2));
-          data.push_back(WG(0));
-          data.push_back(WG(1));
-          data.push_back(WG(2));
-          data.push_back(1.0);
-          FWeight->append(data);
-        }
         if(openMBVBody) {
           vector<double> data;
           data.push_back(getTime());
@@ -670,27 +646,6 @@ namespace MBSim {
       if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
       OpenMBVFrame ombv;
       C->setOpenMBVFrame(ombv.createOpenMBV(e));
-    }
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
-    if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FWeight=ombv.createOpenMBV(e);
-    }
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
-    if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
-    if(e) {
-      if(!openMBVBody) setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameC");

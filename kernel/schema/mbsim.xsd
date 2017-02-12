@@ -129,7 +129,7 @@
     <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
-  <!-- A reference from a Link|Object to a Frame somewhere in the hierarchy -->
+  <!-- A reference to a Frame somewhere in the hierarchy -->
   <xs:simpleType name="FrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><span class="_element">&lt;Frame&gt;</span></a> an beliebiger
@@ -148,7 +148,7 @@
     <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
-  <!-- A reference form a Link|Object to a Contour somewhere in the hierarchy -->
+  <!-- A reference to a Contour somewhere in the hierarchy -->
   <xs:simpleType name="ContourReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einer <a class="link" href="mbsim:Contour"><span class="_element">&lt;Contour&gt;</span></a> an beliebiger
@@ -167,7 +167,7 @@
     <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
-  <!-- A reference form a Link to a Object somewhere in the hierarchy -->
+  <!-- A reference to an Object somewhere in the hierarchy -->
   <xs:simpleType name="ObjectReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Object"><span class="_element">&lt;Object&gt;</span></a> an beliebiger
@@ -184,7 +184,7 @@
     <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
-  <!-- A reference form a Link to a Link somewhere in the hierarchy -->
+  <!-- A reference to a Link somewhere in the hierarchy -->
   <xs:simpleType name="LinkReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Link"><span class="_element">&lt;Link&gt;</span></a> an beliebiger
@@ -201,7 +201,7 @@
     <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
-  <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
+  <!-- A reference to a Contact somewhere in the hierarchy -->
   <xs:simpleType name="ContactReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Contact"><span class="_element">&lt;Contact&gt;</span></a> an beliebiger
@@ -212,6 +212,23 @@
         Element-Namen <code>X</code>. Als letzter Pfadteil wird der <code>Contact Y</code> ausgewählt. Alternativ kann die
         Pfadangabe anstatt mit <code>..</code> mit <code>/</code> beginnen, in diesem Fall beginnt die Referenzierung beim
         obersten Element (<a class="link" href="mbsim:DynamicSystemSolver"><code>DynamicSystemSolver</code></a>) des Modells.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
+    </xs:documentation></xs:annotation>
+    <xs:restriction base="pv:stringPartialEval"/>
+  </xs:simpleType>
+
+  <!-- A reference to a Constraint somewhere in the hierarchy -->
+  <xs:simpleType name="ConstraintReferenceType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Definiert eine Pfadangabe zu einem <a class="constraint" href="mbsim:Constraint"><span class="_element">&lt;Constraint&gt;</span></a> an beliebiger
+        Position im Modell. Gültige Werte sind z.B. <code>../../Group[X]/Group[X]/Constraint[Y]</code>, wobei <code>X</code> und
+        <code>Y</code> geweils einen <a class="constraint" href="pv:stringPartialEval">Element-Namen</a> darstellt. Der Pfadteil <code>..</code>
+        kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <code>Group</code>
+        kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <code>Group</code> mit dem
+        Element-Namen <code>X</code>. Als letzter Pfadteil wird das <code>Constraint Y</code> ausgewählt. Alternativ kann die
+        Pfadangabe anstatt mit <code>..</code> mit <code>/</code> beginnen, in diesem Fall beginnt die Referenzierung beim
+        obersten Element (<a class="constraint" href="mbsim:DynamicSystemSolver"><code>DynamicSystemSolver</code></a>) des Modells.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
@@ -1033,30 +1050,6 @@
               <xs:group ref="OpenMBVFrameParameters"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="enableOpenMBVWeight" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gewichtskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVJointForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVJointMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
           <xs:element name="plotFeatureFrameC" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -1104,22 +1097,6 @@
             </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird die Zwangskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Wenn angegeben, wird das Zwangsmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1405,22 +1382,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1476,26 +1437,7 @@
   </xs:element>
   <xs:complexType name="MechanicalLinkType">
     <xs:complexContent>
-      <xs:extension base="LinkType">
-        <xs:sequence>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
+      <xs:extension base="LinkType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -1573,22 +1515,6 @@
               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="enableOpenMBVForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="enableOpenMBVMoment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType>
-          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1632,9 +1558,9 @@
               tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType"/>
-              <xs:attribute name="ref1" type="FrameReferenceType"/>
-              <xs:attribute name="ref2" type="FrameReferenceType"/>
+              <xs:attribute name="ref" type="ObjectReferenceType"/>
+              <xs:attribute name="ref1" type="ObjectReferenceType"/>
+              <xs:attribute name="ref2" type="ObjectReferenceType"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1691,6 +1617,11 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1730,7 +1661,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
+          <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
@@ -1785,7 +1716,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="enableOpenMBVCoilSpring" minOccurs="0">
+          <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
@@ -2098,32 +2029,6 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
-                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
-                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVFrameParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2207,32 +2112,6 @@
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Anfangswerte für Newton-Löser.
             </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
-                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
-                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVFrameParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
-          </xs:element>
-          <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:group ref="OpenMBVArrowParameters"/>
-            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -4872,6 +4751,172 @@
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="MechanicalLinkObserver" substitutionGroup="Observer" type="MechanicalLinkObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalLinkObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="mechanicalLink">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="ContactObserver" substitutionGroup="Observer" type="ContactObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="ContactObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="contact">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
+                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
+                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVTangentialForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="MechanicalConstraintObserver" substitutionGroup="Observer" type="MechanicalConstraintObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalConstraintObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="mechanicalConstraint">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ConstraintReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">  
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="RigidBodyObserver" substitutionGroup="Observer" type="RigidBodyObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RigidBodyObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="rigidBody">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVWeight" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Gewichtskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVJointForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVJointMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType> 
           </xs:element>
         </xs:sequence> 
       </xs:extension>

@@ -29,6 +29,10 @@ using namespace xercesc;
 namespace MBSim {
 
   FrameLink::FrameLink(const std::string &name) : MechanicalLink(name), frame(2), updPos(true), updVel(true) {
+    F.resize(2);
+    M.resize(2);
+    RF.resize(2);
+    RM.resize(2);
   }
 
   void FrameLink::resetUpToDate() {

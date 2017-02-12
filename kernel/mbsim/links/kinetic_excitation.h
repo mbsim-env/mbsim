@@ -23,6 +23,9 @@
 #include <mbsim/links/floating_frame_link.h>
 #include <mbsim/functions/function.h>
 
+#include "mbsim/utils/boost_parameters.h"
+#include "mbsim/utils/openmbv_utils.h"
+
 namespace MBSim {
 
   /**
@@ -85,15 +88,24 @@ namespace MBSim {
        */
       void connect(MBSim::Frame *frame_) { frame[1] = frame_; }
 
+      void plot();
+
       void initializeUsingXML(xercesc::DOMElement *element);
 
       virtual std::string getType() const { return "KineticExcitation"; }
+
+     BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVArrow=ombv.createOpenMBV(); 
+      }
 
     protected:
       /**
        * \brief portions of the force / moment in the specific directions
        */
       Function<fmatvec::VecV(double)> *F, *M;
+
+      std::shared_ptr<OpenMBV::Arrow> openMBVArrow, openMBVForce, openMBVMoment;
 
     private:
       std::string saved_ref;

@@ -185,13 +185,13 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <unloadedLength>hpcInitialHeight-pistonSpringF0/pistonSpringStiffness</unloadedLength>
-      <enableOpenMBVCoilSpring>
+      <enableOpenMBV>
         <!--<minimalColorValue>-10</minimalColorValue>
         <maximalColorValue>10</maximalColorValue>-->
         <numberOfCoils>5</numberOfCoils>
         <springRadius>.003</springRadius>
         <crossSectionRadius>.0002</crossSectionRadius>
-      </enableOpenMBVCoilSpring>
+      </enableOpenMBV>
     </SpringDamper>
     <RelativePositionSensor name="GapLength" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Housing]/Frame[PistonGap]" rel="../Object[Piston]/Frame[CheckvalveF]"/>

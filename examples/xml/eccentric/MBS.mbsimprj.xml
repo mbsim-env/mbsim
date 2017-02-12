@@ -298,11 +298,11 @@
             </LinearSpringDamperForce>
           </forceFunction>
           <unloadedLength unit="m">l01</unloadedLength>
-          <enableOpenMBVCoilSpring>
+          <enableOpenMBV>
             <?OPENMBV_ID 16?>
             <numberOfCoils unit="-">5</numberOfCoils>
             <springRadius unit="cm">5</springRadius>
-          </enableOpenMBVCoilSpring>
+          </enableOpenMBV>
         </SpringDamper>
         <SpringDamper name="SpringDamper2">
           <connect ref1="../Object[Mass]/Frame[P2]" ref2="../Object[RigidBody]/Frame[C]"/>
@@ -313,11 +313,11 @@
             </LinearSpringDamperForce>
           </forceFunction>
           <unloadedLength unit="m">l02</unloadedLength>
-          <enableOpenMBVCoilSpring>
+          <enableOpenMBV>
             <?OPENMBV_ID 17?>
             <numberOfCoils unit="-">5</numberOfCoils>
             <springRadius unit="cm">5</springRadius>
-          </enableOpenMBVCoilSpring>
+          </enableOpenMBV>
         </SpringDamper>
         <Contact name="Contact">
           <connect ref1="../Object[RigidBody]/Contour[Line3]" ref2="../Object[Eccentric]/Contour[Circle3]"/>

@@ -95,10 +95,7 @@ namespace MBSim {
       gear->addGearInput(bi[i],ratio[i]);
     gear->setGeneralizedForceLaw(new BilateralConstraint);
     gear->setSupportFrame(support);
-    if(FArrow)
-      gear->setOpenMBVForce(FArrow);
-    if(MArrow)
-      gear->setOpenMBVMoment(MArrow);
+    link = gear;
   }
 
 }

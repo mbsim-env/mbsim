@@ -245,10 +245,6 @@
   </objects>
   <links>
     <KineticExcitation xmlns="http://www.mbsim-env.de/MBSim" name="MotorTorque">
-      <enableOpenMBVMoment>
-          <scaleLength>.1</scaleLength>
-          <diffuseColor>[0.6666;1;0]</diffuseColor>
-      </enableOpenMBVMoment>
       <connect ref2="../Object[Motor]/Frame[C]"/>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentFunction>
@@ -257,12 +253,12 @@
           <y>[0 .2 .1 .1]'</y>
         </TabularFunction>
       </momentFunction>
+      <enableOpenMBV>
+          <scaleLength>.1</scaleLength>
+          <diffuseColor>[0.6666;1;0]</diffuseColor>
+      </enableOpenMBV>
     </KineticExcitation>
     <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Crank_Rocker">
-      <enableOpenMBVMoment>
-        <scaleLength>.1</scaleLength>
-        <diffuseColor>[0.6666;1;0]</diffuseColor>
-      </enableOpenMBVMoment>
       <connect ref1="../Object[Crank]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fCrank]"/>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentLaw>
@@ -277,10 +273,6 @@
       </momentLaw>
     </Joint>
     <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Rocker_Piston">
-      <enableOpenMBVMoment>
-        <scaleLength>.1</scaleLength>
-        <diffuseColor>[0.6666;1;0]</diffuseColor>
-      </enableOpenMBVMoment>
       <connect ref1="../Object[Piston]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fPiston]"/>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentLaw>
@@ -308,4 +300,20 @@
       <forceDirection>[1 0 0; 0 1 0]'</forceDirection>
     </JointConstraint>
   </constraints>
+  <observers>
+    <MechanicalLinkObserver name="MechanicalLinkObserver1">
+      <mechanicalLink ref="../Link[Friction_Crank_Rocker]"/>
+      <enableOpenMBVMoment>
+        <scaleLength>.1</scaleLength>
+        <diffuseColor>[0.6666;1;0]</diffuseColor>
+      </enableOpenMBVMoment>
+    </MechanicalLinkObserver>
+    <MechanicalLinkObserver name="MechanicalLinkObserver2">
+      <mechanicalLink ref="../Link[Friction_Rocker_Piston]"/>
+      <enableOpenMBVMoment>
+        <scaleLength>.1</scaleLength>
+        <diffuseColor>[0.6666;1;0]</diffuseColor>
+      </enableOpenMBVMoment>
+    </MechanicalLinkObserver>
+  </observers>
 </Group>

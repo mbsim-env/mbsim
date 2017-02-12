@@ -8,8 +8,7 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematics/kinematics.h"
-
-#include "openmbvcppinterface/arrow.h"
+#include "mbsim/observers/contact_observer.h"
 
 using namespace std;
 using namespace MBSim;
@@ -69,8 +68,13 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   cr->setTangentialForceLaw(new SpatialStribeckFriction(new Friction(mu0,mu1,mu2,kP)));
   cr->setTangentialImpactLaw(new SpatialStribeckImpact(new Friction(mu0,mu1,mu2,kP)));
   cr->connect(pl,ball->getContour("Sphere"));
-  cr->enableOpenMBVNormalForce();
-  cr->enableOpenMBVTangentialForce();
   this->addLink(cr);
+
+
+  ContactObserver *observer = new ContactObserver("Observer");
+  addObserver(observer);
+  observer->setContact(cr);
+  observer->enableOpenMBVNormalForce();
+  observer->enableOpenMBVTangentialForce();
 }
 

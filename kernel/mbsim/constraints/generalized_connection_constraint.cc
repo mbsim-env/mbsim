@@ -56,6 +56,7 @@ namespace MBSim {
     else connection->connect(bd);
     connection->setGeneralizedForceLaw(new BilateralConstraint);
     connection->setSupportFrame(support);
+    link = connection;
   }
 
 }

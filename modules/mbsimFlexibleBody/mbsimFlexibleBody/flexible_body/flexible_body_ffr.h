@@ -218,24 +218,6 @@ namespace MBSimFlexibleBody {
         ombvIndices = indices;
       }
 
-      /** \brief Visualize the weight */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVWeight, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        MBSim::OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        FWeight=ombv.createOpenMBV();
-      }
-
-      /** \brief Visualize the joint force */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointForce, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        MBSim::OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        FArrow=ombv.createOpenMBV();
-      }
-
-      /** \brief Visualize the joint moment */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVJointMoment, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        MBSim::OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        MArrow=ombv.createOpenMBV();
-      }
-
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
@@ -421,7 +403,6 @@ namespace MBSimFlexibleBody {
        * \brief Frame of reference for drawing openMBVBody
        */
       MBSim::Frame * openMBVFrame;
-      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
       std::vector<MBSim::Index> ombvNodes, ombvIndices;
   };
 

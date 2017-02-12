@@ -5,6 +5,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/composite_function.h"
 #include "mbsim/observers/absolute_kinematics_observer.h"
+#include "mbsim/observers/rigid_body_observer.h"
 
 #include "openmbvcppinterface/arrow.h"
 #include "openmbvcppinterface/cuboid.h"
@@ -59,10 +60,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->getFrame("C")->setPlotFeature(globalVelocity,enabled);
   body->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
 
-  body->enableOpenMBVWeight();
-  body->enableOpenMBVJointForce();
-  body->enableOpenMBVJointMoment();
-  AbsoluteKinematicsObserver *o = new AbsoluteKinematicsObserver("Observer");
+  AbsoluteKinematicsObserver *o = new AbsoluteKinematicsObserver("AKObserver");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
  // std::shared_ptr<OpenMBV::Arrow> arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
@@ -84,5 +82,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   getFrame("I")->enableOpenMBV();
 
+  RigidBodyObserver *observer = new RigidBodyObserver("RBObserver");
+  addObserver(observer);
+  observer->setRigidBody(body);
+  observer->enableOpenMBVWeight();
+  observer->enableOpenMBVJointForce();
+  observer->enableOpenMBVJointMoment();
 
 }

@@ -67,7 +67,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, JointConstraint)
 
-  JointConstraint::JointConstraint(const string &name) : Constraint(name), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+  JointConstraint::JointConstraint(const string &name) : MechanicalConstraint(name), frame1(0), frame2(0), refFrame(NULL), refFrameID(0), C("F"), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
     C.setParent(this);
   }
 
@@ -91,10 +91,10 @@ namespace MBSim {
           if2.push_back(bd2[i+1]->getFrameOfReference());
         if2.push_back(frame2);
       }
-      Constraint::init(stage);
+      MechanicalConstraint::init(stage);
     }
     else if(stage==preInit) {
-      Constraint::init(stage);
+      MechanicalConstraint::init(stage);
       for(unsigned int i=0; i<bd1.size(); i++) 
         bd1[i]->addDependency(this);
       for(unsigned int i=0; i<bd2.size(); i++)
@@ -105,7 +105,7 @@ namespace MBSim {
       C.setFrameOfReference(frame1);
     }
     else if(stage==resize) {
-      Constraint::init(stage);
+      MechanicalConstraint::init(stage);
       nq = 0;
       nu = 0;
       nh = 0;
@@ -143,7 +143,7 @@ namespace MBSim {
       JR.resize(3,nu);
     }
     else if (stage == unknownStage) {
-      Constraint::init(stage);
+      MechanicalConstraint::init(stage);
       Js.resize(3 - forceDir.cols());
       if (forceDir.cols() == 2)
         Js.set(0, crossProduct(forceDir.col(0), forceDir.col(1)));
@@ -157,7 +157,7 @@ namespace MBSim {
       }
     }
     else
-      Constraint::init(stage);
+      MechanicalConstraint::init(stage);
   }
 
   void JointConstraint::initz() {
@@ -170,7 +170,7 @@ namespace MBSim {
   }
 
   void JointConstraint::resetUpToDate() {
-    Constraint::resetUpToDate();
+    MechanicalConstraint::resetUpToDate();
     C.resetUpToDate();
   }
 
@@ -303,15 +303,12 @@ namespace MBSim {
       joint->setMomentLaw(new BilateralConstraint);
     }
     joint->connect(frame1,frame2);
-    if(FArrow)
-      joint->setOpenMBVForce(FArrow);
-    if(MArrow)
-      joint->setOpenMBVMoment(MArrow);
+    link = joint;
   }
 
   void JointConstraint::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
-    Constraint::initializeUsingXML(element);
+    MechanicalConstraint::initializeUsingXML(element);
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodyOnFirstSide");
     while(e && E(e)->getTagName()==MBSIM%"dependentRigidBodyOnFirstSide") {
       saved_RigidBodyFirstSide.push_back(E(e)->getAttribute("ref"));
@@ -338,17 +335,6 @@ namespace MBSim {
     if(e) setMomentDirection(getMat3xV(e,3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if (e) setInitialGuess(getVec(e));
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
-      FArrow=ombv.createOpenMBV(e);
-    }
-
-    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
-    if (e) {
-      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
-      MArrow=ombv.createOpenMBV(e);
-    }
   }
 
   void JointConstraint::setForceDirection(const Mat3xV &fd) {

@@ -32,11 +32,8 @@ namespace MBSim {
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
       std::vector<FloatingRelativeFrame> C;
-      bool updPos, updVel, updFD, updF, updM, updRMV;
+      bool updPos, updVel, updFD;
       std::vector<fmatvec::Mat3xV> DF, DM;
-      std::vector<fmatvec::Vec3> F, M;
-      std::vector<fmatvec::Mat3xV> RF, RM;
-      fmatvec::RangeV iF, iM;
       Frame *support;
 
     public:
@@ -50,7 +47,7 @@ namespace MBSim {
       void updateW(int i=0);
       void updateg();
       void updategd();
-      virtual void updatePositions();
+      void updatePositions();
       void updateGeneralizedPositions();
       void updateGeneralizedVelocities();
       void updateForce();
@@ -60,10 +57,6 @@ namespace MBSim {
       void updatewb();
       const fmatvec::Mat3xV& evalGlobalForceDirection(int i) { if(updFD) updateForceDirections(); return DF[i]; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i) { if(updFD) updateForceDirections(); return DM[i]; }
-      const fmatvec::Vec3& evalForce(int i) { if(updF) updateForce(); return F[i]; }
-      const fmatvec::Vec3& evalMoment(int i) { if(updM) updateMoment(); return M[i]; }
-      const fmatvec::Mat3xV& evalRF(int i) { if(updRMV) updateR(); return RF[i]; }
-      const fmatvec::Mat3xV& evalRM(int i) { if(updRMV) updateR(); return RM[i]; }
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);

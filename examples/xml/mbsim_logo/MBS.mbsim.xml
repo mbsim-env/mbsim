@@ -145,9 +145,6 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <enableOpenMBVContactPoints>
-          <size>frameSize</size>
-        </enableOpenMBVContactPoints> 
       </Contact>
     </Embed>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -163,9 +160,6 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
-        <enableOpenMBVContactPoints>
-          <size>frameSize</size>
-        </enableOpenMBVContactPoints> 
       </Contact>
     </Embed>
       <Contact name="ContactSi" xmlns="http://www.mbsim-env.de/MBSim">
@@ -180,11 +174,32 @@
             </forceFunction>
           </RegularizedUnilateralConstraint>
         </normalForceLaw>
+      </Contact>
+  </links>
+  <observers>
+    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ContactObserver name="ContactObserverBS{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+        <contact ref="../Link[ContactBS{nr}]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
         </enableOpenMBVContactPoints> 
-      </Contact>
-  </links>
+      </ContactObserver>
+    </Embed>
+    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ContactObserver name="ContactObserverMB{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+        <contact ref="../Link[ContactMB{nr}]"/>
+        <enableOpenMBVContactPoints>
+          <size>frameSize</size>
+        </enableOpenMBVContactPoints> 
+      </ContactObserver>
+    </Embed>
+    <ContactObserver name="ContactObserverSi">
+      <contact ref="../Link[ContactSi]"/>
+      <enableOpenMBVContactPoints>
+        <size>frameSize</size>
+      </enableOpenMBVContactPoints> 
+    </ContactObserver>
+  </observers>
   <environments>
     <MBSimEnvironment xmlns="http://www.mbsim-env.de/MBSim">
       <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>

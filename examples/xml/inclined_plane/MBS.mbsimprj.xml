@@ -112,10 +112,6 @@
           <enableOpenMBVFrameC>
             <?OPENMBV_ID 3?>
           </enableOpenMBVFrameC>
-          <enableOpenMBVWeight>
-            <?OPENMBV_ID 2?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVWeight>
         </RigidBody>
         <RigidBody name="Plane">
           <mass unit="kg">1</mass>
@@ -209,14 +205,6 @@
               </frictionFunction>
             </PlanarStribeckImpact>
           </tangentialImpactLaw>
-          <enableOpenMBVNormalForce>
-            <?OPENMBV_ID 25?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVNormalForce>
-          <enableOpenMBVTangentialForce>
-            <?OPENMBV_ID 25?>
-            <scaleLength unit="-">0.1</scaleLength>
-          </enableOpenMBVTangentialForce>
         </Contact>
       </links>
       <observers>
@@ -227,6 +215,24 @@
             <referencePoint>"fromPoint"</referencePoint>
           </enableOpenMBVVelocity>
         </AbsoluteKinematicsObserver>
+        <RigidBodyObserver name="RigidBodyObserver1">
+          <rigidBody ref="../Object[Mass]"/>
+          <enableOpenMBVWeight>
+            <?OPENMBV_ID 129?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVWeight>
+        </RigidBodyObserver>
+        <ContactObserver name="ContactObserver1">
+          <contact ref="../Link[Contact]"/>
+          <enableOpenMBVNormalForce>
+            <?OPENMBV_ID 25?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <?OPENMBV_ID 25?>
+            <scaleLength unit="-">0.1</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver>
       </observers>
       <enableOpenMBVFrameI>
         <?OPENMBV_ID 1?>

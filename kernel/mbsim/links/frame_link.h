@@ -21,8 +21,6 @@
 #define _FRAME_LINK_H_
 
 #include "mbsim/links/mechanical_link.h"
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
 
 namespace MBSim {
 

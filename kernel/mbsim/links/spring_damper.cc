@@ -99,7 +99,7 @@ namespace MBSim {
     setForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
     l0 = Element::getDouble(e);
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCoilSpring");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVCoilSpring ombv;
       coilspringOpenMBV=ombv.createOpenMBV(e);

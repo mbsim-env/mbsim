@@ -120,7 +120,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
       sp->connect(
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i-1)))->getFrame("R"), 
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i)))->getFrame("L"));
-      sp->enableOpenMBVCoilSpring(_springRadius=.75*.5*dA,_crossSectionRadius=.1*.25*dA,_numberOfCoils=5);
+      sp->enableOpenMBV(_springRadius=.75*.5*dA,_crossSectionRadius=.1*.25*dA,_numberOfCoils=5);
     }
   }
   

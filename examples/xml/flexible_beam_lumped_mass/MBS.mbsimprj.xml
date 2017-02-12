@@ -139,13 +139,6 @@ ret = 0;</scalarParameter>
       </objects>
       <links>
         <KineticExcitation name="KineticExcitation">
-          <enableOpenMBVForce>
-            <?OPENMBV_ID 7?>
-            <scaleLength unit="-">1e-6</scaleLength>
-          </enableOpenMBVForce>
-          <enableOpenMBVMoment>
-            <?OPENMBV_ID 7?>
-          </enableOpenMBVMoment>
           <connect ref2="../Object[Body]/Frame[P{138}]"/>
           <forceDirection unit="-">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -165,6 +158,10 @@ ret = 0;</scalarParameter>
               <a0>1e7</a0>
             </ConstantFunction>
           </forceFunction>
+          <enableOpenMBV>
+            <?OPENMBV_ID 7?>
+            <scaleLength unit="-">1e-6</scaleLength>
+          </enableOpenMBV>
         </KineticExcitation>
       </links>
       <enableOpenMBVFrameI>

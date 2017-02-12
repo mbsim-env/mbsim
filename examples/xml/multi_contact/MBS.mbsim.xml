@@ -74,12 +74,6 @@
       -->
      <connect ref1="../Contour[Ground]" ref2="../Object[Ball1]/Contour[Sphere]" name="Contact_Uno"/>
      <connect ref1="../Contour[Ground]" ref2="../Object[Ball2]/Contour[Sphere]" name="Contact_Due"/>
-     <enableOpenMBVContactPoints>
-       <size>0.1</size>
-     </enableOpenMBVContactPoints>
-     <enableOpenMBVNormalForce>
-        <scaleLength>.01</scaleLength>
-     </enableOpenMBVNormalForce>
         <InfluenceFunction>
           <FlexibilityInfluenceFunction contourName1="../Contour[Ground]" contourName2="../Contour[Ground]">
             <Flexibility>1e-5</Flexibility>
@@ -87,7 +81,17 @@
         </InfluenceFunction>
    </MaxwellContact>
   </links>
-  
+  <observers>
+    <ContactObserver name="ContactObserver1">
+      <contact ref="../Link[Contact]"/>
+      <enableOpenMBVContactPoints>
+        <size>0.1</size>
+      </enableOpenMBVContactPoints>
+      <enableOpenMBVNormalForce>
+        <scaleLength>.01</scaleLength>
+      </enableOpenMBVNormalForce>
+    </ContactObserver> 
+  </observers>
   <environments>
     <MBSimEnvironment>
       <accelerationOfGravity>[-9.81;0;0]</accelerationOfGravity>

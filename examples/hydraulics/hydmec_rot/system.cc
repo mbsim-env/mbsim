@@ -165,7 +165,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
       sp->connect(
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
           dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
-      sp->enableOpenMBVCoilSpring(_springRadius=.75*.1*h,_crossSectionRadius=.1*.25*h,_numberOfCoils=5);
+      sp->enableOpenMBV(_springRadius=.75*.1*h,_crossSectionRadius=.1*.25*h,_numberOfCoils=5);
     }
   }
   SpringDamper * sp = new SpringDamper("Spring_"+getBodyName(4)+"_"+getBodyName(0));
@@ -175,7 +175,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   sp->connect(
       dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
       dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));
-  sp->enableOpenMBVCoilSpring(_springRadius=.75*.1*h,_crossSectionRadius=.1*.25*h,_numberOfCoils=5);
+  sp->enableOpenMBV(_springRadius=.75*.1*h,_crossSectionRadius=.1*.25*h,_numberOfCoils=5);
 
   RigidLine * l04 = new RigidLine("l04");
   addObject(l04);

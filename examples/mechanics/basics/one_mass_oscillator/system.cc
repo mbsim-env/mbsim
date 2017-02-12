@@ -73,8 +73,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addLink(contact);
 
   // visualisation
-  spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
+  spring1->enableOpenMBV(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
   
-  spring2->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
+  spring2->enableOpenMBV(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 }
 

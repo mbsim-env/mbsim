@@ -19,12 +19,9 @@
 #ifndef _JOINT_CONSTRAINT_H
 #define _JOINT_CONSTRAINT_H
 
-#include "mbsim/constraints/constraint.h"
+#include "mechanical_constraint.h"
 #include "mbsim/functions/function.h"
 #include "mbsim/frames/floating_relative_frame.h"
-
-#include "mbsim/utils/boost_parameters.h"
-#include "mbsim/utils/openmbv_utils.h"
 
 namespace MBSim {
 
@@ -36,7 +33,7 @@ namespace MBSim {
    * \author Martin Foerg
    * 2011-08-04 XML Interface added (Markus Schneider)
    */
-  class JointConstraint : public Constraint {
+  class JointConstraint : public MechanicalConstraint {
     public:
       JointConstraint(const std::string &name="");
 
@@ -68,18 +65,6 @@ namespace MBSim {
       virtual std::string getType() const { return "JointConstraint"; }
 
       void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
-
-      /** \brief Visualize a force arrow acting on frame2 */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        FArrow=ombv.createOpenMBV();
-      }
-
-      /** \brief Visualize a moment arrow */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
-        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
-        MArrow=ombv.createOpenMBV();
-      }
 
     private:
       class Residuum : public Function<fmatvec::Vec(fmatvec::Vec)> {
@@ -115,7 +100,6 @@ namespace MBSim {
 
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide, saved_IndependentBody;
-      std::shared_ptr<OpenMBV::Arrow> FArrow, MArrow;
   };
 
 }

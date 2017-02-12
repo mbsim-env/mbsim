@@ -81,15 +81,6 @@
                 <size unit="m">1</size>
                 <offset unit="-">1</offset>
             </enableOpenMBVFrameC>
-            <enableOpenMBVWeight>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVWeight>
-           <enableOpenMBVJointForce>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVJointForce>
-           <enableOpenMBVJointMoment>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVJointMoment>
         </RigidBody>
     </objects>
     <links />
@@ -100,6 +91,18 @@
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVVelocity>
         </AbsoluteKinematicsObserver>
+        <RigidBodyObserver name="RigidBodyObserver1">
+            <rigidBody ref="../Object[RigidBody1]" />
+            <enableOpenMBVWeight>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVWeight>
+           <enableOpenMBVJointForce>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointForce>
+           <enableOpenMBVJointMoment>
+              <scaleLength unit="-">1</scaleLength>
+            </enableOpenMBVJointMoment>
+        </RigidBodyObserver>
     </observers>
     <enableOpenMBVFrameI>
         <?OPENMBV_ID 3?>

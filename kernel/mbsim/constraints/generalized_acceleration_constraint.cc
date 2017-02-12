@@ -102,10 +102,7 @@ namespace MBSim {
     ke->setExcitationFunction(f);
     ke->setGeneralizedForceLaw(new BilateralConstraint);
     ke->setSupportFrame(support);
-    if(FArrow)
-      ke->setOpenMBVForce(FArrow);
-    if(MArrow)
-      ke->setOpenMBVMoment(MArrow);
+    link = ke;
   }
 
 }
