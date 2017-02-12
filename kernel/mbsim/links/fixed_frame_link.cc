@@ -113,6 +113,11 @@ namespace MBSim {
         r[i].resize(2);
       }
     }
+    else if(stage==unknownStage) {
+      FrameLink::init(stage);
+      P[0] = frame[0];
+      P[1] = frame[1];
+    }
     else
       FrameLink::init(stage);
   }

@@ -60,12 +60,12 @@ namespace MBSim {
       virtual void plot();
       virtual void closePlot();
 
-      Frame* getFrame() { return K; }
+      Frame* getPointOfApplication(int i) { return P[i]; }
 
       int getNumberOfLinks() { return F.size(); }
 
     protected:
-      Frame* K;
+      std::vector<Frame*> P;
 
       std::vector<fmatvec::Mat3xV> RF, RM;
 

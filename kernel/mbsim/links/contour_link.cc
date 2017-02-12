@@ -34,6 +34,7 @@ using namespace xercesc;
 namespace MBSim {
 
   ContourLink::ContourLink(const std::string &name) : MechanicalLink(name), contour(2), cFrame(2), updPos(true), updVel(true), updDF(true) {
+    P.resize(2);
   }
 
   ContourLink::~ContourLink() {
@@ -134,7 +135,8 @@ namespace MBSim {
     else if(stage==unknownStage) {
       MechanicalLink::init(stage);
 
-      K = cFrame[1];
+      P[0] = cFrame[0];
+      P[1] = cFrame[1];
 
       if(contour[0]==NULL or contour[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");

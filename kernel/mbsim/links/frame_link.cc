@@ -29,6 +29,7 @@ using namespace xercesc;
 namespace MBSim {
 
   FrameLink::FrameLink(const std::string &name) : MechanicalLink(name), frame(2), updPos(true), updVel(true) {
+    P.resize(2);
     F.resize(2);
     M.resize(2);
     RF.resize(2);
@@ -49,8 +50,6 @@ namespace MBSim {
     }
     else if(stage==unknownStage) {
       MechanicalLink::init(stage);
-
-      K = frame[1];
 
       if(frame[0]==NULL or frame[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");

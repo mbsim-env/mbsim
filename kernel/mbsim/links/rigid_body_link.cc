@@ -177,6 +177,7 @@ namespace MBSim {
       iM = RangeV(0, body[0]->getPJR(0,false).cols()-1);
       rrel.resize(body[0]->getqRelSize());
       vrel.resize(body[0]->getuRelSize());
+      P.resize(body.size());
       F.resize(body.size());
       M.resize(body.size());
       DF.resize(body.size(),Mat3xV(iF.size()));
@@ -220,7 +221,9 @@ namespace MBSim {
     }
     else if(stage==unknownStage) {
       MechanicalLink::init(stage);
-      K = body[0]->getFrameForKinematics();
+      for(unsigned int i=0; i<body.size(); i++) {
+        P[i] = body[i]->getFrameForKinematics();
+    }
     }
     else if(stage==plotting) {
       updatePlotFeatures();

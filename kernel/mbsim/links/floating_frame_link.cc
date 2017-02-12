@@ -171,6 +171,8 @@ namespace MBSim {
       FrameLink::init(stage);
       refFrame = refFrameID ? frame[1] : frame[0];
       C.setFrameOfReference(frame[0]);
+      P[0] = frame[0];
+      P[1] = &C;
     }
     else
       FrameLink::init(stage);

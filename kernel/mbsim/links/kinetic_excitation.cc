@@ -127,7 +127,7 @@ namespace MBSim {
         if(openMBVForce) {
           vector<double> data;
           data.push_back(getTime());
-          Vec3 toPoint=K->evalPosition();
+          Vec3 toPoint=P[1]->evalPosition();
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));
@@ -141,7 +141,7 @@ namespace MBSim {
         if(openMBVMoment) {
           vector<double> data;
           data.push_back(getTime());
-          Vec3 toPoint=K->evalPosition();
+          Vec3 toPoint=P[1]->evalPosition();
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));
