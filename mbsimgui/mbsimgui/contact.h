@@ -25,7 +25,7 @@
 
 namespace MBSimGUI {
 
-  class Contact : public Link {
+  class Contact : public MechanicalLink {
     friend class ContactPropertyDialog;
     public:
     Contact(const std::string &str, Element *parent);
@@ -36,7 +36,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
     protected:
-    ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, searchAllContactPoints, initialGuess, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
+    ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, searchAllContactPoints, initialGuess;
   };
 
 }

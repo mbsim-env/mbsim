@@ -31,7 +31,13 @@ namespace MBSimGUI {
       virtual int getxSize() {return 0;}
   };
 
-  class FrameLink : public Link {
+  class MechanicalLink : public Link {
+    friend class MechanicalLinkPropertyDialog;
+    public:
+      MechanicalLink(const std::string &str, Element *parent) : Link(str, parent) { }
+  };
+
+  class FrameLink : public MechanicalLink {
     friend class FrameLinkPropertyDialog;
     public:
       FrameLink(const std::string &str, Element *parent);
@@ -39,8 +45,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
-      ExtProperty connections, forceArrow, momentArrow;
- };
+      ExtProperty connections;
+  };
 
   class FixedFrameLink : public FrameLink {
     friend class FixedFrameLinkPropertyDialog;
@@ -58,7 +64,7 @@ namespace MBSimGUI {
       ExtProperty refFrameID;
  };
 
-  class RigidBodyLink : public Link {
+  class RigidBodyLink : public MechanicalLink {
     friend class RigidBodyLinkPropertyDialog;
     public:
       RigidBodyLink(const std::string &str, Element *parent);
@@ -66,7 +72,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
-      ExtProperty support, forceArrow, momentArrow;
+      ExtProperty support;
  };
 
   class DualRigidBodyLink : public RigidBodyLink {

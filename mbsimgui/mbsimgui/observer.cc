@@ -152,4 +152,49 @@ namespace MBSimGUI {
     return ele0;
   }
 
+  MechanicalLinkObserver::MechanicalLinkObserver(const string &str, Element *parent) : Observer(str, parent), forceArrow(0,false), momentArrow(0,false) {
+
+    link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"mechanicalLink"));
+
+    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
+
+    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
+  }
+
+  void MechanicalLinkObserver::initialize() {
+    Observer::initialize();
+    link.initialize();
+  }
+
+  DOMElement* MechanicalLinkObserver::initializeUsingXML(DOMElement *element) {
+    Observer::initializeUsingXML(element);
+    link.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* MechanicalLinkObserver::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Observer::writeXMLFile(parent);
+    link.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
+//
+//  , enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false)
+//
+//    enableOpenMBVContactPoints.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
+//
+//    normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVNormalForce",getID()));
+//
+//    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
+//   enableOpenMBVContactPoints.initializeUsingXML(element);
+//    normalForceArrow.initializeUsingXML(element);
+//    frictionArrow.initializeUsingXML(element);
+//    enableOpenMBVContactPoints.writeXMLFile(ele0);
+//    normalForceArrow.writeXMLFile(ele0);
+//    frictionArrow.writeXMLFile(ele0);
+
 }

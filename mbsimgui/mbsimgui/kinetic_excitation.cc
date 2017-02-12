@@ -21,6 +21,7 @@
 #include "kinetic_excitation.h"
 #include "function_properties.h"
 #include "function_property_factory.h"
+#include "ombv_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -28,7 +29,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  KineticExcitation::KineticExcitation(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false) {
+  KineticExcitation::KineticExcitation(const string &str, Element *parent) : FloatingFrameLink(str, parent), forceDirection(0,false), forceFunction(0,false), momentDirection(0,false), momentFunction(0,false), arrow(0,false) {
 
     static_cast<ConnectFramesProperty*>(connections.getProperty())->setDefaultFrame("../Frame[I]");
 
@@ -40,14 +41,9 @@ namespace MBSimGUI {
 
     momentFunction.setProperty(new ChoiceProperty2(new FunctionPropertyFactory2(this),MBSIM%"momentFunction",0));
 
-    forceArrow.setActive(true);
-    momentArrow.setActive(true);
+    arrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBV",getID()));
+    arrow.setActive(true);
   }
-
-//  void KineticExcitation::initialize() {
-//    FloatingFrameLink::initialize();
-//    forceFunction.initialize();
-//  }
 
   DOMElement* KineticExcitation::initializeUsingXML(DOMElement *element) {
     FloatingFrameLink::initializeUsingXML(element);
@@ -55,7 +51,8 @@ namespace MBSimGUI {
     forceFunction.initializeUsingXML(element);
     momentDirection.initializeUsingXML(element);
     momentFunction.initializeUsingXML(element);
-    return element;
+    arrow.initializeUsingXML(element);
+   return element;
   }
 
   DOMElement* KineticExcitation::writeXMLFile(DOMNode *parent) {
@@ -64,6 +61,7 @@ namespace MBSimGUI {
     forceFunction.writeXMLFile(ele0);
     momentDirection.writeXMLFile(ele0);
     momentFunction.writeXMLFile(ele0);
+    arrow.writeXMLFile(ele0);
     return ele0;
   }
 

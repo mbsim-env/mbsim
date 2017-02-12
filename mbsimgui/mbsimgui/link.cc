@@ -23,7 +23,6 @@
 #include "objectfactory.h"
 #include "mainwindow.h"
 #include "embed.h"
-#include "ombv_properties.h"
 #include "function_property_factory.h"
 
 using namespace std;
@@ -42,32 +41,23 @@ namespace MBSimGUI {
     return link;
   }
 
-  FrameLink::FrameLink(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false), momentArrow(0,false) {
-
+  FrameLink::FrameLink(const string &str, Element *parent) : MechanicalLink(str, parent) {
     connections.setProperty(new ConnectFramesProperty(2,this));
-
-    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-
-    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
   }
 
   void FrameLink::initialize() {
-    Link::initialize();
+    MechanicalLink::initialize();
     connections.initialize();
   }
 
   DOMElement* FrameLink::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     connections.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* FrameLink::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
+    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
     connections.writeXMLFile(ele0);
     return ele0;
   }
@@ -89,32 +79,24 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : Link(str, parent), support(0,false), forceArrow(0,false), momentArrow(0,false) {
+  RigidBodyLink::RigidBodyLink(const string &str, Element *parent) : MechanicalLink(str, parent), support(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
-
-    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-
-    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
   }
 
   void RigidBodyLink::initialize() {
-    Link::initialize();
+    MechanicalLink::initialize();
     support.initialize();
   }
 
   DOMElement* RigidBodyLink::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     support.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* RigidBodyLink::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
+    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
     support.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 

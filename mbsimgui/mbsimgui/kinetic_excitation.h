@@ -36,7 +36,7 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
     protected:
-    ExtProperty forceDirection, forceFunction, momentDirection, momentFunction;
+    ExtProperty forceDirection, forceFunction, momentDirection, momentFunction, arrow;
   };
 
 }

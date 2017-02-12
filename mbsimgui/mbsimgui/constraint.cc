@@ -53,12 +53,8 @@ namespace MBSimGUI {
     return constraint;
   }
 
-  GeneralizedConstraint::GeneralizedConstraint(const string &str, Element *parent) : Constraint(str, parent), support(0,false), forceArrow(0,false), momentArrow(0,false) {
+  GeneralizedConstraint::GeneralizedConstraint(const string &str, Element *parent) : MechanicalConstraint(str, parent), support(0,false) {
     support.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"supportFrame"));
-
-    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-
-    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
   }
 
   void GeneralizedConstraint::initialize() {
@@ -66,18 +62,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedConstraint::initializeUsingXML(DOMElement *element) {
-    Constraint::initializeUsingXML(element);
+    MechanicalConstraint::initializeUsingXML(element);
     support.initializeUsingXML(element);
-    forceArrow.initializeUsingXML(element);
-    momentArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Constraint::writeXMLFile(parent);
+    DOMElement *ele0 = MechanicalConstraint::writeXMLFile(parent);
     support.writeXMLFile(ele0);
-    forceArrow.writeXMLFile(ele0);
-    momentArrow.writeXMLFile(ele0);
     return ele0;
   }
 
@@ -224,7 +216,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), refFrameID(0,false), force(0,false), moment(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), q0(0,false) {
+  JointConstraint::JointConstraint(const string &str, Element *parent) : MechanicalConstraint(str, parent), refFrameID(0,false), force(0,false), moment(0,false), q0(0,false) {
 
     dependentBodiesFirstSide.setProperty(new ListProperty(new RigidBodyOfReferencePropertyFactory(this,""),MBSIM%"dependentRigidBodyOnFirstSide"));
 
@@ -247,14 +239,10 @@ namespace MBSimGUI {
     input.clear();
     input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIM%"initialGuess"));
     q0.setProperty(new ExtPhysicalVarProperty(input));
-
-    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
-
-    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
   }
 
   void JointConstraint::initialize() {
-    Constraint::initialize();
+    MechanicalConstraint::initialize();
     dependentBodiesFirstSide.initialize();
     dependentBodiesSecondSide.initialize();
     independentBody.initialize();
@@ -274,7 +262,7 @@ namespace MBSimGUI {
   }
 
   void JointConstraint::deinitialize() {
-    Constraint::deinitialize();
+    MechanicalConstraint::deinitialize();
     ListProperty *list = static_cast<ListProperty*>(dependentBodiesFirstSide.getProperty());
     for(int i=0; i<list->getSize(); i++) {
       RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(list->getProperty(i))->getBodyPtr();
@@ -290,7 +278,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* JointConstraint::initializeUsingXML(DOMElement *element) {
-    Constraint::initializeUsingXML(element);
+    MechanicalConstraint::initializeUsingXML(element);
 
     dependentBodiesFirstSide.initializeUsingXML(element);
     dependentBodiesSecondSide.initializeUsingXML(element);
@@ -306,14 +294,11 @@ namespace MBSimGUI {
 
     q0.initializeUsingXML(element);
 
-    jointForceArrow.initializeUsingXML(element);
-    jointMomentArrow.initializeUsingXML(element);
-
     return element;
   }
 
   DOMElement* JointConstraint::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Constraint::writeXMLFile(parent);
+    DOMElement *ele0 = MechanicalConstraint::writeXMLFile(parent);
 
     dependentBodiesFirstSide.writeXMLFile(ele0);
     dependentBodiesSecondSide.writeXMLFile(ele0);
@@ -328,9 +313,6 @@ namespace MBSimGUI {
     moment.writeXMLFile(ele0);
 
     q0.writeXMLFile(ele0);
-
-    jointForceArrow.writeXMLFile(ele0);
-    jointMomentArrow.writeXMLFile(ele0);
 
     return ele0;
   }

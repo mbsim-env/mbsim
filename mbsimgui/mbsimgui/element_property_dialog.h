@@ -47,6 +47,7 @@ namespace MBSimGUI {
   class RigidBody;
   class FlexibleBodyFFR;
   class Constraint;
+  class MechanicalConstraint;
   class GeneralizedConstraint;
   class GeneralizedGearConstraint;
   class GeneralizedDualConstraint;
@@ -58,6 +59,7 @@ namespace MBSimGUI {
   class SignalProcessingSystem;
   class LinearTransferSystem;
   class Link;
+  class MechanicalLink;
   class FrameLink;
   class FixedFrameLink;
   class FloatingFrameLink;
@@ -80,6 +82,7 @@ namespace MBSimGUI {
   class AbsoluteKinematicsObserver;
   class RelativeKinematicsObserver;
   class NaturalCoordinatesObserver;
+  class MechanicalLinkObserver;
   class Signal;
   class Sensor;
   class GeneralizedCoordinateSensor;
@@ -353,14 +356,20 @@ namespace MBSimGUI {
       ConstraintPropertyDialog(Constraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class GeneralizedConstraintPropertyDialog : public ConstraintPropertyDialog {
+  class MechanicalConstraintPropertyDialog : public ConstraintPropertyDialog {
+
+    public:
+      MechanicalConstraintPropertyDialog(MechanicalConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+  };
+
+  class GeneralizedConstraintPropertyDialog : public MechanicalConstraintPropertyDialog {
 
     public:
       GeneralizedConstraintPropertyDialog(GeneralizedConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *support, *forceArrow, *momentArrow;
+      ExtWidget *support;
   };
 
   class GeneralizedGearConstraintPropertyDialog : public GeneralizedConstraintPropertyDialog {
@@ -424,7 +433,7 @@ namespace MBSimGUI {
       void resizeVariables();
   };
 
-  class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
+  class JointConstraintPropertyDialog : public MechanicalConstraintPropertyDialog {
     Q_OBJECT
 
     public:
@@ -432,7 +441,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *jointForceArrow, *jointMomentArrow, *q0;
+      ExtWidget *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *refFrameID, *force, *moment, *connections, *q0;
       VecWidget *q0_;
     protected slots:
       void resizeVariables();
@@ -453,14 +462,20 @@ namespace MBSimGUI {
     protected:
   };
 
-  class FrameLinkPropertyDialog : public LinkPropertyDialog {
+  class MechanicalLinkPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      MechanicalLinkPropertyDialog(MechanicalLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+  };
+
+  class FrameLinkPropertyDialog : public MechanicalLinkPropertyDialog {
 
     public:
       FrameLinkPropertyDialog(FrameLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *connections, *forceArrow, *momentArrow;
+      ExtWidget *connections;
   };
 
   class FixedFrameLinkPropertyDialog : public FrameLinkPropertyDialog {
@@ -479,14 +494,14 @@ namespace MBSimGUI {
       ExtWidget *refFrameID;
   };
 
-  class RigidBodyLinkPropertyDialog : public LinkPropertyDialog {
+  class RigidBodyLinkPropertyDialog : public MechanicalLinkPropertyDialog {
 
     public:
       RigidBodyLinkPropertyDialog(RigidBodyLink *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *support, *forceArrow, *momentArrow;
+      ExtWidget *support;
   };
 
   class DualRigidBodyLinkPropertyDialog : public RigidBodyLinkPropertyDialog {
@@ -517,7 +532,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction;
+      ExtWidget *forceDirection, *forceFunction, *momentDirection, *momentFunction, *arrow;
     protected slots:
       void resizeVariables();
   };
@@ -605,14 +620,14 @@ namespace MBSimGUI {
       ExtWidget *forceDirection, *momentDirection, *function;
   };
 
-  class ContactPropertyDialog : public LinkPropertyDialog {
+  class ContactPropertyDialog : public MechanicalLinkPropertyDialog {
 
     public:
       ContactPropertyDialog(Contact *contact, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
+      ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *searchAllContactPoints, *initialGuess;
   };
 
   class ObserverPropertyDialog : public ElementPropertyDialog {
@@ -673,6 +688,16 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *refFrame;
+  };
+
+  class MechanicalLinkObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      MechanicalLinkObserverPropertyDialog(MechanicalLinkObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *link, *forceArrow, *momentArrow;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

@@ -101,6 +101,19 @@ namespace MBSimGUI {
     ExtProperty refFrame;
   };
 
+  class MechanicalLinkObserver : public Observer {
+    friend class MechanicalLinkObserverPropertyDialog;
+    public:
+    MechanicalLinkObserver(const std::string &str, Element *parent);
+    std::string getType() const { return "MechanicalLinkObserver"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new MechanicalLinkObserverPropertyDialog(this);}
+    protected:
+    ExtProperty link, forceArrow, momentArrow;
+  };
+
 }
 
 #endif

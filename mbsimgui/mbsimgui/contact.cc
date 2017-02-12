@@ -30,7 +30,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), searchAllContactPoints(0,false), initialGuess(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
+  Contact::Contact(const string &str, Element *parent) : MechanicalLink(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), searchAllContactPoints(0,false), initialGuess(0,false) {
 
     connections.setProperty(new ConnectContoursProperty(2,this));
 
@@ -45,24 +45,18 @@ namespace MBSimGUI {
     searchAllContactPoints.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"searchAllContactPoints",vector<string>(2,"")),"",4));
 
     initialGuess.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"initialGuess",vector<string>(3,"")),"",4));
-
-    enableOpenMBVContactPoints.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
-
-    normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVNormalForce",getID()));
-
-    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
   }
 
   Contact::~Contact() {
   }
 
   void Contact::initialize() {
-    Link::initialize();
+    MechanicalLink::initialize();
     connections.initialize();
   }
 
   DOMElement* Contact::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
+    MechanicalLink::initializeUsingXML(element);
     contactForceLaw.initializeUsingXML(element);
     contactImpactLaw.initializeUsingXML(element);
     frictionForceLaw.initializeUsingXML(element);
@@ -70,14 +64,11 @@ namespace MBSimGUI {
     connections.initializeUsingXML(element);
     searchAllContactPoints.initializeUsingXML(element);
     initialGuess.initializeUsingXML(element);
-    enableOpenMBVContactPoints.initializeUsingXML(element);
-    normalForceArrow.initializeUsingXML(element);
-    frictionArrow.initializeUsingXML(element);
     return element;
   }
 
   DOMElement* Contact::writeXMLFile(DOMNode *parent) {
-    DOMElement *ele0 = Link::writeXMLFile(parent);
+    DOMElement *ele0 = MechanicalLink::writeXMLFile(parent);
     connections.writeXMLFile(ele0);
     contactForceLaw.writeXMLFile(ele0);
     contactImpactLaw.writeXMLFile(ele0);
@@ -85,9 +76,6 @@ namespace MBSimGUI {
     frictionImpactLaw.writeXMLFile(ele0);
     searchAllContactPoints.writeXMLFile(ele0);
     initialGuess.writeXMLFile(ele0);
-    enableOpenMBVContactPoints.writeXMLFile(ele0);
-    normalForceArrow.writeXMLFile(ele0);
-    frictionArrow.writeXMLFile(ele0);
     return ele0;
   }
 

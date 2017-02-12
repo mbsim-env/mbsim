@@ -51,7 +51,12 @@ namespace MBSimGUI {
       static Constraint* readXMLFile(const std::string &filename, Element *parent);
   };
 
-  class GeneralizedConstraint : public Constraint {
+  class MechanicalConstraint : public Constraint {
+    public:
+      MechanicalConstraint(const std::string &str, Element *parent) : Constraint(str, parent) { }
+  };
+
+  class GeneralizedConstraint : public MechanicalConstraint {
     friend class GeneralizedConstraintPropertyDialog;
     public:
       GeneralizedConstraint(const std::string &str, Element *parent);
@@ -59,7 +64,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
-      ExtProperty support, forceArrow, momentArrow;
+      ExtProperty support;
   };
 
   class GeneralizedGearConstraint : public GeneralizedConstraint {
@@ -130,7 +135,7 @@ namespace MBSimGUI {
     ExtProperty constraintFunction, x0;
   };
 
-  class JointConstraint : public Constraint {
+  class JointConstraint : public MechanicalConstraint {
     friend class JointConstraintPropertyDialog;
     public:
     JointConstraint(const std::string &str, Element *parent);
@@ -142,7 +147,7 @@ namespace MBSimGUI {
     void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
     protected:
-    ExtProperty independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, refFrameID, force, moment, connections, jointForceArrow, jointMomentArrow, q0;
+    ExtProperty independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, refFrameID, force, moment, connections, q0;
 
   };
 

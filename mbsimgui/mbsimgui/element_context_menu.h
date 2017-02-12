@@ -200,9 +200,10 @@ namespace MBSimGUI {
     public:
       ObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addCoordinatesObserver();
+    protected slots:
+      void addCoordinatesObserver();
       void addKinematicsObserver();
+      void addMechanicalLinkObserver();
 
     protected:
       Element *element;
@@ -214,8 +215,8 @@ namespace MBSimGUI {
     public:
       CoordinatesObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addCartesianCoordinatesObserver();
+    protected slots:
+      void addCartesianCoordinatesObserver();
       void addCylinderCoordinatesObserver();
       void addNaturalCoordinatesObserver();
 
@@ -229,8 +230,8 @@ namespace MBSimGUI {
     public:
       KinematicsObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
-      protected slots:
-        void addAbsoluteKinematicsObserver();
+    protected slots:
+      void addAbsoluteKinematicsObserver();
       void addRelativeKinematicsObserver();
 
     protected:
