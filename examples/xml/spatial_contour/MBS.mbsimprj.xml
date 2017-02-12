@@ -147,7 +147,7 @@ ret = [eta;xi]</SymbolicFunction>
       </links>
       <observers>
        <ContactObserver name="ContactObserver1">
-          <contact ref="../Link[Contact1]"/>
+          <mechanicalLink ref="../Link[Contact1]"/>
           <enableOpenMBVContactPoints>
             <?OPENMBV_ID 20?>
             <size unit="cm">1</size>

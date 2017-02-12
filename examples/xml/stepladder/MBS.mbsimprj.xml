@@ -304,7 +304,7 @@
           </enableOpenMBVWeight>
         </RigidBodyObserver>
         <ContactObserver name="ContactObserver1">
-          <contact ref="../Link[Contact1]"/>
+          <mechanicalLink ref="../Link[Contact1]"/>
           <enableOpenMBVNormalForce>
             <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
@@ -315,7 +315,7 @@
           </enableOpenMBVTangentialForce>
         </ContactObserver>
         <ContactObserver name="ContactObserver2">
-          <contact ref="../Link[Contact2]"/>
+          <mechanicalLink ref="../Link[Contact2]"/>
           <enableOpenMBVNormalForce>
             <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>
@@ -326,7 +326,7 @@
           </enableOpenMBVTangentialForce>
         </ContactObserver>
         <ContactObserver name="ContactObserver3">
-          <contact ref="../Link[Contact3]"/>
+          <mechanicalLink ref="../Link[Contact3]"/>
           <enableOpenMBVNormalForce>
             <?OPENMBV_ID 139?>
             <scaleLength unit="-">0.1</scaleLength>

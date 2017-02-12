@@ -158,7 +158,7 @@
       </links>
       <observers>
         <ContactObserver name="ContactObserver1">
-          <contact ref="../Link[Contact1]"/>
+          <mechanicalLink ref="../Link[Contact1]"/>
           <enableOpenMBVContactPoints>
             <?OPENMBV_ID 25?>
             <size unit="cm">1</size>

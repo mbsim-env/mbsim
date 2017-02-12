@@ -171,11 +171,11 @@ namespace MBSimHydraulics {
         ((Circle*)ball->getContour("ContourBall"))->enableOpenMBV(true);
         ContactObserver *observer = new ContactObserver("MaxContactObserver");
         observer->enableOpenMBVContactPoints(rBall/8.);
-        observer->setContact(maxContact);
+        observer->setMechanicalLink(maxContact);
         addObserver(observer);
         observer = new ContactObserver("SeatContactObserver");
         observer->enableOpenMBVContactPoints(rBall/8.);
-        observer->setContact(maxContact);
+        observer->setMechanicalLink(maxContact);
         addObserver(observer);
       }
       if (openMBVFrames) {

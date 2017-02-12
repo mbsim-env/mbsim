@@ -223,7 +223,7 @@
           </enableOpenMBVWeight>
         </RigidBodyObserver>
         <ContactObserver name="ContactObserver1">
-          <contact ref="../Link[Contact]"/>
+          <mechanicalLink ref="../Link[Contact]"/>
           <enableOpenMBVNormalForce>
             <?OPENMBV_ID 25?>
             <scaleLength unit="-">0.1</scaleLength>

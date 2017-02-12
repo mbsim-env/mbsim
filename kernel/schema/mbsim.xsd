@@ -4791,25 +4791,15 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="ContactObserver" substitutionGroup="Observer" type="ContactObserverType">
+  <xs:element name="ContactObserver" substitutionGroup="MechanicalLinkObserver" type="ContactObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ContactObserverType">
     <xs:complexContent>
-      <xs:extension base="ObserverType">
+      <xs:extension base="MechanicalLinkObserverType">
         <xs:sequence>
-          <xs:element name="contact">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-              tbd.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
           <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
