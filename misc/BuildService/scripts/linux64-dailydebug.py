@@ -12,11 +12,13 @@ SRCDIR="/home/mbsim/linux64-dailydebug"
 os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig:"+\
                               "/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig"
 os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
+os.environ["CPPFLAGS"]="--coverage"
 os.environ["CXXFLAGS"]="-O0 -g"
 os.environ["CFLAGS"]="-O0 -g"
 os.environ["FFLAGS"]="-O0 -g"
+os.environ["LDFLAGS"]="--coverage -lgcov"
 os.environ['MBSIM_SWIG']='1'
-simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS"]
+simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CPPFLAGS", "CXXFLAGS", "CFLAGS", "FFLAGS", "LDFLAGS"]
 
 # read config files
 fd=open("/home/mbsim/BuildServiceConfig/mbsimBuildService.conf", 'r+')
