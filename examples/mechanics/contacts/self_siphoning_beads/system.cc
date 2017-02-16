@@ -245,11 +245,11 @@ void SelfSiphoningBeats::addTrajectory(double tEnd) {
   SX fexp=SX::zeros(3);
   double v = M_PI / tEnd;
   double x0 = 2e-2;
-  fexp[0] = x0 * sin(v * t - (M_PI_2)) + x0;
-  fexp[1] = radius + x0 * cos(v * t - (M_PI_2));
-//  fexp[1] = radius + (a * v * t * v * t + b * v * t);
-//  fexp[1] = radius;
-  fexp[2] = 0;
+  fexp(0) = x0 * sin(v * t - (M_PI_2)) + x0;
+  fexp(1) = radius + x0 * cos(v * t - (M_PI_2));
+//  fexp(1) = radius + (a * v * t * v * t + b * v * t);
+//  fexp(1) = radius;
+  fexp(2) = 0;
 
   SymbolicFunction<Vec3(double)> *f = new SymbolicFunction<Vec3(double)>(fexp, t);
 

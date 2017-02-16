@@ -311,7 +311,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body4->setOpenMBVRigidBody(cuboid);
   body4->getFrame("C")->enableOpenMBV(d);
 
-  spring->enableOpenMBVCoilSpring(_springRadius=d/5.,_crossSectionRadius=d/50.,_numberOfCoils=5);
+  spring->enableOpenMBV(_springRadius=d/5.,_crossSectionRadius=d/50.,_numberOfCoils=5);
 
 }
 

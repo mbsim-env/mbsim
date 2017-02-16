@@ -20,6 +20,7 @@
 #include "mbsim/contact_kinematics/point_spatialcontour.h"
 
 #include "mbsim/links/kinetic_excitation.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h" // ball
@@ -208,9 +209,12 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     contactCrankRod->setNormalForceLaw(new UnilateralConstraint());
     contactCrankRod->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
   }
-  contactCrankRod->enableOpenMBVContactPoints(1e-5);
 
-  contactCrankRod->enableOpenMBVNormalForce();
+  ContactObserver *observer = new ContactObserver(contactCrankRod->getName()+"_Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contactCrankRod);
+  observer->enableOpenMBVContactPoints(1e-5);
+  observer->enableOpenMBVNormalForce();
 
   //Add contact to crank
   Vec3 cylinderCenterPos;

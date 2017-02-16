@@ -10,6 +10,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/arrow.h>
@@ -113,12 +114,16 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     contact->setTangentialForceLaw(new SpatialCoulombFriction(mu));
     contact->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
   }
-  //fancy stuff
-  contact->enableOpenMBVContactPoints(0.01);
-  contact->enableOpenMBVNormalForce(_scaleLength=0.001);
-  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
 
   this->addLink(contact);
+
+  //fancy stuff
+  ContactObserver *observer = new ContactObserver("Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVContactPoints(0.01);
+  observer->enableOpenMBVNormalForce(_scaleLength=0.001);
+  observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
 
   // bodies
   for(int k=0; k<nB; k++) {

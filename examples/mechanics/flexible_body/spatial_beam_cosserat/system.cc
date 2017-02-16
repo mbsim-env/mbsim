@@ -13,6 +13,7 @@
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 // End Contact
 #include "mbsim/environment.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h" // ball
@@ -153,9 +154,13 @@ System::System(const string &projectName) :
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"), top);
-  contact->enableOpenMBVNormalForce(0.00001);
-  contact->enableOpenMBVTangentialForce(0.00001);
-  contact->enableOpenMBVContactPoints(0.01);
+
+  ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVNormalForce(0.00001);
+  observer->enableOpenMBVTangentialForce(0.00001);
+  observer->enableOpenMBVContactPoints(0.01);
 
   this->addLink(contact);
 

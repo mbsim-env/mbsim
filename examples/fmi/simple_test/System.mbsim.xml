@@ -46,11 +46,6 @@
           <restitutionCoefficient>0.9</restitutionCoefficient>
         </UnilateralNewtonImpact>
       </normalImpactLaw>
-      <enableOpenMBVContactPoints/>
-      <enableOpenMBVNormalForce>
-        <scaleLength>0.3</scaleLength>
-        <scaleSize>0.15</scaleSize>
-      </enableOpenMBVNormalForce>
     </Contact>
     <control:ExternSignalSource name="ExternForce"> <!-- only used in FMI case -->
       <control:sourceSize>1</control:sourceSize>
@@ -63,4 +58,14 @@
     </control:ExternSignalSink>
     <pv:Embed href="{extern}"/>
   </links>
+  <observers>
+    <ContactObserver name="Observer">
+      <mechanicalLink ref="../Link[Contact]"/>
+      <enableOpenMBVContactPoints/>
+      <enableOpenMBVNormalForce>
+        <scaleLength>0.3</scaleLength>
+        <scaleSize>0.15</scaleSize>
+      </enableOpenMBVNormalForce>
+    </ContactObserver>
+  </observers>
 </Group>

@@ -9,6 +9,7 @@
 #include "mbsim/contact_kinematics/circle_frustum.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/ivbody.h>
 #include <openmbvcppinterface/frustum.h>
@@ -180,8 +181,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setNormalImpactLaw(new UnilateralNewtonImpact);
   contact->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
   contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
-  contact->enableOpenMBVContactPoints();
   this->addLink(contact);
+  ContactObserver *observer = new ContactObserver("Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVContactPoints();
 
   /* OpenMBV */
   /* axis */

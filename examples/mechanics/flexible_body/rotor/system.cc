@@ -14,6 +14,7 @@
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/constant_function.h"
 #include "mbsim/functions/step_function.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include "openmbvcppinterface/frustum.h"
 
@@ -198,14 +199,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   bantrieb->setMomentFunction(new StepFunction<VecV(double)>(0.05,0.,AntriebsmomentLagerB));
   bantrieb->setMomentDirection("[1;0;0]");
   bantrieb->connect(welle->getFrame("Ende"));
-  bantrieb->enableOpenMBVMoment(0.001);
+  bantrieb->enableOpenMBV(0.001);
   this->addLink(bantrieb);
 
   KineticExcitation *bSchlag = new KineticExcitation("Lager_B_Schlag");
   bSchlag->setMomentFunction(new ConstantFunction<VecV(double)>(SchlagLagerB));
   bSchlag->setMomentDirection("[0;0;-1]");
   bSchlag->connect(welle->getFrame("Ende"));
-  bSchlag->enableOpenMBVMoment(0.001);
+  bSchlag->enableOpenMBV(0.001);
   this->addLink(bSchlag);
 
   /* Verbindung Schwungrad - Welle */
@@ -233,7 +234,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cGL_Right->setNormalImpactLaw(new UnilateralNewtonImpact);
   cGL_Right->setTangentialForceLaw(new SpatialCoulombFriction(mu));
   cGL_Right->setTangentialImpactLaw(new SpatialCoulombImpact(mu));
-  cGL_Right->enableOpenMBVContactPoints(0.01);
   this->addLink(cGL_Right);  
+
+  ContactObserver *observer = new ContactObserver(cGL_Right->getName()+"_Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(cGL_Right);
+  observer->enableOpenMBVContactPoints(0.01);
 }
 

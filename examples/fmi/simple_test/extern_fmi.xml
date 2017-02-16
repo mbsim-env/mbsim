@@ -8,9 +8,9 @@
     </control:SignalFunction>
   </forceFunction>
   <unloadedLength>0</unloadedLength>
-  <enableOpenMBVCoilSpring>
+  <enableOpenMBV>
     <numberOfCoils>20</numberOfCoils>
     <springRadius>0.03</springRadius>
     <type>'polyline'</type>
-  </enableOpenMBVCoilSpring>
+  </enableOpenMBV>
 </SpringDamper>

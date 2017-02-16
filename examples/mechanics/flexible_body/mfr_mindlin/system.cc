@@ -14,6 +14,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include "openmbvcppinterface/sphere.h"
 #include "openmbvcppinterface/cube.h"
@@ -145,8 +146,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setTangentialForceLaw(new SpatialCoulombFriction(0.4));
     contact[k]->setTangentialImpactLaw(new SpatialCoulombImpact(0.4));
     contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"), new ContactKinematicsPointNurbsDisk2s());
-    contact[k]->enableOpenMBVContactPoints(0.01);
     this->addLink(contact[k]);
+
+    ContactObserver *observer = new ContactObserver(contactname.str()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact[k]);
+    observer->enableOpenMBVContactPoints(0.01);
   }
 
 } 

@@ -10,6 +10,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include <mbsim/utils/colors.h>
+#include "mbsim/observers/contact_observer.h"
 #include <fmatvec/fmatvec.h>
 
 #include <openmbvcppinterface/ivbody.h>
@@ -90,9 +91,6 @@ System::System(const string &projectName) :
     contact->connect(polyfrustumcontour, plate);
 
     contact->setPlotFeature(openMBV, enabled);
-    contact->enableOpenMBVContactPoints();
-    contact->enableOpenMBVNormalForce();
-    contact->enableOpenMBVTangentialForce();
 
     //Set contact law
     contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
@@ -101,6 +99,13 @@ System::System(const string &projectName) :
     //contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
+
+    ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact);
+    observer->enableOpenMBVContactPoints();
+    observer->enableOpenMBVNormalForce();
+    observer->enableOpenMBVTangentialForce();
   }
 
   { // Plate2
@@ -133,10 +138,6 @@ System::System(const string &projectName) :
     contact->connect(polyfrustumcontour, plate);
 
     contact->setPlotFeature(openMBV, enabled);
-    contact->enableOpenMBVContactPoints();
-    contact->enableOpenMBVNormalForce();
-    contact->enableOpenMBVTangentialForce();
-
     //Set contact law
     //Set contact law
     contact->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
@@ -145,6 +146,13 @@ System::System(const string &projectName) :
     //contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
+
+    ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact);
+    observer->enableOpenMBVContactPoints();
+    observer->enableOpenMBVNormalForce();
+    observer->enableOpenMBVTangentialForce();
   }
 
   { // Plate3
@@ -177,9 +185,6 @@ System::System(const string &projectName) :
     contact->connect(polyfrustumcontour, plate);
 
     contact->setPlotFeature(openMBV, enabled);
-    contact->enableOpenMBVContactPoints();
-    contact->enableOpenMBVNormalForce();
-    contact->enableOpenMBVTangentialForce();
 
     //Set contact law
     //Set contact law
@@ -189,6 +194,13 @@ System::System(const string &projectName) :
     //contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
+
+    ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact);
+    observer->enableOpenMBVContactPoints();
+    observer->enableOpenMBVNormalForce();
+    observer->enableOpenMBVTangentialForce();
   }
 
 }

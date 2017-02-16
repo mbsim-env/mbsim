@@ -10,6 +10,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
@@ -172,9 +173,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setNormalForceLaw(new BilateralConstraint);
     contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
-    contact->enableOpenMBVContactPoints(0.01);
     contact->setSearchAllContactPoints(true);
     this->addLink(contact);
+
+    ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact);
+    observer->enableOpenMBVContactPoints(0.01);
   }
 
   // inner-ball contacts

@@ -20,6 +20,7 @@
 // End Contact
 #include "mbsim/environment.h"
 #include "mbsim/contact_kinematics/point_spatialcontour.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h" // ball
@@ -171,9 +172,13 @@ System::System(const string &projectName) :
   }
 
   contact->connect(ball->getContour("Point"), ncc, new ContactKinematicsPointSpatialContour);
-  contact->enableOpenMBVNormalForce();
-  contact->enableOpenMBVTangentialForce();
-  contact->enableOpenMBVContactPoints();
+
+  ContactObserver *observer = new ContactObserver("Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVNormalForce();
+  observer->enableOpenMBVTangentialForce();
+  observer->enableOpenMBVContactPoints();
 
   this->addLink(contact);
 

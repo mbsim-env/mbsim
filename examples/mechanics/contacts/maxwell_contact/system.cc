@@ -22,6 +22,7 @@
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/functions/kinetics/kinetics.h>
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 using namespace std;
 using namespace MBSim;
@@ -232,10 +233,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
       THROW_MBSIMERROR("No valid contactType chosen.");
   }
 
-  contact->enableOpenMBVContactPoints(1.,false);
-  contact->enableOpenMBVNormalForce(_scaleLength=0.00001);
-  contact->enableOpenMBVTangentialForce(_scaleLength=0.001);
-
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
     stringstream contactname;
     contactname << "Contact_Beam_" << ballsContours[contactIter]->getName();
@@ -244,6 +241,14 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   }
 
   addLink(contact);
+
+
+  ContactObserver *observer = new ContactObserver("Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVContactPoints(1.,false);
+  observer->enableOpenMBVNormalForce(_scaleLength=0.00001);
+  observer->enableOpenMBVTangentialForce(_scaleLength=0.001);
 
   //fancy stuff
 

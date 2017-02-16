@@ -14,7 +14,7 @@ NS="{http://mypytest}"
 
 
 # A python class derived from MBSim::FrameLink
-class PySpringDamperXMLInit(mbsim.FrameLink):
+class PySpringDamperXMLInit(mbsim.FixedFrameLink):
   def __init__(self):
     super(PySpringDamperXMLInit, self).__init__("")
     self.warnCount=0
@@ -46,7 +46,7 @@ class PySpringDamperXMLInit(mbsim.FrameLink):
     super(PySpringDamperXMLInit, self).initializeUsingXML(e)
     self.c=float(e.find(NS+"stiffness").text)
 
-class PySpringDamperPyScriptInit(mbsim.FrameLink):
+class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
   def __init__(self):
     super(PySpringDamperPyScriptInit, self).__init__("")
     self.warnCount=0
@@ -105,7 +105,7 @@ class PySpringDamperPyScriptInit(mbsim.FrameLink):
   def initializeUsingXML(self, e):
     mbsim.pyScriptInitializeUsingXML(self, e, PySpringDamperPyScriptInit)
 
-class PySpringDamperEmpty(mbsim.FrameLink):
+class PySpringDamperEmpty(mbsim.FixedFrameLink):
   def __init__(self):
     super(PySpringDamperEmpty, self).__init__("")
     self.c=100

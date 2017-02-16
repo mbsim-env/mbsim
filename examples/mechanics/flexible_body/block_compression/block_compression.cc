@@ -8,6 +8,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/composite_function.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include <openmbvcppinterface/cuboid.h>
@@ -290,17 +291,26 @@ void BlockCompression::addContacts() {
   Contact * BlBlBottom = new Contact("BottomContacts");
   BlBlBottom->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlBottom, 0.)));
   addLink(BlBlBottom);
-  BlBlBottom->enableOpenMBVNormalForce(1e-3);
+  ContactObserver *observer = new ContactObserver("BottomContactsObserver");
+  addObserver(observer);
+  observer->setMechanicalLink(BlBlBottom);
+  observer->enableOpenMBVNormalForce(1e-3);
 
   Contact * BlBlTop = new Contact("TopContacts");
   BlBlTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlTop, 0.)));
   addLink(BlBlTop);
-  BlBlTop->enableOpenMBVNormalForce(1e-3);
+  observer = new ContactObserver("TopContactsObserver");
+  addObserver(observer);
+  observer->setMechanicalLink(BlBlTop);
+  observer->enableOpenMBVNormalForce(1e-3);
 
   Contact * BlRod = new Contact("BlockRodContacts");
   BlRod->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlRod, 0.)));
   addLink(BlRod);
-  BlRod->enableOpenMBVNormalForce(1e-3);
+  observer = new ContactObserver("BlockRodContactsObserver");
+  addObserver(observer);
+  observer->setMechanicalLink(BlRod);
+  observer->enableOpenMBVNormalForce(1e-3);
 
   for (int i = 1; i < NoBlocks; i++) {
     /*(Inter-)Contact between Blocks*/

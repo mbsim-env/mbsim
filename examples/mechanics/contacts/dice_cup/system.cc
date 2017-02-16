@@ -7,6 +7,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/ivbody.h>
 #include "openmbvcppinterface/cube.h"
@@ -226,9 +227,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact.push_back(new Contact(nameContact.str()));
     contact[i]->setNormalForceLaw(new UnilateralConstraint());
     contact[i]->setNormalImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
-    contact[i]->enableOpenMBVContactPoints(.05);
     contact[i]->connect(frustumRef->getContour("Frustum"),dice->getContour(nameContour.str()));
     this->addLink(contact[i]);
+    ContactObserver *observer = new ContactObserver(nameContact.str()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact[i]);
+    observer->enableOpenMBVContactPoints(0.05);
   } 	
 
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(Vec("[0;-10;0]"));

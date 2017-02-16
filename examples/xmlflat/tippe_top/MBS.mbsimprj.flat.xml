@@ -88,15 +88,6 @@
             <frictionCoefficient>0.2</frictionCoefficient>
           </SpatialCoulombImpact>
         </tangentialImpactLaw>
-        <enableOpenMBVContactPoints>
-          <size>0.0025</size>
-        </enableOpenMBVContactPoints>
-        <enableOpenMBVNormalForce>
-          <scaleLength>0.4</scaleLength>
-        </enableOpenMBVNormalForce>
-        <enableOpenMBVTangentialForce>
-          <scaleLength>0.4</scaleLength>
-        </enableOpenMBVTangentialForce>
       </Contact>
       <Contact name="Contact2">
         <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
@@ -118,6 +109,11 @@
             <frictionCoefficient>0.2</frictionCoefficient>
           </SpatialCoulombImpact>
         </tangentialImpactLaw>
+      </Contact>
+    </links>
+    <observers>
+      <ContactObserver name="ContactObserver1">
+        <mechanicalLink ref="../Link[Contact1]"/>
         <enableOpenMBVContactPoints>
           <size>0.0025</size>
         </enableOpenMBVContactPoints>
@@ -127,8 +123,20 @@
         <enableOpenMBVTangentialForce>
           <scaleLength>0.4</scaleLength>
         </enableOpenMBVTangentialForce>
-      </Contact>
-    </links>
+      </ContactObserver>
+      <ContactObserver name="ContactObserver2">
+        <mechanicalLink ref="../Link[Contact2]"/>
+        <enableOpenMBVContactPoints>
+          <size>0.0025</size>
+        </enableOpenMBVContactPoints>
+        <enableOpenMBVNormalForce>
+          <scaleLength>0.4</scaleLength>
+        </enableOpenMBVNormalForce>
+        <enableOpenMBVTangentialForce>
+          <scaleLength>0.4</scaleLength>
+        </enableOpenMBVTangentialForce>
+      </ContactObserver>
+    </observers>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
@@ -154,6 +162,6 @@
     <initialStepSize>1e-8</initialStepSize>
     <minimalStepSize>0</minimalStepSize>
     <maximalStepSize>0</maximalStepSize>
-    <plotOnRoot>false</plotOnRoot>
+    <plotOnRoot>0</plotOnRoot>
   </LSODARIntegrator>
 </MBSimProject>

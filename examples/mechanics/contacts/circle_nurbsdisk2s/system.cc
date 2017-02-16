@@ -13,6 +13,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/frustum.h>
 
@@ -186,8 +187,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setNormalImpactLaw(new UnilateralNewtonImpact);
   contact->setTangentialForceLaw(new SpatialCoulombFriction(0.2));
   contact->setTangentialImpactLaw(new SpatialCoulombImpact(0.2));
-  contact->enableOpenMBVContactPoints(); // shows the frames in openmbv
   this->addLink(contact);
+
+  ContactObserver *observer = new ContactObserver("Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVContactPoints(); // shows the frames in openmbv
 
   /* OpenMBV */
   /* axis */

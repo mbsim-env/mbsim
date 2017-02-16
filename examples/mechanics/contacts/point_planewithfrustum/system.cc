@@ -10,6 +10,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include "openmbvcppinterface/frustum.h"
 
@@ -128,7 +129,10 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
       c->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
       c->setTangentialForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
     }
-    c->enableOpenMBVContactPoints(.1*rBar);
+    ContactObserver *observer = new ContactObserver("ContactPointPlane"+numtostr(i)+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(c);
+    observer->enableOpenMBVContactPoints(.1*rBar);
   }
 
 }

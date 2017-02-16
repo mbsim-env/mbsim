@@ -11,6 +11,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
@@ -119,10 +120,14 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"), rod->getContour("Top"));
-  contact->enableOpenMBVContactPoints(1e-2);
-  contact->enableOpenMBVNormalForce(1e-2);
-  contact->enableOpenMBVTangentialForce(1e-2);
   this->addLink(contact);
+
+  ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVContactPoints(1e-2);
+  observer->enableOpenMBVNormalForce(1e-2);
+  observer->enableOpenMBVTangentialForce(1e-2);
 
 //  rod->addFrame(new FixedContourFrame("RJ"));
   rod->addFrame(new Frame1s("RJ"));

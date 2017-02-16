@@ -11,6 +11,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
@@ -162,10 +163,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
     contact->connect(disk->getContour("cDisk"),belt->getContour("Top"));
     //contact->setPlotFeature(linkLagrangeParameters, enabled);
-    contact->enableOpenMBVNormalForce(_scaleLength=0.01);
-    contact->enableOpenMBVTangentialForce(_scaleLength=0.01);
-    contact->enableOpenMBVContactPoints(0.001,true);
     this->addLink(contact);
+
+    ContactObserver *observer = new ContactObserver(name.str()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact);
+    observer->enableOpenMBVNormalForce(_scaleLength=0.01);
+    observer->enableOpenMBVTangentialForce(_scaleLength=0.01);
+    observer->enableOpenMBVContactPoints(0.001,true);
   }
 }
 

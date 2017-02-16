@@ -98,11 +98,11 @@
                   </LinearSpringDamperForce>
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
-                <enableOpenMBVCoilSpring>
+                <enableOpenMBV>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
-                </enableOpenMBVCoilSpring>
+                </enableOpenMBV>
               </SpringDamper>
               <SpringDamper name="Feder2">
                 <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
@@ -113,11 +113,11 @@
                   </LinearSpringDamperForce>
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
-                <enableOpenMBVCoilSpring>
+                <enableOpenMBV>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
-                </enableOpenMBVCoilSpring>
+                </enableOpenMBV>
               </SpringDamper>
             </links>
           </Group>
@@ -249,11 +249,11 @@
                   </LinearSpringDamperForce>
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
-                <enableOpenMBVCoilSpring>
+                <enableOpenMBV>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
-                </enableOpenMBVCoilSpring>
+                </enableOpenMBV>
               </SpringDamper>
               <SpringDamper name="Feder2">
                 <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
@@ -264,11 +264,11 @@
                   </LinearSpringDamperForce>
                 </forceFunction>
                 <unloadedLength>0.5</unloadedLength>
-                <enableOpenMBVCoilSpring>
+                <enableOpenMBV>
                   <numberOfCoils>5</numberOfCoils>
                   <springRadius>0.1</springRadius>
                   <crossSectionRadius>0.01</crossSectionRadius>
-                </enableOpenMBVCoilSpring>
+                </enableOpenMBV>
               </SpringDamper>
             </links>
           </Group>

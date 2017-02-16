@@ -12,6 +12,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/kinematics/kinematics.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
@@ -118,11 +119,15 @@ System::System(const string &projectName) :
   contact->setNormalForceLaw(new UnilateralConstraint);
   contact->setNormalImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"), rod->getContour("Top"));
-  contact->enableOpenMBVNormalForce();
-  contact->enableOpenMBVTangentialForce();
-  contact->enableOpenMBVContactPoints(0.1);
 
   this->addLink(contact);
+
+  ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contact);
+  observer->enableOpenMBVNormalForce();
+  observer->enableOpenMBVTangentialForce();
+  observer->enableOpenMBVContactPoints(0.1);
 
   rod->addFrame(new Frame1s("RJ"));
   Joint *joint = new Joint("Clamping");

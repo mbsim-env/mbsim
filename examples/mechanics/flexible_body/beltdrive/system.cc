@@ -17,6 +17,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/composite_function.h"
+#include "mbsim/observers/contact_observer.h"
 
 #include "beltDriveFunctions.h"
 
@@ -450,12 +451,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //    else
     contact->connect(disk->getContour("cDisk"),band[i]);
 //    contact->setPlotFeature(linkLagrangeParameters, enabled);
-    contact->enableOpenMBVNormalForce(_scaleLength=0.0002);
-    if(mu>0)
-      contact->enableOpenMBVTangentialForce(_scaleLength=0.0002);
-    if(enableContactPoints)
-      contact->enableOpenMBVContactPoints(0.0075);
     this->addLink(contact);
+
+    ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
+    addObserver(observer);
+    observer->setMechanicalLink(contact);
+    observer->enableOpenMBVNormalForce(_scaleLength=0.0002);
+    if(mu>0)
+      observer->enableOpenMBVTangentialForce(_scaleLength=0.0002);
+    if(enableContactPoints)
+      observer->enableOpenMBVContactPoints(0.0075);
 
     if(i==1) {
       double omega0 = -100;
@@ -470,7 +475,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
         M0 = -10.0; M1 = -5.0; omegaM = fabs(2*omega0); }
       ke->setMomentDirection(JR);
       ke->setMomentFunction(new Moment(M0,M1,omegaM));
-      ke->enableOpenMBVMoment(_scaleLength=0.005 * 15./(fabs(M0)+fabs(M1)));
+      ke->enableOpenMBV(_scaleLength=0.005 * 15./(fabs(M0)+fabs(M1)));
     }
 
     if(i==nDisks-1) {
@@ -488,7 +493,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        spring->setForceFunction(new LinearSpringDamperForce(cSpring,dSpring));
        spring->setUnloadedLength(l0Spring);
        spring->connect(disk->getFrame("C"),this->getFrame("BS"));
-       spring->enableOpenMBVCoilSpring(_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);
+       spring->enableOpenMBV(_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);
     }
   }
 }

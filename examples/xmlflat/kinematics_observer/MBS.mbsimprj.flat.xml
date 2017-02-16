@@ -99,9 +99,6 @@
     </objects>
     <links>
       <Joint name="Gelenk1">
-        <enableOpenMBVForce>
-          <scaleLength>0.02</scaleLength>
-        </enableOpenMBVForce>
         <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[PunktO]"/>
         <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
         <forceLaw>
@@ -109,9 +106,6 @@
         </forceLaw>
       </Joint>
       <Joint name="Gelenk2">
-        <enableOpenMBVForce>
-          <scaleLength>0.02</scaleLength>
-        </enableOpenMBVForce>
         <connect ref1="../Object[Stab1]/Frame[PunktU]" ref2="../Object[Stab2]/Frame[Punkt]"/>
         <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
         <forceLaw>
@@ -133,6 +127,18 @@
           <scaleLength>0.1</scaleLength>
         </enableOpenMBVAngularVelocity>
       </AbsoluteKinematicsObserver>
+      <MechanicalLinkObserver name="MechanicalLinkObserver1">
+        <mechanicalLink ref="../Link[Gelenk1]"/>
+        <enableOpenMBVForce>
+          <scaleLength>0.02</scaleLength>
+        </enableOpenMBVForce>
+      </MechanicalLinkObserver>
+      <MechanicalLinkObserver name="MechanicalLinkObserver2">
+        <mechanicalLink ref="../Link[Gelenk2]"/>
+        <enableOpenMBVForce>
+          <scaleLength>0.02</scaleLength>
+        </enableOpenMBVForce>
+      </MechanicalLinkObserver>
     </observers>
     <environments>
       <MBSimEnvironment>

@@ -443,6 +443,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVBlock->setLength(Laenge_Block,Breite_Block,Dicke_Block);
   Block->setOpenMBVRigidBody(openMBVBlock);
 
-  spring1->enableOpenMBVCoilSpring(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
+  spring1->enableOpenMBV(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
 }

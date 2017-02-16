@@ -9,6 +9,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/planar_contour.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/observers/contact_observer.h"
 #include "tools/rigid_contour_functions1s.h"
 
 using namespace std;
@@ -86,7 +87,11 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     contactCamRoll->setTangentialForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(1.)));
   }
   contactCamRoll->connect(cam->getContour("Contour"), roll->getContour("Contour"));
-  contactCamRoll->enableOpenMBVContactPoints(.005);
   addLink(contactCamRoll);
+
+  ContactObserver *observer = new ContactObserver("Observer");
+  addObserver(observer);
+  observer->setMechanicalLink(contactCamRoll);
+  observer->enableOpenMBVContactPoints(.005);
 
 }

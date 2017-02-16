@@ -61,26 +61,23 @@
     </objects>
     <links>
       <KineticExcitation name ="ex">
-        <enableOpenMBVForce>
-          <scaleLength>0.05</scaleLength>
-        </enableOpenMBVForce>
-        <enableOpenMBVMoment>
-          <scaleLength>0.05</scaleLength>
-        </enableOpenMBVMoment>
         <connect ref1="../Frame[Wrot]" ref2="../Object[Box1]/Frame[C]"/>
         <frameOfReferenceID>0</frameOfReferenceID>
         <forceDirection>[1;0;0]</forceDirection>
         <forceFunction>
           <ConstantFunction>
-            <a0>[10]</a0>
+            <a0>10</a0>
           </ConstantFunction>
         </forceFunction>
         <momentDirection>[0;0;1]</momentDirection>
         <momentFunction>
           <ConstantFunction>
-            <a0>[10]</a0>
+            <a0>10</a0>
           </ConstantFunction>
         </momentFunction>
+        <enableOpenMBV>
+          <scaleLength>0.05</scaleLength>
+        </enableOpenMBV>
       </KineticExcitation>
     </links>
     <environments>
