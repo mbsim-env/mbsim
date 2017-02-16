@@ -1144,7 +1144,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
+    QModelIndex containerIndex = (index.row()==0)?index.child(6,0):index;
     observer->setName(observer->getName()+toStr(model->getItem(containerIndex)->getID()));
     observer->getParent()->addObserver(observer);
     model->createObserverItem(observer,containerIndex);
