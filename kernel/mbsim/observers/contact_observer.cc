@@ -39,6 +39,8 @@ namespace MBSim {
 
   void ContactObserver::init(InitStage stage) {
     if(stage==preInit) {
+      if(not dynamic_cast<Contact*>(link))
+        THROW_MBSIMERROR("MechanicalLink \"" + link->getName() + "\" is not of type Contact!");
       contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size(),vector<SingleContactObserver>(static_cast<Contact*>(link)->getSubcontacts()[0].size()));
       for (unsigned int i=0; i<contactObserver.size(); i++) {
         for (unsigned int j=0; j<contactObserver[i].size(); j++) {
