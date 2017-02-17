@@ -83,6 +83,7 @@ namespace MBSimGUI {
   class RelativeKinematicsObserver;
   class NaturalCoordinatesObserver;
   class MechanicalLinkObserver;
+  class ContactObserver;
   class Signal;
   class Sensor;
   class GeneralizedCoordinateSensor;
@@ -698,6 +699,16 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *link, *forceArrow, *momentArrow;
+  };
+
+  class ContactObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      ContactObserverPropertyDialog(ContactObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *link, *forceArrow, *momentArrow, *contactPoints, *normalForceArrow, *frictionArrow;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

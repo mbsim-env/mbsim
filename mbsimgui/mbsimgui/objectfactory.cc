@@ -254,6 +254,8 @@ namespace MBSimGUI {
       return new RelativeKinematicsObserver(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"MechanicalLinkObserver")
       return new MechanicalLinkObserver(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"ContactObserver")
+      return new ContactObserver(E(element)->getAttribute("name"),parent);
     return 0;
   }  
 

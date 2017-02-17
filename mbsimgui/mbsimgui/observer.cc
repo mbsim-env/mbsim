@@ -182,19 +182,46 @@ namespace MBSimGUI {
     return ele0;
   }
 
-//
-//  , enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false)
-//
-//    enableOpenMBVContactPoints.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
-//
-//    normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVNormalForce",getID()));
-//
-//    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
-//   enableOpenMBVContactPoints.initializeUsingXML(element);
-//    normalForceArrow.initializeUsingXML(element);
-//    frictionArrow.initializeUsingXML(element);
-//    enableOpenMBVContactPoints.writeXMLFile(ele0);
-//    normalForceArrow.writeXMLFile(ele0);
-//    frictionArrow.writeXMLFile(ele0);
+  ContactObserver::ContactObserver(const string &str, Element *parent) : Observer(str, parent), forceArrow(0,false), momentArrow(0,false), contactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
+
+    link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"contact"));
+
+    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
+
+    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
+
+    contactPoints.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVContactPoints",getID()));
+
+    normalForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVNormalForce",getID()));
+
+    frictionArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVTangentialForce",getID()));
+  }
+
+  void ContactObserver::initialize() {
+    Observer::initialize();
+    link.initialize();
+  }
+
+  DOMElement* ContactObserver::initializeUsingXML(DOMElement *element) {
+    Observer::initializeUsingXML(element);
+    link.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+    contactPoints.initializeUsingXML(element);
+    normalForceArrow.initializeUsingXML(element);
+    frictionArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ContactObserver::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Observer::writeXMLFile(parent);
+    link.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    contactPoints.writeXMLFile(ele0);
+    normalForceArrow.writeXMLFile(ele0);
+    frictionArrow.writeXMLFile(ele0);
+    return ele0;
+  }
 
 }

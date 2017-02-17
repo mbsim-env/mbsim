@@ -472,6 +472,9 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add mechanical link observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
     addAction(action);
+    action = new QAction("Add contact observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addContactObserver()));
+    addAction(action);
   }
 
   void ObserverContextContextMenu::addCoordinatesObserver() {
@@ -486,6 +489,10 @@ namespace MBSimGUI {
 
   void ObserverContextContextMenu::addMechanicalLinkObserver() {
     mw->addObserver(new MechanicalLinkObserver("MechanicalLinkObserver",element));
+  }
+
+  void ObserverContextContextMenu::addContactObserver() {
+    mw->addObserver(new ContactObserver("ContactObserver",element));
   }
 
   CoordinatesObserverContextContextMenu::CoordinatesObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

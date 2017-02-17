@@ -1837,6 +1837,49 @@ namespace MBSimGUI {
     static_cast<MechanicalLinkObserver*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
+  ContactObserverPropertyDialog::ContactObserverPropertyDialog(ContactObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
+
+    addTab("Visualisation",1);
+
+    link = new ExtWidget("Contact",new LinkOfReferenceWidget(observer,0));
+    addToTab("General", link);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation",forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation",momentArrow);
+
+    contactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,true);
+    addToTab("Visualisation",contactPoints);
+
+    normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation",normalForceArrow);
+
+    frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation",frictionArrow);
+  }
+
+  void ContactObserverPropertyDialog::toWidget(Element *element) {
+    ObserverPropertyDialog::toWidget(element);
+    static_cast<ContactObserver*>(element)->link.toWidget(link);
+    static_cast<ContactObserver*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<ContactObserver*>(element)->momentArrow.toWidget(momentArrow);
+    static_cast<ContactObserver*>(element)->contactPoints.toWidget(contactPoints);
+    static_cast<ContactObserver*>(element)->normalForceArrow.toWidget(normalForceArrow);
+    static_cast<ContactObserver*>(element)->frictionArrow.toWidget(frictionArrow);
+  }
+
+  void ContactObserverPropertyDialog::fromWidget(Element *element) {
+    ObserverPropertyDialog::fromWidget(element);
+    static_cast<ContactObserver*>(element)->link.fromWidget(link);
+    static_cast<ContactObserver*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<ContactObserver*>(element)->momentArrow.fromWidget(momentArrow);
+    static_cast<ContactObserver*>(element)->contactPoints.fromWidget(contactPoints);
+    static_cast<ContactObserver*>(element)->normalForceArrow.fromWidget(normalForceArrow);
+    static_cast<ContactObserver*>(element)->frictionArrow.fromWidget(frictionArrow);
+  }
+
   SignalPropertyDialog::SignalPropertyDialog(Signal *signal, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(signal,parent,f) {
   }
 
@@ -2053,20 +2096,4 @@ namespace MBSimGUI {
     static_cast<ExternSignalSink*>(element)->inputSignal.fromWidget(inputSignal);
   }
 
-//    enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new FrameMBSOMBVWidget("NOTSET"),true,true);
-//    addToTab("Visualisation",enableOpenMBVContactPoints);
-//
-//    normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-//    addToTab("Visualisation",normalForceArrow);
-//
-//    frictionArrow = new ExtWidget("OpenMBV tangential force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-//    addToTab("Visualisation",frictionArrow);
-//
-//    static_cast<Contact*>(element)->enableOpenMBVContactPoints.toWidget(enableOpenMBVContactPoints);
-//    static_cast<Contact*>(element)->normalForceArrow.toWidget(normalForceArrow);
-//    static_cast<Contact*>(element)->frictionArrow.toWidget(frictionArrow);
-//
-//    static_cast<Contact*>(element)->enableOpenMBVContactPoints.fromWidget(enableOpenMBVContactPoints);
-//    static_cast<Contact*>(element)->normalForceArrow.fromWidget(normalForceArrow);
-//    static_cast<Contact*>(element)->frictionArrow.fromWidget(frictionArrow);
 }

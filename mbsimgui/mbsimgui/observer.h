@@ -114,6 +114,19 @@ namespace MBSimGUI {
     ExtProperty link, forceArrow, momentArrow;
   };
 
+  class ContactObserver : public Observer {
+    friend class ContactObserverPropertyDialog;
+    public:
+    ContactObserver(const std::string &str, Element *parent);
+    std::string getType() const { return "ContactObserver"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new ContactObserverPropertyDialog(this);}
+    protected:
+    ExtProperty link, forceArrow, momentArrow, contactPoints, normalForceArrow, frictionArrow;
+  };
+
 }
 
 #endif
