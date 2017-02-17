@@ -1,4 +1,6 @@
 #include <boost/filesystem.hpp>
+#include <boost/assign.hpp>
+#include <boost/lexical_cast.hpp>
 #include <set>
 #include <sys/stat.h>
 
@@ -10,8 +12,11 @@ const uid_t rootUID=0;
 const uid_t mbsimUID=1000;
 const gid_t mbsimGID=1000;
 const uid_t mbsimsbUID=1001;
-const set<path> allowedDirs=list_of(canonical("/var/www/html/mbsim"))
-                                   (canonical("/home/mbsim")).to_container(allowedDirs);
+const set<path> allowedDirs=boost::assign::list_of
+  (canonical("/var/www/html/mbsim"))
+  (canonical("/home/mbsim"))
+  (canonical("/tmp"))
+.to_container(allowedDirs);
 
 void changeOwner(const path &f, uid_t newUID) {
   if(!exists(f))

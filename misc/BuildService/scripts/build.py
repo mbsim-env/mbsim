@@ -15,6 +15,7 @@ import shutil
 import codecs
 import simplesandbox
 import buildSystemState
+import tempfile
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -29,9 +30,15 @@ args=None
 
 # pass these envvar to simplesandbox.call
 simplesandboxEnvvars=["PKG_CONFIG_PATH", "CPPFLAGS", "CXXFLAGS", "CFLAGS", "FFLAGS", "LDFLAGS", # general required envvars
+                      "GCOV_PREFIX", # gcov
                       "MBSIM_SWIG", # MBSim required envvars
                       "LD_LIBRARY_PATH", # Linux specific required envvars
                       "WINEPATH", "PLATFORM", "CXX", "MOC", "UIC", "RCC"] # Windows specific required envvars
+
+def getGcovPrefix():
+  if "GCOV_PREFIX" in os.environ:
+    return [os.environ["GCOV_PREFIX"]]
+  return []
 
 def parseArguments():
   # command line option definition
@@ -74,6 +81,7 @@ def parseArguments():
   cfgOpts.add_argument("--openmbvBranch", default="", help='In the openmbv repo checkout the branch OPENMBVBRANCH')
   cfgOpts.add_argument("--mbsimBranch", default="", help='In the mbsim repo checkout the branch MBSIMBRANCH')
   cfgOpts.add_argument("--buildSystemRun", action="store_true", help='Run in build system mode: generate build system state files and run with simplesandbox.')
+  cfgOpts.add_argument("--coverage", action="store_true", help='Enable coverage analysis.')
   
   outOpts=argparser.add_argument_group('Output Options')
   outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="the output directory of the report")
@@ -236,6 +244,14 @@ def main():
   parseArguments()
   args.sourceDir=os.path.abspath(args.sourceDir)
   args.reportOutDir=os.path.abspath(args.reportOutDir)
+
+  # prepare coverage
+  if args.coverage:
+    # coverage (write to a tmp dir)
+    os.environ["GCOV_PREFIX"]=tempfile.gettempdir()+"/linux64-dailydebug-gcov"
+    if os.path.exists(os.environ["GCOV_PREFIX"]):
+      shutil.rmtree(os.environ["GCOV_PREFIX"])
+    os.makedirs(os.environ["GCOV_PREFIX"])
 
   # all tools to be build including the tool dependencies
   global toolDependencies
@@ -470,6 +486,13 @@ def main():
     print("Run runexamples.py in "+os.getcwd()); sys.stdout.flush()
     runExamplesErrorCode=runexamples(mainFD)
     os.chdir(savedDir)
+
+  # coverage analysis
+  if args.coverage:
+    nrRun=nrRun+1
+    print("Create coverage analysis"); sys.stdout.flush()
+    if coverage(mainFD)!=0:
+      nrFailed=nrFailed+1
 
   # create distribution
   if args.enableDistribution:
@@ -721,27 +744,27 @@ def configure(tool, mainFD):
       # pre configure
       os.chdir(pj(args.sourceDir, srcTool(tool)))
       print("\n\nRUNNING aclocal\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["aclocal"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("aclocal failed")
       print("\n\nRUNNING autoheader\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["autoheader"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("autoheader failed")
       print("\n\nRUNNING libtoolize\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["libtoolize", "-c"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("libtoolize failed")
       print("\n\nRUNNING automake\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["automake", "-a", "-c"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["autoconf"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("autoconf failed")
       print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
-      if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["autoreconf"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
         raise RuntimeError("autoreconf failed")
       # configure
@@ -750,13 +773,13 @@ def configure(tool, mainFD):
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
       if args.prefix==None:
-        if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."],
+        if simplesandbox.call(["./config.status", "--recheck"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                               stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
           raise RuntimeError("configure failed")
       else:
         command=[pj(args.sourceDir, srcTool(tool), "configure"), "--prefix", args.prefix]
         command.extend(args.passToConfigure)
-        if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."],
+        if simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                               stderr=subprocess.STDOUT, stdout=configureFD, buildSystemRun=args.buildSystemRun)!=0:
           raise RuntimeError("configure failed")
     else:
@@ -793,17 +816,17 @@ def make(tool, mainFD):
       errStr=""
       if not args.disableMakeClean:
         print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
-        if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
+        if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                               stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
           errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
-      if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["make", "-k", "-j", str(args.j)], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make failed; "
       if not args.disableMakeInstall:
         print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
         if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
-                              shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                              shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto]+getGcovPrefix(),
                               stderr=subprocess.STDOUT, stdout=makeFD, buildSystemRun=args.buildSystemRun)!=0:
           errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
@@ -834,7 +857,7 @@ def check(tool, mainFD):
     run=1
     # make check
     print("RUNNING make check\n", file=checkFD); checkFD.flush()
-    if simplesandbox.call(["make", "-k", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."],
+    if simplesandbox.call(["make", "-k", "-j", str(args.j), "check"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                           stderr=subprocess.STDOUT, stdout=checkFD, buildSystemRun=args.buildSystemRun)==0:
       result="done"
     else:
@@ -885,17 +908,17 @@ def doc(tool, mainFD, disabled, docDirName):
       # make doc
       errStr=""
       print("\n\nRUNNING make clean\n", file=docFD); docFD.flush()
-      if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."],
+      if simplesandbox.call(["make", "clean"], envvar=simplesandboxEnvvars, shareddir=["."]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make clean failed; "
       print("\n\nRUNNING make\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k"], envvar=simplesandboxEnvvars,
-                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make failed; "
       print("\n\nRUNNING make install\n", file=docFD); docFD.flush()
       if simplesandbox.call(["make", "-k", "install"], envvar=simplesandboxEnvvars,
-                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto],
+                            shareddir=[".", args.prefix if args.prefix!=None else args.prefixAuto]+getGcovPrefix(),
                             stderr=subprocess.STDOUT, stdout=docFD, buildSystemRun=args.buildSystemRun)!=0:
         errStr=errStr+"make install failed; "
       if errStr!="": raise RuntimeError(errStr)
@@ -948,7 +971,7 @@ def runexamples(mainFD):
   print("")
   if not os.path.isdir(pj(args.reportOutDir, "runexamples_report")): os.makedirs(pj(args.reportOutDir, "runexamples_report"))
   ret=abs(simplesandbox.call(command, envvar=simplesandboxEnvvars, shareddir=[".", pj(args.reportOutDir, "runexamples_report"),
-                             "/var/www/html/mbsim/buildsystemstate"],
+                             "/var/www/html/mbsim/buildsystemstate"]+getGcovPrefix(),
                              stderr=subprocess.STDOUT, buildSystemRun=args.buildSystemRun))
 
   if ret==0:
@@ -963,6 +986,40 @@ def runexamples(mainFD):
 
   mainFD.flush()
 
+  return ret
+
+
+
+def coverage(mainFD):
+  print('<tr><td>Coverage analysis</td>', file=mainFD); mainFD.flush()
+
+  ret=0
+  # copy .gcda files from coverage dir to build dir
+  for root, _, files in os.walk(os.environ["GCOV_PREFIX"]):
+    for f in files:
+      if f=="conftest.gcda": continue # skip conftest.gcda (the corresponding conftest.gcno is already deleted (by autotools))
+      dst=pj(root[len(os.environ["GCOV_PREFIX"]):], f)
+      if os.path.exists(dst): os.remove(dst)
+      print(pj(root, f))
+      print(dst)
+      os.link(pj(root, f), dst)
+  
+  # run lcov and genhtml
+  if not os.path.exists(pj(args.reportOutDir, "coverage")): os.makedirs(pj(args.reportOutDir, "coverage"))
+  lcovFD=codecs.open(pj(args.reportOutDir, "coverage", "log.txt"), "w", encoding="utf-8")
+  ret=ret+abs(subprocess.call(["lcov", "-c", "-d", args.sourceDir, "-o", pj(os.environ["GCOV_PREFIX"], "cov.trace")], stdout=lcovFD, stderr=lcovFD))
+  ret=ret+abs(subprocess.call(["genhtml", "-o", pj(args.reportOutDir, "coverage"), pj(os.environ["GCOV_PREFIX"], "cov.trace")], stdout=lcovFD, stderr=lcovFD))
+  lcovFD.close()
+
+  if ret==0:
+    print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
+  else:
+    print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
+  print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
+        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b></a></td>', file=mainFD)
+  for i in range(0, 4-sum([args.disableConfigure, args.disableMake, args.disableMakeCheck, args.disableDoxygen, args.disableXMLDoc])):
+    print('<td>-</td>', file=mainFD)
+  print('</tr>', file=mainFD); mainFD.flush()
   return ret
 
 

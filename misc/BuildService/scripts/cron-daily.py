@@ -6,7 +6,7 @@ import os
 scriptdir=os.path.dirname(os.path.realpath(__file__))
 
 if subprocess.call([scriptdir+"/linux64-dailydebug.py"])!=0:
-  print("linux64-dailybuild.py failed.")
+  print("linux64-dailydebug.py failed.")
 
 if subprocess.call([scriptdir+"/builddoc.py"])!=0:
   print("builddoc.py failed.")
