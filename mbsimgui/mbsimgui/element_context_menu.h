@@ -205,6 +205,7 @@ namespace MBSimGUI {
       void addKinematicsObserver();
       void addMechanicalLinkObserver();
       void addContactObserver();
+      void addFrameObserver();
 
     protected:
       Element *element;

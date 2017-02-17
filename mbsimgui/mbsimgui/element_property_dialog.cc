@@ -1650,7 +1650,6 @@ namespace MBSimGUI {
   ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : MechanicalLinkPropertyDialog(contact,parent,f) {
 
     addTab("Kinetics",1);
-    addTab("Visualisation",2);
     addTab("Extra");
 
     connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
@@ -1837,6 +1836,34 @@ namespace MBSimGUI {
     static_cast<MechanicalLinkObserver*>(element)->momentArrow.fromWidget(momentArrow);
   }
 
+  MechanicalConstraintObserverPropertyDialog::MechanicalConstraintObserverPropertyDialog(MechanicalConstraintObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
+
+    addTab("Visualisation",1);
+
+    constraint = new ExtWidget("Mechanical constraint",new ConstraintOfReferenceWidget(observer,0));
+    addToTab("General", constraint);
+
+    forceArrow = new ExtWidget("OpenMBV force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation",forceArrow);
+
+    momentArrow = new ExtWidget("OpenMBV moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
+    addToTab("Visualisation",momentArrow);
+  }
+
+  void MechanicalConstraintObserverPropertyDialog::toWidget(Element *element) {
+    ObserverPropertyDialog::toWidget(element);
+    static_cast<MechanicalConstraintObserver*>(element)->constraint.toWidget(constraint);
+    static_cast<MechanicalConstraintObserver*>(element)->forceArrow.toWidget(forceArrow);
+    static_cast<MechanicalConstraintObserver*>(element)->momentArrow.toWidget(momentArrow);
+  }
+
+  void MechanicalConstraintObserverPropertyDialog::fromWidget(Element *element) {
+    ObserverPropertyDialog::fromWidget(element);
+    static_cast<MechanicalConstraintObserver*>(element)->constraint.fromWidget(constraint);
+    static_cast<MechanicalConstraintObserver*>(element)->forceArrow.fromWidget(forceArrow);
+    static_cast<MechanicalConstraintObserver*>(element)->momentArrow.fromWidget(momentArrow);
+  }
+
   ContactObserverPropertyDialog::ContactObserverPropertyDialog(ContactObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
     addTab("Visualisation",1);
@@ -1878,6 +1905,82 @@ namespace MBSimGUI {
     static_cast<ContactObserver*>(element)->contactPoints.fromWidget(contactPoints);
     static_cast<ContactObserver*>(element)->normalForceArrow.fromWidget(normalForceArrow);
     static_cast<ContactObserver*>(element)->frictionArrow.fromWidget(frictionArrow);
+  }
+
+  FrameObserverPropertyDialog::FrameObserverPropertyDialog(FrameObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
+
+    addTab("Visualisation",1);
+
+    frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
+    addToTab("General", frame);
+
+    position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",position);
+
+    velocity = new ExtWidget("OpenMBV velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",velocity);
+
+    angularVelocity = new ExtWidget("OpenMBV angular velocity arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",angularVelocity);
+
+    acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",acceleration);
+
+    angularAcceleration = new ExtWidget("OpenMBV angular acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",angularAcceleration);
+  }
+
+  void FrameObserverPropertyDialog::toWidget(Element *element) {
+    ObserverPropertyDialog::toWidget(element);
+    static_cast<FrameObserver*>(element)->frame.toWidget(frame);
+    static_cast<FrameObserver*>(element)->position.toWidget(position);
+    static_cast<FrameObserver*>(element)->velocity.toWidget(velocity);
+    static_cast<FrameObserver*>(element)->angularVelocity.toWidget(angularVelocity);
+    static_cast<FrameObserver*>(element)->acceleration.toWidget(acceleration);
+    static_cast<FrameObserver*>(element)->angularAcceleration.toWidget(angularAcceleration);
+  }
+
+  void FrameObserverPropertyDialog::fromWidget(Element *element) {
+    ObserverPropertyDialog::fromWidget(element);
+    static_cast<FrameObserver*>(element)->frame.fromWidget(frame);
+    static_cast<FrameObserver*>(element)->position.fromWidget(position);
+    static_cast<FrameObserver*>(element)->velocity.fromWidget(velocity);
+    static_cast<FrameObserver*>(element)->angularVelocity.fromWidget(angularVelocity);
+    static_cast<FrameObserver*>(element)->acceleration.fromWidget(acceleration);
+    static_cast<FrameObserver*>(element)->angularAcceleration.fromWidget(angularAcceleration);
+  }
+
+  RigidBodyObserverPropertyDialog::RigidBodyObserverPropertyDialog(RigidBodyObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
+
+    addTab("Visualisation",1);
+
+    body = new ExtWidget("RigidBody",new RigidBodyOfReferenceWidget(observer,0));
+    addToTab("General", body);
+
+    weight = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",weight);
+
+    jointForce = new ExtWidget("OpenMBV jointForce arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",jointForce);
+
+    jointMoment = new ExtWidget("OpenMBV jointMoment arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",jointMoment);
+  }
+
+  void RigidBodyObserverPropertyDialog::toWidget(Element *element) {
+    ObserverPropertyDialog::toWidget(element);
+    static_cast<RigidBodyObserver*>(element)->body.toWidget(body);
+    static_cast<RigidBodyObserver*>(element)->weight.toWidget(weight);
+    static_cast<RigidBodyObserver*>(element)->jointForce.toWidget(jointForce);
+    static_cast<RigidBodyObserver*>(element)->jointMoment.toWidget(jointMoment);
+  }
+
+  void RigidBodyObserverPropertyDialog::fromWidget(Element *element) {
+    ObserverPropertyDialog::fromWidget(element);
+    static_cast<RigidBodyObserver*>(element)->body.fromWidget(body);
+    static_cast<RigidBodyObserver*>(element)->weight.fromWidget(weight);
+    static_cast<RigidBodyObserver*>(element)->jointForce.fromWidget(jointForce);
+    static_cast<RigidBodyObserver*>(element)->jointMoment.fromWidget(jointMoment);
   }
 
   SignalPropertyDialog::SignalPropertyDialog(Signal *signal, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(signal,parent,f) {

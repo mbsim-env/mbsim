@@ -23,6 +23,7 @@
 #include "contour.h"
 #include "rigid_body.h"
 #include "signal_.h"
+#include "constraint.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "kinematics_widgets.h"
@@ -365,6 +366,45 @@ namespace MBSimGUI {
   void LinkOfReferenceProperty::toWidget(QWidget *widget) {
     static_cast<LinkOfReferenceWidget*>(widget)->setLink(QString::fromStdString(link),linkPtr);
     static_cast<LinkOfReferenceWidget*>(widget)->updateWidget();
+  }
+
+  ConstraintOfReferenceProperty::ConstraintOfReferenceProperty(const std::string &constraint_, Element *element_, const FQN &xmlName_) : constraint(constraint_), constraintPtr(element_->getByPath<Constraint>(constraint)), element(element_), xmlName(xmlName_) {
+  }
+
+  void ConstraintOfReferenceProperty::initialize() {
+    constraintPtr=element->getByPath<Constraint>(constraint);
+  }
+
+  void ConstraintOfReferenceProperty::setConstraint(const std::string &str) {
+    constraint = str;
+    constraintPtr=element->getByPath<Constraint>(constraint);
+  }
+
+  std::string ConstraintOfReferenceProperty::getConstraint() const {
+    return constraintPtr?constraintPtr->getXMLPath(element,true):constraint;
+  }
+
+  DOMElement* ConstraintOfReferenceProperty::initializeUsingXML(DOMElement *parent) {
+    DOMElement *e = E(parent)->getFirstElementChildNamed(xmlName);
+    if(e) constraint=E(e)->getAttribute("ref");
+    return e;
+  }
+
+  DOMElement* ConstraintOfReferenceProperty::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(xmlName);
+    E(ele)->setAttribute("ref", getConstraint());
+    parent->insertBefore(ele, NULL);
+    return 0;
+  }
+
+  void ConstraintOfReferenceProperty::fromWidget(QWidget *widget) {
+    setConstraint(static_cast<ConstraintOfReferenceWidget*>(widget)->getConstraint().toStdString());
+  }
+
+  void ConstraintOfReferenceProperty::toWidget(QWidget *widget) {
+    static_cast<ConstraintOfReferenceWidget*>(widget)->setConstraint(QString::fromStdString(constraint),constraintPtr);
+    static_cast<ConstraintOfReferenceWidget*>(widget)->updateWidget();
   }
 
   SignalOfReferenceProperty::SignalOfReferenceProperty(const std::string &signal_, Element *element_, const FQN &xmlName_) : signal(signal_), signalPtr(element_->getByPath<Signal>(signal)), element(element_), xmlName(xmlName_) {

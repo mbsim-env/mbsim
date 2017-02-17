@@ -26,6 +26,7 @@
 #include "dynamic_system_solver.h"
 #include "object.h"
 #include "link.h"
+#include "constraint.h"
 #include "observer.h"
 #include "mainwindow.h"
 #include "embed.h"
@@ -151,6 +152,8 @@ namespace MBSimGUI {
         type = "Object";
       else if(dynamic_cast<Link*>(this))
         type = "Link";
+      else if(dynamic_cast<Constraint*>(this))
+        type = "Constraint";
       else if(dynamic_cast<Observer*>(this))
         type = "Observer";
       else 
@@ -163,6 +166,8 @@ namespace MBSimGUI {
           str = string("Object[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Link*>(*i1))
           str = string("Link[") + (*i1)->getName() + "]/" + str;
+        else if(dynamic_cast<Constraint*>(*i1))
+          str = string("Constraint[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Observer*>(*i1))
           str = string("Observer[") + (*i1)->getName() + "]/" + str;
         else
@@ -183,6 +188,8 @@ namespace MBSimGUI {
         type = "Object";
       else if(dynamic_cast<Link*>(this))
         type = "Link";
+      else if(dynamic_cast<Constraint*>(this))
+        type = "Constraint";
       else if(dynamic_cast<Observer*>(this))
         type = "Observer";
       else 
@@ -196,6 +203,8 @@ namespace MBSimGUI {
           str = string("Object[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Link*>(element))
           str = string("Link[") + element->getName() + "]/" + str;
+        else if(dynamic_cast<Constraint*>(element))
+          str = string("Constraint[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Observer*>(element))
           str = string("Observer[") + element->getName() + "]/" + str;
         else

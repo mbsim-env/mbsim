@@ -24,6 +24,7 @@
 #include "group.h"
 #include "rigid_body.h"
 #include "signal_.h"
+#include "constraint.h"
 #include "mainwindow.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -256,6 +257,75 @@ namespace MBSimGUI {
     ElementItem* item = static_cast<ElementItem*>(item_);
     if(dynamic_cast<Link*>(item->getElement())) {
       mw->highlightObject(static_cast<Link*>(item->getElement())->getID());
+      okButton->setDisabled(false);
+    }
+    else
+      okButton->setDisabled(true);
+  }
+
+  ConstraintBrowser::ConstraintBrowser(Element* element_, Constraint* constraint, QWidget *parentConstraint_) : QDialog(parentConstraint_), selection(constraint), savedItem(0), element(element_) {
+    QGridLayout* mainLayout=new QGridLayout;
+    setLayout(mainLayout);
+    constraintList = new QTreeWidget;
+    constraintList->setColumnCount(1);
+    mainLayout->addWidget(constraintList,0,0);
+    QObject::connect(constraintList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForConstraint(QTreeWidgetItem*,int)));
+
+    okButton = new QPushButton("Ok");
+    if(!selection)
+      okButton->setDisabled(true);
+    mainLayout->addWidget(okButton,1,0);
+    connect(okButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+
+    QPushButton *button = new QPushButton("Cancel");
+    mainLayout->addWidget(button,1,1);
+    connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
+
+    setWindowTitle("Constraint browser");
+  }
+
+  void ConstraintBrowser::showEvent(QShowEvent *event) {
+    QDialog::showEvent(event);
+    oldID = mw->getHighlightedObject();
+    if(constraintList->currentItem())
+      checkForConstraint(constraintList->currentItem(),0);
+  }
+
+  void ConstraintBrowser::hideEvent(QHideEvent *event) {
+    QDialog::hideEvent(event);
+    mw->highlightObject(oldID);
+  }
+
+  void ConstraintBrowser::updateWidget(Constraint *sel) {
+    selection = sel;
+    constraintList->clear();
+    savedItem = 0;
+    mbs2ConstraintTree(element,constraintList->invisibleRootItem());
+    constraintList->setCurrentItem(savedItem);
+  }
+
+  void ConstraintBrowser::mbs2ConstraintTree(Element* ele, QTreeWidgetItem* parentItem) {
+    if(dynamic_cast<Group*>(ele) || dynamic_cast<Constraint*>(ele)) {
+
+      ElementItem *item = new ElementItem(ele);
+      item->setText(0,QString::fromStdString(ele->getName()));
+
+      if(ele == selection)
+        savedItem = item;
+
+      parentItem->addChild(item);
+
+      for(int i=0; i<ele->getNumberOfGroups(); i++)
+        mbs2ConstraintTree(ele->getGroup(i),item);
+      for(int i=0; i<ele->getNumberOfConstraints(); i++)
+        mbs2ConstraintTree(ele->getConstraint(i),item);
+    }
+  }
+
+  void ConstraintBrowser::checkForConstraint(QTreeWidgetItem* item_,int) {
+    ElementItem* item = static_cast<ElementItem*>(item_);
+    if(dynamic_cast<Constraint*>(item->getElement())) {
+      mw->highlightObject(static_cast<Constraint*>(item->getElement())->getID());
       okButton->setDisabled(false);
     }
     else

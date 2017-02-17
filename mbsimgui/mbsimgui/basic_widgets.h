@@ -38,6 +38,7 @@ namespace MBSimGUI {
   class Element;
   class Object;
   class Link;
+  class Constraint;
   class RigidBody;
   class Frame;
   class Contour;
@@ -48,6 +49,7 @@ namespace MBSimGUI {
   class RigidBodyBrowser;
   class ObjectBrowser;
   class LinkBrowser;
+  class ConstraintBrowser;
   class SignalBrowser;
   class ExtWidget;
 
@@ -253,6 +255,30 @@ namespace MBSimGUI {
 
     signals:
       void linkChanged();
+  };
+
+  class ConstraintOfReferenceWidget : public Widget {
+    Q_OBJECT
+
+    public:
+      ConstraintOfReferenceWidget(Element* element, Constraint* selectedConstraint);
+
+      void updateWidget();
+      void setConstraint(const QString &str, Constraint *constraintPtr);
+      QString getConstraint() const;
+      Constraint* getSelectedConstraint() {return selectedConstraint;}
+
+    protected:
+      QLineEdit* constraint;
+      Element* element;
+      ConstraintBrowser* constraintBrowser;
+      Constraint* selectedConstraint;
+
+    public slots:
+      void setConstraint();
+
+    signals:
+      void constraintChanged();
   };
 
   class SignalOfReferenceWidget : public Widget {

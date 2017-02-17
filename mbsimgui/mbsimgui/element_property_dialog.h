@@ -83,7 +83,10 @@ namespace MBSimGUI {
   class RelativeKinematicsObserver;
   class NaturalCoordinatesObserver;
   class MechanicalLinkObserver;
+  class MechanicalConstraintObserver;
   class ContactObserver;
+  class FrameObserver;
+  class RigidBodyObserver;
   class Signal;
   class Sensor;
   class GeneralizedCoordinateSensor;
@@ -701,6 +704,16 @@ namespace MBSimGUI {
       ExtWidget *link, *forceArrow, *momentArrow;
   };
 
+  class MechanicalConstraintObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      MechanicalConstraintObserverPropertyDialog(MechanicalConstraintObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *constraint, *forceArrow, *momentArrow;
+  };
+
   class ContactObserverPropertyDialog : public ObserverPropertyDialog {
 
     public:
@@ -709,6 +722,26 @@ namespace MBSimGUI {
       void fromWidget(Element *element);
     protected:
       ExtWidget *link, *forceArrow, *momentArrow, *contactPoints, *normalForceArrow, *frictionArrow;
+  };
+
+  class FrameObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      FrameObserverPropertyDialog(FrameObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
+  };
+
+  class RigidBodyObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      RigidBodyObserverPropertyDialog(RigidBodyObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      void toWidget(Element *element);
+      void fromWidget(Element *element);
+    protected:
+      ExtWidget *body, *weight, *jointForce, *jointMoment;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

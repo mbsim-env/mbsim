@@ -30,6 +30,7 @@ namespace MBSimGUI {
   class Element;
   class Object;
   class Link;
+  class Constraint;
   class RigidBody;
   class Frame;
   class Contour;
@@ -94,6 +95,28 @@ namespace MBSimGUI {
       void hideEvent(QHideEvent *event);
       protected slots:
         void checkForLink(QTreeWidgetItem* item_,int);
+  };
+
+  class ConstraintBrowser : public QDialog {
+    Q_OBJECT
+
+    public:
+      ConstraintBrowser(Element* element, Constraint* selection, QWidget *lnk);
+      ~ConstraintBrowser() {}
+      QTreeWidget* getConstraintList() const {return constraintList;}
+      void updateWidget(Constraint *constraint);
+    protected:
+      QPushButton *okButton;
+      QTreeWidget *constraintList;
+      Constraint *selection;
+      ElementItem *savedItem;
+      Element* element;
+      std::string oldID;
+      void mbs2ConstraintTree(Element* item, QTreeWidgetItem* parentItem);
+      void showEvent(QShowEvent *event);
+      void hideEvent(QHideEvent *event);
+      protected slots:
+        void checkForConstraint(QTreeWidgetItem* item_,int);
   };
 
   class RigidBodyBrowser : public QDialog {

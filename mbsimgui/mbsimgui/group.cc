@@ -547,6 +547,8 @@ namespace MBSimGUI {
       return getObject(name);
     else if (container == "Link")
       return getLink(name);
+    else if (container == "Constraint")
+      return getConstraint(name);
     else if (container == "Group")
       return getGroup(name);
     else if (container == "Frame")

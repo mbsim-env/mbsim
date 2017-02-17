@@ -114,6 +114,19 @@ namespace MBSimGUI {
     ExtProperty link, forceArrow, momentArrow;
   };
 
+  class MechanicalConstraintObserver : public Observer {
+    friend class MechanicalConstraintObserverPropertyDialog;
+    public:
+    MechanicalConstraintObserver(const std::string &str, Element *parent);
+    std::string getType() const { return "MechanicalConstraintObserver"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new MechanicalConstraintObserverPropertyDialog(this);}
+    protected:
+    ExtProperty constraint, forceArrow, momentArrow;
+  };
+
   class ContactObserver : public Observer {
     friend class ContactObserverPropertyDialog;
     public:
@@ -127,6 +140,31 @@ namespace MBSimGUI {
     ExtProperty link, forceArrow, momentArrow, contactPoints, normalForceArrow, frictionArrow;
   };
 
+  class FrameObserver : public Observer {
+    friend class FrameObserverPropertyDialog;
+    public:
+    FrameObserver(const std::string &str, Element *parent);
+    std::string getType() const { return "FrameObserver"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new FrameObserverPropertyDialog(this);}
+    protected:
+    ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
+  };
+
+  class RigidBodyObserver : public Observer {
+    friend class RigidBodyObserverPropertyDialog;
+    public:
+    RigidBodyObserver(const std::string &str, Element *parent);
+    std::string getType() const { return "RigidBodyObserver"; }
+    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}
+    protected:
+    ExtProperty body, weight, jointForce, jointMoment;
+  };
 }
 
 #endif

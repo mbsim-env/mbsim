@@ -475,6 +475,9 @@ namespace MBSimGUI {
     action = new QAction("Add contact observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContactObserver()));
     addAction(action);
+    action = new QAction("Add frame observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFrameObserver()));
+    addAction(action);
   }
 
   void ObserverContextContextMenu::addCoordinatesObserver() {
@@ -493,6 +496,10 @@ namespace MBSimGUI {
 
   void ObserverContextContextMenu::addContactObserver() {
     mw->addObserver(new ContactObserver("ContactObserver",element));
+  }
+
+  void ObserverContextContextMenu::addFrameObserver() {
+    mw->addObserver(new FrameObserver("FrameObserver",element));
   }
 
   CoordinatesObserverContextContextMenu::CoordinatesObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

@@ -32,6 +32,7 @@ namespace MBSimGUI {
   class Contour;
   class Object;
   class Link;
+  class Constraint;
   class RigidBody;
   class Signal;
 
@@ -185,6 +186,24 @@ namespace MBSimGUI {
       void toWidget(QWidget *widget);
       void setLink(const std::string &str);
       std::string getLink() const;
+  };
+
+  class ConstraintOfReferenceProperty : public Property {
+    protected:
+      std::string constraint;
+      Constraint *constraintPtr;
+      Element* element;
+      MBXMLUtils::FQN xmlName;
+    public:
+      ConstraintOfReferenceProperty(const std::string &constraint_="", Element *element_=0, const MBXMLUtils::FQN &xmlName_="");
+      virtual PropertyInterface* clone() const {return new ConstraintOfReferenceProperty(*this);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void initialize();
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+      void setConstraint(const std::string &str);
+      std::string getConstraint() const;
   };
 
   class SignalOfReferenceProperty : public Property {

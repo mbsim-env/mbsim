@@ -24,6 +24,7 @@
 #include "group.h"
 #include "rigid_body.h"
 #include "signal_.h"
+#include "constraint.h"
 #include "dialogs.h"
 #include "mainwindow.h"
 #include <QtGui>
@@ -441,6 +442,48 @@ namespace MBSimGUI {
 
   QString LinkOfReferenceWidget::getLink() const {
     return link->text();
+  }
+
+  ConstraintOfReferenceWidget::ConstraintOfReferenceWidget(Element *element_, Constraint* selectedConstraint_) : element(element_), selectedConstraint(selectedConstraint_) {
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    constraint = new QLineEdit;
+    if(selectedConstraint)
+      constraint->setText(QString::fromStdString(selectedConstraint->getXMLPath(element,true)));
+    constraintBrowser = new ConstraintBrowser(element->getRoot(),0,this);
+    connect(constraintBrowser,SIGNAL(accepted()),this,SLOT(setConstraint()));
+    layout->addWidget(constraint);
+    QPushButton *button = new QPushButton(tr("Browse"));
+    connect(button,SIGNAL(clicked(bool)),constraintBrowser,SLOT(show()));
+    layout->addWidget(button);
+  }
+
+  void ConstraintOfReferenceWidget::updateWidget() {
+    constraintBrowser->updateWidget(selectedConstraint);
+    if(selectedConstraint) {
+      setConstraint();
+    }
+  }
+
+  void ConstraintOfReferenceWidget::setConstraint() {
+    if(constraintBrowser->getConstraintList()->currentItem())
+      selectedConstraint = static_cast<Constraint*>(static_cast<ElementItem*>(constraintBrowser->getConstraintList()->currentItem())->getElement());
+    else
+      selectedConstraint = 0;
+    constraint->setText(selectedConstraint?QString::fromStdString(selectedConstraint->getXMLPath(element,true)):"");
+    emit constraintChanged();
+  }
+
+  void ConstraintOfReferenceWidget::setConstraint(const QString &str, Constraint *constraintPtr) {
+    selectedConstraint = constraintPtr;
+    constraint->setText(str);
+    emit constraintChanged();
+  }
+
+  QString ConstraintOfReferenceWidget::getConstraint() const {
+    return constraint->text();
   }
 
   SignalOfReferenceWidget::SignalOfReferenceWidget(Element *element_, Signal* selectedSignal_) : element(element_), selectedSignal(selectedSignal_) {

@@ -182,6 +182,36 @@ namespace MBSimGUI {
     return ele0;
   }
 
+  MechanicalConstraintObserver::MechanicalConstraintObserver(const string &str, Element *parent) : Observer(str, parent), forceArrow(0,false), momentArrow(0,false) {
+
+    constraint.setProperty(new ConstraintOfReferenceProperty("",this,MBSIM%"mechanicalConstraint"));
+
+    forceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVForce",getID()));
+
+    momentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVMoment",getID()));
+  }
+
+  void MechanicalConstraintObserver::initialize() {
+    Observer::initialize();
+    constraint.initialize();
+  }
+
+  DOMElement* MechanicalConstraintObserver::initializeUsingXML(DOMElement *element) {
+    Observer::initializeUsingXML(element);
+    constraint.initializeUsingXML(element);
+    forceArrow.initializeUsingXML(element);
+    momentArrow.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* MechanicalConstraintObserver::writeXMLFile(DOMNode *parent) {
+    DOMElement *ele0 = Observer::writeXMLFile(parent);
+    constraint.writeXMLFile(ele0);
+    forceArrow.writeXMLFile(ele0);
+    momentArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
   ContactObserver::ContactObserver(const string &str, Element *parent) : Observer(str, parent), forceArrow(0,false), momentArrow(0,false), contactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 
     link.setProperty(new LinkOfReferenceProperty("",this,MBSIM%"contact"));
@@ -221,6 +251,82 @@ namespace MBSimGUI {
     contactPoints.writeXMLFile(ele0);
     normalForceArrow.writeXMLFile(ele0);
     frictionArrow.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  FrameObserver::FrameObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
+
+    frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
+
+    position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
+
+    velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVVelocity",getID(),true));
+
+    angularVelocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularVelocity",getID(),true));
+
+    acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
+
+    angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
+  }
+
+  void FrameObserver::initialize() {
+    Observer::initialize();
+    frame.initialize();
+  }
+
+  DOMElement* FrameObserver::initializeUsingXML(DOMElement *element) {
+    Observer::initializeUsingXML(element);
+    frame.initializeUsingXML(element);
+    position.initializeUsingXML(element);
+    velocity.initializeUsingXML(element);
+    angularVelocity.initializeUsingXML(element);
+    acceleration.initializeUsingXML(element);
+    angularAcceleration.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FrameObserver::writeXMLFile(DOMNode *parent) {
+
+    DOMElement *ele0 = Observer::writeXMLFile(parent);
+    frame.writeXMLFile(ele0);
+    position.writeXMLFile(ele0);
+    velocity.writeXMLFile(ele0);
+    angularVelocity.writeXMLFile(ele0);
+    acceleration.writeXMLFile(ele0);
+    angularAcceleration.writeXMLFile(ele0);
+    return ele0;
+  }
+
+  RigidBodyObserver::RigidBodyObserver(const string &str, Element *parent) : Observer(str, parent), weight(0,false), jointForce(0,false), jointMoment(0,false) {
+
+    body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
+
+    weight.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVWeight",getID(),true));
+
+    jointForce.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointForce",getID(),true));
+
+    jointMoment.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointMoment",getID(),true));
+  }
+
+  void RigidBodyObserver::initialize() {
+    Observer::initialize();
+    body.initialize();
+  }
+
+  DOMElement* RigidBodyObserver::initializeUsingXML(DOMElement *element) {
+    Observer::initializeUsingXML(element);
+    body.initializeUsingXML(element);
+    jointForce.initializeUsingXML(element);
+    jointMoment.initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* RigidBodyObserver::writeXMLFile(DOMNode *parent) {
+
+    DOMElement *ele0 = Observer::writeXMLFile(parent);
+    body.writeXMLFile(ele0);
+    jointForce.writeXMLFile(ele0);
+    jointMoment.writeXMLFile(ele0);
     return ele0;
   }
 
