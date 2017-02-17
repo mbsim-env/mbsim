@@ -175,7 +175,7 @@ System::System(const string &projectName) :
 
   ContactObserver *observer = new ContactObserver("Observer");
   addObserver(observer);
-  observer->setMechanicalLink(contact);
+  observer->setContact(contact);
   observer->enableOpenMBVNormalForce();
   observer->enableOpenMBVTangentialForce();
   observer->enableOpenMBVContactPoints();

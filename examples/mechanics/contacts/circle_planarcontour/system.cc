@@ -91,7 +91,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   ContactObserver *observer = new ContactObserver("Observer");
   addObserver(observer);
-  observer->setMechanicalLink(contactCamRoll);
+  observer->setContact(contactCamRoll);
   observer->enableOpenMBVContactPoints(.005);
 
 }

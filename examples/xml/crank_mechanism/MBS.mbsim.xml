@@ -216,7 +216,7 @@
   </links>
   <observers>
     <ContactObserver name="Observer">
-      <mechanicalLink ref="../Link[jointContact]"/>
+      <contact ref="../Link[jointContact]"/>
       <enableOpenMBVContactPoints>
         <size>fSize/4.</size>
       </enableOpenMBVContactPoints> <!-- optional -->

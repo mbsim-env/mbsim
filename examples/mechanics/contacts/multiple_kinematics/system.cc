@@ -120,7 +120,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   //fancy stuff
   ContactObserver *observer = new ContactObserver("Observer");
   addObserver(observer);
-  observer->setMechanicalLink(contact);
+  observer->setContact(contact);
   observer->enableOpenMBVContactPoints(0.01);
   observer->enableOpenMBVNormalForce(_scaleLength=0.001);
   observer->enableOpenMBVTangentialForce(_scaleLength=0.001);

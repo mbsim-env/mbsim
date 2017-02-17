@@ -124,7 +124,7 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
 
   ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
   addObserver(observer);
-  observer->setMechanicalLink(contact);
+  observer->setContact(contact);
   observer->enableOpenMBVContactPoints(1e-2);
   observer->enableOpenMBVNormalForce(1e-2);
   observer->enableOpenMBVTangentialForce(1e-2);

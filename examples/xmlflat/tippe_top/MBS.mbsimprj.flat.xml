@@ -113,7 +113,7 @@
     </links>
     <observers>
       <ContactObserver name="ContactObserver1">
-        <mechanicalLink ref="../Link[Contact1]"/>
+        <contact ref="../Link[Contact1]"/>
         <enableOpenMBVContactPoints>
           <size>0.0025</size>
         </enableOpenMBVContactPoints>
@@ -125,7 +125,7 @@
         </enableOpenMBVTangentialForce>
       </ContactObserver>
       <ContactObserver name="ContactObserver2">
-        <mechanicalLink ref="../Link[Contact2]"/>
+        <contact ref="../Link[Contact2]"/>
         <enableOpenMBVContactPoints>
           <size>0.0025</size>
         </enableOpenMBVContactPoints>

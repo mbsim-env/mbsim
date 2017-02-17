@@ -184,7 +184,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addLink(contact);
   ContactObserver *observer = new ContactObserver("Observer");
   addObserver(observer);
-  observer->setMechanicalLink(contact);
+  observer->setContact(contact);
   observer->enableOpenMBVContactPoints();
 
   /* OpenMBV */

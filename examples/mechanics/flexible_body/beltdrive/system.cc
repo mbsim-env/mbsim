@@ -455,7 +455,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
     ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
     addObserver(observer);
-    observer->setMechanicalLink(contact);
+    observer->setContact(contact);
     observer->enableOpenMBVNormalForce(_scaleLength=0.0002);
     if(mu>0)
       observer->enableOpenMBVTangentialForce(_scaleLength=0.0002);

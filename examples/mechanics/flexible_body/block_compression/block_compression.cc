@@ -293,7 +293,7 @@ void BlockCompression::addContacts() {
   addLink(BlBlBottom);
   ContactObserver *observer = new ContactObserver("BottomContactsObserver");
   addObserver(observer);
-  observer->setMechanicalLink(BlBlBottom);
+  observer->setContact(BlBlBottom);
   observer->enableOpenMBVNormalForce(1e-3);
 
   Contact * BlBlTop = new Contact("TopContacts");
@@ -301,7 +301,7 @@ void BlockCompression::addContacts() {
   addLink(BlBlTop);
   observer = new ContactObserver("TopContactsObserver");
   addObserver(observer);
-  observer->setMechanicalLink(BlBlTop);
+  observer->setContact(BlBlTop);
   observer->enableOpenMBVNormalForce(1e-3);
 
   Contact * BlRod = new Contact("BlockRodContacts");
@@ -309,7 +309,7 @@ void BlockCompression::addContacts() {
   addLink(BlRod);
   observer = new ContactObserver("BlockRodContactsObserver");
   addObserver(observer);
-  observer->setMechanicalLink(BlRod);
+  observer->setContact(BlRod);
   observer->enableOpenMBVNormalForce(1e-3);
 
   for (int i = 1; i < NoBlocks; i++) {

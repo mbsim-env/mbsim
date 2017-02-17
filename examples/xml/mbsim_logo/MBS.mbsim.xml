@@ -179,7 +179,7 @@
   <observers>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <ContactObserver name="ContactObserverBS{nr}" xmlns="http://www.mbsim-env.de/MBSim">
-        <mechanicalLink ref="../Link[ContactBS{nr}]"/>
+        <contact ref="../Link[ContactBS{nr}]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
         </enableOpenMBVContactPoints> 
@@ -187,14 +187,14 @@
     </Embed>
     <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <ContactObserver name="ContactObserverMB{nr}" xmlns="http://www.mbsim-env.de/MBSim">
-        <mechanicalLink ref="../Link[ContactMB{nr}]"/>
+        <contact ref="../Link[ContactMB{nr}]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
         </enableOpenMBVContactPoints> 
       </ContactObserver>
     </Embed>
     <ContactObserver name="ContactObserverSi">
-      <mechanicalLink ref="../Link[ContactSi]"/>
+      <contact ref="../Link[ContactSi]"/>
       <enableOpenMBVContactPoints>
         <size>frameSize</size>
       </enableOpenMBVContactPoints> 

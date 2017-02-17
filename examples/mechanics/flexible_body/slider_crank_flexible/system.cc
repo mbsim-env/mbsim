@@ -212,7 +212,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
 
   ContactObserver *observer = new ContactObserver(contactCrankRod->getName()+"_Observer");
   addObserver(observer);
-  observer->setMechanicalLink(contactCrankRod);
+  observer->setContact(contactCrankRod);
   observer->enableOpenMBVContactPoints(1e-5);
   observer->enableOpenMBVNormalForce();
 
