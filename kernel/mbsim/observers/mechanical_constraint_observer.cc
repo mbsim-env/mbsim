@@ -115,7 +115,7 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if(e) {
-        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
         openMBVMoment=ombv.createOpenMBV(e); 
     }
   }

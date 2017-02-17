@@ -29,6 +29,8 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FrameObserver)
+
   FrameObserver::FrameObserver(const std::string &name) : Observer(name), frame(0) {
   }
 
@@ -50,44 +52,24 @@ namespace MBSim {
         Observer::init(stage);
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
-            openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-            openMBVPosGrp->setName("Position_Group");
-            openMBVPosGrp->setExpand(false);
-            getOpenMBVGrp()->addObject(openMBVPosGrp);
             openMBVPosition->setName("AbsolutePosition");
-            openMBVPosGrp->addObject(openMBVPosition);
+            getOpenMBVGrp()->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
-            openMBVVelGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-            openMBVVelGrp->setName("Velocity_Group");
-            openMBVVelGrp->setExpand(false);
-            getOpenMBVGrp()->addObject(openMBVVelGrp);
             openMBVVelocity->setName("AbsoluteVelocity");
-            openMBVVelGrp->addObject(openMBVVelocity);
+            getOpenMBVGrp()->addObject(openMBVVelocity);
           }
           if(openMBVAngularVelocity) {
-            openMBVAngVelGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-            openMBVAngVelGrp->setName("Angular_Velocity_Group");
-            openMBVAngVelGrp->setExpand(false);
-            getOpenMBVGrp()->addObject(openMBVAngVelGrp);
             openMBVAngularVelocity->setName("AbsoluteAngularVelocity");
-            openMBVAngVelGrp->addObject(openMBVAngularVelocity);
+            getOpenMBVGrp()->addObject(openMBVAngularVelocity);
           }
           if(openMBVAcceleration) {
-            openMBVAccGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-            openMBVAccGrp->setName("Acceleration_Group");
-            openMBVAccGrp->setExpand(false);
-            getOpenMBVGrp()->addObject(openMBVAccGrp);
             openMBVAcceleration->setName("AbsoluteAcceleration");
-            openMBVAccGrp->addObject(openMBVAcceleration);
+            getOpenMBVGrp()->addObject(openMBVAcceleration);
           }
           if(openMBVAngularAcceleration) {
-            openMBVAngAccGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-            openMBVAngAccGrp->setName("Angular_Acceleration_Group");
-            openMBVAngAccGrp->setExpand(false);
-            getOpenMBVGrp()->addObject(openMBVAngAccGrp);
             openMBVAngularAcceleration->setName("AbsoluteAngularAcceleration");
-            openMBVAngAccGrp->addObject(openMBVAngularAcceleration);
+            getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
           }
         }
       }
