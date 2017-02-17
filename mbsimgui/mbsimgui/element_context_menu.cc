@@ -472,11 +472,17 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add mechanical link observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
     addAction(action);
+    action = new QAction("Add mechanical constraint observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintObserver()));
+    addAction(action);
     action = new QAction("Add contact observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContactObserver()));
     addAction(action);
     action = new QAction("Add frame observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFrameObserver()));
+    addAction(action);
+    action = new QAction("Add rigid body observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyObserver()));
     addAction(action);
   }
 
@@ -494,12 +500,20 @@ namespace MBSimGUI {
     mw->addObserver(new MechanicalLinkObserver("MechanicalLinkObserver",element));
   }
 
+  void ObserverContextContextMenu::addMechanicalConstraintObserver() {
+    mw->addObserver(new MechanicalConstraintObserver("MechanicalConstraintObserver",element));
+  }
+
   void ObserverContextContextMenu::addContactObserver() {
     mw->addObserver(new ContactObserver("ContactObserver",element));
   }
 
   void ObserverContextContextMenu::addFrameObserver() {
     mw->addObserver(new FrameObserver("FrameObserver",element));
+  }
+
+  void ObserverContextContextMenu::addRigidBodyObserver() {
+    mw->addObserver(new RigidBodyObserver("RigidBodyObserver",element));
   }
 
   CoordinatesObserverContextContextMenu::CoordinatesObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
