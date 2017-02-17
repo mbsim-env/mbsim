@@ -35,6 +35,7 @@ namespace MBSim {
 
   ContourLink::ContourLink(const std::string &name) : MechanicalLink(name), contour(2), cFrame(2), updPos(true), updVel(true), updDF(true) {
     P.resize(2);
+    F.resize(2);
   }
 
   ContourLink::~ContourLink() {

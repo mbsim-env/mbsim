@@ -43,7 +43,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Contact)
 
-  Contact::Contact(const string &name) : MechanicalLink(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), saved_ref(0) {
+  Contact::Contact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), saved_ref(0) {
   }
 
   Contact::~Contact() {
@@ -149,7 +149,7 @@ namespace MBSim {
   }
 
   void Contact::updatewbRef(const Vec& wbParent) {
-    MechanicalLink::updatewbRef(wbParent);
+    Link::updatewbRef(wbParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatewbRef(wbParent);
@@ -157,7 +157,7 @@ namespace MBSim {
   }
 
   void Contact::updatelaRef(const Vec& laParent) {
-    MechanicalLink::updatelaRef(laParent);
+    Link::updatelaRef(laParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatelaRef(laParent);
@@ -165,7 +165,7 @@ namespace MBSim {
   }
 
   void Contact::updateLaRef(const Vec& LaParent) {
-    MechanicalLink::updateLaRef(LaParent);
+    Link::updateLaRef(LaParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateLaRef(LaParent);
@@ -173,7 +173,7 @@ namespace MBSim {
   }
 
   void Contact::updategRef(const Vec& gParent) {
-    MechanicalLink::updategRef(gParent);
+    Link::updategRef(gParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->updategRef(gParent);
@@ -182,7 +182,7 @@ namespace MBSim {
   }
 
   void Contact::updategdRef(const Vec& gdParent) {
-    MechanicalLink::updategdRef(gdParent);
+    Link::updategdRef(gdParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updategdRef(gdParent);
@@ -190,7 +190,7 @@ namespace MBSim {
   }
 
   void Contact::updateresRef(const Vec& resParent) {
-    MechanicalLink::updateresRef(resParent);
+    Link::updateresRef(resParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateresRef(resParent);
@@ -198,7 +198,7 @@ namespace MBSim {
   }
 
   void Contact::updaterFactorRef(const Vec& rFactorParent) {
-    MechanicalLink::updaterFactorRef(rFactorParent);
+    Link::updaterFactorRef(rFactorParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updaterFactorRef(rFactorParent);
@@ -206,7 +206,7 @@ namespace MBSim {
   }
 
   void Contact::updatesvRef(const Vec &svParent) {
-    MechanicalLink::updatesvRef(svParent);
+    Link::updatesvRef(svParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatesvRef(svParent);
@@ -214,7 +214,7 @@ namespace MBSim {
   }
 
   void Contact::updatejsvRef(const VecInt &jsvParent) {
-    MechanicalLink::updatejsvRef(jsvParent);
+    Link::updatejsvRef(jsvParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatejsvRef(jsvParent);
@@ -222,7 +222,7 @@ namespace MBSim {
   }
 
   void Contact::updateLinkStatusRef(const VecInt &LinkStatusParent) {
-    MechanicalLink::updateLinkStatusRef(LinkStatusParent);
+    Link::updateLinkStatusRef(LinkStatusParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateLinkStatusRef(LinkStatusParent);
@@ -230,7 +230,7 @@ namespace MBSim {
   }
 
   void Contact::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
-    MechanicalLink::updateLinkStatusRegRef(LinkStatusRegParent);
+    Link::updateLinkStatusRegRef(LinkStatusRegParent);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateLinkStatusRegRef(LinkStatusRegParent);
@@ -238,12 +238,12 @@ namespace MBSim {
   }
 
   void Contact::calcxSize() {
-    MechanicalLink::calcxSize();
+    Link::calcxSize();
     xSize = 0;
   }
 
   void Contact::calclaSize(int j) {
-    MechanicalLink::calclaSize(j);
+    Link::calclaSize(j);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calclaSize(j);
@@ -253,7 +253,7 @@ namespace MBSim {
   }
 
   void Contact::calcgSize(int j) {
-    MechanicalLink::calcgSize(j);
+    Link::calcgSize(j);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calcgSize(j);
@@ -263,7 +263,7 @@ namespace MBSim {
   }
 
   void Contact::calcgdSize(int j) {
-    MechanicalLink::calcgdSize(j);
+    Link::calcgdSize(j);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calcgdSize(j);
@@ -273,7 +273,7 @@ namespace MBSim {
   }
 
   void Contact::calcrFactorSize(int j) {
-    MechanicalLink::calcrFactorSize(j);
+    Link::calcrFactorSize(j);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calcrFactorSize(j);
@@ -283,7 +283,7 @@ namespace MBSim {
   }
 
   void Contact::calcsvSize() {
-    MechanicalLink::calcsvSize();
+    Link::calcsvSize();
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calcsvSize();
@@ -293,7 +293,7 @@ namespace MBSim {
   }
 
   void Contact::calcLinkStatusSize() {
-    MechanicalLink::calcLinkStatusSize();
+    Link::calcLinkStatusSize();
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calcLinkStatusSize();
@@ -304,7 +304,7 @@ namespace MBSim {
   }
 
   void Contact::calcLinkStatusRegSize() {
-    MechanicalLink::calcLinkStatusRegSize();
+    Link::calcLinkStatusRegSize();
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calcLinkStatusRegSize();
@@ -325,7 +325,7 @@ namespace MBSim {
 //      if(not(contour.size()))
 //        THROW_MBSIMERROR("no connection given!");
 
-      MechanicalLink::init(stage);
+      Link::init(stage);
     }
     else if (stage == preInit) {
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
@@ -388,10 +388,10 @@ namespace MBSim {
           jter->init(stage);
         }
       }
-      MechanicalLink::init(stage);
+      Link::init(stage);
     }
     else if (stage == resize) {
-      MechanicalLink::init(stage);
+      Link::init(stage);
 
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -409,7 +409,7 @@ namespace MBSim {
       }
     }
     else if (stage == unknownStage) {
-      MechanicalLink::init(stage);
+      Link::init(stage);
 
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -417,7 +417,7 @@ namespace MBSim {
       }
     }
     else
-      MechanicalLink::init(stage);
+      Link::init(stage);
     //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
     if(fcl) fcl->init(stage);
     if(fdf) fdf->init(stage);
@@ -525,7 +525,7 @@ namespace MBSim {
   }
 
   void Contact::setgInd(int gInd_) {
-    MechanicalLink::setgInd(gInd_);
+    Link::setgInd(gInd_);
     int nextgInd = gInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -536,7 +536,7 @@ namespace MBSim {
   }
 
   void Contact::setgdInd(int gdInd_) {
-    MechanicalLink::setgdInd(gdInd_);
+    Link::setgdInd(gdInd_);
     int nextgdInd = gdInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -547,7 +547,7 @@ namespace MBSim {
   }
 
   void Contact::setsvInd(int svInd_) {
-    MechanicalLink::setsvInd(svInd_);
+    Link::setsvInd(svInd_);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setsvInd(svInd_);
@@ -557,7 +557,7 @@ namespace MBSim {
   }
 
   void Contact::setlaInd(int laInd_) {
-    MechanicalLink::setlaInd(laInd_);
+    Link::setlaInd(laInd_);
     int nextlaInd = laInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -568,7 +568,7 @@ namespace MBSim {
   }
 
   void Contact::setrFactorInd(int rFactorInd_) {
-    MechanicalLink::setrFactorInd(rFactorInd_);
+    Link::setrFactorInd(rFactorInd_);
     int nextrFactorInd = rFactorInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -579,7 +579,7 @@ namespace MBSim {
   }
 
   void Contact::setcorrInd(int corrInd_) {
-    MechanicalLink::setcorrInd(corrInd_);
+    Link::setcorrInd(corrInd_);
     int nextcorrInd = corrInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -590,7 +590,7 @@ namespace MBSim {
   }
 
   void Contact::setLinkStatusInd(int LinkStatusInd_) {
-    MechanicalLink::setLinkStatusInd(LinkStatusInd_);
+    Link::setLinkStatusInd(LinkStatusInd_);
     int nextLinkStatusInd = LinkStatusInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -601,7 +601,7 @@ namespace MBSim {
   }
 
   void Contact::setLinkStatusRegInd(int LinkStatusRegInd_) {
-    MechanicalLink::setLinkStatusRegInd(LinkStatusRegInd_);
+    Link::setLinkStatusRegInd(LinkStatusRegInd_);
     int nextLinkStatusRegInd = LinkStatusRegInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -748,7 +748,7 @@ namespace MBSim {
   }
 
   void Contact::setlaTol(double tol) {
-    MechanicalLink::setlaTol(tol);
+    Link::setlaTol(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setlaTol(tol);
@@ -757,7 +757,7 @@ namespace MBSim {
   }
 
   void Contact::setLaTol(double tol) {
-    MechanicalLink::setLaTol(tol);
+    Link::setLaTol(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setLaTol(tol);
@@ -766,7 +766,7 @@ namespace MBSim {
   }
 
   void Contact::setgTol(double tol) {
-    MechanicalLink::setgTol(tol);
+    Link::setgTol(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setgTol(tol);
@@ -775,7 +775,7 @@ namespace MBSim {
   }
 
   void Contact::setgdTol(double tol) {
-    MechanicalLink::setgdTol(tol);
+    Link::setgdTol(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setgdTol(tol);
@@ -784,7 +784,7 @@ namespace MBSim {
   }
 
   void Contact::setgddTol(double tol) {
-    MechanicalLink::setgddTol(tol);
+    Link::setgddTol(tol);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setgddTol(tol);
@@ -793,7 +793,7 @@ namespace MBSim {
   }
 
   void Contact::setrMax(double rMax_) {
-    MechanicalLink::setrMax(rMax_);
+    Link::setrMax(rMax_);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setrMax(rMax_);
@@ -802,7 +802,7 @@ namespace MBSim {
   }
 
   void Contact::initializeUsingXML(DOMElement *element) {
-    MechanicalLink::initializeUsingXML(element);
+    Link::initializeUsingXML(element);
     DOMElement *e;
 
     /*Read all contour pairings*/
@@ -877,7 +877,7 @@ namespace MBSim {
   }
 
   void Contact::calccorrSize(int j) {
-    MechanicalLink::calccorrSize(j);
+    Link::calccorrSize(j);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->calccorrSize(j);

@@ -29,9 +29,12 @@ namespace MBSim {
 
   class Contact;
 
-  class ContactObserver : public MechanicalLinkObserver {
+  class ContactObserver : public Observer {
     protected:
       std::vector<std::vector<SingleContactObserver> > contactObserver;
+
+      Contact* link;
+      std::string saved_link;
 
       /**
        * \brief container of ContactFrames to draw
@@ -41,13 +44,24 @@ namespace MBSim {
       /**
        * \brief pointer to memory of normal and friction forces to draw
        */
-      std::shared_ptr<OpenMBV::Arrow> contactArrow, frictionArrow;
+      std::shared_ptr<OpenMBV::Arrow> openMBVForce, openMBVMoment, contactArrow, frictionArrow;
 
     public:
       ContactObserver(const std::string &name="");
+      void setContact(Contact *link_) { link = link_; }
       void init(InitStage stage);
       virtual void plot();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVForce, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVForce=ombv.createOpenMBV();
+      }
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVMoment=ombv.createOpenMBV();
+      }
 
       /** 
        * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.

@@ -1497,14 +1497,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="ContourLink" substitutionGroup="Link" type="ContourLinkType">
+  <xs:element name="ContourLink" substitutionGroup="MechanicalLink" type="ContourLinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ContourLinkType">
     <xs:complexContent>
-      <xs:extension base="LinkType">
+      <xs:extension base="MechanicalLinkType">
         <xs:sequence>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -2034,7 +2034,7 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="Contact" substitutionGroup="MechanicalLink" type="ContactType">
+  <xs:element name="Contact" substitutionGroup="Link" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
@@ -2047,7 +2047,7 @@
   </xs:element>
   <xs:complexType name="ContactType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkType">
+      <xs:extension base="LinkType">
         <xs:sequence>
           <xs:element name="connect" maxOccurs="unbounded">
            <xs:annotation>
@@ -4791,15 +4791,35 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="ContactObserver" substitutionGroup="MechanicalLinkObserver" type="ContactObserverType">
+  <xs:element name="ContactObserver" substitutionGroup="Observer" type="ContactObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ContactObserverType">
     <xs:complexContent>
-      <xs:extension base="MechanicalLinkObserverType">
+      <xs:extension base="ObserverType">
         <xs:sequence>
+          <xs:element name="contact">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVForce" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVMoment" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>

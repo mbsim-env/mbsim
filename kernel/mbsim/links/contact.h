@@ -45,7 +45,7 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class Contact : public MechanicalLink {
+  class Contact : public Link {
     public:
       /*!
        * \brief constructor

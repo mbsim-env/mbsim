@@ -34,13 +34,16 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ContactObserver)
 
-  ContactObserver::ContactObserver(const std::string &name) : MechanicalLinkObserver(name) {
+  ContactObserver::ContactObserver(const std::string &name) : Observer(name) {
   }
 
   void ContactObserver::init(InitStage stage) {
-    if(stage==preInit) {
-      if(not dynamic_cast<Contact*>(link))
-        THROW_MBSIMERROR("MechanicalLink \"" + link->getName() + "\" is not of type Contact!");
+    if(stage==resolveXMLPath) {
+      if(saved_link!="")
+        setContact(getByPath<Contact>(saved_link));
+      Observer::init(stage);
+    }
+    else if(stage==preInit) {
       contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size(),vector<SingleContactObserver>(static_cast<Contact*>(link)->getSubcontacts()[0].size()));
       for (unsigned int i=0; i<contactObserver.size(); i++) {
         for (unsigned int j=0; j<contactObserver[i].size(); j++) {
@@ -64,10 +67,10 @@ namespace MBSim {
           contactObserver[i][j].init(stage);
         }
       }
-      MechanicalLinkObserver::init(stage);
+      Observer::init(stage);
     }
     else if (stage == plotting) {
-      MechanicalLinkObserver::init(stage);
+      Observer::init(stage);
       updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
         for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
@@ -77,11 +80,11 @@ namespace MBSim {
       }
     }
     else
-      MechanicalLinkObserver::init(stage);
+      Observer::init(stage);
   }
 
   void ContactObserver::plot() {
-    MechanicalLinkObserver::plot();
+    Observer::plot();
     for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
       for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->plot();
@@ -89,11 +92,23 @@ namespace MBSim {
   }
 
   void ContactObserver::initializeUsingXML(DOMElement *element) {
-    MechanicalLinkObserver::initializeUsingXML(element);
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
+    Observer::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"contact");
+    if(e) saved_link=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
+    if(e) {
+        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+        openMBVForce=ombv.createOpenMBV(e);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
+    if(e) {
+        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);
+        openMBVMoment=ombv.createOpenMBV(e);
+    }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
     if (e) {
       OpenMBVFrame ombv;
-      openMBVContactFrame=ombv.createOpenMBV(e); 
+      openMBVContactFrame=ombv.createOpenMBV(e);
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if (e) {

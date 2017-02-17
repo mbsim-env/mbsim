@@ -33,7 +33,6 @@ namespace MBSim {
     protected:
       MechanicalLink* link;
       std::string saved_link;
-      std::shared_ptr<OpenMBV::Group> openMBVForceGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVForce, openMBVMoment;
 
     public:

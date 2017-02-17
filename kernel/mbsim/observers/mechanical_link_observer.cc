@@ -47,19 +47,15 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 //      if(openMBVForce) plotColumns.push_back("Force");
 //      if(openMBVMoment) plotColumns.push_back("Moment");
-        openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVForceGrp->setExpand(false);
-        openMBVForceGrp->setName(name+"_ArrowGroup");
-        parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
+        Observer::init(stage);
         if(openMBVForce) {
           openMBVForce->setName("Force");
-          openMBVForceGrp->addObject(openMBVForce);
+          getOpenMBVGrp()->addObject(openMBVForce);
         }
         if(openMBVMoment) {
           openMBVMoment->setName("Moment");
-          openMBVForceGrp->addObject(openMBVMoment);
+          getOpenMBVGrp()->addObject(openMBVMoment);
         }
-        Observer::init(stage);
       }
     }
     else
