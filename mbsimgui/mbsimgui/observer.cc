@@ -316,6 +316,7 @@ namespace MBSimGUI {
   DOMElement* RigidBodyObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
     body.initializeUsingXML(element);
+    weight.initializeUsingXML(element);
     jointForce.initializeUsingXML(element);
     jointMoment.initializeUsingXML(element);
     return element;
@@ -325,6 +326,7 @@ namespace MBSimGUI {
 
     DOMElement *ele0 = Observer::writeXMLFile(parent);
     body.writeXMLFile(ele0);
+    weight.writeXMLFile(ele0);
     jointForce.writeXMLFile(ele0);
     jointMoment.writeXMLFile(ele0);
     return ele0;
