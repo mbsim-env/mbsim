@@ -16,6 +16,7 @@ import codecs
 import simplesandbox
 import buildSystemState
 import tempfile
+import hashlib
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -1007,8 +1008,43 @@ def coverage(mainFD):
   # run lcov and genhtml
   if not os.path.exists(pj(args.reportOutDir, "coverage")): os.makedirs(pj(args.reportOutDir, "coverage"))
   lcovFD=codecs.open(pj(args.reportOutDir, "coverage", "log.txt"), "w", encoding="utf-8")
-  ret=ret+abs(subprocess.call(["lcov", "-c", "-d", args.sourceDir, "-o", pj(os.environ["GCOV_PREFIX"], "cov.trace")], stdout=lcovFD, stderr=lcovFD))
-  ret=ret+abs(subprocess.call(["genhtml", "-o", pj(args.reportOutDir, "coverage"), pj(os.environ["GCOV_PREFIX"], "cov.trace")], stdout=lcovFD, stderr=lcovFD))
+  # create tracefile without external source files
+  ret=ret+abs(subprocess.call(["lcov", "-c", "--no-external", "-d", args.sourceDir, "-o",
+    pj(os.environ["GCOV_PREFIX"], "cov.trace1")], stdout=lcovFD, stderr=lcovFD))
+  # remove all (SWIG) generated source files, and other 3rd party souce files and the mbsim examples
+  ret=ret+abs(subprocess.call(["lcov", "-r", pj(os.environ["GCOV_PREFIX"], "cov.trace1"), "mbsim/kernel/swig/*", "mbsim/kernel/swig/check/*",
+    "openmbv/openmbvcppinterface/swig/java/*", "openmbv/openmbvcppinterface/swig/octave/*",
+    "openmbv/openmbvcppinterface/swig/python/*", "openmbv/mbxmlutils/mbxmlutils/swigpyrun.h",
+    "openmbv/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", "mbsim/thirdparty/nurbs++/*",
+    "local/include/nurbs++/*", "mbsim/examples/*", "-o", pj(os.environ["GCOV_PREFIX"], "cov.trace2")], stdout=lcovFD, stderr=lcovFD))
+
+  # collect all header files in repos and hash it
+  repoHeader={}
+  for repo in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
+    for root, _, files in os.walk(pj(args.sourceDir, repo)):
+      for f in files:
+        if f.endswith(".h"):
+          repoHeader[hashlib.sha1(open(pj(root, f)).read()).hexdigest()]=pj(root, f)
+  # loop over all header files in local and create mapping (using the hash)
+  headerMap=[]
+  for root, _, files in os.walk(pj(args.sourceDir, "local", "include")):
+    for f in files:
+      if f.endswith(".h"):
+        h=hashlib.sha1(open(pj(root, f)).read()).hexdigest()
+        if h in repoHeader:
+          headerMap.append((pj(root, f), repoHeader[h]))
+  # replace header map in lcov trace file
+  for line in fileinput.FileInput(pj(os.environ["GCOV_PREFIX"], "cov.trace2"), inplace=1):
+    if line.startswith("SF:"):
+      for hm in headerMap:
+        line=line.replace("SF:"+hm[0], "SF:"+hm[1])
+    print(line, end="")
+
+  # generate html files
+  ret=ret+abs(subprocess.call(["genhtml", "-t", "MBSim-Env Examples", "--prefix", args.sourceDir, "--legend",
+    "--html-prolog", pj(scriptdir, "lcov-prolog.parthtml"), "--html-epilog", pj(scriptdir, "lcov-epilog.parthtml"),
+    "--no-function-coverage", "-o", pj(args.reportOutDir, "coverage"),
+    pj(os.environ["GCOV_PREFIX"], "cov.trace2")], stdout=lcovFD, stderr=lcovFD))
   lcovFD.close()
 
   if ret==0:
