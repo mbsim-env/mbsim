@@ -741,7 +741,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *body, *weight, *jointForce, *jointMoment, *centerOfRotation;
+      ExtWidget *body, *weight, *jointForce, *jointMoment, *axisOfRotation;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

@@ -4928,7 +4928,7 @@
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="enableOpenMBVCenterOfRotation" minOccurs="0">
+          <xs:element name="enableOpenMBVAxisOfRotation" minOccurs="0">
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>

@@ -297,7 +297,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RigidBodyObserver::RigidBodyObserver(const string &str, Element *parent) : Observer(str, parent), weight(0,false), jointForce(0,false), jointMoment(0,false), centerOfRotation(0,false) {
+  RigidBodyObserver::RigidBodyObserver(const string &str, Element *parent) : Observer(str, parent), weight(0,false), jointForce(0,false), jointMoment(0,false), axisOfRotation(0,false) {
 
     body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
 
@@ -307,7 +307,7 @@ namespace MBSimGUI {
 
     jointMoment.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointMoment",getID(),true));
 
-    centerOfRotation.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCenterOfRotation",getID(),true));
+    axisOfRotation.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAxisOfRotation",getID(),true));
   }
 
   void RigidBodyObserver::initialize() {
@@ -321,7 +321,7 @@ namespace MBSimGUI {
     weight.initializeUsingXML(element);
     jointForce.initializeUsingXML(element);
     jointMoment.initializeUsingXML(element);
-    centerOfRotation.initializeUsingXML(element);
+    axisOfRotation.initializeUsingXML(element);
     return element;
   }
 
@@ -332,7 +332,7 @@ namespace MBSimGUI {
     weight.writeXMLFile(ele0);
     jointForce.writeXMLFile(ele0);
     jointMoment.writeXMLFile(ele0);
-    centerOfRotation.writeXMLFile(ele0);
+    axisOfRotation.writeXMLFile(ele0);
     return ele0;
   }
 

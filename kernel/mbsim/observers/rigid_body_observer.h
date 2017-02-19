@@ -33,7 +33,7 @@ namespace MBSim {
     private:
       RigidBody* body;
       std::string saved_body;
-      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow, openMBVCenterOfRotation;
+      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow, openMBVAxisOfRotation;
 
     public:
       RigidBodyObserver(const std::string &name="");
@@ -62,9 +62,9 @@ namespace MBSim {
       }
 
       /** \brief Visualize the center of rotation */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVCenterOfRotation, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAxisOfRotation, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::toPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::line,referencePoint,scaleLength,scaleSize);
-        openMBVCenterOfRotation=ombv.createOpenMBV();
+        openMBVAxisOfRotation=ombv.createOpenMBV();
       }
   };
 

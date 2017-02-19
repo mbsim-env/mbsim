@@ -64,9 +64,9 @@ namespace MBSim {
             MArrow->setName("JointMoment");
             getOpenMBVGrp()->addObject(MArrow);
           }
-          if(openMBVCenterOfRotation) {
-            openMBVCenterOfRotation->setName("CenterOfRotation");
-            getOpenMBVGrp()->addObject(openMBVCenterOfRotation);
+          if(openMBVAxisOfRotation) {
+            openMBVAxisOfRotation->setName("AxisOfRotation");
+            getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
           }
         }
       }
@@ -120,7 +120,7 @@ namespace MBSim {
           data.push_back(nrm2(WM));
           MArrow->append(data);
         }
-        if(openMBVCenterOfRotation) {
+        if(openMBVAxisOfRotation) {
           vector<double> data;
           data.push_back(getTime());
           Vec3 om = body->getFrameC()->evalAngularVelocity();
@@ -141,7 +141,7 @@ namespace MBSim {
           }
           else
             absom = 1;
-          Vec3 r = body->getFrameC()->evalPosition() + dr;;
+          Vec3 r = body->getFrameC()->evalPosition() + dr;
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -150,7 +150,7 @@ namespace MBSim {
           data.push_back(dir(1));
           data.push_back(dir(2));
           data.push_back(0.5);
-          openMBVCenterOfRotation->append(data);
+          openMBVAxisOfRotation->append(data);
 //          plotVector.push_back(nrm2(dir));
         }
       }
@@ -182,10 +182,10 @@ namespace MBSim {
       MArrow=ombv.createOpenMBV(e);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCenterOfRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAxisOfRotation");
     if(e) {
       OpenMBVArrow ombv("[0.5;1;1]",0,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint,1,1);
-      openMBVCenterOfRotation=ombv.createOpenMBV(e);
+      openMBVAxisOfRotation=ombv.createOpenMBV(e);
     }
   }
 
