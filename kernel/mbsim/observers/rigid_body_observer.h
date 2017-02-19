@@ -34,7 +34,7 @@ namespace MBSim {
       std::string saved_body;
       std::shared_ptr<OpenMBV::Group> openMBVGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVAxisOfRotation;
-      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow;
+      std::shared_ptr<OpenMBV::Arrow> FWeight, FArrow, MArrow, openMBVCenterOfRotation;
 
     public:
       RigidBodyObserver(const std::string &name="");

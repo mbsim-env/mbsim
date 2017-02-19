@@ -297,7 +297,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RigidBodyObserver::RigidBodyObserver(const string &str, Element *parent) : Observer(str, parent), weight(0,false), jointForce(0,false), jointMoment(0,false) {
+  RigidBodyObserver::RigidBodyObserver(const string &str, Element *parent) : Observer(str, parent), weight(0,false), jointForce(0,false), jointMoment(0,false), centerOfRotation(0,false) {
 
     body.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIM%"rigidBody"));
 
@@ -306,6 +306,8 @@ namespace MBSimGUI {
     jointForce.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointForce",getID(),true));
 
     jointMoment.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointMoment",getID(),true));
+
+    centerOfRotation.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVCenterOfRotation",getID(),true));
   }
 
   void RigidBodyObserver::initialize() {
@@ -319,6 +321,7 @@ namespace MBSimGUI {
     weight.initializeUsingXML(element);
     jointForce.initializeUsingXML(element);
     jointMoment.initializeUsingXML(element);
+    centerOfRotation.initializeUsingXML(element);
     return element;
   }
 
@@ -329,6 +332,7 @@ namespace MBSimGUI {
     weight.writeXMLFile(ele0);
     jointForce.writeXMLFile(ele0);
     jointMoment.writeXMLFile(ele0);
+    centerOfRotation.writeXMLFile(ele0);
     return ele0;
   }
 

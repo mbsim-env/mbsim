@@ -1965,6 +1965,9 @@ namespace MBSimGUI {
 
     jointMoment = new ExtWidget("OpenMBV jointMoment arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",jointMoment);
+
+    centerOfRotation = new ExtWidget("OpenMBV center of rotation",new ArrowMBSOMBVWidget("NOTSET",true),true);
+    addToTab("Visualisation",centerOfRotation);
   }
 
   void RigidBodyObserverPropertyDialog::toWidget(Element *element) {
@@ -1973,6 +1976,7 @@ namespace MBSimGUI {
     static_cast<RigidBodyObserver*>(element)->weight.toWidget(weight);
     static_cast<RigidBodyObserver*>(element)->jointForce.toWidget(jointForce);
     static_cast<RigidBodyObserver*>(element)->jointMoment.toWidget(jointMoment);
+    static_cast<RigidBodyObserver*>(element)->centerOfRotation.toWidget(centerOfRotation);
   }
 
   void RigidBodyObserverPropertyDialog::fromWidget(Element *element) {
@@ -1981,6 +1985,7 @@ namespace MBSimGUI {
     static_cast<RigidBodyObserver*>(element)->weight.fromWidget(weight);
     static_cast<RigidBodyObserver*>(element)->jointForce.fromWidget(jointForce);
     static_cast<RigidBodyObserver*>(element)->jointMoment.fromWidget(jointMoment);
+    static_cast<RigidBodyObserver*>(element)->centerOfRotation.fromWidget(centerOfRotation);
   }
 
   SignalPropertyDialog::SignalPropertyDialog(Signal *signal, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(signal,parent,f) {

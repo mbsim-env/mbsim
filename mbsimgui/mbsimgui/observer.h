@@ -163,7 +163,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new RigidBodyObserverPropertyDialog(this);}
     protected:
-    ExtProperty body, weight, jointForce, jointMoment;
+    ExtProperty body, weight, jointForce, jointMoment, centerOfRotation;
   };
 }
 

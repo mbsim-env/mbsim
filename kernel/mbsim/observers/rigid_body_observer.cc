@@ -68,6 +68,10 @@ namespace MBSim {
             openMBVAxisOfRotation->setName("AxisOfRotation");
             getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
           }
+          if(openMBVCenterOfRotation) {
+            openMBVCenterOfRotation->setName("CenterOfRotation");
+            getOpenMBVGrp()->addObject(openMBVCenterOfRotation);
+          }
         }
       }
     }
@@ -138,6 +142,39 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVAxisOfRotation->append(data);
         }
+        if(openMBVCenterOfRotation) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 om = body->getFrameC()->evalAngularVelocity();
+          Vec3 v = body->getFrameC()->evalVelocity();
+          Vec3 dr;
+          double absom = nrm2(om);
+          if(abs(om(2))>macheps()) {
+            dr(0) = -v(1)/om(2);
+            dr(1) = v(0)/om(2);
+          }
+          else if(abs(om(1))>macheps()) {
+            dr(0) = v(2)/om(1);
+            dr(2) = -v(0)/om(1);
+          }
+          else if(abs(om(0))>macheps()) {
+            dr(1) = -v(2)/om(0);
+            dr(2) = v(1)/om(0);
+          }
+          else
+            absom = 1;
+          Vec3 r = body->getFrameC()->evalPosition() + dr;;
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          Vec3 dir = om/absom;
+          data.push_back(dir(0));
+          data.push_back(dir(1));
+          data.push_back(dir(2));
+          data.push_back(0.5);
+          openMBVCenterOfRotation->append(data);
+//          plotVector.push_back(nrm2(dir));
+        }
       }
       Observer::plot();
     }
@@ -165,6 +202,12 @@ namespace MBSim {
     if(e) {
       OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::toPoint,1,1);
       MArrow=ombv.createOpenMBV(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVCenterOfRotation");
+    if(e) {
+      OpenMBVArrow ombv("[0.5;1;1]",0,OpenMBV::Arrow::line,OpenMBV::Arrow::midPoint,1,1);
+      openMBVCenterOfRotation=ombv.createOpenMBV(e);
     }
   }
 
