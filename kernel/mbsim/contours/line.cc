@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "mbsim/contours/line.h"
-#include <fmatvec/fmatvec.h>
 
 using namespace std;
 using namespace fmatvec;

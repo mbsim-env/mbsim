@@ -33,7 +33,6 @@ namespace MBSim {
     protected:
       Frame* frame;
       std::string saved_frame;
-      std::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAngVelGrp, openMBVAccGrp, openMBVAngAccGrp;
       std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAngularVelocity, openMBVAcceleration, openMBVAngularAcceleration;
 
     public:

@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/observers/frame_observer.h"
 #include "mbsim/frames/frame.h"
+#include "mbsim/utils/eps.h"
 #include <openmbvcppinterface/group.h>
 
 using namespace std;
@@ -81,7 +82,7 @@ namespace MBSim {
   void FrameObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(openMBV)==enabled) {
-        if(openMBVPosition&& !openMBVPosition->isHDF5Link()) {
+        if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
           data.push_back(getTime());
           data.push_back(0);
@@ -95,7 +96,7 @@ namespace MBSim {
           openMBVPosition->append(data);
           plotVector.push_back(nrm2(r));
         }
-        if(openMBVVelocity&& !openMBVVelocity->isHDF5Link()) {
+        if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(getTime());
           Vec3 r = frame->evalPosition();
@@ -110,7 +111,7 @@ namespace MBSim {
           openMBVVelocity->append(data);
           plotVector.push_back(nrm2(v));
         }
-        if(openMBVAngularVelocity&& !openMBVAngularVelocity->isHDF5Link()) {
+        if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(getTime());
           Vec3 r = frame->evalPosition();
@@ -125,7 +126,7 @@ namespace MBSim {
           openMBVAngularVelocity->append(data);
           plotVector.push_back(nrm2(om));
         }
-        if(openMBVAcceleration&& !openMBVAcceleration->isHDF5Link()) {
+        if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(getTime());
           Vec3 r = frame->evalPosition();
@@ -140,7 +141,7 @@ namespace MBSim {
           openMBVAcceleration->append(data);
           plotVector.push_back(nrm2(a));
         }
-        if(openMBVAngularAcceleration&& !openMBVAngularAcceleration->isHDF5Link()) {
+        if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(getTime());
           Vec3 r = frame->evalPosition();
@@ -167,28 +168,28 @@ namespace MBSim {
     if(e) saved_frame=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
-        OpenMBVArrow ombv;
-        openMBVPosition=ombv.createOpenMBV(e); 
+      OpenMBVArrow ombv;
+      openMBVPosition=ombv.createOpenMBV(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(e) {
-        OpenMBVArrow ombv;
-        openMBVVelocity=ombv.createOpenMBV(e); 
+      OpenMBVArrow ombv;
+      openMBVVelocity=ombv.createOpenMBV(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
     if(e) {
-        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
-        openMBVAngularVelocity=ombv.createOpenMBV(e); 
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
+      openMBVAngularVelocity=ombv.createOpenMBV(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(e) {
-        OpenMBVArrow ombv;
-        openMBVAcceleration=ombv.createOpenMBV(e); 
+      OpenMBVArrow ombv;
+      openMBVAcceleration=ombv.createOpenMBV(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
     if(e) {
-        OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
-        openMBVAngularAcceleration=ombv.createOpenMBV(e); 
+      OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toDoubleHead,OpenMBV::Arrow::fromPoint,1,1);
+      openMBVAngularAcceleration=ombv.createOpenMBV(e);
     }
   }
 
