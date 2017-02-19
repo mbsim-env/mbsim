@@ -1001,8 +1001,6 @@ def coverage(mainFD):
       if f=="conftest.gcda": continue # skip conftest.gcda (the corresponding conftest.gcno is already deleted (by autotools))
       dst=pj(root[len(os.environ["GCOV_PREFIX"]):], f)
       if os.path.exists(dst): os.remove(dst)
-      print(pj(root, f))
-      print(dst)
       os.link(pj(root, f), dst)
   
   # run lcov and genhtml
@@ -1046,6 +1044,17 @@ def coverage(mainFD):
     "--no-function-coverage", "-o", pj(args.reportOutDir, "coverage"),
     pj(os.environ["GCOV_PREFIX"], "cov.trace2")], stdout=lcovFD, stderr=lcovFD))
   lcovFD.close()
+
+  # update build state
+  covRate=0
+  linesRE=re.compile("^ *lines\.*: *([0-9]+\.[0-9]+)% ")
+  for line in fileinput.FileInput(pj(args.reportOutDir, "coverage", "log.txt")):
+    m=linesRE.match(line)
+    if m!=None:
+      covRate=int(float(m.group(1))+0.5)
+      break
+  buildSystemState.createStateSVGFile(buildSystemState.stateDir+"/"+args.buildType+"-coverage.svg", str(covRate)+"%",
+    "#5cb85c" if covRate>=90 else ("#f0ad4e" if covRate>=75 else "#d9534f"))
 
   if ret==0:
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
