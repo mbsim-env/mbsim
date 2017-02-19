@@ -64,10 +64,6 @@ namespace MBSim {
             MArrow->setName("JointMoment");
             getOpenMBVGrp()->addObject(MArrow);
           }
-          if(openMBVAxisOfRotation) {
-            openMBVAxisOfRotation->setName("AxisOfRotation");
-            getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
-          }
           if(openMBVCenterOfRotation) {
             openMBVCenterOfRotation->setName("CenterOfRotation");
             getOpenMBVGrp()->addObject(openMBVCenterOfRotation);
@@ -123,24 +119,6 @@ namespace MBSim {
           data.push_back(WM(2));
           data.push_back(nrm2(WM));
           MArrow->append(data);
-        }
-        if(openMBVAxisOfRotation) {
-          Vec3 r = body->getFrameC()->evalPosition();
-          Vec3 om = body->getFrame("C")->evalAngularVelocity();
-          Vec3 a;
-          double nrmom = nrm2(om);
-          if(nrmom > epsroot())
-            a = om/nrmom;
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
-          data.push_back(a(0));
-          data.push_back(a(1));
-          data.push_back(a(2));
-          data.push_back(0.5);
-          openMBVAxisOfRotation->append(data);
         }
         if(openMBVCenterOfRotation) {
           vector<double> data;
