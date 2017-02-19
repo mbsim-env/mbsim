@@ -23,7 +23,6 @@
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/eps.h"
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
