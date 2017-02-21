@@ -45,26 +45,7 @@ namespace MBSimGUI {
     ExtProperty frame, frameOfReference, position, velocity, acceleration;
   };
 
-  class KinematicsObserver : public Observer {
-    friend class KinematicsObserverPropertyDialog;
-    public:
-    KinematicsObserver(const std::string &str, Element *parent);
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    void initialize();
-    protected:
-    ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
-  };
-
-  class AbsoluteKinematicsObserver : public KinematicsObserver {
-    friend class AbsoluteKinematicsObserverPropertyDialog;
-    public:
-    AbsoluteKinematicsObserver(const std::string &str, Element *parent) : KinematicsObserver(str,parent) {}
-    std::string getType() const { return "AbsoluteKinematicsObserver"; }
-    ElementPropertyDialog* createPropertyDialog() {return new AbsoluteKinematicsObserverPropertyDialog(this);}
-  };
-
-  class RelativeKinematicsObserver : public KinematicsObserver {
+  class RelativeKinematicsObserver : public Observer {
     friend class RelativeKinematicsObserverPropertyDialog;
     public:
     RelativeKinematicsObserver(const std::string &str, Element *parent);
@@ -74,7 +55,7 @@ namespace MBSimGUI {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new RelativeKinematicsObserverPropertyDialog(this);}
     protected:
-    ExtProperty refFrame;
+    ExtProperty frame, refFrame, position, velocity, angularVelocity, acceleration, angularAcceleration;
   };
 
   class MechanicalLinkObserver : public Observer {
@@ -85,7 +66,6 @@ namespace MBSimGUI {
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new MechanicalLinkObserverPropertyDialog(this);}
     protected:
     ExtProperty link, forceArrow, momentArrow;
   };

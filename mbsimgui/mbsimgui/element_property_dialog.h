@@ -75,8 +75,6 @@ namespace MBSimGUI {
   class Contact;
   class Observer;
   class KinematicCoordinatesObserver;
-  class KinematicsObserver;
-  class AbsoluteKinematicsObserver;
   class RelativeKinematicsObserver;
   class NaturalCoordinatesObserver;
   class MechanicalLinkObserver;
@@ -647,30 +645,14 @@ namespace MBSimGUI {
       ExtWidget *frame, *frameOfReference, *position, *velocity, *acceleration;
   };
 
-  class KinematicsObserverPropertyDialog : public ObserverPropertyDialog {
-
-    public:
-      KinematicsObserverPropertyDialog(KinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
-    protected:
-      ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
-  };
-
-  class AbsoluteKinematicsObserverPropertyDialog : public KinematicsObserverPropertyDialog {
-
-    public:
-      AbsoluteKinematicsObserverPropertyDialog(AbsoluteKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-  };
-
-  class RelativeKinematicsObserverPropertyDialog : public KinematicsObserverPropertyDialog {
+  class RelativeKinematicsObserverPropertyDialog : public ObserverPropertyDialog {
 
     public:
       RelativeKinematicsObserverPropertyDialog(RelativeKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *refFrame;
+      ExtWidget *frame, *refFrame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
   };
 
   class MechanicalLinkObserverPropertyDialog : public ObserverPropertyDialog {

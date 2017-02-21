@@ -87,9 +87,11 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  KinematicsObserver::KinematicsObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
+  RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str, Element *parent) : Observer(str, parent), refFrame(0,false), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
+
+    refFrame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frameOfReference"));
 
     position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
 
@@ -102,14 +104,16 @@ namespace MBSimGUI {
     angularAcceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAngularAcceleration",getID(),true));
   }
 
-  void KinematicsObserver::initialize() {
+  void RelativeKinematicsObserver::initialize() {
     Observer::initialize();
     frame.initialize();
+    refFrame.initialize();
   }
 
-  DOMElement* KinematicsObserver::initializeUsingXML(DOMElement *element) {
+  DOMElement* RelativeKinematicsObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
     frame.initializeUsingXML(element);
+    refFrame.initializeUsingXML(element);
     position.initializeUsingXML(element);
     velocity.initializeUsingXML(element);
     angularVelocity.initializeUsingXML(element);
@@ -118,38 +122,16 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* KinematicsObserver::writeXMLFile(DOMNode *parent) {
+  DOMElement* RelativeKinematicsObserver::writeXMLFile(DOMNode *parent) {
 
     DOMElement *ele0 = Observer::writeXMLFile(parent);
     frame.writeXMLFile(ele0);
+    refFrame.writeXMLFile(ele0);
     position.writeXMLFile(ele0);
     velocity.writeXMLFile(ele0);
     angularVelocity.writeXMLFile(ele0);
     acceleration.writeXMLFile(ele0);
     angularAcceleration.writeXMLFile(ele0);
-    return ele0;
-  }
-
-  RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str, Element *parent) : KinematicsObserver(str, parent) {
-
-    refFrame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frameOfReference"));
-  }
-
-  void RelativeKinematicsObserver::initialize() {
-    KinematicsObserver::initialize();
-    refFrame.initialize();
-  }
-
-  DOMElement* RelativeKinematicsObserver::initializeUsingXML(DOMElement *element) {
-    KinematicsObserver::initializeUsingXML(element);
-    refFrame.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* RelativeKinematicsObserver::writeXMLFile(DOMNode *parent) {
-
-    DOMElement *ele0 = KinematicsObserver::writeXMLFile(parent);
-    refFrame.writeXMLFile(ele0);
     return ele0;
   }
 

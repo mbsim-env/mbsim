@@ -465,8 +465,6 @@ namespace MBSimGUI {
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QMenu *menu = new KinematicsObserverContextContextMenu(element, "Add kinematics observer");
-    addMenu(menu);
     QAction *action = new QAction("Add mechanical link observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
     addAction(action);
@@ -485,11 +483,9 @@ namespace MBSimGUI {
     action = new QAction("Add kinematic coordinates observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addKinematicCoordinatesObserver()));
     addAction(action);
-  }
-
-  void ObserverContextContextMenu::addKinematicsObserver() {
-    KinematicsObserverContextContextMenu menu(element);
-    menu.exec(QCursor::pos());
+    action = new QAction("Add relative kinematics observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
+    addAction(action);
   }
 
   void ObserverContextContextMenu::addMechanicalLinkObserver() {
@@ -516,20 +512,7 @@ namespace MBSimGUI {
     mw->addObserver(new KinematicCoordinatesObserver("KinematicCoordinatesObserver",element));
   }
 
-  KinematicsObserverContextContextMenu::KinematicsObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Add absolute kinematics observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
-    addAction(action);
-    action = new QAction("Add relative kinematics observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
-    addAction(action);
-  }
-
-  void KinematicsObserverContextContextMenu::addAbsoluteKinematicsObserver() {
-    mw->addObserver(new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver",element));
-  }
-
-  void KinematicsObserverContextContextMenu::addRelativeKinematicsObserver() {
+  void ObserverContextContextMenu::addRelativeKinematicsObserver() {
     mw->addObserver(new RelativeKinematicsObserver("RelativeKinematicsObserver",element));
   }
 

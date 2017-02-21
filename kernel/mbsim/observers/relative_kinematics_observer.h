@@ -20,27 +20,52 @@
 #ifndef _RELATIVE_KINEMATICS_OBSERVER_H__
 #define _RELATIVE_KINEMATICS_OBSERVER_H__
 
-#include "mbsim/observers/kinematics_observer.h"
+#include "mbsim/observers/observer.h"
+
+#include <mbsim/utils/boost_parameters.h>
+#include <mbsim/utils/openmbv_utils.h>
 
 namespace MBSim {
 
-  class RelativeKinematicsObserver : public KinematicsObserver {
+  class Frame;
+
+  class RelativeKinematicsObserver : public Observer {
     private:
-      Frame* refFrame;
-      std::string saved_frameOfReference;
-      std::shared_ptr<OpenMBV::Arrow> openMBVrTrans, openMBVrRel;
-      std::shared_ptr<OpenMBV::Arrow> openMBVvTrans, openMBVvRot, openMBVvRel, openMBVvF;
-      std::shared_ptr<OpenMBV::Arrow> openMBVaTrans, openMBVaRot, openMBVaZp, openMBVaCor, openMBVaRel, openMBVaF;
-      std::shared_ptr<OpenMBV::Arrow> openMBVomTrans, openMBVomRel;
-      std::shared_ptr<OpenMBV::Arrow> openMBVpsiTrans, openMBVpsiRot, openMBVpsiRel;
+      Frame *frame, *refFrame;
+      std::string saved_frame, saved_frameOfReference;
+      std::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAngVelGrp, openMBVAccGrp, openMBVAngAccGrp;
+      std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAngularVelocity, openMBVAcceleration, openMBVAngularAcceleration, openMBVrTrans, openMBVrRel, openMBVvTrans, openMBVvRot, openMBVvRel, openMBVvF, openMBVaTrans, openMBVaRot, openMBVaZp, openMBVaCor, openMBVaRel, openMBVaF, openMBVomTrans, openMBVomRel, openMBVpsiTrans, openMBVpsiRot, openMBVpsiRel;
 
     public:
       RelativeKinematicsObserver(const std::string &name="");
+
+      void setFrame(Frame *frame_) { frame = frame_; }
       void setFrameOfReference(Frame *frame_) { refFrame = frame_; }
 
       void init(InitStage stage);
       virtual void plot();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
+
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVPosition=ombv.createOpenMBV();
+      }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVVelocity, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVVelocity=ombv.createOpenMBV();
+      }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAngularVelocity, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        openMBVAngularVelocity=ombv.createOpenMBV();
+      }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAcceleration, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
+        openMBVAcceleration=ombv.createOpenMBV();
+      }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAngularAcceleration, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
+        OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toDoubleHead,referencePoint,scaleLength,scaleSize);
+        openMBVAngularAcceleration=ombv.createOpenMBV();
+      }
   };
 
 }  

@@ -201,26 +201,12 @@ namespace MBSimGUI {
       ObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
     protected slots:
-      void addKinematicsObserver();
       void addMechanicalLinkObserver();
       void addMechanicalConstraintObserver();
       void addContactObserver();
       void addFrameObserver();
       void addRigidBodyObserver();
       void addKinematicCoordinatesObserver();
-
-    protected:
-      Element *element;
-  };
-
-  class KinematicsObserverContextContextMenu : public QMenu {
-    Q_OBJECT
-
-    public:
-      KinematicsObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
-
-    protected slots:
-      void addAbsoluteKinematicsObserver();
       void addRelativeKinematicsObserver();
 
     protected:

@@ -4640,16 +4640,26 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="KinematicsObserver" substitutionGroup="Observer" type="KinematicsObserverType">
+  <xs:element name="RelativeKinematicsObserver" substitutionGroup="Observer" type="RelativeKinematicsObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="KinematicsObserverType">
+  <xs:complexType name="RelativeKinematicsObserverType">
     <xs:complexContent>
       <xs:extension base="ObserverType">
         <xs:sequence>
           <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frameOfReference">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd.
@@ -4683,41 +4693,6 @@
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType> 
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType> 
-
-  <xs:element name="AbsoluteKinematicsObserver" substitutionGroup="KinematicsObserver" type="AbsoluteKinematicsObserverType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-    tbd.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="AbsoluteKinematicsObserverType">
-    <xs:complexContent>
-      <xs:extension base="KinematicsObserverType"/>
-    </xs:complexContent>
-  </xs:complexType> 
-
-  <xs:element name="RelativeKinematicsObserver" substitutionGroup="KinematicsObserver" type="RelativeKinematicsObserverType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-    tbd.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RelativeKinematicsObserverType">
-    <xs:complexContent>
-      <xs:extension base="KinematicsObserverType">
-        <xs:sequence>
-          <xs:element name="frameOfReference">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-              tbd.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
