@@ -13,9 +13,8 @@
 %{
 #include <config.h> // to use consistent preprocessor defines
 namespace MBSim {
-  class AbsoluteKinematicsObserver;
   class Body;
-  class CartesianCoordinatesObserver;
+  class KinematicCoordinatesObserver;
   class Circle;
   class CompoundContour;
   class Constraint;
@@ -26,10 +25,8 @@ namespace MBSim {
   class ContourInterpolation;
   class ContourLink;
   class ContourQuad;
-  class CoordinatesObserver;
   class CriteriaFunction;
   class Cuboid;
-  class CylinderCoordinatesObserver;
   class DampingFunction;
   class DirectionalSpringDamper;
   template<typename Sig> class DistanceFunction;
@@ -74,7 +71,6 @@ namespace MBSim {
   class LocalResidualCriteriaFunction;
   class LocalShiftCriteriaFunction;
   class MBSimEnvironment;
-  class NaturalCoordinatesObserver;
   class NewtonJacobianFunction;
   class NumericalNewtonJacobianFunction;
   class Object;

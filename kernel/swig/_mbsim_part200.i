@@ -23,9 +23,8 @@ namespace MBSim {
   class Contact;
   class ContourFrame;
   class ContourLink;
-  class CoordinatesObserver;
+  class KinematicCoordinatesObserver;
   class CriteriaFunction;
-  class CylinderCoordinatesObserver;
   class DampingFunction;
   class DirectionalSpringDamper;
   class DualRigidBodyLink;
@@ -52,7 +51,6 @@ namespace MBSim {
   class LocalResidualCriteriaFunction;
   class LocalShiftCriteriaFunction;
   class MBSimEnvironment;
-  class NaturalCoordinatesObserver;
   class NewtonJacobianFunction;
   class NumericalNewtonJacobianFunction;
   class Observer;
@@ -64,8 +62,6 @@ namespace MBSim {
   class KineticExcitation;
   class RigidBody;
   class FloatingRelativeFrame;
-  class AbsoluteKinematicsObserver;
-  class CartesianCoordinatesObserver;
 }
 #include "mbsim/constraints/constraint.h"
 #include "mbsim/constraints/generalized_constraint.h"
