@@ -24,4 +24,4 @@ observerinclude_HEADERS = observer.h\
 			  mechanical_constraint_observer.h \
 			  single_contact_observer.h \
 			  contact_observer.h \
-			  frame_observer.cc
+			  frame_observer.h
