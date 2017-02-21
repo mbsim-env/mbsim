@@ -465,9 +465,7 @@ namespace MBSimGUI {
   }
 
   ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QMenu *menu = new CoordinatesObserverContextContextMenu(element, "Add coordinates observer");
-    addMenu(menu);
-    menu = new KinematicsObserverContextContextMenu(element, "Add kinematics observer");
+    QMenu *menu = new KinematicsObserverContextContextMenu(element, "Add kinematics observer");
     addMenu(menu);
     QAction *action = new QAction("Add mechanical link observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
@@ -484,11 +482,9 @@ namespace MBSimGUI {
     action = new QAction("Add rigid body observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyObserver()));
     addAction(action);
-  }
-
-  void ObserverContextContextMenu::addCoordinatesObserver() {
-    CoordinatesObserverContextContextMenu menu(element);
-    menu.exec(QCursor::pos());
+    action = new QAction("Add kinematic coordinates observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addKinematicCoordinatesObserver()));
+    addAction(action);
   }
 
   void ObserverContextContextMenu::addKinematicsObserver() {
@@ -516,28 +512,8 @@ namespace MBSimGUI {
     mw->addObserver(new RigidBodyObserver("RigidBodyObserver",element));
   }
 
-  CoordinatesObserverContextContextMenu::CoordinatesObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-    QAction *action = new QAction("Add cartesian coordinates observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addCartesianCoordinatesObserver()));
-    addAction(action);
-    action = new QAction("Add cylinder coordinates observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addCylinderCoordinatesObserver()));
-    addAction(action);
-    action = new QAction("Add natural coordinates observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addNaturalCoordinatesObserver()));
-    addAction(action);
-  }
-
-  void CoordinatesObserverContextContextMenu::addCartesianCoordinatesObserver() {
-    mw->addObserver(new CartesianCoordinatesObserver("CartesianCoordinatesObserver",element));
-  }
-
-  void CoordinatesObserverContextContextMenu::addCylinderCoordinatesObserver() {
-    mw->addObserver(new CylinderCoordinatesObserver("CylinderCoordinatesObserver",element));
-  }
-
-  void CoordinatesObserverContextContextMenu::addNaturalCoordinatesObserver() {
-    mw->addObserver(new NaturalCoordinatesObserver("NaturalCoordinatesObserver",element));
+  void ObserverContextContextMenu::addKinematicCoordinatesObserver() {
+    mw->addObserver(new KinematicCoordinatesObserver("KinematicCoordinatesObserver",element));
   }
 
   KinematicsObserverContextContextMenu::KinematicsObserverContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {

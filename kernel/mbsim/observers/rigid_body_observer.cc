@@ -161,7 +161,7 @@ namespace MBSim {
     Observer::initializeUsingXML(element);
 
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"rigidBody");
-    if(e) saved_body=E(e)->getAttribute("ref");
+    saved_body=E(e)->getAttribute("ref");
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {

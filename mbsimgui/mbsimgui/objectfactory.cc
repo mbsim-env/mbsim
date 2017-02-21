@@ -242,12 +242,8 @@ namespace MBSimGUI {
   }
   Observer* MBSimObjectFactory::createObserver(DOMElement *element, Element *parent) {
     if(element==0) return 0;
-    if(E(element)->getTagName()==MBSIM%"CartesianCoordinatesObserver")
-      return new CartesianCoordinatesObserver(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIM%"CylinderCoordinatesObserver")
-      return new CylinderCoordinatesObserver(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIM%"NaturalCoordinatesObserver")
-      return new NaturalCoordinatesObserver(E(element)->getAttribute("name"),parent);
+    if(E(element)->getTagName()==MBSIM%"KinematicCoordinatesObserver")
+      return new KinematicCoordinatesObserver(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"AbsoluteKinematicsObserver")
       return new AbsoluteKinematicsObserver(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIM%"RelativeKinematicsObserver")

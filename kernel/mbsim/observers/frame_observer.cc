@@ -165,7 +165,7 @@ namespace MBSim {
   void FrameObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frame");
-    if(e) saved_frame=E(e)->getAttribute("ref");
+    saved_frame=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
       OpenMBVArrow ombv;

@@ -4586,16 +4586,26 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CoordinatesObserver" substitutionGroup="Observer" type="CoordinatesObserverType">
+  <xs:element name="KinematicCoordinatesObserver" substitutionGroup="Observer" type="KinematicCoordinatesObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="CoordinatesObserverType">
+  <xs:complexType name="KinematicCoordinatesObserverType">
     <xs:complexContent>
       <xs:extension base="ObserverType">
         <xs:sequence>
           <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd.
@@ -4627,49 +4637,6 @@
           </xs:element>
         </xs:sequence> 
       </xs:extension>
-    </xs:complexContent>
-  </xs:complexType> 
-
-  <xs:element name="CartesianCoordinatesObserver" substitutionGroup="CoordinatesObserver" type="CartesianCoordinatesObserverType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-    tbd.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="CartesianCoordinatesObserverType">
-    <xs:complexContent>
-      <xs:extension base="CoordinatesObserverType">
-        <xs:sequence>
-          <xs:element name="orientation" type="pv:rotationMatrix" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-              tbd.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType> 
-
-  <xs:element name="CylinderCoordinatesObserver" substitutionGroup="CoordinatesObserver" type="CylinderCoordinatesObserverType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-    tbd.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="CylinderCoordinatesObserverType">
-    <xs:complexContent>
-      <xs:extension base="CoordinatesObserverType"/>
-    </xs:complexContent>
-  </xs:complexType> 
-
-  <xs:element name="NaturalCoordinatesObserver" substitutionGroup="CoordinatesObserver" type="NaturalCoordinatesObserverType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-    tbd.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="NaturalCoordinatesObserverType">
-    <xs:complexContent>
-      <xs:extension base="CoordinatesObserverType"/>
     </xs:complexContent>
   </xs:complexType> 
 

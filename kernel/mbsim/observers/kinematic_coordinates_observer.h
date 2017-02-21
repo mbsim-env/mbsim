@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _COORDINATES_OBSERVER_H__
-#define _COORDINATES_OBSERVER_H__
+#ifndef _KINEMATIC_COORDINATES_OBSERVER_H__
+#define _KINEMATIC_COORDINATES_OBSERVER_H__
 
 #include "mbsim/observers/observer.h"
 
@@ -26,42 +26,39 @@
 #include <mbsim/utils/openmbv_utils.h>
 
 namespace MBSim {
+
   class Frame;
 
-  class CoordinatesObserver : public Observer {
-    protected:
-      Frame* frame;
+  class KinematicCoordinatesObserver : public Observer {
+    private:
+      Frame* frame, *frameOfReference;
       std::shared_ptr<OpenMBV::Group> openMBVPosGrp, openMBVVelGrp, openMBVAccGrp;
-      std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration;
-      std::shared_ptr<OpenMBV::Frame> openMBVFrame;
+      std::shared_ptr<OpenMBV::Arrow> openMBVPosition, openMBVVelocity, openMBVAcceleration, openMBVXPosition, openMBVYPosition, openMBVZPosition, openMBVXVelocity, openMBVYVelocity, openMBVZVelocity, openMBVXAcceleration, openMBVYAcceleration, openMBVZAcceleration;
+      std::string saved_frame, saved_frameOfReference;
 
     public:
-      CoordinatesObserver(const std::string &name="");
-      void setFrame(Frame *frame_) { frame = frame_; } 
+      KinematicCoordinatesObserver(const std::string &name="");
+
+      void setFrame(Frame *frame_) { frame = frame_; }
+      void setFrameOfReference(Frame *frameOfReference_) { frameOfReference = frameOfReference_; }
 
       void init(InitStage stage);
-      virtual void plot();
       virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual void plot();
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVPosition, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        openMBVPosition=ombv.createOpenMBV(); 
+        openMBVPosition=ombv.createOpenMBV();
       }
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVVelocity, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        openMBVVelocity=ombv.createOpenMBV(); 
+        openMBVVelocity=ombv.createOpenMBV();
       }
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVAcceleration, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBV::Arrow::ReferencePoint),OpenMBV::Arrow::fromPoint)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0))) {
         OpenMBVArrow ombv(diffuseColor,transparency,OpenMBV::Arrow::toHead,referencePoint,scaleLength,scaleSize);
-        openMBVAcceleration=ombv.createOpenMBV(); 
-      }
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVFrame, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0))) {
-        OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency);
-        openMBVFrame=ombv.createOpenMBV(); 
+        openMBVAcceleration=ombv.createOpenMBV();
       }
 
-    private:
-      std::string saved_frame;
   };
 
 }

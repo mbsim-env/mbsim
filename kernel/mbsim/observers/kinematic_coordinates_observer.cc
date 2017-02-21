@@ -18,8 +18,9 @@
  */
 
 #include <config.h>
-#include "mbsim/observers/cartesian_coordinates_observer.h"
+#include "mbsim/observers/kinematic_coordinates_observer.h"
 #include "mbsim/frames/frame.h"
+#include "mbsim/dynamic_system.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
@@ -31,34 +32,52 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, CartesianCoordinatesObserver)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, KinematicCoordinatesObserver)
 
-  CartesianCoordinatesObserver::CartesianCoordinatesObserver(const std::string &name) : CoordinatesObserver(name), A(EYE) {
+  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const std::string &name) : Observer(name), frame(NULL), frameOfReference(NULL) {
   }
 
-  void CartesianCoordinatesObserver::init(InitStage stage) {
-    if(stage==plotting) {
+  void KinematicCoordinatesObserver::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if(saved_frame!="")
+        setFrame(getByPath<Frame>(saved_frame));
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      if(not frameOfReference)
+        setFrameOfReference(static_cast<DynamicSystem*>(parent)->getFrameI());
+      Observer::init(stage);
+    }
+    else if(stage==plotting) {
       updatePlotFeatures();
 
       if(openMBVPosition) {
+        plotColumns.push_back("Position");
         plotColumns.push_back("XPosition");
         plotColumns.push_back("YPosition");
         plotColumns.push_back("ZPosition");
       }
       if(openMBVVelocity) {
+        plotColumns.push_back("Velocity");
         plotColumns.push_back("XVelocity");
         plotColumns.push_back("YVelocity");
         plotColumns.push_back("ZVelocity");
       }
       if(openMBVAcceleration) {
+        plotColumns.push_back("Acceleration");
         plotColumns.push_back("XAcceleration");
         plotColumns.push_back("YAcceleration");
         plotColumns.push_back("ZAcceleration");
       }
-      CoordinatesObserver::init(stage);
+      Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
+            openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+            openMBVPosGrp->setName("Position_Group");
+            openMBVPosGrp->setExpand(false);
+            getOpenMBVGrp()->addObject(openMBVPosGrp);
+            openMBVPosition->setName("Position");
+            openMBVPosGrp->addObject(openMBVPosition);
             openMBVXPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
             openMBVYPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
             openMBVZPosition = OpenMBV::ObjectFactory::create(openMBVPosition);
@@ -70,6 +89,12 @@ namespace MBSim {
             openMBVPosGrp->addObject(openMBVZPosition);
           }
           if(openMBVVelocity) {
+            openMBVVelGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+            openMBVVelGrp->setName("Velocity_Group");
+            openMBVVelGrp->setExpand(false);
+            getOpenMBVGrp()->addObject(openMBVVelGrp);
+            openMBVVelocity->setName("Velocity");
+            openMBVVelGrp->addObject(openMBVVelocity);
             openMBVXVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
             openMBVYVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
             openMBVZVelocity = OpenMBV::ObjectFactory::create(openMBVVelocity);
@@ -81,6 +106,12 @@ namespace MBSim {
             openMBVVelGrp->addObject(openMBVZVelocity);
           }
           if(openMBVAcceleration) {
+            openMBVAccGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+            openMBVAccGrp->setName("Acceleration_Group");
+            openMBVAccGrp->setExpand(false);
+            getOpenMBVGrp()->addObject(openMBVAccGrp);
+            openMBVAcceleration->setName("Acceleration");
+            openMBVAccGrp->addObject(openMBVAcceleration);
             openMBVXAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
             openMBVYAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
             openMBVZAcceleration = OpenMBV::ObjectFactory::create(openMBVAcceleration);
@@ -95,21 +126,33 @@ namespace MBSim {
       }
     }
     else
-      CoordinatesObserver::init(stage);
+      Observer::init(stage);
   }
 
-  void CartesianCoordinatesObserver::plot() {
+  void KinematicCoordinatesObserver::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(openMBV)==enabled) {
         Vec3 r = frame->evalPosition();
         Vec3 v = frame->evalVelocity();
         Vec3 a = frame->evalAcceleration();
+        SqrMat3 A = frameOfReference->evalOrientation();
 	Vec3 ex = A.col(0);
 	Vec3 ey = A.col(1);
 	Vec3 ez = A.col(2);
 
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
+          data.push_back(getTime());
+          data.push_back(0);
+          data.push_back(0);
+          data.push_back(0);
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          data.push_back(0.5);
+          openMBVPosition->append(data);
+          plotVector.push_back(nrm2(r));
+          data.clear();
           Vec3 rx =  (r.T()*ex)*ex;
           data.push_back(getTime());
           data.push_back(0);
@@ -149,6 +192,17 @@ namespace MBSim {
 
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
+          data.push_back(getTime());
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          data.push_back(v(0));
+          data.push_back(v(1));
+          data.push_back(v(2));
+          data.push_back(0.5);
+          openMBVVelocity->append(data);
+          plotVector.push_back(nrm2(v));
+          data.clear();
           Vec3 vx =  (v.T()*ex)*ex;
           data.push_back(getTime());
           data.push_back(r(0));
@@ -188,6 +242,17 @@ namespace MBSim {
 
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
+          data.push_back(getTime());
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          data.push_back(a(0));
+          data.push_back(a(1));
+          data.push_back(a(2));
+          data.push_back(0.5);
+          openMBVAcceleration->append(data);
+          plotVector.push_back(nrm2(a));
+          data.clear();
           Vec3 ax =  (a.T()*ex)*ex;
           data.push_back(getTime());
           data.push_back(r(0));
@@ -224,34 +289,32 @@ namespace MBSim {
           plotVector.push_back(a(1));
           plotVector.push_back(a(2));
         }
-
-        if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
-          vector<double> data;
-          SqrMat3 AWP;
-          AWP.set(0, ex);
-          AWP.set(1, ey);
-          AWP.set(2, ez);
-          data.push_back(getTime());
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(0);
-          Vec3 cardan=AIK2Cardan(AWP);
-          data.push_back(cardan(0));
-          data.push_back(cardan(1));
-          data.push_back(cardan(2));
-          data.push_back(0);
-          openMBVFrame->append(data);
-        }
       }
-
-      CoordinatesObserver::plot();
+      Observer::plot();
     }
   }
 
-  void CartesianCoordinatesObserver::initializeUsingXML(DOMElement *element) {
-    CoordinatesObserver::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"orientation");
-    if(e) setOrientation(getSqrMat3(e));
+  void KinematicCoordinatesObserver::initializeUsingXML(DOMElement *element) {
+    Observer::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frame");
+    saved_frame=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) saved_frameOfReference=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
+    if(e) {
+        OpenMBVArrow ombv;
+        openMBVPosition=ombv.createOpenMBV(e);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
+    if(e) {
+        OpenMBVArrow ombv;
+        openMBVVelocity=ombv.createOpenMBV(e);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
+    if(e) {
+        OpenMBVArrow ombv;
+        openMBVAcceleration=ombv.createOpenMBV(e);
+    }
   }
 
 }

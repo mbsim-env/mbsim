@@ -74,10 +74,7 @@ namespace MBSimGUI {
   class ElasticJoint;
   class Contact;
   class Observer;
-  class CoordinatesObserver;
-  class CartesianCoordinatesObserver;
-  class CylinderCoordinatesObserver;
-  class NaturalCoordinatesObserver;
+  class KinematicCoordinatesObserver;
   class KinematicsObserver;
   class AbsoluteKinematicsObserver;
   class RelativeKinematicsObserver;
@@ -640,32 +637,14 @@ namespace MBSimGUI {
       ObserverPropertyDialog(Observer *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
   };
 
-  class CoordinatesObserverPropertyDialog : public ObserverPropertyDialog {
+  class KinematicCoordinatesObserverPropertyDialog : public ObserverPropertyDialog {
 
     public:
-      CoordinatesObserverPropertyDialog(CoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      KinematicCoordinatesObserverPropertyDialog(KinematicCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
     protected:
-      ExtWidget *frame, *position, *velocity, *acceleration, *ombvFrame;
-  };
-
-  class CartesianCoordinatesObserverPropertyDialog : public CoordinatesObserverPropertyDialog {
-
-    public:
-      CartesianCoordinatesObserverPropertyDialog(CartesianCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-  };
-
-  class CylinderCoordinatesObserverPropertyDialog : public CoordinatesObserverPropertyDialog {
-
-    public:
-      CylinderCoordinatesObserverPropertyDialog(CylinderCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-  };
-
-  class NaturalCoordinatesObserverPropertyDialog : public CoordinatesObserverPropertyDialog {
-
-    public:
-      NaturalCoordinatesObserverPropertyDialog(NaturalCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      ExtWidget *frame, *frameOfReference, *position, *velocity, *acceleration;
   };
 
   class KinematicsObserverPropertyDialog : public ObserverPropertyDialog {

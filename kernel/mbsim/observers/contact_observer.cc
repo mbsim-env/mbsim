@@ -94,7 +94,7 @@ namespace MBSim {
   void ContactObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"contact");
-    if(e) saved_link=E(e)->getAttribute("ref");
+    saved_link=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
         OpenMBVArrow ombv("[-1;1;1]",0,OpenMBV::Arrow::toHead,OpenMBV::Arrow::toPoint,1,1);

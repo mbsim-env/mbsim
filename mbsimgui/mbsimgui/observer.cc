@@ -48,41 +48,42 @@ namespace MBSimGUI {
     return observer;
   }
 
-  CoordinatesObserver::CoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), acceleration(0,false), ombvFrame(0,false) {
+  KinematicCoordinatesObserver::KinematicCoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), frameOfReference(0,false), position(0,false), velocity(0,false), acceleration(0,false) {
 
     frame.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frame"));
+
+    frameOfReference.setProperty(new FrameOfReferenceProperty("",this,MBSIM%"frameOfReference"));
 
     position.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVPosition",getID(),true));
 
     velocity.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVVelocity",getID(),true));
 
     acceleration.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVAcceleration",getID(),true));
-
-    ombvFrame.setProperty(new FrameMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVFrame",getID()));
   }
 
-  void CoordinatesObserver::initialize() {
+  void KinematicCoordinatesObserver::initialize() {
     Observer::initialize();
     frame.initialize();
+    frameOfReference.initialize();
   }
 
-  DOMElement* CoordinatesObserver::initializeUsingXML(DOMElement *element) {
+  DOMElement* KinematicCoordinatesObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
     frame.initializeUsingXML(element);
+    frameOfReference.initializeUsingXML(element);
     position.initializeUsingXML(element);
     velocity.initializeUsingXML(element);
     acceleration.initializeUsingXML(element);
-    ombvFrame.initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* CoordinatesObserver::writeXMLFile(DOMNode *parent) {
+  DOMElement* KinematicCoordinatesObserver::writeXMLFile(DOMNode *parent) {
     DOMElement *ele0 = Observer::writeXMLFile(parent);
     frame.writeXMLFile(ele0);
+    frameOfReference.writeXMLFile(ele0);
     position.writeXMLFile(ele0);
     velocity.writeXMLFile(ele0);
     acceleration.writeXMLFile(ele0);
-    ombvFrame.writeXMLFile(ele0);
     return ele0;
   }
 

@@ -201,28 +201,13 @@ namespace MBSimGUI {
       ObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
     protected slots:
-      void addCoordinatesObserver();
       void addKinematicsObserver();
       void addMechanicalLinkObserver();
       void addMechanicalConstraintObserver();
       void addContactObserver();
       void addFrameObserver();
       void addRigidBodyObserver();
-
-    protected:
-      Element *element;
-  };
-
-  class CoordinatesObserverContextContextMenu : public QMenu {
-    Q_OBJECT
-
-    public:
-      CoordinatesObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
-
-    protected slots:
-      void addCartesianCoordinatesObserver();
-      void addCylinderCoordinatesObserver();
-      void addNaturalCoordinatesObserver();
+      void addKinematicCoordinatesObserver();
 
     protected:
       Element *element;

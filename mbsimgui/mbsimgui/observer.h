@@ -32,41 +32,17 @@ namespace MBSimGUI {
       virtual int getxSize() {return 0;}
   };
 
-  class CoordinatesObserver : public Observer {
-    friend class CoordinatesObserverPropertyDialog;
+  class KinematicCoordinatesObserver : public Observer {
+    friend class KinematicCoordinatesObserverPropertyDialog;
     public:
-    CoordinatesObserver(const std::string &str, Element *parent);
-    std::string getType() const { return "CoordinatesObserver"; }
+    KinematicCoordinatesObserver(const std::string &str, Element *parent);
+    std::string getType() const { return "KinematicCoordinatesObserver"; }
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     void initialize();
-    ElementPropertyDialog* createPropertyDialog() {return new CoordinatesObserverPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new KinematicCoordinatesObserverPropertyDialog(this);}
     protected:
-    ExtProperty frame, position, velocity, acceleration, ombvFrame;
-  };
-
-  class CartesianCoordinatesObserver : public CoordinatesObserver {
-    friend class CartesianCoordinatesObserverPropertyDialog;
-    public:
-    CartesianCoordinatesObserver(const std::string &str, Element *parent) : CoordinatesObserver(str,parent) {}
-    std::string getType() const { return "CartesianCoordinatesObserver"; }
-    ElementPropertyDialog* createPropertyDialog() {return new CartesianCoordinatesObserverPropertyDialog(this);}
-  };
-
-  class CylinderCoordinatesObserver : public CoordinatesObserver {
-    friend class CylinderCoordinatesObserverPropertyDialog;
-    public:
-    CylinderCoordinatesObserver(const std::string &str, Element *parent) : CoordinatesObserver(str,parent) {}
-    std::string getType() const { return "CylinderCoordinatesObserver"; }
-    ElementPropertyDialog* createPropertyDialog() {return new CylinderCoordinatesObserverPropertyDialog(this);}
-  };
-
-  class NaturalCoordinatesObserver : public CoordinatesObserver {
-    friend class NaturalCoordinatesObserverPropertyDialog;
-    public:
-    NaturalCoordinatesObserver(const std::string &str, Element *parent) : CoordinatesObserver(str,parent) {}
-    std::string getType() const { return "NaturalCoordinatesObserver"; }
-    ElementPropertyDialog* createPropertyDialog() {return new NaturalCoordinatesObserverPropertyDialog(this);}
+    ExtProperty frame, frameOfReference, position, velocity, acceleration;
   };
 
   class KinematicsObserver : public Observer {

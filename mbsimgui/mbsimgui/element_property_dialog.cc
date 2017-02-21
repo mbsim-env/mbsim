@@ -1699,12 +1699,15 @@ namespace MBSimGUI {
   ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(observer,parent,f) {
   }
 
-  CoordinatesObserverPropertyDialog::CoordinatesObserverPropertyDialog(CoordinatesObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
+  KinematicCoordinatesObserverPropertyDialog::KinematicCoordinatesObserverPropertyDialog(KinematicCoordinatesObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
     addTab("Visualisation",1);
 
     frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
     addToTab("General", frame);
+
+    frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(observer,0),true);
+    addToTab("General", frameOfReference);
 
     position = new ExtWidget("OpenMBV position arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",position);
@@ -1714,36 +1717,24 @@ namespace MBSimGUI {
 
     acceleration = new ExtWidget("OpenMBV acceleration arrow",new ArrowMBSOMBVWidget("NOTSET",true),true);
     addToTab("Visualisation",acceleration);
-
-    ombvFrame = new ExtWidget("OpenMBV Frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
-    addToTab("Visualisation",ombvFrame);
   }
 
-  void CoordinatesObserverPropertyDialog::toWidget(Element *element) {
+  void KinematicCoordinatesObserverPropertyDialog::toWidget(Element *element) {
     ObserverPropertyDialog::toWidget(element);
-    static_cast<CoordinatesObserver*>(element)->frame.toWidget(frame);
-    static_cast<CoordinatesObserver*>(element)->position.toWidget(position);
-    static_cast<CoordinatesObserver*>(element)->velocity.toWidget(velocity);
-    static_cast<CoordinatesObserver*>(element)->acceleration.toWidget(acceleration);
-    static_cast<CoordinatesObserver*>(element)->ombvFrame.toWidget(ombvFrame);
+    static_cast<KinematicCoordinatesObserver*>(element)->frame.toWidget(frame);
+    static_cast<KinematicCoordinatesObserver*>(element)->frameOfReference.toWidget(frameOfReference);
+    static_cast<KinematicCoordinatesObserver*>(element)->position.toWidget(position);
+    static_cast<KinematicCoordinatesObserver*>(element)->velocity.toWidget(velocity);
+    static_cast<KinematicCoordinatesObserver*>(element)->acceleration.toWidget(acceleration);
   }
 
-  void CoordinatesObserverPropertyDialog::fromWidget(Element *element) {
+  void KinematicCoordinatesObserverPropertyDialog::fromWidget(Element *element) {
     ObserverPropertyDialog::fromWidget(element);
-    static_cast<CoordinatesObserver*>(element)->frame.fromWidget(frame);
-    static_cast<CoordinatesObserver*>(element)->position.fromWidget(position);
-    static_cast<CoordinatesObserver*>(element)->velocity.fromWidget(velocity);
-    static_cast<CoordinatesObserver*>(element)->acceleration.fromWidget(acceleration);
-    static_cast<CoordinatesObserver*>(element)->ombvFrame.fromWidget(ombvFrame);
-  }
-
-  CartesianCoordinatesObserverPropertyDialog::CartesianCoordinatesObserverPropertyDialog(CartesianCoordinatesObserver *observer, QWidget *parent, Qt::WindowFlags f) : CoordinatesObserverPropertyDialog(observer,parent,f) {
-  }
-
-  CylinderCoordinatesObserverPropertyDialog::CylinderCoordinatesObserverPropertyDialog(CylinderCoordinatesObserver *observer, QWidget *parent, Qt::WindowFlags f) : CoordinatesObserverPropertyDialog(observer,parent,f) {
-  }
-
-  NaturalCoordinatesObserverPropertyDialog::NaturalCoordinatesObserverPropertyDialog(NaturalCoordinatesObserver *observer, QWidget *parent, Qt::WindowFlags f) : CoordinatesObserverPropertyDialog(observer,parent,f) {
+    static_cast<KinematicCoordinatesObserver*>(element)->frame.fromWidget(frame);
+    static_cast<KinematicCoordinatesObserver*>(element)->frameOfReference.fromWidget(frameOfReference);
+    static_cast<KinematicCoordinatesObserver*>(element)->position.fromWidget(position);
+    static_cast<KinematicCoordinatesObserver*>(element)->velocity.fromWidget(velocity);
+    static_cast<KinematicCoordinatesObserver*>(element)->acceleration.fromWidget(acceleration);
   }
 
   KinematicsObserverPropertyDialog::KinematicsObserverPropertyDialog(KinematicsObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
