@@ -85,12 +85,12 @@
     </objects>
     <links />
     <observers>
-        <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver1">
+        <FrameObserver name="FrameObserver1">
             <frame ref="../Object[RigidBody1]/Frame[C]" />
             <enableOpenMBVVelocity>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVVelocity>
-        </AbsoluteKinematicsObserver>
+        </FrameObserver>
         <RigidBodyObserver name="RigidBodyObserver1">
             <rigidBody ref="../Object[RigidBody1]" />
             <enableOpenMBVWeight>

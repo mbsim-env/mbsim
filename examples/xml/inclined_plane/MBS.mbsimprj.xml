@@ -208,13 +208,13 @@
         </Contact>
       </links>
       <observers>
-        <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver">
+        <FrameObserver name="FrameObserver">
           <frame ref="../Object[Mass]/Frame[C]"/>
           <enableOpenMBVVelocity>
             <?OPENMBV_ID 38?>
             <referencePoint>"fromPoint"</referencePoint>
           </enableOpenMBVVelocity>
-        </AbsoluteKinematicsObserver>
+        </FrameObserver>
         <RigidBodyObserver name="RigidBodyObserver1">
           <rigidBody ref="../Object[Mass]"/>
           <enableOpenMBVWeight>

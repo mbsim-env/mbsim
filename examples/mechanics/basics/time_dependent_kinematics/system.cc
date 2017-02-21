@@ -4,7 +4,7 @@
 #include "mbsim/functions/symbolic_function.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/composite_function.h"
-#include "mbsim/observers/absolute_kinematics_observer.h"
+#include "mbsim/observers/frame_observer.h"
 
 #include "openmbvcppinterface/arrow.h"
 #include "openmbvcppinterface/cube.h"
@@ -57,7 +57,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
   body1->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
 
-  AbsoluteKinematicsObserver *o = new AbsoluteKinematicsObserver("Observer");
+  FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body1->getFrame("C"));
   //arrow->setDiffuseColor(1/3.0, 1, 1);

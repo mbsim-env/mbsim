@@ -290,12 +290,12 @@
         </Contact>
       </links>
       <observers>
-        <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver1">
+        <FrameObserver name="FrameObserver1">
           <frame ref="../Object[Stepladder]/Frame[P1]"/>
-        </AbsoluteKinematicsObserver>
-        <AbsoluteKinematicsObserver name="AbsoluteKinematicsObserver2">
+        </FrameObserver>
+        <FrameObserver name="FrameObserver2">
           <frame ref="../Object[Stepladder]/Frame[P2]"/>
-        </AbsoluteKinematicsObserver>
+        </FrameObserver>
         <RigidBodyObserver name="RigidBodyObserver1">
           <rigidBody ref="../Object[Mass]"/>
           <enableOpenMBVWeight>

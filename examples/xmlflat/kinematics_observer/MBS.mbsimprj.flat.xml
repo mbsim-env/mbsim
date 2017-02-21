@@ -114,7 +114,7 @@
       </Joint>
     </links>
     <observers>
-      <AbsoluteKinematicsObserver name="Observer">
+      <FrameObserver name="Observer">
         <frame ref="../Object[Stab2]/Frame[C]"/>
         <enableOpenMBVPosition>
           <diffuseColor>[0.6;0.3;0.6]</diffuseColor>
@@ -126,7 +126,7 @@
         <enableOpenMBVAngularVelocity>
           <scaleLength>0.1</scaleLength>
         </enableOpenMBVAngularVelocity>
-      </AbsoluteKinematicsObserver>
+      </FrameObserver>
       <MechanicalLinkObserver name="MechanicalLinkObserver1">
         <mechanicalLink ref="../Link[Gelenk1]"/>
         <enableOpenMBVForce>

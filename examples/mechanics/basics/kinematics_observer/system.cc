@@ -5,7 +5,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
-#include "mbsim/observers/absolute_kinematics_observer.h"
+#include "mbsim/observers/frame_observer.h"
 #include "mbsim/environment.h"
 
 #include <openmbvcppinterface/frustum.h>
@@ -110,7 +110,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e7,1)));
   }
 
-  AbsoluteKinematicsObserver *obs = new AbsoluteKinematicsObserver("Observer");
+  FrameObserver *obs = new FrameObserver("Observer");
   addObserver(obs);
   obs->setFrame(box2->getFrame("C"));
 
