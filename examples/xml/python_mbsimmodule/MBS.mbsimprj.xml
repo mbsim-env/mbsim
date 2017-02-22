@@ -142,12 +142,12 @@
             </LinearSpringDamperForce>
           </forceFunction>
           <unloadedLength>0</unloadedLength>
-          <enableOpenMBVCoilSpring>
+          <enableOpenMBV>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
             <crossSectionRadius>.01</crossSectionRadius>
             <type>'polyline'</type>
-          </enableOpenMBVCoilSpring>
+          </enableOpenMBV>
         </SpringDamper>
         <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
           <connect ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
@@ -173,12 +173,12 @@
             <PyLinearSpringDamper xmlns="http://mypytest"/>
           </forceFunction>
           <unloadedLength>0</unloadedLength>
-          <enableOpenMBVCoilSpring>
+          <enableOpenMBV>
             <numberOfCoils>5</numberOfCoils>
             <springRadius>.03</springRadius>
             <crossSectionRadius>.01</crossSectionRadius>
             <type>'polyline'</type>
-          </enableOpenMBVCoilSpring>
+          </enableOpenMBV>
         </SpringDamper>
       </links>
       <enableOpenMBVFrameI/>
