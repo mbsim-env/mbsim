@@ -1166,7 +1166,7 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectFramesWidget(2,constraint));
     addToTab("Kinetics", connections);
 
-    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(0,0,1),true);
+    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true);
     addToTab("Kinetics", refFrameID);
 
     vector<PhysicalVariableWidget*> input;
@@ -1317,8 +1317,8 @@ namespace MBSimGUI {
   FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(FloatingFrameLink *link, QWidget *parent, Qt::WindowFlags f) : FrameLinkPropertyDialog(link,parent,f) {
     QStringList names;
     names << "Frame 1" << "Frame 2";
-    refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
-//    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(0,0,1),true);
+    //refFrameID = new ExtWidget("Frame of reference ID",new ComboBoxWidget(names,1),true);
+    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true);
     addToTab("Kinetics", refFrameID);
   }
 

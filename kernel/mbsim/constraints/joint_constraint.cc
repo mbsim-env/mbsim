@@ -328,7 +328,7 @@ namespace MBSim {
     saved_ref1=E(e)->getAttribute("ref1");
     saved_ref2=E(e)->getAttribute("ref2");
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if(e) refFrameID=getInt(e);
+    if(e) refFrameID=getInt(e)-1;
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(getMat3xV(e,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");

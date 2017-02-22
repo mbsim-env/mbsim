@@ -25,6 +25,7 @@ namespace MBSim {
  class GlobalShiftCriteriaFunction;
  class LocalShiftCriteriaFunction;
 }
+#include "mbsim/utils/index.h"
 #include "mbsim/links/link.h"
 #include "mbsim/links/mechanical_link.h"
 #include "mbsim/links/frame_link.h"
@@ -68,6 +69,7 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 
 // wrap the following classes
 %rename(lambda_) MBSim::Link::lambda; // lambda is a python keyword -> rename it to lambda_
+%include "mbsim/utils/index.h"
 %include "mbsim/links/link.h"
 %include "mbsim/links/mechanical_link.h"
 %include "mbsim/links/frame_link.h"

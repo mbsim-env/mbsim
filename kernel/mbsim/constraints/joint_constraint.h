@@ -22,6 +22,7 @@
 #include "mechanical_constraint.h"
 #include "mbsim/functions/function.h"
 #include "mbsim/frames/floating_relative_frame.h"
+#include "mbsim/utils/index.h"
 
 namespace MBSim {
 
@@ -86,7 +87,7 @@ namespace MBSim {
        * \brief frame of reference the force is defined in
        */
       Frame *refFrame;
-      int refFrameID;
+      Index refFrameID;
 
       FloatingRelativeFrame C;
 

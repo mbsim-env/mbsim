@@ -1356,7 +1356,7 @@
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:indexFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                tbd
             </xs:documentation></xs:annotation>
@@ -1486,7 +1486,7 @@
     <xs:complexContent>
       <xs:extension base="FrameLinkType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:integerFullEval">
+          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:indexFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Gibt an, in welchem Koordinatensystem der Kraft- und Momentvektor dargestellt ist. 0 definiert den unter ref1 und 1 den unter
               ref2 angegebenen Frame.

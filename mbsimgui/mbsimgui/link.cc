@@ -64,7 +64,7 @@ namespace MBSimGUI {
 
   FloatingFrameLink::FloatingFrameLink(const string &str, Element *parent) : FrameLink(str, parent), refFrameID(0,false) {
 
-    refFrameID.setProperty(new IntegerProperty(0,MBSIM%"frameOfReferenceID"));
+    refFrameID.setProperty(new IntegerProperty(1,MBSIM%"frameOfReferenceID"));
   }
 
   DOMElement* FloatingFrameLink::initializeUsingXML(DOMElement *element) {

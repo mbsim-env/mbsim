@@ -62,7 +62,7 @@
     <links>
       <KineticExcitation name ="ex">
         <connect ref1="../Frame[Wrot]" ref2="../Object[Box1]/Frame[C]"/>
-        <frameOfReferenceID>0</frameOfReferenceID>
+        <frameOfReferenceID>1</frameOfReferenceID>
         <forceDirection>[1;0;0]</forceDirection>
         <forceFunction>
           <ConstantFunction>

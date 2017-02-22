@@ -22,6 +22,7 @@
 
 #include "mbsim/links/frame_link.h"
 #include "mbsim/frames/floating_relative_frame.h"
+#include "mbsim/utils/index.h"
 
 namespace MBSim {
   /** 
@@ -61,7 +62,7 @@ namespace MBSim {
       /** \brief The frame of reference ID for the force/moment direction vectors.
        * If ID=0 (default) the first frame, if ID=1 the second frame is used.
        */
-      void setFrameOfReferenceID(int ID) { refFrameID = ID; }
+      void setFrameOfReferenceID(Index ID) { refFrameID = ID; }
 
       void resetUpToDate();
       void updatePositions(Frame *frame);
@@ -84,7 +85,7 @@ namespace MBSim {
        * \brief frame of reference the force is defined in
        */
       Frame *refFrame;
-      int refFrameID;
+      Index refFrameID;
 
       /**
        * \brief own frame located in second partner with same orientation as first partner 
