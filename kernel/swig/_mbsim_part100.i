@@ -26,6 +26,7 @@ namespace MBSim {
  class LocalShiftCriteriaFunction;
 }
 #include "mbsim/links/link.h"
+#include "mbsim/links/mechanical_link.h"
 #include "mbsim/links/frame_link.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/frames/contour_frame.h"
@@ -44,6 +45,7 @@ namespace MBSim {
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/contact.h"
 #include "mbsim/links/contour_link.h"
+#include "mbsim/links/fixed_frame_link.h"
 #include "mbsim/links/floating_frame_link.h"
 #include "mbsim/links/directional_spring_damper.h"
 #include "mbsim/links/isotropic_rotational_spring_damper.h"
@@ -67,6 +69,7 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 // wrap the following classes
 %rename(lambda_) MBSim::Link::lambda; // lambda is a python keyword -> rename it to lambda_
 %include "mbsim/links/link.h"
+%include "mbsim/links/mechanical_link.h"
 %include "mbsim/links/frame_link.h"
 %include "mbsim/frames/frame.h"
 %include "mbsim/frames/contour_frame.h"
@@ -85,6 +88,7 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/objects/rigid_body.h"
 %include "mbsim/links/contact.h"
 %include "mbsim/links/contour_link.h"
+%include "mbsim/links/fixed_frame_link.h"
 %include "mbsim/links/floating_frame_link.h"
 %include "mbsim/links/directional_spring_damper.h"
 %include "mbsim/links/isotropic_rotational_spring_damper.h"

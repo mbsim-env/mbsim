@@ -18,6 +18,7 @@ namespace MBSim {
   class Circle;
   class CompoundContour;
   class Constraint;
+  class MechanicalConstraint;
   class Contact;
   class ContactPolyfun;
   class Contour;
@@ -37,6 +38,7 @@ namespace MBSim {
   class FixedContourFrame;
   class FixedRelativeFrame;
   class FloatingContourFrame;
+  class FixedFrameLink;
   class FloatingFrameLink;
   class FloatingRelativeContourFrame;
   class FloatingRelativeFrame;
@@ -67,6 +69,7 @@ namespace MBSim {
   class Line;
   class LineSegment;
   class Link;
+  class MechanicalLink;
   class LocalCriteriaFunction;
   class LocalResidualCriteriaFunction;
   class LocalShiftCriteriaFunction;

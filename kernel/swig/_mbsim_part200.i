@@ -15,6 +15,8 @@ namespace MBSim {
   class Object;
   class Body;
   class Link;
+  class MechanicalLink;
+  class FixedFrameLink;
   class FloatingFrameLink;
   class FunctionBase;
   template<typename Sig> class Function;
@@ -64,6 +66,7 @@ namespace MBSim {
   class FloatingRelativeFrame;
 }
 #include "mbsim/constraints/constraint.h"
+#include "mbsim/constraints/mechanical_constraint.h"
 #include "mbsim/constraints/generalized_constraint.h"
 #include "mbsim/constraints/joint_constraint.h"
 #include "mbsim/constraints/generalized_dual_constraint.h"
@@ -103,6 +106,7 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 
 // wrap the following classes
 %include "mbsim/constraints/constraint.h"
+%include "mbsim/constraints/mechanical_constraint.h"
 %include "mbsim/constraints/generalized_constraint.h"
 %include "mbsim/constraints/joint_constraint.h"
 %include "mbsim/constraints/generalized_dual_constraint.h"
