@@ -142,11 +142,11 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <unloadedLength>l02</unloadedLength>
-      <enableOpenMBVCoilSpring>
+      <enableOpenMBV>
           <numberOfCoils>5</numberOfCoils>
           <springRadius>0.1</springRadius>
           <crossSectionRadius>0.01</crossSectionRadius>
-      </enableOpenMBVCoilSpring>
+      </enableOpenMBV>
     </SpringDamper>
   </links>
 </Group>

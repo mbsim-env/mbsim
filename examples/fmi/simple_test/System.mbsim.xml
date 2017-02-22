@@ -60,7 +60,7 @@
   </links>
   <observers>
     <ContactObserver name="Observer">
-      <mechanicalLink ref="../Link[Contact]"/>
+      <contact ref="../Link[Contact]"/>
       <enableOpenMBVContactPoints/>
       <enableOpenMBVNormalForce>
         <scaleLength>0.3</scaleLength>
