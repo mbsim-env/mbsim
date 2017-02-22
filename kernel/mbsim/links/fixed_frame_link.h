@@ -42,7 +42,6 @@ namespace MBSim {
       /***************************************************/
 
       void updateh(int i=0);
-      void updatedhdz();
 
       const fmatvec::Mat3xV& evalGlobalForceDirection(int i=0) { if(updDF) updateForceDirections(); return DF; }
       const fmatvec::Mat3xV& evalGlobalMomentDirection(int i=0) { if(updDF) updateForceDirections(); return DM; }

@@ -62,10 +62,6 @@ namespace MBSim {
     corrSize = forceDir.cols() + momentDir.cols();
   }
 
-  void FloatingFrameLink::updatedhdz() {
-    THROW_MBSIMERROR("Internal error");
-  }
-
   void FloatingFrameLink::updateW(int j) {
     W[j][0] += C.evalJacobianOfTranslation(j).T() * evalRF(0) + C.evalJacobianOfRotation(j).T() * evalRM(0);
     W[j][1] += frame[1]->evalJacobianOfTranslation(j).T() * evalRF(1) + frame[1]->evalJacobianOfRotation(j).T() * evalRM(1);

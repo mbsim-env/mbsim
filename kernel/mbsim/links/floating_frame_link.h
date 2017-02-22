@@ -36,13 +36,7 @@ namespace MBSim {
        */
       FloatingFrameLink(const std::string &name);
 
-      /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatedhdz();
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void init(InitStage stage);
-      /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "FloatingFrameLink"; }
