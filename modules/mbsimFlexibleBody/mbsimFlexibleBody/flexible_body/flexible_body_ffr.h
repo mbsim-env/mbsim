@@ -399,10 +399,6 @@ namespace MBSimFlexibleBody {
       bool bodyFixedRepresentationOfAngularVelocity;
 
     private:
-      /**
-       * \brief Frame of reference for drawing openMBVBody
-       */
-      MBSim::Frame * openMBVFrame;
       std::vector<MBSim::Index> ombvNodes, ombvIndices;
   };
 

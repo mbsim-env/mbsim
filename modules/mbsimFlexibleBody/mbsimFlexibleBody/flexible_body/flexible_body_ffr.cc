@@ -62,7 +62,6 @@ namespace MBSimFlexibleBody {
 
     K=new Frame("K");
     NodeBasedBody::addFrame(K);
-    openMBVFrame=K;
 
     updateJacobians_[0] = &FlexibleBodyFFR::updateJacobians0;
     updateJacobians_[1] = &FlexibleBodyFFR::updateJacobians1;
@@ -744,9 +743,6 @@ namespace MBSimFlexibleBody {
       updNodalStress[i] = true;
     }
   }
-
-//  void FlexibleBodyFFR::updateJacobiansForRemainingFramesAndContours1() {
-//  }
 
   void FlexibleBodyFFR::updateqRef(const Vec& ref) {
     NodeBasedBody::updateqRef(ref);
