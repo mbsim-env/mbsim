@@ -119,6 +119,7 @@ namespace MBSimGUI {
       QString getValue() const {return toQStr(getVec());}
       void setValue(const QString &str) {setVec(strToVec(str));}
       int size() const {return box.size();}
+      int rows() const { return size(); }
       virtual QString getType() const {return "Vector";}
       bool validate(const std::vector<std::vector<QString> > &A) const;
   };

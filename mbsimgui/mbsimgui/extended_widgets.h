@@ -96,6 +96,7 @@ namespace MBSimGUI {
     void updateWidget() { dynamic_cast<WidgetInterface*>(getWidget())->updateWidget(); }
     QString getName() const { return comboBox->currentText(); }
     int getIndex() const { return comboBox->currentIndex(); }
+    void setIndex(int i) { return comboBox->setCurrentIndex(i); }
     void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
 
     protected slots:

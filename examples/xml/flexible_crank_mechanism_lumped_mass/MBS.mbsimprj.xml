@@ -168,9 +168,15 @@
                 <ele>0.0001</ele>
               </xmlVector>
             </proportionalDamping>
-            <relativeNodalPosition unit="-">u0'(:)</relativeNodalPosition>
-            <shapeMatrixOfTranslation unit="-">V</shapeMatrixOfTranslation>
-            <stressMatrix unit="-">sigh</stressMatrix>
+            <relativeNodalPosition>
+            <eleVec unit="m">u0'(:)</eleVec>
+            </relativeNodalPosition>
+            <shapeMatrixOfTranslation>
+            <eleMat unit="-">V</eleMat>
+            </shapeMatrixOfTranslation>
+            <stressMatrix>
+            <eleMat unit="-">sigh</eleMat>
+            </stressMatrix>
             <stateDependentRotation>
               <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
             </stateDependentRotation>

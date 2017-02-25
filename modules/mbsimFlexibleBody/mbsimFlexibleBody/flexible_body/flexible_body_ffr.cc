@@ -767,6 +767,65 @@ namespace MBSimFlexibleBody {
         static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud(nu[0]-ne,nu[0]-1));
   }
 
+  void FlexibleBodyFFR::setPositionShapeFunctionIntegral(const MatV &rPdm_) {
+    rPdm.resize(3);
+    for(int i=0; i<3; i++)
+      rPdm[i] = rPdm_(RangeV(3*i,3*i+2),RangeV(0,rPdm_.cols()-1));
+  }
+
+  void FlexibleBodyFFR::setShapeFunctionShapeFunctionIntegral(const MatV &PPdm_) {
+    PPdm.resize(3, vector<SqrMatV>(3));
+    int n = PPdm_.cols();
+    int k = 0;
+    for(int i=0; i<3; i++) {
+      for(int j=0; j<3; j++) {
+        PPdm[i][j].resize() = PPdm_(RangeV(n*k,n*k+n-1),RangeV(0,n-1));
+        k++;
+      }
+    }
+  }
+
+  void FlexibleBodyFFR::setNonlinearStiffnessMatrixOfFirstOrder(const MatV &Knl1_) {
+    int n = Knl1_.cols();
+    Knl1.resize(n);
+    for(int i=0; i<n; i++)
+      Knl1[i] = Knl1_(RangeV(n*i,n*i+n-1),RangeV(0,n-1));
+  }
+
+  void FlexibleBodyFFR::setNonlinearStiffnessMatrixOfSecondOrder(const MatV &Knl2_) {
+    int n = Knl2_.cols();
+    int k = 0;
+    Knl2.resize(n);
+    for(int i=0; i<n; i++) {
+      Knl2[i].resize(n);
+      for(int j=0; j<n; j++) {
+        Knl2[i][j] = Knl2_(RangeV(n*k,n*k+n-1),RangeV(0,n-1));
+        k++;
+      }
+    }
+  }
+
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToAcceleration(const MatV &K0t_) {
+    int n = K0t_.cols();
+    K0t.resize(3);
+    for(int i=0; i<3; i++)
+      K0t[i] = K0t_(RangeV(n*i,n*i+n-1),RangeV(0,n-1));
+  }
+
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToAngularAcceleration(const MatV &K0r_) {
+    int n = K0r_.cols();
+    K0r.resize(3);
+    for(int i=0; i<3; i++)
+      K0r[i] = K0r_(RangeV(n*i,n*i+n-1),RangeV(0,n-1));
+  }
+
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToAngularVelocity(const MatV &K0om_) {
+    int n = K0om_.cols();
+    K0om.resize(3);
+    for(int i=0; i<3; i++)
+      K0om[i] = K0om_(RangeV(n*i,n*i+n-1),RangeV(0,n-1));
+  }
+
   void FlexibleBodyFFR::setRelativeNodalPosition(const VecV &r) {
     KrKP.resize(r.size()/3);
     for(unsigned int i=0; i<KrKP.size(); i++)
@@ -797,12 +856,16 @@ namespace MBSimFlexibleBody {
       sigmahel[i] = sigmahel_(RangeV(6*i,6*i+5),RangeV(0,sigmahel_.cols()-1));
   }
 
-  void FlexibleBodyFFR::setNonlinearStressMatrix(const vector<MatV> &sigmahen_) {
-    sigmahen.resize(sigmahen_.size());
+  void FlexibleBodyFFR::setNonlinearStressMatrix(const MatV &sigmahen_) {
+    int n = sigmahen_.cols();
+    int k = 0;
+    sigmahen.resize(sigmahen_.rows()/6/n);
     for(unsigned int i=0; i<sigmahen.size(); i++) {
-      sigmahen[i].resize(sigmahen_[i].rows()/6);
-      for(unsigned int j=0; j<sigmahen[i].size(); j++)
-        sigmahen[i][j] = sigmahen_[i](RangeV(6*i,6*i+5),RangeV(0,sigmahen_[i].cols()-1));
+      sigmahen[i].resize(n);
+      for(int j=0; j<n; j++) {
+        sigmahen[i][j] = sigmahen_(RangeV(6*k,6*k+5),RangeV(0,n-1));
+        k++;
+      }
     }
   }
 
@@ -812,12 +875,30 @@ namespace MBSimFlexibleBody {
       sigma0[i] = sigma0_(RangeV(6*i,6*i+5));
   }
 
-  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToForce(const vector<SqrMatV> &K0F_) {
-//    K0F = K0F_;
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToForce(const MatV &K0F_) {
+    int n = K0F_.cols();
+    int k = 0;
+    K0F.resize(K0F_.rows()/n/n);
+    for(unsigned int i=0; i<K0F.size(); i++) {
+      K0F.resize(n);
+      for(int j=0; j<n; j++) {
+        K0F[i][j] = K0F_(RangeV(n*k,n*k+n-1),RangeV(0,n-1));
+        k++;
+      }
+    }
   }
 
-  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToMoment(const vector<SqrMatV> &K0M_) {
-//    K0M = K0M_;
+  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToMoment(const MatV &K0M_) {
+    int n = K0M_.cols();
+    int k = 0;
+    K0M.resize(K0M_.rows()/n/n);
+    for(unsigned int i=0; i<K0M.size(); i++) {
+      K0M.resize(n);
+      for(int j=0; j<n; j++) {
+        K0M[i][j] = K0M_(RangeV(n*k,n*k+n-1),RangeV(0,n-1));
+        k++;
+      }
+    }
   }
 
   void FlexibleBodyFFR::addFrame(FixedNodalFrame *frame_) {
@@ -867,22 +948,30 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"positionShapeFunctionIntegral");
     rPdm = vector<Mat3xV>(3);
     e=e->getFirstElementChild();
-    for(int i=0; i<3; i++) {
-      rPdm[i].resize() = getMat3xV(e);
-      e=e->getNextElementSibling();
+    if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+      for(int i=0; i<3; i++) {
+        rPdm[i].resize() = getMat3xV(e);
+        e=e->getNextElementSibling();
+      }
     }
+    else
+      setPositionShapeFunctionIntegral(getMat(e));
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral");
     PPdm = vector<vector<SqrMatV> >(3,vector<SqrMatV>(3));
     e=e->getFirstElementChild();
-    for(int i=0; i<3; i++) {
-      DOMElement *ee=e->getFirstElementChild();
-      for(int j=0; j<3; j++) {
-        PPdm[i][j].resize() = getSqrMat(ee);
-        ee=ee->getNextElementSibling();
+    if(E(e)->getTagName()==MBSIMFLEX%"row") {
+      for(int i=0; i<3; i++) {
+        DOMElement *ee=e->getFirstElementChild();
+        for(int j=0; j<3; j++) {
+          PPdm[i][j].resize() = getSqrMat(ee);
+          ee=ee->getNextElementSibling();
+        }
+        e=e->getNextElementSibling();
       }
-      e=e->getNextElementSibling();
     }
+    else
+      setShapeFunctionShapeFunctionIntegral(getMat(e));
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stiffnessMatrix");
     setStiffnessMatrix(getSymMat(e));
@@ -896,24 +985,32 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder");
     if(e) {
       e=e->getFirstElementChild();
-      while(e) {
-        Knl1.push_back(getSqrMat(e));
-        e=e->getNextElementSibling();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        while(e) {
+          Knl1.push_back(getSqrMat(e));
+          e=e->getNextElementSibling();
+        }
       }
+      else
+        setNonlinearStiffnessMatrixOfFirstOrder(getMat(e));
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder");
     if(e) {
       e=e->getFirstElementChild();
-      while(e) {
-        Knl2.push_back(vector<SqrMatV>());
-        DOMElement *ee=e->getFirstElementChild();
-        while(ee) {
-          Knl2[Knl2.size()-1].push_back(getSqrMat(ee));
-          ee=ee->getNextElementSibling();
+      if(E(e)->getTagName()==MBSIMFLEX%"row") {
+        while(e) {
+          Knl2.push_back(vector<SqrMatV>());
+          DOMElement *ee=e->getFirstElementChild();
+          while(ee) {
+            Knl2[Knl2.size()-1].push_back(getSqrMat(ee));
+            ee=ee->getNextElementSibling();
+          }
+          e=e->getNextElementSibling();
         }
-        e=e->getNextElementSibling();
       }
+      else
+        setNonlinearStiffnessMatrixOfSecondOrder(getMat(e));
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"initialStressIntegral");
@@ -926,46 +1023,139 @@ namespace MBSimFlexibleBody {
     if(e) {
       K0t = vector<SqrMatV>(3);
       e=e->getFirstElementChild();
-      for(int i=0; i<3; i++) {
-        K0t[i].resize() = getSqrMat(e);
-        e=e->getNextElementSibling();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        for(int i=0; i<3; i++) {
+          K0t[i].resize() = getSqrMat(e);
+          e=e->getNextElementSibling();
+        }
       }
+      else
+        setGeometricStiffnessMatrixDueToAcceleration(getMat(e));
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration");
     if(e) {
       K0r = vector<SqrMatV>(3);
       e=e->getFirstElementChild();
-      for(int i=0; i<3; i++) {
-        K0r[i].resize() = getSqrMat(e);
-        e=e->getNextElementSibling();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        for(int i=0; i<3; i++) {
+          K0r[i].resize() = getSqrMat(e);
+          e=e->getNextElementSibling();
+        }
       }
+      else
+        setGeometricStiffnessMatrixDueToAngularAcceleration(getMat(e));
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity");
     if(e) {
       K0om = vector<SqrMatV>(3);
       e=e->getFirstElementChild();
-      for(int i=0; i<3; i++) {
-        K0om[i].resize() = getSqrMat(e);
-        e=e->getNextElementSibling();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        for(int i=0; i<3; i++) {
+          K0om[i].resize() = getSqrMat(e);
+          e=e->getNextElementSibling();
+        }
       }
+      else
+        setGeometricStiffnessMatrixDueToAngularVelocity(getMat(e));
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeNodalPosition");
-    if(e) setRelativeNodalPosition(getVec(e));
+    if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        while(e) {
+          KrKP.push_back(getVec3(e));
+          e=e->getNextElementSibling();
+        }
+      }
+      else
+        setRelativeNodalPosition(getVec(e));
+    }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeNodalOrientation");
-    if(e) setRelativeNodalOrientation(getMat(e));
+    if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        while(e) {
+          ARP.push_back(getSqrMat3(e));
+          e=e->getNextElementSibling();
+        }
+      }
+      else
+        if(e) setRelativeNodalOrientation(getMat(e));
+    }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfTranslation");
-    if(e) setShapeMatrixOfTranslation(getMat(e));
+    if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        while(e) {
+          Phi.push_back(getMat3xV(e));
+          e=e->getNextElementSibling();
+        }
+      }
+      else
+        if(e) setShapeMatrixOfTranslation(getMat(e));
+    }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfRotation");
-    if(e) setShapeMatrixOfRotation(getMat(e));
+    if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        while(e) {
+          Psi.push_back(getMat3xV(e));
+          e=e->getNextElementSibling();
+        }
+      }
+      else
+        if(e) setShapeMatrixOfRotation(getMat(e));
+    }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stressMatrix");
-    if(e) setStressMatrix(getMat(e));
+    if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        while(e) {
+          sigmahel.push_back(getMat(e));
+          e=e->getNextElementSibling();
+        }
+      }
+      else
+        if(e) setStressMatrix(getMat(e));
+    }
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStressMatrix");
+    if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()==MBSIMFLEX%"row") {
+        while(e) {
+          sigmahen.push_back(vector<Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >());
+          DOMElement *ee=e->getFirstElementChild();
+          while(ee) {
+            sigmahen[sigmahen.size()-1].push_back(getMat(ee));
+            ee=ee->getNextElementSibling();
+          }
+          e=e->getNextElementSibling();
+        }
+      }
+      else
+        setNonlinearStressMatrix(getMat(e));
+    }
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"initialStress");
+    if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()==MBSIMFLEX%"ele") {
+        while(e) {
+          sigma0.push_back(getVec3(e));
+          e=e->getNextElementSibling();
+        }
+      }
+      else
+        setInitialStress(getVec(e));
+    }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e && e->getFirstElementChild()) {

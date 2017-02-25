@@ -28,12 +28,83 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  OneDimMatArrayProperty::OneDimMatArrayProperty(int size, int m, int n, const MBXMLUtils::FQN &xmlName_, bool var_) : xmlName(xmlName_), var(var_) {
+  OneDimVecArrayProperty::OneDimVecArrayProperty(int size, int m, const FQN &xmlName_, bool var_) : xmlName(xmlName_), var(var_) {
+    resize_(size,m);
+  }
+
+  DOMElement* OneDimVecArrayProperty::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+    if(e) {
+      if(var) {
+        e=e->getFirstElementChild();
+        vector<Property*> p;
+        while(e) {
+          p.push_back(new ChoiceProperty2(new VecPropertyFactory(getVec<string>(6,"0"),"",vector<string>(3,"")),"",7));
+          p[p.size()-1]->initializeUsingXML(e);
+          e=e->getNextElementSibling();
+        }
+        ele.resize(p.size());
+        for(int i=0; i<ele.size(); i++)
+          ele[i].setProperty(p[i]);
+      }
+      else {
+        e=e->getFirstElementChild();
+        for(int i=0; i<ele.size(); i++) {
+          ele[i].initializeUsingXML(e);
+          e=e->getNextElementSibling();
+        }
+      }
+      return element;
+    }
+    return NULL;
+  }
+
+  DOMElement* OneDimVecArrayProperty::writeXMLFile(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMNode *e;
+    if(xmlName!=FQN()) {
+      e=D(doc)->createElement(xmlName);
+      parent->insertBefore(e, NULL);
+    }
+    else
+      e = parent;
+    for(int i=0; i<ele.size(); i++) {
+      DOMElement *ee=D(doc)->createElement(MBSIMFLEX%"ele");
+      e->insertBefore(ee, NULL);
+      ele[i].writeXMLFile(ee);
+    }
+    return 0;
+  }
+
+  void OneDimVecArrayProperty::resize_(int size, int m) {
+    if(ele.size() != size) {
+      ele.resize(size);
+      for(int i=0; i<ele.size(); i++) {
+        string name = string("ele");
+        if(not var) name += toStr(i+1);
+        ele[i].setProperty(new ChoiceProperty2(new VecPropertyFactory(getVec<string>(m,"0"),"",vector<string>(3,"")),"",7));
+      }
+    }
+  }
+
+  void OneDimVecArrayProperty::fromWidget(QWidget *widget) {
+    resize_(static_cast<OneDimVecArrayWidget*>(widget)->getArray().size());
+    for(int i=0; i<ele.size(); i++)
+      ele[i].fromWidget(static_cast<OneDimVecArrayWidget*>(widget)->getArray()[i]);
+  }
+
+  void OneDimVecArrayProperty::toWidget(QWidget *widget) {
+    static_cast<OneDimVecArrayWidget*>(widget)->resize_(ele.size(),0,0);
+    for(int i=0; i<ele.size(); i++)
+      ele[i].toWidget(static_cast<OneDimVecArrayWidget*>(widget)->getArray()[i]);
+  }
+
+  OneDimMatArrayProperty::OneDimMatArrayProperty(int size, int m, int n, const FQN &xmlName_, bool var_) : xmlName(xmlName_), var(var_) {
     resize_(size,m,n);
   }
 
   DOMElement* OneDimMatArrayProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
     if(e) {
       if(var) {
         e=e->getFirstElementChild();
@@ -61,8 +132,13 @@ namespace MBSimGUI {
 
   DOMElement* OneDimMatArrayProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *e=D(doc)->createElement(xmlName);
-    parent->insertBefore(e, NULL);
+    DOMNode *e;
+    if(xmlName!=FQN()) {
+      e=D(doc)->createElement(xmlName);
+      parent->insertBefore(e, NULL);
+    }
+    else
+      e = parent;
     for(int i=0; i<ele.size(); i++) {
       DOMElement *ee=D(doc)->createElement(MBSIMFLEX%"ele");
       e->insertBefore(ee, NULL);
@@ -94,12 +170,12 @@ namespace MBSimGUI {
       ele[i].toWidget(static_cast<OneDimMatArrayWidget*>(widget)->getArray()[i]);
   }
 
-  TwoDimMatArrayProperty::TwoDimMatArrayProperty(int size, int m, int n, const MBXMLUtils::FQN &xmlName_, bool var_) : xmlName(xmlName_), var(var_) {
+  TwoDimMatArrayProperty::TwoDimMatArrayProperty(int size, int m, int n, const FQN &xmlName_, bool var_) : xmlName(xmlName_), var(var_) {
     resize_(size,m,n);
   }
 
   DOMElement* TwoDimMatArrayProperty::initializeUsingXML(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
     if(e) {
       if(var) {
         e=e->getFirstElementChild();
@@ -140,8 +216,13 @@ namespace MBSimGUI {
 
   DOMElement* TwoDimMatArrayProperty::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *e=D(doc)->createElement(xmlName);
-    parent->insertBefore(e, NULL);
+    DOMNode *e;
+    if(xmlName!=FQN()) {
+      e=D(doc)->createElement(xmlName);
+      parent->insertBefore(e, NULL);
+    }
+    else
+      e = parent;
     for(int i=0; i<ele.size(); i++) {
       DOMElement *ee=D(doc)->createElement(MBSIMFLEX%"row");
       e->insertBefore(ee, NULL);
@@ -189,6 +270,45 @@ namespace MBSimGUI {
     for(int i=0; i<ele.size(); i++)
       for(int j=0; j<ele.size(); j++)
         ele[i][j].toWidget(static_cast<TwoDimMatArrayWidget*>(widget)->getArray()[i][j]);
+  }
+
+  OneDimVecArrayPropertyFactory::OneDimVecArrayPropertyFactory(int size_, int m_, const FQN &xmlName_, bool var_) : size(size_), m(m_), xmlName(xmlName_), var(var_) {
+    xmlName2.first = xmlName.first;
+    xmlName2.second = "eleVec";
+  }
+
+  Property* OneDimVecArrayPropertyFactory::createProperty(int i) {
+    if(i==0)
+      return new ChoiceProperty2(new VecPropertyFactory(getVec<string>(3,"0"),MBSIMFLEX%"eleVec",vector<string>(3,"")),"",4);
+    if(i==1)
+      return new OneDimVecArrayProperty(3,1,xmlName);
+    return NULL;
+  }
+
+  OneDimMatArrayPropertyFactory::OneDimMatArrayPropertyFactory(int size_, int m_, int n_, const FQN &xmlName_, bool var_) : size(size_), m(m_), n(n_), xmlName(xmlName_), var(var_) {
+    xmlName2.first = xmlName.first;
+    xmlName2.second = "eleMat";
+  }
+
+  Property* OneDimMatArrayPropertyFactory::createProperty(int i) {
+    if(i==0)
+      return new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"eleMat",vector<string>(3,"")),"",4);
+    if(i==1)
+      return new OneDimMatArrayProperty(size,m,n,xmlName,var);
+    return NULL;
+  }
+
+  TwoDimMatArrayPropertyFactory::TwoDimMatArrayPropertyFactory(int size_, int m_, int n_, const FQN &xmlName_, bool var_) : size(size_), m(m_), n(n_), xmlName(xmlName_), var(var_) {
+    xmlName2.first = xmlName.first;
+    xmlName2.second = "eleMat";
+  }
+
+  Property* TwoDimMatArrayPropertyFactory::createProperty(int i) {
+    if(i==0)
+      return new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,3,"0"),MBSIMFLEX%"eleMat",vector<string>(3,"")),"",4);
+    if(i==1)
+      return new TwoDimMatArrayProperty(size,m,n,xmlName,var);
+    return NULL;
   }
 
 }

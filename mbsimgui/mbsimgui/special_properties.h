@@ -33,6 +33,21 @@ class QWidget;
 
 namespace MBSimGUI {
 
+  class OneDimVecArrayProperty : public Property {
+    protected:
+      MBXMLUtils::FQN xmlName;
+      std::vector<ExtProperty> ele;
+      bool var;
+    public:
+      OneDimVecArrayProperty(int size=3, int m=3, const MBXMLUtils::FQN &xmlName_="", bool var=false);
+      virtual PropertyInterface* clone() const {return new OneDimVecArrayProperty(*this);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      void resize_(int size, int m=3);
+      void fromWidget(QWidget *widget);
+      void toWidget(QWidget *widget);
+  };
+
   class OneDimMatArrayProperty : public Property {
     protected:
       MBXMLUtils::FQN xmlName;
@@ -61,6 +76,39 @@ namespace MBSimGUI {
       void resize_(int size, int m=3, int n=1);
       void fromWidget(QWidget *widget);
       void toWidget(QWidget *widget); 
+  };
+
+  class OneDimVecArrayPropertyFactory : public PropertyFactory {
+    public:
+      OneDimVecArrayPropertyFactory(int size=3, int m=3, const MBXMLUtils::FQN &xmlName="", bool var=false);
+      Property* createProperty(int i=0);
+      int getSize() const { return 2; }
+    protected:
+      int size, m;
+      MBXMLUtils::FQN xmlName, xmlName2;
+      bool var;
+  };
+
+  class OneDimMatArrayPropertyFactory : public PropertyFactory {
+    public:
+      OneDimMatArrayPropertyFactory(int size=3, int m=3, int n=1, const MBXMLUtils::FQN &xmlName="", bool var=false);
+      Property* createProperty(int i=0);
+      int getSize() const { return 2; }
+    protected:
+      int size, m, n;
+      MBXMLUtils::FQN xmlName, xmlName2;
+      bool var;
+  };
+
+  class TwoDimMatArrayPropertyFactory : public PropertyFactory {
+    public:
+      TwoDimMatArrayPropertyFactory(int size=3, int m=3, int n=1, const MBXMLUtils::FQN &xmlName="", bool var=false);
+      Property* createProperty(int i=0);
+      int getSize() const { return 2; }
+    protected:
+      int size, m, n;
+      MBXMLUtils::FQN xmlName, xmlName2;
+      bool var;
   };
 
 }

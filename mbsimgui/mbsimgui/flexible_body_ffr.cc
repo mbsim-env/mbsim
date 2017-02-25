@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), jointForceArrow(0,false), jointMomentArrow(0,false) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), jointForceArrow(0,false), jointMomentArrow(0,false) {
     Frame *K = new Frame("K",this,true,vector<FQN>(1,MBSIMFLEX%"plotFeatureFrameK"));
     addFrame(K);
 
@@ -50,9 +50,11 @@ namespace MBSimGUI {
 
     Pdm.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeFunctionIntegral",vector<string>(3,"")),"",4));
 
-    rPdm.setProperty(new OneDimMatArrayProperty(3,3,1,MBSIMFLEX%"positionShapeFunctionIntegral"));
+    //rPdm.setProperty(new OneDimMatArrayProperty(3,3,1,MBSIMFLEX%"positionShapeFunctionIntegral"));
+    rPdm.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,3,1),MBSIMFLEX%"positionShapeFunctionIntegral",5));
 
-    PPdm.setProperty(new TwoDimMatArrayProperty(3,1,1,MBSIMFLEX%"shapeFunctionShapeFunctionIntegral"));
+    //PPdm.setProperty(new TwoDimMatArrayProperty(3,1,1,MBSIMFLEX%"shapeFunctionShapeFunctionIntegral"));
+    PPdm.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",5));
 
     Ke.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(1,1,"0"),MBSIMFLEX%"stiffnessMatrix",vector<string>(3,"")),"",4));
 
@@ -60,29 +62,47 @@ namespace MBSimGUI {
 
     beta.setProperty(new ChoiceProperty2(new VecPropertyFactory(2,MBSIMFLEX%"proportionalDamping",vector<string>(3,"")),"",4));
 
-    Knl1.setProperty(new OneDimMatArrayProperty(1,1,1,MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder",true));
+    //Knl1.setProperty(new OneDimMatArrayProperty(1,1,1,MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder",true));
+    Knl1.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(1,1,1,"",true),MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder",5));
 
-    Knl2.setProperty(new TwoDimMatArrayProperty(1,1,1,MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder",true));
+    //Knl2.setProperty(new TwoDimMatArrayProperty(1,1,1,MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder",true));
+    Knl2.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(1,1,1,"",true),MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder",5));
 
     ksigma0.setProperty(new ChoiceProperty2(new VecPropertyFactory(1,MBSIMFLEX%"initialStressIntegral",vector<string>(3,"")),"",4));
 
     ksigma1.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(1,1,"0"),MBSIMFLEX%"nonlinearInitialStressIntegral",vector<string>(3,"")),"",4));
 
-    K0t.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration"));
+    //K0t.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration"));
+    K0t.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration",5));
 
-    K0r.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration"));
+    //K0r.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration"));
+    K0r.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration",5));
 
-    K0om.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"));
+    //K0om.setProperty(new OneDimMatArrayProperty(3,1,1,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"));
+    K0om.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity",5));
 
-    r.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMFLEX%"relativeNodalPosition",vector<string>(3,"")),"",4));
+    //r.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMFLEX%"relativeNodalPosition",vector<string>(3,"")),"",4));
+    r.setProperty(new ChoiceProperty2(new OneDimVecArrayPropertyFactory(3,3),MBSIMFLEX%"relativeNodalPosition",5));
 
-    A.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"1","0"),MBSIMFLEX%"relativeNodalOrientation",vector<string>(3,"")),"",4));
+    //A.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"1","0"),MBSIMFLEX%"relativeNodalOrientation",vector<string>(3,"")),"",4));
+    A.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,3,3),MBSIMFLEX%"relativeNodalOrientation",5));
 
-    Phi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfTranslation",vector<string>(3,"")),"",4));
+    //Phi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfTranslation",vector<string>(3,"")),"",4));
+    Phi.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"shapeMatrixOfTranslation",5));
 
-    Psi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfRotation",vector<string>(3,"")),"",4));
+    //Psi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfRotation",vector<string>(3,"")),"",4));
+    Psi.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"shapeMatrixOfRotation",5));
 
-    sigmahel.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,1,"0"),MBSIMFLEX%"stressMatrix",vector<string>(3,"")),"",4));
+    //sigmahel.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,1,"0"),MBSIMFLEX%"stressMatrix",vector<string>(3,"")),"",4));
+    sigmahel.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(6,1,1),MBSIMFLEX%"stressMatrix",5));
+
+    sigmahen.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(6,1,1),MBSIMFLEX%"nonlinearStressMatrix",5));
+
+    sigma0.setProperty(new ChoiceProperty2(new OneDimVecArrayPropertyFactory(1,6),MBSIMFLEX%"initialStress",5));
+
+    K0F.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(1,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToForce",5));
+
+    K0M.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(1,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToMoment",5));
 
     translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this,MBSIMFLEX),"",3));
 
@@ -178,6 +198,10 @@ namespace MBSimGUI {
     Phi.initializeUsingXML(element);
     Psi.initializeUsingXML(element);
     sigmahel.initializeUsingXML(element);
+    sigmahen.initializeUsingXML(element);
+    sigma0.initializeUsingXML(element);
+    K0F.initializeUsingXML(element);
+    K0M.initializeUsingXML(element);
 
     translation.initializeUsingXML(element);
     rotation.initializeUsingXML(element);
@@ -226,6 +250,10 @@ namespace MBSimGUI {
     Phi.writeXMLFile(ele0);
     Psi.writeXMLFile(ele0);
     sigmahel.writeXMLFile(ele0);
+    sigmahen.writeXMLFile(ele0);
+    sigma0.writeXMLFile(ele0);
+    K0F.writeXMLFile(ele0);
+    K0M.writeXMLFile(ele0);
 
     translation.writeXMLFile(ele0);
     rotation.writeXMLFile(ele0);
