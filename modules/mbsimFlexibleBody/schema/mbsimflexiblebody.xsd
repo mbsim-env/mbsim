@@ -593,63 +593,63 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="relativeNodalPosition" type="lengthVectorNx1CellArray" minOccurs="0">
+          <xs:element name="nodalRelativePosition" type="lengthVectorNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="relativeNodalOrientation" type="rotationMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nodalRelativeOrientation" type="rotationMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="shapeMatrixOfTranslation" type="nounitMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nodalShapeMatrixOfTranslation" type="nounitMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="shapeMatrixOfRotation" type="nounitMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nodalShapeMatrixOfRotation" type="nounitMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="stressMatrix" type="nounitMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nodalStressMatrix" type="nounitMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nonlinearStressMatrix" type="nounitMatrixNxNCellArray" minOccurs="0">
+          <xs:element name="nodalNonlinearStressMatrix" type="nounitMatrixNxNCellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="initialStress" type="lengthVectorNx1CellArray" minOccurs="0">
+          <xs:element name="nodalInitialStress" type="lengthVectorNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="geometricStiffnessMatrixDueToForce" type="nounitMatrixNxNCellArray" minOccurs="0">
+          <xs:element name="nodalGeometricStiffnessMatrixDueToForce" type="nounitMatrixNxNCellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="geometricStiffnessMatrixDueToMoment" type="nounitMatrixNxNCellArray" minOccurs="0">
+          <xs:element name="nodalGeometricStiffnessMatrixDueToMoment" type="nounitMatrixNxNCellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd

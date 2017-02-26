@@ -796,35 +796,35 @@ namespace MBSimGUI {
     addToTab("General",K0om);
 
     //r = new ExtWidget("Relative nodal position",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
-    r = new ExtWidget("Relative nodal position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory),true);
+    r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory),true);
     addToTab("Nodal data", r);
 
     //A = new ExtWidget("Relative nodal orientation",new ChoiceWidget2(new MatWidgetFactory(3,3,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    A = new ExtWidget("Relative nodal orientation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    A = new ExtWidget("Nodal relative orientation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
     addToTab("Nodal data", A);
 
     //Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    Phi = new ExtWidget("Shape matrix of translation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    Phi = new ExtWidget("Nodal shape matrix of translation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
     addToTab("Nodal data", Phi);
 
     //Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new MatWidgetFactory(3,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    Psi = new ExtWidget("Shape matrix of rotation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    Psi = new ExtWidget("Nodal shape matrix of rotation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
     addToTab("Nodal data", Psi);
 
     //sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new MatWidgetFactory(6,1,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
-    sigmahel = new ExtWidget("Stress matrix",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
+    sigmahel = new ExtWidget("Nodal stress matrix",new ChoiceWidget2(new OneDimMatArrayWidgetFactory),true);
     addToTab("Nodal data", sigmahel);
 
-    sigmahen = new ExtWidget("Nonlinear stress matrix",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
+    sigmahen = new ExtWidget("Nodal nonlinear stress matrix",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
     addToTab("Nodal data", sigmahen);
 
-    sigma0 = new ExtWidget("Initial stress",new ChoiceWidget2(new OneDimVecArrayWidgetFactory),true);
+    sigma0 = new ExtWidget("Nodal initial stress",new ChoiceWidget2(new OneDimVecArrayWidgetFactory),true);
     addToTab("Nodal data", sigma0);
 
-    K0F = new ExtWidget("Geometric stiffness matrix due to force",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
+    K0F = new ExtWidget("Nodal geometric stiffness matrix due to force",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
     addToTab("Nodal data", K0F);
 
-    K0M = new ExtWidget("Geometric stiffness matrix due to moment",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
+    K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory),true);
     addToTab("Nodal data", K0M);
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);

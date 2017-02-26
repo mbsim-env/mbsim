@@ -196,15 +196,15 @@ namespace MBSimFlexibleBody {
       void setGeometricStiffnessMatrixDueToAngularVelocity(const std::vector<fmatvec::SqrMatV> &K0om_) { K0om = K0om_; }
       // End of interface
 
-      void setRelativeNodalPosition(const std::vector<fmatvec::Vec3> &r) { KrKP = r; }
-      void setRelativeNodalOrientation(const std::vector<fmatvec::SqrMat3> &A) { ARP = A; }
-      void setShapeMatrixOfTranslation(const std::vector<fmatvec::Mat3xV> &Phi_) { Phi = Phi_; }
-      void setShapeMatrixOfRotation(const std::vector<fmatvec::Mat3xV> &Psi_) { Psi = Psi_; }
-      void setStressMatrix(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahel_) { sigmahel = sigmahel_; }
-      void setNonlinearStressMatrix(const std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > &sigmahen_) { sigmahen = sigmahen_; }
-      void setInitialStress(const std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > &sigma0_) { sigma0 = sigma0_; }
-      void setGeometricStiffnessMatrixDueToForce(const std::vector<std::vector<fmatvec::SqrMatV> > &K0F_) { K0F = K0F_; }
-      void setGeometricStiffnessMatrixDueToMoment(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M_) { K0M = K0M_; }
+      void setNodalRelativePosition(const std::vector<fmatvec::Vec3> &r) { KrKP = r; }
+      void setNodalRelativeOrientation(const std::vector<fmatvec::SqrMat3> &A) { ARP = A; }
+      void setNodalShapeMatrixOfTranslation(const std::vector<fmatvec::Mat3xV> &Phi_) { Phi = Phi_; }
+      void setNodalShapeMatrixOfRotation(const std::vector<fmatvec::Mat3xV> &Psi_) { Psi = Psi_; }
+      void setNodalStressMatrix(const std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > &sigmahel_) { sigmahel = sigmahel_; }
+      void setNodalNonlinearStressMatrix(const std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > &sigmahen_) { sigmahen = sigmahen_; }
+      void setNodalInitialStress(const std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > &sigma0_) { sigma0 = sigma0_; }
+      void setNodalGeometricStiffnessMatrixDueToForce(const std::vector<std::vector<fmatvec::SqrMatV> > &K0F_) { K0F = K0F_; }
+      void setNodalGeometricStiffnessMatrixDueToMoment(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M_) { K0M = K0M_; }
 
       void setPositionShapeFunctionIntegral(const fmatvec::MatV &rPdm_);
       void setShapeFunctionShapeFunctionIntegral(const fmatvec::MatV &PPdm_);
@@ -213,15 +213,15 @@ namespace MBSimFlexibleBody {
       void setGeometricStiffnessMatrixDueToAcceleration(const fmatvec::MatV &K0t_);
       void setGeometricStiffnessMatrixDueToAngularAcceleration(const fmatvec::MatV &K0r_);
       void setGeometricStiffnessMatrixDueToAngularVelocity(const fmatvec::MatV &K0om_);
-      void setRelativeNodalPosition(const fmatvec::VecV &r);
-      void setRelativeNodalOrientation(const fmatvec::MatVx3 &A);
-      void setShapeMatrixOfTranslation(const fmatvec::MatV &Phi_);
-      void setShapeMatrixOfRotation(const fmatvec::MatV &Psi_);
-      void setStressMatrix(const fmatvec::MatV &sigmahel_);
-      void setNonlinearStressMatrix(const fmatvec::MatV &sigmahen_);
-      void setInitialStress(const fmatvec::VecV &sigma0_);
-      void setGeometricStiffnessMatrixDueToForce(const fmatvec::MatV &K0F_);
-      void setGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_);
+      void setNodalRelativePosition(const fmatvec::VecV &r);
+      void setNodalRelativeOrientation(const fmatvec::MatVx3 &A);
+      void setNodalShapeMatrixOfTranslation(const fmatvec::MatV &Phi_);
+      void setNodalShapeMatrixOfRotation(const fmatvec::MatV &Psi_);
+      void setNodalStressMatrix(const fmatvec::MatV &sigmahel_);
+      void setNodalNonlinearStressMatrix(const fmatvec::MatV &sigmahen_);
+      void setNodalInitialStress(const fmatvec::VecV &sigma0_);
+      void setNodalGeometricStiffnessMatrixDueToForce(const fmatvec::MatV &K0F_);
+      void setNodalGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_);
 
       void addFrame(FixedNodalFrame *frame); 
 

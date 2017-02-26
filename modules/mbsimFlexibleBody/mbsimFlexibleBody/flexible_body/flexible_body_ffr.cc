@@ -826,37 +826,37 @@ namespace MBSimFlexibleBody {
       K0om[i] = K0om_(RangeV(n*i,n*i+n-1),RangeV(0,n-1));
   }
 
-  void FlexibleBodyFFR::setRelativeNodalPosition(const VecV &r) {
+  void FlexibleBodyFFR::setNodalRelativePosition(const VecV &r) {
     KrKP.resize(r.size()/3);
     for(unsigned int i=0; i<KrKP.size(); i++)
       KrKP[i] = r(RangeV(3*i,3*i+2));
   }
 
-  void FlexibleBodyFFR::setRelativeNodalOrientation(const MatVx3 &A) {
+  void FlexibleBodyFFR::setNodalRelativeOrientation(const MatVx3 &A) {
     ARP.resize(A.rows()/3);
     for(unsigned int i=0; i<ARP.size(); i++)
       ARP[i] = A(RangeV(3*i,3*i+2),RangeV(0,2));
   }
 
-  void FlexibleBodyFFR::setShapeMatrixOfTranslation(const MatV &Phi_) {
+  void FlexibleBodyFFR::setNodalShapeMatrixOfTranslation(const MatV &Phi_) {
     Phi.resize(Phi_.rows()/3);
     for(unsigned int i=0; i<Phi.size(); i++)
       Phi[i] = Phi_(RangeV(3*i,3*i+2),RangeV(0,Phi_.cols()-1));
   }
 
-  void FlexibleBodyFFR::setShapeMatrixOfRotation(const MatV &Psi_) {
+  void FlexibleBodyFFR::setNodalShapeMatrixOfRotation(const MatV &Psi_) {
     Psi.resize(Psi_.rows()/3);
     for(unsigned int i=0; i<Psi.size(); i++)
       Psi[i] = Psi_(RangeV(3*i,3*i+2),RangeV(0,Psi_.cols()-1));
   }
 
-  void FlexibleBodyFFR::setStressMatrix(const MatV &sigmahel_) {
+  void FlexibleBodyFFR::setNodalStressMatrix(const MatV &sigmahel_) {
     sigmahel.resize(sigmahel_.rows()/6);
     for(unsigned int i=0; i<sigmahel.size(); i++)
       sigmahel[i] = sigmahel_(RangeV(6*i,6*i+5),RangeV(0,sigmahel_.cols()-1));
   }
 
-  void FlexibleBodyFFR::setNonlinearStressMatrix(const MatV &sigmahen_) {
+  void FlexibleBodyFFR::setNodalNonlinearStressMatrix(const MatV &sigmahen_) {
     int n = sigmahen_.cols();
     int k = 0;
     sigmahen.resize(sigmahen_.rows()/6/n);
@@ -869,13 +869,13 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBodyFFR::setInitialStress(const VecV &sigma0_) {
+  void FlexibleBodyFFR::setNodalInitialStress(const VecV &sigma0_) {
     sigma0.resize(sigma0_.rows()/6);
     for(unsigned int i=0; i<sigma0.size(); i++)
       sigma0[i] = sigma0_(RangeV(6*i,6*i+5));
   }
 
-  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToForce(const MatV &K0F_) {
+  void FlexibleBodyFFR::setNodalGeometricStiffnessMatrixDueToForce(const MatV &K0F_) {
     int n = K0F_.cols();
     int k = 0;
     K0F.resize(K0F_.rows()/n/n);
@@ -888,7 +888,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBodyFFR::setGeometricStiffnessMatrixDueToMoment(const MatV &K0M_) {
+  void FlexibleBodyFFR::setNodalGeometricStiffnessMatrixDueToMoment(const MatV &K0M_) {
     int n = K0M_.cols();
     int k = 0;
     K0M.resize(K0M_.rows()/n/n);
@@ -1061,7 +1061,7 @@ namespace MBSimFlexibleBody {
         setGeometricStiffnessMatrixDueToAngularVelocity(getMat(e));
     }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeNodalPosition");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativePosition");
     if(e) {
       e=e->getFirstElementChild();
       if(E(e)->getTagName()==MBSIMFLEX%"ele") {
@@ -1071,10 +1071,10 @@ namespace MBSimFlexibleBody {
         }
       }
       else
-        setRelativeNodalPosition(getVec(e));
+        setNodalRelativePosition(getVec(e));
     }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"relativeNodalOrientation");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativeOrientation");
     if(e) {
       e=e->getFirstElementChild();
       if(E(e)->getTagName()==MBSIMFLEX%"ele") {
@@ -1084,10 +1084,10 @@ namespace MBSimFlexibleBody {
         }
       }
       else
-        if(e) setRelativeNodalOrientation(getMat(e));
+        if(e) setNodalRelativeOrientation(getMat(e));
     }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfTranslation");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfTranslation");
     if(e) {
       e=e->getFirstElementChild();
       if(E(e)->getTagName()==MBSIMFLEX%"ele") {
@@ -1097,10 +1097,10 @@ namespace MBSimFlexibleBody {
         }
       }
       else
-        if(e) setShapeMatrixOfTranslation(getMat(e));
+        if(e) setNodalShapeMatrixOfTranslation(getMat(e));
     }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shapeMatrixOfRotation");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalShapeMatrixOfRotation");
     if(e) {
       e=e->getFirstElementChild();
       if(E(e)->getTagName()==MBSIMFLEX%"ele") {
@@ -1110,10 +1110,10 @@ namespace MBSimFlexibleBody {
         }
       }
       else
-        if(e) setShapeMatrixOfRotation(getMat(e));
+        if(e) setNodalShapeMatrixOfRotation(getMat(e));
     }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"stressMatrix");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalStressMatrix");
     if(e) {
       e=e->getFirstElementChild();
       if(E(e)->getTagName()==MBSIMFLEX%"ele") {
@@ -1123,10 +1123,10 @@ namespace MBSimFlexibleBody {
         }
       }
       else
-        if(e) setStressMatrix(getMat(e));
+        if(e) setNodalStressMatrix(getMat(e));
     }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStressMatrix");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalNonlinearStressMatrix");
     if(e) {
       e=e->getFirstElementChild();
       if(E(e)->getTagName()==MBSIMFLEX%"row") {
@@ -1141,10 +1141,10 @@ namespace MBSimFlexibleBody {
         }
       }
       else
-        setNonlinearStressMatrix(getMat(e));
+        setNodalNonlinearStressMatrix(getMat(e));
     }
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"initialStress");
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalInitialStress");
     if(e) {
       e=e->getFirstElementChild();
       if(E(e)->getTagName()==MBSIMFLEX%"ele") {
@@ -1154,7 +1154,7 @@ namespace MBSimFlexibleBody {
         }
       }
       else
-        setInitialStress(getVec(e));
+        setNodalInitialStress(getVec(e));
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");

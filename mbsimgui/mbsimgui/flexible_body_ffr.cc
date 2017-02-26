@@ -82,27 +82,27 @@ namespace MBSimGUI {
     K0om.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity",5));
 
     //r.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIMFLEX%"relativeNodalPosition",vector<string>(3,"")),"",4));
-    r.setProperty(new ChoiceProperty2(new OneDimVecArrayPropertyFactory(3,3),MBSIMFLEX%"relativeNodalPosition",5));
+    r.setProperty(new ChoiceProperty2(new OneDimVecArrayPropertyFactory(3,3),MBSIMFLEX%"nodalRelativePosition",5));
 
     //A.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"1","0"),MBSIMFLEX%"relativeNodalOrientation",vector<string>(3,"")),"",4));
-    A.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,3,3),MBSIMFLEX%"relativeNodalOrientation",5));
+    A.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,3,3),MBSIMFLEX%"nodalRelativeOrientation",5));
 
     //Phi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfTranslation",vector<string>(3,"")),"",4));
-    Phi.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"shapeMatrixOfTranslation",5));
+    Phi.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"nodalShapeMatrixOfTranslation",5));
 
     //Psi.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"shapeMatrixOfRotation",vector<string>(3,"")),"",4));
-    Psi.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"shapeMatrixOfRotation",5));
+    Psi.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(3,1,1),MBSIMFLEX%"nodalShapeMatrixOfRotation",5));
 
     //sigmahel.setProperty(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,1,"0"),MBSIMFLEX%"stressMatrix",vector<string>(3,"")),"",4));
-    sigmahel.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(6,1,1),MBSIMFLEX%"stressMatrix",5));
+    sigmahel.setProperty(new ChoiceProperty2(new OneDimMatArrayPropertyFactory(6,1,1),MBSIMFLEX%"nodalStressMatrix",5));
 
-    sigmahen.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(6,1,1),MBSIMFLEX%"nonlinearStressMatrix",5));
+    sigmahen.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(6,1,1),MBSIMFLEX%"nodalNonlinearStressMatrix",5));
 
-    sigma0.setProperty(new ChoiceProperty2(new OneDimVecArrayPropertyFactory(1,6),MBSIMFLEX%"initialStress",5));
+    sigma0.setProperty(new ChoiceProperty2(new OneDimVecArrayPropertyFactory(1,6),MBSIMFLEX%"nodalInitialStress",5));
 
-    K0F.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(1,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToForce",5));
+    K0F.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(1,1,1),MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForce",5));
 
-    K0M.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(1,1,1),MBSIMFLEX%"geometricStiffnessMatrixDueToMoment",5));
+    K0M.setProperty(new ChoiceProperty2(new TwoDimMatArrayPropertyFactory(1,1,1),MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment",5));
 
     translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this,MBSIMFLEX),"",3));
 
