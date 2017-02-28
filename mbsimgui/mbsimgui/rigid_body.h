@@ -45,7 +45,7 @@ namespace MBSimGUI {
       QMenu* createFrameContextMenu() {return new FixedRelativeFrameContextContextMenu(this);}
     protected:
       bool constrained;
-      ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, bodyFixedRepresentationOfAngularVelocity, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow;
+      ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, bodyFixedRepresentationOfAngularVelocity, ombvEditor;
   };
 
 }

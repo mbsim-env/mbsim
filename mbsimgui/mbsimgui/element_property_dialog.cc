@@ -676,9 +676,6 @@ namespace MBSimGUI {
     static_cast<RigidBody*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
     static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.toWidget(bodyFixedRepresentationOfAngularVelocity);
     static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
-    static_cast<RigidBody*>(element)->weightArrow.toWidget(weightArrow);
-    static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
-    static_cast<RigidBody*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
   }
 
   void RigidBodyPropertyDialog::fromWidget(Element *element) {
@@ -693,9 +690,6 @@ namespace MBSimGUI {
     static_cast<RigidBody*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
     static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.fromWidget(bodyFixedRepresentationOfAngularVelocity);
     static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
-    static_cast<RigidBody*>(element)->weightArrow.fromWidget(weightArrow);
-    static_cast<RigidBody*>(element)->jointForceArrow.fromWidget(jointForceArrow);
-    static_cast<RigidBody*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
   }
 
   int RigidBodyPropertyDialog::getqRelSize() const {
@@ -796,7 +790,7 @@ namespace MBSimGUI {
     addToTab("General",K0om);
 
     //r = new ExtWidget("Relative nodal position",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,vector<QStringList>(3)),QBoxLayout::RightToLeft),true);
-    r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory),true);
+    r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(1,3,true)),true);
     addToTab("Nodal data", r);
 
     //A = new ExtWidget("Relative nodal orientation",new ChoiceWidget2(new MatWidgetFactory(3,3,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft),true);
@@ -844,15 +838,8 @@ namespace MBSimGUI {
     coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ExtPhysicalVarWidget(input),true);
     addToTab("Kinematics", coordinateTransformationForRotation);
 
-//    ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
-    ombvEditor = new ExtWidget("OpenMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true);
+    ombvEditor = new ExtWidget("Enable openMBV",new FlexibleBodyFFRMBSOMBVWidget("NOTSET"),true);
     addToTab("Visualisation", ombvEditor);
-
-    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-    addToTab("Visualisation",jointForceArrow);
-
-    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-    addToTab("Visualisation",jointMomentArrow);
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
     connect(Pdm->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
@@ -862,36 +849,102 @@ namespace MBSimGUI {
 
   void FlexibleBodyFFRPropertyDialog::resizeVariables() {
     int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
-    if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==0)
-      rPdm->resize_(size,size);
+    if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==1)
+      rPdm->resize_(3,size);
     else
-      rPdm->resize_(3*size,size);
-    if(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getIndex()==0)
+      rPdm->resize_(9,size);
+    if(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getIndex()==1)
       PPdm->resize_(size,size);
     else
       PPdm->resize_(9*size,size);
     Ke->resize_(size,size);
     De->resize_(size,size);
-    if(Knl1->isActive())
-      static_cast<OneDimMatArrayWidget*>(Knl1->getWidget())->resize_(size,size,size);
-    if(Knl2->isActive())
-      static_cast<TwoDimMatArrayWidget*>(Knl2->getWidget())->resize_(size,size,size);
+    if(Knl1->isActive()) {
+      if(static_cast<ChoiceWidget2*>(Knl1->getWidget())->getIndex()==1)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Knl1->getWidget())->getWidget())->resize_(size,size,size);
+      else
+        Knl1->resize_(size*size,size);
+    }
+    if(Knl2->isActive()) {
+      if(static_cast<ChoiceWidget2*>(Knl2->getWidget())->getIndex()==1)
+        static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Knl2->getWidget())->getWidget())->resize_(size,size,size,size);
+      else
+        Knl2->resize_(size*size*size,size);
+    }
     ksigma0->resize_(size,1);
     ksigma1->resize_(size,size);
-    if(K0t->isActive())
-      static_cast<OneDimMatArrayWidget*>(K0t->getWidget())->resize_(size,size);
-    if(K0r->isActive())
-      static_cast<OneDimMatArrayWidget*>(K0r->getWidget())->resize_(size,size);
-    if(K0om->isActive())
-      static_cast<OneDimMatArrayWidget*>(K0om->getWidget())->resize_(size,size);
+    if(K0t->isActive()) {
+      if(static_cast<ChoiceWidget2*>(K0t->getWidget())->getIndex()==1)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0t->getWidget())->getWidget())->resize_(3,size,size);
+      else
+        K0t->resize_(3*size,size);
+    }
+    if(K0r->isActive()) {
+      if(static_cast<ChoiceWidget2*>(K0r->getWidget())->getIndex()==1)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0r->getWidget())->getWidget())->resize_(3,size,size);
+      else
+        K0r->resize_(3*size,size);
+    }
+    if(K0om->isActive()) {
+      if(static_cast<ChoiceWidget2*>(K0om->getWidget())->getIndex()==1)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0om->getWidget())->getWidget())->resize_(3,size,size);
+      else
+        K0om->resize_(3*size,size);
+    }
     if(r->isActive()) {
-      //int rsize = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->rows();
-//      int rsize = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->rows();
-//      cout << rsize << endl;
-//      A->resize_(rsize,3);
-//      Phi->resize_(rsize,size);
-//      Psi->resize_(rsize,size);
-//      sigmahel->resize_(2*rsize,size);
+      int rsize;
+      if(static_cast<ChoiceWidget2*>(r->getWidget())->getIndex()==1)
+        rsize = static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getArray().size();
+      else
+        rsize = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->rows()/3;
+      if(A->isActive()) {
+        if(static_cast<ChoiceWidget2*>(A->getWidget())->getIndex()==1)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->resize_(rsize,3,3);
+        else
+          A->resize_(3*rsize,3);
+      }
+      if(Phi->isActive()) {
+        if(static_cast<ChoiceWidget2*>(Phi->getWidget())->getIndex()==1)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->resize_(rsize,3,size);
+        else
+          Phi->resize_(3*rsize,size);
+      }
+      if(Psi->isActive()) {
+        if(static_cast<ChoiceWidget2*>(Psi->getWidget())->getIndex()==1)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Psi->getWidget())->getWidget())->resize_(rsize,3,size);
+        else
+          Psi->resize_(3*rsize,size);
+      }
+      if(sigmahel->isActive()) {
+        if(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getIndex()==1)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->resize_(rsize,6,size);
+        else
+          sigmahel->resize_(6*rsize,size);
+      }
+      if(sigmahen->isActive()) {
+        if(static_cast<ChoiceWidget2*>(sigmahen->getWidget())->getIndex()==1)
+          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(sigmahen->getWidget())->getWidget())->resize_(rsize,size,6,size);
+        else
+          sigmahen->resize_(6*rsize*size,size);
+      }
+      if(sigma0->isActive()) {
+        if(static_cast<ChoiceWidget2*>(sigma0->getWidget())->getIndex()==1)
+          static_cast<OneDimVecArrayWidget*>(static_cast<ChoiceWidget2*>(sigma0->getWidget())->getWidget())->resize_(rsize,6,1);
+        else
+          sigma0->resize_(6*rsize,1);
+      }
+      if(K0F->isActive()) {
+        if(static_cast<ChoiceWidget2*>(K0F->getWidget())->getIndex()==1)
+          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0F->getWidget())->getWidget())->resize_(rsize,size,size,size);
+        else
+          K0F->resize_(size*rsize*size,size);
+      }
+      if(K0M->isActive()) {
+        if(static_cast<ChoiceWidget2*>(K0M->getWidget())->getIndex()==1)
+          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0M->getWidget())->getWidget())->resize_(rsize,size,size,size);
+        else
+          K0M->resize_(size*rsize*size,size);
+      }
     }
   }
 
@@ -927,8 +980,6 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
     static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
     static_cast<FlexibleBodyFFR*>(element)->ombvEditor.toWidget(ombvEditor);
-    static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.toWidget(jointForceArrow);
-    static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
   }
 
   void FlexibleBodyFFRPropertyDialog::fromWidget(Element *element) {
@@ -963,8 +1014,6 @@ namespace MBSimGUI {
     static_cast<FlexibleBodyFFR*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
     static_cast<FlexibleBodyFFR*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
     static_cast<FlexibleBodyFFR*>(element)->ombvEditor.fromWidget(ombvEditor);
-    static_cast<FlexibleBodyFFR*>(element)->jointForceArrow.fromWidget(jointForceArrow);
-    static_cast<FlexibleBodyFFR*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
   }
 
   int FlexibleBodyFFRPropertyDialog::getqRelSize() const {

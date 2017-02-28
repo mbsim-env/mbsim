@@ -26,18 +26,25 @@
 namespace MBSimGUI {
 
   class ExtWidget;
-  class ExtProperty;
+  class CustomSpinBox;
 
   class OneDimVecArrayWidget : public Widget {
+    Q_OBJECT
+    protected:
       std::vector<ExtWidget*> ele;
+      CustomSpinBox* sizeCombo;
+      int m;
     public:
-      OneDimVecArrayWidget(int size=3, int m=3);
+      OneDimVecArrayWidget(int size=3, int m=3, bool var=false);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
       void resize_(int m, int n);
+    public slots:
+      void currentIndexChanged(int);
   };
 
   class OneDimMatArrayWidget : public Widget {
+    protected:
       std::vector<ExtWidget*> ele;
     public:
       OneDimMatArrayWidget(int size=3, int m=3, int n=1);
@@ -52,18 +59,20 @@ namespace MBSimGUI {
     public:
       TwoDimMatArrayWidget(int size=3, int m=3, int n=1);
       const std::vector<std::vector<ExtWidget*> >& getArray() const { return ele; }
-      void resize_(int size, int m, int n);
+      void resize_(int rsize, int csize, int m, int n);
       void resize_(int m, int n);
  };
 
   class OneDimVecArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimVecArrayWidgetFactory();
+      OneDimVecArrayWidgetFactory(int size=3, int m=3, bool var=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
       std::vector<QString> name;
+      int size, m;
+      bool var;
   };
 
   class OneDimMatArrayWidgetFactory : public WidgetFactory {

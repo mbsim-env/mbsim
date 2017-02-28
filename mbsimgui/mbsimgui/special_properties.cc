@@ -266,9 +266,9 @@ namespace MBSimGUI {
   }
 
   void TwoDimMatArrayProperty::toWidget(QWidget *widget) {
-    static_cast<TwoDimMatArrayWidget*>(widget)->resize_(ele.size(),0,0);
+    static_cast<TwoDimMatArrayWidget*>(widget)->resize_(ele.size(),ele[0].size(),0,0);
     for(int i=0; i<ele.size(); i++)
-      for(int j=0; j<ele.size(); j++)
+      for(int j=0; j<ele[i].size(); j++)
         ele[i][j].toWidget(static_cast<TwoDimMatArrayWidget*>(widget)->getArray()[i][j]);
   }
 

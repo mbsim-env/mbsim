@@ -37,7 +37,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), bodyFixedRepresentationOfAngularVelocity(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
+  RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), bodyFixedRepresentationOfAngularVelocity(0,false), ombvEditor(0,true) {
     Frame *C = new Frame("C",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
     addFrame(C);
 
@@ -63,12 +63,6 @@ namespace MBSimGUI {
     bodyFixedRepresentationOfAngularVelocity.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"bodyFixedRepresentationOfAngularVelocity",vector<string>(2,"")),"",4));
 
     ombvEditor.setProperty(new OMBVRigidBodySelectionProperty(this));
-
-    weightArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVWeight",getID()));
-
-    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointForce",getID()));
-
-    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIM%"enableOpenMBVJointMoment",getID()));
   }
 
   int RigidBody::getqRelSize() const {
@@ -142,11 +136,6 @@ namespace MBSimGUI {
     else
       getFrame(0)->setOpenMBVFrame(false);
 
-    weightArrow.initializeUsingXML(element);
-
-    jointForceArrow.initializeUsingXML(element);
-    jointMomentArrow.initializeUsingXML(element);
-
     getFrame(0)->initializeUsingXML3(element);
 
     return element;
@@ -188,11 +177,6 @@ namespace MBSimGUI {
       C->writeXMLFile2(ele1);
       ele0->insertBefore(ele1, NULL);
     }
-
-    weightArrow.writeXMLFile(ele0);
-
-    jointForceArrow.writeXMLFile(ele0);
-    jointMomentArrow.writeXMLFile(ele0);
 
     C->writeXMLFile3(ele0);
 

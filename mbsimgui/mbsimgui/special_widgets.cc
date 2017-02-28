@@ -28,11 +28,22 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  OneDimVecArrayWidget::OneDimVecArrayWidget(int size, int m) {
+  OneDimVecArrayWidget::OneDimVecArrayWidget(int size, int m_, bool var) : m(m_) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
+    if(var) {
+      sizeCombo = new CustomSpinBox;
+      sizeCombo->setValue(size);
+      layout->addWidget(sizeCombo);
+      QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    }
     resize_(size,m,1);
+  }
+
+  void OneDimVecArrayWidget::currentIndexChanged(int size) {
+    resize_(size,m,1);
+//    emit sizeChanged(size);
   }
 
   void OneDimVecArrayWidget::resize_(int size, int m, int n) {
@@ -94,23 +105,23 @@ namespace MBSimGUI {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    resize_(size,m,n);
+    resize_(size,size,m,n);
  }
 
-  void TwoDimMatArrayWidget::resize_(int size, int m, int n) {
-    if(ele.size()!=size) {
+  void TwoDimMatArrayWidget::resize_(int rsize, int csize, int m, int n) {
+    if(ele.size()!=rsize or ele[0].size()!=csize) {
       for(unsigned int i=0; i<ele.size(); i++) {
         for(unsigned int j=0; j<ele.size(); j++) {
           layout()->removeWidget(ele[i][j]);
           delete ele[i][j];
         }
       }
-      ele.resize(size);
-      for(int i=0; i<size; i++) {
-        ele[i].resize(size);
-        for(int j=0; j<size; j++) {
+      ele.resize(rsize);
+      for(int i=0; i<rsize; i++) {
+        ele[i].resize(csize);
+        for(int j=0; j<csize; j++) {
           QString name = QString("ele")+QString::number(i+1)+QString::number(j+1);
-          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,m,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
+          ele[i][j] = new ExtWidget(name,new ChoiceWidget2(new MatWidgetFactory(m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft));
           layout()->addWidget(ele[i][j]);
         }
       }
@@ -123,16 +134,16 @@ namespace MBSimGUI {
         ele[i][j]->resize_(m,n);
   }
 
-  OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory() : name(2) {
+  OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory(int size_, int m_, bool var_) : name(2), size(size_), m(m_), var(var_) {
     name[0] = "Vector";
     name[1] = "Cell array";
   }
 
   QWidget* OneDimVecArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft);
+      return var?new ChoiceWidget2(new VecSizeVarWidgetFactory(size*m),QBoxLayout::RightToLeft):new ChoiceWidget2(new VecWidgetFactory(size*m),QBoxLayout::RightToLeft);
     if(i==1)
-      return new OneDimVecArrayWidget();
+      return new OneDimVecArrayWidget(size,m,var);
     return NULL;
   }
 

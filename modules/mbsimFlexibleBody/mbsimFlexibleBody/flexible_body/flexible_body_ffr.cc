@@ -314,7 +314,7 @@ namespace MBSimFlexibleBody {
 
       updNodalPos.resize(KrKP.size(),true);
       updNodalVel.resize(KrKP.size(),true);
-      updNodalStress.resize(sigmahel.size(),true);
+      updNodalStress.resize(KrKP.size(),true);
       WrOP.resize(KrKP.size());
       WrRP.resize(KrKP.size());
       disp.resize(KrKP.size());
@@ -326,8 +326,8 @@ namespace MBSimFlexibleBody {
       if(not Psi.size())
         Psi.resize(Phi.size(),Mat3xV(ne));
       if(not sigma0.size())
-        sigma0.resize(sigmahel.size());
-      sigma.resize(sigma0.size());
+        sigma0.resize(KrKP.size());
+      sigma.resize(KrKP.size());
 
       updateM_ = &FlexibleBodyFFR::updateMNotConst;
       updateLLM_ = &FlexibleBodyFFR::updateLLMNotConst;

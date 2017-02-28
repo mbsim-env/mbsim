@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true), jointForceArrow(0,false), jointMomentArrow(0,false) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true) {
     Frame *K = new Frame("K",this,true,vector<FQN>(1,MBSIMFLEX%"plotFeatureFrameK"));
     addFrame(K);
 
@@ -116,10 +116,6 @@ namespace MBSimGUI {
     coordinateTransformationForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 
     ombvEditor.setProperty(new FlexibleBodyFFRMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBV",getID()));
-
-    jointForceArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBVJointForce",getID()));
-
-    jointMomentArrow.setProperty(new ArrowMBSOMBVProperty("NOTSET",MBSIMFLEX%"enableOpenMBVJointMoment",getID()));
   }
 
   int FlexibleBodyFFR::getqRelSize() const {
@@ -216,9 +212,6 @@ namespace MBSimGUI {
     else
       getFrame(0)->setOpenMBVFrame(false);
 
-    jointForceArrow.initializeUsingXML(element);
-    jointMomentArrow.initializeUsingXML(element);
-
     getFrame(0)->initializeUsingXML3(element);
 
     return element;
@@ -279,9 +272,6 @@ namespace MBSimGUI {
       K->writeXMLFile2(ele1);
       ele0->insertBefore(ele1, NULL);
     }
-
-    jointForceArrow.writeXMLFile(ele0);
-    jointMomentArrow.writeXMLFile(ele0);
 
     K->writeXMLFile3(ele0);
 
