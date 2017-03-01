@@ -34,8 +34,6 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
-  class FixedNodalFrame;
-
   /*!
    *  \brief Flexible body using a floating frame of reference formulation
    *
@@ -222,8 +220,6 @@ namespace MBSimFlexibleBody {
       void setNodalInitialStress(const fmatvec::VecV &sigma0_);
       void setNodalGeometricStiffnessMatrixDueToForce(const fmatvec::MatV &K0F_);
       void setNodalGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_);
-
-      void addFrame(FixedNodalFrame *frame); 
 
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;

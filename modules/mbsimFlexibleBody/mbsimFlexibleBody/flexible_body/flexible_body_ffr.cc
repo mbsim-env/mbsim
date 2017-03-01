@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "flexible_body_ffr.h"
-#include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/dynamic_system.h"
@@ -224,18 +223,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::init(InitStage stage) {
     if(stage==preInit) {
-      for(unsigned int k=1; k<frame.size(); k++) {
-        if(dynamic_cast<FixedNodalFrame*>(frame[k])) {
-          if(not(static_cast<FixedNodalFrame*>(frame[k])->getFrameOfReference()))
-            static_cast<FixedNodalFrame*>(frame[k])->setFrameOfReference(K);
-        }
-      }
-
       ne = Pdm.cols();
-      for(unsigned int i=1; i<frame.size(); i++)
-        if(dynamic_cast<FixedNodalFrame*>(frame[i])) {
-          static_cast<FixedNodalFrame*>(frame[i])->setNumberOfModeShapes(ne);
-        }
 
       for(unsigned int k=0; k<contour.size(); k++) {
         RigidContour *contour_ = dynamic_cast<RigidContour*>(contour[k]);
@@ -747,24 +735,15 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::updateqRef(const Vec& ref) {
     NodeBasedBody::updateqRef(ref);
     qRel>>q;
-    for(unsigned int i=1; i<frame.size(); i++)
-      if(dynamic_cast<FixedNodalFrame*>(frame[i]))
-        static_cast<FixedNodalFrame*>(frame[i])->updateqRef(q(nq-ne,nq-1));
   }
 
   void FlexibleBodyFFR::updateuRef(const Vec& ref) {
     NodeBasedBody::updateuRef(ref);
     uRel>>u;
-    for(unsigned int i=1; i<frame.size(); i++)
-      if(dynamic_cast<FixedNodalFrame*>(frame[i]))
-        static_cast<FixedNodalFrame*>(frame[i])->updateqdRef(u(nu[0]-ne,nu[0]-1));
   }
 
   void FlexibleBodyFFR::updateudRef(const Vec& ref) {
     NodeBasedBody::updateudRef(ref);
-    for(unsigned int i=1; i<frame.size(); i++)
-      if(dynamic_cast<FixedNodalFrame*>(frame[i]))
-        static_cast<FixedNodalFrame*>(frame[i])->updateqddRef(ud(nu[0]-ne,nu[0]-1));
   }
 
   void FlexibleBodyFFR::setPositionShapeFunctionIntegral(const MatV &rPdm_) {
@@ -899,10 +878,6 @@ namespace MBSimFlexibleBody {
         k++;
       }
     }
-  }
-
-  void FlexibleBodyFFR::addFrame(FixedNodalFrame *frame_) {
-    NodeBasedBody::addFrame(frame_);
   }
 
   void FlexibleBodyFFR::updateMConst() {
