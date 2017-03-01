@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/links/joint.h"
@@ -76,9 +76,20 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   addObject(body2);
   Kr(0) = l2/2;
   Mat3xV T(2*n), P(2*n);
-  body2->addFrame(new FixedNodalFrame("Q", 2.*Kr, T, P));
+  body2->addFrame(new NodeFrame("Q",0));
   body2->getFrame("Q")->enableOpenMBV(0.3);
   body2->setFrameOfReference(body1->getFrame("Q"));
+
+  vector<Vec3> rNod(1);
+  rNod[0] = 2.*Kr;
+
+  vector<Mat3xV> TNod(1), PNod(1);
+  TNod[0] = T;
+  PNod[0] = P;
+
+  body2->setNodalRelativePosition(rNod);
+  body2->setNodalShapeMatrixOfTranslation(TNod);
+  body2->setNodalShapeMatrixOfRotation(PNod);
 
   SymMat rrdm(3);
   rrdm(0,0) = J2;

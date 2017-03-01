@@ -52,7 +52,7 @@
           <frames>
             <FixedRelativeFrame name="K">
               <enableOpenMBV>
-                <?OPENMBV_ID 8?>
+                <?OPENMBV_ID 6?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -65,7 +65,7 @@
             </FixedRelativeFrame>
             <FixedRelativeFrame name="Q">
               <enableOpenMBV>
-                <?OPENMBV_ID 9?>
+                <?OPENMBV_ID 7?>
                 <size unit="cm">1</size>
               </enableOpenMBV>
               <relativePosition unit="m">
@@ -80,7 +80,7 @@
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 4?>
+              <?OPENMBV_ID 2?>
               <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.333333</ele>
@@ -114,7 +114,7 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 5?>
+            <?OPENMBV_ID 3?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -274,64 +274,32 @@ ret = 0;
               </row>
             </shapeFunctionShapeFunctionIntegral>
             <stiffnessMatrix>load('data.asc','Ke').Ke</stiffnessMatrix>
+            <nodalRelativePosition>
+              <ele unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>l2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </ele>
+            </nodalRelativePosition>
+            <nodalShapeMatrixOfTranslation>
+              <ele>zeros(3,2*n)</ele>
+            </nodalShapeMatrixOfTranslation>
             <stateDependentRotation>
               <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
             </stateDependentRotation>
             <frames>
-              <FixedNodalFrame name="Q">
-                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+globalPosition"/>
+              <NodeFrame name="Q">
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                  <?OPENMBV_ID 16?>
-                  <size unit="cm">1</size>
+                  <?OPENMBV_ID 27?>
                 </enableOpenMBV>
-                <relativePosition unit="m">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>l2</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </xmlVector>
-                </relativePosition>
-                <shapeMatrixOfTranslation unit="-">zeros(3,2*n)</shapeMatrixOfTranslation>
-              </FixedNodalFrame>
+                <nodeNumber unit="-">1</nodeNumber>
+              </NodeFrame>
             </frames>
             <contours/>
-            <openMBVRigidBody>
-              <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-                <?OPENMBV_ID 12?>
-                <diffuseColor>
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>0.666667</ele>
-                    <ele>1</ele>
-                    <ele>1</ele>
-                  </xmlVector>
-                </diffuseColor>
-                <transparency unit="-">0.3</transparency>
-                <initialTranslation unit="m">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>l2/2</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </xmlVector>
-                </initialTranslation>
-                <initialRotation unit="rad">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </xmlVector>
-                </initialRotation>
-                <scaleFactor unit="-">1</scaleFactor>
-                <length unit="m">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>l2</ele>
-                    <ele>h2</ele>
-                    <ele>d2</ele>
-                  </xmlVector>
-                </length>
-              </Cuboid>
-            </openMBVRigidBody>
             <enableOpenMBVFrameK>
-              <?OPENMBV_ID 13?>
+              <?OPENMBV_ID 11?>
               <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
             </enableOpenMBVFrameK>
           </FlexibleBodyFFR>
@@ -370,7 +338,7 @@ ret = 0;
           <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
-              <?OPENMBV_ID 19?>
+              <?OPENMBV_ID 17?>
               <diffuseColor unit="-">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.166667</ele>
@@ -404,13 +372,14 @@ ret = 0;
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-            <?OPENMBV_ID 20?>
+            <?OPENMBV_ID 18?>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
       </objects>
       <links>
         <Joint name="Joint1">
+          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleBodyFFR2]/Frame[Q]"/>
           <forceDirection unit="-">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
@@ -430,11 +399,10 @@ ret = 0;
           <forceLaw>
             <BilateralConstraint/>
           </forceLaw>
-          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleBodyFFR2]/Frame[Q]"/>
         </Joint>
       </links>
       <enableOpenMBVFrameI>
-        <?OPENMBV_ID 3?>
+        <?OPENMBV_ID 1?>
         <size unit="cm">1</size>
       </enableOpenMBVFrameI>
       <environments>
@@ -453,7 +421,7 @@ ret = 0;
 
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSimIntegrator">
     <startTime unit="s">0</startTime>
-    <endTime unit="s">1</endTime>
+    <endTime unit="s">0.1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
     <absoluteToleranceScalar>1e-10</absoluteToleranceScalar>
     <relativeToleranceScalar unit="-">1e-10</relativeToleranceScalar>

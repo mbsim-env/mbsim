@@ -525,108 +525,116 @@
               </row>
             </xmlMatrix>
           </stiffnessMatrix>
+          <nodalRelativePosition>
+            <ele unit="m">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>2*l2/2</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </ele>
+          </nodalRelativePosition>
+          <nodalShapeMatrixOfTranslation>
+            <ele>
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>1</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+              </xmlMatrix>
+            </ele>
+          </nodalShapeMatrixOfTranslation>
+          <nodalShapeMatrixOfRotation>
+            <ele>
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>-pi/l2</ele>
+                  <ele>2*pi/l2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+              </xmlMatrix>
+            </ele>
+          </nodalShapeMatrixOfRotation>
+          <nodalStressMatrix>
+            <ele>
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>-E/(1-nu^2)*4/l2</ele>
+                  <ele>E/(1-nu^2)*3/l2</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>-E/(1-nu^2)*nu*4/l2</ele>
+                  <ele>E/(1-nu^2)*nu*3/l2</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+              </xmlMatrix>
+            </ele>
+          </nodalStressMatrix>
           <stateDependentRotation>
             <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
           </stateDependentRotation>
           <frames>
-            <FixedNodalFrame name="Q">
+            <NodeFrame name="Q">
               <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+globalPosition"/>
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
                 <?OPENMBV_ID 27?>
-                <size unit="cm">1</size>
               </enableOpenMBV>
-              <relativePosition unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>2*l2/2</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </xmlVector>
-              </relativePosition>
-              <shapeMatrixOfTranslation unit="-">
-                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>1</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                </xmlMatrix>
-              </shapeMatrixOfTranslation>
-              <shapeMatrixOfRotation unit="-">
-                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                  <row>
-                    <ele>-pi/l2</ele>
-                    <ele>2*pi/l2</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                </xmlMatrix>
-              </shapeMatrixOfRotation>
-              <stressMatrix unit="-">
-                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>-E/(1-nu^2)*4/l2</ele>
-                    <ele>E/(1-nu^2)*3/l2</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele> -E/(1-nu^2)*nu*4/l2</ele>
-                    <ele>E/(1-nu^2)*nu*3/l2</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                  <row>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
-                  </row>
-                </xmlMatrix>
-              </stressMatrix>
-            </FixedNodalFrame>
+              <nodeNumber unit="-">1</nodeNumber>
+            </NodeFrame>
           </frames>
           <contours/>
           <enableOpenMBVFrameK>

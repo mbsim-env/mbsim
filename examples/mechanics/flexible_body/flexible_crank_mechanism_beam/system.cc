@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
 #include "mbsim/frames/fixed_relative_frame.h"
-#include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/links/joint.h"
@@ -79,9 +79,24 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   T(0,3) = 1;
   P(2,0) = -M_PI/l2;
   P(2,1) = 2.*M_PI/l2;
-  body2->addFrame(new FixedNodalFrame("Q", 2.*Kr, T, P));
+  body2->addFrame(new NodeFrame("Q",0));
   body2->getFrame("Q")->enableOpenMBV(0.3);
   body2->setFrameOfReference(body1->getFrame("Q"));
+
+  vector<Vec3> rNod(1);
+  rNod[0] = 2.*Kr;
+
+  vector<Mat3xV> TNod(1), PNod(1);
+  TNod[0] = T;
+  PNod[0] = P;
+
+  vector<Matrix<General, Fixed<6>, Var, double> > sigmahel(1);
+  sigmahel[0] = Matrix<General, Fixed<6>, Var, double>("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
+
+  body2->setNodalRelativePosition(rNod);
+  body2->setNodalShapeMatrixOfTranslation(TNod);
+  body2->setNodalShapeMatrixOfRotation(PNod);
+  body2->setNodalStressMatrix(sigmahel);
 
   SymMat rrdm(3);
   rrdm(0,0) = J2;
@@ -142,8 +157,6 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body2->getFrame("Q")->setPlotFeature(globalPosition,enabled);
   
-  static_cast<FixedNodalFrame*>(body2->getFrame("Q"))->setStressMatrix("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
-
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);
   body3->setFrameOfReference(getFrame("I"));

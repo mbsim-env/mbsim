@@ -35,8 +35,10 @@ namespace MBSimGUI {
   DOMElement* OneDimVecArrayProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
     if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()!=MBSIMFLEX%"ele")
+        return NULL;
       if(var) {
-        e=e->getFirstElementChild();
         vector<Property*> p;
         while(e) {
           p.push_back(new ChoiceProperty2(new VecPropertyFactory(getVec<string>(6,"0"),"",vector<string>(3,"")),"",7));
@@ -48,7 +50,6 @@ namespace MBSimGUI {
           ele[i].setProperty(p[i]);
       }
       else {
-        e=e->getFirstElementChild();
         for(int i=0; i<ele.size(); i++) {
           ele[i].initializeUsingXML(e);
           e=e->getNextElementSibling();
@@ -106,8 +107,10 @@ namespace MBSimGUI {
   DOMElement* OneDimMatArrayProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
     if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()!=MBSIMFLEX%"ele")
+        return NULL;
       if(var) {
-        e=e->getFirstElementChild();
         vector<Property*> p;
         while(e) {
           p.push_back(new ChoiceProperty2(new MatPropertyFactory(getMat<string>(6,2,"0"),"",vector<string>(3,"")),"",7));
@@ -119,7 +122,6 @@ namespace MBSimGUI {
           ele[i].setProperty(p[i]);
       }
       else {
-        e=e->getFirstElementChild();
         for(int i=0; i<ele.size(); i++) {
           ele[i].initializeUsingXML(e);
           e=e->getNextElementSibling();
@@ -177,8 +179,10 @@ namespace MBSimGUI {
   DOMElement* TwoDimMatArrayProperty::initializeUsingXML(DOMElement *element) {
     DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
     if(e) {
+      e=e->getFirstElementChild();
+      if(E(e)->getTagName()!=MBSIMFLEX%"row")
+        return NULL;
       if(var) {
-        e=e->getFirstElementChild();
         vector<vector<Property*> > p;
         while(e) {
           DOMElement *ee=e->getFirstElementChild();
@@ -199,7 +203,6 @@ namespace MBSimGUI {
         }
       }
       else {
-        e=e->getFirstElementChild();
         for(int i=0; i<ele.size(); i++) {
           DOMElement *ee=e->getFirstElementChild();
           for(int j=0; j<ele.size(); j++) {
@@ -279,9 +282,9 @@ namespace MBSimGUI {
 
   Property* OneDimVecArrayPropertyFactory::createProperty(int i) {
     if(i==0)
-      return new ChoiceProperty2(new VecPropertyFactory(getVec<string>(3,"0"),MBSIMFLEX%"eleVec",vector<string>(3,"")),"",4);
+      return new OneDimVecArrayProperty(3,1,xmlName,var);
     if(i==1)
-      return new OneDimVecArrayProperty(3,1,xmlName);
+      return new ChoiceProperty2(new VecPropertyFactory(getVec<string>(3,"0"),MBSIMFLEX%"eleVec",vector<string>(3,"")),"",4);
     return NULL;
   }
 
@@ -292,9 +295,9 @@ namespace MBSimGUI {
 
   Property* OneDimMatArrayPropertyFactory::createProperty(int i) {
     if(i==0)
-      return new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"eleMat",vector<string>(3,"")),"",4);
-    if(i==1)
       return new OneDimMatArrayProperty(size,m,n,xmlName,var);
+    if(i==1)
+      return new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,1,"0"),MBSIMFLEX%"eleMat",vector<string>(3,"")),"",4);
     return NULL;
   }
 
@@ -305,9 +308,9 @@ namespace MBSimGUI {
 
   Property* TwoDimMatArrayPropertyFactory::createProperty(int i) {
     if(i==0)
-      return new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,3,"0"),MBSIMFLEX%"eleMat",vector<string>(3,"")),"",4);
-    if(i==1)
       return new TwoDimMatArrayProperty(size,m,n,xmlName,var);
+    if(i==1)
+      return new ChoiceProperty2(new MatPropertyFactory(getMat<string>(3,3,"0"),MBSIMFLEX%"eleMat",vector<string>(3,"")),"",4);
     return NULL;
   }
 

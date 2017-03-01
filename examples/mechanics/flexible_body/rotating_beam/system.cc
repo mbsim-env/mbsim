@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
-#include "mbsimFlexibleBody/frames/fixed_nodal_frame.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/links/joint.h"
@@ -71,9 +71,20 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   T(0,0) = 1;
   T(1,1) = 1;
   P(2,1) = 0.067808;
-  body->addFrame(new FixedNodalFrame("Q", 2.*Kr, T, P));
+  body->addFrame(new NodeFrame("Q",0));
   body->getFrame("K")->enableOpenMBV(0.3);
   body->getFrame("Q")->enableOpenMBV(0.3);
+
+  vector<Vec3> rNod(1);
+  rNod[0] = 2.*Kr;
+
+  vector<Mat3xV> TNod(1), PNod(1);
+  TNod[0] = T;
+  PNod[0] = P;
+
+  body->setNodalRelativePosition(rNod);
+  body->setNodalShapeMatrixOfTranslation(TNod);
+  body->setNodalShapeMatrixOfRotation(PNod);
 
   SymMat rrdm(3);
   rrdm(0,0) = J;
