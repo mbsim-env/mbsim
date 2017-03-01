@@ -3,19 +3,19 @@
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="E" unit="-">2e11</scalarParameter>
-      <scalarParameter name="nu" unit="-">0.3</scalarParameter>
-      <scalarParameter name="m1" unit="-">0.36</scalarParameter>
-      <scalarParameter name="J1" unit="-">0.002727</scalarParameter>
-      <scalarParameter name="m2" unit="-">0.151104</scalarParameter>
-      <scalarParameter name="J2" unit="-">0.0045339259</scalarParameter>
-      <scalarParameter name="m3" unit="-">0.075552</scalarParameter>
-      <scalarParameter name="rho" unit="-">7870</scalarParameter>
-      <scalarParameter name="l1" unit="-">0.15</scalarParameter>
-      <scalarParameter name="l2" unit="-">0.3</scalarParameter>
-      <scalarParameter name="d2" unit="-">0.008</scalarParameter>
-      <scalarParameter name="h2" unit="-">0.008</scalarParameter>
-      <scalarParameter name="nFE" unit="-">8</scalarParameter>
+      <scalarParameter name="E">2e11</scalarParameter>
+      <scalarParameter name="nu">0.3</scalarParameter>
+      <scalarParameter name="m1">0.36</scalarParameter>
+      <scalarParameter name="J1">0.002727</scalarParameter>
+      <scalarParameter name="m2">0.151104</scalarParameter>
+      <scalarParameter name="J2">0.0045339259</scalarParameter>
+      <scalarParameter name="m3">0.075552</scalarParameter>
+      <scalarParameter name="rho">7870</scalarParameter>
+      <scalarParameter name="l1">0.15</scalarParameter>
+      <scalarParameter name="l2">0.3</scalarParameter>
+      <scalarParameter name="d2">0.008</scalarParameter>
+      <scalarParameter name="h2">0.008</scalarParameter>
+      <scalarParameter name="nFE">8</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -120,8 +120,8 @@
         </RigidBody>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
-            <scalarParameter name="n" unit="-">nFE</scalarParameter>
-            <scalarParameter name="integrals" unit="-">%id = fopen('data.asc')
+            <scalarParameter name="n">nFE</scalarParameter>
+            <scalarParameter name="integrals">%id = fopen('data.asc')
 %if(id==-1)
 D = l2/n;
 m = m2;

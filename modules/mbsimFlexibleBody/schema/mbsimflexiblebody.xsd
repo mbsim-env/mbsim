@@ -23,6 +23,15 @@
     </xs:choice>
   </xs:complexType>
 
+  <xs:complexType name="pressureVectorNx1CellArray">
+    <xs:choice>
+      <xs:sequence>
+        <xs:element name="ele" type="pv:pressureVector" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:element name="eleVec" type="pv:pressureVector"/>
+    </xs:choice>
+  </xs:complexType>
+
   <xs:complexType name="rotationMatrixNx1CellArray">
     <xs:choice>
       <xs:sequence>
@@ -32,51 +41,51 @@
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="nounitMatrixNx1CellArray">
+  <xs:complexType name="unknownMatrixNx1CellArray">
     <xs:choice>
       <xs:sequence>
-        <xs:element name="ele" type="pv:nounitMatrix" maxOccurs="unbounded"/>
+        <xs:element name="ele" type="pv:unknownMatrix" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:element name="eleMat" type="pv:nounitMatrix"/>
+      <xs:element name="eleMat" type="pv:unknownMatrix"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="nounitMatrixNxNCellArray">
+  <xs:complexType name="unknownMatrixNxNCellArray">
     <xs:choice>
       <xs:sequence>
         <xs:element name="row" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="ele" type="pv:nounitMatrix" maxOccurs="unbounded"/>
+              <xs:element name="ele" type="pv:unknownMatrix" maxOccurs="unbounded"/>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
-      <xs:element name="eleMat" type="pv:nounitMatrix"/>
+      <xs:element name="eleMat" type="pv:unknownMatrix"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="nounitMatrix3x1CellArray">
+  <xs:complexType name="unknownMatrix3x1CellArray">
     <xs:choice>
       <xs:sequence>
-        <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
+        <xs:element name="ele" type="pv:unknownMatrix" minOccurs="3" maxOccurs="3"/>
       </xs:sequence>
-      <xs:element name="eleMat" type="pv:nounitMatrix"/>
+      <xs:element name="eleMat" type="pv:unknownMatrix"/>
     </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="nounitMatrix3x3CellArray">
+  <xs:complexType name="unknownMatrix3x3CellArray">
     <xs:choice>
       <xs:sequence>
         <xs:element name="row" minOccurs="3" maxOccurs="3">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
+              <xs:element name="ele" type="pv:unknownMatrix" minOccurs="3" maxOccurs="3"/>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
-      <xs:element name="eleMat" type="pv:nounitMatrix"/>
+      <xs:element name="eleMat" type="pv:unknownMatrix"/>
     </xs:choice>
   </xs:complexType>
 
@@ -378,98 +387,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FixedNodalFrame" substitutionGroup="mbsim:Frame" type="FixedNodalFrameType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-      Koordinatensystem für elastische Körper mit einer Frame Of Reference Formulierung (siehe <a class="link" href="FlexibleBodyFFR">&lt;FlexibleBodyFFR&gt;</a>).
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="FixedNodalFrameType">
-    <xs:complexContent>
-      <xs:extension base="mbsim:FrameType">
-        <xs:sequence>
-          <xs:element name="relativePosition" type="pv:lengthVector" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Relative Lage des Koordinatensystems bzgl. des Frame Of Reference.<br/>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="relativeOrientation" type="pv:rotationMatrix" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Relative Orientierung des Koordinatensystems bzgl. des Frame Of Reference.<br/>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="shapeMatrixOfTranslation" type="pv:nounitMatrix">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Matrix der Verschiebungen.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="shapeMatrixOfRotation" type="pv:nounitMatrix" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Matrix der Verdrehungen.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="stressMatrix" type="pv:nounitMatrix" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Spannungsmatrix.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="nonlinearStressMatrix" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-               nx1-dimensionales Feld aus Matrizen zur Berücksichtigung von Spannungen aufgrund nichtlinearer Verzerrungen.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="ele" type="pv:nounitMatrix" maxOccurs="unbounded"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="initialStress" type="pv:pressureVector" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Vektor der Vorspannungen.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="geometricStiffnessMatrixDueToForce" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Kräften.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="geometricStiffnessMatrixDueToMoment" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Momenten.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="ele" type="pv:nounitMatrix" minOccurs="3" maxOccurs="3"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="FlexibleBodyFFR" substitutionGroup="mbsim:Body" type="FlexibleBodyFFRType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -488,7 +405,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="positionIntegral" type="pv:nounitVector">
+          <xs:element name="positionIntegral" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Integral des Ortsvektors über die Masse, <object class="inlineeqn">\int \boldsymbol{r}\,\mathrm{d}m</object>.
@@ -502,35 +419,35 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="shapeFunctionIntegral" type="pv:nounitMatrix">
+          <xs:element name="shapeFunctionIntegral" type="pv:unknownMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Integral der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int \boldsymbol{\Phi}\,\mathrm{d}m</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="positionShapeFunctionIntegral" type="nounitMatrix3x1CellArray">
+          <xs:element name="positionShapeFunctionIntegral" type="unknownMatrix3x1CellArray">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 3x1-dimensionales Feld aus Integralen des Produkts aus den Elementen des Ortsvektors mit der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int r_i\,\boldsymbol{\Phi}\,\mathrm{d}m,\ i=1,2,3</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="shapeFunctionShapeFunctionIntegral" type="nounitMatrix3x3CellArray">
+          <xs:element name="shapeFunctionShapeFunctionIntegral" type="unknownMatrix3x3CellArray">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 3x3-dimensionales Feld aus Integralen des Produkts aus den Spalten der Matrix der Ansatzfunktionen mit den Transponierten der Spalten der Matrix der Ansatzfunktionen über die Masse, <object class="inlineeqn">\int \boldsymbol{\Phi}_i\,\boldsymbol{\Phi}^T_j\,\mathrm{d}m,\ i,j=1,2,3</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="stiffnessMatrix" type="pv:nounitMatrix">
+          <xs:element name="stiffnessMatrix" type="pv:unknownMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Steifigkeistmatrix.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="dampingMatrix" type="pv:nounitMatrix" minOccurs="0">
+          <xs:element name="dampingMatrix" type="pv:unknownMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Dämpfungsmatrix.
@@ -544,49 +461,49 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nonlinearStiffnessMatrixOfFirstOrder" type="nounitMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nonlinearStiffnessMatrixOfFirstOrder" type="unknownMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 nx1-dimensionales Feld aus Matrizen zur Berücksichtigung nichtlinearer Verzerrungen erster Ordnung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nonlinearStiffnessMatrixOfSecondOrder" type="nounitMatrixNxNCellArray" minOccurs="0">
+          <xs:element name="nonlinearStiffnessMatrixOfSecondOrder" type="unknownMatrixNxNCellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 nxn-dimensionales Feld aus Matrizen zur Berücksichtigung nichtlinearer Verzerrungen zweiter Ordnung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="initialStressIntegral" type="pv:nounitVector" minOccurs="0">
+          <xs:element name="initialStressIntegral" type="pv:unknownVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Vektor der generalisierte Kräfte infolge von Vorspannungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nonlinearInitialStressIntegral" type="pv:nounitMatrix" minOccurs="0">
+          <xs:element name="nonlinearInitialStressIntegral" type="pv:unknownMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Matrix zur Berücksichtigung der generalisierte Kräfte infolge von Vorspannungen bei nichtlinearen Verzerrungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="geometricStiffnessMatrixDueToAcceleration" type="nounitMatrix3x1CellArray" minOccurs="0">
+          <xs:element name="geometricStiffnessMatrixDueToAcceleration" type="unknownMatrix3x1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Beschleunigungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="geometricStiffnessMatrixDueToAngularAcceleration" type="nounitMatrix3x1CellArray" minOccurs="0">
+          <xs:element name="geometricStiffnessMatrixDueToAngularAcceleration" type="unknownMatrix3x1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Winkelbeschleunigungen.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="geometricStiffnessMatrixDueToAngularVelocity" type="nounitMatrix3x1CellArray" minOccurs="0">
+          <xs:element name="geometricStiffnessMatrixDueToAngularVelocity" type="unknownMatrix3x1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 3x1-dimensionales Feld aus Matrizen zu Berücksichtigung geometrischer Steifigkeiten infolge von Winkelgeschwindigkeiten.
@@ -607,49 +524,49 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodalShapeMatrixOfTranslation" type="nounitMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nodalShapeMatrixOfTranslation" type="unknownMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodalShapeMatrixOfRotation" type="nounitMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nodalShapeMatrixOfRotation" type="unknownMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodalStressMatrix" type="nounitMatrixNx1CellArray" minOccurs="0">
+          <xs:element name="nodalStressMatrix" type="unknownMatrixNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodalNonlinearStressMatrix" type="nounitMatrixNxNCellArray" minOccurs="0">
+          <xs:element name="nodalNonlinearStressMatrix" type="unknownMatrixNxNCellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodalInitialStress" type="lengthVectorNx1CellArray" minOccurs="0">
+          <xs:element name="nodalInitialStress" type="pressureVectorNx1CellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodalGeometricStiffnessMatrixDueToForce" type="nounitMatrixNxNCellArray" minOccurs="0">
+          <xs:element name="nodalGeometricStiffnessMatrixDueToForce" type="unknownMatrixNxNCellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodalGeometricStiffnessMatrixDueToMoment" type="nounitMatrixNxNCellArray" minOccurs="0">
+          <xs:element name="nodalGeometricStiffnessMatrixDueToMoment" type="unknownMatrixNxNCellArray" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
               tbd

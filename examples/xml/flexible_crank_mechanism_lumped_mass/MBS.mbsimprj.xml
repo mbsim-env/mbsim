@@ -3,16 +3,16 @@
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="E" unit="-">2e11</scalarParameter>
-      <scalarParameter name="nu" unit="-">0.3</scalarParameter>
-      <scalarParameter name="m1" unit="-">0.36</scalarParameter>
-      <scalarParameter name="J1" unit="-">0.002727</scalarParameter>
-      <scalarParameter name="m3" unit="-">0.075552</scalarParameter>
-      <scalarParameter name="rho" unit="-">7870</scalarParameter>
-      <scalarParameter name="l1" unit="-">0.15</scalarParameter>
-      <scalarParameter name="l2" unit="-">0.3</scalarParameter>
-      <scalarParameter name="d2" unit="-">0.008</scalarParameter>
-      <scalarParameter name="h2" unit="-">0.008</scalarParameter>
+      <scalarParameter name="E">2e11</scalarParameter>
+      <scalarParameter name="nu">0.3</scalarParameter>
+      <scalarParameter name="m1">0.36</scalarParameter>
+      <scalarParameter name="J1">0.002727</scalarParameter>
+      <scalarParameter name="m3">0.075552</scalarParameter>
+      <scalarParameter name="rho">7870</scalarParameter>
+      <scalarParameter name="l1">0.15</scalarParameter>
+      <scalarParameter name="l2">0.3</scalarParameter>
+      <scalarParameter name="d2">0.008</scalarParameter>
+      <scalarParameter name="h2">0.008</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -117,17 +117,17 @@
         </RigidBody>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
-            <matrixParameter name="u0" unit="-">
+            <matrixParameter name="u0">
               <fromFile href="u0.dat"/>
             </matrixParameter>
-            <matrixParameter name="V" unit="-">
+            <matrixParameter name="V">
               <fromFile href="V.dat"/>
             </matrixParameter>
-            <matrixParameter name="P" unit="-">
+            <matrixParameter name="P">
               <fromFile href="P.dat"/>
             </matrixParameter>
-            <scalarParameter name="nf" unit="-">size(u0,1)</scalarParameter>
-            <matrixParameter name="sigh" unit="-">
+            <scalarParameter name="nf">size(u0,1)</scalarParameter>
+            <matrixParameter name="sigh">
               <fromFile href="sigh.dat"/>
             </matrixParameter>
           </Parameter>
@@ -135,33 +135,33 @@
             <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+stateDerivative"/>
             <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
             <mass unit="kg">load('data.bin','m').m</mass>
-            <positionIntegral unit="-">load('data.bin','rdm').rdm</positionIntegral>
+            <positionIntegral>load('data.bin','rdm').rdm</positionIntegral>
             <positionPositionIntegral unit="kg*m^2">load('data.bin','rrdm').rrdm</positionPositionIntegral>
-            <shapeFunctionIntegral unit="-">load('data.bin','Pdm').Pdm</shapeFunctionIntegral>
+            <shapeFunctionIntegral>load('data.bin','Pdm').Pdm</shapeFunctionIntegral>
             <positionShapeFunctionIntegral>
-              <ele unit="-">load('data.bin','rPdm').rPdm{1}
+              <ele>load('data.bin','rPdm').rPdm{1}
 </ele>
-              <ele unit="-">load('data.bin','rPdm').rPdm{2}</ele>
-              <ele unit="-">load('data.bin','rPdm').rPdm{3}</ele>
+              <ele>load('data.bin','rPdm').rPdm{2}</ele>
+              <ele>load('data.bin','rPdm').rPdm{3}</ele>
             </positionShapeFunctionIntegral>
             <shapeFunctionShapeFunctionIntegral>
               <row>
-                <ele unit="-">load('data.bin','PPdm').PPdm{1,1}</ele>
-                <ele unit="-">load('data.bin','PPdm').PPdm{1,2}</ele>
-                <ele unit="-">load('data.bin','PPdm').PPdm{1,3}</ele>
+                <ele>load('data.bin','PPdm').PPdm{1,1}</ele>
+                <ele>load('data.bin','PPdm').PPdm{1,2}</ele>
+                <ele>load('data.bin','PPdm').PPdm{1,3}</ele>
               </row>
               <row>
-                <ele unit="-">load('data.bin','PPdm').PPdm{2,1}</ele>
-                <ele unit="-">load('data.bin','PPdm').PPdm{2,2}</ele>
-                <ele unit="-">load('data.bin','PPdm').PPdm{2,3}</ele>
+                <ele>load('data.bin','PPdm').PPdm{2,1}</ele>
+                <ele>load('data.bin','PPdm').PPdm{2,2}</ele>
+                <ele>load('data.bin','PPdm').PPdm{2,3}</ele>
               </row>
               <row>
-                <ele unit="-">load('data.bin','PPdm').PPdm{3,1}</ele>
-                <ele unit="-">load('data.bin','PPdm').PPdm{3,2}</ele>
-                <ele unit="-">load('data.bin','PPdm').PPdm{3,3}</ele>
+                <ele>load('data.bin','PPdm').PPdm{3,1}</ele>
+                <ele>load('data.bin','PPdm').PPdm{3,2}</ele>
+                <ele>load('data.bin','PPdm').PPdm{3,3}</ele>
               </row>
             </shapeFunctionShapeFunctionIntegral>
-            <stiffnessMatrix unit="-">load('data.bin','Ke').Ke</stiffnessMatrix>
+            <stiffnessMatrix>load('data.bin','Ke').Ke</stiffnessMatrix>
             <proportionalDamping unit="-">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0</ele>
@@ -172,10 +172,10 @@
               <eleVec unit="m">u0'(:)</eleVec>
             </nodalRelativePosition>
             <nodalShapeMatrixOfTranslation>
-              <eleMat unit="-">V</eleMat>
+              <eleMat>V</eleMat>
             </nodalShapeMatrixOfTranslation>
             <nodalStressMatrix>
-              <eleMat unit="-">sigh</eleMat>
+              <eleMat>sigh</eleMat>
             </nodalStressMatrix>
             <stateDependentRotation>
               <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>

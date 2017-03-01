@@ -3,8 +3,8 @@
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="modes" unit="-">2</scalarParameter>
-      <scalarParameter name="updateIntegrals" unit="-">1</scalarParameter>
+      <scalarParameter name="modes">2</scalarParameter>
+      <scalarParameter name="updateIntegrals">1</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
@@ -13,20 +13,20 @@
       <objects>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
-            <matrixParameter name="u0" unit="-">
+            <matrixParameter name="u0">
               <fromFile href="u0.dat"/>
             </matrixParameter>
-            <matrixParameter name="V" unit="-">
+            <matrixParameter name="V">
               <fromFile href="modeShapeMatrix.dat"/>
             </matrixParameter>
-            <matrixParameter name="Kmat" unit="-">
+            <matrixParameter name="Kmat">
               <fromFile href="stiffnessMatrix.dat"/>
             </matrixParameter>
-            <matrixParameter name="mij" unit="-">
+            <matrixParameter name="mij">
               <fromFile href="mij.dat"/>
             </matrixParameter>
-            <scalarParameter name="nf" unit="-">size(u0,1)</scalarParameter>
-            <scalarParameter name="integrals" unit="-">if(updateIntegrals)
+            <scalarParameter name="nf">size(u0,1)</scalarParameter>
+            <scalarParameter name="integrals">if(updateIntegrals)
 
 id = fopen('data.asc')
 
