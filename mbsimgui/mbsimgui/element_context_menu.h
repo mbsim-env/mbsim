@@ -81,15 +81,14 @@ namespace MBSimGUI {
       Element *element;
   };
 
-  class FixedNodalFrameContextContextMenu : public QMenu {
+  class NodeFrameContextContextMenu : public QMenu {
     Q_OBJECT
 
     public:
-      FixedNodalFrameContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+      NodeFrameContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
 
       protected slots:
         void addNodeFrame();
-        void addFixedNodalFrame();
 
     protected:
       Element *element;
@@ -275,12 +274,6 @@ namespace MBSimGUI {
       NodeFrameContextMenu(Element *frame, QWidget * parent = 0);
   };
 
-  class FixedNodalFrameContextMenu : public FrameContextMenu {
-
-    public:
-      FixedNodalFrameContextMenu(Element *frame, QWidget * parent = 0);
-  };
-
   class ObjectContextMenu : public ElementContextMenu {
 
     public:
@@ -305,7 +298,6 @@ namespace MBSimGUI {
 
       protected slots:
         void addNodeFrame();
-        void addFixedNodalFrame();
   };
 
 }

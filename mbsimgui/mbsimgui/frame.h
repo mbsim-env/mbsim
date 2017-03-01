@@ -84,23 +84,6 @@ namespace MBSimGUI {
     ExtProperty nodeNumber;
   };
 
-  class FixedNodalFrame : public Frame {
-    friend class FixedNodalFramePropertyDialog;
-    public:
-    FixedNodalFrame(const std::string &str, Element *parent);
-    ~FixedNodalFrame() { }
-    virtual PropertyInterface* clone() const {return new FixedNodalFrame(*this);}
-    std::string getType() const { return "FixedNodalFrame"; }
-    MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMFLEX; }
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new FixedNodalFramePropertyDialog(this);}
-    EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
-    QMenu* createContextMenu() {return new FixedNodalFrameContextMenu(this);}
-    protected:
-    ExtProperty position, orientation, Phi, Psi, sigmahel, sigmahen, sigma0, K0F, K0M;
-  };
-
 }
 
 #endif

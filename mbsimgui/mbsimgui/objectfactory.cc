@@ -85,8 +85,6 @@ namespace MBSimGUI {
     if(element==0) return 0;
     if(E(element)->getTagName()==MBSIM%"FixedRelativeFrame")
       return new FixedRelativeFrame(E(element)->getAttribute("name"),parent);
-    if(E(element)->getTagName()==MBSIMFLEX%"FixedNodalFrame")
-      return new FixedNodalFrame(E(element)->getAttribute("name"),parent);
     if(E(element)->getTagName()==MBSIMFLEX%"NodeFrame")
       return new NodeFrame(E(element)->getAttribute("name"),parent);
     return 0;

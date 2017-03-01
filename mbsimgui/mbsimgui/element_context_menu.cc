@@ -102,9 +102,6 @@ namespace MBSimGUI {
   NodeFrameContextMenu::NodeFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
   }
 
-  FixedNodalFrameContextMenu::FixedNodalFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
-  }
-
   GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool removable) : ElementContextMenu(element,parent,removable) {
     QAction *action;
     action = new QAction("Add frame", this);
@@ -193,18 +190,16 @@ namespace MBSimGUI {
   }
 
   FlexibleBodyFFRContextMenu::FlexibleBodyFFRContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
-    QMenu *menu = new FixedNodalFrameContextContextMenu(element, "Add frame");
-    addMenu(menu);
-    menu = new ContourContextContextMenu(element, "Add contour");
+    QAction *action;
+    action = new QAction("Add frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addNodeFrame()));
+    addAction(action);
+    QMenu *menu = new ContourContextContextMenu(element, "Add contour");
     addMenu(menu);
   }
 
   void FlexibleBodyFFRContextMenu::addNodeFrame() {
     mw->addFrame(new NodeFrame("P",element));
-  }
-
-  void FlexibleBodyFFRContextMenu::addFixedNodalFrame() {
-    mw->addFrame(new FixedNodalFrame("P",element));
   }
 
   FixedRelativeFrameContextContextMenu::FixedRelativeFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
@@ -217,21 +212,14 @@ namespace MBSimGUI {
     mw->addFrame(new FixedRelativeFrame("P",element));
   }
 
-  FixedNodalFrameContextContextMenu::FixedNodalFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
+  NodeFrameContextContextMenu::NodeFrameContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
     QAction *action = new QAction("Add node frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addNodeFrame()));
     addAction(action);
-    action = new QAction("Add fixed nodal frame", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFixedNodalFrame()));
-    addAction(action);
   }
 
-  void FixedNodalFrameContextContextMenu::addNodeFrame() {
+  void NodeFrameContextContextMenu::addNodeFrame() {
     mw->addFrame(new NodeFrame("P",element));
-  }
-
-  void FixedNodalFrameContextContextMenu::addFixedNodalFrame() {
-    mw->addFrame(new FixedNodalFrame("P",element));
   }
 
   ContourContextContextMenu::ContourContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
