@@ -308,7 +308,7 @@ namespace MBSimGUI {
 
   void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     QMessageBox::StandardButton ret = QMessageBox::Cancel;
-    if(debug and (exitStatus!=QProcess::NormalExit or exitCode!=0)) {
+    if(debug and (exitStatus!=QProcess::NormalExit or exitCode==1)) {
       ret = QMessageBox::warning(this, tr("Error message"), tr("Model file not valid. Restart in debug mode?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
     }
     if(ret == QMessageBox::Ok) {

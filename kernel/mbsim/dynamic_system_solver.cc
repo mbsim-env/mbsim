@@ -1304,7 +1304,7 @@ namespace MBSim {
   void DynamicSystemSolver::checkExitRequest() {
     if (integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
       msg(Warn) << "MBSim: Integrator has not stopped integration! Terminate NOW the hard way!" << endl;
-      exit(1);
+      exit(2);
     }
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
