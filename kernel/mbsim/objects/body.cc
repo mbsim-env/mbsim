@@ -100,6 +100,8 @@ namespace MBSim {
       Object::init(stage);
       if(!R)
         R = static_cast<DynamicSystem*>(parent)->getFrameI();
+      else if(R->getParent()==this)
+        THROW_MBSIMERROR("(Body::init): frame of reference must not be part of " + name);
       addDependency(dynamic_cast<Body*>(R->getParent()));
     }
     else if(stage==plotting) {
