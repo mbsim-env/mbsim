@@ -78,7 +78,8 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   mbsim_process.cc \
 		   main.cc \
 		   embed.cc \
-		   solver.cc 
+		   solver.cc \
+		   file_editor.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 

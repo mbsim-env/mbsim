@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim_process.h"
+#include "file_editor.h"
 #include <iostream>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -28,6 +29,8 @@
 #include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/getinstallpath.h>
+#include <QTextStream>
+#include <QApplication>
 
 using namespace std;
 using namespace MBSim;
@@ -115,12 +118,19 @@ namespace MBSimGUI {
   }
 
   void Process::linkClicked(const QUrl &link, QTextBrowser *std) {
-    static QString editorCommand=QProcessEnvironment::systemEnvironment().value("MBSIMGUI_EDITOR", "gvim -R %1 +%2");
-    cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
-      "Where %1 is replaced by the filename and %2 by the line number. "<<
-      "Use the environment variable MBSIMGUI_EDITOR to overwrite this command."<<endl;
-    QString comm=editorCommand.arg(link.path()).arg(link.queryItemValue("line").toInt());
-    QProcess::startDetached(comm);
+    if(QProcessEnvironment::systemEnvironment().contains("MBSIMGUI_EDITOR")) {
+      static QString editorCommand=QProcessEnvironment::systemEnvironment().value("MBSIMGUI_EDITOR", "gvim -R %1 +%2");
+      cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
+        "Where %1 is replaced by the filename and %2 by the line number. "<<
+        "Use the environment variable MBSIMGUI_EDITOR to overwrite this command."<<endl;
+      QString comm=editorCommand.arg(link.path()).arg(link.queryItemValue("line").toInt());
+      QProcess::startDetached(comm);
+    }
+    else {
+      FileEditor *edit = new FileEditor("Model file",link.path(),link.queryItemValue("line").toInt(),QString("Could not open file ")+link.path(),this);
+      edit->setModal(true);
+      edit->show();
+    }
   }
 
   void Process::outLinkClicked(const QUrl &link) {

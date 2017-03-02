@@ -39,6 +39,7 @@
 #include "embed.h"
 #include "mbsim_process.h"
 #include "project_property_dialog.h"
+#include "file_editor.h"
 #include <openmbv/mainwindow.h>
 #include <utime.h>
 #include <QtGui>
@@ -964,19 +965,8 @@ namespace MBSimGUI {
 
   void MainWindow::eigenanalysis() {
     QString name = QString::fromStdString(uniqueTempDir.generic_string()+"/out0.eigenanalysis.mat");
-    QFile file(name);
-    QPlainTextEdit *edit = new QPlainTextEdit;
-    edit->setWindowTitle("Eigenanalysis");
-    edit->setReadOnly(true);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-      edit->appendPlainText("Eigenanalysis not yet performed!");
-    else {
-      QTextStream in(&file);
-      while (!in.atEnd()) {
-        QString line = in.readLine();
-        edit->appendPlainText(line);
-      }
-    }
+    FileEditor *edit = new FileEditor("Eigenanalysis",name,1,"Eigenanalysis not yet performed!",this);
+    edit->setModal(true);
     edit->show();
   }
 
