@@ -100,7 +100,6 @@ namespace MBSim {
         preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
         resize, /*!< Do the resizing of all vectors, matrices and containers, ... */
         plotting, /*!< Build/initialize the plot structure */
-        reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structure) */
         unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
         LASTINITSTAGE
       };

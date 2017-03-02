@@ -99,7 +99,52 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::init(InitStage stage) {
-    if (stage == reorganizeHierarchy) {
+    if (stage == resize) {
+      calcqSize();
+      calcuSize(0);
+      calcuSize(1);
+      setsvInd(0);
+      setqInd(0);
+      setuInd(0, 0);
+      setuInd(0, 1);
+      sethSize(uSize[0], 0);
+      sethSize(uSize[1], 1);
+      sethInd(0, 0);
+      sethInd(0, 1);
+      setUpLinks(); // is needed by calcgSize()
+
+      calcxSize();
+      setxInd(0);
+
+      calclaInverseKineticsSize();
+      calcbInverseKineticsSize();
+
+      calclaSize(0);
+      calcgSize(0);
+      calcgdSize(0);
+      calcrFactorSize(0);
+      calcsvSize();
+//      svSize += 1; // TODO additional event for drift
+      calcLinkStatusSize();
+      calcLinkStatusRegSize();
+
+      msg(Info) << "qSize = " << qSize << endl;
+      msg(Info) << "uSize[0] = " << uSize[0] << endl;
+      msg(Info) << "xSize = " << xSize << endl;
+      msg(Info) << "gSize = " << gSize << endl;
+      msg(Info) << "gdSize = " << gdSize << endl;
+      msg(Info) << "laSize = " << laSize << endl;
+      msg(Info) << "svSize = " << svSize << endl;
+      msg(Info) << "LinkStatusSize = " << LinkStatusSize << endl;
+      msg(Info) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
+      msg(Info) << "hSize[0] = " << hSize[0] << endl;
+
+      msg(Info) << "uSize[1] = " << uSize[1] << endl;
+      msg(Info) << "hSize[1] = " << hSize[1] << endl;
+
+      Group::init(stage);
+    }
+    else if (stage == unknownStage) {
       msg(Info) << name << " (special group) stage==preInit:" << endl;
 
       vector<Element*> eleList;
@@ -258,53 +303,6 @@ namespace MBSim {
         for(unsigned int j=0; j<linkOrdered[i].size(); j++)
           msg(Info) << "    "<< linkOrdered[i][j]->getName() << " " << linkOrdered[i][j]->getPath() << " " << linkOrdered[i][j]->getType()<<endl;
       }
-    }
-    else if (stage == resize) {
-      calcqSize();
-      calcuSize(0);
-      calcuSize(1);
-      setsvInd(0);
-      setqInd(0);
-      setuInd(0, 0);
-      setuInd(0, 1);
-      sethSize(uSize[0], 0);
-      sethSize(uSize[1], 1);
-      sethInd(0, 0);
-      sethInd(0, 1);
-      setUpLinks(); // is needed by calcgSize()
-
-      calcxSize();
-      setxInd(0);
-
-      calclaInverseKineticsSize();
-      calcbInverseKineticsSize();
-
-      calclaSize(0);
-      calcgSize(0);
-      calcgdSize(0);
-      calcrFactorSize(0);
-      calcsvSize();
-//      svSize += 1; // TODO additional event for drift
-      calcLinkStatusSize();
-      calcLinkStatusRegSize();
-
-      msg(Info) << "qSize = " << qSize << endl;
-      msg(Info) << "uSize[0] = " << uSize[0] << endl;
-      msg(Info) << "xSize = " << xSize << endl;
-      msg(Info) << "gSize = " << gSize << endl;
-      msg(Info) << "gdSize = " << gdSize << endl;
-      msg(Info) << "laSize = " << laSize << endl;
-      msg(Info) << "svSize = " << svSize << endl;
-      msg(Info) << "LinkStatusSize = " << LinkStatusSize << endl;
-      msg(Info) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
-      msg(Info) << "hSize[0] = " << hSize[0] << endl;
-
-      msg(Info) << "uSize[1] = " << uSize[1] << endl;
-      msg(Info) << "hSize[1] = " << hSize[1] << endl;
-
-      Group::init(stage);
-    }
-    else if (stage == unknownStage) {
       setDynamicSystemSolver(this);
 
       MParent.resize(getuSize(0));
