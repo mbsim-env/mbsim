@@ -73,7 +73,6 @@ namespace MBSim {
       void updateDerivativeOfGeneralizedPositions();
       void updateGeneralizedAccelerations();
       void updateGeneralizedJacobians(int j=0);
-      void updateTRel();
       void updatePositions();
       void updateVelocities();
       void updateJacobians();
@@ -217,7 +216,6 @@ namespace MBSim {
       fmatvec::VecV& getjRel(bool check=true) { assert((not check) or (not updGJ)); return jRel; }
 //      fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
 //      fmatvec::Vec& getuRel(bool check=true) { assert((not check) or (not updGC)); return uRel; }
-      fmatvec::MatV& getTRel(bool check=true) { assert((not check) or (not updT)); return TRel; }
       void setqRel(const fmatvec::VecV &q);
       void setuRel(const fmatvec::VecV &u);
       void setJRel(const fmatvec::MatV &J);
@@ -243,7 +241,6 @@ namespace MBSim {
       const fmatvec::VecV& evalqdRRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdRRel; }
       const fmatvec::MatV& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
       const fmatvec::VecV& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
-      const fmatvec::MatV& evalTRel() { if(updT) updateTRel(); return TRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 
@@ -341,7 +338,6 @@ namespace MBSim {
 //      fmatvec::Vec qRel, uRel;
       fmatvec::MatV JRel[2];
       fmatvec::VecV jRel;
-      fmatvec::MatV TRel;
 
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel, qdTRel, qdRRel;
       fmatvec::Mat3xV PJTT, PJRR;
@@ -356,7 +352,7 @@ namespace MBSim {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updPjb, updGJ, updWTS, updT, updateByReference;
+      bool updPjb, updGJ, updWTS, updateByReference;
 
       Frame Z;
 

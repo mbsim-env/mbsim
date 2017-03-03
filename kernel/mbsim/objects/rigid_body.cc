@@ -52,7 +52,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBody)
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z"), bodyFixedRepresentationOfAngularVelocity(false) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGJ(true), updWTS(true), updateByReference(true), Z("Z"), bodyFixedRepresentationOfAngularVelocity(false) {
     
     Z.setParent(this);
 
@@ -192,7 +192,6 @@ namespace MBSim {
       uRel.resize(nu[0]);
       qdRel.resize(nq);
       udRel.resize(nu[0]);
-      TRel.resize(nq,nu[0],Eye());
 
       updateM_ = &RigidBody::updateMNotConst;
       updateLLM_ = &RigidBody::updateLLMNotConst;
@@ -206,8 +205,7 @@ namespace MBSim {
       JRel[1].resize(nu[1],hSize[1]);
       for(int i=0; i<uSize[1]; i++)
         JRel[1](i,hSize[1]-uSize[1]+i) = 1;
-      q.resize(qSize);
-      u.resize(uSize[0]);
+      T.init(Eye());
 
       Z.getJacobianOfTranslation(1,false) = PJT[1];
       Z.getJacobianOfRotation(1,false) = PJR[1];
@@ -352,12 +350,7 @@ namespace MBSim {
   }
 
   void RigidBody::updateT() {
-    T = evalTRel();
-  }
-
-  void RigidBody::updateTRel() {
-    if(fTR) TRel.set(iqR,iuR,(*fTR)(evalqRRel()));
-    updT = false;
+    if(fTR) T(iqR,iuR) = (*fTR)(evalqRRel());
   }
 
   void RigidBody::updateInertiaTensor() {
@@ -529,7 +522,6 @@ namespace MBSim {
     updPjb = true;
     updGJ = true;
     updWTS = true;
-    updT = true;
   }
 
   void RigidBody::addFrame(FixedRelativeFrame *frame) {
