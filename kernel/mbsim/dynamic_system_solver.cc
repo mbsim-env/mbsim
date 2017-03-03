@@ -97,16 +97,13 @@ namespace MBSim {
 
   void DynamicSystemSolver::calcSize() {
       calcqSize();
-      calcuSize(0);
-      calcuSize(1);
-      setsvInd(0);
       setqInd(0);
-      setuInd(0, 0);
-      setuInd(0, 1);
-      sethSize(uSize[0], 0);
-      sethSize(uSize[1], 1);
-      sethInd(0, 0);
-      sethInd(0, 1);
+      for(int i=0; i<2; i++) {
+        calcuSize(i);
+        setuInd(0, i);
+        sethSize(uSize[i], i);
+        sethInd(0, i);
+      }
       setUpLinks(); // is needed by calcgSize()
 
       calcxSize();
@@ -120,6 +117,8 @@ namespace MBSim {
       calcgdSize(0);
       calcrFactorSize(0);
       calcsvSize();
+      setsvInd(0);
+
       calcLinkStatusSize();
       calcLinkStatusRegSize();
   }
@@ -412,7 +411,10 @@ namespace MBSim {
       if (inverseKinetics)
         setUpInverseKinetics();
       Group::init(stage);
-      calcSize();
+//      calcSize();
+      calcqSize();
+      calcuSize(0);
+      calcxSize();
     }
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
@@ -1607,7 +1609,6 @@ namespace MBSim {
 
   void DynamicSystemSolver::updateStopVector() {
     Group::updateStopVector();
-//    sv(sv.size() - 1) = 1;
     updsv = false;
   }
 

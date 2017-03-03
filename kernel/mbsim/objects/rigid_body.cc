@@ -194,7 +194,6 @@ namespace MBSim {
 
       updateM_ = &RigidBody::updateMNotConst;
       updateLLM_ = &RigidBody::updateLLMNotConst;
-
     }
     else if(stage==unknownStage) {
       Body::init(stage);
