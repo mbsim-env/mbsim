@@ -17,7 +17,8 @@ using namespace std;
 
 class Moment : public MBSim::Function<VecV(double)> {
   public:
-    VecV operator()(const double& t) { 
+    std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
+    VecV operator()(const double& t) {
       double t0 = 1;
       double t1 = 1.5;
       double M0 = 0*0.2;
