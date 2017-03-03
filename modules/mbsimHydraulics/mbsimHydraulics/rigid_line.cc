@@ -50,7 +50,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLine::init(InitStage stage) {
-    if (stage==modelBuildup) {
+    if (stage==resolveXMLPath) {
       if (pL)
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_LinePressureLoss", this, pL, false,false));
       RigidHLine::init(stage);
@@ -112,7 +112,7 @@ namespace MBSimHydraulics {
   }
 
   void ClosableRigidLine::init(InitStage stage) {
-    if (stage==modelBuildup) {
+    if (stage==resolveXMLPath) {
       if (cpLBilateral)
          ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_BilateralClosablePressureLoss", this, cpL, true, false));
      else
@@ -144,7 +144,7 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, UnidirectionalRigidLine)
 
   void UnidirectionalRigidLine::init(InitStage stage) {
-    if (stage==modelBuildup) {
+    if (stage==resolveXMLPath) {
       if (upL)
         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"_RegularizedUnidirectionalPressureLoss", this, upL, false,false));
       else

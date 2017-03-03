@@ -95,8 +95,7 @@ namespace MBSim {
        * see also DynamicSystemSolver::init()
        */
       enum InitStage {
-        modelBuildup=0, /*< build up complex internal models */
-        resolveXMLPath, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
+        resolveXMLPath=0, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
         preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
         plotting, /*!< Build/initialize the plot structure */
         unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */

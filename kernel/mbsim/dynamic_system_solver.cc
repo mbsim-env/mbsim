@@ -82,10 +82,9 @@ namespace MBSim {
   void DynamicSystemSolver::initialize() {
 
     std::string InitStageStrings[] = {
-      "Modelbuildup",
-      "ResolveXML-Path",
-      "PreInit",
-      "plot",
+      "resolveXMLPath",
+      "preInit",
+      "plotting",
       "unknownStage",
     };
 
@@ -123,20 +122,6 @@ namespace MBSim {
       calcsvSize();
       calcLinkStatusSize();
       calcLinkStatusRegSize();
-
-      msg(Info) << "qSize = " << qSize << endl;
-      msg(Info) << "uSize[0] = " << uSize[0] << endl;
-      msg(Info) << "xSize = " << xSize << endl;
-      msg(Info) << "gSize = " << gSize << endl;
-      msg(Info) << "gdSize = " << gdSize << endl;
-      msg(Info) << "laSize = " << laSize << endl;
-      msg(Info) << "svSize = " << svSize << endl;
-      msg(Info) << "LinkStatusSize = " << LinkStatusSize << endl;
-      msg(Info) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
-      msg(Info) << "hSize[0] = " << hSize[0] << endl;
-
-      msg(Info) << "uSize[1] = " << uSize[1] << endl;
-      msg(Info) << "hSize[1] = " << hSize[1] << endl;
   }
 
   void DynamicSystemSolver::init(InitStage stage) {
@@ -280,6 +265,20 @@ namespace MBSim {
       // after reorganizing a resize is required
       calcSize();
 
+      msg(Info) << "qSize = " << qSize << endl;
+      msg(Info) << "uSize[0] = " << uSize[0] << endl;
+      msg(Info) << "xSize = " << xSize << endl;
+      msg(Info) << "gSize = " << gSize << endl;
+      msg(Info) << "gdSize = " << gdSize << endl;
+      msg(Info) << "laSize = " << laSize << endl;
+      msg(Info) << "svSize = " << svSize << endl;
+      msg(Info) << "LinkStatusSize = " << LinkStatusSize << endl;
+      msg(Info) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
+      msg(Info) << "hSize[0] = " << hSize[0] << endl;
+
+      msg(Info) << "uSize[1] = " << uSize[1] << endl;
+      msg(Info) << "hSize[1] = " << hSize[1] << endl;
+
       for (unsigned int i = 0; i < dynamicsystem.size(); i++)
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
@@ -407,10 +406,6 @@ namespace MBSim {
         THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown impact solver");
 
       msg(Info) << "End of special group stage==unknownStage" << endl;
-    }
-    else if (stage == modelBuildup) {
-      msg(Info) << "  initialising modelBuildup ..." << endl;
-      Group::init(stage);
     }
     else if (stage == preInit) {
       msg(Info) << "  initialising preInit ..." << endl;

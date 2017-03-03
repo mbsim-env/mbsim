@@ -109,7 +109,7 @@ namespace MBSimHydraulics {
   void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setNormalForceLaw(GFL); }
 
   void Checkvalve::init(InitStage stage) {
-    if (stage==modelBuildup) {
+    if (stage==resolveXMLPath) {
       double rBall=((CheckvalveClosablePressureLoss*)line->getClosablePressureLoss())->getBallRadius();
       double rLine=line->getDiameter()/2.;
       assert(rBall>rLine);
@@ -183,9 +183,9 @@ namespace MBSimHydraulics {
         ballSeat->getFrame("SpringMount")->enableOpenMBV(.5*rBall, 1.);
         ball->getFrame("C")->enableOpenMBV(.5*rBall, 1.);
       }
-      Group::init(stage);
-    }
-    else if (stage==resolveXMLPath) {
+//      Group::init(stage);
+//    }
+//    else if (stage==resolveXMLPath) {
       if (refFrameString!="")
         setFrameOfReference(getByPath<Frame>(refFrameString));
       Group::init(stage);
