@@ -124,6 +124,13 @@ namespace MBSim {
       cFrame[1] = contour[1]->createContourFrame("P1");
       cFrame[0]->setParent(this);
       cFrame[1]->setParent(this);
+
+      for(unsigned int i=0; i<2; i++) {
+        W[i].resize(2);
+        V[i].resize(2);
+        h[i].resize(2);
+        r[i].resize(2);
+      }
     }
     else if(stage==unknownStage) {
       MechanicalLink::init(stage);
@@ -138,17 +145,6 @@ namespace MBSim {
 
       if(contour[0]==NULL or contour[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");
-
-      for(unsigned int i=0; i<2; i++) {
-        W[0].push_back(Mat(0,0,NONINIT));
-        V[0].push_back(Mat(0,0,NONINIT));
-        h[0].push_back(Vec(0,NONINIT));
-        W[1].push_back(Mat(0,0,NONINIT));
-        V[1].push_back(Mat(0,0,NONINIT));
-        h[1].push_back(Vec(0,NONINIT));
-        r[0].push_back(Vec(0,NONINIT));
-        r[1].push_back(Vec(0,NONINIT));
-      }
     }
     else
       MechanicalLink::init(stage);

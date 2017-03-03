@@ -331,8 +331,6 @@ namespace MBSim {
       updateTRef(TParent);
       updateLLMRef(LLMParent);
 
-      Group::init(stage);
-
       updatesvRef(svParent);
       updatejsvRef(jsvParent);
       updateLinkStatusRef(LinkStatusParent);
@@ -400,6 +398,8 @@ namespace MBSim {
         THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown impact solver");
 
       msg(Info) << "End of special group stage==unknownStage" << endl;
+
+      Group::init(stage);
     }
     else if (stage == preInit) {
       msg(Info) << "  initialising preInit ..." << endl;

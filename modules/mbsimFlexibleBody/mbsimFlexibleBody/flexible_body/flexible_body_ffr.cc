@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBodyFFR)
 
-  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : NodeBasedBody(name), m(0), Id(Eye()), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updT(true), updMb(true), bodyFixedRepresentationOfAngularVelocity(false) {
+  FlexibleBodyFFR::FlexibleBodyFFR(const string &name) : NodeBasedBody(name), m(0), Id(Eye()), ne(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), frameForJacobianOfRotation(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updMb(true), bodyFixedRepresentationOfAngularVelocity(false) {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -282,7 +282,8 @@ namespace MBSimFlexibleBody {
 
       qRel.resize(nq);
       uRel.resize(nu[0]);
-      TRel.resize(nq,nu[0],Eye());
+      qdRel.resize(nq);
+      udRel.resize(nu[0]);
       WJTrel.resize(nu[0]);
       WJRrel.resize(nu[0]);
 
@@ -316,8 +317,7 @@ namespace MBSimFlexibleBody {
         KJ[1](6+i,hSize[1]-ne+i) = 1;
       }
 
-      q.resize(qSize);
-      u.resize(uSize[0]);
+      T.init(Eye());
 
       if(Me.size()==0)
         determineSID();
@@ -436,13 +436,6 @@ namespace MBSimFlexibleBody {
     if(fTR) fTR->init(stage);
     if(fPrPK) fPrPK->init(stage);
     if(fAPK) fAPK->init(stage);
-  }
-
-  void FlexibleBodyFFR::initz() {
-    Object::initz();
-    qRel>>q;
-    uRel>>u;
-    TRel>>T;
   }
 
   void FlexibleBodyFFR::setUpInverseKinetics() {
@@ -586,32 +579,53 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::updateqd() {
-    qd(iqT) = uRel(iuT);
+    qd(iqT) = evaluTRel();
     if(fTR)
-      qd(iqR) = (*fTR)(qRel(iuR))*uRel(iuR);
+      qd(iqR) = (*fTR)(evalqRRel())*uRRel;
     else
-      qd(iqR) = uRel(iuR);
+      qd(iqR) = uRRel;
     qd(iqE) = uRel(iuE);
   }
 
   void FlexibleBodyFFR::updatedq() {
-    dq(iqT) = uRel(iuT)*getStepSize();
+    dq(iqT) = evaluTRel()*getStepSize();
     if(fTR)
-      dq(iqR) = (*fTR)(qRel(iuR))*uRel(iuR)*getStepSize();
+      dq(iqR) = (*fTR)(evalqRRel())*uRRel*getStepSize();
     else
-      dq(iqR) = uRel(iuR)*getStepSize();
+      dq(iqR) = uRRel*getStepSize();
     dq(iqE) = uRel(iuE)*getStepSize();
   }
+
   void FlexibleBodyFFR::updateT() {
-    if(fTR) TRel(iqR,iuR) = (*fTR)(qRel(iuR));
+    if(fTR) T(iqR,iuR) = (*fTR)(evalqRRel());
   }
 
-  void FlexibleBodyFFR::updateGeneralizedCoordinates() {
+  void FlexibleBodyFFR::updateGeneralizedPositions() {
+    qRel = q;
     qTRel = qRel(iqT);
     qRRel = qRel(iqR);
+    updq = false;
+  }
+
+  void FlexibleBodyFFR::updateGeneralizedVelocities() {
+    uRel = u;
     uTRel = uRel(iuT);
     uRRel = uRel(iuR);
-    updGC = false;
+    updu = false;
+  }
+
+  void FlexibleBodyFFR::updateDerivativeOfGeneralizedPositions() {
+    qdTRel = evaluTRel();
+    qdRRel = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
+    qdRel.set(iqT,qdTRel);
+    qdRel.set(iqR,qdRRel);
+    qdRel.set(iqE,uRel(iuE));
+    updqd = false;
+  }
+
+  void FlexibleBodyFFR::updateGeneralizedAccelerations() {
+    udRel = evalud();
+    updud = false;
   }
 
  void FlexibleBodyFFR::updatePositions() {
@@ -636,7 +650,6 @@ namespace MBSimFlexibleBody {
       if(!constjT)
         PjhT = fPrPK->parDer2(evalqTRel(),getTime());
     }
-
     if(fAPK) {
       if(!constJR) {
         PJRR = fTR?fAPK->parDer1(evalqRRel(),getTime())*(*fTR)(evalqRRel()):fAPK->parDer1(evalqRRel(),getTime());
@@ -645,26 +658,24 @@ namespace MBSimFlexibleBody {
       if(!constjR)
         PjhR = fAPK->parDer2(evalqRRel(),getTime());
     }
-     updPJ = false;
+    updPJ = false;
   }
 
   void FlexibleBodyFFR::updateGyroscopicAccelerations() {
-    VecV qdTRel = evaluTRel();
-    VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;
     if(fPrPK) {
       if(not(constJT and constjT)) {
-        PjbT = (fPrPK->parDer1DirDer1(qdTRel,qTRel,getTime())+fPrPK->parDer1ParDer2(qTRel,getTime()))*uTRel + fPrPK->parDer2DirDer1(qdTRel,qTRel,getTime()) + fPrPK->parDer2ParDer2(qTRel,getTime());
+        PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*uTRel + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
       }
     }
     if(fAPK) {
       if(not(constJR and constjR)) {
         if(fTR) {
-          Mat3xV JRd = (fAPK->parDer1DirDer1(qdRRel,qRRel,getTime())+fAPK->parDer1ParDer2(qRRel,getTime()));
+          Mat3xV JRd = fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime());
           MatV TRd = fTR->dirDer(qdRRel,qRRel);
           PjbR = JRd*qdRRel + fAPK->parDer1(qRRel,getTime())*TRd*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,getTime()) + fAPK->parDer2ParDer2(qRRel,getTime());
         }
         else
-          PjbR = (fAPK->parDer1DirDer1(qdRRel,qRRel,getTime())+fAPK->parDer1ParDer2(qRRel,getTime()))*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,getTime()) + fAPK->parDer2ParDer2(qRRel,getTime());
+          PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*uRRel + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
       }
     }
     updPjb = false;
@@ -716,8 +727,6 @@ namespace MBSimFlexibleBody {
   void FlexibleBodyFFR::resetUpToDate() {
     NodeBasedBody::resetUpToDate();
     updPjb = true;
-    updGC = true;
-    updT = true;
     updMb = true;
     updKJ[0] = true;
     updKJ[1] = true;
@@ -726,20 +735,6 @@ namespace MBSimFlexibleBody {
       updNodalVel[i] = true;
       updNodalStress[i] = true;
     }
-  }
-
-  void FlexibleBodyFFR::updateqRef(const Vec& ref) {
-    NodeBasedBody::updateqRef(ref);
-    qRel>>q;
-  }
-
-  void FlexibleBodyFFR::updateuRef(const Vec& ref) {
-    NodeBasedBody::updateuRef(ref);
-    uRel>>u;
-  }
-
-  void FlexibleBodyFFR::updateudRef(const Vec& ref) {
-    NodeBasedBody::updateudRef(ref);
   }
 
   void FlexibleBodyFFR::setPositionShapeFunctionIntegral(const MatV &rPdm_) {

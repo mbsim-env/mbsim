@@ -52,7 +52,10 @@ namespace MBSimFlexibleBody {
       void updateT();
       void updateh(int j=0);
       void updateM() { (this->*updateM_)(); }
-      void updateGeneralizedCoordinates();
+      void updateGeneralizedPositions();
+      void updateGeneralizedVelocities();
+      void updateDerivativeOfGeneralizedPositions();
+      void updateGeneralizedAccelerations();
       void updatePositions();
       void updateVelocities();
       void updateAccelerations();
@@ -75,11 +78,7 @@ namespace MBSimFlexibleBody {
       virtual void calcuSize(int j=0);
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void updateqRef(const fmatvec::Vec& ref);
-      virtual void updateuRef(const fmatvec::Vec& ref);
-      virtual void updateudRef(const fmatvec::Vec& ref);
       virtual void init(InitStage stage);
-      virtual void initz();
       virtual void updateLLM() { (this->*updateLLM_)(); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
@@ -233,11 +232,8 @@ namespace MBSimFlexibleBody {
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
-      fmatvec::Vec& getuRel(bool check=true) { assert((not check) or (not updGC)); return uRel; }
-      fmatvec::Mat& getTRel(bool check=true) { assert((not check) or (not updT)); return TRel; }
-      void setqRel(const fmatvec::Vec &q);
-      void setuRel(const fmatvec::Vec &u);
+      void setqRel(const fmatvec::VecV &q);
+      void setuRel(const fmatvec::VecV &u);
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
@@ -245,13 +241,12 @@ namespace MBSimFlexibleBody {
       bool transformCoordinates() const {return fTR!=NULL;}
 
       void resetUpToDate();
-      const fmatvec::Vec& evalqRel() { if(updGC) updateGeneralizedCoordinates(); return qRel; }
-      const fmatvec::Vec& evaluRel() { if(updGC) updateGeneralizedCoordinates(); return uRel; }
-      const fmatvec::VecV& evalqTRel() { if(updGC) updateGeneralizedCoordinates(); return qTRel; }
-      const fmatvec::VecV& evalqRRel() { if(updGC) updateGeneralizedCoordinates(); return qRRel; }
-      const fmatvec::VecV& evaluTRel() { if(updGC) updateGeneralizedCoordinates(); return uTRel; }
-      const fmatvec::VecV& evaluRRel() { if(updGC) updateGeneralizedCoordinates(); return uRRel; }
-      const fmatvec::Mat& evalTRel() { if(updT) updateT(); return TRel; }
+      const fmatvec::VecV& evalqTRel() { if(updq) updateGeneralizedPositions(); return qTRel; }
+      const fmatvec::VecV& evalqRRel() { if(updq) updateGeneralizedPositions(); return qRRel; }
+      const fmatvec::VecV& evaluTRel() { if(updu) updateGeneralizedVelocities(); return uTRel; }
+      const fmatvec::VecV& evaluRRel() { if(updu) updateGeneralizedVelocities(); return uRRel; }
+      const fmatvec::VecV& evalqdTRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdTRel; }
+      const fmatvec::VecV& evalqdRRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdRRel; }
       const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrPK; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return WvPKrel; }
       const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return WomPK; }
@@ -384,10 +379,7 @@ namespace MBSimFlexibleBody {
 
       fmatvec::Vec aT, aR;
 
-      fmatvec::Vec qRel, uRel;
-      fmatvec::Mat TRel;
-
-      fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
+      fmatvec::VecV qTRel, qRRel, uTRel, uRRel, qdTRel, qdRRel;
       fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
 
       int nu[2], nq;
@@ -398,7 +390,7 @@ namespace MBSimFlexibleBody {
 
       bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
-      bool updPjb, updGC, updT, updMb, updKJ[2];
+      bool updPjb, updGC, updMb, updKJ[2];
       std::vector<bool> updNodalPos, updNodalVel, updNodalStress;
 
       fmatvec::SymMatV M_;
