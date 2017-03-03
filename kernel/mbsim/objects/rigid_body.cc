@@ -386,7 +386,7 @@ namespace MBSim {
     qdTRel = evaluTRel();
     qdRRel = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
     qdRel.set(iqT,qdTRel);
-    qdRel.set(iqR,qdTRel);
+    qdRel.set(iqR,qdRRel);
     updqd = false;
   }
 

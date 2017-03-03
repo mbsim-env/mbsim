@@ -81,8 +81,8 @@ class Moment : public MBSim::Function<fmatvec::VecV(double)> {
       if(t<t0)
 	return M;
 
-      Om_Ab = abs(shaft->getuRel()(0));
-      v_Fzg = fzg->getu()(0)*3.6; // km/h
+      Om_Ab = abs(shaft->evalGeneralizedVelocity()(0));
+      v_Fzg = fzg->evalGeneralizedVelocity()(0)*3.6; // km/h
 
       i = v_Fzg < 100 ? 12 : 5;
       i = 1;
