@@ -214,8 +214,6 @@ namespace MBSim {
 
       fmatvec::MatV& getJRel(int i=0, bool check=true) { assert((not check) or (not updGJ)); return JRel[i]; }
       fmatvec::VecV& getjRel(bool check=true) { assert((not check) or (not updGJ)); return jRel; }
-//      fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
-//      fmatvec::Vec& getuRel(bool check=true) { assert((not check) or (not updGC)); return uRel; }
       void setqRel(const fmatvec::VecV &q);
       void setuRel(const fmatvec::VecV &u);
       void setJRel(const fmatvec::MatV &J);
@@ -231,8 +229,6 @@ namespace MBSim {
       void resetVelocitiesUpToDate();
       void resetJacobiansUpToDate();
       void resetGyroscopicAccelerationsUpToDate();
-//      const fmatvec::Vec& evalqRel() { if(updGC) updateGeneralizedCoordinates(); return qRel; }
-//      const fmatvec::Vec& evaluRel() { if(updGC) updateGeneralizedCoordinates(); return uRel; }
       const fmatvec::VecV& evalqTRel() { if(updq) updateGeneralizedPositions(); return qTRel; }
       const fmatvec::VecV& evalqRRel() { if(updq) updateGeneralizedPositions(); return qRRel; }
       const fmatvec::VecV& evaluTRel() { if(updu) updateGeneralizedVelocities(); return uTRel; }
