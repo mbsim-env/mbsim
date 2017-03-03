@@ -259,14 +259,16 @@ namespace MBSim {
       const fmatvec::Vec& evalud();
       const fmatvec::Vec& evaludall();
 
-      void resetUpToDate() { updq = true; updu = true; updud = true; }
+      void resetUpToDate() { updq = true; updu = true; updqd = true; updud = true; }
 
       virtual void updateGeneralizedPositions();
       virtual void updateGeneralizedVelocities();
       virtual void updateGeneralizedAccelerations();
+      virtual void updateDerivativeOfGeneralizedPositions();
 
       const fmatvec::VecV& evalGeneralizedPosition() { if(updq) updateGeneralizedPositions(); return qRel; }
       const fmatvec::VecV& evalGeneralizedVelocity() { if(updu) updateGeneralizedVelocities(); return uRel; }
+      const fmatvec::VecV& evalDerivativeOfGeneralizedPosition() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdRel; }
       const fmatvec::VecV& evalGeneralizedAcceleration() { if(updud) updateGeneralizedAccelerations(); return udRel; }
       fmatvec::VecV& getGeneralizedPosition(bool check=true) {  assert((not check) or (not updq)); return qRel; }
       fmatvec::VecV& getGeneralizedVelocity(bool check=true) {  assert((not check) or (not updu)); return uRel; }
@@ -345,7 +347,7 @@ namespace MBSim {
 
       fmatvec::VecV qRel, uRel, qdRel, udRel;
 
-      bool updq, updu, updud;
+      bool updq, updu, updqd, updud;
   };
 
 }

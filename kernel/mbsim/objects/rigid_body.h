@@ -70,6 +70,7 @@ namespace MBSim {
       void updateInertiaTensor();
       void updateGeneralizedPositions();
       void updateGeneralizedVelocities();
+      void updateDerivativeOfGeneralizedPositions();
       void updateGeneralizedAccelerations();
       void updateGeneralizedJacobians(int j=0);
       void updateTRel();
@@ -238,6 +239,8 @@ namespace MBSim {
       const fmatvec::VecV& evalqRRel() { if(updq) updateGeneralizedPositions(); return qRRel; }
       const fmatvec::VecV& evaluTRel() { if(updu) updateGeneralizedVelocities(); return uTRel; }
       const fmatvec::VecV& evaluRRel() { if(updu) updateGeneralizedVelocities(); return uRRel; }
+      const fmatvec::VecV& evalqdTRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdTRel; }
+      const fmatvec::VecV& evalqdRRel() { if(updqd) updateDerivativeOfGeneralizedPositions(); return qdRRel; }
       const fmatvec::MatV& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
       const fmatvec::VecV& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
       const fmatvec::MatV& evalTRel() { if(updT) updateTRel(); return TRel; }
@@ -340,7 +343,7 @@ namespace MBSim {
       fmatvec::VecV jRel;
       fmatvec::MatV TRel;
 
-      fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
+      fmatvec::VecV qTRel, qRRel, uTRel, uRRel, qdTRel, qdRRel;
       fmatvec::Mat3xV PJTT, PJRR;
 
       Constraint *constraint;

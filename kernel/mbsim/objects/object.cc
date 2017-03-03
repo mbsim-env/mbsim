@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), qSize(0), qInd(0), updq(true), updu(true), updud(true) {
+  Object::Object(const string &name) : Element(name), qSize(0), qInd(0), updq(true), updu(true), updqd(true), updud(true) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -106,9 +106,9 @@ namespace MBSim {
           plotVector.push_back(uRel(i));
       }
       if (getPlotFeature(stateDerivative) == enabled) {
-        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
+        for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
           plotVector.push_back(qdRel(i));
-        for (int i = 0; i < udRel.size(); ++i)
+        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
           plotVector.push_back(udRel(i));
       }
       if (getPlotFeature(energy) == enabled) {
@@ -319,8 +319,12 @@ namespace MBSim {
     updu = false;
   }
 
-  void Object::updateGeneralizedAccelerations() {
+  void Object::updateDerivativeOfGeneralizedPositions() {
     qdRel = evalqd();
+    updqd = false;
+  }
+
+  void Object::updateGeneralizedAccelerations() {
     udRel = evalud();
     updud = false;
   }

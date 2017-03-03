@@ -389,15 +389,19 @@ namespace MBSim {
     updu = false;
   }
 
+  void RigidBody::updateDerivativeOfGeneralizedPositions() {
+    qdTRel = evaluTRel();
+    qdRRel = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
+    qdRel.set(iqT,qdTRel);
+    qdRel.set(iqR,qdTRel);
+    updqd = false;
+  }
+
   void RigidBody::updateGeneralizedAccelerations() {
-    if(constraint) {
-      qdRel = evalTRel()*evalGeneralizedVelocity();
+    if(constraint)
       udRel = evalJRel()*evaludall() + evaljRel();
-    }
-    else {
-     qdRel = evalqd();
+    else
      udRel = evalud();
-    }
     updud = false;
   }
 
@@ -441,22 +445,20 @@ namespace MBSim {
   }
 
   void RigidBody::updateGyroscopicAccelerations() {
-    VecV qdTRel = evaluTRel();
-    VecV qdRRel = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
     if(fPrPK) {
       if(not(constJT and constjT)) {
-        PjbT = (fPrPK->parDer1DirDer1(qdTRel,evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*uTRel + fPrPK->parDer2DirDer1(qdTRel,evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
+        PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*uTRel + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
       }
     }
     if(fAPK) {
       if(not(constJR and constjR)) {
         if(fTR) {
-          Mat3xV JRd = fAPK->parDer1DirDer1(qdRRel,evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime());
+          Mat3xV JRd = fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime());
           MatV TRd = fTR->dirDer(qdRRel,qRRel);
           PjbR = JRd*qdRRel + fAPK->parDer1(qRRel,getTime())*TRd*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,getTime()) + fAPK->parDer2ParDer2(qRRel,getTime());
         }
         else
-          PjbR = (fAPK->parDer1DirDer1(qdRRel,evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*uRRel + fAPK->parDer2DirDer1(qdRRel,evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
+          PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*uRRel + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
       }
     }
     updPjb = false;
