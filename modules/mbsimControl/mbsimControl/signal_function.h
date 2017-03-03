@@ -39,6 +39,8 @@ namespace MBSimControl {
 
       void setReturnSignal(Signal *ret_);
 
+      std::pair<int, int> getRetSize() const { return std::make_pair(ret->getSignalSize(),1); }
+
       virtual Ret operator()(const Arg& a) {
         return MBSim::FromVecV<Ret>::cast(ret->evalSignal());
       }
@@ -85,6 +87,8 @@ namespace MBSimControl {
       SignalFunction(Signal *ret_=NULL) : ret(ret_) {}
 
       void setReturnSignal(Signal *ret_);
+
+      std::pair<int, int> getRetSize() const { return std::make_pair(ret->getSignalSize(),1); }
 
       virtual Ret operator()(const Arg1& a1, const Arg2& a2) {
         return MBSim::FromVecV<Ret>::cast(ret->evalSignal());

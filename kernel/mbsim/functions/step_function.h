@@ -33,6 +33,8 @@ namespace MBSim {
     public:
       StepFunction() {}
       StepFunction(double stepTime_, double stepSize_, double stepInit_=0.) : stepTime(stepTime_), stepSize(stepSize_), stepInit(stepInit_) { }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) {
         return FromDouble<Ret>::cast((ToDouble<Arg>::cast(x)>=stepTime)?stepSize:stepInit);
       }

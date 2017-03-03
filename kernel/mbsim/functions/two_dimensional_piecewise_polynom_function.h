@@ -70,6 +70,10 @@ namespace MBSim {
         }
       }
 
+      int getArgSize() const { return 1; }
+
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
+
       virtual Ret operator()(const Arg1& xVal, const Arg2& yVal) {
         f2.sety(f1(xVal));
         f2.reset();

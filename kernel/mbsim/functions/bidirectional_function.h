@@ -41,6 +41,9 @@ namespace MBSim {
       int getArgSize() const {
         return fn->getArgSize();
       }
+      std::pair<int, int> getRetSize() const {
+        return fp->getRetSize();
+      }
       Ret operator()(const Arg &x) {
         return (ToDouble<Arg>::cast(x)>=0)?(*fp)(x):(*fn)(-x);
       }

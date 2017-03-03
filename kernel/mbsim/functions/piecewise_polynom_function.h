@@ -75,6 +75,8 @@ namespace MBSim {
 
       int getArgSize() const { return 1; }
 
+      std::pair<int, int> getRetSize() const { return std::make_pair(y.cols(),1); }
+
       void init(Element::InitStage stage) {
         Function<Ret(Arg)>::init(stage);
         if(stage==Element::preInit) {

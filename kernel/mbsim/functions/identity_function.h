@@ -31,6 +31,7 @@ namespace MBSim {
     using B = fmatvec::Function<Ret(Arg)>; 
     public:
       int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(ToDouble<Arg>::cast(x)); }
       typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(1); }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }

@@ -34,6 +34,8 @@ namespace MBSim {
     public:
       FourierFunction() { }
       FourierFunction(double f_, const fmatvec::VecV &a_, const fmatvec::VecV &b_, double a0_=0, bool amplitudePhaseAngleForm_=false) : f(f_), a0(a0_), a(a_), b(b_), amplitudePhaseAngleForm(amplitudePhaseAngleForm_) { }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg& t_) {
         double t = ToDouble<Arg>::cast(t_);
         double y = a0/2;

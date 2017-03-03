@@ -34,6 +34,7 @@ namespace MBSim {
     public:
       ConstantFunction(double a0_=0) : a0(a0_) {}
       int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a0); }
       typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(0); }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }

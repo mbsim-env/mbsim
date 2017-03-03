@@ -50,6 +50,8 @@ namespace MBSim {
         a.push_back(limitedFunction.limit);
       }
       Ret zeros(const Ret &x) { return Ret(x.size()); }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return function.size()?function[0]->getRetSize():std::make_pair(0,1); }
       Ret operator()(const double &x) {
         for(unsigned int i=0; i<function.size(); i++)
           if(x<=a[i+1])
@@ -131,6 +133,7 @@ namespace MBSim {
         a.push_back(limitedFunction.limit);
       }
       int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return function.size()?function[0]->getRetSize():std::make_pair(0,1); }
       Ret zeros(const Ret &x) { return Ret(x.size()); }
       Ret operator()(const Arg &x) {
         for(unsigned int i=0; i<function.size(); i++)

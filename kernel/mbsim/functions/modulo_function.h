@@ -32,6 +32,8 @@ namespace MBSim {
       double denom;
     public:
       void setDenominator(double denom_) { denom = denom_; }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
         return FromDouble<Ret>::cast(x-denom*floor(x/denom));

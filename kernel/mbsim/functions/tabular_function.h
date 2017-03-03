@@ -33,6 +33,8 @@ namespace MBSim {
     public:
       TabularFunction() : xIndexOld(0) { }
       TabularFunction(const fmatvec::VecV &x_, const fmatvec::MatV &y_) : x(x_), y(y_), xIndexOld(0) { }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(y.cols(),1); }
       Ret operator()(const Arg& xVal_) {
         double xVal = ToDouble<Arg>::cast(xVal_);
         int i = xIndexOld;

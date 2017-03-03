@@ -29,6 +29,8 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   class SignumFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     public:
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
         return FromDouble<Ret>::cast(sign(x));

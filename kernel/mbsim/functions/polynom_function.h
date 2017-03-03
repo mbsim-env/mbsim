@@ -43,6 +43,8 @@ namespace MBSim {
             add.e(i-1) = double(i)*ad(i);
         }
       }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
         double value=a(a.size()-1);

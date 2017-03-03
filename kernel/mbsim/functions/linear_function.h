@@ -35,6 +35,7 @@ namespace MBSim {
       LinearFunction(double a1_=0) : a0(0), a1(a1_) { }
       LinearFunction(double a0_, double a1_) : a0(a0_), a1(a1_) { }
       int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) { return FromDouble<Ret>::cast(a1*ToDouble<Arg>::cast(x)+a0); }
       typename B::DRetDArg parDer(const Arg &x) { return FromDouble<Ret>::cast(a1); }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return FromDouble<Ret>::cast(0); }

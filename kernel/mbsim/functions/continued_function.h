@@ -33,6 +33,7 @@ namespace MBSim {
       ContinuedFunction() : f(NULL), rule(NULL) { }
       ~ContinuedFunction() { delete f; delete rule; }
       int getArgSize() const { return f->getArgSize(); }
+      std::pair<int, int> getRetSize() const { return f->getRetSize(); }
       Ret operator()(const Arg &x) { return (*f)((*rule)(x)); }
       typename B::DRetDArg parDer(const Arg &x) { return f->parDer((*rule)(x)); }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) { return f->parDerDirDer(xDir,(*rule)(x)); }
@@ -54,13 +55,7 @@ namespace MBSim {
         setContinuationRule(ObjectFactory::createAndInit<Function<Arg(Arg)> >(e->getFirstElementChild()));
       }
       void init(Element::InitStage stage) {
-        if(stage == Element::unknownStage) {
-          Function<Ret(Arg)>::init(stage);
-//          Ret y0 = f(FromDouble<Arg>::cast(0));
-//          Ret y1 = f(FromDouble<Arg>::cast(T));
-        }
-        else
-          Function<Ret(Arg)>::init(stage);
+        Function<Ret(Arg)>::init(stage);
         f->init(stage);
         rule->init(stage);
       }

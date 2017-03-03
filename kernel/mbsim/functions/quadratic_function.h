@@ -35,6 +35,8 @@ namespace MBSim {
       QuadraticFunction(double a2_=0) : a0(0), a1(0), a2(a2_) { }
       QuadraticFunction(double a1_, double a2_) : a0(0), a1(a1_), a2(a2_) { }
       QuadraticFunction(double a0_, double a1_, double a2_) : a0(a0_), a1(a1_), a2(a2_) { }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x_) {  
         double x = ToDouble<Arg>::cast(x_);
         return FromDouble<Ret>::cast(a0+(a1+a2*x)*x);

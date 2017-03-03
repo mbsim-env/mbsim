@@ -44,6 +44,9 @@ namespace MBSim {
       int getArgSize() const {
         return fi->getArgSize();
       }
+      std::pair<int, int> getRetSize() const {
+        return fo->getRetSize();
+      }
       Ret operator()(const double &arg) {
         return (*fo)((*fi)(arg));
       }
@@ -99,6 +102,9 @@ namespace MBSim {
       }
       int getArgSize() const {
         return fi->getArgSize();
+      }
+      std::pair<int, int> getRetSize() const {
+        return fo->getRetSize();
       }
       Ret operator()(const Argi &arg) {
         return (*fo)((*fi)(arg));

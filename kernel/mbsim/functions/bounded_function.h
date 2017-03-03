@@ -35,6 +35,8 @@ namespace MBSim {
       BoundedFunction() : lowerBound(-std::numeric_limits<double>::max()), upperBound(std::numeric_limits<double>::max()) { }
       void setLowerBound(double lowerBound_) { lowerBound = lowerBound_; }
       void setUpperBound(double upperBound_) { upperBound = upperBound_; }
+      int getArgSize() const { return 1; }
+      std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
       Ret operator()(const Arg &x_) {
         double x = ToDouble<Arg>::cast(x_);
         if(x<lowerBound)

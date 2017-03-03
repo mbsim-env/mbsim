@@ -73,13 +73,8 @@ namespace MBSim {
       vrel.resize();
     }
     else if(stage==unknownStage) {
-//      cout << path << endl;
-//      if(F)
-//      cout << F->getRetSize().first << " " << F->getRetSize().second << endl;
-//      if(M)
-//      cout << M->getRetSize().first << " " << M->getRetSize().second << endl;
-//      if(F  and ((*F)(0).size()!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
-//      if(M  and ((*M)(0).size()!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
+      if(F  and (F->getRetSize().first!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
+      if(M  and (M->getRetSize().first!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
       FloatingFrameLink::init(stage);
     }
     else
