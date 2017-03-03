@@ -211,6 +211,7 @@ namespace MBSim {
   }
 
   void Body::resetUpToDate() {
+    Object::resetUpToDate();
     updPos = true;
     updVel = true;
     updPJ = true;

@@ -39,8 +39,8 @@ namespace MBSim {
 
   void GeneralizedPositionConstraint::updateGeneralizedCoordinates() {
     if(bi) {
-      bd->setqRel(bi->getqRel()+(*f)(getTime()));
-      bd->setuRel(bi->getuRel()+f->parDer(getTime()));
+      bd->setqRel(bi->evalGeneralizedPosition()+(*f)(getTime()));
+      bd->setuRel(bi->evalGeneralizedVelocity()+f->parDer(getTime()));
     }
     else {
       bd->setqRel((*f)(getTime()));

@@ -31,7 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), qSize(0), qInd(0) {
+  Object::Object(const string &name) : Element(name), qSize(0), qInd(0), updq(true), updu(true), updud(true) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -42,9 +42,6 @@ namespace MBSim {
     hInd[1] = 0;
 
     setPlotFeature(state, enabled);
-  }
-
-  Object::~Object() {
   }
 
   void Object::updatedhdz() {
@@ -103,22 +100,16 @@ namespace MBSim {
   void Object::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
       if (getPlotFeature(state) == enabled) {
-        for (int i = 0; i < qSize; ++i)
-          plotVector.push_back(q(i));
-        for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(u(i));
+        for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
+          plotVector.push_back(qRel(i));
+        for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
+          plotVector.push_back(uRel(i));
       }
       if (getPlotFeature(stateDerivative) == enabled) {
-        for (int i = 0; i < qSize; ++i)
-          plotVector.push_back(evalqd()(i));
-        for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(evalud()(i));
-      }
-      if (getPlotFeature(rightHandSide) == enabled) {
-        for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(evalh()(i));
-        for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(evalr()(i));
+        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
+          plotVector.push_back(qdRel(i));
+        for (int i = 0; i < udRel.size(); ++i)
+          plotVector.push_back(udRel(i));
       }
       if (getPlotFeature(energy) == enabled) {
         double Ttemp = evalKineticEnergy();
@@ -214,22 +205,16 @@ namespace MBSim {
 
       if (getPlotFeature(plotRecursive) == enabled) {
         if (getPlotFeature(state) == enabled) {
-          for (int i = 0; i < qSize; ++i)
+          for (int i = 0; i < qRel.size(); ++i)
             plotColumns.push_back("q(" + numtostr(i) + ")");
-          for (int i = 0; i < uSize[0]; ++i)
+          for (int i = 0; i < uRel.size(); ++i)
             plotColumns.push_back("u(" + numtostr(i) + ")");
         }
         if (getPlotFeature(stateDerivative) == enabled) {
-          for (int i = 0; i < qSize; ++i)
+          for (int i = 0; i < qdRel.size(); ++i)
             plotColumns.push_back("qd(" + numtostr(i) + ")");
-          for (int i = 0; i < uSize[0]; ++i)
+          for (int i = 0; i < udRel.size(); ++i)
             plotColumns.push_back("ud(" + numtostr(i) + ")");
-        }
-        if (getPlotFeature(rightHandSide) == enabled) {
-          for (int i = 0; i < uSize[0]; ++i)
-            plotColumns.push_back("h(" + numtostr(i) + ")");
-          for (int i = 0; i < getuSize(); ++i)
-            plotColumns.push_back("r(" + numtostr(i) + ")");
         }
         if (getPlotFeature(energy) == enabled) {
           plotColumns.push_back("T");
@@ -322,6 +307,22 @@ namespace MBSim {
   const Vec& Object::evaludall() {
     if(ds->getUpdatezd()) ds->updatezd();
     return udall;
+  }
+
+  void Object::updateGeneralizedPositions() {
+    qRel = q;
+    updq = false;
+  }
+
+  void Object::updateGeneralizedVelocities() {
+    uRel = u;
+    updu = false;
+  }
+
+  void Object::updateGeneralizedAccelerations() {
+    qdRel = evalqd();
+    udRel = evalud();
+    updud = false;
   }
 
   void Object::updatedq() {

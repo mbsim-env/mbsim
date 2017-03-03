@@ -84,14 +84,14 @@ namespace MBSim {
   void RigidBodyLink::updateGeneralizedPositions() {
     rrel.init(0);
     for(unsigned i=0; i<body.size(); i++)
-      rrel+=body[i]->evalqRel()*ratio[i];
+      rrel+=body[i]->evalGeneralizedPosition()*ratio[i];
     updrrel = false;
   }
 
   void RigidBodyLink::updateGeneralizedVelocities() {
     vrel.init(0);
     for(unsigned i=0; i<body.size(); i++)
-      vrel+=body[i]->evaluRel()*ratio[i];
+      vrel+=body[i]->evalGeneralizedVelocity()*ratio[i];
     updvrel = false;
   }
 

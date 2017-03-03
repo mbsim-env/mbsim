@@ -21,7 +21,6 @@
 #define _OBJECT_H_
 
 #include "mbsim/element.h"
-//#include "mbsim/object_interface.h"
 
 namespace MBSim {
 
@@ -49,7 +48,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Object();
+      virtual ~Object() { }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT() { }
@@ -66,12 +65,9 @@ namespace MBSim {
       virtual int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize() {};
       virtual void calcuSize(int j) {};
-      //virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
-      //virtual int getuInd(DynamicSystem* sys, int i=0)
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-      //virtual int gethInd(DynamicSystem* sys,int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; }
       virtual const fmatvec::Vec& getu() const { return u; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
@@ -263,6 +259,18 @@ namespace MBSim {
       const fmatvec::Vec& evalud();
       const fmatvec::Vec& evaludall();
 
+      void resetUpToDate() { updq = true; updu = true; updud = true; }
+
+      virtual void updateGeneralizedPositions();
+      virtual void updateGeneralizedVelocities();
+      virtual void updateGeneralizedAccelerations();
+
+      const fmatvec::VecV& evalGeneralizedPosition() { if(updq) updateGeneralizedPositions(); return qRel; }
+      const fmatvec::VecV& evalGeneralizedVelocity() { if(updu) updateGeneralizedVelocities(); return uRel; }
+      const fmatvec::VecV& evalGeneralizedAcceleration() { if(updud) updateGeneralizedAccelerations(); return udRel; }
+      fmatvec::VecV& getGeneralizedPosition(bool check=true) {  assert((not check) or (not updq)); return qRel; }
+      fmatvec::VecV& getGeneralizedVelocity(bool check=true) {  assert((not check) or (not updu)); return uRel; }
+
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
 
@@ -335,6 +343,9 @@ namespace MBSim {
        */
       fmatvec::SymMat LLM;
 
+      fmatvec::VecV qRel, uRel, qdRel, udRel;
+
+      bool updq, updu, updud;
   };
 
 }

@@ -52,8 +52,8 @@ namespace MBSim {
 
   void GeneralizedVelocityConstraint::updateGeneralizedCoordinates() {
     if(bi) {
-      bd->setqRel(bi->getqRel()+x);
-      bd->setuRel(bi->getuRel()+(*f)(x,getTime()));
+      bd->setqRel(bi->evalGeneralizedPosition()+x);
+      bd->setuRel(bi->evalGeneralizedVelocity()+(*f)(x,getTime()));
     }
     else {
       bd->setqRel(x);
@@ -67,12 +67,12 @@ namespace MBSim {
     if(bi) {
       bd->getJRel(0,false)(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1)) = bi->evalJRel();
       if(J.cols())
-        bd->setjRel(bi->getjRel()+J*(bd->evaluRel()) + f->parDer2(x,getTime()));
+        bd->setjRel(bi->getjRel()+J*(bd->evalGeneralizedVelocity()) + f->parDer2(x,getTime()));
       else
         bd->setjRel(bi->getjRel()+f->parDer2(x,getTime()));
     } else {
       if(J.cols())
-        bd->setjRel(J*(bd->evaluRel())+f->parDer2(x,getTime()));
+        bd->setjRel(J*(bd->evalGeneralizedVelocity())+f->parDer2(x,getTime()));
       else
         bd->setjRel(f->parDer2(x,getTime()));
     }

@@ -211,11 +211,11 @@ namespace MBSim {
     }
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->resetJacobiansUpToDate();
-      bd1[i]->setuRel(Vec(bd1[i]->getuRel().size()));
+      bd1[i]->setuRel(Vec(bd1[i]->getuRelSize()));
     }
     for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->resetJacobiansUpToDate();
-      bd2[i]->setuRel(Vec(bd2[i]->getuRel().size()));
+      bd2[i]->setuRel(Vec(bd2[i]->getuRelSize()));
     }
     SqrMat A(nu);
     A(RangeV(0,dT.cols()-1),RangeV(0,nu-1)) = dT.T()*JT;

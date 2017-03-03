@@ -53,8 +53,8 @@ namespace MBSim {
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {
     if(bi) {
-      bd->setqRel(bi->getqRel()+x(0,bd->getqRelSize()-1));
-      bd->setuRel(bi->getuRel()+x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
+      bd->setqRel(bi->evalGeneralizedPosition()+x(0,bd->getqRelSize()-1));
+      bd->setuRel(bi->evalGeneralizedVelocity()+x(bd->getqRelSize(),bd->getqRelSize()+bd->getuRelSize()-1));
     }
     else {
       bd->setqRel(x(0,bd->getqRelSize()-1));

@@ -57,11 +57,11 @@ namespace MBSim {
   }
 
   void GeneralizedGearConstraint::updateGeneralizedCoordinates() {
-    bd->getqRel(false).init(0);
-    bd->getuRel(false).init(0);
+    bd->getGeneralizedPosition(false).init(0);
+    bd->getGeneralizedVelocity(false).init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getqRel(false) += bi[i]->evalqRel()*ratio[i];
-      bd->getuRel(false) += bi[i]->evaluRel()*ratio[i];
+      bd->getGeneralizedPosition(false) += bi[i]->evalGeneralizedPosition()*ratio[i];
+      bd->getGeneralizedVelocity(false) += bi[i]->evalGeneralizedVelocity()*ratio[i];
     }
     updGC = false;
   }

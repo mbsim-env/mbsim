@@ -37,8 +37,8 @@ namespace MBSim {
 
   void GeneralizedConnectionConstraint::updateGeneralizedCoordinates() {
     if(bi) {
-      bd->getqRel(false) = bi->evalqRel();
-      bd->getuRel(false) = bi->evaluRel();
+      bd->getGeneralizedPosition(false) = bi->evalGeneralizedPosition();
+      bd->getGeneralizedVelocity(false) = bi->evalGeneralizedVelocity();
     }
     updGC = false;
   }

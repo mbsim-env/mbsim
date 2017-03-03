@@ -37,17 +37,17 @@ namespace MBSim {
 
   void GeneralizedPositionExcitation::updateGeneralizedPositions() {
     if(body.size()>1)
-      rrel=body[1]->evalqRel()-body[0]->evalqRel()-(*f)(getTime());
+      rrel=body[1]->evalGeneralizedPosition()-body[0]->evalGeneralizedPosition()-(*f)(getTime());
     else
-      rrel=body[0]->evalqRel()-(*f)(getTime());
+      rrel=body[0]->evalGeneralizedPosition()-(*f)(getTime());
     updrrel = false;
   } 
 
   void GeneralizedPositionExcitation::updateGeneralizedVelocities() {
     if(body.size()>1)
-      vrel=body[1]->evaluRel()-body[0]->evaluRel()-f->parDer(getTime());
+      vrel=body[1]->evalGeneralizedVelocity()-body[0]->evalGeneralizedVelocity()-f->parDer(getTime());
     else
-      vrel=body[0]->evaluRel()-f->parDer(getTime());
+      vrel=body[0]->evalGeneralizedVelocity()-f->parDer(getTime());
     updvrel = false;
   }
 

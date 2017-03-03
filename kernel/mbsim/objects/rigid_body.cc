@@ -52,7 +52,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBody)
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGC(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z"), bodyFixedRepresentationOfAngularVelocity(false) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), coordinateTransformation(true), APK(EYE), fTR(0), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0), translationDependentRotation(false), constJT(false), constJR(false), constjT(false), constjR(false), updPjb(true), updGJ(true), updWTS(true), updT(true), updateByReference(true), Z("Z"), bodyFixedRepresentationOfAngularVelocity(false) {
     
     Z.setParent(this);
 
@@ -190,6 +190,8 @@ namespace MBSim {
       jRel.resize(nu[0]);
       qRel.resize(nq);
       uRel.resize(nu[0]);
+      qdRel.resize(nq);
+      udRel.resize(nu[0]);
       TRel.resize(nq,nu[0],Eye());
 
       updateM_ = &RigidBody::updateMNotConst;
@@ -295,19 +297,6 @@ namespace MBSim {
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
     }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(notMinimalState)==enabled) {
-          for(int i=0; i<nq; i++)
-            plotColumns.push_back("qRel("+numtostr(i)+")");
-          for(int i=0; i<nu[0]; i++)
-            plotColumns.push_back("uRel("+numtostr(i)+")");
-        }
-        Body::init(stage);
-      }
-    }
     else
       Body::init(stage);
     if(fTR) fTR->init(stage);
@@ -317,11 +306,7 @@ namespace MBSim {
 
   void RigidBody::initz() {
     Body::initz();
-    if(!constraint) { 
-      qRel>>q;
-      uRel>>u;
-      TRel>>T;
-    }
+    if(!constraint) TRel>>T;
   }
 
   void RigidBody::setUpInverseKinetics() {
@@ -337,13 +322,6 @@ namespace MBSim {
 
   void RigidBody::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(notMinimalState)==enabled) {
-        for(int i=0; i<nq; i++)
-          plotVector.push_back(evalqRel()(i));
-        for(int i=0; i<nu[0]; i++)
-          plotVector.push_back(evaluRel()(i));
-      }
-
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVBody) {
           vector<double> data;
@@ -394,17 +372,45 @@ namespace MBSim {
     updWTS = false;
   }
 
-  void RigidBody::updateGeneralizedCoordinates() {
-    if(constraint and constraint->getUpdateGeneralizedCoordinates()) constraint->updateGeneralizedCoordinates();
+  void RigidBody::updateGeneralizedPositions() {
+    if(constraint) {
+      if(constraint->getUpdateGeneralizedCoordinates())
+        constraint->updateGeneralizedCoordinates();
+    }
+    else
+     qRel = q;
     qTRel = qRel(iqT);
     qRRel = qRel(iqR);
+    updq = false;
+  }
+
+  void RigidBody::updateGeneralizedVelocities() {
+    if(constraint) {
+      if(constraint->getUpdateGeneralizedCoordinates())
+        constraint->updateGeneralizedCoordinates();
+    }
+    else
+     uRel = u;
     uTRel = uRel(iuT);
     uRRel = uRel(iuR);
-    updGC = false;
+    updu = false;
+  }
+
+  void RigidBody::updateGeneralizedAccelerations() {
+    if(constraint) {
+      qdRel = evalTRel()*evalGeneralizedVelocity();
+      udRel = evalJRel()*evaludall() + evaljRel();
+    }
+    else {
+     qdRel = evalqd();
+     udRel = evalud();
+    }
+    updu = false;
   }
 
   void RigidBody::updateGeneralizedJacobians(int j) {
-    if(constraint and constraint->getUpdateGeneralizedJacobians()) constraint->updateGeneralizedJacobians(j);
+    if(constraint and constraint->getUpdateGeneralizedJacobians())
+      constraint->updateGeneralizedJacobians(j);
     updGJ = false;
   }
 
@@ -526,20 +532,9 @@ namespace MBSim {
     Body::resetUpToDate();
     Z.resetUpToDate();
     updPjb = true;
-    updGC = true;
     updGJ = true;
     updWTS = true;
     updT = true;
-  }
-
-  void RigidBody::updateqRef(const Vec& ref) {
-    Body::updateqRef(ref);
-    if(!constraint) qRel>>q;
-  }
-
-  void RigidBody::updateuRef(const Vec& ref) {
-    Body::updateuRef(ref);
-    if(!constraint) uRel>>u;
   }
 
   void RigidBody::addFrame(FixedRelativeFrame *frame) {
@@ -658,18 +653,18 @@ namespace MBSim {
     constraint = constraint_;
   }
 
-  void RigidBody::setqRel(const Vec &q) {
+  void RigidBody::setqRel(const VecV &q) {
     qRel = q;
     qTRel = qRel(iqT); 
     qRRel = qRel(iqR); 
-    updGC = false; 
+    updq = false;
   }
 
-  void RigidBody::setuRel(const Vec &u) {
+  void RigidBody::setuRel(const VecV &u) {
     uRel = u; 
     uTRel = uRel(iuT);
     uRRel = uRel(iuR);
-    updGC = false; 
+    updu = false;
   }
 
   void RigidBody::setJRel(const Mat &J) {

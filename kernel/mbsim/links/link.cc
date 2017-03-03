@@ -40,12 +40,6 @@ namespace MBSim {
 
   void Link::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotVector.push_back(x(i));
-      if(getPlotFeature(stateDerivative)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotVector.push_back(evalxd()(i));
       if(getPlotFeature(linkKinematics)==enabled) {
         for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
           plotVector.push_back(rrel(i));
@@ -56,9 +50,6 @@ namespace MBSim {
         for(int i=0; i<evalGeneralizedForce().size(); ++i)
           plotVector.push_back(evalGeneralizedForce()(i));
       }
-      if(getPlotFeature(stopVector)==enabled)
-        for(int i=0; i<sv.size(); ++i)
-          plotVector.push_back(sv(i));
       if(getPlotFeature(energy)==enabled) {
         plotVector.push_back(evalPotentialEnergy());
       }
@@ -147,12 +138,6 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(state)==enabled)
-          for(int i=0; i<xSize; ++i)
-            plotColumns.push_back("x("+numtostr(i)+")");
-        if(getPlotFeature(stateDerivative)==enabled)
-          for(int i=0; i<xSize; ++i)
-            plotColumns.push_back("xd("+numtostr(i)+")");
         if(getPlotFeature(linkKinematics)==enabled) {
           for(int i=0; i<rrel.size(); ++i)
             plotColumns.push_back("g("+numtostr(i)+")");
@@ -163,9 +148,6 @@ namespace MBSim {
           for(int i=0; i<lambda.size(); ++i)
             plotColumns.push_back("la("+numtostr(i)+")");
         }
-        if(getPlotFeature(stopVector)==enabled)
-          for(int i=0; i<svSize; ++i)
-            plotColumns.push_back("sv("+numtostr(i)+")");
         if(getPlotFeature(energy)==enabled)
           plotColumns.push_back("V");
 

@@ -411,10 +411,6 @@ namespace MBSim {
       if (inverseKinetics)
         setUpInverseKinetics();
       Group::init(stage);
-//      calcSize();
-      calcqSize();
-      calcuSize(0);
-      calcxSize();
     }
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
