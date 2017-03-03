@@ -292,8 +292,6 @@ namespace MBSim {
       else
         frameForJacobianOfRotation = R;
 
-      T.init(Eye());
-
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
     }
@@ -302,11 +300,6 @@ namespace MBSim {
     if(fTR) fTR->init(stage);
     if(fPrPK) fPrPK->init(stage);
     if(fAPK) fAPK->init(stage);
-  }
-
-  void RigidBody::initz() {
-    Body::initz();
-    if(!constraint) TRel>>T;
   }
 
   void RigidBody::setUpInverseKinetics() {
@@ -343,27 +336,27 @@ namespace MBSim {
   }
 
   void RigidBody::updateqd() {
-    if(!constraint) {
-      qd(iqT) = evaluTRel();
-      if(fTR)
-        qd(iqR) = (*fTR)(qRRel)*uRRel;
-      else
-        qd(iqR) = uRRel;
-    }
+    qd(iqT) = evaluTRel();
+    if(fTR)
+      qd(iqR) = (*fTR)(evalqRRel())*uRRel;
+    else
+      qd(iqR) = uRRel;
   }
 
   void RigidBody::updatedq() {
-    if(!constraint) {
-      dq(iqT) = evaluTRel()*getStepSize();
-      if(fTR)
-        dq(iqR) = (*fTR)(qRRel)*uRRel*getStepSize();
-      else
-        dq(iqR) = uRRel*getStepSize();
-    }
+    dq(iqT) = evaluTRel()*getStepSize();
+    if(fTR)
+      dq(iqR) = (*fTR)(evalqRRel())*uRRel*getStepSize();
+    else
+      dq(iqR) = uRRel*getStepSize();
   }
 
   void RigidBody::updateT() {
-    if(fTR) TRel(iqR,iuR) = (*fTR)(evalqRRel());
+    T = evalTRel();
+  }
+
+  void RigidBody::updateTRel() {
+    if(fTR) TRel.set(iqR,iuR,(*fTR)(evalqRRel()));
     updT = false;
   }
 
@@ -405,7 +398,7 @@ namespace MBSim {
      qdRel = evalqd();
      udRel = evalud();
     }
-    updu = false;
+    updud = false;
   }
 
   void RigidBody::updateGeneralizedJacobians(int j) {
@@ -449,21 +442,21 @@ namespace MBSim {
 
   void RigidBody::updateGyroscopicAccelerations() {
     VecV qdTRel = evaluTRel();
-    VecV qdRRel = fTR ? (*fTR)(qRRel)*uRRel : uRRel;
+    VecV qdRRel = fTR ? (*fTR)(evalqRRel())*uRRel : uRRel;
     if(fPrPK) {
       if(not(constJT and constjT)) {
-        PjbT = (fPrPK->parDer1DirDer1(qdTRel,qTRel,getTime())+fPrPK->parDer1ParDer2(qTRel,getTime()))*uTRel + fPrPK->parDer2DirDer1(qdTRel,qTRel,getTime()) + fPrPK->parDer2ParDer2(qTRel,getTime());
+        PjbT = (fPrPK->parDer1DirDer1(qdTRel,evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*uTRel + fPrPK->parDer2DirDer1(qdTRel,evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
       }
     }
     if(fAPK) {
       if(not(constJR and constjR)) {
         if(fTR) {
-          Mat3xV JRd = (fAPK->parDer1DirDer1(qdRRel,qRRel,getTime())+fAPK->parDer1ParDer2(qRRel,getTime()));
+          Mat3xV JRd = fAPK->parDer1DirDer1(qdRRel,evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime());
           MatV TRd = fTR->dirDer(qdRRel,qRRel);
           PjbR = JRd*qdRRel + fAPK->parDer1(qRRel,getTime())*TRd*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,getTime()) + fAPK->parDer2ParDer2(qRRel,getTime());
         }
         else
-          PjbR = (fAPK->parDer1DirDer1(qdRRel,qRRel,getTime())+fAPK->parDer1ParDer2(qRRel,getTime()))*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,getTime()) + fAPK->parDer2ParDer2(qRRel,getTime());
+          PjbR = (fAPK->parDer1DirDer1(qdRRel,evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*uRRel + fAPK->parDer2DirDer1(qdRRel,evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
       }
     }
     updPjb = false;
@@ -667,12 +660,12 @@ namespace MBSim {
     updu = false;
   }
 
-  void RigidBody::setJRel(const Mat &J) {
+  void RigidBody::setJRel(const MatV &J) {
     JRel[0] = J; 
     updGJ = false; 
   }
 
-  void RigidBody::setjRel(const Vec &j) {
+  void RigidBody::setjRel(const VecV &j) {
     jRel = j; 
     updGJ = false; 
   }

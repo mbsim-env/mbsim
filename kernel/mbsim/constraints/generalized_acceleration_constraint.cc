@@ -65,7 +65,7 @@ namespace MBSim {
 
   void GeneralizedAccelerationConstraint::updateGeneralizedJacobians(int jj) {
     if(bi) {
-      bd->getJRel(0,false)(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1)) = bi->evalJRel();
+      bd->getJRel(0,false).set(Range<Var,Var>(0,bi->getuRelSize()-1),Range<Var,Var>(0,bi->gethSize()-1),bi->evalJRel());
       bd->setjRel((*f)(x,getTime()));
     }
     else

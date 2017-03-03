@@ -72,6 +72,7 @@ namespace MBSim {
       void updateGeneralizedVelocities();
       void updateGeneralizedAccelerations();
       void updateGeneralizedJacobians(int j=0);
+      void updateTRel();
       void updatePositions();
       void updateVelocities();
       void updateJacobians();
@@ -92,7 +93,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual void initz();
       virtual void updateLLM() { (this->*updateLLM_)(); }
       virtual void setUpInverseKinetics();
       /*****************************************************/
@@ -212,15 +212,15 @@ namespace MBSim {
 
        virtual void initializeUsingXML(xercesc::DOMElement *element);
 
-      fmatvec::Mat& getJRel(int i=0, bool check=true) { assert((not check) or (not updGJ)); return JRel[i]; }
-      fmatvec::Vec& getjRel(bool check=true) { assert((not check) or (not updGJ)); return jRel; }
+      fmatvec::MatV& getJRel(int i=0, bool check=true) { assert((not check) or (not updGJ)); return JRel[i]; }
+      fmatvec::VecV& getjRel(bool check=true) { assert((not check) or (not updGJ)); return jRel; }
 //      fmatvec::Vec& getqRel(bool check=true) { assert((not check) or (not updGC)); return qRel; }
 //      fmatvec::Vec& getuRel(bool check=true) { assert((not check) or (not updGC)); return uRel; }
-      fmatvec::Mat& getTRel(bool check=true) { assert((not check) or (not updT)); return TRel; }
+      fmatvec::MatV& getTRel(bool check=true) { assert((not check) or (not updT)); return TRel; }
       void setqRel(const fmatvec::VecV &q);
       void setuRel(const fmatvec::VecV &u);
-      void setJRel(const fmatvec::Mat &J);
-      void setjRel(const fmatvec::Vec &j);
+      void setJRel(const fmatvec::MatV &J);
+      void setjRel(const fmatvec::VecV &j);
 
       int getqRelSize() const {return nq;}
       int getuRelSize(int i=0) const {return nu[i];}
@@ -238,9 +238,9 @@ namespace MBSim {
       const fmatvec::VecV& evalqRRel() { if(updq) updateGeneralizedPositions(); return qRRel; }
       const fmatvec::VecV& evaluTRel() { if(updu) updateGeneralizedVelocities(); return uTRel; }
       const fmatvec::VecV& evaluRRel() { if(updu) updateGeneralizedVelocities(); return uRRel; }
-      const fmatvec::Mat& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
-      const fmatvec::Vec& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
-      const fmatvec::Mat& evalTRel() { if(updT) updateT(); return TRel; }
+      const fmatvec::MatV& evalJRel(int j=0) { if(updGJ) updateGeneralizedJacobians(); return JRel[j]; }
+      const fmatvec::VecV& evaljRel() { if(updGJ) updateGeneralizedJacobians(); return jRel; }
+      const fmatvec::MatV& evalTRel() { if(updT) updateTRel(); return TRel; }
 
       void setUpdateByReference(bool updateByReference_) { updateByReference = updateByReference_; }
 
@@ -336,9 +336,9 @@ namespace MBSim {
       FixedRelativeFrame *C;
 
 //      fmatvec::Vec qRel, uRel;
-      fmatvec::Mat JRel[2];
-      fmatvec::Vec jRel;
-      fmatvec::Mat TRel;
+      fmatvec::MatV JRel[2];
+      fmatvec::VecV jRel;
+      fmatvec::MatV TRel;
 
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
       fmatvec::Mat3xV PJTT, PJRR;

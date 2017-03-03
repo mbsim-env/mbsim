@@ -95,34 +95,6 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::calcSize() {
-      calcqSize();
-      setqInd(0);
-      for(int i=0; i<2; i++) {
-        calcuSize(i);
-        setuInd(0, i);
-        sethSize(uSize[i], i);
-        sethInd(0, i);
-      }
-      setUpLinks(); // is needed by calcgSize()
-
-      calcxSize();
-      setxInd(0);
-
-      calclaInverseKineticsSize();
-      calcbInverseKineticsSize();
-
-      calclaSize(0);
-      calcgSize(0);
-      calcgdSize(0);
-      calcrFactorSize(0);
-      calcsvSize();
-      setsvInd(0);
-
-      calcLinkStatusSize();
-      calcLinkStatusRegSize();
-  }
-
   void DynamicSystemSolver::init(InitStage stage) {
     if (stage == unknownStage) {
       msg(Info) << name << " (special group) stage==unknownStage:" << endl;
@@ -261,8 +233,31 @@ namespace MBSim {
         }
       }
 
-      // after reorganizing a resize is required
-      calcSize();
+      calcqSize();
+      setqInd(0);
+      for(int i=0; i<2; i++) {
+        calcuSize(i);
+        setuInd(0, i);
+        sethSize(uSize[i], i);
+        sethInd(0, i);
+      }
+      setUpLinks(); // is needed by calcgSize()
+
+      calcxSize();
+      setxInd(0);
+
+      calclaInverseKineticsSize();
+      calcbInverseKineticsSize();
+
+      calclaSize(0);
+      calcgSize(0);
+      calcgdSize(0);
+      calcrFactorSize(0);
+      calcsvSize();
+      setsvInd(0);
+
+      calcLinkStatusSize();
+      calcLinkStatusRegSize();
 
       msg(Info) << "qSize = " << qSize << endl;
       msg(Info) << "uSize[0] = " << uSize[0] << endl;

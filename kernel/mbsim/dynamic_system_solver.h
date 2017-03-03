@@ -128,8 +128,6 @@ namespace MBSim {
       using Group::plot;
       /***************************************************/
 
-      void calcSize();
-
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
       virtual int solveConstraintsFixpointSingle();
       virtual int solveImpactsFixpointSingle();
