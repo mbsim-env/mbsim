@@ -30,7 +30,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LinearElasticFunction)
 
   void LinearElasticFunction::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==unknownStage) {
       Function<VecV(VecV,VecV)>::init(stage);
       if(not D.size()) D.resize(K.size());
     }

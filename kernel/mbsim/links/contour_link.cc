@@ -125,16 +125,13 @@ namespace MBSim {
       cFrame[0]->setParent(this);
       cFrame[1]->setParent(this);
     }
-    else if(stage==resize) {
+    else if(stage==unknownStage) {
       MechanicalLink::init(stage);
 
       cFrame[0]->sethSize(contour[0]->gethSize(0), 0);
       cFrame[0]->sethSize(contour[0]->gethSize(1), 1);
       cFrame[1]->sethSize(contour[1]->gethSize(0), 0);
       cFrame[1]->sethSize(contour[1]->gethSize(1), 1);
-     }
-    else if(stage==unknownStage) {
-      MechanicalLink::init(stage);
 
       P[0] = cFrame[0];
       P[1] = cFrame[1];

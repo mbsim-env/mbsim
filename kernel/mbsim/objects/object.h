@@ -83,7 +83,6 @@ namespace MBSim {
       virtual void plot();
       virtual void closePlot();
       virtual std::string getType() const { return "Object"; }
-      //virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 
 
       /**

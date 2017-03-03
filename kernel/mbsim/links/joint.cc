@@ -107,13 +107,11 @@ namespace MBSim {
   }
 
   void Joint::init(InitStage stage) {
-    if (stage == resize) {
+    if (stage == unknownStage) {
       FloatingFrameLink::init(stage);
+
       gdd.resize(gdSize);
       gdn.resize(gdSize);
-    }
-    else if (stage == unknownStage) {
-      FloatingFrameLink::init(stage);
 
       if (ffl) {
         fifl = new BilateralImpact;
@@ -515,7 +513,7 @@ namespace MBSim {
   }
 
   void InverseKineticsJoint::init(InitStage stage) {
-    if (stage == resize) {
+    if (stage == preInit) {
       Joint::init(stage);
       x.resize(momentDir.cols());
     }

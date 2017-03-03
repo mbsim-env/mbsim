@@ -85,9 +85,7 @@ namespace MBSim {
       "Modelbuildup",
       "ResolveXML-Path",
       "PreInit",
-      "Resize",
       "plot",
-      "reorganizeHierarchy",
       "unknownStage",
     };
 
@@ -98,8 +96,7 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::init(InitStage stage) {
-    if (stage == resize) {
+  void DynamicSystemSolver::calcSize() {
       calcqSize();
       calcuSize(0);
       calcuSize(1);
@@ -124,7 +121,6 @@ namespace MBSim {
       calcgdSize(0);
       calcrFactorSize(0);
       calcsvSize();
-//      svSize += 1; // TODO additional event for drift
       calcLinkStatusSize();
       calcLinkStatusRegSize();
 
@@ -141,11 +137,11 @@ namespace MBSim {
 
       msg(Info) << "uSize[1] = " << uSize[1] << endl;
       msg(Info) << "hSize[1] = " << hSize[1] << endl;
+  }
 
-      Group::init(stage);
-    }
-    else if (stage == unknownStage) {
-      msg(Info) << name << " (special group) stage==preInit:" << endl;
+  void DynamicSystemSolver::init(InitStage stage) {
+    if (stage == unknownStage) {
+      msg(Info) << name << " (special group) stage==unknownStage:" << endl;
 
       vector<Element*> eleList;
 
@@ -166,10 +162,11 @@ namespace MBSim {
 
       vector<ModellingInterface*> modellList;
       buildListOfModels(modellList);
-      if (modellList.size())
+      if (modellList.size()) {
         do {
           modellList[0]->processModellList(modellList, objList, lnkList);
         } while (modellList.size());
+      }
 
       vector<Link*> iKlnkList;
       buildListOfInverseKineticsLinks(iKlnkList);
@@ -257,9 +254,8 @@ namespace MBSim {
         }
       }
 
-      for (unsigned int i = 0; i < bufGraph.size(); i++) {
+      for (unsigned int i = 0; i < bufGraph.size(); i++)
         addGroup(bufGraph[i]);
-      }
 
       for (unsigned int i = 0; i < eleList.size(); i++) {
         int level = eleList[i]->computeLevel();
@@ -281,10 +277,8 @@ namespace MBSim {
         }
       }
 
-      msg(Info) << "End of special group stage==preInit" << endl;
-
       // after reorganizing a resize is required
-      init(resize);
+      calcSize();
 
       for (unsigned int i = 0; i < dynamicsystem.size(); i++)
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
@@ -411,17 +405,19 @@ namespace MBSim {
       }
       else
         THROW_MBSIMERROR("(DynamicSystemSolver::init()): Unknown impact solver");
+
+      msg(Info) << "End of special group stage==unknownStage" << endl;
     }
     else if (stage == modelBuildup) {
       msg(Info) << "  initialising modelBuildup ..." << endl;
       Group::init(stage);
-      setDynamicSystemSolver(this);
     }
     else if (stage == preInit) {
       msg(Info) << "  initialising preInit ..." << endl;
-      Group::init(stage);
       if (inverseKinetics)
         setUpInverseKinetics();
+      Group::init(stage);
+      calcSize();
     }
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;

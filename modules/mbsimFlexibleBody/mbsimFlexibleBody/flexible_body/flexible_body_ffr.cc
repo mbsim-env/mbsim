@@ -267,16 +267,6 @@ namespace MBSimFlexibleBody {
       }
 
       nu[1] = 6 + ne;
-    }
-    else if(stage==resize) {
-      NodeBasedBody::init(stage);
-
-      KJ[0].resize(6+ne,hSize[0]);
-      KJ[1].resize(6+ne,hSize[1]);
-      for(int i=0; i<ne; i++) {
-        KJ[0](6+i,hSize[0]-ne+i) = 1;
-        KJ[1](6+i,hSize[1]-ne+i) = 1;
-      }
 
       Ki.resize(6+ne);
 
@@ -292,11 +282,7 @@ namespace MBSimFlexibleBody {
 
       qRel.resize(nq);
       uRel.resize(nu[0]);
-      q.resize(qSize);
-      u.resize(uSize[0]);
-
       TRel.resize(nq,nu[0],Eye());
-
       WJTrel.resize(nu[0]);
       WJRrel.resize(nu[0]);
 
@@ -322,6 +308,16 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==unknownStage) {
       NodeBasedBody::init(stage);
+
+      KJ[0].resize(6+ne,hSize[0]);
+      KJ[1].resize(6+ne,hSize[1]);
+      for(int i=0; i<ne; i++) {
+        KJ[0](6+i,hSize[0]-ne+i) = 1;
+        KJ[1](6+i,hSize[1]-ne+i) = 1;
+      }
+
+      q.resize(qSize);
+      u.resize(uSize[0]);
 
       if(Me.size()==0)
         determineSID();

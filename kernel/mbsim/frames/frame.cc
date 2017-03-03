@@ -95,7 +95,7 @@ namespace MBSim {
   }
 
   void Frame::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==unknownStage) {
       WJP[0].resize(hSize[0]);
       WJR[0].resize(hSize[0]);
       WJP[1].resize(hSize[1]);

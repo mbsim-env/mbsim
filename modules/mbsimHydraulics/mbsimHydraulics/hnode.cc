@@ -115,29 +115,25 @@ namespace MBSimHydraulics {
         addOutFlow(getByPath<HLine>(refOutflowString[i]));
       Link::init(stage);
     }
-    else if (stage==resize) {
+    else if (stage==preInit) {
       Link::init(stage);
       gd.resize(1);
       la.resize(1);
       lambda.resize(1);
       nLines=connectedLines.size();
+      W[0].resize(nLines);
+      W[1].resize(nLines);
+      V[1].resize(nLines);
+      V[0].resize(nLines);
+      h[0].resize(nLines);
+      h[1].resize(nLines);
+      r[0].resize(nLines);
+      r[1].resize(nLines);
       for (unsigned int i=0; i<nLines; i++) {
         connectedLines[i].sign = 
           ((connectedLines[i].inflow) ?
            connectedLines[i].line->getInflowFactor() :
            connectedLines[i].line->getOutflowFactor());
-        const int rows=connectedLines[i].sign.size();
-        W[0].push_back(Mat(rows, laSize));
-        V[0].push_back(Mat(rows, laSize));
-        h[0].push_back(Vec(rows));
-        W[1].push_back(Mat(rows, laSize));
-        V[1].push_back(Mat(rows, laSize));
-        h[1].push_back(Vec(rows));
-        dhdq.push_back(Mat(rows, 0));
-        dhdu.push_back(SqrMat(rows));
-        dhdt.push_back(Vec(rows));
-        r[0].push_back(Vec(rows));
-        r[1].push_back(Vec(rows));
       }
     }
     else if (stage==plotting) {
@@ -603,7 +599,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::init(InitStage stage) {
-    if (stage==resize) {
+    if (stage==preInit) {
       HNode::init(stage);
       g.resize(1, INIT, 0);
       x.resize(1, INIT, 0);

@@ -41,7 +41,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineVariational::init(InitStage stage) {
-    if (stage==resize) {
+    if (stage==preInit) {
       HLine::init(stage);
 
       const double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();

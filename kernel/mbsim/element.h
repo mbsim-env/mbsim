@@ -98,7 +98,6 @@ namespace MBSim {
         modelBuildup=0, /*< build up complex internal models */
         resolveXMLPath, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
         preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
-        resize, /*!< Do the resizing of all vectors, matrices and containers, ... */
         plotting, /*!< Build/initialize the plot structure */
         unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
         LASTINITSTAGE

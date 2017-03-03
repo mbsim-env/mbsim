@@ -48,7 +48,6 @@ namespace MBSim {
       for (unsigned int i=0; i<contactObserver.size(); i++) {
         for (unsigned int j=0; j<contactObserver[i].size(); j++) {
           contactObserver[i][j].setParent(this);
-          contactObserver[i][j].setDynamicSystemSolver(ds);
           contactObserver[i][j].setMechanicalLink(&static_cast<Contact*>(link)->getSingleContact(i,j));
           stringstream contactName;
           contactName << "Contact_" << i << "_" << j;
@@ -78,6 +77,13 @@ namespace MBSim {
             jter->init(stage);
         }
       }
+    }
+    else if (stage == unknownStage) {
+      for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
+        for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+          jter->init(stage);
+      }
+      Observer::init(stage);
     }
     else
       Observer::init(stage);
@@ -122,5 +128,15 @@ namespace MBSim {
       frictionArrow = ombv.createOpenMBV(e);
     }
   }
+
+  void ContactObserver::setDynamicSystemSolver(DynamicSystemSolver* sys) {
+    Observer::setDynamicSystemSolver(sys);
+
+    for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
+      for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setDynamicSystemSolver(ds);
+    }
+  }
+
 
 }

@@ -100,43 +100,9 @@ namespace MBSimHydraulics {
       saved_rotatorial_noVolumeChange.clear();
       HNode::init(stage);
     }
-    else if (stage==resize) {
-      HNode::init(stage);
-      nTrans=connectedTransFrames.size();
-      for (unsigned int i=0; i<nTrans; i++) {
-        int j0=connectedTransFrames[i].frame->getJacobianOfTranslation(0,false).cols();
-        int j1=connectedTransFrames[i].frame->getJacobianOfTranslation(1,false).cols();
-        W[0].push_back(Mat(j0, laSize));
-        V[0].push_back(Mat(j0, laSize));
-        h[0].push_back(Vec(j0));
-        W[1].push_back(Mat(j1, laSize));
-        V[1].push_back(Mat(j1, laSize));
-        h[1].push_back(Vec(j1));
-        dhdq.push_back(Mat(j0, 0));
-        dhdu.push_back(SqrMat(j0));
-        dhdt.push_back(Vec(j0));
-        r[0].push_back(Vec(j0));
-        r[1].push_back(Vec(j1));
-      }
-      nRot=connectedRotFrames.size();
-      for (unsigned int i=0; i<nRot; i++) {
-        int j0=connectedRotFrames[i].frame->getJacobianOfRotation(0,false).cols();
-        int j1=connectedRotFrames[i].frame->getJacobianOfRotation(1,false).cols();
-        W[0].push_back(Mat(j0, laSize));
-        V[0].push_back(Mat(j0, laSize));
-        h[0].push_back(Vec(j0));
-        W[1].push_back(Mat(j1, laSize));
-        V[1].push_back(Mat(j1, laSize));
-        h[1].push_back(Vec(j1));
-        dhdq.push_back(Mat(j0, 0));
-        dhdu.push_back(SqrMat(j0));
-        dhdt.push_back(Vec(j0));
-        r[0].push_back(Vec(j0));
-        r[1].push_back(Vec(j1));
-      }
-      x.resize(xSize);
-    }
     else if (stage==plotting) {
+      nTrans=connectedTransFrames.size();
+      nRot=connectedRotFrames.size();
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Volume [mm^3]");
@@ -181,7 +147,16 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage) {
       HNode::init(stage);
+      x.resize(xSize);
       x0=Vec(1, INIT, V0);
+      W[0].resize(nLines+nTrans+nRot);
+      W[1].resize(nLines+nTrans+nRot);
+      V[0].resize(nLines+nTrans+nRot);
+      V[1].resize(nLines+nTrans+nRot);
+      h[0].resize(nLines+nTrans+nRot);
+      h[1].resize(nLines+nTrans+nRot);
+      r[0].resize(nLines+nTrans+nRot);
+      r[1].resize(nLines+nTrans+nRot);
     }
     else
       HNode::init(stage);

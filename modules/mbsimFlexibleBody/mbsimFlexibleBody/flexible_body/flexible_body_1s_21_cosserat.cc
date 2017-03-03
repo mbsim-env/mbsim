@@ -256,10 +256,6 @@ namespace MBSimFlexibleBody {
           static_cast<FiniteElement1s21CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1);
       }
 
-    }
-    else if (stage == resize) {
-      FlexibleBody1sCosserat::init(stage);
-
       hFull.resize(3 * Elements);
     }
 
@@ -422,7 +418,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21Cosserat::initInfo() {
     init(preInit);
-    init(resize);
+//    init(resize);
     l0 = L / Elements;
     Vec g = Vec("[0.;0.;0.]");
 

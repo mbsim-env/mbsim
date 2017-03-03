@@ -137,7 +137,7 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==preInit) {
       FrameLink::init(stage);
       int size = forceDir.cols() + momentDir.cols();
       iF = RangeV(0, forceDir.cols() - 1);

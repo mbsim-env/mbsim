@@ -86,7 +86,7 @@ namespace MBSimControl {
 
       void calcxSize() {xSize=direction.cols(); }
       void init(InitStage stage) {
-        if (stage==resize) {
+        if (stage==preInit) {
           AbsolutCoordinateSensor::init(stage);
           g.resize(direction.cols()); 
           gd.resize(direction.cols()); 
@@ -171,7 +171,7 @@ namespace MBSimControl {
       
       void calcxSize() {xSize=direction.cols(); }
       void init(InitStage stage) {
-        if (stage==resize) {
+        if (stage==preInit) {
           RelativeCoordinateSensor::init(stage);
           g.resize(direction.cols()); 
           gd.resize(direction.cols());

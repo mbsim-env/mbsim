@@ -114,6 +114,7 @@ namespace MBSim {
   }
 
   void RigidBody::init(InitStage stage) {
+    Z.init(stage);
     if(stage==preInit) {
 
       for(unsigned int k=1; k<frame.size(); k++) {
@@ -176,9 +177,6 @@ namespace MBSim {
 
       if(constraint)
         addDependency(constraint);
-    }
-    else if(stage==resize) {
-      Body::init(stage);
 
       PJT[0].resize(nu[0]);
       PJR[0].resize(nu[0]);
@@ -189,6 +187,17 @@ namespace MBSim {
 	PJT[1](i,i) = 1;
       for(int i=3; i<6; i++)
 	PJR[1](i-3,i) = 1;
+      jRel.resize(nu[0]);
+      qRel.resize(nq);
+      uRel.resize(nu[0]);
+      TRel.resize(nq,nu[0],Eye());
+
+      updateM_ = &RigidBody::updateMNotConst;
+      updateLLM_ = &RigidBody::updateLLMNotConst;
+
+    }
+    else if(stage==unknownStage) {
+      Body::init(stage);
 
       JRel[0].resize(nu[0],hSize[0]);
       for(int i=0; i<uSize[0]; i++)
@@ -196,19 +205,8 @@ namespace MBSim {
       JRel[1].resize(nu[1],hSize[1]);
       for(int i=0; i<uSize[1]; i++)
         JRel[1](i,hSize[1]-uSize[1]+i) = 1;
-      jRel.resize(nu[0]);
-      qRel.resize(nq);
-      uRel.resize(nu[0]);
       q.resize(qSize);
       u.resize(uSize[0]);
-
-      TRel.resize(nq,nu[0],Eye());
-
-      updateM_ = &RigidBody::updateMNotConst;
-      updateLLM_ = &RigidBody::updateLLMNotConst;
-    }
-    else if(stage==unknownStage) {
-      Body::init(stage);
 
       Z.getJacobianOfTranslation(1,false) = PJT[1];
       Z.getJacobianOfRotation(1,false) = PJR[1];
@@ -316,7 +314,6 @@ namespace MBSim {
     if(fTR) fTR->init(stage);
     if(fPrPK) fPrPK->init(stage);
     if(fAPK) fAPK->init(stage);
-    Z.init(stage);
   }
 
   void RigidBody::initz() {

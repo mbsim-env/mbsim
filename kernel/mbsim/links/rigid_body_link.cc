@@ -167,12 +167,10 @@ namespace MBSim {
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
       MechanicalLink::init(stage);
     }
-    else if(stage==resize) {
+    else if(stage==preInit) {
       MechanicalLink::init(stage);
-
       if(!support)
         support = body[0]->getFrameOfReference();
-
       iF = RangeV(0, body[0]->getPJT(0,false).cols()-1);
       iM = RangeV(0, body[0]->getPJR(0,false).cols()-1);
       rrel.resize(body[0]->getqRelSize());
@@ -190,40 +188,25 @@ namespace MBSim {
         la.resize(vrel.size());
       }
       lambda.resize(vrel.size());
-      C.resize(0);
-      h[0].resize(0);
-      h[1].resize(0);
-      W[0].resize(0);
-      W[1].resize(0);
+      h[0].resize(2*body.size());
+      h[1].resize(2*body.size());
+      W[0].resize(2*body.size());
+      W[1].resize(2*body.size());
+      V[0].resize(2*body.size());
+      V[1].resize(2*body.size());
+      C.resize(body.size());
       for(unsigned int i=0; i<body.size(); i++) {
-        h[0].push_back(Vec(body[i]->getFrameForKinematics()->gethSize()));
-        h[1].push_back(Vec(6));
-        W[0].push_back(Mat(body[i]->getFrameForKinematics()->gethSize(),laSize));
-        W[1].push_back(Mat(6,laSize));
         stringstream s;
         s << "F" << i;
-        C.push_back(FloatingRelativeFrame(s.str()));
-        C[i].getJacobianOfTranslation(0,false).resize(support->gethSize());
-        C[i].getJacobianOfRotation(0,false).resize(support->gethSize());
-        C[i].getJacobianOfTranslation(1,false).resize(support->gethSize(1));
-        C[i].getJacobianOfRotation(1,false).resize(support->gethSize(1));
+        C[i].setName(s.str());
         C[i].setParent(this);
         C[i].setFrameOfReference(support);
-      }
-      for(unsigned int i=0; i<body.size(); i++) {
-        h[0].push_back(Vec(support->gethSize()));
-        h[1].push_back(Vec(6));
-        W[0].push_back(Mat(support->gethSize(),laSize));
-        W[1].push_back(Mat(6,laSize));
-        V[0].push_back(Mat(support->gethSize(),laSize));
-        V[1].push_back(Mat(6,laSize));
       }
     }
     else if(stage==unknownStage) {
       MechanicalLink::init(stage);
-      for(unsigned int i=0; i<body.size(); i++) {
+      for(unsigned int i=0; i<body.size(); i++)
         P[i] = body[i]->getFrameForKinematics();
-    }
     }
     else if(stage==plotting) {
       updatePlotFeatures();

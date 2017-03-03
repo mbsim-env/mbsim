@@ -83,7 +83,6 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::plot() {
-    //cout << name << " at t = " << t << " active = " << active << " laSIze = " << laSize << " ds " << ds->getlaSize() << endl;
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(evalGeneralizedForce()(0)*1e-5);
       if (isSetValued())
@@ -99,25 +98,19 @@ namespace MBSimHydraulics {
       if(closablePressureLoss) addDependency(closablePressureLoss->getDependency());
       if(leakagePressureLoss) addDependency(leakagePressureLoss->getDependency());
       if(unidirectionalPressureLoss) addDependency(unidirectionalPressureLoss->getDependency());
-    }
-    else if (stage==resize) {
       Link::init(stage);
-      int j=1;
-      W[0].push_back(Mat(j, 1));
-      V[0].push_back(Mat(j, 1));
-      h[0].push_back(Vec(j));
-      W[1].push_back(Mat(j, 1));
-      V[1].push_back(Mat(j, 1));
-      h[1].push_back(Vec(j));
-      dhdq.push_back(Mat(j, 0));
-      dhdu.push_back(SqrMat(j));
-      dhdt.push_back(Vec(j));
+      W[0].resize(1);
+      W[1].resize(1);
+      V[0].resize(1);
+      V[1].resize(1);
+      h[0].resize(1);
+      h[1].resize(1);
       gd.resize(1);
       lambda.resize(1);
       if (isSetValued()) {
         la.resize(1);
-        r[0].push_back(Vec(j));
-        r[1].push_back(Vec(j));
+        r[0].resize(1);
+        r[1].resize(1);
         sv.resize(1);
       }
     }

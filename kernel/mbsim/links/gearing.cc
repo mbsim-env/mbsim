@@ -235,7 +235,7 @@ namespace MBSim {
       Z1.getJacobianOfRotation(0).resize(P1->getJacobianOfRotation(0).cols());
       Z1.getJacobianOfRotation(1).resize(P1->getJacobianOfRotation(1).cols());
     }
-    else if(stage==resize) {
+    else if(stage==preInit) {
       MechanicalLink::init(stage);
       g.resize(1);
       gd.resize(1);

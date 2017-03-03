@@ -37,7 +37,7 @@ namespace MBSim {
   }
 
   void Room::init(InitStage stage) {
-    if (stage == modelBuildup) {
+    if (stage == preInit) {
       Vec3 Kr[6];
       Vec2 limit[6];
       SqrMat3 AIK[6];

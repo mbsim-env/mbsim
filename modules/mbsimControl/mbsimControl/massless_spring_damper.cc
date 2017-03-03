@@ -143,7 +143,7 @@ namespace MBSimControl {
         setInputSignal(getByPath<Signal>(inputSignalString));
       Signal::init(stage);
     }
-    else if (stage==resize) {
+    else if (stage==unknownStage) {
       Signal::init(stage);
       x.resize(xSize, INIT, 0);
     }

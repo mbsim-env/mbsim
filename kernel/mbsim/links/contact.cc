@@ -369,34 +369,16 @@ namespace MBSim {
           //set parent
           jter->setParent(this);
 
-          //Set dynamic system solver for children
-          jter->setDynamicSystemSolver(ds);
-
           //set contact laws for children
           jter->setNormalForceLaw(fcl);
           jter->setNormalImpactLaw(fnil);
           jter->setTangentialForceLaw(fdf);
           jter->setTangentialImpactLaw(ftil);
 
-//          //Set OpenMBV-Properties to single contacts
-//          if (openMBVFrame)
-//            jter->setOpenMBVContactPoints((iter==contacts.begin() and jter==iter->begin())?openMBVFrame:OpenMBV::ObjectFactory::create(openMBVFrame));
-//          if (contactArrow)
-//            jter->setOpenMBVNormalForce((iter==contacts.begin() and jter==iter->begin())?contactArrow:OpenMBV::ObjectFactory::create(contactArrow));
-//          if (frictionArrow)
-//            jter->setOpenMBVTangentialForce((iter==contacts.begin() and jter==iter->begin())?frictionArrow:OpenMBV::ObjectFactory::create(frictionArrow));
           jter->init(stage);
         }
       }
       Link::init(stage);
-    }
-    else if (stage == resize) {
-      Link::init(stage);
-
-      for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-        for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          jter->init(stage);
-      }
     }
     else if (stage == plotting) {
       Element::init(stage);
@@ -408,16 +390,13 @@ namespace MBSim {
         }
       }
     }
-    else if (stage == unknownStage) {
+    else {
       Link::init(stage);
-
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
           jter->init(stage);
       }
     }
-    else
-      Link::init(stage);
     //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
     if(fcl) fcl->init(stage);
     if(fdf) fdf->init(stage);
@@ -501,6 +480,15 @@ namespace MBSim {
     }
     if (getPlotFeature(plotRecursive) == enabled) {
       Element::closePlot();
+    }
+  }
+
+  void Contact::setDynamicSystemSolver(DynamicSystemSolver* sys) {
+    Link::setDynamicSystemSolver(sys);
+
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setDynamicSystemSolver(ds);
     }
   }
 

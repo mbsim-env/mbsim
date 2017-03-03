@@ -91,7 +91,7 @@ namespace MBSim {
   }
 
   void FixedFrameLink::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==preInit) {
       FrameLink::init(stage);
       iF = RangeV(0, 0);
       iM = RangeV(0, -1);

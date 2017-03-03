@@ -51,8 +51,10 @@ namespace MBSimFlexibleBody {
   }
   
   void FlexibleBodyLinearExternalFFR::init(InitStage stage) {
-    if (stage == resize) {
-      // setNumberof qSize uSize[2]
+    if (stage == plotting) {
+      updatePlotFeatures();
+    }
+    else if (stage == unknownStage) {
       uSize[0] = qSize;
       uSize[1] = qSize; // TODO
 
@@ -74,11 +76,6 @@ namespace MBSimFlexibleBody {
       for (int i = 6; i < 6 + nf; i++)
         for (int j = i; j < 6 + nf; j++)
           K(i, j) = Kff(i - 6, j - 6);
-    }
-    else if (stage == plotting) {
-      updatePlotFeatures();
-    }
-    else if (stage == unknownStage) {
       // read the input data file: mode shape vector, u0, mij, K.
 //      readFEMData();  // move to public function, has to be executed before the init().
       

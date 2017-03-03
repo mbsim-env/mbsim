@@ -94,15 +94,12 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Object::init(stage);
-    }
-    else if(stage==preInit) {
-      Object::init(stage);
       if(!R)
         R = static_cast<DynamicSystem*>(parent)->getFrameI();
       else if(R->getParent()==this)
         THROW_MBSIMERROR("(Body::init): frame of reference must not be part of " + name);
       addDependency(dynamic_cast<Body*>(R->getParent()));
+      Object::init(stage);
     }
     else if(stage==plotting) {
       updatePlotFeatures();

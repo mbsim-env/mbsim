@@ -142,6 +142,7 @@ namespace MBSim {
       }
       virtual void plot();
       virtual void closePlot();
+      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /***************************************************/
 
       void resetUpToDate();

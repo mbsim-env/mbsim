@@ -104,7 +104,7 @@ namespace MBSim {
       refFrame=refFrameID?frame2:frame1;
       C.setFrameOfReference(frame1);
     }
-    else if(stage==resize) {
+    else if(stage==unknownStage) {
       MechanicalConstraint::init(stage);
       nq = 0;
       nu = 0;

@@ -110,9 +110,6 @@ namespace MBSimControl {
         setInputSignal(getByPath<Signal>(signalString));
       Signal::init(stage);
     }
-    else if(stage==resize) {
-      Signal::init(stage);
-    }
     else
       Signal::init(stage);
   }
@@ -159,7 +156,7 @@ namespace MBSimControl {
         setDerivativeOfInputSignal(getByPath<Signal>(sdString));
       Signal::init(stage);
     }
-    else if (stage==resize) {
+    else if (stage==unknownStage) {
       Signal::init(stage);
       x.resize(xSize, INIT, 0);
     }

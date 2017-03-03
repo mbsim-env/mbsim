@@ -71,7 +71,7 @@ namespace MBSimElectronics {
 	Link::init(stage);
       }
     }
-    else if(stage==resize) {
+    else if(stage==preInit) {
       Link::init(stage);
 
       g.resize(1);

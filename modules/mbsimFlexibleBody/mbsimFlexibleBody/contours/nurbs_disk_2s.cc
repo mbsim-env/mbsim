@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
   }
 
   void NurbsDisk2s::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==preInit) {
       degU = (static_cast<FlexibleBody2s13*>(parent))->getAzimuthalDegree();
       degV = (static_cast<FlexibleBody2s13*>(parent))->getRadialDegree();
       RefDofs = (static_cast<FlexibleBody2s13*>(parent))->getReferenceDegreesOfFreedom();

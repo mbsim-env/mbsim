@@ -33,7 +33,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedVelocityConstraint)
 
   void GeneralizedVelocityConstraint::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==unknownStage) {
       x.resize(xSize);
       GeneralizedDualConstraint::init(stage);
     }

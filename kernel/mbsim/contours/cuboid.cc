@@ -17,7 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include<config.h>
+#include <config.h>
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plate.h"

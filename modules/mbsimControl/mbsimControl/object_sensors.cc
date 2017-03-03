@@ -43,7 +43,7 @@ namespace MBSimControl {
         setObject(getByPath<Object>(objectString));
       Sensor::init(stage);
     }
-    else if(stage==resize) {
+    else if(stage==preInit) {
       Sensor::init(stage);
       s.resize(1);
     }

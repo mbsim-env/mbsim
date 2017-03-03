@@ -82,11 +82,8 @@ namespace MBSimHydraulics {
       k=rho*g*delta_h/l;
       MFac=Area*rho*MatIntWWT;
       K=Area*E*MatIntWSWST;
-    }
-    else if (stage==resize) {
       HLine::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       phi.resize(mdim);
       lambda.resize(mdim);
       

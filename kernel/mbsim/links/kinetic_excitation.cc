@@ -47,11 +47,6 @@ namespace MBSim {
       if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
       if(frame[0]==NULL) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
     }
-    else if(stage==resize) {
-      FloatingFrameLink::init(stage);
-      rrel.resize();
-      vrel.resize();
-    }
     else if(stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -72,9 +67,19 @@ namespace MBSim {
         FloatingFrameLink::init(stage);
       }
     }
+    else if(stage==preInit) {
+      FloatingFrameLink::init(stage);
+      rrel.resize();
+      vrel.resize();
+    }
     else if(stage==unknownStage) {
-      if(F  and ((*F)(0).size()!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
-      if(M  and ((*M)(0).size()!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
+//      cout << path << endl;
+//      if(F)
+//      cout << F->getRetSize().first << " " << F->getRetSize().second << endl;
+//      if(M)
+//      cout << M->getRetSize().first << " " << M->getRetSize().second << endl;
+//      if(F  and ((*F)(0).size()!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
+//      if(M  and ((*M)(0).size()!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
       FloatingFrameLink::init(stage);
     }
     else

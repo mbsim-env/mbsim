@@ -486,34 +486,7 @@ namespace MBSim {
   }
 
   void SingleContact::init(InitStage stage) {
-    if (stage == resize) {
-      ContourLink::init(stage);
-
-      RF.resize(1+getFrictionDirections());
-      RM.resize(1+getFrictionDirections());
-
-      iF = RangeV(0,1+getFrictionDirections()-1);
-      iM = RangeV(0,-1);
-      DF.resize(1+getFrictionDirections(),NONINIT);
-
-      lambdaT.resize(getFrictionDirections());
-
-      //TODO: Change this if la should be the vector of nonsmooth forces
-      la.resize(1 + getFrictionDirections());
-      g.resize(1);
-      gd.resize(1 + getFrictionDirections());
-      gddN.resize(1);
-      gddT.resize(getFrictionDirections());
-      gdnN.resize(1);
-      gdnT.resize(getFrictionDirections());
-      rrel.resize(1);
-      vrel.resize(1 + getFrictionDirections());
-      lambda.resize(1 + getFrictionDirections());
-
-      if (getFrictionDirections() == 0)
-        gdActive[tangential] = false;
-    }
-    else if (stage == unknownStage) {
+    if (stage == unknownStage) {
       ContourLink::init(stage);
 
       if (contactKinematics == 0) {
@@ -573,6 +546,30 @@ namespace MBSim {
         updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceM;
       else
         updateGeneralizedTangentialForce_ = &SingleContact::updateGeneralizedTangentialForceS;
+
+      RF.resize(1+getFrictionDirections());
+      RM.resize(1+getFrictionDirections());
+
+      iF = RangeV(0,1+getFrictionDirections()-1);
+      iM = RangeV(0,-1);
+      DF.resize(1+getFrictionDirections(),NONINIT);
+
+      lambdaT.resize(getFrictionDirections());
+
+      //TODO: Change this if la should be the vector of nonsmooth forces
+      la.resize(1 + getFrictionDirections());
+      g.resize(1);
+      gd.resize(1 + getFrictionDirections());
+      gddN.resize(1);
+      gddT.resize(getFrictionDirections());
+      gdnN.resize(1);
+      gdnT.resize(getFrictionDirections());
+      rrel.resize(1);
+      vrel.resize(1 + getFrictionDirections());
+      lambda.resize(1 + getFrictionDirections());
+
+      if (getFrictionDirections() == 0)
+        gdActive[tangential] = false;
     }
     else if(stage == LASTINITSTAGE) {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
