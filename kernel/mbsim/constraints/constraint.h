@@ -44,13 +44,10 @@ namespace MBSim {
       virtual void updatexRef(const fmatvec::Vec& ref);
       virtual void updatexdRef(const fmatvec::Vec& ref);
       virtual void updatedxRef(const fmatvec::Vec& ref);
-      virtual void init(InitStage stage);
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *group);
       std::string getType() const { return "Constraint"; }
-      virtual void plot();
-      virtual void closePlot();
       virtual void setUpInverseKinetics() { }
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
       bool getUpdateGeneralizedCoordinates() const { return updGC; }

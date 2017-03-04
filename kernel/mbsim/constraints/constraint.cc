@@ -44,25 +44,6 @@ namespace MBSim {
     dx >> dxParent(xInd,xInd+xSize-1);
   }
 
-  void Constraint::init(InitStage stage) {
-    if(stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(state)==enabled)
-          for(int i=0; i<xSize; ++i)
-            plotColumns.push_back("x("+numtostr(i)+")");
-        if(getPlotFeature(stateDerivative)==enabled)
-          for(int i=0; i<xSize; ++i)
-            plotColumns.push_back("xd("+numtostr(i)+")");
-
-        Element::init(stage);
-      }
-    }
-    else
-      Element::init(stage);
-  }
-
   void Constraint::initz() {
     x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
@@ -73,25 +54,6 @@ namespace MBSim {
 
   void Constraint::readz0(H5::GroupBase *group) {
     x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
-  }
-
-  void Constraint::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotVector.push_back(x(i));
-      if(getPlotFeature(stateDerivative)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotVector.push_back(evalxd()(i));
-
-      Element::plot();
-    }
-  }
-
-  void Constraint::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Element::closePlot();
-    }
   }
 
   const Vec& Constraint::evalxd() {
