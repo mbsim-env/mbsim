@@ -98,8 +98,9 @@ namespace MBSimHydraulics {
       void addInflowDependencyOnOutflow(RigidHLine* line);
       void addInflowDependencyOnInflow(RigidHLine* line);
 
-      void calcqSize() {qSize=0; }
-      void calcuSize(int j=0) {uSize[j]=(dependency.size()?0:1); }
+      int getuRelSize(int i=0) const { return dependency.size()?0:1; }
+      void calcqSize() { qSize=0; }
+      void calcuSize(int j=0) { uSize[j]=getuRelSize(j); }
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
       void updatePressureLossGravity();

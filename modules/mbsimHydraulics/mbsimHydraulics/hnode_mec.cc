@@ -100,9 +100,20 @@ namespace MBSimHydraulics {
       saved_rotatorial_noVolumeChange.clear();
       HNode::init(stage);
     }
+    else if (stage==preInit) {
+      HNode::init(stage);
+    }
     else if (stage==plotting) {
       nTrans=connectedTransFrames.size();
       nRot=connectedRotFrames.size();
+      W[0].resize(nLines+nTrans+nRot);
+      W[1].resize(nLines+nTrans+nRot);
+      V[0].resize(nLines+nTrans+nRot);
+      V[1].resize(nLines+nTrans+nRot);
+      h[0].resize(nLines+nTrans+nRot);
+      h[1].resize(nLines+nTrans+nRot);
+      r[0].resize(nLines+nTrans+nRot);
+      r[1].resize(nLines+nTrans+nRot);
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Volume [mm^3]");
@@ -147,16 +158,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage) {
       HNode::init(stage);
-      x.resize(xSize);
       x0=Vec(1, INIT, V0);
-      W[0].resize(nLines+nTrans+nRot);
-      W[1].resize(nLines+nTrans+nRot);
-      V[0].resize(nLines+nTrans+nRot);
-      V[1].resize(nLines+nTrans+nRot);
-      h[0].resize(nLines+nTrans+nRot);
-      h[1].resize(nLines+nTrans+nRot);
-      r[0].resize(nLines+nTrans+nRot);
-      r[1].resize(nLines+nTrans+nRot);
     }
     else
       HNode::init(stage);
@@ -168,14 +170,14 @@ namespace MBSimHydraulics {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedTransFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation(j,false).cols() -1;
+      const int hJ = hI + connectedTransFrames[i].frame->gethSize(j)-1;
       W[j][nLines+i].resize()>>WParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedRotFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation(j,false).cols() -1;
+      const int hJ = hI + connectedRotFrames[i].frame->gethSize(j)-1;
       W[j][nTrans+nLines+i].resize()>>WParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
@@ -186,14 +188,14 @@ namespace MBSimHydraulics {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedTransFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation(j,false).cols() -1;
+      const int hJ = hI + connectedTransFrames[i].frame->gethSize(j)-1;
       V[j][nLines+i].resize()>>VParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedRotFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation(j,false).cols() -1;
+      const int hJ = hI + connectedRotFrames[i].frame->gethSize(j)-1;
       V[j][nTrans+nLines+i].resize()>>VParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
@@ -202,13 +204,13 @@ namespace MBSimHydraulics {
     HNode::updatehRef(hParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
       const int hI = connectedTransFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation(j,false).cols()-1;
+      const int hJ = hI + connectedTransFrames[i].frame->gethSize(j)-1;
       cout << "j=" << j << ", nLines+i=" << nLines+i << ", h[j, nLines+i]=" << h[j][nLines+i] << " hI=" << hI << ", hJ=" << hJ << ", hParent=" << hParent(RangeV(hI, hJ)) << endl;
       h[j][nLines+i].resize() >> hParent(RangeV(hI, hJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int hI = connectedRotFrames[i].frame->gethInd(j);
-      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation(j,false).cols()-1;
+      const int hJ = hI + connectedRotFrames[i].frame->gethSize(j)-1;
       h[j][nTrans+nLines+i].resize() >> hParent(RangeV(hI, hJ));
     }
   }
@@ -241,12 +243,12 @@ namespace MBSimHydraulics {
     HNode::updaterRef(rParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
       const int rI = connectedTransFrames[i].frame->gethInd(j);
-      const int rJ = rI + connectedTransFrames[i].frame->getJacobianOfTranslation(j,false).cols()-1;
+      const int rJ = rI + connectedTransFrames[i].frame->gethSize(j)-1;
       r[j][nLines+i] >> rParent(RangeV(rI, rJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int rI = connectedRotFrames[i].frame->gethInd(j);
-      const int rJ = rI + connectedRotFrames[i].frame->getJacobianOfRotation(j,false).cols()-1;
+      const int rJ = rI + connectedRotFrames[i].frame->gethSize(j)-1;
       r[j][nTrans+nLines+i] >> rParent(RangeV(rI, rJ));
     }
   }
@@ -488,8 +490,7 @@ namespace MBSimHydraulics {
       Vec x0Tmp(2);
       x0Tmp(0)=V0;
       x0Tmp(1)=p0;
-      x0.resize(2);
-      x0=x0Tmp;
+      x0.resize()=x0Tmp;
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();

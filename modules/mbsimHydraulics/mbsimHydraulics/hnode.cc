@@ -185,7 +185,6 @@ namespace MBSimHydraulics {
     }
   }
 
-
   void HNode::updatehRef(const Vec& hParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
@@ -601,9 +600,6 @@ namespace MBSimHydraulics {
   void RigidCavitationNode::init(InitStage stage) {
     if (stage==preInit) {
       HNode::init(stage);
-      g.resize(1, INIT, 0);
-      x.resize(1, INIT, 0);
-      sv.resize(1, INIT, 0);
       x0=Vec(1, INIT, 0);
     }
     else if (stage==plotting) {

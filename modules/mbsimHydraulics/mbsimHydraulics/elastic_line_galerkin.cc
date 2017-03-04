@@ -114,6 +114,8 @@ namespace MBSimHydraulics {
       for (int i=0; i<mdim; i++)
         for (int j=0; j<mdim; j++)
           D(i,j)=DTmp(i,j);
+      qRel.resize(mdim);
+      uRel.resize(mdim);
     }
     else if (stage==plotting) {
       if (relPlotPoints.size()>0) {
