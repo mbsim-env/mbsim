@@ -38,6 +38,7 @@ class Moment : public MBSim::Function<VecV(double)> {
   double omegaM;
   public:
     Moment(double M0_, double M1_, double omegaM_) : M0(M0_), M1(M1_), omegaM(omegaM_) {}
+    std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
     VecV operator()(const double& tVal) {
       VecV M(1);
       M(0) = M0 + M1*sin(tVal*omegaM);

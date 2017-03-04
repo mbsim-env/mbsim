@@ -51,13 +51,15 @@ namespace MBSimFlexibleBody {
   }
   
   void FlexibleBodyLinearExternalFFR::init(InitStage stage) {
-    if (stage == plotting) {
+    if (stage == preInit) {
+      qSize = 6+nf;
+      uSize[0] = qSize;
+      uSize[1] = qSize; // TODO
+    }
+    else if (stage == plotting) {
       updatePlotFeatures();
     }
     else if (stage == unknownStage) {
-      uSize[0] = qSize;
-      uSize[1] = qSize; // TODO
-
       // only the modes can be used that are available
       if(nf > phiFull.cols()) {
         nf = phiFull.cols();

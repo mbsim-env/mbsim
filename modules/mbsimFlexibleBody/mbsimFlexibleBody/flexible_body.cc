@@ -82,8 +82,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::init(InitStage stage) {
-    if (stage == unknownStage) {
+    if (stage == preInit) {
       NodeBasedBody::init(stage);
+      qRel.resize(qSize);
+      uRel.resize(uSize[0]);
       T = SqrMat(qSize, EYE);
     }
     else if(stage==plotting) {

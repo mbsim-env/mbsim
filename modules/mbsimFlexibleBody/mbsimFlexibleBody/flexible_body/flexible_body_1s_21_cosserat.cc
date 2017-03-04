@@ -219,7 +219,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21Cosserat::init(InitStage stage) {
     if (stage == preInit) {
-      FlexibleBody1sCosserat::init(stage);
       l0 = L / Elements;
 
       if (PODreduced)
@@ -237,6 +236,9 @@ namespace MBSimFlexibleBody {
         q << q0;
         u << u0;
       }
+
+      FlexibleBody1sCosserat::init(stage);
+
       Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
       /* translational elements */
@@ -265,6 +267,8 @@ namespace MBSimFlexibleBody {
       initialised = true;
 
       initM();
+
+      updEle = true;
     }
 
     else if (stage == plotting) {

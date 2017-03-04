@@ -82,6 +82,8 @@ namespace MBSimFlexibleBody {
       NLP->computeCurve(false);
       NV->computeCurve(false);
 
+      resetUpToDate();
+
       Contour1sNeutralFactory::init(stage);
     }
 

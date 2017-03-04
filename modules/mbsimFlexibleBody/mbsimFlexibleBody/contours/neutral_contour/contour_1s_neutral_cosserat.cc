@@ -66,6 +66,8 @@ namespace MBSimFlexibleBody {
       NA->computeCurve(false);
       NDA->computeCurve(false);
 
+      resetUpToDate();
+
       Vec u(NV->getuVec());
       for (int i = 0; i < u.size() - degU; i++)
         etaNodes.push_back(u(i));
