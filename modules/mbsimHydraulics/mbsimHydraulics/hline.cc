@@ -153,10 +153,6 @@ namespace MBSimHydraulics {
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
         dependency.push_back(dependencyOnOutflow[i]);
       uRel.resize((dependency.size()?0:1));
-
-      vector<RigidHLine *> dep_check;
-      dep_check.push_back(this);
-      Jacobian=calculateJacobian(dep_check);
     }
     else if(stage==plotting) {
       updatePlotFeatures();
@@ -167,6 +163,12 @@ namespace MBSimHydraulics {
           plotColumns.push_back("pressureLoss due to gravity [bar]");
         HLine::init(stage);
       }
+    }
+    else if(stage==unknownStage) {
+      HLine::init(stage);
+      vector<RigidHLine *> dep_check;
+      dep_check.push_back(this);
+      Jacobian=calculateJacobian(dep_check);
     }
     else
       HLine::init(stage);
