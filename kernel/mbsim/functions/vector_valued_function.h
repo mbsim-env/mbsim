@@ -45,7 +45,7 @@ namespace MBSim {
         function->setParent(this);
       }
       int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return component.size()?component[0]->getRetSize():std::make_pair(0,1); }
+      std::pair<int, int> getRetSize() const { return std::make_pair(component.size(),1); }
       Ret operator()(const double &x) {
         Ret y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
@@ -100,7 +100,7 @@ namespace MBSim {
         function->setParent(this);
       }
       int getArgSize() const { return 1; }
-      std::pair<int, int> getRetSize() const { return component.size()?component[0]->getRetSize():std::make_pair(0,1); }
+      std::pair<int, int> getRetSize() const { return std::make_pair(component.size(),1); }
       Ret operator()(const Arg &x) {
         Ret y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
