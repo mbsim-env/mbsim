@@ -46,7 +46,7 @@ namespace MBSim {
 
   void Frame::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(globalPosition)==enabled) {
+      if(getPlotFeature(position)==enabled) {
         if(updPos) updatePositions();
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
@@ -54,14 +54,14 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
-      if(getPlotFeature(globalVelocity)==enabled) {
+      if(getPlotFeature(velocity)==enabled) {
         if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
-      if(getPlotFeature(globalAcceleration)==enabled) {
+      if(getPlotFeature(acceleration)==enabled) {
         if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
@@ -105,20 +105,20 @@ namespace MBSim {
       updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(globalPosition)==enabled) {
+        if(getPlotFeature(position)==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WrOP("+numtostr(i)+")");
           plotColumns.push_back("alpha");
           plotColumns.push_back("beta");
           plotColumns.push_back("gamma");
         }
-        if(getPlotFeature(globalVelocity)==enabled) {
+        if(getPlotFeature(velocity)==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WvP("+numtostr(i)+")");
           for(int i=0; i<3; i++)
             plotColumns.push_back("WomegaP("+numtostr(i)+")");
         }
-        if(getPlotFeature(globalAcceleration)==enabled) {
+        if(getPlotFeature(acceleration)==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WaP("+numtostr(i)+")");
           for(int i=0; i<3; i++)

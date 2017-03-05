@@ -65,8 +65,6 @@ namespace MBSim {
       std::string getType() const { return "RigidBodyLink"; }
       void init(InitStage stage);
 
-      void plot();
-
       void initializeUsingXML(xercesc::DOMElement * element);
 
       void resetUpToDate(); 

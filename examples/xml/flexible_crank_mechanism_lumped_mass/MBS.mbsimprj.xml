@@ -20,7 +20,8 @@
       <groups/>
       <objects>
         <RigidBody name="RigidBody1">
-          <plotFeature feature="+stateDerivative"/>
+          <plotFeature feature="+derivativeOfGeneralizedPosition"/>
+          <plotFeature feature="+generalizedAcceleration"/>
           <frameForKinematics ref="Frame[K]"/>
           <mass unit="kg">m1</mass>
           <inertiaTensor unit="kg*m^2">
@@ -132,7 +133,8 @@
             </matrixParameter>
           </Parameter>
           <FlexibleBodyFFR xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBodyFFR2">
-            <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+stateDerivative"/>
+          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+derivativeOfGeneralizedPosition"/>
+          <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+generalizedAcceleration"/>
             <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
             <mass unit="kg">load('data.bin','m').m</mass>
             <positionIntegral>load('data.bin','rdm').rdm</positionIntegral>
@@ -182,7 +184,7 @@
             </stateDependentRotation>
             <frames>
               <NodeFrame name="Q">
-                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+globalPosition"/>
+                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+position"/>
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
                   <?OPENMBV_ID 15?>
                   <size unit="cm">1</size>
@@ -208,7 +210,8 @@
           </FlexibleBodyFFR>
         </Embed>
         <RigidBody name="RigidBody3">
-          <plotFeature feature="+stateDerivative"/>
+          <plotFeature feature="+derivativeOfGeneralizedPosition"/>
+          <plotFeature feature="+generalizedAcceleration"/>
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>l1+l2</ele>

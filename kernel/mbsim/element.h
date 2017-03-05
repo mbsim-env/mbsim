@@ -74,18 +74,20 @@ namespace MBSim {
       enum PlotFeature {
         plotRecursive=0, /*!< enables/disables all plotting beyond this hierarchy */
         separateFilePerGroup, /*!< create a separate h5 file for the Group */
-        state, /*!< plot the state vector (x, q, u) */
-        stateDerivative, /*!< plot the derivative of the state vector (xd, qd, ud) */
-        notMinimalState, // TODO
-        rightHandSide, /*!< plot the smooth and non smooth right hand size (h, r=W*l) */
-        globalPosition, /*!< plot some global (world) positions/orientation */
-        globalVelocity, /*!< plot some global (world) velocities */
-        globalAcceleration, /*!< plot some global (world) accelerations */
+        generalizedPosition, /*!< plot the generalized position q */
+        generalizedVelocity, /*!< plot the generalized velocity u */
+        derivativeOfGeneralizedPosition, /*!< plot the derivative of generalized position qd */
+        generalizedAcceleration, /*!< plot the generalized accelerations ud */
+        generalizedRelativePosition, /*!< plot the generalized relative position g */
+        generalizedRelativeVelocity, /*!< plot the generalized relative velocity gd */
+        generalizedForce, /*!< plot the generalized force la */
+        position, /*!< plot the position r and orientation A */
+        velocity, /*!< plot the velocity v and angular velocity om */
+        acceleration, /*!< plot the acceleration a and angular acceleration psi */
+        force, /*!< plot the force F */
+        moment, /*!< plot the moment M */
         energy, /*!< plot the energy */
         openMBV, /*!< plot the OpenMBV part */
-        generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */
-        linkKinematics, /*!< plot the kinematic of links (g, gd) */
-        stopVector, /*!< plot the stop vector (sv) */
         debug, /*!< plot internal sizes */
         LASTPLOTFEATURE
       };

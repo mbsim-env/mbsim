@@ -103,7 +103,6 @@ namespace MBSim {
     ke->setExcitationFunction(f);
     ke->setGeneralizedForceLaw(new BilateralConstraint);
     ke->setSupportFrame(support);
-    ke->setPlotFeature(linkKinematics,disabled);
     link = ke;
   }
 

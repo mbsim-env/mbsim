@@ -137,12 +137,14 @@ namespace MBSim {
   }
 
   void Graph::printGraph() {
-    msg(Info) << "Content of object graph "<< name << ":" << endl;
-    for(unsigned int i=0; i<obj.size(); i++) {
-      msg(Info) << "  Objects in level "<< i << ":"<< endl;
-      for(unsigned int j=0; j<obj[i].size(); j++)
-	msg(Info) << "    "<< obj[i][j]->getPath()<<" (uSize=" <<obj[i][j]->getuSize()<<", hSize="<< obj[i][j]->gethSize()<<
-                                           ", uInd=" << obj[i][j]->getuInd()<<", hInd=" << obj[i][j]->gethInd()<< ")"<<endl;
+    if(msgAct(Debug)) {
+      msg(Debug) << "Content of object graph "<< name << ":" << endl;
+      for(unsigned int i=0; i<obj.size(); i++) {
+        msg(Debug) << "  Objects in level "<< i << ":"<< endl;
+        for(unsigned int j=0; j<obj[i].size(); j++)
+          msg(Debug) << "    "<< obj[i][j]->getPath()<<" (uSize=" <<obj[i][j]->getuSize()<<", hSize="<< obj[i][j]->gethSize()<<
+            ", uInd=" << obj[i][j]->getuInd()<<", hInd=" << obj[i][j]->gethInd()<< ")"<<endl;
+      }
     }
   }
 

@@ -198,7 +198,7 @@ namespace MBSimHydraulics {
         plotColumns.push_back("QOut [l/min]");
         for (int i=0; i<relPlotPoints.size(); i++)
           plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
-        if(getPlotFeature(state)==enabled)
+        if(getPlotFeature(generalizedPosition)==enabled)
           for (int i=0; i<n; i++)
             plotColumns.push_back("y("+numtostr(i)+")");
         HLine::init(stage);
@@ -236,7 +236,7 @@ namespace MBSimHydraulics {
       plotVector.push_back(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
         plotVector.push_back((nFrom->getGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->getGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
-      if(getPlotFeature(state)==enabled)
+      if(getPlotFeature(generalizedPosition)==enabled)
         for (int i=0; i<n; i++)
           plotVector.push_back(y(i));
       HLine::plot();

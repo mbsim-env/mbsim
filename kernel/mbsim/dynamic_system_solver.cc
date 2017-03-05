@@ -277,18 +277,20 @@ namespace MBSim {
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
 
-      msg(Info) << "Content of element graph "<< name << ":" << endl;
-      for(unsigned int i=0; i<elementOrdered.size(); i++) {
-        msg(Info) << "  Elements in level "<< i << ":"<< endl;
-        for(unsigned int j=0; j<elementOrdered[i].size(); j++)
-          msg(Info) << "    "<< elementOrdered[i][j]->getName() << " " << elementOrdered[i][j]->getPath() << " " << elementOrdered[i][j]->getType()<<endl;
-      }
+      if(msgAct(Debug)) {
+        msg(Debug) << "Content of element graph "<< name << ":" << endl;
+        for(unsigned int i=0; i<elementOrdered.size(); i++) {
+          msg(Debug) << "  Elements in level "<< i << ":"<< endl;
+          for(unsigned int j=0; j<elementOrdered[i].size(); j++)
+            msg(Debug) << "    "<< elementOrdered[i][j]->getName() << " " << elementOrdered[i][j]->getPath() << " " << elementOrdered[i][j]->getType()<<endl;
+        }
 
-      msg(Info) << "Content of link graph "<< name << ":" << endl;
-      for(unsigned int i=0; i<linkOrdered.size(); i++) {
-        msg(Info) << "  Elements in level "<< i << ":"<< endl;
-        for(unsigned int j=0; j<linkOrdered[i].size(); j++)
-          msg(Info) << "    "<< linkOrdered[i][j]->getName() << " " << linkOrdered[i][j]->getPath() << " " << linkOrdered[i][j]->getType()<<endl;
+        msg(Debug) << "Content of link graph "<< name << ":" << endl;
+        for(unsigned int i=0; i<linkOrdered.size(); i++) {
+          msg(Debug) << "  Elements in level "<< i << ":"<< endl;
+          for(unsigned int j=0; j<linkOrdered[i].size(); j++)
+            msg(Debug) << "    "<< linkOrdered[i][j]->getName() << " " << linkOrdered[i][j]->getPath() << " " << linkOrdered[i][j]->getType()<<endl;
+        }
       }
       setDynamicSystemSolver(this);
 

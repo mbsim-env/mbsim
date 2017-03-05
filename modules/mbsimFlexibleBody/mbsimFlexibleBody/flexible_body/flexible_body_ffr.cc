@@ -412,17 +412,6 @@ namespace MBSimFlexibleBody {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(notMinimalState)==enabled) {
-          for(int i=0; i<nq; i++)
-            plotColumns.push_back("qRel("+numtostr(i)+")");
-          for(int i=0; i<nu[0]; i++)
-            plotColumns.push_back("uRel("+numtostr(i)+")");
-        }
-        if(getPlotFeature(globalPosition)==enabled) {
-          for(unsigned int i=0; i<WrOP.size(); i++)
-            for(int j=0; j<3; j++)
-              plotColumns.push_back("WrOP["+numtostr(int(i))+"]("+numtostr(j)+")");
-        }
         if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
           dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
           if(ombvIndices.size())
@@ -449,20 +438,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyFFR::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(notMinimalState)==enabled) {
-        for(int i=0; i<nq; i++)
-          plotVector.push_back(qRel.e(i));
-        for(int i=0; i<nu[0]; i++)
-          plotVector.push_back(uRel.e(i));
-      }
-
-      if(getPlotFeature(globalPosition)==enabled) {
-        for(unsigned int i=0; i<WrOP.size(); i++) {
-          Vec3 WrOP = evalNodalPosition(i);
-          for(int j=0; j<3; j++)
-            plotVector.push_back(WrOP(j));
-        }
-      }
       if(getPlotFeature(openMBV)==enabled) {
         if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
           vector<double> data;

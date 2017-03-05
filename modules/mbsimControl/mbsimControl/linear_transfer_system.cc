@@ -110,7 +110,7 @@ namespace MBSimControl {
     else if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
-        if (getPlotFeature(rightHandSide)==enabled)
+        if (getPlotFeature(generalizedPosition)==enabled)
           for (int i=0; i<B.cols(); i++)
             plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
       }
@@ -214,7 +214,7 @@ namespace MBSimControl {
 
   void LinearTransferSystem::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if (getPlotFeature(rightHandSide)==enabled)
+      if (getPlotFeature(generalizedPosition)==enabled)
         for (int i=0; i<B.cols(); i++)
           plotVector.push_back(inputSignal->evalSignal()(i));
     }

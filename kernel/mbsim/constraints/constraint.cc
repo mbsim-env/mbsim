@@ -29,7 +29,6 @@ using namespace xercesc;
 namespace MBSim {
 
   Constraint::Constraint(const std::string &name) : Element(name), updGC(true), updGJ(true) {
-    setPlotFeature(state, enabled);
   }
 
   void Constraint::updatexRef(const Vec &xParent) {

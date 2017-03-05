@@ -27,7 +27,6 @@ using namespace fmatvec;
 namespace MBSim {
 
   Observer::Observer(const std::string &name) : Element(name) {
-    setPlotFeature(globalPosition, enabled);
   }
 
   void Observer::init(InitStage stage) {

@@ -208,25 +208,8 @@ namespace MBSim {
       for(unsigned int i=0; i<body.size(); i++)
         P[i] = body[i]->getFrameForKinematics();
     }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
-        for(int i=0; i<(int)body.size(); i++)
-          plotColumns.push_back("la("+numtostr(i)+")*ratio("+numtostr(i)+")");
-        MechanicalLink::init(stage);
-      }
-    }
     else
       MechanicalLink::init(stage);
-  }
-
-  void RigidBodyLink::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      for(unsigned int i=0; i<body.size(); i++) {
-        plotVector.push_back(ratio[i]*evalGeneralizedForce()(0));
-      }
-      MechanicalLink::plot();
-    }
   }
 
   void RigidBodyLink::initializeUsingXML(DOMElement* element) {

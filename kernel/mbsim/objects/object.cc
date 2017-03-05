@@ -40,8 +40,6 @@ namespace MBSim {
     uInd[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-
-    setPlotFeature(state, enabled);
   }
 
   void Object::updatedhdz() {
@@ -99,15 +97,19 @@ namespace MBSim {
 
   void Object::plot() {
     if (getPlotFeature(plotRecursive) == enabled) {
-      if (getPlotFeature(state) == enabled) {
+      if (getPlotFeature(generalizedPosition) == enabled) {
         for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
           plotVector.push_back(qRel(i));
+      }
+      if (getPlotFeature(generalizedVelocity) == enabled) {
         for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
           plotVector.push_back(uRel(i));
       }
-      if (getPlotFeature(stateDerivative) == enabled) {
+      if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
         for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
           plotVector.push_back(qdRel(i));
+      }
+      if (getPlotFeature(generalizedAcceleration) == enabled) {
         for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
           plotVector.push_back(udRel(i));
       }
@@ -204,15 +206,19 @@ namespace MBSim {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {
-        if (getPlotFeature(state) == enabled) {
+        if (getPlotFeature(generalizedPosition) == enabled) {
           for (int i = 0; i < qRel.size(); ++i)
             plotColumns.push_back("q(" + numtostr(i) + ")");
+        }
+        if (getPlotFeature(generalizedVelocity) == enabled) {
           for (int i = 0; i < uRel.size(); ++i)
             plotColumns.push_back("u(" + numtostr(i) + ")");
         }
-        if (getPlotFeature(stateDerivative) == enabled) {
+        if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
           for (int i = 0; i < qdRel.size(); ++i)
             plotColumns.push_back("qd(" + numtostr(i) + ")");
+        }
+        if (getPlotFeature(generalizedAcceleration) == enabled) {
           for (int i = 0; i < udRel.size(); ++i)
             plotColumns.push_back("ud(" + numtostr(i) + ")");
         }

@@ -35,7 +35,7 @@ namespace MBSimControl {
     if (stage==plotting) {
       updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(state)==enabled) {
+        if(getPlotFeature(generalizedPosition)==enabled) {
           for (int i=0; i<getSignalSize(); i++)
             plotColumns.push_back("Signal (" + numtostr(i) + ")");
         }
@@ -49,7 +49,7 @@ namespace MBSimControl {
 
   void Signal::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled) {
+      if(getPlotFeature(generalizedPosition)==enabled) {
         for (int i=0; i<evalSignal().size(); i++)
           plotVector.push_back(getSignal()(i));
       }

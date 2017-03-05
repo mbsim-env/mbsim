@@ -33,20 +33,19 @@ using namespace std;
 namespace MBSim {
 
   Link::Link(const string &name) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), bSize(0), bInd(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), rFactorSize(0), rFactorInd(0), rMax(1.), corrSize(0), corrInd(0), updrrel(true), updvrel(true), updla(true) {
-    setPlotFeature(state, enabled);
-    setPlotFeature(generalizedLinkForce, enabled);
-    setPlotFeature(linkKinematics, enabled);
   }
 
   void Link::plot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(linkKinematics)==enabled) {
+      if(getPlotFeature(generalizedRelativePosition)==enabled) {
         for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
           plotVector.push_back(rrel(i));
+      }
+      if(getPlotFeature(generalizedRelativeVelocity)==enabled) {
         for(int i=0; i<evalGeneralizedRelativeVelocity().size(); ++i)
           plotVector.push_back(vrel(i));
       }
-      if(getPlotFeature(generalizedLinkForce)==enabled) {
+      if(getPlotFeature(generalizedForce)==enabled) {
         for(int i=0; i<evalGeneralizedForce().size(); ++i)
           plotVector.push_back(evalGeneralizedForce()(i));
       }
@@ -138,13 +137,15 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(linkKinematics)==enabled) {
+        if(getPlotFeature(generalizedRelativePosition)==enabled) {
           for(int i=0; i<rrel.size(); ++i)
             plotColumns.push_back("g("+numtostr(i)+")");
+        }
+        if(getPlotFeature(generalizedRelativeVelocity)==enabled) {
           for(int i=0; i<vrel.size(); ++i)
             plotColumns.push_back("gd("+numtostr(i)+")");
         }
-        if(getPlotFeature(generalizedLinkForce)==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
+        if(getPlotFeature(generalizedForce)==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
           for(int i=0; i<lambda.size(); ++i)
             plotColumns.push_back("la("+numtostr(i)+")");
         }
