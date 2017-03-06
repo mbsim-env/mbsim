@@ -41,7 +41,7 @@ namespace MBSim {
     if(stage==plotting) {
       MechanicalLinkObserver::init(stage);
       updatePlotFeatures();
-      if (getPlotFeature(plotRecursive) == enabled) {
+      if (getPlotFeature(11334901831169464975ULL) == enabled) {
         if(openMBVContactFrame[0]) {
           for (unsigned int i = 0; i < 2; i++) { // frames
             openMBVContactFrame[i]->setName(i == 0 ? "Frame_A" : "Frame_B");
@@ -64,8 +64,8 @@ namespace MBSim {
   }
 
   void SingleContactObserver::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(openMBV)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(getPlotFeature(13464197197848110344ULL)==enabled) {
         if(openMBVContactFrame[0]) {
           for(unsigned int i = 0; i < 2; i++) {
             vector<double> data;

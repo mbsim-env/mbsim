@@ -39,8 +39,8 @@ namespace MBSim {
       updatePlotFeatures();
 
       Observer::init(stage);
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(openMBV)==enabled) {
+      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+        if(getPlotFeature(13464197197848110344ULL)==enabled) {
           if(openMBVPosition) {
             openMBVPosition->setName("Position");
             getOpenMBVGrp()->addObject(openMBVPosition);
@@ -89,7 +89,7 @@ namespace MBSim {
   }
 
   void RigidBodyGroupObserver::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
       double m = 0;
       for(unsigned int i=0; i<body.size(); i++) {
         m += body[i]->getMass();
@@ -123,7 +123,7 @@ namespace MBSim {
         Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aSi);
       }
       Vec3 G = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-      if(getPlotFeature(openMBV)==enabled) {
+      if(getPlotFeature(13464197197848110344ULL)==enabled) {
         if(openMBVWeight) {
           vector<double> data;
           data.push_back(getTime());

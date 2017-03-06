@@ -58,10 +58,10 @@ namespace MBSim {
     delete ftil;
   }
 
-  void Contact::setPlotFeatureContactKinematics(std::string cKName, PlotFeature pf, PlotFeatureStatus value) {
+  void Contact::setPlotFeatureContactKinematics(std::string cKName, std::size_t pf, PlotFeatureStatus value) {
     if (ckNames.end() != find(ckNames.begin(), ckNames.end(), cKName)) {
-      pair<string, PlotFeature> Pair(cKName, pf);
-      plotFeatureMap.insert(pair<pair<string, PlotFeature>, PlotFeatureStatus>(Pair, value));
+      pair<string, std::size_t> Pair(cKName, pf);
+      plotFeatureMap.insert(pair<pair<string, std::size_t>, PlotFeatureStatus>(Pair, value));
     }
   }
 
@@ -342,17 +342,17 @@ namespace MBSim {
           contacts[cK][k].setContactKinematics(contactKinematics[cK]->getContactKinematics(k) ? contactKinematics[cK]->getContactKinematics(k) : contactKinematics[cK]);
           contacts[cK][k].connect(contour[0][cK], contour[1][cK]);
           //Applies the plot feature to all children (make it possible to set only some children...)
-          for (int i = plotRecursive; i != LASTPLOTFEATURE; i++) {
-            PlotFeature pf = static_cast<PlotFeature>(i);
-            PlotFeatureStatus pfS = getPlotFeature(pf);
-
-            pair<string, PlotFeature> Pair(ckNames[cK], pf);
-            if (plotFeatureMap.find(Pair) != plotFeatureMap.end()) {
-              pfS = plotFeatureMap.find(Pair)->second;
-            }
-
-            contacts[cK][k].setPlotFeature(pf, pfS);
-          }
+//          for (int i = 11334901831169464975ULL; i != LASTPLOTFEATURE; i++) {
+//            PlotFeature pf = static_cast<PlotFeature>(i);
+//            PlotFeatureStatus pfS = getPlotFeature(pf);
+//
+//            pair<string, PlotFeature> Pair(ckNames[cK], pf);
+//            if (plotFeatureMap.find(Pair) != plotFeatureMap.end()) {
+//              pfS = plotFeatureMap.find(Pair)->second;
+//            }
+//
+//            contacts[cK][k].setPlotFeature(pf, pfS);
+//          }
 
           //set the tolerances for the single contacts
           contacts[cK][k].setgTol(gTol);
@@ -383,7 +383,7 @@ namespace MBSim {
     else if (stage == plotting) {
       Element::init(stage);
       updatePlotFeatures();
-      if (getPlotFeature(plotRecursive) == enabled) {
+      if (getPlotFeature(11334901831169464975ULL) == enabled) {
         for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
           for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
             jter->init(stage);
@@ -478,7 +478,7 @@ namespace MBSim {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->closePlot();
     }
-    if (getPlotFeature(plotRecursive) == enabled) {
+    if (getPlotFeature(11334901831169464975ULL) == enabled) {
       Element::closePlot();
     }
   }

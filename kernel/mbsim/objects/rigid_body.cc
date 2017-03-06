@@ -312,8 +312,8 @@ namespace MBSim {
   }
 
   void RigidBody::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(openMBV)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(getPlotFeature(13464197197848110344ULL)==enabled) {
         if(openMBVBody) {
           vector<double> data;
           data.push_back(getTime());
@@ -629,7 +629,7 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameC");
     while(e and E(e)->getTagName()==MBSIM%"plotFeatureFrameC") {
       PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      PlotFeature feature = initializePlotFeatureUsingXML(e);
+      size_t feature = initializePlotFeatureUsingXML(e);
       C->setPlotFeature(feature, status);
       e=e->getNextElementSibling();
     }

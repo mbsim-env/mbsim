@@ -45,8 +45,8 @@ namespace MBSim {
   }
 
   void Frame::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(position)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(getPlotFeature(12307443656510933270ULL)==enabled) {
         if(updPos) updatePositions();
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
@@ -54,21 +54,21 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
-      if(getPlotFeature(velocity)==enabled) {
+      if(getPlotFeature(9333706489830170160ULL)==enabled) {
         if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
-      if(getPlotFeature(acceleration)==enabled) {
+      if(getPlotFeature(1640323793842503125ULL)==enabled) {
         if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
         for(int i=0; i<3; i++)
           plotVector.push_back(WpsiP(i));
       }
-      if(getPlotFeature(openMBV)==enabled) {
+      if(getPlotFeature(13464197197848110344ULL)==enabled) {
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
           if(updPos) updatePositions();
           vector<double> data;
@@ -89,7 +89,7 @@ namespace MBSim {
   }
 
   void Frame::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
       Element::closePlot();
     }
   }
@@ -104,28 +104,28 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
   
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(position)==enabled) {
+      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+        if(getPlotFeature(12307443656510933270ULL)==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WrOP("+numtostr(i)+")");
           plotColumns.push_back("alpha");
           plotColumns.push_back("beta");
           plotColumns.push_back("gamma");
         }
-        if(getPlotFeature(velocity)==enabled) {
+        if(getPlotFeature(9333706489830170160ULL)==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WvP("+numtostr(i)+")");
           for(int i=0; i<3; i++)
             plotColumns.push_back("WomegaP("+numtostr(i)+")");
         }
-        if(getPlotFeature(acceleration)==enabled) {
+        if(getPlotFeature(1640323793842503125ULL)==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WaP("+numtostr(i)+")");
           for(int i=0; i<3; i++)
             plotColumns.push_back("WpsiP("+numtostr(i)+")");
         }
   
-        if(getPlotFeature(openMBV)==enabled) {
+        if(getPlotFeature(13464197197848110344ULL)==enabled) {
           if(openMBVFrame) {
             openMBVFrame->setName(name);
             parent->getOpenMBVGrp()->addObject(openMBVFrame);

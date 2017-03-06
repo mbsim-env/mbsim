@@ -99,8 +99,8 @@ namespace MBSim {
       void setu(const fmatvec::Vec& u_){ u = u_;}
       void setjsv(const fmatvec::VecInt& jsv_){ jsv = jsv_;}
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
-      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
+      virtual PlotFeatureStatus getPlotFeature(std::size_t pf) { return Element::getPlotFeature(pf); };
+      virtual PlotFeatureStatus getPlotFeatureForChildren(std::size_t pf) { return Element::getPlotFeatureForChildren(pf); };
       virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp();
 
       virtual void updatewb();

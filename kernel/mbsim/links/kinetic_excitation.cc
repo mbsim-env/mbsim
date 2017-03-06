@@ -49,8 +49,8 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(openMBV)==enabled) {
+      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+        if(getPlotFeature(13464197197848110344ULL)==enabled) {
           if(openMBVArrow) {
             if(forceDir.cols()) {
               openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow); 
@@ -122,8 +122,8 @@ namespace MBSim {
   }
 
   void KineticExcitation::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(openMBV)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(getPlotFeature(13464197197848110344ULL)==enabled) {
         if(openMBVForce) {
           vector<double> data;
           data.push_back(getTime());

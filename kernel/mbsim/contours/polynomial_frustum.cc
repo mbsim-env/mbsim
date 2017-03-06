@@ -46,7 +46,7 @@ namespace MBSim {
     else if (stage == plotting) {
       updatePlotFeatures();
 
-      if (getPlotFeature(plotRecursive) == enabled) {
+      if (getPlotFeature(11334901831169464975ULL) == enabled) {
         if (openMBVRigidBody) {
           static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setIvFileName((getPath(NULL, ".").substr(1) + ".iv").c_str());
           static_pointer_cast<OpenMBV::IvBody>(openMBVRigidBody)->setBoundaryEdges(true);

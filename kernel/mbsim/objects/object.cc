@@ -96,37 +96,37 @@ namespace MBSim {
   }
 
   void Object::plot() {
-    if (getPlotFeature(plotRecursive) == enabled) {
-      if (getPlotFeature(generalizedPosition) == enabled) {
-        for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
-          plotVector.push_back(qRel(i));
-      }
-      if (getPlotFeature(generalizedVelocity) == enabled) {
-        for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
-          plotVector.push_back(uRel(i));
-      }
-      if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
-        for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
-          plotVector.push_back(qdRel(i));
-      }
-      if (getPlotFeature(generalizedAcceleration) == enabled) {
-        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
-          plotVector.push_back(udRel(i));
-      }
-      if (getPlotFeature(energy) == enabled) {
-        double Ttemp = evalKineticEnergy();
-        double Vtemp = evalPotentialEnergy();
-        plotVector.push_back(Ttemp);
-        plotVector.push_back(Vtemp);
-        plotVector.push_back(Ttemp + Vtemp);
-      }
+    if (getPlotFeature(11334901831169464975ULL) == enabled) {
+//      if (getPlotFeature(generalizedPosition) == enabled) {
+//        for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
+//          plotVector.push_back(qRel(i));
+//      }
+//      if (getPlotFeature(generalizedVelocity) == enabled) {
+//        for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
+//          plotVector.push_back(uRel(i));
+//      }
+//      if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
+//        for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
+//          plotVector.push_back(qdRel(i));
+//      }
+//      if (getPlotFeature(generalizedAcceleration) == enabled) {
+//        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
+//          plotVector.push_back(udRel(i));
+//      }
+//      if (getPlotFeature(energy) == enabled) {
+//        double Ttemp = evalKineticEnergy();
+//        double Vtemp = evalPotentialEnergy();
+//        plotVector.push_back(Ttemp);
+//        plotVector.push_back(Vtemp);
+//        plotVector.push_back(Ttemp + Vtemp);
+//      }
 
       Element::plot();
     }
   }
 
   void Object::closePlot() {
-    if (getPlotFeature(plotRecursive) == enabled) {
+    if (getPlotFeature(11334901831169464975ULL) == enabled) {
       Element::closePlot();
     }
   }
@@ -205,28 +205,28 @@ namespace MBSim {
     else if (stage == plotting) {
       updatePlotFeatures();
 
-      if (getPlotFeature(plotRecursive) == enabled) {
-        if (getPlotFeature(generalizedPosition) == enabled) {
-          for (int i = 0; i < qRel.size(); ++i)
-            plotColumns.push_back("q(" + numtostr(i) + ")");
-        }
-        if (getPlotFeature(generalizedVelocity) == enabled) {
-          for (int i = 0; i < uRel.size(); ++i)
-            plotColumns.push_back("u(" + numtostr(i) + ")");
-        }
-        if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
-          for (int i = 0; i < qdRel.size(); ++i)
-            plotColumns.push_back("qd(" + numtostr(i) + ")");
-        }
-        if (getPlotFeature(generalizedAcceleration) == enabled) {
-          for (int i = 0; i < udRel.size(); ++i)
-            plotColumns.push_back("ud(" + numtostr(i) + ")");
-        }
-        if (getPlotFeature(energy) == enabled) {
-          plotColumns.push_back("T");
-          plotColumns.push_back("V");
-          plotColumns.push_back("E");
-        }
+      if (getPlotFeature(11334901831169464975ULL) == enabled) {
+//        if (getPlotFeature(generalizedPosition) == enabled) {
+//          for (int i = 0; i < qRel.size(); ++i)
+//            plotColumns.push_back("q(" + numtostr(i) + ")");
+//        }
+//        if (getPlotFeature(generalizedVelocity) == enabled) {
+//          for (int i = 0; i < uRel.size(); ++i)
+//            plotColumns.push_back("u(" + numtostr(i) + ")");
+//        }
+//        if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
+//          for (int i = 0; i < qdRel.size(); ++i)
+//            plotColumns.push_back("qd(" + numtostr(i) + ")");
+//        }
+//        if (getPlotFeature(generalizedAcceleration) == enabled) {
+//          for (int i = 0; i < udRel.size(); ++i)
+//            plotColumns.push_back("ud(" + numtostr(i) + ")");
+//        }
+//        if (getPlotFeature(energy) == enabled) {
+//          plotColumns.push_back("T");
+//          plotColumns.push_back("V");
+//          plotColumns.push_back("E");
+//        }
 
         Element::init(stage);
       }

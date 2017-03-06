@@ -59,7 +59,7 @@ namespace MBSim {
   }
 
   void MechanicalLink::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
       Link::closePlot();
     }
   }

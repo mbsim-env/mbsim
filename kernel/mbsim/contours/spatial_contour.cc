@@ -80,8 +80,8 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
   
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+        if(getPlotFeature(13464197197848110344ULL)==enabled && openMBVRigidBody) {
           if(not(ombvEtaNodes.size())) {
             ombvEtaNodes.resize(51);
             for(unsigned int i=0; i<ombvEtaNodes.size(); i++)

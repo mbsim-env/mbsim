@@ -30,6 +30,7 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
 #include <hdf5serie/simpleattribute.h>
+#include <boost/functional/hash.hpp>
 
 using namespace std;
 using namespace fmatvec;
@@ -42,17 +43,42 @@ namespace MBSim {
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
-    for(int i=0; i<LASTPLOTFEATURE; i++) {
-      plotFeature[(PlotFeature)i]=unset;
-      plotFeatureForChildren[(PlotFeature)i]=unset;
-    }
-  }
-
-  Element::~Element() {
+//    for(int i=0; i<LASTPLOTFEATURE; i++) {
+//      plotFeature[(PlotFeature)i]=unset;
+//      plotFeatureForChildren[(PlotFeature)i]=unset;
+//    }
+//
+//      // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
+//      // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
+//      // new feature must also be added in
+//      // element.cc:Element::initializeUsingXML(xercesc::DOMElement *element)
+//      // and in
+//      // mbsimxml/schema/mbsim.xsd.in
+//      /** \brief Plot Features */
+//      enum PlotFeature {
+//        11334901831169464975ULL=0, /*!< enables/disables all plotting beyond this hierarchy */
+//        separateFilePerGroup, /*!< create a separate h5 file for the Group */
+//        generalizedPosition, /*!< plot the generalized position q */
+//        generalizedVelocity, /*!< plot the generalized velocity u */
+//        derivativeOfGeneralizedPosition, /*!< plot the derivative of generalized position qd */
+//        generalizedAcceleration, /*!< plot the generalized accelerations ud */
+//        generalizedRelativePosition, /*!< plot the generalized relative position g */
+//        generalizedRelativeVelocity, /*!< plot the generalized relative velocity gd */
+//        generalizedForce, /*!< plot the generalized force la */
+//        position, /*!< plot the position r and orientation A */
+//        velocity, /*!< plot the velocity v and angular velocity om */
+//        acceleration, /*!< plot the acceleration a and angular acceleration psi */
+//        force, /*!< plot the force F */
+//        moment, /*!< plot the moment M */
+//        energy, /*!< plot the energy */
+//        openMBV, /*!< plot the OpenMBV part */
+//        debug, /*!< plot internal sizes */
+//        LASTPLOTFEATURE
+//      };
   }
 
   void Element::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(getPlotFeature(11334901831169464975ULL)==enabled) {
       if(plotColumns.size()>1) {
         plotVector.insert(plotVector.begin(), getTime());
         assert(plotColumns.size()==plotVector.size());
@@ -62,24 +88,25 @@ namespace MBSim {
     }
   }
 
-  void Element::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-    }
-  }
-
   void Element::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(11334901831169464975ULL)==enabled) {
         unsigned int numEnabled=0;
-        int i=1;
-        while ((i<LASTPLOTFEATURE) && (numEnabled==0)) {
-          if (i!=openMBV)
-            if (getPlotFeature((PlotFeature)i)==enabled)
-              numEnabled++;
-          i++;
+        for (auto& x: plotFeature) {
+          size_t pf = x.first;
+          if((pf != 11334901831169464975ULL) and (pf != 13464197197848110344ULL) and x.second==enabled) {
+            numEnabled++;
+            break;
+          }
         }
+        //while ((i<LASTPLOTFEATURE) && (numEnabled==0)) {
+        //  if (i!=openMBV)
+        //    if (getPlotFeature((PlotFeature)i)==enabled)
+        //      numEnabled++;
+        //  i++;
+        //}
 
         if(numEnabled>0) {
           if(not parent->getPlotGroup()) {
@@ -108,9 +135,11 @@ namespace MBSim {
   }
 
   void Element::updatePlotFeatures() {
-    for(int i=0; i<LASTPLOTFEATURE; i++) {
-      if(getPlotFeature((PlotFeature)i)==unset) setPlotFeature((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
-      if(getPlotFeatureForChildren((PlotFeature)i)==unset) setPlotFeatureForChildren((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
+    for (auto& x: parent->getPlotFeaturesForChildren()) {
+      if(plotFeature[x.first]==unset) plotFeature[x.first]=x.second;
+    }
+    for (auto& x: parent->getPlotFeaturesForChildren()) {
+      if(plotFeatureForChildren[x.first]==unset) plotFeatureForChildren[x.first]=x.second;
     }
   }
 
@@ -202,31 +231,9 @@ namespace MBSim {
       return status;
   }
 
-  Element::PlotFeature Element::initializePlotFeatureUsingXML(DOMElement *e) {
-      PlotFeature feature=plotRecursive;
-      if     (E(e)->getAttribute("feature").substr(1)=="plotRecursive") feature=plotRecursive;
-      else if(E(e)->getAttribute("feature").substr(1)=="separateFilePerGroup") feature=separateFilePerGroup;
-      else if(E(e)->getAttribute("feature").substr(1)=="generalizedPosition") feature=generalizedPosition;
-      else if(E(e)->getAttribute("feature").substr(1)=="generalizedVelocity") feature=generalizedVelocity;
-      else if(E(e)->getAttribute("feature").substr(1)=="derivativeOfGeneralizedPosition") feature=derivativeOfGeneralizedPosition;
-      else if(E(e)->getAttribute("feature").substr(1)=="generalizedAcceleration") feature=generalizedAcceleration;
-      else if(E(e)->getAttribute("feature").substr(1)=="generalizedRelativePosition") feature=generalizedRelativePosition;
-      else if(E(e)->getAttribute("feature").substr(1)=="generalizedRelativeVelocity") feature=generalizedRelativeVelocity;
-      else if(E(e)->getAttribute("feature").substr(1)=="generalizedForce") feature=generalizedForce;
-      else if(E(e)->getAttribute("feature").substr(1)=="position") feature=position;
-      else if(E(e)->getAttribute("feature").substr(1)=="velocity") feature=velocity;
-      else if(E(e)->getAttribute("feature").substr(1)=="acceleration") feature=acceleration;
-      else if(E(e)->getAttribute("feature").substr(1)=="force") feature=force;
-      else if(E(e)->getAttribute("feature").substr(1)=="moment") feature=moment;
-      else if(E(e)->getAttribute("feature").substr(1)=="energy") feature=energy;
-      else if(E(e)->getAttribute("feature").substr(1)=="openMBV") feature=openMBV;
-      else if(E(e)->getAttribute("feature").substr(1)=="debug") feature=debug;
-      else {
-        ostringstream str;
-        str<<"Unknown plot feature: "<<E(e)->getAttribute("feature");
-        throw DOMEvalException(str.str(), e, e->getAttributeNode(X()%"feature"));
-      }
-      return feature;
+  size_t Element::initializePlotFeatureUsingXML(DOMElement *e) {
+    boost::hash<std::string> string_hash;
+    return string_hash(E(e)->getAttribute("feature").substr(1));
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
@@ -241,7 +248,7 @@ namespace MBSim {
                 E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
                 E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
       PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      PlotFeature feature = initializePlotFeatureUsingXML(e);
+      size_t feature = initializePlotFeatureUsingXML(e);
       if(E(e)->getTagName()==MBSIM%"plotFeature") setPlotFeature(feature, status);
       else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
       else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);

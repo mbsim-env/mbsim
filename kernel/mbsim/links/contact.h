@@ -176,7 +176,7 @@ namespace MBSim {
         return contacts;
       }
 
-      virtual void setPlotFeatureContactKinematics(std::string cKName, PlotFeature pf, PlotFeatureStatus value);
+      virtual void setPlotFeatureContactKinematics(std::string cKName, std::size_t pf, PlotFeatureStatus value);
       /***************************************************/
 
       /**
@@ -227,7 +227,7 @@ namespace MBSim {
        *
        * \todo: see remark of ckNames
        */
-      std::map<std::pair<std::string, PlotFeature>, PlotFeatureStatus> plotFeatureMap;
+      std::map<std::pair<std::string, std::size_t>, PlotFeatureStatus> plotFeatureMap;
 
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level

@@ -59,37 +59,9 @@ namespace MBSim {
     public:
       /** \brief Plot feature status */
       enum PlotFeatureStatus {
+        unset, /*!< use the default value for the feature */
         enabled, /*!< set the feature enabled */
-        disabled, /*!< set the feature disabled */
-        unset /*!< use the default value for the feature */
-      };
-
-      // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
-      // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
-      // new feature must also be added in
-      // element.cc:Element::initializeUsingXML(xercesc::DOMElement *element)
-      // and in
-      // mbsimxml/schema/mbsim.xsd.in
-      /** \brief Plot Features */
-      enum PlotFeature {
-        plotRecursive=0, /*!< enables/disables all plotting beyond this hierarchy */
-        separateFilePerGroup, /*!< create a separate h5 file for the Group */
-        generalizedPosition, /*!< plot the generalized position q */
-        generalizedVelocity, /*!< plot the generalized velocity u */
-        derivativeOfGeneralizedPosition, /*!< plot the derivative of generalized position qd */
-        generalizedAcceleration, /*!< plot the generalized accelerations ud */
-        generalizedRelativePosition, /*!< plot the generalized relative position g */
-        generalizedRelativeVelocity, /*!< plot the generalized relative velocity gd */
-        generalizedForce, /*!< plot the generalized force la */
-        position, /*!< plot the position r and orientation A */
-        velocity, /*!< plot the velocity v and angular velocity om */
-        acceleration, /*!< plot the acceleration a and angular acceleration psi */
-        force, /*!< plot the force F */
-        moment, /*!< plot the moment M */
-        energy, /*!< plot the energy */
-        openMBV, /*!< plot the OpenMBV part */
-        debug, /*!< plot internal sizes */
-        LASTPLOTFEATURE
+        disabled /*!< set the feature disabled */
       };
 
       /** \brief The stages of the initialization
@@ -112,13 +84,13 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Element();
+      virtual ~Element() { }
 
       /* INTERFACE */
       /**
        * \brief TODO
        */
-      virtual void initDataInterfaceBase(DynamicSystemSolver *parentds) {};
+      virtual void initDataInterfaceBase(DynamicSystemSolver *parentds) { }
 
       /**
        * \return std::string representation
@@ -143,12 +115,12 @@ namespace MBSim {
        * \param simulation time
        * \param simulation time step size for derivative calculation
        */
-      virtual void plotAtSpecialEvent() {}
+      virtual void plotAtSpecialEvent() { }
 
       /**
        * \brief closes plot file
        */
-      virtual void closePlot();
+      virtual void closePlot() { }
       /***************************************************/
 
       /**
@@ -191,34 +163,40 @@ namespace MBSim {
        * Set the plot feature pf of this object to enabled, disabled or unset.
        * If unset, this object uses the value of the plot feature pf of its parent object.
        */
-      virtual void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; }
+      virtual void setPlotFeature(std::size_t pf, PlotFeatureStatus value) { plotFeature[pf]=value; }
+      virtual void setPlotFeature(std::string pf, PlotFeatureStatus value);
 
       /**
        * \brief Set a plot feature for the children of this object
        *
        * Set the plot feature pf of all children which plot feature is unset to enabled, disabled or unset.
        */
-      void setPlotFeatureForChildren(PlotFeature pf, PlotFeatureStatus value) { plotFeatureForChildren[pf]=value; }
+      void setPlotFeatureForChildren(std::size_t pf, PlotFeatureStatus value) { plotFeatureForChildren[pf]=value; }
+      void setPlotFeatureForChildren(std::string pf, PlotFeatureStatus value);
 
       /**
        * \brief Set a plot feature for this object and the children of this object.
        *
        * This is a convenience function. It simply calls setPlotFeature and setPlotFeatureForChildren.
        */
-      void setPlotFeatureRecursive(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; plotFeatureForChildren[pf]=value; }
+      void setPlotFeatureRecursive(std::size_t pf, PlotFeatureStatus value) { plotFeature[pf]=value; plotFeatureForChildren[pf]=value; }
+      void setPlotFeatureRecursive(std::string pf, PlotFeatureStatus value);
+
+      const std::map<std::size_t,PlotFeatureStatus>& getPlotFeatures() const { return plotFeature; }
+      const std::map<std::size_t,PlotFeatureStatus>& getPlotFeaturesForChildren() const { return plotFeatureForChildren; }
 
       /**
        * \return plot feature
        */
-      PlotFeatureStatus getPlotFeature(PlotFeature pf) { return plotFeature[pf]; }
+      PlotFeatureStatus getPlotFeature(std::size_t pf) { return plotFeature[pf]; }
 
       /**
        * \return plot feature for derived classes
        */
-      PlotFeatureStatus getPlotFeatureForChildren(PlotFeature pf) { return plotFeatureForChildren[pf]; }
+      PlotFeatureStatus getPlotFeatureForChildren(std::size_t pf) { return plotFeatureForChildren[pf]; }
 
       PlotFeatureStatus initializePlotFeatureStatusUsingXML(xercesc::DOMElement *e);
-      PlotFeature initializePlotFeatureUsingXML(xercesc::DOMElement *e);
+      std::size_t initializePlotFeatureUsingXML(xercesc::DOMElement *e);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
@@ -283,7 +261,7 @@ namespace MBSim {
       virtual void updateJacobians(Frame *frame, int j=0) { }
       virtual void updateGyroscopicAccelerations(Frame *frame) { }
 
-      virtual void resetUpToDate() {}
+      virtual void resetUpToDate() { }
 
       const double& getTime() const;
       double getStepSize() const;
@@ -341,7 +319,7 @@ namespace MBSim {
       /**
        * \brief plot feature
        */
-      PlotFeatureStatus plotFeature[LASTPLOTFEATURE], plotFeatureForChildren[LASTPLOTFEATURE];
+      std::map<std::size_t,PlotFeatureStatus> plotFeature, plotFeatureForChildren;
   };
 
   template<class T>
@@ -390,7 +368,6 @@ namespace MBSim {
         throw ex;
     }
   }
-
 
 }
 

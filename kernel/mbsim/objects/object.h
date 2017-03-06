@@ -63,16 +63,16 @@ namespace MBSim {
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
       virtual int getuSize(int i=0) const { return uSize[i]; }
-      virtual void calcqSize() {};
-      virtual void calcuSize(int j) {};
+      virtual void calcqSize() { }
+      virtual void calcuSize(int j) { }
       virtual int getuInd(int i=0) { return uInd[i]; }
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       virtual const fmatvec::Vec& getq() const { return q; }
       virtual const fmatvec::Vec& getu() const { return u; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); }
-      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); }
+      virtual PlotFeatureStatus getPlotFeature(std::size_t pf) { return Element::getPlotFeature(pf); }
+      virtual PlotFeatureStatus getPlotFeatureForChildren(std::size_t pf) { return Element::getPlotFeatureForChildren(pf); }
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -227,7 +227,7 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      virtual void setUpInverseKinetics() {}
+      virtual void setUpInverseKinetics() { }
       /*******************************************************/ 
 
       /* GETTER / SETTER */

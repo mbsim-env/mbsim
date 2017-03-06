@@ -186,7 +186,7 @@ namespace MBSim {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameI");
     while(e and MBXMLUtils::E(e)->getTagName()==MBSIM%"plotFeatureFrameI") {
       PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      PlotFeature feature = initializePlotFeatureUsingXML(e);
+      size_t feature = initializePlotFeatureUsingXML(e);
       I->setPlotFeature(feature, status);
       e=e->getNextElementSibling();
     }

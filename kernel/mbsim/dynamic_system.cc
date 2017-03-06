@@ -328,7 +328,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::plot() {
-    if (getPlotFeature(plotRecursive) == enabled) {
+    if (getPlotFeature(11334901831169464975ULL) == enabled) {
       for (unsigned i = 0; i < dynamicsystem.size(); i++)
         dynamicsystem[i]->plot();
       for (unsigned i = 0; i < object.size(); i++)
@@ -349,7 +349,7 @@ namespace MBSim {
   }
   
   void DynamicSystem::plotAtSpecialEvent() {
-    if (getPlotFeature(plotRecursive) == enabled) {
+    if (getPlotFeature(11334901831169464975ULL) == enabled) {
       for (unsigned i = 0; i < dynamicsystem.size(); i++)
         dynamicsystem[i]->plotAtSpecialEvent();
       for (unsigned i = 0; i < object.size(); i++)
@@ -370,7 +370,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::closePlot() {
-    if (getPlotFeature(plotRecursive) == enabled) {
+    if (getPlotFeature(11334901831169464975ULL) == enabled) {
       for (unsigned i = 0; i < dynamicsystem.size(); i++)
         dynamicsystem[i]->closePlot();
       for (unsigned i = 0; i < object.size(); i++)
@@ -424,8 +424,8 @@ namespace MBSim {
       if (parent)
         updatePlotFeatures();
 
-      if (getPlotFeature(plotRecursive) == enabled) {
-        if (getPlotFeature(separateFilePerGroup) == enabled) {
+      if (getPlotFeature(11334901831169464975ULL) == enabled) {
+        if (getPlotFeature(18269718848207088804ULL) == enabled) {
           // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
           // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
           // We can walk to the top here since stage plotting is done before reorganizeHierarchy.
@@ -453,7 +453,7 @@ namespace MBSim {
         //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
         if (parent)
           parent->getOpenMBVGrp()->addObject(openMBVGrp);
-        if (getPlotFeature(separateFilePerGroup) == enabled)
+        if (getPlotFeature(18269718848207088804ULL) == enabled)
           openMBVGrp->setSeparateFile(true);
 
         H5::File *file=dynamic_cast<H5::File*>(plotGroup);

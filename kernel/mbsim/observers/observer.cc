@@ -33,8 +33,8 @@ namespace MBSim {
     if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(openMBV)==enabled) {
+      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+        if(getPlotFeature(13464197197848110344ULL)==enabled) {
           openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVGrp->setName(name+"_Group");
           openMBVGrp->setExpand(false);
