@@ -71,8 +71,6 @@ namespace MBSim {
       virtual const fmatvec::Vec& getq() const { return q; }
       virtual const fmatvec::Vec& getu() const { return u; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      virtual PlotFeatureStatus getPlotFeature(std::size_t pf) { return Element::getPlotFeature(pf); }
-      virtual PlotFeatureStatus getPlotFeatureForChildren(std::size_t pf) { return Element::getPlotFeatureForChildren(pf); }
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */

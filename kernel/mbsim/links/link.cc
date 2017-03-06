@@ -36,7 +36,7 @@ namespace MBSim {
   }
 
   void Link::plot() {
-    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
 //      if(getPlotFeature(generalizedRelativePosition)==enabled) {
 //        for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
 //          plotVector.push_back(rrel(i));
@@ -58,7 +58,7 @@ namespace MBSim {
   }
 
   void Link::closePlot() {
-    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       Element::closePlot();
     }
   }
@@ -136,7 +136,7 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
 //        if(getPlotFeature(generalizedRelativePosition)==enabled) {
 //          for(int i=0; i<rrel.size(); ++i)
 //            plotColumns.push_back("g("+numtostr(i)+")");

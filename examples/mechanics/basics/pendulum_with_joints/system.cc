@@ -55,8 +55,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   KrSP(1) = -b1;
   box1->addFrame(new FixedRelativeFrame("PunktU",KrSP,E));
-  //box1->getFrame("PunktU")->setPlotFeature(12307443656510933270ULL,Element::enabled);
-  setPlotFeatureForChildren(12307443656510933270ULL,Element::enabled);
+  box1->getFrame("PunktU")->setPlotFeature("position",Element::enabled);
+  //setPlotFeatureForChildren("position",Element::enabled);
 
   RigidBody *box2 = new RigidBody("Stab2");
   addObject(box2);

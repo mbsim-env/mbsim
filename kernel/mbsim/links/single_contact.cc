@@ -642,7 +642,7 @@ namespace MBSim {
   }
 
   void SingleContact::closePlot() {
-    if (getPlotFeature(11334901831169464975ULL) == enabled) {
+    if (plotFeature[11334901831169464975ULL] == enabled) {
       ContourLink::closePlot();
     }
   }

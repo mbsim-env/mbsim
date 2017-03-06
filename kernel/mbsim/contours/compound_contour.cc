@@ -66,14 +66,14 @@ namespace MBSim {
       if (parent)
         updatePlotFeatures();
 
-      if (getPlotFeature(11334901831169464975ULL) == enabled) {
+      if (plotFeature[11334901831169464975ULL] == enabled) {
         if (openMBVGroup == 0) {
           openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openMBVGroup->setName(name + "Group");
           //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
           if (parent)
             parent->getOpenMBVGrp()->addObject(openMBVGroup);
-          if (getPlotFeature(18269718848207088804ULL) == enabled)
+          if (plotFeature[18269718848207088804ULL] == enabled)
             openMBVGroup->setSeparateFile(true);
         }
       }

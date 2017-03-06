@@ -49,8 +49,8 @@ namespace MBSim {
       updatePlotFeatures();
 
       Observer::init(stage);
-      if(getPlotFeature(11334901831169464975ULL)==enabled) {
-        if(getPlotFeature(13464197197848110344ULL)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
+        if(plotFeature[13464197197848110344ULL]==enabled) {
           if(FWeight) {
             FWeight->setName("Weight");
             getOpenMBVGrp()->addObject(FWeight);
@@ -75,8 +75,8 @@ namespace MBSim {
   }
 
   void RigidBodyObserver::plot() {
-    if(getPlotFeature(11334901831169464975ULL)==enabled) {
-      if(getPlotFeature(13464197197848110344ULL)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[13464197197848110344ULL]==enabled) {
         if(FWeight) {
           vector<double> data;
           data.push_back(getTime());

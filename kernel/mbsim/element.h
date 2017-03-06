@@ -163,40 +163,23 @@ namespace MBSim {
        * Set the plot feature pf of this object to enabled, disabled or unset.
        * If unset, this object uses the value of the plot feature pf of its parent object.
        */
-      virtual void setPlotFeature(std::size_t pf, PlotFeatureStatus value) { plotFeature[pf]=value; }
-      virtual void setPlotFeature(std::string pf, PlotFeatureStatus value);
+      virtual void setPlotFeature(const std::string &pf, PlotFeatureStatus value);
 
       /**
        * \brief Set a plot feature for the children of this object
        *
        * Set the plot feature pf of all children which plot feature is unset to enabled, disabled or unset.
        */
-      void setPlotFeatureForChildren(std::size_t pf, PlotFeatureStatus value) { plotFeatureForChildren[pf]=value; }
-      void setPlotFeatureForChildren(std::string pf, PlotFeatureStatus value);
+      void setPlotFeatureForChildren(const std::string &pf, PlotFeatureStatus value);
 
       /**
        * \brief Set a plot feature for this object and the children of this object.
        *
        * This is a convenience function. It simply calls setPlotFeature and setPlotFeatureForChildren.
        */
-      void setPlotFeatureRecursive(std::size_t pf, PlotFeatureStatus value) { plotFeature[pf]=value; plotFeatureForChildren[pf]=value; }
-      void setPlotFeatureRecursive(std::string pf, PlotFeatureStatus value);
-
-      const std::map<std::size_t,PlotFeatureStatus>& getPlotFeatures() const { return plotFeature; }
-      const std::map<std::size_t,PlotFeatureStatus>& getPlotFeaturesForChildren() const { return plotFeatureForChildren; }
-
-      /**
-       * \return plot feature
-       */
-      PlotFeatureStatus getPlotFeature(std::size_t pf) { return plotFeature[pf]; }
-
-      /**
-       * \return plot feature for derived classes
-       */
-      PlotFeatureStatus getPlotFeatureForChildren(std::size_t pf) { return plotFeatureForChildren[pf]; }
+      void setPlotFeatureRecursive(const std::string &pf, PlotFeatureStatus value) { setPlotFeature(pf,value); setPlotFeatureForChildren(pf,value); }
 
       PlotFeatureStatus initializePlotFeatureStatusUsingXML(xercesc::DOMElement *e);
-      std::size_t initializePlotFeatureUsingXML(xercesc::DOMElement *e);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       const std::vector<MBXMLUtils::EmbedDOMLocator>& getLocationStack() const { return locationStack; }
@@ -315,7 +298,6 @@ namespace MBSim {
        */
       std::vector<Element*> dependency;
 
-    private:
       /**
        * \brief plot feature
        */

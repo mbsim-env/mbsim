@@ -96,7 +96,7 @@ namespace MBSim {
   }
 
   void Object::plot() {
-    if (getPlotFeature(11334901831169464975ULL) == enabled) {
+    if (plotFeature[11334901831169464975ULL] == enabled) {
 //      if (getPlotFeature(generalizedPosition) == enabled) {
 //        for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
 //          plotVector.push_back(qRel(i));
@@ -126,7 +126,7 @@ namespace MBSim {
   }
 
   void Object::closePlot() {
-    if (getPlotFeature(11334901831169464975ULL) == enabled) {
+    if (plotFeature[11334901831169464975ULL] == enabled) {
       Element::closePlot();
     }
   }
@@ -205,7 +205,7 @@ namespace MBSim {
     else if (stage == plotting) {
       updatePlotFeatures();
 
-      if (getPlotFeature(11334901831169464975ULL) == enabled) {
+      if (plotFeature[11334901831169464975ULL] == enabled) {
 //        if (getPlotFeature(generalizedPosition) == enabled) {
 //          for (int i = 0; i < qRel.size(); ++i)
 //            plotColumns.push_back("q(" + numtostr(i) + ")");

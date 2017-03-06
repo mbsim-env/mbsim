@@ -63,8 +63,8 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
   
-      if(getPlotFeature(11334901831169464975ULL)==enabled) {
-        if(getPlotFeature(13464197197848110344ULL)==enabled && openMBVRigidBody) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
+        if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
           if(not(ombvNodes.size())) {
             ombvNodes.resize(101);

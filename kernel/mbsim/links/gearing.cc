@@ -244,7 +244,7 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
       plotColumns.push_back("la(0)");
-      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         MechanicalLink::init(stage);
       }
     }
@@ -256,7 +256,7 @@ namespace MBSim {
 
   void Gearing::plot() {
     plotVector.push_back(la(0));
-    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       MechanicalLink::plot();
     }
   }

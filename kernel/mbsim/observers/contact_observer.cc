@@ -71,7 +71,7 @@ namespace MBSim {
     else if (stage == plotting) {
       Observer::init(stage);
       updatePlotFeatures();
-      if (getPlotFeature(11334901831169464975ULL) == enabled) {
+      if (plotFeature[11334901831169464975ULL] == enabled) {
         for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
           for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
             jter->init(stage);

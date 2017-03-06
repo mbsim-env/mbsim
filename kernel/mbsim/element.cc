@@ -78,7 +78,7 @@ namespace MBSim {
   }
 
   void Element::plot() {
-    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       if(plotColumns.size()>1) {
         plotVector.insert(plotVector.begin(), getTime());
         assert(plotColumns.size()==plotVector.size());
@@ -92,7 +92,7 @@ namespace MBSim {
     if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         unsigned int numEnabled=0;
         for (auto& x: plotFeature) {
           size_t pf = x.first;
@@ -135,10 +135,10 @@ namespace MBSim {
   }
 
   void Element::updatePlotFeatures() {
-    for (auto& x: parent->getPlotFeaturesForChildren()) {
+    for (auto& x: parent->plotFeatureForChildren) {
       if(plotFeature[x.first]==unset) plotFeature[x.first]=x.second;
     }
-    for (auto& x: parent->getPlotFeaturesForChildren()) {
+    for (auto& x: parent->plotFeatureForChildren) {
       if(plotFeatureForChildren[x.first]==unset) plotFeatureForChildren[x.first]=x.second;
     }
   }
@@ -231,9 +231,14 @@ namespace MBSim {
       return status;
   }
 
-  size_t Element::initializePlotFeatureUsingXML(DOMElement *e) {
-    boost::hash<std::string> string_hash;
-    return string_hash(E(e)->getAttribute("feature").substr(1));
+  void Element::setPlotFeature(const string &pf, PlotFeatureStatus value) {
+    boost::hash<string> string_hash;
+    plotFeature[string_hash(pf)] = value;
+  }
+
+  void Element::setPlotFeatureForChildren(const string &pf, PlotFeatureStatus value) {
+    boost::hash<string> string_hash;
+    plotFeatureForChildren[string_hash(pf)] = value;
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
@@ -248,10 +253,14 @@ namespace MBSim {
                 E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
                 E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
       PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      size_t feature = initializePlotFeatureUsingXML(e);
-      if(E(e)->getTagName()==MBSIM%"plotFeature") setPlotFeature(feature, status);
-      else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
-      else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
+      boost::hash<string> string_hash;
+      size_t feature = string_hash(E(e)->getAttribute("feature").substr(1));
+      if(E(e)->getTagName()==MBSIM%"plotFeature") plotFeature[feature] = status;
+      else if(E(e)->getTagName()==MBSIM%"plotFeatureForChildren") plotFeatureForChildren[feature] = status;
+      else if(E(e)->getTagName()==MBSIM%"plotFeatureRecursive") {
+        plotFeature[feature] = status;
+        plotFeatureForChildren[feature] = status;
+      }
       e=e->getNextElementSibling();
     }
   }

@@ -198,7 +198,6 @@ namespace MBSim {
         if (a > 0 && fabs(A(i, i) + 1) > epsroot()) { // root of relativ kinematics
           Graph *graph = new Graph("InvisibleGraph_"+to_string(nt++));
           addToGraph(graph, A, i, eleList);
-          graph->setPlotFeatureRecursive(11334901831169464975ULL, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         }
         else if (fabs(a) < epsroot()) { // absolut kinematics
@@ -412,7 +411,7 @@ namespace MBSim {
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage);
-      if (getPlotFeature(11334901831169464975ULL) == enabled)
+      if (plotFeature[11334901831169464975ULL] == enabled)
         openMBVGrp->write(true, truncateSimulationFiles);
       H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
@@ -844,7 +843,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::closePlot() {
-    if (getPlotFeature(11334901831169464975ULL) == enabled) {
+    if (plotFeature[11334901831169464975ULL] == enabled) {
       Group::closePlot();
     }
   }
@@ -1376,10 +1375,12 @@ namespace MBSim {
 
   void DynamicSystemSolver::constructor() {
     integratorExitRequest = false;
-    setPlotFeatureRecursive(11334901831169464975ULL, enabled);
-    setPlotFeature(18269718848207088804ULL, enabled);
-    setPlotFeatureForChildren(18269718848207088804ULL, disabled);
-    setPlotFeatureRecursive(13464197197848110344ULL, enabled);
+    plotFeature[11334901831169464975ULL] = enabled;
+    plotFeatureForChildren[11334901831169464975ULL] = enabled;
+    plotFeature[18269718848207088804ULL] = enabled;
+    plotFeatureForChildren[18269718848207088804ULL] = disabled;
+    plotFeature[13464197197848110344ULL] = enabled;
+    plotFeatureForChildren[13464197197848110344ULL] = enabled;
   }
 
   void DynamicSystemSolver::initializeUsingXML(DOMElement *element) {

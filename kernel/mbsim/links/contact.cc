@@ -383,7 +383,7 @@ namespace MBSim {
     else if (stage == plotting) {
       Element::init(stage);
       updatePlotFeatures();
-      if (getPlotFeature(11334901831169464975ULL) == enabled) {
+      if (plotFeature[11334901831169464975ULL] == enabled) {
         for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
           for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
             jter->init(stage);
@@ -478,7 +478,7 @@ namespace MBSim {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->closePlot();
     }
-    if (getPlotFeature(11334901831169464975ULL) == enabled) {
+    if (plotFeature[11334901831169464975ULL] == enabled) {
       Element::closePlot();
     }
   }

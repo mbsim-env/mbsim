@@ -44,7 +44,7 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(11334901831169464975ULL)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
 //      if(openMBVForce) plotColumns.push_back("Force");
 //      if(openMBVMoment) plotColumns.push_back("Moment");
         Observer::init(stage);
@@ -63,8 +63,8 @@ namespace MBSim {
   }
 
   void MechanicalLinkObserver::plot() {
-    if(getPlotFeature(11334901831169464975ULL)==enabled) {
-      if(getPlotFeature(13464197197848110344ULL)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[13464197197848110344ULL]==enabled) {
         if(openMBVForce) {
           vector<double> data;
           data.push_back(getTime());

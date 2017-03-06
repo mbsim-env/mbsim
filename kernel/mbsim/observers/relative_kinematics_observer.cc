@@ -81,8 +81,8 @@ namespace MBSim {
         plotColumns.push_back("RelativeAngularAcceleration");
       }
       Observer::init(stage);
-      if(getPlotFeature(11334901831169464975ULL)==enabled) {
-        if(getPlotFeature(13464197197848110344ULL)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
+        if(plotFeature[13464197197848110344ULL]==enabled) {
           if(openMBVPosition) {
             openMBVPosGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
             openMBVPosGrp->setName("Position_Group");
@@ -182,7 +182,7 @@ namespace MBSim {
   }
 
   void RelativeKinematicsObserver::plot() {
-    if(getPlotFeature(11334901831169464975ULL)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       Vec3 vP = frame->evalVelocity();
       Vec3 vOs = refFrame->evalVelocity();
       Vec3 rOP = frame->evalPosition();
@@ -209,7 +209,7 @@ namespace MBSim {
       Vec3 psiRot = crossProduct(omB, omBK);
       Vec3 psiRel = psiBK - psiRot;
 
-      if(getPlotFeature(13464197197848110344ULL)==enabled) {
+      if(plotFeature[13464197197848110344ULL]==enabled) {
         if(openMBVPosition&& !openMBVPosition->isHDF5Link()) {
           vector<double> data;
           data.push_back(getTime());
