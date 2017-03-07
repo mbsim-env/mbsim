@@ -50,9 +50,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   
   body1->setGeneralizedInitialVelocity("[0;1]");
 
-  body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
-  body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
-  body1->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
+  body1->getFrame("C")->setPlotFeature("position",enabled);
+  body1->getFrame("C")->setPlotFeature("orientation",enabled);
+  body1->getFrame("C")->setPlotFeature("velocity",enabled);
+  body1->getFrame("C")->setPlotFeature("angularVelocity",enabled);
+  body1->getFrame("C")->setPlotFeature("acceleration",enabled);
+  body1->getFrame("C")->setPlotFeature("angularAcceleration",enabled);
 
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
@@ -67,5 +70,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   getFrame("I")->enableOpenMBV();
 
-
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
 }

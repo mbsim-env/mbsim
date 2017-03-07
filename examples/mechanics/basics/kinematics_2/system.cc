@@ -58,6 +58,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setLength(l,h,d);
   body->setOpenMBVRigidBody(cuboid);
 
-
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
 }
 

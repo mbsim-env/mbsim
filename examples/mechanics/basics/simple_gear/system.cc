@@ -163,5 +163,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   c->addRigidBody(c2);
   c->setDiffuseColor(0.1111,1,1);
   shaft3->setOpenMBVRigidBody(c);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

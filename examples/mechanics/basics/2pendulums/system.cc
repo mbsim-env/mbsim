@@ -22,5 +22,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
   addGroup(pendel2);
   pendel2->getRod1()->setFrameOfReference(pendel1->getRod2()->getFrame("P"));
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
 }
 

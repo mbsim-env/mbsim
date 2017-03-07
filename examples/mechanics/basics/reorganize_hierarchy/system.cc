@@ -120,5 +120,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   r(0) = 0.2;
   group->setPosition(r);
   addGroup(group);
-}
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+}

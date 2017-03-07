@@ -143,5 +143,12 @@ System::System(const string &projectName) :
 
   // visualisation
   spring1->enableOpenMBV(_springRadius = 0.002, _crossSectionRadius = 0.01, _numberOfCoils = 5);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
 }
 

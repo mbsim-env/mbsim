@@ -76,5 +76,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

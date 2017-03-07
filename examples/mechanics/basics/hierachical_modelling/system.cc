@@ -17,8 +17,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addGroup(group1);
 
   Group2 *group2 = new Group2("Hauptgruppe2");
-  group2->setPlotFeatureRecursive(stateDerivative, enabled);
-  group2->setPlotFeature(separateFilePerGroup, enabled);
+  group2->setPlotFeatureRecursive("derivativeOfGeneralizedPosition", enabled);
+  group2->setPlotFeatureRecursive("generalizedAcceleration", enabled);
+  group2->setPlotFeature("separateFilePerGroup", enabled);
   Vec r(3);
   r(0) = 2;
   SqrMat A(3);
@@ -32,7 +33,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   group2->setOrientation(A);
   addGroup(group2);
 
-  //cout << getSubsystem("Hauptgruppe2")->getSubsystem("Hauptgruppe2_Untergruppe")->getName()<<endl;;
-  //cout << findFrame("TS.Hauptgruppe2.Hauptgruppe2_Untergruppe.Box1.P2")->getName()<<endl;
-
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
 }

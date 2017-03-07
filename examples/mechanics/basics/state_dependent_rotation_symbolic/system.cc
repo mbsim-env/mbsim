@@ -56,22 +56,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setRotation(new CompositeFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
   body->setTranslationDependentRotation(true);
   
-  body->getFrame("C")->setPlotFeature(globalPosition,enabled);
-  body->getFrame("C")->setPlotFeature(globalVelocity,enabled);
-  body->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
+  body->getFrame("C")->setPlotFeature("position",enabled);
+  body->getFrame("C")->setPlotFeature("orientation",enabled);
+  body->getFrame("C")->setPlotFeature("velocity",enabled);
+  body->getFrame("C")->setPlotFeature("angularVelocity",enabled);
+  body->getFrame("C")->setPlotFeature("acceleration",enabled);
+  body->getFrame("C")->setPlotFeature("angularAcceleration",enabled);
 
   FrameObserver *o = new FrameObserver("AKObserver");
   addObserver(o);
   o->setFrame(body->getFrame("C"));
- // std::shared_ptr<OpenMBV::Arrow> arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
- // arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
- // arrow->setDiffuseColor(1/3.0, 1, 1);
   o->enableOpenMBVVelocity();
-
-//  arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>();
-//  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
-//  arrow->setType(OpenMBV::Arrow::toDoubleHead);
-//  arrow->setDiffuseColor(0.4, 1, 1);
   o->enableOpenMBVAngularVelocity();
 
   // ----------------------- Visualisierung in OpenMBV --------------------  
@@ -89,4 +84,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   observer->enableOpenMBVJointForce();
   observer->enableOpenMBVJointMoment();
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }

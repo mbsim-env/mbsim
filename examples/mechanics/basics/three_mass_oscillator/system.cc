@@ -171,5 +171,12 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
     setPosition(3.*dDisk*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]"));
   else 
     setPosition(0*h0Cylinder*Vec("[1;0;0]")+1.5*dDisk*Vec("[0;0;-1]"));
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
 }
 
