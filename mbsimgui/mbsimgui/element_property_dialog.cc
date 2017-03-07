@@ -95,6 +95,11 @@ namespace MBSimGUI {
     addTab("Plot");
     plotFeature = new ExtWidget("Plot features",new PlotFeatureStatusWidget(static_cast<PlotFeatureStatusProperty*>(element->plotFeature.getProperty())->getTypes()));
     addToTab("Plot", plotFeature);
+
+    addFeature("plotRecursive");
+    addFeature("separateFilePerGroup");
+    addFeature("openMBV");
+    addFeature("debug");
   }
 
   void ElementPropertyDialog::toWidget(Element *element) {
@@ -119,11 +124,19 @@ namespace MBSimGUI {
     mw->xmlHelp(url);
   }
 
+  void ElementPropertyDialog::addFeature(const QString &feature) {
+    static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->addFeature(feature);
+  }
+
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
     visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
+
+    addFeature("position");
+    addFeature("velocity");
+    addFeature("acceleration");
   }
 
   void FramePropertyDialog::toWidget(Element *element) {
@@ -501,6 +514,11 @@ namespace MBSimGUI {
   }
 
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
+    addFeature("generalizedPosition");
+    addFeature("generalizedVelocity");
+    addFeature("derivativeOfGeneralizedPosition");
+    addFeature("generalizedAcceleration");
+    addFeature("energy");
   }
 
   void ObjectPropertyDialog::toWidget(Element *element) {
@@ -1296,6 +1314,10 @@ namespace MBSimGUI {
   }
 
   LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(link,parent,f) {
+    addFeature("generalizedRelativePosition");
+    addFeature("generalizedRelativeVelocity");
+    addFeature("generalizedForce");
+    addFeature("energy");
   }
 
   void LinkPropertyDialog::toWidget(Element *element) {

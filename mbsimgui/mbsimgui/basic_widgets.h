@@ -463,15 +463,6 @@ namespace MBSimGUI {
     ExtWidget *constraintSolver, *impactSolver, *numberOfMaximalIterations, *tolerances;
   };
 
-  class PlotFeature : public Widget {
-    public:
-      PlotFeature(const QString &name);
-
-    protected:
-      QString name;
-      QComboBox *status;
-  };
-
   class EmbedWidget : public Widget {
 
     friend class EmbedProperty;
@@ -526,6 +517,7 @@ namespace MBSimGUI {
 
     public:
       PlotFeatureStatusWidget(const std::vector<MBXMLUtils::FQN> &types);
+      void addFeature(const QString &feature);
 
     protected slots:
       void addFeature();

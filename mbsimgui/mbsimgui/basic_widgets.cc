@@ -738,16 +738,6 @@ namespace MBSimGUI {
     layout->addWidget(tolerances);
   }
 
-  PlotFeature::PlotFeature(const QString &name_) : name(name_) {
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    status = new CustomComboBox;
-    status->addItem("enabled");
-    status->addItem("disabled");
-    layout->addWidget(status);
-  }
-
   EmbedWidget::EmbedWidget() {
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
@@ -820,42 +810,6 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    QStringList value_;
-    value_.push_back("+plotRecursive");
-    value_.push_back("+separateFilePerGroup");
-    value_.push_back("+generalizedPosition");
-    value_.push_back("+generalizedVelocity");
-    value_.push_back("+derivativeOfGeneralizedPosition");
-    value_.push_back("+generalizedAcceleration");
-    value_.push_back("+generalizedForce");
-    value_.push_back("+generalizedRelativePosition");
-    value_.push_back("+generalizedRelativeVelocity");
-    value_.push_back("+position");
-    value_.push_back("+velocity");
-    value_.push_back("+acceleration");
-    value_.push_back("+force");
-    value_.push_back("+moment");
-    value_.push_back("+energy");
-    value_.push_back("+openMBV");
-    value_.push_back("+debug");
-    value_.push_back("-plotRecursive");
-    value_.push_back("-separateFilePerGroup");
-    value_.push_back("-generalizedPosition");
-    value_.push_back("-generalizedVelocity");
-    value_.push_back("-derivativeOfGeneralizedPosition");
-    value_.push_back("-generalizedAcceleration");
-    value_.push_back("-generalizedForce");
-    value_.push_back("-generalizedRelativePosition");
-    value_.push_back("-generalizedRelativeVelocity");
-    value_.push_back("-position");
-    value_.push_back("-velocity");
-    value_.push_back("-acceleration");
-    value_.push_back("-force");
-    value_.push_back("-moment");
-    value_.push_back("-energy");
-    value_.push_back("-openMBV");
-    value_.push_back("-debug");
-
     QStringList type_;
     for(unsigned int i=0; i<types.size(); i++)
       type_ << QString::fromStdString(types[i].second);
@@ -877,7 +831,6 @@ namespace MBSimGUI {
 
     value = new CustomComboBox;
     value->setEditable(true);
-    value->addItems(value_);
     layout->addWidget(value,1,1);
 
     QPushButton *add = new QPushButton("Add");
@@ -891,6 +844,11 @@ namespace MBSimGUI {
     connect(type,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
     connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+  }
+
+  void PlotFeatureStatusWidget::addFeature(const QString &feature) {
+    value->addItem(QString("+")+feature);
+    value->addItem(QString("-")+feature);
   }
 
   void PlotFeatureStatusWidget::addFeature() {

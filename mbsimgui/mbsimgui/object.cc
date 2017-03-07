@@ -32,18 +32,14 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   Object::Object(const string &str, Element *parent) : Element(str,parent) {
-
   }
 
   Object* Object::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();
-//    Object *object=ObjectFactory::getInstance()->createObject(e, parent);
     Object *object=Embed<Object>::createAndInit(e,parent);
-    if(object) {
-//      object->initializeUsingXML(e);
+    if(object)
       object->initialize();
-    }
     return object;
   }
 
