@@ -2,7 +2,13 @@
 <Group name="Hauptgruppe{numHG}" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <plotFeatureRecursive feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}state{plotSubType}"/>
+  <plotFeatureRecursive feature="+deflection"/>
+  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+  <plotFeatureRecursive feature="+generalizedForce"/>
+  <plotFeatureRecursive feature="+generalizedPosition"/>
+  <plotFeatureRecursive feature="+generalizedVelocity"/>
+  <plotFeatureRecursive feature="{if plotSubTypeEnabled, ret='+'; else ret='-'; end}{plotSubType}"/>
   <plotFeature feature="+separateFilePerGroup"/>
   <position unit="mm">
     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -17,7 +23,7 @@
   </groups>
   <objects>
     <RigidBody name="Box1">
-      <plotFeature feature="+globalPosition"/>
+      <plotFeature feature="+generalizedAcceleration"/>
       <generalizedInitialPosition>[0]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>

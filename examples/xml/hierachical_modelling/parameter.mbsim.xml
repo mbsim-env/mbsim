@@ -25,7 +25,7 @@
     </xmlMatrix>
   </matrixParameter>
   <stringParameter name="grav">'gravity.txt'</stringParameter>
-  <stringParameter name="plotSubType">'Derivative'</stringParameter>
+  <stringParameter name="plotSubType">'derivativeOfGeneralizedPosition'</stringParameter>
   <scalarParameter name="plotSubTypeEnabled">true</scalarParameter>
   <stringParameter name="pathPrefix">'m'</stringParameter>
   <stringParameter name="ivdir">'iv'</stringParameter>

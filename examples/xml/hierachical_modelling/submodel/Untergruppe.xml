@@ -77,7 +77,6 @@
       </openMBVRigidBody>
     </RigidBody>
     <RigidBody name="Box2">
-      <plotFeature feature="-stateDerivative"/>
       <generalizedInitialPosition>[l01 + l02 + h1 + h2/2]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>

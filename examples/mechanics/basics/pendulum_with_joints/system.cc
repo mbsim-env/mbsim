@@ -30,44 +30,42 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double phi1 = -M_PI/2;
   double phi2 = -M_PI/4;
 
-  RigidBody *box1 = new RigidBody("Stab1");
-  addObject(box1);
-  box1->setMass(m1);
+  RigidBody *body1 = new RigidBody("Stab1");
+  addObject(body1);
+  body1->setMass(m1);
   SymMat Theta(3);
   Theta(2,2) = 1./12.*m1*l1*l1;
-  box1->setInertiaTensor(Theta);
+  body1->setInertiaTensor(Theta);
 
   SqrMat E(3);
   E << DiagMat(3,INIT,1);
   Vec KrSP(3);
   KrSP(1) = a1;
-  box1->addFrame(new FixedRelativeFrame("PunktO",KrSP,E));
+  body1->addFrame(new FixedRelativeFrame("PunktO",KrSP,E));
 
-  box1->setTranslation(new TranslationAlongAxesXY<VecV>);
-  box1->setRotation(new RotationAboutZAxis<VecV>);
+  body1->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body1->setRotation(new RotationAboutZAxis<VecV>);
 
-  box1->setFrameOfReference(getFrame("I"));
-  box1->setFrameForKinematics(box1->getFrame("C"));
+  body1->setFrameOfReference(getFrame("I"));
+  body1->setFrameForKinematics(body1->getFrame("C"));
   Vec q0(3);
   q0(0) = a1;
   q0(2) = -phi1;
-  box1->setGeneralizedInitialPosition(q0);
+  body1->setGeneralizedInitialPosition(q0);
 
   KrSP(1) = -b1;
-  box1->addFrame(new FixedRelativeFrame("PunktU",KrSP,E));
-  box1->getFrame("PunktU")->setPlotFeature("position",Element::enabled);
-  //setPlotFeatureForChildren("position",Element::enabled);
+  body1->addFrame(new FixedRelativeFrame("PunktU",KrSP,E));
 
-  RigidBody *box2 = new RigidBody("Stab2");
-  addObject(box2);
-  box2->setMass(m2);
+  RigidBody *body2 = new RigidBody("Stab2");
+  addObject(body2);
+  body2->setMass(m2);
   Theta(2,2) = 1./12.*m2*l2*l2;
-  box2->setInertiaTensor(Theta);
+  body2->setInertiaTensor(Theta);
 
   KrSP(1) = a2;
-  box2->addFrame(new FixedRelativeFrame("Punkt",KrSP,E));
-  box2->setTranslation(new TranslationAlongAxesXY<VecV>);
-  box2->setRotation(new RotationAboutZAxis<VecV>);
+  body2->addFrame(new FixedRelativeFrame("Punkt",KrSP,E));
+  body2->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body2->setRotation(new RotationAboutZAxis<VecV>);
 
   SqrMat A1(3);
   A1(0,0) = cos(phi1);
@@ -85,21 +83,21 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rOP(1) = -a1-b1;
   q0 = A1*rOP + A2*(-KrSP);
   q0(2) = -phi2;
-  box2->setGeneralizedInitialPosition(q0);
+  body2->setGeneralizedInitialPosition(q0);
 
   addFrame(new FixedRelativeFrame("Os","[0;0;0.04]",E));
-  box2->setFrameOfReference(getFrame("Os"));
-  box2->setFrameForKinematics(box2->getFrame("C"));
+  body2->setFrameOfReference(getFrame("Os"));
+  body2->setFrameForKinematics(body2->getFrame("C"));
 
   Joint *joint1 = new Joint("Gelenk1");
   addLink(joint1);
   joint1->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
-  joint1->connect(getFrame("I"),box1->getFrame("PunktO"));
+  joint1->connect(getFrame("I"),body1->getFrame("PunktO"));
 
   Joint *joint2 = new Joint("Gelenk2");
   addLink(joint2);
   joint2->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
-  joint2->connect(box1->getFrame("PunktU"),box2->getFrame("Punkt"));
+  joint2->connect(body1->getFrame("PunktU"),body2->getFrame("Punkt"));
 
   joint1->setForceLaw(new BilateralConstraint);
   joint2->setForceLaw(new BilateralConstraint);
@@ -110,7 +108,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setHeight(l1);
   cylinder->setInitialTranslation(0,-0.5,0);
   cylinder->setInitialRotation(1.5708,0,0);
-  box1->setOpenMBVRigidBody(cylinder);
+  body1->setOpenMBVRigidBody(cylinder);
 
   cylinder=OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
   cylinder->setTopRadius(0.02);
@@ -118,7 +116,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setHeight(l2);
   cylinder->setInitialTranslation(0,-0.5,0);
   cylinder->setInitialRotation(1.5708,0,0);
-  box2->setOpenMBVRigidBody(cylinder);
+  body2->setOpenMBVRigidBody(cylinder);
 
   MechanicalLinkObserver *observer = new MechanicalLinkObserver("Observer1");
   addObserver(observer);
@@ -129,5 +127,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addObserver(observer);
   observer->setMechanicalLink(joint2);
   observer->enableOpenMBVForce(0.02);
+
+  body1->setPlotFeature("generalizedPosition",Element::enabled);
+  body1->setPlotFeature("generalizedVelocity",Element::enabled);
+  body2->setPlotFeature("generalizedPosition",Element::enabled);
+  body2->setPlotFeature("generalizedVelocity",Element::enabled);
+  joint1->setPlotFeature("generalizedRelativePosition",Element::enabled);
+  joint1->setPlotFeature("generalizedRelativeVelocity",Element::enabled);
+  joint1->setPlotFeature("generalizedForce",Element::enabled);
+  joint2->setPlotFeature("generalizedRelativePosition",Element::enabled);
+  joint2->setPlotFeature("generalizedRelativeVelocity",Element::enabled);
+  joint2->setPlotFeature("generalizedForce",Element::enabled);
 }
 

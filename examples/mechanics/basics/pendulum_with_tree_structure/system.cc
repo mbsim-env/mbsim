@@ -68,4 +68,10 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setOpenMBVRigidBody(obj);
   stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
 
+  setPlotFeatureRecursive("generalizedPosition",Element::enabled);
+  setPlotFeatureRecursive("generalizedVelocity",Element::enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",Element::enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",Element::enabled);
+  setPlotFeatureRecursive("generalizedForce",Element::enabled);
+
 }
