@@ -34,7 +34,9 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      GeneralizedImpactLaw() : Element(uniqueDummyName(this)) { }
+      GeneralizedImpactLaw() : Element(uniqueDummyName(this)) {
+        plotFeature[11334901831169464975ULL]=disabled;
+      }
 
       /**
        * \brief destructor

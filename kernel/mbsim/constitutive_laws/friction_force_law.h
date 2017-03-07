@@ -37,6 +37,7 @@ namespace MBSim {
       FrictionForceLaw(Function<fmatvec::Vec(fmatvec::Vec,double)> *frictionForceFunc_=NULL) : Element(uniqueDummyName(this)), frictionForceFunc(frictionForceFunc_) {
         if(frictionForceFunc)
           frictionForceFunc->setParent(this);
+        plotFeature[11334901831169464975ULL]=disabled;
       }
 
       /**

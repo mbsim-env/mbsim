@@ -37,6 +37,7 @@ namespace MBSim {
       GeneralizedForceLaw(Function<double(double,double)> *forceFunc_=NULL) : Element(uniqueDummyName(this)), forceFunc(forceFunc_) { 
         if(forceFunc)
           forceFunc->setParent(this);
+        plotFeature[11334901831169464975ULL]=disabled;
       }
 
       /**
