@@ -30,6 +30,9 @@ namespace MBSim {
   class SingleContact;
 
   class SingleContactObserver : public MechanicalLinkObserver {
+
+    friend class ContactObserver;
+
     protected:
       /**
        * \brief container of ContactFrames to draw

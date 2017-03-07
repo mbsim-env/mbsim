@@ -341,18 +341,8 @@ namespace MBSim {
           contacts[cK].push_back(SingleContact(contactName.str()));
           contacts[cK][k].setContactKinematics(contactKinematics[cK]->getContactKinematics(k) ? contactKinematics[cK]->getContactKinematics(k) : contactKinematics[cK]);
           contacts[cK][k].connect(contour[0][cK], contour[1][cK]);
-          //Applies the plot feature to all children (make it possible to set only some children...)
-//          for (int i = 11334901831169464975ULL; i != LASTPLOTFEATURE; i++) {
-//            PlotFeature pf = static_cast<PlotFeature>(i);
-//            PlotFeatureStatus pfS = getPlotFeature(pf);
-//
-//            pair<string, PlotFeature> Pair(ckNames[cK], pf);
-//            if (plotFeatureMap.find(Pair) != plotFeatureMap.end()) {
-//              pfS = plotFeatureMap.find(Pair)->second;
-//            }
-//
-//            contacts[cK][k].setPlotFeature(pf, pfS);
-//          }
+          contacts[cK][k].plotFeature = plotFeature;
+          contacts[cK][k].plotFeatureForChildren = plotFeatureForChildren;
 
           //set the tolerances for the single contacts
           contacts[cK][k].setgTol(gTol);

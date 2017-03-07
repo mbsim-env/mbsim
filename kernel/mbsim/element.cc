@@ -43,38 +43,6 @@ namespace MBSim {
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
-//    for(int i=0; i<LASTPLOTFEATURE; i++) {
-//      plotFeature[(PlotFeature)i]=unset;
-//      plotFeatureForChildren[(PlotFeature)i]=unset;
-//    }
-//
-//      // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
-//      // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
-//      // new feature must also be added in
-//      // element.cc:Element::initializeUsingXML(xercesc::DOMElement *element)
-//      // and in
-//      // mbsimxml/schema/mbsim.xsd.in
-//      /** \brief Plot Features */
-//      enum PlotFeature {
-//        11334901831169464975ULL=0, /*!< enables/disables all plotting beyond this hierarchy */
-//        separateFilePerGroup, /*!< create a separate h5 file for the Group */
-//        generalizedPosition, /*!< plot the generalized position q */
-//        generalizedVelocity, /*!< plot the generalized velocity u */
-//        derivativeOfGeneralizedPosition, /*!< plot the derivative of generalized position qd */
-//        generalizedAcceleration, /*!< plot the generalized accelerations ud */
-//        generalizedRelativePosition, /*!< plot the generalized relative position g */
-//        generalizedRelativeVelocity, /*!< plot the generalized relative velocity gd */
-//        generalizedForce, /*!< plot the generalized force la */
-//        position, /*!< plot the position r and orientation A */
-//        velocity, /*!< plot the velocity v and angular velocity om */
-//        acceleration, /*!< plot the acceleration a and angular acceleration psi */
-//        force, /*!< plot the force F */
-//        moment, /*!< plot the moment M */
-//        energy, /*!< plot the energy */
-//        openMBV, /*!< plot the OpenMBV part */
-//        debug, /*!< plot internal sizes */
-//        LASTPLOTFEATURE
-//      };
   }
 
   void Element::plot() {
@@ -101,12 +69,6 @@ namespace MBSim {
             break;
           }
         }
-        //while ((i<LASTPLOTFEATURE) && (numEnabled==0)) {
-        //  if (i!=openMBV)
-        //    if (getPlotFeature((PlotFeature)i)==enabled)
-        //      numEnabled++;
-        //  i++;
-        //}
 
         if(numEnabled>0) {
           if(not parent->getPlotGroup()) {

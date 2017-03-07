@@ -31,15 +31,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), qSize(0), qInd(0), updq(true), updu(true), updqd(true), updud(true) {
-    uSize[0] = 0;
-    uSize[1] = 0;
-    hSize[0] = 0;
-    hSize[1] = 0;
-    uInd[0] = 0;
-    uInd[1] = 0;
-    hInd[0] = 0;
-    hInd[1] = 0;
+  Object::Object(const std::string &name) : Element(name), qSize(0), uSize{0,0}, hSize{0,0}, qInd(0), uInd{0,0}, hInd{0,0}, updq(true), updu(true), updqd(true), updud(true) {
   }
 
   void Object::updatedhdz() {
@@ -97,30 +89,29 @@ namespace MBSim {
 
   void Object::plot() {
     if (plotFeature[11334901831169464975ULL] == enabled) {
-//      if (getPlotFeature(generalizedPosition) == enabled) {
-//        for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
-//          plotVector.push_back(qRel(i));
-//      }
-//      if (getPlotFeature(generalizedVelocity) == enabled) {
-//        for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
-//          plotVector.push_back(uRel(i));
-//      }
-//      if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
-//        for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
-//          plotVector.push_back(qdRel(i));
-//      }
-//      if (getPlotFeature(generalizedAcceleration) == enabled) {
-//        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
-//          plotVector.push_back(udRel(i));
-//      }
-//      if (getPlotFeature(energy) == enabled) {
-//        double Ttemp = evalKineticEnergy();
-//        double Vtemp = evalPotentialEnergy();
-//        plotVector.push_back(Ttemp);
-//        plotVector.push_back(Vtemp);
-//        plotVector.push_back(Ttemp + Vtemp);
-//      }
-
+      if (plotFeature[5656632352625109444ULL] == enabled) {
+        for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
+          plotVector.push_back(qRel(i));
+      }
+      if (plotFeature[13287341799877438450ULL] == enabled) {
+        for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
+          plotVector.push_back(uRel(i));
+      }
+      if (plotFeature[2887885390489345704ULL] == enabled) {
+        for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
+          plotVector.push_back(qdRel(i));
+      }
+      if (plotFeature[8408391595996478274ULL] == enabled) {
+        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
+          plotVector.push_back(udRel(i));
+      }
+      if (plotFeature[2188794903238700147ULL] == enabled) {
+        double Ttemp = evalKineticEnergy();
+        double Vtemp = evalPotentialEnergy();
+        plotVector.push_back(Ttemp);
+        plotVector.push_back(Vtemp);
+        plotVector.push_back(Ttemp + Vtemp);
+      }
       Element::plot();
     }
   }
@@ -204,30 +195,28 @@ namespace MBSim {
     }
     else if (stage == plotting) {
       updatePlotFeatures();
-
       if (plotFeature[11334901831169464975ULL] == enabled) {
-//        if (getPlotFeature(generalizedPosition) == enabled) {
-//          for (int i = 0; i < qRel.size(); ++i)
-//            plotColumns.push_back("q(" + numtostr(i) + ")");
-//        }
-//        if (getPlotFeature(generalizedVelocity) == enabled) {
-//          for (int i = 0; i < uRel.size(); ++i)
-//            plotColumns.push_back("u(" + numtostr(i) + ")");
-//        }
-//        if (getPlotFeature(derivativeOfGeneralizedPosition) == enabled) {
-//          for (int i = 0; i < qdRel.size(); ++i)
-//            plotColumns.push_back("qd(" + numtostr(i) + ")");
-//        }
-//        if (getPlotFeature(generalizedAcceleration) == enabled) {
-//          for (int i = 0; i < udRel.size(); ++i)
-//            plotColumns.push_back("ud(" + numtostr(i) + ")");
-//        }
-//        if (getPlotFeature(energy) == enabled) {
-//          plotColumns.push_back("T");
-//          plotColumns.push_back("V");
-//          plotColumns.push_back("E");
-//        }
-
+        if (plotFeature[5656632352625109444ULL] == enabled) {
+          for (int i = 0; i < qRel.size(); ++i)
+            plotColumns.push_back("q(" + numtostr(i) + ")");
+        }
+        if (plotFeature[13287341799877438450ULL] == enabled) {
+          for (int i = 0; i < uRel.size(); ++i)
+            plotColumns.push_back("u(" + numtostr(i) + ")");
+        }
+        if (plotFeature[2887885390489345704ULL] == enabled) {
+          for (int i = 0; i < qdRel.size(); ++i)
+            plotColumns.push_back("qd(" + numtostr(i) + ")");
+        }
+        if (plotFeature[8408391595996478274ULL] == enabled) {
+          for (int i = 0; i < udRel.size(); ++i)
+            plotColumns.push_back("ud(" + numtostr(i) + ")");
+        }
+        if (plotFeature[2188794903238700147ULL] == enabled) {
+          plotColumns.push_back("T");
+          plotColumns.push_back("V");
+          plotColumns.push_back("E");
+        }
         Element::init(stage);
       }
     }

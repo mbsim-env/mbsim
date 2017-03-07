@@ -37,22 +37,21 @@ namespace MBSim {
 
   void Link::plot() {
     if(plotFeature[11334901831169464975ULL]==enabled) {
-//      if(getPlotFeature(generalizedRelativePosition)==enabled) {
-//        for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
-//          plotVector.push_back(rrel(i));
-//      }
-//      if(getPlotFeature(generalizedRelativeVelocity)==enabled) {
-//        for(int i=0; i<evalGeneralizedRelativeVelocity().size(); ++i)
-//          plotVector.push_back(vrel(i));
-//      }
-//      if(getPlotFeature(generalizedForce)==enabled) {
-//        for(int i=0; i<evalGeneralizedForce().size(); ++i)
-//          plotVector.push_back(evalGeneralizedForce()(i));
-//      }
-//      if(getPlotFeature(energy)==enabled) {
-//        plotVector.push_back(evalPotentialEnergy());
-//      }
-
+      if(plotFeature[5125144808927415120ULL]==enabled) {
+        for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
+          plotVector.push_back(rrel(i));
+      }
+      if(plotFeature[7543055333706056486ULL]==enabled) {
+        for(int i=0; i<evalGeneralizedRelativeVelocity().size(); ++i)
+          plotVector.push_back(vrel(i));
+      }
+      if(plotFeature[1829434585317744831ULL]==enabled) {
+        for(int i=0; i<evalGeneralizedForce().size(); ++i)
+          plotVector.push_back(evalGeneralizedForce()(i));
+      }
+      if(plotFeature[2188794903238700147ULL]==enabled) {
+        plotVector.push_back(evalPotentialEnergy());
+      }
       Element::plot();
     }
   }
@@ -135,23 +134,21 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       updatePlotFeatures();
-
       if(plotFeature[11334901831169464975ULL]==enabled) {
-//        if(getPlotFeature(generalizedRelativePosition)==enabled) {
-//          for(int i=0; i<rrel.size(); ++i)
-//            plotColumns.push_back("g("+numtostr(i)+")");
-//        }
-//        if(getPlotFeature(generalizedRelativeVelocity)==enabled) {
-//          for(int i=0; i<vrel.size(); ++i)
-//            plotColumns.push_back("gd("+numtostr(i)+")");
-//        }
-//        if(getPlotFeature(generalizedForce)==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
-//          for(int i=0; i<lambda.size(); ++i)
-//            plotColumns.push_back("la("+numtostr(i)+")");
-//        }
-//        if(getPlotFeature(energy)==enabled)
-//          plotColumns.push_back("V");
-
+        if(plotFeature[5125144808927415120ULL]==enabled) {
+          for(int i=0; i<rrel.size(); ++i)
+            plotColumns.push_back("g("+numtostr(i)+")");
+        }
+        if(plotFeature[7543055333706056486ULL]==enabled) {
+          for(int i=0; i<vrel.size(); ++i)
+            plotColumns.push_back("gd("+numtostr(i)+")");
+        }
+        if(plotFeature[1829434585317744831ULL]==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
+          for(int i=0; i<lambda.size(); ++i)
+            plotColumns.push_back("la("+numtostr(i)+")");
+        }
+        if(plotFeature[2188794903238700147ULL]==enabled)
+          plotColumns.push_back("V");
         Element::init(stage);
       }
     }

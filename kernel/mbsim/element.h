@@ -86,12 +86,6 @@ namespace MBSim {
        */
       virtual ~Element() { }
 
-      /* INTERFACE */
-      /**
-       * \brief TODO
-       */
-      virtual void initDataInterfaceBase(DynamicSystemSolver *parentds) { }
-
       /**
        * \return std::string representation
        */

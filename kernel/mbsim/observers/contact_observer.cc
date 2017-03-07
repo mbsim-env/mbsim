@@ -52,6 +52,8 @@ namespace MBSim {
           stringstream contactName;
           contactName << "Contact_" << i << "_" << j;
           contactObserver[i][j].setName(contactName.str());
+          contactObserver[i][j].plotFeature = plotFeature;
+          contactObserver[i][j].plotFeatureForChildren = plotFeatureForChildren;
           //Set OpenMBV-Properties to single contacts
           if(openMBVForce)
             contactObserver[i][j].setOpenMBVForce((i==0 and j==0)?openMBVForce:OpenMBV::ObjectFactory::create(openMBVForce));
