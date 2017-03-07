@@ -50,6 +50,9 @@ namespace MBSim {
         if(updPos) updatePositions();
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
+      }
+      if(plotFeature[14158292694042650861ULL]==enabled) {
+        if(updPos) updatePositions();
         Vec3 cardan=AIK2Cardan(AWP);
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
@@ -58,6 +61,9 @@ namespace MBSim {
         if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WvP(i));
+      }
+      if(plotFeature[10919411498317597175ULL]==enabled) {
+        if(updVel) updateVelocities();
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
@@ -65,6 +71,9 @@ namespace MBSim {
         if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WaP(i));
+      }
+      if(plotFeature[1907010450089173335ULL]==enabled) {
+        if(updAcc) updateAccelerations();
         for(int i=0; i<3; i++)
           plotVector.push_back(WpsiP(i));
       }
@@ -108,6 +117,8 @@ namespace MBSim {
         if(plotFeature[12307443656510933270ULL]==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WrOP("+numtostr(i)+")");
+        }
+        if(plotFeature[14158292694042650861ULL]==enabled) {
           plotColumns.push_back("alpha");
           plotColumns.push_back("beta");
           plotColumns.push_back("gamma");
@@ -115,12 +126,16 @@ namespace MBSim {
         if(plotFeature[9333706489830170160ULL]==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WvP("+numtostr(i)+")");
+        }
+        if(plotFeature[10919411498317597175ULL]==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WomegaP("+numtostr(i)+")");
         }
         if(plotFeature[1640323793842503125ULL]==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WaP("+numtostr(i)+")");
+        }
+        if(plotFeature[1907010450089173335ULL]==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WpsiP("+numtostr(i)+")");
         }

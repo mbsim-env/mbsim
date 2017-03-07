@@ -45,11 +45,11 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(openMBVPosition) plotColumns.push_back("AbsolutePosition");
-        if(openMBVVelocity) plotColumns.push_back("AbsoluteVelocity");
-        if(openMBVAngularVelocity) plotColumns.push_back("AbsoluteAngularVelocity");
-        if(openMBVAcceleration) plotColumns.push_back("AbsoluteAcceleration");
-        if(openMBVAngularAcceleration) plotColumns.push_back("AbsoluteAngularAcceleration");
+//        if(plotFeature[12307443656510933270ULL]==enabled) plotColumns.push_back("AbsolutePosition");
+//        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteVelocity");
+//        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteAngularVelocity");
+//        if(plotFeature[1640323793842503125ULL]==enabled) plotColumns.push_back("AbsoluteAcceleration");
+//        if(plotFeature[1640323793842503125ULL]==enabled) plotColumns.push_back("AbsoluteAngularAcceleration");
         Observer::init(stage);
         if(plotFeature[13464197197848110344ULL]==enabled) {
           if(openMBVPosition) {
@@ -94,7 +94,7 @@ namespace MBSim {
           data.push_back(r(2));
           data.push_back(0.5);
           openMBVPosition->append(data);
-          plotVector.push_back(nrm2(r));
+//          plotVector.push_back(nrm2(r));
         }
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
@@ -109,7 +109,7 @@ namespace MBSim {
           data.push_back(v(2));
           data.push_back(0.5);
           openMBVVelocity->append(data);
-          plotVector.push_back(nrm2(v));
+//          plotVector.push_back(nrm2(v));
         }
         if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
@@ -124,7 +124,7 @@ namespace MBSim {
           data.push_back(om(2));
           data.push_back(0.5);
           openMBVAngularVelocity->append(data);
-          plotVector.push_back(nrm2(om));
+//          plotVector.push_back(nrm2(om));
         }
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
@@ -139,7 +139,7 @@ namespace MBSim {
           data.push_back(a(2));
           data.push_back(0.5);
           openMBVAcceleration->append(data);
-          plotVector.push_back(nrm2(a));
+//          plotVector.push_back(nrm2(a));
         }
         if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
@@ -154,7 +154,7 @@ namespace MBSim {
           data.push_back(psi(2));
           data.push_back(0.5);
           openMBVAngularAcceleration->append(data);
-          plotVector.push_back(nrm2(psi));
+//          plotVector.push_back(nrm2(psi));
         }
       }
 
