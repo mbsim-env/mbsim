@@ -24,6 +24,7 @@
 #include "fmatvec/atom.h"
 #include "mbsim/objectfactory.h"
 #include <string>
+#include <unordered_map>
 #include <hdf5serie/vectorserie.h>
 #include <mbxmlutilshelper/dom.h>
 
@@ -295,7 +296,7 @@ namespace MBSim {
       /**
        * \brief plot feature
        */
-      std::map<std::size_t,PlotFeatureStatus> plotFeature, plotFeatureForChildren;
+      std::unordered_map<std::size_t,PlotFeatureStatus> plotFeature, plotFeatureForChildren;
   };
 
   template<class T>
