@@ -83,26 +83,9 @@
 
   <xs:simpleType name="PlotFeatureType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
+        Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die Werte sind
         jeweils mit einem vorangestellten '<b>+</b>' oder '<b>-</b>' zulässig. Ein '<b>+</b>' aktiviert das entsprechende
         Plotfeature, ein '<b>-</b>' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
-        <dl>
-          <dt>plotRecursive</dt>       <dd>Aktiviert/Deaktiviert das Plotten unterhalb dieser hiearchy Gruppe [+]</dd>
-          <dt>separateFilePerGroup</dt><dd>Erzeugt ein eigenes H5 File für diese Gruppe [-]</dd>
-          <dt>state</dt>               <dd>Zustandsvektor plotten (x, q, u) [+]</dd>
-          <dt>stateDerivative</dt>     <dd>Ableitung des Zustandsvektors plotten (xd, qd, ud) [-]</dd>
-          <dt>notMinimalState</dt>     <dd>TODO</dd>
-          <dt>rightHandSide</dt>       <dd>Glatte und nicht glatte rechte Seite plotten (h, r=W*l) [-]</dd>
-          <dt>globalPosition</dt>      <dd>Globale (world) Positionen und Orientierungen plotten [-]</dd>
-          <dt>globalVelocity</dt>      <dd>Globale (world) Geschwindigkeiten plotten [-]</dd>
-          <dt>globalAcceleration</dt>  <dd>Globale (world) Beschleunigen plotten [-]</dd>
-          <dt>energy</dt>              <dd>Energie plotten [-]</dd>
-          <dt>openMBV</dt>             <dd>OpenMBV Visualisierung ausgeben [+]</dd>
-          <dt>generalizedLinkForce</dt><dd>Glatte und nicht glatte generalisierte Link Kräfte plotten (l) [+]</dd>
-          <dt>linkKinematics</dt>      <dd>Kinematic der Links plotten (g, gd) [+]</dd>
-          <dt>stopVector</dt>          <dd>Stopvektor der Schaltpunktsuche ausgeben [-]</dd>
-          <dt>debug</dt>               <dd>interne Größen ausgeben [-]</dd>
-        </dl>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
