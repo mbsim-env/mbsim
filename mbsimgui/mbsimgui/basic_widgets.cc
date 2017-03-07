@@ -821,9 +821,9 @@ namespace MBSimGUI {
 
     tree = new QTreeWidget;
     QStringList labels;
-    labels << "Type" << "Value";
+    labels << "Type" << "Value" << "Status";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,2,1);
+    layout->addWidget(tree,0,0,3,1);
 
     type = new CustomComboBox;
     type->addItems(type_);
@@ -833,28 +833,35 @@ namespace MBSimGUI {
     value->setEditable(true);
     layout->addWidget(value,1,1);
 
+    status = new CustomComboBox;
+    status->setEditable(true);
+    status->insertItem(0,"+");
+    status->insertItem(1,"-");
+    layout->addWidget(status,2,1);
+
     QPushButton *add = new QPushButton("Add");
     connect(add,SIGNAL(pressed()),this,SLOT(addFeature()));
-    layout->addWidget(add,2,0);
+    layout->addWidget(add,3,0);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
-    layout->addWidget(remove,2,1);
+    layout->addWidget(remove,3,1);
 
     connect(type,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
+    connect(status,SIGNAL(currentIndexChanged(int)),this,SLOT(updateFeature()));
     connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
   }
 
   void PlotFeatureStatusWidget::addFeature(const QString &feature) {
-    value->addItem(QString("+")+feature);
-    value->addItem(QString("-")+feature);
+    value->addItem(feature);
   }
 
   void PlotFeatureStatusWidget::addFeature() {
     QTreeWidgetItem *item = new QTreeWidgetItem;
     item->setText(0, type->currentText());
     item->setText(1, value->currentText());
+    item->setText(2, status->currentText());
     tree->addTopLevelItem(item);
   }
 
@@ -867,6 +874,7 @@ namespace MBSimGUI {
     if(item) {
       item->setText(0, type->currentText());
       item->setText(1, value->currentText());
+      item->setText(2, status->currentText());
     }
   }
 
@@ -876,6 +884,7 @@ namespace MBSimGUI {
       type->setCurrentIndex(type->findText(item->text(0)));
       type->blockSignals(false);
       value->setEditText(item->text(1));
+      status->setEditText(item->text(2));
     }
   }
 

@@ -971,7 +971,8 @@ namespace MBSimGUI {
                 E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
       string feature = E(e)->getAttribute("feature");
       type.push_back(E(e)->getTagName().second);
-      value.push_back(feature);
+      value.push_back(feature.substr(1));
+      status.push_back(feature.substr(0,1));
       e=e->getNextElementSibling();
     }
     return e;
@@ -982,7 +983,8 @@ namespace MBSimGUI {
     while(e && (E(e)->getTagName()==types[0])) {
       string feature = E(e)->getAttribute("feature");
       type.push_back(E(e)->getTagName().second);
-      value.push_back(feature);
+      value.push_back(feature.substr(1));
+      status.push_back(feature.substr(0,1));
       e=e->getNextElementSibling();
     }
     return e;
@@ -992,7 +994,7 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<type.size(); i++) {
       DOMElement *ele = D(doc)->createElement(MBSIM%type[i]);
-      E(ele)->setAttribute("feature",value[i]);
+      E(ele)->setAttribute("feature",status[i]+value[i]);
       parent->insertBefore(ele, NULL);
     }
     return 0;
@@ -1002,7 +1004,7 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<type.size(); i++) {
       DOMElement *ele = D(doc)->createElement(FQN(types[0].first,type[i]));
-      E(ele)->setAttribute("feature",value[i]);
+      E(ele)->setAttribute("feature",status[i]+value[i]);
       parent->insertBefore(ele, NULL);
     }
     return 0;
@@ -1012,9 +1014,11 @@ namespace MBSimGUI {
     QTreeWidget *tree = static_cast<PlotFeatureStatusWidget*>(widget)->tree;
     type.clear();
     value.clear();
+    status.clear();
     for(int i=0; i<tree->topLevelItemCount(); i++) {
       type.push_back(tree->topLevelItem(i)->text(0).toStdString());
       value.push_back(tree->topLevelItem(i)->text(1).toStdString());
+      status.push_back(tree->topLevelItem(i)->text(2).toStdString());
     }
   }
 
@@ -1025,6 +1029,7 @@ namespace MBSimGUI {
       QTreeWidgetItem *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(type[i]));
       item->setText(1, QString::fromStdString(value[i]));
+      item->setText(2, QString::fromStdString(status[i]));
       tree->addTopLevelItem(item);
     }
   }

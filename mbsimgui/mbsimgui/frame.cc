@@ -39,8 +39,11 @@ namespace MBSimGUI {
     visu.setProperty(new FrameMBSOMBVProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
 
     addPlotFeature("position");
+    addPlotFeature("orientation");
     addPlotFeature("velocity");
+    addPlotFeature("angularVelocity");
     addPlotFeature("acceleration");
+    addPlotFeature("angularAcceleration");
   }
 
   Frame* Frame::readXMLFile(const string &filename, Element *parent) {

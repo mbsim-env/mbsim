@@ -512,7 +512,7 @@ namespace MBSimGUI {
     friend class PlotFeatureStatusProperty;
 
     protected:
-      QComboBox *type, *value;
+      QComboBox *type, *value, *status;
       QTreeWidget *tree;
 
     public:

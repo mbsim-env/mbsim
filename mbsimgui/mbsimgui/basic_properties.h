@@ -412,7 +412,7 @@ namespace MBSimGUI {
 
   class PlotFeatureStatusProperty : public Property {
     protected:
-      std::vector<std::string> type, value;
+      std::vector<std::string> type, value, status;
       std::vector<MBXMLUtils::FQN> types;
     public:
       PlotFeatureStatusProperty(const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
