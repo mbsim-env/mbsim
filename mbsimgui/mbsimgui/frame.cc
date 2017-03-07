@@ -37,6 +37,10 @@ namespace MBSimGUI {
   Frame::Frame(const string &str, Element *parent, bool grey, const vector<FQN> &plotFeatureTypes) : Element(str,parent,plotFeatureTypes), visu(0,true) {
 
     visu.setProperty(new FrameMBSOMBVProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
+
+    addPlotFeature("position");
+    addPlotFeature("velocity");
+    addPlotFeature("acceleration");
   }
 
   Frame* Frame::readXMLFile(const string &filename, Element *parent) {

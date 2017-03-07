@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   class Link : public Element {
     public:
-      Link(const std::string &str, Element *parent) : Element(str,parent) { }
+      Link(const std::string &str, Element *parent); 
       static Link* readXMLFile(const std::string &filename, Element *parent);
       virtual int getxSize() {return 0;}
   };

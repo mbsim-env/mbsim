@@ -32,6 +32,11 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   Object::Object(const string &str, Element *parent) : Element(str,parent) {
+    addPlotFeature("generalizedPosition");
+    addPlotFeature("generalizedVelocity");
+    addPlotFeature("derivativeOfGeneralizedPosition");
+    addPlotFeature("generalizedAcceleration");
+    addPlotFeature("energy");
   }
 
   Object* Object::readXMLFile(const string &filename, Element *parent) {

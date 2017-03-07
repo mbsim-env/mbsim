@@ -50,77 +50,80 @@ namespace MBSimGUI {
     friend class ElementPropertyDialog;
     friend class EmbeddingPropertyDialog;
     protected:
-    Element *parent;
-    static int IDcounter;
-    std::string ID;
-    ExtProperty name, embed, plotFeature;
-    Parameters parameters;
+      Element *parent;
+      static int IDcounter;
+      std::string ID;
+      ExtProperty name, embed, plotFeature;
+      Parameters parameters;
+      std::vector<std::string> plotFeatures;
     public:
-    Element(const std::string &name, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
-    virtual ~Element() { parameters.removeParameters(); }
-    virtual PropertyInterface* clone() const {return 0;}
-    virtual std::string getPath();
-    std::string getXMLPath(Element *ref=0, bool rel=false);
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
-    virtual void writeXMLFile(const std::string &name);
-    virtual void writeXMLFile() { writeXMLFile(getName()); }
-    virtual void writeXMLFileEmbed(const std::string &name);
-    virtual void initialize() {}
-    virtual void deinitialize() {}
-    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
-    void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
-    virtual std::string getType() const { return "Element"; }
-    virtual std::string getValue() const;
-    virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
-    //std::string newName(const std::string &type);
-    virtual std::string getFileExtension() const { return ".xml"; }
-    template<class T> T* getByPath(const std::string &path, bool initialCaller=true) const;
-    virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) const { return 0; }
-    virtual int getNumberOfFrames() {return 0;}
-    virtual int getNumberOfContours() {return 0;}
-    virtual int getNumberOfGroups() {return 0;}
-    virtual int getNumberOfObjects() {return 0;}
-    virtual int getNumberOfExtraDynamics() {return 0;}
-    virtual int getNumberOfLinks() {return 0;}
-    virtual int getNumberOfConstraints() {return 0;}
-    virtual int getNumberOfObservers() {return 0;}
-    virtual Frame* getFrame(int i) const {return 0;}
-    virtual Contour* getContour(int i) const {return 0;}
-    virtual Group* getGroup(int i) const {return 0;}
-    virtual Object* getObject(int i) const {return 0;}
-    virtual Link* getLink(int i) const {return 0;}
-    virtual Constraint* getConstraint(int i) const {return 0;}
-    virtual Observer* getObserver(int i) const {return 0;}
-    virtual Frame* getFrame(const std::string &name) const {return 0;}
-    virtual void addFrame(Frame *frame) {}
-    virtual void addContour(Contour *contour) {}
-    virtual void addGroup(Group *group) {}
-    virtual void addObject(Object *object) {}
-    virtual void addLink(Link *link) {}
-    virtual void addConstraint(Constraint *constraint) {}
-    virtual void addObserver(Observer *observer) {}
-    virtual void removeElement(Element *element) {}
-    const std::string& getID() const { return ID; }
-    Element* getParent() {return parent;}
-    std::vector<Element*> getParents();
-    virtual void setParent(Element* parent_) {parent = parent_;}
-    virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
-    virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
-    virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
-    virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
-    virtual QMenu* createFrameContextMenu() {return NULL;}
-    Element* getRoot() {return parent?parent->getRoot():this;}
-    bool isEmbedded() const {return embed.isActive();}
-    int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }
-    void addParameter(Parameter *param) { parameters.addParameter(param); embed.setActive(true); }
-    void removeParameter(Parameter *param) { parameters.removeParameter(param); }
-    Parameter *getParameter(int i) { return parameters.getParameter(i); }
-    void setParameters(const Parameters &param) { parameters = param; }
-    const Parameters& getParameters() const { return parameters; }
-    std::string getCounterName() const;
+      Element(const std::string &name, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
+      virtual ~Element() { parameters.removeParameters(); }
+      virtual PropertyInterface* clone() const {return 0;}
+      virtual std::string getPath();
+      std::string getXMLPath(Element *ref=0, bool rel=false);
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFileEmbed(xercesc::DOMNode *element);
+      virtual void writeXMLFile(const std::string &name);
+      virtual void writeXMLFile() { writeXMLFile(getName()); }
+      virtual void writeXMLFileEmbed(const std::string &name);
+      virtual void initialize() {}
+      virtual void deinitialize() {}
+      const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
+      void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
+      virtual std::string getType() const { return "Element"; }
+      virtual std::string getValue() const;
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
+      //std::string newName(const std::string &type);
+      virtual std::string getFileExtension() const { return ".xml"; }
+      template<class T> T* getByPath(const std::string &path, bool initialCaller=true) const;
+      virtual Element* getChildByContainerAndName(const std::string &container, const std::string &name) const { return 0; }
+      virtual int getNumberOfFrames() {return 0;}
+      virtual int getNumberOfContours() {return 0;}
+      virtual int getNumberOfGroups() {return 0;}
+      virtual int getNumberOfObjects() {return 0;}
+      virtual int getNumberOfExtraDynamics() {return 0;}
+      virtual int getNumberOfLinks() {return 0;}
+      virtual int getNumberOfConstraints() {return 0;}
+      virtual int getNumberOfObservers() {return 0;}
+      virtual Frame* getFrame(int i) const {return 0;}
+      virtual Contour* getContour(int i) const {return 0;}
+      virtual Group* getGroup(int i) const {return 0;}
+      virtual Object* getObject(int i) const {return 0;}
+      virtual Link* getLink(int i) const {return 0;}
+      virtual Constraint* getConstraint(int i) const {return 0;}
+      virtual Observer* getObserver(int i) const {return 0;}
+      virtual Frame* getFrame(const std::string &name) const {return 0;}
+      virtual void addFrame(Frame *frame) {}
+      virtual void addContour(Contour *contour) {}
+      virtual void addGroup(Group *group) {}
+      virtual void addObject(Object *object) {}
+      virtual void addLink(Link *link) {}
+      virtual void addConstraint(Constraint *constraint) {}
+      virtual void addObserver(Observer *observer) {}
+      virtual void removeElement(Element *element) {}
+      const std::string& getID() const { return ID; }
+      Element* getParent() {return parent;}
+      std::vector<Element*> getParents();
+      virtual void setParent(Element* parent_) {parent = parent_;}
+      virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
+      virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
+      virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
+      virtual QMenu* createEmbeddingContextMenu() {return new EmbeddingContextMenu(this);}
+      virtual QMenu* createFrameContextMenu() {return NULL;}
+      Element* getRoot() {return parent?parent->getRoot():this;}
+      bool isEmbedded() const {return embed.isActive();}
+      int getNumberOfParameters() const { return parameters.getNumberOfParameters(); }
+      void addParameter(Parameter *param) { parameters.addParameter(param); embed.setActive(true); }
+      void removeParameter(Parameter *param) { parameters.removeParameter(param); }
+      Parameter *getParameter(int i) { return parameters.getParameter(i); }
+      void setParameters(const Parameters &param) { parameters = param; }
+      const Parameters& getParameters() const { return parameters; }
+      std::string getCounterName() const;
+      void addPlotFeature(const std::string &pf);
+      const std::vector<std::string>& getPlotFeatures() const { return plotFeatures; }
   };
 
   template<class T>

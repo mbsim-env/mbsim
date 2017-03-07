@@ -33,6 +33,13 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  Link::Link(const string &str, Element *parent) : Element(str,parent) {
+    addPlotFeature("generalizedRelativePosition");
+    addPlotFeature("generalizedRelativeVelocity");
+    addPlotFeature("generalizedForce");
+    addPlotFeature("energy");
+  }
+
   Link* Link::readXMLFile(const string &filename, Element *parent) {
     shared_ptr<DOMDocument> doc=mw->parser->parse(filename);
     DOMElement *e=doc->getDocumentElement();

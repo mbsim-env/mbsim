@@ -48,6 +48,10 @@ namespace MBSimGUI {
     embed.setProperty(new EmbedProperty(std::bind(&Element::getName, this)));
     plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));
     ID=toStr(IDcounter++);
+    addPlotFeature("plotRecursive");
+    addPlotFeature("separateFilePerGroup");
+    addPlotFeature("openMBV");
+    addPlotFeature("debug");
   }
 
   string Element::getPath() {
@@ -230,6 +234,15 @@ namespace MBSimGUI {
       parents.push_back(getParent());
     }
     return parents;
+  }
+
+  void Element::addPlotFeature(const string &pf) {
+    for(unsigned int i=0; i<plotFeatures.size(); i++)
+      if(plotFeatures[i]==pf)
+        return;
+    plotFeatures.push_back(pf);
+    if(getParent())
+      getParent()->addPlotFeature(pf);
   }
 
 }
