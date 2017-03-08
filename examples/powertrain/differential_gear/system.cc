@@ -49,8 +49,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
   shaft1->getFrame("C")->enableOpenMBV(0.3);
 
-  setPlotFeatureForChildren(notMinimalState,enabled);
-
   DifferentialGear* differentialGear = new DifferentialGear("DifferentialGear");
   addGroup(differentialGear);
   double R2 = differentialGear->getRadiusInputShaft();
@@ -87,5 +85,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 
