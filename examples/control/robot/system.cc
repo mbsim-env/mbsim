@@ -246,4 +246,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   obj->setInitialTranslation(0,-0.3,0);
   obj->setInitialRotation(M_PI,0,0);
   spitze->setOpenMBVRigidBody(obj);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("signal",enabled);
 }

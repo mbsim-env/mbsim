@@ -223,28 +223,28 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   C(0,0) = -1; C(1,1) = 1; C(2,2) = -1;
   Vec RrRC_line1(3,INIT,0.);
   RrRC_line1(0) = -(0.5*Laenge_Block+0.5*Laenge_Piston); //damit Kontakt an beiden Konturen auftritt
-  Block->addFrame(new FixedRelativeFrame("line1",RrRC_line1,C));
-  Block->addContour(new LineSegment("line1",2,Block->getFrame("line1")));
+  Block->addFrame(new FixedRelativeFrame("P1",RrRC_line1,C));
+  Block->addContour(new LineSegment("line1",2,Block->getFrame("P1")));
 
 
   // Ebene der Welt von unten
   SqrMat A(3,INIT,0.);
   A(0,1) = -1; A(1,0) = 1; A(2,2) = 1;
-  addFrame(new FixedRelativeFrame("plane1",Vec("[0;0;0]"),A));
-  addContour(new Line("plane1",getFrame("plane1")));
+  addFrame(new FixedRelativeFrame("P1",Vec("[0;0;0]"),A));
+  addContour(new Line("plane1",getFrame("P1")));
 
   // Ebene der Welt von oben
   SqrMat B(3,INIT,0.);
   B(0,1) = 1; B(1,0) = -1; B(2,2) = 1;
-  addFrame(new FixedRelativeFrame("plane2",Vec("[0;0;0]"),B));
-  addContour(new Line("plane2",getFrame("plane2")));
+  addFrame(new FixedRelativeFrame("P2",Vec("[0;0;0]"),B));
+  addContour(new Line("plane2",getFrame("P2")));
 
 
   // Ebene Vertikal rechts für Feder und Block
   Vec Plane3_q0(3,INIT,0.);
   Plane3_q0(0) = Laenge_Crank+Laenge_Rod+Laenge_Piston+Laenge_Block+0.2;
-  addFrame(new FixedRelativeFrame("plane3",Plane3_q0,C));
-  addContour(new Line("plane3",getFrame("plane3")));
+  addFrame(new FixedRelativeFrame("P3",Plane3_q0,C));
+  addContour(new Line("plane3",getFrame("P3")));
 
   //---------------------------------------------------------------------------
 
@@ -445,4 +445,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   spring1->enableOpenMBV(_springRadius=0.1,_crossSectionRadius=0.01,_numberOfCoils=5);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
+  setPlotFeatureRecursive("signal",enabled);
 }
