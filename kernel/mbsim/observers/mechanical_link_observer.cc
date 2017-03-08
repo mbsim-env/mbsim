@@ -44,10 +44,10 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
+      Observer::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled) {
 //      if(openMBVForce) plotColumns.push_back("Force");
 //      if(openMBVMoment) plotColumns.push_back("Moment");
-        Observer::init(stage);
         if(openMBVForce) {
           openMBVForce->setName("Force");
           getOpenMBVGrp()->addObject(openMBVForce);
@@ -63,40 +63,37 @@ namespace MBSim {
   }
 
   void MechanicalLinkObserver::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVForce) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=link->getPointOfApplication(link->getNumberOfLinks()-1)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WF = link->evalForce(link->getNumberOfLinks()-1);
-          data.push_back(WF(0));
-          data.push_back(WF(1));
-          data.push_back(WF(2));
-          data.push_back(nrm2(WF));
-          openMBVForce->append(data);
-        }
-        if(openMBVMoment) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=link->getPointOfApplication(link->getNumberOfLinks()-1)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WM = link->evalMoment(link->getNumberOfLinks()-1);
-          data.push_back(WM(0));
-          data.push_back(WM(1));
-          data.push_back(WM(2));
-          data.push_back(nrm2(WM));
-          openMBVMoment->append(data);
-        }
+    if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(openMBVForce) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=link->getPointOfApplication(link->getNumberOfLinks()-1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WF = link->evalForce(link->getNumberOfLinks()-1);
+        data.push_back(WF(0));
+        data.push_back(WF(1));
+        data.push_back(WF(2));
+        data.push_back(nrm2(WF));
+        openMBVForce->append(data);
       }
-
-      Observer::plot();
+      if(openMBVMoment) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=link->getPointOfApplication(link->getNumberOfLinks()-1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WM = link->evalMoment(link->getNumberOfLinks()-1);
+        data.push_back(WM(0));
+        data.push_back(WM(1));
+        data.push_back(WM(2));
+        data.push_back(nrm2(WM));
+        openMBVMoment->append(data);
+      }
     }
+    Observer::plot();
   }
 
   void MechanicalLinkObserver::initializeUsingXML(DOMElement *element) {

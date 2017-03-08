@@ -63,8 +63,7 @@ namespace MBSim {
       if(plotFeature[11334901831169464975ULL]==enabled) {
         unsigned int numEnabled=0;
         for (auto& x: plotFeature) {
-          size_t pf = x.first;
-          if((pf != 11334901831169464975ULL) and (pf != 13464197197848110344ULL) and x.second==enabled) {
+          if((x.first != 11334901831169464975ULL) and (x.first != 13464197197848110344ULL) and x.second==enabled) {
             numEnabled++;
             break;
           }

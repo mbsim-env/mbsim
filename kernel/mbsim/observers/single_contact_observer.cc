@@ -39,9 +39,9 @@ namespace MBSim {
 
   void SingleContactObserver::init(InitStage stage) {
     if(stage==plotting) {
-      MechanicalLinkObserver::init(stage);
       updatePlotFeatures();
-      if (plotFeature[11334901831169464975ULL] == enabled) {
+      MechanicalLinkObserver::init(stage);
+      if (plotFeature[13464197197848110344ULL] == enabled) {
         if(openMBVContactFrame[0]) {
           for (unsigned int i = 0; i < 2; i++) { // frames
             openMBVContactFrame[i]->setName(i == 0 ? "Frame_A" : "Frame_B");
@@ -64,57 +64,55 @@ namespace MBSim {
   }
 
   void SingleContactObserver::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVContactFrame[0]) {
-          for(unsigned int i = 0; i < 2; i++) {
-            vector<double> data;
-            data.push_back(getTime());
-            Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition();
-            data.push_back(toPoint(0));
-            data.push_back(toPoint(1));
-            data.push_back(toPoint(2));
-            Vec3 cardan = AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation());
-            data.push_back(cardan(0));
-            data.push_back(cardan(1));
-            data.push_back(cardan(2));
-            data.push_back(0);
-            openMBVContactFrame[i]->append(data);
-          }
-        }
-        // arrows
-        vector<double> data;
-        if (contactArrow) {
+    if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(openMBVContactFrame[0]) {
+        for(unsigned int i = 0; i < 2; i++) {
+          vector<double> data;
           data.push_back(getTime());
-          Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(1)->evalPosition();
+          Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition();
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));
-          Vec3 F = static_cast<SingleContact*>(link)->evalGlobalForceDirection().col(0)*static_cast<SingleContact*>(link)->evalGeneralizedNormalForce();
-          data.push_back(F(0));
-          data.push_back(F(1));
-          data.push_back(F(2));
-          data.push_back(nrm2(F));
-          contactArrow->append(data);
-        }
-        if (frictionArrow && static_cast<SingleContact*>(link)->getFrictionDirections() > 0) { // friction force
-          data.clear();
-          data.push_back(getTime());
-          Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(1)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 F = static_cast<SingleContact*>(link)->evalGlobalForceDirection()(RangeV(0,2),RangeV(1, static_cast<SingleContact*>(link)->getFrictionDirections()))*static_cast<SingleContact*>(link)->evalGeneralizedTangentialForce();
-          data.push_back(F(0));
-          data.push_back(F(1));
-          data.push_back(F(2));
-          // TODO fdf->isSticking(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())), gdTol)
-          data.push_back(static_cast<SingleContact*>(link)->isSticking() ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
-          frictionArrow->append(data);
+          Vec3 cardan = AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation());
+          data.push_back(cardan(0));
+          data.push_back(cardan(1));
+          data.push_back(cardan(2));
+          data.push_back(0);
+          openMBVContactFrame[i]->append(data);
         }
       }
-      MechanicalLinkObserver::plot();
+      // arrows
+      vector<double> data;
+      if (contactArrow) {
+        data.push_back(getTime());
+        Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 F = static_cast<SingleContact*>(link)->evalGlobalForceDirection().col(0)*static_cast<SingleContact*>(link)->evalGeneralizedNormalForce();
+        data.push_back(F(0));
+        data.push_back(F(1));
+        data.push_back(F(2));
+        data.push_back(nrm2(F));
+        contactArrow->append(data);
+      }
+      if (frictionArrow && static_cast<SingleContact*>(link)->getFrictionDirections() > 0) { // friction force
+        data.clear();
+        data.push_back(getTime());
+        Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 F = static_cast<SingleContact*>(link)->evalGlobalForceDirection()(RangeV(0,2),RangeV(1, static_cast<SingleContact*>(link)->getFrictionDirections()))*static_cast<SingleContact*>(link)->evalGeneralizedTangentialForce();
+        data.push_back(F(0));
+        data.push_back(F(1));
+        data.push_back(F(2));
+        // TODO fdf->isSticking(evalGeneralizedRelativeVelocity()(RangeV(1,getFrictionDirections())), gdTol)
+        data.push_back(static_cast<SingleContact*>(link)->isSticking() ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
+        frictionArrow->append(data);
+      }
     }
+    MechanicalLinkObserver::plot();
   }
 
   void SingleContactObserver::initializeUsingXML(DOMElement *element) {

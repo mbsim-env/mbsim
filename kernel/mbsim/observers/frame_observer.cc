@@ -44,34 +44,32 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
 //        if(plotFeature[12307443656510933270ULL]==enabled) plotColumns.push_back("AbsolutePosition");
 //        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteVelocity");
 //        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteAngularVelocity");
 //        if(plotFeature[1640323793842503125ULL]==enabled) plotColumns.push_back("AbsoluteAcceleration");
 //        if(plotFeature[1640323793842503125ULL]==enabled) plotColumns.push_back("AbsoluteAngularAcceleration");
-        Observer::init(stage);
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          if(openMBVPosition) {
-            openMBVPosition->setName("AbsolutePosition");
-            getOpenMBVGrp()->addObject(openMBVPosition);
-          }
-          if(openMBVVelocity) {
-            openMBVVelocity->setName("AbsoluteVelocity");
-            getOpenMBVGrp()->addObject(openMBVVelocity);
-          }
-          if(openMBVAngularVelocity) {
-            openMBVAngularVelocity->setName("AbsoluteAngularVelocity");
-            getOpenMBVGrp()->addObject(openMBVAngularVelocity);
-          }
-          if(openMBVAcceleration) {
-            openMBVAcceleration->setName("AbsoluteAcceleration");
-            getOpenMBVGrp()->addObject(openMBVAcceleration);
-          }
-          if(openMBVAngularAcceleration) {
-            openMBVAngularAcceleration->setName("AbsoluteAngularAcceleration");
-            getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
-          }
+      Observer::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        if(openMBVPosition) {
+          openMBVPosition->setName("AbsolutePosition");
+          getOpenMBVGrp()->addObject(openMBVPosition);
+        }
+        if(openMBVVelocity) {
+          openMBVVelocity->setName("AbsoluteVelocity");
+          getOpenMBVGrp()->addObject(openMBVVelocity);
+        }
+        if(openMBVAngularVelocity) {
+          openMBVAngularVelocity->setName("AbsoluteAngularVelocity");
+          getOpenMBVGrp()->addObject(openMBVAngularVelocity);
+        }
+        if(openMBVAcceleration) {
+          openMBVAcceleration->setName("AbsoluteAcceleration");
+          getOpenMBVGrp()->addObject(openMBVAcceleration);
+        }
+        if(openMBVAngularAcceleration) {
+          openMBVAngularAcceleration->setName("AbsoluteAngularAcceleration");
+          getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
         }
       }
     }
@@ -80,86 +78,83 @@ namespace MBSim {
   }
 
   void FrameObserver::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(0);
-          Vec3 r = frame->evalPosition();
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
-          data.push_back(0.5);
-          openMBVPosition->append(data);
-//          plotVector.push_back(nrm2(r));
-        }
-        if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 r = frame->evalPosition();
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
-          Vec3 v = frame->evalVelocity();
-          data.push_back(v(0));
-          data.push_back(v(1));
-          data.push_back(v(2));
-          data.push_back(0.5);
-          openMBVVelocity->append(data);
-//          plotVector.push_back(nrm2(v));
-        }
-        if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 r = frame->evalPosition();
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
-          Vec3 om = frame->evalAngularVelocity();
-          data.push_back(om(0));
-          data.push_back(om(1));
-          data.push_back(om(2));
-          data.push_back(0.5);
-          openMBVAngularVelocity->append(data);
-//          plotVector.push_back(nrm2(om));
-        }
-        if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 r = frame->evalPosition();
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
-          Vec3 a = frame->evalAcceleration();
-          data.push_back(a(0));
-          data.push_back(a(1));
-          data.push_back(a(2));
-          data.push_back(0.5);
-          openMBVAcceleration->append(data);
-//          plotVector.push_back(nrm2(a));
-        }
-        if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 r = frame->evalPosition();
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
-          Vec3 psi = frame->evalAngularAcceleration();
-          data.push_back(psi(0));
-          data.push_back(psi(1));
-          data.push_back(psi(2));
-          data.push_back(0.5);
-          openMBVAngularAcceleration->append(data);
-//          plotVector.push_back(nrm2(psi));
-        }
+    if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        Vec3 r = frame->evalPosition();
+        data.push_back(r(0));
+        data.push_back(r(1));
+        data.push_back(r(2));
+        data.push_back(0.5);
+        openMBVPosition->append(data);
+        //          plotVector.push_back(nrm2(r));
       }
-
-      Observer::plot();
+      if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 r = frame->evalPosition();
+        data.push_back(r(0));
+        data.push_back(r(1));
+        data.push_back(r(2));
+        Vec3 v = frame->evalVelocity();
+        data.push_back(v(0));
+        data.push_back(v(1));
+        data.push_back(v(2));
+        data.push_back(0.5);
+        openMBVVelocity->append(data);
+        //          plotVector.push_back(nrm2(v));
+      }
+      if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 r = frame->evalPosition();
+        data.push_back(r(0));
+        data.push_back(r(1));
+        data.push_back(r(2));
+        Vec3 om = frame->evalAngularVelocity();
+        data.push_back(om(0));
+        data.push_back(om(1));
+        data.push_back(om(2));
+        data.push_back(0.5);
+        openMBVAngularVelocity->append(data);
+        //          plotVector.push_back(nrm2(om));
+      }
+      if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 r = frame->evalPosition();
+        data.push_back(r(0));
+        data.push_back(r(1));
+        data.push_back(r(2));
+        Vec3 a = frame->evalAcceleration();
+        data.push_back(a(0));
+        data.push_back(a(1));
+        data.push_back(a(2));
+        data.push_back(0.5);
+        openMBVAcceleration->append(data);
+        //          plotVector.push_back(nrm2(a));
+      }
+      if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 r = frame->evalPosition();
+        data.push_back(r(0));
+        data.push_back(r(1));
+        data.push_back(r(2));
+        Vec3 psi = frame->evalAngularAcceleration();
+        data.push_back(psi(0));
+        data.push_back(psi(1));
+        data.push_back(psi(2));
+        data.push_back(0.5);
+        openMBVAngularAcceleration->append(data);
+        //          plotVector.push_back(nrm2(psi));
+      }
     }
+    Observer::plot();
   }
 
   void FrameObserver::initializeUsingXML(DOMElement *element) {

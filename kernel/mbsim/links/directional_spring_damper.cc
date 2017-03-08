@@ -64,15 +64,13 @@ namespace MBSim {
   void DirectionalSpringDamper::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          if(coilspringOpenMBV) {
-            coilspringOpenMBV->setName(name);
-            parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
-          }
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        if(coilspringOpenMBV) {
+          coilspringOpenMBV->setName(name);
+          parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
         }
-        FloatingFrameLink::init(stage);
       }
+      FloatingFrameLink::init(stage);
     }
     else
       FloatingFrameLink::init(stage);
@@ -80,28 +78,26 @@ namespace MBSim {
   }
 
   void DirectionalSpringDamper::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if (coilspringOpenMBV) {
-          Vec3 WrOToPoint;
-          Vec3 WrOFromPoint;
+    if(plotFeature[13464197197848110344ULL]==enabled) {
+      if (coilspringOpenMBV) {
+        Vec3 WrOToPoint;
+        Vec3 WrOFromPoint;
 
-          WrOFromPoint = C.evalPosition();
-          WrOToPoint   = frame[1]->evalPosition();
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(WrOFromPoint(0));
-          data.push_back(WrOFromPoint(1));
-          data.push_back(WrOFromPoint(2));
-          data.push_back(WrOToPoint(0));
-          data.push_back(WrOToPoint(1));
-          data.push_back(WrOToPoint(2));
-          data.push_back(fabs(evalGeneralizedForce()(0)));
-          coilspringOpenMBV->append(data);
-        }
+        WrOFromPoint = C.evalPosition();
+        WrOToPoint   = frame[1]->evalPosition();
+        vector<double> data;
+        data.push_back(getTime());
+        data.push_back(WrOFromPoint(0));
+        data.push_back(WrOFromPoint(1));
+        data.push_back(WrOFromPoint(2));
+        data.push_back(WrOToPoint(0));
+        data.push_back(WrOToPoint(1));
+        data.push_back(WrOToPoint(2));
+        data.push_back(fabs(evalGeneralizedForce()(0)));
+        coilspringOpenMBV->append(data);
       }
-      FloatingFrameLink::plot();
     }
+    FloatingFrameLink::plot();
   }
 
   void DirectionalSpringDamper::initializeUsingXML(DOMElement *element) {

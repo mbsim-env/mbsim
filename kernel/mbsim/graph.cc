@@ -35,8 +35,6 @@ namespace MBSim {
     setuInd_[1] = &Graph::setuInd1;
     sethInd_[0] = &Graph::sethInd0;
     sethInd_[1] = &Graph::sethInd1;
-    plotFeature[11334901831169464975ULL] = enabled; // the generated invisible graph must always walk through the plot functions
-    plotFeatureForChildren[11334901831169464975ULL] = enabled; // the generated invisible graph must always walk through the plot functions
   }
 
   Graph::~Graph() {}

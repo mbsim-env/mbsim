@@ -77,24 +77,22 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(WpsiP(i));
       }
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
-          if(updPos) updatePositions();
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(WrOP(0));
-          data.push_back(WrOP(1));
-          data.push_back(WrOP(2));
-          Vec3 cardan=AIK2Cardan(AWP);
-          data.push_back(cardan(0));
-          data.push_back(cardan(1));
-          data.push_back(cardan(2));
-          data.push_back(0);
-          openMBVFrame->append(data);
-        }
-      }
-      Element::plot();
     }
+    if(plotFeature[13464197197848110344ULL]==enabled and openMBVFrame && !openMBVFrame->isHDF5Link()) {
+      if(updPos) updatePositions();
+      vector<double> data;
+      data.push_back(getTime());
+      data.push_back(WrOP(0));
+      data.push_back(WrOP(1));
+      data.push_back(WrOP(2));
+      Vec3 cardan=AIK2Cardan(AWP);
+      data.push_back(cardan(0));
+      data.push_back(cardan(1));
+      data.push_back(cardan(2));
+      data.push_back(0);
+      openMBVFrame->append(data);
+    }
+    Element::plot();
   }
 
   void Frame::init(InitStage stage) {
@@ -133,15 +131,12 @@ namespace MBSim {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WpsiP("+numtostr(i)+")");
         }
-  
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          if(openMBVFrame) {
-            openMBVFrame->setName(name);
-            parent->getOpenMBVGrp()->addObject(openMBVFrame);
-          }
-        }
-        Element::init(stage);
       }
+      if(plotFeature[13464197197848110344ULL]==enabled and openMBVFrame) {
+          openMBVFrame->setName(name);
+          parent->getOpenMBVGrp()->addObject(openMBVFrame);
+      }
+      Element::init(stage);
     }
     else
       Element::init(stage);

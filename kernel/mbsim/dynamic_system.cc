@@ -328,45 +328,41 @@ namespace MBSim {
   }
 
   void DynamicSystem::plot() {
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      for (unsigned i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->plot();
-      for (unsigned i = 0; i < object.size(); i++)
-        object[i]->plot();
-      for (unsigned i = 0; i < link.size(); i++)
-        link[i]->plot();
-      for (unsigned i = 0; i < constraint.size(); i++)
-        constraint[i]->plot();
-      for (unsigned i = 0; i < frame.size(); i++)
-        frame[i]->plot();
-      for (unsigned i = 0; i < contour.size(); i++)
-        contour[i]->plot();
-      for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
-        inverseKineticsLink[i]->plot();
-      for (unsigned i = 0; i < observer.size(); i++)
-        observer[i]->plot();
-    }
+    for (unsigned i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->plot();
+    for (unsigned i = 0; i < object.size(); i++)
+      object[i]->plot();
+    for (unsigned i = 0; i < link.size(); i++)
+      link[i]->plot();
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->plot();
+    for (unsigned i = 0; i < frame.size(); i++)
+      frame[i]->plot();
+    for (unsigned i = 0; i < contour.size(); i++)
+      contour[i]->plot();
+    for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->plot();
+    for (unsigned i = 0; i < observer.size(); i++)
+      observer[i]->plot();
   }
   
   void DynamicSystem::plotAtSpecialEvent() {
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      for (unsigned i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->plotAtSpecialEvent();
-      for (unsigned i = 0; i < object.size(); i++)
-        object[i]->plotAtSpecialEvent();
-      for (unsigned i = 0; i < link.size(); i++)
-        link[i]->plotAtSpecialEvent();
-      for (unsigned i = 0; i < constraint.size(); i++)
-        constraint[i]->plotAtSpecialEvent();
-      for (unsigned i = 0; i < frame.size(); i++)
-        frame[i]->plotAtSpecialEvent();
-      for (unsigned i = 0; i < contour.size(); i++)
-        contour[i]->plotAtSpecialEvent();
-      for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
-        inverseKineticsLink[i]->plotAtSpecialEvent();
-      for (unsigned i = 0; i < observer.size(); i++)
-        observer[i]->plotAtSpecialEvent();
-    }
+    for (unsigned i = 0; i < dynamicsystem.size(); i++)
+      dynamicsystem[i]->plotAtSpecialEvent();
+    for (unsigned i = 0; i < object.size(); i++)
+      object[i]->plotAtSpecialEvent();
+    for (unsigned i = 0; i < link.size(); i++)
+      link[i]->plotAtSpecialEvent();
+    for (unsigned i = 0; i < constraint.size(); i++)
+      constraint[i]->plotAtSpecialEvent();
+    for (unsigned i = 0; i < frame.size(); i++)
+      frame[i]->plotAtSpecialEvent();
+    for (unsigned i = 0; i < contour.size(); i++)
+      contour[i]->plotAtSpecialEvent();
+    for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->plotAtSpecialEvent();
+    for (unsigned i = 0; i < observer.size(); i++)
+      observer[i]->plotAtSpecialEvent();
   }
 
   void DynamicSystem::init(InitStage stage) {
@@ -432,20 +428,18 @@ namespace MBSim {
         plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write("Object of class: " + getType());
         plotVectorSerie = NULL;
 
-        openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVGrp->setName(name);
-        //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
-        if (parent)
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
-        if (plotFeature[18269718848207088804ULL] == enabled)
-          openMBVGrp->setSeparateFile(true);
-
         H5::File *file=dynamic_cast<H5::File*>(plotGroup);
         if(file)
           file->flush();
       }
-    }
-    else if (stage==unknownStage) {
+      if (plotFeature[13464197197848110344ULL] == enabled) {
+        openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+        openMBVGrp->setName(name);
+        if (parent)
+          parent->getOpenMBVGrp()->addObject(openMBVGrp);
+        if (plotFeature[18269718848207088804ULL] == enabled)
+          openMBVGrp->setSeparateFile(true);
+      }
     }
 
     for (unsigned i = 0; i < frame.size(); i++)

@@ -33,13 +33,11 @@ namespace MBSim {
     if(stage==plotting) {
       updatePlotFeatures();
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
-        }
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+        openMBVGrp->setName(name+"_Group");
+        openMBVGrp->setExpand(false);
+        parent->getOpenMBVGrp()->addObject(openMBVGrp);
       }
       Element::init(stage);
     }

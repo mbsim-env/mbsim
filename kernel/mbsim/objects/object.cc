@@ -112,8 +112,8 @@ namespace MBSim {
         plotVector.push_back(Vtemp);
         plotVector.push_back(Ttemp + Vtemp);
       }
-      Element::plot();
     }
+    Element::plot();
   }
 
   void Object::updateqRef(const Vec &qParent) {
@@ -211,8 +211,8 @@ namespace MBSim {
           plotColumns.push_back("V");
           plotColumns.push_back("E");
         }
-        Element::init(stage);
       }
+      Element::init(stage);
     }
     else
       Element::init(stage);

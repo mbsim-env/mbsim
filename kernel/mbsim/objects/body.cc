@@ -60,14 +60,12 @@ namespace MBSim {
   }  
 
   void Body::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      Object::plot();
+    Object::plot();
 
-      for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->plot();
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->plot();
-    }
+    for(unsigned int j=0; j<frame.size(); j++)
+      frame[j]->plot();
+    for(unsigned int j=0; j<contour.size(); j++)
+      contour[j]->plot();
   }
 
   void Body::setDynamicSystemSolver(DynamicSystemSolver* sys) {
@@ -93,19 +91,17 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
-          if(plotFeature[13464197197848110344ULL]==enabled && openMBVBody) {
-            openMBVBody->setName(name);
-            openMBVGrp->addObject(openMBVBody);
-          }
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+        openMBVGrp->setName(name+"_Group");
+        openMBVGrp->setExpand(false);
+        parent->getOpenMBVGrp()->addObject(openMBVGrp);
+        if(openMBVBody) {
+          openMBVBody->setName(name);
+          openMBVGrp->addObject(openMBVBody);
         }
-        Object::init(stage);
       }
+      Object::init(stage);
     }
     else
       Object::init(stage);

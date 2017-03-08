@@ -409,7 +409,7 @@ namespace MBSim {
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage);
-      if (plotFeature[11334901831169464975ULL] == enabled)
+      if (plotFeature[13464197197848110344ULL] == enabled)
         openMBVGrp->write(true, truncateSimulationFiles);
       H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;

@@ -312,25 +312,21 @@ namespace MBSim {
   }
 
   void RigidBody::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVBody) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 WrOS=openMBVFrame->evalPosition();
-          Vec3 cardan=AIK2Cardan(openMBVFrame->evalOrientation());
-          data.push_back(WrOS(0));
-          data.push_back(WrOS(1));
-          data.push_back(WrOS(2));
-          data.push_back(cardan(0));
-          data.push_back(cardan(1));
-          data.push_back(cardan(2));
-          data.push_back(0);
-          static_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
-        }
-      }
-      Body::plot();
+    if(plotFeature[13464197197848110344ULL]==enabled and openMBVBody) {
+      vector<double> data;
+      data.push_back(getTime());
+      Vec3 WrOS=openMBVFrame->evalPosition();
+      Vec3 cardan=AIK2Cardan(openMBVFrame->evalOrientation());
+      data.push_back(WrOS(0));
+      data.push_back(WrOS(1));
+      data.push_back(WrOS(2));
+      data.push_back(cardan(0));
+      data.push_back(cardan(1));
+      data.push_back(cardan(2));
+      data.push_back(0);
+      static_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
     }
+    Body::plot();
   }
 
   void RigidBody::updateqd() {

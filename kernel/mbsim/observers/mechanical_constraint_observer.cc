@@ -45,22 +45,18 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-//      if(openMBVForce) plotColumns.push_back("Force");
-//      if(openMBVMoment) plotColumns.push_back("Moment");
-        openMBVForceGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVForceGrp->setExpand(false);
-        openMBVForceGrp->setName(name+"_ArrowGroup");
-        parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
+      Observer::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        //      if(openMBVForce) plotColumns.push_back("Force");
+        //      if(openMBVMoment) plotColumns.push_back("Moment");
         if(openMBVForce) {
           openMBVForce->setName("Force");
-          openMBVForceGrp->addObject(openMBVForce);
+          getOpenMBVGrp()->addObject(openMBVForce);
         }
         if(openMBVMoment) {
           openMBVMoment->setName("Moment");
-          openMBVForceGrp->addObject(openMBVMoment);
+          getOpenMBVGrp()->addObject(openMBVMoment);
         }
-        Observer::init(stage);
       }
     }
     else
@@ -68,40 +64,38 @@ namespace MBSim {
   }
 
   void MechanicalConstraintObserver::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVForce) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(constraint->getMechanicalLink()->getNumberOfLinks()-1)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WF = constraint->getMechanicalLink()->evalForce(constraint->getMechanicalLink()->getNumberOfLinks()-1);
-          data.push_back(WF(0));
-          data.push_back(WF(1));
-          data.push_back(WF(2));
-          data.push_back(nrm2(WF));
-          openMBVForce->append(data);
-        }
-        if(openMBVMoment) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(constraint->getMechanicalLink()->getNumberOfLinks()-1)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WM = constraint->getMechanicalLink()->evalMoment(constraint->getMechanicalLink()->getNumberOfLinks()-1);
-          data.push_back(WM(0));
-          data.push_back(WM(1));
-          data.push_back(WM(2));
-          data.push_back(nrm2(WM));
-          openMBVMoment->append(data);
-        }
+    if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(openMBVForce) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(constraint->getMechanicalLink()->getNumberOfLinks()-1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WF = constraint->getMechanicalLink()->evalForce(constraint->getMechanicalLink()->getNumberOfLinks()-1);
+        data.push_back(WF(0));
+        data.push_back(WF(1));
+        data.push_back(WF(2));
+        data.push_back(nrm2(WF));
+        openMBVForce->append(data);
       }
-
-      Observer::plot();
+      if(openMBVMoment) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(constraint->getMechanicalLink()->getNumberOfLinks()-1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WM = constraint->getMechanicalLink()->evalMoment(constraint->getMechanicalLink()->getNumberOfLinks()-1);
+        data.push_back(WM(0));
+        data.push_back(WM(1));
+        data.push_back(WM(2));
+        data.push_back(nrm2(WM));
+        openMBVMoment->append(data);
+      }
     }
+
+    Observer::plot();
   }
 
   void MechanicalConstraintObserver::initializeUsingXML(DOMElement *element) {

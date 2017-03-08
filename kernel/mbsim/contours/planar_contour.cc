@@ -62,24 +62,22 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       updatePlotFeatures();
-  
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
-          shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
-          if(not(ombvNodes.size())) {
-            ombvNodes.resize(101);
-            for(int i=0; i<101; i++)
-              ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
-          }
-          for (unsigned int i=0; i<ombvNodes.size(); i++) {
-            const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
-            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
-          }
-          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
-          static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
+
+      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+        shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
+        if(not(ombvNodes.size())) {
+          ombvNodes.resize(101);
+          for(int i=0; i<101; i++)
+            ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
         }
-        RigidContour::init(stage);
+        for (unsigned int i=0; i<ombvNodes.size(); i++) {
+          const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
+          vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
+        }
+        static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
+        static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
       }
+      RigidContour::init(stage);
     }
     else
       RigidContour::init(stage);

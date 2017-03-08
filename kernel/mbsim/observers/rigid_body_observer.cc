@@ -49,24 +49,22 @@ namespace MBSim {
       updatePlotFeatures();
 
       Observer::init(stage);
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          if(FWeight) {
-            FWeight->setName("Weight");
-            getOpenMBVGrp()->addObject(FWeight);
-          }
-          if(FArrow) {
-            FArrow->setName("JointForce");
-            getOpenMBVGrp()->addObject(FArrow);
-          }
-          if(MArrow) {
-            MArrow->setName("JointMoment");
-            getOpenMBVGrp()->addObject(MArrow);
-          }
-          if(openMBVAxisOfRotation) {
-            openMBVAxisOfRotation->setName("AxisOfRotation");
-            getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
-          }
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        if(FWeight) {
+          FWeight->setName("Weight");
+          getOpenMBVGrp()->addObject(FWeight);
+        }
+        if(FArrow) {
+          FArrow->setName("JointForce");
+          getOpenMBVGrp()->addObject(FArrow);
+        }
+        if(MArrow) {
+          MArrow->setName("JointMoment");
+          getOpenMBVGrp()->addObject(MArrow);
+        }
+        if(openMBVAxisOfRotation) {
+          openMBVAxisOfRotation->setName("AxisOfRotation");
+          getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
         }
       }
     }
@@ -75,86 +73,84 @@ namespace MBSim {
   }
 
   void RigidBodyObserver::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(FWeight) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 WrOS=body->getFrameC()->evalPosition();
-          Vec3 WG = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-          data.push_back(WrOS(0));
-          data.push_back(WrOS(1));
-          data.push_back(WrOS(2));
-          data.push_back(WG(0));
-          data.push_back(WG(1));
-          data.push_back(WG(2));
-          data.push_back(1.0);
-          FWeight->append(data);
-        }
-        if(FArrow) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=body->getJoint()->getFrame(1)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WF = body->getJoint()->evalForce();
-          data.push_back(WF(0));
-          data.push_back(WF(1));
-          data.push_back(WF(2));
-          data.push_back(nrm2(WF));
-          FArrow->append(data);
-        }
-        if(MArrow) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=body->getJoint()->getFrame(1)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WM = body->getJoint()->evalMoment();
-          data.push_back(WM(0));
-          data.push_back(WM(1));
-          data.push_back(WM(2));
-          data.push_back(nrm2(WM));
-          MArrow->append(data);
-        }
-        if(openMBVAxisOfRotation) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 om = body->getFrameC()->evalAngularVelocity();
-          Vec3 v = body->getFrameC()->evalVelocity();
-          Vec3 dr;
-          double absom = nrm2(om);
-          if(abs(om(2))>macheps()) {
-            dr(0) = -v(1)/om(2);
-            dr(1) = v(0)/om(2);
-          }
-          else if(abs(om(1))>macheps()) {
-            dr(0) = v(2)/om(1);
-            dr(2) = -v(0)/om(1);
-          }
-          else if(abs(om(0))>macheps()) {
-            dr(1) = -v(2)/om(0);
-            dr(2) = v(1)/om(0);
-          }
-          else
-            absom = 1;
-          Vec3 r = body->getFrameC()->evalPosition() + dr;
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
-          Vec3 dir = om/absom;
-          data.push_back(dir(0));
-          data.push_back(dir(1));
-          data.push_back(dir(2));
-          data.push_back(0.5);
-          openMBVAxisOfRotation->append(data);
-//          plotVector.push_back(nrm2(dir));
-        }
+    if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(FWeight) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 WrOS=body->getFrameC()->evalPosition();
+        Vec3 WG = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+        data.push_back(WrOS(0));
+        data.push_back(WrOS(1));
+        data.push_back(WrOS(2));
+        data.push_back(WG(0));
+        data.push_back(WG(1));
+        data.push_back(WG(2));
+        data.push_back(1.0);
+        FWeight->append(data);
       }
-      Observer::plot();
+      if(FArrow) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=body->getJoint()->getFrame(1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WF = body->getJoint()->evalForce();
+        data.push_back(WF(0));
+        data.push_back(WF(1));
+        data.push_back(WF(2));
+        data.push_back(nrm2(WF));
+        FArrow->append(data);
+      }
+      if(MArrow) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=body->getJoint()->getFrame(1)->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WM = body->getJoint()->evalMoment();
+        data.push_back(WM(0));
+        data.push_back(WM(1));
+        data.push_back(WM(2));
+        data.push_back(nrm2(WM));
+        MArrow->append(data);
+      }
+      if(openMBVAxisOfRotation) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 om = body->getFrameC()->evalAngularVelocity();
+        Vec3 v = body->getFrameC()->evalVelocity();
+        Vec3 dr;
+        double absom = nrm2(om);
+        if(abs(om(2))>macheps()) {
+          dr(0) = -v(1)/om(2);
+          dr(1) = v(0)/om(2);
+        }
+        else if(abs(om(1))>macheps()) {
+          dr(0) = v(2)/om(1);
+          dr(2) = -v(0)/om(1);
+        }
+        else if(abs(om(0))>macheps()) {
+          dr(1) = -v(2)/om(0);
+          dr(2) = v(1)/om(0);
+        }
+        else
+          absom = 1;
+        Vec3 r = body->getFrameC()->evalPosition() + dr;
+        data.push_back(r(0));
+        data.push_back(r(1));
+        data.push_back(r(2));
+        Vec3 dir = om/absom;
+        data.push_back(dir(0));
+        data.push_back(dir(1));
+        data.push_back(dir(2));
+        data.push_back(0.5);
+        openMBVAxisOfRotation->append(data);
+        //          plotVector.push_back(nrm2(dir));
+      }
     }
+    Observer::plot();
   }
   
   void RigidBodyObserver::initializeUsingXML(DOMElement *element) {

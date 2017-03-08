@@ -49,23 +49,21 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       updatePlotFeatures();
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          if(openMBVArrow) {
-            if(forceDir.cols()) {
-              openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow); 
-              openMBVForce->setName(name+"_Force");
-              parent->getOpenMBVGrp()->addObject(openMBVForce);
-            }
-            if(momentDir.cols()) {
-              openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow); 
-              openMBVMoment->setName(name+"_Moment");
-              parent->getOpenMBVGrp()->addObject(openMBVMoment);
-            }
+      if(plotFeature[13464197197848110344ULL]==enabled) {
+        if(openMBVArrow) {
+          if(forceDir.cols()) {
+            openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow);
+            openMBVForce->setName(name+"_Force");
+            parent->getOpenMBVGrp()->addObject(openMBVForce);
+          }
+          if(momentDir.cols()) {
+            openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow);
+            openMBVMoment->setName(name+"_Moment");
+            parent->getOpenMBVGrp()->addObject(openMBVMoment);
           }
         }
-        FloatingFrameLink::init(stage);
       }
+      FloatingFrameLink::init(stage);
     }
     else if(stage==preInit) {
       FloatingFrameLink::init(stage);
@@ -122,39 +120,37 @@ namespace MBSim {
   }
 
   void KineticExcitation::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVForce) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=P[1]->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WF = evalForce();
-          data.push_back(WF(0));
-          data.push_back(WF(1));
-          data.push_back(WF(2));
-          data.push_back(nrm2(WF));
-          openMBVForce->append(data);
-        }
-        if(openMBVMoment) {
-          vector<double> data;
-          data.push_back(getTime());
-          Vec3 toPoint=P[1]->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          Vec3 WM = evalMoment();
-          data.push_back(WM(0));
-          data.push_back(WM(1));
-          data.push_back(WM(2));
-          data.push_back(nrm2(WM));
-          openMBVMoment->append(data);
-        }
+    if(plotFeature[13464197197848110344ULL]==enabled) {
+      if(openMBVForce) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=P[1]->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WF = evalForce();
+        data.push_back(WF(0));
+        data.push_back(WF(1));
+        data.push_back(WF(2));
+        data.push_back(nrm2(WF));
+        openMBVForce->append(data);
       }
-      FloatingFrameLink::plot();
+      if(openMBVMoment) {
+        vector<double> data;
+        data.push_back(getTime());
+        Vec3 toPoint=P[1]->evalPosition();
+        data.push_back(toPoint(0));
+        data.push_back(toPoint(1));
+        data.push_back(toPoint(2));
+        Vec3 WM = evalMoment();
+        data.push_back(WM(0));
+        data.push_back(WM(1));
+        data.push_back(WM(2));
+        data.push_back(nrm2(WM));
+        openMBVMoment->append(data);
+      }
     }
+    FloatingFrameLink::plot();
   }
 
   void KineticExcitation::initializeUsingXML(DOMElement *element) {

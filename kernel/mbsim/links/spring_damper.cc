@@ -50,17 +50,13 @@ namespace MBSim {
   void SpringDamper::init(InitStage stage) {
     if(stage==plotting) {
       updatePlotFeatures();
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[4069279623887175301ULL]==enabled)
+      if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[4069279623887175301ULL]==enabled)
           plotColumns.push_back("deflection");
-        if(plotFeature[13464197197848110344ULL]==enabled) {
-          if(coilspringOpenMBV) {
-            coilspringOpenMBV->setName(name);
-            parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
-          }
-        }
-        FixedFrameLink::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled and coilspringOpenMBV) {
+        coilspringOpenMBV->setName(name);
+        parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
+      FixedFrameLink::init(stage);
     }
     else
       FixedFrameLink::init(stage);
@@ -68,30 +64,26 @@ namespace MBSim {
   }
 
   void SpringDamper::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[4069279623887175301ULL]==enabled)
-        plotVector.push_back(evalGeneralizedRelativePosition()(0)-l0);
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if (coilspringOpenMBV) {
-          Vec3 WrOToPoint;
-          Vec3 WrOFromPoint;
+    if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[4069279623887175301ULL]==enabled)
+      plotVector.push_back(evalGeneralizedRelativePosition()(0)-l0);
+    if(plotFeature[13464197197848110344ULL]==enabled and coilspringOpenMBV) {
+      Vec3 WrOToPoint;
+      Vec3 WrOFromPoint;
 
-          WrOFromPoint = frame[0]->evalPosition();
-          WrOToPoint   = frame[1]->evalPosition();
-          vector<double> data;
-          data.push_back(getTime());
-          data.push_back(WrOFromPoint(0));
-          data.push_back(WrOFromPoint(1));
-          data.push_back(WrOFromPoint(2));
-          data.push_back(WrOToPoint(0));
-          data.push_back(WrOToPoint(1));
-          data.push_back(WrOToPoint(2));
-          data.push_back(fabs(evalGeneralizedForce()(0)));
-          coilspringOpenMBV->append(data);
-        }
-      }
-      FixedFrameLink::plot();
+      WrOFromPoint = frame[0]->evalPosition();
+      WrOToPoint   = frame[1]->evalPosition();
+      vector<double> data;
+      data.push_back(getTime());
+      data.push_back(WrOFromPoint(0));
+      data.push_back(WrOFromPoint(1));
+      data.push_back(WrOFromPoint(2));
+      data.push_back(WrOToPoint(0));
+      data.push_back(WrOToPoint(1));
+      data.push_back(WrOToPoint(2));
+      data.push_back(fabs(evalGeneralizedForce()(0)));
+      coilspringOpenMBV->append(data);
     }
+    FixedFrameLink::plot();
   }
 
   void SpringDamper::initializeUsingXML(DOMElement *element) {

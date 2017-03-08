@@ -52,8 +52,8 @@ namespace MBSim {
       if(plotFeature[2188794903238700147ULL]==enabled) {
         plotVector.push_back(evalPotentialEnergy());
       }
-      Element::plot();
     }
+    Element::plot();
   }
 
   void Link::updatewbRef(const Vec& wbParent) {
@@ -143,8 +143,8 @@ namespace MBSim {
         }
         if(plotFeature[2188794903238700147ULL]==enabled)
           plotColumns.push_back("V");
-        Element::init(stage);
       }
+      Element::init(stage);
     }
     else
       Element::init(stage);
