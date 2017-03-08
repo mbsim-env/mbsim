@@ -32,16 +32,14 @@ namespace MBSim {
     if(stage==plotting) {
       updatePlotFeatures();
   
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r(0));
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r(1));
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
-        }
-        RigidContour::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r(0));
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r(1));
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
       }
+      RigidContour::init(stage);
     }
     else
       RigidContour::init(stage);

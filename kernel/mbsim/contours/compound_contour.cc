@@ -66,19 +66,16 @@ namespace MBSim {
       if (parent)
         updatePlotFeatures();
 
-      if (plotFeature[11334901831169464975ULL] == enabled) {
-        if (openMBVGroup == 0) {
-          openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openMBVGroup->setName(name + "Group");
-          //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
-          if (parent)
-            parent->getOpenMBVGrp()->addObject(openMBVGroup);
-          if (plotFeature[18269718848207088804ULL] == enabled)
-            openMBVGroup->setSeparateFile(true);
-        }
+      if (plotFeature[13464197197848110344ULL] == enabled and openMBVGroup == 0) {
+        openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+        openMBVGroup->setName(name + "Group");
+        if (parent)
+          parent->getOpenMBVGrp()->addObject(openMBVGroup);
+        if (plotFeature[18269718848207088804ULL] == enabled)
+          openMBVGroup->setSeparateFile(true);
       }
+      Contour::init(stage);
     }
-    Contour::init(stage);
 
     for (unsigned int i = 0; i < element.size(); i++) {
       //element[i]->setParent(parent); // PARENT

@@ -80,48 +80,46 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
   
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
-          if(not(ombvEtaNodes.size())) {
-            ombvEtaNodes.resize(51);
-            for(unsigned int i=0; i<ombvEtaNodes.size(); i++)
-              ombvEtaNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/50.;
-          }
-          if(not(ombvXiNodes.size())) {
-            ombvXiNodes.resize(51);
-            for(unsigned int i=0; i<ombvXiNodes.size(); i++)
-              ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/50.;
-          }
-          vector<vector<double> > vp(ombvEtaNodes.size()*ombvXiNodes.size());
-          Vec2 zeta(NONINIT);
-          int n = ombvXiNodes.size();
-          for (unsigned int i=0; i<ombvEtaNodes.size(); i++) {
-            zeta(0) = ombvEtaNodes[i];
-            for (unsigned int j=0; j<ombvXiNodes.size(); j++) {
-              zeta(1) = ombvXiNodes[j];
-              const Vec3 CrPC=(*funcCrPC)(zeta);
-              vp[i*n+j].push_back(CrPC(0));
-              vp[i*n+j].push_back(CrPC(1));
-              vp[i*n+j].push_back(CrPC(2));
-            }
-          }
-          vector<int> indices(5*(ombvEtaNodes.size()-1)*(ombvXiNodes.size()-1));
-          int k=0;
-          for(unsigned int i=0; i<ombvEtaNodes.size()-1; i++) {
-            for(unsigned int j=0; j<ombvXiNodes.size()-1; j++) {
-              indices[k+2] = i*ombvXiNodes.size()+j;
-              indices[k+1] = i*ombvXiNodes.size()+j+1;
-              indices[k+3] = (i+1)*ombvXiNodes.size()+j;
-              indices[k] = (i+1)*ombvXiNodes.size()+j+1;
-              indices[k+4] = -1;
-              k+=5;
-            }
-          }
-          static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setVertexPositions(vp);
-          static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
+      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+        if(not(ombvEtaNodes.size())) {
+          ombvEtaNodes.resize(51);
+          for(unsigned int i=0; i<ombvEtaNodes.size(); i++)
+            ombvEtaNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/50.;
         }
-        RigidContour::init(stage);
+        if(not(ombvXiNodes.size())) {
+          ombvXiNodes.resize(51);
+          for(unsigned int i=0; i<ombvXiNodes.size(); i++)
+            ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/50.;
+        }
+        vector<vector<double> > vp(ombvEtaNodes.size()*ombvXiNodes.size());
+        Vec2 zeta(NONINIT);
+        int n = ombvXiNodes.size();
+        for (unsigned int i=0; i<ombvEtaNodes.size(); i++) {
+          zeta(0) = ombvEtaNodes[i];
+          for (unsigned int j=0; j<ombvXiNodes.size(); j++) {
+            zeta(1) = ombvXiNodes[j];
+            const Vec3 CrPC=(*funcCrPC)(zeta);
+            vp[i*n+j].push_back(CrPC(0));
+            vp[i*n+j].push_back(CrPC(1));
+            vp[i*n+j].push_back(CrPC(2));
+          }
+        }
+        vector<int> indices(5*(ombvEtaNodes.size()-1)*(ombvXiNodes.size()-1));
+        int k=0;
+        for(unsigned int i=0; i<ombvEtaNodes.size()-1; i++) {
+          for(unsigned int j=0; j<ombvXiNodes.size()-1; j++) {
+            indices[k+2] = i*ombvXiNodes.size()+j;
+            indices[k+1] = i*ombvXiNodes.size()+j+1;
+            indices[k+3] = (i+1)*ombvXiNodes.size()+j;
+            indices[k] = (i+1)*ombvXiNodes.size()+j+1;
+            indices[k+4] = -1;
+            k+=5;
+          }
+        }
+        static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setVertexPositions(vp);
+        static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
       }
+      RigidContour::init(stage);
     }
     else
       RigidContour::init(stage);

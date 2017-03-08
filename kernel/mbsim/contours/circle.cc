@@ -79,14 +79,12 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r);
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r);
-          static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(0);
-        }
-        RigidContour::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r);
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r);
+        static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(0);
       }
+      RigidContour::init(stage);
     }
     else
       RigidContour::init(stage);

@@ -42,13 +42,11 @@ namespace MBSim {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
-          openMBVRigidBody->setName(name);
-          parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
-        }
-        Contour::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+        openMBVRigidBody->setName(name);
+        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
       }
+      Contour::init(stage);
     }
     else
       Contour::init(stage);
@@ -101,22 +99,20 @@ namespace MBSim {
   }
 
   void RigidContour::plot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(R->evalPosition()(0));
-        data.push_back(R->getPosition()(1));
-        data.push_back(R->getPosition()(2));
-        Vec3 cardan=AIK2Cardan(R->evalOrientation());
-        data.push_back(cardan(0));
-        data.push_back(cardan(1));
-        data.push_back(cardan(2));
-        data.push_back(0);
-        openMBVRigidBody->append(data);
-      }
-      Contour::plot();
+    if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
+      vector<double> data;
+      data.push_back(getTime());
+      data.push_back(R->evalPosition()(0));
+      data.push_back(R->getPosition()(1));
+      data.push_back(R->getPosition()(2));
+      Vec3 cardan=AIK2Cardan(R->evalOrientation());
+      data.push_back(cardan(0));
+      data.push_back(cardan(1));
+      data.push_back(cardan(2));
+      data.push_back(0);
+      openMBVRigidBody->append(data);
     }
+    Contour::plot();
   }
 
   ContactKinematics * RigidContour::findContactPairingWith(std::string type0, std::string type1) {
