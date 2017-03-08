@@ -202,6 +202,7 @@ std::string _getPyScriptProcessingInstruction(xercesc::DOMElement *e, const std:
 # initialization
 from _mbsim_part100 import *
 from _mbsim_part200 import *
+from _mbsim_part250 import *
 from _mbsim_part300 import *
 
 # internal helper class to register a director class in the MBSim::ObjectFactory
