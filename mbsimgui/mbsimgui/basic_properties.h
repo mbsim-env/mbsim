@@ -416,6 +416,11 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> types;
     public:
       PlotFeatureStatusProperty(const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
+      void setFeature(const std::string &t, const std::string &v, const std::string &s) {
+        type.push_back(t);
+        value.push_back(v);
+        status.push_back(s);
+      }
       virtual PropertyInterface* clone() const {return new PlotFeatureStatusProperty(*this);}
       const std::vector<MBXMLUtils::FQN>& getTypes() const { return types; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
