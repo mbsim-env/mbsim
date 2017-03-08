@@ -18,23 +18,26 @@ namespace MBSimElectronics {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
-	plotColumns.push_back("Charge");
-	plotColumns.push_back("Current");
-
-	Object::init(stage);
+      if(plotFeature[11334901831169464975ULL]==enabled) {
+        if(plotFeature[12990959818100602138ULL]==enabled)
+          plotColumns.push_back("Charge");
+        if(plotFeature[12665280193825468542ULL]==enabled)
+          plotColumns.push_back("Current");
       }
+      Object::init(stage);
     }
     else
       Object::init(stage);
   }
 
   void ElectronicObject::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(evalCharge());
-      plotVector.push_back(evalCurrent());
-      Object::plot();
+    if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[12990959818100602138ULL]==enabled)
+        plotVector.push_back(evalCharge());
+      if(plotFeature[12665280193825468542ULL]==enabled)
+        plotVector.push_back(evalCurrent());
     }
+    Object::plot();
   }
 
   void ElectronicLink::calcgSize(int j) {
@@ -50,34 +53,32 @@ namespace MBSimElectronics {
   }
 
   void ElectronicLink::init(InitStage stage) {
-    if(stage==unknownStage) {
-      h[0].push_back(Vec(branch->getJacobian(0).cols()));
-      r[0].push_back(Vec(branch->getJacobian(0).cols()));
-      W[0].push_back(Mat(branch->getJacobian(0).cols(),laSize));
-      V[0].push_back(Mat(branch->getJacobian(0).cols(),laSize));
-      h[1].push_back(Vec(branch->getJacobian(1).cols()));
-      r[1].push_back(Vec(branch->getJacobian(1).cols()));
-      W[1].push_back(Mat(branch->getJacobian(1).cols(),laSize));
-      V[1].push_back(Mat(branch->getJacobian(1).cols(),laSize));
-  }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
-	plotColumns.push_back("Charge");
-	plotColumns.push_back("Current");
-	plotColumns.push_back("Voltage");
-
-	Link::init(stage);
-      }
-    }
-    else if(stage==preInit) {
+    if(stage==preInit) {
       Link::init(stage);
 
       g.resize(1);
       gd.resize(1);
       gdn.resize(1);
       lambda.resize(1);
+      for(int i=0; i<2; i++) {
+        h[i].resize(1);
+        r[i].resize(1);
+        W[i].resize(1);
+        V[i].resize(1);
+      }
+    }
+    else if(stage==plotting) {
+      updatePlotFeatures();
+
+      if(plotFeature[11334901831169464975ULL]==enabled) {
+        if(plotFeature[12990959818100602138ULL]==enabled)
+          plotColumns.push_back("Charge");
+        if(plotFeature[12665280193825468542ULL]==enabled)
+          plotColumns.push_back("Current");
+        if(plotFeature[492538187671312075ULL]==enabled)
+          plotColumns.push_back("Voltage");
+      }
+      Link::init(stage);
     }
     else
       Link::init(stage);
@@ -92,12 +93,15 @@ namespace MBSimElectronics {
   }
 
   void ElectronicLink::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(evalCharge());
-      plotVector.push_back(evalCurrent());
-      plotVector.push_back(evalGeneralizedForce()(0));
-      Link::plot();
+    if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[12990959818100602138ULL]==enabled)
+        plotVector.push_back(evalCharge());
+      if(plotFeature[12665280193825468542ULL]==enabled)
+        plotVector.push_back(evalCurrent());
+      if(plotFeature[492538187671312075ULL]==enabled)
+        plotVector.push_back(evalGeneralizedForce()(0));
     }
+    Link::plot();
   }
 
   void ElectronicLink::updateW(int j) {
@@ -105,18 +109,18 @@ namespace MBSimElectronics {
   }
 
   void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, int j) {
-    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->gethSize(j)-1);
     h[j][0]>>hParent(I);
   } 
 
   void ElectronicLink::updaterRef(const Vec &rParent, int j) {
-    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->gethSize(j)-1);
     r[j][0]>>rParent(I);
   } 
 
   void ElectronicLink::updateWRef(const fmatvec::Mat& WParent, int j) {
     RangeV J = RangeV(laInd,laInd+laSize-1);
-    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->gethSize(j)-1);
     W[j][0].resize()>>WParent(I,J);
   }
 
@@ -136,13 +140,6 @@ namespace MBSimElectronics {
       if(precessor)
 	dependency.push_back(precessor);
     } 
-    else if(stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
-	Object::init(stage);
-      }
-    }
     else
       Object::init(stage);
   }
@@ -177,6 +174,7 @@ namespace MBSimElectronics {
       if(J[1].cols() == 0) {
 	J[1].resize(1,gethSize(1),INIT,1);
       }
+      Object::init(stage);
     }
     else
       Object::init(stage);
