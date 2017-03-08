@@ -34,11 +34,9 @@ namespace MBSimControl {
   void Signal::init(InitStage stage) {
     if (stage==plotting) {
       updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(generalizedPosition)==enabled) {
-          for (int i=0; i<getSignalSize(); i++)
-            plotColumns.push_back("Signal (" + numtostr(i) + ")");
-        }
+      if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[15826512145364485088ULL]==enabled) {
+        for (int i=0; i<getSignalSize(); i++)
+          plotColumns.push_back("Signal (" + numtostr(i) + ")");
       }
       Link::init(stage);
     }
@@ -48,11 +46,9 @@ namespace MBSimControl {
 
 
   void Signal::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(generalizedPosition)==enabled) {
-        for (int i=0; i<evalSignal().size(); i++)
-          plotVector.push_back(getSignal()(i));
-      }
+    if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[15826512145364485088ULL]==enabled) {
+      for (int i=0; i<evalSignal().size(); i++)
+        plotVector.push_back(getSignal()(i));
     }
     Link::plot();
   }

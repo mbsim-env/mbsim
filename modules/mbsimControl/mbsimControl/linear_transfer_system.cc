@@ -109,10 +109,9 @@ namespace MBSimControl {
     }
     else if (stage==plotting) {
       updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if (getPlotFeature(generalizedPosition)==enabled)
-          for (int i=0; i<B.cols(); i++)
-            plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
+      if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[13300192525503281405ULL]==enabled) {
+        for (int i=0; i<B.cols(); i++)
+          plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
       }
       Signal::init(stage);
     }
@@ -213,10 +212,9 @@ namespace MBSimControl {
   }
 
   void LinearTransferSystem::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if (getPlotFeature(generalizedPosition)==enabled)
-        for (int i=0; i<B.cols(); i++)
-          plotVector.push_back(inputSignal->evalSignal()(i));
+    if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[13300192525503281405ULL]==enabled) {
+      for (int i=0; i<B.cols(); i++)
+        plotVector.push_back(inputSignal->evalSignal()(i));
     }
     Signal::plot();
   }

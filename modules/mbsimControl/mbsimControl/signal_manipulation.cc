@@ -160,12 +160,6 @@ namespace MBSimControl {
       Signal::init(stage);
       x.resize(xSize, INIT, 0);
     }
-    else if (stage==plotting) {
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
-        Signal::init(stage);
-      }
-    }
     else
       Signal::init(stage);
   }
