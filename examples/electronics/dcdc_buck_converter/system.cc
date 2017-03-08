@@ -121,6 +121,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(sw);
   sw->setInputSignal(vs);
   eswitch->setVoltageSignal(new SignalFunction<VecV(double)>(sw));
+
+  setPlotFeatureRecursive("current",enabled);
+  setPlotFeatureRecursive("charge",enabled);
+  setPlotFeatureRecursive("voltage",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("signal",enabled);
 }
 
 

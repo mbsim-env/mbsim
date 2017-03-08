@@ -26,8 +26,6 @@ int main (int argc, char* argv[])
 
   integrator.integrate(*sys);
 
-  sys->closePlot();
-
   delete sys;
 
   return 0;

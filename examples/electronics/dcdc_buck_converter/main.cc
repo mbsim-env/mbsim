@@ -39,8 +39,6 @@ int main (int argc, char* argv[])
   integrator->setEndTime(1e-2);
   integrator->integrate(*sys);
 
-  sys->closePlot();
-
   delete sys;
   delete integrator;
 
