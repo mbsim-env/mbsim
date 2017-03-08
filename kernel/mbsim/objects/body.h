@@ -72,7 +72,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot();
-      virtual void closePlot();
       virtual std::string getType() const { return "Body"; }
       virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 

@@ -70,17 +70,6 @@ namespace MBSim {
     }
   }
 
-  void Body::closePlot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      Object::closePlot();
-
-      for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->closePlot();
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->closePlot();
-    }
-  }
-
   void Body::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Object::setDynamicSystemSolver(sys);
 

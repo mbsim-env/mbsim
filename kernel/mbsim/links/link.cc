@@ -56,12 +56,6 @@ namespace MBSim {
     }
   }
 
-  void Link::closePlot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      Element::closePlot();
-    }
-  }
-
   void Link::updatewbRef(const Vec& wbParent) {
     wb >> wbParent(laInd,laInd+laSize-1);
   }

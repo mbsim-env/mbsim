@@ -54,18 +54,4 @@ namespace MBSim {
     updla = false;
   }
 
-  void MechanicalLink::plot() {
-    Link::plot();
-  }
-
-  void MechanicalLink::closePlot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      Link::closePlot();
-    }
-  }
-
-  void MechanicalLink::initializeUsingXML(DOMElement *element) {
-    Link::initializeUsingXML(element);
-  }
-
 }

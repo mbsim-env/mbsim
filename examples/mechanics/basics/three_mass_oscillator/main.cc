@@ -36,7 +36,6 @@ int main(int argc, char *argv[]) {
   end=clock();
   cout << "Integration Time: " << double(end - start)/CLOCKS_PER_SEC << " s." << endl;
 
-  sys->closePlot();
   delete sys;
 
   return 0;

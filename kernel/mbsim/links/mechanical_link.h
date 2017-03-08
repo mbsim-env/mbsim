@@ -37,7 +37,6 @@ namespace MBSim {
       MechanicalLink(const std::string &name);
 
       virtual void init(InitStage stage);
-      void initializeUsingXML(xercesc::DOMElement *element);
 
       void resetUpToDate();
 
@@ -56,9 +55,6 @@ namespace MBSim {
       const fmatvec::Mat3xV& evalRM(int i=1) { if(updRMV) updateR(); return RM[i]; }
       const fmatvec::VecV& evallaF() { if(updlaF) updatelaF(); return lambdaF; }
       const fmatvec::VecV& evallaM() { if(updlaM) updatelaM(); return lambdaM; }
-
-      virtual void plot();
-      virtual void closePlot();
 
       Frame* getPointOfApplication(int i) { return P[i]; }
 

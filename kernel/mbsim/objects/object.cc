@@ -116,12 +116,6 @@ namespace MBSim {
     }
   }
 
-  void Object::closePlot() {
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      Element::closePlot();
-    }
-  }
-
   void Object::updateqRef(const Vec &qParent) {
     q >> qParent(qInd, qInd + qSize - 1);
   }

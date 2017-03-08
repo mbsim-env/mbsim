@@ -93,7 +93,6 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Link"; }
       virtual void plot();
-      virtual void closePlot();
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASS */

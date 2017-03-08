@@ -133,7 +133,6 @@ namespace MBSim {
       virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
       virtual void plot();
       virtual void plotAtSpecialEvent();
-      virtual void closePlot();
       /*****************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */

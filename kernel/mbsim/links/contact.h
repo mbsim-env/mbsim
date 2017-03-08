@@ -141,7 +141,6 @@ namespace MBSim {
         return "Contact";
       }
       virtual void plot();
-      virtual void closePlot();
       virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /***************************************************/
 

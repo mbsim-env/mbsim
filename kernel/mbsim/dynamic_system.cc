@@ -369,22 +369,6 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::closePlot() {
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      for (unsigned i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->closePlot();
-      for (unsigned i = 0; i < object.size(); i++)
-        object[i]->closePlot();
-      for (unsigned i = 0; i < link.size(); i++)
-        link[i]->closePlot();
-      for (unsigned i = 0; i < frame.size(); i++)
-        frame[i]->closePlot();
-
-      //if (not parent) //TODO: why was that active once?
-      //  delete plotGroup;
-    }
-  }
-
   void DynamicSystem::init(InitStage stage) {
     if (stage == resolveXMLPath) {
       if (saved_frameOfReference != "")

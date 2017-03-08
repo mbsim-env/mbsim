@@ -637,16 +637,6 @@ namespace MBSim {
     return gActive0 < gActive ? true : false;
   }
 
-  void SingleContact::plot() {
-    ContourLink::plot();
-  }
-
-  void SingleContact::closePlot() {
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      ContourLink::closePlot();
-    }
-  }
-
   void SingleContact::setNormalForceLaw(GeneralizedForceLaw *fcl_) { 
     fcl = fcl_; 
     if(fcl) 

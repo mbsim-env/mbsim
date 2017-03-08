@@ -51,7 +51,6 @@ namespace MBSim {
       void init(InitStage stage);
       std::string getType() const { return "Frame"; }
       virtual void plot();
-      virtual void closePlot();
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */

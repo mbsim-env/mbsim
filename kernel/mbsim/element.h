@@ -113,12 +113,6 @@ namespace MBSim {
       virtual void plotAtSpecialEvent() { }
 
       /**
-       * \brief closes plot file
-       */
-      virtual void closePlot() { }
-      /***************************************************/
-
-      /**
        * \return element name
        */
       const std::string& getName() const { return name; }

@@ -173,10 +173,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      /** DEPRECATED */
       virtual std::string getType() const { return "DynamicSystemSolver"; }
-
-      virtual void closePlot();
       /***************************************************/
 
       /* GETTER / SETTER */

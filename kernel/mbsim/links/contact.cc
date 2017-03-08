@@ -463,16 +463,6 @@ namespace MBSim {
     }
   }
 
-  void Contact::closePlot() {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->closePlot();
-    }
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      Element::closePlot();
-    }
-  }
-
   void Contact::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Link::setDynamicSystemSolver(sys);
 

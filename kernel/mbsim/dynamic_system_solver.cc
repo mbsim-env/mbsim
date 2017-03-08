@@ -70,8 +70,6 @@ namespace MBSim {
   }
 
   DynamicSystemSolver::~DynamicSystemSolver() {
-    closePlot();
-
     // Now we also delete the DynamicSystem's which exists before "reorganizing hierarchie" takes place.
     // Note all other containers are readded to DynamicSystemSolver and deleted by the dtor of
     // DynamicSystem (a base class of DynamicSystemSolver).
@@ -840,12 +838,6 @@ namespace MBSim {
   void DynamicSystemSolver::updatezd() {
     Group::updatezd();
     updzd = false;
-  }
-
-  void DynamicSystemSolver::closePlot() {
-    if (plotFeature[11334901831169464975ULL] == enabled) {
-      Group::closePlot();
-    }
   }
 
   void DynamicSystemSolver::computeInitialCondition() {

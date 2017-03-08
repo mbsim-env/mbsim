@@ -97,12 +97,6 @@ namespace MBSim {
     }
   }
 
-  void Frame::closePlot() {
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      Element::closePlot();
-    }
-  }
-
   void Frame::init(InitStage stage) {
     if(stage==unknownStage) {
       WJP[0].resize(hSize[0]);

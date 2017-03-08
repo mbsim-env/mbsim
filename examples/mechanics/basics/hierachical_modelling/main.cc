@@ -33,10 +33,6 @@ int main (int argc, char* argv[])
   integrator.integrate(*sys);
   cout << "finished"<<endl;
 
-  cout << "closePlot"<<endl;
-  sys->closePlot();
-  cout << "finished"<<endl;
-
   delete sys;
 
   return 0;
