@@ -83,17 +83,16 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       plotVector.push_back(evalGeneralizedForce()(0)*1e-5);
       if (isSetValued())
         plotVector.push_back(active);
-      Element::plot();
     }
+    Link::plot();
   }
 
   void RigidLinePressureLoss::init(InitStage stage) {
     if (stage==preInit) {
-      Link::init(stage);
       if(linePressureLoss) addDependency(linePressureLoss->getDependency());
       if(closablePressureLoss) addDependency(closablePressureLoss->getDependency());
       if(leakagePressureLoss) addDependency(leakagePressureLoss->getDependency());
@@ -115,22 +114,15 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==plotting) {
-      if (line->getPlotFeature(plotRecursive)!=enabled)
-        this->setPlotFeature(plotRecursive, disabled);
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         plotColumns.push_back("pressureLoss [bar]");
         if (isSetValued())
           plotColumns.push_back("active");
-        Element::init(stage);
       }
     }
-    else if (stage==unknownStage) {
+    else if (stage==unknownStage)
       gdTol/=6e4;
-      Link::init(stage);
-    }
-    else
-      Link::init(stage);
+    Link::init(stage);
     if(gfl) gfl->init(stage);
     if(gil) gil->init(stage);
   }

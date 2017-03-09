@@ -67,7 +67,6 @@ namespace MBSimHydraulics {
 
   void ElasticLineGalerkin::init(InitStage stage) {
     if (stage==preInit) {
-      HLine::init(stage);
       Area=M_PI*d*d/4.;
       if (direction.size()>0)
         g=trans(((DynamicSystem*)parent)->getFrame("I")->getOrientation(false)*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
@@ -82,7 +81,6 @@ namespace MBSimHydraulics {
       k=rho*g*delta_h/l;
       MFac=Area*rho*MatIntWWT;
       K=Area*E*MatIntWSWST;
-      HLine::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       phi.resize(mdim);
       lambda.resize(mdim);
@@ -116,14 +114,11 @@ namespace MBSimHydraulics {
           D(i,j)=DTmp(i,j);
       qRel.resize(mdim);
       uRel.resize(mdim);
+      qdRel.resize(mdim);
+      udRel.resize(mdim);
     }
     else if (stage==plotting) {
-      if (relPlotPoints.size()>0) {
-        setPlotFeature(position, enabled);
-        setPlotFeature(velocity, enabled);
-      }
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         plotdim=relPlotPoints.size();
         plotVecW.resize(mdim, plotdim);
         plotVecWS.resize(mdim, plotdim);
@@ -132,22 +127,21 @@ namespace MBSimHydraulics {
           plotVecWS.col(i)=ansatz->VecWS(relPlotPoints(i));
         }
         delete ansatz;
-      if (getPlotFeature(velocity)==enabled)
-        for (int i=0; i<plotdim; i++)
-          plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
-      if (getPlotFeature(position)==enabled)
-        for (int i=0; i<plotdim; i++)
-          plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
-        HLine::init(stage);
+        if(plotFeature[9401386987347715767ULL]==enabled) {
+          for (int i=0; i<plotdim; i++)
+            plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
+        }
+        if(plotFeature[5242263993174891894ULL]==enabled) {
+          for (int i=0; i<plotdim; i++)
+            plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
+        }
       }
     }
     else if (stage==unknownStage) {
-      HLine::init(stage);
       u0 = inv(MatIntWWT)*WInt*Q0; 
       //plotParameters();
     }
-    else
-      HLine::init(stage);
+    HLine::init(stage);
 
   }
 
@@ -170,15 +164,17 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineGalerkin::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if (getPlotFeature(velocity)==enabled)
+    if(plotFeature[11334901831169464975ULL]==enabled) {
+      if(plotFeature[9401386987347715767ULL]==enabled) {
         for (int i=0; i<plotdim; i++)
           plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
-      if (getPlotFeature(position)==enabled)
+      }
+      if(plotFeature[5242263993174891894ULL]==enabled) {
         for (int i=0; i<plotdim; i++)
           plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
-      HLine::plot();
+      }
     }
+    HLine::plot();
   }
 
   void ElasticLineGalerkin::plotParameters() {

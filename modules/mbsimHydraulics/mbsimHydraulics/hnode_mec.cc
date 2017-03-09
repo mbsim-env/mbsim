@@ -98,10 +98,6 @@ namespace MBSimHydraulics {
       saved_rotatorial_area.clear();
       saved_rotatorial_frameOfRotationCenter.clear();
       saved_rotatorial_noVolumeChange.clear();
-      HNode::init(stage);
-    }
-    else if (stage==preInit) {
-      HNode::init(stage);
     }
     else if (stage==plotting) {
       nTrans=connectedTransFrames.size();
@@ -114,10 +110,9 @@ namespace MBSimHydraulics {
       h[1].resize(nLines+nTrans+nRot);
       r[0].resize(nLines+nTrans+nRot);
       r[1].resize(nLines+nTrans+nRot);
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         plotColumns.push_back("Volume [mm^3]");
-        if(getPlotFeature(debug)==enabled) {
+        if(plotFeature[4352960293889866924ULL]==enabled) {
           plotColumns.push_back("QTrans [mm^3/s]");
           plotColumns.push_back("QRot [mm^3/s]");
           plotColumns.push_back("Mechanical surface flow into and out the node [mm^3/s]");
@@ -126,42 +121,38 @@ namespace MBSimHydraulics {
           for (unsigned int i=0; i<nRot; i++)
             plotColumns.push_back("interface force on area " + numtostr(int(i)));
         }
-        if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
-          if (openMBVArrowSize>0) {
-            for (int i=0; i<int(nTrans+nRot); i++) {
-              openMBVArrows.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Arrow>());
-              openMBVArrows.back()->setArrowHead(openMBVArrowSize/4., openMBVArrowSize/4.);
-              openMBVArrows.back()->setDiameter(openMBVArrowSize/10.);
-            }
-            openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-            openMBVGrp->setName(name);
-            openMBVGrp->setExpand(false);
-            parent->getOpenMBVGrp()->addObject(openMBVGrp);
-            for (unsigned int i=0; i<nTrans; i++) {
-              openMBVArrows[i]->setName(
-                  "ForceOn_"+
-                  connectedTransFrames[i].frame->getName()+
-                  "_"+numtostr(int(i)));
-              openMBVGrp->addObject(openMBVArrows[i]);
-            }
-            for (unsigned int i=0; i<nRot; i++) {
-              openMBVArrows[nTrans+i]->setName(
-                  "ForceOn_"+
-                  connectedRotFrames[i].frame->getName()+
-                  "_"+numtostr(int(nTrans+i)));
-              openMBVGrp->addObject(openMBVArrows[nTrans+i]);
-            }
+      }
+      if(plotFeature[13464197197848110344ULL]==enabled and openMBVSphere) {
+        if (openMBVArrowSize>0) {
+          for (int i=0; i<int(nTrans+nRot); i++) {
+            openMBVArrows.push_back(OpenMBV::ObjectFactory::create<OpenMBV::Arrow>());
+            openMBVArrows.back()->setArrowHead(openMBVArrowSize/4., openMBVArrowSize/4.);
+            openMBVArrows.back()->setDiameter(openMBVArrowSize/10.);
+          }
+          openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+          openMBVGrp->setName(name);
+          openMBVGrp->setExpand(false);
+          parent->getOpenMBVGrp()->addObject(openMBVGrp);
+          for (unsigned int i=0; i<nTrans; i++) {
+            openMBVArrows[i]->setName(
+                "ForceOn_"+
+                connectedTransFrames[i].frame->getName()+
+                "_"+numtostr(int(i)));
+            openMBVGrp->addObject(openMBVArrows[i]);
+          }
+          for (unsigned int i=0; i<nRot; i++) {
+            openMBVArrows[nTrans+i]->setName(
+                "ForceOn_"+
+                connectedRotFrames[i].frame->getName()+
+                "_"+numtostr(int(nTrans+i)));
+            openMBVGrp->addObject(openMBVArrows[nTrans+i]);
           }
         }
-        HNode::init(stage);
       }
     }
-    else if (stage==unknownStage) {
-      HNode::init(stage);
-      x0=Vec(1, INIT, V0);
-    }
-    else
-      HNode::init(stage);
+    else if (stage==unknownStage)
+      x0.resize()=Vec(1, INIT, V0);
+    HNode::init(stage);
   }
 
   void HNodeMec::updateWRef(const Mat &WParent, int j) {
@@ -331,9 +322,9 @@ namespace MBSimHydraulics {
   }
 
   void HNodeMec::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       plotVector.push_back(x(0)*1e9);
-      if(getPlotFeature(debug)==enabled) {
+      if(plotFeature[4352960293889866924ULL]==enabled) {
         plotVector.push_back(evalQMecTrans()*1e9);
         plotVector.push_back(getQMecRot()*1e9);
         plotVector.push_back(getQMec()*1e9);
@@ -342,54 +333,54 @@ namespace MBSimHydraulics {
         for (unsigned int i=0; i<nRot; i++)
           plotVector.push_back(connectedRotFrames[i].area*evalGeneralizedForce()(0));
       }
-      if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
-        WrON.init(0);
-        for (unsigned int i=0; i<nTrans; i++)
-          WrON+=connectedTransFrames[i].frame->evalPosition();
-        for (unsigned int i=0; i<nRot; i++)
-          WrON+=connectedRotFrames[i].frame->evalPosition();
-        WrON/=double(nTrans+nRot);
-        if (openMBVArrows.size()) {
-          for (unsigned int i=0; i<nTrans; i++) {
-            vector<double> data;
-            Vec toPoint=connectedTransFrames[i].frame->evalPosition();
-            Vec dir=(
-                connectedTransFrames[i].frame->evalOrientation() *
-                connectedTransFrames[i].normal
-                ) *
-              openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
-            data.push_back(getTime());
-            data.push_back(toPoint(0));
-            data.push_back(toPoint(1));
-            data.push_back(toPoint(2));
-            data.push_back(dir(0));
-            data.push_back(dir(1));
-            data.push_back(dir(2));
-            data.push_back(1.);
-            openMBVArrows[i]->append(data);
-          }
-          for (unsigned int i=0; i<nRot; i++) {
-            vector<double> data;
-            Vec toPoint=connectedRotFrames[i].frame->evalPosition();
-            Vec dir=(
-                connectedRotFrames[i].frame->evalOrientation() *
-                connectedRotFrames[i].normal
-                ) *
-              openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
-            data.push_back(getTime());
-            data.push_back(toPoint(0));
-            data.push_back(toPoint(1));
-            data.push_back(toPoint(2));
-            data.push_back(dir(0));
-            data.push_back(dir(1));
-            data.push_back(dir(2));
-            data.push_back(1.);
-            openMBVArrows[nTrans+i]->append(data);
-          }
+    }
+    if(plotFeature[13464197197848110344ULL]==enabled and openMBVSphere) {
+      WrON.init(0);
+      for (unsigned int i=0; i<nTrans; i++)
+        WrON+=connectedTransFrames[i].frame->evalPosition();
+      for (unsigned int i=0; i<nRot; i++)
+        WrON+=connectedRotFrames[i].frame->evalPosition();
+      WrON/=double(nTrans+nRot);
+      if (openMBVArrows.size()) {
+        for (unsigned int i=0; i<nTrans; i++) {
+          vector<double> data;
+          Vec toPoint=connectedTransFrames[i].frame->evalPosition();
+          Vec dir=(
+              connectedTransFrames[i].frame->evalOrientation() *
+              connectedTransFrames[i].normal
+              ) *
+            openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
+          data.push_back(getTime());
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          data.push_back(dir(0));
+          data.push_back(dir(1));
+          data.push_back(dir(2));
+          data.push_back(1.);
+          openMBVArrows[i]->append(data);
+        }
+        for (unsigned int i=0; i<nRot; i++) {
+          vector<double> data;
+          Vec toPoint=connectedRotFrames[i].frame->evalPosition();
+          Vec dir=(
+              connectedRotFrames[i].frame->evalOrientation() *
+              connectedRotFrames[i].normal
+              ) *
+            openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
+          data.push_back(getTime());
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          data.push_back(dir(0));
+          data.push_back(dir(1));
+          data.push_back(dir(2));
+          data.push_back(1.);
+          openMBVArrows[nTrans+i]->append(data);
         }
       }
-      HNode::plot();
     }
+    HNode::plot();
   }
 
   void HNodeMec::initializeUsingXML(DOMElement *element) {
@@ -428,17 +419,13 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ConstrainedNodeMec)
 
   void ConstrainedNodeMec::init(InitStage stage) {
-    if(stage==preInit) {
-      HNode::init(stage);
+    if(stage==preInit)
       addDependency(pFun->getDependency());
-    }
     else if (stage==unknownStage) {
-      HNodeMec::init(stage);
       la.init((*pFun)(0));
       x0=Vec(1, INIT, V0);
     }
-    else
-      HNodeMec::init(stage);
+    HNodeMec::init(stage);
     pFun->init(stage);
   }
 
@@ -473,14 +460,10 @@ namespace MBSimHydraulics {
 
   void ElasticNodeMec::init(InitStage stage) {
     if (stage==plotting) {
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled)
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
-        HNodeMec::init(stage);
-      }
     }
     else if (stage==unknownStage) {
-      HNodeMec::init(stage);
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
       if (fabs(p0)<epsroot()) {
         msg(Warn) << "ElasticNodeMec \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
@@ -496,8 +479,7 @@ namespace MBSimHydraulics {
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
       bulkModulus = new OilBulkModulus(path, E0, pinf, kappa, fracAir);
     }
-    else
-      HNodeMec::init(stage);
+    HNodeMec::init(stage);
   }
 
   void ElasticNodeMec::updateGeneralizedForces() {
@@ -518,10 +500,9 @@ namespace MBSimHydraulics {
   }
 
   void ElasticNodeMec::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled)
       plotVector.push_back((*bulkModulus)(evalGeneralizedForce()(0))*1e-6);
-      HNodeMec::plot();
-    }
+    HNodeMec::plot();
   }
 
   void ElasticNodeMec::initializeUsingXML(DOMElement * element) {
@@ -555,7 +536,6 @@ namespace MBSimHydraulics {
 
   void RigidNodeMec::init(InitStage stage) {
     if (stage==unknownStage) {
-      HNodeMec::init(stage);
       x0=Vec(1, INIT, V0);
       for (unsigned int i=0; i<nLines; i++) {
         Vec u0=connectedLines[i].line->getu0();
@@ -589,8 +569,7 @@ namespace MBSimHydraulics {
         }
       }
     }
-    else
-      HNodeMec::init(stage);
+    HNodeMec::init(stage);
     if(gfl) gfl->init(stage);
     if(gil) gil->init(stage);
   }

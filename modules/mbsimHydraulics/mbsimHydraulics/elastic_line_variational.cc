@@ -42,8 +42,6 @@ namespace MBSimHydraulics {
 
   void ElasticLineVariational::init(InitStage stage) {
     if (stage==preInit) {
-      HLine::init(stage);
-
       const double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       const double kappa=HydraulicEnvironment::getInstance()->getKappa();
       const double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
@@ -191,26 +189,22 @@ namespace MBSimHydraulics {
           relPlot(i, j)=sin(i*M_PI*relPlotPoints(j));
     }
     else if (stage==plotting) {
-      updatePlotFeatures();
-
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         plotColumns.push_back("QIn [l/min]");
         plotColumns.push_back("QOut [l/min]");
         for (int i=0; i<relPlotPoints.size(); i++)
           plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
-        if(getPlotFeature(generalizedPosition)==enabled)
+        if(plotFeature[5656632352625109444ULL]==enabled) {
           for (int i=0; i<n; i++)
             plotColumns.push_back("y("+numtostr(i)+")");
-        HLine::init(stage);
+        }
       }
     }
     else if (stage==unknownStage) {
-      HLine::init(stage);
       if (printStateSpace)
         doPrintStateSpace();
     }
-    else
-      HLine::init(stage);
+    HLine::init(stage);
   }
 
   void ElasticLineVariational::updateQ() {
@@ -228,7 +222,7 @@ namespace MBSimHydraulics {
   }
 
   void ElasticLineVariational::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       VecV y(n,NONINIT);
       for (int i=0; i<n; i++)
         y(i) = cu(i)*u(i);
@@ -236,11 +230,12 @@ namespace MBSimHydraulics {
       plotVector.push_back(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
         plotVector.push_back((nFrom->getGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->getGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
-      if(getPlotFeature(generalizedPosition)==enabled)
+      if(plotFeature[5656632352625109444ULL]==enabled) {
         for (int i=0; i<n; i++)
           plotVector.push_back(y(i));
-      HLine::plot();
+      }
     }
+    HLine::plot();
   }
 
   void ElasticLineVariational::initializeUsingXML(DOMElement * element) {

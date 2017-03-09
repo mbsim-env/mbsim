@@ -42,26 +42,22 @@ namespace MBSimHydraulics {
         THROW_MBSIMERROR("pFrom is of setValued type. not valid for dimensionless lines.");
       if (dynamic_cast<RigidNode*>(nTo) || dynamic_cast<RigidNodeMec*>(nTo))
         THROW_MBSIMERROR("pTo is of setValued type. not valid for dimensionless lines.");
-      HLine::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         plotColumns.push_back("Volume flow [l/min]");
         plotColumns.push_back("Mass flow [kg/min]");
-        HLine::init(stage);
       }
     }
-    else
-      HLine::init(stage);
+    HLine::init(stage);
   }
 
   void DimensionlessLine::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       plotVector.push_back(evalQIn()(0)*6e4);
       plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
-      HLine::plot();
     }
+    HLine::plot();
   }
 
   void DimensionlessLine::initializeUsingXML(DOMElement * element) {

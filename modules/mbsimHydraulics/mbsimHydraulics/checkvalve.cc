@@ -124,10 +124,10 @@ namespace MBSimHydraulics {
       ballSeat->setFrameForKinematics(ballSeat->getFrame("C"));
       ballSeat->addFrame(new FixedRelativeFrame("BallMount", h0*Vec("[1; 0; 0]"), SqrMat(3, EYE)));
       ballSeat->addFrame(new FixedRelativeFrame("SpringMount", (rBall+h0+hMax)*Vec("[1;0;0]"), SqrMat(3, EYE)));
-      ballSeat->addFrame(new FixedRelativeFrame("ContourSeat", (-rBall+h0)*Vec("[1;0;0]"), BasicRotAIKy(0)));
-      ballSeat->addContour(new Line("ContourSeat", ballSeat->getFrame("ContourSeat")));
-      ballSeat->addFrame(new FixedRelativeFrame("ContourMaxOpening", (rBall+h0+hMax)*Vec("[1;0;0]"), BasicRotAIKz(-M_PI)));
-      ballSeat->addContour(new Line("ContourMaxOpening", ballSeat->getFrame("ContourMaxOpening")));
+      ballSeat->addFrame(new FixedRelativeFrame("ContourSeatFrame", (-rBall+h0)*Vec("[1;0;0]"), BasicRotAIKy(0)));
+      ballSeat->addContour(new Line("ContourSeat", ballSeat->getFrame("ContourSeatFrame")));
+      ballSeat->addFrame(new FixedRelativeFrame("ContourMaxOpeningFrame", (rBall+h0+hMax)*Vec("[1;0;0]"), BasicRotAIKz(-M_PI)));
+      ballSeat->addContour(new Line("ContourMaxOpening", ballSeat->getFrame("ContourMaxOpeningFrame")));
 
       ball->setInertiaTensor(SymMat(3, EYE) * 2./5. * mBall * rBall * rBall);
       ball->setFrameOfReference(ballSeat->getFrame("BallMount"));

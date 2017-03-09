@@ -144,44 +144,39 @@ namespace MBSimHydraulics {
         addInflowDependencyOnInflow(getByPath<RigidHLine>(refDependencyOnInflowString[i]));
       for (unsigned int i=0; i<refDependencyOnOutflowString.size(); i++)
         addInflowDependencyOnOutflow(getByPath<RigidHLine>(refDependencyOnOutflowString[i]));
-      HLine::init(stage);
     }
     else if (stage==preInit) {
-      HLine::init(stage);
       for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
         dependency.push_back(dependencyOnInflow[i]);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
         dependency.push_back(dependencyOnOutflow[i]);
       uRel.resize((dependency.size()?0:1));
+      udRel.resize(uRel.size());
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-      if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotFeature[11334901831169464975ULL]==enabled) {
         plotColumns.push_back("Volume flow [l/min]");
         plotColumns.push_back("Mass flow [kg/min]");
         if (frameOfReference)
           plotColumns.push_back("pressureLoss due to gravity [bar]");
-        HLine::init(stage);
       }
     }
     else if(stage==unknownStage) {
-      HLine::init(stage);
       vector<RigidHLine *> dep_check;
       dep_check.push_back(this);
       Jacobian=calculateJacobian(dep_check);
     }
-    else
-      HLine::init(stage);
+    HLine::init(stage);
   }
   
   void RigidHLine::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if(plotFeature[11334901831169464975ULL]==enabled) {
       plotVector.push_back(evalQIn()(0)*6e4);
       plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
       if (frameOfReference)
         plotVector.push_back(evalPressureLossGravity()*1e-5);
-      HLine::plot();
     }
+    HLine::plot();
   }
 
   void RigidHLine::initializeUsingXML(DOMElement * element) {
@@ -280,15 +275,13 @@ namespace MBSimHydraulics {
 
   void StatelessOrifice::init(InitStage stage) {
     if (stage==preInit) {
-      Object::init(stage); // no check of connected lines
       if (!nFrom && !nTo) 
         THROW_MBSIMERROR("needs at least one connected node!");
       if (nFrom==nTo)
         THROW_MBSIMERROR("fromNode and toNode are the same!");
     }
     else if (stage==plotting) {
-      updatePlotFeatures();
-      if (getPlotFeature(plotRecursive)==enabled) {
+      if (plotFeature[11334901831169464975ULL]==enabled) {
         plotColumns.push_back("pInflow [bar]");
         plotColumns.push_back("pOutflow [bar]");
         plotColumns.push_back("dp [bar]");
@@ -297,23 +290,20 @@ namespace MBSimHydraulics {
         plotColumns.push_back("area [mm^2]");
         plotColumns.push_back("sqrt_dp [sqrt(bar)]");
         plotColumns.push_back("Q [l/min]");
-        HLine::init(stage);
       }
     }
     else if (stage==unknownStage) {
       const double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       alpha=alpha*sqrt(2./rho);
-      HLine::init(stage);
     }
-    else
-      HLine::init(stage);
+    HLine::init(stage);
     inflowFunction->init(stage);
     outflowFunction->init(stage);
     openingFunction->init(stage);
   }
 
   void StatelessOrifice::plot() {
-    if (getPlotFeature(plotRecursive)==enabled) {
+    if (plotFeature[11334901831169464975ULL]==enabled) {
       double Q = evalQIn()(0);
       plotVector.push_back(pIn*1e-5);
       plotVector.push_back(pOut*1e-5);
@@ -323,8 +313,8 @@ namespace MBSimHydraulics {
       plotVector.push_back(area*1e6);
       plotVector.push_back(sqrt_dp*sqrt(1e-5));
       plotVector.push_back(Q*6e4);
-      HLine::plot();
     }
+    HLine::plot();
   }
 
   void StatelessOrifice::updateQ() {
