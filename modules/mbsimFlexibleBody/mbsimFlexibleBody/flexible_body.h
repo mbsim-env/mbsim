@@ -68,7 +68,6 @@ namespace MBSimFlexibleBody {
       virtual void updatedhdz();
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
       virtual std::string getType() const { return "FlexibleBody"; }
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       /***************************************************/

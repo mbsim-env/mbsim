@@ -80,30 +80,26 @@ namespace MBSimFlexibleBody {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(openMBV)==enabled) {
-          if(openMBVNurbsDisk) {
-            openMBVNurbsDisk->setName(name);
-            drawDegree = 30 / nj;
-            openMBVNurbsDisk->setDiffuseColor(0.46667, 1, 1);
-            openMBVNurbsDisk->setMinimalColorValue(0.);
-            openMBVNurbsDisk->setMaximalColorValue(1.);
-            openMBVNurbsDisk->setDrawDegree(drawDegree);
-            openMBVNurbsDisk->setRadii(Ri, Ra);
+      if(plotFeature[13464197197848110344ULL]==enabled and openMBVNurbsDisk) {
+        openMBVNurbsDisk->setName(name);
+        drawDegree = 30 / nj;
+        openMBVNurbsDisk->setDiffuseColor(0.46667, 1, 1);
+        openMBVNurbsDisk->setMinimalColorValue(0.);
+        openMBVNurbsDisk->setMaximalColorValue(1.);
+        openMBVNurbsDisk->setDrawDegree(drawDegree);
+        openMBVNurbsDisk->setRadii(Ri, Ra);
 
-            openMBVNurbsDisk->setKnotVecAzimuthal(getUVector());
-            openMBVNurbsDisk->setKnotVecRadial(getVVector());
+        openMBVNurbsDisk->setKnotVecAzimuthal(getUVector());
+        openMBVNurbsDisk->setKnotVecRadial(getVVector());
 
-            openMBVNurbsDisk->setElementNumberRadial(nr);
-            openMBVNurbsDisk->setElementNumberAzimuthal(nj);
+        openMBVNurbsDisk->setElementNumberRadial(nr);
+        openMBVNurbsDisk->setElementNumberAzimuthal(nj);
 
-            openMBVNurbsDisk->setInterpolationDegreeRadial(degV);
-            openMBVNurbsDisk->setInterpolationDegreeAzimuthal(degU);
-            parent->getOpenMBVGrp()->addObject(openMBVNurbsDisk);
-          }
-        }
-        Contour2s::init(stage);
+        openMBVNurbsDisk->setInterpolationDegreeRadial(degV);
+        openMBVNurbsDisk->setInterpolationDegreeAzimuthal(degU);
+        parent->getOpenMBVGrp()->addObject(openMBVNurbsDisk);
       }
+      Contour2s::init(stage);
     }
     else
       Contour2s::init(stage);
@@ -219,65 +215,63 @@ namespace MBSimFlexibleBody {
   }
 
   void NurbsDisk2s::plot() {
-    if(getPlotFeature(plotRecursive) == enabled) {
-      if(getPlotFeature(openMBV) == enabled && openMBVNurbsDisk) {
-        vector<double> data;
-        data.push_back(getTime()); //time
+    if(plotFeature[13464197197848110344ULL]==enabled and openMBVNurbsDisk) {
+      vector<double> data;
+      data.push_back(getTime()); //time
 
-        Vec3 r = evalPosition();
-        SqrMat3 A = evalOrientation();
+      Vec3 r = evalPosition();
+      SqrMat3 A = evalOrientation();
 
-        //Translation of COG
-        data.push_back(r(0)); //global x-coordinate
-        data.push_back(r(1)); //global y-coordinate
-        data.push_back(r(2)); //global z-coordinate
+      //Translation of COG
+      data.push_back(r(0)); //global x-coordinate
+      data.push_back(r(1)); //global y-coordinate
+      data.push_back(r(2)); //global z-coordinate
 
-        //Rotation of COG
-        Vec AlphaBetaGamma = AIK2Cardan(A);
-        data.push_back(AlphaBetaGamma(0));
-        data.push_back(AlphaBetaGamma(1));
-        data.push_back(AlphaBetaGamma(2));
+      //Rotation of COG
+      Vec AlphaBetaGamma = AIK2Cardan(A);
+      data.push_back(AlphaBetaGamma(0));
+      data.push_back(AlphaBetaGamma(1));
+      data.push_back(AlphaBetaGamma(2));
 
-        //Control-Point coordinates
-        for(int i = 0; i < nr + 1; i++) {
-          for(int j = 0; j < nj + degU; j++) {
-            data.push_back(getControlPoints(j, i)(0)); //global x-coordinate
-            data.push_back(getControlPoints(j, i)(1)); //global y-coordinate
-            data.push_back(getControlPoints(j, i)(2)); //global z-coordinate
-          }
+      //Control-Point coordinates
+      for(int i = 0; i < nr + 1; i++) {
+        for(int j = 0; j < nj + degU; j++) {
+          data.push_back(getControlPoints(j, i)(0)); //global x-coordinate
+          data.push_back(getControlPoints(j, i)(1)); //global y-coordinate
+          data.push_back(getControlPoints(j, i)(2)); //global z-coordinate
         }
-
-        Vec2 zeta(NONINIT);
-
-        //inner ring
-        for(int i = 0; i < nj; i++) {
-          for(int j = 0; j < drawDegree; j++) {
-            zeta(0) = Ri;
-            zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            Vec3 pos = evalPosition(zeta);
-
-            data.push_back(pos(0)); //global x-coordinate
-            data.push_back(pos(1)); //global y-coordinate
-            data.push_back(pos(2)); //global z-coordinate
-
-          }
-        }
-
-        //outer Ring
-        for(int i = 0; i < nj; i++) {
-          for(int j = 0; j < drawDegree; j++) {
-            zeta(0) = Ra;
-            zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
-            Vec3 pos = evalPosition(zeta);
-
-            data.push_back(pos(0)); //global x-coordinate
-            data.push_back(pos(1)); //global y-coordinate
-            data.push_back(pos(2)); //global z-coordinate
-          }
-        }
-
-        openMBVNurbsDisk->append(data);
       }
+
+      Vec2 zeta(NONINIT);
+
+      //inner ring
+      for(int i = 0; i < nj; i++) {
+        for(int j = 0; j < drawDegree; j++) {
+          zeta(0) = Ri;
+          zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
+          Vec3 pos = evalPosition(zeta);
+
+          data.push_back(pos(0)); //global x-coordinate
+          data.push_back(pos(1)); //global y-coordinate
+          data.push_back(pos(2)); //global z-coordinate
+
+        }
+      }
+
+      //outer Ring
+      for(int i = 0; i < nj; i++) {
+        for(int j = 0; j < drawDegree; j++) {
+          zeta(0) = Ra;
+          zeta(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
+          Vec3 pos = evalPosition(zeta);
+
+          data.push_back(pos(0)); //global x-coordinate
+          data.push_back(pos(1)); //global y-coordinate
+          data.push_back(pos(2)); //global z-coordinate
+        }
+      }
+
+      openMBVNurbsDisk->append(data);
     }
     Contour2s::plot();
   }

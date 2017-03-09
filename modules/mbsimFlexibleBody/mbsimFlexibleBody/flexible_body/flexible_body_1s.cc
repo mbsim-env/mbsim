@@ -33,7 +33,7 @@ namespace MBSimFlexibleBody {
     P.setParent(this);
   }
 
- void FlexibleBody1s::init(InitStage stage) {
+  void FlexibleBody1s::init(InitStage stage) {
     if(stage==plotting) {
       if(openMBVBody) ((OpenMBV::SpineExtrusion*)openMBVBody.get())->setInitialRotation(AIK2Cardan(R->evalOrientation()));
       FlexibleBodyContinuum<double>::init(stage);
@@ -43,20 +43,18 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
-        vector<double> data;
-        data.push_back(getTime());
-        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
-        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
-          Vec3 pos = getPosition(ds*i);
-          data.push_back(pos(0)); // global x-position
-          data.push_back(pos(1)); // global y-position
-          data.push_back(pos(2)); // global z-position
-          data.push_back(getAngles(ds*i)(0)); // local twist
-        }
-        ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
+    if(plotFeature[13464197197848110344ULL]==enabled and openMBVBody) {
+      vector<double> data;
+      data.push_back(getTime());
+      double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
+      for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {
+        Vec3 pos = getPosition(ds*i);
+        data.push_back(pos(0)); // global x-position
+        data.push_back(pos(1)); // global y-position
+        data.push_back(pos(2)); // global z-position
+        data.push_back(getAngles(ds*i)(0)); // local twist
       }
+      ((OpenMBV::SpineExtrusion*)openMBVBody.get())->append(data);
     }
     FlexibleBodyContinuum<double>::plot();
   }

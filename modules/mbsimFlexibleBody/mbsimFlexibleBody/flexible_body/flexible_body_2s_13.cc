@@ -136,7 +136,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13::plot() {
-    if(getPlotFeature(plotRecursive) == enabled) {
 //      if(getPlotFeature(openMBV) == enabled && openMBVBody) {
 //        vector<double> data;
 //        data.push_back(getTime()); //time
@@ -199,7 +198,6 @@ namespace MBSimFlexibleBody {
 //
 //        ((OpenMBV::NurbsDisk*) openMBVBody.get())->append(data);
 //      }
-    }
     FlexibleBody2s::plot();
   }
 

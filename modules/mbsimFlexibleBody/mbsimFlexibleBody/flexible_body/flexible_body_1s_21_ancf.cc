@@ -215,7 +215,7 @@ namespace MBSimFlexibleBody {
       initM();
     }
     else if(stage==plotting) {
-      for(int i=0;i<q.size()/4;i++) {
+      for(int i=0;i<qRel.size()/4;i++) {
         plotColumns.push_back("vel_abs node ("+numtostr(i)+")");
       }
       FlexibleBody1s::init(stage);
@@ -226,12 +226,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21ANCF::plot() {
     if(Euler) {
-      for(int i=0;i<q.size()/4;i++) {
+      for(int i=0;i<qRel.size()/4;i++) {
         plotVector.push_back(sqrt(pow(u(4*i+0) + v0*q(4*i+2),2.)+pow(u(4*i+1) + v0*q(4*i+3),2.)));
       }
     }
     else {
-      for(int i=0;i<q.size()/4;i++) {
+      for(int i=0;i<qRel.size()/4;i++) {
         plotVector.push_back(sqrt(pow(u(4*i+0),2.)+pow(u(4*i+1),2.)));
       }
     }

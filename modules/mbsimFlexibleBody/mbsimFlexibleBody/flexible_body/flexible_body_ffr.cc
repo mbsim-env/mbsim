@@ -411,14 +411,12 @@ namespace MBSimFlexibleBody {
     else if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
-          dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
-          if(ombvIndices.size())
-            dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
-        }
-        NodeBasedBody::init(stage);
+      if(plotFeature[13464197197848110344ULL]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+        dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
+        if(ombvIndices.size())
+          dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
       }
+      NodeBasedBody::init(stage);
     }
     else
       NodeBasedBody::init(stage);
@@ -437,24 +435,20 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyFFR::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(openMBV)==enabled) {
-        if(dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
-          vector<double> data;
-          data.push_back(getTime());
-          for(unsigned int i=0; i<ombvNodes.size(); i++) {
-            Vec3 WrOP = evalNodalPosition(ombvNodes[i]);
-            Vector<Fixed<6>, double> sigma = evalNodalStress(ombvNodes[i]);
-              for(int j=0; j<3; j++)
-                data.push_back(WrOP(j));
-              //data.push_back(nrm2(disp[ombvNodes[i]]));
-              data.push_back(fabs(sigma(0)));
-          }
-          dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
-        }
+    if(plotFeature[13464197197848110344ULL]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
+      vector<double> data;
+      data.push_back(getTime());
+      for(unsigned int i=0; i<ombvNodes.size(); i++) {
+        Vec3 WrOP = evalNodalPosition(ombvNodes[i]);
+        Vector<Fixed<6>, double> sigma = evalNodalStress(ombvNodes[i]);
+        for(int j=0; j<3; j++)
+          data.push_back(WrOP(j));
+        //data.push_back(nrm2(disp[ombvNodes[i]]));
+        data.push_back(fabs(sigma(0)));
       }
-      NodeBasedBody::plot();
+      dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->append(data);
     }
+    NodeBasedBody::plot();
   }
 
   void FlexibleBodyFFR::updateMb() {
@@ -1163,8 +1157,7 @@ namespace MBSimFlexibleBody {
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotFeatureFrameK");
     while(e and E(e)->getTagName()==MBSIMFLEX%"plotFeatureFrameK") {
       PlotFeatureStatus status = initializePlotFeatureStatusUsingXML(e);
-      PlotFeature feature = initializePlotFeatureUsingXML(e);
-      K->setPlotFeature(feature, status);
+      K->setPlotFeature(MBXMLUtils::E(e)->getAttribute("feature").substr(1), status);
       e=e->getNextElementSibling();
     }
   }

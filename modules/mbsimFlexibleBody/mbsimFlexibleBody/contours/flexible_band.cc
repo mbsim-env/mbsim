@@ -38,22 +38,20 @@ namespace MBSimFlexibleBody {
     if(stage==plotting) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(openMBV)==enabled && openMBVSpineExtrusion) {
-          openMBVSpineExtrusion->setName(name);
-          openMBVSpineExtrusion->setShilouetteEdge(true);
-          openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(static_cast<Body*>(parent)->getFrameOfReference()->evalOrientation()));
-          shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
-          shared_ptr<OpenMBV::PolygonPoint>  corner1 = OpenMBV::PolygonPoint::create(0, 0.5*width, 1);
-          rectangle->push_back(corner1);
-          shared_ptr<OpenMBV::PolygonPoint>  corner2 = OpenMBV::PolygonPoint::create(0, -0.5*width, 1);
-          rectangle->push_back(corner2);
+      if(plotFeature[13464197197848110344ULL]==enabled and openMBVSpineExtrusion) {
+        openMBVSpineExtrusion->setName(name);
+        openMBVSpineExtrusion->setShilouetteEdge(true);
+        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(static_cast<Body*>(parent)->getFrameOfReference()->evalOrientation()));
+        shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
+        shared_ptr<OpenMBV::PolygonPoint>  corner1 = OpenMBV::PolygonPoint::create(0, 0.5*width, 1);
+        rectangle->push_back(corner1);
+        shared_ptr<OpenMBV::PolygonPoint>  corner2 = OpenMBV::PolygonPoint::create(0, -0.5*width, 1);
+        rectangle->push_back(corner2);
 
-          openMBVSpineExtrusion->setContour(rectangle);
-          parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
-        }
-        Contour1s::init(stage);
+        openMBVSpineExtrusion->setContour(rectangle);
+        parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
       }
+      Contour1s::init(stage);
     }
     else
       Contour1s::init(stage);
@@ -92,21 +90,19 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBand::plot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(openMBV)==enabled && openMBVSpineExtrusion) {
-        vector<double> data;
-        data.push_back(getTime());
-        double L = getEtaNodes()[getEtaNodes().size()-1];
-        double ds = static_cast<FlexibleBody1s*>(parent)->getOpenStructure() ? L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-1) : L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-2);
-        for(int i=0; i<openMBVSpineExtrusion->getNumberOfSpinePoints(); i++) {
-          Vec3 pos = evalPosition(ds*i);
-          data.push_back(pos(0)); // global x-position
-          data.push_back(pos(1)); // global y-position
-          data.push_back(pos(2)); // global z-position
-          data.push_back(static_cast<FlexibleBody1s*>(parent)->getAngles(ds*i)(0)); // local twist
-        }
-        openMBVSpineExtrusion->append(data);
+    if(plotFeature[13464197197848110344ULL]==enabled and openMBVSpineExtrusion) {
+      vector<double> data;
+      data.push_back(getTime());
+      double L = getEtaNodes()[getEtaNodes().size()-1];
+      double ds = static_cast<FlexibleBody1s*>(parent)->getOpenStructure() ? L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-1) : L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-2);
+      for(int i=0; i<openMBVSpineExtrusion->getNumberOfSpinePoints(); i++) {
+        Vec3 pos = evalPosition(ds*i);
+        data.push_back(pos(0)); // global x-position
+        data.push_back(pos(1)); // global y-position
+        data.push_back(pos(2)); // global z-position
+        data.push_back(static_cast<FlexibleBody1s*>(parent)->getAngles(ds*i)(0)); // local twist
       }
+      openMBVSpineExtrusion->append(data);
     }
     Contour1s::plot();
   }

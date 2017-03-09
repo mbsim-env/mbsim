@@ -35,14 +35,15 @@ namespace MBSimFlexibleBody {
     if (stage == plotting) {
       updatePlotFeatures();
 
-      if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
+      if(plotFeature[13464197197848110344ULL]==enabled and openMBVSpineExtrusion) {
         openMBVSpineExtrusion->setName(name);
         parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
 //        openMBVSpineExtrusion->setInitialRotation(AIK2Cardan(R->getOrientation()));
       }
       Contour::init(stage);
     }
-    Contour::init(stage);
+    else
+      Contour::init(stage);
   }
 
   Vec3 Contour1s::evalKt(const fmatvec::Vec2 &zeta) {
@@ -51,7 +52,7 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1s::plot() {
-    if (getPlotFeature(openMBV) == enabled && openMBVSpineExtrusion) {
+    if(plotFeature[13464197197848110344ULL]==enabled and openMBVSpineExtrusion) {
 
       vector<double> data;
       data.push_back(getTime());
@@ -84,6 +85,7 @@ namespace MBSimFlexibleBody {
 
       openMBVSpineExtrusion->append(data);
     }
+    Contour::plot();
   }
 
 }

@@ -75,25 +75,12 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getdhdu(), dhdu); // assemble
   }
 
-  void FlexibleBody::plot() {
-    if (getPlotFeature(plotRecursive) == enabled) {
-      NodeBasedBody::plot();
-    }
-  }
-
   void FlexibleBody::init(InitStage stage) {
     if (stage == preInit) {
       NodeBasedBody::init(stage);
       qRel.resize(qSize);
       uRel.resize(uSize[0]);
       T = SqrMat(qSize, EYE);
-    }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-
-      if (getPlotFeature(plotRecursive) == enabled) {
-        NodeBasedBody::init(stage);
-      }
     }
     else
       NodeBasedBody::init(stage);
