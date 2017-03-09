@@ -20,8 +20,6 @@ int main (int argc, char* argv[]) {
   integrator.setPlotStepSize(1e-4);
   integrator.integrate(*sys);
 
-  sys->closePlot();
-
   cout << "finished"<<endl;
 
   delete sys;

@@ -53,8 +53,6 @@ int main (int argc, char* argv[]) {
   integrator->setPlotStepSize(max(1e-4,dt_const));
   integrator->integrate(*sys);
 
-  sys->closePlot();
-
   cout << "finished"<<endl;
 
   delete integrator;

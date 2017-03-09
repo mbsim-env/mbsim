@@ -691,13 +691,13 @@ Perlchain::Perlchain(const string &projectName) :
     balls[i]->addContour(pt);
 
     Point *tP = new Point("topPoint");
-    balls[i]->addFrame(new FixedRelativeFrame("topPoint", d * Vec("[0.5;0;0]") + b * Vec("[0;0.5;0]"), SqrMat(3, EYE), balls[i]->getFrame("C")));
-    tP->setFrameOfReference(balls[i]->getFrame("topPoint"));
+    balls[i]->addFrame(new FixedRelativeFrame("T", d * Vec("[0.5;0;0]") + b * Vec("[0;0.5;0]"), SqrMat(3, EYE), balls[i]->getFrame("C")));
+    tP->setFrameOfReference(balls[i]->getFrame("T"));
     balls[i]->addContour(tP);
 
     Point *bP = new Point("bottomPoint");
-    balls[i]->addFrame(new FixedRelativeFrame("bottomPoint", d * Vec("[0.5;0;0]") - b * Vec("[0;0.5;0]"), SqrMat(3, EYE), balls[i]->getFrame("C")));
-    bP->setFrameOfReference(balls[i]->getFrame("bottomPoint"));
+    balls[i]->addFrame(new FixedRelativeFrame("B", d * Vec("[0.5;0;0]") - b * Vec("[0;0.5;0]"), SqrMat(3, EYE), balls[i]->getFrame("C")));
+    bP->setFrameOfReference(balls[i]->getFrame("B"));
     balls[i]->addContour(bP);
 
     Plane *plane = new Plane("Plane");
@@ -705,8 +705,8 @@ Perlchain::Perlchain(const string &projectName) :
     trafoPlane(0, 0) = -1.;
     trafoPlane(1, 1) = 1.;
     trafoPlane(2, 2) = -1.;
-    balls[i]->addFrame(new FixedRelativeFrame("Plane", -d * Vec("[0.5;0;0]"), trafoPlane, balls[i]->getFrame("C")));
-    plane->setFrameOfReference(balls[i]->getFrame("Plane"));
+    balls[i]->addFrame(new FixedRelativeFrame("P", -d * Vec("[0.5;0;0]"), trafoPlane, balls[i]->getFrame("C")));
+    plane->setFrameOfReference(balls[i]->getFrame("P"));
     balls[i]->addContour(plane);
 
     std::shared_ptr<OpenMBV::Cuboid> cube = OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
@@ -819,5 +819,11 @@ Perlchain::Perlchain(const string &projectName) :
 //      ctrb->connect(balls[i + 1]->getContour("bottomPoint"), balls[i]->getContour("Plane"));
 //    }
 //  }
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

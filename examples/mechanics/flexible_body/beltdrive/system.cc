@@ -378,10 +378,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(2,2) = inertiaDisks(i);//2./5.*massDisks(i)*radiiDisks(i)*radiiDisks(i);
     disk->setInertiaTensor(Theta);
 
-    disk->setPlotFeature(Element::globalPosition,enabled);
-    disk->setPlotFeature(Element::globalVelocity,enabled);
-    disk->getFrame("C")->setPlotFeature(Element::globalPosition,enabled);
-    disk->getFrame("C")->setPlotFeature(Element::globalVelocity,enabled);
+    disk->setPlotFeatureRecursive("position",enabled);
+    disk->setPlotFeatureRecursive("orientation",enabled);
+    disk->setPlotFeatureRecursive("velocity",enabled);
+    disk->setPlotFeatureRecursive("angularVelocity",enabled);
 
     Vec JR("[0;0;1.0]");
     if(i==0)
@@ -411,8 +411,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Circle *cDisk = new Circle("cDisk");
     cDisk->setRadius(0.98*radiiDisks(i));
     Vec BR(3,INIT,0.);// BR(1)=-r;
-    disk->addFrame(new FixedRelativeFrame("cDisk",BR,SqrMat(3,EYE),disk->getFrame("C")));
-    cDisk->setFrameOfReference(disk->getFrame("cDisk"));
+    disk->addFrame(new FixedRelativeFrame("P",BR,SqrMat(3,EYE),disk->getFrame("C")));
+    cDisk->setFrameOfReference(disk->getFrame("P"));
     disk->addContour(cDisk);
     cDisk->enableOpenMBV();
     this->addObject(disk);
@@ -497,5 +497,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
        spring->enableOpenMBV(_springRadius=0.1*radiiDisks(i),_crossSectionRadius=0.005*radiiDisks(i),_numberOfCoils=nWindings);
     }
   }
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
 }
 

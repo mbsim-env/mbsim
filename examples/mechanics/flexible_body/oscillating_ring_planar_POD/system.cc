@@ -117,6 +117,12 @@ System::System(const string &projectName) :
 
   cuboid->setContour(rectangle);
   rodCont->setOpenMBVSpineExtrusion(cuboid);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 
 void System::reduce(const string & h5file) {

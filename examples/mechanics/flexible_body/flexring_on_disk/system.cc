@@ -172,5 +172,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     observer->enableOpenMBVTangentialForce(_scaleLength=0.01);
     observer->enableOpenMBVContactPoints(0.001,true);
   }
-}
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+}

@@ -107,19 +107,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[i]->addContour(pt);
 
     Point *tP = new Point("topPoint");
-    balls[i]->addFrame(new FixedRelativeFrame("topPoint",d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
-    tP->setFrameOfReference(balls[i]->getFrame("topPoint"));
+    balls[i]->addFrame(new FixedRelativeFrame("T",d*Vec("[0.5;0;0]") + b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+    tP->setFrameOfReference(balls[i]->getFrame("T"));
     balls[i]->addContour(tP);
 
     Point *bP = new Point("bottomPoint");
-    balls[i]->addFrame(new FixedRelativeFrame("bottomPoint",d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
-    bP->setFrameOfReference(balls[i]->getFrame("bottomPoint"));
+    balls[i]->addFrame(new FixedRelativeFrame("B",d*Vec("[0.5;0;0]") - b*Vec("[0;0.5;0]"),SqrMat(3,EYE),balls[i]->getFrame("C")));
+    bP->setFrameOfReference(balls[i]->getFrame("B"));
     balls[i]->addContour(bP);
 
     Plane *plane = new Plane("Plane");
     SqrMat trafoPlane(3,INIT,0.); trafoPlane(0,0) = -1.; trafoPlane(1,1) = 1.; trafoPlane(2,2) = -1.;
-    balls[i]->addFrame(new FixedRelativeFrame("Plane",-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C")));
-    plane->setFrameOfReference(balls[i]->getFrame("Plane"));
+    balls[i]->addFrame(new FixedRelativeFrame("P",-d*Vec("[0.5;0;0]"),trafoPlane,balls[i]->getFrame("C")));
+    plane->setFrameOfReference(balls[i]->getFrame("P"));
     balls[i]->addContour(plane);
 
     std::shared_ptr<OpenMBV::Cuboid> cube=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
@@ -204,4 +204,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addLink(ctrt);
     this->addLink(ctrb);
   }
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }

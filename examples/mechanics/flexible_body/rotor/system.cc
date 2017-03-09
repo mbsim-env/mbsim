@@ -149,8 +149,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylsurf_GLS->enableOpenMBV();
   SqrMat AWK_cylsurf_GLS(3,INIT,0.); AWK_cylsurf_GLS(2,2) = 1.; AWK_cylsurf_GLS(0,0) = cos(M_PI/2.); AWK_cylsurf_GLS(1,1) = cos(M_PI/2.); AWK_cylsurf_GLS(0,1) = sin(M_PI/2.); AWK_cylsurf_GLS(1,0) = -sin(M_PI/2.);
   Vec KrKS_cylsurf_GLS(3,INIT,0.); KrKS_cylsurf_GLS(0) = -b_GLS;
-  ScheibeGLS->addFrame(new FixedRelativeFrame("cylsurf_GLS",KrKS_cylsurf_GLS,AWK_cylsurf_GLS));
-  cylsurf_GLS->setFrameOfReference(ScheibeGLS->getFrame("cylsurf_GLS"));
+  ScheibeGLS->addFrame(new FixedRelativeFrame("P",KrKS_cylsurf_GLS,AWK_cylsurf_GLS));
+  cylsurf_GLS->setFrameOfReference(ScheibeGLS->getFrame("P"));
   ScheibeGLS->addContour(cylsurf_GLS);
   this->addObject(ScheibeGLS);
 
@@ -169,8 +169,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rightCircle->enableOpenMBV();
   SqrMat AWK_rightCircle(3,INIT,0.); AWK_rightCircle(1,1) = 1.; AWK_rightCircle(0,0) = cos(M_PI/2.); AWK_rightCircle(2,2) = cos(M_PI/2.); AWK_rightCircle(0,2) = sin(M_PI/2.); AWK_rightCircle(2,0) = -sin(M_PI/2.);
   Vec PosRightCircle(3,INIT,0.); PosRightCircle(0) = b_GLS/2.;
-  Gleitlager->addFrame(new FixedRelativeFrame("rightCircle",PosRightCircle,AWK_rightCircle));
-  rightCircle->setFrameOfReference(Gleitlager->getFrame("rightCircle"));
+  Gleitlager->addFrame(new FixedRelativeFrame("R",PosRightCircle,AWK_rightCircle));
+  rightCircle->setFrameOfReference(Gleitlager->getFrame("R"));
   Gleitlager->addContour(rightCircle);
   this->addObject(Gleitlager);
 
@@ -240,5 +240,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addObserver(observer);
   observer->setContact(cGL_Right);
   observer->enableOpenMBVContactPoints(0.01);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

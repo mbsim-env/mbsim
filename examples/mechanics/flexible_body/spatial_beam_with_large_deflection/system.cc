@@ -106,8 +106,8 @@ System::System(const string &projectName) :
   ball->setInertiaTensor(Theta);
   ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
-  ball->addContour(new Point("Point", ball->getFrame("Point")));
+  ball->addFrame(new FixedRelativeFrame("P", BR, SqrMat(3, EYE), ball->getFrame("C")));
+  ball->addContour(new Point("Point", ball->getFrame("P")));
   this->addObject(ball);
 
   std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
@@ -137,4 +137,10 @@ System::System(const string &projectName) :
   joint->setMomentDirection(Mat(3, 3, EYE));
   joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }

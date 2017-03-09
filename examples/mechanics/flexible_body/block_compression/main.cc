@@ -14,7 +14,6 @@ int main(int argc, char* argv[]) {
 
   sys->setStopIfNoConvergence(true, true);
   sys->setMaxIter(100000); // set up to 100000 because of "No Convergence" in only ONE step
-  sys->setPlotFeature(MBSim::Element::rightHandSide, MBSim::Element::enabled);
   sys->initialize();
   sys->setFlushEvery(1);
 

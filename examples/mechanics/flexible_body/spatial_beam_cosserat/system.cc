@@ -140,8 +140,8 @@ System::System(const string &projectName) :
 
   MBSim::Point *point = new MBSim::Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
-  ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
-  point->setFrameOfReference(ball->getFrame("Point"));
+  ball->addFrame(new FixedRelativeFrame("P", BR, SqrMat(3, EYE), ball->getFrame("C")));
+  point->setFrameOfReference(ball->getFrame("P"));
   ball->addContour(point);
   this->addObject(ball);
 
@@ -165,4 +165,10 @@ System::System(const string &projectName) :
   this->addLink(contact);
 
 // End Contact ---------------------------------------------------
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }

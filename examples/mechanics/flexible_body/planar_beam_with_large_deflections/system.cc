@@ -105,8 +105,8 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   Point *point = new Point("Point");
   Vec BR(3, INIT, 0.);
   BR(1) = -r;
-  ball->addFrame(new FixedRelativeFrame("Point", BR, SqrMat(3, EYE), ball->getFrame("C")));
-  point->setFrameOfReference(ball->getFrame("Point"));
+  ball->addFrame(new FixedRelativeFrame("P", BR, SqrMat(3, EYE), ball->getFrame("C")));
+  point->setFrameOfReference(ball->getFrame("P"));
   ball->addContour(point);
   ball->setGeneralizedInitialVelocity(-0.5);
   this->addObject(ball);
@@ -138,5 +138,11 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   joint->setMomentDirection("[0; 0; 1]");
   joint->setMomentLaw(new BilateralConstraint);
   this->addLink(joint);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

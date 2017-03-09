@@ -231,8 +231,9 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   body2->setStiffnessMatrix(Ke);
 
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  body2->getFrame("Q")->setPlotFeature(globalPosition,enabled);
-  
+  body2->getFrame("Q")->setPlotFeature("position",enabled);
+  body2->getFrame("Q")->setPlotFeature("orientation",enabled);
+
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);
   body3->setFrameOfReference(getFrame("I"));
@@ -242,9 +243,12 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   body3->setTranslation(new TranslationAlongXAxis<VecV>);
   body3->setGeneralizedInitialPosition(VecV(1,INIT,l1+l2));
 
-  body1->setPlotFeature(stateDerivative,enabled);
-  body2->setPlotFeature(stateDerivative,enabled);
-  body3->setPlotFeature(stateDerivative,enabled);
+  body1->setPlotFeature("derivativeOfGeneralizedPosition",enabled);
+  body1->setPlotFeature("generalizedAcceleration",enabled);
+  body2->setPlotFeature("derivativeOfGeneralizedPosition",enabled);
+  body2->setPlotFeature("generalizedAcceleration",enabled);
+  body3->setPlotFeature("derivativeOfGeneralizedPosition",enabled);
+  body3->setPlotFeature("generalizedAcceleration",enabled);
 
   Joint* constraint = new Joint("C");
   constraint->connect(body3->getFrame("C"),body2->getFrame("Q"));
@@ -267,4 +271,9 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   dummy->setDiffuseColor(240./360.,1,1);
   body3->setOpenMBVRigidBody(dummy);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
