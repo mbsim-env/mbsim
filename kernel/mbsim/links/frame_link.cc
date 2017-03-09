@@ -46,16 +46,12 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      MechanicalLink::init(stage);
     }
     else if(stage==unknownStage) {
-      MechanicalLink::init(stage);
-
       if(frame[0]==NULL or frame[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");
     }
-    else
-      MechanicalLink::init(stage);
+    MechanicalLink::init(stage);
   }
 
   void FrameLink::updateWRef(const Mat& WParent, int j) {

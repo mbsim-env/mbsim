@@ -39,16 +39,13 @@ namespace MBSim {
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       for (unsigned int i=0; i<saved_IndependentBody.size(); i++)
         bi.push_back(getByPath<RigidBody>(saved_IndependentBody[i]));
-      GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
-      GeneralizedConstraint::init(stage);
       bd->addDependency(this);
       for(unsigned int i=0; i<bi.size(); i++)
         addDependency(bi[i]);
     }
-    else
-      GeneralizedConstraint::init(stage);
+    GeneralizedConstraint::init(stage);
   }
 
   void GeneralizedGearConstraint::addIndependentRigidBody(RigidBody *body, double ratio_) {

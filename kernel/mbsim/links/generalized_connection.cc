@@ -53,17 +53,14 @@ namespace MBSim {
     updla = false;
   }
 
- void GeneralizedConnection::init(InitStage stage) {
+  void GeneralizedConnection::init(InitStage stage) {
     if(stage==unknownStage) {
       if(fl->isSetValued()) {
         il = new BilateralImpact;
         il->setParent(this);
       }
-      DualRigidBodyLink::init(stage);
     }
-    else {
-      DualRigidBodyLink::init(stage);
-    }
+    DualRigidBodyLink::init(stage);
     if(fl) fl->init(stage);
     if(il) il->init(stage);
   }

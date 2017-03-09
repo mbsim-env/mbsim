@@ -31,11 +31,9 @@ namespace MBSim {
 
   void LinearElasticFunction::init(InitStage stage) {
     if(stage==unknownStage) {
-      Function<VecV(VecV,VecV)>::init(stage);
       if(not D.size()) D.resize(K.size());
     }
-    else
-      Function<VecV(VecV,VecV)>::init(stage);
+    Function<VecV(VecV,VecV)>::init(stage);
   }
 
   void LinearElasticFunction::initializeUsingXML(DOMElement *element) {

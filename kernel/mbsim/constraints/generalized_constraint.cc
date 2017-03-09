@@ -31,10 +31,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_supportFrame!="")
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
-      MechanicalConstraint::init(stage);
     }
-    else
-      MechanicalConstraint::init(stage);
+    MechanicalConstraint::init(stage);
   }
 
   void GeneralizedConstraint::initializeUsingXML(DOMElement* element) {

@@ -325,12 +325,10 @@ namespace MBSim {
 
     }
     else if (stage == plotting) {
-      RigidContour::init(stage);
       if(openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
     }
-    else
-      CompoundContour::init(stage);
+    CompoundContour::init(stage);
   }
 
   void Cuboid::plot() {

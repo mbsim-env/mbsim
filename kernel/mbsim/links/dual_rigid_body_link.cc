@@ -30,7 +30,6 @@ namespace MBSim {
 
   void DualRigidBodyLink::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      RigidBodyLink::init(stage);
       if(saved_ref!="")
         connect(getByPath<RigidBody>(saved_ref));
       else
@@ -40,10 +39,8 @@ namespace MBSim {
     else if(stage==unknownStage) {
       if(body.size()>1 and (body[0]->getuRelSize()!=body[1]->getuRelSize()))
         THROW_MBSIMERROR("rigid bodies must have the same dof!");
-      RigidBodyLink::init(stage);
     }
-    else
-      RigidBodyLink::init(stage);
+    RigidBodyLink::init(stage);
   }
 
   void DualRigidBodyLink::initializeUsingXML(DOMElement* element) {

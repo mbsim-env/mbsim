@@ -115,11 +115,8 @@ namespace MBSim {
     if(stage == resolveXMLPath) {
       if(saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
-      MechanicalLink::init(stage);
     }
     else if(stage==preInit) {
-      MechanicalLink::init(stage);
-
       cFrame[0] = contour[0]->createContourFrame("P0");
       cFrame[1] = contour[1]->createContourFrame("P1");
       cFrame[0]->setParent(this);
@@ -133,8 +130,6 @@ namespace MBSim {
       }
     }
     else if(stage==unknownStage) {
-      MechanicalLink::init(stage);
-
       cFrame[0]->sethSize(contour[0]->gethSize(0), 0);
       cFrame[0]->sethSize(contour[0]->gethSize(1), 1);
       cFrame[1]->sethSize(contour[1]->gethSize(0), 0);
@@ -146,8 +141,7 @@ namespace MBSim {
       if(contour[0]==NULL or contour[1]==NULL)
         THROW_MBSIMERROR("Not all connections are given!");
     }
-    else
-      MechanicalLink::init(stage);
+    MechanicalLink::init(stage);
   }
 
   void ContourLink::resetUpToDate() {

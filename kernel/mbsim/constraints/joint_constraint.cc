@@ -91,10 +91,8 @@ namespace MBSim {
           if2.push_back(bd2[i+1]->getFrameOfReference());
         if2.push_back(frame2);
       }
-      MechanicalConstraint::init(stage);
     }
     else if(stage==preInit) {
-      MechanicalConstraint::init(stage);
       for(unsigned int i=0; i<bd1.size(); i++) 
         bd1[i]->addDependency(this);
       for(unsigned int i=0; i<bd2.size(); i++)
@@ -105,7 +103,6 @@ namespace MBSim {
       C.setFrameOfReference(frame1);
     }
     else if(stage==unknownStage) {
-      MechanicalConstraint::init(stage);
       nq = 0;
       nu = 0;
       nh = 0;
@@ -143,7 +140,6 @@ namespace MBSim {
       JR.resize(3,nu);
     }
     else if (stage == unknownStage) {
-      MechanicalConstraint::init(stage);
       Js.resize(3 - forceDir.cols());
       if (forceDir.cols() == 2)
         Js.set(0, crossProduct(forceDir.col(0), forceDir.col(1)));
@@ -156,8 +152,7 @@ namespace MBSim {
         Js.set(1, crossProduct(forceDir.col(0), Js.col(0)));
       }
     }
-    else
-      MechanicalConstraint::init(stage);
+    MechanicalConstraint::init(stage);
   }
 
   void JointConstraint::initz() {

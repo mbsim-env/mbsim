@@ -108,8 +108,6 @@ namespace MBSim {
 
   void Joint::init(InitStage stage) {
     if (stage == unknownStage) {
-      FloatingFrameLink::init(stage);
-
       gdd.resize(gdSize);
       gdn.resize(gdSize);
 
@@ -146,8 +144,7 @@ namespace MBSim {
       else
         updatelaM_ = &Joint::updatelaMS;
     }
-    else
-      FloatingFrameLink::init(stage);
+    FloatingFrameLink::init(stage);
     if(ffl) ffl->init(stage);
     if(fml) fml->init(stage);
     if(fifl) fifl->init(stage);
@@ -513,12 +510,9 @@ namespace MBSim {
   }
 
   void InverseKineticsJoint::init(InitStage stage) {
-    if (stage == preInit) {
-      Joint::init(stage);
+    if (stage == preInit)
       x.resize(momentDir.cols());
-    }
-    else
-      Joint::init(stage);
+    Joint::init(stage);
   }
 
 }

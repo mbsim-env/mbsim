@@ -55,7 +55,7 @@ namespace MBSim {
     updla = false;
   }
 
- void GeneralizedGear::init(InitStage stage) {
+  void GeneralizedGear::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if (saved_gearOutput!="")
         setGearOutput(getByPath<RigidBody>(saved_gearOutput));
@@ -63,7 +63,6 @@ namespace MBSim {
         for (unsigned int i=0; i<saved_gearInput.size(); i++)
           body.push_back(getByPath<RigidBody>(saved_gearInput[i]));
       }
-      RigidBodyLink::init(stage);
     }
     else if(stage==unknownStage) {
       for(unsigned int i=0; i<body.size(); i++) {
@@ -74,11 +73,8 @@ namespace MBSim {
         il = new BilateralImpact;
         il->setParent(this);
       }
-      RigidBodyLink::init(stage);
     }
-    else {
-      RigidBodyLink::init(stage);
-    }
+    RigidBodyLink::init(stage);
     if(fl) fl->init(stage);
     if(il) il->init(stage);
   }

@@ -31,10 +31,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Frame::init(stage);
     }
-    else
-      Frame::init(stage);
+    Frame::init(stage);
   }
 
   void FixedRelativeFrame::initializeUsingXML(DOMElement *element) {

@@ -138,7 +138,6 @@ namespace MBSim {
 
   void FloatingFrameLink::init(InitStage stage) {
     if(stage==preInit) {
-      FrameLink::init(stage);
       int size = forceDir.cols() + momentDir.cols();
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
@@ -164,14 +163,12 @@ namespace MBSim {
       }
     }
     else if(stage==unknownStage) {
-      FrameLink::init(stage);
       refFrame = refFrameID ? frame[1] : frame[0];
       C.setFrameOfReference(frame[0]);
       P[0] = frame[0];
       P[1] = &C;
     }
-    else
-      FrameLink::init(stage);
+    FrameLink::init(stage);
   }
 
   void FloatingFrameLink::initializeUsingXML(DOMElement *element) {

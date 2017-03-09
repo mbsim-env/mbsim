@@ -75,10 +75,8 @@ namespace MBSim {
         il = new BilateralImpact;
         il->setParent(this);
       }
-      RigidBodyLink::init(stage);
     }
-    else
-      RigidBodyLink::init(stage);
+    RigidBodyLink::init(stage);
     if(fl) fl->init(stage);
     if(il) il->init(stage);
   }

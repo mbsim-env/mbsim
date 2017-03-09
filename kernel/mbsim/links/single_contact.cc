@@ -487,8 +487,6 @@ namespace MBSim {
 
   void SingleContact::init(InitStage stage) {
     if (stage == unknownStage) {
-      ContourLink::init(stage);
-
       if (contactKinematics == 0) {
         contactKinematics = contour[0]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
         if (contactKinematics == 0) {
@@ -515,8 +513,6 @@ namespace MBSim {
       gddTBuf.resize(getFrictionDirections());
     }
     else if (stage == preInit) {
-      ContourLink::init(stage);
-
       gActive = 1;
       gActive0 = 1;
 
@@ -575,9 +571,7 @@ namespace MBSim {
       if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
         throw MBSimError("Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
     }
-    else {
-      ContourLink::init(stage);
-    }
+    ContourLink::init(stage);
     if(fcl) fcl->init(stage);
     if(fdf) fdf->init(stage);
     if(fnil) fnil->init(stage);

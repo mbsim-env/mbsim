@@ -33,15 +33,12 @@ namespace MBSim {
         setDependentRigidBody(getByPath<RigidBody>(saved_DependentBody));
       if(saved_IndependentBody!="")
         setIndependentRigidBody(getByPath<RigidBody>(saved_IndependentBody));
-      GeneralizedConstraint::init(stage);
     }
     else if(stage==preInit) {
-      GeneralizedConstraint::init(stage);
       bd->addDependency(this);
       if(bi) addDependency(bi);
     }
-    else
-      GeneralizedConstraint::init(stage);
+    GeneralizedConstraint::init(stage);
   }
 
   void GeneralizedDualConstraint::initializeUsingXML(DOMElement* element) {

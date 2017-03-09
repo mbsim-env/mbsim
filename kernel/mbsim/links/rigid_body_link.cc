@@ -165,10 +165,8 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_supportFrame!="")
         setSupportFrame(getByPath<Frame>(saved_supportFrame));
-      MechanicalLink::init(stage);
     }
     else if(stage==preInit) {
-      MechanicalLink::init(stage);
       if(!support)
         support = body[0]->getFrameOfReference();
       iF = RangeV(0, body[0]->getPJT(0,false).cols()-1);
@@ -204,12 +202,10 @@ namespace MBSim {
       }
     }
     else if(stage==unknownStage) {
-      MechanicalLink::init(stage);
       for(unsigned int i=0; i<body.size(); i++)
         P[i] = body[i]->getFrameForKinematics();
     }
-    else
-      MechanicalLink::init(stage);
+    MechanicalLink::init(stage);
   }
 
   void RigidBodyLink::initializeUsingXML(DOMElement* element) {
