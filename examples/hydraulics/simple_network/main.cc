@@ -167,7 +167,6 @@ int main (int argc, char* argv[]) {
           }
           integrationTime.push_back(double(endTime-startTime)/CLOCKS_PER_SEC);
 
-          dss->closePlot();
           delete dss;
         }
       }

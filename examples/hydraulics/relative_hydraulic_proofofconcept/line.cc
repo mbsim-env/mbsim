@@ -6,7 +6,6 @@ using namespace std;
 using namespace fmatvec;
 
 Line::Line(string name) : Object(name), updJ(true) {
-  setPlotFeature(state,disabled);
 }
 
 void Line::updateStateDependentVariables(double) {
@@ -56,22 +55,12 @@ void Line::updateJacobians(int k) {
 
 void Line::init(InitStage stage) {
   if(stage==plotting) {
-    updatePlotFeatures();
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      plotColumns.push_back("flowrate");
-
-      Object::init(stage);
-    }
+    plotColumns.push_back("flowrate");
   }
-  else
-    Object::init(stage);
+  Object::init(stage);
 }
 
 void Line::plot() {
-  if(getPlotFeature(plotRecursive)==enabled) {
-    plotVector.push_back(flowrate);
-
-    Object::plot();
-  }
+  plotVector.push_back(flowrate);
+  Object::plot();
 }

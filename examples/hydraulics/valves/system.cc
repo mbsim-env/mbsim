@@ -93,4 +93,9 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   addLink(n4);
   n4->addInFlow(l34);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }

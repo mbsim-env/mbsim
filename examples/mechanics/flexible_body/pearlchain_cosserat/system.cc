@@ -154,6 +154,7 @@ System::System(const string &projectName) :
   rodInfo->setFrameOfReference(rod->getFrameOfReference());
   Contour1sNeutralCosserat * neutralFactory = rodInfo->createNeutralPhase();
 
+  rodInfo->setParent(this);
   rodInfo->initInfo();
 
   for (unsigned int i = 0; i < balls.size(); i++) {

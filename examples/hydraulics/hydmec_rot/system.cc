@@ -145,9 +145,6 @@ System::System(const string &name, bool unilateral) : Group(name) {
     scheibe->setFrameOfReference(traeger->getFrame(getBodyName(i)));
     scheibe->setFrameForKinematics(scheibe->getFrame("C"));
     scheibe->setInertiaTensor(0.001*SymMat(3, EYE));
-    scheibe->setPlotFeature(state, enabled);
-    scheibe->setPlotFeature(stateDerivative, enabled);
-    scheibe->setPlotFeature(rightHandSide, enabled);
     if (i>0)
       scheibe->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0; 0; 1]")));
     std::shared_ptr<OpenMBV::Extrusion> scheibeVisu = OpenMBV::ObjectFactory::create<OpenMBV::Extrusion>();
@@ -239,4 +236,13 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addLink(n4Inf);
   n4Inf->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
   n4Inf->enableOpenMBVArrows(.01);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("derivativeOfGeneralizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedAcceleration",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
 }

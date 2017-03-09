@@ -90,4 +90,11 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   lCV->enableOpenMBVBodies();
   n1->enableOpenMBVArrows(.01);
   n2->enableOpenMBVArrows(.01);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("signal",enabled);
 }

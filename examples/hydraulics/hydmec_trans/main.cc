@@ -64,7 +64,6 @@ int main (int argc, char* argv[]) {
       cout << "Integration Time Radau5: " << double(end - start)/CLOCKS_PER_SEC << " s." << endl;
     }
 
-    dss->closePlot();
     delete dss;
   }
 

@@ -93,7 +93,6 @@ int main (int argc, char* argv[])
   integrator.setPlotStepSize(1e-3);
 
   integrator.integrate(*sys);
-  sys->closePlot();
 
   delete sys;
 

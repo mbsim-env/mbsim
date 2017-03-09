@@ -180,4 +180,11 @@ System::System(const string &name, bool unilateral) : Group(name) {
   EnvironmentNodeMec * n4Inf = new EnvironmentNodeMec("n4Inf");
   addLink(n4Inf);
   n4Inf->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
 }

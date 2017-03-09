@@ -161,6 +161,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 	rodInfo->setFrameOfReference(rod->getFrameOfReference());
 	Contour1sNeutralFactory * cont = rodInfo->createNeutralPhase();
 
+        rodInfo->setParent(this);
 	rodInfo->initInfo();
 
 	for(unsigned int i=0;i<balls.size();i++) {
