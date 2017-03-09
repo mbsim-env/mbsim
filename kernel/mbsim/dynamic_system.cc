@@ -371,6 +371,8 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
     }
     else if (stage == preInit) {
+      if (parent)
+        updatePlotFeatures();
       if (!R) {
         DynamicSystem *sys = dynamic_cast<DynamicSystem*>(parent);
         if (sys)
@@ -401,9 +403,6 @@ namespace MBSim {
       }
     }
     else if (stage == plotting) {
-      if (parent)
-        updatePlotFeatures();
-
       if (plotFeature[11334901831169464975ULL] == enabled) {
         if (plotFeature[18269718848207088804ULL] == enabled) {
           // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's

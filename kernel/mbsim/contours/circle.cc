@@ -74,20 +74,15 @@ namespace MBSim {
     if(stage==preInit) {
       sign = solid?1:-1;
       Kt(2) = sign;
-      RigidContour::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setBaseRadius(r);
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r);
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(0);
       }
-      RigidContour::init(stage);
     }
-    else
-      RigidContour::init(stage);
+    RigidContour::init(stage);
   }
 
   void Circle::initializeUsingXML(DOMElement *element) {

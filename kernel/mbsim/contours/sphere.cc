@@ -35,14 +35,10 @@ namespace MBSim {
 
   void Sphere::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);
-      RigidContour::init(stage);
     }
-    else
-      RigidContour::init(stage);
+    RigidContour::init(stage);
   }
 
   Vec3 Sphere::evalKs(const fmatvec::Vec2 &zeta) {

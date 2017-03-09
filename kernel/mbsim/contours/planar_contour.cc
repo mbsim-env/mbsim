@@ -56,13 +56,10 @@ namespace MBSim {
 
   void PlanarContour::init(InitStage stage) {
     if (stage == preInit) {
-      RigidContour::init(stage);
       if (etaNodes.size() < 2)
         THROW_MBSIMERROR("(PlanarContour::init): Size of etaNodes must be greater than 1.");
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
         shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
         if(not(ombvNodes.size())) {
@@ -77,10 +74,8 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
         static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
       }
-      RigidContour::init(stage);
     }
-    else
-      RigidContour::init(stage);
+    RigidContour::init(stage);
 
     funcCrPC->init(stage);
   }

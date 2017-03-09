@@ -123,11 +123,9 @@ namespace MBSim {
   } 
 
   void Link::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==unknownStage)
       rFactorUnsure.resize(rFactorSize);
-    }
     else if(stage==plotting) {
-      updatePlotFeatures();
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[5125144808927415120ULL]==enabled) {
           for(int i=0; i<rrel.size(); ++i)
@@ -144,10 +142,8 @@ namespace MBSim {
         if(plotFeature[2188794903238700147ULL]==enabled)
           plotColumns.push_back("V");
       }
-      Element::init(stage);
     }
-    else
-      Element::init(stage);
+    Element::init(stage);
   }
 
   void Link::initz() {

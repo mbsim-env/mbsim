@@ -42,14 +42,10 @@ namespace MBSim {
 
   void LineSegment::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(0,length,0);
-      RigidContour::init(stage);
     }
-    else
-      RigidContour::init(stage);
+    RigidContour::init(stage);
   }
 
   void LineSegment::initializeUsingXML(DOMElement *element) {

@@ -36,8 +36,6 @@ namespace MBSim {
        */
       MechanicalLink(const std::string &name);
 
-      virtual void init(InitStage stage);
-
       void resetUpToDate();
 
       virtual void updatePositions() { }

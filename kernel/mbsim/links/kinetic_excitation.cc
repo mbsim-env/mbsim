@@ -43,40 +43,28 @@ namespace MBSim {
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      FloatingFrameLink::init(stage);
       if(saved_ref!="") connect(getByPath<Frame>(saved_ref));
       if(frame[0]==NULL) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-      if(plotFeature[13464197197848110344ULL]==enabled) {
-        if(openMBVArrow) {
-          if(forceDir.cols()) {
-            openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow);
-            openMBVForce->setName(name+"_Force");
-            parent->getOpenMBVGrp()->addObject(openMBVForce);
-          }
-          if(momentDir.cols()) {
-            openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow);
-            openMBVMoment->setName(name+"_Moment");
-            parent->getOpenMBVGrp()->addObject(openMBVMoment);
-          }
+      if(plotFeature[13464197197848110344ULL]==enabled and openMBVArrow) {
+        if(forceDir.cols()) {
+          openMBVForce=OpenMBV::ObjectFactory::create(openMBVArrow);
+          openMBVForce->setName(name+"_Force");
+          parent->getOpenMBVGrp()->addObject(openMBVForce);
+        }
+        if(momentDir.cols()) {
+          openMBVMoment=OpenMBV::ObjectFactory::create(openMBVArrow);
+          openMBVMoment->setName(name+"_Moment");
+          parent->getOpenMBVGrp()->addObject(openMBVMoment);
         }
       }
-      FloatingFrameLink::init(stage);
-    }
-    else if(stage==preInit) {
-      FloatingFrameLink::init(stage);
-      rrel.resize();
-      vrel.resize();
     }
     else if(stage==unknownStage) {
       if(F  and (F->getRetSize().first!=forceDir.cols())) THROW_MBSIMERROR("Number of force directions does not match!");
       if(M  and (M->getRetSize().first!=momentDir.cols())) THROW_MBSIMERROR("Number of moment directions does not match!");
-      FloatingFrameLink::init(stage);
     }
-    else
-      FloatingFrameLink::init(stage);
+    FloatingFrameLink::init(stage);
     if(F) F->init(stage);
     if(M) M->init(stage);
   }

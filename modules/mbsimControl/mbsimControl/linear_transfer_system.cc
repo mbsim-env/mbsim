@@ -105,18 +105,14 @@ namespace MBSimControl {
     if (stage==resolveXMLPath) {
       if (inputSignalString!="")
         setInputSignal(getByPath<Signal>(inputSignalString));
-      Signal::init(stage);
     }
     else if (stage==plotting) {
-      updatePlotFeatures();
       if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[13300192525503281405ULL]==enabled) {
         for (int i=0; i<B.cols(); i++)
           plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
       }
-      Signal::init(stage);
     }
-    else
-      Signal::init(stage);
+    Signal::init(stage);
   }
 
   VecV LinearTransferSystem::outputMethodC() {

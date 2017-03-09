@@ -103,8 +103,6 @@ namespace MBSim {
       WJR[1].resize(hSize[1]);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-  
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[12307443656510933270ULL]==enabled) {
           for(int i=0; i<3; i++)
@@ -136,10 +134,8 @@ namespace MBSim {
           openMBVFrame->setName(name);
           parent->getOpenMBVGrp()->addObject(openMBVFrame);
       }
-      Element::init(stage);
     }
-    else
-      Element::init(stage);
+    Element::init(stage);
   }
 
   void Frame::initializeUsingXML(DOMElement *element) {

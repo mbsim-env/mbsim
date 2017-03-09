@@ -249,7 +249,6 @@ namespace MBSimFlexibleBody {
 
     }
     else if (stage == plotting) {
-      updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
         if (getPlotFeature(notMinimalState) == enabled) {
           for (int i = 0; i < qSize; ++i)

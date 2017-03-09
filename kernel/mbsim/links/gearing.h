@@ -65,10 +65,6 @@ namespace MBSim {
         func->setName("Force");
       }
       void setReverse(bool reverse_) { reverse = reverse_; }
-
-      void plot();
-
-    private:
   };
 
 }

@@ -11,23 +11,18 @@ namespace MBSimElectronics {
 
   void ElectronicObject::init(InitStage stage) {
     if(stage==preInit) {
-      Object::init(stage);
       if(branch)
 	dependency.push_back(branch);
     } 
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[12990959818100602138ULL]==enabled)
           plotColumns.push_back("Charge");
         if(plotFeature[12665280193825468542ULL]==enabled)
           plotColumns.push_back("Current");
       }
-      Object::init(stage);
     }
-    else
-      Object::init(stage);
+    Object::init(stage);
   }
 
   void ElectronicObject::plot() {
@@ -54,8 +49,6 @@ namespace MBSimElectronics {
 
   void ElectronicLink::init(InitStage stage) {
     if(stage==preInit) {
-      Link::init(stage);
-
       g.resize(1);
       gd.resize(1);
       gdn.resize(1);
@@ -68,8 +61,6 @@ namespace MBSimElectronics {
       }
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[12990959818100602138ULL]==enabled)
           plotColumns.push_back("Charge");
@@ -78,10 +69,8 @@ namespace MBSimElectronics {
         if(plotFeature[492538187671312075ULL]==enabled)
           plotColumns.push_back("Voltage");
       }
-      Link::init(stage);
     }
-    else
-      Link::init(stage);
+    Link::init(stage);
   }
 
   void ElectronicLink::updateg() {

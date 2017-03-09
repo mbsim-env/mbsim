@@ -74,12 +74,8 @@ namespace MBSimFlexibleBody {
       }
 
       computeSurface();
-
-      Contour2s::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled and openMBVNurbsDisk) {
         openMBVNurbsDisk->setName(name);
         drawDegree = 30 / nj;
@@ -99,10 +95,8 @@ namespace MBSimFlexibleBody {
         openMBVNurbsDisk->setInterpolationDegreeAzimuthal(degU);
         parent->getOpenMBVGrp()->addObject(openMBVNurbsDisk);
       }
-      Contour2s::init(stage);
     }
-    else
-      Contour2s::init(stage);
+    Contour2s::init(stage);
   }
 
   ContourFrame* NurbsDisk2s::createContourFrame(const string &name) {

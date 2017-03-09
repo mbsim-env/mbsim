@@ -31,22 +31,14 @@ namespace MBSim {
 
   void Observer::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled) {
         openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name+"_Group");
         openMBVGrp->setExpand(false);
         parent->getOpenMBVGrp()->addObject(openMBVGrp);
       }
-      Element::init(stage);
     }
-    else
-      Element::init(stage);
-  }
-
-  void Observer::plot() {
-    Element::plot();
+    Element::init(stage);
   }
 
 }

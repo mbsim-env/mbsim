@@ -215,8 +215,6 @@ namespace MBSim {
 
   void Gearing::init(InitStage stage) {
     if(stage==unknownStage) {
-      MechanicalLink::init(stage);
-
       h[0].push_back(Vec(P0->getJacobianOfTranslation().cols()));
       h[1].push_back(Vec(6));
       h[0].push_back(Vec(P1->getJacobianOfTranslation().cols()));
@@ -236,29 +234,13 @@ namespace MBSim {
       Z1.getJacobianOfRotation(1).resize(P1->getJacobianOfRotation(1).cols());
     }
     else if(stage==preInit) {
-      MechanicalLink::init(stage);
       g.resize(1);
       gd.resize(1);
       la.resize(1);
     }
-    else if(stage==plotting) {
-      updatePlotFeatures();
-      plotColumns.push_back("la(0)");
-      if(plotFeature[11334901831169464975ULL]==enabled) {
-        MechanicalLink::init(stage);
-      }
-    }
-    else {
-      MechanicalLink::init(stage);
-    }
-    func->init(stage);
-  }
+    MechanicalLink::init(stage);
 
-  void Gearing::plot() {
-    plotVector.push_back(la(0));
-    if(plotFeature[11334901831169464975ULL]==enabled) {
-      MechanicalLink::plot();
-    }
+    func->init(stage);
   }
 
   void Gearing::updatexd() {

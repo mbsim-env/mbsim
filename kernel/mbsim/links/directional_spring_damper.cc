@@ -63,17 +63,14 @@ namespace MBSim {
 
   void DirectionalSpringDamper::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
       if(plotFeature[13464197197848110344ULL]==enabled) {
         if(coilspringOpenMBV) {
           coilspringOpenMBV->setName(name);
           parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
         }
       }
-      FloatingFrameLink::init(stage);
     }
-    else
-      FloatingFrameLink::init(stage);
+    FloatingFrameLink::init(stage);
     func->init(stage);
   }
 

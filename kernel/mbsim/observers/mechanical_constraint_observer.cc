@@ -43,8 +43,6 @@ namespace MBSim {
       Observer::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       Observer::init(stage);
       if(plotFeature[13464197197848110344ULL]==enabled) {
         //      if(openMBVForce) plotColumns.push_back("Force");

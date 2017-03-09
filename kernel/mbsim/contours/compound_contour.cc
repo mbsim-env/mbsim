@@ -58,14 +58,10 @@ namespace MBSim {
 
   void CompoundContour::init(InitStage stage) {
     if (stage == unknownStage) {
-      Contour::init(stage);
       for (unsigned int i = 0; i < element.size(); i++)
         element[i]->sethSize(hSize[0]);
     }
     else if (stage == plotting) {
-      if (parent)
-        updatePlotFeatures();
-
       if (plotFeature[13464197197848110344ULL] == enabled and openMBVGroup == 0) {
         openMBVGroup = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGroup->setName(name + "Group");
@@ -74,13 +70,11 @@ namespace MBSim {
         if (plotFeature[18269718848207088804ULL] == enabled)
           openMBVGroup->setSeparateFile(true);
       }
-      Contour::init(stage);
     }
+    Contour::init(stage);
 
-    for (unsigned int i = 0; i < element.size(); i++) {
-      //element[i]->setParent(parent); // PARENT
+    for (unsigned int i = 0; i < element.size(); i++)
       element[i]->init(stage);
-    }
   }
 
   void CompoundContour::resetUpToDate() {

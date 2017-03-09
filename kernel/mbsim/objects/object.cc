@@ -185,10 +185,7 @@ namespace MBSim {
   }
 
   void Object::init(InitStage stage) {
-    if (stage == unknownStage) {
-    }
-    else if (stage == plotting) {
-      updatePlotFeatures();
+    if (stage == plotting) {
       if (plotFeature[11334901831169464975ULL] == enabled) {
         if (plotFeature[5656632352625109444ULL] == enabled) {
           for (int i = 0; i < qRel.size(); ++i)
@@ -212,10 +209,8 @@ namespace MBSim {
           plotColumns.push_back("E");
         }
       }
-      Element::init(stage);
     }
-    else
-      Element::init(stage);
+    Element::init(stage);
   }
 
   void Object::initz() {

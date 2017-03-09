@@ -30,8 +30,6 @@ namespace MBSim {
 
   void PlanarFrustum::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
-  
       if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialTranslation(0.,h,0.);
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setInitialRotation(3./2.*M_PI,0,0.);
@@ -39,10 +37,8 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setTopRadius(r(1));
         static_pointer_cast<OpenMBV::Frustum>(openMBVRigidBody)->setHeight(h);
       }
-      RigidContour::init(stage);
     }
-    else
-      RigidContour::init(stage);
+    RigidContour::init(stage);
   }
 
 }

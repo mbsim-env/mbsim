@@ -127,8 +127,6 @@ namespace MBSim {
           static_cast<RigidContour*>(contour[k])->setFrameOfReference(C);
       }
 
-      Body::init(stage);
-
       if(K!=C) {
         const FixedRelativeFrame *R = K;
         do {
@@ -197,8 +195,6 @@ namespace MBSim {
       updateLLM_ = &RigidBody::updateLLMNotConst;
     }
     else if(stage==unknownStage) {
-      Body::init(stage);
-
       JRel[0].resize(nu[0],hSize[0]);
       for(int i=0; i<uSize[0]; i++)
         JRel[0](i,hSize[0]-uSize[0]+i) = 1;
@@ -293,8 +289,7 @@ namespace MBSim {
       if(frameForInertiaTensor && frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
     }
-    else
-      Body::init(stage);
+    Body::init(stage);
     if(fTR) fTR->init(stage);
     if(fPrPK) fPrPK->init(stage);
     if(fAPK) fAPK->init(stage);

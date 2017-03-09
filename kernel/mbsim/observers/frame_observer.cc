@@ -42,8 +42,6 @@ namespace MBSim {
       Observer::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
 //        if(plotFeature[12307443656510933270ULL]==enabled) plotColumns.push_back("AbsolutePosition");
 //        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteVelocity");
 //        if(plotFeature[9333706489830170160ULL]==enabled) plotColumns.push_back("AbsoluteAngularVelocity");

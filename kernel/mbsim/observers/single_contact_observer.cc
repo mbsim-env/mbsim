@@ -39,7 +39,6 @@ namespace MBSim {
 
   void SingleContactObserver::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
       MechanicalLinkObserver::init(stage);
       if (plotFeature[13464197197848110344ULL] == enabled) {
         if(openMBVContactFrame[0]) {

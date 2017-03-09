@@ -48,8 +48,6 @@ namespace MBSim {
       Observer::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
 //      if(openMBVPosition) {
 //        plotColumns.push_back("Position");
 //        plotColumns.push_back("XPosition");

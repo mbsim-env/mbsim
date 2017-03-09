@@ -31,13 +31,10 @@ namespace MBSim {
       Observer(const std::string &name);
 
       void init(InitStage stage);
-      virtual void plot();
 
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return openMBVGrp; }
-
   };
 
 }  
 
 #endif
-

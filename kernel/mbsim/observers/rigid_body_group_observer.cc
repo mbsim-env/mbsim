@@ -36,8 +36,6 @@ namespace MBSim {
 
   void RigidBodyGroupObserver::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
-
       Observer::init(stage);
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[13464197197848110344ULL]==enabled) {

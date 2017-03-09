@@ -36,8 +36,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBand::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled and openMBVSpineExtrusion) {
         openMBVSpineExtrusion->setName(name);
         openMBVSpineExtrusion->setShilouetteEdge(true);
@@ -51,10 +49,8 @@ namespace MBSimFlexibleBody {
         openMBVSpineExtrusion->setContour(rectangle);
         parent->getOpenMBVGrp()->addObject(openMBVSpineExtrusion);
       }
-      Contour1s::init(stage);
     }
-    else
-      Contour1s::init(stage);
+    Contour1s::init(stage);
   }
 
   ContourFrame* FlexibleBand::createContourFrame(const string &name) {

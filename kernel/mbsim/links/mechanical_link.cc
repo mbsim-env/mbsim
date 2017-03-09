@@ -40,14 +40,6 @@ namespace MBSim {
     updlaM = true;
   }
 
-  void MechanicalLink::init(InitStage stage) {
-    if(stage==plotting) {
-      Link::init(stage);
-    }
-    else
-      Link::init(stage);
-  }
-
   void MechanicalLink::updateGeneralizedForces() {
     lambda.set(iF, evallaF());
     lambda.set(iM, evallaM());

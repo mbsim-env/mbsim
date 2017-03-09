@@ -56,9 +56,6 @@ namespace MBSimFlexibleBody {
       uSize[0] = qSize;
       uSize[1] = qSize; // TODO
     }
-    else if (stage == plotting) {
-      updatePlotFeatures();
-    }
     else if (stage == unknownStage) {
       // only the modes can be used that are available
       if(nf > phiFull.cols()) {

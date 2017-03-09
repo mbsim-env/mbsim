@@ -231,8 +231,6 @@ namespace MBSimFlexibleBody {
           contour_->setFrameOfReference(K);
       }
 
-      NodeBasedBody::init(stage);
-
       int nqT=0, nqR=0, nuT=0, nuR=0;
       if(fPrPK) {
         nqT = fPrPK->getArg1Size();
@@ -308,8 +306,6 @@ namespace MBSimFlexibleBody {
       updateLLM_ = &FlexibleBodyFFR::updateLLMNotConst;
     }
     else if(stage==unknownStage) {
-      NodeBasedBody::init(stage);
-
       KJ[0].resize(6+ne,hSize[0]);
       KJ[1].resize(6+ne,hSize[1]);
       for(int i=0; i<ne; i++) {
@@ -409,17 +405,13 @@ namespace MBSimFlexibleBody {
       T.init(Eye());
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled and dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)) {
         dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
         if(ombvIndices.size())
           dynamic_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(openMBVBody)->setIndices(ombvIndices);
       }
-      NodeBasedBody::init(stage);
     }
-    else
-      NodeBasedBody::init(stage);
+    NodeBasedBody::init(stage);
     if(fTR) fTR->init(stage);
     if(fPrPK) fPrPK->init(stage);
     if(fAPK) fAPK->init(stage);

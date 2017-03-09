@@ -44,6 +44,7 @@ namespace MBSim {
       Observer::init(stage);
     }
     else if(stage==preInit) {
+      Observer::init(stage);
       contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size(),vector<SingleContactObserver>(static_cast<Contact*>(link)->getSubcontacts()[0].size()));
       for (unsigned int i=0; i<contactObserver.size(); i++) {
         for (unsigned int j=0; j<contactObserver[i].size(); j++) {
@@ -68,11 +69,9 @@ namespace MBSim {
           contactObserver[i][j].init(stage);
         }
       }
-      Observer::init(stage);
     }
     else if (stage == plotting) {
       Observer::init(stage);
-      updatePlotFeatures();
       for (std::vector<std::vector<SingleContactObserver> >::iterator iter = contactObserver.begin(); iter != contactObserver.end(); ++iter) {
         for (std::vector<SingleContactObserver>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
           jter->init(stage);

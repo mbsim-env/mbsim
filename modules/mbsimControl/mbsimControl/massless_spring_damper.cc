@@ -141,20 +141,15 @@ namespace MBSimControl {
     if (stage==resolveXMLPath) {
       if (inputSignalString!="")
         setInputSignal(getByPath<Signal>(inputSignalString));
-      Signal::init(stage);
     }
-    else if (stage==unknownStage) {
-      Signal::init(stage);
+    else if (stage==unknownStage)
       x.resize(xSize, INIT, 0);
-    }
 //    else if (stage==plotting) {
-//      updatePlotFeatures();
 //      if(getPlotFeature(plotRecursive)==enabled) {
 //        if (getPlotFeature(globalPosition)==enabled) {
 //          plotColumns.push_back("Position");
 //          plotColumns.push_back("Velocity");
 //        }
-//        Signal::init(stage);
 //      }
 //    }
     else if (stage==unknownStage) {
@@ -167,11 +162,8 @@ namespace MBSimControl {
       if (fabs(FFricNeg) > (1./epsroot()-1))
         FFricNeg=FFricPos;
       assert(!(FFricNeg<0));
-
-      Signal::init(stage);
     }
-    else
-      Signal::init(stage);
+    Signal::init(stage);
   }
 
   void MasslessSpringDamper::plot() {

@@ -37,19 +37,14 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      Contour::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
         openMBVRigidBody->setName(name);
         parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
       }
-      Contour::init(stage);
     }
-    else
-      Contour::init(stage);
+    Contour::init(stage);
   }
   
   ContourFrame* RigidContour::createContourFrame(const string &name) {

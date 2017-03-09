@@ -71,15 +71,12 @@ namespace MBSim {
 
   void SpatialContour::init(InitStage stage) {
     if (stage == preInit) {
-      RigidContour::init(stage);
       if (etaNodes.size() < 2)
         THROW_MBSIMERROR("(SpatialContour::init): Size of etaNodes must be greater than 1.");
       if (xiNodes.size() < 2)
         THROW_MBSIMERROR("(SpatialContour::init): Size of xiNodes must be greater than 1.");
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-  
       if(plotFeature[13464197197848110344ULL]==enabled && openMBVRigidBody) {
         if(not(ombvEtaNodes.size())) {
           ombvEtaNodes.resize(51);
@@ -119,10 +116,8 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setVertexPositions(vp);
         static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
       }
-      RigidContour::init(stage);
     }
-    else
-      RigidContour::init(stage);
+    RigidContour::init(stage);
 
     funcCrPC->init(stage);
   }

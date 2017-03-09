@@ -46,8 +46,6 @@ namespace MBSim {
       Observer::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
 //      if(openMBVPosition) {
 //        plotColumns.push_back("AbsolutePosition");
 //        plotColumns.push_back("TranslationalPosition");

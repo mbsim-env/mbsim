@@ -86,11 +86,8 @@ namespace MBSim {
       else if(R->getParent()==this)
         THROW_MBSIMERROR("(Body::init): frame of reference must not be part of " + name);
       addDependency(dynamic_cast<Body*>(R->getParent()));
-      Object::init(stage);
     }
     else if(stage==plotting) {
-      updatePlotFeatures();
-
       if(plotFeature[13464197197848110344ULL]==enabled) {
         openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name+"_Group");
@@ -101,10 +98,8 @@ namespace MBSim {
           openMBVGrp->addObject(openMBVBody);
         }
       }
-      Object::init(stage);
     }
-    else
-      Object::init(stage);
+    Object::init(stage);
 
     for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) 
       (*i)->init(stage);

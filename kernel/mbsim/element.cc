@@ -57,8 +57,9 @@ namespace MBSim {
   }
 
   void Element::init(InitStage stage) {
-    if(stage==plotting) {
+    if(stage==preInit)
       updatePlotFeatures();
+    else if(stage==plotting) {
 
       if(plotFeature[11334901831169464975ULL]==enabled) {
         unsigned int numEnabled=0;

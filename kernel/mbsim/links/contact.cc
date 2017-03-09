@@ -328,6 +328,7 @@ namespace MBSim {
       Link::init(stage);
     }
     else if (stage == preInit) {
+      Link::init(stage);
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
         contactKinematics[cK]->setSearchAllContactPoints(searchAllCP);
         contactKinematics[cK]->setInitialGuess(zeta0);
@@ -368,11 +369,9 @@ namespace MBSim {
           jter->init(stage);
         }
       }
-      Link::init(stage);
     }
     else if (stage == plotting) {
       Element::init(stage);
-      updatePlotFeatures();
       for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
         for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
           jter->init(stage);

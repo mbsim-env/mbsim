@@ -49,17 +49,14 @@ namespace MBSim {
 
   void SpringDamper::init(InitStage stage) {
     if(stage==plotting) {
-      updatePlotFeatures();
       if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[4069279623887175301ULL]==enabled)
           plotColumns.push_back("deflection");
       if(plotFeature[13464197197848110344ULL]==enabled and coilspringOpenMBV) {
         coilspringOpenMBV->setName(name);
         parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
-      FixedFrameLink::init(stage);
     }
-    else
-      FixedFrameLink::init(stage);
+    FixedFrameLink::init(stage);
     func->init(stage);
   }
 
