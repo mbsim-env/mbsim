@@ -245,8 +245,4 @@ namespace MBSimGUI {
       getParent()->addPlotFeature(pf);
   }
 
-  void Element::setPlotFeature(const string &t, const string &v, const string &s) {
-    static_cast<PlotFeatureStatusProperty*>(plotFeature.getProperty())->setFeature(t,v,s);
-  }
-
 }

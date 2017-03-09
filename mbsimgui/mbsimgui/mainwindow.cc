@@ -880,15 +880,14 @@ namespace MBSimGUI {
     if(task==1) {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
-      dss->setPlotFeature("plotFeatureRecursive","plotRecursive","-");
+      dss->enablePlot(false);
     }
-    else
-      dss->setPlotFeature("plotFeatureRecursive","plotRecursive","+");
 
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMElement *ele0=writeProject(doc);
     dss->setName(saveName);
     absolutePath = false;
+    if(task==1) dss->enablePlot(true);
 
     if(ele0) {
       mbsimThread->setDocument(doc);

@@ -124,7 +124,6 @@ namespace MBSimGUI {
       std::string getCounterName() const;
       void addPlotFeature(const std::string &pf);
       const std::vector<std::string>& getPlotFeatures() const { return plotFeatures; }
-      void setPlotFeature(const std::string &t, const std::string &v, const std::string &s);
   };
 
   template<class T>
