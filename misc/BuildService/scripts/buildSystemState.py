@@ -7,12 +7,13 @@ import fcntl
 import hashlib
 import base64
 
+stateDir='/var/www/html/mbsim/buildsystemstate'
+
 def update(buildType, title, content, link, nrFailed, nrRun):
-  stateDir='/var/www/html/mbsim/buildsystemstate'
 
   # update build system state
-  createStateSVGFile(stateDir+"/"+buildType+".nrFailed.svg", nrFailed, "#5cb85c" if nrFailed==0 else "#d9534f")
-  createStateSVGFile(stateDir+"/"+buildType+".nrAll.svg", nrRun, "#777")
+  createStateSVGFile(stateDir+"/"+buildType+".nrFailed.svg", str(nrFailed), "#5cb85c" if nrFailed==0 else "#d9534f")
+  createStateSVGFile(stateDir+"/"+buildType+".nrAll.svg", str(nrRun), "#777")
 
   # add to Atom feed on failure
   if nrFailed>0:
@@ -72,13 +73,13 @@ def update(buildType, title, content, link, nrFailed, nrRun):
     fcntl.lockf(fd, fcntl.LOCK_UN) # unlock lockfile
     fd.close() # close lockfile
 
-def createStateSVGFile(filename, nr, color):
+def createStateSVGFile(filename, text, color):
   fd=open(filename, "w")
   print('''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="36" height="20">
   <circle cx="10" cy="10" r="9" style="fill:%s"/>
   <circle cx="26" cy="10" r="9" style="fill:%s"/>
   <rect x="10" y="1" width="16" height="18" style="fill:%s"/>
-  <text x="18" y="15" style="font-size:14px;font-weight:bold;fill:#ffffff;font-family:Arial;text-anchor:middle">%d</text>
-</svg>'''%(color, color, color, nr), file=fd)
+  <text x="18" y="15" style="font-size:14px;font-weight:bold;fill:#ffffff;font-family:Arial;text-anchor:middle">%s</text>
+</svg>'''%(color, color, color, text), file=fd)
   fd.close()

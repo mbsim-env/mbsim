@@ -8,6 +8,7 @@
 %import mbsim.i
 %import _mbsim_part100.i
 %import _mbsim_part200.i
+%import _mbsim_part250.i
 
 // includes needed in the generated swig c++ code
 %{

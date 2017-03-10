@@ -5,6 +5,8 @@ import simplesandbox
 import json
 import fcntl
 import subprocess
+import tempfile
+import shutil
 
 SCRIPTDIR=os.path.dirname(os.path.realpath(__file__))
 CURDIR=os.getcwd()
@@ -12,11 +14,19 @@ SRCDIR="/home/mbsim/linux64-dailydebug"
 os.environ["PKG_CONFIG_PATH"]=SRCDIR+"/local/lib/pkgconfig:/home/mbsim/3rdparty/casadi3py-local-linux64/lib/pkgconfig:"+\
                               "/home/mbsim/3rdparty/coin-local-linux64/lib/pkgconfig"
 os.environ["LD_LIBRARY_PATH"]="/home/mbsim/3rdparty/casadi3py-local-linux64/lib"
+os.environ["CPPFLAGS"]="--coverage"
 os.environ["CXXFLAGS"]="-O0 -g"
 os.environ["CFLAGS"]="-O0 -g"
 os.environ["FFLAGS"]="-O0 -g"
+os.environ["LDFLAGS"]="--coverage -lgcov"
 os.environ['MBSIM_SWIG']='1'
-simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CXXFLAGS", "CFLAGS", "FFLAGS"]
+simplesandboxEnvvars=["PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "CPPFLAGS", "CXXFLAGS", "CFLAGS", "FFLAGS", "LDFLAGS", 'GCOV_PREFIX']
+
+# disable coverage (write to a dummy dir)
+os.environ["GCOV_PREFIX"]=tempfile.gettempdir()+"/linux64-dailydebug-dummy-gcov"
+if os.path.exists(os.environ["GCOV_PREFIX"]):
+  shutil.rmtree(os.environ["GCOV_PREFIX"])
+os.makedirs(os.environ["GCOV_PREFIX"])
 
 # read config files
 fd=open("/home/mbsim/BuildServiceConfig/mbsimBuildService.conf", 'r+')
@@ -35,13 +45,13 @@ fd.close()
 if len(checkedExamples)>0:
   os.chdir(SRCDIR+"/mbsim/examples")
   if simplesandbox.call(["./runexamples.py", "--action", "copyToReference"]+checkedExamples,
-                    shareddir=["."], envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
+                    shareddir=[".", os.environ["GCOV_PREFIX"]], envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
     print("runexamples.py --action copyToReference ... failed.")
   os.chdir(CURDIR)
 
 # build and run all examples
 if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30", "-j", "2", "--sourceDir", SRCDIR, "--prefix", SRCDIR+"/local",
-  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--reportOutDir",
+  "--enableCleanPrefix", "--docOutDir", "/var/www/html/mbsim/linux64-dailydebug/doc", "--coverage", "--reportOutDir",
   "/var/www/html/mbsim/linux64-dailydebug/report", "--url",
   "http://www.mbsim-env.de/mbsim/linux64-dailydebug/report", "--buildType", "linux64-dailydebug",
   "--passToConfigure", "--enable-python", "--enable-debug", "--enable-shared", "--disable-static", "--with-qwt-inc-prefix=/usr/include/qwt", "--with-qmake=qmake-qt4",
@@ -52,7 +62,7 @@ if subprocess.call([SCRIPTDIR+"/build.py", "--buildSystemRun", "--rotate", "30",
 # update references for download
 os.chdir(SRCDIR+"/mbsim/examples")
 if simplesandbox.call(["./runexamples.py", "--action", "pushReference=/var/www/html/mbsim/linux64-dailydebug/references"],
-                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references"],
+                   shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/references", os.environ["GCOV_PREFIX"]],
                    envvar=simplesandboxEnvvars, buildSystemRun=True)!=0:
   print("pushing references to download dir failed.")
 os.chdir(CURDIR)
@@ -71,7 +81,7 @@ if simplesandbox.call(["./runexamples.py", "--rotate", "30", "-j", "2", "--repor
                     SRCDIR+"/mbsim_valgrind/misc/valgrind-mbsim.supp --leak-check=full", "--disableCompare", "--disableValidate",
                     "--buildType", "linux64-dailydebug-valgrind"],
                    shareddir=[".", "/var/www/html/mbsim/linux64-dailydebug/report/runexamples_valgrind_report",
-                              "/var/www/html/mbsim/buildsystemstate"],
+                              "/var/www/html/mbsim/buildsystemstate", os.environ["GCOV_PREFIX"]],
                    envvar=simplesandboxEnvvars+["MBSIM_SET_MINIMAL_TEND"], buildSystemRun=True)!=0:
   print("runing examples with valgrind failed.")
 os.chdir(CURDIR)

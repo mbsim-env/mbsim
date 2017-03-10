@@ -27,7 +27,7 @@ else
   CXXFLAGS="$CXXFLAGS -g -O2 -DNDEBUG"
 fi
 
-CPPFLAGS="$CFLAGS -Wall -Werror -Wno-sign-compare"
+CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
