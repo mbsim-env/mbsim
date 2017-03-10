@@ -162,5 +162,10 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
 
     contact->connect(groundBase->getContour("Ground"),spheres[k]);
   }
-}
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+}

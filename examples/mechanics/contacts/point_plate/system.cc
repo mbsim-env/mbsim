@@ -85,11 +85,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // contacts
   for(int k=0; k<nB; k++) {
-    stringstream pointname; // point contour at lower position
+    stringstream pointname, framename; // point contour at lower position
     pointname << "Point_" << k;
+    framename << "P_" << k;
     Vec BR(3,INIT,0.); BR(2)=-r;
-    balls[k]->addFrame(new FixedRelativeFrame(pointname.str(),BR,SqrMat(3,EYE),balls[k]->getFrame("C")));
-    points.push_back(new Point(pointname.str(),balls[k]->getFrame(pointname.str())));
+    balls[k]->addFrame(new FixedRelativeFrame(framename.str(),BR,SqrMat(3,EYE),balls[k]->getFrame("C")));
+    points.push_back(new Point(pointname.str(),balls[k]->getFrame(framename.str())));
     balls[k]->addContour(points[k]);
 
     stringstream contactname; // fricional contact
@@ -173,5 +174,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //    this->addLink(contact[k]);
   //  }
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 } 
-

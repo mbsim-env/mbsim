@@ -139,8 +139,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(2,2) = 1;
   A(0,1) = 1;
   A(1,0) = 1;
-  addFrame(new FixedRelativeFrame("Plane",Vec(3),A));
-  addContour(new Plane("Plane",getFrame("Plane")));
+  addFrame(new FixedRelativeFrame("P",Vec(3),A));
+  addContour(new Plane("Plane",getFrame("P")));
 
   // Contour of Frustum
   Vec radii(2);
@@ -321,5 +321,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  dummy5->setInitialTranslation(0,10*d,0);
 //  cup2->setOpenMBVRigidBody(dummy5);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

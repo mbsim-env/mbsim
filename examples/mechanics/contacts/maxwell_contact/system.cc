@@ -104,8 +104,8 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   Vec planeTrans(3, INIT, 0.);
   planeTrans(1) = height/2;
 
-  Beam->addFrame(new FixedRelativeFrame("Line", planeTrans, BasicRotAIKz(planeRot)));
-  BeamContour->setFrameOfReference(Beam->getFrame("Line"));
+  Beam->addFrame(new FixedRelativeFrame("P", planeTrans, BasicRotAIKz(planeRot)));
+  BeamContour->setFrameOfReference(Beam->getFrame("P"));
   Beam->addContour(BeamContour);
 
   std::shared_ptr<OpenMBV::Cuboid> openMBVBeam=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
@@ -120,8 +120,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   for (int ballIter = 0; ballIter < lastBall-firstBall+1; ballIter++) {
 
     //generate the name of each ball
-    stringstream ballname;
+    stringstream ballname, framename;
     ballname << "Ball" << ballIter+firstBall;
+    framename << "P" << ballIter+firstBall;
     balls.push_back(new RigidBody(ballname.str()));
 
     //translation of the ball in longitudinal beam direction
@@ -132,7 +133,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
     SqrMat BallRot(3, EYE);
 
-    FixedRelativeFrame * R = new FixedRelativeFrame(ballname.str());
+    FixedRelativeFrame * R = new FixedRelativeFrame(framename.str());
     R->setFrameOfReference(ReferenceFrame);
     R->setRelativePosition(BallInitialTranslation);
     R->setRelativeOrientation(BallRot);
@@ -155,8 +156,8 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     Vec pointTrans = Vec(3, INIT, 0.);
     pointTrans(1) = - radius;
 
-    balls[ballIter]->addFrame(new FixedRelativeFrame(ballname.str(), pointTrans, CircContourRot));
-    ballsContours[ballIter]->setFrameOfReference(balls[ballIter]->getFrame(ballname.str()));
+    balls[ballIter]->addFrame(new FixedRelativeFrame(framename.str(), pointTrans, CircContourRot));
+    ballsContours[ballIter]->setFrameOfReference(balls[ballIter]->getFrame(framename.str()));
     balls[ballIter]->addContour(ballsContours[ballIter]);
 
     /*Visualization of the balls*/
@@ -252,5 +253,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
   //fancy stuff
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
-

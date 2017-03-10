@@ -114,9 +114,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK = SqrMat(3,EYE);
   AWK(0,0) = cos(M_PI*0.5); AWK(0,2) = sin(M_PI*0.5);
   AWK(2,0) = -sin(M_PI*0.5); AWK(2,2) = cos(M_PI*0.5);
-  muller->addFrame(new FixedRelativeFrame("Disk",Vec(3,INIT,0.),AWK,muller->getFrame("C")));
+  muller->addFrame(new FixedRelativeFrame("P",Vec(3,INIT,0.),AWK,muller->getFrame("C")));
   Circle* disk = new Circle("Disk");
-  disk->setFrameOfReference(muller->getFrame("Disk"));
+  disk->setFrameOfReference(muller->getFrame("P"));
 //  disk->setOutCont(true);
   disk->setRadius(r_muller);
   disk->enableOpenMBV();
@@ -214,6 +214,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   obj2->setInitialTranslation(l_pole*0.5,0.,0.);
   pole->setOpenMBVRigidBody(obj2);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 } 
 
 void System::init(InitStage stage) {

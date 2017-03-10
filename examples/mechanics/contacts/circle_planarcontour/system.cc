@@ -50,10 +50,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   this->addObject(cam);
 
   //cam->addFrame(new FixedRelativeFrame("Contour", "[.003; .01; 0]", Cardan2AIK(-M_PI/2., 0, -M_PI/2. )));
-  cam->addFrame(new FixedRelativeFrame("Contour", "[.003; .01; 0]", SqrMat3(EYE)));
+  cam->addFrame(new FixedRelativeFrame("P", "[.003; .01; 0]", SqrMat3(EYE)));
   PlanarContour * camContour = new PlanarContour("Contour");
   camContour->setContourFunction(funcCamContour);
-  camContour->setFrameOfReference(cam->getFrame("Contour"));
+  camContour->setFrameOfReference(cam->getFrame("P"));
   camContour->setNodes(searchpoints);
   cam->addContour(camContour);
   camContour->enableOpenMBV();
@@ -94,4 +94,9 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   observer->setContact(contactCamRoll);
   observer->enableOpenMBVContactPoints(.005);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }

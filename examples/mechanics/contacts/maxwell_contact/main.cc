@@ -74,8 +74,6 @@ int main(int argc, char *argv[]) {
 
       double elapsedIntegrationTime = timer.elapsed();
 
-      sys->closePlot();
-
       delete sys;
       delete integrator;
 

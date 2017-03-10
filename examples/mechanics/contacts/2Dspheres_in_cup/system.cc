@@ -134,8 +134,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(0,1) = -sin(M_PI/2);
   A(1,1) = cos(M_PI/2);
 
-  addFrame(new FixedRelativeFrame("Line",Vec(3),A));
-  addContour(new Line("Line",getFrame("Line")));
+  addFrame(new FixedRelativeFrame("P",Vec(3),A));
+  addContour(new Line("Line",getFrame("P")));
 
   // Contour of Frustum
   Vec radii(2);
@@ -328,5 +328,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy3->setDiffuseColor(0.6666,1,0.6666);
   body4->setOpenMBVRigidBody(dummy4);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

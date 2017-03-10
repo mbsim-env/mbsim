@@ -61,26 +61,26 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec rSP(3);
   rSP(0) = -lStab/2.;
   rSP(1) = -hStab/2.;
-  stab->addFrame(new FixedRelativeFrame("PunktUntenLinks",rSP,SqrMat(3,EYE)));
-  stab->addContour(new Point("PunktUntenLinks",stab->getFrame("PunktUntenLinks")));
+  stab->addFrame(new FixedRelativeFrame("PUL",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktUntenLinks",stab->getFrame("PUL")));
   
   rSP(0) = -lStab/2.;
   rSP(1) =  hStab/2.;
-  stab->addFrame(new FixedRelativeFrame("PunktUntenRechts",rSP,SqrMat(3,EYE)));
-  stab->addContour(new Point("PunktUntenRechts",stab->getFrame("PunktUntenRechts")));
+  stab->addFrame(new FixedRelativeFrame("PUR",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktUntenRechts",stab->getFrame("PUR")));
   
   rSP(0) =  lStab/2.;
   rSP(1) = -hStab/2.;
-  stab->addFrame(new FixedRelativeFrame("PunktObenLinks",rSP,SqrMat(3,EYE)));
-  stab->addContour(new Point("PunktObenLinks",stab->getFrame("PunktObenLinks")));
+  stab->addFrame(new FixedRelativeFrame("POL",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktObenLinks",stab->getFrame("POL")));
   
   rSP(0) = lStab/2.;
   rSP(1) = hStab/2.;
-  stab->addFrame(new FixedRelativeFrame("PunktObenRechts",rSP,SqrMat(3,EYE)));
-  stab->addContour(new Point("PunktObenRechts",stab->getFrame("PunktObenRechts")));
+  stab->addFrame(new FixedRelativeFrame("POR",rSP,SqrMat(3,EYE)));
+  stab->addContour(new Point("PunktObenRechts",stab->getFrame("POR")));
 
-  addFrame(new FixedRelativeFrame("Grund",Vec(3,INIT,0),SqrMat("[0,1,0;1,0,0;0,0,1]")));
-  addContour(new Plane("Grund",getFrame("Grund")));
+  addFrame(new FixedRelativeFrame("P",Vec(3,INIT,0),SqrMat("[0,1,0;1,0,0;0,0,1]")));
+  addContour(new Plane("Grund",getFrame("P")));
 
   // Contacts
   Contact *cnf = new Contact("KontaktUntenLinks");
@@ -114,5 +114,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cnf->setTangentialForceLaw(new PlanarCoulombFriction(1.5));
   cnf->setTangentialImpactLaw(new PlanarCoulombImpact(1.5));
   addLink(cnf);
-}
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+}

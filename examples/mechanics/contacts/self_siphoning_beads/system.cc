@@ -45,7 +45,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     /*Upper Area*/
     Vec3 rArea;
     rArea(0) = 0;
-    FixedRelativeFrame * refBoden = new FixedRelativeFrame("Oben", rArea, BasicRotAIKz(M_PI_2));
+    FixedRelativeFrame * refBoden = new FixedRelativeFrame("P", rArea, BasicRotAIKz(M_PI_2));
     addFrame(refBoden);
     Plate * upperTable = new Plate("Oben");
     upperTable->setYLength(3e-2);
@@ -208,6 +208,12 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
       balls[ele]->setGeneralizedInitialPosition(abc);
     }
   }
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 
 void SelfSiphoningBeats::addEmptyLeader() {
@@ -268,4 +274,3 @@ void SelfSiphoningBeats::addTrajectory(double tEnd) {
   }
 
 }
-

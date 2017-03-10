@@ -28,8 +28,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
   wall->enableOpenMBV(1, 0.5);
-  addFrame(new FixedRelativeFrame("WandUnten",Vec(3),AWK));
-  wall->setFrameOfReference(getFrame("WandUnten"));
+  addFrame(new FixedRelativeFrame("P",Vec(3),AWK));
+  wall->setFrameOfReference(getFrame("P"));
   addContour(wall);
 
   addContour(new Plane("WandTest"));
@@ -82,5 +82,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   std::shared_ptr<OpenMBV::Cube> obj = OpenMBV::ObjectFactory::create<OpenMBV::Cube>();
   body->setOpenMBVRigidBody(obj);
   obj->setLength(l);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 

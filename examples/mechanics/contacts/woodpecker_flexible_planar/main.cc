@@ -13,7 +13,6 @@ int main (int argc, char* argv[]) {
   sys.setLaTol(1e-5);
   sys.setgdTol(1e-5);
 
-
 //  TimeSteppingSSCIntegrator integrator;
   TimeSteppingIntegrator integrator;
   integrator.setEndTime(0.2);
@@ -21,8 +20,6 @@ int main (int argc, char* argv[]) {
   integrator.setPlotStepSize(5.e-3);
   
   integrator.integrate(sys);
-
-  sys.closePlot();
 
   return 0;
 }

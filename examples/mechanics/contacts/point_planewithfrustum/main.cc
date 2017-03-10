@@ -9,9 +9,6 @@ int main (int argc, char* argv[]) {
   bool setValued=false;
 
   System *sys = new System("MBS", setValued);
-  sys->setPlotFeature(Element::plotRecursive, Element::enabled);
-  sys->setPlotFeature(Element::state, Element::enabled);
-  sys->setPlotFeature(Element::globalPosition, Element::enabled);
   sys->setStopIfNoConvergence(true, true);
   sys->initialize();
 
@@ -26,7 +23,6 @@ int main (int argc, char* argv[]) {
   integrator->setPlotStepSize(1e-3);
   integrator->integrate(*sys);
 
-  sys->closePlot();
   delete sys;
   delete integrator;
 

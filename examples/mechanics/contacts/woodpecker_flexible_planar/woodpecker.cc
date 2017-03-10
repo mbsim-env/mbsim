@@ -194,8 +194,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInertiaTensor(Theta);
 
   Point* schnabel = new Point("Schabel");
-  specht->addFrame(new FixedRelativeFrame("Schabel",SrSchabelspitze,SqrMat(3,EYE)));
-  schnabel->setFrameOfReference(specht->getFrame("Schabel"));
+  specht->addFrame(new FixedRelativeFrame("P",SrSchabelspitze,SqrMat(3,EYE)));
+  schnabel->setFrameOfReference(specht->getFrame("P"));
   specht->addContour(schnabel);
 
   GeneralizedSpringDamper *feder = new GeneralizedSpringDamper("Drehfeder");
@@ -245,5 +245,10 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   spechtMBV->setInitialRotation(M_PI/2., 0, 0);
   spechtMBV->setScaleFactor(0.05);
   specht->setOpenMBVRigidBody(spechtMBV); 
-}
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+}

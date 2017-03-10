@@ -71,7 +71,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
     body->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
-    body->setPlotFeature(energy, enabled);
+    body->setPlotFeature("energy", enabled);
 
     // Hollow cylinder
     RigidBody* body2 = new RigidBody("CylinderHollow");
@@ -86,7 +86,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body2->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
     body2->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
-    body2->setPlotFeature(energy, enabled);
+    body2->setPlotFeature("energy", enabled);
 
     // Sphere
     RigidBody* body3 = new RigidBody("Sphere");
@@ -101,7 +101,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body3->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
     body3->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
-    body3->setPlotFeature(energy, enabled);
+    body3->setPlotFeature("energy", enabled);
 
 
   // Stopper
@@ -313,5 +313,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   spring->enableOpenMBV(_springRadius=d/5.,_crossSectionRadius=d/50.,_numberOfCoils=5);
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+  setPlotFeatureRecursive("deflection",enabled);
 }
-

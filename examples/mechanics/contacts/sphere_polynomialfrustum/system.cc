@@ -95,8 +95,6 @@ System::System(const string &projectName) :
     Contact* contact = new Contact("Frustum_" + name.str());
     contact->connect(polyfrustumcontour, sphere);
 
-    contact->setPlotFeature(openMBV, enabled);
-
     //Set contact law
     contact->setNormalForceLaw(new UnilateralConstraint);
     contact->setNormalImpactLaw(new UnilateralNewtonImpact(0));
@@ -113,5 +111,9 @@ System::System(const string &projectName) :
     observer->enableOpenMBVTangentialForce();
   }
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
-

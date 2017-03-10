@@ -102,8 +102,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(1,1) = cos(phi);
   A(1,0) = sin(phi);
   A(2,2) = 1;
-  addFrame(new FixedRelativeFrame("Line",Vec(3),A));
-  addContour(new Line("Line",getFrame("Line")));
+  addFrame(new FixedRelativeFrame("P",Vec(3),A));
+  addContour(new Line("Line",getFrame("P")));
 
   // Contact between CylinderHollow and ObstacleCylinder
   Contact *rc2 = new Contact("Contact2");
@@ -160,5 +160,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->getFrame("C")->enableOpenMBV(1.5*d);
   body3->setOpenMBVRigidBody(OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>());
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
-

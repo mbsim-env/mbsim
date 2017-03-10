@@ -43,8 +43,6 @@ int main(int argc, char *argv[]) {
 
     double elapsedIntegrationTime = timer.elapsed();
 
-    sys->closePlot();
-
     cout << "******** Results of speed are:****************" << endl;
     cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;
     cout << "**********************************************" << endl;
@@ -78,8 +76,6 @@ int main(int argc, char *argv[]) {
 
     double elapsedIntegrationTime = timer.elapsed();
 
-    sys->closePlot();
-
     cout << "******** Results of speed are:****************" << endl;
     cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;
     cout << "**********************************************" << endl;
@@ -111,8 +107,6 @@ int main(int argc, char *argv[]) {
     integrator->integrate(*sys);
 
     double elapsedIntegrationTime = timer.elapsed();
-
-    sys->closePlot();
 
     cout << "******** Results of speed are:****************" << endl;
     cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;

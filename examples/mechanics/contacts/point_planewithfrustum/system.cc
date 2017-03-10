@@ -74,8 +74,6 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   m->getFrame("C")->enableOpenMBV(2.*rBar, .9);
 
   RigidBody * b = new RigidBody("Bar");
-  b->setPlotFeature(plotRecursive, enabled);
-  b->setPlotFeature(globalPosition, enabled);
   addObject(b);
   b->setFrameOfReference(getFrame("I"));
   b->setFrameForKinematics(b->getFrame("C"));
@@ -135,5 +133,9 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     observer->enableOpenMBVContactPoints(.1*rBar);
   }
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
-

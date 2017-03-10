@@ -116,8 +116,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(0,0) = cos(M_PI*0.5); AWK(0,1) = 0.; AWK(0,2) = sin(M_PI*0.5);
   AWK(1,0) = 0., AWK(1,1) = 1.;
   AWK(2,0) = -sin(M_PI*0.5), AWK(2,2) = cos(M_PI*0.5);
-  muller->addFrame(new FixedRelativeFrame("Disk",Vec(3,INIT,0.),AWK));
-  disk->setFrameOfReference(muller->getFrame("Disk"));
+  muller->addFrame(new FixedRelativeFrame("P",Vec(3,INIT,0.),AWK));
+  disk->setFrameOfReference(muller->getFrame("P"));
   disk->setRadius(r_muller);
   muller->addContour(disk);
 
@@ -299,6 +299,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
   groundBase->setOpenMBVRigidBody(frustumMBV);
+
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
 }
 
 void System::initialize() {
@@ -310,4 +316,3 @@ void System::initialize() {
     dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setLocalSearch(true);
   }
 }
-

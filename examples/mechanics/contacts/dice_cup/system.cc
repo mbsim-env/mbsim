@@ -48,8 +48,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vector<Point*> contour;
 
   for(int i=0;i<8;i++) {
-    stringstream nameContour; // (BS -> STRINGSTREAM 21.5.3)
+    stringstream nameContour, nameFrame; // (BS -> STRINGSTREAM 21.5.3)
     nameContour <<"point_"<< i+1;
+    nameFrame <<"P_"<< i+1;
     contour.push_back(new Point(nameContour.str()));
     Vec p(3,INIT,0.);
 
@@ -57,51 +58,51 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       p(0) = -length/2.;
       p(1) = -length/2.;
       p(2) = -length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
     else if(i==1) {
       p(0) = -length/2.;
       p(1) = -length/2.;
       p(2) = length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
     else if(i==2) {
       p(0) = -length/2.;
       p(1) = length/2.;
       p(2) = -length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
     else if(i==3) {
       p(0) = -length/2.;
       p(1) = length/2.;
       p(2) = length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
     else if(i==4) {
       p(0) = length/2.;
       p(1) = -length/2.;
       p(2) = -length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
     else if(i==5) {
       p(0) = length/2.;
       p(1) = -length/2.;
       p(2) = length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
     else if(i==6) {
       p(0) = length/2.;
       p(1) = length/2.;
       p(2) = -length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
     else {
       p(0) = length/2.;
       p(1) = length/2.;
       p(2) = length/2.;
-      dice->addFrame(new FixedRelativeFrame(nameContour.str(),p,SqrMat(3,EYE)));
+      dice->addFrame(new FixedRelativeFrame(nameFrame.str(),p,SqrMat(3,EYE)));
     }
-    contour[i]->setFrameOfReference(dice->getFrame(nameContour.str()));
+    contour[i]->setFrameOfReference(dice->getFrame(nameFrame.str()));
     dice->addContour(contour[i]);
   }
 
@@ -236,5 +237,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   } 	
 
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(Vec("[0;-10;0]"));
-}
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+}
