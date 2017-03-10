@@ -19,6 +19,11 @@
       <scalarParameter name="xG" unit="-">1/(1+mu^2)*(a-mu*h)</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+      <plotFeatureRecursive feature="+generalizedForce"/>
+      <plotFeatureRecursive feature="+generalizedPosition"/>
+      <plotFeatureRecursive feature="+generalizedVelocity"/>
       <frames>
         <FixedRelativeFrame name="P1">
           <enableOpenMBV>

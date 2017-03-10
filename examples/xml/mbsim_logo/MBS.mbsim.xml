@@ -1,4 +1,9 @@
 <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim">
+  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+  <plotFeatureRecursive feature="+generalizedForce"/>
+  <plotFeatureRecursive feature="+generalizedPosition"/>
+  <plotFeatureRecursive feature="+generalizedVelocity"/>
   <frames>
   </frames>
   <contours>

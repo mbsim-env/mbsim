@@ -104,7 +104,7 @@
           <relativePosition>[0; pistonHeight/2; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
-        <FixedRelativeFrame name="Contour">
+        <FixedRelativeFrame name="P">
           <frameOfReference ref="../Frame[TopF]"/>
           <relativePosition>[0; -pistonContourRadius; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
@@ -112,7 +112,7 @@
       </frames>
       <contours>
         <Circle name="Contour">
-          <frameOfReference ref="../Frame[Contour]"/>
+          <frameOfReference ref="../Frame[P]"/>
           <radius>pistonContourRadius</radius>
           <enableOpenMBV/>
         </Circle>

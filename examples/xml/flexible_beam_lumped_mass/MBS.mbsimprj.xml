@@ -7,6 +7,11 @@
       <scalarParameter name="updateIntegrals">1</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+      <plotFeatureRecursive feature="+generalizedForce"/>
+      <plotFeatureRecursive feature="+generalizedPosition"/>
+      <plotFeatureRecursive feature="+generalizedVelocity"/>
       <frames/>
       <contours/>
       <groups/>

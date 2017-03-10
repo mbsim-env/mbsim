@@ -15,6 +15,11 @@
       <scalarParameter name="h2">0.008</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+      <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+      <plotFeatureRecursive feature="+generalizedForce"/>
+      <plotFeatureRecursive feature="+generalizedPosition"/>
+      <plotFeatureRecursive feature="+generalizedVelocity"/>
       <frames/>
       <contours/>
       <groups/>
@@ -185,6 +190,7 @@
             <frames>
               <NodeFrame name="Q">
                 <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+position"/>
+                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+orientation"/>
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
                   <?OPENMBV_ID 15?>
                   <size unit="cm">1</size>

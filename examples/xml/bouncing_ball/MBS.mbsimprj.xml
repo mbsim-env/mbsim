@@ -2,6 +2,11 @@
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+    <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+    <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+    <plotFeatureRecursive feature="+generalizedForce"/>
+    <plotFeatureRecursive feature="+generalizedPosition"/>
+    <plotFeatureRecursive feature="+generalizedVelocity"/>
     <frames>
       <FixedRelativeFrame name="P1">
         <enableOpenMBV>

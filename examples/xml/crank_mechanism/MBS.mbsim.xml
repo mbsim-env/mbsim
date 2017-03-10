@@ -1,4 +1,10 @@
 <DynamicSystemSolver name="CrankMechanism" xmlns="http://www.mbsim-env.de/MBSim">
+  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+  <plotFeatureRecursive feature="+generalizedForce"/>
+  <plotFeatureRecursive feature="+generalizedPosition"/>
+  <plotFeatureRecursive feature="+generalizedVelocity"/>
+  <plotFeatureRecursive feature="+signal"/>
   <frames>
     <FixedRelativeFrame name="I2">
       <enableOpenMBV> <!-- optional -->

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+  <plotFeatureRecursive feature="+generalizedForce"/>
+  <plotFeatureRecursive feature="+generalizedPosition"/>
+  <plotFeatureRecursive feature="+generalizedVelocity"/>
+  <plotFeatureRecursive feature="+deflection"/>
+  <plotFeatureRecursive feature="+signal"/>
   <frames>
     <FixedRelativeFrame name="AnregungC">
       <relativePosition>[0;pistonRadius; 0 ]</relativePosition>

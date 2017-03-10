@@ -1,4 +1,10 @@
 <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim">
+  <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+  <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+  <plotFeatureRecursive feature="+generalizedForce"/>
+  <plotFeatureRecursive feature="+generalizedPosition"/>
+  <plotFeatureRecursive feature="+generalizedVelocity"/>
+  <plotFeatureRecursive feature="+signal"/>
   <frames>
     <Embed count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <FixedRelativeFrame name="I{i}" xmlns="http://www.mbsim-env.de/MBSim">
