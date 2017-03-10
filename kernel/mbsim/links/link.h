@@ -402,6 +402,8 @@ namespace MBSim {
       const fmatvec::VecV& evalGeneralizedRelativeVelocity() { if(updvrel) updateGeneralizedVelocities(); return vrel; }
       const fmatvec::VecV& evalGeneralizedForce() { if(updla) updateGeneralizedForces(); return lambda; }
 
+      fmatvec::VecV& getGeneralizedRelativePosition(bool check=true) {  assert((not check) or (not updrrel)); return rrel; }
+      fmatvec::VecV& getGeneralizedRelativeVelocity(bool check=true) {  assert((not check) or (not updvrel)); return vrel; }
       fmatvec::VecV& getGeneralizedForce(bool check=true) {  assert((not check) or (not updla)); return lambda; }
 
       /**
