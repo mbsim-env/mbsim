@@ -28,6 +28,7 @@ namespace MBSim {
   class GeneralizedImpactLaw;
 
   class GeneralizedGear : public RigidBodyLink {
+    friend class GeneralizedGearConstraint;
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;

@@ -28,6 +28,7 @@ namespace MBSim {
   class GeneralizedImpactLaw;
 
   class GeneralizedConnection : public DualRigidBodyLink {
+    friend class GeneralizedConnectionConstraint;
     protected:
       GeneralizedForceLaw *fl;
       GeneralizedImpactLaw *il;

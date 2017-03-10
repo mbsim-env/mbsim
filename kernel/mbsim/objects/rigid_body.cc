@@ -304,6 +304,8 @@ namespace MBSim {
     joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,&Z);
     joint->setBody(this);
+    joint->plotFeature[5125144808927415120ULL] = disabled;
+    joint->plotFeature[7543055333706056486ULL] = disabled;
   }
 
   void RigidBody::plot() {

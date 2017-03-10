@@ -27,6 +27,7 @@
 namespace MBSim {
 
   class GeneralizedVelocityExcitation : public GeneralizedKinematicExcitation {
+    friend class GeneralizedVelocityConstraint;
     protected:
       Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
     public:

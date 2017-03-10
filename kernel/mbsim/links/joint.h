@@ -145,6 +145,8 @@ namespace MBSim {
   };
 
   class InverseKineticsJoint : public Joint {
+    friend class RigidBody;
+    friend class JointConstraint;
     public:
       InverseKineticsJoint(const std::string &name);
       virtual void updateb();
