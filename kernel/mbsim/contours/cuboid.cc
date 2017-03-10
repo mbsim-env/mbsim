@@ -322,17 +322,12 @@ namespace MBSim {
       edge->setThickness(min(lx, lz)*thicknessFactor);
       edge->setFrameOfReference(frame);
       addContour(edge);
-
     }
     else if (stage == plotting) {
       if(openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);
     }
     CompoundContour::init(stage);
-  }
-
-  void Cuboid::plot() {
-    RigidContour::plot();
   }
 
   void Cuboid::initializeUsingXML(DOMElement *element) {

@@ -28,9 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  CompoundContour::CompoundContour(const string &name, Frame *R) :
-      RigidContour(name,R)
-  {
+  CompoundContour::CompoundContour(const string &name, Frame *R) : RigidContour(name,R) {
   }
 
   CompoundContour::~CompoundContour() {
@@ -46,9 +44,8 @@ namespace MBSim {
   }
 
   void CompoundContour::plot() {
-    for (size_t i = 0; i < element.size(); i++) {
+    for (size_t i = 0; i < element.size(); i++)
       element[i]->plot();
-    }
   }
 
   void CompoundContour::addFrame(FixedRelativeFrame* f) {
@@ -71,7 +68,7 @@ namespace MBSim {
           openMBVGroup->setSeparateFile(true);
       }
     }
-    Contour::init(stage);
+    RigidContour::init(stage);
 
     for (unsigned int i = 0; i < element.size(); i++)
       element[i]->init(stage);
