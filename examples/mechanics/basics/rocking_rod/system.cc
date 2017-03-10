@@ -111,4 +111,3 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
   setPlotFeatureRecursive("generalizedForce",enabled);
 }
-
