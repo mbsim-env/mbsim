@@ -15,16 +15,17 @@
 namespace MBSim {
   class AbsoluteKinematicsObserver;
   class Body;
-  class CartesianCoordinatesObserver;
   class Circle;
   class CompoundContour;
   class ContourInterpolation;
+  class Link;
+  class MechanicalLink;
   class ContourLink;
   class ContourQuad;
+  class KinematicCoordinatesObserver;
   class CoordinatesObserver;
   class CriteriaFunction;
   class Cuboid;
-  class CylinderCoordinatesObserver;
   class DampingFunction;
   class DirectionalSpringDamper;
   template<typename Sig> class DistanceFunction;
@@ -33,10 +34,13 @@ namespace MBSim {
   class Environment;
   class FixedContourFrame;
   class FloatingContourFrame;
+  class FixedFrameLink;
   class FloatingFrameLink;
   class FloatingRelativeContourFrame;
   class FloatingRelativeFrame;
   class FrameLink;
+  class Constraint;
+  class MechanicalConstraint;
   class GeneralizedAccelerationConstraint;
   class GeneralizedAccelerationExcitation;
   class GeneralizedConstraint;
@@ -60,7 +64,6 @@ namespace MBSim {
   class LocalResidualCriteriaFunction;
   class LocalShiftCriteriaFunction;
   class MBSimEnvironment;
-  class NaturalCoordinatesObserver;
   class NewtonJacobianFunction;
   class NumericalNewtonJacobianFunction;
   class RelativeKinematicsObserver;

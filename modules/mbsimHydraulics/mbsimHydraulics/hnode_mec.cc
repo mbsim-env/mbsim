@@ -99,6 +99,8 @@ namespace MBSimHydraulics {
       saved_rotatorial_frameOfRotationCenter.clear();
       saved_rotatorial_noVolumeChange.clear();
     }
+    else if(stage==preInit)
+      x0.resize(1);
     else if (stage==plotting) {
       nTrans=connectedTransFrames.size();
       nRot=connectedRotFrames.size();
@@ -151,7 +153,7 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==unknownStage)
-      x0.resize()=Vec(1, INIT, V0);
+      x0(0) = V0;
     HNode::init(stage);
   }
 
@@ -421,10 +423,8 @@ namespace MBSimHydraulics {
   void ConstrainedNodeMec::init(InitStage stage) {
     if(stage==preInit)
       addDependency(pFun->getDependency());
-    else if (stage==unknownStage) {
+    else if (stage==unknownStage)
       la.init((*pFun)(0));
-      x0=Vec(1, INIT, V0);
-    }
     HNodeMec::init(stage);
     pFun->init(stage);
   }
@@ -470,10 +470,8 @@ namespace MBSimHydraulics {
         p0=pinf;
       }
       la(0)=p0;
-      Vec x0Tmp(2);
-      x0Tmp(0)=V0;
-      x0Tmp(1)=p0;
-      x0.resize()=x0Tmp;
+      x0.resize(2);
+      x0(1) = p0;
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
@@ -536,7 +534,6 @@ namespace MBSimHydraulics {
 
   void RigidNodeMec::init(InitStage stage) {
     if (stage==unknownStage) {
-      x0=Vec(1, INIT, V0);
       for (unsigned int i=0; i<nLines; i++) {
         Vec u0=connectedLines[i].line->getu0();
 //        bool zero=true;
