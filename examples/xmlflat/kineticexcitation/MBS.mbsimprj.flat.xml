@@ -3,6 +3,11 @@
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
   <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
       xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+    <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+    <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+    <plotFeatureRecursive feature="+generalizedForce"/>
+    <plotFeatureRecursive feature="+generalizedPosition"/>
+    <plotFeatureRecursive feature="+generalizedVelocity"/>
     <frames>
       <FixedRelativeFrame name="W">
         <enableOpenMBV>
