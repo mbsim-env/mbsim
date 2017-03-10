@@ -30,8 +30,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,1) = cos(phi);
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
-  addFrame(new FixedRelativeFrame("Plane",Vec(3),AWK));
-  addContour(new Plane("Plane",getFrame("Plane")));
+  addFrame(new FixedRelativeFrame("P",Vec(3),AWK));
+  addContour(new Plane("Plane",getFrame("P")));
 
   RigidBody* body = new RigidBody("Body");
   addObject(body);
@@ -80,5 +80,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   std::shared_ptr<OpenMBV::InvisibleBody> obj=OpenMBV::ObjectFactory::create<OpenMBV::InvisibleBody>();
   body->setOpenMBVRigidBody(obj);
   body->getFrame("C")->enableOpenMBV(2*r*1.2,0);
-}
 
+  setPlotFeatureRecursive("generalizedPosition",enabled);
+  setPlotFeatureRecursive("generalizedVelocity",enabled);
+  setPlotFeatureRecursive("generalizedRelativePosition",enabled);
+  setPlotFeatureRecursive("generalizedRelativeVelocity",enabled);
+  setPlotFeatureRecursive("generalizedForce",enabled);
+}

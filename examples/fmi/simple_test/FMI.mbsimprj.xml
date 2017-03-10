@@ -3,6 +3,13 @@
   xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <pv:Embed>
     <DynamicSystemSolver name="System" xmlns="http://www.mbsim-env.de/MBSim">
+     <plotFeatureRecursive feature="+generalizedRelativePosition"/>
+     <plotFeatureRecursive feature="+generalizedRelativeVelocity"/>
+     <plotFeatureRecursive feature="+generalizedForce"/>
+     <plotFeatureRecursive feature="+generalizedPosition"/>
+     <plotFeatureRecursive feature="+generalizedVelocity"/>
+     <plotFeatureRecursive feature="+deflection"/>
+     <plotFeatureRecursive feature="+signal"/>
       <frames/>
       <contours/>
       <groups>
