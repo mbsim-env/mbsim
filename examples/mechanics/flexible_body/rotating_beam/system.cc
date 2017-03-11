@@ -158,7 +158,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   body->setPlotFeature("generalizedPosition",enabled);
   body->setPlotFeature("generalizedVelocity",enabled);
   body->getFrame("K")->setPlotFeature("position",enabled);
-  body->getFrame("K")->setPlotFeature("orientation",enabled);
+  body->getFrame("K")->setPlotFeature("angle",enabled);
   body->getFrame("K")->setPlotFeature("velocity",enabled);
   body->getFrame("K")->setPlotFeature("angularVelocity",enabled);
   body->getFrame("K")->setPlotFeature("acceleration",enabled);

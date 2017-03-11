@@ -35,7 +35,7 @@ namespace MBSimControl {
     if (stage==plotting) {
       if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[15826512145364485088ULL]==enabled) {
         for (int i=0; i<getSignalSize(); i++)
-          plotColumns.push_back("Signal (" + numtostr(i) + ")");
+          plotColumns.push_back("signal (" + numtostr(i) + ")");
       }
     }
     Link::init(stage);

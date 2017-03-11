@@ -39,7 +39,7 @@ namespace MBSimGUI {
     visu.setProperty(new FrameMBSOMBVProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
 
     addPlotFeature("position");
-    addPlotFeature("orientation");
+    addPlotFeature("angle");
     addPlotFeature("velocity");
     addPlotFeature("angularVelocity");
     addPlotFeature("acceleration");

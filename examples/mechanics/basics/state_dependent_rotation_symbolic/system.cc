@@ -57,7 +57,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setTranslationDependentRotation(true);
   
   body->getFrame("C")->setPlotFeature("position",enabled);
-  body->getFrame("C")->setPlotFeature("orientation",enabled);
+  body->getFrame("C")->setPlotFeature("angle",enabled);
   body->getFrame("C")->setPlotFeature("velocity",enabled);
   body->getFrame("C")->setPlotFeature("angularVelocity",enabled);
   body->getFrame("C")->setPlotFeature("acceleration",enabled);

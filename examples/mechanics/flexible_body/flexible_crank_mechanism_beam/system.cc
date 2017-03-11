@@ -156,7 +156,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body2->getFrame("Q")->setPlotFeature("position",enabled);
-  body2->getFrame("Q")->setPlotFeature("orientation",enabled);
+  body2->getFrame("Q")->setPlotFeature("angle",enabled);
   
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);

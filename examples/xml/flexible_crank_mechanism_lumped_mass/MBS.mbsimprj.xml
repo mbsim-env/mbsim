@@ -190,7 +190,7 @@
             <frames>
               <NodeFrame name="Q">
                 <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+position"/>
-                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+orientation"/>
+                <plotFeature xmlns="http://www.mbsim-env.de/MBSim" feature="+angle"/>
                 <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
                   <?OPENMBV_ID 15?>
                   <size unit="cm">1</size>

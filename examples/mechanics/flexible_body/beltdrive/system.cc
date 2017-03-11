@@ -379,7 +379,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     disk->setInertiaTensor(Theta);
 
     disk->setPlotFeatureRecursive("position",enabled);
-    disk->setPlotFeatureRecursive("orientation",enabled);
+    disk->setPlotFeatureRecursive("angle",enabled);
     disk->setPlotFeatureRecursive("velocity",enabled);
     disk->setPlotFeatureRecursive("angularVelocity",enabled);
 

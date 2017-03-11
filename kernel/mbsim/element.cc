@@ -93,7 +93,7 @@ namespace MBSim {
     plotGroup=parent->getPlotGroup()->createChildObject<H5::Group>(name)();
     plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write("Object of class: "+getType());
 
-    plotColumns.insert(plotColumns.begin(), "Time");
+    plotColumns.insert(plotColumns.begin(), "time");
   }
 
   void Element::updatePlotFeatures() {

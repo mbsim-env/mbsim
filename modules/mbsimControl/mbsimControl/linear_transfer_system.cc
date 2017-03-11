@@ -109,7 +109,7 @@ namespace MBSimControl {
     else if (stage==plotting) {
       if(plotFeature[11334901831169464975ULL]==enabled and plotFeature[13300192525503281405ULL]==enabled) {
         for (int i=0; i<B.cols(); i++)
-          plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
+          plotColumns.push_back("input signal (" + numtostr(i) + ")");
       }
     }
     Signal::init(stage);

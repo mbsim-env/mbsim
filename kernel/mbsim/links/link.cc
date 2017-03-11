@@ -129,18 +129,18 @@ namespace MBSim {
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[5125144808927415120ULL]==enabled) {
           for(int i=0; i<rrel.size(); ++i)
-            plotColumns.push_back("g("+numtostr(i)+")");
+            plotColumns.push_back("generalized relative position ("+numtostr(i)+")");
         }
         if(plotFeature[7543055333706056486ULL]==enabled) {
           for(int i=0; i<vrel.size(); ++i)
-            plotColumns.push_back("gd("+numtostr(i)+")");
+            plotColumns.push_back("generalized relative velocity ("+numtostr(i)+")");
         }
         if(plotFeature[1829434585317744831ULL]==enabled) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
           for(int i=0; i<lambda.size(); ++i)
-            plotColumns.push_back("la("+numtostr(i)+")");
+            plotColumns.push_back("generalized force ("+numtostr(i)+")");
         }
         if(plotFeature[2188794903238700147ULL]==enabled)
-          plotColumns.push_back("V");
+          plotColumns.push_back("potential energy");
       }
     }
     Element::init(stage);

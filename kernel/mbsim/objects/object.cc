@@ -189,24 +189,24 @@ namespace MBSim {
       if (plotFeature[11334901831169464975ULL] == enabled) {
         if (plotFeature[5656632352625109444ULL] == enabled) {
           for (int i = 0; i < qRel.size(); ++i)
-            plotColumns.push_back("q(" + numtostr(i) + ")");
+            plotColumns.push_back("generalized position (" + numtostr(i) + ")");
         }
         if (plotFeature[13287341799877438450ULL] == enabled) {
           for (int i = 0; i < uRel.size(); ++i)
-            plotColumns.push_back("u(" + numtostr(i) + ")");
+            plotColumns.push_back("generalized velocity (" + numtostr(i) + ")");
         }
         if (plotFeature[2887885390489345704ULL] == enabled) {
           for (int i = 0; i < qdRel.size(); ++i)
-            plotColumns.push_back("qd(" + numtostr(i) + ")");
+            plotColumns.push_back("derivative of generalized position (" + numtostr(i) + ")");
         }
         if (plotFeature[8408391595996478274ULL] == enabled) {
           for (int i = 0; i < udRel.size(); ++i)
-            plotColumns.push_back("ud(" + numtostr(i) + ")");
+            plotColumns.push_back("generalized acceleration (" + numtostr(i) + ")");
         }
         if (plotFeature[2188794903238700147ULL] == enabled) {
-          plotColumns.push_back("T");
-          plotColumns.push_back("V");
-          plotColumns.push_back("E");
+          plotColumns.push_back("kinetic energy");
+          plotColumns.push_back("potential energy");
+          plotColumns.push_back("total energy");
         }
       }
     }
