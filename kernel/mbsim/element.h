@@ -146,6 +146,8 @@ namespace MBSim {
        */
       H5::GroupBase *getPlotGroup() { return plotGroup; }
 
+      PlotFeatureStatus getPlotFeature(std::size_t pf) { return plotFeature[pf]; }
+
       /**
        * \brief Set a plot feature
        *

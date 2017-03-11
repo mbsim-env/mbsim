@@ -70,19 +70,17 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
 
   def init(self, stage):
     if stage==self.plotting:
-#      if self.plotFeature[11334901831169464975]==self.enabled:
-#        self.plotColumns.push_back("sin")
-#      if self.plotFeature[13464197197848110344]==self.enabled:
+     if self.getPlotFeature(11334901831169464975)==self.enabled:
+       self.plotColumns.push_back("sin")
+     if self.getPlotFeature(13464197197848110344)==self.enabled:
       self.coilspringOpenMBV.setName(self.name)
       self.parent.getOpenMBVGrp().addObject(self.coilspringOpenMBV)
-      super(PySpringDamperPyScriptInit, self).init(stage)
-    else:
-      super(PySpringDamperPyScriptInit, self).init(stage)
+    super(PySpringDamperPyScriptInit, self).init(stage)
 
   def plot(self):
-#    if self.getPlotFeature(self.plotRecursive)==self.enabled:
-#      self.plotVector.push_back(math.sin(10*self.getTime()))
-#      if self.getPlotFeature(self.openMBV)==self.enabled:
+     if self.getPlotFeature(11334901831169464975)==self.enabled:
+      self.plotVector.push_back(math.sin(10*self.getTime()))
+     if self.getPlotFeature(13464197197848110344)==self.enabled:
       WrOFromPoint=self.frame[0].evalPosition()
       WrOToPoint  =self.frame[1].evalPosition()
       data=[]
@@ -95,7 +93,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       data.append(WrOToPoint[2]);
       data.append(0.5)
       self.coilspringOpenMBV.append(data)
-      super(PySpringDamperPyScriptInit, self).plot()
+     super(PySpringDamperPyScriptInit, self).plot()
 
   @staticmethod
   def getSchema():
