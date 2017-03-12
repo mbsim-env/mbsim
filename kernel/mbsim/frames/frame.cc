@@ -105,28 +105,34 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[11334901831169464975ULL]==enabled) {
         if(plotFeature[12307443656510933270ULL]==enabled) {
-          for(int i=0; i<3; i++)
-            plotColumns.push_back("position ("+numtostr(i)+")");
+          plotColumns.push_back("position (x)");
+          plotColumns.push_back("position (y)");
+          plotColumns.push_back("position (z)");
         }
         if(plotFeature[5107032826456238796ULL]==enabled) {
-          for(int i=0; i<3; i++)
-            plotColumns.push_back("angle ("+numtostr(i)+")");
+          plotColumns.push_back("angle (alpha)");
+          plotColumns.push_back("angle (beta)");
+          plotColumns.push_back("angle (gamma)");
         }
         if(plotFeature[9333706489830170160ULL]==enabled) {
-          for(int i=0; i<3; i++)
-            plotColumns.push_back("velocity ("+numtostr(i)+")");
+          plotColumns.push_back("velocity (x)");
+          plotColumns.push_back("velocity (y)");
+          plotColumns.push_back("velocity (z)");
         }
         if(plotFeature[10919411498317597175ULL]==enabled) {
-          for(int i=0; i<3; i++)
-            plotColumns.push_back("angular velocity ("+numtostr(i)+")");
+          plotColumns.push_back("angular velocity (x)");
+          plotColumns.push_back("angular velocity (y)");
+          plotColumns.push_back("angular velocity (z)");
         }
         if(plotFeature[1640323793842503125ULL]==enabled) {
-          for(int i=0; i<3; i++)
-            plotColumns.push_back("acceleration ("+numtostr(i)+")");
+          plotColumns.push_back("acceleration (x)");
+          plotColumns.push_back("acceleration (y)");
+          plotColumns.push_back("acceleration (z)");
         }
         if(plotFeature[1907010450089173335ULL]==enabled) {
-          for(int i=0; i<3; i++)
-            plotColumns.push_back("angular acceleration ("+numtostr(i)+")");
+          plotColumns.push_back("angular acceleration (x)");
+          plotColumns.push_back("angular acceleration (y)");
+          plotColumns.push_back("angular acceleration (z)");
         }
       }
       if(plotFeature[13464197197848110344ULL]==enabled and openMBVFrame) {
