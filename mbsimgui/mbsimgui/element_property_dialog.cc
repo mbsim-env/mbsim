@@ -101,6 +101,16 @@ namespace MBSimGUI {
       static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->addFeature(QString::fromStdString(element->getPlotFeatures()[i]));
   }
 
+  DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(E(element->getXMLElement())->getAttribute("name")));
+    return parent;
+  }
+
+  DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent) {
+    E(element->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    return NULL;
+  }
+
   void ElementPropertyDialog::toWidget(Element *element) {
     element->name.toWidget(name);
     element->plotFeature.toWidget(plotFeature);
@@ -488,12 +498,12 @@ namespace MBSimGUI {
   }
 
   void DynamicSystemSolverPropertyDialog::toWidget(Element *element) {
-    GroupPropertyDialog::toWidget(element);
-    static_cast<DynamicSystemSolver*>(element)->environment.toWidget(environment);
-    static_cast<DynamicSystemSolver*>(element)->solverParameters.toWidget(solverParameters);
-    static_cast<DynamicSystemSolver*>(element)->inverseKinetics.toWidget(inverseKinetics);
-    static_cast<DynamicSystemSolver*>(element)->initialProjection.toWidget(initialProjection);
-    static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.toWidget(useConstraintSolverForPlot);
+    initializeUsingXML(element->getXMLElement());
+//    static_cast<DynamicSystemSolver*>(element)->environment.toWidget(environment);
+//    static_cast<DynamicSystemSolver*>(element)->solverParameters.toWidget(solverParameters);
+//    static_cast<DynamicSystemSolver*>(element)->inverseKinetics.toWidget(inverseKinetics);
+//    static_cast<DynamicSystemSolver*>(element)->initialProjection.toWidget(initialProjection);
+//    static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.toWidget(useConstraintSolverForPlot);
   }
 
   void DynamicSystemSolverPropertyDialog::fromWidget(Element *element) {
@@ -505,12 +515,14 @@ namespace MBSimGUI {
     static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.fromWidget(useConstraintSolverForPlot);
   }
 
-  DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *element) {
-    return NULL;
+  DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GroupPropertyDialog::initializeUsingXML(element->getXMLElement());
+    environment->initializeUsingXML(E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild());
+    return parent;
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent) {
-//    GroupPropertyDialog::writeXMLFile(parent);
+    GroupPropertyDialog::writeXMLFile(parent);
     environment->writeXMLFile(E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild());
     return NULL;
   }

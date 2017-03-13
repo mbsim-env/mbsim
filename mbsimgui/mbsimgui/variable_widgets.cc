@@ -301,6 +301,33 @@ namespace MBSimGUI {
     return true;
   }
 
+  DOMElement* VecWidget::initializeUsingXML(DOMElement *parent) {
+   DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != PV%"xmlVector")
+      return 0;
+    DOMElement *ei=element->getFirstElementChild();
+    std::vector<QString> value;
+    while(ei && E(ei)->getTagName()==PV%"ele") {
+      value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
+      ei=ei->getNextElementSibling();
+    }
+    setVec(value);
+    return element;
+  }
+
+  DOMElement* VecWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
+    for(int i=0; i<size(); i++) {
+      DOMElement *elei = D(doc)->createElement(PV%"ele");
+      DOMText *text = doc->createTextNode(X()%getVec()[i].toStdString());
+      elei->insertBefore(text, NULL);
+      ele->insertBefore(elei, NULL);
+    }
+    parent->insertBefore(ele, NULL);
+    return NULL;
+  }
+
   VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_, bool transpose) : minSize(minSize_), maxSize(maxSize_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -348,23 +375,6 @@ namespace MBSimGUI {
     if(A.size() && A[0].size()!=1)
       return false;
     return true;
-  }
-
-  DOMElement* VecWidget::initializeUsingXML(DOMElement *element) {
-    return NULL;
-  }
-
-  DOMElement* VecWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
-    for(int i=0; i<size(); i++) {
-      DOMElement *elei = D(doc)->createElement(PV%"ele");
-      DOMText *text = doc->createTextNode(X()%getVec()[i].toStdString());
-      elei->insertBefore(text, NULL);
-      ele->insertBefore(elei, NULL);
-    }
-    parent->insertBefore(ele, NULL);
-    return 0;
   }
 
   QWidget* BasicMatWidget::getValidatedWidget() const {
@@ -941,15 +951,15 @@ namespace MBSimGUI {
   }
 
   DOMElement* PhysicalVariableWidget::initializeUsingXML(DOMElement *parent) {
-//    DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
-//    if(e) {
-//      if(value->initializeUsingXML(e)) {
-//        if(E(e)->hasAttribute("unit"))
-//          setUnit(E(e)->getAttribute("unit"));
-//        return e;
-//      }
-//    }
-    return 0;
+    DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      if(widget->initializeUsingXML(e)) {
+        if(E(e)->hasAttribute("unit"))
+          setUnit(QString::fromStdString(E(e)->getAttribute("unit")));
+        return e;
+      }
+    }
+    return NULL;
   }
 
   DOMElement* PhysicalVariableWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
@@ -968,7 +978,7 @@ namespace MBSimGUI {
     if(getUnit()!="")
       E(newele)->setAttribute("unit", getUnit().toStdString());
     widget->writeXMLFile(newele);
-    return 0;
+    return NULL;
   }
 
   FromFileWidget::FromFileWidget() {

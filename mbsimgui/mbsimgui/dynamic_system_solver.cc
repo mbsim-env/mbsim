@@ -24,6 +24,7 @@
 #include "objectfactory.h"
 #include <string>
 #include "basic_properties.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -37,8 +38,27 @@ namespace MBSimGUI {
     DOMElement *ele0 = Group::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
 
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"environments" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
+    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%"1");
+    ele1->insertBefore(id, NULL);
+    ele0->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIM%"environments" );
     DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
+    DOMElement *ele3 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );
+    E(ele3)->setAttribute("unit", "m/s^2");
+    DOMElement *ele4 = D(doc)->createElement( PV%"xmlVector" );
+    vector<string> g(3);
+    g[0] = "0";
+    g[1] = "-9.81";
+    g[2] = "0";
+    for(int i=0; i<3; i++) {
+      DOMElement *ele5 = D(doc)->createElement( PV%"ele" );
+      DOMText *text = doc->createTextNode(X()%g[i]);
+      ele5->insertBefore(text, NULL);
+      ele4->insertBefore(ele5, NULL);
+    }
+    ele3->insertBefore( ele4, NULL );
+    ele2->insertBefore( ele3, NULL );
     ele1->insertBefore( ele2, NULL );
     ele0->insertBefore( ele1, NULL );
     return ele0;

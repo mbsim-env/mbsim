@@ -70,11 +70,21 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(MBSIMINT%getType());
     parent->insertBefore(element, NULL);
-    // TODO remove the following lines
-    startTime.writeXMLFile(element);
-    endTime.writeXMLFile(element);
-    plotStepSize.writeXMLFile(element);
-    initialState.writeXMLFile(element);
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"startTime" );
+    E(ele1)->setAttribute("unit", "s");
+    DOMText *text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"endTime" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"1");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"plotStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"1e-2");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
     return element;
   }
 
@@ -118,12 +128,26 @@ namespace MBSimGUI {
 
   DOMElement* DOPRI5Integrator::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Integrator::createXMLElement(parent);
-    absTol.writeXMLFile(ele0);
-    relTol.writeXMLFile(ele0);
-    initialStepSize.writeXMLFile(ele0);
-    maximalStepSize.writeXMLFile(ele0);
-    maxSteps.writeXMLFile(ele0);
-    return element;
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIMINT%"absoluteToleranceScalar" );
+    DOMText *text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"relativeToleranceScalar" );
+    text = doc->createTextNode(X()%"1e-6");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"initialStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIMINT%"maximalStepSize" );
+    E(ele1)->setAttribute("unit", "s");
+    text = doc->createTextNode(X()%"0");
+    ele1->insertBefore(text, NULL);
+    element->insertBefore( ele1, NULL );
+    return ele0;
   }
 
   void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {

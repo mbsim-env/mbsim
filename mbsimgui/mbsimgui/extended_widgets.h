@@ -114,6 +114,7 @@ namespace MBSimGUI {
     //QStackedWidget *stackedWidget;
     WidgetFactory *factory;
     MBXMLUtils::FQN xmlName;
+    int mode;
 
     signals:
     void widgetChanged();

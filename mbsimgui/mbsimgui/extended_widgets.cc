@@ -106,7 +106,7 @@ namespace MBSimGUI {
     //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
   }
 
-  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : widget(0), factory(factory_) {
+  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : widget(0), factory(factory_), mode(4) {
     layout = new QBoxLayout(dir);
     layout->setMargin(0);
     setLayout(layout);
@@ -131,6 +131,25 @@ namespace MBSimGUI {
   }
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
+    if(element) {
+     if(true) { // mode<=5) {
+        DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+        if(e) {
+          DOMElement* ee=e;
+          if(ee) {
+            for(int i=0; i<factory->getSize(); i++) {
+              DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
+              if(eee) {
+                defineWidget(i);
+                if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
+                  return eee;
+              }
+            }
+          }
+        }
+        return NULL;
+      }
+    }
     return NULL;
   }
 
@@ -178,20 +197,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
-    return NULL;
-//    active = false;
-//    if(element) {
-//      if(xmlName!=FQN()) {
-//        DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-//        if(e)
-//          active = property->initializeUsingXML(e);
-//        if(alwaysWriteXMLName)
-//          return e;
-//      }
-//      else
-//        active = property->initializeUsingXML(element);
-//    }
-//    return active?element:0;
+    setActive(false);
+    if(element) {
+      if(xmlName!=FQN()) {
+        DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+        if(e)
+          setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e));
+        return e;
+      }
+      else
+        setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element));
+    }
+    return isActive()?element:0;
   }
 
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
