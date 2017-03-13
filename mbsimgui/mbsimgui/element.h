@@ -78,7 +78,7 @@ namespace MBSimGUI {
       virtual void initialize() {}
       virtual void deinitialize() {}
       const std::string& getName() const;
-      void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
+      void setName(const std::string &str);
       virtual std::string getType() const { return "Element"; }
       virtual std::string getValue() const;
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }

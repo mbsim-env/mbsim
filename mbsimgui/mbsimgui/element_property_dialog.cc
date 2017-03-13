@@ -112,8 +112,9 @@ namespace MBSimGUI {
   }
 
   void ElementPropertyDialog::toWidget(Element *element) {
-    element->name.toWidget(name);
-    element->plotFeature.toWidget(plotFeature);
+  //  element->name.toWidget(name);
+  //  element->plotFeature.toWidget(plotFeature);
+    initializeUsingXML(element->getXMLElement());
   }
 
   void ElementPropertyDialog::fromWidget(Element *element) {
@@ -498,7 +499,7 @@ namespace MBSimGUI {
   }
 
   void DynamicSystemSolverPropertyDialog::toWidget(Element *element) {
-    initializeUsingXML(element->getXMLElement());
+    GroupPropertyDialog::toWidget(element);
 //    static_cast<DynamicSystemSolver*>(element)->environment.toWidget(environment);
 //    static_cast<DynamicSystemSolver*>(element)->solverParameters.toWidget(solverParameters);
 //    static_cast<DynamicSystemSolver*>(element)->inverseKinetics.toWidget(inverseKinetics);

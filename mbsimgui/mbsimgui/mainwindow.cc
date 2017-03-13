@@ -56,6 +56,8 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 namespace bfs=boost::filesystem;
 
+string saveName;
+
 namespace MBSimGUI {
 
   bool currentTask;
@@ -879,8 +881,11 @@ namespace MBSimGUI {
       return;
 
     QString sTask = QString::number(task); 
-    string saveName=dss->getName();
-    dss->setName("out"+sTask.toStdString());
+    saveName=dss->getName();
+    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+    DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
+    doc->insertBefore(newDocElement, NULL);
+    E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"))->setAttribute("name","out"+sTask.toStdString());;
     QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";
 
     currentTask = task;
@@ -891,18 +896,15 @@ namespace MBSimGUI {
       dss->enablePlot(false);
     }
 
-    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    DOMElement *ele0=writeProject(doc);
-    dss->setName(saveName);
     absolutePath = false;
     if(task==1) dss->enablePlot(true);
 
-    if(ele0) {
+//    if(ele0) {
       mbsimThread->setDocument(doc);
       mbsimThread->setProjectFile(projectFile);
       mbsimThread->setEvaluator(evalSelect.isActive()?static_cast<TextProperty*>(evalSelect.getProperty())->getText():"octave");
       mbsimThread->start();
-    }
+//    }
   }
 
   void MainWindow::preprocessFinished(int result) {

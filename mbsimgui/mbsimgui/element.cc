@@ -254,9 +254,13 @@ namespace MBSimGUI {
       getParent()->addPlotFeature(pf);
   }
 
-  const std::string& Element::getName() const {
+  const string& Element::getName() const {
 //    if(element) if(E(element)->hasAttribute("name"))  cout << E(element)->getAttribute("name") << endl;
     return static_cast<const TextProperty*>(name.getProperty())->getText();
+  }
+
+  void Element::setName(const string &str) {
+    static_cast<TextProperty*>(name.getProperty())->setText(str);
   }
 
 }
