@@ -98,9 +98,7 @@ namespace MBSimGUI {
     diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
     layout->addWidget(diffuseColor);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
-    transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,MBSIM%"transparency");
     layout->addWidget(transparency);
   }
 
@@ -241,7 +239,7 @@ namespace MBSimGUI {
     size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
 
-    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true,true,MBSIM%"offset");
+    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,MBSIM%"offset");
     offset->setToolTip("Set the offset of the frame");
     layout()->addWidget(offset);
   }
