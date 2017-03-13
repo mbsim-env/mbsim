@@ -220,13 +220,9 @@ namespace MBSimGUI {
   }
 
   DOMElement* ScalarWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMText *text = static_cast<DOMText*>(parent->getFirstChild());
-    if(not text) {
     DOMDocument *doc=parent->getOwnerDocument();
-    text = doc->createTextNode(X()%getValue().toStdString());
+    DOMText *text = doc->createTextNode(X()%getValue().toStdString());
     parent->insertBefore(text, ref);
-    } else
-      text->replaceWholeText(X()%getValue().toStdString());
     return 0;
   }
 
@@ -359,8 +355,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* VecWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *vec = static_cast<DOMElement*>(parent->getFirstChild());
-    if(not vec) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
     for(int i=0; i<size(); i++) {
@@ -370,14 +364,6 @@ namespace MBSimGUI {
       ele->insertBefore(elei, NULL);
     }
     parent->insertBefore(ele, NULL);
-    } else {
-      DOMElement *ele = vec->getFirstElementChild();
-      for(int i=0; i<size(); i++) {
-        DOMText *text = static_cast<DOMText*>(ele->getFirstChild());
-        text->replaceWholeText(X()%getVec()[i].toStdString());
-        ele = ele->getNextElementSibling();
-      }
-    }
     return 0;
   }
 
@@ -777,8 +763,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* SymMatWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *mat = static_cast<DOMElement*>(parent->getFirstChild());
-    if(not mat) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele = D(doc)->createElement(PV%"xmlMatrix");
     for(int i=0; i<rows(); i++) {
@@ -792,18 +776,6 @@ namespace MBSimGUI {
       ele->insertBefore(elei, NULL);
     }
     parent->insertBefore(ele, NULL);
-    } else {
-      DOMElement *row = mat->getFirstElementChild();
-      for(int i=0; i<rows(); i++) {
-        DOMElement *ele = row->getFirstElementChild();
-        for(int j=0; j<cols(); j++) {
-          DOMText *text = static_cast<DOMText*>(ele->getFirstChild());
-          text->replaceWholeText(X()%getMat()[i][j].toStdString());
-          ele = ele->getNextElementSibling();
-        }
-        row = row->getNextElementSibling();
-      }
-    }
     return 0;
   }
 
@@ -981,20 +953,21 @@ namespace MBSimGUI {
   }
 
   DOMElement* PhysicalVariableWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
-    if(not ele) {
+    DOMElement *newele;
     if(xmlName!=FQN()) {
       DOMDocument *doc=parent->getOwnerDocument();
-      ele = D(doc)->createElement(xmlName);
-      parent->insertBefore(ele, ref);
-      //parent->insertBefore(ele, parent->getFirstChild());
+      newele = D(doc)->createElement(xmlName);
+      DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+      if(ele)
+        parent->replaceChild(newele, ele);
+      else
+        parent->insertBefore(newele, ref);
     }
     else
-      ele = (DOMElement*)parent;
+      newele = (DOMElement*)parent;
     if(getUnit()!="")
-      E(ele)->setAttribute("unit", getUnit().toStdString());
-    }
-    widget->writeXMLFile(ele);
+      E(newele)->setAttribute("unit", getUnit().toStdString());
+    widget->writeXMLFile(newele);
     return 0;
   }
 
