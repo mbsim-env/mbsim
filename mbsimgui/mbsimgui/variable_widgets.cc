@@ -184,6 +184,21 @@ namespace MBSimGUI {
     return new MatWidget(getMat());
   }
 
+  DOMElement* ExpressionWidget::initializeUsingXML(DOMElement *element) {
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return 0;
+    setValue(QString::fromStdString(X()%text->getData()));
+    return element;
+  }
+
+  DOMElement* ExpressionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMText *text = doc->createTextNode(X()%getValue().toStdString());
+    parent->insertBefore(text, ref);
+    return 0;
+  }
+
   ScalarWidget::ScalarWidget(const QString &d) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -1031,6 +1046,24 @@ namespace MBSimGUI {
     return new MatWidget(strToMat(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())))));
   }
 
+  DOMElement* FromFileWidget::initializeUsingXML(DOMElement *parent) {
+    DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != (PV%"fromFile"))
+      return 0;
+
+    setFile(QString::fromStdString((E(element)->getAttribute("href"))));
+
+    return element;
+  }
+
+  DOMElement* FromFileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"fromFile");
+    E(ele)->setAttribute("href",getFile().toStdString());
+    parent->insertBefore(ele, NULL);
+    return 0;
+  }
+
   BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,4) {
     name[0] = "Boolean";
     name[1] = "Editor";
@@ -1085,7 +1118,7 @@ namespace MBSimGUI {
   VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
   }
 
-  VecWidgetFactory::VecWidgetFactory(int m_, const FQN &xmlName_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,4), transpose(transpose_), xmlName(xmlName_) {
+  VecWidgetFactory::VecWidgetFactory(int m_, const FQN &xmlName_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,0), transpose(transpose_), xmlName(xmlName_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";

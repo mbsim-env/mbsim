@@ -95,9 +95,9 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
-    layout->addWidget(diffuseColor);
-
+//    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,true,MBSIM%"diffuseColor");
+//    layout->addWidget(diffuseColor);
+//
     transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,MBSIM%"transparency");
     layout->addWidget(transparency);
   }

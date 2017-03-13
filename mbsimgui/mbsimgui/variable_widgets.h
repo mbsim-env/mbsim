@@ -79,6 +79,8 @@ namespace MBSimGUI {
       std::vector<std::vector<QString> > getMat() const;
       int rows() const { return getMat().size(); }
       int cols() const { return getMat().size()?getMat()[0].size():0; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     private:
       QPlainTextEdit *value;
@@ -154,7 +156,6 @@ namespace MBSimGUI {
       void currentIndexChanged(int);
     signals:
       void sizeChanged(int);
-
   };
 
   class BasicMatWidget : public VariableWidget {
@@ -411,48 +412,27 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
-  //class VecFromFileWidget : public VariableWidget {
-  //  Q_OBJECT
-  //
-  //  friend class VecFromFileProperty;
-  //
-  //  public:
-  //    VecFromFileWidget();
-  //    QString getValue() const;
-  //    void setValue(const QString &str) {}
-  //    QString getFile() const {return file;}
-  //    void setFile(const QString &str);
-  //    virtual QString getType() const {return "File";}
-  //
-  //  protected:
-  //    QLineEdit *relativeFilePath;
-  //    QString file; 
-  //
-  //  protected slots:
-  //    void selectFile();
-  //
-  //};
-
   class FromFileWidget : public VariableWidget {
     Q_OBJECT
 
-      friend class FromFileProperty;
+    friend class FromFileProperty;
 
     public:
-    FromFileWidget();
-    QString getValue() const; 
-    void setValue(const QString &str) {}
-    QString getFile() const {return relativeFilePath->text();}
-    void setFile(const QString &str);
-    virtual QString getType() const {return "File";}
-    virtual QWidget* getValidatedWidget() const;
+      FromFileWidget();
+      QString getValue() const;
+      void setValue(const QString &str) {}
+      QString getFile() const {return relativeFilePath->text();}
+      void setFile(const QString &str);
+      virtual QString getType() const {return "File";}
+      virtual QWidget* getValidatedWidget() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    QLineEdit *relativeFilePath;
+      QLineEdit *relativeFilePath;
 
     protected slots:
       void selectFile();
-
   };
 
   class BoolWidgetFactory : public WidgetFactory {

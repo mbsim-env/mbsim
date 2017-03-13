@@ -174,22 +174,6 @@ namespace MBSimGUI {
       int cols() const { return value->cols(); }
   };
 
-  //class VecFromFileProperty : public VariableProperty {
-  //
-  //  public:
-  //    VecFromFileProperty(const std::string &file_="") : file(file_) {}
-  //    virtual PropertyInterface* clone() const {return new VecFromFileProperty(*this);}
-  //    std::string getValue() const;
-  //    void setValue(const std::string &str) {}
-  //    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-  //    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-  //    void fromWidget(QWidget *widget);
-  //    void toWidget(QWidget *widget);
-  //
-  //  protected:
-  //    std::string file;
-  //};
-
   class FromFileProperty : public VariableProperty {
 
     public:

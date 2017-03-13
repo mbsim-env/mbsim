@@ -496,12 +496,14 @@ namespace MBSimGUI {
     friend class ColorProperty;
 
     public:
-    ColorWidget();
-    void updateWidget();
+      ColorWidget();
+      void updateWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
 
     protected:
-    ExtWidget *color;
-    QPushButton *button;
+      ExtWidget *color;
+      QPushButton *button;
 
     protected slots:
       void setColor(); 

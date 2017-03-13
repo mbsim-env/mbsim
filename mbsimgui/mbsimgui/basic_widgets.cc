@@ -30,6 +30,8 @@
 #include <QtGui>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -771,11 +773,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
     vector<QString> vec(3);
     vec[0] = "0.666667"; vec[1] = "1"; vec[2] = "1";
-    input.push_back(new PhysicalVariableWidget(new VecWidget(vec,true), QStringList(), 1));
-    color = new ExtWidget("HSV",new ExtPhysicalVarWidget(input));
+    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(3,"",vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft));
+    static_cast<VecWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->setVec(vec);
     layout->addWidget(color);
 
     button = new QPushButton(tr("Select"));
@@ -803,6 +804,20 @@ namespace MBSimGUI {
       static_cast<ExtPhysicalVarWidget*>(color->getWidget())->setValue(str);
       updateWidget();
     }
+  }
+
+  DOMElement* ColorWidget::initializeUsingXML(DOMElement *parent) {
+ //   DOMElement *e = E(parent)->getFirstElementChildNamed(xmlName);
+    color->initializeUsingXML(parent);
+    return parent;
+  }
+
+  DOMElement* ColorWidget::writeXMLFile(DOMNode *parent) {
+//    DOMDocument *doc=parent->getOwnerDocument();
+//    DOMElement *ele = D(doc)->createElement(xmlName);
+    color->writeXMLFile(parent);
+//    parent->insertBefore(ele, NULL);
+    return 0;
   }
  
   PlotFeatureStatusWidget::PlotFeatureStatusWidget(const vector<MBXMLUtils::FQN> &types) {
