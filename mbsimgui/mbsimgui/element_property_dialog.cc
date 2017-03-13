@@ -102,12 +102,12 @@ namespace MBSimGUI {
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(E(element->getXMLElement())->getAttribute("name")));
+    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(element->getName()));
     return parent;
   }
 
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent) {
-    E(element->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     return NULL;
   }
 

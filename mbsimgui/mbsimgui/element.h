@@ -57,6 +57,7 @@ namespace MBSimGUI {
       Parameters parameters;
       std::vector<std::string> plotFeatures;
       xercesc::DOMElement *element;
+      std::string name_;
     public:
       Element(const std::string &name, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
       virtual ~Element() { parameters.removeParameters(); }
@@ -77,7 +78,7 @@ namespace MBSimGUI {
       virtual void writeXMLFileEmbed(const std::string &name);
       virtual void initialize() {}
       virtual void deinitialize() {}
-      std::string getName() const;
+      const std::string& getName() const { return name_; }
       void setName(const std::string &str);
       virtual std::string getType() const { return "Element"; }
       virtual std::string getValue() const;

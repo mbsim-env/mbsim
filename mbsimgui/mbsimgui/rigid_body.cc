@@ -101,10 +101,15 @@ namespace MBSimGUI {
   DOMElement* RigidBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frames" );
-    ele0->insertBefore( ele1, NULL );
-    ele1 = D(doc)->createElement( MBSIM%"contours" );
-    ele0->insertBefore( ele1, NULL );
+    DOMElement *elef = D(doc)->createElement( MBSIM%"frames" );
+    ele0->insertBefore( elef, NULL );
+    DOMElement *elec = D(doc)->createElement( MBSIM%"contours" );
+    ele0->insertBefore( elec, NULL );
+
+    for(size_t i=1; i<frame.size(); i++)
+      frame[i]->createXMLElement(elef);
+    for(size_t i=0; i<contour.size(); i++)
+      contour[i]->createXMLElement(elec);
     return ele0;
   }
 
