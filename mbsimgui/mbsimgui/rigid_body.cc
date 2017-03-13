@@ -41,28 +41,28 @@ namespace MBSimGUI {
     Frame *C = new Frame("C",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
     addFrame(C);
 
-    K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForKinematics"));
-
-    mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"mass",vector<string>(2,"kg")),"",4));
-
-    inertia.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0.01","0"),MBSIM%"inertiaTensor",vector<string>(3,"kg*m^2")),"",4));
-
-    frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForInertiaTensor"));
-
-    vector<Property*> property;
-
-    translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this),"",3)); 
-
-    rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4(this),"",3)); 
-
-    translationDependentRotation.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"translationDependentRotation",vector<string>(2,"")),"",4));
-
-    coordinateTransformationForRotation.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"coordinateTransformationForRotation",vector<string>(2,"")),"",4));
-    coordinateTransformationForRotation.setActive(false);
-
-    bodyFixedRepresentationOfAngularVelocity.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"bodyFixedRepresentationOfAngularVelocity",vector<string>(2,"")),"",4));
-
-    ombvEditor.setProperty(new OMBVRigidBodySelectionProperty(this));
+//    K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForKinematics"));
+//
+//    mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"mass",vector<string>(2,"kg")),"",4));
+//
+//    inertia.setProperty(new ChoiceProperty2(new MatPropertyFactory(getEye<string>(3,3,"0.01","0"),MBSIM%"inertiaTensor",vector<string>(3,"kg*m^2")),"",4));
+//
+//    frameForInertiaTensor.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForInertiaTensor"));
+//
+//    vector<Property*> property;
+//
+//    translation.setProperty(new ChoiceProperty2(new TranslationPropertyFactory4(this),"",3));
+//
+//    rotation.setProperty(new ChoiceProperty2(new RotationPropertyFactory4(this),"",3));
+//
+//    translationDependentRotation.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"translationDependentRotation",vector<string>(2,"")),"",4));
+//
+//    coordinateTransformationForRotation.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"coordinateTransformationForRotation",vector<string>(2,"")),"",4));
+//    coordinateTransformationForRotation.setActive(false);
+//
+//    bodyFixedRepresentationOfAngularVelocity.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("0",MBSIM%"bodyFixedRepresentationOfAngularVelocity",vector<string>(2,"")),"",4));
+//
+//    ombvEditor.setProperty(new OMBVRigidBodySelectionProperty(this));
   }
 
   int RigidBody::getqRelSize() const {

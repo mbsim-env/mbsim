@@ -208,15 +208,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* ScalarWidget::initializeUsingXML(DOMElement *element) {
-    return NULL;
-  //  DOMText* text = E(element)->getFirstTextChild();
-  //  if(!text)
-  //    return 0;
-  //  string str = X()%text->getData();
-  //  if(str.find("\n")!=string::npos)
-  //    return 0;
-  //  setValue(str);
-  //  return element;
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return 0;
+    string str = X()%text->getData();
+    if(str.find("\n")!=string::npos)
+      return 0;
+    setValue(QString::fromStdString(str));
+    return element;
   }
 
   DOMElement* ScalarWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
@@ -768,8 +767,27 @@ namespace MBSimGUI {
     return true;
   }
 
-  DOMElement* SymMatWidget::initializeUsingXML(DOMElement *element) {
-    return NULL;
+  DOMElement* SymMatWidget::initializeUsingXML(DOMElement *parent) {
+    DOMElement *element=parent->getFirstElementChild();
+    if(!element || E(element)->getTagName() != (PV%"xmlMatrix"))
+      return 0;
+    DOMElement *ei=element->getFirstElementChild();
+    int i=0;
+    std::vector<std::vector<QString> > value;
+    while(ei && E(ei)->getTagName()==PV%"row") {
+      DOMElement *ej=ei->getFirstElementChild();
+      int j=0;
+      value.push_back(vector<QString>());
+      while(ej && E(ej)->getTagName()==PV%"ele") {
+        value[i].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
+        ej=ej->getNextElementSibling();
+        j++;
+      }
+      i++;
+      ei=ei->getNextElementSibling();
+    }
+    setMat(value);
+    return element;
   }
 
   DOMElement* SymMatWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {

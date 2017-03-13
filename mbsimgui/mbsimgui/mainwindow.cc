@@ -1106,6 +1106,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addObject(Object *object) {
+    object->createXMLElement(object->getParent()->getXMLObjects());
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();
@@ -1115,8 +1116,7 @@ namespace MBSimGUI {
     model->createObjectItem(object,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor();
-    object->createXMLElement(object->getParent()->getXMLObjects());
+    elementList->openEditor(false);
   }
 
   void MainWindow::addLink(Link *link) {

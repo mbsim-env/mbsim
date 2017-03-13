@@ -30,11 +30,11 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   Body::Body(const string &str, Element *parent) : Object(str,parent), q0(0,false), u0(0,false), R(0,false) {
-    q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"generalizedInitialPosition",vector<string>(3,"")),"",4));
-
-    u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"generalizedInitialVelocity",vector<string>(3,"")),"",4));
-
-    R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
+//    q0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"generalizedInitialPosition",vector<string>(3,"")),"",4));
+//
+//    u0.setProperty(new ChoiceProperty2(new VecPropertyFactory(0,MBSIM%"generalizedInitialVelocity",vector<string>(3,"")),"",4));
+//
+//    R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIM%"frameOfReference"));
   }
 
   Body::Body(const Body &b) : Object(b), R(b.R) {

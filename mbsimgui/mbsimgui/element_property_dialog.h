@@ -113,6 +113,7 @@ namespace MBSimGUI {
       void toWidget() {toWidget(element);}
       void fromWidget() {fromWidget(element);}
       Element* getElement() {return element;}
+      void setName(const QString &str);
     protected:
       void showXMLHelp();
       Element *element;

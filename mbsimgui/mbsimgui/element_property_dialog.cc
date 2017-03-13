@@ -135,6 +135,10 @@ namespace MBSimGUI {
     mw->xmlHelp(url);
   }
 
+  void ElementPropertyDialog::setName(const QString &str) {
+    static_cast<TextWidget*>(name->getWidget())->setText(str);
+  }
+
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
     visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
@@ -553,29 +557,29 @@ namespace MBSimGUI {
     connect(u0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 
-    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true);
-    addToTab("Kinematics",R);
+//    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true);
+//    addToTab("Kinematics",R);
   }
 
   void BodyPropertyDialog::toWidget(Element *element) {
     ObjectPropertyDialog::toWidget(element);
-    static_cast<Body*>(element)->q0.toWidget(q0);
-    static_cast<Body*>(element)->u0.toWidget(u0);
-    static_cast<Body*>(element)->R.toWidget(R);
+//    static_cast<Body*>(element)->q0.toWidget(q0);
+//    static_cast<Body*>(element)->u0.toWidget(u0);
+//    static_cast<Body*>(element)->R.toWidget(R);
   }
 
   void BodyPropertyDialog::fromWidget(Element *element) {
     ObjectPropertyDialog::fromWidget(element);
-    static_cast<Body*>(element)->q0.fromWidget(q0);
-    static_cast<Body*>(element)->u0.fromWidget(u0);
-    static_cast<Body*>(element)->R.fromWidget(R);
+//    static_cast<Body*>(element)->q0.fromWidget(q0);
+//    static_cast<Body*>(element)->u0.fromWidget(u0);
+//    static_cast<Body*>(element)->R.fromWidget(R);
   }
 
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
     addTab("Visualisation",3);
 
-    K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
-    addToTab("Kinematics",K);
+//    K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
+//    addToTab("Kinematics",K);
 
     mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",MBSIM%"mass",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
     addToTab("General",mass);
@@ -583,74 +587,67 @@ namespace MBSimGUI {
     inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),MBSIM%"inertiaTensor",vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
     addToTab("General",inertia);
 
-    frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
-    addToTab("General",frameForInertiaTensor);
-
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
-    addToTab("Kinematics", translation);
-    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
-    addToTab("Kinematics", rotation);
-    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
-    addToTab("Kinematics", translationDependentRotation);
-
-    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
-    addToTab("Kinematics", coordinateTransformationForRotation);
-
-    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
-    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
-
-    ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
-    addToTab("Visualisation", ombvEditor);
-
-    weightArrow = new ExtWidget("OpenMBV weight arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-    addToTab("Visualisation",weightArrow);
-
-    jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-    addToTab("Visualisation",jointForceArrow);
-
-    jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new ArrowMBSOMBVWidget("NOTSET"),true);
-    addToTab("Visualisation",jointMomentArrow);
-
+//    frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
+//    addToTab("General",frameForInertiaTensor);
+//
+//    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
+//    addToTab("Kinematics", translation);
+//    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+//
+//    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
+//    addToTab("Kinematics", rotation);
+//    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+//
+//    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+//    addToTab("Kinematics", translationDependentRotation);
+//
+//    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true);
+//    addToTab("Kinematics", coordinateTransformationForRotation);
+//
+//    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
+//    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
+//
+//    ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
+//    addToTab("Visualisation", ombvEditor);
   }
 
   void RigidBodyPropertyDialog::toWidget(Element *element) {
     BodyPropertyDialog::toWidget(element);
-    static_cast<RigidBody*>(element)->K.toWidget(K);
-    static_cast<RigidBody*>(element)->mass.toWidget(mass);
-    static_cast<RigidBody*>(element)->inertia.toWidget(inertia);
-    static_cast<RigidBody*>(element)->frameForInertiaTensor.toWidget(frameForInertiaTensor);
-    static_cast<RigidBody*>(element)->translation.toWidget(translation);
-    static_cast<RigidBody*>(element)->rotation.toWidget(rotation);
-    static_cast<RigidBody*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
-    static_cast<RigidBody*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
-    static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.toWidget(bodyFixedRepresentationOfAngularVelocity);
-    static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
+//    static_cast<RigidBody*>(element)->K.toWidget(K);
+//    static_cast<RigidBody*>(element)->mass.toWidget(mass);
+//    static_cast<RigidBody*>(element)->inertia.toWidget(inertia);
+//    static_cast<RigidBody*>(element)->frameForInertiaTensor.toWidget(frameForInertiaTensor);
+//    static_cast<RigidBody*>(element)->translation.toWidget(translation);
+//    static_cast<RigidBody*>(element)->rotation.toWidget(rotation);
+//    static_cast<RigidBody*>(element)->translationDependentRotation.toWidget(translationDependentRotation);
+//    static_cast<RigidBody*>(element)->coordinateTransformationForRotation.toWidget(coordinateTransformationForRotation);
+//    static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.toWidget(bodyFixedRepresentationOfAngularVelocity);
+//    static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
   }
 
   void RigidBodyPropertyDialog::fromWidget(Element *element) {
     BodyPropertyDialog::fromWidget(element);
-    static_cast<RigidBody*>(element)->K.fromWidget(K);
-    static_cast<RigidBody*>(element)->mass.fromWidget(mass);
-    static_cast<RigidBody*>(element)->inertia.fromWidget(inertia);
-    static_cast<RigidBody*>(element)->frameForInertiaTensor.fromWidget(frameForInertiaTensor);
-    static_cast<RigidBody*>(element)->translation.fromWidget(translation);
-    static_cast<RigidBody*>(element)->rotation.fromWidget(rotation);
-    static_cast<RigidBody*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
-    static_cast<RigidBody*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
-    static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.fromWidget(bodyFixedRepresentationOfAngularVelocity);
-    static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
+//    static_cast<RigidBody*>(element)->K.fromWidget(K);
+//    static_cast<RigidBody*>(element)->mass.fromWidget(mass);
+//    static_cast<RigidBody*>(element)->inertia.fromWidget(inertia);
+//    static_cast<RigidBody*>(element)->frameForInertiaTensor.fromWidget(frameForInertiaTensor);
+//    static_cast<RigidBody*>(element)->translation.fromWidget(translation);
+//    static_cast<RigidBody*>(element)->rotation.fromWidget(rotation);
+//    static_cast<RigidBody*>(element)->translationDependentRotation.fromWidget(translationDependentRotation);
+//    static_cast<RigidBody*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
+//    static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.fromWidget(bodyFixedRepresentationOfAngularVelocity);
+//    static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
   }
 
-  DOMElement* RigidBodyPropertyDialog::initializeUsingXML(DOMElement *element) {
-//    return Body::initializeUsingXML(element);
-    return NULL;
+  DOMElement* RigidBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    BodyPropertyDialog::initializeUsingXML(element->getXMLElement());
+    mass->initializeUsingXML(element->getXMLElement());
+    inertia->initializeUsingXML(element->getXMLElement());
+    return parent;
   }
 
   DOMElement* RigidBodyPropertyDialog::writeXMLFile(DOMNode *parent) {
+    BodyPropertyDialog::writeXMLFile(element->getXMLElement());
 
  //   DOMElement *ele0 = Body::writeXMLFile(parent);
 
