@@ -376,6 +376,7 @@ namespace MBSimGUI {
 
       QString getText() const {return text->text();}
       void setText(const QString &text_) {text->setText(text_);}
+      void setReadOnly(bool readOnly) { text->setReadOnly(readOnly); }
 
     protected:
       QLineEdit *text;

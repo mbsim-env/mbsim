@@ -56,7 +56,8 @@ namespace MBSimGUI {
     int getxSize();
     static Group* readXMLFile(const std::string &filename, Element *parent);
     virtual xercesc::DOMElement* getXMLObjects();
-      virtual xercesc::DOMElement* getXMLConstraints();
+    virtual xercesc::DOMElement* getXMLConstraints();
+    virtual xercesc::DOMElement* getXMLFrame();
     virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

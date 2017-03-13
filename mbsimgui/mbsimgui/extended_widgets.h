@@ -69,7 +69,7 @@ namespace MBSimGUI {
     friend class ExtProperty;
 
     public:
-    ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false);
+    ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false, const MBXMLUtils::FQN &xmlName="");
     QWidget* getWidget() const {return widget;}
     virtual void resizeVariables() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
     void resize_(int m, int n) {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
@@ -94,7 +94,7 @@ namespace MBSimGUI {
     friend class ChoiceProperty2;
 
     public:
-    ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
+    ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode=4);
     QWidget* getWidget() const { return widget; }
     void updateWidget() { dynamic_cast<WidgetInterface*>(getWidget())->updateWidget(); }
     QString getName() const { return comboBox->currentText(); }

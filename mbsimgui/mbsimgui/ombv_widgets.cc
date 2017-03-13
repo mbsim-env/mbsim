@@ -24,8 +24,11 @@
 #include "body.h"
 #include "frame.h"
 #include <QtGui>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -79,7 +82,15 @@ namespace MBSimGUI {
   //  return new ChoiceWidget(widget,name);
   //}
 
-  MBSOMBVWidget::MBSOMBVWidget(const QString &name) : OMBVObjectWidget(name) {
+  void OMBVObjectWidget::writeXMLFileID(DOMNode *parent) {
+    if(!ID.empty()) {
+      DOMDocument *doc=parent->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%ID);
+      parent->insertBefore(id, parent->getFirstChild());
+    }
+  }
+
+  MBSOMBVWidget::MBSOMBVWidget(const QString &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectWidget(name,ID), xmlName(xmlName_) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -91,6 +102,44 @@ namespace MBSimGUI {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
     transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
     layout->addWidget(transparency);
+  }
+
+  DOMElement* MBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      diffuseColor->initializeUsingXML(e);
+      transparency->initializeUsingXML(e);
+    }
+    return e;
+  }
+
+  DOMElement* MBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=initXMLFile(parent,ref);
+    writeProperties(e);
+    return e;
+  }
+
+  DOMElement* MBSOMBVWidget::initXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *newele;
+    if(xmlName!=FQN()) {
+    DOMDocument *doc = parent->getOwnerDocument();
+    newele=D(doc)->createElement(xmlName);
+    writeXMLFileID(newele);
+    DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+    if(ele)
+      parent->replaceChild(newele,ele);
+    else
+      parent->insertBefore(newele,ref);
+    }
+    else
+      newele = (DOMElement*)parent;
+    return newele;
+  }
+
+  DOMElement* MBSOMBVWidget::writeProperties(DOMElement *e) {
+    diffuseColor->writeXMLFile(e);
+    transparency->writeXMLFile(e);
+    return e;
   }
 
   PointMBSOMBVWidget::PointMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
@@ -187,18 +236,41 @@ namespace MBSimGUI {
     layout()->addWidget(maxCol);
   }
 
-  FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    size = new ExtWidget("Size",new ExtPhysicalVarWidget(input),true);
+  FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name, const FQN &xmlName, const std::string &ID) : MBSOMBVWidget(name,xmlName,ID) {
+    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1","",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,true,MBSIM%"size");
     size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-    offset = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
+    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft),true,true,MBSIM%"offset");
     offset->setToolTip("Set the offset of the frame");
     layout()->addWidget(offset);
+  }
+
+  DOMElement* FrameMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      size->initializeUsingXML(e);
+      offset->initializeUsingXML(e);
+      transparency->initializeUsingXML(e);
+    }
+    return e;
+  }
+
+  DOMElement* FrameMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    if(xmlName!=FQN()) {
+      DOMElement *e=MBSOMBVWidget::initXMLFile(parent,ref);
+      size->writeXMLFile(e);
+      offset->writeXMLFile(e);
+      transparency->writeXMLFile(e);
+      return e;
+    }
+    else {
+      writeXMLFileID(parent);
+      size->writeXMLFile(parent);
+      offset->writeXMLFile(parent);
+      transparency->writeXMLFile(parent);
+      return 0;
+    }
   }
 
   OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name) : OMBVObjectWidget(name) {

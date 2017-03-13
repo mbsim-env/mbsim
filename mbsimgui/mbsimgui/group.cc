@@ -330,6 +330,17 @@ namespace MBSimGUI {
     return ele;
   }
 
+  DOMElement* Group::getXMLFrame() {
+    DOMElement *ele = E(element)->getFirstElementChildNamed(MBSIM%"environments");
+//    if(not ele) {
+//      DOMDocument *doc=element->getOwnerDocument();
+//      ele = D(doc)->createElement( MBSIM%"constraints" );
+//      element->insertBefore( ele, NULL );
+//    }
+    return ele;
+  }
+
+
   DOMElement* Group::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();

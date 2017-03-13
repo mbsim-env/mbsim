@@ -114,6 +114,7 @@ namespace MBSimGUI {
       void fromWidget() {fromWidget(element);}
       Element* getElement() {return element;}
       void setName(const QString &str);
+      void setReadOnly(bool readOnly);
     protected:
       void showXMLHelp();
       Element *element;
@@ -126,6 +127,8 @@ namespace MBSimGUI {
       FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     protected:
       ExtWidget *visu;
   };

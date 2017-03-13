@@ -106,7 +106,7 @@ namespace MBSimGUI {
     //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
   }
 
-  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir) : widget(0), factory(factory_), mode(4) {
+  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(0), factory(factory_), mode(mode_) {
     layout = new QBoxLayout(dir);
     layout->setMargin(0);
     setLayout(layout);
@@ -168,7 +168,7 @@ namespace MBSimGUI {
   }
 
 
-  ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active) : QGroupBox(name), widget(widget_) {
+  ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, const FQN &xmlName_) : QGroupBox(name), widget(widget_), xmlName(xmlName_) {
 
     QHBoxLayout *layout = new QHBoxLayout;
 
@@ -213,19 +213,26 @@ namespace MBSimGUI {
 
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(xmlName!=FQN()) {
-//      DOMDocument *doc=parent->getOwnerDocument();
+      DOMElement *newele;
+      DOMDocument *doc = parent->getOwnerDocument();
+      newele = D(doc)->createElement(xmlName);
 //      if(alwaysWriteXMLName) {
-//        DOMElement *ele0 = D(doc)->createElement(xmlName);
-//        if(isActive()) widget->writeXMLFile(ele0);
-//        parent->insertBefore(ele0, NULL);
-//        return ele0;
-//      }
-//      else if(isActive()) {
-//        DOMElement *ele0 = D(doc)->createElement(xmlName);
-//        widget->writeXMLFile(ele0);
-//        parent->insertBefore(ele0, NULL);
-//        return ele0;
-//      }
+      DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+      if(false) {
+        if(isActive()) dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
+        parent->insertBefore(newele,ref);
+        return newele;
+      }
+      else if(isActive()) {
+        dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
+        if(ele)
+          parent->replaceChild(newele,ele);
+        else
+          parent->insertBefore(newele,ref);
+        return newele;
+      }
+      else if(ele)
+        parent->removeChild(ele);
     }
     else
       return isActive()?dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref):0;

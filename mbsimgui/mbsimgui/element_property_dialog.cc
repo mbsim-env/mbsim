@@ -139,21 +139,39 @@ namespace MBSimGUI {
     static_cast<TextWidget*>(name->getWidget())->setText(str);
   }
 
+  void ElementPropertyDialog::setReadOnly(bool readOnly) {
+    static_cast<TextWidget*>(name->getWidget())->setReadOnly(readOnly);
+  }
+
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET"),true,true);
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET","",frame->getID()),true,true,MBSIM%"enableOpenMBVFrameI");
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
+    setReadOnly(true);
+    setName("I");
   }
 
   void FramePropertyDialog::toWidget(Element *element) {
     ElementPropertyDialog::toWidget(element);
-    static_cast<Frame*>(element)->visu.toWidget(visu);
+//    static_cast<Frame*>(element)->visu.toWidget(visu);
   }
 
   void FramePropertyDialog::fromWidget(Element *element) {
     ElementPropertyDialog::fromWidget(element);
-    static_cast<Frame*>(element)->visu.fromWidget(visu);
+//    static_cast<Frame*>(element)->visu.fromWidget(visu);
+  }
+
+  DOMElement* FramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+//    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getParent()->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FramePropertyDialog::writeXMLFile(DOMNode *parent) {
+//    ElementPropertyDialog::writeXMLFile(element->getXMLElement());
+    visu->writeXMLFile(element->getParent()->getXMLElement(),element->getParent()->getXMLFrame());
+    return NULL;
   }
 
   FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
