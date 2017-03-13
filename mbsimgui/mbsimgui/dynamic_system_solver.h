@@ -46,6 +46,7 @@ namespace MBSimGUI {
     DynamicSystemSolver(const std::string &str, Element *parent);
     virtual PropertyInterface* clone() const {return new DynamicSystemSolver(*this);}
     std::string getType() const { return "DynamicSystemSolver"; }
+    virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     std::string getFileExtension() const { return ".mbsim.xml"; }

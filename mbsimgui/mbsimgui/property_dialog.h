@@ -24,6 +24,13 @@
 #include <QTabWidget>
 #include <QDialog>
 #include <map>
+#include <xercesc/util/XercesDefs.hpp>
+#include <mbxmlutilshelper/dom.h>
+
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
+}
 
 class QVBoxLayout;
 class QDialogButtonBox;
@@ -42,6 +49,8 @@ namespace MBSimGUI {
       void addTab(const QString &name, int i=-1);
       void addStretch();
       void updateWidget();
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {return 0;}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element) {return 0;}
     protected:
       std::map<QString,QVBoxLayout*> layout;
       std::vector<QWidget*> widget;
@@ -49,11 +58,11 @@ namespace MBSimGUI {
       QDialogButtonBox *buttonBox;
       QPushButton *buttonResize;
       virtual void showXMLHelp() {}
-      public slots:
-        void clicked(QAbstractButton *button);
+    public slots:
+      void clicked(QAbstractButton *button);
       virtual void toWidget() {}
       virtual void fromWidget() {}
-signals:
+    signals:
       void apply();
   };
 

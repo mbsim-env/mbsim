@@ -66,6 +66,18 @@ namespace MBSimGUI {
   Integrator::~Integrator() {
   }
 
+  DOMElement* Integrator::createXMLElement(DOMNode *parent) {
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    element=D(doc)->createElement(MBSIMINT%getType());
+    parent->insertBefore(element, NULL);
+    // TODO remove the following lines
+    startTime.writeXMLFile(element);
+    endTime.writeXMLFile(element);
+    plotStepSize.writeXMLFile(element);
+    initialState.writeXMLFile(element);
+    return element;
+  }
+
   void Integrator::initializeUsingXML(DOMElement *element) {
     startTime.initializeUsingXML(element);
     endTime.initializeUsingXML(element);
@@ -102,6 +114,16 @@ namespace MBSimGUI {
     input.clear();
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINT%"maximalNumberOfSteps"));
     maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
+  }
+
+  DOMElement* DOPRI5Integrator::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Integrator::createXMLElement(parent);
+    absTol.writeXMLFile(ele0);
+    relTol.writeXMLFile(ele0);
+    initialStepSize.writeXMLFile(ele0);
+    maximalStepSize.writeXMLFile(ele0);
+    maxSteps.writeXMLFile(ele0);
+    return element;
   }
 
   void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {

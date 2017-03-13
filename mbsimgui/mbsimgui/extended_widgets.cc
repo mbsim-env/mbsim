@@ -27,6 +27,8 @@
 #include <mbxmlutils/eval.h>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -128,6 +130,25 @@ namespace MBSimGUI {
     connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
   }
 
+  DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
+    return NULL;
+  }
+
+  DOMElement* ChoiceWidget2::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMNode *ele0;
+    if(xmlName!=FQN()) {
+      DOMDocument *doc=parent->getOwnerDocument();
+      ele0 = D(doc)->createElement(xmlName);
+      parent->insertBefore(ele0, NULL);
+    }
+    else
+      ele0 = parent;
+    dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(ele0,ref);
+
+    return 0;
+  }
+
+
   ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active) : QGroupBox(name), widget(widget_) {
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -155,6 +176,45 @@ namespace MBSimGUI {
     ////  fold->setChecked(true);
     //  widget->setVisible(false);
   }
+
+  DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
+    return NULL;
+//    active = false;
+//    if(element) {
+//      if(xmlName!=FQN()) {
+//        DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+//        if(e)
+//          active = property->initializeUsingXML(e);
+//        if(alwaysWriteXMLName)
+//          return e;
+//      }
+//      else
+//        active = property->initializeUsingXML(element);
+//    }
+//    return active?element:0;
+  }
+
+  DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    if(xmlName!=FQN()) {
+//      DOMDocument *doc=parent->getOwnerDocument();
+//      if(alwaysWriteXMLName) {
+//        DOMElement *ele0 = D(doc)->createElement(xmlName);
+//        if(isActive()) widget->writeXMLFile(ele0);
+//        parent->insertBefore(ele0, NULL);
+//        return ele0;
+//      }
+//      else if(isActive()) {
+//        DOMElement *ele0 = D(doc)->createElement(xmlName);
+//        widget->writeXMLFile(ele0);
+//        parent->insertBefore(ele0, NULL);
+//        return ele0;
+//      }
+    }
+    else
+      return isActive()?dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref):0;
+    return NULL;
+  }
+
 
   ContainerWidget::ContainerWidget() {
     layout = new QVBoxLayout;

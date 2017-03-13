@@ -56,12 +56,18 @@ namespace MBSimGUI {
       ExtProperty name, embed, plotFeature;
       Parameters parameters;
       std::vector<std::string> plotFeatures;
+      xercesc::DOMElement *element;
     public:
       Element(const std::string &name, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
       virtual ~Element() { parameters.removeParameters(); }
       virtual PropertyInterface* clone() const {return 0;}
       virtual std::string getPath();
       std::string getXMLPath(Element *ref=0, bool rel=false);
+      xercesc::DOMElement* getXMLElement() { return element; }
+      virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
+      virtual xercesc::DOMElement* getXMLObjects() { return NULL; }
+      virtual xercesc::DOMElement* getXMLConstraints() { return NULL; }
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       virtual void initializeUsingXMLEmbed(xercesc::DOMElement *element);
@@ -71,7 +77,7 @@ namespace MBSimGUI {
       virtual void writeXMLFileEmbed(const std::string &name);
       virtual void initialize() {}
       virtual void deinitialize() {}
-      const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
+      const std::string& getName() const;
       void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
       virtual std::string getType() const { return "Element"; }
       virtual std::string getValue() const;

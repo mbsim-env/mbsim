@@ -520,8 +520,16 @@ namespace MBSimGUI {
       DynamicSystemSolver *dss = new DynamicSystemSolver("MBS",0);
       model->createGroupItem(dss,QModelIndex());
 
+      doc=MainWindow::parser->createDocument();
+      DOMElement *ele0=D(doc)->createElement(MBSIMXML%"MBSimProject");
+      doc->insertBefore(ele0, NULL);
+      E(ele0)->setAttribute("name", "Project");
+      dss->createXMLElement(ele0);
+
       elementList->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
-      solverView->setSolver(new DOPRI5Integrator);
+      Integrator *integrator = new DOPRI5Integrator;
+      integrator->createXMLElement(ele0);
+      solverView->setSolver(integrator);
       actionSaveProject->setDisabled(true);
       fileProject="";
       mbsimxml(1);
@@ -537,7 +545,6 @@ namespace MBSimGUI {
       fileProject=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       MBSimObjectFactory::initialize();
-      shared_ptr<xercesc::DOMDocument> doc;
       std::string message;
       try { 
         doc=MainWindow::parser->parse(file.toStdString());
@@ -676,6 +683,7 @@ namespace MBSimGUI {
     DOMElement *ele0=writeProject(doc);
     if(ele0) {
       DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
+      DOMParser::serialize(this->doc.get(), fileName.isEmpty()?string("_")+fileProject.toStdString():string("_")+fileName.toStdString());
       return true;
     }
     return false;
@@ -1106,6 +1114,7 @@ namespace MBSimGUI {
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     elementList->openEditor();
+    object->createXMLElement(object->getParent()->getXMLObjects());
   }
 
   void MainWindow::addLink(Link *link) {

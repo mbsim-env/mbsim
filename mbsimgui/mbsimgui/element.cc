@@ -43,7 +43,7 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name_, Element *parent_, const vector<FQN> &plotFeatureTypes) : parent(parent_), embed(0,false) {
+  Element::Element(const string &name_, Element *parent_, const vector<FQN> &plotFeatureTypes) : parent(parent_), embed(0,false), element(NULL) {
     name.setProperty(new TextProperty(name_,""));
     embed.setProperty(new EmbedProperty(std::bind(&Element::getName, this)));
     plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));
@@ -82,8 +82,17 @@ namespace MBSimGUI {
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
+  DOMElement* Element::createXMLElement(DOMNode *parent) {
+    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    element=D(doc)->createElement(getNameSpace()%getType());
+    E(element)->setAttribute("name", getName());
+    parent->insertBefore(element, NULL);
+    return element;
+  }
+
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
     plotFeature.initializeUsingXML(element);
+    this->element = element;
     return element;
   }
 
@@ -243,6 +252,11 @@ namespace MBSimGUI {
     plotFeatures.push_back(pf);
     if(getParent())
       getParent()->addPlotFeature(pf);
+  }
+
+  const std::string& Element::getName() const {
+//    if(element) if(E(element)->hasAttribute("name"))  cout << E(element)->getAttribute("name") << endl;
+    return static_cast<const TextProperty*>(name.getProperty())->getText();
   }
 
 }

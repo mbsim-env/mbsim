@@ -76,9 +76,12 @@ namespace MBSimGUI {
     bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
     void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
     void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
     QWidget *widget;
+    MBXMLUtils::FQN xmlName;
     public slots:
     virtual void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
     signals:
@@ -98,6 +101,8 @@ namespace MBSimGUI {
     int getIndex() const { return comboBox->currentIndex(); }
     void setIndex(int i) { return comboBox->setCurrentIndex(i); }
     void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected slots:
     void defineWidget(int);
@@ -108,6 +113,7 @@ namespace MBSimGUI {
     QWidget *widget;
     //QStackedWidget *stackedWidget;
     WidgetFactory *factory;
+    MBXMLUtils::FQN xmlName;
 
     signals:
     void widgetChanged();

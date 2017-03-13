@@ -33,6 +33,17 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  DOMElement* DynamicSystemSolver::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Group::createXMLElement(parent);
+    DOMDocument *doc=ele0->getOwnerDocument();
+
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"environments" );
+    DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
+    ele1->insertBefore( ele2, NULL );
+    ele0->insertBefore( ele1, NULL );
+    return ele0;
+  }
+
   void Environment::initializeUsingXML(DOMElement *element) {
     E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
     //setAccelerationOfGravity(Element::getVec3(e));

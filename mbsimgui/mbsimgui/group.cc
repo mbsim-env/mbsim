@@ -316,6 +316,36 @@ namespace MBSimGUI {
     return group;
   }
 
+  DOMElement* Group::getXMLObjects() {
+    return E(element)->getFirstElementChildNamed(MBSIM%"objects");
+  }
+
+  DOMElement* Group::getXMLConstraints() {
+    DOMElement *ele = E(element)->getFirstElementChildNamed(MBSIM%"constraints");
+    if(not ele) {
+      DOMDocument *doc=element->getOwnerDocument();
+      ele = D(doc)->createElement( MBSIM%"constraints" );
+      element->insertBefore( ele, NULL );
+    }
+    return ele;
+  }
+
+  DOMElement* Group::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Element::createXMLElement(parent);
+    DOMDocument *doc=ele0->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frames" );
+    ele0->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIM%"contours" );
+    ele0->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIM%"groups" );
+    ele0->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIM%"objects" );
+    ele0->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIM%"links" );
+    ele0->insertBefore( ele1, NULL );
+    return ele0;
+  }
+
   DOMElement* Group::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Element::initializeUsingXML(element);

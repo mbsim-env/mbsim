@@ -276,6 +276,8 @@ namespace MBSimGUI {
       DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
   };
 
   class ObjectPropertyDialog : public ElementPropertyDialog {
@@ -308,6 +310,8 @@ namespace MBSimGUI {
       RigidBodyPropertyDialog(RigidBody *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       void resizeGeneralizedPosition();
       void resizeGeneralizedVelocity();
       int getqRelSize() const; 

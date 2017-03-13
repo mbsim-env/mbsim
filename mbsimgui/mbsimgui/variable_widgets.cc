@@ -27,6 +27,8 @@
 #include <QtGui>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -205,6 +207,29 @@ namespace MBSimGUI {
     return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
   }
 
+  DOMElement* ScalarWidget::initializeUsingXML(DOMElement *element) {
+    return NULL;
+  //  DOMText* text = E(element)->getFirstTextChild();
+  //  if(!text)
+  //    return 0;
+  //  string str = X()%text->getData();
+  //  if(str.find("\n")!=string::npos)
+  //    return 0;
+  //  setValue(str);
+  //  return element;
+  }
+
+  DOMElement* ScalarWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMText *text = static_cast<DOMText*>(parent->getFirstChild());
+    if(not text) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    text = doc->createTextNode(X()%getValue().toStdString());
+    parent->insertBefore(text, ref);
+    } else
+      text->replaceWholeText(X()%getValue().toStdString());
+    return 0;
+  }
+
   QWidget* BasicVecWidget::getValidatedWidget() const {
     vector<QString> x = getVec();
     for(size_t i=0; i<x.size(); i++)
@@ -327,6 +352,33 @@ namespace MBSimGUI {
     if(A.size() && A[0].size()!=1)
       return false;
     return true;
+  }
+
+  DOMElement* VecWidget::initializeUsingXML(DOMElement *element) {
+    return NULL;
+  }
+
+  DOMElement* VecWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *vec = static_cast<DOMElement*>(parent->getFirstChild());
+    if(not vec) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"xmlVector");
+    for(int i=0; i<size(); i++) {
+      DOMElement *elei = D(doc)->createElement(PV%"ele");
+      DOMText *text = doc->createTextNode(X()%getVec()[i].toStdString());
+      elei->insertBefore(text, NULL);
+      ele->insertBefore(elei, NULL);
+    }
+    parent->insertBefore(ele, NULL);
+    } else {
+      DOMElement *ele = vec->getFirstElementChild();
+      for(int i=0; i<size(); i++) {
+        DOMText *text = static_cast<DOMText*>(ele->getFirstChild());
+        text->replaceWholeText(X()%getVec()[i].toStdString());
+        ele = ele->getNextElementSibling();
+      }
+    }
+    return 0;
   }
 
   QWidget* BasicMatWidget::getValidatedWidget() const {
@@ -720,6 +772,41 @@ namespace MBSimGUI {
     return true;
   }
 
+  DOMElement* SymMatWidget::initializeUsingXML(DOMElement *element) {
+    return NULL;
+  }
+
+  DOMElement* SymMatWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *mat = static_cast<DOMElement*>(parent->getFirstChild());
+    if(not mat) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele = D(doc)->createElement(PV%"xmlMatrix");
+    for(int i=0; i<rows(); i++) {
+      DOMElement *elei = D(doc)->createElement(PV%"row");
+      for(int j=0; j<cols(); j++) {
+        DOMElement *elej = D(doc)->createElement(PV%"ele");
+        DOMText *text = doc->createTextNode(X()%getMat()[i][j].toStdString());
+        elej->insertBefore(text, NULL);
+        elei->insertBefore(elej, NULL);
+      }
+      ele->insertBefore(elei, NULL);
+    }
+    parent->insertBefore(ele, NULL);
+    } else {
+      DOMElement *row = mat->getFirstElementChild();
+      for(int i=0; i<rows(); i++) {
+        DOMElement *ele = row->getFirstElementChild();
+        for(int j=0; j<cols(); j++) {
+          DOMText *text = static_cast<DOMText*>(ele->getFirstChild());
+          text->replaceWholeText(X()%getMat()[i][j].toStdString());
+          ele = ele->getNextElementSibling();
+        }
+        row = row->getNextElementSibling();
+      }
+    }
+    return 0;
+  }
+
   SymMatSizeVarWidget::SymMatSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -850,7 +937,7 @@ namespace MBSimGUI {
     return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
   }
 
-  PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
+  PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_, const FQN &xmlName_) : widget(widget_), units(units_), defaultUnit(defaultUnit_), xmlName(xmlName_) {
     QHBoxLayout *layout = new QHBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
@@ -879,6 +966,36 @@ namespace MBSimGUI {
     }
     EvalDialog evalDialog(w); 
     evalDialog.exec();
+  }
+
+  DOMElement* PhysicalVariableWidget::initializeUsingXML(DOMElement *parent) {
+//    DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
+//    if(e) {
+//      if(value->initializeUsingXML(e)) {
+//        if(E(e)->hasAttribute("unit"))
+//          setUnit(E(e)->getAttribute("unit"));
+//        return e;
+//      }
+//    }
+    return 0;
+  }
+
+  DOMElement* PhysicalVariableWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+    if(not ele) {
+    if(xmlName!=FQN()) {
+      DOMDocument *doc=parent->getOwnerDocument();
+      ele = D(doc)->createElement(xmlName);
+      parent->insertBefore(ele, ref);
+      //parent->insertBefore(ele, parent->getFirstChild());
+    }
+    else
+      ele = (DOMElement*)parent;
+    if(getUnit()!="")
+      E(ele)->setAttribute("unit", getUnit().toStdString());
+    }
+    widget->writeXMLFile(ele);
+    return 0;
   }
 
   FromFileWidget::FromFileWidget() {
@@ -939,11 +1056,16 @@ namespace MBSimGUI {
   ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
   }
 
+  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const FQN &xmlName_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(2), unit(unit_), defaultUnit(defaultUnit_), xmlName(xmlName_) {
+    name[0] = "Scalar";
+    name[1] = "Editor";
+  }
+
   QWidget* ScalarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0], xmlName);
     if(i==1)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1], xmlName);
     return NULL;
   }
 
@@ -962,13 +1084,19 @@ namespace MBSimGUI {
   VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
   }
 
+  VecWidgetFactory::VecWidgetFactory(int m_, const FQN &xmlName_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,4), transpose(transpose_), xmlName(xmlName_) {
+    name[0] = "Vector";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
   QWidget* VecWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecWidget(m,transpose), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new VecWidget(m,transpose), unit[0], defaultUnit[0], xmlName);
     if(i==1)
-      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], xmlName);
     if(i==2)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], xmlName);
     return NULL;
   }
 
@@ -1134,13 +1262,19 @@ namespace MBSimGUI {
   SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
   }
 
+  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const FQN &xmlName_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_), xmlName(xmlName_) {
+    name[0] = "Matrix";
+    name[1] = "File";
+    name[2] = "Editor";
+  }
+
   QWidget* SymMatWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0], xmlName);
     if(i==1)
-      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], xmlName);
     if(i==2)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], xmlName);
     return NULL;
   }
 

@@ -94,6 +94,20 @@ namespace MBSimGUI {
       contour[i]->initialize();
   }
 
+  DOMElement* RigidBody::getXMLFrames() {
+    return E(element)->getFirstElementChildNamed(MBSIM%"frames");
+  }
+
+  DOMElement* RigidBody::createXMLElement(DOMNode *parent) {
+    DOMElement *ele0 = Element::createXMLElement(parent);
+    DOMDocument *doc=ele0->getOwnerDocument();
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frames" );
+    ele0->insertBefore( ele1, NULL );
+    ele1 = D(doc)->createElement( MBSIM%"contours" );
+    ele0->insertBefore( ele1, NULL );
+    return ele0;
+  }
+
   DOMElement* RigidBody::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);

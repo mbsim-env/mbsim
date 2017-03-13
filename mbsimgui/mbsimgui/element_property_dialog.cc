@@ -53,6 +53,8 @@
 #include "mainwindow.h"
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -107,6 +109,7 @@ namespace MBSimGUI {
   void ElementPropertyDialog::fromWidget(Element *element) {
     element->name.fromWidget(name);
     element->plotFeature.fromWidget(plotFeature);
+    writeXMLFile(element->getXMLElement());
   }
 
   void ElementPropertyDialog::showXMLHelp() {
@@ -468,7 +471,7 @@ namespace MBSimGUI {
     addTab("Solver parameters",2);
     addTab("Extra");
 
-    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft));
+    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,MBSIM%"accelerationOfGravity",vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft));
     addToTab("Environment", environment);
 
     solverParameters = new ExtWidget("Solver parameters",new DynamicSystemSolverParametersWidget,true); 
@@ -500,6 +503,16 @@ namespace MBSimGUI {
     static_cast<DynamicSystemSolver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
     static_cast<DynamicSystemSolver*>(element)->initialProjection.fromWidget(initialProjection);
     static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.fromWidget(useConstraintSolverForPlot);
+  }
+
+  DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *element) {
+    return NULL;
+  }
+
+  DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent) {
+//    GroupPropertyDialog::writeXMLFile(parent);
+    environment->writeXMLFile(E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild());
+    return NULL;
   }
 
   ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
@@ -551,10 +564,10 @@ namespace MBSimGUI {
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
     addToTab("Kinematics",K);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
+    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",MBSIM%"mass",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft));
     addToTab("General",mass);
 
-    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
+    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),MBSIM%"inertiaTensor",vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft));
     addToTab("General",inertia);
 
     frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
@@ -617,6 +630,53 @@ namespace MBSimGUI {
     static_cast<RigidBody*>(element)->coordinateTransformationForRotation.fromWidget(coordinateTransformationForRotation);
     static_cast<RigidBody*>(element)->bodyFixedRepresentationOfAngularVelocity.fromWidget(bodyFixedRepresentationOfAngularVelocity);
     static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
+  }
+
+  DOMElement* RigidBodyPropertyDialog::initializeUsingXML(DOMElement *element) {
+//    return Body::initializeUsingXML(element);
+    return NULL;
+  }
+
+  DOMElement* RigidBodyPropertyDialog::writeXMLFile(DOMNode *parent) {
+
+ //   DOMElement *ele0 = Body::writeXMLFile(parent);
+
+//    K.writeXMLFile(ele0);
+
+    mass->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    inertia->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+//    inertia.writeXMLFile(ele0);
+//    frameForInertiaTensor.writeXMLFile(ele0);
+
+//    translation.writeXMLFile(ele0);
+//    rotation.writeXMLFile(ele0);
+//    translationDependentRotation.writeXMLFile(ele0);
+//    coordinateTransformationForRotation.writeXMLFile(ele0);
+//    bodyFixedRepresentationOfAngularVelocity.writeXMLFile(ele0);
+//
+//    DOMDocument *doc=ele0->getOwnerDocument();
+//    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frames" );
+//    for(size_t i=1; i<frame.size(); i++)
+//      Embed<Frame>::writeXML(frame[i],ele1);
+//    ele0->insertBefore( ele1, NULL );
+//
+//    ele1 = D(doc)->createElement( MBSIM%"contours" );
+//    for(size_t i=0; i<contour.size(); i++)
+//      Embed<Contour>::writeXML(contour[i],ele1);
+//    ele0->insertBefore( ele1, NULL );
+//
+//    ombvEditor.writeXMLFile(ele0);
+//
+//    Frame *C = getFrame(0);
+//    if(C->openMBVFrame()) {
+//      ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
+//      C->writeXMLFile2(ele1);
+//      ele0->insertBefore(ele1, NULL);
+//    }
+//
+//    C->writeXMLFile3(ele0);
+
+    return NULL;
   }
 
   int RigidBodyPropertyDialog::getqRelSize() const {

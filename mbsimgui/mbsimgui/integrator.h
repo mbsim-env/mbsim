@@ -45,26 +45,29 @@ namespace MBSimGUI {
   class Integrator : public Solver {
     friend class IntegratorPropertyDialog;
     protected:
-    ExtProperty startTime, endTime, plotStepSize, initialState;
+      ExtProperty startTime, endTime, plotStepSize, initialState;
+      xercesc::DOMElement *element;
     public:
-    Integrator();
-    virtual ~Integrator();
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual std::string getType() const { return "Integrator"; }
-    virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
+      Integrator();
+      virtual ~Integrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      virtual std::string getType() const { return "Integrator"; }
+      virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
   };
 
   class DOPRI5Integrator : public Integrator {
     friend class DOPRI5IntegratorPropertyDialog;
     public:
-    DOPRI5Integrator();
-    virtual void initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
-    virtual std::string getType() const { return "DOPRI5Integrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
+      DOPRI5Integrator();
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      virtual std::string getType() const { return "DOPRI5Integrator"; }
+      IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
     protected:
-    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
+      ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
   };
 
   class RADAU5Integrator : public Integrator {

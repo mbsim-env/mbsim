@@ -20,7 +20,7 @@
 #ifndef _PROPERTIES_H_
 #define _PROPERTIES_H_
 
-#include<string>
+#include <string>
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
 

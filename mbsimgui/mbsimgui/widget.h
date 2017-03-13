@@ -21,6 +21,8 @@
 #define _XML_WIDGETS_H_
 
 #include <QWidget>
+#include <xercesc/util/XercesDefs.hpp>
+#include <mbxmlutilshelper/dom.h>
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -35,6 +37,8 @@ namespace MBSimGUI {
       virtual void updateWidget() {}
       virtual void resizeVariables() {}
       virtual void resize_(int m, int n) {}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) {return 0;}
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL) {return 0;}
   };
 
   class Widget : public QWidget, public WidgetInterface {

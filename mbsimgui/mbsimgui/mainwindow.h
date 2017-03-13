@@ -93,6 +93,7 @@ namespace MBSimGUI {
       static QDialog *helpDialog;
       static QWebView *helpViewer;
       bool debug;
+      std::shared_ptr<xercesc::DOMDocument> doc;
 
     public:
       MainWindow(QStringList &arg);
