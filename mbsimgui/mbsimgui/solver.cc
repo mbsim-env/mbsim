@@ -36,7 +36,7 @@ namespace MBSimGUI {
 
   Solver::Solver() : embed(0,false), name("Solver") {
 
-    embed.setProperty(new EmbedProperty(std::bind(&Solver::getName, this)));
+    embed.setProperty(new EmbedProperty(name));
   }
 
   Solver::~Solver() {

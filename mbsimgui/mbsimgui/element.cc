@@ -45,7 +45,7 @@ namespace MBSimGUI {
 
   Element::Element(const string &name_, Element *parent_, const vector<FQN> &plotFeatureTypes) : parent(parent_), embed(0,false), element(NULL) {
     name.setProperty(new TextProperty(name_,""));
-    embed.setProperty(new EmbedProperty(std::bind(&Element::getName, this)));
+    embed.setProperty(new EmbedProperty(name_));
     plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));
     ID=toStr(IDcounter++);
     addPlotFeature("plotRecursive");
@@ -85,7 +85,7 @@ namespace MBSimGUI {
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType());
-    E(element)->setAttribute("name", getName());
+    E(element)->setAttribute("name", static_cast<TextProperty*>(name.getProperty())->getText());
     parent->insertBefore(element, NULL);
     return element;
   }
@@ -254,13 +254,14 @@ namespace MBSimGUI {
       getParent()->addPlotFeature(pf);
   }
 
-  const string& Element::getName() const {
-//    if(element) if(E(element)->hasAttribute("name"))  cout << E(element)->getAttribute("name") << endl;
-    return static_cast<const TextProperty*>(name.getProperty())->getText();
+  string Element::getName() const {
+    return E(element)->getAttribute("name");
+//    return static_cast<const TextProperty*>(name.getProperty())->getText();
   }
 
   void Element::setName(const string &str) {
-    static_cast<TextProperty*>(name.getProperty())->setText(str);
+//    static_cast<TextProperty*>(name.getProperty())->setText(str);
+    E(element)->setAttribute("name", str);
   }
 
 }

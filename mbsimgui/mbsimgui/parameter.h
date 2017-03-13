@@ -48,7 +48,7 @@ namespace MBSimGUI {
     virtual void initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual std::string getType() const { return "Parameter"; }
-    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
+    std::string getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
     virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}

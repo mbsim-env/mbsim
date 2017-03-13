@@ -29,7 +29,7 @@ namespace MBSimGUI {
   class TreeItemData {
     public:
       virtual ~TreeItemData() {}
-      virtual const std::string& getName() const = 0;
+      virtual std::string getName() const {return "";};
       virtual std::string getValue() const {return "";}
       virtual std::string getType() const {return "";}
       virtual void setName(const std::string &data) {}

@@ -86,43 +86,43 @@ namespace MBSimGUI {
 
   DynamicSystemSolver::DynamicSystemSolver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false), initialProjection(0,false), useConstraintSolverForPlot(0,false) {
 
-    vector<string> g(3);
-    g[0] = "0";
-    g[1] = "-9.81";
-    g[2] = "0";
-    environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIM%"accelerationOfGravity",vector<string>(3,"m/s^2")),"",4));
-
-    solverParameters.setProperty(new DynamicSystemSolverParametersProperty); 
-
-    inverseKinetics.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"inverseKinetics",vector<string>(2,"")),"",4));
-
-    initialProjection.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"initialProjection",vector<string>(2,"")),"",4));
-
-    useConstraintSolverForPlot.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"useConstraintSolverForPlot",vector<string>(2,"")),"",4));
+//    vector<string> g(3);
+//    g[0] = "0";
+//    g[1] = "-9.81";
+//    g[2] = "0";
+//    environment.setProperty(new ChoiceProperty2(new VecPropertyFactory(g,MBSIM%"accelerationOfGravity",vector<string>(3,"m/s^2")),"",4));
+//
+//    solverParameters.setProperty(new DynamicSystemSolverParametersProperty);
+//
+//    inverseKinetics.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"inverseKinetics",vector<string>(2,"")),"",4));
+//
+//    initialProjection.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"initialProjection",vector<string>(2,"")),"",4));
+//
+//    useConstraintSolverForPlot.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"useConstraintSolverForPlot",vector<string>(2,"")),"",4));
   }
 
   DOMElement* DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
-    Group::initializeUsingXML(element);
-    DOMElement *e;
-
-    // search first Environment element
-    e=E(element)->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild();
-    Environment *env;
-    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
-      env->initializeUsingXML(e);
-      environment.initializeUsingXML(e);
-      e=e->getNextElementSibling();
-    }
-
-    solverParameters.initializeUsingXML(element);
-
-    inverseKinetics.initializeUsingXML(element);
-
-    initialProjection.initializeUsingXML(element);
-
-    useConstraintSolverForPlot.initializeUsingXML(element);
-
-    return element;
+    return Group::initializeUsingXML(element);
+//    DOMElement *e;
+//
+//    // search first Environment element
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild();
+//    Environment *env;
+//    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
+//      env->initializeUsingXML(e);
+//      environment.initializeUsingXML(e);
+//      e=e->getNextElementSibling();
+//    }
+//
+//    solverParameters.initializeUsingXML(element);
+//
+//    inverseKinetics.initializeUsingXML(element);
+//
+//    initialProjection.initializeUsingXML(element);
+//
+//    useConstraintSolverForPlot.initializeUsingXML(element);
+//
+//    return element;
   }
 
   DOMElement* DynamicSystemSolver::writeXMLFile(DOMNode *parent) {

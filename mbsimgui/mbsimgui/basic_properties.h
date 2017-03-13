@@ -364,7 +364,7 @@ namespace MBSimGUI {
   class EmbedProperty : public Property {
 
     public:
-      EmbedProperty(std::function<const std::string&()> f);
+      EmbedProperty(const std::string &f);
       virtual PropertyInterface* clone() const {return new EmbedProperty(*this);}
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);

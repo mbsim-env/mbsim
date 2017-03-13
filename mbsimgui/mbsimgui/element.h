@@ -77,7 +77,7 @@ namespace MBSimGUI {
       virtual void writeXMLFileEmbed(const std::string &name);
       virtual void initialize() {}
       virtual void deinitialize() {}
-      const std::string& getName() const;
+      std::string getName() const;
       void setName(const std::string &str);
       virtual std::string getType() const { return "Element"; }
       virtual std::string getValue() const;

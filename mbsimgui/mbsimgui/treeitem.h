@@ -38,7 +38,7 @@ namespace MBSimGUI {
       std::string name, value, type;
     public:
       BasicItemData(const std::string &name_, const std::string &value_, const std::string &type_="") : name(name_), value(value_), type(type_) {}
-      const std::string& getName() const {return name;}
+      std::string getName() const {return name;}
       std::string getValue() const {return value;}
       std::string getType() const {return type;}
       void setName(const std::string &name_) {name = name_;}

@@ -829,9 +829,9 @@ namespace MBSimGUI {
     tolerances.toWidget(static_cast<DynamicSystemSolverParametersWidget*>(widget)->tolerances);
   }
 
-  EmbedProperty::EmbedProperty(std::function<const std::string&()> f) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
+  EmbedProperty::EmbedProperty(const string &name) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
     href.setProperty(new FileProperty(""));
-    static_cast<FileProperty*>(href.getProperty())->setFile(f()+".xml");
+    static_cast<FileProperty*>(href.getProperty())->setFile(name+".xml");
     count.setProperty(new PhysicalVariableProperty(new ScalarProperty("1")));
     counterName.setProperty(new TextProperty("n",""));
     parameterList.setProperty(new FileProperty(""));

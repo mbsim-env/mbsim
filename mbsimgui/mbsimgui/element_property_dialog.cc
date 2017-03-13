@@ -118,8 +118,8 @@ namespace MBSimGUI {
   }
 
   void ElementPropertyDialog::fromWidget(Element *element) {
-    element->name.fromWidget(name);
-    element->plotFeature.fromWidget(plotFeature);
+//    element->name.fromWidget(name);
+//    element->plotFeature.fromWidget(plotFeature);
     writeXMLFile(element->getXMLElement());
   }
 
@@ -461,20 +461,20 @@ namespace MBSimGUI {
 
   void GroupPropertyDialog::toWidget(Element *element) {
     ElementPropertyDialog::toWidget(element);
-    if(position) {
-      static_cast<Group*>(element)->position.toWidget(position);
-      static_cast<Group*>(element)->orientation.toWidget(orientation);
-      static_cast<Group*>(element)->frameOfReference.toWidget(frameOfReference);
-    }
+//    if(position) {
+//      static_cast<Group*>(element)->position.toWidget(position);
+//      static_cast<Group*>(element)->orientation.toWidget(orientation);
+//      static_cast<Group*>(element)->frameOfReference.toWidget(frameOfReference);
+//    }
   }
 
   void GroupPropertyDialog::fromWidget(Element *element) {
     ElementPropertyDialog::fromWidget(element);
-    if(position) {
-      static_cast<Group*>(element)->position.fromWidget(position);
-      static_cast<Group*>(element)->orientation.fromWidget(orientation);
-      static_cast<Group*>(element)->frameOfReference.fromWidget(frameOfReference);
-    }
+//    if(position) {
+//      static_cast<Group*>(element)->position.fromWidget(position);
+//      static_cast<Group*>(element)->orientation.fromWidget(orientation);
+//      static_cast<Group*>(element)->frameOfReference.fromWidget(frameOfReference);
+//    }
   }
 
   DynamicSystemSolverPropertyDialog::DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
@@ -509,11 +509,11 @@ namespace MBSimGUI {
 
   void DynamicSystemSolverPropertyDialog::fromWidget(Element *element) {
     GroupPropertyDialog::fromWidget(element);
-    static_cast<DynamicSystemSolver*>(element)->environment.fromWidget(environment);
-    static_cast<DynamicSystemSolver*>(element)->solverParameters.fromWidget(solverParameters);
-    static_cast<DynamicSystemSolver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
-    static_cast<DynamicSystemSolver*>(element)->initialProjection.fromWidget(initialProjection);
-    static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.fromWidget(useConstraintSolverForPlot);
+//    static_cast<DynamicSystemSolver*>(element)->environment.fromWidget(environment);
+//    static_cast<DynamicSystemSolver*>(element)->solverParameters.fromWidget(solverParameters);
+//    static_cast<DynamicSystemSolver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
+//    static_cast<DynamicSystemSolver*>(element)->initialProjection.fromWidget(initialProjection);
+//    static_cast<DynamicSystemSolver*>(element)->useConstraintSolverForPlot.fromWidget(useConstraintSolverForPlot);
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {

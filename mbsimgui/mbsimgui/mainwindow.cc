@@ -681,14 +681,14 @@ namespace MBSimGUI {
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
     if(modifyStatus) setProjectChanged(false);
-    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
-    DOMElement *ele0=writeProject(doc);
-    if(ele0) {
-      DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
-      DOMParser::serialize(this->doc.get(), fileName.isEmpty()?string("_")+fileProject.toStdString():string("_")+fileName.toStdString());
+//    shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
+//    DOMElement *ele0=writeProject(doc);
+//    if(ele0) {
+//      DOMParser::serialize(doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
+      DOMParser::serialize(this->doc.get(), fileName.isEmpty()?fileProject.toStdString():fileName.toStdString());
       return true;
-    }
-    return false;
+//    }
+//    return false;
   }
 
   void MainWindow::selectIntegrator() {
