@@ -608,7 +608,7 @@ namespace MBSimGUI {
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
     addTab("Visualisation",3);
 
-    K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true,true,MBSIM%"frameForKinematics");
+    K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true,false,MBSIM%"frameForKinematics");
     addToTab("Kinematics",K);
 
     mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1","",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"mass");
@@ -637,8 +637,14 @@ namespace MBSimGUI {
 //    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
 //    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
 //
-//    ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
-//    addToTab("Visualisation", ombvEditor);
+    //ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
+    //addToTab("Visualisation", ombvEditor);
+
+    ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
+    addToTab("Visualisation", ombv);
+//
+    ombvFrameRef=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true,false,MBSIM%"openMBVFrameOfReference");
+    addToTab("Visualisation", ombvFrameRef);
   }
 
   void RigidBodyPropertyDialog::toWidget(Element *element) {
@@ -674,6 +680,8 @@ namespace MBSimGUI {
     K->initializeUsingXML(element->getXMLElement());
     mass->initializeUsingXML(element->getXMLElement());
     inertia->initializeUsingXML(element->getXMLElement());
+    ombv->initializeUsingXML(element->getXMLElement());
+    ombvFrameRef->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
@@ -683,13 +691,14 @@ namespace MBSimGUI {
  //   DOMElement *ele0 = Body::writeXMLFile(parent);
 
 //    K.writeXMLFile(ele0);
-
     DOMElement *ele = inertia->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     ele = mass->writeXMLFile(element->getXMLElement(),ele);
     ele = K->writeXMLFile(element->getXMLElement(),ele);
 //    inertia.writeXMLFile(ele0);
 //    frameForInertiaTensor.writeXMLFile(ele0);
 
+    ele = ombvFrameRef->writeXMLFile(element->getXMLElement(),E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC"));
+    ele = ombv->writeXMLFile(element->getXMLElement(),ele?ele:E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC"));
 //    translation.writeXMLFile(ele0);
 //    rotation.writeXMLFile(ele0);
 //    translationDependentRotation.writeXMLFile(ele0);

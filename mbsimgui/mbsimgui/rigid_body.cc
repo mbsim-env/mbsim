@@ -118,8 +118,6 @@ namespace MBSimGUI {
     ele0->insertBefore( elec, NULL );
 
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
-    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
-    ele1->insertBefore(id, NULL);
     ele0->insertBefore( ele1, NULL );
 
     for(size_t i=1; i<frame.size(); i++)
@@ -146,6 +144,16 @@ namespace MBSimGUI {
       ELE=ELE->getNextElementSibling();
     }
 
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
+    if(ELE) {
+      ELE = ELE->getFirstElementChild();
+      if(ELE) {
+        DOMDocument *doc=element->getOwnerDocument();
+        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+        ELE->insertBefore(id, NULL);
+      }
+    }
+
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
     if(ELE) {
       DOMDocument *doc=element->getOwnerDocument();
@@ -155,6 +163,7 @@ namespace MBSimGUI {
 
     return element;
   }
+
   DOMElement* RigidBody::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);

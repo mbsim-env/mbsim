@@ -38,17 +38,22 @@ namespace MBSimGUI {
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
+      MBXMLUtils::FQN getXMLName(int i=0) const { return xmlName[i]; }
     protected:
       std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
   class OMBVObjectWidget : public Widget {
 
     public:
-      OMBVObjectWidget(const QString &name_="NOTSET") : name(name_) {}
+      OMBVObjectWidget(const QString &name_="NOTSET", const MBXMLUtils::FQN &xmlName_="") : name(name_), xmlName(xmlName_) {}
       void setName(const QString &name_) {name = name_;}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       QString name;
+      MBXMLUtils::FQN xmlName;
   };
 
   class MBSOMBVWidget : public OMBVObjectWidget {
@@ -153,10 +158,12 @@ namespace MBSimGUI {
     friend class OMBVDynamicColoredObjectProperty;
 
     public:
-    OMBVDynamicColoredObjectWidget(const QString &name="NOTSET");
+      OMBVDynamicColoredObjectWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    QVBoxLayout *layout;
-    ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
+      QVBoxLayout *layout;
+      ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
   };
 
   class OMBVRigidBodyWidget : public OMBVDynamicColoredObjectWidget {
@@ -164,9 +171,11 @@ namespace MBSimGUI {
     friend class OMBVRigidBodyProperty;
 
     public:
-    OMBVRigidBodyWidget(const QString &name="NOTSET");
+      OMBVRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *trans, *rot, *scale;
+      ExtWidget *trans, *rot, *scale;
   };
 
   class InvisibleBodyWidget : public OMBVRigidBodyWidget {
@@ -180,9 +189,11 @@ namespace MBSimGUI {
     friend class CubeProperty;
 
     public:
-    CubeWidget(const QString &name="NOTSET");
+      CubeWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *length;
+      ExtWidget *length;
   };
 
   class CuboidWidget : public OMBVRigidBodyWidget {
@@ -190,9 +201,11 @@ namespace MBSimGUI {
     friend class CuboidProperty;
 
     public:
-    CuboidWidget(const QString &name="NOTSET");
+      CuboidWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *length;
+      ExtWidget *length;
   };
 
   class SphereWidget : public OMBVRigidBodyWidget {
@@ -251,13 +264,14 @@ namespace MBSimGUI {
     friend class OMBVRigidBodySelectionProperty;
 
     public:
+      OMBVRigidBodySelectionWidget(Body* body);
 
-    OMBVRigidBodySelectionWidget(Body* body);
-
-    virtual void updateWidget() {ref->updateWidget();}
+      virtual void updateWidget() {ref->updateWidget();}
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    ExtWidget *ombv, *ref;
+      ExtWidget *ombv, *ref;
   };
 
   class FlexibleBodyFFRMBSOMBVWidget : public MBSOMBVWidget {

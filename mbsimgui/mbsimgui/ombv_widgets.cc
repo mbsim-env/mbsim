@@ -44,13 +44,21 @@ namespace MBSimGUI {
     name.push_back("IvBody");
     name.push_back("CompoundRigidBody");
     name.push_back("InvisibleBody");
+    xmlName.push_back(OPENMBV%"Cube");
+    xmlName.push_back(OPENMBV%"Cuboid");
+    xmlName.push_back(OPENMBV%"Frustum");
+    xmlName.push_back(OPENMBV%"Extrusion");
+    xmlName.push_back(OPENMBV%"Sphere");
+    xmlName.push_back(OPENMBV%"IvBody");
+    xmlName.push_back(OPENMBV%"CompoundRigidBody");
+    xmlName.push_back(OPENMBV%"InvisibleBody");
   }
 
   QWidget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new CubeWidget;
+      return new CubeWidget("Cube",OPENMBV%"Cube");
     if(i==1)
-      return new CuboidWidget;
+      return new CuboidWidget("Cuboid",OPENMBV%"Cuboid");
     if(i==2)
       return new FrustumWidget;
     if(i==3)
@@ -64,6 +72,32 @@ namespace MBSimGUI {
     if(i==7)
       return new InvisibleBodyWidget;
     return NULL;
+  }
+
+  DOMElement* OMBVObjectWidget::initializeUsingXML(DOMElement *element) {
+//    DOMElement *e=(xmlName==FQN())?element:E(element)->getFirstElementChildNamed(xmlName);
+//    if(e) {
+//      diffuseColor->initializeUsingXML(e);
+//      transparency->initializeUsingXML(e);
+//    }
+    return element;
+  }
+
+  DOMElement* OMBVObjectWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *newele;
+    if(xmlName!=FQN()) {
+    DOMDocument *doc = parent->getOwnerDocument();
+    newele=D(doc)->createElement(xmlName);
+    E(newele)->setAttribute("name",name.toStdString());
+    DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+    if(ele)
+      parent->replaceChild(newele,ele);
+    else
+      parent->insertBefore(newele,ref);
+    }
+    else
+      newele = (DOMElement*)parent;
+    return newele;
   }
 
   //class OmbvBodyWidgetFactory : public WidgetFactory {
@@ -264,60 +298,108 @@ namespace MBSimGUI {
     }
   }
 
-  OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name) : OMBVObjectWidget(name) {
+  OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name, const FQN &xmlName) : OMBVObjectWidget(name,xmlName) {
     layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), noUnitUnits(), 1));
-    minimalColorValue = new ExtWidget("Minimal color value",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(minimalColorValue);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-    maximalColorValue = new ExtWidget("Maximal color value",new ExtPhysicalVarWidget(input),true);
-    layout->addWidget(maximalColorValue);
-
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
-    layout->addWidget(diffuseColor);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
-    transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+//    vector<PhysicalVariableWidget*> input;
+//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), noUnitUnits(), 1));
+//    minimalColorValue = new ExtWidget("Minimal color value",new ExtPhysicalVarWidget(input),true);
+//    layout->addWidget(minimalColorValue);
+//
+//    input.clear();
+//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
+//    maximalColorValue = new ExtWidget("Maximal color value",new ExtPhysicalVarWidget(input),true);
+//    layout->addWidget(maximalColorValue);
+//
+//    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+//    layout->addWidget(diffuseColor);
+//
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,OPENMBV%"transparency");
     layout->addWidget(transparency);
   }
 
-  OMBVRigidBodyWidget::OMBVRigidBodyWidget(const QString &name) : OMBVDynamicColoredObjectWidget(name) {
+  DOMElement* OMBVDynamicColoredObjectWidget::initializeUsingXML(DOMElement *element) {
+    OMBVObjectWidget::initializeUsingXML(element);
+    transparency->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* OMBVDynamicColoredObjectWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
+    transparency->writeXMLFile(e);
+    return e;
+  }
+
+  OMBVRigidBodyWidget::OMBVRigidBodyWidget(const QString &name, const FQN &xmlName) : OMBVDynamicColoredObjectWidget(name,xmlName) {
 
     transparency->setActive(true);
 
-    trans = new ExtWidget("Initial translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft));
+    trans = new ExtWidget("Initial translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"initialTranslation");
     layout->addWidget(trans);
 
-    rot = new ExtWidget("Initial rotation",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,angleUnits())),QBoxLayout::RightToLeft));
+    rot = new ExtWidget("Initial rotation",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,angleUnits())),QBoxLayout::RightToLeft),false,false,OPENMBV%"initialRotation");
     layout->addWidget(rot);
-
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), noUnitUnits(), 1));
-    scale = new ExtWidget("Scale factor",new ExtPhysicalVarWidget(input));
+//
+    scale = new ExtWidget("Scale factor",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"scaleFactor");
     layout->addWidget(scale);
   }
 
-  CubeWidget::CubeWidget(const QString &name) : OMBVRigidBodyWidget(name) {
+  DOMElement* OMBVRigidBodyWidget::initializeUsingXML(DOMElement *element) {
+    OMBVDynamicColoredObjectWidget::initializeUsingXML(element);
+    trans->initializeUsingXML(element);
+    rot->initializeUsingXML(element);
+    scale->initializeUsingXML(element);
+    return element;
+  }
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
+  DOMElement* OMBVRigidBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVDynamicColoredObjectWidget::writeXMLFile(parent);
+    trans->writeXMLFile(e);
+    rot->writeXMLFile(e);
+    scale->writeXMLFile(e);
+    return e;
+  }
+
+  CubeWidget::CubeWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
+
+    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"length");
+    layout->addWidget(length);
+//    vector<PhysicalVariableWidget*> input;
+//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
+//    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
+//    layout->addWidget(length);
+  }
+
+  DOMElement* CubeWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    length->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* CubeWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    length->writeXMLFile(e);
+    return e;
+  }
+
+  CuboidWidget::CuboidWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name, xmlName) {
+
+    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"length");
     layout->addWidget(length);
   }
 
-  CuboidWidget::CuboidWidget(const QString &name) : OMBVRigidBodyWidget(name) {
+  DOMElement* CuboidWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    length->initializeUsingXML(element);
+    return element;
+  }
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<QString>(3,"1"),true), lengthUnits(), 4));
-    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
-    layout->addWidget(length);
+  DOMElement* CuboidWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    length->writeXMLFile(e);
+    return e;
   }
 
   SphereWidget::SphereWidget(const QString &name) : OMBVRigidBodyWidget(name) {
@@ -403,11 +485,23 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory),true);
-
-    ref=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true);
+    ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory),true,true,MBSIM%"openMBVRigidBody");
     layout->addWidget(ombv);
+
+    ref=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true,true,MBSIM%"openMBVFrameOfReference");
     layout->addWidget(ref);
+  }
+
+  DOMElement* OMBVRigidBodySelectionWidget::initializeUsingXML(DOMElement *element) {
+    ombv->initializeUsingXML(element);
+    ref->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* OMBVRigidBodySelectionWidget::writeXMLFile(DOMNode *parent, DOMNode *refNode) {
+    ombv->writeXMLFile(parent,refNode);
+    ref->writeXMLFile(parent,refNode);
+    return 0;
   }
 
   FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {

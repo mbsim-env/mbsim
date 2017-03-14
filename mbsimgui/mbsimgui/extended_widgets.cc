@@ -131,8 +131,45 @@ namespace MBSimGUI {
   }
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
-    if(element) {
-     if(true) { // mode<=5) {
+//    if(element) {
+      if(mode<=1) {
+        DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+        if(e) {
+          DOMElement* ee=(mode==0)?e->getFirstElementChild():e;
+          if(ee) {
+            for(int i=0; i<factory->getSize(); i++) {
+              if(E(ee)->getTagName() == factory->getXMLName(i)) {
+                defineWidget(i);
+                comboBox->blockSignals(true);
+                comboBox->setCurrentIndex(i);
+                comboBox->blockSignals(false);
+                return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
+              }
+            }
+          }
+        }
+        return 0;
+      }
+      else if (mode<=3) {
+        DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
+        if(e) {
+          DOMElement* ee=(mode==2)?e->getFirstElementChild():e;
+          if(ee) {
+            for(int i=0; i<factory->getSize(); i++) {
+              DOMElement *eee=E(ee)->getFirstElementChildNamed(factory->getXMLName(i));
+              if(eee) {
+                defineWidget(i);
+                comboBox->blockSignals(true);
+                comboBox->setCurrentIndex(i);
+                comboBox->blockSignals(false);
+                return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee);
+              }
+            }
+          }
+        }
+        return 0;
+      }
+      else {
         DOMElement *e=(xmlName!=FQN())?E(element)->getFirstElementChildNamed(xmlName):element;
         if(e) {
           DOMElement* ee=e;
@@ -141,6 +178,9 @@ namespace MBSimGUI {
               DOMElement *eee=(mode==4)?ee->getFirstElementChild():ee;
               if(eee) {
                 defineWidget(i);
+                comboBox->blockSignals(true);
+                comboBox->setCurrentIndex(i);
+                comboBox->blockSignals(false);
                 if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(ee))
                   return eee;
               }
@@ -149,7 +189,7 @@ namespace MBSimGUI {
         }
         return NULL;
       }
-    }
+//    }
     return NULL;
   }
 
@@ -238,7 +278,6 @@ namespace MBSimGUI {
       return isActive()?dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref):0;
     return NULL;
   }
-
 
   ContainerWidget::ContainerWidget() {
     layout = new QVBoxLayout;

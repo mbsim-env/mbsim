@@ -83,15 +83,6 @@ namespace MBSimGUI {
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
-  DOMElement* Element::processFileID(DOMElement *element) {
-//    if(not getID().empty()) {
-//      DOMDocument *doc=element->getOwnerDocument();
-//      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-//      element->insertBefore(id, element->getFirstChild());
-//    }
-    return element;
-  }
-
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType());
