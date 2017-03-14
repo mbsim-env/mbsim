@@ -75,8 +75,8 @@ namespace MBSimGUI {
   }
 
   void LocalFrameOfReferenceProperty::toWidget(QWidget *widget) {
-    static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
-    static_cast<LocalFrameOfReferenceWidget*>(widget)->updateWidget();
+//    static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
+//    static_cast<LocalFrameOfReferenceWidget*>(widget)->updateWidget();
   }
 
   ParentFrameOfReferenceProperty::ParentFrameOfReferenceProperty(const std::string &frame_, Element* element_, const MBXMLUtils::FQN &xmlName_): frame(frame_), framePtr(element_->getParent()->getFrame(frame.substr(9, frame.length()-10))), element(element_), xmlName(xmlName_) {
@@ -153,8 +153,8 @@ namespace MBSimGUI {
   }
 
   void FrameOfReferenceProperty::toWidget(QWidget *widget) {
-    static_cast<FrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
-    static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
+//    static_cast<FrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
+//    static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
   }
 
   ContourOfReferenceProperty::ContourOfReferenceProperty(const std::string &contour_, Element* element_, const FQN &xmlName_) : contour(contour_), contourPtr(element_->getByPath<Contour>(contour)), element(element_), xmlName(xmlName_) {

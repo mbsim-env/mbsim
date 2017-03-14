@@ -84,12 +84,11 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::processFileID(DOMElement *element) {
-    if(not getID().empty()) {
-      cout << "write ID" << getID() << " for " << getName() << endl;
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      element->insertBefore(id, element->getFirstChild());
-    }
+//    if(not getID().empty()) {
+//      DOMDocument *doc=element->getOwnerDocument();
+//      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+//      element->insertBefore(id, element->getFirstChild());
+//    }
     return element;
   }
 

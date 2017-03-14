@@ -87,7 +87,8 @@ namespace MBSimGUI {
 
       void updateWidget();
       QString getFrame() const;
-      void setFrame(const QString &str, Frame *framePtr);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QComboBox *frame;
@@ -124,7 +125,7 @@ namespace MBSimGUI {
       FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
       void updateWidget();
-      void setFrame(const QString &str, Frame *framePtr);
+      void setFrame(const QString &str);
       void setDefaultFrame(const QString &def);
       QString getFrame() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

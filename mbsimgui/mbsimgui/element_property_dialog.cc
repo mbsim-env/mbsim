@@ -608,8 +608,8 @@ namespace MBSimGUI {
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
     addTab("Visualisation",3);
 
-//    K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
-//    addToTab("Kinematics",K);
+    K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true,true,MBSIM%"frameForKinematics");
+    addToTab("Kinematics",K);
 
     mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1","",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"mass");
     addToTab("General",mass);
@@ -671,6 +671,7 @@ namespace MBSimGUI {
 
   DOMElement* RigidBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     BodyPropertyDialog::initializeUsingXML(element->getXMLElement());
+    K->initializeUsingXML(element->getXMLElement());
     mass->initializeUsingXML(element->getXMLElement());
     inertia->initializeUsingXML(element->getXMLElement());
     return parent;
@@ -683,8 +684,9 @@ namespace MBSimGUI {
 
 //    K.writeXMLFile(ele0);
 
-    mass->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    inertia->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    DOMElement *ele = inertia->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    ele = mass->writeXMLFile(element->getXMLElement(),ele);
+    ele = K->writeXMLFile(element->getXMLElement(),ele);
 //    inertia.writeXMLFile(ele0);
 //    frameForInertiaTensor.writeXMLFile(ele0);
 

@@ -122,11 +122,6 @@ namespace MBSimGUI {
     frame->blockSignals(false);
   }
 
-  void LocalFrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
-    selectedFrame = framePtr;
-    frame->setEditText(str);
-  }
-
   void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
     selectedFrame = element->getFrame(str.mid(6, str.length()-7).toStdString());
     frame->setEditText(str);
@@ -134,6 +129,16 @@ namespace MBSimGUI {
 
   QString LocalFrameOfReferenceWidget::getFrame() const {
     return frame->currentText();
+  }
+
+  DOMElement* LocalFrameOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setFrame(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* LocalFrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
+    return NULL;
   }
 
   ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
@@ -220,9 +225,9 @@ namespace MBSimGUI {
     frame->setText(selectedFrame?QString::fromStdString(selectedFrame->getXMLPath(element,true)):"");
   }
 
-  void FrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
+  void FrameOfReferenceWidget::setFrame(const QString &str) {
     if(str!=def) {
-      selectedFrame = framePtr;
+      selectedFrame = element->getByPath<Frame>(str.toStdString());
       frame->setText(str);
     }
   }
@@ -232,16 +237,12 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrameOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-//    if(element)
-    setFrame(QString::fromStdString(E(element)->getAttribute("ref")),NULL);
+    setFrame(QString::fromStdString(E(element)->getAttribute("ref")));
     return element;
   }
 
   DOMElement* FrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    //DOMDocument *doc=parent->getOwnerDocument();
-    //DOMElement *ele = D(doc)->createElement(xmlName);
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
-    //parent->insertBefore(ele, NULL);
     return NULL;
   }
 
