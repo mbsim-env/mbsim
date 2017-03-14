@@ -60,17 +60,17 @@ namespace MBSimGUI {
     if(i==1)
       return new CuboidWidget("Cuboid",OPENMBV%"Cuboid");
     if(i==2)
-      return new FrustumWidget;
+      return new FrustumWidget("Frustum",OPENMBV%"Frustum");
     if(i==3)
-      return new ExtrusionWidget;
+      return new ExtrusionWidget("Extrusion",OPENMBV%"Extrusion");
     if(i==4)
-      return new SphereWidget;
+      return new SphereWidget("Sphere",OPENMBV%"Sphere");
     if(i==5)
-      return new IvBodyWidget;
+      return new IvBodyWidget("IvBody",OPENMBV%"IvBody");
     if(i==6)
-      return new CompoundRigidBodyWidget;
+      return new CompoundRigidBodyWidget("CompoundRigidBody",OPENMBV%"CompoundRigidBody");
     if(i==7)
-      return new InvisibleBodyWidget;
+      return new InvisibleBodyWidget("InvisibleBody",OPENMBV%"InvisibleBody");
     return NULL;
   }
 
@@ -127,7 +127,7 @@ namespace MBSimGUI {
 //    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,true,MBSIM%"diffuseColor");
 //    layout->addWidget(diffuseColor);
 //
-    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"transparency");
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"transparency");
     layout->addWidget(transparency);
   }
 
@@ -263,11 +263,11 @@ namespace MBSimGUI {
   }
 
   FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name, const FQN &xmlName) : MBSOMBVWidget(name,xmlName) {
-    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1","",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
+    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
     size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
 
-    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
+    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     offset->setToolTip("Set the offset of the frame");
     layout()->addWidget(offset);
   }
@@ -336,7 +336,7 @@ namespace MBSimGUI {
 
     transparency->setActive(true);
 
-    trans = new ExtWidget("Initial translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"initialTranslation");
+    trans = new ExtWidget("Initial translation",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"initialTranslation");
     layout->addWidget(trans);
 
     rot = new ExtWidget("Initial rotation",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,angleUnits())),QBoxLayout::RightToLeft),false,false,OPENMBV%"initialRotation");
@@ -366,10 +366,6 @@ namespace MBSimGUI {
 
     length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"length");
     layout->addWidget(length);
-//    vector<PhysicalVariableWidget*> input;
-//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-//    length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
-//    layout->addWidget(length);
   }
 
   DOMElement* CubeWidget::initializeUsingXML(DOMElement *element) {
@@ -386,7 +382,7 @@ namespace MBSimGUI {
 
   CuboidWidget::CuboidWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name, xmlName) {
 
-    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"length");
+    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(strToVec(QString("[1;1;1]")),vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"length");
     layout->addWidget(length);
   }
 
@@ -402,46 +398,65 @@ namespace MBSimGUI {
     return e;
   }
 
-  SphereWidget::SphereWidget(const QString &name) : OMBVRigidBodyWidget(name) {
+  SphereWidget::SphereWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
-    layout->addWidget(radius);
+    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"radius");
   }
 
-  FrustumWidget::FrustumWidget(const QString &name) : OMBVRigidBodyWidget(name) {
+  DOMElement* SphereWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    radius->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* SphereWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    radius->writeXMLFile(e);
+    return e;
+  }
+
+  FrustumWidget::FrustumWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
     vector<QString> r(3);
     r[2] = "0.5";
     static_cast<VecWidget*>(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(trans->getWidget())->getWidget())->getWidget())->setVec(r);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    top = new ExtWidget("Top radius",new ExtPhysicalVarWidget(input));
-    layout->addWidget(top);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    base = new ExtWidget("Base radius",new ExtPhysicalVarWidget(input));
+    base = new ExtWidget("Base radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"baseRadius");
     layout->addWidget(base);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
-    height = new ExtWidget("Height",new ExtPhysicalVarWidget(input));
+    top = new ExtWidget("Top radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"topRadius");
+    layout->addWidget(top);
+
+    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"height");
     layout->addWidget(height);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), lengthUnits(), 4));
-    innerTop = new ExtWidget("Inner top radius",new ExtPhysicalVarWidget(input));
-    layout->addWidget(innerTop);
-
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), lengthUnits(), 4));
-    innerBase = new ExtWidget("Inner base radius",new ExtPhysicalVarWidget(input));
+    innerBase = new ExtWidget("Inner base radius",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"innerBaseRadius");
     layout->addWidget(innerBase);
+
+    innerTop = new ExtWidget("Inner top radius",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"innerTopRadius");
+    layout->addWidget(innerTop);
   }
 
-  ExtrusionWidget::ExtrusionWidget(const QString &name) : OMBVRigidBodyWidget(name) {
+  DOMElement* FrustumWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    base->initializeUsingXML(element);
+    top->initializeUsingXML(element);
+    height->initializeUsingXML(element);
+    innerBase->initializeUsingXML(element);
+    innerTop->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FrustumWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    base->writeXMLFile(e);
+    top->writeXMLFile(e);
+    height->writeXMLFile(e);
+    innerBase->writeXMLFile(e);
+    innerTop->writeXMLFile(e);
+    return e;
+  }
+
+  ExtrusionWidget::ExtrusionWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
     vector<QString> list;
     list.push_back("odd");
     list.push_back("nonzero");
@@ -458,50 +473,53 @@ namespace MBSimGUI {
     layout->addWidget(contour);
   }
 
-  IvBodyWidget::IvBodyWidget(const QString &name) : OMBVRigidBodyWidget(name) {
+  DOMElement* ExtrusionWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    windingRule->initializeUsingXML(element);
+    height->initializeUsingXML(element);
+    contour->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* ExtrusionWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    windingRule->writeXMLFile(e);
+    height->writeXMLFile(e);
+    contour->writeXMLFile(e);
+    return e;
+  }
+
+  IvBodyWidget::IvBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
 
     ivFileName = new ExtWidget("Iv file name",new FileWidget("XML model files", "iv files (*.iv *.wrl)"));
     layout->addWidget(ivFileName);
 
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("-1"), angleUnits(), 0));
-    creaseEdges = new ExtWidget("Crease edges",new ExtPhysicalVarWidget(input),true);
+    creaseEdges = new ExtWidget("Crease edges",new ChoiceWidget2(new ScalarWidgetFactory("-1",vector<QStringList>(2,angleUnits())),QBoxLayout::RightToLeft),false,false,OPENMBV%"creaseEdges");
     layout->addWidget(creaseEdges);
 
-    input.clear();
-    input.push_back(new PhysicalVariableWidget(new BoolWidget("0"), QStringList(), 4));
-    boundaryEdges = new ExtWidget("Boundary edges",new ExtPhysicalVarWidget(input),true);
+    boundaryEdges = new ExtWidget("Boundary edges",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),false,false,OPENMBV%"boundaryEdges");
     layout->addWidget(boundaryEdges);
   }
 
-  CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name) : OMBVRigidBodyWidget(name) {
-    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"Body",1,1));
-    layout->addWidget(bodies);
-  }
-
-  OMBVRigidBodySelectionWidget::OMBVRigidBodySelectionWidget(Body *body) {
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory),true,true,MBSIM%"openMBVRigidBody");
-    layout->addWidget(ombv);
-
-    ref=new ExtWidget("Frame of reference",new LocalFrameOfReferenceWidget(body),true,true,MBSIM%"openMBVFrameOfReference");
-    layout->addWidget(ref);
-  }
-
-  DOMElement* OMBVRigidBodySelectionWidget::initializeUsingXML(DOMElement *element) {
-    ombv->initializeUsingXML(element);
-    ref->initializeUsingXML(element);
+  DOMElement* IvBodyWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    ivFileName->initializeUsingXML(element);
+    creaseEdges->initializeUsingXML(element);
+    boundaryEdges->initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* OMBVRigidBodySelectionWidget::writeXMLFile(DOMNode *parent, DOMNode *refNode) {
-    ombv->writeXMLFile(parent,refNode);
-    ref->writeXMLFile(parent,refNode);
-    return 0;
+  DOMElement* IvBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    ivFileName->writeXMLFile(e);
+    creaseEdges->writeXMLFile(e);
+    boundaryEdges->writeXMLFile(e);
+    return e;
+  }
+
+  CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name) {
+    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"Body",1,1));
+    layout->addWidget(bodies);
   }
 
   FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {

@@ -181,7 +181,7 @@ namespace MBSimGUI {
   class InvisibleBodyWidget : public OMBVRigidBodyWidget {
 
     public:
-      InvisibleBodyWidget(const QString &name="NOTSET") : OMBVRigidBodyWidget(name) {}
+      InvisibleBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="") : OMBVRigidBodyWidget(name) {}
   };
 
   class CubeWidget : public OMBVRigidBodyWidget {
@@ -213,9 +213,11 @@ namespace MBSimGUI {
     friend class SphereProperty;
 
     public:
-    SphereWidget(const QString &name="NOTSET");
+      SphereWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *radius;
+      ExtWidget *radius;
   };
 
   class FrustumWidget : public OMBVRigidBodyWidget {
@@ -223,9 +225,11 @@ namespace MBSimGUI {
     friend class FrustumProperty;
 
     public:
-    FrustumWidget(const QString &name="NOTSET");
+      FrustumWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *top, *base, *height, *innerBase, *innerTop;
+      ExtWidget *top, *base, *height, *innerBase, *innerTop;
   };
 
   class ExtrusionWidget : public OMBVRigidBodyWidget {
@@ -233,9 +237,11 @@ namespace MBSimGUI {
     friend class ExtrusionProperty;
 
     public:
-    ExtrusionWidget(const QString &name="NOTSET");
+      ExtrusionWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *windingRule, *height, *contour;
+      ExtWidget *windingRule, *height, *contour;
   };
 
   class IvBodyWidget : public OMBVRigidBodyWidget {
@@ -243,35 +249,21 @@ namespace MBSimGUI {
     friend class IvBodyProperty;
 
     public:
-    IvBodyWidget(const QString &name="NOTSET");
+      IvBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
+      ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
   };
-  class OMBVRigidBodyChoiceWidget;
 
   class CompoundRigidBodyWidget : public OMBVRigidBodyWidget {
 
     friend class CompoundRigidBodyProperty;
 
     public:
-    CompoundRigidBodyWidget(const QString &name="NOTSET");
+    CompoundRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
     protected:
     ExtWidget *bodies; 
-  };
-
-  class OMBVRigidBodySelectionWidget : public Widget {
-
-    friend class OMBVRigidBodySelectionProperty;
-
-    public:
-      OMBVRigidBodySelectionWidget(Body* body);
-
-      virtual void updateWidget() {ref->updateWidget();}
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
-
-    protected:
-      ExtWidget *ombv, *ref;
   };
 
   class FlexibleBodyFFRMBSOMBVWidget : public MBSOMBVWidget {

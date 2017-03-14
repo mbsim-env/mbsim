@@ -808,33 +808,6 @@ namespace MBSimGUI {
     bodies.toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->bodies);
   }
 
-  OMBVRigidBodySelectionProperty::OMBVRigidBodySelectionProperty(Body *body, const NamespaceURI &uri) : ombv(0,true), ref(0,false) {
-    ombv.setProperty(new ChoiceProperty2(new OMBVRigidBodyPropertyFactory(body->getID()),uri%"openMBVRigidBody"));
-    ref.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",body,uri%"openMBVFrameOfReference"));
-  }
-
-  DOMElement* OMBVRigidBodySelectionProperty::initializeUsingXML(DOMElement *element) {
-    ombv.initializeUsingXML(element);
-    ref.initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* OMBVRigidBodySelectionProperty::writeXMLFile(DOMNode *parent) {
-    ombv.writeXMLFile(parent);
-    ref.writeXMLFile(parent);
-    return 0;
-  }
-
-  void OMBVRigidBodySelectionProperty::fromWidget(QWidget *widget) {
-    ref.fromWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ref);
-    ombv.fromWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ombv);
-  }
-
-  void OMBVRigidBodySelectionProperty::toWidget(QWidget *widget) {
-    ref.toWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ref);
-    ombv.toWidget(static_cast<OMBVRigidBodySelectionWidget*>(widget)->ombv);
-  }
-
   FlexibleBodyFFRMBSOMBVProperty::FlexibleBodyFFRMBSOMBVProperty(const string &name, const FQN &xmlName, const std::string &ID) : MBSOMBVProperty(name,xmlName,ID), nodes(0,false), indices(0,false) {
     nodes.setProperty(new ChoiceProperty2(new VecPropertyFactory(1,MBSIMFLEX%"nodes",vector<string>(3,"")),"",4));
     indices.setProperty(new ChoiceProperty2(new VecPropertyFactory(1,MBSIMFLEX%"indices",vector<string>(3,"")),"",4));

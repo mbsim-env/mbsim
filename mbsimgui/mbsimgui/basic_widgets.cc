@@ -790,7 +790,7 @@ namespace MBSimGUI {
 
     vector<QString> vec(3);
     vec[0] = "0.666667"; vec[1] = "1"; vec[2] = "1";
-    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(3,"",vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft));
+    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft));
     static_cast<VecWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->setVec(vec);
     layout->addWidget(color);
 

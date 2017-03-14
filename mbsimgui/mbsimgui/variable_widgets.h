@@ -390,11 +390,10 @@ namespace MBSimGUI {
       QComboBox* unit;
       QStringList units;
       int defaultUnit;
-      MBXMLUtils::FQN xmlName;
     protected slots:
       void openEvalDialog();
     public:
-      PhysicalVariableWidget(VariableWidget *widget, const QStringList &units=QStringList(), int defaultUnit=0, const MBXMLUtils::FQN &xmlName_="");
+      PhysicalVariableWidget(VariableWidget *widget, const QStringList &units=QStringList(), int defaultUnit=0);
       QString getValue() const {return widget->getValue();}
       void setValue(const QString &str) {widget->setValue(str);}
       void setReadOnly(bool flag) {widget->setReadOnly(flag);}
@@ -450,10 +449,7 @@ namespace MBSimGUI {
 
   class ScalarWidgetFactory : public WidgetFactory {
     public:
-      ScalarWidgetFactory(const QString &value);
-      ScalarWidgetFactory(const QString &value, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      ScalarWidgetFactory(const QString &value, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      ScalarWidgetFactory(const QString &value, const MBXMLUtils::FQN &xmlName, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+      ScalarWidgetFactory(const QString &value, const std::vector<QStringList> &unit=std::vector<QStringList>(2,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(2,0));
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -462,25 +458,24 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
-      MBXMLUtils::FQN xmlName;
   };
 
   class VecWidgetFactory : public WidgetFactory {
     public:
-      VecWidgetFactory(int m, bool transpose=false);
-      VecWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit, bool transpose=false);
-      VecWidgetFactory(int m, const std::vector<QStringList> &unit, bool transpose=false);
-      VecWidgetFactory(int m, const MBXMLUtils::FQN &xmlName, const std::vector<QStringList> &unit, bool transpose=false);
+//      VecWidgetFactory(int m, bool transpose=false);
+//      VecWidgetFactory(int m, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit, bool transpose=false);
+      //VecWidgetFactory(int m, const std::vector<QStringList> &unit, bool transpose=false);
+      VecWidgetFactory(int m, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
+      VecWidgetFactory(const std::vector<QString> &x, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0), bool transpose=false);
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
     protected:
-      int m;
+      std::vector<QString> x;
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
       bool transpose;
-      MBXMLUtils::FQN xmlName;
   };
 
   class VecSizeVarWidgetFactory : public WidgetFactory {
@@ -577,10 +572,7 @@ namespace MBSimGUI {
 
   class SymMatWidgetFactory : public WidgetFactory {
     public:
-      SymMatWidgetFactory();
-      SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QString> &name, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
-      SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const MBXMLUtils::FQN &xmlName, const std::vector<QStringList> &unit, const std::vector<int> &defaultUnit);
+      SymMatWidgetFactory(const std::vector<std::vector<QString> > &A, const std::vector<QStringList> &unit=std::vector<QStringList>(3,noUnitUnits()), const std::vector<int> &defaultUnit=std::vector<int>(3,0));
       QWidget* createWidget(int i=0);
       QString getName(int i=0) const { return name[i]; }
       int getSize() const { return name.size(); }
@@ -589,7 +581,6 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
-      MBXMLUtils::FQN xmlName;
   };
 
   class SymMatSizeVarWidgetFactory : public WidgetFactory {

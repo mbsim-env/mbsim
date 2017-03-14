@@ -952,7 +952,7 @@ namespace MBSimGUI {
     return new ScalarWidget(QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString()))));
   }
 
-  PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_, const FQN &xmlName_) : widget(widget_), units(units_), defaultUnit(defaultUnit_), xmlName(xmlName_) {
+  PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
     QHBoxLayout *layout = new QHBoxLayout;
     setLayout(layout);
     layout->setMargin(0);
@@ -984,33 +984,33 @@ namespace MBSimGUI {
   }
 
   DOMElement* PhysicalVariableWidget::initializeUsingXML(DOMElement *parent) {
-    DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
-    if(e) {
-      if(widget->initializeUsingXML(e)) {
-        if(E(e)->hasAttribute("unit"))
-          setUnit(QString::fromStdString(E(e)->getAttribute("unit")));
-        return e;
+//    DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
+//    if(e) {
+      if(widget->initializeUsingXML(parent)) {
+        if(E(parent)->hasAttribute("unit"))
+          setUnit(QString::fromStdString(E(parent)->getAttribute("unit")));
+        return parent;
       }
-    }
+//    }
     return NULL;
   }
 
   DOMElement* PhysicalVariableWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *newele;
-    if(xmlName!=FQN()) {
-      DOMDocument *doc=parent->getOwnerDocument();
-      newele = D(doc)->createElement(xmlName);
-      DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
-      if(ele)
-        parent->replaceChild(newele, ele);
-      else
-        parent->insertBefore(newele, ref);
-    }
-    else
-      newele = (DOMElement*)parent;
+ //   DOMElement *newele;
+ //   if(xmlName!=FQN()) {
+ //     DOMDocument *doc=parent->getOwnerDocument();
+ //     newele = D(doc)->createElement(xmlName);
+ //     DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+ //     if(ele)
+ //       parent->replaceChild(newele, ele);
+ //     else
+ //       parent->insertBefore(newele, ref);
+ //   }
+ //   else
+ //     newele = (DOMElement*)parent;
     if(getUnit()!="")
-      E(newele)->setAttribute("unit", getUnit().toStdString());
-    widget->writeXMLFile(newele);
+      E(static_cast<DOMElement*>(parent))->setAttribute("unit", getUnit().toStdString());
+    widget->writeXMLFile(parent);
     return NULL;
   }
 
@@ -1077,48 +1077,32 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,lengthUnits()), defaultUnit(2,4) {
-    name[0] = "Scalar";
-    name[1] = "Editor";
-  }
-
   ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(2), unit(unit_), defaultUnit(defaultUnit_) {
-    name[0] = "Scalar";
-    name[1] = "Editor";
-  }
-
-  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
-  }
-
-  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, const FQN &xmlName_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : value(value_), name(2), unit(unit_), defaultUnit(defaultUnit_), xmlName(xmlName_) {
     name[0] = "Scalar";
     name[1] = "Editor";
   }
 
   QWidget* ScalarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0], xmlName);
+      return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1], xmlName);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
     return NULL;
   }
 
-  VecWidgetFactory::VecWidgetFactory(int m_, bool transpose_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4), transpose(transpose_) {
+//  VecWidgetFactory::VecWidgetFactory(int m_, bool transpose_) : m(m_), name(3), unit(3,lengthUnits()), defaultUnit(3,4), transpose(transpose_) {
+//    name[0] = "Vector";
+//    name[1] = "File";
+//    name[2] = "Editor";
+//  }
+
+  VecWidgetFactory::VecWidgetFactory(int m, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : x(getVec<QString>(m,"0")), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
   }
 
-  VecWidgetFactory::VecWidgetFactory(int m_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,0), transpose(transpose_) {
-    name[0] = "Vector";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
-  VecWidgetFactory::VecWidgetFactory(int m_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : m(m_), name(name_), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
-  }
-
-  VecWidgetFactory::VecWidgetFactory(int m_, const FQN &xmlName_, const vector<QStringList> &unit_, bool transpose_) : m(m_), name(3), unit(unit_), defaultUnit(3,0), transpose(transpose_), xmlName(xmlName_) {
+  VecWidgetFactory::VecWidgetFactory(const vector<QString> &x_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_, bool transpose_) : x(x_), name(3), unit(unit_), defaultUnit(defaultUnit_), transpose(transpose_) {
     name[0] = "Vector";
     name[1] = "File";
     name[2] = "Editor";
@@ -1126,11 +1110,11 @@ namespace MBSimGUI {
 
   QWidget* VecWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new VecWidget(m,transpose), unit[0], defaultUnit[0], xmlName);
+      return new PhysicalVariableWidget(new VecWidget(x,transpose), unit[0], defaultUnit[0]);
     if(i==1)
-      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], xmlName);
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], xmlName);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 
@@ -1281,22 +1265,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  SymMatWidgetFactory::SymMatWidgetFactory() : name(3), unit(3,noUnitUnits()), defaultUnit(3,1) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
   SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_) {
-    name[0] = "Matrix";
-    name[1] = "File";
-    name[2] = "Editor";
-  }
-
-  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const vector<QString> &name_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(name_), unit(unit_), defaultUnit(defaultUnit_) {
-  }
-
-  SymMatWidgetFactory::SymMatWidgetFactory(const vector<vector<QString> > &A_, const FQN &xmlName_, const vector<QStringList> &unit_, const vector<int> &defaultUnit_) : A(A_), name(3), unit(unit_), defaultUnit(defaultUnit_), xmlName(xmlName_) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1304,11 +1273,11 @@ namespace MBSimGUI {
 
   QWidget* SymMatWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0], xmlName);
+      return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0]);
     if(i==1)
-      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1], xmlName);
+      return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2], xmlName);
+      return new PhysicalVariableWidget(new ExpressionWidget, unit[2], defaultUnit[2]);
     return NULL;
   }
 
