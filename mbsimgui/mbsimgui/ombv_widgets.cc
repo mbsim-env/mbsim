@@ -98,7 +98,7 @@ namespace MBSimGUI {
 //    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true,true,MBSIM%"diffuseColor");
 //    layout->addWidget(diffuseColor);
 //
-    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,MBSIM%"transparency");
+    transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"transparency");
     layout->addWidget(transparency);
   }
 
@@ -235,11 +235,11 @@ namespace MBSimGUI {
   }
 
   FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name, const FQN &xmlName, const std::string &ID) : MBSOMBVWidget(name,xmlName,ID) {
-    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1","",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,true,MBSIM%"size");
+    size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1","",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
     size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
 
-    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,true,MBSIM%"offset");
+    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0","",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     offset->setToolTip("Set the offset of the frame");
     layout()->addWidget(offset);
   }

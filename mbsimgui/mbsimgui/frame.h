@@ -46,8 +46,11 @@ namespace MBSimGUI {
     ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
     EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this,false);}
     QMenu* createContextMenu() {return new FrameContextMenu(this);}
+    const MBXMLUtils::FQN& getXMLName() const { return xmlName; }
+    void setXMLName(const MBXMLUtils::FQN &name) { xmlName = name; }
     protected:
     ExtProperty visu;
+    MBXMLUtils::FQN xmlName;
   };
 
   class FixedRelativeFrame : public Frame {

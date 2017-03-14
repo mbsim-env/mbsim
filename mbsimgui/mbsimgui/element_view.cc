@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void ElementView::openEditor(bool toWidget) {
+  void ElementView::openEditor() {
     if(!editor) {
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
@@ -38,10 +38,7 @@ namespace MBSimGUI {
         mw->updateParameters(element);
         editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
-        if(toWidget)
-          editor->toWidget();
-        else
-          editor->setName(QString::fromStdString(element->getName()));
+        editor->toWidget();
         editor->show();
         connect(editor,SIGNAL(apply()),this,SLOT(apply()));
         connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));

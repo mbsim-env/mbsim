@@ -145,11 +145,11 @@ namespace MBSimGUI {
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET","",frame->getID()),true,true,MBSIM%"enableOpenMBVFrameI");
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET","",frame->getID()),true,true,frame->getXMLName());
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
-    setName("I");
+    setName(QString::fromStdString(frame->getName()));
   }
 
   void FramePropertyDialog::toWidget(Element *element) {

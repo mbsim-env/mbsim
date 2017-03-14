@@ -36,6 +36,7 @@
 #include "utils.h"
 #include "embed.h"
 #include "mbxmlutilshelper/dom.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -48,6 +49,7 @@ namespace MBSimGUI {
   Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
     Frame *I = new Frame("I",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameI"));
+    I->setXMLName(MBSIM%"enableOpenMBVFrameI");
     addFrame(I);
 
     if(parent) {
@@ -354,29 +356,35 @@ namespace MBSimGUI {
     ele0->insertBefore( ele1, NULL );
     ele1 = D(doc)->createElement( MBSIM%"links" );
     ele0->insertBefore( ele1, NULL );
+
+    ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
+    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
+    ele1->insertBefore(id, NULL);
+    ele0->insertBefore( ele1, NULL );
+
     return ele0;
   }
 
   DOMElement* Group::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
+ //   DOMElement *e;
     Element::initializeUsingXML(element);
-    e=element->getFirstElementChild();
+//    e=element->getFirstElementChild();
 
-    if(frameOfReference.getProperty())
-      frameOfReference.initializeUsingXML(element);
-
-    // search first element known by Group
-    while(e && 
-        E(e)->getTagName()!=MBSIM%"position" &&
-        E(e)->getTagName()!=MBSIM%"orientation" &&
-        E(e)->getTagName()!=MBSIM%"frames")
-      e=e->getNextElementSibling();
-
-    if(position.getProperty())
-      position.initializeUsingXML(element);
-
-    if(orientation.getProperty())
-      orientation.initializeUsingXML(element);
+//    if(frameOfReference.getProperty())
+//      frameOfReference.initializeUsingXML(element);
+//
+//    // search first element known by Group
+//    while(e &&
+//        E(e)->getTagName()!=MBSIM%"position" &&
+//        E(e)->getTagName()!=MBSIM%"orientation" &&
+//        E(e)->getTagName()!=MBSIM%"frames")
+//      e=e->getNextElementSibling();
+//
+//    if(position.getProperty())
+//      position.initializeUsingXML(element);
+//
+//    if(orientation.getProperty())
+//      orientation.initializeUsingXML(element);
 
     // frames
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
@@ -445,13 +453,13 @@ namespace MBSimGUI {
       }
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
-    if(e)
-      getFrame(0)->initializeUsingXML2(e);
-    else
-      getFrame(0)->setOpenMBVFrame(false);
-
-    getFrame(0)->initializeUsingXML3(element);
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
+//    if(e)
+//      getFrame(0)->initializeUsingXML2(e);
+//    else
+//      getFrame(0)->setOpenMBVFrame(false);
+//
+//    getFrame(0)->initializeUsingXML3(element);
 
     return element;
   }

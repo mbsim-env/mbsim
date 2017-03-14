@@ -30,6 +30,7 @@
 #include "function_properties.h"
 #include "function_property_factory.h"
 #include "embed.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -39,6 +40,7 @@ namespace MBSimGUI {
 
   RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), bodyFixedRepresentationOfAngularVelocity(0,false), ombvEditor(0,true) {
     Frame *C = new Frame("C",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
+    C->setXMLName(MBSIM%"enableOpenMBVFrameC");
     addFrame(C);
 
 //    K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIM%"frameForKinematics"));
@@ -98,6 +100,15 @@ namespace MBSimGUI {
     return E(element)->getFirstElementChildNamed(MBSIM%"frames");
   }
 
+  DOMElement* RigidBody::getXMLFrame() {
+//    if(not ele) {
+//      DOMDocument *doc=element->getOwnerDocument();
+//      ele = D(doc)->createElement( MBSIM%"constraints" );
+//      element->insertBefore( ele, NULL );
+//    }
+    return NULL;
+  }
+
   DOMElement* RigidBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
@@ -105,6 +116,11 @@ namespace MBSimGUI {
     ele0->insertBefore( elef, NULL );
     DOMElement *elec = D(doc)->createElement( MBSIM%"contours" );
     ele0->insertBefore( elec, NULL );
+
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
+    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
+    ele1->insertBefore(id, NULL);
+    ele0->insertBefore( ele1, NULL );
 
     for(size_t i=1; i<frame.size(); i++)
       frame[i]->createXMLElement(elef);
@@ -135,27 +151,27 @@ namespace MBSimGUI {
       e=e->getNextElementSibling();
     }
 
-    K.initializeUsingXML(element);
-
-    mass.initializeUsingXML(element);
-    inertia.initializeUsingXML(element);
-    frameForInertiaTensor.initializeUsingXML(element);
-
-    translation.initializeUsingXML(element);
-    rotation.initializeUsingXML(element);
-    translationDependentRotation.initializeUsingXML(element);
-    coordinateTransformationForRotation.initializeUsingXML(element);
-    bodyFixedRepresentationOfAngularVelocity.initializeUsingXML(element);
-
-    ombvEditor.initializeUsingXML(element);
-
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
-    if(e)
-      getFrame(0)->initializeUsingXML2(e);
-    else
-      getFrame(0)->setOpenMBVFrame(false);
-
-    getFrame(0)->initializeUsingXML3(element);
+//    K.initializeUsingXML(element);
+//
+//    mass.initializeUsingXML(element);
+//    inertia.initializeUsingXML(element);
+//    frameForInertiaTensor.initializeUsingXML(element);
+//
+//    translation.initializeUsingXML(element);
+//    rotation.initializeUsingXML(element);
+//    translationDependentRotation.initializeUsingXML(element);
+//    coordinateTransformationForRotation.initializeUsingXML(element);
+//    bodyFixedRepresentationOfAngularVelocity.initializeUsingXML(element);
+//
+//    ombvEditor.initializeUsingXML(element);
+//
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
+//    if(e)
+//      getFrame(0)->initializeUsingXML2(e);
+//    else
+//      getFrame(0)->setOpenMBVFrame(false);
+//
+//    getFrame(0)->initializeUsingXML3(element);
 
     return element;
   }

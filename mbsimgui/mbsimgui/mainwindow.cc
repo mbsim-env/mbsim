@@ -578,7 +578,7 @@ namespace MBSimGUI {
       if(evalSelect.isActive()) ele1 = ele1->getNextElementSibling();
 
       DynamicSystemSolver *dss=Embed<DynamicSystemSolver>::createAndInit(ele1,0);
-      dss->initialize();
+//      dss->initialize();
 
       EmbeddingTreeModel *pmodel = static_cast<EmbeddingTreeModel*>(embeddingList->model());
       QModelIndex index = pmodel->index(0,0);
@@ -1116,7 +1116,7 @@ namespace MBSimGUI {
     model->createObjectItem(object,containerIndex);
     QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
     elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementList->openEditor(false);
+    elementList->openEditor();
   }
 
   void MainWindow::addLink(Link *link) {

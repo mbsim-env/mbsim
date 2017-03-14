@@ -126,9 +126,9 @@ namespace MBSimGUI {
 
   DOMElement* Body::initializeUsingXML(DOMElement *element) {
     Object::initializeUsingXML(element);
-    q0.initializeUsingXML(element);
-    u0.initializeUsingXML(element);
-    R.initializeUsingXML(element);
+//    q0.initializeUsingXML(element);
+//    u0.initializeUsingXML(element);
+//    R.initializeUsingXML(element);
     return element;
   }
 
