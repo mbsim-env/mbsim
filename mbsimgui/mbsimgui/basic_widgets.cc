@@ -576,6 +576,28 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* FileWidget::initializeUsingXML(DOMElement *parent) {
+    DOMText *text = E(parent)->getFirstTextChild();
+    if(text) {
+      setFile(QString::fromStdString(X()%text->getData()));
+      return parent;
+    }
+    return 0;
+  }
+
+  DOMElement* FileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0 = static_cast<DOMElement*>(parent);
+    string fileName = getFile().toStdString();
+    if(true) {
+      QFileInfo fileInfo = QString::fromStdString(fileName.substr(1,fileName.length()-2));
+      fileName = string("\"")+fileInfo.absoluteFilePath().toStdString()+"\"";
+    }
+    DOMText *text = doc->createTextNode(X()%fileName);
+    ele0->insertBefore(text, NULL);
+    return 0;
+  }
+
   SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);

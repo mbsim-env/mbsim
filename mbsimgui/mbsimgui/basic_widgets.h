@@ -315,6 +315,8 @@ namespace MBSimGUI {
       FileWidget(const QString &description, const QString &extensions, int mode=0);
       QString getFile() const { return relativeFilePath->text(); }
       void setFile(const QString &str) { relativeFilePath->setText(str); }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit *relativeFilePath;
