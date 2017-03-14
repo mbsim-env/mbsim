@@ -127,6 +127,8 @@ namespace MBSimGUI {
       void setFrame(const QString &str, Frame *framePtr);
       void setDefaultFrame(const QString &def);
       QString getFrame() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       QLineEdit *frame;
@@ -499,7 +501,7 @@ namespace MBSimGUI {
       ColorWidget();
       void updateWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
       ExtWidget *color;

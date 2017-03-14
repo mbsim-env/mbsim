@@ -49,6 +49,7 @@
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
 #include "function_properties.h"
 
 using namespace std;
@@ -549,7 +550,15 @@ namespace MBSimGUI {
       MBSimObjectFactory::initialize();
       std::string message;
       try { 
-        doc=MainWindow::parser->parse(file.toStdString());
+        xercesc::DOMImplementation * impl = xercesc::DOMImplementation::getImplementation();
+        xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
+
+            //parser->parse(file.toStdString());
+
+        xercesc::DOMDocument *doc_ = parser->parseURI(X()%file.toStdString());
+        doc = shared_ptr<DOMDocument>(doc_);
+        //shared_ptr<DOMDocument> doc(parser->parseURI(X()%inputSource.string(CODECVT)), bind(&DOMDocument::release, _1));
+// doc=MainWindow::parser->parse(file.toStdString());
       }
       catch(const std::exception &ex) {
         message = ex.what();
@@ -885,7 +894,9 @@ namespace MBSimGUI {
     shared_ptr<xercesc::DOMDocument> doc=MainWindow::parser->createDocument();
     DOMNode *newDocElement = doc->importNode(this->doc->getDocumentElement(), true);
     doc->insertBefore(newDocElement, NULL);
-    E(E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"))->setAttribute("name","out"+sTask.toStdString());;
+    DOMElement* ele = E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+    dss->processFileID(ele);
+    E(ele)->setAttribute("name","out"+sTask.toStdString());;
     QString projectFile=QString::fromStdString(uniqueTempDir.generic_string())+"/in"+sTask+".mbsimprj.flat.xml";
 
     currentTask = task;

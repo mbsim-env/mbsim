@@ -145,7 +145,7 @@ namespace MBSimGUI {
 
   FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
     addTab("Visualisation",1);
-    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET","",frame->getID()),true,true,frame->getXMLName());
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,frame->getXMLName());
     visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualisation", visu);
     setReadOnly(true);
@@ -575,8 +575,8 @@ namespace MBSimGUI {
     connect(u0, SIGNAL(resize_()), this, SLOT(resizeVariables()));
     connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 
-//    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true);
-//    addToTab("Kinematics",R);
+    R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,body->getParent()->getFrame(0)),true,false,MBSIM%"frameOfReference");
+    addToTab("Kinematics",R);
   }
 
   void BodyPropertyDialog::toWidget(Element *element) {
@@ -591,6 +591,18 @@ namespace MBSimGUI {
 //    static_cast<Body*>(element)->q0.fromWidget(q0);
 //    static_cast<Body*>(element)->u0.fromWidget(u0);
 //    static_cast<Body*>(element)->R.fromWidget(R);
+  }
+
+  DOMElement* BodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObjectPropertyDialog::initializeUsingXML(element->getXMLElement());
+    R->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* BodyPropertyDialog::writeXMLFile(DOMNode *parent) {
+    ObjectPropertyDialog::writeXMLFile(element->getXMLElement());
+    R->writeXMLFile(element->getXMLElement(),element->getXMLElement()->getFirstChild());
+    return NULL;
   }
 
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {

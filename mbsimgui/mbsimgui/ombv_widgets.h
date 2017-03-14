@@ -45,12 +45,10 @@ namespace MBSimGUI {
   class OMBVObjectWidget : public Widget {
 
     public:
-      OMBVObjectWidget(const QString &name_="NOTSET", const std::string &ID_=0) : name(name_), ID(ID_) {}
+      OMBVObjectWidget(const QString &name_="NOTSET") : name(name_) {}
       void setName(const QString &name_) {name = name_;}
     protected:
       QString name;
-      std::string ID;
-      void writeXMLFileID(xercesc::DOMNode *parent);
   };
 
   class MBSOMBVWidget : public OMBVObjectWidget {
@@ -58,7 +56,7 @@ namespace MBSimGUI {
     friend class MBSOMBVProperty;
 
     public:
-      MBSOMBVWidget(const QString &name, const MBXMLUtils::FQN &xmlName="", const std::string &ID="");
+      MBSOMBVWidget(const QString &name, const MBXMLUtils::FQN &xmlName="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       virtual xercesc::DOMElement* initXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
@@ -143,7 +141,7 @@ namespace MBSimGUI {
     friend class FrameMBSOMBVProperty;
 
     public:
-      FrameMBSOMBVWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="", const std::string &ID_=0);
+      FrameMBSOMBVWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:

@@ -38,6 +38,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* getXMLFrames();
       xercesc::DOMElement* getXMLFrame();
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
       bool isConstrained() const {return constrained;}

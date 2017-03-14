@@ -358,11 +358,45 @@ namespace MBSimGUI {
     ele0->insertBefore( ele1, NULL );
 
     ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
-    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
-    ele1->insertBefore(id, NULL);
+//    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
+//    ele1->insertBefore(id, NULL);
     ele0->insertBefore( ele1, NULL );
 
     return ele0;
+  }
+
+  DOMElement* Group::processFileID(DOMElement *element) {
+    Element::processFileID(element);
+
+    // frames
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    for(size_t i=1; i<frame.size(); i++) {
+      frame[i]->processFileID(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    // contours
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    for(size_t i=0; i<contour.size(); i++) {
+      contour[i]->processFileID(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    // objects
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
+    for(size_t i=0; i<object.size(); i++) {
+      object[i]->processFileID(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
   }
 
   DOMElement* Group::initializeUsingXML(DOMElement *element) {

@@ -30,6 +30,7 @@
 #include "observer.h"
 #include "mainwindow.h"
 #include "embed.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -80,6 +81,16 @@ namespace MBSimGUI {
     if(!dir.exists(info.absolutePath()))
       dir.mkpath(info.absolutePath());
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+  }
+
+  DOMElement* Element::processFileID(DOMElement *element) {
+    if(not getID().empty()) {
+      cout << "write ID" << getID() << " for " << getName() << endl;
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      element->insertBefore(id, element->getFirstChild());
+    }
+    return element;
   }
 
   DOMElement* Element::createXMLElement(DOMNode *parent) {

@@ -23,6 +23,7 @@
 #include "extended_widgets.h"
 #include "body.h"
 #include "frame.h"
+#include "mainwindow.h"
 #include <QtGui>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
@@ -31,6 +32,8 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory() {
     name.push_back("Cube");
@@ -82,15 +85,7 @@ namespace MBSimGUI {
   //  return new ChoiceWidget(widget,name);
   //}
 
-  void OMBVObjectWidget::writeXMLFileID(DOMNode *parent) {
-    if(!ID.empty()) {
-      DOMDocument *doc=parent->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%ID);
-      parent->insertBefore(id, parent->getFirstChild());
-    }
-  }
-
-  MBSOMBVWidget::MBSOMBVWidget(const QString &name, const FQN &xmlName_, const std::string &ID) : OMBVObjectWidget(name,ID), xmlName(xmlName_) {
+  MBSOMBVWidget::MBSOMBVWidget(const QString &name, const FQN &xmlName_) : OMBVObjectWidget(name), xmlName(xmlName_) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -122,7 +117,6 @@ namespace MBSimGUI {
     if(xmlName!=FQN()) {
     DOMDocument *doc = parent->getOwnerDocument();
     newele=D(doc)->createElement(xmlName);
-    writeXMLFileID(newele);
     DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
     if(ele)
       parent->replaceChild(newele,ele);
@@ -234,7 +228,7 @@ namespace MBSimGUI {
     layout()->addWidget(maxCol);
   }
 
-  FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name, const FQN &xmlName, const std::string &ID) : MBSOMBVWidget(name,xmlName,ID) {
+  FrameMBSOMBVWidget::FrameMBSOMBVWidget(const QString &name, const FQN &xmlName) : MBSOMBVWidget(name,xmlName) {
     size = new ExtWidget("Size",new ChoiceWidget2(new ScalarWidgetFactory("1","",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
     size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
@@ -263,7 +257,6 @@ namespace MBSimGUI {
       return e;
     }
     else {
-      writeXMLFileID(parent);
       size->writeXMLFile(parent);
       offset->writeXMLFile(parent);
       transparency->writeXMLFile(parent);

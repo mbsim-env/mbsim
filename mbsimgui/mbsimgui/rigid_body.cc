@@ -129,6 +129,32 @@ namespace MBSimGUI {
     return ele0;
   }
 
+  DOMElement* RigidBody::processFileID(DOMElement *element) {
+    Body::processFileID(element);
+
+    // frames
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    for(size_t i=1; i<frame.size(); i++) {
+      frame[i]->processFileID(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    // contours
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    for(size_t i=0; i<contour.size(); i++) {
+      contour[i]->processFileID(ELE);
+      ELE=ELE->getNextElementSibling();
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
+      ELE->insertBefore(id, NULL);
+    }
+
+    return element;
+  }
   DOMElement* RigidBody::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
     Body::initializeUsingXML(element);

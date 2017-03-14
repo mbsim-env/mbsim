@@ -231,6 +231,20 @@ namespace MBSimGUI {
     return frame->text().isEmpty()?def:frame->text();
   }
 
+  DOMElement* FrameOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+//    if(element)
+    setFrame(QString::fromStdString(E(element)->getAttribute("ref")),NULL);
+    return element;
+  }
+
+  DOMElement* FrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    //DOMDocument *doc=parent->getOwnerDocument();
+    //DOMElement *ele = D(doc)->createElement(xmlName);
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
+    //parent->insertBefore(ele, NULL);
+    return NULL;
+  }
+
   ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
@@ -812,7 +826,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* ColorWidget::writeXMLFile(DOMNode *parent) {
+  DOMElement* ColorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
 //    DOMDocument *doc=parent->getOwnerDocument();
 //    DOMElement *ele = D(doc)->createElement(xmlName);
     color->writeXMLFile(parent);

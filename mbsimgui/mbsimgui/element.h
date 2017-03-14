@@ -69,6 +69,7 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* getXMLObjects() { return NULL; }
       virtual xercesc::DOMElement* getXMLConstraints() { return NULL; }
       virtual xercesc::DOMElement* getXMLFrame() { return NULL; }
+      virtual xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
@@ -113,6 +114,7 @@ namespace MBSimGUI {
       virtual void addObserver(Observer *observer) {}
       virtual void removeElement(Element *element) {}
       const std::string& getID() const { return ID; }
+      void setID(const std::string &ID_) { ID = ID_; }
       Element* getParent() {return parent;}
       std::vector<Element*> getParents();
       virtual void setParent(Element* parent_) {parent = parent_;}
