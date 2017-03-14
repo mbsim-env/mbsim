@@ -303,7 +303,9 @@ namespace MBSimGUI {
         }
     }
     removedElement.push_back(element);
-    element->deinitialize();
+    element->getXMLElement()->getParentNode()->removeChild(element->getXMLElement());
+
+//    element->deinitialize();
   }
 
   Group* Group::readXMLFile(const string &filename, Element *parent) {

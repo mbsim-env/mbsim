@@ -117,7 +117,16 @@ namespace MBSimGUI {
     DOMElement *elec = D(doc)->createElement( MBSIM%"contours" );
     ele0->insertBefore( elec, NULL );
 
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"openMBVRigidBody" );
+    DOMElement *ele2 = D(doc)->createElement( OPENMBV%"Cube" );
+    DOMElement *ele3 = D(doc)->createElement( OPENMBV%"transparency" );
+    DOMText *text = doc->createTextNode(X()%"0.3");
+    ele3->insertBefore( text, NULL );
+    ele2->insertBefore( ele3, NULL );
+    ele1->insertBefore( ele2, NULL );
+    ele0->insertBefore( ele1, NULL );
+
+    ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
     ele0->insertBefore( ele1, NULL );
 
     for(size_t i=1; i<frame.size(); i++)
