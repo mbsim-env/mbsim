@@ -84,14 +84,6 @@ namespace MBSimGUI {
     inputWidget[inputCombo->currentIndex()]->setValue(str);
   }
 
-  //void ExtPhysicalVarWidget::changeInput(int j) {
-  //  for(int i=0; i<inputWidget.size(); i++)
-  //    if(i==j)
-  //      inputWidget[i]->setVisible(true);
-  //    else
-  //      inputWidget[i]->setVisible(false);
-  //}
-
   void ExtPhysicalVarWidget::openEvalDialog() {
     evalInput = inputCombo->currentIndex();
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString())));
@@ -101,10 +93,68 @@ namespace MBSimGUI {
       QMessageBox::warning( this, "Validation", "Value not valid"); 
       return;
     }
-    //evalDialog->setValue(A);
     evalDialog->exec();
-    //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
   }
+
+  ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, const FQN &xmlName_) : QGroupBox(name), widget(widget_), xmlName(xmlName_) {
+
+    QHBoxLayout *layout = new QHBoxLayout;
+
+    if(deactivatable) {
+      setCheckable(true);
+      connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize_()));
+      connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
+      connect(this,SIGNAL(toggled(bool)),this,SLOT(updateWidget()));
+      setChecked(active);
+    }
+    setLayout(layout);
+    layout->addWidget(widget);
+    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
+  }
+
+  DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
+    setActive(false);
+    if(element) {
+      if(xmlName!=FQN()) {
+        DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+        if(e)
+          setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e));
+        return e;
+      }
+      else
+        setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element));
+    }
+    return isActive()?element:0;
+  }
+
+  DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    if(xmlName!=FQN()) {
+      DOMElement *newele;
+      DOMDocument *doc = parent->getOwnerDocument();
+      newele = D(doc)->createElement(xmlName);
+//      if(alwaysWriteXMLName) {
+      DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+      if(false) {
+        if(isActive()) dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
+        parent->insertBefore(newele,ref);
+        return newele;
+      }
+      else if(isActive()) {
+        dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
+        if(ele)
+          parent->replaceChild(newele,ele);
+        else
+          parent->insertBefore(newele,ref);
+        return newele;
+      }
+      else if(ele)
+        parent->removeChild(ele);
+    }
+    else
+      return isActive()?dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref):0;
+    return NULL;
+  }
+
 
   ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(0), factory(factory_), mode(mode_) {
     layout = new QBoxLayout(dir);
@@ -205,78 +255,6 @@ namespace MBSimGUI {
     dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(ele0,ref);
 
     return 0;
-  }
-
-
-  ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, const FQN &xmlName_) : QGroupBox(name), widget(widget_), xmlName(xmlName_) {
-
-    QHBoxLayout *layout = new QHBoxLayout;
-
-    if(deactivatable) {
-      setCheckable(true);
-      connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize_()));
-      connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
-      connect(this,SIGNAL(toggled(bool)),this,SLOT(updateWidget()));
-      setChecked(active);
-    }
-    setLayout(layout);
-    layout->addWidget(widget);
-    connect(widget,SIGNAL(resize_()),this,SIGNAL(resize_()));
-    //  QPushButton *fold = new QPushButton("+");
-    //  fold->setCheckable(true);
-    //  layout->addWidget(fold);
-    //  int w=QFontMetrics(fold->font()).width("+") * 1.2;
-    //  int h=QFontMetrics(fold->font()).height() * 1.2;
-    //  fold->setMinimumSize(w, h);
-    //  fold->setMaximumSize(w, h);
-    //  connect(fold, SIGNAL(toggled(bool)), widget, SLOT(setVisible(bool)));
-    //  //layout->addStretch(0);
-    //  layout->setAlignment(Qt::AlignLeft);
-    ////  fold->setChecked(true);
-    //  widget->setVisible(false);
-  }
-
-  DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
-    setActive(false);
-    if(element) {
-      if(xmlName!=FQN()) {
-        DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-        if(e)
-          setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e));
-        return e;
-      }
-      else
-        setActive(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element));
-    }
-    return isActive()?element:0;
-  }
-
-  DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    if(xmlName!=FQN()) {
-      DOMElement *newele;
-      DOMDocument *doc = parent->getOwnerDocument();
-      newele = D(doc)->createElement(xmlName);
-//      if(alwaysWriteXMLName) {
-      DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
-      if(false) {
-        if(isActive()) dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
-        parent->insertBefore(newele,ref);
-        return newele;
-      }
-      else if(isActive()) {
-        dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
-        if(ele)
-          parent->replaceChild(newele,ele);
-        else
-          parent->insertBefore(newele,ref);
-        return newele;
-      }
-      else if(ele)
-        parent->removeChild(ele);
-    }
-    else
-      return isActive()?dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref):0;
-    return NULL;
   }
 
   ContainerWidget::ContainerWidget() {
