@@ -181,7 +181,7 @@ namespace MBSimGUI {
   class InvisibleBodyWidget : public OMBVRigidBodyWidget {
 
     public:
-      InvisibleBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="") : OMBVRigidBodyWidget(name) {}
+      InvisibleBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="") : OMBVRigidBodyWidget(name,xmlName) {}
   };
 
   class CubeWidget : public OMBVRigidBodyWidget {
@@ -261,9 +261,11 @@ namespace MBSimGUI {
     friend class CompoundRigidBodyProperty;
 
     public:
-    CompoundRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      CompoundRigidBodyWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName_="");
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
-    ExtWidget *bodies; 
+      ExtWidget *bodies;
   };
 
   class FlexibleBodyFFRMBSOMBVWidget : public MBSOMBVWidget {

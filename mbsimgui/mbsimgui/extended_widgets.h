@@ -69,23 +69,23 @@ namespace MBSimGUI {
     friend class ExtProperty;
 
     public:
-    ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false, const MBXMLUtils::FQN &xmlName="");
-    QWidget* getWidget() const {return widget;}
-    virtual void resizeVariables() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
-    void resize_(int m, int n) {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
-    bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
-    void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
-    void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      ExtWidget(const QString &name, QWidget *widget, bool deactivatable=false, bool active=false, const MBXMLUtils::FQN &xmlName="");
+      QWidget* getWidget() const {return widget;}
+      virtual void resizeVariables() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resizeVariables();}
+      void resize_(int m, int n) {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
+      bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
+      void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
+      void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    QWidget *widget;
-    MBXMLUtils::FQN xmlName;
+      QWidget *widget;
+      MBXMLUtils::FQN xmlName;
     public slots:
-    virtual void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
+      virtual void updateWidget() {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
     signals:
-    void resize_();
+      void resize_();
   };
 
   class ChoiceWidget2 : public Widget {
@@ -94,30 +94,29 @@ namespace MBSimGUI {
     friend class ChoiceProperty2;
 
     public:
-    ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode=4);
-    QWidget* getWidget() const { return widget; }
-    void updateWidget() { dynamic_cast<WidgetInterface*>(getWidget())->updateWidget(); }
-    QString getName() const { return comboBox->currentText(); }
-    int getIndex() const { return comboBox->currentIndex(); }
-    void setIndex(int i) { return comboBox->setCurrentIndex(i); }
-    void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
-    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      ChoiceWidget2(WidgetFactory *factory, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode=4);
+      QWidget* getWidget() const { return widget; }
+      void updateWidget() { dynamic_cast<WidgetInterface*>(getWidget())->updateWidget(); }
+      QString getName() const { return comboBox->currentText(); }
+      int getIndex() const { return comboBox->currentIndex(); }
+      void setIndex(int i) { return comboBox->setCurrentIndex(i); }
+      void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected slots:
-    void defineWidget(int);
+      void defineWidget(int);
 
     protected:
-    QBoxLayout *layout;
-    QComboBox *comboBox;
-    QWidget *widget;
-    //QStackedWidget *stackedWidget;
-    WidgetFactory *factory;
-    MBXMLUtils::FQN xmlName;
-    int mode;
+      QBoxLayout *layout;
+      QComboBox *comboBox;
+      QWidget *widget;
+      WidgetFactory *factory;
+      MBXMLUtils::FQN xmlName;
+      int mode;
 
     signals:
-    void widgetChanged();
+      void widgetChanged();
   };
 
   class ContainerWidget : public Widget {
@@ -125,16 +124,16 @@ namespace MBSimGUI {
     friend class ContainerProperty;
 
     public:
-    ContainerWidget();
+      ContainerWidget();
 
-    void resize_(int m, int n);
-    void addWidget(QWidget *widget_);
-    QWidget* getWidget(int i) const {return widget[i];}
-    void updateWidget();
+      void resize_(int m, int n);
+      void addWidget(QWidget *widget_);
+      QWidget* getWidget(int i) const {return widget[i];}
+      void updateWidget();
 
     protected:
-    QVBoxLayout *layout;
-    std::vector<QWidget*> widget;
+      QVBoxLayout *layout;
+      std::vector<QWidget*> widget;
   };
 
   class ListWidget : public Widget {
@@ -143,27 +142,29 @@ namespace MBSimGUI {
     friend class ListProperty;
 
     public:
-    ListWidget(WidgetFactory *factory, const QString &name="Element", int m=0, int n=1, bool fixedSize=false);
-    ~ListWidget();
-
-    void resize_(int m, int n);
-    int getSize() const;
-    void setSize(int m);
-    QWidget* getWidget(int i) const;
+      ListWidget(WidgetFactory *factory, const QString &name="Element", const MBXMLUtils::FQN &xmlName="", int m=0, int mode=0, bool fixedSize=false);
+      ~ListWidget();
+      void resize_(int m, int n);
+      int getSize() const;
+      void setSize(int m);
+      QWidget* getWidget(int i) const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected:
-    QStackedWidget *stackedWidget; 
-    QSpinBox* spinBox;
-    QListWidget *list; 
-    WidgetFactory *factory;
-    QString name;
-    int n;
-    void addElements(int n=1, bool emitSignals=true);
+      QStackedWidget *stackedWidget;
+      QSpinBox* spinBox;
+      QListWidget *list;
+      WidgetFactory *factory;
+      QString name;
+      MBXMLUtils::FQN xmlName;
+      int mode;
+      void addElements(int n=1, bool emitSignals=true);
 
     protected slots:
       void removeElements(int n=1);
-    void changeCurrent(int idx);
-    void currentIndexChanged(int idx);
+      void changeCurrent(int idx);
+      void currentIndexChanged(int idx);
   };
 
   class ChoiceWidgetFactory : public WidgetFactory {

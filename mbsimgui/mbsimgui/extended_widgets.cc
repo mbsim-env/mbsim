@@ -278,7 +278,7 @@ namespace MBSimGUI {
       dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
   }
 
-  ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, int m, int n_, bool fixedSize) : factory(factory_), name(name_), n(n_) {
+  ListWidget::ListWidget(WidgetFactory *factory_, const QString &name_, const FQN &xmlName_, int m, int mode_, bool fixedSize) : factory(factory_), name(name_), xmlName(xmlName_), mode(mode_) {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -378,6 +378,42 @@ namespace MBSimGUI {
     //  if(emitSignals) {
     emit Widget::resize_();
     //  }
+  }
+
+  DOMElement* ListWidget::initializeUsingXML(DOMElement *element) {
+    if(xmlName==FQN()) {
+      DOMElement *e=(mode==0)?element->getFirstElementChild():element;
+      while(e) {
+        addElements(1,false);
+        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
+        e=e->getNextElementSibling();
+      }
+    }
+    else {
+      DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+      while(e and E(e)->getTagName()==xmlName) {
+        addElements(1,false);
+        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
+        e=e->getNextElementSibling();
+      }
+    }
+    return element;
+  }
+
+  DOMElement* ListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+   if(xmlName==FQN()) {
+      for(unsigned int i=0; i<getSize(); i++)
+        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent);
+    }
+    else {
+      DOMDocument *doc=parent->getOwnerDocument();
+      for(unsigned int i=0; i<getSize(); i++) {
+        DOMElement *ele0 = D(doc)->createElement(xmlName);
+        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(ele0);
+        parent->insertBefore(ele0, NULL);
+      }
+    }
+    return 0;
   }
 
   Widget* ChoiceWidgetFactory::createWidget(int i) {

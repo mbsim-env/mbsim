@@ -517,9 +517,21 @@ namespace MBSimGUI {
     return e;
   }
 
-  CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name) {
-    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"Body",1,1));
+  CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
+    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"Body","",0,1));
     layout->addWidget(bodies);
+  }
+
+  DOMElement* CompoundRigidBodyWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    bodies->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* CompoundRigidBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    bodies->writeXMLFile(e);
+    return e;
   }
 
   FlexibleBodyFFRMBSOMBVWidget::FlexibleBodyFFRMBSOMBVWidget(const QString &name) : MBSOMBVWidget(name) {
