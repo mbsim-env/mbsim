@@ -945,4 +945,52 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* PlotFeatureStatusWidget::initializeUsingXML(DOMElement *parent) {
+    DOMElement *e=parent->getFirstElementChild();
+    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+      string feature = E(e)->getAttribute("feature");
+      QTreeWidgetItem *item = new QTreeWidgetItem;
+      item->setText(0, QString::fromStdString(E(e)->getTagName().second));
+      item->setText(1, QString::fromStdString(feature.substr(1)));
+      item->setText(2, QString::fromStdString(feature.substr(0,1)));
+      tree->addTopLevelItem(item);
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* PlotFeatureStatusWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(size_t i=0; i<tree->topLevelItemCount(); i++) {
+      DOMElement *ele = D(doc)->createElement(MBSIM%tree->topLevelItem(i)->text(0).toStdString());
+      E(ele)->setAttribute("feature",(tree->topLevelItem(i)->text(2)+tree->topLevelItem(i)->text(1)).toStdString());
+      parent->insertBefore(ele, ref);
+    }
+    return 0;
+  }
+
+//  DOMElement* PlotFeatureStatusWidget::initializeUsingXML2(DOMElement *parent) {
+//    DOMElement *e=E(parent)->getFirstElementChildNamed(types[0]);
+//    while(e && (E(e)->getTagName()==types[0])) {
+//      string feature = E(e)->getAttribute("feature");
+//      type.push_back(E(e)->getTagName().second);
+//      value.push_back(feature.substr(1));
+//      status.push_back(feature.substr(0,1));
+//      e=e->getNextElementSibling();
+//    }
+//    return e;
+//  }
+//
+//  DOMElement* PlotFeatureStatusWidget::writeXMLFile2(DOMNode *parent) {
+//    DOMDocument *doc=parent->getOwnerDocument();
+//    for(size_t i=0; i<type.size(); i++) {
+//      DOMElement *ele = D(doc)->createElement(FQN(types[0].first,type[i]));
+//      E(ele)->setAttribute("feature",status[i]+value[i]);
+//      parent->insertBefore(ele, NULL);
+//    }
+//    return 0;
+//  }
+
 }

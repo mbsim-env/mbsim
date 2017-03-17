@@ -58,16 +58,16 @@ namespace MBSimGUI {
     static Group* readXMLFile(const std::string &filename, Element *parent);
     void createXMLConstraints();
     void createXMLObservers();
-    virtual xercesc::DOMElement* getXMLFrames() { return frames; }
-    virtual xercesc::DOMElement* getXMLObjects() { return objects; }
-    virtual xercesc::DOMElement* getXMLLinks() { return links; }
-    virtual xercesc::DOMElement* getXMLConstraints() { return constraints ? constraints : getXMLLinks(); }
-    virtual xercesc::DOMElement* getXMLObservers() { return observers ? observers : getXMLConstraints(); }
-    virtual xercesc::DOMElement* getXMLFrame() { return getXMLObservers()->getNextElementSibling(); }
-    virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-    virtual xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    xercesc::DOMElement* getXMLFrames() { return frames; }
+    xercesc::DOMElement* getXMLObjects() { return objects; }
+    xercesc::DOMElement* getXMLLinks() { return links; }
+    xercesc::DOMElement* getXMLConstraints() { return constraints ? constraints : getXMLLinks(); }
+    xercesc::DOMElement* getXMLObservers() { return observers ? observers : getXMLConstraints(); }
+    xercesc::DOMElement* getXMLFrame() { return getXMLObservers()->getNextElementSibling(); }
+    xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+    xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
+    xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual Element *getChildByContainerAndName(const std::string &container, const std::string &name) const;
     void setActionPasteDisabled(bool flag);
     void initialize();

@@ -103,11 +103,13 @@ namespace MBSimGUI {
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
     static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(element->getName()));
+    plotFeature->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    plotFeature->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
@@ -153,14 +155,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* FramePropertyDialog::initializeUsingXML(DOMElement *parent) {
-//    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
     visu->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* FramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-//    ElementPropertyDialog::writeXMLFile(element->getXMLElement());
-    return visu->writeXMLFile(element->getXMLElement(),ref);
+    DOMElement *ele = visu->writeXMLFile(element->getXMLElement(),ref);
+    return ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ele);
   }
 
   InternalFramePropertyDialog::InternalFramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
@@ -493,6 +495,15 @@ namespace MBSimGUI {
     }
   }
 
+  DOMElement* GroupPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GroupPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    return ElementPropertyDialog::writeXMLFile(parent,element->getXMLFrames());
+  }
+
   DynamicSystemSolverPropertyDialog::DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
     addTab("Environment",1);
     addTab("Solver parameters",2);
@@ -516,13 +527,13 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GroupPropertyDialog::initializeUsingXML(element->getXMLElement());
-    environment->initializeUsingXML(E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild());
+    environment->initializeUsingXML(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
     return parent;
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    environment->writeXMLFile(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
     GroupPropertyDialog::writeXMLFile(parent);
-    environment->writeXMLFile(E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild());
     return NULL;
   }
 

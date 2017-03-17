@@ -527,6 +527,8 @@ namespace MBSimGUI {
     public:
       PlotFeatureStatusWidget(const std::vector<MBXMLUtils::FQN> &types);
       void addFeature(const QString &feature);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
 
     protected slots:
       void addFeature();

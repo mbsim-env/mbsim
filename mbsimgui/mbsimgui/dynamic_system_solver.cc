@@ -34,11 +34,6 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void Environment::initializeUsingXML(DOMElement *element) {
-    E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
-    //setAccelerationOfGravity(Element::getVec3(e));
-  }
-
   DOMElement* Environment::writeXMLFile(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement* ele0 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
@@ -75,7 +70,7 @@ namespace MBSimGUI {
     DOMElement *ele0 = Group::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
 
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"environments" );
+    environments = D(doc)->createElement( MBSIM%"environments" );
     DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
     DOMElement *ele3 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );
     E(ele3)->setAttribute("unit", "m/s^2");
@@ -92,13 +87,16 @@ namespace MBSimGUI {
     }
     ele3->insertBefore( ele4, NULL );
     ele2->insertBefore( ele3, NULL );
-    ele1->insertBefore( ele2, NULL );
-    ele0->insertBefore( ele1, NULL );
+    environments->insertBefore( ele2, NULL );
+    ele0->insertBefore( environments, NULL );
     return ele0;
   }
 
   DOMElement* DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
-    return Group::initializeUsingXML(element);
+    Group::initializeUsingXML(element);
+    environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
+    return element;
+
 //    DOMElement *e;
 //
 //    // search first Environment element

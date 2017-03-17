@@ -28,7 +28,6 @@ namespace MBSimGUI {
 
   class Environment : public QObject {
     public:
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent);
       static Environment *getInstance() { return instance?instance:(instance=new Environment); }
 
@@ -42,10 +41,12 @@ namespace MBSimGUI {
     friend class DynamicSystemSolverPropertyDialog;
     protected:
     ExtProperty environment, solverParameters, inverseKinetics, initialProjection, useConstraintSolverForPlot;
+    xercesc::DOMElement *environments;
     public:
     DynamicSystemSolver(const std::string &str, Element *parent);
     virtual PropertyInterface* clone() const {return new DynamicSystemSolver(*this);}
     std::string getType() const { return "DynamicSystemSolver"; }
+    xercesc::DOMElement* getXMLEnvironments() { return environments; }
     virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
