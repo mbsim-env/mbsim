@@ -187,18 +187,19 @@ namespace MBSimGUI {
   FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
     addTab("Kinematics",1);
 
+    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true,false,MBSIM%"frameOfReference");
+    addToTab("Kinematics", refFrame);
+
     position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativePosition");
     addToTab("Kinematics", position);
 
     orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true,false,MBSIM%"relativeOrientation");
     addToTab("Kinematics", orientation);
-
-    refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true);
-    addToTab("Kinematics", refFrame);
   }
 
   DOMElement* FixedRelativeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
     FramePropertyDialog::initializeUsingXML(element->getXMLElement());
+    refFrame->initializeUsingXML(element->getXMLElement());
     position->initializeUsingXML(element->getXMLElement());
     orientation->initializeUsingXML(element->getXMLElement());
     return parent;
@@ -207,6 +208,7 @@ namespace MBSimGUI {
   DOMElement* FixedRelativeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = orientation->writeXMLFile(element->getXMLElement(),0);
     ele = position->writeXMLFile(element->getXMLElement(),ele);
+    ele = refFrame->writeXMLFile(element->getXMLElement(),ele);
     FramePropertyDialog::writeXMLFile(element->getXMLElement(),ele);
     return NULL;
   }

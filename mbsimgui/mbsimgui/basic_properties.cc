@@ -114,8 +114,8 @@ namespace MBSimGUI {
   }
 
   void ParentFrameOfReferenceProperty::toWidget(QWidget *widget) {
-    static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
-    static_cast<ParentFrameOfReferenceWidget*>(widget)->updateWidget();
+//    static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
+//    static_cast<ParentFrameOfReferenceWidget*>(widget)->updateWidget();
   }
 
   FrameOfReferenceProperty::FrameOfReferenceProperty(const std::string &frame_, Element* element_, const MBXMLUtils::FQN &xmlName_) : frame(frame_), framePtr(element_->getByPath<Frame>(frame)), element(element_), xmlName(xmlName_) {

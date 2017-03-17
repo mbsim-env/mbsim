@@ -174,11 +174,6 @@ namespace MBSimGUI {
     frame->blockSignals(false);
   }
 
-  void ParentFrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
-    selectedFrame = framePtr;
-    frame->setEditText(str);
-  }
-
   void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
     selectedFrame = element->getParent()->getFrame(str.mid(9, str.length()-10).toStdString());
     frame->setEditText(str);
@@ -186,6 +181,16 @@ namespace MBSimGUI {
 
   QString ParentFrameOfReferenceWidget::getFrame() const {
     return frame->currentText();
+  }
+
+  DOMElement* ParentFrameOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    setFrame(QString::fromStdString(E(element)->getAttribute("ref")));
+    return element;
+  }
+
+  DOMElement* ParentFrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    E(static_cast<DOMElement*>(parent))->setAttribute("ref", getFrame().toStdString());
+    return NULL;
   }
 
   FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
