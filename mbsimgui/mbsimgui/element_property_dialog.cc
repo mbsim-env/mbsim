@@ -175,14 +175,12 @@ namespace MBSimGUI {
   }
 
   DOMElement* InternalFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
-//    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
     visu->initializeUsingXML(element->getParent()->getXMLElement());
     static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->initializeUsingXML2(element->getParent()->getXMLElement());
     return parent;
   }
 
   DOMElement* InternalFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-//    ElementPropertyDialog::writeXMLFile(element->getXMLElement());
     visu->writeXMLFile(element->getParent()->getXMLElement(),element->getParent()->getXMLFrame());
     static_cast<PlotFeatureStatusWidget*>(plotFeature->getWidget())->writeXMLFile2(element->getParent()->getXMLElement());
     return NULL;
@@ -584,8 +582,8 @@ namespace MBSimGUI {
     inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"inertiaTensor");
     addToTab("General",inertia);
 
-//    frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true);
-//    addToTab("General",frameForInertiaTensor);
+    frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true,false,MBSIM%"frameForInertiaTensor");
+    addToTab("General",frameForInertiaTensor);
 //
 //    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
 //    addToTab("Kinematics", translation);
@@ -619,6 +617,7 @@ namespace MBSimGUI {
     K->initializeUsingXML(element->getXMLElement());
     mass->initializeUsingXML(element->getXMLElement());
     inertia->initializeUsingXML(element->getXMLElement());
+    frameForInertiaTensor->initializeUsingXML(element->getXMLElement());
     ombv->initializeUsingXML(element->getXMLElement());
     ombvFrameRef->initializeUsingXML(element->getXMLElement());
     return parent;
@@ -626,16 +625,13 @@ namespace MBSimGUI {
 
   DOMElement* RigidBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
 
-//    frameForInertiaTensor.writeXMLFile(ele0);
-
     DOMElement *ele = ombvFrameRef->writeXMLFile(element->getXMLElement(),element->getXMLContours()->getNextElementSibling());
     ele = ombv->writeXMLFile(element->getXMLElement(),ele);
+    ele = frameForInertiaTensor->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
     ele = inertia->writeXMLFile(element->getXMLElement(),ele);
     ele = mass->writeXMLFile(element->getXMLElement(),ele);
     ele = K->writeXMLFile(element->getXMLElement(),ele);
     BodyPropertyDialog::writeXMLFile(element->getXMLElement(),ele);
-//    ele = ombvFrameRef->writeXMLFile(element->getXMLElement(),E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC"));
-//    ele = ombv->writeXMLFile(element->getXMLElement(),ele?ele:E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC"));
 
 //    translation.writeXMLFile(ele0);
 //    rotation.writeXMLFile(ele0);
