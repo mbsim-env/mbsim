@@ -43,6 +43,7 @@ namespace MBSimGUI {
     std::vector<Constraint*> constraint;
     std::vector<Observer*> observer;
     std::vector<Element*> removedElement;
+    xercesc::DOMElement *frames, *contours, *groups, *objects, *links, *constraints, *observers;
 
     public:
     Group(const std::string &str, Element *parent);
@@ -55,10 +56,14 @@ namespace MBSimGUI {
     int getuSize();
     int getxSize();
     static Group* readXMLFile(const std::string &filename, Element *parent);
-    virtual xercesc::DOMElement* getXMLFrames();
-    virtual xercesc::DOMElement* getXMLObjects();
-    virtual xercesc::DOMElement* getXMLConstraints();
-    virtual xercesc::DOMElement* getXMLFrame();
+    void createXMLConstraints();
+    void createXMLObservers();
+    virtual xercesc::DOMElement* getXMLFrames() { return frames; }
+    virtual xercesc::DOMElement* getXMLObjects() { return objects; }
+    virtual xercesc::DOMElement* getXMLLinks() { return links; }
+    virtual xercesc::DOMElement* getXMLConstraints() { return constraints ? constraints : getXMLLinks(); }
+    virtual xercesc::DOMElement* getXMLObservers() { return observers ? observers : getXMLConstraints(); }
+    virtual xercesc::DOMElement* getXMLFrame() { return getXMLObservers()->getNextElementSibling(); }
     virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
     virtual xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

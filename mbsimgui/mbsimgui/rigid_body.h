@@ -35,9 +35,8 @@ namespace MBSimGUI {
       int getquize() const {return constrained?0:getuRelSize();}
       int getqRelSize() const;
       int getuRelSize() const;
-      xercesc::DOMElement* getXMLFrames();
-      xercesc::DOMElement* getXMLContours();
-      xercesc::DOMElement* getXMLFrame();
+      xercesc::DOMElement* getXMLFrames() { return frames; }
+      xercesc::DOMElement* getXMLContours() { return contours; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
@@ -50,7 +49,7 @@ namespace MBSimGUI {
       QMenu* createFrameContextMenu() {return new FixedRelativeFrameContextContextMenu(this);}
     protected:
       bool constrained;
-      ExtProperty K, mass, inertia, frameForInertiaTensor, translation, rotation, translationDependentRotation, coordinateTransformationForRotation, bodyFixedRepresentationOfAngularVelocity, ombvEditor;
+      xercesc::DOMElement *frames, *contours;
   };
 
 }

@@ -46,7 +46,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false) {
+  Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false), constraints(NULL), observers(NULL) {
 
     InternalFrame *I = new InternalFrame("I",this,vector<FQN>(1,MBSIM%"plotFeatureFrameI"));
     I->setXMLName(MBSIM%"enableOpenMBVFrameI");
@@ -320,50 +320,38 @@ namespace MBSimGUI {
     return group;
   }
 
-  DOMElement* Group::getXMLFrames() {
-    return E(element)->getFirstElementChildNamed(MBSIM%"frames");
+  void Group::createXMLConstraints() {
+    DOMDocument *doc=element->getOwnerDocument();
+    constraints = D(doc)->createElement( MBSIM%"constraints" );
+    element->insertBefore( constraints, getXMLLinks()->getNextElementSibling() );
   }
 
-  DOMElement* Group::getXMLObjects() {
-    return E(element)->getFirstElementChildNamed(MBSIM%"objects");
+  void Group::createXMLObservers() {
+    DOMDocument *doc=element->getOwnerDocument();
+    observers = D(doc)->createElement( MBSIM%"observers" );
+    element->insertBefore( observers, getXMLConstraints()->getNextElementSibling() );
   }
 
-  DOMElement* Group::getXMLConstraints() {
-    DOMElement *ele = E(element)->getFirstElementChildNamed(MBSIM%"constraints");
-    if(not ele) {
-      DOMDocument *doc=element->getOwnerDocument();
-      ele = D(doc)->createElement( MBSIM%"constraints" );
-      element->insertBefore( ele, NULL );
-    }
-    return ele;
-  }
-
-  DOMElement* Group::getXMLFrame() {
-    DOMElement *ele = E(element)->getFirstElementChildNamed(MBSIM%"environments");
-//    if(not ele) {
-//      DOMDocument *doc=element->getOwnerDocument();
-//      ele = D(doc)->createElement( MBSIM%"constraints" );
-//      element->insertBefore( ele, NULL );
-//    }
-    return ele;
-  }
-
+//  DOMElement* Group::getXMLFrame() {
+//    DOMElement *ele = E(element)->getFirstElementChildNamed(MBSIM%"environments");
+//    return ele;
+//  }
 
   DOMElement* Group::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"frames" );
-    ele0->insertBefore( ele1, NULL );
-    ele1 = D(doc)->createElement( MBSIM%"contours" );
-    ele0->insertBefore( ele1, NULL );
-    ele1 = D(doc)->createElement( MBSIM%"groups" );
-    ele0->insertBefore( ele1, NULL );
-    ele1 = D(doc)->createElement( MBSIM%"objects" );
-    ele0->insertBefore( ele1, NULL );
-    ele1 = D(doc)->createElement( MBSIM%"links" );
-    ele0->insertBefore( ele1, NULL );
+    frames = D(doc)->createElement( MBSIM%"frames" );
+    ele0->insertBefore( frames, NULL );
+    contours = D(doc)->createElement( MBSIM%"contours" );
+    ele0->insertBefore( contours, NULL );
+    groups = D(doc)->createElement( MBSIM%"groups" );
+    ele0->insertBefore( groups, NULL );
+    objects = D(doc)->createElement( MBSIM%"objects" );
+    ele0->insertBefore( objects, NULL );
+    links = D(doc)->createElement( MBSIM%"links" );
+    ele0->insertBefore( links, NULL );
 
-    ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameI" );
 //    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
 //    ele1->insertBefore(id, NULL);
     ele0->insertBefore( ele1, NULL );
@@ -427,7 +415,8 @@ namespace MBSimGUI {
 //      orientation.initializeUsingXML(element);
 
     // frames
-    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    frames = E(element)->getFirstElementChildNamed(MBSIM%"frames");
+    DOMElement *ELE=frames->getFirstElementChild();
     Frame *f;
     while(ELE) {
       f = Embed<Frame>::createAndInit(ELE,this);
@@ -436,7 +425,8 @@ namespace MBSimGUI {
     }
 
     // contours
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    contours = E(element)->getFirstElementChildNamed(MBSIM%"contours");
+    ELE=contours->getFirstElementChild();
     Contour *c;
     while(ELE) {
       c = Embed<Contour>::createAndInit(ELE,this);
@@ -445,7 +435,8 @@ namespace MBSimGUI {
     }
 
     // groups
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
+    groups = E(element)->getFirstElementChildNamed(MBSIM%"groups");
+    ELE=groups->getFirstElementChild();
     Group *g;
     while(ELE) {
       g = Embed<Group>::createAndInit(ELE,this);
@@ -454,7 +445,8 @@ namespace MBSimGUI {
     }
 
     // objects
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
+    objects = E(element)->getFirstElementChildNamed(MBSIM%"objects");
+    ELE=objects->getFirstElementChild();
     Object *o;
     while(ELE) {
       o = Embed<Object>::createAndInit(ELE,this);
@@ -463,7 +455,8 @@ namespace MBSimGUI {
     }
 
     // links
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
+    links = E(element)->getFirstElementChildNamed(MBSIM%"links");
+    ELE=links->getFirstElementChild();
     Link *l;
     while(ELE) {
       l = Embed<Link>::createAndInit(ELE,this);
@@ -472,8 +465,9 @@ namespace MBSimGUI {
     }
 
     // constraints
-    if(E(element)->getFirstElementChildNamed(MBSIM%"constraints")) {
-      ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints")->getFirstElementChild();
+    constraints = E(element)->getFirstElementChildNamed(MBSIM%"constraints");
+    if(constraints) {
+      ELE=constraints->getFirstElementChild();
       Constraint *constraint;
       while(ELE) {
         constraint = Embed<Constraint>::createAndInit(ELE,this);
@@ -483,8 +477,9 @@ namespace MBSimGUI {
     }
 
     // observers
-    if(E(element)->getFirstElementChildNamed(MBSIM%"observers")) {
-      ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers")->getFirstElementChild();
+    observers = E(element)->getFirstElementChildNamed(MBSIM%"observers");
+    if(observers) {
+      ELE=observers->getFirstElementChild();
       Observer *obsrv;
       while(ELE) {
         obsrv = Embed<Observer>::createAndInit(ELE,this);

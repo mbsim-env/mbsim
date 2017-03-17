@@ -38,7 +38,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), bodyFixedRepresentationOfAngularVelocity(0,false), ombvEditor(0,true) {
+  RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false) {
     InternalFrame *C = new InternalFrame("C",this,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
     C->setXMLName(MBSIM%"enableOpenMBVFrameC");
     addFrame(C);
@@ -69,16 +69,16 @@ namespace MBSimGUI {
 
   int RigidBody::getqRelSize() const {
     int nqT=0, nqR=0;
-    if(translation.isActive()) {
-      const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(translation.getProperty())->getProperty());
-      const ChoiceProperty2 *trans = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-      nqT = static_cast<Function*>(trans->getProperty())->getArg1Size();
-    }
-    if(rotation.isActive()) {
-      const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(rotation.getProperty())->getProperty());
-      const ChoiceProperty2 *rot = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
-      nqR = static_cast<Function*>(rot->getProperty())->getArg1Size();
-    }
+//    if(translation.isActive()) {
+//      const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(translation.getProperty())->getProperty());
+//      const ChoiceProperty2 *trans = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
+//      nqT = static_cast<Function*>(trans->getProperty())->getArg1Size();
+//    }
+//    if(rotation.isActive()) {
+//      const ExtProperty *extProperty = static_cast<const ExtProperty*>(static_cast<const ChoiceProperty2*>(rotation.getProperty())->getProperty());
+//      const ChoiceProperty2 *rot = static_cast<const ChoiceProperty2*>(extProperty->getProperty());
+//      nqR = static_cast<Function*>(rot->getProperty())->getArg1Size();
+//    }
     int nq = nqT + nqR;
     return nq;
   }
@@ -96,31 +96,13 @@ namespace MBSimGUI {
       contour[i]->initialize();
   }
 
-  DOMElement* RigidBody::getXMLFrames() {
-    return E(element)->getFirstElementChildNamed(MBSIM%"frames");
-  }
-
-  DOMElement* RigidBody::getXMLContours() {
-    return E(element)->getFirstElementChildNamed(MBSIM%"contours");
-  }
-
-
-  DOMElement* RigidBody::getXMLFrame() {
-//    if(not ele) {
-//      DOMDocument *doc=element->getOwnerDocument();
-//      ele = D(doc)->createElement( MBSIM%"constraints" );
-//      element->insertBefore( ele, NULL );
-//    }
-    return NULL;
-  }
-
   DOMElement* RigidBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();
-    DOMElement *elef = D(doc)->createElement( MBSIM%"frames" );
-    ele0->insertBefore( elef, NULL );
-    DOMElement *elec = D(doc)->createElement( MBSIM%"contours" );
-    ele0->insertBefore( elec, NULL );
+    frames = D(doc)->createElement( MBSIM%"frames" );
+    ele0->insertBefore( frames, NULL );
+    contours = D(doc)->createElement( MBSIM%"contours" );
+    ele0->insertBefore( contours, NULL );
 
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"openMBVRigidBody" );
     DOMElement *ele2 = D(doc)->createElement( OPENMBV%"Cube" );
@@ -135,9 +117,9 @@ namespace MBSimGUI {
     ele0->insertBefore( ele1, NULL );
 
     for(size_t i=1; i<frame.size(); i++)
-      frame[i]->createXMLElement(elef);
+      frame[i]->createXMLElement(frames);
     for(size_t i=0; i<contour.size(); i++)
-      contour[i]->createXMLElement(elec);
+      contour[i]->createXMLElement(contours);
     return ele0;
   }
 
@@ -183,7 +165,8 @@ namespace MBSimGUI {
     Body::initializeUsingXML(element);
 
     // frames
-    e=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    frames = E(element)->getFirstElementChildNamed(MBSIM%"frames");
+    e=frames->getFirstElementChild();
     Frame *f;
     while(e) {
       f = Embed<Frame>::createAndInit(e,this);
@@ -192,7 +175,8 @@ namespace MBSimGUI {
     }
 
     // contours
-    e=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    contours = E(element)->getFirstElementChildNamed(MBSIM%"contours");
+    e=contours->getFirstElementChild();
     Contour *c;
     while(e) {
       c = Embed<Contour>::createAndInit(e,this);
@@ -228,41 +212,41 @@ namespace MBSimGUI {
   DOMElement* RigidBody::writeXMLFile(DOMNode *parent) {
 
     DOMElement *ele0 = Body::writeXMLFile(parent);
-    DOMElement *ele1;
-
-    K.writeXMLFile(ele0);
-
-    mass.writeXMLFile(ele0);
-    inertia.writeXMLFile(ele0);
-    frameForInertiaTensor.writeXMLFile(ele0);
-
-    translation.writeXMLFile(ele0);
-    rotation.writeXMLFile(ele0);
-    translationDependentRotation.writeXMLFile(ele0);
-    coordinateTransformationForRotation.writeXMLFile(ele0);
-    bodyFixedRepresentationOfAngularVelocity.writeXMLFile(ele0);
-
-    DOMDocument *doc=ele0->getOwnerDocument();
-    ele1 = D(doc)->createElement( MBSIM%"frames" );
-    for(size_t i=1; i<frame.size(); i++)
-      Embed<Frame>::writeXML(frame[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ele1 = D(doc)->createElement( MBSIM%"contours" );
-    for(size_t i=0; i<contour.size(); i++)
-      Embed<Contour>::writeXML(contour[i],ele1);
-    ele0->insertBefore( ele1, NULL );
-
-    ombvEditor.writeXMLFile(ele0);
-
-    Frame *C = getFrame(0);
-    if(C->openMBVFrame()) {
-      ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
-      C->writeXMLFile2(ele1);
-      ele0->insertBefore(ele1, NULL);
-    }
-
-    C->writeXMLFile3(ele0);
+//    DOMElement *ele1;
+//
+//    K.writeXMLFile(ele0);
+//
+//    mass.writeXMLFile(ele0);
+//    inertia.writeXMLFile(ele0);
+//    frameForInertiaTensor.writeXMLFile(ele0);
+//
+//    translation.writeXMLFile(ele0);
+//    rotation.writeXMLFile(ele0);
+//    translationDependentRotation.writeXMLFile(ele0);
+//    coordinateTransformationForRotation.writeXMLFile(ele0);
+//    bodyFixedRepresentationOfAngularVelocity.writeXMLFile(ele0);
+//
+//    DOMDocument *doc=ele0->getOwnerDocument();
+//    ele1 = D(doc)->createElement( MBSIM%"frames" );
+//    for(size_t i=1; i<frame.size(); i++)
+//      Embed<Frame>::writeXML(frame[i],ele1);
+//    ele0->insertBefore( ele1, NULL );
+//
+//    ele1 = D(doc)->createElement( MBSIM%"contours" );
+//    for(size_t i=0; i<contour.size(); i++)
+//      Embed<Contour>::writeXML(contour[i],ele1);
+//    ele0->insertBefore( ele1, NULL );
+//
+//    ombvEditor.writeXMLFile(ele0);
+//
+//    Frame *C = getFrame(0);
+//    if(C->openMBVFrame()) {
+//      ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
+//      C->writeXMLFile2(ele1);
+//      ele0->insertBefore(ele1, NULL);
+//    }
+//
+//    C->writeXMLFile3(ele0);
 
     return ele0;
   }
