@@ -48,7 +48,7 @@ namespace MBSimGUI {
 
   Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false), constraints(NULL), observers(NULL) {
 
-    InternalFrame *I = new InternalFrame("I",this,vector<FQN>(1,MBSIM%"plotFeatureFrameI"));
+    InternalFrame *I = new InternalFrame("I",this,"plotFeatureFrameI");
     I->setXMLName(MBSIM%"enableOpenMBVFrameI");
     addFrame(I);
 

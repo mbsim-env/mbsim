@@ -413,9 +413,9 @@ namespace MBSimGUI {
   class PlotFeatureStatusProperty : public Property {
     protected:
       std::vector<std::string> type, value, status;
-      std::vector<MBXMLUtils::FQN> types;
+      std::string types;
     public:
-      PlotFeatureStatusProperty(const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
+      PlotFeatureStatusProperty(const std::string &types="");
       void addFeature(const std::string &t, const std::string &v, const std::string &s) {
         type.push_back(t);
         value.push_back(v);
@@ -427,7 +427,7 @@ namespace MBSimGUI {
         status.pop_back();
       }
       virtual PropertyInterface* clone() const {return new PlotFeatureStatusProperty(*this);}
-      const std::vector<MBXMLUtils::FQN>& getTypes() const { return types; }
+      const std::string& getTypes() const { return types; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element); 
       xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *element);

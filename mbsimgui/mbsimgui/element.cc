@@ -44,7 +44,7 @@ namespace MBSimGUI {
 
   int Element::IDcounter=0;
 
-  Element::Element(const string &name__, Element *parent_, const vector<FQN> &plotFeatureTypes) : parent(parent_), embed(0,false), element(NULL), name_(name__) {
+  Element::Element(const string &name__, Element *parent_, const string &plotFeatureTypes) : parent(parent_), embed(0,false), element(NULL), name_(name__) {
     name.setProperty(new TextProperty(name_,""));
     embed.setProperty(new EmbedProperty(name_));
     plotFeature.setProperty(new PlotFeatureStatusProperty(plotFeatureTypes));

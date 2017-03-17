@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Frame::Frame(const string &str, Element *parent, bool grey, const vector<FQN> &plotFeatureTypes) : Element(str,parent,plotFeatureTypes), visu(0,true) {
+  Frame::Frame(const string &str, Element *parent, bool grey, const string &plotFeatureTypes) : Element(str,parent,plotFeatureTypes), visu(0,true) {
 
     visu.setProperty(new FrameMBSOMBVProperty("NOTSET",grey?"":MBSIM%"enableOpenMBV",getID()));
 

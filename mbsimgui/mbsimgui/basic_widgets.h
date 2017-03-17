@@ -22,6 +22,7 @@
 
 #include "extended_widgets.h"
 #include "custom_widgets.h"
+#include "property.h"
 #include <QLineEdit>
 #include <QSpinBox>
 #include <mbxmlutilshelper/dom.h>
@@ -523,12 +524,15 @@ namespace MBSimGUI {
     protected:
       QComboBox *type, *value, *status;
       QTreeWidget *tree;
+      MBXMLUtils::NamespaceURI uri;
 
     public:
-      PlotFeatureStatusWidget(const std::vector<MBXMLUtils::FQN> &types);
+      PlotFeatureStatusWidget(const QString &types="", const MBXMLUtils::NamespaceURI &uri=MBSIM);
       void addFeature(const QString &feature);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *element);
 
     protected slots:
       void addFeature();

@@ -862,19 +862,19 @@ namespace MBSimGUI {
     return 0;
   }
  
-  PlotFeatureStatusWidget::PlotFeatureStatusWidget(const vector<MBXMLUtils::FQN> &types) {
+  PlotFeatureStatusWidget::PlotFeatureStatusWidget(const QString &types, const NamespaceURI &uri_) : uri(uri_) {
     QGridLayout *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     QStringList type_;
-    for(unsigned int i=0; i<types.size(); i++)
-      type_ << QString::fromStdString(types[i].second);
-    if(type_.isEmpty()) {
+    if(types.isEmpty()) {
       type_ << "plotFeature";
       type_ << "plotFeatureForChildren";
       type_ << "plotFeatureRecursive";
     }
+    else
+      type_ << types;
 
     tree = new QTreeWidget;
     QStringList labels;
@@ -947,9 +947,9 @@ namespace MBSimGUI {
 
   DOMElement* PlotFeatureStatusWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *e=parent->getFirstElementChild();
-    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
-                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
-                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+    while(e && (E(e)->getTagName()==uri%"plotFeature" ||
+                E(e)->getTagName()==uri%"plotFeatureForChildren" ||
+                E(e)->getTagName()==uri%"plotFeatureRecursive")) {
       string feature = E(e)->getAttribute("feature");
       QTreeWidgetItem *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
@@ -963,46 +963,50 @@ namespace MBSimGUI {
 
   DOMElement* PlotFeatureStatusWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *e = static_cast<DOMElement*>(parent)->getFirstElementChild();
-    cout << E(e)->getTagName().second << endl;
-//    e = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBSIM%"plotFeature");
-//    if(e)
-//    cout << E(e)->getTagName().second << endl;
-    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
-                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
-                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+    while(e && (E(e)->getTagName()==uri%"plotFeature" ||
+                E(e)->getTagName()==uri%"plotFeatureForChildren" ||
+                E(e)->getTagName()==uri%"plotFeatureRecursive")) {
       DOMElement *en=e->getNextElementSibling();
       parent->removeChild(e);
       e = en;
     }
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
-      DOMElement *ele = D(doc)->createElement(MBSIM%tree->topLevelItem(i)->text(0).toStdString());
+      DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("feature",(tree->topLevelItem(i)->text(2)+tree->topLevelItem(i)->text(1)).toStdString());
       parent->insertBefore(ele, ref);
     }
     return 0;
   }
 
-//  DOMElement* PlotFeatureStatusWidget::initializeUsingXML2(DOMElement *parent) {
-//    DOMElement *e=E(parent)->getFirstElementChildNamed(types[0]);
-//    while(e && (E(e)->getTagName()==types[0])) {
-//      string feature = E(e)->getAttribute("feature");
-//      type.push_back(E(e)->getTagName().second);
-//      value.push_back(feature.substr(1));
-//      status.push_back(feature.substr(0,1));
-//      e=e->getNextElementSibling();
-//    }
-//    return e;
-//  }
-//
-//  DOMElement* PlotFeatureStatusWidget::writeXMLFile2(DOMNode *parent) {
-//    DOMDocument *doc=parent->getOwnerDocument();
-//    for(size_t i=0; i<type.size(); i++) {
-//      DOMElement *ele = D(doc)->createElement(FQN(types[0].first,type[i]));
-//      E(ele)->setAttribute("feature",status[i]+value[i]);
-//      parent->insertBefore(ele, NULL);
-//    }
-//    return 0;
-//  }
+  DOMElement* PlotFeatureStatusWidget::initializeUsingXML2(DOMElement *parent) {
+    DOMElement *e=E(parent)->getFirstElementChildNamed(uri%type->itemText(0).toStdString());
+    while(e && E(e)->getTagName()==uri%type->itemText(0).toStdString()) {
+      string feature = E(e)->getAttribute("feature");
+      QTreeWidgetItem *item = new QTreeWidgetItem;
+      item->setText(0, QString::fromStdString(E(e)->getTagName().second));
+      item->setText(1, QString::fromStdString(feature.substr(1)));
+      item->setText(2, QString::fromStdString(feature.substr(0,1)));
+      tree->addTopLevelItem(item);
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* PlotFeatureStatusWidget::writeXMLFile2(DOMNode *parent) {
+    DOMElement *e = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(uri%type->itemText(0).toStdString());
+    while(e && E(e)->getTagName()==uri%type->itemText(0).toStdString()) {
+      DOMElement *en=e->getNextElementSibling();
+      parent->removeChild(e);
+      e = en;
+    }
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(size_t i=0; i<tree->topLevelItemCount(); i++) {
+      DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
+      E(ele)->setAttribute("feature",(tree->topLevelItem(i)->text(2)+tree->topLevelItem(i)->text(1)).toStdString());
+      parent->insertBefore(ele, NULL);
+    }
+    return 0;
+  }
 
 }

@@ -39,7 +39,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false) {
-    InternalFrame *C = new InternalFrame("C",this,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
+    InternalFrame *C = new InternalFrame("C",this,"plotFeatureFrameC");
     C->setXMLName(MBSIM%"enableOpenMBVFrameC");
     addFrame(C);
 

@@ -39,7 +39,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   FlexibleBodyFFR::FlexibleBodyFFR(const string &str, Element *parent) : Body(str,parent), De(0,false), beta(0,false), Knl1(0,false), Knl2(0,false), ksigma0(0,false), ksigma1(0,false), K0t(0,false), K0r(0,false), K0om(0,false), r(0,false), A(0,false), Phi(0,false), sigmahel(0,false), sigmahen(0,false), sigma0(0,false), K0F(0,false), K0M(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), ombvEditor(0,true) {
-    Frame *K = new Frame("K",this,true,vector<FQN>(1,MBSIMFLEX%"plotFeatureFrameK"));
+    Frame *K = new Frame("K",this,true,"plotFeatureFrameK");
     addFrame(K);
 
     mass.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIMFLEX%"mass",vector<string>(2,"kg")),"",4));

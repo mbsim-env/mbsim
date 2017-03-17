@@ -59,7 +59,7 @@ namespace MBSimGUI {
       xercesc::DOMElement *element;
       std::string name_;
     public:
-      Element(const std::string &name, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
+      Element(const std::string &name, Element *parent, const std::string &plotFeatureTypes="");
       virtual ~Element() { parameters.removeParameters(); }
       virtual PropertyInterface* clone() const {return 0;}
       virtual std::string getPath();

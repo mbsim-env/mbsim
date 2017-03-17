@@ -961,7 +961,7 @@ namespace MBSimGUI {
     static_cast<ColorWidget*>(widget)->updateWidget();
   }
 
-  PlotFeatureStatusProperty::PlotFeatureStatusProperty(const vector<FQN> &plotFeatureTypes) : types(plotFeatureTypes) {
+  PlotFeatureStatusProperty::PlotFeatureStatusProperty(const string &plotFeatureTypes) : types(plotFeatureTypes) {
   }
 
   DOMElement* PlotFeatureStatusProperty::initializeUsingXML(DOMElement *parent) {
@@ -979,15 +979,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureStatusProperty::initializeUsingXML2(DOMElement *parent) {
-    DOMElement *e=E(parent)->getFirstElementChildNamed(types[0]);
-    while(e && (E(e)->getTagName()==types[0])) {
-      string feature = E(e)->getAttribute("feature");
-      type.push_back(E(e)->getTagName().second);
-      value.push_back(feature.substr(1));
-      status.push_back(feature.substr(0,1));
-      e=e->getNextElementSibling();
-    }
-    return e;
+    return NULL;
+//    DOMElement *e=E(parent)->getFirstElementChildNamed(types[0]);
+//    while(e && (E(e)->getTagName()==types[0])) {
+//      string feature = E(e)->getAttribute("feature");
+//      type.push_back(E(e)->getTagName().second);
+//      value.push_back(feature.substr(1));
+//      status.push_back(feature.substr(0,1));
+//      e=e->getNextElementSibling();
+//    }
+//    return e;
   }
 
   DOMElement* PlotFeatureStatusProperty::writeXMLFile(DOMNode *parent) {
@@ -1001,12 +1002,12 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureStatusProperty::writeXMLFile2(DOMNode *parent) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    for(size_t i=0; i<type.size(); i++) {
-      DOMElement *ele = D(doc)->createElement(FQN(types[0].first,type[i]));
-      E(ele)->setAttribute("feature",status[i]+value[i]);
-      parent->insertBefore(ele, NULL);
-    }
+//    DOMDocument *doc=parent->getOwnerDocument();
+//    for(size_t i=0; i<type.size(); i++) {
+//      DOMElement *ele = D(doc)->createElement(FQN(types[0].first,type[i]));
+//      E(ele)->setAttribute("feature",status[i]+value[i]);
+//      parent->insertBefore(ele, NULL);
+//    }
     return 0;
   }
 

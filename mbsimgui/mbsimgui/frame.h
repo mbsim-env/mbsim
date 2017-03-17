@@ -30,7 +30,7 @@ namespace MBSimGUI {
   class Frame : public Element {
     friend class FramePropertyDialog;
     public:
-    Frame(const std::string &str, Element *parent, bool grey=true, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>());
+    Frame(const std::string &str, Element *parent, bool grey=true, const std::string &plotFeatureTypes="");
     ~Frame() { }
     virtual PropertyInterface* clone() const {return new Frame(*this);}
     std::string getType() const { return "Frame"; }
@@ -56,7 +56,7 @@ namespace MBSimGUI {
   class InternalFrame : public Frame {
     friend class InternalFramePropertyDialog;
     public:
-    InternalFrame(const std::string &str, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>()) : Frame(str,parent,true,plotFeatureTypes) { }
+    InternalFrame(const std::string &str, Element *parent, const std::string &plotFeatureTypes="") : Frame(str,parent,true,plotFeatureTypes) { }
     virtual PropertyInterface* clone() const {return new InternalFrame(*this);}
     std::string getType() const { return "InternalFrame"; }
     ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
