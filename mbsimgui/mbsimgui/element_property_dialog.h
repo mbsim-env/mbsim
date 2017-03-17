@@ -146,8 +146,6 @@ namespace MBSimGUI {
 
     public:
       FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
@@ -279,8 +277,6 @@ namespace MBSimGUI {
 
     public:
       GroupPropertyDialog(Group *group, QWidget * parent = 0, Qt::WindowFlags f = 0, bool kinematics=true);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
     protected:
       ExtWidget *position, *orientation, *frameOfReference; 
   };
@@ -291,8 +287,6 @@ namespace MBSimGUI {
 
     public:
       DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
@@ -301,8 +295,6 @@ namespace MBSimGUI {
 
     public:
       ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
   };
 
   class BodyPropertyDialog : public ObjectPropertyDialog {
@@ -310,8 +302,6 @@ namespace MBSimGUI {
 
     public:
     BodyPropertyDialog(Body *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
     xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     virtual void resizeGeneralizedPosition() {}
@@ -327,8 +317,6 @@ namespace MBSimGUI {
 
     public:
       RigidBodyPropertyDialog(RigidBody *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       void resizeGeneralizedPosition();
