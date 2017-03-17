@@ -92,7 +92,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::initializeUsingXML(DOMElement *element) {
-//    plotFeature.initializeUsingXML(element);
     this->element = element;
     return element;
   }

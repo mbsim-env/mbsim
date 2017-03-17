@@ -962,6 +962,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureStatusWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *e = static_cast<DOMElement*>(parent)->getFirstElementChild();
+    cout << E(e)->getTagName().second << endl;
+//    e = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBSIM%"plotFeature");
+//    if(e)
+//    cout << E(e)->getTagName().second << endl;
+    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+      DOMElement *en=e->getNextElementSibling();
+      parent->removeChild(e);
+      e = en;
+    }
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(MBSIM%tree->topLevelItem(i)->text(0).toStdString());
