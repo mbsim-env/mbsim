@@ -337,6 +337,17 @@ namespace MBSimGUI {
 //    return ele;
 //  }
 
+  void Group::removeXMLElements() {
+     DOMElement *e = element->getFirstElementChild();
+     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
+     while(e) {
+       DOMElement *en=e->getNextElementSibling();
+       if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
+         element->removeChild(e);
+       e = en;
+     }
+  }
+
   DOMElement* Group::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();

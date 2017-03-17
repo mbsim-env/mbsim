@@ -132,7 +132,6 @@ namespace MBSimGUI {
       DOMElement *newele;
       DOMDocument *doc = parent->getOwnerDocument();
       newele = D(doc)->createElement(xmlName);
-//      if(alwaysWriteXMLName) {
       DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
       if(false) {
         if(isActive()) dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
@@ -150,11 +149,23 @@ namespace MBSimGUI {
       else if(ele)
         parent->removeChild(ele);
     }
-    else
-      return isActive()?dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref):0;
+    else {
+      if(not isActive())
+        ;//removeXMLElement(parent);
+      else
+        return dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
+    }
     return static_cast<DOMElement*>(ref);
   }
 
+  void ExtWidget::removeXMLElement(xercesc::DOMNode *parent) {
+    if(xmlName!=FQN()) {
+      DOMElement *ele = E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(xmlName);
+      if(ele) parent->removeChild(ele);
+    }
+    else
+      dynamic_cast<WidgetInterface*>(getWidget())->removeXMLElement(parent);
+  }
 
   ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(0), factory(factory_), mode(mode_) {
     layout = new QBoxLayout(dir);

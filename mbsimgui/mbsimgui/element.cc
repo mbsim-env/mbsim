@@ -83,6 +83,15 @@ namespace MBSimGUI {
     DOMParser::serialize(doc.get(), (name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
   }
 
+  void Element::removeXMLElements() {
+    DOMElement *e = element->getFirstElementChild();
+    while(e) {
+      DOMElement *en=e->getNextElementSibling();
+      element->removeChild(e);
+      e = en;
+    }
+  }
+
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getNameSpace()%getType());

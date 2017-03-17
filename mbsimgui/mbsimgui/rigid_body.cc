@@ -96,6 +96,17 @@ namespace MBSimGUI {
       contour[i]->initialize();
   }
 
+  void RigidBody::removeXMLElements() {
+    DOMElement *e = element->getFirstElementChild();
+    DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
+    while(e) {
+      DOMElement *en=e->getNextElementSibling();
+      if((e != frames) and (e != contours) and (e != ombvFrame))
+        element->removeChild(e);
+      e = en;
+    }
+  }
+
   DOMElement* RigidBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();

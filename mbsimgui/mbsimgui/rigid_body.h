@@ -37,6 +37,7 @@ namespace MBSimGUI {
       int getuRelSize() const;
       xercesc::DOMElement* getXMLFrames() { return frames; }
       xercesc::DOMElement* getXMLContours() { return contours; }
+      void removeXMLElements();
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

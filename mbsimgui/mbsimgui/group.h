@@ -64,6 +64,7 @@ namespace MBSimGUI {
     xercesc::DOMElement* getXMLConstraints() { return constraints ? constraints : getXMLLinks(); }
     xercesc::DOMElement* getXMLObservers() { return observers ? observers : getXMLConstraints(); }
     xercesc::DOMElement* getXMLFrame() { return getXMLObservers()->getNextElementSibling(); }
+    void removeXMLElements();
     xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
     xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
     xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);

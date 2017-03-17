@@ -78,6 +78,7 @@ namespace MBSimGUI {
       void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      void removeXMLElement(xercesc::DOMNode *parent);
 
     protected:
       QWidget *widget;
@@ -103,6 +104,7 @@ namespace MBSimGUI {
       void resize_(int m, int n) { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+      void removeXMLElement(xercesc::DOMNode *parent) { dynamic_cast<WidgetInterface*>(getWidget())->removeXMLElement(parent); }
 
     protected slots:
       void defineWidget(int);

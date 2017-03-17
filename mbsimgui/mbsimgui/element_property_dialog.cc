@@ -108,20 +108,17 @@ namespace MBSimGUI {
   }
 
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    element->removeXMLElements();
     element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     plotFeature->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
   void ElementPropertyDialog::toWidget(Element *element) {
-  //  element->name.toWidget(name);
-  //  element->plotFeature.toWidget(plotFeature);
     initializeUsingXML(element->getXMLElement());
   }
 
   void ElementPropertyDialog::fromWidget(Element *element) {
-//    element->name.fromWidget(name);
-//    element->plotFeature.fromWidget(plotFeature);
     writeXMLFile(element->getXMLElement());
   }
 
@@ -161,8 +158,9 @@ namespace MBSimGUI {
   }
 
   DOMElement* FramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *ele = visu->writeXMLFile(element->getXMLElement(),ref);
-    return ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ele);
+    ElementPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    visu->writeXMLFile(element->getXMLElement(),ref);
+    return NULL;
   }
 
   InternalFramePropertyDialog::InternalFramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
@@ -208,10 +206,10 @@ namespace MBSimGUI {
   }
 
   DOMElement* FixedRelativeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *ele = orientation->writeXMLFile(element->getXMLElement(),0);
-    ele = position->writeXMLFile(element->getXMLElement(),ele);
-    ele = refFrame->writeXMLFile(element->getXMLElement(),ele);
-    FramePropertyDialog::writeXMLFile(element->getXMLElement(),ele);
+    FramePropertyDialog::writeXMLFile(element->getXMLElement(),NULL);
+    orientation->writeXMLFile(element->getXMLElement(),NULL);
+    position->writeXMLFile(element->getXMLElement(),NULL);
+    refFrame->writeXMLFile(element->getXMLElement(),NULL);
     return NULL;
   }
 
@@ -501,7 +499,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* GroupPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    return ElementPropertyDialog::writeXMLFile(parent,element->getXMLFrames());
+    ElementPropertyDialog::writeXMLFile(parent,ref);
+    return NULL;
   }
 
   DynamicSystemSolverPropertyDialog::DynamicSystemSolverPropertyDialog(DynamicSystemSolver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
@@ -532,8 +531,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    environment->writeXMLFile(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
     GroupPropertyDialog::writeXMLFile(parent);
+    environment->writeXMLFile(static_cast<DynamicSystemSolver*>(element)->getXMLEnvironments()->getFirstElementChild());
     return NULL;
   }
 
@@ -565,8 +564,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* BodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *ele = R->writeXMLFile(element->getXMLElement(),ref);
-    ObjectPropertyDialog::writeXMLFile(element->getXMLElement(),ele);
+    ObjectPropertyDialog::writeXMLFile(element->getXMLElement(),ref);
+    R->writeXMLFile(element->getXMLElement(),ref);
     return NULL;
   }
 
@@ -584,14 +583,14 @@ namespace MBSimGUI {
 
     frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,0),true,false,MBSIM%"frameForInertiaTensor");
     addToTab("General",frameForInertiaTensor);
-//
-//    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body)),true);
-//    addToTab("Kinematics", translation);
-//    connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
-//
-//    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body)),true);
-//    addToTab("Kinematics", rotation);
-//    connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("Kinematics", translation);
+    //connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory4(body),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("Kinematics", rotation);
+    //connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 //
 //    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
 //    addToTab("Kinematics", translationDependentRotation);
@@ -602,8 +601,6 @@ namespace MBSimGUI {
 //    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true);
 //    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
 //
-    //ombvEditor = new ExtWidget("OpenMBV body",new OMBVRigidBodySelectionWidget(body),true);
-    //addToTab("Visualisation", ombvEditor);
 
     ombv = new ExtWidget("Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
     addToTab("Visualisation", ombv);
@@ -618,20 +615,22 @@ namespace MBSimGUI {
     mass->initializeUsingXML(element->getXMLElement());
     inertia->initializeUsingXML(element->getXMLElement());
     frameForInertiaTensor->initializeUsingXML(element->getXMLElement());
+    translation->initializeUsingXML(element->getXMLElement());
     ombv->initializeUsingXML(element->getXMLElement());
     ombvFrameRef->initializeUsingXML(element->getXMLElement());
     return parent;
   }
 
   DOMElement* RigidBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-
-    DOMElement *ele = ombvFrameRef->writeXMLFile(element->getXMLElement(),element->getXMLContours()->getNextElementSibling());
-    ele = ombv->writeXMLFile(element->getXMLElement(),ele);
-    ele = frameForInertiaTensor->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
-    ele = inertia->writeXMLFile(element->getXMLElement(),ele);
-    ele = mass->writeXMLFile(element->getXMLElement(),ele);
-    ele = K->writeXMLFile(element->getXMLElement(),ele);
-    BodyPropertyDialog::writeXMLFile(element->getXMLElement(),ele);
+    BodyPropertyDialog::writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    K->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    mass->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    inertia->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    frameForInertiaTensor->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    translation->writeXMLFile(element->getXMLElement(),element->getXMLFrames());
+    DOMElement *ele =element->getXMLContours()->getNextElementSibling();
+    ombv->writeXMLFile(element->getXMLElement(),ele);
+    ombvFrameRef->writeXMLFile(element->getXMLElement(),ele);
 
 //    translation.writeXMLFile(ele0);
 //    rotation.writeXMLFile(ele0);

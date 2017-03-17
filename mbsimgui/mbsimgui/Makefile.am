@@ -55,6 +55,7 @@ mbsimgui_SOURCES = mainwindow.cc \
 		   special_properties.cc \
 		   basic_widgets.cc \
 		   variable_widgets.cc \
+		   function_widget.cc \
 		   function_widgets.cc \
 		   kinematic_functions_widgets.cc \
 		   function_widget_factory.cc \

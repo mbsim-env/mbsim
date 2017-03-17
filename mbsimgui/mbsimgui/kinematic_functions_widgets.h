@@ -31,6 +31,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongXAxisWidget() { }
       int getArg1Size() const {return 1;}
+      std::string getType() const { return "TranslationAlongXAxis"; }
   };
 
   class TranslationAlongYAxisWidget : public FunctionWidget {
@@ -38,6 +39,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongYAxisWidget() { }
       int getArg1Size() const {return 1;}
+      std::string getType() const { return "TranslationAlongYAxis"; }
   };
 
   class TranslationAlongZAxisWidget : public FunctionWidget {
@@ -45,6 +47,7 @@ namespace MBSimGUI {
     public:
       TranslationAlongZAxisWidget() { }
       int getArg1Size() const {return 1;}
+      std::string getType() const { return "TranslationAlongZAxis"; }
   };
 
   class TranslationAlongAxesXYWidget : public FunctionWidget {

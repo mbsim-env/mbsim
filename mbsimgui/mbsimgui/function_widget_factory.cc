@@ -126,8 +126,7 @@ namespace MBSimGUI {
     return NULL;
   }
 
-  vector<QString> TranslationWidgetFactory2::getNames() {
-    vector<QString> name;
+  TranslationWidgetFactory2::TranslationWidgetFactory2(Element *parent_) : parent(parent_) {
     name.push_back("Translation along x axis");
     name.push_back("Translation along y axis");
     name.push_back("Translation along z axis");
@@ -141,7 +140,19 @@ namespace MBSimGUI {
     name.push_back("Composite function");
     name.push_back("Piecewise polynom function");
     name.push_back("Piecewise defined function");
-    return name;
+    xmlName.push_back(MBSIM%"TranslationAlongXAxis");
+    xmlName.push_back(MBSIM%"TranslationAlongYAxis");
+    xmlName.push_back(MBSIM%"TranslationAlongZAxis");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesXY");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesYZ");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesXZ");
+    xmlName.push_back(MBSIM%"TranslationAlongAxesXYZ");
+    xmlName.push_back(MBSIM%"TranslationAlongFixedAxis");
+    xmlName.push_back(MBSIM%"LinearTranslation");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
   }
 
   QWidget* TranslationWidgetFactory3::createWidget(int i) {
@@ -286,21 +297,24 @@ namespace MBSimGUI {
     return name;
   }
 
-  TranslationWidgetFactory4::TranslationWidgetFactory4(Element *parent_) : parent(parent_) {
+  TranslationWidgetFactory4::TranslationWidgetFactory4(Element *parent_, const MBXMLUtils::NamespaceURI &uri) : parent(parent_) {
     name.push_back("State dependent translation");
     name.push_back("Time dependent translation");
     name.push_back("General translation");
+    xmlName.push_back(uri%"stateDependentTranslation");
+    xmlName.push_back(uri%"timeDependentTranslation");
+    xmlName.push_back(uri%"generalTranslation");
   }
 
   QWidget* TranslationWidgetFactory4::createWidget(int i) {
     if(i==0)
-      return new ExtWidget("Function r=r(q)",new ChoiceWidget2(new TranslationWidgetFactory2(parent)));
+      return new ExtWidget(name[i],new ChoiceWidget2(new TranslationWidgetFactory2(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     if(i==1)
-      return new ExtWidget("Function r=r(t)",new ChoiceWidget2(new TranslationWidgetFactory3(parent)));
+      return new ExtWidget(name[i],new ChoiceWidget2(new TranslationWidgetFactory3(parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     if(i==2) {
       QStringList var;
       var << "q" << "t";
-      return new ExtWidget("Function r=r(q,t)",new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,parent)));
+      return new ExtWidget(name[i],new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(var,parent),QBoxLayout::TopToBottom,0),false,false,xmlName[i]);
     }
     return NULL;
   }

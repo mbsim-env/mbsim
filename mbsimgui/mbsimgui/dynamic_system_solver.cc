@@ -66,6 +66,21 @@ namespace MBSimGUI {
 //    useConstraintSolverForPlot.setProperty(new ChoiceProperty2(new ScalarPropertyFactory("1",MBSIM%"useConstraintSolverForPlot",vector<string>(2,"")),"",4));
   }
 
+  void DynamicSystemSolver::removeXMLElements() {
+     DOMElement *e = element->getFirstElementChild();
+     DOMElement *ombvFrame=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
+     while(e) {
+       DOMElement *en=e->getNextElementSibling();
+       if(e == environments) {
+         DOMElement *env = E(e)->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
+         env->removeChild(env->getFirstElementChild());
+       }
+       else if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (e != ombvFrame))
+         element->removeChild(e);
+       e = en;
+     }
+  }
+
   DOMElement* DynamicSystemSolver::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Group::createXMLElement(parent);
     DOMDocument *doc=ele0->getOwnerDocument();

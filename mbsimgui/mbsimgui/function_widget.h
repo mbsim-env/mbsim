@@ -21,6 +21,7 @@
 #define _FUNCTION_WIDGET_H_
 
 #include "widget.h"
+#include "property.h"
 
 namespace MBSimGUI {
 
@@ -32,6 +33,11 @@ namespace MBSimGUI {
       virtual int getArg1Size() const {return 0;}
       virtual int getArg2Size() const {return 0;}
       virtual void setArg1Size(int i) {}
+      virtual std::string getType() const { return "Element"; }
+      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=NULL);
+      void removeXMLElement(xercesc::DOMNode *parent);
     protected:
       public slots:
         virtual void resize_(int m, int n) {}
