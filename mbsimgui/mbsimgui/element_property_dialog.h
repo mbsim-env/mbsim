@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class Element;
   class Frame;
+  class InternalFrame;
   class FixedRelativeFrame;
   class NodeFrame;
   class Contour;
@@ -107,7 +108,7 @@ namespace MBSimGUI {
     public:
       ElementPropertyDialog(Element *element, QWidget * parent = 0, Qt::WindowFlags f = 0);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       virtual void toWidget(Element *element);
       virtual void fromWidget(Element *element);
       void toWidget() {toWidget(element);}
@@ -125,10 +126,18 @@ namespace MBSimGUI {
 
     public:
       FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
-      void toWidget(Element *element);
-      void fromWidget(Element *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
+    protected:
+      ExtWidget *visu;
+  };
+
+  class InternalFramePropertyDialog : public ElementPropertyDialog {
+
+    public:
+      InternalFramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *visu;
   };
@@ -139,6 +148,8 @@ namespace MBSimGUI {
       FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
       void toWidget(Element *element);
       void fromWidget(Element *element);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     protected:
       ExtWidget *refFrame, *position, *orientation;
   };
@@ -283,7 +294,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
   };
 
   class ObjectPropertyDialog : public ElementPropertyDialog {
@@ -302,7 +313,7 @@ namespace MBSimGUI {
     void toWidget(Element *element);
     void fromWidget(Element *element);
     xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+    xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
     protected:
@@ -319,7 +330,7 @@ namespace MBSimGUI {
       void toWidget(Element *element);
       void fromWidget(Element *element);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=NULL);
       void resizeGeneralizedPosition();
       void resizeGeneralizedVelocity();
       int getqRelSize() const; 

@@ -48,7 +48,7 @@ namespace MBSimGUI {
 
   Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
-    Frame *I = new Frame("I",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameI"));
+    InternalFrame *I = new InternalFrame("I",this,vector<FQN>(1,MBSIM%"plotFeatureFrameI"));
     I->setXMLName(MBSIM%"enableOpenMBVFrameI");
     addFrame(I);
 
@@ -318,6 +318,10 @@ namespace MBSimGUI {
       group->initialize();
     }
     return group;
+  }
+
+  DOMElement* Group::getXMLFrames() {
+    return E(element)->getFirstElementChildNamed(MBSIM%"frames");
   }
 
   DOMElement* Group::getXMLObjects() {

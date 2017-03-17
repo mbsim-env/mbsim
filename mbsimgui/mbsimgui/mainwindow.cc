@@ -1078,6 +1078,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addFrame(Frame *frame) {
+    frame->createXMLElement(frame->getParent()->getXMLFrames());
     setProjectChanged(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = elementList->selectionModel()->currentIndex();

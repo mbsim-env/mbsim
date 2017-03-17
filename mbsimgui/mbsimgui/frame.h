@@ -53,6 +53,16 @@ namespace MBSimGUI {
     MBXMLUtils::FQN xmlName;
   };
 
+  class InternalFrame : public Frame {
+    friend class InternalFramePropertyDialog;
+    public:
+    InternalFrame(const std::string &str, Element *parent, const std::vector<MBXMLUtils::FQN> &plotFeatureTypes=std::vector<MBXMLUtils::FQN>()) : Frame(str,parent,true,plotFeatureTypes) { }
+    virtual PropertyInterface* clone() const {return new InternalFrame(*this);}
+    std::string getType() const { return "InternalFrame"; }
+    ElementPropertyDialog* createPropertyDialog() {return new InternalFramePropertyDialog(this);}
+    EmbeddingPropertyDialog* createEmbeddingPropertyDialog() {return new EmbeddingPropertyDialog(this);}
+  };
+
   class FixedRelativeFrame : public Frame {
     friend class FixedRelativeFramePropertyDialog;
     public:
@@ -60,6 +70,7 @@ namespace MBSimGUI {
     ~FixedRelativeFrame() { }
     virtual PropertyInterface* clone() const {return new FixedRelativeFrame(*this);}
     std::string getType() const { return "FixedRelativeFrame"; }
+    virtual xercesc::DOMElement* processFileID(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
     virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element);
     virtual void initialize();

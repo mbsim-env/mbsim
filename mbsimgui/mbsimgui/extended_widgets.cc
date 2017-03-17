@@ -152,7 +152,7 @@ namespace MBSimGUI {
     }
     else
       return isActive()?dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref):0;
-    return NULL;
+    return static_cast<DOMElement*>(ref);
   }
 
 

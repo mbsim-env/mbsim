@@ -106,7 +106,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent) {
+  DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     element->setName(static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     return NULL;
   }
@@ -152,23 +152,33 @@ namespace MBSimGUI {
     setName(QString::fromStdString(frame->getName()));
   }
 
-  void FramePropertyDialog::toWidget(Element *element) {
-    ElementPropertyDialog::toWidget(element);
-//    static_cast<Frame*>(element)->visu.toWidget(visu);
-  }
-
-  void FramePropertyDialog::fromWidget(Element *element) {
-    ElementPropertyDialog::fromWidget(element);
-//    static_cast<Frame*>(element)->visu.fromWidget(visu);
-  }
-
   DOMElement* FramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+//    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
+    visu->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+//    ElementPropertyDialog::writeXMLFile(element->getXMLElement());
+    return visu->writeXMLFile(element->getXMLElement(),ref);
+  }
+
+  InternalFramePropertyDialog::InternalFramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(frame,parent,f) {
+    addTab("Visualisation",1);
+    visu = new ExtWidget("OpenMBV frame",new FrameMBSOMBVWidget("NOTSET",""),true,true,frame->getXMLName());
+    visu->setToolTip("Set the visualisation parameters for the frame");
+    addToTab("Visualisation", visu);
+    setReadOnly(true);
+    setName(QString::fromStdString(frame->getName()));
+  }
+
+  DOMElement* InternalFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
 //    ElementPropertyDialog::initializeUsingXML(element->getXMLElement());
     visu->initializeUsingXML(element->getParent()->getXMLElement());
     return parent;
   }
 
-  DOMElement* FramePropertyDialog::writeXMLFile(DOMNode *parent) {
+  DOMElement* InternalFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
 //    ElementPropertyDialog::writeXMLFile(element->getXMLElement());
     visu->writeXMLFile(element->getParent()->getXMLElement(),element->getParent()->getXMLFrame());
     return NULL;
@@ -177,10 +187,10 @@ namespace MBSimGUI {
   FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
     addTab("Kinematics",1);
 
-    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft),true);
+    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativePosition");
     addToTab("Kinematics", position);
 
-    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true);
+    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft),true,false,MBSIM%"relativeOrientation");
     addToTab("Kinematics", orientation);
 
     refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,frame),true);
@@ -189,16 +199,31 @@ namespace MBSimGUI {
 
   void FixedRelativeFramePropertyDialog::toWidget(Element *element) {
     FramePropertyDialog::toWidget(element);
-    static_cast<FixedRelativeFrame*>(element)->position.toWidget(position);
-    static_cast<FixedRelativeFrame*>(element)->orientation.toWidget(orientation);
-    static_cast<FixedRelativeFrame*>(element)->refFrame.toWidget(refFrame);
+//    static_cast<FixedRelativeFrame*>(element)->position.toWidget(position);
+//    static_cast<FixedRelativeFrame*>(element)->orientation.toWidget(orientation);
+//    static_cast<FixedRelativeFrame*>(element)->refFrame.toWidget(refFrame);
   }
 
   void FixedRelativeFramePropertyDialog::fromWidget(Element *element) {
     FramePropertyDialog::fromWidget(element);
-    static_cast<FixedRelativeFrame*>(element)->position.fromWidget(position);
-    static_cast<FixedRelativeFrame*>(element)->orientation.fromWidget(orientation);
-    static_cast<FixedRelativeFrame*>(element)->refFrame.fromWidget(refFrame);
+//    static_cast<FixedRelativeFrame*>(element)->position.fromWidget(position);
+//    static_cast<FixedRelativeFrame*>(element)->orientation.fromWidget(orientation);
+//    static_cast<FixedRelativeFrame*>(element)->refFrame.fromWidget(refFrame);
+  }
+
+  DOMElement* FixedRelativeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FramePropertyDialog::initializeUsingXML(element->getXMLElement());
+//    visu->initializeUsingXML(element->getXMLElement());
+    position->initializeUsingXML(element->getXMLElement());
+    orientation->initializeUsingXML(element->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FixedRelativeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = orientation->writeXMLFile(element->getXMLElement(),0);//,element->getParent()->getXMLFrame());
+    ele = position->writeXMLFile(element->getXMLElement(),ele);//,element->getParent()->getXMLFrame());
+    FramePropertyDialog::writeXMLFile(element->getXMLElement(),ele);
+    return NULL;
   }
 
   NodeFramePropertyDialog::NodeFramePropertyDialog(NodeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
@@ -544,7 +569,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent) {
+  DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GroupPropertyDialog::writeXMLFile(parent);
     environment->writeXMLFile(E(element->getXMLElement())->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild());
     return NULL;
@@ -599,7 +624,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* BodyPropertyDialog::writeXMLFile(DOMNode *parent) {
+  DOMElement* BodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ObjectPropertyDialog::writeXMLFile(element->getXMLElement());
     R->writeXMLFile(element->getXMLElement(),element->getXMLElement()->getFirstChild());
     return NULL;
@@ -685,7 +710,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* RigidBodyPropertyDialog::writeXMLFile(DOMNode *parent) {
+  DOMElement* RigidBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     BodyPropertyDialog::writeXMLFile(element->getXMLElement());
 
  //   DOMElement *ele0 = Body::writeXMLFile(parent);

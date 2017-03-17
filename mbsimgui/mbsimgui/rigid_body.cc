@@ -39,7 +39,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), frameForInertiaTensor(0,false), translation(0,false), rotation(0,false), translationDependentRotation(0,false), coordinateTransformationForRotation(0,false), bodyFixedRepresentationOfAngularVelocity(0,false), ombvEditor(0,true) {
-    Frame *C = new Frame("C",this,true,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
+    InternalFrame *C = new InternalFrame("C",this,vector<FQN>(1,MBSIM%"plotFeatureFrameC"));
     C->setXMLName(MBSIM%"enableOpenMBVFrameC");
     addFrame(C);
 
@@ -99,6 +99,11 @@ namespace MBSimGUI {
   DOMElement* RigidBody::getXMLFrames() {
     return E(element)->getFirstElementChildNamed(MBSIM%"frames");
   }
+
+  DOMElement* RigidBody::getXMLContours() {
+    return E(element)->getFirstElementChildNamed(MBSIM%"contours");
+  }
+
 
   DOMElement* RigidBody::getXMLFrame() {
 //    if(not ele) {

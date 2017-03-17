@@ -66,6 +66,7 @@ namespace MBSimGUI {
       std::string getXMLPath(Element *ref=0, bool rel=false);
       xercesc::DOMElement* getXMLElement() { return element; }
       virtual xercesc::DOMElement* getXMLFrames() { return NULL; }
+      virtual xercesc::DOMElement* getXMLContours() { return NULL; }
       virtual xercesc::DOMElement* getXMLObjects() { return NULL; }
       virtual xercesc::DOMElement* getXMLConstraints() { return NULL; }
       virtual xercesc::DOMElement* getXMLFrame() { return NULL; }

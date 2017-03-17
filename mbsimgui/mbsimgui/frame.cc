@@ -25,6 +25,7 @@
 #include "mainwindow.h"
 #include "embed.h"
 #include "flexible_body_ffr.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -89,6 +90,7 @@ namespace MBSimGUI {
   }
 
   FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
+    setXMLName(MBSIM%"enableOpenMBV");
 
     position.setProperty(new ChoiceProperty2(new VecPropertyFactory(3,MBSIM%"relativePosition"),"",4));
 
@@ -100,6 +102,16 @@ namespace MBSimGUI {
   void FixedRelativeFrame::initialize() {
     Frame::initialize();
     refFrame.initialize();
+  }
+
+  DOMElement* FixedRelativeFrame::processFileID(DOMElement *element) {
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, NULL);
+    }
+    return element;
   }
 
   DOMElement* FixedRelativeFrame::initializeUsingXML(DOMElement *element) {
